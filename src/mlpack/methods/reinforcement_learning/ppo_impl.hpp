@@ -35,16 +35,18 @@ PPO<
   UpdaterType,
   PolicyType,
   ReplayType
->::PPO(TrainingConfig config,
-       ActorNetworkType actor,
-       CriticNetworkType critic,
-       PolicyType policy,
-       ReplayType replayMethod,
+>::PPO(TrainingConfig& config,
+       ActorNetworkType& actor,
+       CriticNetworkType& critic,
+       PolicyType& policy,
+       ReplayType& replayMethod,
        UpdaterType updater,
        EnvironmentType environment):
-  config(std::move(config)),
-  actorNetwork(std::move(actor)),
-  criticNetwork(std::move(critic)),
+  config(config),
+  actorNetwork(actor),
+  criticNetwork(critic),
+  policy(policy),
+  replayMethod(replayMethod),
   actorUpdater(std::move(updater)),
   #if ENS_VERSION_MAJOR >= 2
   actorUpdatePolicy(NULL),
@@ -53,8 +55,6 @@ PPO<
   #if ENS_VERSION_MAJOR >= 2
   criticUpdatePolicy(NULL),
   #endif
-  policy(std::move(policy)),
-  replayMethod(std::move(replayMethod)),
   environment(std::move(environment)),
   totalSteps(0),
   deterministic(false)
@@ -172,15 +172,15 @@ void PPO<
     ann::TanhFunction::Fn(actionParameter.row(0), mu);
     ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
 
-    ann::NormalDistribution normalDist =
-      ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
+    ann::NormalDistribution<> normalDist =
+      ann::NormalDistribution<>(vectorise(mu, 0), vectorise(sigma, 0));
 
     oldActorNetwork.Forward(sampledStates, actionParameter);
     ann::TanhFunction::Fn(actionParameter.row(0), mu);
     ann::SoftplusFunction::Fn(actionParameter.row(1), sigma);
 
-    ann::NormalDistribution oldNormalDist =
-      ann::NormalDistribution(vectorise(mu, 0), vectorise(sigma, 0));
+    ann::NormalDistribution<> oldNormalDist =
+      ann::NormalDistribution<>(vectorise(mu, 0), vectorise(sigma, 0));
 
     // Update the actor.
     // observation use action.
@@ -271,8 +271,8 @@ double PPO<
 
 //  std::cout << "mu sigma: "<< mu << " " << sigma << std::endl;
 
-  ann::NormalDistribution normalDist
-      = ann::NormalDistribution(mu, sigma);
+  ann::NormalDistribution<> normalDist
+      = ann::NormalDistribution<>(mu, sigma);
 
   ActionType action;
   action.action[0] = normalDist.Sample()[0];
@@ -287,7 +287,7 @@ double PPO<
 
   // Store the transition for replay.
   replayMethod.Store(state, action, reward, nextState,
-      environment.IsTerminal(nextState));
+      environment.IsTerminal(nextState), config.Discount());
 
   // Update current state.
   state = nextState;

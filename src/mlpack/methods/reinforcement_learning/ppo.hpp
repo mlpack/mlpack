@@ -81,11 +81,11 @@ class PPO
    * @param updater How to apply gradients when training.
    * @param environment Reinforcement learning task.
    */
-  PPO(TrainingConfig config,
-      ActorNetworkType ActorNetwork,
-      CriticNetworkType CriticNetwork,
-      PolicyType policy,
-      ReplayType replayMethod,
+  PPO(TrainingConfig& config,
+      ActorNetworkType& actor,
+      CriticNetworkType& critic,
+      PolicyType& policy,
+      ReplayType& replayMethod,
       UpdaterType updater = UpdaterType(),
       EnvironmentType environment = EnvironmentType());
 
@@ -119,23 +119,22 @@ class PPO
 
  private:
   //! Locally-stored hyper-parameters.
-  TrainingConfig config;
+  TrainingConfig& config;
 
   //! Locally-stored actor network.
-  ActorNetworkType actorNetwork;
+  ActorNetworkType& actorNetwork;
 
   //! Locally-stored old actor network.
   ActorNetworkType oldActorNetwork;
 
   //! Locally-stored critic network.
-  CriticNetworkType criticNetwork;
+  CriticNetworkType& criticNetwork;
 
-  //! Locally-stored updater.
-  UpdaterType criticUpdater;
-  #if ENS_VERSION_MAJOR >= 2
-    typename UpdaterType::template
-      Policy<arma::mat, arma::mat>* criticUpdatePolicy;
-  #endif
+  //! Locally-stored behavior policy.
+  PolicyType& policy;
+
+  //! Locally-stored experience method.
+  ReplayType& replayMethod;
 
   //! Locally-stored updater.
   UpdaterType actorUpdater;
@@ -144,11 +143,12 @@ class PPO
     Policy<arma::mat, arma::mat>* actorUpdatePolicy;
   #endif
 
-  //! Locally-stored behavior policy.
-  PolicyType policy;
-
-  //! Locally-stored experience method.
-  ReplayType replayMethod;
+  //! Locally-stored updater.
+  UpdaterType criticUpdater;
+  #if ENS_VERSION_MAJOR >= 2
+    typename UpdaterType::template
+      Policy<arma::mat, arma::mat>* criticUpdatePolicy;
+  #endif
 
   //! Locally-stored reinforcement learning task.
   EnvironmentType environment;
@@ -158,6 +158,9 @@ class PPO
 
   //! Locally-stored current state of the agent.
   StateType state;
+
+  //! Locally-stored action of the agent.
+  ActionType action;
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;
