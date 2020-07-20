@@ -19,8 +19,8 @@
 #include <cereal/archives/xml.hpp>
 #include <cereal/types/memory.hpp>
 
+#if __cplusplus <= 201103L
 namespace std {
-
 template<typename T, typename... Args>
 std::unique_ptr<T> make_unique(Args&&... args)
 
@@ -28,6 +28,7 @@ std::unique_ptr<T> make_unique(Args&&... args)
       return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 } //end of std namepace
+#endif
 
 namespace cereal {
 
