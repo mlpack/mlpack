@@ -11,8 +11,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef CEREAL_ARRAY_WRAPPER_HPP
-#define CEREAL_ARRAY_WRAPPER_HPP
+#ifndef MLPACK_CORE_CEREAL_ARRAY_WRAPPER_HPP
+#define MLPACK_CORE_CEREAL_ARRAY_WRAPPER_HPP
 
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/portable_binary.hpp>

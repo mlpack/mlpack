@@ -2,6 +2,7 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   array_wrapper.hpp
+  pointer_wrapper.hpp
 )
 
 # add directory name to sources

@@ -807,7 +807,7 @@ void HoeffdingTree<
   data::DatasetInfo* d = NULL;
   if (Archive::is_saving::value)
     d = const_cast<data::DatasetInfo*>(datasetInfo);
-   ar & CEREAL_POINTER(d);
+  ar & CEREAL_POINTER(d);
   if (Archive::is_loading::value)
   {
     if (datasetInfo && ownsInfo)
@@ -873,10 +873,10 @@ void HoeffdingTree<
   else
   {
     // We have split, so we only need to save the split and the children.
-   if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
-     ar & CEREAL_NVP(categoricalSplit);
-   else
-     ar & CEREAL_NVP(numericSplit);
+    if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
+      ar & CEREAL_NVP(categoricalSplit);
+    else
+      ar & CEREAL_NVP(numericSplit);
 
     // Serialize the children, because we have split.
     for (size_t i = 0; i < children.size(); ++i)
