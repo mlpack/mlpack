@@ -187,7 +187,21 @@ double KernelSVM<MatType, KernelType>::Train(
       count = 0;
   }
 
-  trainingData = data;
+  // Calculating paramter values for linear kernel.
+  parameters = (data * (alpha.t() % trainLabels).t()).t();
+  double threshold = arma::as_scalar(arma::mean(alpha));
+
+  // Saving values of labels and sample data to be used
+  // with kernel function.
+  savedLabels = arma::zeros(1, data.n_cols);
+  trainingData = arma::mat(data);
+  for (size_t i = 0; i < data.n_cols; i++)
+  {
+    if (alpha(i) > threshold)
+    {
+      savedLabels(i) = trainLabels(i);
+    }
+  }
 }
 
 template <typename MatType, typename KernelType>
@@ -225,24 +239,28 @@ void KernelSVM<MatType, KernelType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  // Giving prediction when non-linear kernel is used.
-  scores = arma::zeros(1, data.n_cols);
-  double threshold = arma::as_scalar(arma::mean(alpha));
-  for (size_t i = 0; i < data.n_cols; i++)
+  if (fitKernel)
   {
-    double  prediction = 0;
-    for (size_t j = 0; j < trainingData.n_cols; j++)
+    // Giving predictio when non-linear kernel is used.
+    scores = arma::zeros(1, data.n_cols);
+    for (size_t i = 0; i < data.n_cols; i++)
     {
-      if (alpha(j) <= threshold)
-        continue;
-      assert(j < trainLabels.n_elem && j >= 0);
-      std::cout<<"In loop"<<std::endl;
-      prediction = prediction + alpha(j) *
-                   trainLabels(j) * kernel.Evaluate(data.col(i),
-                   trainingData.col(j));
+      double  prediction = 0;
+      for (size_t j = 0; j < trainingData.n_cols; j++)
+      {
+        if (savedLabels(j) == 0)
+          continue;
+        prediction = prediction + alpha(j) *
+                     savedLabels(j) * kernel.Evaluate(data.col(i),
+                     trainingData.col(j));
+      }
+      scores(i) = prediction + intercept;
     }
-    std::cout<<"Out loop"<<std::endl;
-    scores(i) = prediction + intercept;
+  }
+  else
+  {
+    // Giving predictions for linear kernel.
+    scores = (data.t() * parameters.t() + intercept).t();
   }
 }
 
