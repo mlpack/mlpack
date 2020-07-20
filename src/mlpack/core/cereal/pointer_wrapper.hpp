@@ -1,20 +1,23 @@
+/**
+ * @file core/cereal/pointer_wrapper.hpp
+ * @author Omar Shrit
+ *
+ * Implementation of a pointer wrapper to enable the serialization of
+ * raw pointers in cereal
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef CEREAL_PONTER_WRAPPER_HPP
 #define CEREAL_PONTER_WRAPPER_HPP
-
-/*
- * The objective of this class is to create a wrapper for
- * raw pointer by encapsulating them in a smart pointer unique_ptr
- * This will allow to serialize raw pointer in cereal as a smart pointer
- * because it will be difficult to change all pointer type in mlpack
- */
 
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/json.hpp>
 #include <cereal/archives/portable_binary.hpp>
 #include <cereal/archives/xml.hpp>
 #include <cereal/types/memory.hpp>
-
-#include <memory>
 
 namespace std {
 
@@ -31,7 +34,13 @@ namespace cereal {
 template<class T>
 class pointer_wrapper
 {
-public:
+/*
+ * The objective of this class is to create a wrapper for
+ * raw pointer by encapsulating them in a smart pointer unique_ptr
+ * This will allow to serialize raw pointer in cereal as a smart pointer
+ * because it will be difficult to change all pointer type in mlpack
+ */
+ public:
   pointer_wrapper(T*& pointer)
     : localPointer(pointer)
   {}
