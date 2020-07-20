@@ -120,19 +120,19 @@ TEST_CASE_METHOD(
   output = std::move(IO::GetParam<arma::mat>("output"));
 
   // All values dimension should remain unchanged.
-  REQUIRE(output(0, 0)== Approx(7.0).epsilon(1e-5 / 100));
-  REQUIRE(output(0, 1)== Approx(4.0).epsilon(1e-5 / 100));
-  REQUIRE(output(0, 2)== Approx(5.0).epsilon(1e-5 / 100));
+  REQUIRE(output(0, 0)== Approx(7.0).epsilon(1e-7));
+  REQUIRE(output(0, 1)== Approx(4.0).epsilon(1e-7));
+  REQUIRE(output(0, 2)== Approx(5.0).epsilon(1e-7));
 
   // All values should be binarized according to the threshold.
   REQUIRE(output(1, 0) == Approx(0.0).margin(1e-5));
   REQUIRE(output(1, 1) == Approx(0.0).margin(1e-5));
-  REQUIRE(output(1, 2)== Approx(1.0).epsilon(1e-5 / 100));
+  REQUIRE(output(1, 2)== Approx(1.0).epsilon(1e-7));
 
   // All values dimension should remain unchanged.
-  REQUIRE(output(2, 0)== Approx(7.0).epsilon(1e-5 / 100));
-  REQUIRE(output(2, 1)== Approx(3.0).epsilon(1e-5 / 100));
-  REQUIRE(output(2, 2)== Approx(8.0).epsilon(1e-5 / 100));
+  REQUIRE(output(2, 0)== Approx(7.0).epsilon(1e-7));
+  REQUIRE(output(2, 1)== Approx(3.0).epsilon(1e-7));
+  REQUIRE(output(2, 2)== Approx(8.0).epsilon(1e-7));
 }
 
 /**
@@ -153,13 +153,13 @@ TEST_CASE_METHOD(
   output = std::move(IO::GetParam<arma::mat>("output"));
 
   // All values should be binarized according to the threshold.
-  REQUIRE(output(0, 0)== Approx(1.0).epsilon(1e-5 / 100));
+  REQUIRE(output(0, 0)== Approx(1.0).epsilon(1e-7));
   REQUIRE(output(0, 1) == Approx(0.0).margin(1e-5));
   REQUIRE(output(0, 2) == Approx(0.0).margin(1e-5));
   REQUIRE(output(1, 0) == Approx(0.0).margin(1e-5));
   REQUIRE(output(1, 1) == Approx(0.0).margin(1e-5));
-  REQUIRE(output(1, 2)== Approx(1.0).epsilon(1e-5 / 100));
-  REQUIRE(output(2, 0)== Approx(1.0).epsilon(1e-5 / 100));
+  REQUIRE(output(1, 2)== Approx(1.0).epsilon(1e-7));
+  REQUIRE(output(2, 0)== Approx(1.0).epsilon(1e-7));
   REQUIRE(output(2, 1) == Approx(0.0).margin(1e-5));
-  REQUIRE(output(2, 2)== Approx(1.0).epsilon(1e-5 / 100));
+  REQUIRE(output(2, 2)== Approx(1.0).epsilon(1e-7));
 }

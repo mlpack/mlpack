@@ -149,7 +149,7 @@ TEST_CASE("PCAWhiteningTest", "[ScalingTest]")
   double ccovsum = 0.0;
   for (size_t i = 0; i < diagonals.n_elem; ++i)
     ccovsum += diagonals(i);
-  REQUIRE(ccovsum == Approx(1.0).epsilon(1e-3 / 100));
+  REQUIRE(ccovsum == Approx(1.0).epsilon(1e-5));
   scale.InverseTransform(output, temp);
   CheckMatrices(dataset, temp);
 }
@@ -168,7 +168,7 @@ TEST_CASE("ZCAWhiteningTest", "[ScalingTest]")
   double ccovsum = 0.0;
   for (size_t i = 0; i < diagonals.n_elem; ++i)
     ccovsum += diagonals(i);
-  REQUIRE(ccovsum == Approx(1.0).epsilon(1e-3 / 100));
+  REQUIRE(ccovsum == Approx(1.0).epsilon(1e-5));
   scale.InverseTransform(output, temp);
   CheckMatrices(dataset, temp);
 }

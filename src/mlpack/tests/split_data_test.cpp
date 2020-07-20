@@ -42,7 +42,7 @@ void CompareData(const mat& inputData,
       if (std::abs(rhsCol(j)) < 1e-5)
         REQUIRE(lhsCol(j) == Approx(0.0).margin(1e-5));
       else
-        REQUIRE(lhsCol(j) == Approx(rhsCol(j)).epsilon(1e-5 / 100));
+        REQUIRE(lhsCol(j) == Approx(rhsCol(j)).epsilon(1e-7));
     }
   }
 }
@@ -61,7 +61,7 @@ void CheckMatEqual(const mat& inputData,
       if (std::abs(rhsCol(j)) < 1e-5)
         REQUIRE(lhsCol(j) == Approx(0.0).margin(1e-5));
       else
-        REQUIRE(lhsCol(j) == Approx(rhsCol(j)).epsilon(1e-5 / 100));
+        REQUIRE(lhsCol(j) == Approx(rhsCol(j)).epsilon(1e-7));
     }
   }
 }

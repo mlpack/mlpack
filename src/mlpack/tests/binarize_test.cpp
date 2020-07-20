@@ -32,15 +32,15 @@ TEST_CASE("BinerizeOneDimension", "[BinarizeTest]")
   const size_t dimension = 1;
   Binarize<double>(input, output, threshold, dimension);
 
-  REQUIRE(output(0, 0)== Approx(1.0).epsilon(1e-5 / 100)); // 1
-  REQUIRE(output(0, 1)== Approx(2.0).epsilon(1e-5 / 100)); // 2
-  REQUIRE(output(0, 2)== Approx(3.0).epsilon(1e-5 / 100)); // 3 
+  REQUIRE(output(0, 0)== Approx(1.0).epsilon(1e-7)); // 1
+  REQUIRE(output(0, 1)== Approx(2.0).epsilon(1e-7)); // 2
+  REQUIRE(output(0, 2)== Approx(3.0).epsilon(1e-7)); // 3
   REQUIRE(output(1, 0) == Approx(0.0).margin(1e-5)); // 4 target
   REQUIRE(output(1, 1) == Approx(0.0).margin(1e-5)); // 5 target
-  REQUIRE(output(1, 2)== Approx(1.0).epsilon(1e-5 / 100)); // 6 target
-  REQUIRE(output(2, 0)== Approx(7.0).epsilon(1e-5 / 100)); // 7
-  REQUIRE(output(2, 1)== Approx(8.0).epsilon(1e-5 / 100)); // 8
-  REQUIRE(output(2, 2)== Approx(9.0).epsilon(1e-5 / 100)); // 9
+  REQUIRE(output(1, 2)== Approx(1.0).epsilon(1e-7)); // 6 target
+  REQUIRE(output(2, 0)== Approx(7.0).epsilon(1e-7)); // 7
+  REQUIRE(output(2, 1)== Approx(8.0).epsilon(1e-7)); // 8
+  REQUIRE(output(2, 2)== Approx(9.0).epsilon(1e-7)); // 9
 }
 
 TEST_CASE("BinerizeAll", "[BinarizeTest]")
@@ -57,11 +57,11 @@ TEST_CASE("BinerizeAll", "[BinarizeTest]")
 
   REQUIRE(output(0, 0) == Approx(0.0).margin(1e-5)); // 1
   REQUIRE(output(0, 1) == Approx(0.0).margin(1e-5)); // 2
-  REQUIRE(output(0, 2) == Approx(0.0).margin(1e-5)); // 3 
-  REQUIRE(output(1, 0) == Approx(0.0).margin(1e-5)); //4
+  REQUIRE(output(0, 2) == Approx(0.0).margin(1e-5)); // 3
+  REQUIRE(output(1, 0) == Approx(0.0).margin(1e-5)); // 4
   REQUIRE(output(1, 1) == Approx(0.0).margin(1e-5)); // 5
-  REQUIRE(output(1, 2)== Approx(1.0).epsilon(1e-5 / 100)); // 6
-  REQUIRE(output(2, 0)== Approx(1.0).epsilon(1e-5 / 100)); // 7
-  REQUIRE(output(2, 1)== Approx(1.0).epsilon(1e-5 / 100)); // 8
-  REQUIRE(output(2, 2)== Approx(1.0).epsilon(1e-5 / 100)); // 9
- }
+  REQUIRE(output(1, 2)== Approx(1.0).epsilon(1e-7)); // 6
+  REQUIRE(output(2, 0)== Approx(1.0).epsilon(1e-7)); // 7
+  REQUIRE(output(2, 1)== Approx(1.0).epsilon(1e-7)); // 8
+  REQUIRE(output(2, 2)== Approx(1.0).epsilon(1e-7)); // 9
+}

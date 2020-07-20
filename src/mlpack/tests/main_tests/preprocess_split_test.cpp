@@ -163,7 +163,8 @@ TEST_CASE_METHOD(
   REQUIRE(IO::GetParam<arma::mat>("training").n_cols == inputSize);
   REQUIRE(IO::GetParam<arma::mat>("test").n_cols == 0);
 
-  REQUIRE(IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols == labelSize);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols ==
+      labelSize);
   REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols == 0);
 }
 
