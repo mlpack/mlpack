@@ -1,9 +1,18 @@
+/**
+ * @file core/cereal/array_wrapper.hpp
+ * @author Omar Shrit
+ *
+ * Implementation of an array wrapper.
+ *
+ * This implementation will allows to serilize array easily using cereal.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef CEREAL_ARRAY_WRAPPER_HPP
 #define CEREAL_ARRAY_WRAPPER_HPP
-
-// This file add make_array functionality to cereal
-// This functionality exist only in boost::serialization.
-// Most part of this code are copied from array_wrapper in boost::serialization
 
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/portable_binary.hpp>
@@ -13,61 +22,63 @@
 namespace cereal {
 
 template<class T>
-class array_wrapper
+class ArrayWrapper
 {
-private:
-    array_wrapper& operator=(array_wrapper rhs);
-    // note: I would like to make the copy constructor private but this breaks
-    // make_array.  So I make make_array a friend
-    template<class Tx, class S>
-    friend const cereal::array_wrapper<Tx> make_array(Tx * t, S s);
+/* This file add make_array functionality to cereal
+ * This functionality exist only in boost::serialization.
+ * Most part of this code are copied from ArrayWrapper in boost::serialization
+ */
 public:
 
-    // array_wrapper(array_wrapper& rhs) :
-    //     m_t(rhs.m_t),
-    //     m_element_count(rhs.m_element_count)
-    // {}
-    array_wrapper(T * t, std::size_t s) :
-        m_t(t),
-        m_element_count(s)
-    {}
+  ArrayWrapper(T * t, std::size_t s) :
+      ArrayAddress(t),
+      ArraySize(s)
+  {}
 
-    // default implementation
-    // Cereal does not require to split member, it can do that internally
-    // If this is the case we can not implement optimized version, since 
-    // the only possible one is optimized.
-    // Some verification needed...
-    // default implementation
-    template<class Archive>
-    void serialize(Archive &ar, const unsigned int /*version*/)
-    {
-     // default implemention does the loop
-      std::size_t c = count();
-      T * t = address();
-      while(0 < c--)
-            ar & cereal::make_nvp("item", *t++); 
-    }
+  /* default implementation
+  * Cereal does not require to split member, it can do that internally
+  * If this is the case we can not implement optimized version, since
+  * the only possible one is optimized.
+  * Some verification needed...
+  * default implementation
+  */
+  template<class Archive>
+  void serialize(Archive &ar, const unsigned int /*version*/)
+  {
+   // default implemention does the loop
+    size_t c = count();
+    T * t = address();
+    while(0 < c--)
+          ar & cereal::make_nvp("item", *t++);
+  }
 
-    T * address() const
-    {
-      return m_t;
-    }
+  T * address() const
+  {
+    return ArrayAddress;
+  }
 
-    std::size_t count() const
-    {
-      return m_element_count;
-    }
+  size_t count() const
+  {
+    return ArraySize;
+  }
 
 private:
-    T * const m_t;
-    const std::size_t m_element_count;
+  ArrayWrapper& operator=(ArrayWrapper rhs);
+  // note: I would like to make the copy constructor private but this breaks
+  // make_array.  So I make make_array a friend
+  template<class Tx, class S>
+  friend const cereal::ArrayWrapper<Tx> make_array(Tx * t, S s);
+
+  const T * ArrayAddress;
+  const size_t ArraySize;
 };
 
 template<class T, class S>
 inline
-array_wrapper< T > make_array(T* t, S s){
-    array_wrapper< T > a(t, s);
-    return a;
+ArrayWrapper< T > make_array(T* t, S s)
+{
+  ArrayWrapper< T > a(t, s);
+  return a;
 }
 
 } // end namespace cereal
