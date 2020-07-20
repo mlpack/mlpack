@@ -236,10 +236,12 @@ void KernelSVM<MatType, KernelType>::Classify(
       if (alpha(j) <= threshold)
         continue;
       assert(j < trainLabels.n_elem && j >= 0);
+      std::cout<<"In loop"<<std::endl;
       prediction = prediction + alpha(j) *
                    trainLabels(j) * kernel.Evaluate(data.col(i),
                    trainingData.col(j));
     }
+    std::cout<<"Out loop"<<std::endl;
     scores(i) = prediction + intercept;
   }
 }
