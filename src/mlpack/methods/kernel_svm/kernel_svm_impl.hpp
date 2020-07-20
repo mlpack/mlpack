@@ -56,12 +56,10 @@ double KernelSVM<MatType, KernelType>::Train(
     const size_t max_iter,
     const double tol)
 {
-  std::cout<<"LOC 1"<<std::endl;
   trainLabels = arma::Row<int> (data.n_cols);
 
   // Changing labels values to 1, -1 values provided
   // by user should 0 and 1.
-  std::cout<<"LOC 2"<<std::endl;
   for (size_t i = 0; i < data.n_cols; i++)
   {
     if (labels(i) == 0)
@@ -69,7 +67,6 @@ double KernelSVM<MatType, KernelType>::Train(
     else
       trainLabels(i) = 1;
   }
-  std::cout<<"LOC 3"<<std::endl;
 
   // Intializing variable to calculate alphas.
   alpha = arma::zeros(data.n_cols);
@@ -86,7 +83,6 @@ double KernelSVM<MatType, KernelType>::Train(
 
   // Storing kernel fucntion values.
   arma::mat K = arma::mat(data.n_cols, data.n_cols);
-  std::cout<<"LOC 4"<<std::endl;
 
   // Pre-compute the Kernel Matrix
   for (size_t i = 0; i < data.n_cols; i++)
@@ -96,39 +92,36 @@ double KernelSVM<MatType, KernelType>::Train(
       K(i, j) = kernel.Evaluate(data.col(i), data.col(j));
     }
   }
-  std::cout<<"LOC 5"<<std::endl;
 
   // Training starts from here.
   while (count < max_iter)
   {
-    size_t num_changed_alphas = 0;
+    size_t changedAlphas = 0;
     for (size_t i = 0; i < data.n_cols; i++)
     {
       // Calculate Ei = f(x(i)) - y(i) using (2).
       // E(i) = b + sum (X(i, :) * (repmat(alphas.*Y,1,n).*X)') - Y(i);
       E(i) = intercept + arma::sum(alpha.t() % trainLabels % K.col(i).t())
              - trainLabels(i);
-      std::cout<<"In Loop LOC 1"<<std::endl;
       if ((trainLabels(i) * E(i) < -tol && alpha(i) < regularization) ||
         (trainLabels(i) * E(i) > tol && alpha(i) > 0))
       {
         // In practice, there are many ways one can use to select
         // the i and j. In this simplified code, we select them randomly.
         size_t j = rand() % data.n_cols;
-        while (j == i || j >= data.n_cols)
+        while (j == i)
         {
           j = rand() % data.n_cols;
         }
-        std::cout<<"In Loop LOC 2"<<std::endl;
+        assert(j < data.n_cols && j >= 0);
 
         // Calculate Ej = f(x(j)) - y(j) using (2).
         E(j) = intercept + arma::sum(alpha.t() % trainLabels % K.col(j).t())
                - trainLabels(j);
-        std::cout<<"In Loop LOC 3"<<std::endl;
 
         // Saving old alpha values.
-        double alpha_i_old = alpha(i);
-        double alpha_j_old = alpha(j);
+        double alphaIold = alpha(i);
+        double alphaJold = alpha(j);
 
         // Compute L and H to find max and min values of alphas.
         if (trainLabels(i) == trainLabels(j))
@@ -152,31 +145,29 @@ double KernelSVM<MatType, KernelType>::Train(
           continue;
         // Compute and clip new value for alpha j using (12) and (15).
         alpha(j) = alpha(j) - (trainLabels(j) * (E(i) - E(j))) / eta;
-        std::cout<<"In Loop LOC 4"<<std::endl;
 
         // Clip.
         alpha(j) = std::min(H, alpha(j));
         alpha(j) = std::max(L, alpha(j));
 
         // Check if change in alpha is noticeable or not.
-        if (std::abs(alpha(j) - alpha_j_old) < tol)
+        if (std::abs(alpha(j) - alphaJold) < tol)
         {
-          alpha(j) = alpha_j_old;
+          alpha(j) = alphaJold;
           continue;
         }
 
         // Determine value for alpha i using (16).
         alpha(i) = alpha(i) + trainLabels(i) * trainLabels(j)
-                   * (alpha_j_old - alpha(j));
+                   * (alphaJold - alpha(j));
 
         // Compute b1 and b2 using (17) and (18) respectively.
         double b1 = intercept - E(i)
-                    - trainLabels(i) * (alpha(i) - alpha_i_old) *  K(i, j)
-                    - trainLabels(j) * (alpha(j) - alpha_j_old) *  K(i, j);
+                    - trainLabels(i) * (alpha(i) - alphaIold) *  K(i, j)
+                    - trainLabels(j) * (alpha(j) - alphaJold) *  K(i, j);
         double b2 = intercept - E(j)
-                    - trainLabels(i) * (alpha(i) - alpha_i_old) *  K(i, j)
-                    - trainLabels(j) * (alpha(j) - alpha_j_old) *  K(j, j);
-        std::cout<<"In Loop LOC 5"<<std::endl;
+                    - trainLabels(i) * (alpha(i) - alphaIold) *  K(i, j)
+                    - trainLabels(j) * (alpha(j) - alphaJold) *  K(j, j);
 
         // Compute b by (19).
         if (0 < alpha(i) && alpha(i) < regularization)
@@ -186,24 +177,19 @@ double KernelSVM<MatType, KernelType>::Train(
         else
           intercept = (b1 + b2) / 2;
 
-        num_changed_alphas = num_changed_alphas + 1;
-        std::cout<<"In Loop LOC 6"<<std::endl;
+        changedAlphas = changedAlphas + 1;
       }
     }
 
-    if (num_changed_alphas == 0)
+    if (changedAlphas == 0)
       count = count + 1;
     else
       count = 0;
-    std::cout<<"Outer LOOP LOC 1"<<std::endl;
   }
-  std::cout<<"Before paramter"<<std::endl;
+
   // Calculating paramter values for linear kernel.
   parameters = (data * (alpha.t() % trainLabels).t()).t();
-  std::cout<<"After paramter"<<std::endl;
   trainingData = data;
-  std::cout<<"After data"<<std::endl;
-
 }
 
 template <typename MatType, typename KernelType>
@@ -243,7 +229,6 @@ void KernelSVM<MatType, KernelType>::Classify(
 {
   if (fitKernel)
   {
-    std::cout<<"Non-Linear prediction"<<std::endl;
     // Giving prediction when non-linear kernel is used.
     scores = arma::zeros(1, data.n_cols);
     double threshold = arma::as_scalar(arma::mean(alpha));
@@ -252,25 +237,20 @@ void KernelSVM<MatType, KernelType>::Classify(
       double  prediction = 0;
       for (size_t j = 0; j < trainingData.n_cols; j++)
       {
-        std::cout<<"Non-Linear inside loop loc1"<<std::endl;
         if (alpha(j) <= threshold)
           continue;
+        assert(j < trainLabels.n_elem && j >= 0);
         prediction = prediction + alpha(j) *
                      trainLabels(j) * kernel.Evaluate(data.col(i),
                      trainingData.col(j));
-        std::cout<<"Non-Linear inside loop loc2"<<std::endl;
       }
-      std::cout<<"Non-Linear scores"<<std::endl;
       scores(i) = prediction + intercept;
-      std::cout<<"Non-Linear After scores"<<std::endl;
     }
   }
   else
   {
-    std::cout<<"Linear prediction"<<std::endl;
     // Giving predictions for linear kernel.
     scores = (data.t() * parameters.t() + intercept).t();
-    std::cout<<"Linear prediction end"<<std::endl;
   }
 }
 
