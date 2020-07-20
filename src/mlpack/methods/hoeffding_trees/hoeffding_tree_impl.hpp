@@ -879,11 +879,8 @@ void HoeffdingTree<
       ar & CEREAL_NVP(numericSplit);
 
     // Serialize the children, because we have split.
-    for (size_t i = 0; i < children.size(); ++i)
-    {    
-      ar & CEREAL_POINTER(children.at(i));
-    }
-
+      ar & CEREAL_VECTOR_POINTER(children);
+    
     if (Archive::is_loading::value)
     {
       for (size_t i = 0; i < children.size(); ++i)
