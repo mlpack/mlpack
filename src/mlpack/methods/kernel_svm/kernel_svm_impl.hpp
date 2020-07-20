@@ -187,8 +187,6 @@ double KernelSVM<MatType, KernelType>::Train(
       count = 0;
   }
 
-  // Calculating paramter values for linear kernel.
-  parameters = (data * (alpha.t() % trainLabels).t()).t();
   trainingData = data;
 }
 
@@ -227,30 +225,22 @@ void KernelSVM<MatType, KernelType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  if (fitKernel)
+  // Giving prediction when non-linear kernel is used.
+  scores = arma::zeros(1, data.n_cols);
+  double threshold = arma::as_scalar(arma::mean(alpha));
+  for (size_t i = 0; i < data.n_cols; i++)
   {
-    // Giving prediction when non-linear kernel is used.
-    scores = arma::zeros(1, data.n_cols);
-    double threshold = arma::as_scalar(arma::mean(alpha));
-    for (size_t i = 0; i < data.n_cols; i++)
+    double  prediction = 0;
+    for (size_t j = 0; j < trainingData.n_cols; j++)
     {
-      double  prediction = 0;
-      for (size_t j = 0; j < trainingData.n_cols; j++)
-      {
-        if (alpha(j) <= threshold)
-          continue;
-        assert(j < trainLabels.n_elem && j >= 0);
-        prediction = prediction + alpha(j) *
-                     trainLabels(j) * kernel.Evaluate(data.col(i),
-                     trainingData.col(j));
-      }
-      scores(i) = prediction + intercept;
+      if (alpha(j) <= threshold)
+        continue;
+      assert(j < trainLabels.n_elem && j >= 0);
+      prediction = prediction + alpha(j) *
+                   trainLabels(j) * kernel.Evaluate(data.col(i),
+                   trainingData.col(j));
     }
-  }
-  else
-  {
-    // Giving predictions for linear kernel.
-    scores = (data.t() * parameters.t() + intercept).t();
+    scores(i) = prediction + intercept;
   }
 }
 
