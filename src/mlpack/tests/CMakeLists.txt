@@ -19,7 +19,7 @@ add_executable(mlpack_test
   callback_test.cpp
 # cf_test.cpp
   cli_binding_test.cpp
-# cli_test.cpp
+  io_test.cpp
   convolution_test.cpp
   convolutional_network_test.cpp
   cosine_tree_test.cpp
@@ -44,16 +44,16 @@ add_executable(mlpack_test
   image_load_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
-#  kde_test.cpp
+# kde_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
   kfn_test.cpp
-  # kmeans_test.cpp
-  # knn_test.cpp
+# kmeans_test.cpp
+# knn_test.cpp
   krann_search_test.cpp
   ksinit_test.cpp
-  # lars_test.cpp
+# lars_test.cpp
   layer_names_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
@@ -64,7 +64,7 @@ add_executable(mlpack_test
   log_test.cpp
   logistic_regression_test.cpp
   loss_functions_test.cpp
-  # lsh_test.cpp
+# lsh_test.cpp
   math_test.cpp
   matrix_completion_test.cpp
   maximal_inputs_test.cpp
@@ -76,8 +76,8 @@ add_executable(mlpack_test
   nca_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
-  # octree_test.cpp
-  # pca_test.cpp
+# octree_test.cpp
+# pca_test.cpp
   perceptron_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp

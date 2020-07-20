@@ -195,17 +195,17 @@ class AdaBoost
 } // namespace mlpack
 
 //! Set the serialization version of the adaboost class.
-namespace boost {
-namespace serialization {
+// namespace boost {
+// namespace serialization {
 
-template<typename WeakLearnerType, typename MatType>
-struct version<mlpack::adaboost::AdaBoost<WeakLearnerType, MatType>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
+// template<typename WeakLearnerType, typename MatType>
+// struct version<mlpack::adaboost::AdaBoost<WeakLearnerType, MatType>>
+// {
+//   BOOST_STATIC_CONSTANT(int, value = 1);
+// };
 
-} // namespace serialization
-} // namespace boost
+// } // namespace serialization
+// } // namespace boost
 
 // Include implementation.
 #include "adaboost_impl.hpp"
