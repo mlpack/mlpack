@@ -177,22 +177,12 @@ class KernelSVM
   //! Sets the intercept term flag.
   bool& FitKernel() { return fitKernel; }
 
-  //! Set the model parameters.
-  arma::mat& Parameters() { return parameters; }
-  //! Get the model parameters.
-  const arma::mat& Parameters() const { return parameters; }
-
-  //! Gets the features size of the training data
-  size_t FeatureSize() const
-  { return parameters.n_rows; }
-
   /**
    * Serialize the KernelSVM model.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(parameters);
     ar & BOOST_SERIALIZATION_NVP(fitKernel);
     ar & BOOST_SERIALIZATION_NVP(trainingData);
     ar & BOOST_SERIALIZATION_NVP(trainLabels);
@@ -202,8 +192,6 @@ class KernelSVM
 
  private:
   size_t inputSize;
-  //! Parameters after optimization.
-  arma::mat parameters;
   //! Locally saved standard svm regularization parameter.
   double regularization;
   //! Kernel flag.
