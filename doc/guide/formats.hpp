@@ -447,7 +447,7 @@ Multiple images are saved according to the vector of filenames specified.
 
 @section formatmodels Loading and saving models
 
-Using \c boost::serialization, mlpack is able to load and save machine learning
+Using \c cereal, mlpack is able to load and save machine learning
 models with ease.  These models can currently be saved in three formats:
 
  - binary (.bin); this is not human-readable, but it is small
@@ -471,7 +471,7 @@ options; for more information, see the documentation for each program
 
 @section formatmodelscpp Loading and saving models in C++
 
-mlpack uses the \c boost::serialization library internally to perform loading
+mlpack uses the \c cereal library internally to perform loading
 and saving of models, and provides convenience overloads of mlpack::data::Load()
 and mlpack::data::Save() to load and save these models.
 
@@ -484,7 +484,7 @@ void serialize(Archive& ar, const unsigned int version);
 
 \note
 For more information on this method and how it works, see the
-boost::serialization documentation at
+cereal documentation at
 http://www.boost.org/libs/serialization/doc/.
 
 \note
