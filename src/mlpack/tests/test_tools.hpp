@@ -54,7 +54,7 @@ template <typename FieldType,
               arma::is_Mat_only<typename FieldType::object_type>::value>>
 // Check the values of two field types
 inline void CheckFields(const FieldType& a,
-                          const FieldType& b)
+                        const FieldType& b)
 {
   BOOST_REQUIRE_EQUAL(a.n_rows, b.n_rows);
   BOOST_REQUIRE_EQUAL(a.n_cols, b.n_cols);
