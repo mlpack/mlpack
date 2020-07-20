@@ -14,7 +14,6 @@ add_executable(mlpack_test
   async_learning_test.cpp
   augmented_rnns_tasks_test.cpp
   bias_svd_test.cpp
-  binarize_test.cpp
   block_krylov_svd_test.cpp
   callback_test.cpp
   cf_test.cpp
@@ -41,7 +40,6 @@ add_executable(mlpack_test
   hoeffding_tree_test.cpp
   hpt_test.cpp
   hyperplane_test.cpp
-  imputation_test.cpp
   init_rules_test.cpp
   kde_test.cpp
   kernel_pca_test.cpp
@@ -94,7 +92,6 @@ add_executable(mlpack_test
   regularized_svd_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
-  scaling_test.cpp
   serialization.cpp
   serialization.hpp
   serialization_test.cpp
@@ -104,7 +101,6 @@ add_executable(mlpack_test
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
   spill_tree_test.cpp
-  split_data_test.cpp
   string_encoding_test.cpp
   sumtree_test.cpp
   svd_batch_test.cpp
@@ -156,10 +152,6 @@ add_executable(mlpack_test
   main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
-  main_tests/preprocess_binarize_test.cpp
-  main_tests/preprocess_imputer_test.cpp
-  main_tests/preprocess_scale_test.cpp
-  main_tests/preprocess_split_test.cpp
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
   main_tests/range_search_test.cpp
@@ -173,8 +165,16 @@ add_executable(mlpack_catch_test
   serialization_catch.cpp
   serialization_catch.hpp
   test_catch_tools.hpp
+  binarize_test.cpp
   image_load_test.cpp
+  imputation_test.cpp
+  scaling_test.cpp
+  split_data_test.cpp
   main_tests/image_converter_test.cpp
+  main_tests/preprocess_binarize_test.cpp
+  main_tests/preprocess_imputer_test.cpp
+  main_tests/preprocess_scale_test.cpp
+  main_tests/preprocess_split_test.cpp
   main_tests/test_helper.hpp
 )
 
