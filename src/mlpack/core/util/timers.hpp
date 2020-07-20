@@ -14,23 +14,24 @@
 #ifndef MLPACK_CORE_UTILITIES_TIMERS_HPP
 #define MLPACK_CORE_UTILITIES_TIMERS_HPP
 
-#include <map>
-#include <string>
-#include <chrono> // chrono library for cross platform timer calculation.
-#include <thread> // std::thread is used for thread safety.
-#include <mutex>
-#include <list>
 #include <atomic>
+#include <chrono> // chrono library for cross platform timer calculation.
+#include <iomanip>
+#include <list>
+#include <map>
+#include <mutex>
+#include <string>
+#include <thread> // std::thread is used for thread safety.
 
 #if defined(_WIN32)
-  // uint64_t isn't defined on every windows.
-  #if !defined(HAVE_UINT64_T)
-    #if SIZEOF_UNSIGNED_LONG == 8
-      typedef unsigned long uint64_t;
-    #else
-      typedef unsigned long long  uint64_t;
-    #endif  // SIZEOF_UNSIGNED_LONG
-  #endif  // HAVE_UINT64_T
+// uint64_t isn't defined on every windows.
+#if !defined(HAVE_UINT64_T)
+#if SIZEOF_UNSIGNED_LONG == 8
+typedef unsigned long uint64_t;
+#else
+typedef unsigned long long uint64_t;
+#endif // SIZEOF_UNSIGNED_LONG
+#endif // HAVE_UINT64_T
 #endif
 
 namespace mlpack {
@@ -44,7 +45,7 @@ namespace mlpack {
  */
 class Timer
 {
- public:
+public:
   /**
    * Start the given timer.  If a timer is started, then stopped, then
    * re-started, then re-stopped, the final value of the timer is the length of
@@ -96,9 +97,11 @@ class Timer
 
 class Timers
 {
- public:
+public:
   //! Default to disabled.
-  Timers() : enabled(false) { }
+  Timers()
+    : enabled(false)
+  {}
 
   /**
    * Returns a copy of all the timers used via this interface.
@@ -167,14 +170,16 @@ class Timers
   //! Get whether or not timing is enabled.
   bool Enabled() const { return enabled; }
 
- private:
+private:
   //! A map of all the timers that are being tracked.
   std::map<std::string, std::chrono::microseconds> timers;
   //! A mutex for modifying the timers.
   std::mutex timersMutex;
   //! A map for the starting values of the timers.
-  std::map<std::thread::id, std::map<std::string,
-      std::chrono::high_resolution_clock::time_point>> timerStartTime;
+  std::map<
+    std::thread::id,
+    std::map<std::string, std::chrono::high_resolution_clock::time_point>>
+    timerStartTime;
 
   //! Whether or not timing is enabled.
   std::atomic<bool> enabled;

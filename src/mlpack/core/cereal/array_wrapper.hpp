@@ -30,7 +30,7 @@ class ArrayWrapper
  */
 public:
 
-  ArrayWrapper(T * t, std::size_t s) :
+  ArrayWrapper(T* t, std::size_t s) :
       ArrayAddress(t),
       ArraySize(s)
   {}
@@ -47,12 +47,12 @@ public:
   {
    // default implemention does the loop
     size_t c = count();
-    T * t = address();
+    T* t = address();
     while(0 < c--)
           ar & cereal::make_nvp("item", *t++);
   }
 
-  T * address() const
+  T* address() const
   {
     return ArrayAddress;
   }
@@ -67,9 +67,9 @@ private:
   // note: I would like to make the copy constructor private but this breaks
   // make_array.  So I make make_array a friend
   template<class Tx, class S>
-  friend const cereal::ArrayWrapper<Tx> make_array(Tx * t, S s);
+  friend const cereal::ArrayWrapper<Tx> make_array(Tx* t, S s);
 
-  const T * ArrayAddress;
+  T* ArrayAddress;
   const size_t ArraySize;
 };
 
