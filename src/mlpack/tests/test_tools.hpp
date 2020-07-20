@@ -37,7 +37,6 @@ inline void CheckMatrices(const arma::mat& a,
   }
 }
 
-
 // Check the values of two unsigned matrices.
 inline void CheckMatrices(const arma::Mat<size_t>& a,
                           const arma::Mat<size_t>& b)
