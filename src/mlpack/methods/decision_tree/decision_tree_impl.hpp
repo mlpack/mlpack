@@ -1141,12 +1141,8 @@ void DecisionTree<FitnessFunction,
       delete children[i];
     children.clear();
   }
-
   // Serialize the children first.
-  for (size_t i = 0; i < children.size(); ++i)
-  {
-    ar & CEREAL_POINTER(children.at(i));
-  }
+  CEREAL_VECTOR_POINTER(children);
 
   // Now serialize the rest of the object.
   ar & CEREAL_NVP(splitDimension);

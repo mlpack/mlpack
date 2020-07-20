@@ -32,7 +32,7 @@ class pointer_vector_wrapper
  * we need to add the size of the vector if it holds a raw pointers.
  */
  public:
-   pointer_vector_wrapper(std::vector<T*>& PointerVec);
+   pointer_vector_wrapper(std::vector<T*>& PointerVec)
     : PointerVector(PointerVec)
   {}
 
