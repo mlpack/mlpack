@@ -58,7 +58,7 @@ void CheckActivationCorrect(const arma::colvec input,
   for (size_t i = 0; i < target.n_elem; ++i)
   {
     REQUIRE(ActivationFunction::Fn(input.at(i)) ==
-        Approx(target.at(i)).epsilon(1e-3));
+        Approx(target.at(i)).epsilon(1e-5));
   }
 
   // Test the activation function using the entire vector as input.
@@ -66,7 +66,7 @@ void CheckActivationCorrect(const arma::colvec input,
   ActivationFunction::Fn(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -86,7 +86,7 @@ void CheckDerivativeCorrect(const arma::colvec input,
   for (size_t i = 0; i < target.n_elem; ++i)
   {
     REQUIRE(ActivationFunction::Deriv(input.at(i)) ==
-        Approx(target.at(i)).epsilon(1e-3));
+        Approx(target.at(i)).epsilon(1e-5));
   }
 
   // Test the calculation of the derivatives using the entire vector as input.
@@ -94,7 +94,7 @@ void CheckDerivativeCorrect(const arma::colvec input,
   ActivationFunction::Deriv(input, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -113,7 +113,7 @@ void CheckInverseCorrect(const arma::colvec input)
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     REQUIRE(ActivationFunction::Inv(ActivationFunction::Fn(input.at(i))) ==
-        Approx(input.at(i)).epsilon(1e-3));
+        Approx(input.at(i)).epsilon(1e-5));
   }
 
   // Test the calculation of the inverse using the entire vector as input.
@@ -123,7 +123,7 @@ void CheckInverseCorrect(const arma::colvec input)
 
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(input.at(i)).epsilon(1e-3));
+    REQUIRE(activations.at(i) == Approx(input.at(i)).epsilon(1e-5));
   }
 }
 
@@ -144,7 +144,7 @@ void CheckHardTanHActivationCorrect(const arma::colvec input,
   htf.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -170,7 +170,7 @@ void CheckHardTanHDerivativeCorrect(const arma::colvec input,
 
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -192,7 +192,7 @@ void CheckLeakyReLUActivationCorrect(const arma::colvec input,
   lrf.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -218,7 +218,7 @@ void CheckLeakyReLUDerivativeCorrect(const arma::colvec input,
   lrf.Backward(input, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -240,7 +240,7 @@ void CheckELUActivationCorrect(const arma::colvec input,
   lrf.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -266,7 +266,7 @@ void CheckELUDerivativeCorrect(const arma::colvec input,
   lrf.Backward(activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -288,7 +288,7 @@ void CheckPReLUActivationCorrect(const arma::colvec input,
   prelu.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -314,7 +314,7 @@ void CheckPReLUDerivativeCorrect(const arma::colvec input,
   prelu.Backward(input, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -340,7 +340,7 @@ void CheckPReLUGradientCorrect(const arma::colvec input,
   prelu.Gradient(input, error, gradient);
   REQUIRE(gradient.n_rows == 1);
   REQUIRE(gradient.n_cols == 1);
-  REQUIRE(gradient(0) == Approx(target(0)).epsilon(1e-3));
+  REQUIRE(gradient(0) == Approx(target(0)).epsilon(1e-5));
 }
 
 /**
@@ -360,7 +360,7 @@ void CheckHardShrinkActivationCorrect(const arma::colvec input,
   hardshrink.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -386,7 +386,7 @@ void CheckHardShrinkDerivativeCorrect(const arma::colvec input,
   hardshrink.Backward(input, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -408,7 +408,7 @@ void CheckSoftShrinkActivationCorrect(const arma::colvec input,
   softshrink.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -434,7 +434,7 @@ void CheckSoftShrinkDerivativeCorrect(const arma::colvec input,
   softshrink.Backward(input, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -529,7 +529,7 @@ void CheckCELUActivationCorrect(const arma::colvec input,
   lrf.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
-    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -555,7 +555,7 @@ void CheckCELUDerivativeCorrect(const arma::colvec input,
   lrf.Backward(activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-3));
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   }
 }
 
@@ -743,12 +743,12 @@ TEST_CASE("CReLUFunctionTest", "ActivationFunctionsTest")
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
     REQUIRE(activations.at(i) ==
-        Approx(desiredActivations.at(i)).epsilon(1e-3));
+        Approx(desiredActivations.at(i)).epsilon(1e-5));
   }
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     REQUIRE(derivatives.at(i) ==
-        Approx(desiredDerivatives.at(i)).epsilon(1e-3));
+        Approx(desiredDerivatives.at(i)).epsilon(1e-5));
   }
 }
 
