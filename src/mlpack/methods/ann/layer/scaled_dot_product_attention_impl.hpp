@@ -22,8 +22,6 @@ namespace ann /** Artificial Neural Network. */ {
 template <typename InputDataType, typename OutputDataType>
 ScaledDotProductAttention<InputDataType, OutputDataType>::
 ScaledDotProductAttention() :
-    targetLength(0),
-    sourceLength(0),
     embedDim(0),
     dropoutRate(0.0),
     deterministic(false)
@@ -34,29 +32,12 @@ ScaledDotProductAttention() :
 template <typename InputDataType, typename OutputDataType>
 ScaledDotProductAttention<InputDataType, OutputDataType>::
 ScaledDotProductAttention(const size_t embedDim,
-    const InputDataType& key,
-    const InputDataType& value,
     const ElemType dropoutRate,
     const bool deterministic) :
     embedDim(embedDim),
-    key(key),
-    value(value),
     dropoutRate(dropoutRate),
     deterministic(deterministic)
 {
-  if (!this->key.is_empty() && this->value.is_empty())
-    this->value = this->key;
-
-  if (!key.is_empty() && !value.is_empty())
-  {
-    if (key.n_rows != value.n_rows || this->key.n_cols != value.n_cols)
-    {
-      Log::Fatal << "The 'key' and 'value' matrices must have the same "
-                 << "dimensions.";
-    }
-  }
-  Log::Assert(key.n_rows % embedDim == 0);
-  sourceLength = key.n_rows / embedDim;
   dropout.Ratio(dropoutRate);
   dropout.Deterministic() = deterministic;
 }
@@ -66,25 +47,26 @@ template <typename eT>
 void ScaledDotProductAttention<InputDataType, OutputDataType>::
 Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  Log::Assert(input.n_rows % embedDim == 0);
-  targetLength = input.n_rows / embedDim;
+  /*
+  embedding dimension: embedDim
+  target sequence length: (input.n_rows / embedDim)
+  source sequence length: (key.n_rows / embedDim)
+  batch size: input.n_cols
+  */
+  typedef typename arma::Cube<eT> CubeType;
 
-  if (key.is_empty())
-  {
-    key = const_cast<arma::Mat<eT>&>(input);
-    value = const_cast<arma::Mat<eT>&>(input);
-  }
-  arma::Cube<eT> q(const_cast<arma::Mat<eT>&>(input).memptr(),
-      embedDim, targetLength, input.n_cols, true, false);
-  arma::Cube<eT> k(key.memptr(), embedDim, sourceLength, input.n_cols, false, false);
-  arma::Cube<eT> v(value.memptr(), embedDim, sourceLength, input.n_cols, false, false);
+  Log::Assert(input.n_rows % embedDim == 0,
+      "Number of features in input must be divisible by embedding dimension.");
+
+  CubeType q, k, v;
+  Expand(input, key, value, q, k, v);
 
   q /= std::sqrt(embedDim);
-  arma::Cube<eT> scores = CubeMultiply(k, q, true, false);
+  CubeType scores = CubeMultiply(k, q, true, false);
 
   if (!attnMask.is_empty())
   {
-    if (attnMask.n_rows != sourceLength || attnMask.n_cols != targetLength)
+    if (attnMask.n_rows != k.n_cols || attnMask.n_cols != q.n_cols)
     {
       Log::Fatal << "The size of the 2D `attn_mask` is not correct."
                  << std::endl;
@@ -93,24 +75,26 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   }
   if (!keyPaddingMask.is_empty())
   {
-    if (keyPaddingMask.n_rows != sourceLength || keyPaddingMask.n_cols != 1)
+    if (keyPaddingMask.n_rows != k.n_cols || keyPaddingMask.n_cols != 1)
     {
-      Log::Fatal << "The size of the `keyPaddingMask` is not correct."
+      Log::Fatal << "The size of the `keyPaddingMask` is not valid."
                  << std::endl;
     }
-    scores.each_slice() += arma::repmat(keyPaddingMask, 1, targetLength);
+    scores.each_slice() += arma::repmat(keyPaddingMask, 1, q.n_cols);
   }
 
-  attnOut.set_size(sourceLength, targetLength, input.n_cols);
-  softmaxOutput.set_size(sourceLength, targetLength, input.n_cols);
+  attnOut.set_size(k.n_cols, q.n_cols, input.n_cols);
+  softmaxOutput.set_size(k.n_cols, q.n_cols, input.n_cols);
+
   for (size_t i = 0; i < input.n_cols; ++i)
   {
-    softmax.Forward(scores.slice(i), softmax.OutputParameter());
-    softmaxOutput.slice(i) = softmax.OutputParameter();
-    dropout.Forward(softmax.OutputParameter(), attnOut.slice(i));
+    softmax.Forward(scores.slice(i), softmaxOutput.slice(i));
+    dropout.Forward(softmaxOutput.slice(i), attnOut.slice(i));
   }
+
   scores = CubeMultiply(v, attnOut, false, false);
-  output.set_size(embedDim * targetLength, input.n_cols);
+
+  output.set_size(embedDim * q.n_cols, input.n_cols);
   for (size_t i = 0; i < input.n_cols; ++i)
   {
     output.col(i) = arma::vectorise(scores.slice(i));
@@ -120,27 +104,36 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 template <typename InputDataType, typename OutputDataType>
 template <typename eT>
 void ScaledDotProductAttention<InputDataType, OutputDataType>::
-Backward(const arma::Mat<eT>& /* input */,
+Backward(const arma::Mat<eT>& input,
          const arma::Mat<eT>& gy,
          arma::Mat<eT>& g)
 {
-  g.set_size(arma::size(gy));
-  arma::Cube<eT> k(key.memptr(), embedDim, sourceLength, gy.n_cols, false, false);
-  arma::Cube<eT> v(value.memptr(), embedDim, sourceLength, gy.n_cols, false, false);
+  typedef typename arma::Mat<eT> MatType;
+  typedef typename arma::Cube<eT> CubeType;
 
-  arma::Cube<eT> gyTemp(const_cast<arma::Mat<eT>&>(gy).memptr(), embedDim,
-      targetLength, gy.n_cols, true, false);
+  CubeType q, k, v;
+  Expand(input, key, value, q, k, v);
+
+  CubeType gyTemp(embedDim, gy.n_rows / embedDim, gy.n_cols);
+  for (size_t i = 0; i < gy.n_elem; ++i)
+  {
+    const size_t row = i % embedDim;
+    const size_t col = (i / embedDim) % (gy.n_rows / embedDim);
+    const size_t slice = i / gy.n_rows;
+    gyTemp(row, col, slice) = gy(i);
+  }
 
   gyTemp = CubeMultiply(v, gyTemp, true, false);
 
   for (size_t i = 0; i < gy.n_cols; ++i)
   {
-    dropout.Backward(arma::Mat<eT>(), gyTemp.slice(i), dropout.Delta());
+    dropout.Backward(MatType(), gyTemp.slice(i), dropout.Delta());
     softmax.Backward(softmaxOutput.slice(i), dropout.Delta(), gyTemp.slice(i));
   }
 
   gyTemp = CubeMultiply(k, gyTemp) / std::sqrt(embedDim);
 
+  g.set_size(arma::size(gy));
   for (size_t i = 0; i < gy.n_cols; ++i)
   {
     g.submat(0, i, g.n_rows - 1, i) = arma::vectorise(gyTemp.slice(i));
@@ -152,8 +145,6 @@ template <typename Archive>
 void ScaledDotProductAttention<InputDataType, OutputDataType>::
 serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(targetLength);
-  ar & BOOST_SERIALIZATION_NVP(sourceLength);
   ar & BOOST_SERIALIZATION_NVP(embedDim);
   ar & BOOST_SERIALIZATION_NVP(dropout);
   ar & BOOST_SERIALIZATION_NVP(deterministic);

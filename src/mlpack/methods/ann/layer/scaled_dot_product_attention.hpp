@@ -33,14 +33,14 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * In Scaled Dot-Product Attention, the input consists of <i>query</i>,
- * <i> key</i> and <i>value</i>. <i>key</i> and <i>value</i> are constructor
- * parameters both of shape <i>(embedDim * srcSeqLen, batchSize)</i>. Here,
- * <i> embedDim</i> is the length of embedding vector of each token, and
- * <i> srcSeqLen</i> is the length of each sequence in the <i>key</i> or the
- * <i> value</i>. We compute the dot products of the query with all keys, divide
- * each by @f$ \sqrt{embedDim} @f$, and apply a softmax function to obtain the
- * weights on the values. We compute the matrix of outputs as:
+ * In Scaled Dot-Product Attention, the input consists of \c query,
+ * \c key and \c value. \c key and \c value can be specified using accessor
+ * methods. Here, \c embedDim is the length of embedding vector of each
+ * token, and so the shape of \c key and \c value is
+ * (number of tokens * embedDim, batchSize). We compute the dot products of
+ * the query with all keys, divide each by @f$ \sqrt{embedDim} @f$, and apply a
+ * softmax function to obtain the weights on the values. We compute the matrix
+ * of outputs as:
  *
  * \f{eqnarray*}{ \\
  * Attention(Q, K, V ) = softmax \left( \frac{Q K^T}{\sqrt{embedDim}} \right) V
@@ -74,16 +74,12 @@ class ScaledDotProductAttention
    * Create the ScaledDotProductAttention object using the specified parameters.
    *
    * @param embedDim Total dimension of the model.
-   * @param key The key matrix. The default is empty matrix.
-   * @param value The value matrix. The default is empty matrix.
    * @param dropoutRate The dropout rate for attention output weights.
-   * @param deterministic If false, dropout layer is omitted otherwise dropout layer
-   *        is applied with dropout rate `dropout`.
+   * @param deterministic If false, dropout layer is omitted otherwise dropout
+   *        layer is applied with dropout rate `dropout`.
    */
   ScaledDotProductAttention(
     const size_t embedDim,
-    const InputDataType& key = InputDataType(),
-    const InputDataType& value = InputDataType(),
     const ElemType dropoutRate = 0.1,
     const bool deterministic = false);
 
@@ -107,11 +103,12 @@ class ScaledDotProductAttention
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
+   * @param input The query matrix.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
+  void Backward(const arma::Mat<eT>& input,
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
@@ -199,11 +196,54 @@ class ScaledDotProductAttention
     return z;
   }
 
-  //! Locally-stored value of target sequence length.
-  size_t targetLength;
+  template <typename eT>
+  void Expand(const arma::Mat<eT>& query,
+              arma::Mat<eT>& key,
+              arma::Mat<eT>& value,
+              arma::Cube<eT>& q,
+              arma::Cube<eT>& k,
+              arma::Cube<eT>& v)
+  {
+    typedef typename arma::Cube<eT> CubeType;
 
-  //! Locally-stored value of source sequence length.
-  size_t sourceLength;
+    q.set_size(embedDim, query.n_rows / embedDim, query.n_cols);
+
+    for (size_t i = 0; i < query.n_elem; ++i)
+    {
+      const size_t row = i % embedDim;
+      const size_t col = (i / embedDim) % (query.n_rows / embedDim);
+      const size_t slice = i / query.n_rows;
+      q(row, col, slice) = query(i);
+    }
+
+    if (key.is_empty())
+      k = q;
+    else
+    {
+      if (key.n_cols != query.n_cols || key.n_rows % embedDim != 0)
+      {
+        Log::Fatal << "The dimensions of the 'key' matrix is not valid."
+                  << std::endl;
+      }
+      // We can use memory pointer method as 'k' is not modified anywhere.
+      k = CubeType(key.memptr(), embedDim, key.n_rows / embedDim, key.n_cols,
+          false, false);
+    }
+
+    if (value.is_empty())
+      v = k;
+    else
+    {
+      if (arma::size(value) != arma::size(key))
+      {
+        Log::Fatal << "The 'key' and 'value' matrices must have same \
+            dimensions." << std::endl;
+      }
+      // We can use memory pointer method as 'v' is not modified anywhere.
+      v = CubeType(value.memptr(), embedDim, value.n_rows / embedDim,
+          value.n_cols, false, false);
+    }
+  }
 
   //! Locally-stored module output size.
   size_t embedDim;

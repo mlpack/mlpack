@@ -4141,7 +4141,9 @@ BOOST_AUTO_TEST_CASE(ScaledDotProductAttentionTest)
                                0.6204 0.8704");
   arma::mat output;
 
-  ScaledDotProductAttention<> module(embedDim, key, value, dropoutRate, false);
+  ScaledDotProductAttention<> module(embedDim, dropoutRate, false);
+  module.Key() = key;
+  module.Value() = value;
 
   // Test the Forward function.
   module.Forward(input, output);
@@ -4205,7 +4207,7 @@ BOOST_AUTO_TEST_CASE(ScaledDotProductAttentionTest)
   BOOST_REQUIRE_EQUAL(g.n_cols, input.n_cols);
 
   //! Scaled Dot Product Attention test with attention and key padding mask.
-  double INF = 1e+09;
+  double INF = std::numeric_limits<double>::max();
   arma::mat attnMask = arma::zeros(sLen, tLen);
   for (size_t i = 0; i < sLen; ++i)
   {
