@@ -34,7 +34,7 @@
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
 
 #include "catch.hpp"
-
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
