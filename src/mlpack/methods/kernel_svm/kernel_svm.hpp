@@ -72,7 +72,7 @@ class KernelSVM
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
    * @param regularization standard svm regularization parameter.
-   * @param fitKernel true when not using linear kernel.
+   * @param fitIntercept add intercept term or not.
    * @param max_iter maximum number of iteration for training.
    * @param tol tolerance value.
    * @param kernel kernel type of kernel used with svm.
@@ -80,7 +80,7 @@ class KernelSVM
   KernelSVM(const MatType& data,
             const arma::Row<size_t>& labels,
             const double regularization = 1.0,
-            const bool fitKernel = false,
+            const bool fitIntercept = false,
             const size_t max_iter = 10,
             const double tol = 1e-3,
             const KernelType kernel = KernelType());
@@ -90,14 +90,12 @@ class KernelSVM
    * to use Train() before calling
    * Classify() or ComputeAccuracy(), otherwise the results may be meaningless.
    *
-   * @param inputSize Size of the input feature vector.
    * @param regularization standard svm regularization parameter.
-   * @param fitKernel true when not using linear kernel.
+   * @param fitIntercept add intercept term or not.
    * @param kernel kernel type of kernel used with svm.
    */
-  KernelSVM(const size_t inputSize,
-            const double regularization = 1.0,
-            const bool fitKernel = false,
+  KernelSVM(const double regularization = 1.0,
+            const bool fitIntercept = false,
             const KernelType kernel = KernelType());
 
   /**
@@ -175,16 +173,7 @@ class KernelSVM
                const double tol = 1e-3);
 
   //! Sets the intercept term flag.
-  bool& FitKernel() { return fitKernel; }
-
-  //! Set the model parameters.
-  arma::mat& Parameters() { return parameters; }
-  //! Get the model parameters.
-  const arma::mat& Parameters() const { return parameters; }
-
-  //! Gets the features size of the training data
-  size_t FeatureSize() const
-  { return parameters.n_rows; }
+  bool& FitIntercept() { return fitIntercept; }
 
   /**
    * Serialize the KernelSVM model.
@@ -192,8 +181,7 @@ class KernelSVM
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(parameters);
-    ar & BOOST_SERIALIZATION_NVP(fitKernel);
+    ar & BOOST_SERIALIZATION_NVP(fitIntercept);
     ar & BOOST_SERIALIZATION_NVP(trainingData);
     ar & BOOST_SERIALIZATION_NVP(trainLabels);
     ar & BOOST_SERIALIZATION_NVP(alpha);
@@ -201,13 +189,10 @@ class KernelSVM
   }
 
  private:
-  size_t inputSize;
-  //! Parameters after optimization.
-  arma::mat parameters;
   //! Locally saved standard svm regularization parameter.
   double regularization;
   //! Kernel flag.
-  bool fitKernel;
+  bool fitIntercept;
   //! Locally saved interce value of kernel.
   double intercept;
   //! Locally saved alpha values.

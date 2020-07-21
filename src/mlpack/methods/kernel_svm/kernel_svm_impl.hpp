@@ -23,12 +23,12 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const double regularization,
-    const bool fitKernel,
+    const bool fitIntercept,
     const size_t max_iter,
     const double tol,
     const KernelType kernel) :
     regularization(regularization),
-    fitKernel(fitKernel),
+    fitIntercept(fitIntercept),
     kernel(kernel)
 {
   intercept = 0;
@@ -37,13 +37,11 @@ KernelSVM<MatType, KernelType>::KernelSVM(
 
 template <typename MatType, typename KernelType>
 KernelSVM<MatType, KernelType>::KernelSVM(
-    const size_t inputSize,
     const double regularization,
-    const bool fitKernel,
+    const bool fitIntercept,
     const KernelType kernel) :
-    inputSize(inputSize),
     regularization(regularization),
-    fitKernel(fitKernel),
+    fitIntercept(fitIntercept),
     kernel(kernel)
 {
   intercept = 0;
@@ -186,9 +184,6 @@ double KernelSVM<MatType, KernelType>::Train(
     else
       count = 0;
   }
-
-  // Calculating paramter values for linear kernel.
-  parameters = (data * (alpha.t() % trainLabels).t()).t();
   double threshold = arma::as_scalar(arma::mean(alpha));
 
   // Saving values of labels and sample data to be used
@@ -239,28 +234,23 @@ void KernelSVM<MatType, KernelType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  if (fitKernel)
+  // Giving prediction when non-linear kernel is used.
+  scores = arma::zeros(1, data.n_cols);
+  for (size_t i = 0; i < data.n_cols; i++)
   {
-    // Giving predictio when non-linear kernel is used.
-    scores = arma::zeros(1, data.n_cols);
-    for (size_t i = 0; i < data.n_cols; i++)
+    double  prediction = 0;
+    for (size_t j = 0; j < trainingData.n_cols; j++)
     {
-      double  prediction = 0;
-      for (size_t j = 0; j < trainingData.n_cols; j++)
-      {
-        if (savedLabels(j) == 0)
-          continue;
-        prediction = prediction + alpha(j) *
-                     savedLabels(j) * kernel.Evaluate(data.col(i),
-                     trainingData.col(j));
-      }
-      scores(i) = prediction + intercept;
+      if (savedLabels(j) == 0)
+        continue;
+      prediction = prediction + alpha(j) *
+                   savedLabels(j) * kernel.Evaluate(data.col(i),
+                   trainingData.col(j));
     }
-  }
-  else
-  {
-    // Giving predictions for linear kernel.
-    scores = (data.t() * parameters.t() + intercept).t();
+    if (!fitIntercept)
+      scores(i) = prediction;
+    else
+      scores(i) = prediction + intercept;
   }
 }
 
