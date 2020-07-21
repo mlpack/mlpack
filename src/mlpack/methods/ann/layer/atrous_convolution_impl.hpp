@@ -416,7 +416,7 @@ void AtrousConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::serialize(Archive& ar, const unsigned int version)
+>::serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);
@@ -427,7 +427,7 @@ void AtrousConvolution<
   ar & CEREAL_NVP(strideHeight);
 
   // These are now stored in the padding layer.
-  if (version < 2 && Archive::is_loading::value)
+  if (Archive::is_loading::value)
   {
     size_t padWLeft, padWRight, padHBottom, padHTop;
     ar & CEREAL_NVP(padWLeft);
@@ -442,9 +442,7 @@ void AtrousConvolution<
   ar & CEREAL_NVP(outputHeight);
   ar & CEREAL_NVP(dilationWidth);
   ar & CEREAL_NVP(dilationHeight);
-
-  if (version > 0)
-    ar & CEREAL_NVP(padding);
+  ar & CEREAL_NVP(padding);
 
   if (Archive::is_loading::value)
   {

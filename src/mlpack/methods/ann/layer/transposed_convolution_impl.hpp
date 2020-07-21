@@ -450,7 +450,7 @@ void TransposedConvolution<
     InputDataType,
     OutputDataType
 >::serialize(
-    Archive& ar, const unsigned int version)
+    Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);
@@ -459,13 +459,6 @@ void TransposedConvolution<
   ar & CEREAL_NVP(kernelHeight);
   ar & CEREAL_NVP(strideWidth);
   ar & CEREAL_NVP(strideHeight);
-  if (version == 0)
-  {
-    // These are now stored in paddingForward and paddingBackward.
-    size_t padWidth, padHeight;
-    ar & CEREAL_NVP(padWidth);
-    ar & CEREAL_NVP(padHeight);
-  }
   ar & CEREAL_NVP(padWLeft);
   ar & CEREAL_NVP(padWRight);
   ar & CEREAL_NVP(padHBottom);
@@ -474,13 +467,9 @@ void TransposedConvolution<
   ar & CEREAL_NVP(inputHeight);
   ar & CEREAL_NVP(outputWidth);
   ar & CEREAL_NVP(outputHeight);
-
-  if (version > 0)
-  {
-    ar & CEREAL_NVP(paddingForward);
-    ar & CEREAL_NVP(paddingBackward);
-  }
-
+  ar & CEREAL_NVP(paddingForward);
+  ar & CEREAL_NVP(paddingBackward);
+  
   if (Archive::is_loading::value)
   {
     weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
@@ -491,6 +480,7 @@ void TransposedConvolution<
     aH = (outputHeight + kernelHeight - totalPadHeight - 2) % strideHeight;
   }
 }
+
 template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,

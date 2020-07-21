@@ -71,14 +71,12 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void AdaptiveMaxPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int version)
+    const unsigned int /* version */)
 {
   ar & CEREAL_NVP(outputWidth);
   ar & CEREAL_NVP(outputHeight);
   ar & CEREAL_NVP(reset);
-
-  if (version > 0)
-    ar & CEREAL_NVP(poolingLayer);
+  ar & CEREAL_NVP(poolingLayer);
 }
 
 } // namespace ann
