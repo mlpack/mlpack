@@ -129,7 +129,7 @@ TEST_CASE("SaveImageMatAPITest", "[ImageLoadTest]")
   REQUIRE(input.n_cols == output.n_cols);
   REQUIRE(input.n_rows == output.n_rows);
   for (size_t i = 0; i < input.n_elem; ++i)
-    REQUIRE(input[i] == Approx(output[i]).epsilon(1e-5 / 100));
+    REQUIRE(input[i] == Approx(output[i]).epsilon(1e-7));
   remove("APITest.bmp");
 }
 

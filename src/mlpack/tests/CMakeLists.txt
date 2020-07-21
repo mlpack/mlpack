@@ -173,8 +173,8 @@ add_executable(mlpack_catch_test
   test_catch_tools.hpp
   image_load_test.cpp
   linear_regression_test.cpp
-  main_tests/linear_regression_test.cpp
   main_tests/image_converter_test.cpp
+  main_tests/linear_regression_test.cpp
   main_tests/test_helper.hpp
 )
 

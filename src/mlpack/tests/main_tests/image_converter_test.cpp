@@ -83,7 +83,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
   REQUIRE(output.n_rows == 5 * 5 * 3);
   REQUIRE(output.n_cols == 2);
   for (size_t i = 0; i < output.n_elem; ++i)
-    REQUIRE(testimage[i] == Approx(output[i]).epsilon(1e-5 / 100));
+    REQUIRE(testimage[i] == Approx(output[i]).epsilon(1e-7));
 }
 
 /**

@@ -82,7 +82,7 @@ TEST_CASE("ComputeErrorTest", "[LinearRegressionTest]")
   LinearRegression lr(predictors, responses);
 
   REQUIRE(lr.ComputeError(predictors, responses) ==
-      Approx(1.189500337).epsilon(1e-3 / 100));
+      Approx(1.189500337).epsilon(1e-5));
 }
 
 /**
@@ -196,7 +196,7 @@ TEST_CASE("LinearRegressionTrainTest", "[LinearRegressionTest]")
   REQUIRE(lr.Parameters().n_elem == lrTrain.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
     REQUIRE(lr.Parameters()[i] ==
-        Approx(lrTrain.Parameters()[i]).epsilon(1e-5 / 100));
+        Approx(lrTrain.Parameters()[i]).epsilon(1e-7));
 }
 
 /*
@@ -215,9 +215,9 @@ TEST_CASE("LinearRegressionTest", "[LinearRegressionTest]")
 
   SerializeObjectAll(lr, xmlLr, textLr, binaryLr);
 
-  REQUIRE(lr.Lambda() == Approx(xmlLr.Lambda()).epsilon(1e-8 / 100));
-  REQUIRE(lr.Lambda() == Approx(textLr.Lambda()).epsilon(1e-8 / 100));
-  REQUIRE(lr.Lambda() == Approx(binaryLr.Lambda()).epsilon(1e-8 / 100));
+  REQUIRE(lr.Lambda() == Approx(xmlLr.Lambda()).epsilon(1e-10));
+  REQUIRE(lr.Lambda() == Approx(textLr.Lambda()).epsilon(1e-10));
+  REQUIRE(lr.Lambda() == Approx(binaryLr.Lambda()).epsilon(1e-10));
 
   CheckMatrices(lr.Parameters(), xmlLr.Parameters(), textLr.Parameters(),
       binaryLr.Parameters());
