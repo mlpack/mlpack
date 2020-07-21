@@ -68,7 +68,7 @@ class Lookup
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
