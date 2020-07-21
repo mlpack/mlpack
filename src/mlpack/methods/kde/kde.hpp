@@ -352,41 +352,6 @@ class KDE
 } // namespace kde
 } // namespace mlpack
 
-//! Set the serialization version of the KDE class.
-/* TODO FIX
-Cannot use BOOST_TEMPLATE_CLASS_VERSION because of the problem stated in
-https://stackoverflow.com/questions/8942912/how-to-pass-multi-argument-templates
--to-macros
-*/
-
-namespace boost {
-namespace serialization{
-
-template<typename KernelType,
-         typename MetricType,
-         typename MatType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType,
-         template<typename RuleType> class DualTreeTraversalType,
-         template<typename RuleType> class SingleTreeTraversalType>
-struct version<mlpack::kde::KDE<KernelType,
-                                MetricType,
-                                MatType,
-                                TreeType,
-                                DualTreeTraversalType,
-                                SingleTreeTraversalType>>
-{
-  typedef mpl::int_<1> type;
-  typedef mpl::integral_c_tag tag;
-  BOOST_STATIC_CONSTANT(int, value = version::type::value);
-  BOOST_MPL_ASSERT((boost::mpl::less<boost::mpl::int_<1>,
-                    boost::mpl::int_<256>>));
-};
-
-} // namespace serialization.
-} // namespace boost.
-
 // Include implementation.
 #include "kde_impl.hpp"
 
