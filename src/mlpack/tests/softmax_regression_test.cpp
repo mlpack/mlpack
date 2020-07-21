@@ -61,7 +61,7 @@ TEST_CASE("SoftmaxRegressionFunctionEvaluate", "[SoftmaxRegressionTest]")
 
     // Compare with the value returned by the function.
     REQUIRE(srf.Evaluate(parameters) ==
-        Approx(-logLikelihood).epsilon(1e-5 / 100));
+        Approx(-logLikelihood).epsilon(1e-7));
   }
 }
 
@@ -102,9 +102,9 @@ TEST_CASE("SoftmaxRegressionFunctionRegularizationEvaluate",
     const double bigRegTerm = 10 * wL2SquaredNorm;
 
     REQUIRE(srfNoReg.Evaluate(parameters) + smallRegTerm ==
-        Approx(srfSmallReg.Evaluate(parameters)).epsilon(1e-5 / 100));
+        Approx(srfSmallReg.Evaluate(parameters)).epsilon(1e-7));
     REQUIRE(srfNoReg.Evaluate(parameters) + bigRegTerm ==
-        Approx(srfBigReg.Evaluate(parameters)).epsilon(1e-5 / 100));
+        Approx(srfBigReg.Evaluate(parameters)).epsilon(1e-7));
   }
 }
 
@@ -166,8 +166,8 @@ TEST_CASE("SoftmaxRegressionFunctionGradient",
       parameters(i, j) += epsilon;
 
       // Compare numerical and backpropagation gradient values.
-    REQUIRE(numGradient1 == Approx(gradient1(i, j)).epsilon(1e-2 / 100));
-    REQUIRE(numGradient2 == Approx(gradient2(i, j)).epsilon(1e-2 / 100));
+    REQUIRE(numGradient1 == Approx(gradient1(i, j)).epsilon(1e-4));
+    REQUIRE(numGradient2 == Approx(gradient2(i, j)).epsilon(1e-4));
     }
   }
 }
@@ -202,7 +202,7 @@ TEST_CASE("SoftmaxRegressionTwoClasses", "[SoftmaxRegressionTest]")
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
-  REQUIRE(acc == Approx(100.0).epsilon(2.0 / 100));
+  REQUIRE(acc == Approx(100.0).epsilon(0.02));
 
   // Create test dataset.
   for (size_t i = 0; i < points / 2; ++i)
@@ -218,7 +218,7 @@ TEST_CASE("SoftmaxRegressionTwoClasses", "[SoftmaxRegressionTest]")
 
   // Compare test accuracy to 100.
   const double testAcc = sr.ComputeAccuracy(data, labels);
-  REQUIRE(testAcc == Approx(100.0).epsilon(2.0 / 100));
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.02));
 }
 
 TEST_CASE("SoftmaxRegressionFitIntercept", "[SoftmaxRegressionTest]")
@@ -246,7 +246,7 @@ TEST_CASE("SoftmaxRegressionFitIntercept", "[SoftmaxRegressionTest]")
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-  REQUIRE(acc == Approx(100.0).epsilon(2.0 / 100));
+  REQUIRE(acc == Approx(100.0).epsilon(0.02));
 
   // Create a test set.
   for (size_t i = 0; i < 500; ++i)
@@ -262,7 +262,7 @@ TEST_CASE("SoftmaxRegressionFitIntercept", "[SoftmaxRegressionTest]")
 
   // Ensure that the error is close to zero.
   const double testAcc = lr.ComputeAccuracy(data, responses);
-  REQUIRE(testAcc == Approx(100.0).epsilon(2.0 / 100));
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.02));
 }
 
 TEST_CASE("SoftmaxRegressionMultipleClasses", "[SoftmaxRegressionTest]")
@@ -314,7 +314,7 @@ TEST_CASE("SoftmaxRegressionMultipleClasses", "[SoftmaxRegressionTest]")
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
-  REQUIRE(acc == Approx(100.0).epsilon(2.0 / 100));
+  REQUIRE(acc == Approx(100.0).epsilon(0.02));
 
   // Create test dataset.
   for (size_t i = 0; i < points / 5; ++i)
@@ -345,7 +345,7 @@ TEST_CASE("SoftmaxRegressionMultipleClasses", "[SoftmaxRegressionTest]")
 
   // Compare test accuracy to 100.
   const double testAcc = sr.ComputeAccuracy(data, labels);
-  REQUIRE(testAcc == Approx(100.0).epsilon(2.0 / 100));
+  REQUIRE(testAcc == Approx(100.0).epsilon(0.02));
 }
 
 TEST_CASE("SoftmaxRegressionTrainTest", "[SoftmaxRegressionTest]")
@@ -374,7 +374,7 @@ TEST_CASE("SoftmaxRegressionTrainTest", "[SoftmaxRegressionTest]")
       REQUIRE(sr2.Parameters()[i] == Approx(0.0).margin(1e-4));
     else
         REQUIRE(sr.Parameters()[i] ==
-            Approx(sr2.Parameters()[i]).epsilon(1e-4 / 100));
+            Approx(sr2.Parameters()[i]).epsilon(1e-6));
   }
 }
 
@@ -409,7 +409,7 @@ TEST_CASE("SoftmaxRegressionOptimizerTrainTest", "[SoftmaxRegressionTest]")
       REQUIRE(sr2.Parameters()[i] == Approx(0.0).margin(1e-5));
     else
         REQUIRE(sr.Parameters()[i] ==
-            Approx(sr2.Parameters()[i]).epsilon(1e-5 / 100));
+            Approx(sr2.Parameters()[i]).epsilon(1e-7));
   }
 }
 
@@ -580,7 +580,7 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesTest",
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     REQUIRE(arma::sum(probabilities.col(i)) ==
-        Approx(1.0).epsilon(1e-5 / 100));
+        Approx(1.0).epsilon(1e-7));
   }
 }
 
@@ -671,7 +671,7 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesAndLabelsTest",
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     REQUIRE(arma::sum(probabilities.col(i)) ==
-        Approx(1.0).epsilon(1e-5 / 100));
+        Approx(1.0).epsilon(1e-7));
     REQUIRE(testLabels(i) == labels(i));
   }
 }
