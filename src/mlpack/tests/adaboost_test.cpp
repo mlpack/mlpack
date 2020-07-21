@@ -590,7 +590,7 @@ TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest]")
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
     REQUIRE(predictedLabels1(i) == maxIndex);
-    REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-5 / 100));
+    REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
   }
 
   size_t localError = arma::accu(trueTestLabels != predictedLabels1);
@@ -658,7 +658,7 @@ TEST_CASE("ClassifyTest_NONLINSEP", "[AdaBoostTest]")
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
     REQUIRE(predictedLabels1(i) == maxIndex);
-    REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-5 / 100));
+    REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
   }
 
   size_t localError = arma::accu(trueTestLabels != predictedLabels1);
@@ -725,7 +725,7 @@ TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]")
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
     REQUIRE(predictedLabels1(i) == maxIndex);
-    REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-5 / 100));
+    REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
   }
 
   size_t localError = arma::accu(trueTestLabels != predictedLabels1);
@@ -820,9 +820,9 @@ TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest]")
   SerializeObjectAll(ab, abXml, abText, abBinary);
 
   // Now check that the objects are the same.
-  REQUIRE(ab.Tolerance() == Approx(abXml.Tolerance()).epsilon(1e-5 / 100));
-  REQUIRE(ab.Tolerance() == Approx(abText.Tolerance()).epsilon(1e-5 / 100));
-  REQUIRE(ab.Tolerance() == Approx(abBinary.Tolerance()).epsilon(1e-5 / 100));
+  REQUIRE(ab.Tolerance() == Approx(abXml.Tolerance()).epsilon(1e-7));
+  REQUIRE(ab.Tolerance() == Approx(abText.Tolerance()).epsilon(1e-7));
+  REQUIRE(ab.Tolerance() == Approx(abBinary.Tolerance()).epsilon(1e-7));
 
   REQUIRE(ab.WeakLearners() == abXml.WeakLearners());
   REQUIRE(ab.WeakLearners() == abText.WeakLearners());
@@ -873,9 +873,9 @@ TEST_CASE("ID3DecisionStumpSerializationTest", "[AdaBoostTest]")
   SerializeObjectAll(ab, abXml, abText, abBinary);
 
   // Now check that the objects are the same.
-  REQUIRE(ab.Tolerance() == Approx(abXml.Tolerance()).epsilon(1e-5 / 100));
-  REQUIRE(ab.Tolerance() == Approx(abText.Tolerance()).epsilon(1e-5 / 100));
-  REQUIRE(ab.Tolerance() == Approx(abBinary.Tolerance()).epsilon(1e-5 / 100));
+  REQUIRE(ab.Tolerance() == Approx(abXml.Tolerance()).epsilon(1e-7));
+  REQUIRE(ab.Tolerance() == Approx(abText.Tolerance()).epsilon(1e-7));
+  REQUIRE(ab.Tolerance() == Approx(abBinary.Tolerance()).epsilon(1e-7));
 
   REQUIRE(ab.WeakLearners() == abXml.WeakLearners());
   REQUIRE(ab.WeakLearners() == abText.WeakLearners());
