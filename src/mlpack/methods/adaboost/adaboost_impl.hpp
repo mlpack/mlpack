@@ -260,12 +260,6 @@ void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
 {
   ar & CEREAL_NVP(numClasses);
   ar & CEREAL_NVP(tolerance);
-  if (version == 0 && Archive::is_loading::value)
-  {
-    // Load unused ztProduct double and forget it.
-    double tmpZtProduct = 0.0;
-    ar & CEREAL_NVP(tmpZtProduct);
-  }
   ar & CEREAL_NVP(alpha);
 
   // Now serialize each weak learner.

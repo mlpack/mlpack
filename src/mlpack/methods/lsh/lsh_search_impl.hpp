@@ -1040,7 +1040,7 @@ double LSHSearch<SortPolicy, MatType>::ComputeRecall(
 template<typename SortPolicy, typename MatType>
 template<typename Archive>
 void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
-                                               const unsigned int version)
+                                               const unsigned int /*version*/)
 {
   ar & CEREAL_NVP(referenceSet);
   ar & CEREAL_NVP(numProj);
@@ -1050,99 +1050,28 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
   if (Archive::is_loading::value)
     projections.reset();
 
-  // Backward compatibility: older versions of LSHSearch stored the projection
-  // tables in a std::vector<arma::mat>.
-  if (version == 0)
-  {
-    std::vector<arma::mat> tmpProj;
-    ar & CEREAL_NVP(tmpProj);
-
-    projections.set_size(tmpProj[0].n_rows, tmpProj[0].n_cols, tmpProj.size());
-    for (size_t i = 0; i < tmpProj.size(); ++i)
-      projections.slice(i) = tmpProj[i];
-  }
-  else
-  {
-    ar & CEREAL_NVP(projections);
-  }
-
+  ar & CEREAL_NVP(projections);
   ar & CEREAL_NVP(offsets);
   ar & CEREAL_NVP(hashWidth);
   ar & CEREAL_NVP(secondHashSize);
   ar & CEREAL_NVP(secondHashWeights);
   ar & CEREAL_NVP(bucketSize);
-  // needs specific handling for new version
+  
+  size_t tables;
+  if (Archive::is_saving::value)
+    tables = secondHashTable.size();
+  ar & CEREAL_NVP(tables);
 
-  // Backward compatibility: in older versions of LSHSearch, the secondHashTable
-  // was stored as an arma::Mat<size_t>.  So we need to properly load that, then
-  // prune it down to size.
-  if (version == 0)
+  // Set size of second hash table if needed.
+  if (Archive::is_loading::value)
   {
-    arma::Mat<size_t> tmpSecondHashTable;
-    ar & CEREAL_NVP(tmpSecondHashTable);
-
-    // The old secondHashTable was stored in row-major format, so we transpose
-    // it.
-    tmpSecondHashTable = tmpSecondHashTable.t();
-
-    secondHashTable.resize(tmpSecondHashTable.n_cols);
-    for (size_t i = 0; i < tmpSecondHashTable.n_cols; ++i)
-    {
-      // Find length of each column.  We know we are at the end of the list when
-      // the value referenceSet.n_cols is seen.
-
-      size_t len = 0;
-      for (; len < tmpSecondHashTable.n_rows; ++len)
-        if (tmpSecondHashTable(len, i) == referenceSet.n_cols)
-          break;
-
-      // Set the size of the new column correctly.
-      secondHashTable[i].set_size(len);
-      for (size_t j = 0; j < len; ++j)
-        secondHashTable[i](j) = tmpSecondHashTable(j, i);
-    }
-  }
-  else
-  {
-    size_t tables;
-    if (Archive::is_saving::value)
-      tables = secondHashTable.size();
-    ar & CEREAL_NVP(tables);
-
-    // Set size of second hash table if needed.
-    if (Archive::is_loading::value)
-    {
-      secondHashTable.clear();
-      secondHashTable.resize(tables);
-    }
-
-    ar & CEREAL_NVP(secondHashTable);
+    secondHashTable.clear();
+    secondHashTable.resize(tables);
   }
 
-  // Backward compatibility: old versions of LSHSearch held bucketContentSize
-  // for all possible buckets (of size secondHashSize), but now we hold a
-  // compressed representation.
-  if (version == 0)
-  {
-    // The vector was stored in the old uncompressed form.  So we need to shrink
-    // it.  But we can't do that until we have bucketRowInHashTable, so we also
-    // have to load that.
-    arma::Col<size_t> tmpBucketContentSize;
-    ar & CEREAL_NVP(tmpBucketContentSize);
-    ar & CEREAL_NVP(bucketRowInHashTable);
-
-    // Compress into a smaller vector by just dropping all of the zeros.
-    bucketContentSize.set_size(secondHashTable.size());
-    for (size_t i = 0; i < tmpBucketContentSize.n_elem; ++i)
-      if (tmpBucketContentSize[i] > 0)
-        bucketContentSize[bucketRowInHashTable[i]] = tmpBucketContentSize[i];
-  }
-  else
-  {
-    ar & CEREAL_NVP(bucketContentSize);
-    ar & CEREAL_NVP(bucketRowInHashTable);
-  }
-
+  ar & CEREAL_NVP(secondHashTable);
+  ar & CEREAL_NVP(bucketContentSize);
+  ar & CEREAL_NVP(bucketRowInHashTable);
   ar & CEREAL_NVP(distanceEvaluations);
 }
 
