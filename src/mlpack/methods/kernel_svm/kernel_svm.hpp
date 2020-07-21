@@ -196,11 +196,9 @@ class KernelSVM
   //! Locally saved interce value of kernel.
   double intercept;
   //! Locally saved alpha values.
-  arma::vec alpha;
+  arma::rowvec alpha;
   //! Locally saved KernelType values.
   KernelType kernel;
-  //! Locally saved labels of classes to give prediction for non-linear kernel.
-  arma::rowvec savedLabels;
     //! Locally saved training labels.
   arma::Row<int> trainLabels;
   //! Locally saved input data of classes for non-linear kernel.
