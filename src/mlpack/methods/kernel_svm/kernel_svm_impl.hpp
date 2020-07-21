@@ -90,7 +90,6 @@ double KernelSVM<MatType, KernelType>::Train(
       K(i, j) = kernel.Evaluate(data.col(i), data.col(j));
     }
   }
-  std::cout<<"Not here"<<std::endl;
 
   // Training starts from here.
   while (count < maxIter)
@@ -113,7 +112,6 @@ double KernelSVM<MatType, KernelType>::Train(
           j = rand() % data.n_cols;
         }
         assert(j < data.n_cols && j >= 0);
-        std::cout<<j<<" = j"<<std::endl;
 
         // Calculate Ej = f(x(j)) - y(j) using (2).
         E(j) = intercept + arma::sum(alpha % trainCoefficients % K.col(j).t())
@@ -191,6 +189,7 @@ double KernelSVM<MatType, KernelType>::Train(
   // Saving values of sample data to be used
   // with kernel function.
   trainingData = data;
+  std::cout<<"Not here"<<std::endl;
 }
 
 template <typename MatType, typename KernelType>
@@ -228,10 +227,18 @@ void KernelSVM<MatType, KernelType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
+  std::cout<<"here it is"<<std::endl;
   // Giving prediction when non-linear kernel is used.
   scores = arma::zeros(1, data.n_cols);
+  std::cout<<"With score"<<std::endl;
+  std::cout<<scores<<std::endl;
+  std::cout<<"With alpha"<<std::endl;
+  std::cout<<alpha<<std::endl;
+  std::cout<<"With data"<<std::endl;
+  std::cout<<trainingData<<std::endl;
+  std::cout<<"With labels"<<std::endl;
+  std::cout<<trainCoefficients<<std::endl;
   double threshold = arma::as_scalar(arma::mean(alpha));
-  std::cout<<threshold<<std::endl;
   for (size_t i = 0; i < data.n_cols; i++)
   {
     double  prediction = 0;
