@@ -231,24 +231,6 @@ class AddMerge
 } // namespace ann
 } // namespace mlpack
 
-//! Set the serialization version of the AddMerge class.
-namespace boost {
-namespace serialization {
-
-template<
-    typename InputDataType,
-    typename OutputDataType,
-    typename... CustomLayers
->
-struct version<mlpack::ann::AddMerge<
-    InputDataType, OutputDataType, CustomLayers...>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
-
 // Include implementation.
 #include "add_merge_impl.hpp"
 

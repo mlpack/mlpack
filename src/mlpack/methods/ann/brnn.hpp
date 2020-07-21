@@ -418,25 +418,6 @@ class BRNN
 } // namespace ann
 } // namespace mlpack
 
-//! Set the serialization version of the BRNN class.
-namespace boost {
-namespace serialization {
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename MergeLayerType,
-         typename MergeOutputType,
-         typename... CustomLayer>
-struct version<
-    mlpack::ann::BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
-        InitializationRuleType, CustomLayer...>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
-
 // Include implementation.
 #include "brnn_impl.hpp"
 

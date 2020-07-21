@@ -391,27 +391,6 @@ class Convolution
 } // namespace ann
 } // namespace mlpack
 
-//! Set the serialization version of the Convolution class.
-namespace boost {
-namespace serialization {
-
-template<
-    typename ForwardConvolutionRule,
-    typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
->
-struct version<
-    mlpack::ann::Convolution<ForwardConvolutionRule, BackwardConvolutionRule,
-        GradientConvolutionRule, InputDataType, OutputDataType> >
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
-
 // Include implementation.
 #include "convolution_impl.hpp"
 
