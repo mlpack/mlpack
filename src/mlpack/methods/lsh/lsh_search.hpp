@@ -484,10 +484,6 @@ class LSHSearch
 } // namespace neighbor
 } // namespace mlpack
 
-//! Set the serialization version of the LSHSearch class.
-BOOST_TEMPLATE_CLASS_VERSION(template<typename SortPolicy>,
-    mlpack::neighbor::LSHSearch<SortPolicy>, 1);
-
 // Include implementation.
 #include "lsh_search_impl.hpp"
 

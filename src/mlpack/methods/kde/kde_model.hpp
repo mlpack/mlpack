@@ -608,9 +608,6 @@ class KDEModel
 } // namespace kde
 } // namespace mlpack
 
-//! Set the serialization version of the KDEModel class.
-BOOST_TEMPLATE_CLASS_VERSION(template<>, mlpack::kde::KDEModel, 1);
-
 #include "kde_model_impl.hpp"
 
 #endif

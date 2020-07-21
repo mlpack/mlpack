@@ -116,7 +116,4 @@ class KDEStat
 } // namespace kde
 } // namespace mlpack
 
-//! Set the serialization version of the KDEStat class.
-BOOST_TEMPLATE_CLASS_VERSION(template<>, mlpack::kde::KDEStat, 1);
-
 #endif
