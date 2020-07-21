@@ -183,7 +183,7 @@ class KernelSVM
   {
     ar & BOOST_SERIALIZATION_NVP(fitIntercept);
     ar & BOOST_SERIALIZATION_NVP(trainingData);
-    ar & BOOST_SERIALIZATION_NVP(trainLabels);
+    ar & BOOST_SERIALIZATION_NVP(trainCoefficients);
     ar & BOOST_SERIALIZATION_NVP(alpha);
     ar & BOOST_SERIALIZATION_NVP(intercept);
   }
@@ -200,7 +200,7 @@ class KernelSVM
   //! Locally saved KernelType values.
   KernelType kernel;
     //! Locally saved training labels.
-  arma::Row<int> trainLabels;
+  arma::Row<int> trainCoefficients;
   //! Locally saved input data of classes for non-linear kernel.
   arma::mat trainingData;
 };
