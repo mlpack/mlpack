@@ -24,7 +24,7 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const arma::Row<size_t>& labels,
     const double regularization,
     const bool fitIntercept,
-    const size_t max_iter,
+    const size_t maxIter,
     const double tol,
     const KernelType kernel) :
     regularization(regularization),
@@ -32,7 +32,7 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     kernel(kernel)
 {
   intercept = 0;
-  Train(data, labels, max_iter, tol);
+  Train(data, labels, maxIter, tol);
 }
 
 template <typename MatType, typename KernelType>
@@ -51,7 +51,7 @@ template<typename MatType, typename KernelType>
 double KernelSVM<MatType, KernelType>::Train(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const size_t max_iter,
+    const size_t maxIter,
     const double tol)
 {
   trainLabels = arma::Row<int> (data.n_cols);
@@ -67,7 +67,7 @@ double KernelSVM<MatType, KernelType>::Train(
   }
 
   // Intializing variable to calculate alphas.
-  alpha = arma::zeros(data.n_cols);
+  alpha = arma::zeros(1, data.n_cols);
   size_t count = 0;
 
   // Vector to store error value.
@@ -79,7 +79,7 @@ double KernelSVM<MatType, KernelType>::Train(
   double L = 0;
   double H = 0;
 
-  // Storing kernel fucntion values.
+  // Storing kernel function values.
   arma::mat K = arma::mat(data.n_cols, data.n_cols);
 
   // Pre-compute the Kernel Matrix
@@ -92,14 +92,14 @@ double KernelSVM<MatType, KernelType>::Train(
   }
 
   // Training starts from here.
-  while (count < max_iter)
+  while (count < maxIter)
   {
     size_t changedAlphas = 0;
     for (size_t i = 0; i < data.n_cols; i++)
     {
       // Calculate Ei = f(x(i)) - y(i) using (2).
       // E(i) = b + sum (X(i, :) * (repmat(alphas.*Y,1,n).*X)') - Y(i);
-      E(i) = intercept + arma::sum(alpha.t() % trainLabels % K.col(i).t())
+      E(i) = intercept + arma::sum(alpha % trainLabels % K.col(i).t())
              - trainLabels(i);
       if ((trainLabels(i) * E(i) < -tol && alpha(i) < regularization) ||
         (trainLabels(i) * E(i) > tol && alpha(i) > 0))
@@ -114,7 +114,7 @@ double KernelSVM<MatType, KernelType>::Train(
         assert(j < data.n_cols && j >= 0);
 
         // Calculate Ej = f(x(j)) - y(j) using (2).
-        E(j) = intercept + arma::sum(alpha.t() % trainLabels % K.col(j).t())
+        E(j) = intercept + arma::sum(alpha % trainLabels % K.col(j).t())
                - trainLabels(j);
 
         // Saving old alpha values.
@@ -175,28 +175,19 @@ double KernelSVM<MatType, KernelType>::Train(
         else
           intercept = (b1 + b2) / 2;
 
-        changedAlphas = changedAlphas + 1;
+        changedAlphas++;
       }
     }
 
     if (changedAlphas == 0)
-      count = count + 1;
+      count++;
     else
       count = 0;
   }
-  double threshold = arma::as_scalar(arma::mean(alpha));
 
-  // Saving values of labels and sample data to be used
+  // Saving values of sample data to be used
   // with kernel function.
-  savedLabels = arma::zeros(1, data.n_cols);
-  trainingData = arma::mat(data);
-  for (size_t i = 0; i < data.n_cols; i++)
-  {
-    if (alpha(i) > threshold)
-    {
-      savedLabels(i) = trainLabels(i);
-    }
-  }
+  trainingData = data;
 }
 
 template <typename MatType, typename KernelType>
@@ -236,15 +227,16 @@ void KernelSVM<MatType, KernelType>::Classify(
 {
   // Giving prediction when non-linear kernel is used.
   scores = arma::zeros(1, data.n_cols);
+  double threshold = arma::as_scalar(arma::mean(alpha));
   for (size_t i = 0; i < data.n_cols; i++)
   {
     double  prediction = 0;
     for (size_t j = 0; j < trainingData.n_cols; j++)
     {
-      if (savedLabels(j) == 0)
+      if (alpha(j) <= threshold)
         continue;
       prediction = prediction + alpha(j) *
-                   savedLabels(j) * kernel.Evaluate(data.col(i),
+                   trainLabels(j) * kernel.Evaluate(data.col(i),
                    trainingData.col(j));
     }
     if (!fitIntercept)
