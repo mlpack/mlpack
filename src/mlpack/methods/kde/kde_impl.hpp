@@ -712,25 +712,20 @@ void KDE<KernelType,
          TreeType,
          DualTreeTraversalType,
          SingleTreeTraversalType>::
-serialize(Archive& ar, const unsigned int version)
+serialize(Archive& ar, const unsigned int /* version */)
 {
   // Serialize preferences.
   ar & CEREAL_NVP(relError);
   ar & CEREAL_NVP(absError);
   ar & CEREAL_NVP(trained);
   ar & CEREAL_NVP(mode);
+  ar & CEREAL_NVP(monteCarlo);
+  ar & CEREAL_NVP(mcProb);
+  ar & CEREAL_NVP(initialSampleSize);
+  ar & CEREAL_NVP(mcEntryCoef);
+  ar & CEREAL_NVP(mcBreakCoef);
 
-  // Backward compatibility: Old versions of KDE did not need to handle Monte
-  // Carlo parameters.
-  if (version > 0)
-  {
-    ar & CEREAL_NVP(monteCarlo);
-    ar & CEREAL_NVP(mcProb);
-    ar & CEREAL_NVP(initialSampleSize);
-    ar & CEREAL_NVP(mcEntryCoef);
-    ar & CEREAL_NVP(mcBreakCoef);
-  }
-  else if (Archive::is_loading::value)
+  if (Archive::is_loading::value)
   {
     monteCarlo = KDEDefaultParams::monteCarlo;
     mcProb = KDEDefaultParams::mcProb;
@@ -754,8 +749,8 @@ serialize(Archive& ar, const unsigned int version)
   // Serialize the rest of values.
   ar & CEREAL_NVP(kernel);
   ar & CEREAL_NVP(metric);
-  ar & CEREAL_NVP(referenceTree);
-  ar & CEREAL_NVP(oldFromNewReferences);
+  ar & CEREAL_POINTER(referenceTree);
+  ar & CEREAL_POINTER(oldFromNewReferences);
 }
 
 template<typename KernelType,
