@@ -442,7 +442,7 @@ void CheckSoftShrinkDerivativeCorrect(const arma::colvec input,
  * Simple SELU activation test to check whether the mean and variance remain
  * invariant after passing normalized inputs through the function.
  */
-TEST_CASE("SELUFunctionNormalizedTest", "ActivationFunctionsTest")
+TEST_CASE("SELUFunctionNormalizedTest", "[ActivationFunctionsTest]")
 {
   arma::mat input = arma::randn<arma::mat>(1000, 1);
 
@@ -463,7 +463,7 @@ TEST_CASE("SELUFunctionNormalizedTest", "ActivationFunctionsTest")
  * Simple SELU activation test to check whether the mean and variance
  * vary significantly after passing unnormalized inputs through the function.
  */
-TEST_CASE("SELUFunctionUnnormalizedTest", "ActivationFunctionsTest")
+TEST_CASE("SELUFunctionUnnormalizedTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec input("5.96402758 0.9966824 0.99975321 1 \
                             7.76159416 -0.76159416 0.96402758 8");
@@ -486,7 +486,7 @@ TEST_CASE("SELUFunctionUnnormalizedTest", "ActivationFunctionsTest")
  * produced by the activation function are correct.
  *
  */
-TEST_CASE("SELUFunctionDerivativeTest", "ActivationFunctionsTest")
+TEST_CASE("SELUFunctionDerivativeTest", "[ActivationFunctionsTest]")
 {
   arma::mat input = arma::ones<arma::mat>(1000, 1);
 
@@ -562,7 +562,7 @@ void CheckCELUDerivativeCorrect(const arma::colvec input,
 /**
  * Basic test of the tanh function.
  */
-TEST_CASE("TanhFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-0.96402758 0.9966824 0.99975321 -1 \
                                          0.76159416 -0.76159416 0.96402758 0");
@@ -578,7 +578,7 @@ TEST_CASE("TanhFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the logistic function.
  */
-TEST_CASE("LogisticFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("LogisticFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("1.19202922e-01 9.60834277e-01 \
                                          9.89013057e-01 3.04574e-44 \
@@ -598,7 +598,7 @@ TEST_CASE("LogisticFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the softsign function.
  */
-TEST_CASE("SoftsignFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("SoftsignFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-0.66666667 0.76190476 0.81818182 \
                                          -0.99011858 0.5 -0.5 0.66666667 0");
@@ -615,7 +615,7 @@ TEST_CASE("SoftsignFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the identity function.
  */
-TEST_CASE("IdentityFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("IdentityFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredDerivatives = arma::ones<arma::colvec>(
       activationData.n_elem);
@@ -627,7 +627,7 @@ TEST_CASE("IdentityFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the rectifier function.
  */
-TEST_CASE("RectifierFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("RectifierFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("0 3.2 4.5 0 1 0 2 0");
 
@@ -641,7 +641,7 @@ TEST_CASE("RectifierFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the LeakyReLU function.
  */
-TEST_CASE("LeakyReLUFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("LeakyReLUFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-0.06 3.2 4.5 -3.006 \
                                          1 -0.03 2 0");
@@ -656,7 +656,7 @@ TEST_CASE("LeakyReLUFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the HardTanH function.
  */
-TEST_CASE("HardTanHFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("HardTanHFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-1 1 1 -1 \
                                          1 -1 1 0");
@@ -671,7 +671,7 @@ TEST_CASE("HardTanHFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the ELU function.
  */
-TEST_CASE("ELUFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("ELUFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-0.86466471 3.2 4.5 -1.0 \
                                          1 -0.63212055 2 0");
@@ -686,7 +686,7 @@ TEST_CASE("ELUFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the softplus function.
  */
-TEST_CASE("SoftplusFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("SoftplusFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec activationData("-2 3.2 4.5 -100.2 1 -1 2 0 1000 10000");
 
@@ -707,7 +707,7 @@ TEST_CASE("SoftplusFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the PReLU function.
  */
-TEST_CASE("PReLUFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("PReLUFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-0.06 3.2 4.5 -3.006 \
                                          1 -0.03 2 0");
@@ -724,7 +724,7 @@ TEST_CASE("PReLUFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the CReLU function.
  */
-TEST_CASE("CReLUFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("CReLUFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("0 3.2 4.5 0 \
                                          1 0 2 0 2 0 0 \
@@ -755,7 +755,7 @@ TEST_CASE("CReLUFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the swish function.
  */
-TEST_CASE("SwishFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("SwishFunctionTest", "[ActivationFunctionsTest]")
 {
   // Hand-calculated values using Python interpreter.
   const arma::colvec desiredActivations("-0.238405 3.07466 4.45055 \
@@ -774,7 +774,7 @@ TEST_CASE("SwishFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the hard sigmoid function.
  */
-TEST_CASE("HardSigmoidFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("HardSigmoidFunctionTest", "[ActivationFunctionsTest]")
 {
   // Hand-calculated values using Python interpreter.
   const arma::colvec desiredActivations("0.1 1 1 \
@@ -794,7 +794,7 @@ TEST_CASE("HardSigmoidFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the Mish function.
  */
-TEST_CASE("MishFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("MishFunctionTest", "[ActivationFunctionsTest]")
 {
   // Calculated using tfa.activations.mish().
   // where tfa is tensorflow_addons.
@@ -816,7 +816,7 @@ TEST_CASE("MishFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the LiSHT function.
  */
-TEST_CASE("LiSHTFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("LiSHTFunctionTest", "[ActivationFunctionsTest]")
 {
   // Calculated using tfa.activations.LiSHT().
   // where tfa is tensorflow_addons.
@@ -838,7 +838,7 @@ TEST_CASE("LiSHTFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the GELU function.
  */
-TEST_CASE("GELUFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("GELUFunctionTest", "[ActivationFunctionsTest]")
 {
   // Calculated using torch.nn.gelu().
   const arma::colvec desiredActivations("-0.0454023 3.1981304 \
@@ -858,7 +858,7 @@ TEST_CASE("GELUFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the Hard Shrink function.
  */
-TEST_CASE("HardShrinkFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("HardShrinkFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-2 3.2 4.5 -100.2 1 -1 2 0");
 
@@ -873,7 +873,7 @@ TEST_CASE("HardShrinkFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the Elliot function.
  */
-TEST_CASE("ElliotFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("ElliotFunctionTest", "[ActivationFunctionsTest]")
 {
   // Calculated using PyTorch tensor.
   const arma::colvec desiredActivations("-0.66666667 0.76190476 0.81818182 \
@@ -893,7 +893,7 @@ TEST_CASE("ElliotFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the EliSH function.
  */
-TEST_CASE("ElishFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("ElishFunctionTest", "[ActivationFunctionsTest]")
 {
   // Manually-calculated using python-numpy module.
   const arma::colvec desiredActivations("-0.10307056 3.0746696 4.4505587 \
@@ -913,7 +913,7 @@ TEST_CASE("ElishFunctionTest", "ActivationFunctionsTest")
 /** 
  * Basic test of the Soft Shrink function.
  */
-TEST_CASE("SoftShrinkFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("SoftShrinkFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-1.5 2.7 4 -99.7 0.5 -0.5 1.5 0");
 
@@ -928,7 +928,7 @@ TEST_CASE("SoftShrinkFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the CELU activation function.
  */
-TEST_CASE("CELUFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("CELUFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("-0.86466472 3.2 4.5 \
                                          -1 1 -0.63212056 2 0");
@@ -944,7 +944,7 @@ TEST_CASE("CELUFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the inverse quadratic function.
  */
-TEST_CASE("InverseQuadraticFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("InverseQuadraticFunctionTest", "[ActivationFunctionsTest]")
 {
   // Hand-calculated values.
   const arma::colvec desiredActivations("0.2 0.088968 0.0470588 \
@@ -963,7 +963,7 @@ TEST_CASE("InverseQuadraticFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the quadratic function.
  */
-TEST_CASE("QuadraticFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("QuadraticFunctionTest", "[ActivationFunctionsTest]")
 {
   // Hand-calculated values.
   const arma::colvec desiredActivations("4 10.24 20.25 \
@@ -982,7 +982,7 @@ TEST_CASE("QuadraticFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the Spline function.
  */
-TEST_CASE("SplineFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("SplineFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec activationData1("2 3.2 4.5 100.2 1 1 2 0");
 
@@ -1003,7 +1003,7 @@ TEST_CASE("SplineFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the multi quadratic function.
  */
-TEST_CASE("MultiquadFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("MultiquadFunctionTest", "[ActivationFunctionsTest]")
 {
   // Hand-calculated values.
   const arma::colvec desiredActivations("2.23607 3.35261 4.60977 \
@@ -1023,7 +1023,7 @@ TEST_CASE("MultiquadFunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the Poisson one function.
  */
-TEST_CASE("Poisson1FunctionTest", "ActivationFunctionsTest")
+TEST_CASE("Poisson1FunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec activationData1("-2 3.2 4.5 5 1 -1 2 0");
 
@@ -1044,7 +1044,7 @@ TEST_CASE("Poisson1FunctionTest", "ActivationFunctionsTest")
 /**
  * Basic test of the Gaussian activation function.
  */
-TEST_CASE("GaussianFunctionTest", "ActivationFunctionsTest")
+TEST_CASE("GaussianFunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec desiredActivations("0.018315639 0.000035713 \
                                          1.6052280551856116e-09 \
