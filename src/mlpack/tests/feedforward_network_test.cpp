@@ -52,7 +52,7 @@ void TestNetwork(ModelType& model,
   for (size_t i = 0; i < predictionTemp.n_cols; ++i)
   {
     prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1));
   }
 
   size_t correct = arma::accu(prediction == testLabels);
@@ -71,12 +71,14 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // Labels should be from 0 to numClasses - 1.
 
   arma::mat testData;
   data::Load("thyroid_test.csv", testData, true);
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // Labels should be from 0 to numClasses - 1.
 
   /*
    * Construct a feed forward network with trainData.n_rows input nodes,
@@ -120,7 +122,6 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
-  labels += 1;
 
   FFN<NegativeLogLikelihood<> > model1;
   model1.Add<Linear<> >(dataset.n_rows, 10);
@@ -142,7 +143,6 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
 
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
-  labels += 1;
 
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear<> >(dataset.n_rows, 50);
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
       for (size_t i = 0; i < currentResuls.n_cols; ++i)
       {
         prediction(i) = arma::as_scalar(arma::find(
-            arma::max(currentResuls.col(i)) == currentResuls.col(i), 1)) + 1;
+            arma::max(currentResuls.col(i)) == currentResuls.col(i), 1));
       }
 
       size_t correct = arma::accu(prediction == currentLabels);
@@ -218,12 +218,14 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // Labels should be from 0 to numClasses - 1.
 
   arma::mat testData;
   data::Load("thyroid_test.csv", testData, true);
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // Labels should be from 0 to numClasses - 1.
 
   /*
    * Construct a feed forward network with trainData.n_rows input nodes,
@@ -269,7 +271,6 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
 
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
-  labels += 1;
 
   FFN<NegativeLogLikelihood<> > model1;
   model1.Add<Linear<> >(dataset.n_rows, 10);
@@ -295,7 +296,6 @@ BOOST_AUTO_TEST_CASE(HighwayNetworkTest)
 
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
-  labels += 1;
 
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear<> >(dataset.n_rows, 10);
@@ -319,12 +319,14 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // The range should be between 0 and numClasses - 1.
 
   arma::mat testData;
   data::Load("thyroid_test.csv", testData, true);
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // The range should be between 0 and numClasses - 1.
 
  /*
   *  Construct a feed forward network with trainData.n_rows input nodes,
@@ -370,7 +372,6 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
 
   arma::mat labels = arma::zeros(1, dataset.n_cols);
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
-  labels += 1;
 
   FFN<NegativeLogLikelihood<> > model1;
   model1.Add<Linear<> >(dataset.n_rows, 10);
@@ -408,12 +409,14 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
 
   arma::mat testData;
   data::Load("thyroid_test.csv", testData, true);
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // The labels should be between 0 and numClasses - 1.
 
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
@@ -457,12 +460,14 @@ BOOST_AUTO_TEST_CASE(CustomLayerTest)
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
 
   arma::mat testData;
   data::Load("thyroid_test.csv", testData, true);
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // The labels should be between 0 and numClasses - 1.
 
   FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);
@@ -536,12 +541,14 @@ BOOST_AUTO_TEST_CASE(FFNTrainReturnObjective)
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // The labels should be between 0 and numClasses.
 
   arma::mat testData;
   data::Load("thyroid_test.csv", testData, true);
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // The labels should be between 0 and numClasses.
 
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
@@ -606,12 +613,14 @@ BOOST_AUTO_TEST_CASE(OptimizerTest)
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // The labels should be between 0 and numClasses.
 
   arma::mat testData;
   data::Load("thyroid_test.csv", testData, true);
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // The labels should be between 0 and numClasses.
 
   FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);
@@ -634,11 +643,12 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
+  trainLabels -= 1; // The labels should be between 0 and numClasses.
 
   arma::mat trainLabels1 = arma::zeros(3, trainData.n_cols);
   for (size_t i = 0; i < trainData.n_cols; i++)
   {
-    trainLabels1.col(i).row((trainLabels(i) - 1)) = 1;
+    trainLabels1.col(i).row(trainLabels(i)) = 1;
   }
 
   arma::mat testData;
@@ -646,6 +656,7 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
+  testLabels -= 1; // The labels should be between 0 and numClasses.
 
   /*
    * Construct a feed forward network with trainData.n_rows input nodes,
@@ -681,7 +692,7 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
   }
 
   arma::mat labels = arma::zeros(1, dataset.n_cols);
-  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(0);
 
   arma::mat labels1 = arma::zeros(2, dataset.n_cols);
 
@@ -689,7 +700,6 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
   {
     labels1.col(i).row(labels(i)) = 1;
   }
-  labels += 1;
 
   arma::mat centroids1;
   arma::Row<size_t> assignments;

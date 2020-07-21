@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
     GradientFunction()
     {
       input = arma::randu(10, 1);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -422,7 +422,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
     GradientFunction()
     {
       input = arma::randu(10, 1);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -498,7 +498,7 @@ BOOST_AUTO_TEST_CASE(GradientNoisyLinearLayerTest)
     GradientFunction()
     {
       input = arma::randu(10, 1);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -602,7 +602,7 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
     GradientFunction()
     {
       input = arma::randu(10, 1);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -648,7 +648,7 @@ BOOST_AUTO_TEST_CASE(JacobianNegativeLogLikelihoodLayerTest)
     init.Initialize(input, inputElements, 1);
 
     arma::mat target(1, 1);
-    target(0) = math::RandInt(1, inputElements - 1);
+    target(0) = math::RandInt(0, inputElements - 2);
 
     double error = JacobianPerformanceTest(module, input, target);
     BOOST_REQUIRE_LE(error, 1e-5);
@@ -704,7 +704,7 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
     GradientFunction()
     {
       input = arma::randu(2, 1);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
           NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
@@ -883,7 +883,7 @@ BOOST_AUTO_TEST_CASE(LSTMRrhoTest)
 {
   const size_t rho = 5;
   arma::cube input = arma::randu(1, 1, 5);
-  arma::cube target = arma::ones(1, 1, 5);
+  arma::cube target = arma::zeros(1, 1, 5);
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.
@@ -924,7 +924,7 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
     GradientFunction()
     {
       input = arma::randu(1, 1, 5);
-      target.ones(1, 1, 5);
+      target.zeros(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
@@ -988,7 +988,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
 {
   const size_t rho = 5;
   arma::cube input = arma::randu(1, 1, 5);
-  arma::cube target = arma::ones(1, 1, 5);
+  arma::cube target = arma::zeros(1, 1, 5);
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.
@@ -1029,7 +1029,7 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
     GradientFunction()
     {
       input = arma::randu(1, 1, 5);
-      target = arma::ones(1, 1, 5);
+      target = arma::zeros(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
@@ -1298,7 +1298,7 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
     GradientFunction()
     {
       input = arma::randu(1, 1, 5);
-      target = arma::ones(1, 1, 5);
+      target = arma::zeros(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
@@ -1537,7 +1537,7 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
     GradientFunction()
     {
       input = arma::randu(10, 1);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -1606,7 +1606,7 @@ BOOST_AUTO_TEST_CASE(GradientConcatenateLayerTest)
     GradientFunction()
     {
       input = arma::randu(10, 1);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -1961,7 +1961,7 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
       {
         input = arma::randn(32, 2048);
         arma::mat target;
-        target.ones(1, 2048);
+        target.zeros(1, 2048);
 
         model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
         model->Predictors() = input;
@@ -2037,7 +2037,7 @@ BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
       input = arma::randn(5, 256);
       arma::mat referenceBatch = arma::mat(input.memptr(), input.n_rows, 16);
       arma::mat target;
-      target.ones(1, 256);
+      target.zeros(1, 256);
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -2099,7 +2099,7 @@ BOOST_AUTO_TEST_CASE(MiniBatchDiscriminationTest)
     {
       input = arma::randn(5, 4);
       arma::mat target;
-      target.ones(1, 4);
+      target.zeros(1, 4);
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -2278,7 +2278,7 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
       GradientFunction()
       {
         input = arma::linspace<arma::colvec>(0, 35, 36);
-        target = arma::mat("1");
+        target = arma::mat("0");
 
         model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
         model->Predictors() = input;
@@ -2395,7 +2395,7 @@ BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
     GradientFunction()
     {
       input = arma::linspace<arma::colvec>(0, 35, 36);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
       model->Predictors() = input;
@@ -2578,7 +2578,7 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
     {
       input = arma::randn(10, 256);
       arma::mat target;
-      target.ones(1, 256);
+      target.zeros(1, 256);
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -2899,7 +2899,7 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerTest)
     GradientFunction()
     {
       input = arma::randu(10, 1);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -2943,7 +2943,7 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerBetaTest)
     GradientFunction()
     {
       input = arma::randu(10, 2);
-      target = arma::mat("1 1");
+      target = arma::mat("0 0");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -3099,7 +3099,7 @@ BOOST_AUTO_TEST_CASE(GradientHighwayLayerTest)
     GradientFunction()
     {
       input = arma::randu(5, 1);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -3151,7 +3151,7 @@ BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
     GradientFunction()
     {
       input = arma::randu(10, 1);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -3202,7 +3202,7 @@ BOOST_AUTO_TEST_CASE(GradientWeightNormLayerTest)
     GradientFunction()
     {
       input = arma::randu(10, 1);
-      target = arma::mat("1");
+      target = arma::mat("0");
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -4037,7 +4037,7 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormWithMiniBatchesTest)
       {
         input = arma::randn(16, 1024);
         arma::mat target;
-        target.ones(1, 1024);
+        target.zeros(1, 1024);
 
         model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
         model->Predictors() = input;

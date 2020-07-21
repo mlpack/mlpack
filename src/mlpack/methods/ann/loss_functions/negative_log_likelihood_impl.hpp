@@ -35,11 +35,10 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
   ElemType output = 0;
   for (size_t i = 0; i < input.n_cols; ++i)
   {
-    size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+    Log::Assert(target(i) >= 0 && target(i) < input.n_rows,
         "Target class out of range.");
 
-    output -= input(currentTarget, i);
+    output -= input(target(i), i);
   }
 
   return output;
@@ -55,11 +54,10 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
   output = arma::zeros<OutputType>(input.n_rows, input.n_cols);
   for (size_t i = 0; i < input.n_cols; ++i)
   {
-    size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+    Log::Assert(target(i) >= 0 && target(i) < input.n_rows,
         "Target class out of range.");
 
-    output(currentTarget, i) = -1;
+    output(target(i), i) = -1;
   }
 }
 
