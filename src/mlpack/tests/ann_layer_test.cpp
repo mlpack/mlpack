@@ -15,9 +15,11 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/init_rules/glorot_init.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
@@ -1688,6 +1690,59 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
   module.Gradient(input, error, gradient);
 
   BOOST_CHECK_CLOSE_FRACTION(arma::accu(error), arma::accu(gradient), 1e-05);
+}
+
+/**
+ * Lookup layer numerical gradient test.
+ */
+BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
+{
+  // Lookup function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      const size_t seqLength = 10;
+      const size_t embeddingSize = 8;
+      const size_t vocabSize = 20;
+      const size_t batchSize = 1;
+
+      input.set_size(seqLength, batchSize);
+      for (size_t i = 0; i < input.n_elem; ++i)
+      {
+        input(i) = math::RandInt(1, 20);
+      }
+      target.set_size(vocabSize, batchSize);
+      target(vocabSize - 1) = 1;
+
+      model = new FFN<CrossEntropyError<>, GlorotInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<> >();
+      model->Add<Lookup<> >(vocabSize, embeddingSize);
+      model->Add<Linear<> >(embeddingSize * seqLength, vocabSize);
+      model->Add<Softmax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<CrossEntropyError<>, GlorotInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /**
