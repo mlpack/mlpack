@@ -18,18 +18,16 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "serialization_catch.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 
-BOOST_AUTO_TEST_SUITE(ConvolutionalNetworkTest);
-
 /**
  * Train the vanilla network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
+TEST_CASE("VanillaNetworkTest","[ConvolutionalNetworkTest]")
 {
   arma::mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
@@ -102,7 +100,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
     double objVal = model.Train(X, Y, opt);
 
     // Test that objective value returned by FFN::Train() is finite.
-    BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+    REQUIRE(std::isfinite(objVal) == true);
 
     arma::mat predictionTemp;
     model.Predict(X, predictionTemp);
@@ -123,7 +121,6 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
     }
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
