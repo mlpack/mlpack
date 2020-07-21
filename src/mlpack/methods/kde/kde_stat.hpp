@@ -67,30 +67,14 @@ class KDEStat
 
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
-    // Backward compatibility: Old versions of KDEStat needed to handle obsolete
-    // values.
-    if (version == 0 && Archive::is_loading::value)
-    {
-      // Placeholders.
-      arma::vec centroid;
-      bool validCentroid;
-
-      ar & CEREAL_NVP(centroid);
-      ar & CEREAL_NVP(validCentroid);
-    }
-
-    // Backward compatibility: Old versions of KDEStat did not need to handle
-    // alpha values.
-    if (version > 0)
-    {
-      ar & CEREAL_NVP(mcBeta);
-      ar & CEREAL_NVP(mcAlpha);
-      ar & CEREAL_NVP(accumAlpha);
-      ar & CEREAL_NVP(accumError);
-    }
-    else if (Archive::is_loading::value)
+    ar & CEREAL_NVP(mcBeta);
+    ar & CEREAL_NVP(mcAlpha);
+    ar & CEREAL_NVP(accumAlpha);
+    ar & CEREAL_NVP(accumError);
+    
+    if (Archive::is_loading::value)
     {
       mcBeta = -1;
       mcAlpha = -1;

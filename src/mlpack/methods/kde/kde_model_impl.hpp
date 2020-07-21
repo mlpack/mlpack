@@ -546,18 +546,13 @@ void KDEModel::serialize(Archive& ar, const unsigned int version)
   ar & CEREAL_NVP(absError);
   ar & CEREAL_NVP(kernelType);
   ar & CEREAL_NVP(treeType);
-
-  // Backward compatibility: Old versions of KDEModel did not need to handle
-  // Monte Carlo parameters.
-  if (version > 0)
-  {
-    ar & CEREAL_NVP(monteCarlo);
-    ar & CEREAL_NVP(mcProb);
-    ar & CEREAL_NVP(initialSampleSize);
-    ar & CEREAL_NVP(mcEntryCoef);
-    ar & CEREAL_NVP(mcBreakCoef);
-  }
-  else if (Archive::is_loading::value)
+  ar & CEREAL_NVP(monteCarlo);
+  ar & CEREAL_NVP(mcProb);
+  ar & CEREAL_NVP(initialSampleSize);
+  ar & CEREAL_NVP(mcEntryCoef);
+  ar & CEREAL_NVP(mcBreakCoef);
+  
+  if (Archive::is_loading::value)
   {
     monteCarlo = KDEDefaultParams::monteCarlo;
     mcProb = KDEDefaultParams::mcProb;
