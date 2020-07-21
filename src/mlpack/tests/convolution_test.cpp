@@ -51,7 +51,7 @@ void Convolution2DMethodTest(const arma::mat input,
   const double* convOutputPtr = convOutput.memptr();
 
   for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
-    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-3));
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-3 / 100));
 }
 
 /*
@@ -82,7 +82,7 @@ void Convolution3DMethodTest(const arma::cube input,
   const double* convOutputPtr = convOutput.memptr();
 
   for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
-    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-3));
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-3 / 100));
 }
 
 /*
@@ -114,7 +114,7 @@ void ConvolutionMethodBatchTest(const arma::mat input,
   const double* convOutputPtr = convOutput.memptr();
 
   for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
-    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-3));
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-3 / 100));
 }
 
 /**

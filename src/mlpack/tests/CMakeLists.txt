@@ -20,8 +20,6 @@ add_executable(mlpack_test
   cf_test.cpp
   cli_binding_test.cpp
   io_test.cpp
-  convolution_test.cpp
-  convolutional_network_test.cpp
   cosine_tree_test.cpp
   cv_test.cpp
   dbscan_test.cpp
@@ -169,7 +167,9 @@ add_executable(mlpack_test
 )
 
 add_executable(mlpack_catch_test
+  convolution_test.cpp
   main.cpp
+  convolutional_network_test.cpp
   serialization_catch.cpp
   serialization_catch.hpp
   test_catch_tools.hpp
