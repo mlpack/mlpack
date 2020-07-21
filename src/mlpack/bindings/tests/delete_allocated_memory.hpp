@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_CLI_DELETE_ALLOCATED_MEMORY_HPP
-#define MLPACK_BINDINGS_CLI_DELETE_ALLOCATED_MEMORY_HPP
+#ifndef MLPACK_BINDINGS_IO_DELETE_ALLOCATED_MEMORY_HPP
+#define MLPACK_BINDINGS_IO_DELETE_ALLOCATED_MEMORY_HPP
 
 #include <mlpack/core/util/param_data.hpp>
 
@@ -20,7 +20,7 @@ namespace tests {
 
 template<typename T>
 void DeleteAllocatedMemoryImpl(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
 {
@@ -29,7 +29,7 @@ void DeleteAllocatedMemoryImpl(
 
 template<typename T>
 void DeleteAllocatedMemoryImpl(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   // Do nothing.
@@ -37,7 +37,7 @@ void DeleteAllocatedMemoryImpl(
 
 template<typename T>
 void DeleteAllocatedMemoryImpl(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
@@ -47,7 +47,7 @@ void DeleteAllocatedMemoryImpl(
 
 template<typename T>
 void DeleteAllocatedMemory(
-    const util::ParamData& d,
+    util::ParamData& d,
     const void* /* input */,
     void* /* output */)
 {

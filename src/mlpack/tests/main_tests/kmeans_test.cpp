@@ -30,20 +30,20 @@ struct KmTestFixture
   KmTestFixture()
   {
       // Cache in the options for this program.
-      CLI::RestoreSettings(testName);
+      IO::RestoreSettings(testName);
   }
 
   ~KmTestFixture()
   {
       // Clear the settings.
-      CLI::ClearSettings();
+      IO::ClearSettings();
   }
 };
 
 void ResetKmSettings()
 {
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
@@ -147,10 +147,10 @@ BOOST_AUTO_TEST_CASE(KmClusteringSizeCheck)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, row+1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, col);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_rows, row);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, c);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, row+1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, col);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("centroid").n_rows, row);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("centroid").n_cols, c);
 }
 
 /**
@@ -172,10 +172,10 @@ BOOST_AUTO_TEST_CASE(KmClusteringSizeCheckLabelOnly)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, col);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_rows, row);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("centroid").n_cols, c);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, col);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("centroid").n_rows, row);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("centroid").n_cols, c);
 }
 
 
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
   mlpackMain();
 
   arma::mat normalOutput;
-  normalOutput = std::move(CLI::GetParam<arma::mat>("centroid"));
+  normalOutput = std::move(IO::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
   mlpackMain();
 
   arma::mat allowEmptyOutput;
-  allowEmptyOutput = std::move(CLI::GetParam<arma::mat>("centroid"));
+  allowEmptyOutput = std::move(IO::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
   mlpackMain();
 
   arma::mat killEmptyOutput;
-  killEmptyOutput = std::move(CLI::GetParam<arma::mat>("centroid"));
+  killEmptyOutput = std::move(IO::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE(KmClusteringResultSizeCheck)
   SetInputParam("in_place", true);
 
   mlpackMain();
-  arma::mat processedInput = CLI::GetParam<arma::mat>("output");
+  arma::mat processedInput = IO::GetParam<arma::mat>("output");
   // here input is actually accessed through output
   // due to a little trick in kmeans_main
 
@@ -310,8 +310,8 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
 
   arma::mat naiveOutput;
   arma::mat naiveCentroid;
-  naiveOutput = std::move(CLI::GetParam<arma::mat>("output"));
-  naiveCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
+  naiveOutput = std::move(IO::GetParam<arma::mat>("output"));
+  naiveCentroid = std::move(IO::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -327,8 +327,8 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
 
   arma::mat elkanOutput;
   arma::mat elkanCentroid;
-  elkanOutput = std::move(CLI::GetParam<arma::mat>("output"));
-  elkanCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
+  elkanOutput = std::move(IO::GetParam<arma::mat>("output"));
+  elkanCentroid = std::move(IO::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -344,8 +344,8 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
 
   arma::mat hamerlyOutput;
   arma::mat hamerlyCentroid;
-  hamerlyOutput = std::move(CLI::GetParam<arma::mat>("output"));
-  hamerlyCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
+  hamerlyOutput = std::move(IO::GetParam<arma::mat>("output"));
+  hamerlyCentroid = std::move(IO::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -361,8 +361,8 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
 
   arma::mat dualTreeOutput;
   arma::mat dualTreeCentroid;
-  dualTreeOutput = std::move(CLI::GetParam<arma::mat>("output"));
-  dualTreeCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
+  dualTreeOutput = std::move(IO::GetParam<arma::mat>("output"));
+  dualTreeCentroid = std::move(IO::GetParam<arma::mat>("centroid"));
 
   ResetKmSettings();
 
@@ -378,8 +378,8 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
 
   arma::mat dualCoverTreeOutput;
   arma::mat dualCoverTreeCentroid;
-  dualCoverTreeOutput = std::move(CLI::GetParam<arma::mat>("output"));
-  dualCoverTreeCentroid = std::move(CLI::GetParam<arma::mat>("centroid"));
+  dualCoverTreeOutput = std::move(IO::GetParam<arma::mat>("output"));
+  dualCoverTreeCentroid = std::move(IO::GetParam<arma::mat>("centroid"));
 
   // Checking all the algorithms return same assignments
   CheckMatrices(naiveOutput, hamerlyOutput);

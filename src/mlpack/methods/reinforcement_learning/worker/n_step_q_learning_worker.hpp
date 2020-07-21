@@ -303,7 +303,7 @@ class NStepQLearningWorker
         // Compute the training target for current state.
         arma::mat input = std::get<0>(transition).Encode();
         network.Forward(input, actionValue);
-        actionValue[std::get<1>(transition)] = target;
+        actionValue[std::get<1>(transition).action] = target;
 
         // Compute gradient.
         arma::mat gradients;

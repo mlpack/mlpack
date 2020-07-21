@@ -61,7 +61,7 @@ using namespace mlpack::metric; // ManhattanDistance
 
 int main()
 {
-  // Load the data from data.csv (hard-coded).  Use CLI for simple command-line
+  // Load the data from data.csv (hard-coded).  Use IO for simple command-line
   // parameter handling.
   arma::mat data;
   data::Load("data.csv", data, true);

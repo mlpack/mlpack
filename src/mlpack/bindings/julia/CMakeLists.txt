@@ -65,9 +65,9 @@ if (BUILD_JULIA_BINDINGS)
       PROPERTY INCLUDE_DIRECTORIES)
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml.in
                  ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml)
-  # Configure cli.jl.in with the right suffix for libraries.
-  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/cli.jl.in
-                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/cli.jl)
+  # Configure io.jl.in with the right suffix for libraries.
+  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/io.jl.in
+                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/io.jl)
 
   # Create the empty mlpack.jl file that we will fill with includes using the
   # exsiting template.  Unfortunately COPY doesn't let us change the extension

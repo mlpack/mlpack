@@ -120,7 +120,7 @@ class RandomReplay
 
     // Before moving ahead, lets confirm if our fixed size buffer works.
     assert(nStepBuffer.size() == nSteps);
-    
+
     // Make a n-step transition.
     GetNStepInfo(reward, nextState, isEnd, discount);
 
@@ -128,7 +128,7 @@ class RandomReplay
     action = nStepBuffer.front().action;
 
     states.col(position) = state.Encode();
-    actions(position) = action;
+    actions[position] = action;
     rewards(position) = reward;
     nextStates.col(position) = nextState.Encode();
     isTerminal(position) = isEnd;
@@ -181,7 +181,7 @@ class RandomReplay
    *        state.
    */
   void Sample(arma::mat& sampledStates,
-              arma::icolvec& sampledActions,
+              std::vector<ActionType>& sampledActions,
               arma::colvec& sampledRewards,
               arma::mat& sampledNextStates,
               arma::icolvec& isTerminal)
@@ -191,7 +191,8 @@ class RandomReplay
         batchSize, arma::distr_param(0, upperBound - 1));
 
     sampledStates = states.cols(sampledIndices);
-    sampledActions = actions.elem(sampledIndices);
+    for (size_t t = 0; t < sampledIndices.n_rows; t ++)
+      sampledActions.push_back(actions[sampledIndices[t]]);
     sampledRewards = rewards.elem(sampledIndices);
     sampledNextStates = nextStates.cols(sampledIndices);
     isTerminal = this->isTerminal.elem(sampledIndices);
@@ -216,7 +217,7 @@ class RandomReplay
    * @param * (gradients) The model's gradients
    */
   void Update(arma::mat /* target */,
-              arma::icolvec /* sampledActions */,
+              std::vector<ActionType> /* sampledActions */,
               arma::mat /* nextActionValues */,
               arma::mat& /* gradients */)
   {
@@ -249,7 +250,7 @@ class RandomReplay
   arma::mat states;
 
   //! Locally-stored previous actions.
-  arma::icolvec actions;
+  std::vector<ActionType> actions;
 
   //! Locally-stored previous rewards.
   arma::colvec rewards;

@@ -23,7 +23,7 @@ class TrainingConfig
       numWorkers(1),
       updateInterval(1),
       targetNetworkSyncInterval(100),
-      stepLimit(0),
+      stepLimit(200),
       explorationSteps(1),
       stepSize(0.01),
       discount(0.99),

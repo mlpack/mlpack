@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionRandomTest)
 
   actualProb.zeros();
 
-  for (size_t i = 0; i < 50000; i++)
+  for (size_t i = 0; i < 50000; ++i)
     actualProb((size_t) (d.Random()[0] + 0.5))++;
 
   // Normalize.
@@ -282,11 +282,11 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionDistributionConstructor)
 
   GaussianDistribution d(mean, covariance);
 
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_CLOSE(d.Mean()[i], mean[i], 1e-5);
 
-  for (size_t i = 0; i < 3; i++)
-    for (size_t j = 0; j < 3; j++)
+  for (size_t i = 0; i < 3; ++i)
+    for (size_t j = 0; j < 3; ++j)
       BOOST_REQUIRE_CLOSE(d.Covariance()(i, j), covariance(i, j), 1e-5);
 }
 
@@ -456,7 +456,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionRandomTest)
 
   arma::mat obs(2, 5000);
 
-  for (size_t i = 0; i < 5000; i++)
+  for (size_t i = 0; i < 5000; ++i)
     obs.col(i) = d.Random();
 
   // Now make sure that reflects the actual distribution.
@@ -488,7 +488,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainTest)
   arma::mat observations(4, 10000);
 
   arma::mat transChol = trans(chol(cov));
-  for (size_t i = 0; i < 10000; i++)
+  for (size_t i = 0; i < 10000; ++i)
     observations.col(i) = transChol * arma::randn<arma::vec>(4) + mean;
 
   // Now estimate.
@@ -501,11 +501,11 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainTest)
   d.Train(observations);
 
   // Check that everything is estimated right.
-  for (size_t i = 0; i < 4; i++)
+  for (size_t i = 0; i < 4; ++i)
     BOOST_REQUIRE_SMALL(d.Mean()[i] - actualMean[i], 1e-5);
 
-  for (size_t i = 0; i < 4; i++)
-    for (size_t j = 0; j < 4; j++)
+  for (size_t i = 0; i < 4; ++i)
+    for (size_t j = 0; j < 4; ++j)
       BOOST_REQUIRE_SMALL(d.Covariance()(i, j) - actualCov(i, j), 1e-5);
 }
 
@@ -523,11 +523,11 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithProbabilitiesTest)
   size_t d = 1;
 
   arma::mat rdata(d, N);
-  for (size_t i = 0; i < N; i++)
+  for (size_t i = 0; i < N; ++i)
     rdata.col(i) = dist.Random();
 
   arma::vec probabilities(N);
-  for (size_t i = 0; i < N; i++)
+  for (size_t i = 0; i < N; ++i)
     probabilities(i) = Random();
 
   // Fit distribution with probabilities and data.
@@ -560,7 +560,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionWithProbabilties1Test)
 
   arma::mat rdata(d, N);
 
-  for (size_t i = 0; i < N; i++)
+  for (size_t i = 0; i < N; ++i)
       rdata.col(i) = Random();
 
   arma::vec probabilities(N, arma::fill::ones);
@@ -605,7 +605,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithTwoDistProbabilitiesTest)
 
   // Fill even numbered columns with random points from dist1 and odd numbered
   // columns with random points from dist2.
-  for (size_t j = 0; j < N; j++)
+  for (size_t j = 0; j < N; ++j)
   {
     if (j % 2 == 0)
       rdata.col(j) = dist1.Random();
@@ -615,7 +615,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTrainWithTwoDistProbabilitiesTest)
 
   // Assign high probabilities to points drawn from dist1 and low probabilities
   // to numbers drawn from dist2.
-  for (size_t i = 0 ; i < N ; i++)
+  for (size_t i = 0 ; i < N ; ++i)
   {
     if (i % 2 == 0)
       probabilities(i) = Random(0.98, 1);
@@ -696,8 +696,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainWithProbabilitiesTest)
   size_t d = 2;
   arma::mat rdata(d, N);
 
-  for (size_t j = 0; j < d; j++)
-    for (size_t i = 0; i < N; i++)
+  for (size_t j = 0; j < d; ++j)
+    for (size_t i = 0; i < N; ++i)
       rdata(j, i) = dist(math::randGen);
 
   // Fill the probabilities randomly.
@@ -740,8 +740,8 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainAllProbabilities1Test)
   size_t d = 2;
   arma::mat rdata(d, N);
 
-  for (size_t j = 0; j < d; j++)
-    for (size_t i = 0; i < N; i++)
+  for (size_t j = 0; j < d; ++j)
+    for (size_t i = 0; i < N; ++i)
       rdata(j, i) = dist(math::randGen);
 
   // Fit results with only data.
@@ -785,9 +785,9 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTwoDistProbabilities1Test)
   arma::vec probabilities(N);
 
   // Draw points alternately from the two different distributions.
-  for (size_t j = 0; j < d; j++)
+  for (size_t j = 0; j < d; ++j)
   {
-    for (size_t i = 0; i < N; i++)
+    for (size_t i = 0; i < N; ++i)
     {
       if (i % 2 == 0)
         rdata(j, i) = dist(math::randGen);
@@ -796,7 +796,7 @@ BOOST_AUTO_TEST_CASE(GammaDistributionTrainTwoDistProbabilities1Test)
     }
   }
 
-  for (size_t i = 0; i < N; i++)
+  for (size_t i = 0; i < N; ++i)
   {
     if (i % 2 == 0)
       probabilities(i) = 0.02 * math::Random();
@@ -1282,7 +1282,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionConstructor)
   DiagonalGaussianDistribution d(mean, covariance);
 
   // Make sure the mean and covariance is correct.
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
   {
     BOOST_REQUIRE_CLOSE(d.Mean()(i), mean(i), 1e-5);
     BOOST_REQUIRE_CLOSE(d.Covariance()(i), covariance(i), 1e-5);
@@ -1413,7 +1413,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionRandomTest)
 
   arma::mat obs(2, 5000);
 
-  for (size_t i = 0; i < 5000; i++)
+  for (size_t i = 0; i < 5000; ++i)
     obs.col(i) = d.Random();
 
   // Make sure that reflects the actual distribution.
@@ -1439,7 +1439,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionTrainTest)
   // Generate the observations.
   arma::mat observations(4, 10000);
 
-  for (size_t i = 0; i < 10000; i++)
+  for (size_t i = 0; i < 10000; ++i)
     observations.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
 
   DiagonalGaussianDistribution d;
@@ -1452,7 +1452,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianDistributionTrainTest)
   d.Train(observations);
 
   // Check that the estimated parameters are right.
-  for (size_t i = 0; i < 4; i++)
+  for (size_t i = 0; i < 4; ++i)
   {
     BOOST_REQUIRE_SMALL(d.Mean()(i) - actualMean(i), 1e-5);
     BOOST_REQUIRE_SMALL(d.Covariance()(i) - actualCov(i, i), 1e-5);
@@ -1503,7 +1503,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianWeightedParametersReductionTest)
   arma::mat obs(4, 5);
   arma::vec probs("0.2 0.2 0.2 0.2 0.2");
 
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
     obs.col(i) = (arma::sqrt(cov) % arma::randn<arma::vec>(4)) + mean;
 
   DiagonalGaussianDistribution d1;
@@ -1514,7 +1514,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGaussianWeightedParametersReductionTest)
   d2.Train(obs, probs);
 
   // Check if these are equal.
-  for (size_t i = 0; i < 4; i++)
+  for (size_t i = 0; i < 4; ++i)
   {
     BOOST_REQUIRE_CLOSE(d1.Mean()(i), d2.Mean()(i), 1e-5);
     BOOST_REQUIRE_CLOSE(d1.Covariance()(i), d2.Covariance()(i), 1e-5);
