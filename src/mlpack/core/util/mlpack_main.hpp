@@ -1,5 +1,5 @@
 /**
- * @param mlpack_cli_main.hpp
+ * @param mlpack_main.hpp
  * @author Ryan Curtin
  *
  * This file, based on the value of the macro BINDING_TYPE, will define the
@@ -155,7 +155,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
     static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ })
 
 #elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
@@ -220,7 +220,7 @@ static const std::string testName = "";
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
     static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ }); \
     namespace mlpack { \
     namespace bindings { \
@@ -269,7 +269,7 @@ static const std::string testName = "";
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static \
     mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ }); \
     namespace mlpack { \
     namespace bindings { \
@@ -314,7 +314,7 @@ static const std::string testName = "";
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
     static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ }); \
     namespace mlpack { \
     namespace bindings { \
@@ -399,7 +399,7 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static \
     mlpack::bindings::markdown::ProgramDocWrapper \
-    cli_programdoc_dummy_object = \
+    io_programdoc_dummy_object = \
     mlpack::bindings::markdown::ProgramDocWrapper(BINDING_NAME, NAME, \
     SHORT_DESC, []() { return DESC; }, { __VA_ARGS__ }); \
 
