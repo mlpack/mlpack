@@ -54,16 +54,16 @@ double KernelSVM<MatType, KernelType>::Train(
     const size_t maxIter,
     const double tol)
 {
-  trainLabels = arma::Row<int> (data.n_cols);
+  trainCoefficients = arma::Row<int> (data.n_cols);
 
   // Changing labels values to 1, -1 values provided
   // by user should 0 and 1.
   for (size_t i = 0; i < data.n_cols; i++)
   {
     if (labels(i) == 0)
-      trainLabels(i) = -1;
+      trainCoefficients(i) = -1;
     else
-      trainLabels(i) = 1;
+      trainCoefficients(i) = 1;
   }
 
   // Intializing variable to calculate alphas.
@@ -99,10 +99,10 @@ double KernelSVM<MatType, KernelType>::Train(
     {
       // Calculate Ei = f(x(i)) - y(i) using (2).
       // E(i) = b + sum (X(i, :) * (repmat(alphas.*Y,1,n).*X)') - Y(i);
-      E(i) = intercept + arma::sum(alpha % trainLabels % K.col(i).t())
-             - trainLabels(i);
-      if ((trainLabels(i) * E(i) < -tol && alpha(i) < regularization) ||
-        (trainLabels(i) * E(i) > tol && alpha(i) > 0))
+      E(i) = intercept + arma::sum(alpha % trainCoefficients % K.col(i).t())
+             - trainCoefficients(i);
+      if ((trainCoefficients(i) * E(i) < -tol && alpha(i) < regularization) ||
+        (trainCoefficients(i) * E(i) > tol && alpha(i) > 0))
       {
         // In practice, there are many ways one can use to select
         // the i and j. In this simplified code, we select them randomly.
@@ -114,15 +114,15 @@ double KernelSVM<MatType, KernelType>::Train(
         assert(j < data.n_cols && j >= 0);
 
         // Calculate Ej = f(x(j)) - y(j) using (2).
-        E(j) = intercept + arma::sum(alpha % trainLabels % K.col(j).t())
-               - trainLabels(j);
+        E(j) = intercept + arma::sum(alpha % trainCoefficients % K.col(j).t())
+               - trainCoefficients(j);
 
         // Saving old alpha values.
         double alphaIold = alpha(i);
         double alphaJold = alpha(j);
 
         // Compute L and H to find max and min values of alphas.
-        if (trainLabels(i) == trainLabels(j))
+        if (trainCoefficients(i) == trainCoefficients(j))
         {
           L = std::max(0.0, alpha(j) + alpha(i) - regularization);
           H = std::min(regularization, alpha(j) + alpha(i));
@@ -142,7 +142,7 @@ double KernelSVM<MatType, KernelType>::Train(
         if (eta >= 0)
           continue;
         // Compute and clip new value for alpha j using (12) and (15).
-        alpha(j) = alpha(j) - (trainLabels(j) * (E(i) - E(j))) / eta;
+        alpha(j) = alpha(j) - (trainCoefficients(j) * (E(i) - E(j))) / eta;
 
         // Clip.
         alpha(j) = std::min(H, alpha(j));
@@ -156,16 +156,16 @@ double KernelSVM<MatType, KernelType>::Train(
         }
 
         // Determine value for alpha i using (16).
-        alpha(i) = alpha(i) + trainLabels(i) * trainLabels(j)
+        alpha(i) = alpha(i) + trainCoefficients(i) * trainCoefficients(j)
                    * (alphaJold - alpha(j));
 
         // Compute b1 and b2 using (17) and (18) respectively.
         double b1 = intercept - E(i)
-                    - trainLabels(i) * (alpha(i) - alphaIold) *  K(i, j)
-                    - trainLabels(j) * (alpha(j) - alphaJold) *  K(i, j);
+                    - trainCoefficients(i) * (alpha(i) - alphaIold) *  K(i, j)
+                    - trainCoefficients(j) * (alpha(j) - alphaJold) *  K(i, j);
         double b2 = intercept - E(j)
-                    - trainLabels(i) * (alpha(i) - alphaIold) *  K(i, j)
-                    - trainLabels(j) * (alpha(j) - alphaJold) *  K(j, j);
+                    - trainCoefficients(i) * (alpha(i) - alphaIold) *  K(i, j)
+                    - trainCoefficients(j) * (alpha(j) - alphaJold) *  K(j, j);
 
         // Compute b by (19).
         if (0 < alpha(i) && alpha(i) < regularization)
@@ -236,7 +236,7 @@ void KernelSVM<MatType, KernelType>::Classify(
       if (alpha(j) <= threshold)
         continue;
       prediction = prediction + alpha(j) *
-                   trainLabels(j) * kernel.Evaluate(data.col(i),
+                   trainCoefficients(j) * kernel.Evaluate(data.col(i),
                    trainingData.col(j));
     }
     if (!fitIntercept)
