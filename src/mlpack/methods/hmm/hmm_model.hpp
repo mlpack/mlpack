@@ -177,18 +177,14 @@ class HMMModel
     }
 
     if (type == HMMType::DiscreteHMM)
-      ar & CEREAL_NVP(discreteHMM);
+      ar & CEREAL_POINTER(discreteHMM);
     else if (type == HMMType::GaussianHMM)
-      ar & CEREAL_NVP(gaussianHMM);
+      ar & CEREAL_POINTER(gaussianHMM);
     else if (type == HMMType::GaussianMixtureModelHMM)
-      ar & CEREAL_NVP(gmmHMM);
+      ar & CEREAL_POINTER(gmmHMM);
 
-    // Backward compatibility: new versions of HMM has a Diagonal GMM type.
-    if (version > 0)
-    {
-      if (type == HMMType::DiagonalGaussianMixtureModelHMM)
-        ar & CEREAL_NVP(diagGMMHMM);
-    }
+    if (type == HMMType::DiagonalGaussianMixtureModelHMM)
+      ar & CEREAL_POINTER(diagGMMHMM);
   }
 
   // Accessor method for type of HMM
