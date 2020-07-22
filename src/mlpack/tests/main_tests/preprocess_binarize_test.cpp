@@ -45,7 +45,7 @@ struct PreprocessBinarizeTestFixture
  */
 TEST_CASE_METHOD(
     PreprocessBinarizeTestFixture, "PreprocessBinarizeDimensionTest",
-    "PreprocessBinarizeMainTest")
+    "[PreprocessBinarizeMainTest][BindingTests]")
 {
   // Create a synthetic dataset.
   arma::mat inputData = arma::randu<arma::mat>(2, 5);
@@ -70,7 +70,7 @@ TEST_CASE_METHOD(
  */
 TEST_CASE_METHOD(
     PreprocessBinarizeTestFixture, "PreprocessBinarizeNegativeDimensionTest",
-    "PreprocessBinarizeMainTest")
+    "[PreprocessBinarizeMainTest][BindingTests]")
 {
   arma::mat inputData = arma::randu<arma::mat>(2, 2);
 
@@ -88,7 +88,7 @@ TEST_CASE_METHOD(
  */
 TEST_CASE_METHOD(
     PreprocessBinarizeTestFixture, "PreprocessBinarizelargerDimensionTest",
-    "PreprocessBinarizeMainTest")
+    "[PreprocessBinarizeMainTest][BindingTests]")
 {
   arma::mat inputData = arma::randu<arma::mat>(2, 2);
 
@@ -106,7 +106,7 @@ TEST_CASE_METHOD(
  */
 TEST_CASE_METHOD(
     PreprocessBinarizeTestFixture, "PreprocessBinarizeVerificationTest",
-    "PreprocessBinarizeMainTest")
+    "[PreprocessBinarizeMainTest][BindingTests]")
 {
   arma::mat inputData({{7.0, 4.0, 5.0}, {2.0, 5.0, 9.0}, {7.0, 3.0, 8.0}});
 
@@ -140,7 +140,7 @@ TEST_CASE_METHOD(
  */
 TEST_CASE_METHOD(
     PreprocessBinarizeTestFixture, "PreprocessBinarizeDimensionLessVerTest",
-    "PreprocessBinarizeMainTest")
+    "[PreprocessBinarizeMainTest][BindingTests]")
 {
   arma::mat inputData({{7.0, 4.0, 5.0}, {2.0, 5.0, 9.0}, {7.0, 3.0, 8.0}});
 

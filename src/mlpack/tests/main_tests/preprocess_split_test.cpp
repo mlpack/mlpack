@@ -47,7 +47,7 @@ struct PreprocessSplitTestFixture
  * labels.
  */
 TEST_CASE_METHOD(PreprocessSplitTestFixture, "PreprocessSplitDimensionTest",
-                 "PreprocessSplitMainTest")
+                 "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -87,7 +87,8 @@ TEST_CASE_METHOD(PreprocessSplitTestFixture, "PreprocessSplitDimensionTest",
  */
 TEST_CASE_METHOD(
     PreprocessSplitTestFixture,
-    "PreprocessSplitLabelLessDimensionTest", "PreprocessSplitMainTest")
+    "PreprocessSplitLabelLessDimensionTest",
+    "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -115,7 +116,7 @@ TEST_CASE_METHOD(
  * Ensure that test ratio is always a non-negative number.
  */
 TEST_CASE_METHOD(PreprocessSplitTestFixture, "PreprocessSplitTestRatioTest",
-                 "PreprocessSplitMainTest")
+                 "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -139,7 +140,7 @@ TEST_CASE_METHOD(PreprocessSplitTestFixture, "PreprocessSplitTestRatioTest",
  */
 TEST_CASE_METHOD(
     PreprocessSplitTestFixture, "PreprocessSplitZeroTestRatioTest",
-    "PreprocessSplitMainTest")
+    "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -173,7 +174,7 @@ TEST_CASE_METHOD(
  */
 TEST_CASE_METHOD(
     PreprocessSplitTestFixture, "PreprocessSplitUnityTestRatioTest",
-    "PreprocessSplitMainTest")
+    "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -206,7 +207,7 @@ TEST_CASE_METHOD(
  */
 TEST_CASE_METHOD(
     PreprocessSplitTestFixture, "PreprocessSplitLabelShuffleDataTest",
-    "PreprocessSplitMainTest")
+    "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;

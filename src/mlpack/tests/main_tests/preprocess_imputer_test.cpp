@@ -48,7 +48,7 @@ struct PreprocessImputerTestFixture
  */
 TEST_CASE_METHOD(
     PreprocessImputerTestFixture, "PreprocessImputerDimensionTest",
-    "PreprocessImputerMainTest")
+    "[PreprocessImputerMainTest][BindingTests]")
 {
   // Load synthetic dataset.
   arma::mat inputData;
@@ -108,7 +108,7 @@ TEST_CASE_METHOD(
  */
 TEST_CASE_METHOD(
     PreprocessImputerTestFixture, "PreprocessImputerListwiseDimensionTest",
-    "PreprocessImputerMainTest")
+    "[PreprocessImputerMainTest][BindingTests]")
 {
   // Load synthetic dataset.
   arma::mat inputData;
@@ -150,7 +150,7 @@ TEST_CASE_METHOD(
  */
 TEST_CASE_METHOD(
     PreprocessImputerTestFixture, "PreprocessImputerStrategyTest",
-    "PreprocessImputerMainTest")
+    "[PreprocessImputerMainTest][BindingTests]")
 {
   // Load synthetic dataset.
   arma::mat inputData;

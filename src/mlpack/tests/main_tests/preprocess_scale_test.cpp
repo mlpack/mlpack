@@ -48,7 +48,7 @@ arma::mat PreprocessScaleTestFixture::dataset = "-1 -0.5 0 1;"
  * Check that two different scalers give two different output.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "TwoScalerTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   // Input custom data points.
   std::string method = "max_abs_scaler";
@@ -75,7 +75,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "TwoScalerTest",
  * different output.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "TwoOptionTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "min_max_scaler";
   // Input custom data points.
@@ -102,7 +102,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "TwoOptionTest",
  * Check that passing unrelated option don't change anything.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "UnrelatedOptionTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "standard_scaler";
   // Input custom data points.
@@ -130,7 +130,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "UnrelatedOptionTest",
  * Check Inverse Scaling is working.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "InverseScalingTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "zca_whitening";
   // Input custom data points.
@@ -154,7 +154,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "InverseScalingTest",
  * Check Saved model is working.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "SavedModelTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "pca_whitening";
   // Input custom data points.
@@ -177,7 +177,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "SavedModelTest",
  * Check different epsilon for PCA give two different output.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "EpsilonTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "pca_whitening";
   // Input custom data points.
@@ -203,7 +203,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "EpsilonTest",
  * Check for invalid epsilon.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidEpsilonTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "pca_whitening";
   // Input custom data points.
@@ -218,7 +218,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidEpsilonTest",
  * Check for invalid range in min_max_scaler.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidRangeTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "min_max_scaler";
   // Input custom data points.
@@ -234,7 +234,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidRangeTest",
  * Check for invalid scaler type.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidScalerTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "invalid_scaler";
   // Input custom data points.
@@ -252,7 +252,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidScalerTest",
  * Check for Standard scaler type.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "StandardScalerBindingTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "standard_scaler";
   // Input custom data points.
@@ -271,7 +271,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "StandardScalerBindingTest",
  * Check for MaxAbs scaler type.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "MaxAbsScalerBindingTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "max_abs_scaler";
   // Input custom data points.
@@ -290,7 +290,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "MaxAbsScalerBindingTest",
  * Check for MinMax scaler type.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "MinMaxScalerBindingTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "min_max_scaler";
   // Input custom data points.
@@ -311,7 +311,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "MinMaxScalerBindingTest",
  * Check for PCA scaler type.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "PCAScalerBindingTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "pca_whitening";
   // Input custom data points.
@@ -331,7 +331,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "PCAScalerBindingTest",
  * Check for ZCA scaler type.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "ZCAScalerBindingTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "zca_whitening";
   // Input custom data points.
@@ -351,7 +351,7 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "ZCAScalerBindingTest",
  * Check for Mean Normalization scaler type.
  */
 TEST_CASE_METHOD(PreprocessScaleTestFixture, "MeanNormalizationBindingTest",
-                 "PreprocessScaleMainTest")
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "mean_normalization";
   // Input custom data points.

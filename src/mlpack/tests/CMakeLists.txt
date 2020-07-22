@@ -161,15 +161,15 @@ add_executable(mlpack_test
 )
 
 add_executable(mlpack_catch_test
-  main.cpp
-  serialization_catch.cpp
-  serialization_catch.hpp
-  test_catch_tools.hpp
   binarize_test.cpp
   image_load_test.cpp
   imputation_test.cpp
+  main.cpp
   scaling_test.cpp
+  serialization_catch.cpp
+  serialization_catch.hpp
   split_data_test.cpp
+  test_catch_tools.hpp
   main_tests/image_converter_test.cpp
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_imputer_test.cpp
