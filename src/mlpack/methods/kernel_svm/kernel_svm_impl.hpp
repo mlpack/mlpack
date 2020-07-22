@@ -182,7 +182,7 @@ double KernelSVM<MatType, KernelType>::Train(
 
   // Saving values of sample data to be used
   // with kernel function.
-  trainingData = data;
+  trainingData = arma::mat(data);
   std::cout<<"Not here"<<std::endl;
   std::cout<<trainCoefficients(21)<<std::endl;
   std::cout<<"Ok"<<std::endl;
