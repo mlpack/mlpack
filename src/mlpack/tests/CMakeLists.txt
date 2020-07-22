@@ -1,6 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  activation_functions_test.cpp
   adaboost_test.cpp
   akfn_test.cpp
   aknn_test.cpp
@@ -168,6 +167,7 @@ add_executable(mlpack_test
 
 add_executable(mlpack_catch_test
   convolution_test.cpp
+  activation_functions_test.cpp
   main.cpp
   convolutional_network_test.cpp
   serialization_catch.cpp
@@ -233,7 +233,6 @@ set(parallel_tests
   "SparseAutoencoderTest;"
   "GMMTest;"
   "CFTest;"
-  "ConvolutionalNetworkTest;"
   "HMMTest;"
   "LARSTest;"
   "LogisticRegressionTest;"
