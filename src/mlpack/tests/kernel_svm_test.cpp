@@ -93,12 +93,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
  */
 BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
 {
-  arma::mat dataset;
+  arma::mat dataset, dataset1;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
-
+  dataset1.load("mnist_first250_training_4s_and_9s.arm");
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
     dataset.col(i) /= norm(dataset.col(i), 2);
+
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+    dataset1.col(i) /= norm(dataset1.col(i), 2);
 
   arma::Row<size_t> labels(dataset.n_cols);
   for (size_t i = 0; i < dataset.n_cols / 2; ++i)
@@ -120,7 +123,7 @@ BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
                                 labels, 1.0, true, 10);
 
     // Ensure that the error is close to zero.
-    const double testAcc = svm.ComputeAccuracy(dataset, labels);
+    const double testAcc = svm.ComputeAccuracy(dataset1, labels);
     if (testAcc >= 0.95)
     {
       success = true;
