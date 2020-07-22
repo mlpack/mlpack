@@ -54,7 +54,7 @@ double KernelSVM<MatType, KernelType>::Train(
     const size_t maxIter,
     const double tol)
 {
-  trainCoefficients = arma::Row<int> (data.n_cols);
+  trainCoefficients = arma::zeros(1, data.n_cols);
 
   // Changing labels values to 1, -1 values provided
   // by user should 0 and 1.
@@ -188,7 +188,7 @@ double KernelSVM<MatType, KernelType>::Train(
 
   // Saving values of sample data to be used
   // with kernel function.
-  trainingData = arma::zeros(data.n_rows, data.n_cols);
+  trainingData = data;
   std::cout<<"Not here"<<std::endl;
   std::cout<<trainCoefficients(21)<<std::endl;
   std::cout<<"Ok"<<std::endl;
