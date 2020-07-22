@@ -2,7 +2,7 @@
  * @file bindings/tests/clean_memory.cpp
  * @author Ryan Curtin
  *
- * Delete any pointers held by the CLI object.
+ * Delete any pointers held by the IO object.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,7 +18,7 @@ namespace bindings {
 namespace tests {
 
 /**
- * Delete any pointers held by the CLI object.
+ * Delete any pointers held by the IO object.
  */
 void CleanMemory()
 {

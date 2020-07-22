@@ -93,7 +93,7 @@ void PrintInputProcessing(
       std::cout << "nil";
     }
 
-    // Print function call to set the given parameter into the cli.
+    // Print function call to set the given parameter into the io.
     std::cout << " {" << std::endl;
     std::cout << prefix << prefix << "setParam" << GetType<T>(d) << "(\""
               << d.name << "\", param." << goParamName << ")" << std::endl;
@@ -158,7 +158,7 @@ void PrintInputProcessing(
     std::cout << prefix << "if param." << goParamName
               << " != nil {" << std::endl;
 
-    // Print function call to set the given parameter into the cli.
+    // Print function call to set the given parameter into the io.
     std::cout << prefix << prefix << "gonumToArma" << GetType<T>(d)
               << "(\"" << d.name << "\", param." << goParamName
               << ")" << std::endl;
@@ -219,7 +219,7 @@ void PrintInputProcessing(
     std::cout << prefix << "if param." << goParamName
               << " != nil {" << std::endl;
 
-    // Print function call to set the given parameter into the cli.
+    // Print function call to set the given parameter into the io.
     std::cout << prefix << prefix << "gonumToArmaMatWithInfo"
               << "(\"" << d.name << "\", param." << goParamName
               << ")" << std::endl;
@@ -283,7 +283,7 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "if param." << goParamName << " != nil {"
               << std::endl;
-    // Print function call to set the given parameter into the cli.
+    // Print function call to set the given parameter into the io.
     std::cout << prefix << prefix << "set" << strippedType << "(\""
               << d.name << "\", param." << goParamName << ")" << std::endl;
 
