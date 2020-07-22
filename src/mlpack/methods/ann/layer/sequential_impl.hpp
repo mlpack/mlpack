@@ -228,7 +228,7 @@ template<typename InputDataType, typename OutputDataType, bool Residual,
 template<typename Archive>
 void Sequential<
     InputDataType, OutputDataType, Residual, CustomLayers...>::serialize(
-        Archive& ar, const unsigned int version)
+        Archive& ar, const unsigned int /* version */)
 {
   // If loading, delete the old layers.
   if (Archive::is_loading::value)
@@ -241,10 +241,8 @@ void Sequential<
 
   ar & CEREAL_NVP(model);
   ar & CEREAL_NVP(network);
-
-  if (version >= 1)
-    ar & CEREAL_NVP(ownsLayers);
-  else if (Archive::is_loading::value)
+  ar & CEREAL_NVP(ownsLayers);
+  if (Archive::is_loading::value)
     ownsLayers = !model;
 }
 
