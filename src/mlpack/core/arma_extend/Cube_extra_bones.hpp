@@ -1,4 +1,3 @@
 //! Add a serialization operator.
-template<typename eT>
-template<typename Archive>
+template<typename Archive, typename eT>
 void serialize(Archive& ar, arma::Cube<eT>& cube);
