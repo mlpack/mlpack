@@ -46,7 +46,7 @@ struct AdaBoostTestFixture
  * points are equal.
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostOutputDimensionTest",
-                 "AdaBoostMainTest")
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
@@ -80,7 +80,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostOutputDimensionTest",
  * up to 1.
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostProbabilitiesTest",
-                 "AdaBoostMainTest")
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
@@ -116,7 +116,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostProbabilitiesTest",
  * Ensure that saved model can be used again.
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostModelReuseTest",
-                 "AdaBoostMainTest")
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
@@ -158,7 +158,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostModelReuseTest",
  * Test that iterations in adaboost is always non-negative.
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostItrTest",
-                 "AdaBoostMainTest")
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("trainSet.csv", trainData))
@@ -178,7 +178,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostItrTest",
  * and results are same from both label and without label models.
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostWithoutLabelTest",
-                 "AdaBoostMainTest")
+                 "[AdaBoostMainTest][BindingTests]")
 {
   // Train adaboost without providing labels.
   arma::mat trainData;
@@ -228,7 +228,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostWithoutLabelTest",
  * Testing that only one of training data or pre-trained model is passed.
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostTrainingDataOrModelTest",
-                 "AdaBoostMainTest")
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("trainSet.csv", trainData))
@@ -251,7 +251,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostTrainingDataOrModelTest",
  * predictions outputs are the same.
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostOutputPredictionsTest",
-                 "AdaBoostMainTest")
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
@@ -274,7 +274,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostOutputPredictionsTest",
  * Weak learner should be either Decision Stump or Perceptron.
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostWeakLearnerTest",
-                 "AdaBoostMainTest")
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("trainSet.csv", trainData))
@@ -292,7 +292,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostWeakLearnerTest",
  * Different Weak learner should give different outputs.
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffWeakLearnerOutputTest",
-                 "AdaBoostMainTest")
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
@@ -339,7 +339,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffWeakLearnerOutputTest",
  * (Or converges and remains same)
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffItrTest",
-                 "AdaBoostMainTest")
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
@@ -416,7 +416,7 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffItrTest",
  * (Execution Time also increases)
  */
 TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffTolTest",
-                 "AdaBoostMainTest")
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
