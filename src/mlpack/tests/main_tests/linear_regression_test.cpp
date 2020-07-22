@@ -33,11 +33,6 @@ struct LRTestFixture
     IO::RestoreSettings(testName);
   }
 
-  void ResetSettings()
-  {
-    IO::ClearSettings();
-    IO::RestoreSettings(testName);
-  }
   ~LRTestFixture()
   {
     // Clear the settings.
@@ -46,13 +41,19 @@ struct LRTestFixture
   }
 };
 
+void ResetSettings()
+{
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
+}
+
 /**
  * Training a model with different regularization parameter and ensuring that
  * predictions are different.
  */
 
 TEST_CASE_METHOD(LRTestFixture, "LRDifferentLambdas",
-                 "LinearRegressionMainTest")
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   // A required minimal difference between solutions.
   const double delta = 0.1;
@@ -93,7 +94,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRDifferentLambdas",
  * extra parameter) and ensuring that predictions are the same.
  */
 TEST_CASE_METHOD(LRTestFixture, "LRResponsesRepresentation",
-                 "LinearRegressionMainTest")
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr double delta = 1e-5;
 
@@ -127,7 +128,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRResponsesRepresentation",
  * same.
  */
 TEST_CASE_METHOD(LRTestFixture, "LRModelReload",
-                 "LinearRegressionMainTest")
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr double delta = 1e-5;
   constexpr int N = 10;
@@ -163,7 +164,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRModelReload",
  * Ensuring that response size is checked.
  */
 TEST_CASE_METHOD(LRTestFixture, "LRWrongResponseSizeTest",
-                 "LinearRegressionMainTest")
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 2;
@@ -183,7 +184,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRWrongResponseSizeTest",
  * Ensuring that test data dimensionality is checked.
  */
 TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest1t",
-                 "LinearRegressionMainTest")
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -206,7 +207,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest1t",
  * Ensuring that test data dimensionality is checked when model is loaded.
  */
 TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest2",
-                 "LinearRegressionMainTest")
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -237,7 +238,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest2",
  * Checking that that size and dimensionality of prediction is correct.
  */
 TEST_CASE_METHOD(LRTestFixture, "LRPredictionSizeCheck",
-                 "LinearRegressionMainTest")
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -263,7 +264,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRPredictionSizeCheck",
  * Ensuring that absence of responses is checked.
  */
 TEST_CASE_METHOD(LRTestFixture, "LRNoResponses",
-                 "LinearRegressionMainTest")
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 1;
@@ -280,7 +281,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRNoResponses",
  * Ensuring that absence of training data is checked.
  */
 TEST_CASE_METHOD(LRTestFixture, "LRNoTrainingData",
-                 "LinearRegressionMainTest")
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
 

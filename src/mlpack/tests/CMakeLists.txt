@@ -167,12 +167,12 @@ add_executable(mlpack_test
 
 add_executable(mlpack_catch_test
   activation_functions_test.cpp
+  image_load_test.cpp
+  linear_regression_test.cpp
   main.cpp
   serialization_catch.cpp
   serialization_catch.hpp
   test_catch_tools.hpp
-  image_load_test.cpp
-  linear_regression_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/test_helper.hpp
