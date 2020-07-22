@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_SUITE(PythonBindingsTest);
 
 /**
  * Ensure that we can construct a PyOption object, and that it will add itself
- * to the CLI instance.
+ * to the IO instance.
  */
 BOOST_AUTO_TEST_CASE(PyOptionTest)
 {
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(PyOptionTest)
   programName = "test";
   PyOption<double> po1(0.0, "test", "test2", "t", "double", false, true, false);
 
-  // Now check that it's in CLI.
+  // Now check that it's in IO.
   IO::RestoreSettings(programName);
   BOOST_REQUIRE_GT(IO::Parameters().count("test"), 0);
   BOOST_REQUIRE_GT(IO::Aliases().count('t'), 0);
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(PyOptionTest)
   PyOption<arma::mat> po2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
       true, true);
 
-  // Now check that it's in CLI.
+  // Now check that it's in IO.
   IO::RestoreSettings(programName);
   BOOST_REQUIRE_GT(IO::Parameters().count("mat"), 0);
   BOOST_REQUIRE_GT(IO::Aliases().count('m'), 0);

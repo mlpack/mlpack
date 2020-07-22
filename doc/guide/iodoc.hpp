@@ -40,7 +40,7 @@ once that is done, it will call \c mlpackMain().
 
 @code
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 // This definition below means we will only compile for the command line.
 #define BINDING_TYPE BINDING_TYPE_CLI
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -117,7 +117,7 @@ Aborted
 These four outputs can be very useful for both providing informational output
 and debugging output for your mlpack program.
 
-@section simplecli Simple IO Example
+@section simpleio Simple IO Example
 
 Through the mlpack::IO object, command-line parameters can be easily added
 with the PROGRAM_INFO, PARAM_INT, PARAM_DOUBLE, PARAM_STRING, and PARAM_FLAG
@@ -128,7 +128,7 @@ Here is a sample use of those macros, extracted from methods/pca/pca_main.cpp.
 
 @code
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 // Document program.
