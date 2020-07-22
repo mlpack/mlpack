@@ -23,7 +23,11 @@ BayesianLinearRegression::BayesianLinearRegression(const bool centerData,
   centerData(centerData),
   scaleData(scaleData),
   nIterMax(nIterMax),
-  tol(tol)
+  tol(tol),
+  responsesOffset(0.0),
+  alpha(0.0),
+  beta(0.0),
+  gamma(0.0)
 {/* Nothing to do */}
 
 double BayesianLinearRegression::Train(const arma::mat& data,
@@ -121,7 +125,6 @@ double BayesianLinearRegression::CenterScaleData(const arma::mat& data,
                                                  arma::rowvec& responsesProc)
 {
   // Initialize the offsets to their neutral forms.
-  responsesOffset = 0.0;
   if (!centerData && !scaleData)
   {
     dataProc = arma::mat(const_cast<double*>(data.memptr()), data.n_rows, 
