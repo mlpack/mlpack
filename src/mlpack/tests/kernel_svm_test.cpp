@@ -55,10 +55,9 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
     // Now train a svm object on it.
     KernelSVM<> svm(data, labels, 1.0, false, 10);
     std::cout<<"training complete"<<std::endl;
-
     // Ensure that the error is close to zero.
     const double acc = svm.ComputeAccuracy(data, labels);
-    if (acc <= 0.5)
+    if (acc >= 0.98)
       continue;
 
     arma::mat testData(inputSize, points);
@@ -78,7 +77,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
 
     // Ensure that the error is close to zero.
     const double testAcc = svm.ComputeAccuracy(data, labels);
-    if (testAcc <= 0.5)
+    if (testAcc >= 0.95)
     {
       success = true;
       break;
@@ -94,15 +93,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
  */
 BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
 {
-  arma::mat dataset, dataset1;
+  arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
-  dataset1.load("mnist_first250_training_4s_and_9s.arm");
+
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
     dataset.col(i) /= norm(dataset.col(i), 2);
-
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-    dataset1.col(i) /= norm(dataset1.col(i), 2);
 
   arma::Row<size_t> labels(dataset.n_cols);
   for (size_t i = 0; i < dataset.n_cols / 2; ++i)
@@ -123,10 +119,9 @@ BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
               kernel::GaussianKernel> svm(dataset,
                                 labels, 1.0, true, 10);
     std::cout<<"training complete"<<std::endl;
-
     // Ensure that the error is close to zero.
-    const double testAcc = svm.ComputeAccuracy(dataset1, labels);
-    if (testAcc <= 0.5)
+    const double testAcc = svm.ComputeAccuracy(dataset, labels);
+    if (testAcc >= 0.95)
     {
       success = true;
       break;
@@ -174,10 +169,9 @@ BOOST_AUTO_TEST_CASE(ConcentricCircleDataset)
               kernel::GaussianKernel> svm(dataset,
                                 labels, 1.0, true, 10);
     std::cout<<"training complete"<<std::endl;
-
     // Ensure that the error is close to zero.
     const double testAcc = svm.ComputeAccuracy(dataset, labels);
-    if (testAcc <= 0.5)
+    if (testAcc >= 0.95)
     {
       success = true;
       break;
