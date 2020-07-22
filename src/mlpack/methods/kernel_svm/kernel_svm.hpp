@@ -200,7 +200,7 @@ class KernelSVM
   //! Locally saved KernelType values.
   KernelType kernel;
     //! Locally saved training labels.
-  arma::Row<int> trainCoefficients;
+  arma::rowvec trainCoefficients;
   //! Locally saved input data of classes for non-linear kernel.
   arma::mat trainingData;
 };
