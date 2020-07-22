@@ -71,7 +71,7 @@ ElemType BLEU<ElemType, PrecisionType>::Evaluate(
 
   auto refIt = referenceCorpus.cbegin();
   auto trIt = translationCorpus.cbegin();
-  for (; refIt != referenceCorpus.cend(), trIt != translationCorpus.cend();
+  for (; refIt != referenceCorpus.cend() && trIt != translationCorpus.cend();
       ++refIt, ++trIt)
   {
     size_t min = std::numeric_limits<size_t>::max();
