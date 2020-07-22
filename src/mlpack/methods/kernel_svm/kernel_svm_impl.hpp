@@ -188,8 +188,10 @@ double KernelSVM<MatType, KernelType>::Train(
 
   // Saving values of sample data to be used
   // with kernel function.
-  trainingData = data;
+  trainingData = arma::zeros(data.n_rows, data.n_cols);
   std::cout<<"Not here"<<std::endl;
+  std::cout<<trainCoefficients(21)<<std::endl;
+  std::cout<<"Ok"<<std::endl;
 }
 
 template <typename MatType, typename KernelType>
