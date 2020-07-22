@@ -13,13 +13,18 @@
  * Add a batch constructor for SpMat, if the version is older than 3.810.0, and
  * also a serialize() function for Armadillo.
  */
-template<typename Archive>
-void serialize(Archive& ar, const unsigned int version);
+template<typename Archive, typename eT>
+void serialize(Archive& ar, arma::SpMat<eT>& SpaMat);
 
 /**
  * These will help us refer the proper vector / column types, only with
  * specifying the matrix type we want to use.
  */
-typedef SpCol<elem_type>   vec_type;
-typedef SpCol<elem_type>   col_type;
-typedef SpRow<elem_type>   row_type;
+// template<typename eT>
+// using vec_type = arma::SpCol<eT>;
+
+// template<typename eT>
+// using col_type = arma::SpCol<eT>;
+
+// template<typename eT>
+// using row_type = arma::SpRow<eT>;

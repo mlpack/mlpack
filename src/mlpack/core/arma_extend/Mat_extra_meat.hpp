@@ -8,9 +8,8 @@
 // Written by Conrad Sanderson - http://conradsanderson.id.au
 // Written by Ryan Curtin
 
-// Add a serialization function.
-template<typename eT>
-template<typename Archive>
+// Add an external serialization function.
+template<typename Archive, typename eT>
 void serialize(Archive& ar, arma::Mat<eT>& mat)
 {
   const uword old_n_elem = mat.n_elem;

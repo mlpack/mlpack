@@ -8,19 +8,19 @@
 // Written by Conrad Sanderson - http://conradsanderson.id.au
 // Written by Ryan Curtin
 
-//! Add a serialization operator.
-template<typename Archive>
-void serialize(Archive& ar, const unsigned int version);
+//! Add an external serialization function.
+template<typename Archive, typename eT>
+void serialize(Archive& ar, arma::Mat<eT>& mat);
 
 /**
  * These will help us refer the proper vector / column types, only with
  * specifying the matrix type we want to use.
  */
+template<typename eT>
+using vec_type = arma::Col<eT>;
 
-typedef Col<elem_type>   vec_type;
-typedef Col<elem_type>   col_type;
-typedef Row<elem_type>   row_type;
+template<typename eT>
+using col_type = arma::Col<eT>;
 
-/*
- * Add row_col_iterator and row_col_const_iterator to arma::Mat.
- */
+template<typename eT>
+using row_type = arma::Row<eT>;

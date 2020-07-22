@@ -10,10 +10,9 @@
 // Written by Matthew Amidon
 
 /**
- * Add a serialization function.
+ * Add an external serialization function.
  */
-template<typename eT>
-template<typename Archive>
+template<typename Archive, typename eT>
 void serialize(Archive& ar, arma::SpMat<eT>& SpaMat)
 {
   // This is accurate from Armadillo 3.6.0 onwards.
