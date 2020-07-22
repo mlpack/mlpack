@@ -54,17 +54,10 @@ double KernelSVM<MatType, KernelType>::Train(
     const size_t maxIter,
     const double tol)
 {
-  trainCoefficients = arma::zeros(1, data.n_cols);
-
   // Changing labels values to 1, -1 values provided
   // by user should 0 and 1.
-  for (size_t i = 0; i < data.n_cols; i++)
-  {
-    if (labels(i) == 0)
-      trainCoefficients(i) = -1;
-    else
-      trainCoefficients(i) = 1;
-  }
+  trainCoefficients = 2.0 *
+                      arma::conv_to<arma::Row<int>>::from(labels) - 1;
 
   // Intializing variable to calculate alphas.
   alpha = arma::zeros(1, data.n_cols);
@@ -99,8 +92,9 @@ double KernelSVM<MatType, KernelType>::Train(
     {
       // Calculate Ei = f(x(i)) - y(i) using (2).
       // E(i) = b + sum (X(i, :) * (repmat(alphas.*Y,1,n).*X)') - Y(i);
-      E(i) = intercept + arma::sum(alpha % trainCoefficients % K.col(i).t())
-             - trainCoefficients(i);
+      E(i) = intercept + arma::as_scalar(arma::sum(alpha
+             % trainCoefficients % K.col(i).t()))- trainCoefficients(i);
+
       if ((trainCoefficients(i) * E(i) < -tol && alpha(i) < regularization) ||
         (trainCoefficients(i) * E(i) > tol && alpha(i) > 0))
       {
@@ -114,8 +108,8 @@ double KernelSVM<MatType, KernelType>::Train(
         assert(j < data.n_cols && j >= 0);
 
         // Calculate Ej = f(x(j)) - y(j) using (2).
-        E(j) = intercept + arma::sum(alpha % trainCoefficients % K.col(j).t())
-               - trainCoefficients(j);
+        E(j) = intercept + arma::as_scalar(arma::sum(alpha
+               % trainCoefficients % K.col(j).t())) - trainCoefficients(j);
 
         // Saving old alpha values.
         double alphaIold = alpha(i);
