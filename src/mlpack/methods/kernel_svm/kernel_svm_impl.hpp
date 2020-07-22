@@ -198,6 +198,7 @@ void KernelSVM<MatType, KernelType>::Classify(
     arma::Row<size_t>& labels) const
 {
   arma::mat scores;
+  std::cout<<"Classify 1"<<std::endl;
   Classify(data, labels, scores);
 }
 
@@ -207,6 +208,7 @@ void KernelSVM<MatType, KernelType>::Classify(
     arma::Row<size_t>& labels,
     arma::mat& scores) const
 {
+  std::cout<<"Classify 2"<<std::endl;
   Classify(data, scores);
   double threshold = arma::as_scalar(arma::mean(scores, 1));
 
@@ -272,6 +274,7 @@ double KernelSVM<MatType, KernelType>::ComputeAccuracy(
     const arma::Row<size_t>& testLabels) const
 {
   arma::Row<size_t> labels;
+  std::cout<<"ComputeAccuracy"<<std::endl;
 
   // Get predictions for the provided data.
   Classify(testData, labels);
