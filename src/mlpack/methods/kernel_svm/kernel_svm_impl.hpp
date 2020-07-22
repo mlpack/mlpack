@@ -57,7 +57,7 @@ double KernelSVM<MatType, KernelType>::Train(
   // Changing labels values to 1, -1 values provided
   // by user should 0 and 1.
   trainCoefficients = 2.0 *
-                      arma::conv_to<arma::Row<int>>::from(labels) - 1;
+                      arma::conv_to<arma::rowvec>::from(labels) - 1;
 
   // Intializing variable to calculate alphas.
   alpha = arma::zeros(1, data.n_cols);
