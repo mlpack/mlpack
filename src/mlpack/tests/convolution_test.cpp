@@ -19,6 +19,7 @@
 
 #include "serialization_catch.hpp"
 #include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -51,7 +52,7 @@ void Convolution2DMethodTest(const arma::mat input,
   const double* convOutputPtr = convOutput.memptr();
 
   for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
-    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-3 / 100));
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
 }
 
 /*
@@ -82,7 +83,7 @@ void Convolution3DMethodTest(const arma::cube input,
   const double* convOutputPtr = convOutput.memptr();
 
   for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
-    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-3 / 100));
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
 }
 
 /*
@@ -114,7 +115,7 @@ void ConvolutionMethodBatchTest(const arma::mat input,
   const double* convOutputPtr = convOutput.memptr();
 
   for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
-    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-3 / 100));
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
 }
 
 /**
@@ -368,4 +369,3 @@ TEST_CASE("FullConvolutionBatchTest", "[ConvolutionTest]")
   ConvolutionMethodBatchTest<SVDConvolution<FullConvolution> >(input,
       filterCube, outputCube);
 }
-

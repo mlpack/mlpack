@@ -20,6 +20,7 @@
 
 #include "serialization_catch.hpp"
 #include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -27,7 +28,7 @@ using namespace mlpack::ann;
 /**
  * Train the vanilla network on a larger dataset.
  */
-TEST_CASE("VanillaNetworkTest","[ConvolutionalNetworkTest]")
+TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
 {
   arma::mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
@@ -123,4 +124,3 @@ TEST_CASE("VanillaNetworkTest","[ConvolutionalNetworkTest]")
 
   REQUIRE(success == true);
 }
-
