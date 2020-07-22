@@ -108,7 +108,7 @@ The example above has only shown a little bit of the functionality of mlpack.
 Lots of other commands are available with different functionality.  A full list
 of commands and full documentation for each can be found on the following page:
 
- - <a href="https://mlpack.org/doc/mlpack-git/cli_documentation.html">IO documentation</a>
+ - <a href="https://mlpack.org/doc/mlpack-git/cli_documentation.html">CLI documentation</a>
 
 For more information on what mlpack does, see https://www.mlpack.org/.  Next,
 let's go through another example for providing movie recommendations with
