@@ -1712,7 +1712,7 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
       {
         input(i) = math::RandInt(1, 20);
       }
-      target.set_size(vocabSize, batchSize);
+      target = arma::zeros(vocabSize, batchSize);
       target(vocabSize - 1) = 1;
 
       model = new FFN<CrossEntropyError<>, GlorotInitialization>();
@@ -1742,7 +1742,7 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-5);
 }
 
 /**
