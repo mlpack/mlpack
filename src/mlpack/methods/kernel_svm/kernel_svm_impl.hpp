@@ -54,6 +54,10 @@ double KernelSVM<MatType, KernelType>::Train(
     const size_t maxIter,
     const double tol)
 {
+  // Saving values of sample data to be used
+  // with kernel function.
+  trainingData = data;
+
   // Changing labels values to 1, -1 values provided
   // by user should 0 and 1.
   trainCoefficients = 2.0 *
@@ -178,14 +182,8 @@ double KernelSVM<MatType, KernelType>::Train(
     else
       count = 0;
   }
-  std::cout<<"Problem"<<std::endl;
 
-  // Saving values of sample data to be used
-  // with kernel function.
-  trainingData = arma::mat(data);
-  std::cout<<"Not here"<<std::endl;
-  std::cout<<trainCoefficients(21)<<std::endl;
-  std::cout<<"Ok"<<std::endl;
+  return eta;
 }
 
 template <typename MatType, typename KernelType>
@@ -194,7 +192,6 @@ void KernelSVM<MatType, KernelType>::Classify(
     arma::Row<size_t>& labels) const
 {
   arma::mat scores;
-  std::cout<<"Classify 1"<<std::endl;
   Classify(data, labels, scores);
 }
 
@@ -204,7 +201,6 @@ void KernelSVM<MatType, KernelType>::Classify(
     arma::Row<size_t>& labels,
     arma::mat& scores) const
 {
-  std::cout<<"Classify 2"<<std::endl;
   Classify(data, scores);
   double threshold = arma::as_scalar(arma::mean(scores, 1));
 
@@ -225,17 +221,8 @@ void KernelSVM<MatType, KernelType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  std::cout<<"here it is"<<std::endl;
   // Giving prediction when non-linear kernel is used.
   scores = arma::zeros(1, data.n_cols);
-  std::cout<<"With score"<<std::endl;
-  std::cout<<scores<<std::endl;
-  std::cout<<"With alpha"<<std::endl;
-  std::cout<<alpha<<std::endl;
-  std::cout<<"With data"<<std::endl;
-  std::cout<<trainingData<<std::endl;
-  std::cout<<"With labels"<<std::endl;
-  std::cout<<trainCoefficients<<std::endl;
   double threshold = arma::as_scalar(arma::mean(alpha));
   for (size_t i = 0; i < data.n_cols; i++)
   {
@@ -270,7 +257,6 @@ double KernelSVM<MatType, KernelType>::ComputeAccuracy(
     const arma::Row<size_t>& testLabels) const
 {
   arma::Row<size_t> labels;
-  std::cout<<"ComputeAccuracy"<<std::endl;
 
   // Get predictions for the provided data.
   Classify(testData, labels);
