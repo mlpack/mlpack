@@ -12,7 +12,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 
-#include "test_catch_tools.hpp"
 #include "catch.hpp"
 
 using namespace mlpack;
