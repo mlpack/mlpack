@@ -201,7 +201,8 @@ void SerializeObject(T& t, T& newT)
 
     try
     {
-      o << CEREAL_NVP(t);
+      T& x(t);
+      o << CEREAL_NVP(x);
     }
     catch (cereal::Exception& e)
     {
@@ -219,8 +220,9 @@ void SerializeObject(T& t, T& newT)
     IArchiveType i(ifs);
 
     try
-    {
-      i >> CEREAL_NVP(newT);
+    { 
+      T& x(newT);
+      i >> CEREAL_NVP(x);
     }
     catch (cereal::Exception& e)
     {
