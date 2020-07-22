@@ -1,6 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  activation_functions_test.cpp
   akfn_test.cpp
   aknn_test.cpp
   ann_dist_test.cpp
@@ -167,6 +166,7 @@ add_executable(mlpack_test
 )
 
 add_executable(mlpack_catch_test
+  activation_functions_test.cpp
   adaboost_test.cpp
   image_load_test.cpp
   main.cpp
