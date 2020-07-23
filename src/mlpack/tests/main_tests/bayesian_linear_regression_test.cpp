@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
   mlpackMain();
 
   BayesianLinearRegression* estimator =
-      CLI::GetParam<BayesianLinearRegression*>("output_model");
+      IO::GetParam<BayesianLinearRegression*>("output_model");
 
   BOOST_REQUIRE(estimator->DataOffset().n_elem == 0);
   BOOST_REQUIRE(estimator->DataScale().n_elem == 0);
