@@ -124,7 +124,6 @@ double BayesianLinearRegression::CenterScaleData(const arma::mat& data,
                                                  arma::mat& dataProc,
                                                  arma::rowvec& responsesProc)
 {
-  // Initialize the offsets to their neutral forms.
   if (!centerData && !scaleData)
   {
     dataProc = arma::mat(const_cast<double*>(data.memptr()), data.n_rows, 
