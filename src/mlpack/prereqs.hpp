@@ -15,13 +15,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-// First, check if Armadillo was included before, warning if so.
-#ifdef ARMA_INCLUDES
-#pragma message "Armadillo was included before mlpack; this can sometimes cause\
- problems.  It should only be necessary to include <mlpack/core.hpp> and not \
-<armadillo>."
-#endif
-
 // Next, standard includes.
 #include <cstdlib>
 #include <cstdio>
