@@ -1710,7 +1710,7 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
       input.set_size(seqLength, batchSize);
       for (size_t i = 0; i < input.n_elem; ++i)
       {
-        input(i) = math::RandInt(1, 20);
+        input(i) = math::RandInt(1, vocabSize);
       }
       target = arma::zeros(vocabSize, batchSize);
       target(vocabSize - 1) = 1;
@@ -1731,8 +1731,8 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
 
     double Gradient(arma::mat& gradient) const
     {
-      double error = model->Evaluate(model->Parameters(), 0, 1);
-      model->Gradient(model->Parameters(), 0, gradient, 1);
+      double error = model->Evaluate(model->Parameters(), 0, batchSize);
+      model->Gradient(model->Parameters(), 0, gradient, batchSize);
       return error;
     }
 
