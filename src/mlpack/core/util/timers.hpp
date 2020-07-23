@@ -24,14 +24,14 @@
 #include <thread> // std::thread is used for thread safety.
 
 #if defined(_WIN32)
-// uint64_t isn't defined on every windows.
-#if !defined(HAVE_UINT64_T)
-#if SIZEOF_UNSIGNED_LONG == 8
-typedef unsigned long uint64_t;
-#else
-typedef unsigned long long uint64_t;
-#endif // SIZEOF_UNSIGNED_LONG
-#endif // HAVE_UINT64_T
+  // uint64_t isn't defined on every windows.
+  #if !defined(HAVE_UINT64_T)
+    #if SIZEOF_UNSIGNED_LONG == 8
+      typedef unsigned long uint64_t;
+    #else
+      typedef unsigned long long uint64_t;
+    #endif // SIZEOF_UNSIGNED_LONG
+  #endif // HAVE_UINT64_T
 #endif
 
 namespace mlpack {
