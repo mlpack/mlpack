@@ -30,7 +30,7 @@ struct BRTestFixture
   BRTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~BRTestFixture()
