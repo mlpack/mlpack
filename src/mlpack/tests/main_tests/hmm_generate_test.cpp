@@ -21,8 +21,8 @@ static const std::string testName = "HMMGenerate";
 #include <mlpack/methods/hmm/hmm.hpp>
 #include <mlpack/methods/hmm/hmm_generate_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 #include "hmm_test_utils.hpp"
 
@@ -45,9 +45,8 @@ struct HMMGenerateTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(HMMGenerateMainTest, HMMGenerateTestFixture);
-
-BOOST_AUTO_TEST_CASE(HMMGenerateDiscreteHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMGenerateTestFixture, "HMMGenerateDiscreteHMMCheckDimensionsTest",
+                 "[HMMGenerateMainTest][BindingTests]")
 {
   // Load data to train a discrete HMM model with.
   arma::mat inp;
@@ -73,19 +72,21 @@ BOOST_AUTO_TEST_CASE(HMMGenerateDiscreteHMMCheckDimensionsTest)
   // Get the generated observation sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
   arma::mat obsSeq = IO::GetParam<arma::mat>("output");
-  BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t)length);
-  BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t)1);
-  BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t)length);
+  REQUIRE(obsSeq.n_cols == (size_t)length);
+  REQUIRE(obsSeq.n_rows == (size_t)1);
+  REQUIRE(obsSeq.n_elem == (size_t)length);
 
   // Get the generated state sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
   arma::Mat<size_t> stateSeq = IO::GetParam<arma::Mat<size_t>>("state");
-  BOOST_REQUIRE_EQUAL(stateSeq.n_cols, (size_t)length);
-  BOOST_REQUIRE_EQUAL(stateSeq.n_rows, (size_t)1);
-  BOOST_REQUIRE_EQUAL(stateSeq.n_elem, (size_t)length);
+  REQUIRE(stateSeq.n_cols == (size_t)length);
+  REQUIRE(stateSeq.n_rows == (size_t)1);
+  REQUIRE(stateSeq.n_elem == (size_t)length);
 }
 
-BOOST_AUTO_TEST_CASE(HMMGenerateGaussianHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMGenerateTestFixture,
+                 "HMMGenerateGaussianHMMCheckDimensionsTest",
+                 "[HMMGenerateMainTest][BindingTests]")
 {
   // Load data to train a gaussian HMM model with.
   arma::mat inp;
@@ -111,19 +112,21 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGaussianHMMCheckDimensionsTest)
   // Get the generated observation sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
   arma::mat obsSeq = IO::GetParam<arma::mat>("output");
-  BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t)length);
-  BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t)1);
-  BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t)length);
+  REQUIRE(obsSeq.n_cols == (size_t)length);
+  REQUIRE(obsSeq.n_rows == (size_t)1);
+  REQUIRE(obsSeq.n_elem == (size_t)length);
 
   // Get the generated state sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
   arma::Mat<size_t> stateSeq = IO::GetParam<arma::Mat<size_t>>("state");
-  BOOST_REQUIRE_EQUAL(stateSeq.n_cols, (size_t)length);
-  BOOST_REQUIRE_EQUAL(stateSeq.n_rows, (size_t)1);
-  BOOST_REQUIRE_EQUAL(stateSeq.n_elem, (size_t)length);
+  REQUIRE(stateSeq.n_cols == (size_t)length);
+  REQUIRE(stateSeq.n_rows == (size_t)1);
+  REQUIRE(stateSeq.n_elem == (size_t)length);
 }
 
-BOOST_AUTO_TEST_CASE(HMMGenerateGMMHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMGenerateTestFixture,
+                 "HMMGenerateGMMHMMCheckDimensionsTest",
+                 "[HMMGenerateMainTest][BindingTests]")
 {
   // Initialize and train a GMM HMM model.
   HMMModel* h = new HMMModel(GaussianMixtureModelHMM);
@@ -159,19 +162,21 @@ BOOST_AUTO_TEST_CASE(HMMGenerateGMMHMMCheckDimensionsTest)
   // Get the generated observation sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
   arma::mat obsSeq = IO::GetParam<arma::mat>("output");
-  BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t) length);
-  BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t) 2);
-  BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t) length * 2);
+  REQUIRE(obsSeq.n_cols == (size_t) length);
+  REQUIRE(obsSeq.n_rows == (size_t) 2);
+  REQUIRE(obsSeq.n_elem == (size_t) length * 2);
 
   // Get the generated state sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
   arma::Mat<size_t> stateSeq = IO::GetParam<arma::Mat<size_t>>("state");
-  BOOST_REQUIRE_EQUAL(stateSeq.n_cols, (size_t) length);
-  BOOST_REQUIRE_EQUAL(stateSeq.n_rows, (size_t) 1);
-  BOOST_REQUIRE_EQUAL(stateSeq.n_elem, (size_t) length);
+  REQUIRE(stateSeq.n_cols == (size_t) length);
+  REQUIRE(stateSeq.n_rows == (size_t) 1);
+  REQUIRE(stateSeq.n_elem == (size_t) length);
 }
 
-BOOST_AUTO_TEST_CASE(HMMGenerateDiagonalGMMHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMGenerateTestFixture,
+                 "HMMGenerateDiagonalGMMHMMCheckDimensionsTest",
+                 "[HMMGenerateMainTest][BindingTests]")
 {
   // Initialize and train a DiagonalGMM HMM model.
   HMMModel* h = new HMMModel(DiagonalGaussianMixtureModelHMM);
@@ -207,19 +212,21 @@ BOOST_AUTO_TEST_CASE(HMMGenerateDiagonalGMMHMMCheckDimensionsTest)
   // Get the generated observation sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
   arma::mat obsSeq = IO::GetParam<arma::mat>("output");
-  BOOST_REQUIRE_EQUAL(obsSeq.n_cols, (size_t) length);
-  BOOST_REQUIRE_EQUAL(obsSeq.n_rows, (size_t) 2);
-  BOOST_REQUIRE_EQUAL(obsSeq.n_elem, (size_t) length * 2);
+  REQUIRE(obsSeq.n_cols == (size_t) length);
+  REQUIRE(obsSeq.n_rows == (size_t) 2);
+  REQUIRE(obsSeq.n_elem == (size_t) length * 2);
 
   // Get the generated state sequence. Ensure that the generated sequence
   // has the correct length (as provided in the input).
   arma::Mat<size_t> stateSeq = IO::GetParam<arma::Mat<size_t>>("state");
-  BOOST_REQUIRE_EQUAL(stateSeq.n_cols, (size_t) length);
-  BOOST_REQUIRE_EQUAL(stateSeq.n_rows, (size_t) 1);
-  BOOST_REQUIRE_EQUAL(stateSeq.n_elem, (size_t) length);
+  REQUIRE(stateSeq.n_cols == (size_t) length);
+  REQUIRE(stateSeq.n_rows == (size_t) 1);
+  REQUIRE(stateSeq.n_elem == (size_t) length);
 }
 
-BOOST_AUTO_TEST_CASE(HMMGenerateLengthPositiveTest)
+TEST_CASE_METHOD(HMMGenerateTestFixture,
+                 "HMMGenerateLengthPositiveTest",
+                 "[HMMGenerateMainTest][BindingTests]")
 {
   // Load data to train a Gaussian Mixture Model HMM model with.
   arma::mat inp;
@@ -239,11 +246,13 @@ BOOST_AUTO_TEST_CASE(HMMGenerateLengthPositiveTest)
   SetInputParam("length", length);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
-BOOST_AUTO_TEST_CASE(HMMGenerateValidStartStateTest)
+TEST_CASE_METHOD(HMMGenerateTestFixture,
+                 "HMMGenerateValidStartStateTest",
+                 "[HMMGenerateMainTest][BindingTests]")
 {
   // Load data to train a Gaussian Mixture Model HMM model with.
   arma::mat inp;
@@ -265,8 +274,6 @@ BOOST_AUTO_TEST_CASE(HMMGenerateValidStartStateTest)
   SetInputParam("start_state", startState);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-
-BOOST_AUTO_TEST_SUITE_END();

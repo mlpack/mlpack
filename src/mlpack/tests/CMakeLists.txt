@@ -35,8 +35,6 @@ add_executable(mlpack_test
   facilities_test.cpp
   feedforward_network_test.cpp
   gan_test.cpp
-  gmm_test.cpp
-  hmm_test.cpp
   hoeffding_tree_test.cpp
   hpt_test.cpp
   hyperplane_test.cpp
@@ -127,14 +125,6 @@ add_executable(mlpack_test
   main_tests/det_test.cpp
   main_tests/emst_test.cpp
   main_tests/fastmks_test.cpp
-  main_tests/gmm_generate_test.cpp
-  main_tests/gmm_probability_test.cpp
-  main_tests/gmm_train_test.cpp
-  main_tests/hmm_generate_test.cpp
-  main_tests/hmm_loglik_test.cpp
-  main_tests/hmm_test_utils.hpp
-  main_tests/hmm_train_test.cpp
-  main_tests/hmm_viterbi_test.cpp
   main_tests/hoeffding_tree_test.cpp
   main_tests/kde_test.cpp
   main_tests/kernel_pca_test.cpp
@@ -167,12 +157,22 @@ add_executable(mlpack_test
 
 add_executable(mlpack_catch_test
   activation_functions_test.cpp
+  gmm_test.cpp
+  hmm_test.cpp
   image_load_test.cpp
   linear_regression_test.cpp
   main.cpp
   serialization_catch.cpp
   serialization_catch.hpp
   test_catch_tools.hpp
+  main_tests/gmm_generate_test.cpp
+  main_tests/gmm_probability_test.cpp
+  main_tests/gmm_train_test.cpp
+  main_tests/hmm_generate_test.cpp
+  main_tests/hmm_loglik_test.cpp
+  main_tests/hmm_test_utils.hpp
+  main_tests/hmm_train_test.cpp
+  main_tests/hmm_viterbi_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/test_helper.hpp
@@ -231,13 +231,10 @@ set(parallel_tests
   "FeedForwardNetworkTest;"
   "RecurrentNetworkTest;"
   "SparseAutoencoderTest;"
-  "GMMTest;"
   "CFTest;"
   "ConvolutionalNetworkTest;"
-  "HMMTest;"
   "LARSTest;"
   "LogisticRegressionTest;"
-  "GmmTrainMainTest;"
   "LinearSVMTest")
 
 # Add tests to the testing framework
