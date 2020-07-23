@@ -112,8 +112,8 @@ PARAM_FLAG("scale", "Scale each feature by their standard deviations if "
 
 static void mlpackMain()
 {
-  bool center = CLI::GetParam<bool>("center");
-  bool scale = CLI::GetParam<bool>("scale");
+  bool center = IO::GetParam<bool>("center");
+  bool scale = IO::GetParam<bool>("scale");
 
   // Check parameters -- make sure everything given makes sense.
   RequireOnlyOnePassed({"input", "input_model"}, true);
