@@ -160,7 +160,7 @@ static void mlpackMain()
   }
   else // We must have --input_model_file.
   {
-    bayesLinReg = CLI::GetParam<BayesianLinearRegression*>("input_model");
+    bayesLinReg = IO::GetParam<BayesianLinearRegression*>("input_model");
   }
 
   if (CLI::HasParam("test"))
