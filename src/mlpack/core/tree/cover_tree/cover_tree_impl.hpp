@@ -1765,10 +1765,7 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
   }
 
   // Lastly, serialize the children.
-  for (size_t i = 0; i < children.size(); ++i)
-  {
-    ar & CEREAL_POINTER(children.at(i));
-  }
+  ar & CEREAL_VECTOR_POINTER(children);
 
   if (Archive::is_loading::value && parent == NULL)
   {
