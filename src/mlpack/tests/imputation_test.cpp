@@ -56,14 +56,14 @@ TEST_CASE("DatasetMapperImputerTest", "[ImputationTest]")
   // Load check
   // MissingPolicy should convert strings to nans.
   REQUIRE(std::isnan(input(0, 0)) == true);
-  REQUIRE(input(0, 1) == Approx(5.0).epsilon(1e-5 / 100));
-  REQUIRE(input(0, 2) == Approx(8.0).epsilon(1e-5 / 100));
-  REQUIRE(input(1, 0) == Approx(2.0).epsilon(1e-5 / 100));
-  REQUIRE(input(1, 1) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(input(1, 2) == Approx(9.0).epsilon(1e-5 / 100));
-  REQUIRE(input(2, 0) == Approx(3.0).epsilon(1e-5 / 100));
+  REQUIRE(input(0, 1) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(input(0, 2) == Approx(8.0).epsilon(1e-7));
+  REQUIRE(input(1, 0) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(input(1, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(input(1, 2) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(input(2, 0) == Approx(3.0).epsilon(1e-7));
   REQUIRE(std::isnan(input(2, 1)) == true);
-  REQUIRE(input(2, 2) == Approx(10.0).epsilon(1e-5 / 100));
+  REQUIRE(input(2, 2) == Approx(10.0).epsilon(1e-7));
 
   // convert missing vals to 99.
   CustomImputation<double> customStrategy(99);
@@ -74,15 +74,15 @@ TEST_CASE("DatasetMapperImputerTest", "[ImputationTest]")
   imputer.Impute(input, "a", 0);
 
   // Custom imputation result check.
-  REQUIRE(input(0, 0) == Approx(99.0).epsilon(1e-5 / 100));
-  REQUIRE(input(0, 1) == Approx(5.0).epsilon(1e-5 / 100));
-  REQUIRE(input(0, 2) == Approx(8.0).epsilon(1e-5 / 100));
-  REQUIRE(input(1, 0) == Approx(2.0).epsilon(1e-5 / 100));
-  REQUIRE(input(1, 1) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(input(1, 2) == Approx(9.0).epsilon(1e-5 / 100));
-  REQUIRE(input(2, 0) == Approx(3.0).epsilon(1e-5 / 100));
+  REQUIRE(input(0, 0) == Approx(99.0).epsilon(1e-7));
+  REQUIRE(input(0, 1) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(input(0, 2) == Approx(8.0).epsilon(1e-7));
+  REQUIRE(input(1, 0) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(input(1, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(input(1, 2) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(input(2, 0) == Approx(3.0).epsilon(1e-7));
   REQUIRE(std::isnan(input(2, 1)) == true); // remains as NaN
-  REQUIRE(input(2, 2) == Approx(10.0).epsilon(1e-5 / 100));
+  REQUIRE(input(2, 2) == Approx(10.0).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.csv");
@@ -105,34 +105,34 @@ TEST_CASE("CustomImputationTest", "[ImputationTest]")
   // column wise
   imputer.Impute(columnWiseInput, mappedValue, 0/*dimension*/, true);
 
-  REQUIRE(columnWiseInput(0, 0) == Approx(3.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(0, 1) == Approx(99.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(0, 2) == Approx(2.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(0, 3) == Approx(99.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 0) == Approx(5.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 1) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 2) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 3) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 0) == Approx(9.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 1) == Approx(8.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 2) == Approx(4.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 3) == Approx(8.0).epsilon(1e-5 / 100));
+  REQUIRE(columnWiseInput(0, 0) == Approx(3.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 1) == Approx(99.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 2) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 3) == Approx(99.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 0) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 2) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 3) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 0) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 1) == Approx(8.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 2) == Approx(4.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 3) == Approx(8.0).epsilon(1e-7));
 
   // row wise
   imputer.Impute(rowWiseInput, mappedValue, 1, false);
 
-  REQUIRE(rowWiseInput(0, 0) == Approx(3.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 1) == Approx(99.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 2) == Approx(2.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 3) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 0) == Approx(5.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 1) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 2) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 3) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 0) == Approx(9.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 1) == Approx(8.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 2) == Approx(4.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 3) == Approx(8.0).epsilon(1e-5 / 100));
+  REQUIRE(rowWiseInput(0, 0) == Approx(3.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 1) == Approx(99.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 2) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 3) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 0) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 2) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 3) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 0) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 1) == Approx(8.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 2) == Approx(4.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 3) == Approx(8.0).epsilon(1e-7));
 }
 
 /**
@@ -152,34 +152,34 @@ TEST_CASE("MeanImputationTest", "[ImputationTest]")
   // column wise
   imputer.Impute(columnWiseInput, mappedValue, 0, true);
 
-  REQUIRE(columnWiseInput(0, 0) == Approx(3.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(0, 1) == Approx(2.5).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(0, 2) == Approx(2.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(0, 3) == Approx(2.5).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 0) == Approx(5.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 1) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 2) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 3) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 0) == Approx(9.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 1) == Approx(8.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 2) == Approx(4.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 3) == Approx(8.0).epsilon(1e-5 / 100));
+  REQUIRE(columnWiseInput(0, 0) == Approx(3.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 1) == Approx(2.5).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 2) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 3) == Approx(2.5).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 0) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 2) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 3) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 0) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 1) == Approx(8.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 2) == Approx(4.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 3) == Approx(8.0).epsilon(1e-7));
 
   // row wise
   imputer.Impute(rowWiseInput, mappedValue, 1, false);
 
-  REQUIRE(rowWiseInput(0, 0) == Approx(3.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 1) == Approx(7.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 2) == Approx(2.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 3) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 0) == Approx(5.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 1) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 2) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 3) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 0) == Approx(9.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 1) == Approx(8.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 2) == Approx(4.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 3) == Approx(8.0).epsilon(1e-5 / 100));
+  REQUIRE(rowWiseInput(0, 0) == Approx(3.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 1) == Approx(7.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 2) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 3) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 0) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 2) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 3) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 0) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 1) == Approx(8.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 2) == Approx(4.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 3) == Approx(8.0).epsilon(1e-7));
 }
 
 /**
@@ -199,34 +199,34 @@ TEST_CASE("MedianImputationTest", "[ImputationTest]")
   // column wise
   imputer.Impute(columnWiseInput, mappedValue, 1, true);
 
-  REQUIRE(columnWiseInput(0, 0) == Approx(3.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(0, 1) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(0, 2) == Approx(2.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(0, 3) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 0) == Approx(5.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 1) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 2) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 3) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 0) == Approx(9.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 1) == Approx(8.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 2) == Approx(4.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 3) == Approx(8.0).epsilon(1e-5 / 100));
+  REQUIRE(columnWiseInput(0, 0) == Approx(3.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 2) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 3) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 0) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 2) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 3) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 0) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 1) == Approx(8.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 2) == Approx(4.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 3) == Approx(8.0).epsilon(1e-7));
 
   // row wise
   imputer.Impute(rowWiseInput, mappedValue, 1, false);
 
-  REQUIRE(rowWiseInput(0, 0) == Approx(3.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 1) == Approx(7.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 2) == Approx(2.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 3) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 0) == Approx(5.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 1) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 2) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 3) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 0) == Approx(9.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 1) == Approx(8.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 2) == Approx(4.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(2, 3) == Approx(8.0).epsilon(1e-5 / 100));
+  REQUIRE(rowWiseInput(0, 0) == Approx(3.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 1) == Approx(7.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 2) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 3) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 0) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 2) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 3) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 0) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 1) == Approx(8.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 2) == Approx(4.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(2, 3) == Approx(8.0).epsilon(1e-7));
 }
 
 /**
@@ -246,24 +246,24 @@ TEST_CASE("ListwiseDeletionTest", "[ImputationTest]")
   // column wise
   imputer.Impute(columnWiseInput, mappedValue, 0, true); // column wise
 
-  REQUIRE(columnWiseInput(0, 0) == Approx(3.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(0, 1) == Approx(2.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 0) == Approx(5.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(1, 1) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 0) == Approx(9.0).epsilon(1e-5 / 100));
-  REQUIRE(columnWiseInput(2, 1) == Approx(4.0).epsilon(1e-5 / 100));
+  REQUIRE(columnWiseInput(0, 0) == Approx(3.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(0, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 0) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(1, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 0) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(columnWiseInput(2, 1) == Approx(4.0).epsilon(1e-7));
 
   // row wise
   imputer.Impute(rowWiseInput, mappedValue, 1, false); // row wise
 
-  REQUIRE(rowWiseInput(0, 0) == Approx(5.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 1) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 2) == Approx(0.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(0, 3) == Approx(6.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 0) == Approx(9.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 1) == Approx(8.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 2) == Approx(4.0).epsilon(1e-5 / 100));
-  REQUIRE(rowWiseInput(1, 3) == Approx(8.0).epsilon(1e-5 / 100));
+  REQUIRE(rowWiseInput(0, 0) == Approx(5.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 1) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 2) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(0, 3) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 0) == Approx(9.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 1) == Approx(8.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 2) == Approx(4.0).epsilon(1e-7));
+  REQUIRE(rowWiseInput(1, 3) == Approx(8.0).epsilon(1e-7));
 }
 
 /**
