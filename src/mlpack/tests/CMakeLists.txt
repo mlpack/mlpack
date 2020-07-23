@@ -166,10 +166,10 @@ add_executable(mlpack_test
 )
 
 add_executable(mlpack_catch_test
-  convolution_test.cpp
   activation_functions_test.cpp
-  main.cpp
   convolutional_network_test.cpp
+  convolution_test.cpp
+  main.cpp
   serialization_catch.cpp
   serialization_catch.hpp
   test_catch_tools.hpp

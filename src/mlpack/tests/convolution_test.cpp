@@ -24,7 +24,6 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 
-
 /*
  * Implementation of the convolution function test.
  *
