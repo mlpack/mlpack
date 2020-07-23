@@ -163,9 +163,9 @@ add_executable(mlpack_catch_test
   activation_functions_test.cpp
   akfn_test.cpp
   aknn_test.cpp
+  image_load_test.cpp
   kfn_test.cpp
   knn_test.cpp
-  image_load_test.cpp
   linear_regression_test.cpp
   main.cpp
   serialization_catch.cpp
