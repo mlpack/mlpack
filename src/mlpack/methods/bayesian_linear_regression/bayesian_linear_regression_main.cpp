@@ -139,7 +139,7 @@ static void mlpackMain()
 
     // Load covariates.  We can avoid LARS transposing our data by choosing to
     // not transpose this data (that's why we used PARAM_TMATRIX_IN).
-    mat matX = std::move(CLI::GetParam<arma::mat>("input"));
+    mat matX = std::move(IO::GetParam<arma::mat>("input"));
 
     // Load responses.  The responses should be a one-dimensional vector, and it
     // seems more likely that these will be stored with one response per line
