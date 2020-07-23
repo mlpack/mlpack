@@ -50,7 +50,6 @@ add_executable(mlpack_test
   lars_test.cpp
   layer_names_test.cpp
   lin_alg_test.cpp
-  linear_regression_test.cpp
   linear_svm_test.cpp
   lmnn_test.cpp
   load_save_test.cpp
@@ -137,7 +136,6 @@ add_executable(mlpack_test
   main_tests/kernel_pca_test.cpp
   main_tests/kmeans_test.cpp
   main_tests/krann_test.cpp
-  main_tests/linear_regression_test.cpp
   main_tests/linear_svm_test.cpp
   main_tests/lmnn_test.cpp
   main_tests/local_coordinate_coding_test.cpp
@@ -167,14 +165,16 @@ add_executable(mlpack_catch_test
   aknn_test.cpp
   kfn_test.cpp
   knn_test.cpp
+  image_load_test.cpp
+  linear_regression_test.cpp
   main.cpp
   serialization_catch.cpp
   serialization_catch.hpp
   test_catch_tools.hpp
-  image_load_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/kfn_test.cpp
   main_tests/knn_test.cpp
+  main_tests/linear_regression_test.cpp
   main_tests/test_helper.hpp
 )
 
