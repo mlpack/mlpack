@@ -51,7 +51,6 @@ void ResetSettings()
  * Training a model with different regularization parameter and ensuring that
  * predictions are different.
  */
-
 TEST_CASE_METHOD(LRTestFixture, "LRDifferentLambdas",
                  "[LinearRegressionMainTest][BindingTests]")
 {
