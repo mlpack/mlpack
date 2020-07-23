@@ -17,11 +17,17 @@
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
+namespace ann /* Artificial Neural Network. */ {
 
 /**
- * Implementation of the Lookup class. The Lookup class is a particular
- * convolution, where the width of the convolution is 1.
+ * The Lookup class stores word embeddings and retrieves them using tokens. The
+ * Lookup layer is always the first layer of the network. The input to the
+ * Lookup class is a matrix of shape (sequenceLength, batchSize). The matrix
+ * consists of tokens which are used to lookup the table (i.e. weights) to find
+ * the embeddings of those tokens.
+ *
+ * The input shape : (sequenceLength, batchSize).
+ * The output shape : (embeddingSize * sequenceLength, batchSize).
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -36,8 +42,7 @@ class Lookup
 {
  public:
   /**
-   * Create the Lookup object using the specified number of input and output
-   * units.
+   * Create the Lookup object using the specified vocabulary and embedding size.
    *
    * @param vocabSize The size of the vocabulary.
    * @param embeddingSize The length of each embedding vector.
