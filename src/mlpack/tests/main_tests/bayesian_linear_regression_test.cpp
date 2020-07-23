@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(CheckParamsPassed)
   // An error should occur.
   SetInputParam("input", std::move(matX));
   SetInputParam("input_model",
-                CLI::GetParam<BayesianLinearRegression*>("output_model"));
+                IO::GetParam<BayesianLinearRegression*>("output_model"));
   SetInputParam("test", std::move(matXtest));
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
