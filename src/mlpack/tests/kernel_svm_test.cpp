@@ -40,7 +40,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
   for (size_t trial = 0; trial < 5; ++trial)
   {
     arma::mat data(inputSize, points);
-    arma::Row<size_t> labels(points);
+    arma::Row<size_t> labels = arma::zeros<
+                               arma::Row<size_t>>(points);
     for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
@@ -61,22 +62,22 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
       continue;
 
     arma::mat testData(inputSize, points);
-    arma::Row<size_t> testLabels(inputSize);
+    arma::Row<size_t> testLabels = arma::zeros<
+                                   arma::Row<size_t>>(points);
 
     // Create a test set.
     for (size_t i = 0; i < points / 2; ++i)
     {
-      data.col(i) = g1.Random();
-      labels[i] = 0;
+      testData.col(i) = g1.Random();
     }
     for (size_t i = points / 2; i < points; ++i)
     {
-      data.col(i) = g2.Random();
-      labels[i] = 1;
+      testData.col(i) = g2.Random();
+      testLabels[i] = 1;
     }
 
     // Ensure that the error is close to zero.
-    const double testAcc = svm.ComputeAccuracy(data, labels);
+    const double testAcc = svm.ComputeAccuracy(testData, testLabels);
     if (testAcc >= 0.95)
     {
       success = true;
@@ -100,11 +101,8 @@ BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
   for (size_t i = 0; i < dataset.n_cols; ++i)
     dataset.col(i) /= norm(dataset.col(i), 2);
 
-  arma::Row<size_t> labels(dataset.n_cols);
-  for (size_t i = 0; i < dataset.n_cols / 2; ++i)
-  {
-    labels[i] = 0;
-  }
+  arma::Row<size_t> labels = arma::zeros<
+                             arma::Row<size_t>>(dataset.n_cols);
 
   for (size_t i = dataset.n_cols / 2; i < dataset.n_cols; ++i)
   {
@@ -115,9 +113,9 @@ BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
   for (size_t trial = 0; trial < 5; ++trial)
   {
     // Now train a svm object on it.
-    KernelSVM<arma::mat,
-              kernel::GaussianKernel> svm(dataset,
-                                labels, 1.0, true, 10);
+    KernelSVM<arma::mat, kernel::GaussianKernel> svm(
+        dataset, labels, 1.0, true, 10);
+
     // Ensure that the error is close to zero.
     const double testAcc = svm.ComputeAccuracy(dataset, labels);
     if (testAcc >= 0.95)
@@ -141,12 +139,8 @@ BOOST_AUTO_TEST_CASE(ConcentricCircleDataset)
   // Now, there are 500 points centered at the origin with unit variance.
   dataset = arma::randn(3, 500);
   dataset *= 0.05;
-  arma::Row<size_t> labels(dataset.n_cols);
-  for (size_t i = 0; i < dataset.n_cols / 2; ++i)
-  {
-    labels[i] = 0;
-  }
-
+  arma::Row<size_t> labels = arma::zeros<
+                             arma::Row<size_t>>(dataset.n_cols);
 
   // Take the second 250 points and spread them away from the origin.
   for (size_t i = 250; i < 500; ++i)
@@ -164,10 +158,9 @@ BOOST_AUTO_TEST_CASE(ConcentricCircleDataset)
   for (size_t trial = 0; trial < 5; ++trial)
   {
     // Now train a svm object on it.
-    KernelSVM<arma::mat,
-              kernel::GaussianKernel> svm(dataset,
-                                labels, 1.0, true, 10);
-    std::cout<<"training complete"<<std::endl;
+    KernelSVM<arma::mat, kernel::GaussianKernel> svm(
+        dataset, labels, 1.0, true, 10);
+
     // Ensure that the error is close to zero.
     const double testAcc = svm.ComputeAccuracy(dataset, labels);
     if (testAcc >= 0.95)
