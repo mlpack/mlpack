@@ -1710,8 +1710,8 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
       target = arma::zeros(vocabSize, batchSize);
       for (size_t i = 0; i < batchSize; ++i)
       {
-        const size_t predictedWord = math::RandInt(1, vocabSize);
-        target(predictedWord, i) = 1;
+        const size_t targetWord = math::RandInt(1, vocabSize);
+        target(targetWord, i) = 1;
       }
 
       model = new FFN<CrossEntropyError<>, GlorotInitialization>();
