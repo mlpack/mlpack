@@ -131,7 +131,7 @@ static void mlpackMain()
   ReportIgnoredParam({{"test", false}}, "predictions");
 
   BayesianLinearRegression* bayesLinReg;
-  if (CLI::HasParam("input"))
+  if (IO::HasParam("input"))
   {
     Log::Info << "input detected " << std::endl;
     // Initialize the object.
