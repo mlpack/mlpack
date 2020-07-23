@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionSavedEqualCode)
 
   arma::mat ytest = std::move(responses);
   // Check that initial output and output using saved model are same.
-  CheckMatrices(ytest, CLI::GetParam<arma::mat>("predictions"));
+  CheckMatrices(ytest, IO::GetParam<arma::mat>("predictions"));
 }
 
 /**
