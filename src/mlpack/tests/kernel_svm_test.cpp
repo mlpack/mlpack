@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
 
     // Ensure that the error is close to zero.
     const double acc = svm.ComputeAccuracy(data, labels);
-    if (acc >= 0.92)
+    if (acc <= 0.98)
       continue;
 
     arma::mat testData(inputSize, points);
