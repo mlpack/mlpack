@@ -145,7 +145,7 @@ static void mlpackMain()
     // seems more likely that these will be stored with one response per line
     // (one per row). So we should not transpose upon loading.
     arma::rowvec responses = std::move(
-        CLI::GetParam<arma::rowvec>("responses"));
+        IO::GetParam<arma::rowvec>("responses"));
 
     if (responses.n_elem != matX.n_cols)
     {
