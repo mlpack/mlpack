@@ -67,7 +67,7 @@ make_pointer_vector(std::vector<T*>& t)
   return pointer_vector_wrapper<T>(t);
 }
 
-#define CEREAL_VECTOR_POINTER(T) cereal::make_pointer_vector(T) \
+#define CEREAL_VECTOR_POINTER(T) cereal::make_pointer_vector(T)
 
 } // end namespace cereal
 

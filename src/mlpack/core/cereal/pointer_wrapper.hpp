@@ -75,7 +75,7 @@ make_pointer(T*& t)
   return pointer_wrapper<T>(t);
 }
 
-#define CEREAL_POINTER(T) cereal::make_pointer(T) \
+#define CEREAL_POINTER(T) cereal::make_pointer(T)
 
 } // end namespace cereal
 
