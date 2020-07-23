@@ -50,10 +50,10 @@ template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Lookup<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+    const arma::Mat<eT>& /* gy */,
+    arma::Mat<eT>& /* g */)
 {
-  g = gy;
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>

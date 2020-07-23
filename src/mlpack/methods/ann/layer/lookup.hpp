@@ -70,8 +70,8 @@ class Lookup
    */
   template<typename eT>
   void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+                const arma::Mat<eT>& /* gy */,
+                arma::Mat<eT>& /* g */);
 
   /**
    * Calculate the gradient using the output delta and the input activation.

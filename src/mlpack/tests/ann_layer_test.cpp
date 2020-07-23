@@ -1680,11 +1680,6 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
     BOOST_REQUIRE_CLOSE(outputSum, arma::accu(output.col(i)), 1e-3);
   }
 
-  // Test the Backward function.
-  gy = 0.3 * arma::randu(embeddingSize * seqLength, batchSize);
-  module.Backward(input, gy, g);
-  BOOST_REQUIRE_EQUAL(arma::accu(gy), arma::accu(g));
-
   // Test the Gradient function.
   arma::mat error = 0.01 * arma::randu(embeddingSize * seqLength, batchSize);
   module.Gradient(input, error, gradient);
