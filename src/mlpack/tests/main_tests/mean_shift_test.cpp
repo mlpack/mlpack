@@ -30,22 +30,22 @@ struct MeanShiftTestFixture
   MeanShiftTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~MeanShiftTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
 static void ResetSettings()
 {
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(MeanShiftMainTest, MeanShiftTestFixture);
@@ -65,9 +65,9 @@ BOOST_AUTO_TEST_CASE(MeanShiftOutputDimensionTest)
   mlpackMain();
 
   // Now check that the output has 1 extra row for labels.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3 + 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 3 + 1);
   // Check number of output points are the same.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 100);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 100);
 }
 
 /**
@@ -86,9 +86,9 @@ BOOST_AUTO_TEST_CASE(MeanShiftLabelOnlyOutputDimensionTest)
   mlpackMain();
 
   // Check that there is only 1 row containing all the labels.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 1);
   // Check number of output points are the same.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 100);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 100);
 }
 
 /**
@@ -113,9 +113,9 @@ BOOST_AUTO_TEST_CASE(MeanShiftInPlaceTest)
   mlpackMain();
 
   // Now check that the output has 1 extra row for labels.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, numRows + 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, numRows + 1);
   // Check number of output points are the same.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, numCols);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, numCols);
 }
 
 /**
@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftForceConvergenceTest)
 
   mlpackMain();
 
-  const int numCentroids1 = CLI::GetParam<arma::mat>("centroid").n_cols;
+  const int numCentroids1 = IO::GetParam<arma::mat>("centroid").n_cols;
 
   ResetSettings();
 
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftForceConvergenceTest)
 
   mlpackMain();
 
-  const int numCentroids2 = CLI::GetParam<arma::mat>("centroid").n_cols;
+  const int numCentroids2 = IO::GetParam<arma::mat>("centroid").n_cols;
   // Resulting number of centroids should be different.
   BOOST_REQUIRE_NE(numCentroids1, numCentroids2);
 }
@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftRadiusTest)
 
   mlpackMain();
 
-  const int numCentroids1 = CLI::GetParam<arma::mat>("centroid").n_cols;
+  const int numCentroids1 = IO::GetParam<arma::mat>("centroid").n_cols;
 
   ResetSettings();
 
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftRadiusTest)
 
   mlpackMain();
 
-  const int numCentroids2 = CLI::GetParam<arma::mat>("centroid").n_cols;
+  const int numCentroids2 = IO::GetParam<arma::mat>("centroid").n_cols;
   // Resulting number of centroids should be different.
   BOOST_REQUIRE_NE(numCentroids1, numCentroids2);
 }
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftMaxIterationsTest)
 
   mlpackMain();
 
-  const int numCentroids1 = CLI::GetParam<arma::mat>("centroid").n_cols;
+  const int numCentroids1 = IO::GetParam<arma::mat>("centroid").n_cols;
 
   ResetSettings();
 
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE(MeanShiftMaxIterationsTest)
 
   mlpackMain();
 
-  const int numCentroids2 = CLI::GetParam<arma::mat>("centroid").n_cols;
+  const int numCentroids2 = IO::GetParam<arma::mat>("centroid").n_cols;
   // Resulting number of centroids should be different.
   BOOST_REQUIRE_NE(numCentroids1, numCentroids2);
 }

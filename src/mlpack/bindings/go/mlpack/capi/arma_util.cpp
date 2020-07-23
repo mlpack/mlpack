@@ -13,8 +13,8 @@
  */
 #include <mlpack/bindings/go/mlpack/capi/arma_util.h>
 #include "arma_util.hpp"
-#include "cli_util.hpp"
-#include <mlpack/core/util/cli.hpp>
+#include "io_util.hpp"
+#include <mlpack/core/util/io.hpp>
 
 namespace mlpack {
 namespace util {
@@ -30,7 +30,7 @@ void mlpackToArmaMat(const char* identifier, double* mat,
   // Advanced constructor.
   arma::mat m(mat, row, col, false, true);
 
-  // Set input parameter with corresponding matrix in CLI.
+  // Set input parameter with corresponding matrix in IO.
   SetParam(identifier, m);
 }
 
@@ -45,7 +45,7 @@ void mlpackToArmaUmat(const char* identifier, double* mat,
 
   arma::Mat<size_t> matr = arma::conv_to<arma::Mat<size_t>>::from(m);
 
-  // Set input parameter with corresponding matrix in CLI.
+  // Set input parameter with corresponding matrix in IO.
   SetParam(identifier, matr);
 }
 
@@ -57,7 +57,7 @@ void mlpackToArmaRow(const char* identifier, double* rowvec, const size_t elem)
   // Advanced constructor.
   arma::rowvec m(rowvec, elem, false, true);
 
-  // Set input parameter with corresponding row in CLI.
+  // Set input parameter with corresponding row in IO.
   SetParam(identifier, m);
 }
 
@@ -71,7 +71,7 @@ void mlpackToArmaUrow(const char* identifier, double* rowvec, const size_t elem)
 
   arma::Row<size_t> matr = arma::conv_to<arma::Row<size_t>>::from(m);
 
-  // Set input parameter with corresponding row in CLI.
+  // Set input parameter with corresponding row in IO.
   SetParam(identifier, matr);
 }
 
@@ -83,7 +83,7 @@ void mlpackToArmaCol(const char* identifier, double* colvec, const size_t elem)
   // Advanced constructor.
   arma::colvec m(colvec, elem, false, true);
 
-  // Set input parameter with corresponding column in CLI.
+  // Set input parameter with corresponding column in IO.
   SetParam(identifier, m);
 }
 
@@ -97,7 +97,7 @@ void mlpackToArmaUcol(const char* identifier, double* colvec, const size_t elem)
 
   arma::Col<size_t> matr = arma::conv_to<arma::Col<size_t>>::from(m);
 
-  // Set input parameter with corresponding column in CLI.
+  // Set input parameter with corresponding column in IO.
   SetParam(identifier, matr);
 }
 /**
@@ -105,7 +105,7 @@ void mlpackToArmaUcol(const char* identifier, double* colvec, const size_t elem)
  */
 void* mlpackArmaPtrMat(const char* identifier)
 {
-  arma::mat& output = CLI::GetParam<arma::mat>(identifier);
+  arma::mat& output = IO::GetParam<arma::mat>(identifier);
   if (output.is_empty())
   {
     return NULL;
@@ -119,7 +119,7 @@ void* mlpackArmaPtrMat(const char* identifier)
  */
 void* mlpackArmaPtrUmat(const char* identifier)
 {
-  arma::Mat<size_t>& m = CLI::GetParam<arma::Mat<size_t>>(identifier);
+  arma::Mat<size_t>& m = IO::GetParam<arma::Mat<size_t>>(identifier);
 
   arma::mat output = arma::conv_to<arma::mat>::from(m);
   if (output.is_empty())
@@ -135,7 +135,7 @@ void* mlpackArmaPtrUmat(const char* identifier)
  */
 void* mlpackArmaPtrRow(const char* identifier)
 {
-  arma::Row<double>& output = CLI::GetParam<arma::Row<double>>(identifier);
+  arma::Row<double>& output = IO::GetParam<arma::Row<double>>(identifier);
   if (output.is_empty())
   {
     return NULL;
@@ -149,7 +149,7 @@ void* mlpackArmaPtrRow(const char* identifier)
  */
 void* mlpackArmaPtrUrow(const char* identifier)
 {
-  arma::Row<size_t>& m = CLI::GetParam<arma::Row<size_t>>(identifier);
+  arma::Row<size_t>& m = IO::GetParam<arma::Row<size_t>>(identifier);
 
   arma::Row<double> output = arma::conv_to<arma::Row<double>>::from(m);
   if (output.is_empty())
@@ -165,7 +165,7 @@ void* mlpackArmaPtrUrow(const char* identifier)
  */
 void* mlpackArmaPtrCol(const char* identifier)
 {
-  arma::Col<double>& output = CLI::GetParam<arma::Col<double>>(identifier);
+  arma::Col<double>& output = IO::GetParam<arma::Col<double>>(identifier);
   if (output.is_empty())
   {
     return NULL;
@@ -179,7 +179,7 @@ void* mlpackArmaPtrCol(const char* identifier)
  */
 void* mlpackArmaPtrUcol(const char* identifier)
 {
-  arma::Col<size_t>& m = CLI::GetParam<arma::Col<size_t>>(identifier);
+  arma::Col<size_t>& m = IO::GetParam<arma::Col<size_t>>(identifier);
 
   arma::Col<double> output = arma::conv_to<arma::Col<double>>::from(m);
   if (output.is_empty())
@@ -195,7 +195,7 @@ void* mlpackArmaPtrUcol(const char* identifier)
  */
 int mlpackNumRowMat(const char* identifier)
 {
-  return CLI::GetParam<arma::mat>(identifier).n_rows;
+  return IO::GetParam<arma::mat>(identifier).n_rows;
 }
 
 /**
@@ -203,7 +203,7 @@ int mlpackNumRowMat(const char* identifier)
  */
 int mlpackNumColMat(const char* identifier)
 {
-  return CLI::GetParam<arma::mat>(identifier).n_cols;
+  return IO::GetParam<arma::mat>(identifier).n_cols;
 }
 
 /**
@@ -211,7 +211,7 @@ int mlpackNumColMat(const char* identifier)
  */
 int mlpackNumElemMat(const char* identifier)
 {
-  return CLI::GetParam<arma::mat>(identifier).n_elem;
+  return IO::GetParam<arma::mat>(identifier).n_elem;
 }
 
 /**
@@ -219,7 +219,7 @@ int mlpackNumElemMat(const char* identifier)
  */
 int mlpackNumRowUmat(const char* identifier)
 {
-  return CLI::GetParam<arma::Mat<size_t>>(identifier).n_rows;
+  return IO::GetParam<arma::Mat<size_t>>(identifier).n_rows;
 }
 
 /**
@@ -227,7 +227,7 @@ int mlpackNumRowUmat(const char* identifier)
  */
 int mlpackNumColUmat(const char* identifier)
 {
-  return CLI::GetParam<arma::Mat<size_t>>(identifier).n_cols;
+  return IO::GetParam<arma::Mat<size_t>>(identifier).n_cols;
 }
 
 /**
@@ -235,7 +235,7 @@ int mlpackNumColUmat(const char* identifier)
  */
 int mlpackNumElemUmat(const char* identifier)
 {
-  return CLI::GetParam<arma::Mat<size_t>>(identifier).n_elem;
+  return IO::GetParam<arma::Mat<size_t>>(identifier).n_elem;
 }
 
 /**
@@ -243,7 +243,7 @@ int mlpackNumElemUmat(const char* identifier)
  */
 int mlpackNumElemRow(const char* identifier)
 {
-  return CLI::GetParam<arma::Row<double>>(identifier).n_elem;
+  return IO::GetParam<arma::Row<double>>(identifier).n_elem;
 }
 
 /**
@@ -251,7 +251,7 @@ int mlpackNumElemRow(const char* identifier)
  */
 int mlpackNumElemUrow(const char* identifier)
 {
-  return CLI::GetParam<arma::Row<size_t>>(identifier).n_elem;
+  return IO::GetParam<arma::Row<size_t>>(identifier).n_elem;
 }
 
 /**
@@ -259,7 +259,7 @@ int mlpackNumElemUrow(const char* identifier)
  */
 int mlpackNumElemCol(const char* identifier)
 {
-  return CLI::GetParam<arma::Col<double>>(identifier).n_elem;
+  return IO::GetParam<arma::Col<double>>(identifier).n_elem;
 }
 
 /**
@@ -267,11 +267,11 @@ int mlpackNumElemCol(const char* identifier)
  */
 int mlpackNumElemUcol(const char* identifier)
 {
-  return CLI::GetParam<arma::Col<size_t>>(identifier).n_elem;
+  return IO::GetParam<arma::Col<size_t>>(identifier).n_elem;
 }
 
 /**
- * Call CLI::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
+ * Call IO::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
  */
 void mlpackToArmaMatWithInfo(const char* identifier,
                              const bool* dimensions,
@@ -287,11 +287,11 @@ void mlpackToArmaMatWithInfo(const char* identifier,
   }
 
   arma::mat m(memptr, rows, cols, false, true);
-  std::get<0>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
+  std::get<0>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
       identifier)) = std::move(d);
-  std::get<1>(CLI::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
+  std::get<1>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
       identifier)) = std::move(m);
-  CLI::SetPassed(identifier);
+  IO::SetPassed(identifier);
 }
 
 /**
@@ -300,7 +300,7 @@ void mlpackToArmaMatWithInfo(const char* identifier,
 int mlpackArmaMatWithInfoElements(const char* identifier)
 {
   typedef std::tuple<data::DatasetInfo, arma::mat> TupleType;
-  return std::get<1>(CLI::GetParam<TupleType>(identifier)).n_elem;
+  return std::get<1>(IO::GetParam<TupleType>(identifier)).n_elem;
 }
 
 /**
@@ -309,7 +309,7 @@ int mlpackArmaMatWithInfoElements(const char* identifier)
 int mlpackArmaMatWithInfoRows(const char* identifier)
 {
   typedef std::tuple<data::DatasetInfo, arma::mat> TupleType;
-  return std::get<1>(CLI::GetParam<TupleType>(identifier)).n_rows;
+  return std::get<1>(IO::GetParam<TupleType>(identifier)).n_rows;
 }
 
 /**
@@ -318,7 +318,7 @@ int mlpackArmaMatWithInfoRows(const char* identifier)
 int mlpackArmaMatWithInfoCols(const char* identifier)
 {
   typedef std::tuple<data::DatasetInfo, arma::mat> TupleType;
-  return std::get<1>(CLI::GetParam<TupleType>(identifier)).n_cols;
+  return std::get<1>(IO::GetParam<TupleType>(identifier)).n_cols;
 }
 
 /**
@@ -328,7 +328,7 @@ int mlpackArmaMatWithInfoCols(const char* identifier)
 void* mlpackArmaPtrMatWithInfoPtr(const char* identifier)
 {
   typedef std::tuple<data::DatasetInfo, arma::mat> TupleType;
-  arma::mat& m = std::get<1>(CLI::GetParam<TupleType>(identifier));
+  arma::mat& m = std::get<1>(IO::GetParam<TupleType>(identifier));
   if (m.is_empty())
   {
     return NULL;

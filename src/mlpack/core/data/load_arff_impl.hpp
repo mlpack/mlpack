@@ -84,6 +84,7 @@ void LoadARFF(const std::string& filename,
         std::string dimType = "";
         while (it != tok.end())
           dimType += *(it++);
+        std::string origDimType(dimType); // We may need the original cases.
         std::transform(dimType.begin(), dimType.end(), dimType.begin(),
             ::tolower);
 
@@ -98,15 +99,18 @@ void LoadARFF(const std::string& filename,
         else if (dimType[0] == '{')
         {
           // The feature is categorical, and we have all the types right here.
+          // Note that categories are case-sensitive, and so we must use the
+          // `origDimType` string here instead (which has not had ::tolower used
+          // on it).
           types.push_back(true);
-          boost::trim_if(dimType,
+          boost::trim_if(origDimType,
               [](char c)
               {
                   return c == '{' || c == '}' || c == ' ' || c == '\t';
               });
 
           boost::escaped_list_separator<char> sep("\\", ",", "\"'");
-          Tokenizer dimTok(dimType, sep);
+          Tokenizer dimTok(origDimType, sep);
           Tokenizer::iterator it = dimTok.begin();
           std::vector<std::string> categories;
 
@@ -230,8 +234,26 @@ void LoadARFF(const std::string& filename,
         // Strip spaces before mapping.
         std::string token = *it;
         boost::trim(token);
+        const size_t currentNumMappings = info.NumMappings(col);
+        const eT result = info.template MapString<eT>(token, col);
+
+        // If the set of categories was pre-specified, then we must crash if
+        // this was not one of those categories.
+        if (categoryStrings.count(col) > 0 &&
+            currentNumMappings < info.NumMappings(col))
+        {
+          std::stringstream error;
+          error << "Parse error at line " << (headerLines + row) << " token "
+              << col << ": category \"" << token << "\" not in the set of known"
+              << " categories for this dimension (";
+          for (size_t i = 0; i < categoryStrings.at(col).size() - 1; ++i)
+            error << "\"" << categoryStrings.at(col)[i] << "\", ";
+          error << "\"" << categoryStrings.at(col).back() << "\").";
+          throw std::runtime_error(error.str());
+        }
+
         // We load transposed.
-        matrix(col, row) = info.template MapString<eT>(token, col);
+        matrix(col, row) = result;
       }
       else if (info.Type(col) == Datatype::numeric)
       {

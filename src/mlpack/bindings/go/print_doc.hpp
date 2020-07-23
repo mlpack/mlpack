@@ -36,7 +36,7 @@ namespace go {
  * or Required Input.
  */
 template<typename T>
-void PrintDoc(const util::ParamData& d,
+void PrintDoc(util::ParamData& d,
               const void* input,
               void* isLower)
 {

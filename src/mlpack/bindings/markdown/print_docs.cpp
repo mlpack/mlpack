@@ -11,7 +11,7 @@
  */
 #include "print_docs.hpp"
 
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/program_doc.hpp>
 #include "binding_info.hpp"
 #include "print_doc_functions.hpp"
@@ -47,7 +47,7 @@ void PrintDocs(const std::string& bindingName,
 {
   ProgramDoc& programDoc = BindingInfo::GetProgramDoc(bindingName);
 
-  CLI::RestoreSettings(bindingName);
+  IO::RestoreSettings(bindingName);
 
   // First, for this section, print each of the names.
   for (size_t i = 0; i < languages.size(); ++i)
@@ -110,8 +110,8 @@ void PrintDocs(const std::string& bindingName,
         << endl;
     cout << "|------------|------------|-------------------|---------------|"
         << endl;
-    map<string, ParamData>& parameters = CLI::Parameters();
-    for (map<string, ParamData>::const_iterator it = parameters.begin();
+    map<string, ParamData>& parameters = IO::Parameters();
+    for (map<string, ParamData>::iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
       if (!it->second.input)
@@ -175,7 +175,7 @@ void PrintDocs(const std::string& bindingName,
     cout << endl;
     cout << "| ***name*** | ***type*** | ***description*** |" << endl;
     cout << "|------------|------------|-------------------|" << endl;
-    for (map<string, ParamData>::const_iterator it = parameters.begin();
+    for (map<string, ParamData>::iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
       if (it->second.input)
@@ -254,5 +254,5 @@ void PrintDocs(const std::string& bindingName,
     cout << endl;
   }
 
-  CLI::ClearSettings();
+  IO::ClearSettings();
 }

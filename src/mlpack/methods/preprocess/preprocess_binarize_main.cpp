@@ -2,7 +2,7 @@
  * @file methods/preprocess/preprocess_binarize_main.cpp
  * @author Keon Kim
  *
- * binarize CLI executable
+ * A binding to binarize a dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/binarize.hpp>
 
@@ -65,18 +65,18 @@ using namespace std;
 
 static void mlpackMain()
 {
-  const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
-  const double threshold = CLI::GetParam<double>("threshold");
+  const size_t dimension = (size_t) IO::GetParam<int>("dimension");
+  const double threshold = IO::GetParam<double>("threshold");
 
   // Check on data parameters.
-  if (!CLI::HasParam("dimension"))
+  if (!IO::HasParam("dimension"))
   {
     Log::Warn << "You did not specify " << PRINT_PARAM_STRING("dimension")
         << ", so the program will perform binarization on every dimension."
         << endl;
   }
 
-  if (!CLI::HasParam("threshold"))
+  if (!IO::HasParam("threshold"))
   {
     Log::Warn << "You did not specify " << PRINT_PARAM_STRING("threshold")
         << ", so the threshold will be automatically set to '0.0'." << endl;
@@ -85,7 +85,7 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   // Load the data.
-  arma::mat input = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat input = std::move(IO::GetParam<arma::mat>("input"));
   arma::mat output;
 
   RequireParamValue<int>("dimension", [](int x) { return x >= 0; }, true,
@@ -97,7 +97,7 @@ static void mlpackMain()
       [input](int x) { return size_t(x) < input.n_rows; }, true, error.str());
 
   Timer::Start("binarize");
-  if (CLI::HasParam("dimension"))
+  if (IO::HasParam("dimension"))
   {
     data::Binarize<double>(input, output, threshold, dimension);
   }
@@ -108,6 +108,6 @@ static void mlpackMain()
   }
   Timer::Stop("binarize");
 
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(output);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(output);
 }
