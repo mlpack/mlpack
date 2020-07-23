@@ -187,5 +187,5 @@ static void mlpackMain()
     IO::GetParam<arma::mat>("predictions") = std::move(predictions);
   }
 
-  CLI::GetParam<BayesianLinearRegression*>("output_model") = bayesLinReg;
+  IO::GetParam<BayesianLinearRegression*>("output_model") = bayesLinReg;
 }
