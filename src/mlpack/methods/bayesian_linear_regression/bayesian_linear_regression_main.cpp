@@ -184,7 +184,7 @@ static void mlpackMain()
     }
 
     // Save test predictions (one per line).
-    CLI::GetParam<arma::mat>("predictions") = std::move(predictions);
+    IO::GetParam<arma::mat>("predictions") = std::move(predictions);
   }
 
   CLI::GetParam<BayesianLinearRegression*>("output_model") = bayesLinReg;
