@@ -167,7 +167,7 @@ static void mlpackMain()
   {
     Log::Info << "Regressing on test points." << endl;
     // Load test points.
-    mat testPoints = std::move(CLI::GetParam<arma::mat>("test"));
+    mat testPoints = std::move(IO::GetParam<arma::mat>("test"));
     arma::rowvec predictions;
 
     if (CLI::HasParam("stds"))
