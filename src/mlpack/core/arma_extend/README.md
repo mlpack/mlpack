@@ -3,14 +3,8 @@ to still support older versions of Armadillo.  Therefore some files are licensed
 under the Mozilla Public License v2.0 (MPL2).
 
 These are the files under the MPL:
-
- - fn_ind2sub.hpp
- - SpMat_extra_bones.hpp
- - SpMat_extra_meat.hpp
- - operator_minus.hpp
- - hdf5_misc.hpp
- - Mat_extra_bones.hpp
- - Mat_extra_meat.hpp
+ 
+ * serialize_armadillo.hpp
 
 If you want a copy of mlpack without MPL code included, you will need to
 
