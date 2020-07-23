@@ -57,7 +57,6 @@ add_executable(mlpack_test
   linear_regression_test.cpp
   linear_svm_test.cpp
   lmnn_test.cpp
-  load_save_test.cpp
   local_coordinate_coding_test.cpp
   log_test.cpp
   logistic_regression_test.cpp
@@ -174,6 +173,7 @@ add_executable(mlpack_catch_test
   serialization_catch.hpp
   test_catch_tools.hpp
   image_load_test.cpp
+  load_save_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/test_helper.hpp
 )
