@@ -180,14 +180,14 @@ BOOST_AUTO_TEST_CASE(EqualtoRidge)
     if (arma::norm(blrPred - ridgePred) > 1e-5)
       continue;
 
-    // Check the predictions are close enough between ridge and our tested model.
+    // Check the predictions are close enough between ridge and our blr.
     for (size_t i = 0; i < y.size(); ++i)
       BOOST_REQUIRE_CLOSE(blrPred[i], ridgePred[i], 1);
 
     // Exit once a test case has completed.
     break;
   }
-  
+
   BOOST_REQUIRE_LT(trial, 3);
 }
 
