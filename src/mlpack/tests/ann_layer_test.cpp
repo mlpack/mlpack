@@ -1702,18 +1702,17 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
   {
     GradientFunction()
     {
-      const size_t seqLength = 10;
-      const size_t embeddingSize = 8;
-      const size_t vocabSize = 20;
-      const size_t batchSize = 1;
-
       input.set_size(seqLength, batchSize);
       for (size_t i = 0; i < input.n_elem; ++i)
       {
         input(i) = math::RandInt(1, vocabSize);
       }
       target = arma::zeros(vocabSize, batchSize);
-      target(vocabSize - 1) = 1;
+      for (size_t i = 0; i < batchSize; ++i)
+      {
+        const size_t predictedWord = math::RandInt(1, vocabSize);
+        target(predictedWord, i) = 1;
+      }
 
       model = new FFN<CrossEntropyError<>, GlorotInitialization>();
       model->Predictors() = input;
@@ -1740,6 +1739,11 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
 
     FFN<CrossEntropyError<>, GlorotInitialization>* model;
     arma::mat input, target;
+
+    const size_t seqLength = 10;
+    const size_t embeddingSize = 8;
+    const size_t vocabSize = 20;
+    const size_t batchSize = 4;
   } function;
 
   BOOST_REQUIRE_LE(CheckGradient(function), 1e-5);
