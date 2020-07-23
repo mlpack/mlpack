@@ -1,10 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-<<<<<<< HEAD
-  activation_functions_test.cpp
-=======
-  adaboost_test.cpp
->>>>>>> fac4099885f326fe7374423f59852b7a1a8c39e0
   akfn_test.cpp
   aknn_test.cpp
   ann_dist_test.cpp
