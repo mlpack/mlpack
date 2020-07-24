@@ -18,8 +18,6 @@
 // In case it hasn't been included yet.
 #include "ns_model.hpp"
 
-#include <boost/serialization/variant.hpp>
-
 namespace mlpack {
 namespace neighbor {
 

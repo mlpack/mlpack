@@ -14,8 +14,6 @@
 
 #include "cf_model.hpp"
 
-#include <boost/serialization/variant.hpp>
-
 #include <mlpack/methods/cf/normalization/no_normalization.hpp>
 #include <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
 #include <mlpack/methods/cf/normalization/user_mean_normalization.hpp>

@@ -14,12 +14,10 @@
 #include "gan.hpp"
 
 #include <mlpack/core.hpp>
-
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/init_rules/network_init.hpp>
 #include <mlpack/methods/ann/visitor/output_parameter_visitor.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
-#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
 namespace ann /** Artifical Neural Network.  */ {
