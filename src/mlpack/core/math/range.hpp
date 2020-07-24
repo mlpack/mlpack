@@ -180,7 +180,7 @@ class RangeType
    * Serialize the range object.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar);
 };
 
 } // namespace math
