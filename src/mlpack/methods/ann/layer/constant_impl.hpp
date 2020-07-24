@@ -54,7 +54,7 @@ void Constant<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Constant<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar
 {
   ar & CEREAL_NVP(constantOutput);
 }

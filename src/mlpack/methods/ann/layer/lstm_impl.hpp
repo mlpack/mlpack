@@ -467,7 +467,7 @@ void LSTM<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void LSTM<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar
 {
   ar & CEREAL_NVP(weights);
   ar & CEREAL_NVP(inSize);

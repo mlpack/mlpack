@@ -450,7 +450,7 @@ void TransposedConvolution<
     InputDataType,
     OutputDataType
 >::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar
 {
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);

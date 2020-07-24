@@ -127,7 +127,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MiniBatchDiscrimination<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar
 {
   ar & CEREAL_NVP(A);
   ar & CEREAL_NVP(B);

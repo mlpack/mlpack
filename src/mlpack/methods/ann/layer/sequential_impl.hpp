@@ -228,7 +228,7 @@ template<typename InputDataType, typename OutputDataType, bool Residual,
 template<typename Archive>
 void Sequential<
     InputDataType, OutputDataType, Residual, CustomLayers...>::serialize(
-        Archive& ar, const unsigned int /* version */)
+        Archive& ar
 {
   // If loading, delete the old layers.
   if (Archive::is_loading::value)

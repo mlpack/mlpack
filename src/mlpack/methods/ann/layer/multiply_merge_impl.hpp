@@ -112,7 +112,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar
 {
   // Be sure to clear other layers before loading.
   if (Archive::is_loading::value)

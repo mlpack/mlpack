@@ -208,7 +208,7 @@ void RecurrentAttention<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void RecurrentAttention<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar
 {
   ar & CEREAL_NVP(rho);
   ar & CEREAL_NVP(outSize);

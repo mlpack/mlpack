@@ -281,7 +281,7 @@ void FastLSTM<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void FastLSTM<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar
 {
   ar & CEREAL_NVP(weights);
   ar & CEREAL_NVP(inSize);

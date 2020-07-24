@@ -256,7 +256,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar
 {
   // Clean up memory, if we are loading.
   if (Archive::is_loading::value)

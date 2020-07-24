@@ -216,7 +216,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void Highway<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar
 {
   // If loading, delete the old layers and set size for weights.
   if (Archive::is_loading::value)
