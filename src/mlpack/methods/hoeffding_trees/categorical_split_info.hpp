@@ -32,7 +32,7 @@ class CategoricalSplitInfo
 
   //! Serialize the object.  (Nothing needs to be saved.)
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */) { }
 };
 
 } // namespace tree

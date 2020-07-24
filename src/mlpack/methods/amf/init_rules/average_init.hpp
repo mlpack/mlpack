@@ -119,7 +119,7 @@ class AverageInitialization
 
   //! Serialize the object (in this case, there is nothing to do).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */) { }
 };
 
 } // namespace amf

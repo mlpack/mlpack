@@ -120,7 +120,7 @@ class NMFALSUpdate
 
   //! Serialize the object (in this case, there is nothing to serialize).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */) { }
 }; // class NMFALSUpdate
 
 } // namespace amf

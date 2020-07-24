@@ -199,7 +199,7 @@ class CombinedNormalization
       typename Archive,
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
       typename = void>
-  void SequenceSerialize(Archive& /* ar */, const unsigned int /* version */)
+  void SequenceSerialize(Archive& /* ar */)
   { }
 };
 

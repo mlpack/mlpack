@@ -90,7 +90,7 @@ class ConcatPerformance
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& /* ar */);
 
  private:
   //! Locally-stored number of inputs.
