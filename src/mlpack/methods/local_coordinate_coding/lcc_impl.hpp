@@ -107,7 +107,7 @@ double LocalCoordinateCoding::Train(
 }
 
 template<typename Archive>
-void LocalCoordinateCoding::serialize(Archive& ar,
+void LocalCoordinateCoding::serialize(Archive& ar
                                   )
 {
   ar & CEREAL_NVP(atoms);

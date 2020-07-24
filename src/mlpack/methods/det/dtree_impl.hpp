@@ -992,7 +992,7 @@ void DTree<MatType, TagType>::FillMinMax(const StatType& mins,
 
 template <typename MatType, typename TagType>
 template <typename Archive>
-void DTree<MatType, TagType>::serialize(Archive& ar,
+void DTree<MatType, TagType>::serialize(Archive& ar
                                     )
 {
   ar & CEREAL_NVP(start);

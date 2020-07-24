@@ -91,7 +91,7 @@ template<typename InputDataType, typename OutputDataType,
          typename Activation>
 template<typename Archive>
 void RBF<InputDataType, OutputDataType, Activation>::serialize(
-    Archive& ar,
+    Archive& ar
 )
 {
   ar & CEREAL_NVP(distances);

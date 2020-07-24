@@ -605,7 +605,7 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
-    Archive& ar,
+    Archive& ar
 )
 {
   // Serialize preferences for search.

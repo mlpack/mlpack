@@ -1131,7 +1131,7 @@ void DecisionTree<FitnessFunction,
                   CategoricalSplitType,
                   DimensionSelectionType,
                   ElemType,
-                  NoRecursion>::serialize(Archive& ar,
+                  NoRecursion>::serialize(Archive& ar
                                       )
 {
   // Clean memory if needed.
