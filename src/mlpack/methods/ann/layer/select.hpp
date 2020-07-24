@@ -84,7 +84,7 @@ class Select
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar);
 
  private:
   //! Locally-stored column index.

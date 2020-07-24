@@ -102,7 +102,7 @@ class CombinedNormalization
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version)
+  void serialize(Archive& ar)
   {
     SequenceSerialize<0, Archive>(ar, version);
   }

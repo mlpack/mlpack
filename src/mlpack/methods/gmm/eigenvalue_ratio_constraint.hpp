@@ -104,7 +104,7 @@ class EigenvalueRatioConstraint
 
   //! Serialize the constraint.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar)
   {
     // Strip the const for the sake of loading/saving.  This is the only time it
     // is modified (other than the constructor).

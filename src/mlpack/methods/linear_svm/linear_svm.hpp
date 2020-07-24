@@ -291,7 +291,7 @@ class LinearSVM
    * Serialize the LinearSVM model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar)
   {
     ar & CEREAL_NVP(parameters);
     ar & CEREAL_NVP(numClasses);

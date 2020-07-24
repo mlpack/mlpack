@@ -150,7 +150,7 @@ class RecurrentAttention
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar);
 
  private:
   //! Calculate the gradient of the attention module.

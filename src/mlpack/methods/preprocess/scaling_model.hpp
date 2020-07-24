@@ -87,7 +87,7 @@ class ScalingModel
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar)
   {
     if (Archive::is_loading::value)
     {

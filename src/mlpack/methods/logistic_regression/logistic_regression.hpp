@@ -242,7 +242,7 @@ class LogisticRegression
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar);
 
  private:
   //! Vector of trained parameters (size: dimensionality plus one).

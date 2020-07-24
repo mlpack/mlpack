@@ -156,7 +156,7 @@ class Subview
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar)
   {
     ar & CEREAL_NVP(inSize);
     ar & CEREAL_NVP(beginRow);

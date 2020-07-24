@@ -129,7 +129,7 @@ class EMFit
 
   //! Serialize the fitter.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar);
 
  private:
   /**

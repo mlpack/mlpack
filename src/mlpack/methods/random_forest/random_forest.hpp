@@ -336,7 +336,7 @@ class RandomForest
    * Serialize the random forest.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar);
 
  private:
   /**

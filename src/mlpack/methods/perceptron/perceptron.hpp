@@ -120,7 +120,7 @@ class Perceptron
    * Serialize the perceptron.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar);
 
   //! Get the maximum number of iterations.
   size_t MaxIterations() const { return maxIterations; }

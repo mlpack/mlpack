@@ -100,7 +100,7 @@ class FastMKSStat
 
   //! Serialize the statistic.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar)
   {
     ar & CEREAL_NVP(bound);
     ar & CEREAL_NVP(selfKernel);
