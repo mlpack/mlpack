@@ -72,8 +72,10 @@ TEST_CASE("GMMProbabilityComponentTest", "[GMMTest]")
   REQUIRE(gmm.Probability("3 3", 0) == Approx(5.8923841039e-6).epsilon(1e-7));
   REQUIRE(gmm.Probability("3 3", 1) == Approx(0.0643217044658).epsilon(1e-7));
 
-  REQUIRE(gmm.Probability("-1 5.3", 0) == Approx(2.30212100302e-8).epsilon(1e-7));
-  REQUIRE(gmm.Probability("-1 5.3", 1) == Approx(2.48015006877e-6).epsilon(1e-7));
+  REQUIRE(gmm.Probability("-1 5.3", 0) ==
+      Approx(2.30212100302e-8).epsilon(1e-7));
+  REQUIRE(gmm.Probability("-1 5.3", 1) ==
+      Approx(2.48015006877e-6).epsilon(1e-7));
 
   REQUIRE(gmm.Probability("1.4 0", 0) == Approx(0.0179197849738).epsilon(1e-7));
   REQUIRE(gmm.Probability("1.4 0", 1) == Approx(0.0067568972024).epsilon(1e-7));
@@ -231,7 +233,7 @@ TEST_CASE("GMMTrainEMMultipleGaussians", "[GMMTest]")
     {
       // Check the mean.
       REQUIRE(
-          arma::norm(gmm.Component(sortTry[i]).Mean() - means[sortRef[i]]) < 
+          arma::norm(gmm.Component(sortTry[i]).Mean() - means[sortRef[i]]) <
           0.05);
       // Check the covariance.
       REQUIRE(
@@ -424,8 +426,10 @@ TEST_CASE("GMMRandomTest", "[GMMTest]")
 
   // Now check that the parameters are the same.  Tolerances are kind of big
   // because we only used 2000 observations.
-  REQUIRE(gmm.Weights()[0] == Approx(gmm2.Weights()[sortedIndices[0]]).epsilon(0.07));
-  REQUIRE(gmm.Weights()[1] == Approx(gmm2.Weights()[sortedIndices[1]]).epsilon(0.07));
+  REQUIRE(gmm.Weights()[0] ==
+      Approx(gmm2.Weights()[sortedIndices[0]]).epsilon(0.07));
+  REQUIRE(gmm.Weights()[1] ==
+      Approx(gmm2.Weights()[sortedIndices[1]]).epsilon(0.07));
 
   REQUIRE(gmm.Component(0).Mean()[0] ==
       Approx(gmm2.Component(sortedIndices[0]).Mean()[0]).epsilon(0.075));
@@ -433,13 +437,17 @@ TEST_CASE("GMMRandomTest", "[GMMTest]")
       Approx(gmm2.Component(sortedIndices[0]).Mean()[1]).epsilon(0.075));
 
   REQUIRE(gmm.Component(0).Covariance()(0, 0) ==
-      Approx(gmm2.Component(sortedIndices[0]).Covariance()(0, 0)).epsilon(0.13));
+      Approx(gmm2.Component(sortedIndices[0]).Covariance()(0,
+      0)).epsilon(0.13));
   REQUIRE(gmm.Component(0).Covariance()(0, 1) ==
-      Approx(gmm2.Component(sortedIndices[0]).Covariance()(0, 1)).epsilon(0.22));
+      Approx(gmm2.Component(sortedIndices[0]).Covariance()(0,
+      1)).epsilon(0.22));
   REQUIRE(gmm.Component(0).Covariance()(1, 0) ==
-      Approx(gmm2.Component(sortedIndices[0]).Covariance()(1, 0)).epsilon(0.22));
+      Approx(gmm2.Component(sortedIndices[0]).Covariance()(1,
+      0)).epsilon(0.22));
   REQUIRE(gmm.Component(0).Covariance()(1, 1) ==
-      Approx(gmm2.Component(sortedIndices[0]).Covariance()(1, 1)).epsilon(0.13));
+      Approx(gmm2.Component(sortedIndices[0]).Covariance()(1,
+      1)).epsilon(0.13));
 
   REQUIRE(gmm.Component(1).Mean()[0] ==
       Approx(gmm2.Component(sortedIndices[1]).Mean()[0]).epsilon(0.075));
@@ -447,13 +455,17 @@ TEST_CASE("GMMRandomTest", "[GMMTest]")
       Approx(gmm2.Component(sortedIndices[1]).Mean()[1]).epsilon(0.075));
 
   REQUIRE(gmm.Component(1).Covariance()(0, 0) ==
-      Approx(gmm2.Component(sortedIndices[1]).Covariance()(0, 0)).epsilon(0.13));
+      Approx(gmm2.Component(sortedIndices[1]).Covariance()(0,
+      0)).epsilon(0.13));
   REQUIRE(gmm.Component(1).Covariance()(0, 1) ==
-      Approx(gmm2.Component(sortedIndices[1]).Covariance()(0, 1)).epsilon(0.22));
+      Approx(gmm2.Component(sortedIndices[1]).Covariance()(0,
+      1)).epsilon(0.22));
   REQUIRE(gmm.Component(1).Covariance()(1, 0) ==
-      Approx(gmm2.Component(sortedIndices[1]).Covariance()(1, 0)).epsilon(0.22));
+      Approx(gmm2.Component(sortedIndices[1]).Covariance()(1,
+      0)).epsilon(0.22));
   REQUIRE(gmm.Component(1).Covariance()(1, 1) ==
-      Approx(gmm2.Component(sortedIndices[1]).Covariance()(1, 1)).epsilon(0.13));
+      Approx(gmm2.Component(sortedIndices[1]).Covariance()(1,
+      1)).epsilon(0.13));
 }
 
 /**
@@ -633,7 +645,8 @@ TEST_CASE("EigenvalueRatioConstraintTest", "[GMMTest]")
     arma::vec eigenvalues = arma::eig_sym(cov);
 
     for (size_t i = 0; i < eigenvalues.n_elem; ++i)
-      REQUIRE(eigenvalues[i] / eigenvalues[0] == Approx(ratios[i]).epsilon(1e-7));
+      REQUIRE(eigenvalues[i] / eigenvalues[0] ==
+          Approx(ratios[i]).epsilon(1e-7));
   }
 }
 
@@ -790,7 +803,7 @@ TEST_CASE("UseExistingModelTest", "[GMMTest]")
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
       REQUIRE(gmm.Component(i).Mean()[j] ==
-          Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-5)); 
+          Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-5));
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
         REQUIRE(gmm.Component(i).Covariance()(j, k) ==
@@ -822,14 +835,19 @@ TEST_CASE("DiagonalGMMProbabilityComponentTest", "[GMMTest]")
   REQUIRE(gmm.Probability("1 1", 0) == Approx(0.0117099663049).epsilon(1e-7));
   REQUIRE(gmm.Probability("1 1", 1) == Approx(0.016186673172).epsilon(1e-7));
 
-  REQUIRE(gmm.Probability("3 3", 0) == Approx(3.92825606928e-06).epsilon(1e-7));
+  REQUIRE(gmm.Probability("3 3", 0) ==
+      Approx(3.92825606928e-06).epsilon(1e-7));
   REQUIRE(gmm.Probability("3 3", 1) == Approx(0.0439999395467).epsilon(1e-7));
 
-  REQUIRE(gmm.Probability("2.6 3.2", 0) == Approx(6.47659933818e-06).epsilon(1e-7));
-  REQUIRE(gmm.Probability("2.6 3.2", 1) == Approx(0.0484656319247).epsilon(1e-7));
+  REQUIRE(gmm.Probability("2.6 3.2", 0) ==
+      Approx(6.47659933818e-06).epsilon(1e-7));
+  REQUIRE(gmm.Probability("2.6 3.2", 1) ==
+      Approx(0.0484656319247).epsilon(1e-7));
 
-  REQUIRE(gmm.Probability("-4.1 2.1", 0) == Approx(7.85209733164e-07).epsilon(1e-7));
-  REQUIRE(gmm.Probability("-4.1 2.1", 1) == Approx(8.60082772711e-05).epsilon(1e-7));
+  REQUIRE(gmm.Probability("-4.1 2.1", 0) ==
+      Approx(7.85209733164e-07).epsilon(1e-7));
+  REQUIRE(gmm.Probability("-4.1 2.1", 1) ==
+      Approx(8.60082772711e-05).epsilon(1e-7));
 }
 
 /**

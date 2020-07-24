@@ -135,27 +135,27 @@ TEST_CASE("ForwardBackwardTwoState", "[HMMTest]")
       scales);
 
   // All values obtained from MATLAB hmmdecode().
-  REQUIRE(log == Approx( -23.4349).epsilon(1e-5));
+  REQUIRE(log == Approx(-23.4349).epsilon(1e-5));
 
   REQUIRE(stateProb(0, 0) == Approx(0.0).margin(1e-7));
-  REQUIRE(stateProb(1, 0) == Approx( 1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 0) == Approx(1.0).epsilon(1e-7));
   REQUIRE(stateProb(0, 1) == Approx(0.0).margin(1e-7));
-  REQUIRE(stateProb(1, 1) == Approx( 1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 1) == Approx(1.0).epsilon(1e-7));
   REQUIRE(stateProb(0, 2) == Approx(0.0).margin(1e-7));
-  REQUIRE(stateProb(1, 2) == Approx( 1.0).epsilon(1e-7));
-  REQUIRE(stateProb(0, 3) == Approx( 1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 2) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 3) == Approx(1.0).epsilon(1e-7));
   REQUIRE(stateProb(1, 3) == Approx(0.0).margin(1e-7));
-  REQUIRE(stateProb(0, 4) == Approx( 1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 4) == Approx(1.0).epsilon(1e-7));
   REQUIRE(stateProb(1, 4) == Approx(0.0).margin(1e-7));
-  REQUIRE(stateProb(0, 5) == Approx( 1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 5) == Approx(1.0).epsilon(1e-7));
   REQUIRE(stateProb(1, 5) == Approx(0.0).margin(1e-7));
-  REQUIRE(stateProb(0, 6) == Approx( 1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 6) == Approx(1.0).epsilon(1e-7));
   REQUIRE(stateProb(1, 6) == Approx(0.0).margin(1e-7));
   REQUIRE(stateProb(0, 7) == Approx(0.0).margin(1e-7));
-  REQUIRE(stateProb(1, 7) == Approx( 1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 7) == Approx(1.0).epsilon(1e-7));
   REQUIRE(stateProb(0, 8) == Approx(0.0).margin(1e-7));
-  REQUIRE(stateProb(1, 8) == Approx( 1.0).epsilon(1e-7));
-  REQUIRE(stateProb(0, 9) == Approx( 1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 8) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 9) == Approx(1.0).epsilon(1e-7));
   REQUIRE(stateProb(1, 9) == Approx(0.0).margin(1e-7));
 }
 
@@ -177,9 +177,9 @@ TEST_CASE("SimplestBaumWelchDiscreteHMM", "[HMMTest]")
 
   hmm.Train(observations);
 
-  REQUIRE(hmm.Initial()[0] == Approx( 1.0).epsilon(1e-7));
-  REQUIRE(hmm.Emission()[0].Probability("0") == Approx( 1.0).epsilon(1e-7));
-  REQUIRE(hmm.Transition()(0, 0) == Approx( 1.0).epsilon(1e-7));
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(hmm.Emission()[0].Probability("0") == Approx(1.0).epsilon(1e-7));
+  REQUIRE(hmm.Transition()(0, 0) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -210,10 +210,10 @@ TEST_CASE("SimpleBaumWelchDiscreteHMM", "[HMMTest]")
 
   hmm.Train(observations);
 
-  REQUIRE(hmm.Emission()[0].Probability("0") == Approx( 0.5).epsilon(1e-7));
-  REQUIRE(hmm.Emission()[0].Probability("1") == Approx( 0.5).epsilon(1e-7));
-  REQUIRE(hmm.Transition()(0, 0) == Approx( 1.0).epsilon(1e-7));
-  REQUIRE(hmm.Initial()[0] == Approx( 1.0).epsilon(1e-7));
+  REQUIRE(hmm.Emission()[0].Probability("0") == Approx(0.5).epsilon(1e-7));
+  REQUIRE(hmm.Emission()[0].Probability("1") == Approx(0.5).epsilon(1e-7));
+  REQUIRE(hmm.Transition()(0, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(1e-7));
 }
 
 /**
@@ -299,22 +299,22 @@ TEST_CASE("SimpleBaumWelchDiscreteHMM_2", "[HMMTest]")
   double prob = double(stateZeroStarts) / observations.size();
 
   // Only require 2.5% tolerance, because this is a little fuzzier.
-  REQUIRE(hmm.Initial()[0] == Approx( prob).epsilon(0.025));
-  REQUIRE(hmm.Initial()[1] == Approx( 1.0 - prob).epsilon(0.025));
+  REQUIRE(hmm.Initial()[0] == Approx(prob).epsilon(0.025));
+  REQUIRE(hmm.Initial()[1] == Approx(1.0 - prob).epsilon(0.025));
 
-  REQUIRE(hmm.Transition()(0, 0) == Approx( 0.5).epsilon(0.025));
-  REQUIRE(hmm.Transition()(1, 0) == Approx( 0.5).epsilon(0.025));
-  REQUIRE(hmm.Transition()(0, 1) == Approx( 0.5).epsilon(0.025));
-  REQUIRE(hmm.Transition()(1, 1) == Approx( 0.5).epsilon(0.025));
+  REQUIRE(hmm.Transition()(0, 0) == Approx(0.5).epsilon(0.025));
+  REQUIRE(hmm.Transition()(1, 0) == Approx(0.5).epsilon(0.025));
+  REQUIRE(hmm.Transition()(0, 1) == Approx(0.5).epsilon(0.025));
+  REQUIRE(hmm.Transition()(1, 1) == Approx(0.5).epsilon(0.025));
 
-  REQUIRE(hmm.Emission()[0].Probability("0") == Approx( 0.4).epsilon(0.04));
-  REQUIRE(hmm.Emission()[0].Probability("1") == Approx( 0.6).epsilon(0.04));
+  REQUIRE(hmm.Emission()[0].Probability("0") == Approx(0.4).epsilon(0.04));
+  REQUIRE(hmm.Emission()[0].Probability("1") == Approx(0.6).epsilon(0.04));
   REQUIRE(hmm.Emission()[0].Probability("2") == Approx(0.0).margin(2.5));
   REQUIRE(hmm.Emission()[0].Probability("3") == Approx(0.0).margin(2.5));
   REQUIRE(hmm.Emission()[1].Probability("0") == Approx(0.0).margin(2.5));
   REQUIRE(hmm.Emission()[1].Probability("1") == Approx(0.0).margin(2.5));
-  REQUIRE(hmm.Emission()[1].Probability("2") == Approx( 0.2).epsilon(0.04));
-  REQUIRE(hmm.Emission()[1].Probability("3") == Approx( 0.8).epsilon(0.04));
+  REQUIRE(hmm.Emission()[1].Probability("2") == Approx(0.2).epsilon(0.04));
+  REQUIRE(hmm.Emission()[1].Probability("3") == Approx(0.8).epsilon(0.04));
 }
 
 TEST_CASE("DiscreteHMMLabeledTrainTest", "[HMMTest]")
@@ -437,13 +437,13 @@ TEST_CASE("DiscreteHMMSimpleGenerateTest", "[HMMTest]")
   stateProb /= accu(stateProb);
 
   // Now check that the probabilities are right.  3% tolerance.
-  REQUIRE(emissionProb[0] == Approx( 0.25).epsilon(0.03));
-  REQUIRE(emissionProb[1] == Approx( 0.25).epsilon(0.03));
-  REQUIRE(emissionProb[2] == Approx( 0.25).epsilon(0.03));
-  REQUIRE(emissionProb[3] == Approx( 0.25).epsilon(0.03));
+  REQUIRE(emissionProb[0] == Approx(0.25).epsilon(0.03));
+  REQUIRE(emissionProb[1] == Approx(0.25).epsilon(0.03));
+  REQUIRE(emissionProb[2] == Approx(0.25).epsilon(0.03));
+  REQUIRE(emissionProb[3] == Approx(0.25).epsilon(0.03));
 
-  REQUIRE(stateProb[0] == Approx( 0.50).epsilon(0.03));
-  REQUIRE(stateProb[1] == Approx( 0.50).epsilon(0.03));
+  REQUIRE(stateProb[0] == Approx(0.50).epsilon(0.03));
+  REQUIRE(stateProb[1] == Approx(0.50).epsilon(0.03));
 }
 
 /**
@@ -521,9 +521,9 @@ TEST_CASE("DiscreteHMMLogLikelihoodTest", "[HMMTest]")
 
   // Now generate some sequences and check that the log-likelihood is the same
   // as MATLAB gives for this HMM.
-  REQUIRE(hmm.LogLikelihood("0 1 2 3") == Approx( -4.9887223949).epsilon(1e-7));
-  REQUIRE(hmm.LogLikelihood("1 2 0 0") == Approx( -6.0288487077).epsilon(1e-7));
-  REQUIRE(hmm.LogLikelihood("3 3 3 3") == Approx( -5.5544000018).epsilon(1e-7));
+  REQUIRE(hmm.LogLikelihood("0 1 2 3") == Approx(-4.9887223949).epsilon(1e-7));
+  REQUIRE(hmm.LogLikelihood("1 2 0 0") == Approx(-6.0288487077).epsilon(1e-7));
+  REQUIRE(hmm.LogLikelihood("3 3 3 3") == Approx(-5.5544000018).epsilon(1e-7));
   REQUIRE(hmm.LogLikelihood("0 2 2 1 2 3 0 0 1 3 1 0 0 3 1 2 2") ==
       Approx(-24.51556128368).epsilon(1e-7));
 }
@@ -653,7 +653,7 @@ TEST_CASE("GaussianHMMTrainTest", "[HMMTest]")
   hmm.Train(observations, states);
 
   // Check initial weights.
-  REQUIRE(hmm.Initial()[0] == Approx( 1.0).epsilon(1e-7));
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(1e-7));
   REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(1e-3));
   REQUIRE(hmm.Initial()[2] == Approx(0.0).margin(1e-3));
 
@@ -686,7 +686,7 @@ TEST_CASE("GaussianHMMTrainTest", "[HMMTest]")
 
   hmm.Train(observations);
 
-  REQUIRE(hmm.Initial()[0] == Approx( 1.0).epsilon(0.001));
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.001));
   REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.05));
   REQUIRE(hmm.Initial()[2] == Approx(0.0).margin(0.05));
 
@@ -843,7 +843,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
       7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9,
       9, 9, 9, 9, 9, 9, 9, 9, 9, 9 };
 
-  REQUIRE(likelihood == Approx( -2734.43).epsilon(1e-5));
+  REQUIRE(likelihood == Approx(-2734.43).epsilon(1e-5));
 
   for (size_t i = 0; i < stateSeqRef.n_cols; ++i)
   {
@@ -1467,13 +1467,14 @@ TEST_CASE("DiagonalGMMHMMOneGaussianUnlabeledTrainingTest", "[HMMTest]")
   hmm.Train(observations);
 
   // Check the initial weights.
-  REQUIRE(hmm.Initial()[0] == Approx( 1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
   REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 2; ++i)
     for (size_t j = 0; j < 2; ++j)
-      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) == Approx(0.0).margin(0.08));
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.08));
 
   // Check the estimated weights of the each emission distribution.
   for (size_t i = 0; i < 2; ++i)
@@ -1548,14 +1549,15 @@ TEST_CASE("DiagonalGMMHMMOneGaussianLabeledTrainingTest", "[HMMTest]")
   hmm.Train(observations, states);
 
   // Check the initial weights.
-  REQUIRE(hmm.Initial()[0] == Approx( 1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
   REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
   REQUIRE(hmm.Initial()[2] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 3; ++i)
     for (size_t j = 0; j < 3; ++j)
-      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) == Approx(0.0).margin(0.03));
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.03));
 
   // Check the estimated weights of the each emission distribution.
   for (size_t i = 0; i < 3; ++i)
@@ -1628,13 +1630,14 @@ TEST_CASE("DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest", "[HMMTest]")
   hmm.Train(observations);
 
   // Check the initial weights.
-  REQUIRE(hmm.Initial()[0] == Approx( 1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
   REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 2; ++i)
     for (size_t j = 0; j < 2; ++j)
-      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) == Approx(0.0).margin(0.08));
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.08));
 
   // Sort by the estimated weights of the first emission distribution.
   arma::uvec sortedIndices = sort_index(hmm.Emission()[0].Weights());
@@ -1732,13 +1735,14 @@ TEST_CASE("DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest", "[HMMTest]")
   hmm.Train(observations, states);
 
   // Check the initial weights.
-  REQUIRE(hmm.Initial()[0] == Approx( 1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
   REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 2; ++i)
     for (size_t j = 0; j < 2; ++j)
-      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) == Approx(0.0).margin(0.03));
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.03));
 
   // Sort by the estimated weights of the first emission distribution.
   arma::uvec sortedIndices = sort_index(hmm.Emission()[0].Weights());

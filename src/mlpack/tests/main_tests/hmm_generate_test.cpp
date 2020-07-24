@@ -45,7 +45,8 @@ struct HMMGenerateTestFixture
   }
 };
 
-TEST_CASE_METHOD(HMMGenerateTestFixture, "HMMGenerateDiscreteHMMCheckDimensionsTest",
+TEST_CASE_METHOD(HMMGenerateTestFixture,
+                 "HMMGenerateDiscreteHMMCheckDimensionsTest",
                  "[HMMGenerateMainTest][BindingTests]")
 {
   // Load data to train a discrete HMM model with.
