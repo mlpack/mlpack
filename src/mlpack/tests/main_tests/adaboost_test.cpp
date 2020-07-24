@@ -19,8 +19,8 @@ static const std::string testName = "AdaBoost";
 #include "test_helper.hpp"
 #include <mlpack/methods/adaboost/adaboost_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -41,25 +41,24 @@ struct AdaBoostTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(AdaBoostMainTest, AdaBoostTestFixture);
-
 /**
  * Check that number of output labels and number of input
  * points are equal.
  */
-BOOST_AUTO_TEST_CASE(AdaBoostOutputDimensionTest)
+TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostOutputDimensionTest",
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Unable to load label dataset vc2_labels.txt!");
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Unable to load test dataset vc2.csv!");
+    FAIL("Unable to load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
@@ -71,9 +70,8 @@ BOOST_AUTO_TEST_CASE(AdaBoostOutputDimensionTest)
   mlpackMain();
 
   // Check that number of predicted labels is equal to the input test points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
 }
 
 /**
@@ -81,19 +79,20 @@ BOOST_AUTO_TEST_CASE(AdaBoostOutputDimensionTest)
  * number of rows of input data and that each column of probabilities matrix sums
  * up to 1.
  */
-BOOST_AUTO_TEST_CASE(AdaBoostProbabilitiesTest)
+TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostProbabilitiesTest",
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Unable to load label dataset vc2_labels.txt!");
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Unable to load test dataset vc2.csv!");
+    FAIL("Unable to load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
@@ -107,28 +106,29 @@ BOOST_AUTO_TEST_CASE(AdaBoostProbabilitiesTest)
   arma::mat probabilities;
   probabilities = std::move(IO::GetParam<arma::mat>("probabilities"));
 
-  BOOST_REQUIRE_EQUAL(probabilities.n_cols, testSize);
+  REQUIRE(probabilities.n_cols == testSize);
 
   for (size_t i = 0; i < testSize; ++i)
-    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
+    REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
 }
 
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(AdaBoostModelReuseTest)
+TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostModelReuseTest",
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Unable to load label dataset vc2_labels.txt!");
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Unable to load test dataset vc2.csv!");
+    FAIL("Unable to load test dataset vc2.csv!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
@@ -157,17 +157,18 @@ BOOST_AUTO_TEST_CASE(AdaBoostModelReuseTest)
 /**
  * Test that iterations in adaboost is always non-negative.
  */
-BOOST_AUTO_TEST_CASE(AdaBoostItrTest)
+TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostItrTest",
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("trainSet.csv", trainData))
-    BOOST_FAIL("Unable load train dataset trainSet.csv!");
+    FAIL("Unable load train dataset trainSet.csv!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("iterations", (int) -1);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -176,12 +177,13 @@ BOOST_AUTO_TEST_CASE(AdaBoostItrTest)
  * used as labels when labels are not passed specifically 
  * and results are same from both label and without label models.
  */
-BOOST_AUTO_TEST_CASE(AdaBoostWithoutLabelTest)
+TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostWithoutLabelTest",
+                 "[AdaBoostMainTest][BindingTests]")
 {
   // Train adaboost without providing labels.
   arma::mat trainData;
   if (!data::Load("trainSet.csv", trainData))
-    BOOST_FAIL("Unable to load train dataset trainSet.csv!");
+    FAIL("Unable to load train dataset trainSet.csv!");
 
   // Give labels.
   arma::Row<size_t> labels(trainData.n_cols);
@@ -190,7 +192,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostWithoutLabelTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Unable to load test dataset testSet.csv!");
+    FAIL("Unable to load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -225,11 +227,12 @@ BOOST_AUTO_TEST_CASE(AdaBoostWithoutLabelTest)
 /**
  * Testing that only one of training data or pre-trained model is passed.
  */
-BOOST_AUTO_TEST_CASE(AdaBoostTrainingDataOrModelTest)
+TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostTrainingDataOrModelTest",
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("trainSet.csv", trainData))
-    BOOST_FAIL("Unable to load train dataset trainSet.csv!");
+    FAIL("Unable to load train dataset trainSet.csv!");
 
   SetInputParam("training", std::move(trainData));
 
@@ -239,7 +242,7 @@ BOOST_AUTO_TEST_CASE(AdaBoostTrainingDataOrModelTest)
                 IO::GetParam<AdaBoostModel*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -247,15 +250,16 @@ BOOST_AUTO_TEST_CASE(AdaBoostTrainingDataOrModelTest)
  * This test can be removed in mlpack 4.0.0.  This tests that the output and
  * predictions outputs are the same.
  */
-BOOST_AUTO_TEST_CASE(AdaBoostOutputPredictionsTest)
+TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostOutputPredictionsTest",
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Unable to load label dataset vc2_labels.txt!");
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(labels));
@@ -269,36 +273,38 @@ BOOST_AUTO_TEST_CASE(AdaBoostOutputPredictionsTest)
 /**
  * Weak learner should be either Decision Stump or Perceptron.
  */
-BOOST_AUTO_TEST_CASE(AdaBoostWeakLearnerTest)
+TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostWeakLearnerTest",
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("trainSet.csv", trainData))
-    BOOST_FAIL("Unable to load train dataset trainSet.csv!");
+    FAIL("Unable to load train dataset trainSet.csv!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("weak_learner", std::string("decision tree"));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Different Weak learner should give different outputs.
  */
-BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
+TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffWeakLearnerOutputTest",
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Unable to load label dataset vc2_labels.txt!");
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Unable to load test dataset vc2.csv!");
+    FAIL("Unable to load test dataset vc2.csv!");
 
   SetInputParam("training", trainData);
   SetInputParam("labels", labels);
@@ -325,30 +331,31 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffWeakLearnerOutputTest)
   arma::Row<size_t> outputPerceptron;
   outputPerceptron = std::move(IO::GetParam<arma::Row<size_t>>("output"));
 
-  BOOST_REQUIRE_GT(arma::accu(output != outputPerceptron), 1);
+  REQUIRE(arma::accu(output != outputPerceptron) > 1);
 }
 
 /**
  * Accuracy increases as Number of Iterations increases.
  * (Or converges and remains same)
  */
-BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
+TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffItrTest",
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Unable to load label dataset vc2_labels.txt!");
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Unable to load test dataset vc2.csv!");
+    FAIL("Unable to load test dataset vc2.csv!");
 
   arma::Row<size_t> testLabels;
   if (!data::Load("vc2_test_labels.txt", testLabels))
-    BOOST_FAIL("Unable to load labels for vc2__test_labels.txt");
+    FAIL("Unable to load labels for vc2__test_labels.txt");
 
   // Iterations = 1
   SetInputParam("training", trainData);
@@ -400,31 +407,32 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffItrTest)
   correct = arma::accu(output == testLabels);
   double accuracy100 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  BOOST_REQUIRE_LE(accuracy1, accuracy10);
-  BOOST_REQUIRE_LE(accuracy10, accuracy100);
+  REQUIRE(accuracy1 <= accuracy10);
+  REQUIRE(accuracy10 <= accuracy100);
 }
 
 /**
  * Accuracy increases as tolerance decreases.
  * (Execution Time also increases)
  */
-BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
+TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostDiffTolTest",
+                 "[AdaBoostMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("vc2.csv", trainData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Unable to load label dataset vc2_labels.txt!");
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Unable to load test dataset vc2.csv!");
+    FAIL("Unable to load test dataset vc2.csv!");
 
   arma::Row<size_t> testLabels;
   if (!data::Load("vc2_test_labels.txt", testLabels))
-    BOOST_FAIL("Unable to load labels for vc2__test_labels.txt");
+    FAIL("Unable to load labels for vc2__test_labels.txt");
 
   // tolerance = 0.001
   SetInputParam("training", trainData);
@@ -473,8 +481,6 @@ BOOST_AUTO_TEST_CASE(AdaBoostDiffTolTest)
   correct = arma::accu(output == testLabels);
   double accuracy3 = (double(correct) / double(testLabels.n_elem) * 100);
 
-  BOOST_REQUIRE_LE(accuracy1, accuracy2);
-  BOOST_REQUIRE_LE(accuracy2, accuracy3);
+  REQUIRE(accuracy1 <= accuracy2);
+  REQUIRE(accuracy2 <= accuracy3);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
