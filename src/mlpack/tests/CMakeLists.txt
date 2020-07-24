@@ -1,6 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  adaboost_test.cpp
   akfn_test.cpp
   aknn_test.cpp
   ann_dist_test.cpp
@@ -114,7 +113,6 @@ add_executable(mlpack_test
   union_find_test.cpp
   vantage_point_tree_test.cpp
   wgan_test.cpp
-  main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
@@ -159,6 +157,7 @@ add_executable(mlpack_test
 
 add_executable(mlpack_catch_test
   activation_functions_test.cpp
+  adaboost_test.cpp
   binarize_test.cpp
   image_load_test.cpp
   imputation_test.cpp
@@ -169,6 +168,7 @@ add_executable(mlpack_catch_test
   serialization_catch.hpp
   split_data_test.cpp
   test_catch_tools.hpp
+  main_tests/adaboost_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/preprocess_binarize_test.cpp
