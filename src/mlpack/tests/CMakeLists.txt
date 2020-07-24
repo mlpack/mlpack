@@ -96,7 +96,6 @@ add_executable(mlpack_test
   serialization.hpp
   serialization_test.cpp
   sfinae_test.cpp
-  softmax_regression_test.cpp
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
@@ -158,7 +157,6 @@ add_executable(mlpack_test
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
   main_tests/range_search_test.cpp
-  main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/test_helper.hpp
 )
@@ -171,10 +169,12 @@ add_executable(mlpack_catch_test
   main.cpp
   serialization_catch.cpp
   serialization_catch.hpp
+  softmax_regression_test.cpp
   test_catch_tools.hpp
   main_tests/adaboost_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/softmax_regression_test.cpp
   main_tests/test_helper.hpp
 )
 
