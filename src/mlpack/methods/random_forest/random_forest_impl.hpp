@@ -421,7 +421,7 @@ void RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     ElemType
->::serialize(Archive& ar, const unsigned int /* version */)
+>::serialize(Archive& ar)
 {
   size_t numTrees;
   if (Archive::is_loading::value)

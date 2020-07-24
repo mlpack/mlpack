@@ -539,7 +539,7 @@ KDEMode& KDEModel::Mode()
 
 // Serialize the model.
 template<typename Archive>
-void KDEModel::serialize(Archive& ar, const unsigned int version)
+void KDEModel::serialize(Archive& ar)
 {
   ar & CEREAL_NVP(bandwidth);
   ar & CEREAL_NVP(relError);

@@ -191,7 +191,7 @@ double GMM::Train(const arma::mat& observations,
  * Serialize the object.
  */
 template<typename Archive>
-void GMM::serialize(Archive& ar, const unsigned int /* version */)
+void GMM::serialize(Archive& ar)
 {
   ar & CEREAL_NVP(gaussians);
   ar & CEREAL_NVP(dimensionality);

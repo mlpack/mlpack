@@ -181,7 +181,7 @@ void QDAFN<MatType>::Search(const MatType& querySet,
 
 template<typename MatType>
 template<typename Archive>
-void QDAFN<MatType>::serialize(Archive& ar, const unsigned int /* version */)
+void QDAFN<MatType>::serialize(Archive& ar)
 {
   ar & CEREAL_NVP(l);
   ar & CEREAL_NVP(m);
