@@ -51,7 +51,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
-    const unsigned int /* version */)
+)
 {
   // Nothing to do here.
 }

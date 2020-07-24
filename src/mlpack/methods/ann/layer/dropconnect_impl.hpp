@@ -107,7 +107,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void DropConnect<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   // Delete the old network first, if needed.
   if (Archive::is_loading::value)

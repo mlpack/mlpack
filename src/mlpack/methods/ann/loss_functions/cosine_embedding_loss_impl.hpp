@@ -107,7 +107,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void CosineEmbeddingLoss<InputDataType, OutputDataType>::serialize(
     Archive&  ar ,
-    const unsigned int /* version */)
+)
 {
   ar & CEREAL_NVP(margin);
   ar & CEREAL_NVP(similarity);

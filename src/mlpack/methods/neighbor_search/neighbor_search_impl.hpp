@@ -947,7 +947,7 @@ template<typename Archive>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   // Serialize preferences for search.
   ar(CEREAL_NVP(searchMode));

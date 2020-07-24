@@ -626,7 +626,7 @@ template<typename MetricType,
 template<typename Archive>
 void RangeSearch<MetricType, MatType, TreeType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   // Serialize preferences for search.
   ar & CEREAL_NVP(naive);

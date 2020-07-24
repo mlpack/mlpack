@@ -1132,7 +1132,7 @@ void DecisionTree<FitnessFunction,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::serialize(Archive& ar,
-                                          const unsigned int /* version */)
+                                      )
 {
   // Clean memory if needed.
   if (Archive::is_loading::value)

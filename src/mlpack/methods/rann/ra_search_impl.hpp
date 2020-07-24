@@ -606,7 +606,7 @@ template<typename SortPolicy,
 template<typename Archive>
 void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   // Serialize preferences for search.
   ar & CEREAL_NVP(naive);

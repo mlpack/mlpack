@@ -145,7 +145,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MaxPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   ar & CEREAL_NVP(kernelWidth);
   ar & CEREAL_NVP(kernelHeight);

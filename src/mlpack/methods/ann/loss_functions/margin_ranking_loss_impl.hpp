@@ -63,7 +63,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MarginRankingLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   ar & CEREAL_NVP(margin);
 }

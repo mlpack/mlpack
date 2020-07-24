@@ -706,7 +706,7 @@ void HMM<Distribution>::load(Archive& ar, const unsigned int /* version */)
 template<typename Distribution>
 template<typename Archive>
 void HMM<Distribution>::save(Archive& ar,
-                             const unsigned int /* version */) const
+                         ) const
 {
   arma::mat transition = exp(logTransition);
   arma::vec initial = exp(logInitial);

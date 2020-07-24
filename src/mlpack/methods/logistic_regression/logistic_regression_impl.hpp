@@ -174,7 +174,7 @@ template<typename MatType>
 template<typename Archive>
 void LogisticRegression<MatType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   ar & CEREAL_NVP(parameters);
   ar & CEREAL_NVP(lambda);

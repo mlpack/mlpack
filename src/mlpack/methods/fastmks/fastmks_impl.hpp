@@ -641,7 +641,7 @@ template<typename KernelType,
 template<typename Archive>
 void FastMKS<KernelType, MatType, TreeType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   // Serialize preferences for search.
   ar & CEREAL_NVP(naive);
