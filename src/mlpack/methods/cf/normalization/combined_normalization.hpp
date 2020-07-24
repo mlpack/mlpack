@@ -104,7 +104,7 @@ class CombinedNormalization
   template<typename Archive>
   void serialize(Archive& ar)
   {
-    SequenceSerialize<0, Archive>(ar, version);
+    SequenceSerialize<0, Archive>(ar);
   }
 
  private:
@@ -190,7 +190,7 @@ class CombinedNormalization
     tagName += std::to_string(I);
     ar & cereal::make_nvp(
         tagName.c_str(), std::get<I>(normalizations));
-    SequenceSerialize<I + 1, Archive>(ar, version);
+    SequenceSerialize<I + 1, Archive>(ar);
   }
 
   //! End of tuple unpacking.

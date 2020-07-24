@@ -385,7 +385,7 @@ void Convolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::serialize(Archive& ar const unsigned int /* version*/)
+>::serialize(Archive& ar)
 {
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);
