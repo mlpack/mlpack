@@ -391,7 +391,7 @@ template<typename MetricType,
 template<typename Archive>
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillTree(
-    Archive& ar,
+    Archive& ar
     const typename std::enable_if_t<Archive::is_loading::value>*) :
     SpillTree() // Create an empty SpillTree.
 {
@@ -887,7 +887,7 @@ template<typename MetricType,
              class SplitType>
 template<typename Archive>
 void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    serialize(Archive& ar, const unsigned int /* version */)
+    serialize(Archive& ar
 {
   // If we're loading, and we have children, they need to be deleted.
   if (Archive::is_loading::value)

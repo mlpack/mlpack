@@ -179,7 +179,7 @@ template<typename TreeType,
          template<typename> class HilbertValueType>
 template<typename Archive>
 void HilbertRTreeAuxiliaryInformation<TreeType, HilbertValueType>::serialize(
-    Archive& ar,
+    Archive& ar
 )
 {
   ar & CEREAL_NVP(hilbertValue);

@@ -521,7 +521,7 @@ void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
 template<typename TreeElemType>
 template<typename Archive>
 void DiscreteHilbertValue<TreeElemType>::serialize(
-    Archive& ar,
+    Archive& ar
 )
 {
   ar & CEREAL_POINTER(localHilbertValues);

@@ -981,7 +981,7 @@ inline ElemType CellBound<MetricType, ElemType>::Diameter() const
 template<typename MetricType, typename ElemType>
 template<typename Archive>
 void CellBound<MetricType, ElemType>::serialize(
-    Archive& ar,
+    Archive& ar
 )
 {
   // Allocate memory for the bounds, if necessary.

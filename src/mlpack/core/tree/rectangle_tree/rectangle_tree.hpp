@@ -205,7 +205,7 @@ class RectangleTree
    */
   template<typename Archive>
   RectangleTree(
-      Archive& ar,
+      Archive& ar
       const typename std::enable_if_t<Archive::is_loading::value>* = 0);
 
   /**

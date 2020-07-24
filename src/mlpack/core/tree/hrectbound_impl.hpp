@@ -663,7 +663,7 @@ inline ElemType HRectBound<MetricType, ElemType>::Diameter() const
 template<typename MetricType, typename ElemType>
 template<typename Archive>
 void HRectBound<MetricType, ElemType>::serialize(
-    Archive& ar,
+    Archive& ar
 )
 {
   ar & CEREAL_NVP(dim);

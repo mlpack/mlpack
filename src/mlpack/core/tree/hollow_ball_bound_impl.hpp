@@ -426,7 +426,7 @@ HollowBallBound<TMetricType, ElemType>::operator|=(const HollowBallBound& other)
 template<typename TMetricType, typename ElemType>
 template<typename Archive>
 void HollowBallBound<TMetricType, ElemType>::serialize(
-    Archive& ar,
+    Archive& ar
 )
 {
   ar & CEREAL_NVP(radii);

@@ -725,7 +725,7 @@ template<
 >
 template<typename Archive>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
-    Archive& ar,
+    Archive& ar
     const typename std::enable_if_t<Archive::is_loading::value>*) :
     CoverTree() // Create an empty CoverTree.
 {
@@ -1727,7 +1727,7 @@ template<
 >
 template<typename Archive>
 void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
-    Archive& ar,
+    Archive& ar
 )
 {
   // If we're loading, and we have children, they need to be deleted.  We may
