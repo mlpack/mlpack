@@ -184,7 +184,7 @@ class CombinedNormalization
       int I, /* Which normalization in tuple to serialize */
       typename Archive,
       typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
-  void SequenceSerialize(Archive& ar const unsigned int version)
+  void SequenceSerialize(Archive& ar)
   {
     std::string tagName = "normalization_";
     tagName += std::to_string(I);
