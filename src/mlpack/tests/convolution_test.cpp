@@ -17,13 +17,12 @@
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "serialization_catch.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
-
-BOOST_AUTO_TEST_SUITE(ConvolutionTest);
 
 /*
  * Implementation of the convolution function test.
@@ -46,13 +45,13 @@ void Convolution2DMethodTest(const arma::mat input,
   // Check the output dimension.
   bool b = (convOutput.n_rows == output.n_rows) &&
       (convOutput.n_cols == output.n_cols);
-  BOOST_REQUIRE_EQUAL(b, 1);
+  REQUIRE(b == 1);
 
   const double* outputPtr = output.memptr();
   const double* convOutputPtr = convOutput.memptr();
 
   for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
-    BOOST_REQUIRE_CLOSE(*outputPtr, *convOutputPtr, 1e-3);
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
 }
 
 /*
@@ -77,13 +76,13 @@ void Convolution3DMethodTest(const arma::cube input,
   bool b = (convOutput.n_rows == output.n_rows) &&
       (convOutput.n_cols == output.n_cols &&
       convOutput.n_slices == output.n_slices);
-  BOOST_REQUIRE_EQUAL(b, 1);
+  REQUIRE(b == 1);
 
   const double* outputPtr = output.memptr();
   const double* convOutputPtr = convOutput.memptr();
 
   for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
-    BOOST_REQUIRE_CLOSE(*outputPtr, *convOutputPtr, 1e-3);
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
 }
 
 /*
@@ -109,19 +108,19 @@ void ConvolutionMethodBatchTest(const arma::mat input,
   bool b = (convOutput.n_rows == output.n_rows) &&
       (convOutput.n_cols == output.n_cols &&
       convOutput.n_slices == output.n_slices);
-  BOOST_REQUIRE_EQUAL(b, 1);
+  REQUIRE(b == 1);
 
   const double* outputPtr = output.memptr();
   const double* convOutputPtr = convOutput.memptr();
 
   for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
-    BOOST_REQUIRE_CLOSE(*outputPtr, *convOutputPtr, 1e-3);
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
 }
 
 /**
  * Test the convolution (valid) methods.
  */
-BOOST_AUTO_TEST_CASE(ValidConvolution2DTest)
+TEST_CASE("ValidConvolution2DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
@@ -154,7 +153,7 @@ BOOST_AUTO_TEST_CASE(ValidConvolution2DTest)
 /**
  * Test the convolution (full) methods.
  */
-BOOST_AUTO_TEST_CASE(FullConvolution2DTest)
+TEST_CASE("FullConvolution2DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
@@ -191,7 +190,7 @@ BOOST_AUTO_TEST_CASE(FullConvolution2DTest)
 /**
  * Test the convolution (valid) methods using 3rd order tensors.
  */
-BOOST_AUTO_TEST_CASE(ValidConvolution3DTest)
+TEST_CASE("ValidConvolution3DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
@@ -236,7 +235,7 @@ BOOST_AUTO_TEST_CASE(ValidConvolution3DTest)
 /**
  * Test the convolution (full) methods using 3rd order tensors.
  */
-BOOST_AUTO_TEST_CASE(FullConvolution3DTest)
+TEST_CASE("FullConvolution3DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
@@ -286,7 +285,7 @@ BOOST_AUTO_TEST_CASE(FullConvolution3DTest)
  * Test the convolution (valid) methods using dense matrix as input and a 3rd
  * order tensors as filter and output (batch modus).
  */
-BOOST_AUTO_TEST_CASE(ValidConvolutionBatchTest)
+TEST_CASE("ValidConvolutionBatchTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
@@ -328,7 +327,7 @@ BOOST_AUTO_TEST_CASE(ValidConvolutionBatchTest)
  * Test the convolution (full) methods using dense matrix as input and a 3rd
  * order tensors as filter and output (batch modus).
  */
-BOOST_AUTO_TEST_CASE(FullConvolutionBatchTest)
+TEST_CASE("FullConvolutionBatchTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
@@ -369,5 +368,3 @@ BOOST_AUTO_TEST_CASE(FullConvolutionBatchTest)
   ConvolutionMethodBatchTest<SVDConvolution<FullConvolution> >(input,
       filterCube, outputCube);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
