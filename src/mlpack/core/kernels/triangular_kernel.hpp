@@ -93,7 +93,7 @@ class TriangularKernel
 
   //! Serialize the kernel.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar)
   {
     ar & CEREAL_NVP(bandwidth);
   }

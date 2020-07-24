@@ -101,7 +101,7 @@ class MaxAbsScaler
   const arma::vec& Scale() const { return scale; }
 
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar)
   {
     ar & CEREAL_NVP(itemMin);
     ar & CEREAL_NVP(itemMax);

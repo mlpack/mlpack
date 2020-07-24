@@ -75,7 +75,7 @@ class RegressionDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar)
   {
     ar & CEREAL_NVP(rf);
     ar & CEREAL_NVP(err);

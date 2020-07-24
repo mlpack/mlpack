@@ -140,7 +140,7 @@ class DiagonalGaussianDistribution
 
   //! Serialize the distribution.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar)
   {
     // We just need to serialize each of the members.
     ar & CEREAL_NVP(mean);

@@ -197,7 +197,7 @@ class XTreeAuxiliaryInformation
     }
 
     template<typename Archive>
-    void serialize(Archive& ar, const unsigned int /* version */)
+    void serialize(Archive& ar)
     {
       ar & CEREAL_NVP(lastDimension);
       ar & CEREAL_NVP(history);
@@ -224,7 +224,7 @@ class XTreeAuxiliaryInformation
    * Serialize the information.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar)
   {
     ar & CEREAL_NVP(normalNodeMaxNumChildren);
     ar & CEREAL_NVP(splitHistory);
