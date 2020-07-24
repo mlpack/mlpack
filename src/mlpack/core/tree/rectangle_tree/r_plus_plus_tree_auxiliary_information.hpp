@@ -157,7 +157,7 @@ class RPlusPlusTreeAuxiliaryInformation
    * Serialize the information.
    */
   template<typename Archive>
-  void serialize(Archive &, const unsigned int /* version */);
+  void serialize(Archive &);
 };
 
 } // namespace tree

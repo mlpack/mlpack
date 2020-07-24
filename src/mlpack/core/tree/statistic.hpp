@@ -41,7 +41,7 @@ class EmptyStatistic
    * Serialize the statistic (there's nothing to be saved).
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  void serialize(Archive& /* ar */)
   { }
 };
 

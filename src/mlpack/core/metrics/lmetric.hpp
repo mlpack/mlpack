@@ -85,7 +85,7 @@ class LMetric
 
   //! Serialize the metric (nothing to do).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */) { }
 
   //! The power of the metric.
   static const int Power = TPower;
