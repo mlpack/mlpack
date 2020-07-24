@@ -664,7 +664,7 @@ template<typename MetricType, typename ElemType>
 template<typename Archive>
 void HRectBound<MetricType, ElemType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   ar & CEREAL_NVP(dim);
 

@@ -1394,7 +1394,7 @@ template<typename Archive>
 void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   // Clean up memory, if necessary.
   if (Archive::is_loading::value)

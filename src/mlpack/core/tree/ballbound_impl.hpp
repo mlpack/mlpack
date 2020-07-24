@@ -285,7 +285,7 @@ template<typename MetricType, typename VecType>
 template<typename Archive>
 void BallBound<MetricType, VecType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   ar & CEREAL_NVP(radius);
   ar & CEREAL_NVP(center);

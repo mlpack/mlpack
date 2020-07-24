@@ -982,7 +982,7 @@ template<typename MetricType, typename ElemType>
 template<typename Archive>
 void CellBound<MetricType, ElemType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+)
 {
   // Allocate memory for the bounds, if necessary.
   if (Archive::is_loading::value)
