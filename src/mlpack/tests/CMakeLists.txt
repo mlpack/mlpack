@@ -17,8 +17,6 @@ add_executable(mlpack_test
   cf_test.cpp
   cli_binding_test.cpp
   io_test.cpp
-  convolution_test.cpp
-  convolutional_network_test.cpp
   cosine_tree_test.cpp
   cv_test.cpp
   dbscan_test.cpp
@@ -93,7 +91,6 @@ add_executable(mlpack_test
   serialization.hpp
   serialization_test.cpp
   sfinae_test.cpp
-  softmax_regression_test.cpp
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
@@ -150,7 +147,6 @@ add_executable(mlpack_test
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
   main_tests/range_search_test.cpp
-  main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/test_helper.hpp
 )
@@ -159,6 +155,8 @@ add_executable(mlpack_catch_test
   activation_functions_test.cpp
   adaboost_test.cpp
   binarize_test.cpp
+  convolutional_network_test.cpp
+  convolution_test.cpp
   image_load_test.cpp
   imputation_test.cpp
   linear_regression_test.cpp
@@ -166,15 +164,17 @@ add_executable(mlpack_catch_test
   scaling_test.cpp
   serialization_catch.cpp
   serialization_catch.hpp
+  softmax_regression_test.cpp
   split_data_test.cpp
   test_catch_tools.hpp
   main_tests/adaboost_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/preprocess_binarize_test.cpp
-  main_tests/preprocess_imputer_test.cpp
   main_tests/preprocess_scale_test.cpp
   main_tests/preprocess_split_test.cpp
+  main_tests/preprocess_imputer_test.cpp
+  main_tests/softmax_regression_test.cpp
   main_tests/test_helper.hpp
 )
 
@@ -233,7 +233,6 @@ set(parallel_tests
   "SparseAutoencoderTest;"
   "GMMTest;"
   "CFTest;"
-  "ConvolutionalNetworkTest;"
   "HMMTest;"
   "LARSTest;"
   "LogisticRegressionTest;"
