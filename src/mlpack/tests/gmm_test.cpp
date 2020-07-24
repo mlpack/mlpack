@@ -360,10 +360,14 @@ TEST_CASE("GMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
       - d1.Mean()[i]) == Approx(0.0).margin(0.4));
 
   for (size_t row = 0; row < 3; row++)
+  {
     for (size_t col = 0; col < 3; col++)
+    {
        // Big tolerance!  Lots of noise.
       REQUIRE((g.Component(sortedIndices[0]).Covariance()(row, col)
           - d1.Covariance()(row, col)) == Approx(0.0).margin(0.7));
+    }    
+  }
 
   // Second Gaussian (d2).
   REQUIRE(g.Weights()[sortedIndices[1]] - 0.3 == Approx(0.0).margin(0.1));
@@ -373,10 +377,14 @@ TEST_CASE("GMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
         - d2.Mean()[i]) == Approx(0.0).margin(0.4));
 
   for (size_t row = 0; row < 3; row++)
+  {
     for (size_t col = 0; col < 3; col++)
+    {
       // Big tolerance!  Lots of noise.
       REQUIRE((g.Component(sortedIndices[1]).Covariance()(row, col)
           - d2.Covariance()(row, col)) == Approx(0.0).margin(0.7));
+    }
+  }
 
   // Third Gaussian (d3).
     REQUIRE(g.Weights()[sortedIndices[2]] - 0.4 == Approx(0.0).margin(0.1));
@@ -386,9 +394,13 @@ TEST_CASE("GMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
         - d3.Mean()[i]) == Approx(0.0).margin(0.4));
 
   for (size_t row = 0; row < 3; ++row)
+  {
     for (size_t col = 0; col < 3; ++col)
+    {
       REQUIRE((g.Component(sortedIndices[2]).Covariance()(row, col)
           - d3.Covariance()(row, col)) == Approx(0.0).margin(0.7));
+    }
+  }
 }
 
 /**
@@ -555,7 +567,7 @@ TEST_CASE("GMMLoadSaveTest", "[GMMTest]")
   REQUIRE(gmm.Dimensionality() == gmm2.Dimensionality());
 
   for (size_t i = 0; i < gmm.Dimensionality(); ++i)
-    REQUIRE(gmm.Weights()[i] == Approx(gmm2.Weights()[i]).epsilon(1e-7));
+    REQUIRE(gmm.Weights()[i] == Approx(gmm2.Weights()[i]).epsilon(1e-5));
 
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
@@ -732,7 +744,7 @@ TEST_CASE("UseExistingModelTest", "[GMMTest]")
   // Check for similarity.
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
-    REQUIRE(gmm.Weights()[i] == Approx(oldgmm.Weights()[i]).epsilon(1e-7));
+    REQUIRE(gmm.Weights()[i] == Approx(oldgmm.Weights()[i]).epsilon(1e-6));
 
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
