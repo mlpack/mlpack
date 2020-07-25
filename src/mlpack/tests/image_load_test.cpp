@@ -84,7 +84,6 @@ TEST_CASE("SaveImageWrongInfo", "[ImageLoadTest]")
   data::ImageInfo info(5, 5, 3, 90);
 
   arma::Mat<unsigned char> im1;
-  size_t dimension = info.Width() * info.Height() * info.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
   Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(data::Save("APITest.bmp", im1, info, false),

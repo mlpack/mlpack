@@ -203,7 +203,7 @@ void IO_SetParamMatWithInfo(const char* paramName,
   std::get<0>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
   std::get<1>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
-      paramName)) = pointsAreRows ? std::move(m.t()) : std::move(m);
+      paramName)) = pointsAreRows ? m.t() : std::move(m);
   IO::SetPassed(paramName);
 }
 
