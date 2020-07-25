@@ -356,17 +356,19 @@ TEST_CASE("GMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
   REQUIRE(g.Weights()[sortedIndices[0]] - 0.2 == Approx(0.0).margin(0.1));
 
   for (size_t i = 0; i < 3; ++i)
-  REQUIRE((g.Component(sortedIndices[0]).Mean()[i]
-      - d1.Mean()[i]) == Approx(0.0).margin(0.4));
+  {
+    REQUIRE((g.Component(sortedIndices[0]).Mean()[i]
+        - d1.Mean()[i]) == Approx(0.0).margin(0.4));
+  }
 
   for (size_t row = 0; row < 3; row++)
   {
     for (size_t col = 0; col < 3; col++)
     {
-       // Big tolerance!  Lots of noise.
+      // Big tolerance!  Lots of noise.
       REQUIRE((g.Component(sortedIndices[0]).Covariance()(row, col)
           - d1.Covariance()(row, col)) == Approx(0.0).margin(0.7));
-    }    
+    }
   }
 
   // Second Gaussian (d2).
@@ -387,7 +389,7 @@ TEST_CASE("GMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
   }
 
   // Third Gaussian (d3).
-    REQUIRE(g.Weights()[sortedIndices[2]] - 0.4 == Approx(0.0).margin(0.1));
+  REQUIRE(g.Weights()[sortedIndices[2]] - 0.4 == Approx(0.0).margin(0.1));
 
   for (size_t i = 0; i < 3; ++i)
     REQUIRE((g.Component(sortedIndices[2]).Mean()[i]
@@ -572,8 +574,10 @@ TEST_CASE("GMMLoadSaveTest", "[GMMTest]")
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
+    {
       REQUIRE(gmm.Component(i).Mean()[j] ==
           Approx(gmm2.Component(i).Mean()[j]).epsilon(1e-5));
+    }
 
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
@@ -798,8 +802,10 @@ TEST_CASE("UseExistingModelTest", "[GMMTest]")
           Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-5));
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
+      {
         REQUIRE(gmm.Component(i).Covariance()(j, k) ==
             Approx(oldgmm.Component(i).Covariance()(j, k)).epsilon(1e-5));
+      }
     }
   }
 
@@ -818,8 +824,10 @@ TEST_CASE("UseExistingModelTest", "[GMMTest]")
           Approx(oldgmm.Component(i).Mean()[j]).epsilon(1e-5));
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
+      {
         REQUIRE(gmm.Component(i).Covariance()(j, k) ==
             Approx(oldgmm.Component(i).Covariance()(j, k)).epsilon(1e-5));
+      }
     }
   }
 }
@@ -981,8 +989,10 @@ TEST_CASE("DiagonalGMMTrainEMMultipleGaussians", "[GMMTest]")
   REQUIRE(g.Weights()[sortedIndices[0]] - 0.2 == Approx(0.0).margin(0.1));
 
   for (size_t i = 0; i < 3; ++i)
+  {
     REQUIRE((g.Component(sortedIndices[0]).Mean()[i]
         - d1.Mean()[i]) == Approx(0.0).margin(0.4));
+  }
 
   for (size_t i = 0; i < 3; ++i)
   {
@@ -994,8 +1004,10 @@ TEST_CASE("DiagonalGMMTrainEMMultipleGaussians", "[GMMTest]")
   REQUIRE(g.Weights()[sortedIndices[1]] - 0.3 == Approx(0.0).margin(0.1));
 
   for (size_t i = 0; i < 3; ++i)
+  {
     REQUIRE((g.Component(sortedIndices[1]).Mean()[i]
         - d2.Mean()[i]) == Approx(0.0).margin(0.4));
+  }
 
   for (size_t i = 0; i < 3; ++i)
   {
@@ -1007,8 +1019,10 @@ TEST_CASE("DiagonalGMMTrainEMMultipleGaussians", "[GMMTest]")
   REQUIRE(g.Weights()[sortedIndices[2]] - 0.5 == Approx(0.0).margin(0.1));
 
   for (size_t i = 0; i < 3; ++i)
+  {
     REQUIRE((g.Component(sortedIndices[2]).Mean()[i]
         - d3.Mean()[i]) == Approx(0.0).margin(0.4));
+  }
 
   for (size_t i = 0; i < 3; ++i)
   {
@@ -1077,8 +1091,10 @@ TEST_CASE("DiagonalGMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
   REQUIRE(g.Weights()[sortedIndices[1]] == Approx(0.3).epsilon(0.1));
 
   for (size_t i = 0; i < 3; ++i)
+  {
     REQUIRE(g.Component(sortedIndices[1]).Mean()[i] ==
         Approx(d2.Mean()[i]).epsilon(0.13));
+  }
 
   for (size_t i = 0; i < 3; ++i)
   {
@@ -1090,8 +1106,10 @@ TEST_CASE("DiagonalGMMTrainEMMultipleGaussiansWithProbability", "[GMMTest]")
   REQUIRE(g.Weights()[sortedIndices[2]] == Approx(0.5).epsilon(0.1));
 
   for (size_t i = 0; i < 3; ++i)
+  {
     REQUIRE(g.Component(sortedIndices[2]).Mean()[i] ==
         Approx(d3.Mean()[i]).epsilon(0.13));
+  }
 
   for (size_t i = 0; i < 3; ++i)
   {
