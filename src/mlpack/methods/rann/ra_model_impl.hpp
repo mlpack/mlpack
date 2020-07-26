@@ -346,7 +346,7 @@ void RAModel<SortPolicy>::serialize(Archive& ar
   }
 
   // We only need to serialize one of the kRANN objects.
-  ar & CEREAL_NVP(raSearch);
+  ar & CEREAL_VARIANT_POINTER(raSearch);
 }
 
 template<typename SortPolicy>

@@ -562,7 +562,7 @@ void KDEModel::serialize(Archive& ar)
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), kdeModel);
 
-  ar & CEREAL_NVP(kdeModel);
+  ar & CEREAL_VARIANT_POINTER(kdeModel);
 }
 
 // Modify model kernel bandwidth.

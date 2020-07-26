@@ -211,7 +211,7 @@ void CFModel::serialize(Archive& ar)
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), cf);
 
-  ar & CEREAL_NVP(cf);
+  ar & CEREAL_VARIANT_POINTER(cf);
 }
 
 #endif

@@ -460,7 +460,7 @@ void RSModel::serialize(Archive& ar)
     boost::apply_visitor(DeleteVisitor(), rSearch);
 
   // We'll only need to serialize one of the model objects, based on the type.
- // ar(CEREAL_NVP(rSearch));
+  ar(CEREAL_VARIANT_POINTER(rSearch));
 }
 
 inline const arma::mat& RSModel::Dataset() const

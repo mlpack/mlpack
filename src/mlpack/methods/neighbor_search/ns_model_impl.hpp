@@ -369,7 +369,7 @@ void NSModel<SortPolicy>::serialize(Archive& ar)
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), nSearch);
 
-  ar(CEREAL_NVP(nSearch));
+  ar(CEREAL_VARIANT_POINTER(nSearch));
 }
 
 //! Expose the dataset.
