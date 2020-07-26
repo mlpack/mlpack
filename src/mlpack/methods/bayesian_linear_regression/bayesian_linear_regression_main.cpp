@@ -163,7 +163,7 @@ static void mlpackMain()
     bayesLinReg = IO::GetParam<BayesianLinearRegression*>("input_model");
   }
 
-  if (CLI::HasParam("test"))
+  if (IO::HasParam("test"))
   {
     Log::Info << "Regressing on test points." << endl;
     // Load test points.
