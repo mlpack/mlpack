@@ -170,7 +170,7 @@ static void mlpackMain()
     mat testPoints = std::move(IO::GetParam<arma::mat>("test"));
     arma::rowvec predictions;
 
-    if (CLI::HasParam("stds"))
+    if (IO::HasParam("stds"))
     {
       arma::rowvec std;
       bayesLinReg->Predict(testPoints, predictions, std);
