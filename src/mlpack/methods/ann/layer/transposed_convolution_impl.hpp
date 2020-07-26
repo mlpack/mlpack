@@ -522,13 +522,6 @@ void TransposedConvolution<
   padWRight = totalVerticalPadding - totalVerticalPadding / 2;
   padHTop = totalHorizontalPadding / 2;
   padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
-
-  // If Padding is negative throw a fatal error.
-  if (totalHorizontalPadding < 0 || totalVerticalPadding < 0)
-  {
-    Log::Fatal << "The output width / output height is not possible given "
-               << "same padding for the layer." << std::endl;
-  }
 }
 
 } // namespace ann

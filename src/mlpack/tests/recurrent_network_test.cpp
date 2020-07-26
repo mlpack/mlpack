@@ -1472,7 +1472,7 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
     targets[i] = makeTarget(trainingData[i].c_str());
   }
   ens::SGD<> opt(0.01, 1, 100);
-  double objVal = model.Train(inputs[0], targets[0], opt);
+  model.Train(inputs[0], targets[0], opt);
   BOOST_TEST_CHECKPOINT("Training over");
 }
 
