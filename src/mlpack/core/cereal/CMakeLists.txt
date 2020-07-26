@@ -4,6 +4,7 @@ set(SOURCES
   array_wrapper.hpp
   pointer_wrapper.hpp
   pointer_vector_wrapper.hpp
+  pointer_variant_wrapper.hpp
 )
 
 # add directory name to sources
