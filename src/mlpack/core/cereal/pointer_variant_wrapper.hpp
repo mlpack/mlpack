@@ -42,7 +42,7 @@ struct load : public boost::static_visitor<>
   }
 };
 
-template<class VariantType1, typename... VariantTypes>
+template<typename VariantType1, typename... VariantTypes>
 class pointer_variant_wrapper
 {
 /*
@@ -72,7 +72,7 @@ private:
    boost::variant<VariantType1*, VariantTypes*...>& PointerVariant;
 };
 
-template<class VariantType1, typename... VariantTypes>
+template<typename VariantType1, typename... VariantTypes>
 inline pointer_variant_wrapper<VariantType1, VariantTypes...>
 make_pointer_variant(boost::variant<VariantType1*, VariantTypes*...>& t)
 {
