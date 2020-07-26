@@ -12,6 +12,7 @@
 
 #include <mlpack/core.hpp>
 #include "serialization_catch.hpp"
+#include "test_catch_tools.hpp"
 #include "catch.hpp"
 
 using namespace mlpack;
@@ -83,7 +84,6 @@ TEST_CASE("SaveImageWrongInfo", "[ImageLoadTest]")
   data::ImageInfo info(5, 5, 3, 90);
 
   arma::Mat<unsigned char> im1;
-  size_t dimension = info.Width() * info.Height() * info.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
   Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(data::Save("APITest.bmp", im1, info, false),
@@ -128,7 +128,7 @@ TEST_CASE("SaveImageMatAPITest", "[ImageLoadTest]")
   REQUIRE(input.n_cols == output.n_cols);
   REQUIRE(input.n_rows == output.n_rows);
   for (size_t i = 0; i < input.n_elem; ++i)
-    REQUIRE(input[i] == Approx(output[i]).epsilon(1e-5 / 100));
+    REQUIRE(input[i] == Approx(output[i]).epsilon(1e-7));
   remove("APITest.bmp");
 }
 

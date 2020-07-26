@@ -1,7 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  activation_functions_test.cpp
-  adaboost_test.cpp
   akfn_test.cpp
   aknn_test.cpp
   ann_dist_test.cpp
@@ -20,8 +18,6 @@ add_executable(mlpack_test
   cf_test.cpp
   cli_binding_test.cpp
   io_test.cpp
-  convolution_test.cpp
-  convolutional_network_test.cpp
   cosine_tree_test.cpp
   cv_test.cpp
   dbscan_test.cpp
@@ -55,7 +51,6 @@ add_executable(mlpack_test
   lars_test.cpp
   layer_names_test.cpp
   lin_alg_test.cpp
-  linear_regression_test.cpp
   linear_svm_test.cpp
   lmnn_test.cpp
   load_save_test.cpp
@@ -99,7 +94,6 @@ add_executable(mlpack_test
   serialization.hpp
   serialization_test.cpp
   sfinae_test.cpp
-  softmax_regression_test.cpp
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
@@ -120,7 +114,6 @@ add_executable(mlpack_test
   union_find_test.cpp
   vantage_point_tree_test.cpp
   wgan_test.cpp
-  main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
@@ -144,7 +137,6 @@ add_executable(mlpack_test
   main_tests/kmeans_test.cpp
   main_tests/knn_test.cpp
   main_tests/krann_test.cpp
-  main_tests/linear_regression_test.cpp
   main_tests/linear_svm_test.cpp
   main_tests/lmnn_test.cpp
   main_tests/local_coordinate_coding_test.cpp
@@ -163,18 +155,26 @@ add_executable(mlpack_test
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
   main_tests/range_search_test.cpp
-  main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/test_helper.hpp
 )
 
 add_executable(mlpack_catch_test
+  activation_functions_test.cpp
+  adaboost_test.cpp
+  convolutional_network_test.cpp
+  convolution_test.cpp
+  image_load_test.cpp
+  linear_regression_test.cpp
   main.cpp
   serialization_catch.cpp
   serialization_catch.hpp
+  softmax_regression_test.cpp
   test_catch_tools.hpp
-  image_load_test.cpp
+  main_tests/adaboost_test.cpp
   main_tests/image_converter_test.cpp
+  main_tests/linear_regression_test.cpp
+  main_tests/softmax_regression_test.cpp
   main_tests/test_helper.hpp
 )
 
@@ -233,7 +233,6 @@ set(parallel_tests
   "SparseAutoencoderTest;"
   "GMMTest;"
   "CFTest;"
-  "ConvolutionalNetworkTest;"
   "HMMTest;"
   "LARSTest;"
   "LogisticRegressionTest;"
