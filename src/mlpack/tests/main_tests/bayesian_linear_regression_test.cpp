@@ -88,8 +88,8 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionSavedEqualCode)
 
   mlpackMain();
 
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["responses"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["responses"].wasPassed = false;
 
   SetInputParam("input_model",
                 IO::GetParam<BayesianLinearRegression*>("output_model"));
