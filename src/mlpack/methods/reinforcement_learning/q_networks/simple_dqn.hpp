@@ -57,8 +57,7 @@ class SimpleDQN
             const int outputDim,
             const bool isNoisy = false,
             InitType init = GaussianInitialization(0, 0.001),
-            OutputLayerType outputLayer = OutputLayerType()
-            ):
+            OutputLayerType outputLayer = OutputLayerType()):
       network(outputLayer, init),
       isNoisy(isNoisy)
   {

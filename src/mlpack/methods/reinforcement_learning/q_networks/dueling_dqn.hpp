@@ -44,7 +44,9 @@ using namespace mlpack::ann;
  * @tparam ValueNetworkType The type of network used for value network.
  */
 template <
-  typename CompleteNetworkType = FFN<EmptyLoss<>, GaussianInitialization>,
+  typename OutputLayerType = EmptyLoss<>,
+  typename InitType = GaussianInitialization,
+  typename CompleteNetworkType = FFN<OutputLayerType, InitType>,
   typename FeatureNetworkType = Sequential<>,
   typename AdvantageNetworkType = Sequential<>,
   typename ValueNetworkType = Sequential<>
@@ -80,8 +82,10 @@ class DuelingDQN
              const int h1,
              const int h2,
              const int outputDim,
-             const bool isNoisy = false):
-      completeNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
+             const bool isNoisy = false,
+             InitType init = GaussianInitialization(0, 0.001),
+             OutputLayerType outputLayer = OutputLayerType()):
+      completeNetwork(outputLayer, init),
       isNoisy(isNoisy)
   {
     featureNetwork = new Sequential<>();
@@ -125,13 +129,21 @@ class DuelingDQN
     this->ResetParameters();
   }
 
-  DuelingDQN(FeatureNetworkType featureNetwork,
-             AdvantageNetworkType advantageNetwork,
-             ValueNetworkType valueNetwork,
+  /**
+   * Construct an instance of DuelingDQN class from a pre-constructed network.
+   *
+   * @param featureNetwork The festure network to be used by DuelingDQN class.
+   * @param advantageNetwork The advantage network to be used by DuelingDQN class.
+   * @param valueNetwork The value network to be used by DuelingDQN class.
+   * @param isNoisy Specifies whether the network needs to be of type noisy.
+   */
+  DuelingDQN(FeatureNetworkType& featureNetwork,
+             AdvantageNetworkType& advantageNetwork,
+             ValueNetworkType& valueNetwork,
              const bool isNoisy = false):
-      featureNetwork(std::move(featureNetwork)),
-      advantageNetwork(std::move(advantageNetwork)),
-      valueNetwork(std::move(valueNetwork)),
+      featureNetwork(featureNetwork),
+      advantageNetwork(advantageNetwork),
+      valueNetwork(valueNetwork),
       isNoisy(isNoisy)
   {
     concat = new Concat<>(true);
