@@ -84,8 +84,7 @@ inline typename Vec1Type::elem_type IPMetric<KernelType>::Evaluate(
 // Serialize the kernel.
 template<typename KernelType>
 template<typename Archive>
-void IPMetric<KernelType>::serialize(Archive& ar,
-                                 )
+void IPMetric<KernelType>::serialize(Archive& ar)
 {
   // If we're loading, we need to allocate space for the kernel, and we will own
   // the kernel.
