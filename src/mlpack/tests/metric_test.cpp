@@ -336,7 +336,8 @@ BOOST_AUTO_TEST_CASE(BLEUScoreTest)
   BOOST_REQUIRE_EQUAL(bleu.TranslationLength(), 12);
   BOOST_REQUIRE_EQUAL(bleu.ReferenceLength(), 12);
 
-  std::vector<float> expectedPrecision = {0.666666, 0.5555555, 0.3333333, 0};
+  std::vector<float> expectedPrecision = {0.666666f, 0.5555555f,
+      0.3333333f, 0.0f};
   for (size_t i = 0; i < bleu.Precisions().size(); ++i)
   {
     BOOST_REQUIRE_CLOSE_FRACTION(bleu.Precisions()[i],
@@ -351,7 +352,7 @@ BOOST_AUTO_TEST_CASE(BLEUScoreTest)
   BOOST_REQUIRE_EQUAL(bleu.TranslationLength(), 12);
   BOOST_REQUIRE_EQUAL(bleu.ReferenceLength(), 12);
 
-  expectedPrecision = {0.692308, 0.6, 0.428571, 0.25};
+  expectedPrecision = {0.692308f, 0.6f, 0.428571f, 0.25f};
   for (size_t i = 0; i < bleu.Precisions().size(); ++i)
   {
     BOOST_REQUIRE_CLOSE_FRACTION(bleu.Precisions()[i],
