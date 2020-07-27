@@ -127,8 +127,7 @@ void NMS<UseCoordinates>::Evaluate(
 template<bool UseCoordinates>
 template<typename Archive>
 void NMS<UseCoordinates>::serialize(
-    Archive& ar,
-)
+    Archive& ar)
 {
   // Nothing to do here.
 }
