@@ -146,12 +146,12 @@ if (BUILD_GO_SHLIB)
     endforeach ()
   endif ()
 
-  add_library(go_util SHARED
+  add_library(mlpack_go_util SHARED
           ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/arma_util.cpp
           ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/io_util.cpp)
-  target_link_libraries(go_util mlpack ${MLPACK_LIBRARIES})
-  target_compile_definitions(go_util PUBLIC "BINDING_TYPE=BINDING_TYPE_GO")
-  set_target_properties(go_util PROPERTIES
+  target_link_libraries(mlpack_go_util mlpack ${MLPACK_LIBRARIES})
+  target_compile_definitions(mlpack_go_util PUBLIC "BINDING_TYPE=BINDING_TYPE_GO")
+  set_target_properties(mlpack_go_util PROPERTIES
      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/)
 
   # Set the include directories correctly.
@@ -159,7 +159,7 @@ if (BUILD_GO_SHLIB)
      PROPERTY INCLUDE_DIRECTORIES)
   set (GO_INCLDIRS "${GO_INCLUDE_DIRECTORIES}")
 
-  install(TARGETS go_util
+  install(TARGETS mlpack_go_util
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
       LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
@@ -245,7 +245,7 @@ if(BUILD_GO_SHLIB)
   # Build libmlpack_go_${name}.so.
   add_library(mlpack_go_${name} SHARED
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp)
-  target_link_libraries(mlpack_go_${name} mlpack go_util)
+  target_link_libraries(mlpack_go_${name} mlpack mlpack_go_util)
   set_target_properties(mlpack_go_${name} PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/")
 
@@ -256,7 +256,7 @@ if(BUILD_GO_SHLIB)
       ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
   add_dependencies(mlpack_go_${name} go_copy)
-  add_dependencies(mlpack_go_${name} go_util)
+  add_dependencies(mlpack_go_${name} mlpack_go_util)
   add_dependencies(go_shlib mlpack_go_${name})
 
   if (BUILD_GO_BINDINGS)
