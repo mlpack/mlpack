@@ -38,6 +38,7 @@ print the accuracy of the random forest on the test dataset.
 You can copy-paste this code directly into R to run it.
 
 @code{.R}
+if(!requireNamespace("data.table", quietly = TRUE)) { install.packages("data.table") }
 suppressMessages({
     library("mlpack")
     library("data.table")
