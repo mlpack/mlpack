@@ -24,6 +24,8 @@ namespace rl {
 using namespace mlpack::ann;
 
 /**
+ * @tparam OutputLayerType The output layer type of the network.
+ * @tparam InitType The initialization type used for the network.
  * @tparam NetworkType The type of network used for simple dqn.
  */
 template<
@@ -48,7 +50,7 @@ class SimpleDQN
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
    * @param isNoisy Specifies whether the network needs to be of type noisy.
-   * @param init Specifies the initilization rule for the network.
+   * @param init Specifies the initialization rule for the network.
    * @param outputLayer Specifies the output layer type for network.
    */
   SimpleDQN(const int inputDim,
@@ -56,7 +58,7 @@ class SimpleDQN
             const int h2,
             const int outputDim,
             const bool isNoisy = false,
-            InitType init = GaussianInitialization(0, 0.001),
+            InitType init = InitType(),
             OutputLayerType outputLayer = OutputLayerType()):
       network(outputLayer, init),
       isNoisy(isNoisy)

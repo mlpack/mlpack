@@ -38,6 +38,8 @@ using namespace mlpack::ann;
  * }
  * @endcode
  * 
+ * @tparam OutputLayerType The output layer type of the network.
+ * @tparam InitType The initialization type used for the network.
  * @tparam CompleteNetworkType The type of network used for full dueling dqn.
  * @tparam FeatureNetworkType The type of network used for feature network.
  * @tparam AdvantageNetworkType The type of network used for advantage network.
@@ -77,7 +79,7 @@ class DuelingDQN
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
    * @param isNoisy Specifies whether the network needs to be of type noisy.
-   * @param init Specifies the initilization rule for the network.
+   * @param init Specifies the initialization rule for the network.
    * @param outputLayer Specifies the output layer type for network.
    */
   DuelingDQN(const int inputDim,
@@ -85,7 +87,7 @@ class DuelingDQN
              const int h2,
              const int outputDim,
              const bool isNoisy = false,
-             InitType init = GaussianInitialization(0, 0.001),
+             InitType init = InitType(),
              OutputLayerType outputLayer = OutputLayerType()):
       completeNetwork(outputLayer, init),
       isNoisy(isNoisy)
@@ -134,7 +136,7 @@ class DuelingDQN
   /**
    * Construct an instance of DuelingDQN class from a pre-constructed network.
    *
-   * @param featureNetwork The festure network to be used by DuelingDQN class.
+   * @param featureNetwork The feature network to be used by DuelingDQN class.
    * @param advantageNetwork The advantage network to be used by DuelingDQN class.
    * @param valueNetwork The value network to be used by DuelingDQN class.
    * @param isNoisy Specifies whether the network needs to be of type noisy.
