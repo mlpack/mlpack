@@ -1,5 +1,5 @@
 Package: mlpack
-Title: 'Rcpp' Integration for the 'MLPACK' Library
+Title: 'Rcpp' Integration for the 'mlpack' Library
 Version: @PACKAGE_VERSION@
 Date: @PACKAGE_DATE@
 Author: mlpack Team
@@ -17,7 +17,8 @@ LinkingTo: Rcpp,
            BH (>= @BH_Version@),
            RcppEnsmallen (>= @RcppEnsmallen_Version@)
 Suggests: testthat (>= 2.1.0)
-URL: http://www.mlpack.org/
+URL: https://www.mlpack.org/doc/mlpack-@PACKAGE_VERSION@/r_documentation.html,
+     https://github.com/mlpack/mlpack-r, https://github.com/mlpack/mlpack
 BugReports: https://github.com/mlpack/mlpack/issues
 LazyData: true
 RoxygenNote: 7.1.0
