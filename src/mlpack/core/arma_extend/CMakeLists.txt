@@ -2,6 +2,9 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   serialize_armadillo.hpp
+  arma_extend.hpp
+  Mat_extra_bones.hpp
+  SpMat_extra_bones.hpp
 )
 
 # add directory name to sources
