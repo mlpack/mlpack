@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "ra_search.hpp"
@@ -115,8 +115,8 @@ PARAM_INT_IN("single_sample_limit", "The limit on the maximum number of "
 
 static void mlpackMain()
 {
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
@@ -133,7 +133,7 @@ static void mlpackMain()
       "saved");
 
   // If the user specifies k but no output files, they should be warned.
-  if (CLI::HasParam("k"))
+  if (IO::HasParam("k"))
   {
     RequireAtLeastOnePassed({ "neighbors", "distances" }, false, "no nearest "
         "neighbor search results will be saved");
@@ -147,7 +147,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "naive", true }}, "single_mode");
 
   // Sanity check on leaf size.
-  const int lsInt = CLI::GetParam<int>("leaf_size");
+  const int lsInt = IO::GetParam<int>("leaf_size");
   RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be greater than 0");
 
@@ -155,28 +155,26 @@ static void mlpackMain()
   RequireParamValue<double>("tau", [](double x) {
       return (x >= 0.0 && x <=100.0); }, true,
       "tau must be in range [0.0, 100.0]");
-  const double tau = CLI::GetParam<double>("tau");
 
   // Sanity check on alpha.
   RequireParamValue<double>("alpha", [](double x) {
       return (x >= 0.0 && x <=1.0); }, true,
       "alpha must be in range [0.0, 1.0]");
-  const double alpha = CLI::GetParam<double>("alpha");
 
   // We either have to load the reference data, or we have to load the model.
   RANNModel* rann;
-  const bool naive = CLI::HasParam("naive");
-  const bool singleMode = CLI::HasParam("single_mode");
-  if (CLI::HasParam("reference"))
+  const bool naive = IO::HasParam("naive");
+  const bool singleMode = IO::HasParam("single_mode");
+  if (IO::HasParam("reference"))
   {
     rann = new RANNModel();
 
     // Get all the parameters.
-    const string treeType = CLI::GetParam<string>("tree_type");
+    const string treeType = IO::GetParam<string>("tree_type");
     RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star", "x",
         "hilbert-r", "r-plus", "r-plus-plus", "ub", "oct" }, true,
         "unknown tree type");
-    const bool randomBasis = CLI::HasParam("random_basis");
+    const bool randomBasis = IO::HasParam("random_basis");
 
     RANNModel::TreeTypes tree = RANNModel::KD_TREE;
     if (treeType == "kd")
@@ -204,48 +202,48 @@ static void mlpackMain()
     rann->RandomBasis() = randomBasis;
 
     Log::Info << "Using reference data from "
-        << CLI::GetPrintableParam<arma::mat>("reference") << "." << endl;
-    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
+        << IO::GetPrintableParam<arma::mat>("reference") << "." << endl;
+    arma::mat referenceSet = std::move(IO::GetParam<arma::mat>("reference"));
 
     rann->BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
   }
   else
   {
     // Load the model from file.
-    rann = CLI::GetParam<RANNModel*>("input_model");
+    rann = IO::GetParam<RANNModel*>("input_model");
 
     Log::Info << "Using rank-approximate kNN model from '"
-        << CLI::GetPrintableParam<RANNModel*>("input_model") << "' (trained on "
+        << IO::GetPrintableParam<RANNModel*>("input_model") << "' (trained on "
         << rann->Dataset().n_rows << "x" << rann->Dataset().n_cols
         << " dataset)." << endl;
 
     // Adjust singleMode and naive if necessary.
-    rann->SingleMode() = CLI::HasParam("single_mode");
-    rann->Naive() = CLI::HasParam("naive");
+    rann->SingleMode() = IO::HasParam("single_mode");
+    rann->Naive() = IO::HasParam("naive");
     rann->LeafSize() = size_t(lsInt);
   }
 
   // Apply the parameters for search.
-  if (CLI::HasParam("tau"))
-    rann->Tau() = CLI::GetParam<double>("tau");
-  if (CLI::HasParam("alpha"))
-    rann->Alpha() = CLI::GetParam<double>("alpha");
-  if (CLI::HasParam("single_sample_limit"))
-    rann->SingleSampleLimit() = CLI::GetParam<int>("single_sample_limit");
-  rann->SampleAtLeaves() = CLI::HasParam("sample_at_leaves");
-  rann->FirstLeafExact() = CLI::HasParam("sample_at_leaves");
+  if (IO::HasParam("tau"))
+    rann->Tau() = IO::GetParam<double>("tau");
+  if (IO::HasParam("alpha"))
+    rann->Alpha() = IO::GetParam<double>("alpha");
+  if (IO::HasParam("single_sample_limit"))
+    rann->SingleSampleLimit() = IO::GetParam<int>("single_sample_limit");
+  rann->SampleAtLeaves() = IO::HasParam("sample_at_leaves");
+  rann->FirstLeafExact() = IO::HasParam("sample_at_leaves");
 
   // Perform search, if desired.
-  if (CLI::HasParam("k"))
+  if (IO::HasParam("k"))
   {
-    const size_t k = (size_t) CLI::GetParam<int>("k");
+    const size_t k = (size_t) IO::GetParam<int>("k");
 
     arma::mat queryData;
-    if (CLI::HasParam("query"))
+    if (IO::HasParam("query"))
     {
-      queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      queryData = std::move(IO::GetParam<arma::mat>("query"));
       Log::Info << "Using query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
+          << IO::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
       if (queryData.n_rows != rann->Dataset().n_rows)
       {
@@ -267,17 +265,17 @@ static void mlpackMain()
 
     arma::Mat<size_t> neighbors;
     arma::mat distances;
-    if (CLI::HasParam("query"))
+    if (IO::HasParam("query"))
       rann->Search(std::move(queryData), k, neighbors, distances);
     else
       rann->Search(k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
     // Save output.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    IO::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    IO::GetParam<arma::mat>("distances") = std::move(distances);
   }
 
   // Save the output model.
-  CLI::GetParam<RANNModel*>("output_model") = rann;
+  IO::GetParam<RANNModel*>("output_model") = rann;
 }

@@ -12,7 +12,7 @@
  */
 #include "print_go.hpp"
 #include "camel_case.hpp"
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/hyphenate_string.hpp>
 #include <set>
 
@@ -34,17 +34,17 @@ void PrintGo(const util::ProgramDoc& programInfo,
               const std::string& functionName)
 {
   // Restore parameters.
-  CLI::RestoreSettings(programInfo.programName);
+  IO::RestoreSettings(programInfo.programName);
 
-  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
-  typedef std::map<std::string, util::ParamData>::const_iterator ParamIter;
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  typedef std::map<std::string, util::ParamData>::iterator ParamIter;
 
   // Split into input and output parameters.  Take two passes on the input
   // parameters, so that we get the required ones first.
   vector<string> inputOptions, outputOptions;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && d.required)
     {
       // Ignore some parameters.
@@ -59,7 +59,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
 
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && !d.required &&
         d.name != "help" && d.name != "info" &&
         d.name != "version")
@@ -83,7 +83,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
   // Then we must print the import of the gonum package.
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if ((d.cppType).compare(0, 6, "arma::") == 0)
     {
       std::cout << "import \"gonum.org/v1/gonum/mat\" " << std::endl;
@@ -98,9 +98,9 @@ void PrintGo(const util::ProgramDoc& programInfo,
       << std::endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
+    util::ParamData& d = parameters.at(inputOptions[i]);
     size_t indent = 4;
-    CLI::GetSingleton().functionMap[d.tname]["PrintMethodConfig"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintMethodConfig"](d,
         (void*) &indent, NULL);
   }
   cout << "}" << endl;
@@ -113,9 +113,9 @@ void PrintGo(const util::ProgramDoc& programInfo,
   cout << "  " << "return &" << goFunctionName << "OptionalParam{" << endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
+    util::ParamData& d = parameters.at(inputOptions[i]);
     size_t indent = 4;
-    CLI::GetSingleton().functionMap[d.tname]["PrintMethodInit"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintMethodInit"](d,
         (void*) &indent, NULL);
   }
   cout << "  " << "}" << endl;
@@ -130,20 +130,20 @@ void PrintGo(const util::ProgramDoc& programInfo,
   cout << endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
+    util::ParamData& d = parameters.at(inputOptions[i]);
 
     cout << "  ";
     size_t indent = 4;
     if (!d.required)
     {
       bool isLower = false;
-      CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+      IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
            &isLower);
     }
     else
     {
       bool isLower = true;
-      CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+      IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
           &isLower);
     }
     cout << endl;
@@ -153,12 +153,12 @@ void PrintGo(const util::ProgramDoc& programInfo,
   cout << endl;
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
+    util::ParamData& d = parameters.at(outputOptions[i]);
 
     cout << "  ";
     size_t indent = 4;
     bool isLower = true;
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         &isLower);
     cout << endl;
   }
@@ -172,13 +172,13 @@ void PrintGo(const util::ProgramDoc& programInfo,
   size_t counter = 0;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
+    util::ParamData& d = parameters.at(inputOptions[i]);
     if (d.required)
     {
       if (i != 0)
         cout << ", ";
 
-      CLI::GetSingleton().functionMap[d.tname]["PrintDefnInput"](d, NULL, NULL);
+      IO::GetSingleton().functionMap[d.tname]["PrintDefnInput"](d, NULL, NULL);
       counter++;
     }
   }
@@ -196,13 +196,13 @@ void PrintGo(const util::ProgramDoc& programInfo,
   // We must then print the output options.
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
+    util::ParamData& d = parameters.at(outputOptions[i]);
 
     if (i != 0)
       cout << ", ";
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
-    CLI::GetSingleton().functionMap[d.tname]["PrintDefnOutput"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintDefnOutput"](d,
       (void*) &t, NULL);
   }
 
@@ -223,10 +223,10 @@ void PrintGo(const util::ProgramDoc& programInfo,
   // Do any input processing.
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
+    util::ParamData& d = parameters.at(inputOptions[i]);
 
     size_t indent = 2;
-    CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
         (void*) &indent, NULL);
   }
 
@@ -234,7 +234,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
   cout << "  " << "// Mark all output options as passed." << endl;
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
+    util::ParamData& d = parameters.at(outputOptions[i]);
     cout << "  " << "setPassed(\"" << d.name << "\")" << endl;
   }
   cout << endl;
@@ -249,9 +249,9 @@ void PrintGo(const util::ProgramDoc& programInfo,
 
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
+    util::ParamData& d = parameters.at(outputOptions[i]);
 
-    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
         NULL, NULL);
   }
 
@@ -269,7 +269,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
     if (i != 0)
       cout << ", ";
 
-    const util::ParamData& d = parameters.at(outputOptions[i]);
+    util::ParamData& d = parameters.at(outputOptions[i]);
     cout << CamelCase(d.name, true);
   }
   cout << endl;

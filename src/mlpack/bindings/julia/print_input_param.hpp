@@ -24,7 +24,7 @@ namespace julia {
  * function definition.  This doesn't include any commas or anything.
  */
 template<typename T>
-void PrintInputParam(const util::ParamData& d,
+void PrintInputParam(util::ParamData& d,
                      const void* /* input */,
                      void* /* output */)
 {

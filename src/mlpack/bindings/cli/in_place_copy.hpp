@@ -30,7 +30,7 @@ namespace cli {
 template<typename T>
 void InPlaceCopyInternal(
     util::ParamData& /* d */,
-    const util::ParamData& /* input */,
+    util::ParamData& /* input */,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<std::is_same<T,
@@ -49,7 +49,7 @@ void InPlaceCopyInternal(
 template<typename T>
 void InPlaceCopyInternal(
     util::ParamData& d,
-    const util::ParamData& input,
+    util::ParamData& input,
     const typename std::enable_if<
         arma::is_arma_type<T>::value ||
         std::is_same<T,
@@ -74,13 +74,13 @@ void InPlaceCopyInternal(
  * @param * (output) Unused parameter.
  */
 template<typename T>
-void InPlaceCopy(const util::ParamData& d,
+void InPlaceCopy(util::ParamData& d,
                  const void* input,
                  void* /* output */)
 {
   // Cast to the correct type.
   InPlaceCopyInternal<typename std::remove_pointer<T>::type>(
-      const_cast<util::ParamData&>(d), *((const util::ParamData*) input));
+      const_cast<util::ParamData&>(d), *((util::ParamData*) input));
 }
 
 } // namespace cli

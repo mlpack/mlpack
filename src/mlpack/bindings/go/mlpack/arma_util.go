@@ -5,7 +5,7 @@ package mlpack
 #cgo LDFLAGS: -L. -lgo_util
 #include <stdlib.h>
 #include <stdio.h>
-#include <capi/cli_util.h>
+#include <capi/io_util.h>
 #include <capi/arma_util.h>
 */
 import "C"

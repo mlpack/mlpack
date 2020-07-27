@@ -26,7 +26,7 @@ namespace go {
  */
 template<typename T>
 void PrintDefnOutput(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<std::is_same<T,
@@ -40,7 +40,7 @@ void PrintDefnOutput(
  */
 template<typename T>
 void PrintDefnOutput(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   // *mat.Dense
@@ -52,7 +52,7 @@ void PrintDefnOutput(
  */
 template<typename T>
 void PrintDefnOutput(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
@@ -65,7 +65,7 @@ void PrintDefnOutput(
  */
 template<typename T>
 void PrintDefnOutput(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
@@ -90,9 +90,9 @@ void PrintDefnOutput(
  * @param * (output) Unused parameter.
  */
 template<typename T>
-void PrintDefnOutput(const util::ParamData& d,
-                           const void* /* input */,
-                           void* /* output */)
+void PrintDefnOutput(util::ParamData& d,
+                     const void* /* input */,
+                     void* /* output */)
 {
   PrintDefnOutput<typename std::remove_pointer<T>::type>(d);
 }
