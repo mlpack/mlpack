@@ -484,7 +484,7 @@ Octree<MetricType, StatisticType, MatType>::Octree() :
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
 Octree<MetricType, StatisticType, MatType>::Octree(
-    Archive& ar
+    Archive& ar,
     const typename std::enable_if_t<Archive::is_loading::value>*) :
     Octree() // Create an empty tree.
 {
