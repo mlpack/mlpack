@@ -106,8 +106,7 @@ void CosineEmbeddingLoss<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void CosineEmbeddingLoss<InputDataType, OutputDataType>::serialize(
-    Archive&  ar ,
-)
+    Archive&  ar)
 {
   ar & CEREAL_NVP(margin);
   ar & CEREAL_NVP(similarity);
