@@ -1,5 +1,5 @@
 /**
- * @file dtree.cpp
+ * @file methods/det/dtree_impl.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ivan Georgiev (ivan@jonan.info) (sparsification and optimizations)
  *

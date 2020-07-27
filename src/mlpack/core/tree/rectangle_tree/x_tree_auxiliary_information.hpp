@@ -1,5 +1,5 @@
 /**
- * @file no_auxiliary_information.hpp
+ * @file core/tree/rectangle_tree/x_tree_auxiliary_information.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the XTreeAuxiliaryInformation class, a class that provides
@@ -47,8 +47,8 @@ class XTreeAuxiliaryInformation
    *
    * @param other Another auxiliary information object from which the
    *    information will be copied.
-   * @param tree The node that holds the auxiliary information.
-   * @param deepCopy If false, the new object uses the same memory
+   * @param * (tree) The node that holds the auxiliary information.
+   * @param * (deepCopy) If false, the new object uses the same memory
    *    (not used here).
    */
   XTreeAuxiliaryInformation(const XTreeAuxiliaryInformation& other,
@@ -90,8 +90,8 @@ class XTreeAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    *
-   * @param node The node in which the point is being inserted.
-   * @param point The global number of the point being inserted.
+   * @param * (node) The node in which the point is being inserted.
+   * @param * (point) The global number of the point being inserted.
    */
   bool HandlePointInsertion(TreeType* /* node */, const size_t /* point */)
   {
@@ -105,9 +105,9 @@ class XTreeAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    *
-   * @param node The node in which the nodeToInsert is being inserted.
-   * @param nodeToInsert The node being inserted.
-   * @param insertionLevel The level of the tree at which the nodeToInsert
+   * @param * (node) The node in which the nodeToInsert is being inserted.
+   * @param * (nodeToInsert) The node being inserted.
+   * @param * (insertionLevel) The level of the tree at which the nodeToInsert
    *        should be inserted.
    */
   bool HandleNodeInsertion(TreeType* /* node */,
@@ -123,10 +123,10 @@ class XTreeAuxiliaryInformation
    * the tree in order to perform the deletion process. If the auxiliary
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
-   * @param node The node from which the point is being deleted.
-   * @param localIndex The local index of the point being deleted.
+   * @param * (node) The node from which the point is being deleted.
+   * @param * (localIndex) The local index of the point being deleted.
    */
-  bool HandlePointDeletion(TreeType* , const size_t)
+  bool HandlePointDeletion(TreeType* /* node */ , const size_t /* localIndex */)
   {
     return false;
   }
@@ -137,10 +137,10 @@ class XTreeAuxiliaryInformation
    * the tree in order to perform the deletion process. If the auxiliary
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
-   * @param node The node from which the node is being deleted.
-   * @param nodeIndex The local index of the node being deleted.
+   * @param * (node) The node from which the node is being deleted.
+   * @param * (nodeIndex) The local index of the node being deleted.
    */
-  bool HandleNodeRemoval(TreeType* , const size_t)
+  bool HandleNodeRemoval(TreeType* /* node */ , const size_t /* nodeIndex */)
   {
     return false;
   }
@@ -149,9 +149,9 @@ class XTreeAuxiliaryInformation
    * Some tree types require to propagate the information upward.
    * This method should return false if this is not the case. If true is
    * returned, the update will be propagated upward.
-   * @param node The node in which the auxiliary information being update.
+   * @param * (node) The node in which the auxiliary information being update.
    */
-  bool UpdateAuxiliaryInfo(TreeType* )
+  bool UpdateAuxiliaryInfo(TreeType* /* node */)
   {
     return false;
   }
@@ -173,7 +173,7 @@ class XTreeAuxiliaryInformation
 
     SplitHistoryStruct(int dim) : lastDimension(0), history(dim)
     {
-      for (int i = 0; i < dim; i++)
+      for (int i = 0; i < dim; ++i)
         history[i] = false;
     }
 

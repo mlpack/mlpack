@@ -1,5 +1,5 @@
 /**
- * @file dbscan_test.cpp
+ * @file tests/dbscan_test.cpp
  * @author Ryan Curtin
  *
  * Test the DBSCAN implementation.

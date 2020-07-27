@@ -1,5 +1,5 @@
 /**
- * @file is_std_vector.hpp
+ * @file core/util/is_std_vector.hpp
  * @author Ryan Curtin
  *
  * Simple template metaprogramming struct to detect if a type is a

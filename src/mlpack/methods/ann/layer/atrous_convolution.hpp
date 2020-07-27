@@ -1,5 +1,5 @@
 /**
- * @file atrous_convolution.hpp
+ * @file methods/ann/layer/atrous_convolution.hpp
  * @author Aarush Gupta
  * @author Shikhar Jaiswal
  *
@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
+#include <mlpack/core/util/to_lower.hpp>
 
 #include "layer_types.hpp"
 #include "padding.hpp"
@@ -144,7 +145,7 @@ class AtrousConvolution
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -364,9 +365,6 @@ class AtrousConvolution
 
   //! Locally-stored transformed output parameter.
   arma::cube outputTemp;
-
-  //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
 
   //! Locally-stored transformed padded input parameter.
   arma::cube inputPaddedTemp;

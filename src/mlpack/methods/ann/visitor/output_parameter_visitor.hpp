@@ -1,5 +1,5 @@
 /**
- * @file output_parameter_visitor.hpp
+ * @file methods/ann/visitor/output_parameter_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the OutputParameter() function for

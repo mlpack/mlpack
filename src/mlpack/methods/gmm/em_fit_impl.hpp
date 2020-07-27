@@ -1,5 +1,5 @@
 /**
- * @file em_fit_impl.hpp
+ * @file methods/gmm/em_fit_impl.hpp
  * @author Ryan Curtin
  * @author Michael Fox
  *
@@ -88,7 +88,7 @@ Estimate(const arma::mat& observations,
 
     // Calculate the conditional probabilities of choosing a particular
     // Gaussian given the observations and the present theta value.
-    for (size_t i = 0; i < dists.size(); i++)
+    for (size_t i = 0; i < dists.size(); ++i)
     {
       // Store conditional log probabilities into condLogProb vector for each
       // Gaussian.  First we make an alias of the condLogProb vector.
@@ -98,7 +98,7 @@ Estimate(const arma::mat& observations,
     }
 
     // Normalize row-wise.
-    for (size_t i = 0; i < condLogProb.n_rows; i++)
+    for (size_t i = 0; i < condLogProb.n_rows; ++i)
     {
       // Avoid dividing by zero; if the probability for everything is 0, we
       // don't want to make it NaN.
@@ -116,7 +116,7 @@ Estimate(const arma::mat& observations,
 
     // Calculate the new value of the means using the updated conditional
     // probabilities.
-    for (size_t i = 0; i < dists.size(); i++)
+    for (size_t i = 0; i < dists.size(); ++i)
     {
       // Don't update if there's no probability of the Gaussian having points.
       if (probRowSums[i] != -std::numeric_limits<double>::infinity())
@@ -193,7 +193,7 @@ Estimate(const arma::mat& observations,
   {
     // Calculate the conditional probabilities of choosing a particular
     // Gaussian given the observations and the present theta value.
-    for (size_t i = 0; i < dists.size(); i++)
+    for (size_t i = 0; i < dists.size(); ++i)
     {
       // Store conditional log probabilities into condLogProb vector for each
       // Gaussian.  First we make an alias of the condLogProb vector.
@@ -203,7 +203,7 @@ Estimate(const arma::mat& observations,
     }
 
     // Normalize row-wise.
-    for (size_t i = 0; i < condLogProb.n_rows; i++)
+    for (size_t i = 0; i < condLogProb.n_rows; ++i)
     {
       // Avoid dividing by zero; if the probability for everything is 0, we
       // don't want to make it NaN.
@@ -219,7 +219,7 @@ Estimate(const arma::mat& observations,
     // Calculate the new value of the means using the updated conditional
     // probabilities.
     arma::vec logProbabilities = arma::log(probabilities);
-    for (size_t i = 0; i < dists.size(); i++)
+    for (size_t i = 0; i < dists.size(); ++i)
     {
       // Calculate the sum of probabilities of points, which is the
       // conditional probability of each point being from Gaussian i

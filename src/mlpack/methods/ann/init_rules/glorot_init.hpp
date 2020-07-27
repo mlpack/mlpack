@@ -1,5 +1,5 @@
 /**
- * @file glorot_init.hpp
+ * @file methods/ann/init_rules/glorot_init.hpp
  * @author Prabhat Sharma
  *
  * Definition and implementation of the Glorot initialization method. This
@@ -82,7 +82,7 @@ class GlorotInitializationType
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
    * @param cols Number of columns.
-   * @param slice Numbers of slices.
+   * @param slices Number of slices.
    */
   template<typename eT>
   void Initialize(arma::Cube<eT>& W,
@@ -131,7 +131,7 @@ inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W,
   {
     W = arma::cube(rows, cols, slices);
   }
-  for (size_t i = 0; i < slices; i++)
+  for (size_t i = 0; i < slices; ++i)
     Initialize(W.slice(i), rows, cols);
 }
 

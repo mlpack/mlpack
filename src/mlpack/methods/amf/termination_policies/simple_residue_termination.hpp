@@ -1,5 +1,5 @@
 /**
- * @file simple_residue_termination.hpp
+ * @file methods/amf/termination_policies/simple_residue_termination.hpp
  * @author Sumedh Ghaisas
  *
  * Termination policy used in AMF (Alternating Matrix Factorization).

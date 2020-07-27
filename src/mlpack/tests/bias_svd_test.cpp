@@ -1,5 +1,5 @@
 /**
- * @file bias_svd_test.cpp
+ * @file tests/bias_svd_test.cpp
  * @author Siddharth Agrawal
  * @author Wenhao Huang
  *
@@ -46,13 +46,13 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionRandomEvaluate)
   // Make a BiasSVDFunction with zero regularization.
   BiasSVDFunction<arma::mat> biasSVDFunc(data, rank, 0);
 
-  for (size_t i = 0; i < numTrials; i++)
+  for (size_t i = 0; i < numTrials; ++i)
   {
     arma::mat parameters = arma::randu(rank + 1, numUsers + numItems);
 
     // Calculate cost by summing up cost of each example.
     double cost = 0;
-    for (size_t j = 0; j < numRatings; j++)
+    for (size_t j = 0; j < numRatings; ++j)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionRegularizationEvaluate)
   BiasSVDFunction<arma::mat> biasSVDFuncSmallReg(data, rank, 0.5);
   BiasSVDFunction<arma::mat> biasSVDFuncBigReg(data, rank, 20);
 
-  for (size_t i = 0; i < numTrials; i++)
+  for (size_t i = 0; i < numTrials; ++i)
   {
     arma::mat parameters = arma::randu(rank + 1, numUsers + numItems);
 
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionRegularizationEvaluate)
     // each rating and sum them up.
     double smallRegTerm = 0;
     double bigRegTerm = 0;
-    for (size_t j = 0; j < numRatings; j++)
+    for (size_t j = 0; j < numRatings; ++j)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
@@ -166,9 +166,9 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionGradient)
   double costPlus1, costMinus1, numGradient1;
   double costPlus2, costMinus2, numGradient2;
 
-  for (size_t i = 0; i < rank; i++)
+  for (size_t i = 0; i < rank; ++i)
   {
-    for (size_t j = 0; j < numUsers + numItems; j++)
+    for (size_t j = 0; j < numUsers + numItems; ++j)
     {
       // Perturb parameter with a positive constant and get costs.
       parameters(i, j) += epsilon;
@@ -262,7 +262,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionOptimize)
   data(1, numRatings - 1) = numItems - 1;
 
   // Make rating entries based on the parameters.
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionOptimize)
 
   // Get predicted ratings from optimized parameters.
   arma::mat predictedData(1, numRatings);
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -330,7 +330,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionParallelOptimize)
   data(1, numRatings - 1) = numItems - 1;
 
   // Make rating entries based on the parameters.
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -358,7 +358,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionParallelOptimize)
 
   // Get predicted ratings from optimized parameters.
   arma::mat predictedData(1, numRatings);
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;

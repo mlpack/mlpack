@@ -1,5 +1,5 @@
 /**
- * @file select_impl.hpp
+ * @file methods/ann/layer/select_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Select module.

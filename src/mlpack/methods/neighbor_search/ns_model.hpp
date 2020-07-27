@@ -1,5 +1,5 @@
 /**
- * @file ns_model.hpp
+ * @file methods/neighbor_search/ns_model.hpp
  * @author Ryan Curtin
  *
  * This is a model for nearest or furthest neighbor search.  It is useful in

@@ -1,5 +1,5 @@
 /**
- * @file log_cosh_loss.hpp
+ * @file methods/ann/loss_functions/log_cosh_loss.hpp
  * @author Kartik Dutt
  *
  * Definition of the Log-Hyperbolic-Cosine loss function.
@@ -20,7 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Log-Hyperbolic-Cosine loss function is often used to improve
- * variational auto encoder. This function is the log of hyperbolic 
+ * variational auto encoder. This function is the log of hyperbolic
  * cosine of difference between true values and predicted values.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -55,7 +55,8 @@ class LogCoshLoss
    * @param target Target data to compare with.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, const TargetType&& target);
+  typename InputType::elem_type Forward(const InputType& input,
+                                        const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -65,9 +66,9 @@ class LogCoshLoss
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  void Backward(const InputType& input,
+                const TargetType& target,
+                OutputType& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }

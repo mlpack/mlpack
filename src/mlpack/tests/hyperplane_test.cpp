@@ -1,5 +1,5 @@
 /**
- * @file hyperplane_test.cpp
+ * @file tests/hyperplane_test.cpp
  *
  * Tests for Hyperplane and ProjVector implementations.
  *
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(HyperplaneEmptyConstructor)
   arma::mat dataset;
   dataset.randu(3, 20); // 20 points in 3 dimensions.
 
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     BOOST_REQUIRE(h1.Left(dataset.col(i)));
     BOOST_REQUIRE(h2.Left(dataset.col(i)));

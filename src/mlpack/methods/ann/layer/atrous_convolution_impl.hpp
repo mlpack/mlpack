@@ -1,5 +1,5 @@
 /**
- * @file atrous_convolution_impl.hpp
+ * @file methods/ann/layer/atrous_convolution_impl.hpp
  * @author Aarush Gupta
  * @author Shikhar Jaiswal
  *
@@ -127,8 +127,7 @@ AtrousConvolution<
 
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
-  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
-      [](unsigned char c){ return std::tolower(c); });
+  util::ToLower(paddingType, paddingTypeLow);
 
   size_t padWLeft = std::get<0>(padW);
   size_t padWRight = std::get<1>(padW);
@@ -187,7 +186,7 @@ void AtrousConvolution<
 >::Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   batchSize = input.n_cols;
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
+  arma::cube inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
 
   if (padding.PadWLeft() != 0 || padding.PadWRight() != 0 ||
@@ -271,9 +270,9 @@ void AtrousConvolution<
   arma::cube mappedError(((arma::Mat<eT>&) gy).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
 
-  g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
-  gTemp = arma::Cube<eT>(g.memptr(), inputTemp.n_rows,
-      inputTemp.n_cols, inputTemp.n_slices, false, false);
+  g.set_size(inputWidth * inputHeight * inSize, batchSize);
+  gTemp = arma::Cube<eT>(g.memptr(), inputWidth, inputHeight,
+      inSize * batchSize, false, false);
   gTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
@@ -325,12 +324,14 @@ void AtrousConvolution<
     InputDataType,
     OutputDataType
 >::Gradient(
-    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& input,
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
   arma::cube mappedError(((arma::Mat<eT>&) error).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
+  arma::cube inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
+      inputWidth, inputHeight, inSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
   gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,
@@ -367,13 +368,13 @@ void AtrousConvolution<
 
       if (dilationHeight > 1)
       {
-        for (size_t i = 1; i < output.n_cols; i++){
+        for (size_t i = 1; i < output.n_cols; ++i){
           output.shed_cols(i, i + dilationHeight - 2);
         }
       }
       if (dilationWidth > 1)
       {
-        for (size_t i = 1; i < output.n_rows; i++){
+        for (size_t i = 1; i < output.n_rows; ++i){
           output.shed_rows(i, i + dilationWidth - 2);
         }
       }

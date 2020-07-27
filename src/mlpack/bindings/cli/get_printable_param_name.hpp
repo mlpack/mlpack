@@ -1,5 +1,5 @@
 /**
- * @file get_printable_param_name.hpp
+ * @file bindings/cli/get_printable_param_name.hpp
  * @author Ryan Curtin
  *
  * Return the parameter name that the user would specify on the command line,
@@ -25,7 +25,7 @@ namespace cli {
  */
 template<typename T>
 std::string GetPrintableParamName(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<std::is_same<T,
@@ -37,7 +37,7 @@ std::string GetPrintableParamName(
  */
 template<typename T>
 std::string GetPrintableParamName(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0);
 
 /**
@@ -46,7 +46,7 @@ std::string GetPrintableParamName(
  */
 template<typename T>
 std::string GetPrintableParamName(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
 
@@ -56,7 +56,7 @@ std::string GetPrintableParamName(
  */
 template<typename T>
 std::string GetPrintableParamName(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0);
 
@@ -65,7 +65,7 @@ std::string GetPrintableParamName(
  */
 template<typename T>
 void GetPrintableParamName(
-    const util::ParamData& d,
+    util::ParamData& d,
     const void* /* input */,
     void* output)
 {

@@ -1,5 +1,5 @@
 /**
- * @file rnn_impl.hpp
+ * @file methods/ann/rnn_impl.hpp
  * @author Marcus Edel
  *
  * Definition of the RNN class, which implements recurrent neural networks.
@@ -63,6 +63,41 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::~RNN()
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename OptimizerType>
+typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
+{
+  if (optimizer.MaxIterations() < samples &&
+      optimizer.MaxIterations() != 0)
+  {
+    Log::Warn << "The optimizer's maximum number of iterations "
+              << "is less than the size of the dataset; the "
+              << "optimizer will not pass over the entire "
+              << "dataset. To fix this, modify the maximum "
+              << "number of iterations to be at least equal "
+              << "to the number of points of your dataset "
+              << "(" << samples << ")." << std::endl;
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename OptimizerType>
+typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+WarnMessageMaxIterations(OptimizerType& /* optimizer */,
+                         size_t /* samples */) const
+{
+  return;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename OptimizerType, typename... CallbackTypes>
 double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube predictors,
@@ -82,6 +117,8 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   {
     ResetParameters();
   }
+
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("rnn_optimization");
@@ -126,6 +163,8 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   }
 
   OptimizerType optimizer;
+
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("rnn_optimization");

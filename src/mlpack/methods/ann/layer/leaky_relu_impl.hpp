@@ -1,5 +1,5 @@
 /**
- * @file leaky_relu_impl.hpp
+ * @file methods/ann/layer/leaky_relu_impl.hpp
  * @author Dhawal Arora
  *
  * Implementation of LeakyReLU layer first introduced in the acoustic model,
@@ -42,7 +42,7 @@ void LeakyReLU<InputDataType, OutputDataType>::Backward(
 {
   DataType derivative;
   derivative.set_size(arma::size(input));
-  for (size_t i = 0; i < input.n_elem; i++)
+  for (size_t i = 0; i < input.n_elem; ++i)
     derivative(i) = (input(i) >= 0) ? 1 : alpha;
 
   g = gy % derivative;

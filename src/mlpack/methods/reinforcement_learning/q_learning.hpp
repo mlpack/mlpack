@@ -1,5 +1,5 @@
 /**
- * @file q_learning.hpp
+ * @file methods/reinforcement_learning/q_learning.hpp
  * @author Shangtong Zhang
  *
  * This file is the definition of QLearning class,
@@ -77,10 +77,10 @@ class QLearning
    * @param updater How to apply gradients when training.
    * @param environment Reinforcement learning task.
    */
-  QLearning(TrainingConfig config,
-            NetworkType network,
-            PolicyType policy,
-            ReplayType replayMethod,
+  QLearning(TrainingConfig& config,
+            NetworkType& network,
+            PolicyType& policy,
+            ReplayType& replayMethod,
             UpdaterType updater = UpdaterType(),
             EnvironmentType environment = EnvironmentType());
 
@@ -90,10 +90,14 @@ class QLearning
   ~QLearning();
 
   /**
-   * Execute a step in an episode.
-   * @return Reward for the step.
+   * Trains the DQN agent(non-categorical).
    */
-  double Step();
+  void TrainAgent();
+
+  /**
+   * Select an action, given an agent.
+   */
+  void SelectAction();
 
   /**
    * Execute an episode.
@@ -101,15 +105,18 @@ class QLearning
    */
   double Episode();
 
-  /**
-   * @return Total steps from beginning.
-   */
+  //! Modify total steps from beginning.
+  size_t& TotalSteps() { return totalSteps; }
+  //! Get total steps from beginning.
   const size_t& TotalSteps() const { return totalSteps; }
 
   //! Modify the state of the agent.
   StateType& State() { return state; }
   //! Get the state of the agent.
   const StateType& State() const { return state; }
+
+  //! Get the action of the agent.
+  const ActionType& Action() const { return action; }
 
   //! Modify the environment in which the agent is.
   EnvironmentType& Environment() { return environment; }
@@ -135,25 +142,25 @@ class QLearning
   arma::Col<size_t> BestAction(const arma::mat& actionValues);
 
   //! Locally-stored hyper-parameters.
-  TrainingConfig config;
+  TrainingConfig& config;
 
   //! Locally-stored learning network.
-  NetworkType learningNetwork;
+  NetworkType& learningNetwork;
 
   //! Locally-stored target network.
   NetworkType targetNetwork;
+
+  //! Locally-stored behavior policy.
+  PolicyType& policy;
+
+  //! Locally-stored experience method.
+  ReplayType& replayMethod;
 
   //! Locally-stored updater.
   UpdaterType updater;
   #if ENS_VERSION_MAJOR >= 2
   typename UpdaterType::template Policy<arma::mat, arma::mat>* updatePolicy;
   #endif
-
-  //! Locally-stored behavior policy.
-  PolicyType policy;
-
-  //! Locally-stored experience method.
-  ReplayType replayMethod;
 
   //! Locally-stored reinforcement learning task.
   EnvironmentType environment;
@@ -163,6 +170,9 @@ class QLearning
 
   //! Locally-stored current state of the agent.
   StateType state;
+
+  //! Locally-stored action of the agent.
+  ActionType action;
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;

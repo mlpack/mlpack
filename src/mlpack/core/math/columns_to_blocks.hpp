@@ -1,5 +1,5 @@
 /**
- * @file columns_to_blocks.hpp
+ * @file core/math/columns_to_blocks.hpp
  * @author Tham Ngap Wei
  *
  * A helper class that could be useful for visualizing the output of
@@ -140,7 +140,7 @@ class ColumnsToBlocks
    * BlockWidth() were not called), then the number of rows in the input matrix
    * must be a perfect square.
    *
-   * @param input Input matrix to transform.
+   * @param maximalInputs Input matrix to transform.
    * @param output Matrix to store transformed output in.
    */
   void Transform(const arma::mat& maximalInputs, arma::mat& output);

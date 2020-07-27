@@ -1,5 +1,5 @@
 /**
- * @file maximal_inputs.hpp
+ * @file methods/sparse_autoencoder/maximal_inputs.hpp
  * @author Tham Ngap Wei
  *
  * A function to find the maximal inputs of an autoencoder.

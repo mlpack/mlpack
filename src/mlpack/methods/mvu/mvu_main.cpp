@@ -1,5 +1,5 @@
 /**
- * @file mvu_main.cpp
+ * @file methods/mvu/mvu_main.cpp
  * @author Ryan Curtin
  *
  * Executable for MVU.
@@ -12,7 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include "mvu.hpp"
 
 PROGRAM_INFO("Maximum Variance Unfolding (MVU)", "This program implements "
@@ -38,13 +38,13 @@ using namespace std;
 int main(int argc, char **argv)
 {
   // Read from command line.
-  CLI::ParseCommandLine(argc, argv);
-  const string inputFile = CLI::GetParam<string>("input_file");
-  const string outputFile = CLI::GetParam<string>("output_file");
-  const int newDim = CLI::GetParam<int>("new_dim");
-  const int numNeighbors = CLI::GetParam<int>("num_neighbors");
+  IO::ParseCommandLine(argc, argv);
+  const string inputFile = IO::GetParam<string>("input_file");
+  const string outputFile = IO::GetParam<string>("output_file");
+  const int newDim = IO::GetParam<int>("new_dim");
+  const int numNeighbors = IO::GetParam<int>("num_neighbors");
 
-  if (!CLI::HasParam("output"))
+  if (!IO::HasParam("output"))
   {
     Log::Warn << "--output_file (-o) is not specified; no results will be "
         << "saved!" << endl;
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
   RandomSeed(time(NULL));
 
   // Load input dataset.
-  mat data = std::move(CLI::GetParam<arma::mat>("input"));
+  mat data = std::move(IO::GetParam<arma::mat>("input"));
 
   // Verify that the requested dimensionality is valid.
   if (newDim <= 0 || newDim > (int) data.n_rows)
@@ -78,6 +78,6 @@ int main(int argc, char **argv)
   mvu.Unfold(newDim, numNeighbors, output);
 
   // Save results to file.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(output);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(output);
 }

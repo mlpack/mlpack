@@ -1,5 +1,5 @@
 /**
- * @file orthogonal_init.hpp
+ * @file methods/ann/init_rules/orthogonal_init.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the orthogonal matrix initialization method.
@@ -66,7 +66,7 @@ class OrthogonalInitialization
   {
     W = arma::Cube<eT>(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
   }
 

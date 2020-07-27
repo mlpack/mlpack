@@ -1,5 +1,5 @@
 /**
- * @file max_pooling.hpp
+ * @file methods/ann/layer/max_pooling.hpp
  * @author Marcus Edel
  * @author Nilay Jain
  *
@@ -85,7 +85,7 @@ class MaxPooling
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -104,24 +104,24 @@ class MaxPooling
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the width.
+  //! Get the input width.
   size_t InputWidth() const { return inputWidth; }
-  //! Modify the width.
+  //! Modify the input width.
   size_t& InputWidth() { return inputWidth; }
 
-  //! Get the height.
+  //! Get the input height.
   size_t InputHeight() const { return inputHeight; }
-  //! Modify the height.
+  //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
-  //! Get the width.
+  //! Get the output width.
   size_t OutputWidth() const { return outputWidth; }
-  //! Modify the width.
+  //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
-  //! Get the height.
+  //! Get the output height.
   size_t OutputHeight() const { return outputHeight; }
-  //! Modify the height.
+  //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
@@ -161,7 +161,7 @@ class MaxPooling
   bool& Deterministic() { return deterministic; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -179,8 +179,6 @@ class MaxPooling
                         arma::Mat<eT>& output,
                         arma::Mat<eT>& poolingIndices)
   {
-    const size_t rStep = kernelWidth;
-    const size_t cStep = kernelHeight;
     for (size_t j = 0, colidx = 0; j < output.n_cols;
         ++j, colidx += strideHeight)
     {
@@ -188,16 +186,18 @@ class MaxPooling
           ++i, rowidx += strideWidth)
       {
         arma::mat subInput = input(
-            arma::span(rowidx, rowidx + rStep - 1 - offset),
-            arma::span(colidx, colidx + cStep - 1 - offset));
+            arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
+            arma::span(colidx, colidx + kernelHeight - 1 - offset));
+
         const size_t idx = pooling.Pooling(subInput);
         output(i, j) = subInput(idx);
 
         if (!deterministic)
         {
           arma::Mat<size_t> subIndices = indices(arma::span(rowidx,
-            rowidx + rStep - 1 - offset),
-            arma::span(colidx, colidx + cStep - 1 - offset));
+              rowidx + kernelWidth - 1 - offset),
+              arma::span(colidx, colidx + kernelHeight - 1 - offset));
+
           poolingIndices(i, j) = subIndices(idx);
         }
       }

@@ -1,5 +1,5 @@
 /**
- * @file weight_norm_impl.hpp
+ * @file methods/ann/layer/weight_norm_impl.hpp
  * @author Toshal Agrawal
  *
  * Implementation of the WeightNorm Layer.

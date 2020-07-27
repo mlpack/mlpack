@@ -1,5 +1,5 @@
 /**
- * @file naive_kmeans_impl.hpp
+ * @file methods/kmeans/naive_kmeans_impl.hpp
  * @author Ryan Curtin
  * @author Shikhar Bhardwaj
  *
@@ -55,7 +55,7 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
       double minDistance = std::numeric_limits<double>::infinity();
       size_t closestCluster = centroids.n_cols; // Invalid value.
 
-      for (size_t j = 0; j < centroids.n_cols; j++)
+      for (size_t j = 0; j < centroids.n_cols; ++j)
       {
         const double distance = metric.Evaluate(dataset.col(i),
             centroids.unsafe_col(j));

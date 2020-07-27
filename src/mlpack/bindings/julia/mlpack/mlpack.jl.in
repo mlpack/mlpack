@@ -17,6 +17,9 @@ functionality can be used to access the documentation that way.
 """
 module mlpack
 
+# Include any types of models.
+include("types.jl")
+
 """
     mlpack._Internal
 
@@ -27,4 +30,4 @@ around!)
 """
 module _Internal
 
-include("cli.jl")
+include("io.jl")

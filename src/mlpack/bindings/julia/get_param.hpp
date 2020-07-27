@@ -1,5 +1,5 @@
 /**
- * @file get_param.hpp
+ * @file bindings/julia/get_param.hpp
  * @author Ryan Curtin
  *
  * Get a parameter for a Julia binding.
@@ -23,7 +23,7 @@ namespace julia {
  * special handling is necessary.
  */
 template<typename T>
-void GetParam(const util::ParamData& d,
+void GetParam(util::ParamData& d,
               const void* /* input */,
               void* output)
 {

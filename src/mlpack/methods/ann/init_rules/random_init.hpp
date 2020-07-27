@@ -1,5 +1,5 @@
 /**
- * @file random_init.hpp
+ * @file methods/ann/init_rules/random_init.hpp
  * @author Marcus Edel
  *
  * Intialization rule for the neural networks. This simple initialization is
@@ -65,6 +65,7 @@ class RandomInitialization
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
    * @param cols Number of columns.
+   * @param slices Number of slices.
    */
   template<typename eT>
   void Initialize(arma::Cube<eT>& W,
@@ -74,7 +75,7 @@ class RandomInitialization
   {
     W = arma::Cube<eT>(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
   }
 

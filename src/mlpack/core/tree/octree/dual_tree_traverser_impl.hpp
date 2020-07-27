@@ -1,5 +1,5 @@
 /**
- * @file dual_tree_traverser_impl.hpp
+ * @file core/tree/octree/dual_tree_traverser_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the dual-tree traverser for the octree.

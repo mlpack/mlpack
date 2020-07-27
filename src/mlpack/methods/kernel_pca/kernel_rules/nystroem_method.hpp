@@ -1,5 +1,5 @@
 /**
- * @file nystroem_method.hpp
+ * @file methods/kernel_pca/kernel_rules/nystroem_method.hpp
  * @author Marcus Edel
  *
  * Use the Nystroem method for approximating a kernel matrix.

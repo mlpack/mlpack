@@ -1,5 +1,5 @@
 /**
- * @file radical_main.cpp
+ * @file methods/radical/radical_main.cpp
  * @author Nishant Mehta
  *
  * Executable for RADICAL. RADICAL is Robust, Accurate, Direct ICA
@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
 #include "radical.hpp"
@@ -75,8 +75,8 @@ using namespace arma;
 static void mlpackMain()
 {
   // Set random seed.
-  if (CLI::GetParam<int>("seed") != 0)
-    RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     RandomSeed((size_t) std::time(NULL));
 
@@ -95,13 +95,13 @@ static void mlpackMain()
       "number of sweeps must be 0 or greater");
 
   // Load the data.
-  mat matX = std::move(CLI::GetParam<mat>("input"));
+  mat matX = std::move(IO::GetParam<mat>("input"));
 
   // Load parameters.
-  double noiseStdDev = CLI::GetParam<double>("noise_std_dev");
-  size_t nReplicates = CLI::GetParam<int>("replicates");
-  size_t nAngles = CLI::GetParam<int>("angles");
-  size_t nSweeps = CLI::GetParam<int>("sweeps");
+  double noiseStdDev = IO::GetParam<double>("noise_std_dev");
+  size_t nReplicates = IO::GetParam<int>("replicates");
+  size_t nAngles = IO::GetParam<int>("angles");
+  size_t nSweeps = IO::GetParam<int>("sweeps");
 
   if (nSweeps == 0)
   {
@@ -115,18 +115,18 @@ static void mlpackMain()
   rad.DoRadical(matX, matY, matW);
 
   // Save results.
-  if (CLI::HasParam("output_ic"))
-    CLI::GetParam<mat>("output_ic") = std::move(matY);
+  if (IO::HasParam("output_ic"))
+    IO::GetParam<mat>("output_ic") = std::move(matY);
 
-  if (CLI::HasParam("output_unmixing"))
-    CLI::GetParam<mat>("output_unmixing") = std::move(matW);
+  if (IO::HasParam("output_unmixing"))
+    IO::GetParam<mat>("output_unmixing") = std::move(matW);
 
-  if (CLI::HasParam("objective"))
+  if (IO::HasParam("objective"))
   {
     // Compute and print objective.
     mat matYT = trans(matY);
     double valEst = 0;
-    for (size_t i = 0; i < matYT.n_cols; i++)
+    for (size_t i = 0; i < matYT.n_cols; ++i)
     {
       vec y = vec(matYT.col(i));
       valEst += rad.Vasicek(y);

@@ -78,8 +78,8 @@ mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
  - Armadillo >= 8.400.0 (with LAPACK support)
- - Boost (math_c99, program_options, serialization, unit_test_framework, heap,
-          spirit) >= 1.49
+ - Boost (math_c99, serialization, unit_test_framework, heap,
+          spirit) >= 1.58
  - ensmallen >= 2.10.0 (will be downloaded if not found)
 
 In addition, mlpack has the following optional dependencies:
@@ -99,9 +99,9 @@ In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be
 installed through apt:
 
 @code
-# apt-get install libboost-math-dev libboost-program-options-dev
-  libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
-  python-pandas python-numpy cython python-setuptools
+# apt-get install libboost-math-dev libboost-test-dev libboost-serialization-dev
+  libarmadillo-dev binutils-dev python-pandas python-numpy cython
+  python-setuptools
 @endcode
 
 If you are using Ubuntu 19.10 or newer, you can also install @c libensmallen-dev
@@ -122,9 +122,9 @@ source as apt installs an older version. So you need to omit
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
-# dnf install boost-devel boost-test boost-program-options boost-math
-  armadillo-devel binutils-devel python2-Cython python2-setuptools
-  python2-numpy python2-pandas ensmallen-devel stbi-devel
+# dnf install boost-devel boost-test boost-math armadillo-devel binutils-devel 
+  python2-Cython python2-setuptools python2-numpy python2-pandas ensmallen-devel 
+  stbi-devel
 @endcode
 
 (It's also possible to use python3 packages from the package manager---mlpack

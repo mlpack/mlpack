@@ -1,5 +1,5 @@
 /**
- * @file sparse_autoencoder_test.cpp
+ * @file tests/sparse_autoencoder_test.cpp
  * @author Siddharth Agrawal
  *
  * Test the SparseAutoencoder class.
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRandomEvaluate)
   SparseAutoencoderFunction saf(data, vSize, hSize, 0, 0);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; ++i)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRandomEvaluate)
     double reconstructionError = 0;
 
     // Compute error for each training example.
-    for (size_t j = 0; j < points; j++)
+    for (size_t j = 0; j < points; ++j)
     {
       arma::mat hiddenLayer, outputLayer, diff;
 
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRegularizationEvaluate)
   SparseAutoencoderFunction safBigReg(data, vSize, hSize, 20, 0);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; ++i)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
   SparseAutoencoderFunction safBigDiv(data, vSize, hSize, 0, 20, rho);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; ++i)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
     rhoCap.zeros(hSize, 1);
 
     // Compute hidden layer activations for each example.
-    for (size_t j = 0; j < points; j++)
+    for (size_t j = 0; j < points; ++j)
     {
       arma::mat hiddenLayer;
 
@@ -236,9 +236,9 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
   double costPlus3, costMinus3, numGradient3;
 
   // For each parameter.
-  for (size_t i = 0; i <= l3; i++)
+  for (size_t i = 0; i <= l3; ++i)
   {
-    for (size_t j = 0; j <= l2; j++)
+    for (size_t j = 0; j <= l2; ++j)
     {
       // Perturb parameter with a positive constant and get costs.
       parameters(i, j) += epsilon;

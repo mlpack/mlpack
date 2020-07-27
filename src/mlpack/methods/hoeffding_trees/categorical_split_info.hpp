@@ -1,5 +1,5 @@
 /**
- * @file categorical_split_info.hpp
+ * @file methods/hoeffding_trees/categorical_split_info.hpp
  * @author Ryan Curtin
  *
  * After a categorical split has been made, this holds information on the split.

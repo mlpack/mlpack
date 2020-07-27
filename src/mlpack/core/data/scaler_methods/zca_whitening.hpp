@@ -1,5 +1,5 @@
 /**
- * @file zca_whitening.hpp
+ * @file core/data/scaler_methods/zca_whitening.hpp
  * @author Jeffin Sam
  *
  * Whitening scaling to scale features, Using ZCA Whitening.
@@ -52,10 +52,7 @@ class ZCAWhitening
    *
    * @param eps Regularization parameter.
    */
-  ZCAWhitening(double eps = 0.00005)
-  {
-    pca = new data::PCAWhitening(eps);
-  }
+  ZCAWhitening(double eps = 0.00005) : pca(eps) { }
 
   /**
    * Function to fit features, to find out the min max and scale.
@@ -65,7 +62,7 @@ class ZCAWhitening
   template<typename MatType>
   void Fit(const MatType& input)
   {
-    pca->Fit(input);
+    pca.Fit(input);
   }
 
   /**
@@ -77,8 +74,8 @@ class ZCAWhitening
   template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
-    pca->Transform(input, output);
-    output = pca->EigenVectors() * output;
+    pca.Transform(input, output);
+    output = pca.EigenVectors() * output;
   }
 
   /**
@@ -90,19 +87,19 @@ class ZCAWhitening
   template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
-    output = inv(pca->EigenVectors()) * arma::diagmat(arma::sqrt(
-        pca->EigenValues())) * inv(pca->EigenVectors().t()) * input;
-    output = (output.each_col() + pca->ItemMean());
+    output = inv(pca.EigenVectors()) * arma::diagmat(arma::sqrt(
+        pca.EigenValues())) * inv(pca.EigenVectors().t()) * input;
+    output = (output.each_col() + pca.ItemMean());
   }
 
   //! Get the mean row vector.
-  const arma::vec& ItemMean() const { return pca->ItemMean(); }
+  const arma::vec& ItemMean() const { return pca.ItemMean(); }
   //! Get the eigenvalues vector.
-  const arma::vec& EigenValues() const { return pca->EigenValues(); }
+  const arma::vec& EigenValues() const { return pca.EigenValues(); }
   //! Get the eigenvector.
-  const arma::mat& EigenVectors() const { return pca->EigenVectors(); }
+  const arma::mat& EigenVectors() const { return pca.EigenVectors(); }
   //! Get the regularization parameter.
-  double Epsilon() const { return pca->Epsilon(); }
+  double Epsilon() const { return pca.Epsilon(); }
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
@@ -112,7 +109,7 @@ class ZCAWhitening
 
  private:
   // A pointer to PcaWhitening Class.
-  PCAWhitening* pca;
+  PCAWhitening pca;
 }; // class ZCAWhitening
 
 } // namespace data

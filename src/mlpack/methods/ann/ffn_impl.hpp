@@ -1,5 +1,5 @@
 /**
- * @file ffn_impl.hpp
+ * @file methods/ann/ffn_impl.hpp
  * @author Marcus Edel
  *
  * Definition of the FFN class, which implements feed forward neural networks.
@@ -69,6 +69,41 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename OptimizerType>
+typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
+{
+  if (optimizer.MaxIterations() < samples &&
+      optimizer.MaxIterations() != 0)
+  {
+    Log::Warn << "The optimizer's maximum number of iterations "
+              << "is less than the size of the dataset; the "
+              << "optimizer will not pass over the entire "
+              << "dataset. To fix this, modify the maximum "
+              << "number of iterations to be at least equal "
+              << "to the number of points of your dataset "
+              << "(" << samples << ")." << std::endl;
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename OptimizerType>
+typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+WarnMessageMaxIterations(OptimizerType& /* optimizer */, size_t /* samples */)
+    const
+{
+  return;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename OptimizerType, typename... CallbackTypes>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       arma::mat predictors,
@@ -77,6 +112,8 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       CallbackTypes&&... callbacks)
 {
   ResetData(std::move(predictors), std::move(responses));
+
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -99,6 +136,8 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
   ResetData(std::move(predictors), std::move(responses));
 
   OptimizerType optimizer;
+
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -203,7 +242,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
   results = arma::mat(resultsTemp.n_elem, predictors.n_cols);
   results.col(0) = resultsTemp.col(0);
 
-  for (size_t i = 1; i < predictors.n_cols; i++)
+  for (size_t i = 1; i < predictors.n_cols; ++i)
   {
     Forward(arma::mat(predictors.colptr(i), predictors.n_rows, 1, false, true));
 

@@ -1,5 +1,5 @@
 /**
- * @file save.hpp
+ * @file core/data/save.hpp
  * @author Ryan Curtin
  *
  * Save an Armadillo matrix to file.  This is necessary because Armadillo does
@@ -50,12 +50,43 @@ namespace data /** Functions to load and save matrices. */ {
  * @param filename Name of file to save to.
  * @param matrix Matrix to save into file.
  * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix before saving.
+ * @param transpose If true, transpose the matrix before saving (default true).
  * @return Boolean value indicating success or failure of save.
  */
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
+          const bool fatal = false,
+          bool transpose = true);
+
+/**
+ * Saves a sparse matrix to file, guessing the filetype from the
+ * extension.  This will transpose the matrix at save time.  If the
+ * filetype cannot be determined, an error will be given.
+ *
+ * The supported types of files are the same as found in Armadillo:
+ *
+ *  - TSV (coord_ascii), denoted by .tsv or .txt
+ *  - TXT (coord_ascii), denoted by .txt
+ *  - Raw binary (raw_binary), denoted by .bin
+ *  - Armadillo binary (arma_binary), denoted by .bin
+ *
+ * If the file extension is not one of those types, an error will be given.  If
+ * the 'fatal' parameter is set to true, a std::runtime_error exception will be
+ * thrown upon failure.  If the 'transpose' parameter is set to true, the matrix
+ * will be transposed before saving.  Generally, because mlpack stores matrices
+ * in a column-major format and most datasets are stored on disk as row-major,
+ * this parameter should be left at its default value of 'true'.
+ *
+ * @param filename Name of file to save to.
+ * @param matrix Sparse matrix to save into file.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @param transpose If true, transpose the matrix before saving (default true).
+ * @return Boolean value indicating success or failure of save.
+ */
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::SpMat<eT>& matrix,
           const bool fatal = false,
           bool transpose = true);
 
@@ -91,8 +122,6 @@ bool Save(const std::string& filename,
           const bool fatal = false,
           format f = format::autodetect);
 
-#ifdef HAS_STB
-
 /**
  * Save the image file from the given matrix.
  *
@@ -100,15 +129,13 @@ bool Save(const std::string& filename,
  * @param matrix Matrix to save the image from.
  * @param info An object of ImageInfo class.
  * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true);
+          const bool fatal = false);
 
 /**
  * Save the image file from the given matrix.
@@ -117,17 +144,21 @@ bool Save(const std::string& filename,
  * @param matrix Matrix to save the image from.
  * @param info An object of ImageInfo class.
  * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true);
+          const bool fatal = false);
 
-#endif // HAS_STB.
+/**
+ * Helper function to save files.  Implementation in save_image.cpp.
+ */
+bool SaveImage(const std::string& filename,
+               arma::Mat<unsigned char>& image,
+               ImageInfo& info,
+               const bool fatal = false);
 
 } // namespace data
 } // namespace mlpack

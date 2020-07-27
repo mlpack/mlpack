@@ -1,5 +1,5 @@
 /**
- * @file sparse_coding.cpp
+ * @file methods/sparse_coding/sparse_coding.cpp
  * @author Nishant Mehta
  *
  * Implementation of Sparse Coding with Dictionary Learning using l1 (LASSO) or
@@ -127,7 +127,7 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
 
   // vec dualVars = diagvec(solve(dictionary, data * trans(codes))
   //    - codes * trans(codes));
-  // for (size_t i = 0; i < dualVars.n_elem; i++)
+  // for (size_t i = 0; i < dualVars.n_elem; ++i)
   //   if (dualVars(i) < 0)
   //     dualVars(i) = 0;
 
@@ -242,7 +242,7 @@ double SparseCoding::OptimizeDictionary(const arma::mat& data,
 // Project each atom of the dictionary back into the unit ball (if necessary).
 void SparseCoding::ProjectDictionary()
 {
-  for (size_t j = 0; j < atoms; j++)
+  for (size_t j = 0; j < atoms; ++j)
   {
     double atomNorm = arma::norm(dictionary.col(j), 2);
     if (atomNorm > 1)

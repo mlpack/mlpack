@@ -1,5 +1,5 @@
 /**
- * @file hmm_generate_main.cpp
+ * @file methods/hmm/hmm_generate_main.cpp
  * @author Ryan Curtin
  * @author Michael Fox
  *
@@ -12,7 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
@@ -87,8 +87,8 @@ struct Generate
         "Length must be >= 0");
 
     // Load the parameters.
-    const size_t startState = (size_t) CLI::GetParam<int>("start_state");
-    const size_t length = (size_t) CLI::GetParam<int>("length");
+    const size_t startState = (size_t) IO::GetParam<int>("start_state");
+    const size_t length = (size_t) IO::GetParam<int>("length");
 
     Log::Info << "Generating sequence of length " << length << "..." << endl;
     if (startState >= hmm.Transition().n_rows)
@@ -101,12 +101,12 @@ struct Generate
     hmm.Generate(length, observations, sequence, startState);
 
     // Now save the output.
-    if (CLI::HasParam("output"))
-      CLI::GetParam<mat>("output") = std::move(observations);
+    if (IO::HasParam("output"))
+      IO::GetParam<mat>("output") = std::move(observations);
 
     // Do we want to save the hidden sequence?
-    if (CLI::HasParam("state"))
-      CLI::GetParam<Mat<size_t>>("state") = std::move(sequence);
+    if (IO::HasParam("state"))
+      IO::GetParam<Mat<size_t>>("state") = std::move(sequence);
   }
 };
 
@@ -116,13 +116,13 @@ static void mlpackMain()
       "saved");
 
   // Set random seed.
-  if (CLI::GetParam<int>("seed") != 0)
-    RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     RandomSeed((size_t) time(NULL));
 
   // Load model, and perform the generation.
   HMMModel* hmm;
-  hmm = std::move(CLI::GetParam<HMMModel*>("model"));
+  hmm = std::move(IO::GetParam<HMMModel*>("model"));
   hmm->PerformAction<Generate, void>(NULL); // No extra data required.
 }

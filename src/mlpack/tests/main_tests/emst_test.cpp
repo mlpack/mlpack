@@ -1,5 +1,5 @@
 /**
- * @file emst_test.cpp
+ * @file tests/main_tests/emst_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of emst_main.cpp.
@@ -32,14 +32,14 @@ struct EMSTTestFixture
   EMSTTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~EMSTTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -62,9 +62,9 @@ BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
   mlpackMain();
 
   // Now check that the output has 3 dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 3);
   // Check number of output points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 999);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 999);
 }
 
 /**
@@ -84,9 +84,9 @@ BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
   mlpackMain();
 
   // Now check that the output has 3 dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 3);
   // Check number of output points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 999);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 999);
 }
 
 /**
@@ -120,12 +120,12 @@ BOOST_AUTO_TEST_CASE(EMSTFirstTwoOutputRowsIntegerTest)
   SetInputParam("input", std::move(x));
   SetInputParam("leaf_size", (int) 2);
 
-  for (size_t i = 0; i < CLI::GetParam<arma::mat>("output").n_cols; i++)
+  for (size_t i = 0; i < IO::GetParam<arma::mat>("output").n_cols; ++i)
   {
-    BOOST_REQUIRE_CLOSE(CLI::GetParam<arma::mat>("output")(0, i),
-        boost::math::iround(CLI::GetParam<arma::mat>("output")(0, i)), 1e-5);
-    BOOST_REQUIRE_CLOSE(CLI::GetParam<arma::mat>("output")(1, i),
-        boost::math::iround(CLI::GetParam<arma::mat>("output")(1, i)), 1e-5);
+    BOOST_REQUIRE_CLOSE(IO::GetParam<arma::mat>("output")(0, i),
+        boost::math::iround(IO::GetParam<arma::mat>("output")(0, i)), 1e-5);
+    BOOST_REQUIRE_CLOSE(IO::GetParam<arma::mat>("output")(1, i),
+        boost::math::iround(IO::GetParam<arma::mat>("output")(1, i)), 1e-5);
   }
 }
 

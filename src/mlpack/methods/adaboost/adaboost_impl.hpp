@@ -1,5 +1,5 @@
 /*
- * @file adaboost_impl.hpp
+ * @file methods/adaboost/adaboost_impl.hpp
  * @author Udit Saxena
  *
  * Implementation of the AdaBoost class.
@@ -106,7 +106,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
   arma::Row<size_t> finalH(predictedLabels.n_cols);
 
   // Now, start the boosting rounds.
-  for (size_t i = 0; i < iterations; i++)
+  for (size_t i = 0; i < iterations; ++i)
   {
     // Initialized to zero in every round.  rt is used for calculation of
     // alphat; it is the weighted error.
@@ -127,7 +127,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     // buildClassificationMatrix(ht, predictedLabels);
 
     // Now, calculate alpha(t) using ht.
-    for (size_t j = 0; j < D.n_cols; j++) // instead of D, ht
+    for (size_t j = 0; j < D.n_cols; ++j) // instead of D, ht
     {
       if (predictedLabels(j) == labels(j))
         rt += arma::accu(D.col(j));
@@ -157,12 +157,12 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     wl.push_back(w);
 
     // Now start modifying the weights.
-    for (size_t j = 0; j < D.n_cols; j++)
+    for (size_t j = 0; j < D.n_cols; ++j)
     {
       const double expo = exp(alphat);
       if (predictedLabels(j) == labels(j))
       {
-        for (size_t k = 0; k < D.n_rows; k++)
+        for (size_t k = 0; k < D.n_rows; ++k)
         {
           // We calculate zt, the normalization constant.
           D(k, j) /= expo;
@@ -178,7 +178,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
       }
       else
       {
-        for (size_t k = 0; k < D.n_rows; k++)
+        for (size_t k = 0; k < D.n_rows; ++k)
         {
           // We calculate zt, the normalization constant.
           D(k, j) *= expo;
@@ -230,18 +230,18 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
   probabilities.zeros(numClasses, test.n_cols);
   predictedLabels.set_size(test.n_cols);
 
-  for (size_t i = 0; i < wl.size(); i++)
+  for (size_t i = 0; i < wl.size(); ++i)
   {
     wl[i].Classify(test, tempPredictedLabels);
 
-    for (size_t j = 0; j < tempPredictedLabels.n_cols; j++)
+    for (size_t j = 0; j < tempPredictedLabels.n_cols; ++j)
       probabilities(tempPredictedLabels(j), j) += alpha[i];
   }
 
   arma::colvec pRow;
   arma::uword maxIndex = 0;
 
-  for (size_t i = 0; i < predictedLabels.n_cols; i++)
+  for (size_t i = 0; i < predictedLabels.n_cols; ++i)
   {
     probabilities.col(i) /= arma::accu(probabilities.col(i));
     pRow = probabilities.unsafe_col(i);

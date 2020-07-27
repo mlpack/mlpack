@@ -1,5 +1,5 @@
 /**
- * @file option.hpp
+ * @file bindings/cli/cli_option.hpp
  * @author Matthew Amidon
  *
  * Definition of the Option class, which is used to define parameters which are
@@ -15,9 +15,9 @@
 
 #include <string>
 
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include "parameter_type.hpp"
-#include "add_to_po.hpp"
+#include "add_to_cli11.hpp"
 #include "default_param.hpp"
 #include "output_param.hpp"
 #include "get_printable_param.hpp"
@@ -30,18 +30,19 @@
 #include "get_printable_param_value.hpp"
 #include "get_allocated_memory.hpp"
 #include "delete_allocated_memory.hpp"
+#include "in_place_copy.hpp"
 
 namespace mlpack {
 namespace bindings {
 namespace cli {
 
 /**
- * A static object whose constructor registers a parameter with the CLI class.
- * This should not be used outside of CLI itself, and you should use the
+ * A static object whose constructor registers a parameter with the IO class.
+ * This should not be used outside of IO itself, and you should use the
  * PARAM_FLAG(), PARAM_DOUBLE(), PARAM_INT(), PARAM_STRING(), or other similar
  * macros to declare these objects instead of declaring them directly.
  *
- * @see core/util/cli.hpp, mlpack::CLI
+ * @see core/util/io.hpp, mlpack::IO
  */
 template<typename N>
 class CLIOption
@@ -49,7 +50,7 @@ class CLIOption
  public:
   /**
    * Construct an Option object.  When constructed, it will register
-   * itself with CLI.
+   * itself with IO.
    *
    * @param defaultValue Default value this parameter will be initialized to
    *      (for flags, this should be false, for instance).
@@ -62,7 +63,7 @@ class CLIOption
    * @param input Whether or not the option is an input option.
    * @param noTranspose If the parameter is a matrix and this is true, then the
    *      matrix will not be transposed on loading.
-   * @param testName Is not used and added for compatibility reasons.
+   * @param * (testName) Is not used and added for compatibility reasons.
    */
   CLIOption(const N defaultValue,
             const std::string& identifier,
@@ -103,15 +104,15 @@ class CLIOption
     }
 
     const std::string tname = data.tname;
-    const std::string boostName = MapParameterName<
+    const std::string cliName = MapParameterName<
         typename std::remove_pointer<N>::type>(identifier);
-    std::string progOptId = (alias[0] != '\0') ? boostName + ","
-        + std::string(1, alias[0]) : boostName;
+    std::string progOptId = (alias[0] != '\0') ?
+        "-" + std::string(1, alias[0]) + ",--" + cliName : "--" + cliName;
 
     // Do a check to ensure that the boost name isn't already in use.
     const std::map<std::string, util::ParamData>& parameters =
-        CLI::Parameters();
-    if (parameters.count(boostName) > 0)
+        IO::Parameters();
+    if (parameters.count(cliName) > 0)
     {
       // Create a fake Log::Fatal since it may not yet be initialized.
       // Temporarily define color code escape sequences.
@@ -130,36 +131,36 @@ class CLIOption
       #undef BASH_RED
       #undef BASH_CLEAR
 
-      outstr << "Parameter --" << boostName << " (" << data.alias << ") "
+      outstr << "Parameter --" << cliName << " (" << data.alias << ") "
              << "is defined multiple times with the same identifiers."
              << std::endl;
     }
 
-    CLI::Add(std::move(data));
+    IO::Add(std::move(data));
 
     // Set some function pointers that we need.
-    CLI::GetSingleton().functionMap[tname]["DefaultParam"] =
+    IO::GetSingleton().functionMap[tname]["DefaultParam"] =
         &DefaultParam<N>;
-    CLI::GetSingleton().functionMap[tname]["OutputParam"] =
+    IO::GetSingleton().functionMap[tname]["OutputParam"] =
         &OutputParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetPrintableParam"] =
+    IO::GetSingleton().functionMap[tname]["GetPrintableParam"] =
         &GetPrintableParam<N>;
-    CLI::GetSingleton().functionMap[tname]["StringTypeParam"] =
+    IO::GetSingleton().functionMap[tname]["StringTypeParam"] =
         &StringTypeParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetRawParam"] = &GetRawParam<N>;
-    CLI::GetSingleton().functionMap[tname]["AddToPO"] = &AddToPO<N>;
-    CLI::GetSingleton().functionMap[tname]["MapParameterName"] =
+    IO::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
+    IO::GetSingleton().functionMap[tname]["GetRawParam"] = &GetRawParam<N>;
+    IO::GetSingleton().functionMap[tname]["AddToCLI11"] = &AddToCLI11<N>;
+    IO::GetSingleton().functionMap[tname]["MapParameterName"] =
         &MapParameterName<N>;
-    CLI::GetSingleton().functionMap[tname]["SetParam"] = &SetParam<N>;
-    CLI::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
+    IO::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
         &GetPrintableParamName<N>;
-    CLI::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
+    IO::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
         &GetPrintableParamValue<N>;
-    CLI::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
+    IO::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
         &GetAllocatedMemory<N>;
-    CLI::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
+    IO::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
         &DeleteAllocatedMemory<N>;
+    IO::GetSingleton().functionMap[tname]["InPlaceCopy"] = &InPlaceCopy<N>;
   }
 };
 
@@ -169,19 +170,19 @@ class CLIOption
  * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
  * object should ever exist.
  *
- * @see core/util/cli.hpp, mlpack::CLI
+ * @see core/util/io.hpp, mlpack::IO
  */
 class ProgramDoc
 {
  public:
   /**
    * Construct a ProgramDoc object.  When constructed, it will register itself
-   * with CLI.
+   * with IO.
    *
    * @param programName Short string representing the name of the program.
    * @param documentation Long string containing documentation on how to use the
    *     program and what it is.  No newline characters are necessary; this is
-   *     taken care of by CLI later.
+   *     taken care of by IO later.
    */
   ProgramDoc(const std::string& programName,
              const std::string& documentation);

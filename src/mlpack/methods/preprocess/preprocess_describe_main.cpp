@@ -1,8 +1,8 @@
 /**
- * @file preprocess_describe_main.cpp
+ * @file methods/preprocess/preprocess_describe_main.cpp
  * @author Keon Kim
  *
- * Descriptive Statistics Class and CLI executable.
+ * Descriptive Statistics Class and binding.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <boost/format.hpp>
@@ -163,14 +163,14 @@ double StandardError(const size_t size, const double& fStd)
 
 static void mlpackMain()
 {
-  const size_t dimension = static_cast<size_t>(CLI::GetParam<int>("dimension"));
-  const size_t precision = static_cast<size_t>(CLI::GetParam<int>("precision"));
-  const size_t width = static_cast<size_t>(CLI::GetParam<int>("width"));
-  const bool population = CLI::HasParam("population");
-  const bool rowMajor = CLI::HasParam("row_major");
+  const size_t dimension = static_cast<size_t>(IO::GetParam<int>("dimension"));
+  const size_t precision = static_cast<size_t>(IO::GetParam<int>("precision"));
+  const size_t width = static_cast<size_t>(IO::GetParam<int>("width"));
+  const bool population = IO::HasParam("population");
+  const bool rowMajor = IO::HasParam("row_major");
 
   // Load the data.
-  arma::mat& data = CLI::GetParam<arma::mat>("input");
+  arma::mat& data = IO::GetParam<arma::mat>("input");
 
   // Generate boost format recipe.
   const string widthPrecision("%-" + to_string(width) + "." +
@@ -225,7 +225,7 @@ static void mlpackMain()
 
   // If the user specified dimension, describe statistics of the given
   // dimension. If a dimension is not specified, describe all dimensions.
-  if (CLI::HasParam("dimension"))
+  if (IO::HasParam("dimension"))
   {
     PrintStatResults(dimension, rowMajor);
   }
@@ -239,4 +239,3 @@ static void mlpackMain()
   }
   Timer::Stop("statistics");
 }
-

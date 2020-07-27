@@ -1,5 +1,5 @@
 /**
- * @file hilbert_r_tree_auxiliary_information.hpp
+ * @file core/tree/rectangle_tree/hilbert_r_tree_auxiliary_information_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of the HilbertRTreeAuxiliaryInformation class, a class that
@@ -128,7 +128,7 @@ HandlePointDeletion(TreeType* node, const size_t localIndex)
   // Update the largest Hilbert value.
   hilbertValue.DeletePoint(node, localIndex);
 
-  for (size_t i = localIndex + 1; localIndex < node->NumPoints(); i++)
+  for (size_t i = localIndex + 1; localIndex < node->NumPoints(); ++i)
     node->Point(i - 1) = node->Point(i);
 
   node->NumPoints()--;
@@ -143,7 +143,7 @@ HandleNodeRemoval(TreeType* node, const size_t nodeIndex)
   // Update the largest Hilbert value.
   hilbertValue.RemoveNode(node, nodeIndex);
 
-  for (size_t i = nodeIndex + 1; nodeIndex < node->NumChildren(); i++)
+  for (size_t i = nodeIndex + 1; nodeIndex < node->NumChildren(); ++i)
     node->children[i - 1] = node->children[i];
 
   node->NumChildren()--;

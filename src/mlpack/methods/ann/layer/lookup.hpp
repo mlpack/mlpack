@@ -1,5 +1,5 @@
 /**
- * @file lookup.hpp
+ * @file methods/ann/layer/lookup.hpp
  * @author Marcus Edel
  *
  * Definition of the Lookup class a particular convolution, where the width of
@@ -59,7 +59,7 @@ class Lookup
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -99,6 +99,12 @@ class Lookup
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+
+  //! Get the number of input units.
+  size_t InSize() const { return inSize; }
+
+  //! Get the number of output units.
+  size_t OutSize() const { return outSize; }
 
   /**
    * Serialize the layer

@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_tree_test.cpp
+ * @file tests/main_tests/hoeffding_tree_test.cpp
  * @author Haritha Nair
  *
  * Test mlpackMain() of hoeffding_tree_main.cpp.
@@ -30,14 +30,14 @@ struct HoeffdingTreeTestFixture
   HoeffdingTreeTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~HoeffdingTreeTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -76,15 +76,15 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeOutputDimensionTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
+      IO::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+      IO::GetParam<arma::mat>("probabilities").n_rows, 1);
 }
 
 /**
@@ -118,16 +118,16 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeCategoricalOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>
       ("predictions").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+      IO::GetParam<arma::mat>("probabilities").n_rows, 1);
 }
 
 /**
@@ -166,25 +166,25 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
+      IO::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_cols,
       testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+      IO::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
-  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
+  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(IO::GetParam<arma::mat>("probabilities"));
 
   bindings::tests::CleanMemory();
 
@@ -200,21 +200,21 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+      IO::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
+      IO::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+      IO::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial and current predictions are same.
   CheckMatrices(
-      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+      predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-      probabilities, CLI::GetParam<arma::mat>("probabilities"));
+      probabilities, IO::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -238,50 +238,50 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
   size_t testSize = testData.n_cols;
 
   // Input training data.
-  SetInputParam("training", std::move(std::make_tuple(info, inputData)));
+  SetInputParam("training", std::make_tuple(info, inputData));
   SetInputParam("labels", std::move(labels));
 
   // Input test data.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
 
   mlpackMain();
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
-  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
+  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(IO::GetParam<arma::mat>("probabilities"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   if (!data::Load("vc2_test.csv", testData, info))
     BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   // Input trained model.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
   SetInputParam("input_model",
-      CLI::GetParam<HoeffdingTreeModel*>("output_model"));
+      IO::GetParam<HoeffdingTreeModel*>("output_model"));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+      IO::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
+      IO::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
-      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+      predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-      probabilities, CLI::GetParam<arma::mat>("probabilities"));
+      probabilities, IO::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -314,42 +314,42 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
   mlpackMain();
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
-  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
+  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(IO::GetParam<arma::mat>("probabilities"));
 
   if (!data::Load("braziltourism_test.arff", testData, info))
     BOOST_FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   // Input trained model.
-  SetInputParam("test", std::move(std::make_tuple(info, testData)));
+  SetInputParam("test", std::make_tuple(info, testData));
   SetInputParam("input_model",
-      CLI::GetParam<HoeffdingTreeModel*>("output_model"));
+      IO::GetParam<HoeffdingTreeModel*>("output_model"));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
+      IO::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_cols, testSize);
+      IO::GetParam<arma::mat>("probabilities").n_cols, testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
+      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
   BOOST_REQUIRE_EQUAL(
-      CLI::GetParam<arma::mat>("probabilities").n_rows, 1);
+      IO::GetParam<arma::mat>("probabilities").n_rows, 1);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
-      predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+      predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
   CheckMatrices(
-      probabilities, CLI::GetParam<arma::mat>("probabilities"));
+      probabilities, IO::GetParam<arma::mat>("probabilities"));
 }
 
 /**
@@ -384,13 +384,13 @@ BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
   mlpackMain();
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["min_samples"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["confidence"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["min_samples"].wasPassed = false;
+  IO::GetSingleton().Parameters()["confidence"].wasPassed = false;
 
-  nodes = (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
+  nodes = (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
 
   bindings::tests::CleanMemory();
 
@@ -417,7 +417,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
 
   // Check that small min_samples creates larger model.
   BOOST_REQUIRE_LT(
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(),
+      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(),
       nodes);
 }
 
@@ -453,13 +453,13 @@ BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
   mlpackMain();
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["max_samples"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["confidence"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["max_samples"].wasPassed = false;
+  IO::GetSingleton().Parameters()["confidence"].wasPassed = false;
 
-  nodes = (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
+  nodes = (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
 
   bindings::tests::CleanMemory();
 
@@ -486,7 +486,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
 
   // Check that large max_samples creates smaller model.
   BOOST_REQUIRE_LT(nodes,
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
@@ -520,13 +520,13 @@ BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
   mlpackMain();
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["confidence"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["confidence"].wasPassed = false;
 
   // Model with high confidence.
-  nodes = (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
+  nodes = (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
 
   bindings::tests::CleanMemory();
 
@@ -552,7 +552,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
   mlpackMain();
   // Check that higher confidence creates smaller tree.
   BOOST_REQUIRE_LT(nodes,
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
@@ -586,13 +586,13 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
   mlpackMain();
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["passes"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["passes"].wasPassed = false;
 
   // Model with smaller number of passes.
-  nodes = (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
+  nodes = (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
 
   bindings::tests::CleanMemory();
 
@@ -619,7 +619,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
 
   // Check that model with larger number of passes has greater number of nodes.
   BOOST_REQUIRE_LT(nodes,
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
+      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
@@ -656,7 +656,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinarySplittingStrategyTest)
 
   // Check that number of children is 2.
   BOOST_REQUIRE_EQUAL(
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes()-1, 2);
+      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes()-1, 2);
 }
 
 /**
@@ -692,15 +692,15 @@ BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
   mlpackMain();
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["max_samples"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["numeric_split_strategy"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["bins"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["max_samples"].wasPassed = false;
+  IO::GetSingleton().Parameters()["numeric_split_strategy"].wasPassed = false;
+  IO::GetSingleton().Parameters()["bins"].wasPassed = false;
 
   // Initial model.
-  nodes = (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
+  nodes = (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes();
 
   bindings::tests::CleanMemory();
 
@@ -728,7 +728,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
 
   // Check that both models have different number of nodes.
   BOOST_CHECK_NE(
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), nodes);
+      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), nodes);
 }
 
 /**
@@ -773,7 +773,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinningTest)
 
   // Check that no splitting has happened.
   BOOST_REQUIRE_EQUAL(
-      (CLI::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), 1);
+      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

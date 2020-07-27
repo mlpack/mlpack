@@ -1,5 +1,5 @@
 /**
- * @file octree_impl.hpp
+ * @file core/tree/octree/octree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of generalized octree (Octree).
@@ -141,7 +141,7 @@ Octree<MetricType, StatisticType, MatType>::Octree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(this->dataset->n_cols);
-  for (size_t i = 0; i < this->dataset->n_cols; i++)
+  for (size_t i = 0; i < this->dataset->n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 
@@ -267,7 +267,7 @@ Octree<MetricType, StatisticType, MatType>::Octree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(this->dataset->n_cols);
-  for (size_t i = 0; i < this->dataset->n_cols; i++)
+  for (size_t i = 0; i < this->dataset->n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 

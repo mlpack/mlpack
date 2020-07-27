@@ -1,5 +1,5 @@
 /**
- * @file recurrent_network_test.cpp
+ * @file tests/recurrent_network_test.cpp
  * @author Marcus Edel
  *
  * Tests the recurrent network.
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationBRNNTest)
     BOOST_TEST_CHECKPOINT("Training over");
     arma::cube prediction;
     model.Predict(input, prediction);
-    BOOST_TEST_CHECKPOINT("Predicion over");
+    BOOST_TEST_CHECKPOINT("Prediction over");
 
     size_t error = 0;
     for (size_t i = 0; i < prediction.n_cols; ++i)
@@ -481,14 +481,14 @@ arma::Mat<char> GenerateReberGrammarData(
   arma::colvec translation;
 
   // Generate the training data.
-  for (size_t i = 0; i < trainReberGrammarCount; i++)
+  for (size_t i = 0; i < trainReberGrammarCount; ++i)
   {
     if (recursive)
       GenerateRecursiveReber(transitions, 3, 5, trainReber);
     else
       GenerateReber(transitions, trainReber);
 
-    for (size_t j = 0; j < trainReber.length() - 1; j++)
+    for (size_t j = 0; j < trainReber.length() - 1; ++j)
     {
       ReberTranslation(trainReber[j], translation);
       trainInput(0, i) = arma::join_cols(trainInput(0, i), translation);
@@ -499,7 +499,7 @@ arma::Mat<char> GenerateReberGrammarData(
   }
 
   // Generate the test data.
-  for (size_t i = 0; i < testReberGrammarCount; i++)
+  for (size_t i = 0; i < testReberGrammarCount; ++i)
   {
     if (recursive)
       GenerateRecursiveReber(transitions, averageRecursion, maxRecursion,
@@ -507,7 +507,7 @@ arma::Mat<char> GenerateReberGrammarData(
     else
       GenerateReber(transitions, testReber);
 
-    for (size_t j = 0; j < testReber.length() - 1; j++)
+    for (size_t j = 0; j < testReber.length() - 1; ++j)
     {
       ReberTranslation(testReber[j], translation);
       testInput(0, i) = arma::join_cols(testInput(0, i), translation);
@@ -577,7 +577,7 @@ void ReberGrammarTestNetwork(ModelType& model,
     arma::cube inputTemp, labelsTemp;
     for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
     {
-      for (size_t j = 0; j < trainReberGrammarCount; j++)
+      for (size_t j = 0; j < trainReberGrammarCount; ++j)
       {
         // Each sequence may be a different length, so we need to extract them
         // manually.  We will reshape them into a cube with each slice equal to
@@ -596,7 +596,7 @@ void ReberGrammarTestNetwork(ModelType& model,
     double error = 0;
 
     // Ask the network to predict the next Reber grammar in the given sequence.
-    for (size_t i = 0; i < testReberGrammarCount; i++)
+    for (size_t i = 0; i < testReberGrammarCount; ++i)
     {
       arma::cube prediction;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
@@ -610,7 +610,7 @@ void ReberGrammarTestNetwork(ModelType& model,
 
       size_t reberError = 0;
 
-      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); j++)
+      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); ++j)
       {
         char predictedSymbol, inputSymbol;
         std::string reberChoices;
@@ -737,14 +737,14 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
 
   // Set the target in the input sequence and the corresponding targets in the
   // output sequence by following the correct order.
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < 2; ++i)
   {
     size_t idx = rand() % 2;
     input(idx, index(i)) = 1;
     output(idx, index(i) > index(i == 0) ? 9 : 8) = 1;
   }
 
-  for (size_t i = 2; i < 8; i++)
+  for (size_t i = 2; i < 8; ++i)
     input(2 + rand() % 6, index(i)) = 1;
 
   // Set the prompts which direct the network to give an answer.
@@ -772,11 +772,11 @@ void DistractedSequenceRecallTestNetwork(
   arma::field<arma::mat> testLabels(1, testDistractedSequenceCount);
 
   // Generate the training data.
-  for (size_t i = 0; i < trainDistractedSequenceCount; i++)
+  for (size_t i = 0; i < trainDistractedSequenceCount; ++i)
     GenerateDistractedSequence(trainInput(0, i), trainLabels(0, i));
 
   // Generate the test data.
-  for (size_t i = 0; i < testDistractedSequenceCount; i++)
+  for (size_t i = 0; i < testDistractedSequenceCount; ++i)
     GenerateDistractedSequence(testInput(0, i), testLabels(0, i));
 
   /*
@@ -821,12 +821,12 @@ void DistractedSequenceRecallTestNetwork(
     arma::cube inputTemp, labelsTemp;
     for (size_t iteration = 0; iteration < (9 + offset); iteration++)
     {
-      for (size_t j = 0; j < trainDistractedSequenceCount; j++)
+      for (size_t j = 0; j < trainDistractedSequenceCount; ++j)
       {
         inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
             trainInput.at(0, j).n_elem / inputSize, false, true);
         labelsTemp = arma::cube(trainLabels.at(0, j).memptr(), outputSize, 1,
-            trainInput.at(0, j).n_elem / outputSize, false, true);
+            trainLabels.at(0, j).n_elem / outputSize, false, true);
 
         model.Train(inputTemp, labelsTemp, opt);
       }
@@ -836,7 +836,7 @@ void DistractedSequenceRecallTestNetwork(
 
     // Ask the network to predict the targets in the given sequence at the
     // prompts.
-    for (size_t i = 0; i < testDistractedSequenceCount; i++)
+    for (size_t i = 0; i < testDistractedSequenceCount; ++i)
     {
       arma::cube output;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
@@ -1104,7 +1104,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
     arma::cube inputTemp, labelsTemp;
     for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
     {
-      for (size_t j = 0; j < trainReberGrammarCount; j++)
+      for (size_t j = 0; j < trainReberGrammarCount; ++j)
       {
         // Each sequence may be a different length, so we need to extract them
         // manually.  We will reshape them into a cube with each slice equal to
@@ -1123,7 +1123,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
     double error = 0;
 
     // Ask the network to predict the next Reber grammar in the given sequence.
-    for (size_t i = 0; i < testReberGrammarCount; i++)
+    for (size_t i = 0; i < testReberGrammarCount; ++i)
     {
       arma::cube prediction;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
@@ -1137,7 +1137,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
 
       size_t reberError = 0;
 
-      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); j++)
+      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); ++j)
       {
         char predictedSymbol, inputSymbol;
         std::string reberChoices;
@@ -1234,7 +1234,7 @@ void GenerateNoisySinRNN(arma::cube& data,
 
   x.for_each([&i, gain, freq, phase, noisePercent, interval]
     (arma::colvec::elem_type& val) {
-    double t = interval * (i++);
+    double t = interval * (++i);
     val = gain * ::sin(2 * M_PI * freq * t + phase) +
         (noisePercent * gain / 100 * Random(0.0, 0.1));
   });
@@ -1541,7 +1541,7 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
     targets[i] = makeTarget(trainingData[i].c_str());
   }
   ens::SGD<> opt(0.01, 1, 100);
-  double objVal = model.Train(inputs[0], targets[0], opt);
+  model.Train(inputs[0], targets[0], opt);
   BOOST_TEST_CHECKPOINT("Training over");
 }
 

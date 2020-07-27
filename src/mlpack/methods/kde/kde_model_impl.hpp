@@ -1,5 +1,5 @@
 /**
- * @file kde_model_impl.hpp
+ * @file methods/kde/kde_model_impl.hpp
  * @author Roberto Hueso
  *
  * Implementation of KDE Model.

@@ -1,9 +1,9 @@
 /**
- * @file elu.hpp
+ * @file methods/ann/layer/elu.hpp
  * @author Vivek Pal
  * @author Dakshit Agrawal
  *
- * Definition of the ELU activation function as descibed by Djork-Arne Clevert,
+ * Definition of the ELU activation function as described by Djork-Arne Clevert,
  * Thomas Unterthiner and Sepp Hochreiter.
  *
  * Definition of the SELU function as introduced by
@@ -164,6 +164,11 @@ class ELU
   double const& Alpha() const { return alpha; }
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
+
+  //! Get the value of deterministic parameter.
+  bool Deterministic() const { return deterministic; }
+  //! Modify the value of deterministic parameter.
+  bool& Deterministic() { return deterministic; }
 
   //! Get the lambda parameter.
   double const& Lambda() const { return lambda; }

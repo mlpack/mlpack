@@ -11,6 +11,7 @@ set(SOURCES
   load_csv.cpp
   load.hpp
   load_image_impl.hpp
+  load_image.cpp
   load_model_impl.hpp
   load_vec_impl.hpp
   load_impl.hpp
@@ -21,6 +22,7 @@ set(SOURCES
   normalize_labels_impl.hpp
   save.hpp
   save_impl.hpp
+  save_image.cpp
   serialization_template_version.hpp
   split_data.hpp
   imputer.hpp
@@ -44,6 +46,7 @@ add_subdirectory(imputation_methods)
 add_subdirectory(map_policies)
 add_subdirectory(string_encoding_policies)
 add_subdirectory(tokenizers)
+add_subdirectory(scaler_methods)
 
 # Append sources (with directory name) to list of all mlpack sources (used at
 # parent scope).

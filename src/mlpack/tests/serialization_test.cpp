@@ -1,5 +1,5 @@
 /**
- * @file serialization_test.cpp
+ * @file tests/serialization_test.cpp
  * @author Ryan Curtin
  *
  * Test serialization of mlpack objects.
@@ -1559,7 +1559,7 @@ BOOST_AUTO_TEST_CASE(ssRBMTest)
   data.randu(3, 100);
   double slabPenalty = 1;
   double tempRadius, radius = arma::norm(data.col(0));
-  for (size_t i = 1; i < data.n_cols; i++)
+  for (size_t i = 1; i < data.n_cols; ++i)
   {
     tempRadius = arma::norm(data.col(i));
     if (radius < tempRadius)

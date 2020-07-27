@@ -1,5 +1,5 @@
 /**
- * @file ra_model_impl.hpp
+ * @file methods/rann/ra_model_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the RAModel class.

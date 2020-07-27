@@ -1,5 +1,5 @@
 /**
- * @file wgangp_impl.hpp
+ * @file methods/ann/gan/wgangp_impl.hpp
  * @author Shikhar Jaiswal
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -175,14 +175,20 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     // Pass the error from Discriminator to Generator.
     responses.cols(numFunctions, numFunctions + batchSize - 1) =
         arma::ones(1, batchSize);
-    discriminator.Gradient(discriminator.parameter, numFunctions,
-        noiseGradientDiscriminator, batchSize);
+
+    discriminator.outputLayer.Backward(
+        boost::apply_visitor(outputParameterVisitor,
+        discriminator.network.back()), discriminator.responses.cols(
+        numFunctions, numFunctions + batchSize - 1), discriminator.error);
+    discriminator.Backward();
+
     generator.error = boost::apply_visitor(deltaVisitor,
         discriminator.network[1]);
 
     generator.Predictors() = noise;
+    generator.Backward();
     generator.ResetGradients(gradientGenerator);
-    generator.Gradient(generator.parameter, 0, gradientGenerator, batchSize);
+    generator.Gradient(generator.Predictors().cols(0, batchSize - 1));
 
     gradientGenerator *= multiplier;
   }

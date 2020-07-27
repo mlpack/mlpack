@@ -1,5 +1,5 @@
 /**
- * @file svd_convolution.hpp
+ * @file methods/ann/convolution_rules/svd_convolution.hpp
  * @author Marcus Edel
  *
  * Implementation of the convolution using the singular value decomposition to
@@ -131,7 +131,7 @@ class SVDConvolution
         input.n_slices);
     output.slice(0) = convOutput;
 
-    for (size_t i = 1; i < input.n_slices; i++)
+    for (size_t i = 1; i < input.n_slices; ++i)
     {
       SVDConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
           output.slice(i));
@@ -160,7 +160,7 @@ class SVDConvolution
         filter.n_slices);
     output.slice(0) = convOutput;
 
-    for (size_t i = 1; i < filter.n_slices; i++)
+    for (size_t i = 1; i < filter.n_slices; ++i)
     {
       SVDConvolution<BorderMode>::Convolution(input, filter.slice(i),
           output.slice(i));
@@ -189,7 +189,7 @@ class SVDConvolution
         input.n_slices);
     output.slice(0) = convOutput;
 
-    for (size_t i = 1; i < input.n_slices; i++)
+    for (size_t i = 1; i < input.n_slices; ++i)
     {
       SVDConvolution<BorderMode>::Convolution(input.slice(i), filter,
           output.slice(i));

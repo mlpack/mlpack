@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search_impl.hpp
+ * @file methods/neighbor_search/neighbor_search_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of Neighbor-Search class to perform all-nearest-neighbors on
@@ -542,13 +542,13 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       neighbors.set_size(k, querySet.n_cols);
       distances.set_size(k, querySet.n_cols);
 
-      for (size_t i = 0; i < distances.n_cols; i++)
+      for (size_t i = 0; i < distances.n_cols; ++i)
       {
         // Map distances (copy a column).
         distances.col(oldFromNewQueries[i]) = distancePtr->col(i);
 
         // Map indices of neighbors.
-        for (size_t j = 0; j < distances.n_rows; j++)
+        for (size_t j = 0; j < distances.n_rows; ++j)
         {
           neighbors(j, oldFromNewQueries[i]) =
               oldFromNewReferences[(*neighborPtr)(j, i)];
@@ -583,8 +583,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       neighbors.set_size(k, querySet.n_cols);
 
       // Map indices of neighbors.
-      for (size_t i = 0; i < neighbors.n_cols; i++)
-        for (size_t j = 0; j < neighbors.n_rows; j++)
+      for (size_t i = 0; i < neighbors.n_cols; ++i)
+        for (size_t j = 0; j < neighbors.n_rows; ++j)
           neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
       // Finished with temporary matrix.
@@ -669,8 +669,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     neighbors.set_size(k, querySet.n_cols);
 
     // Map indices of neighbors.
-    for (size_t i = 0; i < neighbors.n_cols; i++)
-      for (size_t j = 0; j < neighbors.n_rows; j++)
+    for (size_t i = 0; i < neighbors.n_cols; ++i)
+      for (size_t j = 0; j < neighbors.n_rows; ++j)
         neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
     // Finished with temporary matrix.
@@ -886,7 +886,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::EffectiveError(
   double effectiveError = 0;
   size_t numCases = 0;
 
-  for (size_t i = 0; i < foundDistances.n_elem; i++)
+  for (size_t i = 0; i < foundDistances.n_elem; ++i)
   {
     if (realDistances(i) != 0 &&
         foundDistances(i) != SortPolicy::WorstDistance())

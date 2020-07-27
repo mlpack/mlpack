@@ -1,5 +1,5 @@
 /**
- * @file gmm.cpp
+ * @file methods/gmm/gmm.cpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ryan Curtin
  * @author Michael Fox
@@ -59,7 +59,7 @@ double GMM::LogProbability(const arma::vec& observation) const
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
     sum = math::LogAdd(sum, log(weights[i]) +
         dists[i].LogProbability(observation));
 
@@ -169,14 +169,14 @@ double GMM::LogLikelihood(
   arma::mat logLikelihoods(gaussians, data.n_cols);
 
   // It has to be LogProbability() otherwise Probability() would overflow easily
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
   {
     distsL[i].LogProbability(data, logPhis);
     logLikelihoods.row(i) = log(weightsL(i)) + trans(logPhis);
   }
 
   // Now sum over every point.
-  for (size_t j = 0; j < data.n_cols; j++)
+  for (size_t j = 0; j < data.n_cols; ++j)
     loglikelihood += mlpack::math::AccuLog(logLikelihoods.col(j));
   return loglikelihood;
 }

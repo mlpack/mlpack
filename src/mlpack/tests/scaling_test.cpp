@@ -1,5 +1,5 @@
 /**
- * @file scaling_test.cpp
+ * @file tests/scaling_test.cpp
  *
  * Tests for Scaling of dataset.
  *
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(PCAWhiteningTest)
   arma::vec diagonals = (mlpack::math::ColumnCovariance(output)).diag();
   // Checking covarience is close to 1.0
   double ccovsum = 0.0;
-  for (size_t i = 0; i < diagonals.n_elem; i++)
+  for (size_t i = 0; i < diagonals.n_elem; ++i)
     ccovsum += diagonals(i);
   BOOST_REQUIRE_CLOSE(ccovsum, 1.0, 1e-3);
   scale.InverseTransform(output, temp);
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(ZCAWhiteningTest)
   arma::vec diagonals = (mlpack::math::ColumnCovariance(output)).diag();
   // Check that the covariance is close to 1.0.
   double ccovsum = 0.0;
-  for (size_t i = 0; i < diagonals.n_elem; i++)
+  for (size_t i = 0; i < diagonals.n_elem; ++i)
     ccovsum += diagonals(i);
   BOOST_REQUIRE_CLOSE(ccovsum, 1.0, 1e-3);
   scale.InverseTransform(output, temp);

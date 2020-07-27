@@ -1,5 +1,5 @@
 /**
- * @file discrete_hilbert_value.hpp
+ * @file core/tree/rectangle_tree/discrete_hilbert_value.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the DiscreteHilbertValue class, a class that calculates
