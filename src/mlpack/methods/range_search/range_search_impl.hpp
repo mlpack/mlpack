@@ -625,8 +625,7 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void RangeSearch<MetricType, MatType, TreeType>::serialize(
-    Archive& ar
-)
+    Archive& ar)
 {
   // Serialize preferences for search.
   ar & CEREAL_NVP(naive);

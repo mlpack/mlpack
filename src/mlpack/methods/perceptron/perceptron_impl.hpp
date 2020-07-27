@@ -198,8 +198,7 @@ template<typename LearnPolicy,
          typename MatType>
 template<typename Archive>
 void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::serialize(
-    Archive& ar
-)
+    Archive& ar)
 {
   // We just need to serialize the maximum number of iterations, the weights,
   // and the biases.

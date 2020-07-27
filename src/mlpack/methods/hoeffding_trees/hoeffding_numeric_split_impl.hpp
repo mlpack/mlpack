@@ -189,8 +189,7 @@ double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
 template<typename FitnessFunction, typename ObservationType>
 template<typename Archive>
 void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
-    Archive& ar
-)
+    Archive& ar)
 {
   ar & CEREAL_NVP(samplesSeen);
   ar & CEREAL_NVP(observationsBeforeBinning);

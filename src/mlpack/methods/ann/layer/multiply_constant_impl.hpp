@@ -45,7 +45,7 @@ void MultiplyConstant<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MultiplyConstant<InputDataType, OutputDataType>::serialize(
-    Archive& ar
+    Archive& ar)
 {
   ar & CEREAL_NVP(scalar);
 }
