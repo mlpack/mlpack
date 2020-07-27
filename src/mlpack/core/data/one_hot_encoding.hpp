@@ -36,6 +36,7 @@ void OneHotEncoding(const RowType& labelsIn,
 /**
  * Overloaded function for the above function, which takes a matrix as input
  * and also a vector of indices to encode and outputs a matrix.
+ * Indices represent the IDs of the dimensions to be one-hot encoded.
  *
  * @param input Input dataset to be encoded.
  * @param indices Index of rows to be encoded.
@@ -46,11 +47,26 @@ void OneHotEncoding(const arma::Mat<eT>& input,
                     const arma::Col<size_t>& indices,
                     arma::Mat<eT>& output);
 
+/**
+ * Overloaded function for the above function, which takes a matrix as input
+ * and also a DatasetInfo object and outputs a matrix.
+ * This function encodes all the dimensions marked `Datatype::categorical`
+ * in the data::DatasetInfo.
+ *
+ * @param input Input dataset to be encoded.
+ * @param output Encoded matrix.
+ * @param datasetInfo DatasetInfod object that has information about data.
+ */
 template<typename eT>
 void OneHotEncoding(const arma::Mat<eT>& input,
                     arma::Mat<eT>& output,
                     const data::DatasetInfo& datasetInfo);
 
+/**
+ * Returns the count of unique categorical values in a row.
+ * 
+ * @param labelsIn Input labels of arbitrary datatype.
+ */
 template<typename RowType>
 size_t numofMapping(const RowType& labelsIn);
 

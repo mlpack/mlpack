@@ -11,19 +11,18 @@
  */
 #include <mlpack/core.hpp>
 #include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "test_catch_tools.hpp"
+#include "catch.hpp"
 #include <mlpack/core/data/one_hot_encoding.hpp>
 
 using namespace mlpack;
 using namespace mlpack::data;
 using namespace std;
 
-BOOST_AUTO_TEST_SUITE(OneHotEncoding);
-
 /**
  * Test one hot encoding.
  */
-BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
+TEST_CASE("OneHotEncodingTest01", "[OneHotEncodingTest]")
 {
   arma::Mat<size_t> matrix;
   matrix = "1 0;"
@@ -40,12 +39,12 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
   arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
   data::OneHotEncoding(labels, output);
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);
+  REQUIRE(matrix.n_cols == output.n_cols);
+  REQUIRE(matrix.n_rows == output.n_rows);
   CheckMatrices(output, matrix);
 }
 
-BOOST_AUTO_TEST_CASE(OneHotEncodingSparseMatTest)
+TEST_CASE("OneHotEncodingSparseMatTest", "[OneHotEncodingTest]")
 {
   arma::SpMat<size_t> matrix;
   matrix = "1 0;"
@@ -63,13 +62,13 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingSparseMatTest)
   arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
   data::OneHotEncoding(labels, output);
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);
+  REQUIRE(matrix.n_cols == output.n_cols);
+  REQUIRE(matrix.n_rows == output.n_rows);
   for (size_t i = 0; i < output.n_elem; i++)
-    BOOST_REQUIRE_EQUAL(matrix.at(i), output.at(i));
+    REQUIRE(matrix.at(i) == output.at(i));
 }
 
-BOOST_AUTO_TEST_CASE(OneHotEncodingInputTest)
+TEST_CASE("OneHotEncodingInputTest", "[OneHotEncodingTest]")
 {
   arma::Mat<int> matrix;
   arma::Mat<int> input;
@@ -84,13 +83,13 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingInputTest)
   arma::Col<size_t> indices("1");
   data::OneHotEncoding(input, indices, output);
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);
+  REQUIRE(matrix.n_cols == output.n_cols);
+  REQUIRE(matrix.n_rows == output.n_rows);
   for (size_t i = 0; i < output.n_elem; i++)
-    BOOST_REQUIRE_EQUAL(matrix.at(i), output.at(i));
+    REQUIRE(matrix.at(i) == output.at(i));
 }
 
-BOOST_AUTO_TEST_CASE(OneHotEncodingBigInputTest)
+TEST_CASE("OneHotEncodingBigInputTest", "[OneHotEncodingTest]")
 {
   arma::Mat<int> matrix;
   arma::Mat<int> input;
@@ -113,13 +112,13 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingBigInputTest)
   arma::Col<size_t> indices("1 3");
   data::OneHotEncoding(input, indices, output);
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);
+  REQUIRE(matrix.n_cols == output.n_cols);
+  REQUIRE(matrix.n_rows == output.n_rows);
   for (size_t i = 0; i < output.n_elem; i++)
-    BOOST_REQUIRE_EQUAL(matrix.at(i), output.at(i));
+    REQUIRE(matrix.at(i) == output.at(i));
 }
 
-BOOST_AUTO_TEST_CASE(OneHotEncodingVeryBigInputTest)
+TEST_CASE("OneHotEncodingVeryBigInputTest", "[OneHotEncodingTest]")
 {
   arma::Mat<int> matrix;
   arma::Mat<int> input;
@@ -156,13 +155,13 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingVeryBigInputTest)
   arma::Col<size_t> indices("1 4 7 8");
   data::OneHotEncoding(input, indices, output);
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);
+  REQUIRE(matrix.n_cols == output.n_cols);
+  REQUIRE(matrix.n_rows == output.n_rows);
   for (size_t i = 0; i < output.n_elem; i++)
-    BOOST_REQUIRE_EQUAL(matrix.at(i), output.at(i));
+    REQUIRE(matrix.at(i) == output.at(i));
 }
 
-BOOST_AUTO_TEST_CASE(OneHotEncodingDatasetinfoTest)
+TEST_CASE("OneHotEncodingDatasetinfoTest", "[OneHotEncodingTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -181,34 +180,33 @@ BOOST_AUTO_TEST_CASE(OneHotEncodingDatasetinfoTest)
   data::Load("test.csv", matrix, info);
   arma::umat output;
   data::OneHotEncoding(matrix, output, info);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 7);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 6);
+  REQUIRE(output.n_cols == 7);
+  REQUIRE(output.n_rows == 6);
   BOOST_REQUIRE(info.Type(0) == Datatype::numeric);
   BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
   BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
 
-  BOOST_REQUIRE_EQUAL(output(0, 0), 1);
-  BOOST_REQUIRE_EQUAL(output(1, 0), 2);
-  BOOST_REQUIRE_EQUAL(output(2, 0), 1);
-  BOOST_REQUIRE_EQUAL(output(0, 1), 3);
-  BOOST_REQUIRE_EQUAL(output(1, 1), 4);
-  BOOST_REQUIRE_EQUAL(output(3, 1), 1);
-  BOOST_REQUIRE_EQUAL(output(0, 2), 5);
-  BOOST_REQUIRE_EQUAL(output(1, 2), 6);
-  BOOST_REQUIRE_EQUAL(output(4, 2), 1);
-  BOOST_REQUIRE_EQUAL(output(0, 3), 7);
-  BOOST_REQUIRE_EQUAL(output(1, 3), 8);
-  BOOST_REQUIRE_EQUAL(output(5, 3), 1);
-  BOOST_REQUIRE_EQUAL(output(0, 4), 9);
-  BOOST_REQUIRE_EQUAL(output(1, 4), 10);
-  BOOST_REQUIRE_EQUAL(output(2, 4), 1);
-  BOOST_REQUIRE_EQUAL(output(0, 5), 11);
-  BOOST_REQUIRE_EQUAL(output(1, 5), 12);
-  BOOST_REQUIRE_EQUAL(output(5, 5), 1);
-  BOOST_REQUIRE_EQUAL(output(0, 6), 13);
-  BOOST_REQUIRE_EQUAL(output(1, 6), 14);
-  BOOST_REQUIRE_EQUAL(output(5, 6), 1);
+  REQUIRE(output(0, 0) == 1);
+  REQUIRE(output(1, 0) == 2);
+  REQUIRE(output(2, 0) == 1);
+  REQUIRE(output(0, 1) == 3);
+  REQUIRE(output(1, 1) == 4);
+  REQUIRE(output(3, 1) == 1);
+  REQUIRE(output(0, 2) == 5);
+  REQUIRE(output(1, 2) == 6);
+  REQUIRE(output(4, 2) == 1);
+  REQUIRE(output(0, 3) == 7);
+  REQUIRE(output(1, 3) == 8);
+  REQUIRE(output(5, 3) == 1);
+  REQUIRE(output(0, 4) == 9);
+  REQUIRE(output(1, 4) == 10);
+  REQUIRE(output(2, 4) == 1);
+  REQUIRE(output(0, 5) == 11);
+  REQUIRE(output(1, 5) == 12);
+  REQUIRE(output(5, 5) == 1);
+  REQUIRE(output(0, 6) == 13);
+  REQUIRE(output(1, 6) == 14);
+  REQUIRE(output(5, 6) == 1);
 
   remove("test.csv");
 }
-BOOST_AUTO_TEST_SUITE_END();

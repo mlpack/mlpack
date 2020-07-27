@@ -18,8 +18,8 @@ static const std::string testName = "PreprocessOneHotEncoding";
 #include <mlpack/methods/preprocess/preprocess_one_hot_encoding_main.cpp>
 
 #include "test_helper.hpp"
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -29,21 +29,20 @@ struct PreprocessOneHotEncodingTestFixture
   PreprocessOneHotEncodingTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~PreprocessOneHotEncodingTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(PreprocessOneHotEncodingMainTest,
-                         PreprocessOneHotEncodingTestFixture);
-
-BOOST_AUTO_TEST_CASE(PreprocessOneHotEncodingTest)
+TEST_CASE_METHOD(
+    PreprocessOneHotEncodingTestFixture, "PreprocessOneHotEncodingTest",
+    "[PreprocessOneHotEncodingMainTest][BindingTests]")
 {
   arma::mat dataset;
   dataset = "1 1 -1 -1 -1 -1 1 1;"
@@ -65,13 +64,15 @@ BOOST_AUTO_TEST_CASE(PreprocessOneHotEncodingTest)
   SetInputParam<vector<int>>("dimensions", {1, 3});
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);  
+  arma::mat output = IO::GetParam<arma::mat>("output");
+  REQUIRE(matrix.n_cols == output.n_cols);
+  REQUIRE(matrix.n_rows == output.n_rows);  
   CheckMatrices(output, matrix);
 }
 
-BOOST_AUTO_TEST_CASE(EmptyMatrixTest)
+TEST_CASE_METHOD(
+    PreprocessOneHotEncodingTestFixture, "EmptyMatrixTest",
+    "[PreprocessOneHotEncodingMainTest][BindingTests]")
 {
   arma::mat dataset;
  
@@ -79,11 +80,13 @@ BOOST_AUTO_TEST_CASE(EmptyMatrixTest)
   SetInputParam<vector<int>>("dimensions", {1, 3});
   // error since dimesnions are bigger that matrix
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
-BOOST_AUTO_TEST_CASE(EmptyIndicesTest)
+TEST_CASE_METHOD(
+    PreprocessOneHotEncodingTestFixture, "EmptyIndicesTest",
+    "[PreprocessOneHotEncodingMainTest][BindingTests]")
 {
   arma::mat dataset;
   dataset = "1 1 -1 -1 -1 -1 1 1;"
@@ -97,12 +100,15 @@ BOOST_AUTO_TEST_CASE(EmptyIndicesTest)
   // error since dimesnions are bigger that matrix
   mlpackMain();
 
-  arma::mat output = CLI::GetParam<arma::mat>("output");
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, output.n_cols);
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, output.n_rows);  
+  arma::mat output = IO::GetParam<arma::mat>("output");
+  REQUIRE(dataset.n_cols == output.n_cols);
+  REQUIRE(dataset.n_rows == output.n_rows);  
   CheckMatrices(output, dataset);
 }
-BOOST_AUTO_TEST_CASE(InvalidDimensionTest)
+
+TEST_CASE_METHOD(
+    PreprocessOneHotEncodingTestFixture, "InvalidDimensionTest",
+    "[PreprocessOneHotEncodingMainTest][BindingTests]")
 {
   arma::mat dataset;
   dataset = "1 1 -1 -1 -1 -1 1 1;"
@@ -115,11 +121,13 @@ BOOST_AUTO_TEST_CASE(InvalidDimensionTest)
   SetInputParam<vector<int>>("dimensions", {10000});
   // error since dimesnions are bigger that matrix
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
-BOOST_AUTO_TEST_CASE(NegativeDimensionTest)
+TEST_CASE_METHOD(
+    PreprocessOneHotEncodingTestFixture, "NegativeDimensionTest",
+    "[PreprocessOneHotEncodingMainTest][BindingTests]")
 {
   arma::mat dataset;
   dataset = "1 1 -1 -1 -1 -1 1 1;"
@@ -132,7 +140,23 @@ BOOST_AUTO_TEST_CASE(NegativeDimensionTest)
   SetInputParam<vector<int>>("dimensions", {-10000});
   // error since dimesnions are bigger that matrix
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-BOOST_AUTO_TEST_SUITE_END();
+
+TEST_CASE_METHOD(
+    PreprocessOneHotEncodingTestFixture, "EmptyMatrixEmptyIndicesTest",
+    "[PreprocessOneHotEncodingMainTest][BindingTests]")
+{
+  arma::mat dataset;
+
+  SetInputParam("input", dataset);
+  SetInputParam<vector<int>>("dimensions", {});
+  // error since dimesnions are bigger that matrix
+  mlpackMain();
+
+  arma::mat output = IO::GetParam<arma::mat>("output");
+  REQUIRE(dataset.n_cols == output.n_cols);
+  REQUIRE(dataset.n_rows == output.n_rows);  
+  CheckMatrices(output, dataset);
+}

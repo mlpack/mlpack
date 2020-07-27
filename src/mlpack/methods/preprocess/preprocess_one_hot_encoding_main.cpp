@@ -2,7 +2,7 @@
  * @file preprocess_one_hot_encoding_main.cpp
  * @author Jeffin Sam
  *
- * A CLI executable to do One-Hot Encoding on features from a dataset.
+ * A IO executable to do One-Hot Encoding on features from a dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/one_hot_encoding.hpp>
@@ -51,9 +51,9 @@ using namespace std;
 static void mlpackMain()
 {
   // Load the data.
-  const arma::mat& data = CLI::GetParam<arma::mat>("input");
+  const arma::mat& data = IO::GetParam<arma::mat>("input");
   vector<int>& indices =
-    CLI::GetParam<vector<int> >("dimensions");
+    IO::GetParam<vector<int> >("dimensions");
   vector<size_t>copyIndices(indices.size());
   for (size_t i = 0; i < indices.size(); i++)
   {
@@ -65,6 +65,6 @@ static void mlpackMain()
   arma::Col<size_t>temp(copyIndices);
   arma::mat output;
   data::OneHotEncoding(data, temp, output);
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(output);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(output);
 }

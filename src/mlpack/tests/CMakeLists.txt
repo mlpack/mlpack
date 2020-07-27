@@ -66,7 +66,6 @@ add_executable(mlpack_test
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
-  one_hot_encoding_test.cpp
   pca_test.cpp
   perceptron_test.cpp
   prefixedoutstream_test.cpp
@@ -139,7 +138,6 @@ add_executable(mlpack_test
   main_tests/nbc_test.cpp
   main_tests/nca_test.cpp
   main_tests/nmf_test.cpp
-  main_tests/preprocess_one_hot_encode_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
   main_tests/preprocess_binarize_test.cpp
@@ -166,6 +164,7 @@ add_executable(mlpack_catch_test
   linear_regression_test.cpp
   load_save_test.cpp
   main.cpp
+  one_hot_encoding_test.cpp
   serialization_catch.cpp
   serialization_catch.hpp
   softmax_regression_test.cpp
@@ -176,6 +175,7 @@ add_executable(mlpack_catch_test
   main_tests/kfn_test.cpp
   main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/preprocess_one_hot_encode_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/test_helper.hpp
 )

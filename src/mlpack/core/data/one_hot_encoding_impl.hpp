@@ -16,7 +16,6 @@
 // In case it hasn't been included yet.
 #include "one_hot_encoding.hpp"
 
-
 namespace mlpack {
 namespace data {
 
@@ -137,6 +136,16 @@ void OneHotEncoding(const arma::Mat<eT>& input,
   }
 }
 
+/**
+ * Overloaded function for the above function, which takes a matrix as input
+ * and also a DatasetInfo object and outputs a matrix.
+ * This function encodes all the dimensions marked `Datatype::categorical`
+ * in the data::DatasetInfo.
+ *
+ * @param input Input dataset to be encoded.
+ * @param output Encoded matrix.
+ * @param datasetInfo DatasetInfod object that has information about data.
+ */
 template<typename eT>
 void OneHotEncoding(const arma::Mat<eT>& input,
                     arma::Mat<eT>& output,
@@ -152,15 +161,11 @@ void OneHotEncoding(const arma::Mat<eT>& input,
   }
   OneHotEncoding(input, (arma::Col<size_t>)(indices), output);
 }
+
 /**
- * Given a set of labels of a particular datatype, convert them to binary
- * vector. The categorical values be mapped to integer values.
- * Then, each integer value is represented as a binary vector that is
- * all zero values except the index of the integer, which is marked
- * with a 1.
- *
+ * Returns the count of unique categorical values in a row.
+ * 
  * @param labelsIn Input labels of arbitrary datatype.
- * @param output Binary matrix.
  */
 template<typename RowType>
 size_t numofMapping(const RowType& labelsIn)
