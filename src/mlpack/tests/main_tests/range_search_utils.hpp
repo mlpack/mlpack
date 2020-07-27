@@ -25,7 +25,7 @@
 inline std::string ModelToString(RSModel* model)
 {
   std::ostringstream oss;
-  boost::archive::text_oarchive oa(oss);
+  cereal::JSONOutputArchive oa(oss);
   oa << model;
   return oss.str();
 }
