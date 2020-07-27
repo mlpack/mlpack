@@ -119,7 +119,7 @@ void LayerNorm<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void LayerNorm<InputDataType, OutputDataType>::serialize(
-    Archive& ar
+    Archive& ar)
 {
   ar & CEREAL_NVP(size);
 

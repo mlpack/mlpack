@@ -70,8 +70,7 @@ void AdaptiveMeanPooling<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void AdaptiveMeanPooling<InputDataType, OutputDataType>::serialize(
-    Archive& ar
-)
+    Archive& ar)
 {
   ar & CEREAL_NVP(outputWidth);
   ar & CEREAL_NVP(outputHeight);

@@ -59,8 +59,7 @@ void HardTanH<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void HardTanH<InputDataType, OutputDataType>::serialize(
-    Archive& ar
-)
+    Archive& ar)
 {
   ar & CEREAL_NVP(maxValue);
   ar & CEREAL_NVP(minValue);

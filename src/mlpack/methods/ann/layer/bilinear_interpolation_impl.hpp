@@ -176,7 +176,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void BilinearInterpolation<InputDataType, OutputDataType>::serialize(
-    Archive& ar
+    Archive& ar)
 {
   ar & CEREAL_NVP(inRowSize);
   ar & CEREAL_NVP(inColSize);

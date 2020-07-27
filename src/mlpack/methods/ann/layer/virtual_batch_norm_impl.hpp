@@ -132,7 +132,7 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void VirtualBatchNorm<InputDataType, OutputDataType>::serialize(
-    Archive& ar
+    Archive& ar)
 {
   ar & CEREAL_NVP(size);
 

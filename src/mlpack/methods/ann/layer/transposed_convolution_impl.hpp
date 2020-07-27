@@ -449,8 +449,7 @@ void TransposedConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::serialize(
-    Archive& ar
+>::serialize(Archive& ar)
 {
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);

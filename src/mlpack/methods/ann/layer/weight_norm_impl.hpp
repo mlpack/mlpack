@@ -142,7 +142,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar
+    Archive& ar)
 {
   if (Archive::is_loading::value)
   {

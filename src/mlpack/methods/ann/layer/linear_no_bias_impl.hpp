@@ -83,7 +83,7 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 template<typename Archive>
 void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::serialize(
-    Archive& ar
+    Archive& ar)
 {
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);

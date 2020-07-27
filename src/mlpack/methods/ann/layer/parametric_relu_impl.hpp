@@ -80,8 +80,7 @@ void PReLU<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void PReLU<InputDataType, OutputDataType>::serialize(
-    Archive& ar
-)
+    Archive& ar)
 {
   ar & CEREAL_NVP(alpha);
 }

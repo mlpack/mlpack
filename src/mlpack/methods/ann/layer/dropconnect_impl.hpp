@@ -106,8 +106,7 @@ void DropConnect<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void DropConnect<InputDataType, OutputDataType>::serialize(
-    Archive& ar
-)
+    Archive& ar)
 {
   // Delete the old network first, if needed.
   if (Archive::is_loading::value)

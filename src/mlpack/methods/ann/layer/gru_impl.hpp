@@ -380,7 +380,7 @@ void GRU<InputDataType, OutputDataType>::ResetCell(const size_t /* size */)
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void GRU<InputDataType, OutputDataType>::serialize(
-    Archive& ar
+    Archive& ar)
 {
   // If necessary, clean memory from the old model.
   if (Archive::is_loading::value)

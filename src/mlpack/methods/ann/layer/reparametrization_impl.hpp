@@ -90,7 +90,7 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Reparametrization<InputDataType, OutputDataType>::serialize(
-    Archive& ar
+    Archive& ar)
 {
   ar & CEREAL_NVP(latentSize);
   ar & CEREAL_NVP(stochastic);
