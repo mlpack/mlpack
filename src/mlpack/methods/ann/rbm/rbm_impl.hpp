@@ -305,7 +305,7 @@ template<
 >
 template<typename Archive>
 void RBM<InitializationRuleType, DataType, PolicyType>::serialize(
-    Archive& ar
+    Archive& ar)
 {
   ar & CEREAL_NVP(parameter);
   ar & CEREAL_NVP(visibleSize);

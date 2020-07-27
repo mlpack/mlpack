@@ -51,8 +51,7 @@ void L1Loss<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void L1Loss<InputDataType, OutputDataType>::serialize(
-    Archive& ar
-)
+    Archive& ar)
 {
   ar & CEREAL_NVP(mean);
 }
