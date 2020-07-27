@@ -725,7 +725,7 @@ template<
 >
 template<typename Archive>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
-    Archive& ar
+    Archive& ar,
     const typename std::enable_if_t<Archive::is_loading::value>*) :
     CoverTree() // Create an empty CoverTree.
 {

@@ -390,7 +390,7 @@ template<typename Archive>
 RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 RectangleTree(
-    Archive& ar
+    Archive& ar,
     const typename std::enable_if_t<Archive::is_loading::value>*) :
     RectangleTree() // Use default constructor.
 {

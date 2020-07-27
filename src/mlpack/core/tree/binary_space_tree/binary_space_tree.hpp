@@ -305,7 +305,7 @@ class BinarySpaceTree
    */
   template<typename Archive>
   BinarySpaceTree(
-      Archive& ar
+      Archive& ar,
       const typename std::enable_if_t<Archive::is_loading::value>* = 0);
 
   /**
