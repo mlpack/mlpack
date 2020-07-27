@@ -20,16 +20,45 @@ namespace bindings {
 namespace r {
 
 /**
+ * Given the name of a binding, print its R name.
+ */
+inline std::string GetBindingName(const std::string& bindingName);
+
+/**
+ * Print any import information for the R binding.
+ */
+inline std::string PrintImport();
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo();
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo();
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
 inline std::string PrintValue(const T& value, bool quotes);
 
-// Special overload for booleans.
+/**
+ * Special overload for booleans.
+ */
 template<>
 inline std::string PrintValue(const bool& value, bool quotes);
 
-// Recursion base case.
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& paramName);
+
+/**
+ * Recursion base case.
+ */
 inline std::string PrintInputOptions();
 
 /**
@@ -41,11 +70,14 @@ std::string PrintInputOptions(const std::string& paramName,
                               const T& value,
                               Args... args);
 
-// Recursion base case.
-inline std::string PrintOutputOptions();
+/**
+ * Recursion base case.
+ */
+inline std::string PrintOutputOptions(const bool /* markdown */);
 
 template<typename T, typename... Args>
-std::string PrintOutputOptions(const std::string& paramName,
+std::string PrintOutputOptions(const bool markdown,
+                               const std::string& paramName,
                                const T& value,
                                Args... args);
 
@@ -54,7 +86,15 @@ std::string PrintOutputOptions(const std::string& paramName,
  * contents), print the corresponding function call.
  */
 template<typename... Args>
-std::string ProgramCall(const std::string& programName, Args... args);
+std::string ProgramCall(const bool markdown,
+                        const std::string& programName,
+                        Args... args);
+
+/**
+ * Given the name of a binding, print a program call assuming that all options
+ * are specified.
+ */
+inline std::string ProgramCall(const std::string& programName);
 
 /**
  * Given the name of a model, print it.  Here we do not need to modify anything.

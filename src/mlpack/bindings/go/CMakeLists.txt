@@ -224,7 +224,7 @@ if (BUILD_GO_BINDINGS)
       COMMAND ${CMAKE_COMMAND}
           -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_go_${name}
           -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/${name}.go
-          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateGoBinding.cmake)
+          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
 
   add_dependencies(go generate_go_${name})
 endif ()

@@ -19,9 +19,9 @@ if (BUILD_R_BINDINGS)
   include(${CMAKE_SOURCE_DIR}/CMake/FindRModule.cmake)
 
   # If mlpack upgrade the version of dependencies, then we also have to update the version here.
-  set(RcppArmadillo_Version "0.8.400.0.0")
-  set(RcppEnsmallen_Version "0.2.10.0")
-  set(BH_Version "1.58.0")
+  set(RcppArmadillo_Version "0.${ARMADILLO_VERSION}")
+  set(RcppEnsmallen_Version "0.${ENSMALLEN_VERSION}")
+  set(BH_Version "${BOOST_VERSION}")
 
   ## We need to check here if R is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we

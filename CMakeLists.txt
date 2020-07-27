@@ -278,7 +278,13 @@ endif()
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
-find_package(Armadillo 8.400.0 REQUIRED)
+
+# Set minimum library version required by mlpack.
+set(ARMADILLO_VERSION "8.400.0")
+set(ENSMALLEN_VERSION "2.10.0")
+set(BOOST_VERSION "1.58")
+
+find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
@@ -344,7 +350,7 @@ endif ()
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
-find_package(Ensmallen 2.10.0)
+find_package(Ensmallen "${ENSMALLEN_VERSION}")
 if (NOT ENSMALLEN_FOUND)
   if (DOWNLOAD_ENSMALLEN)
     file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
@@ -424,7 +430,7 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost 1.58
+find_package(Boost "${BOOST_VERSION}"
     COMPONENTS
       unit_test_framework
       serialization

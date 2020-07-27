@@ -20,6 +20,40 @@ namespace bindings {
 namespace r {
 
 /**
+ * Given the name of a binding, print its R name.
+ */
+inline std::string GetBindingName(const std::string& bindingName)
+{
+  // No modification is needed to the name---we just use it as-is.
+  return bindingName + "()";
+}
+
+/**
+ * Print any import information for the R binding.
+ */
+inline std::string PrintImport()
+{
+  return "library(mlpack)";
+}
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo()
+{
+  return "";
+}
+
+/**
+ * Print any special information about output options.
+ */
+inline std::string PrintOutputOptionInfo()
+{
+  return "Results are returned in a R list.  The keys of the "
+      "list are the names of the output parameters.";
+}
+
+/**
  * Given a parameter type, print the corresponding value.
  */
 template<typename T>
@@ -34,7 +68,26 @@ inline std::string PrintValue(const T& value, bool quotes)
   return oss.str();
 }
 
-// Special overload for booleans.
+/**
+ * Given a parameter name, print its corresponding default value.
+ */
+inline std::string PrintDefault(const std::string& paramName)
+{
+  if (IO::Parameters().count(paramName) == 0)
+    throw std::invalid_argument("unknown parameter " + paramName + "!");
+
+  util::ParamData& d = IO::Parameters()[paramName];
+
+  std::string defaultValue;
+  IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
+      (void*) &defaultValue);
+
+  return defaultValue;
+}
+
+/**
+ * Special overload for booleans.
+ */
 template<>
 inline std::string PrintValue(const bool& value, bool quotes)
 {
@@ -48,7 +101,9 @@ inline std::string PrintValue(const bool& value, bool quotes)
     return "FALSE";
 }
 
-// Recursion base case.
+/**
+ * Recursion base case.
+ */
 std::string PrintInputOptions() { return ""; }
 
 /**
@@ -92,11 +147,14 @@ std::string PrintInputOptions(const std::string& paramName,
   return result;
 }
 
-// Recursion base case.
-inline std::string PrintOutputOptions() { return ""; }
+/**
+ * Recursion base case.
+ */
+inline std::string PrintOutputOptions(const bool /* markdown */) { return ""; }
 
 template<typename T, typename... Args>
-std::string PrintOutputOptions(const std::string& paramName,
+std::string PrintOutputOptions(const bool markdown,
+                               const std::string& paramName,
                                const T& value,
                                Args... args)
 {
@@ -109,6 +167,8 @@ std::string PrintOutputOptions(const std::string& paramName,
     {
       // Print a new line for the output option.
       std::ostringstream oss;
+      if (markdown)
+        oss << "R> ";
       oss << value << " <- output$" << paramName;
       result = oss.str();
     }
@@ -122,7 +182,7 @@ std::string PrintOutputOptions(const std::string& paramName,
   }
 
   // Continue recursion.
-  std::string rest = PrintOutputOptions(args...);
+  std::string rest = PrintOutputOptions(markdown, args...);
   if (rest != "" && result != "")
     result += "\n";
   result += rest;
@@ -136,9 +196,13 @@ std::string PrintOutputOptions(const std::string& paramName,
  * contents), print the corresponding function call.
  */
 template<typename... Args>
-std::string ProgramCall(const std::string& programName, Args... args)
+std::string ProgramCall(const bool markdown,
+                        const std::string& programName,
+                        Args... args)
 {
   std::ostringstream oss;
+  if (markdown)
+    oss << "R> ";
 
   // Find out if we have any output options first.
   std::ostringstream ossOutput;
@@ -153,12 +217,87 @@ std::string ProgramCall(const std::string& programName, Args... args)
   oss.str(""); // Reset it.
 
   // Now process each output option.
-  oss << PrintOutputOptions(args...);
+  oss << PrintOutputOptions(markdown, args...);
+  if (markdown)
+  {
+    if (oss.str() == "")
+      return util::HyphenateString(call, 2);
+    else
+      return util::HyphenateString(call, 2) + "\n" + oss.str();
+  }
+  
   if (oss.str() == "")
     return "\\donttest{\n" + util::HyphenateString(call, 2) + "\n}";
   else
     return "\\donttest{\n" + util::HyphenateString(call, 2) + "\n" + oss.str() +
            "\n}";
+}
+
+/**
+ * Given the name of a binding, print a program call assuming that all options
+ * are specified.  The programName should not be the output of GetBindingName().
+ */
+inline std::string ProgramCall(const std::string& programName)
+{
+  std::ostringstream oss;
+  oss << "R> ";
+
+  // Determine if we have any output options.
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  bool hasOutput = false;
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (!it->second.input)
+    {
+      hasOutput = true;
+      break;
+    }
+  }
+
+  if (hasOutput)
+    oss << "d <- ";
+
+  oss << programName << "(";
+
+  // Now iterate over every input option.
+  bool first = true;
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (!it->second.input || (it->second.persistent &&
+        it->second.name != "verbose"))
+      continue;
+
+    if (!first)
+      oss << ", ";
+    else
+      first = false;
+
+    // Print the input option.
+    oss << it->second.name << "=";
+
+    std::string value;
+    IO::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+        it->second, NULL, (void*) &value);
+    oss << value;
+  }
+  oss << ")";
+
+  std::string result = util::HyphenateString(oss.str(), 8);
+
+  oss.str("");
+  oss << result;
+
+  // Now print output lines.
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (it->second.input)
+      continue;
+
+    // Print a new line for the output option.
+    oss << std::endl << "R> " << it->second.name << " <- d$" << it->second.name;
+  }
+
+  return oss.str();
 }
 
 /**

@@ -346,7 +346,7 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 #define PRINT_PARAM_VALUE mlpack::bindings::r::PrintValue
 #define PRINT_DATASET mlpack::bindings::r::PrintDataset
 #define PRINT_MODEL mlpack::bindings::r::PrintModel
-#define PRINT_CALL mlpack::bindings::r::ProgramCall
+#define PRINT_CALL(...) mlpack::bindings::r::ProgramCall(false, __VA_ARGS__)
 #define BINDING_IGNORE_CHECK mlpack::bindings::r::IgnoreCheck
 
 namespace mlpack {

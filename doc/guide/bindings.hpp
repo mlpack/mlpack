@@ -147,8 +147,7 @@ PROGRAM_INFO("Mean Shift Clustering",
     "\n\n"
     "The output labels may be saved with the " + PRINT_PARAM_STRING("output") +
     " output parameter and the centroids of each cluster may be saved with the"
-    " " + PRINT_PARAM_STRING("centroid") + " output parameter."
-    "\n\n"
+    " " + PRINT_PARAM_STRING("centroid") + " output parameter.",
     "For example, to run mean shift clustering on the dataset " +
     PRINT_DATASET("data") + " and store the centroids to " +
     PRINT_DATASET("centroids") + ", the following command may be used: "
@@ -286,7 +285,7 @@ is of the form
 
 @code
 PROGRAM_INFO("program name", "short documentation", "long documentation",
-    SEE_ALSO("link", "description"), ...)
+    "examples", SEE_ALSO("link", "description"), ...)
 @endcode
 
 The short documentation should be two sentences indicating what the program
@@ -425,8 +424,7 @@ Input C++ (full program, 'random_numbers_main.cpp'):
       "The output random numbers can be saved with the " +
       PRINT_PARAM_STRING("output") + " output parameter.  In addition, a "
       "randomly generated linear regression model can be saved with the " +
-      PRINT_PARAM_STRING("output_model") + " output parameter."
-      "\n\n"
+      PRINT_PARAM_STRING("output_model") + " output parameter.",
       "For example, to generate 100 random numbers with 3 subtracted from them "
       "and save the output to " + PRINT_DATASET("rand") + " and the random "
       "model to " + PRINT_MODEL("rand_lr") + ", use the following "
