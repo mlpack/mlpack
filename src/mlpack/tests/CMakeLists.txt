@@ -1,7 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  akfn_test.cpp
-  aknn_test.cpp
   ann_dist_test.cpp
   ann_layer_test.cpp
   ann_regularizer_test.cpp
@@ -43,9 +41,7 @@ add_executable(mlpack_test
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
-  kfn_test.cpp
   kmeans_test.cpp
-  knn_test.cpp
   krann_search_test.cpp
   ksinit_test.cpp
   lars_test.cpp
@@ -114,7 +110,6 @@ add_executable(mlpack_test
   union_find_test.cpp
   vantage_point_tree_test.cpp
   wgan_test.cpp
-  main_tests/approx_kfn_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/decision_stump_test.cpp
@@ -133,9 +128,7 @@ add_executable(mlpack_test
   main_tests/hoeffding_tree_test.cpp
   main_tests/kde_test.cpp
   main_tests/kernel_pca_test.cpp
-  main_tests/kfn_test.cpp
   main_tests/kmeans_test.cpp
-  main_tests/knn_test.cpp
   main_tests/krann_test.cpp
   main_tests/linear_svm_test.cpp
   main_tests/lmnn_test.cpp
@@ -162,9 +155,13 @@ add_executable(mlpack_test
 add_executable(mlpack_catch_test
   activation_functions_test.cpp
   adaboost_test.cpp
+  akfn_test.cpp
+  aknn_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
   image_load_test.cpp
+  kfn_test.cpp
+  knn_test.cpp
   linear_regression_test.cpp
   main.cpp
   serialization_catch.cpp
@@ -172,7 +169,10 @@ add_executable(mlpack_catch_test
   softmax_regression_test.cpp
   test_catch_tools.hpp
   main_tests/adaboost_test.cpp
+  main_tests/approx_kfn_test.cpp
   main_tests/image_converter_test.cpp
+  main_tests/kfn_test.cpp
+  main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/test_helper.hpp
