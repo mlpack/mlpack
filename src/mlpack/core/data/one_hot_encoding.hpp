@@ -14,6 +14,7 @@
 #define MLPACK_CORE_DATA_ONE_HOT_ENCODING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace data {
@@ -28,9 +29,9 @@ namespace data {
  * @param labelsIn Input labels of arbitrary datatype.
  * @param output Binary matrix.
  */
-template<class RowType, template <typename> class MatType, class eT>
+template<typename RowType, typename MatType>
 void OneHotEncoding(const RowType& labelsIn,
-                    MatType<eT>& output);
+                    MatType& output);
 
 /**
  * Overloaded function for the above function, which takes a matrix as input
@@ -41,9 +42,17 @@ void OneHotEncoding(const RowType& labelsIn,
  * @param output Encoded matrix.
  */
 template<typename eT>
-void OneHotEncoding(arma::Mat<eT>& input,
-                    const arma::colvec indices,
+void OneHotEncoding(const arma::Mat<eT>& input,
+                    const arma::Col<size_t>& indices,
                     arma::Mat<eT>& output);
+
+template<typename eT>
+void OneHotEncoding(const arma::Mat<eT>& input,
+                    arma::Mat<eT>& output,
+                    const data::DatasetInfo& datasetInfo);
+
+template<typename RowType>
+size_t numofMapping(const RowType& labelsIn);
 
 } // namespace data
 } // namespace mlpack

@@ -62,11 +62,77 @@ BOOST_AUTO_TEST_CASE(PreprocessOneHotEncodingTest)
            "1 1 -1 -1 -1 -1 1 1;";
 
   SetInputParam("input", dataset);
-  SetInputParam<vector<int>>("indices", {1, 3});
+  SetInputParam<vector<int>>("dimensions", {1, 3});
   mlpackMain();
 
   arma::mat output = CLI::GetParam<arma::mat>("output");
+  BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
+  BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);  
   CheckMatrices(output, matrix);
 }
 
+BOOST_AUTO_TEST_CASE(EmptyMatrixTest)
+{
+  arma::mat dataset;
+ 
+  SetInputParam("input", dataset);
+  SetInputParam<vector<int>>("dimensions", {1, 3});
+  // error since dimesnions are bigger that matrix
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+BOOST_AUTO_TEST_CASE(EmptyIndicesTest)
+{
+  arma::mat dataset;
+  dataset = "1 1 -1 -1 -1 -1 1 1;"
+            "-1 1 -1 -1 -1 -1 1 -1;"
+            "1 1 -1 -1 -1 -1 1 1;"
+            "-1 1 -1 -1 -1 -1 1 -1;"
+            "1 1 -1 -1 -1 -1 1 1;";
+
+  SetInputParam("input", dataset);
+  SetInputParam<vector<int>>("dimensions", {});
+  // error since dimesnions are bigger that matrix
+  mlpackMain();
+
+  arma::mat output = CLI::GetParam<arma::mat>("output");
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, output.n_cols);
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, output.n_rows);  
+  CheckMatrices(output, dataset);
+}
+BOOST_AUTO_TEST_CASE(InvalidDimensionTest)
+{
+  arma::mat dataset;
+  dataset = "1 1 -1 -1 -1 -1 1 1;"
+            "-1 1 -1 -1 -1 -1 1 -1;"
+            "1 1 -1 -1 -1 -1 1 1;"
+            "-1 1 -1 -1 -1 -1 1 -1;"
+            "1 1 -1 -1 -1 -1 1 1;";
+
+  SetInputParam("input", dataset);
+  SetInputParam<vector<int>>("dimensions", {10000});
+  // error since dimesnions are bigger that matrix
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+BOOST_AUTO_TEST_CASE(NegativeDimensionTest)
+{
+  arma::mat dataset;
+  dataset = "1 1 -1 -1 -1 -1 1 1;"
+            "-1 1 -1 -1 -1 -1 1 -1;"
+            "1 1 -1 -1 -1 -1 1 1;"
+            "-1 1 -1 -1 -1 -1 1 -1;"
+            "1 1 -1 -1 -1 -1 1 1;";
+
+  SetInputParam("input", dataset);
+  SetInputParam<vector<int>>("dimensions", {-10000});
+  // error since dimesnions are bigger that matrix
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
 BOOST_AUTO_TEST_SUITE_END();

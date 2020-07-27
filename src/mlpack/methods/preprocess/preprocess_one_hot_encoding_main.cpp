@@ -40,8 +40,8 @@ PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save one hot encoded features "
     "data to.", "o");
 
-PARAM_VECTOR_IN_REQ(int, "indices", "Index of Column which"
-    "need to be one hot encoded", "c");
+PARAM_VECTOR_IN_REQ(int, "dimensions", "Index of dimensions that"
+    "need to be one hot encoded.", "d");
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -51,18 +51,20 @@ using namespace std;
 static void mlpackMain()
 {
   // Load the data.
-  arma::mat& data = CLI::GetParam<arma::mat>("input");
-  vector<int> indices =
-    CLI::GetParam<vector<int> >("indices");
-  vector<unsigned long long >copyIndices(indices.size());
+  const arma::mat& data = CLI::GetParam<arma::mat>("input");
+  vector<int>& indices =
+    CLI::GetParam<vector<int> >("dimensions");
+  vector<size_t>copyIndices(indices.size());
   for (size_t i = 0; i < indices.size(); i++)
   {
-    if (indices[i] < 0)
-      throw std::runtime_error("Indices should be having positive value");
-    copyIndices[i] = (unsigned long long)indices[i];
+    if (indices[i] < 0 || indices[i] >= data.n_rows)
+      throw std::runtime_error("Indices should be having positive value and less than"
+      "then the number of dimesnions of the input data");
+    copyIndices[i] = (size_t)indices[i];
   }
+  arma::Col<size_t>temp(copyIndices);
   arma::mat output;
-  data::OneHotEncoding(data, arma::uvec(copyIndices), output);
+  data::OneHotEncoding(data, temp, output);
   if (CLI::HasParam("output"))
     CLI::GetParam<arma::mat>("output") = std::move(output);
 }
