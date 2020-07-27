@@ -1,5 +1,5 @@
 /**
- * @file one_hot_encoding_test.cpp
+ * @file tests/one_hot_encoding_test.cpp
  * @author Jeffin Sam
  *
  * Tests for the One-Hot Encoding method.

@@ -86,7 +86,7 @@ void OneHotEncoding(const arma::Mat<eT>& input,
     newRows += mapIndices[indices.at(i)];
   }
 
-  // find the size of output mat 
+  // find the size of output mat.
   output.zeros(newRows, input.n_cols);
   size_t row = 0;
 
@@ -94,7 +94,7 @@ void OneHotEncoding(const arma::Mat<eT>& input,
   {
     if (mapIndices.count(i) == 0)
     {
-      // Copy exactly as required
+      // Copy exactly as required.
       for (size_t j = 0; j < input.n_cols; j++)
       {
         output(row, j) = input(i, j);
@@ -132,7 +132,7 @@ void OneHotEncoding(const arma::Mat<eT>& input,
       }
       labelMap.clear();
       row +=  mapIndices[i];
-    }    
+    }
   }
 }
 

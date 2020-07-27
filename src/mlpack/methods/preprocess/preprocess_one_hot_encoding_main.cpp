@@ -1,5 +1,5 @@
 /**
- * @file preprocess_one_hot_encoding_main.cpp
+ * @file methods/preprocess/preprocess_one_hot_encoding_main.cpp
  * @author Jeffin Sam
  *
  * A IO executable to do One-Hot Encoding on features from a dataset.
@@ -58,13 +58,12 @@ static void mlpackMain()
   for (size_t i = 0; i < indices.size(); i++)
   {
     if (indices[i] < 0 || indices[i] >= data.n_rows)
-      throw std::runtime_error("Indices should be having positive value and less than"
-      "then the number of dimesnions of the input data");
+      throw std::runtime_error("Indices should be having positive value"
+      " and less than then the number of dimesnions of the input data");
     copyIndices[i] = (size_t)indices[i];
   }
-  arma::Col<size_t>temp(copyIndices);
   arma::mat output;
-  data::OneHotEncoding(data, temp, output);
+  data::OneHotEncoding(data, (arma::Col<size_t>)(copyIndices), output);
   if (IO::HasParam("output"))
     IO::GetParam<arma::mat>("output") = std::move(output);
 }

@@ -1,5 +1,5 @@
 /**
- * @file preprocess_one_hot_encode_test.cpp
+ * @file tests/main_tests/preprocess_one_hot_encode_test.cpp
  * @author Jeffin Sam
  *
  * Test mlpackMain() of preprocess_one_hot_encoding_main.cpp.
@@ -66,7 +66,7 @@ TEST_CASE_METHOD(
 
   arma::mat output = IO::GetParam<arma::mat>("output");
   REQUIRE(matrix.n_cols == output.n_cols);
-  REQUIRE(matrix.n_rows == output.n_rows);  
+  REQUIRE(matrix.n_rows == output.n_rows);
   CheckMatrices(output, matrix);
 }
 
@@ -75,7 +75,7 @@ TEST_CASE_METHOD(
     "[PreprocessOneHotEncodingMainTest][BindingTests]")
 {
   arma::mat dataset;
- 
+
   SetInputParam("input", dataset);
   SetInputParam<vector<int>>("dimensions", {1, 3});
   // error since dimesnions are bigger that matrix
@@ -102,7 +102,7 @@ TEST_CASE_METHOD(
 
   arma::mat output = IO::GetParam<arma::mat>("output");
   REQUIRE(dataset.n_cols == output.n_cols);
-  REQUIRE(dataset.n_rows == output.n_rows);  
+  REQUIRE(dataset.n_rows == output.n_rows);
   CheckMatrices(output, dataset);
 }
 
@@ -157,6 +157,6 @@ TEST_CASE_METHOD(
 
   arma::mat output = IO::GetParam<arma::mat>("output");
   REQUIRE(dataset.n_cols == output.n_cols);
-  REQUIRE(dataset.n_rows == output.n_rows);  
+  REQUIRE(dataset.n_rows == output.n_rows);
   CheckMatrices(output, dataset);
 }
