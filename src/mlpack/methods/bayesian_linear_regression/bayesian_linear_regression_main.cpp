@@ -84,7 +84,13 @@ PROGRAM_INFO("BayesianLinearRegression",
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input_model",
                "bayesian_linear_regression_model", "test", "test",
-               "predictions", "test_predictions", "stds", "stds"));
+               "predictions", "test_predictions", "stds", "stds"),
+    SEE_ALSO("MacKay 1992"),
+    SEE_ALSO("MLA Bishop, Christopher M. Pattern Recognition and Machine "
+        " Learning. New York :Springer, 2006, section 3.3."),
+    SEE_ALSO("mlpack::regression::BayesianLinearRegression C++ class
+        documentation",
+        "@doxygen/classmlpack_1_1regression_1_1BayesianLinearRegression.html"));
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 
