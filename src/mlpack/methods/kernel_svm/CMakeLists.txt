@@ -4,6 +4,8 @@
 set(SOURCES
   kernel_svm.hpp
   kernel_svm_impl.hpp
+  kernel_svm_function.hpp
+  kernel_svm_function_impl.hpp
 )
 
 # add directory name to sources
