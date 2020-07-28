@@ -20,8 +20,6 @@ add_executable(mlpack_test
   cv_test.cpp
   dbscan_test.cpp
   dcgan_test.cpp
-  decision_stump_test.cpp
-  decision_tree_test.cpp
   det_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
@@ -111,8 +109,6 @@ add_executable(mlpack_test
   wgan_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
-  main_tests/decision_stump_test.cpp
-  main_tests/decision_tree_test.cpp
   main_tests/det_test.cpp
   main_tests/emst_test.cpp
   main_tests/fastmks_test.cpp
@@ -158,6 +154,8 @@ add_executable(mlpack_catch_test
   aknn_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
+  decision_stump_test.cpp
+  decision_tree_test.cpp
   image_load_test.cpp
   kfn_test.cpp
   knn_test.cpp
@@ -170,6 +168,8 @@ add_executable(mlpack_catch_test
   test_catch_tools.hpp
   main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
+  main_tests/decision_stump_test.cpp
+  main_tests/decision_tree_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/kfn_test.cpp
   main_tests/knn_test.cpp
