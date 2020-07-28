@@ -53,7 +53,7 @@ void Lookup<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& /* gy */,
     arma::Mat<eT>& /* g */)
 {
-  // Nothing to do here.
+  Log::Fatal << "Lookup cannot be used as an intermediate layer." << std::endl;
 }
 
 template<typename InputDataType, typename OutputDataType>

@@ -1712,7 +1712,6 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
       model = new FFN<CrossEntropyError<>, GlorotInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
-      model->Add<IdentityLayer<> >();
       model->Add<Lookup<> >(vocabSize, embeddingSize);
       model->Add<Linear<> >(embeddingSize * seqLength, vocabSize);
       model->Add<Softmax<> >();
