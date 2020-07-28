@@ -20,10 +20,7 @@
 #include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
 #include <mlpack/methods/amf/termination_policies/validation_rmse_termination.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-
-BOOST_AUTO_TEST_SUITE(SVDIncrementalTest);
+#include "catch.hpp"
 
 using namespace std;
 using namespace mlpack;
@@ -33,7 +30,7 @@ using namespace arma;
 /**
  * Test for convergence of incomplete incremenal learning.
  */
-BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalConvergenceTest)
+TEST_CASE("SVDIncompleteIncrementalConvergenceTest", "[SVDIncrementalTest]")
 {
   sp_mat data;
   data.sprandn(100, 100, 0.2);
@@ -48,14 +45,14 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalConvergenceTest)
   mat m1, m2;
   amf.Apply(data, 2, m1, m2);
 
-  BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),
-                   amf.TerminationPolicy().MaxIterations());
+  REQUIRE(amf.TerminationPolicy().Iteration() !=
+          amf.TerminationPolicy().MaxIterations());
 }
 
 /**
  * Test for convergence of complete incremenal learning
  */
-BOOST_AUTO_TEST_CASE(SVDCompleteIncrementalConvergenceTest)
+TEST_CASE("SVDCompleteIncrementalConvergenceTest", "[SVDIncrementalTest]")
 {
   sp_mat data;
   data.sprandn(100, 100, 0.2);
@@ -71,8 +68,8 @@ BOOST_AUTO_TEST_CASE(SVDCompleteIncrementalConvergenceTest)
   mat m1, m2;
   amf.Apply(data, 2, m1, m2);
 
-  BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),
-                   amf.TerminationPolicy().MaxIterations());
+  REQUIRE(amf.TerminationPolicy().Iteration() !=
+          amf.TerminationPolicy().MaxIterations());
 }
 
 //! This is used to ensure we start from the same initial point.
@@ -98,7 +95,7 @@ class SpecificRandomInitialization
   arma::mat H;
 };
 
-BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalRegularizationTest)
+TEST_CASE("SVDIncompleteIncrementalRegularizationTest", "[SVDIncrementalTest]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -143,7 +140,5 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalRegularizationTest)
   mat m3, m4;
   double regularizedRMSE = amf2.Apply(cleanedData2, 2, m3, m4);
 
-  BOOST_REQUIRE_LT(regularizedRMSE, regularRMSE + 0.105);
+  REQUIRE(regularizedRMSE < regularRMSE + 0.105);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
