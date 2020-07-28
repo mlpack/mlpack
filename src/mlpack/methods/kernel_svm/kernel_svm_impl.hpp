@@ -55,6 +55,7 @@ double KernelSVM<MatType, KernelType>::Train(
     const double tol)
 {
   classesClassifier = arma::zeros(numClassifier, 2);
+  double val = 0;
 
   size_t countClass = 0;
   for (size_t i = 0; i < numClass; i++)
@@ -71,14 +72,21 @@ double KernelSVM<MatType, KernelType>::Train(
         if (labels(k) ==  i)
           tempLables(k) = 1;
       }
-      KernelSVMFunction<MatType, KernelType> svm(data.cols(arma::find(tempLables == 1 || tempLables == -1)),
-                                                          tempLables.cols(arma::find(tempLables == 1 || tempLables == -1)),
-                                                          regularization, fitIntercept, maxIter, tol);
+
+      KernelSVMFunction<MatType,
+                        KernelType> svm(
+                          data.cols(
+                            arma::find(tempLables == 1 || tempLables == -1)),
+                          tempLables.cols(
+                            arma::find(tempLables == 1 || tempLables == -1)),
+                          regularization, fitIntercept, maxIter, tol);
       network.push_back(svm);
 
       countClass++;
+      val++;
     }
   }
+  return val;
 }
 
 template <typename MatType, typename KernelType>
@@ -119,7 +127,7 @@ void KernelSVM<MatType, KernelType>::Classify(
         prediction(classesClassifier(k, 0), i) += 1;
       if (scores(k, i) == 0)
         prediction(classesClassifier(k, 1), i) += 1;
-    } 
+    }
   }
 
   labels.zeros(data.n_cols);
@@ -127,7 +135,6 @@ void KernelSVM<MatType, KernelType>::Classify(
   {
     labels(i) = prediction.col(i).index_max();
   }
-
 }
 
 template <typename MatType, typename KernelType>

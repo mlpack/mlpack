@@ -77,7 +77,6 @@ class KernelSVM
    * @param numClass Number of classes for classification.
    * @param max_iter maximum number of iteration for training.
    * @param tol tolerance value.
-   * @param kernel kernel type of kernel used with svm.
    */
   KernelSVM(const MatType& data,
             const arma::Row<size_t>& labels,
@@ -94,8 +93,7 @@ class KernelSVM
    *
    * @param regularization standard svm regularization parameter.
    * @param fitIntercept add intercept term or not.
-   * @param numClasses Number of classes for classification.
-   * @param kernel kernel type of kernel used with svm.
+   * @param numClass Number of classes for classification.
    */
   KernelSVM(const double regularization = 1.0,
             const bool fitIntercept = false,
@@ -188,14 +186,17 @@ class KernelSVM
   }
 
  private:
+  //! Locally saved number of classes.
   size_t numClass;
+  //! Locally saved number of classifier trained.
   double numClassifier;
+  //! Locally saved classes of classifiers.
   arma::mat classesClassifier;
-  KernelSVMFunction<MatType , KernelType> svms;
+  //! Locally saved network of trained svms.
   std::vector<KernelSVMFunction<MatType , KernelType> > network;
   //! Locally saved standard svm regularization parameter.
   double regularization;
-  //! Kernel flag.
+  //! Intercept term flag.
   bool fitIntercept;
 };
 
