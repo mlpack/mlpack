@@ -100,7 +100,7 @@ class BayesianLinearRegression
    *
    * @param centerData Whether or not center the data according to the
    *    examples.
-   * @param scaleData Whether or to scale the data according to the
+   * @param scaleData Whether or not scale the data according to the
    *    standard deviation of each feature.
    * @param nIterMax Maximum number of iterations for convergency.
    * @param tol Level from which the solution is considered sufficientlly 
