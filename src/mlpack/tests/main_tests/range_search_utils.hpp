@@ -26,7 +26,10 @@ inline std::string ModelToString(RSModel* model)
 {
   std::ostringstream oss;
   cereal::JSONOutputArchive oa(oss);
-  oa << model;
+  // It is not possible to serialize this model, I am getting an error
+  // of not serialize function is found fir this model, even that we have
+  // declared that in the rs_model_impl
+  oa << CEREAL_POINTER(model);
   return oss.str();
 }
 

@@ -1,169 +1,169 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  adaboost_test.cpp
-  akfn_test.cpp
-  aknn_test.cpp
-  ann_dist_test.cpp
-# ann_layer_test.cpp
-  ann_regularizer_test.cpp
-  ann_test_tools.hpp
-  ann_visitor_test.cpp
-  arma_extend_test.cpp
-  armadillo_svd_test.cpp
-  async_learning_test.cpp
-  augmented_rnns_tasks_test.cpp
-  bias_svd_test.cpp
-  binarize_test.cpp
-  block_krylov_svd_test.cpp
-  callback_test.cpp
-# cf_test.cpp
-  cli_binding_test.cpp
-  io_test.cpp
-  convolution_test.cpp
-  convolutional_network_test.cpp
-  cosine_tree_test.cpp
-  cv_test.cpp
-  dbscan_test.cpp
-# dcgan_test.cpp
-  decision_stump_test.cpp
-  decision_tree_test.cpp
-  det_test.cpp
-  distribution_test.cpp
-  drusilla_select_test.cpp
-  emst_test.cpp
-# fastmks_test.cpp
-  facilities_test.cpp
-# feedforward_network_test.cpp
-# gan_test.cpp
-  gmm_test.cpp
-  hmm_test.cpp
-  hoeffding_tree_test.cpp
-  hpt_test.cpp
-  hyperplane_test.cpp
-  imputation_test.cpp
-  init_rules_test.cpp
-# kde_test.cpp
-  kernel_pca_test.cpp
-  kernel_test.cpp
-  kernel_traits_test.cpp
-  kfn_test.cpp
-# kmeans_test.cpp
-# knn_test.cpp
-  krann_search_test.cpp
-  ksinit_test.cpp
-# lars_test.cpp
-  layer_names_test.cpp
-  lin_alg_test.cpp
-  linear_regression_test.cpp
-  linear_svm_test.cpp
-  lmnn_test.cpp
-  load_save_test.cpp
-  local_coordinate_coding_test.cpp
-  log_test.cpp
-  logistic_regression_test.cpp
-  loss_functions_test.cpp
-# lsh_test.cpp
-  math_test.cpp
-  matrix_completion_test.cpp
-  maximal_inputs_test.cpp
-  mean_shift_test.cpp
-  metric_test.cpp
-  mlpack_test.cpp
-  mock_categorical_data.hpp
-  nbc_test.cpp
-  nca_test.cpp
-  nmf_test.cpp
-  nystroem_method_test.cpp
-# octree_test.cpp
-# pca_test.cpp
-  perceptron_test.cpp
-  prefixedoutstream_test.cpp
-  python_binding_test.cpp
-  q_learning_test.cpp
-  qdafn_test.cpp
-  quic_svd_test.cpp
-  radical_test.cpp
-  random_forest_test.cpp
-  random_test.cpp
-  randomized_svd_test.cpp
-  # range_search_test.cpp
-  # rbm_network_test.cpp
-  # rectangle_tree_test.cpp
-  # recurrent_network_test.cpp
-  regularized_svd_test.cpp
-  reward_clipping_test.cpp
-  rl_components_test.cpp
-  scaling_test.cpp
-  serialization.cpp
-  serialization.hpp
-  serialization_test.cpp
-  sfinae_test.cpp
-  softmax_regression_test.cpp
-  sort_policy_test.cpp
-  sparse_autoencoder_test.cpp
-  sparse_coding_test.cpp
-  spill_tree_test.cpp
-  split_data_test.cpp
-  #string_encoding_test.cpp
-  sumtree_test.cpp
-  svd_batch_test.cpp
-  svd_incremental_test.cpp
-  svdplusplus_test.cpp
-  termination_policy_test.cpp
-  test_function_tools.hpp
-  test_tools.hpp
-  timer_test.cpp
-  tree_test.cpp
-  tree_traits_test.cpp
-  ub_tree_test.cpp
-  union_find_test.cpp
-  vantage_point_tree_test.cpp
-  wgan_test.cpp
-  main_tests/adaboost_test.cpp
-  main_tests/approx_kfn_test.cpp
-  main_tests/cf_test.cpp
-  main_tests/dbscan_test.cpp
-  main_tests/decision_stump_test.cpp
-  main_tests/decision_tree_test.cpp
-  main_tests/det_test.cpp
-  main_tests/emst_test.cpp
-  main_tests/fastmks_test.cpp
-  main_tests/gmm_generate_test.cpp
-  main_tests/gmm_probability_test.cpp
-  main_tests/gmm_train_test.cpp
-  main_tests/hmm_generate_test.cpp
-  main_tests/hmm_loglik_test.cpp
-  main_tests/hmm_test_utils.hpp
-  main_tests/hmm_train_test.cpp
-  main_tests/hmm_viterbi_test.cpp
-  main_tests/hoeffding_tree_test.cpp
-  main_tests/kde_test.cpp
-  main_tests/kernel_pca_test.cpp
-  main_tests/kfn_test.cpp
-  main_tests/kmeans_test.cpp
-  main_tests/knn_test.cpp
-  main_tests/krann_test.cpp
-  main_tests/linear_regression_test.cpp
-  main_tests/linear_svm_test.cpp
-  main_tests/lmnn_test.cpp
-  main_tests/local_coordinate_coding_test.cpp
-  main_tests/logistic_regression_test.cpp
-  main_tests/lsh_test.cpp
-  main_tests/mean_shift_test.cpp
-  main_tests/nbc_test.cpp
-  main_tests/nca_test.cpp
-  main_tests/nmf_test.cpp
-  main_tests/pca_test.cpp
-  main_tests/perceptron_test.cpp
-  main_tests/preprocess_binarize_test.cpp
-  main_tests/preprocess_imputer_test.cpp
-  main_tests/preprocess_scale_test.cpp
-  main_tests/preprocess_split_test.cpp
-  main_tests/radical_test.cpp
-  main_tests/random_forest_test.cpp
-  main_tests/range_search_test.cpp
-  main_tests/softmax_regression_test.cpp
-  main_tests/sparse_coding_test.cpp
+# # adaboost_test.cpp
+    akfn_test.cpp
+    aknn_test.cpp
+    ann_dist_test.cpp
+# # ann_layer_test.cpp
+    ann_regularizer_test.cpp
+    ann_test_tools.hpp
+    ann_visitor_test.cpp
+    arma_extend_test.cpp
+    armadillo_svd_test.cpp
+    async_learning_test.cpp
+    augmented_rnns_tasks_test.cpp
+    bias_svd_test.cpp
+    binarize_test.cpp
+    block_krylov_svd_test.cpp
+    callback_test.cpp
+# # cf_test.cpp
+    cli_binding_test.cpp
+    io_test.cpp
+    convolution_test.cpp
+    convolutional_network_test.cpp
+    cosine_tree_test.cpp
+    cv_test.cpp
+    dbscan_test.cpp
+# # dcgan_test.cpp
+# #  decision_stump_test.cpp
+# #  decision_tree_test.cpp
+# #  det_test.cpp
+# #  distribution_test.cpp
+# #  drusilla_select_test.cpp
+    emst_test.cpp
+# # fastmks_test.cpp
+    facilities_test.cpp
+# # feedforward_network_test.cpp
+# # gan_test.cpp
+# #  gmm_test.cpp
+# #  hmm_test.cpp
+# #  hoeffding_tree_test.cpp
+    hpt_test.cpp
+    hyperplane_test.cpp
+    imputation_test.cpp
+    init_rules_test.cpp
+# # kde_test.cpp
+   kernel_pca_test.cpp
+   kernel_test.cpp
+   kernel_traits_test.cpp
+   kfn_test.cpp
+# # kmeans_test.cpp
+# # knn_test.cpp
+   krann_search_test.cpp
+   ksinit_test.cpp
+# # lars_test.cpp
+   layer_names_test.cpp
+   lin_alg_test.cpp
+# #  linear_regression_test.cpp
+   linear_svm_test.cpp
+   lmnn_test.cpp
+   load_save_test.cpp
+# #  local_coordinate_coding_test.cpp
+   log_test.cpp
+#   logistic_regression_test.cpp
+   loss_functions_test.cpp
+# # lsh_test.cpp
+   math_test.cpp
+   matrix_completion_test.cpp
+   maximal_inputs_test.cpp
+   mean_shift_test.cpp
+   metric_test.cpp
+   mlpack_test.cpp
+   mock_categorical_data.hpp
+   nbc_test.cpp
+   nca_test.cpp
+   nmf_test.cpp
+   nystroem_method_test.cpp
+# # octree_test.cpp
+# # pca_test.cpp
+   perceptron_test.cpp
+   prefixedoutstream_test.cpp
+   python_binding_test.cpp
+   q_learning_test.cpp
+#   qdafn_test.cpp
+   quic_svd_test.cpp
+   radical_test.cpp
+# #  random_forest_test.cpp
+#   random_test.cpp
+#   randomized_svd_test.cpp
+# # range_search_test.cpp
+# # rbm_network_test.cpp
+# # rectangle_tree_test.cpp
+# # recurrent_network_test.cpp
+   regularized_svd_test.cpp
+   reward_clipping_test.cpp
+   rl_components_test.cpp
+   scaling_test.cpp
+   serialization.cpp
+   serialization.hpp
+#   serialization_test.cpp
+   sfinae_test.cpp
+   softmax_regression_test.cpp
+   sort_policy_test.cpp
+   sparse_autoencoder_test.cpp
+#   sparse_coding_test.cpp
+   spill_tree_test.cpp
+   split_data_test.cpp
+# # string_encoding_test.cpp
+   sumtree_test.cpp
+   svd_batch_test.cpp
+   svd_incremental_test.cpp
+   svdplusplus_test.cpp
+   termination_policy_test.cpp
+   test_function_tools.hpp
+   test_tools.hpp
+   timer_test.cpp
+   tree_test.cpp
+   tree_traits_test.cpp
+   ub_tree_test.cpp
+   union_find_test.cpp
+   vantage_point_tree_test.cpp
+#   wgan_test.cpp
+# # main_tests/adaboost_test.cpp
+# # main_tests/approx_kfn_test.cpp
+# # main_tests/cf_test.cpp
+# # main_tests/dbscan_test.cpp
+# # main_tests/decision_stump_test.cpp
+# # main_tests/decision_tree_test.cpp
+# # main_tests/det_test.cpp
+    main_tests/emst_test.cpp
+# # main_tests/fastmks_test.cpp
+# # main_tests/gmm_generate_test.cpp
+# # main_tests/gmm_probability_test.cpp
+# # main_tests/gmm_train_test.cpp
+# # main_tests/hmm_generate_test.cpp
+# # main_tests/hmm_loglik_test.cpp
+# # main_tests/hmm_test_utils.hpp
+# # main_tests/hmm_train_test.cpp
+# # main_tests/hmm_viterbi_test.cpp
+# # main_tests/hoeffding_tree_test.cpp
+# # main_tests/kde_test.cpp
+# # main_tests/kernel_pca_test.cpp
+# # main_tests/kfn_test.cpp
+# # main_tests/kmeans_test.cpp
+# # main_tests/knn_test.cpp
+# # main_tests/krann_test.cpp
+# # main_tests/linear_regression_test.cpp
+# # main_tests/linear_svm_test.cpp
+# # main_tests/lmnn_test.cpp
+# # main_tests/local_coordinate_coding_test.cpp
+# # main_tests/logistic_regression_test.cpp
+# # main_tests/lsh_test.cpp
+    main_tests/mean_shift_test.cpp
+    main_tests/nbc_test.cpp
+    main_tests/nca_test.cpp
+    main_tests/nmf_test.cpp
+    main_tests/pca_test.cpp
+    main_tests/perceptron_test.cpp
+    main_tests/preprocess_binarize_test.cpp
+    main_tests/preprocess_imputer_test.cpp
+    main_tests/preprocess_scale_test.cpp
+    main_tests/preprocess_split_test.cpp
+# # main_tests/radical_test.cpp
+# # main_tests/random_forest_test.cpp
+    main_tests/range_search_test.cpp
+    main_tests/softmax_regression_test.cpp
+# # main_tests/sparse_coding_test.cpp
 )
 
 add_executable(mlpack_catch_test
