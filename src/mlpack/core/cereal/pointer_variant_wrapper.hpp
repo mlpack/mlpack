@@ -24,21 +24,21 @@
 
 namespace cereal {
 
-struct save : public boost::static_visitor<>
+struct save_vistor : public boost::static_visitor<>
 {
   template<class T>
   void operator()(T t) const 
   {
-    CEREAL_NVP_POINTER(t);
+    CEREAL_POINTER(t);
   }
 };
 
-struct load : public boost::static_visitor<>
+struct load_visitor : public boost::static_visitor<>
 {
   template<class T>
   void operator()(T t) const 
   {
-    CEREAL_NVP_POINTER(t);
+    CEREAL_POINTER(t);
   }
 };
 
@@ -59,13 +59,15 @@ class pointer_variant_wrapper
   template<class Archive>
   void save(Archive& ar) const
   { 
-    boost::apply_visitor(save(), PointerVariant);
+    save_vistor s;
+    boost::apply_visitor(s, PointerVariant);
   }
 
   template<class Archive>
   void load(Archive& ar)
-  {
-    boost::apply_visitor(load(), PointerVariant);
+  { 
+    load_visitor l;
+    boost::apply_visitor(l, PointerVariant);
   }
 
 private:
