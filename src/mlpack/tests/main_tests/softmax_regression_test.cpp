@@ -47,7 +47,7 @@ struct SoftmaxRegressionTestFixture
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
     "SoftmaxRegressionOutputDimensionTest",
-    "[SoftmaxRegressionMainTest][BindingsTest]")
+    "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
@@ -92,7 +92,7 @@ TEST_CASE_METHOD(
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
     "SoftmaxRegressionLabelsLessDimensionTest",
-    "[SoftmaxRegressionMainTest][BindingsTest]")
+    "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
@@ -112,7 +112,7 @@ TEST_CASE_METHOD(
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
     "SoftmaxRegressionModelReuseTest",
-    "[SoftmaxRegressionMainTest][BindingsTest]")
+    "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
@@ -175,7 +175,7 @@ TEST_CASE_METHOD(
  */
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
-    "SoftmaxRegressionMaxItrTest", "[SoftmaxRegressionMainTest][BindingsTest]")
+    "SoftmaxRegressionMaxItrTest", "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
@@ -204,7 +204,7 @@ TEST_CASE_METHOD(
  */
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
-    "SoftmaxRegressionLambdaTest", "[SoftmaxRegressionMainTest][BindingsTest]")
+    "SoftmaxRegressionLambdaTest", "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
@@ -234,7 +234,7 @@ TEST_CASE_METHOD(
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
     "SoftmaxRegressionNumClassesTest",
-    "[SoftmaxRegressionMainTest][BindingsTest]")
+    "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
@@ -264,7 +264,7 @@ TEST_CASE_METHOD(
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
     "SoftmaxRegressionTrainingVerTest",
-    "[SoftmaxRegressionMainTest][BindingsTest]")
+    "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
@@ -300,7 +300,7 @@ TEST_CASE_METHOD(
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
     "SoftmaxRegressionDiffLambdaTest",
-    "[SoftmaxRegressionMainTest][BindingsTest]")
+    "[SoftmaxRegressionMainTest][BindingTests]")
 {
   // Train SR for lambda 0.1.
   arma::mat inputData;
@@ -369,7 +369,7 @@ TEST_CASE_METHOD(
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
     "SoftmaxRegressionDiffMaxItrTest",
-    "[SoftmaxRegressionMainTest][BindingsTest]")
+    "[SoftmaxRegressionMainTest][BindingTests]")
 {
   // Train SR for lambda 0.1.
   arma::mat inputData;
@@ -438,7 +438,7 @@ TEST_CASE_METHOD(
 TEST_CASE_METHOD(
     SoftmaxRegressionTestFixture,
     "SoftmaxRegressionDiffInterceptTest",
-    "[SoftmaxRegressionMainTest][BindingsTest]")
+    "[SoftmaxRegressionMainTest][BindingTests]")
 {
   // Train SR with intercept.
   arma::mat inputData;
