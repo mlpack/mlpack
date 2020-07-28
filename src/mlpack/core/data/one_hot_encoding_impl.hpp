@@ -68,6 +68,7 @@ void OneHotEncoding(const RowType& labelsIn,
 /**
  * Overloaded function for the above function, which takes a matrix as input
  * and also a vector of indices to encode and outputs a matrix.
+ * Indices represent the IDs of the dimensions to be one-hot encoded.
  *
  * @param input Input dataset to be encoded.
  * @param indices Index of rows to be encoded.

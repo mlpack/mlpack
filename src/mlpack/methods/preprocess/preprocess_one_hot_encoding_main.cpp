@@ -20,7 +20,8 @@ PROGRAM_INFO("One Hot Encoding",
     "A utility to do one hot encoding on features of dataset.",
     // Long description.
     "This utility takes a dataset and a vector of indices and does one hot "
-    "encoding of the respective features at those indices. "
+    "encoding of the respective features at those indices. Indices represent "
+    "the IDs of the dimensions to be one-hot encoded."
     "\n\n"
     "The output matrices with encoded features may be saved with the " +
     PRINT_PARAM_STRING("output") + " parameters."
@@ -30,7 +31,7 @@ PROGRAM_INFO("One Hot Encoding",
     PRINT_DATASET("X_output") + " would be"
     "\n\n" +
     PRINT_CALL("preprocess_one_hot_encoding", "input", "X", "output",
-        "X_ouput", "indices", 1 , "indices", 3),
+        "X_ouput", "dimensions", 1 , "dimensions", 3),
     SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
     SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
     SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
