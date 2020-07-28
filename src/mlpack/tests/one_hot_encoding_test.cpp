@@ -10,7 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <boost/test/unit_test.hpp>
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
 #include <mlpack/core/data/one_hot_encoding.hpp>
@@ -182,9 +181,9 @@ TEST_CASE("OneHotEncodingDatasetinfoTest", "[OneHotEncodingTest]")
   data::OneHotEncoding(matrix, output, info);
   REQUIRE(output.n_cols == 7);
   REQUIRE(output.n_rows == 6);
-  BOOST_REQUIRE(info.Type(0) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
+  REQUIRE(info.Type(0) == Datatype::numeric);
+  REQUIRE(info.Type(1) == Datatype::numeric);
+  REQUIRE(info.Type(2) == Datatype::categorical);
 
   REQUIRE(output(0, 0) == 1);
   REQUIRE(output(1, 0) == 2);
