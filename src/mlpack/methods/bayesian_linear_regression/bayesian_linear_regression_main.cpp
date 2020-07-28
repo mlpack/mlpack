@@ -85,9 +85,11 @@ PROGRAM_INFO("BayesianLinearRegression",
     PRINT_CALL("bayesian_linear_regression", "input_model",
                "bayesian_linear_regression_model", "test", "test",
                "predictions", "test_predictions", "stds", "stds"),
-    SEE_ALSO("MacKay 1992"),
-    SEE_ALSO("MLA Bishop, Christopher M. Pattern Recognition and Machine "
-        " Learning. New York :Springer, 2006, section 3.3."),
+    SEE_ALSO("Bayesian Interpolation",
+        "https://authors.library.caltech.edu/13792/1/MACnc92a.pdf"),
+    SEE_ALSO("Bayesian Linear Regression, Section 3.3",
+        "MLA Bishop, Christopher M. Pattern Recognition and Machine "
+        "Learning. New York :Springer, 2006, section 3.3."),
     SEE_ALSO("mlpack::regression::BayesianLinearRegression C++ class "
         "documentation",
         "@doxygen/classmlpack_1_1regression_1_1BayesianLinearRegression.html"));
