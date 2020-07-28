@@ -1,8 +1,8 @@
 /**
- * @file methods/kernel_svm/kernel_svm_impl.hpp
+ * @file methods/kernel_svm/kernel_svm_function_impl.hpp
  * @author Himanshu Pathak
  *
- * Implementation of Kernel SVM.
+ * Implementation of Kernel SVM Function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

@@ -1,5 +1,5 @@
 /**
- * @file methods/kernel_svm/kernel_svm.hpp
+ * @file methods/kernel_svm/kernel_svm_function.hpp
  * @author Himanshu Pathak
  *
  * An implementation of Kernel SVM.
@@ -23,39 +23,6 @@ namespace svm {
  * The KernelSVMFunction class implements an smo algorithm for support vector machine
  * model, and supports training with multiple non-linear and linear kenel.
  * The class supports different observation types via the MatType template
- * parameter; for instance, support vector classification can be performed
- * on sparse datasets by specifying arma::sp_mat as the MatType parameter.
- *
- *
-
- * @code
- * @article{Microsoft Research,
- *   author    = {John C. Platt},
- *   title     = {Sequential Minimal Optimization:A Fast 
-                  Algorithm for Training Support Vector Machines},
- *   journal   = {Technical Report MSR-TR-98-14},
- *   year      = {1998},
- *   url       = {https://www.microsoft.com/en-us/research
-                  /wp-content/uploads/2016/02/tr-98-14.pdf},
- * }
- * @endcode
- *
- *
- * An example on how to use the interface is shown below:
- *
- * @code
- * arma::mat train_data; // Training data matrix.
- * arma::Row<size_t> labels; // Labels associated with the data.
- * const size_t inputSize = 1000; // Size of input feature vector.
- *
- * // Train the model using default options.
- * KernelSVMFunction<> svm(train_data, C, kernel_flag, max_iter, tol,
- *     kernel::Gaussian());
- *
- * arma::mat test_data;
- * arma::Row<size_t> predictions;
- * lsvm.Classify(test_data, predictions);
- * @endcode
  *
  * @tparam MatType Type of data matrix.
  * @tparam KernelType Type of kernel used with svm.
@@ -101,7 +68,6 @@ class KernelSVMFunction
    * Classify the given points, returning class scores for each point.
    *
    * @param data Matrix of data points to be classified.
-   * @param scores Class scores for each point.
    */
   arma::rowvec Classify(const MatType& data) const;
 
@@ -139,9 +105,9 @@ class KernelSVMFunction
  private:
   //! Locally saved standard svm regularization parameter.
   double regularization;
-  //! Kernel flag.
+  //! Intercept term flag.
   bool fitIntercept;
-  //! Locally saved interce value of kernel.
+  //! Locally saved intercept value of kernel.
   double intercept;
   //! Locally saved alpha values.
   arma::rowvec alpha;
