@@ -12,7 +12,6 @@ add_executable(mlpack_test
   bias_svd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
-  callback_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
   io_test.cpp
@@ -156,6 +155,7 @@ add_executable(mlpack_catch_test
   adaboost_test.cpp
   akfn_test.cpp
   aknn_test.cpp
+  callback_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
   image_load_test.cpp
