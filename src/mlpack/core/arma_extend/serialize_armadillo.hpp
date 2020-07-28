@@ -17,31 +17,6 @@
 
 #include <armadillo>
 
-/**
- * These will help us refer the proper vector / column types, only with
- * specifying the matrix type we want to use.
- */
-template<typename eT>
-using vec_type = arma::SpCol<eT>;
-
-template<typename eT>
-using col_type = arma::SpCol<eT>;
-
-template<typename eT>
-using row_type = arma::SpRow<eT>;
-
-/**
- * These will help us refer the proper vector / column types, only with
- * specifying the matrix type we want to use.
- */
-template<typename eT>
-using vec_type = arma::Col<eT>;
-
-template<typename eT>
-using col_type = arma::Col<eT>;
-
-template<typename eT>
-using row_type = arma::Row<eT>;
 
 /**
  * Add an external serialization function for SpMat.
