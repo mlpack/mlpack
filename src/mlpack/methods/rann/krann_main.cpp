@@ -155,13 +155,11 @@ static void mlpackMain()
   RequireParamValue<double>("tau", [](double x) {
       return (x >= 0.0 && x <=100.0); }, true,
       "tau must be in range [0.0, 100.0]");
-  const double tau = IO::GetParam<double>("tau");
 
   // Sanity check on alpha.
   RequireParamValue<double>("alpha", [](double x) {
       return (x >= 0.0 && x <=1.0); }, true,
       "alpha must be in range [0.0, 1.0]");
-  const double alpha = IO::GetParam<double>("alpha");
 
   // We either have to load the reference data, or we have to load the model.
   RANNModel* rann;
