@@ -108,7 +108,7 @@ typename std::enable_if<
       ::value, void>::type
 BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::WarnMessageMaxIterations
-(OptimizerType& optimizer, size_t samples) const
+(OptimizerType& /* optimizer */, size_t /* samples */) const
 {
   return;
 }

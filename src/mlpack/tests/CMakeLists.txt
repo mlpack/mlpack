@@ -168,12 +168,28 @@ add_executable(mlpack_test
 
 add_executable(mlpack_catch_test
   activation_functions_test.cpp
+  adaboost_test.cpp
+  akfn_test.cpp
+  aknn_test.cpp
+  convolutional_network_test.cpp
+  convolution_test.cpp
+  image_load_test.cpp
+  kfn_test.cpp
+  knn_test.cpp
+  linear_regression_test.cpp
+  load_save_test.cpp
   main.cpp
   serialization_catch.cpp
   serialization_catch.hpp
+  softmax_regression_test.cpp
   test_catch_tools.hpp
-  image_load_test.cpp
+  main_tests/adaboost_test.cpp
+  main_tests/approx_kfn_test.cpp
   main_tests/image_converter_test.cpp
+  main_tests/kfn_test.cpp
+  main_tests/knn_test.cpp
+  main_tests/linear_regression_test.cpp
+  main_tests/softmax_regression_test.cpp
   main_tests/test_helper.hpp
 )
 
@@ -237,8 +253,7 @@ set(parallel_tests
   # "LARSTest;"
   # "LogisticRegressionTest;"
   # "GmmTrainMainTest;"
-  # "LinearSVMTest"
-)
+  # "LinearSVMTest")
 
 # Add tests to the testing framework
 # Get the list of sources from the test target

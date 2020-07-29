@@ -83,11 +83,6 @@ class VRClassReward
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
   /*
    * Add a new module to the model.
    *
@@ -133,9 +128,6 @@ class VRClassReward
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<> > network;
