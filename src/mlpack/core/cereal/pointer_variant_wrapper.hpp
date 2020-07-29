@@ -32,7 +32,7 @@ struct save_visitor : public boost::static_visitor<void>
   save_visitor(Archive& ar) : ar_(ar) {}
   
   template<class T>
-  void operator()(const T& value) const 
+  void operator()(const T* value) const 
   {
     ar_ & CEREAL_POINTER(value);
   }
@@ -43,11 +43,11 @@ struct save_visitor : public boost::static_visitor<void>
 struct load_visitor : public boost::static_visitor<void>
 {
   template<class Archive, class VariantType>
-  void operator()(Archive& ar, VariantType& variant) const 
+  void operator()(Archive& ar, VariantType* variant) const 
   {
-    VariantType loadVariant;
+    VariantType* loadVariant;
     ar & CEREAL_POINTER(loadVariant);
-    variant = std::move(loadVariant);
+    variant = loadVariant;
   }
 };
 
