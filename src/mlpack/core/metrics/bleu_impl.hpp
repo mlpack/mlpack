@@ -188,10 +188,9 @@ ElemType BLEU<ElemType, PrecisionType>::Evaluate(
 template <typename ElemType, typename PrecisionType>
 template <typename Archive>
 void BLEU<ElemType, PrecisionType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar)
 {
-  ar & BOOST_SERIALIZATION_NVP(maxOrder);
+  ar & CEREAL_NVP(maxOrder);
 }
 
 } // namespace metric
