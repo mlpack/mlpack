@@ -18,6 +18,7 @@
 #include "replay/random_replay.hpp"
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/visitor/parameters_visitor.hpp>
 #include "training_config.hpp"
 
 namespace mlpack {
@@ -100,6 +101,14 @@ class SAC
   size_t& TotalSteps() { return totalSteps; }
   //! Get total steps from beginning.
   const size_t& TotalSteps() const { return totalSteps; }
+
+  //! Modify the state of the agent.
+  StateType& State() { return state; }
+  //! Get the state of the agent.
+  const StateType& State() const { return state; }
+
+  //! Get the action of the agent.
+  const ActionType& Action() const { return action; }
 
   //! Modify the training mode / test mode indicator.
   bool& Deterministic() { return deterministic; }

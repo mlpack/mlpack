@@ -57,10 +57,17 @@ SAC<
   deterministic(false)
 {
   // Set up q-learning and policy networks.
+  learningQ2Network = learningQ1Network;
+  targetQ1Network = learningQ1Network;
+  targetQ2Network = learningQ2Network;
   if (learningQ1Network.Parameters().is_empty())
     learningQ1Network.ResetParameters();
-  learningQ2Network = learningQ1Network;
-  learningQ2Network.ResetParameters();
+  if (learningQ2Network.Parameters().is_empty())
+    learningQ2Network.ResetParameters();
+  if (targetQ1Network.Parameters().is_empty())
+    targetQ1Network.ResetParameters();
+  if (targetQ2Network.Parameters().is_empty())
+    targetQ2Network.ResetParameters();
   if (policyNetwork.Parameters().is_empty())
     policyNetwork.ResetParameters();
 
@@ -84,8 +91,7 @@ SAC<
                                    policyNetwork.Parameters().n_cols);
   #endif
 
-  targetQ1Network = learningQ1Network;
-  targetQ2Network = learningQ2Network;
+  targetQ1Network.Parameters() = learningQ1Network.Parameters();
 }
 
 template <
@@ -166,8 +172,8 @@ void SAC<
   arma::rowvec Q1, Q2;
   targetQ1Network.Predict(targetQInput, Q1);
   // targetQ2Network.Predict(targetQInput, Q2);
-  arma::rowvec nextQ = sampledRewards +  config.Discount() * (1 - isTerminal)
-      % Q1;
+  arma::rowvec nextQ = sampledRewards +  config.Discount() * ((1 - isTerminal)
+      % Q1);
 
   arma::mat sampledActionValues(action.size, sampledActions.size());
   for (size_t i = 0; i < sampledActions.size(); i++)
@@ -219,10 +225,13 @@ void SAC<
 
     arma::colvec input = arma::join_vert(singlePi, singleState);
     learningQ1Network.Forward(input, q);
-    learningQ1Network.Backward(input, -q, gradQ);
+    learningQ1Network.Backward(input, -1, gradQ);
 
     //! TODO: Check for the correct location of pi grad.
-    arma::mat gradPolicy = gradQ.rows(0, singlePi.n_rows - 1);
+    size_t hidden1 = boost::get<mlpack::ann::Linear<> *>(learningQ1Network.Model()[0])->OutputSize();
+    arma::colvec gradQBias = gradQ(input.n_rows * hidden1, 0, arma::size(hidden1, 1));
+    arma::rowvec weightLastLayer = learningQ1Network.Parameters().rows(0, hidden1-1).t();
+    arma::mat gradPolicy = weightLastLayer * gradQBias;
     policyNetwork.Backward(singleState, gradPolicy, grad);
     if (i == 0)
     {
@@ -266,7 +275,7 @@ void SAC<
 
   if (!deterministic)
   {
-    arma::rowvec noise = arma::randu<arma::rowvec>(outputAction.n_rows) * 0.1;
+    arma::rowvec noise = arma::randn<arma::rowvec>(outputAction.n_rows) * 0.1;
     noise = arma::clamp(noise, -0.25, 0.25);
     outputAction = outputAction + noise;
   }
@@ -321,7 +330,8 @@ double SAC<
 
     if (deterministic || totalSteps < config.ExplorationSteps())
       continue;
-    Update();
+    for(size_t i = 0; i < config.UpdateInterval(); i++)
+      Update();
   }
 
   return totalReturn;
