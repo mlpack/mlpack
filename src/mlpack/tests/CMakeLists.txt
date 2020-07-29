@@ -42,7 +42,6 @@ add_executable(mlpack_test
   kernel_test.cpp
   kernel_traits_test.cpp
   kernel_svm_test.cpp
-  kfn_test.cpp
   kmeans_test.cpp
   krann_search_test.cpp
   ksinit_test.cpp
