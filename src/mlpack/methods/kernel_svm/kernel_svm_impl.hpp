@@ -107,7 +107,7 @@ void KernelSVM<MatType, KernelType>::Classify(
   Classify(data, scores);
   for (size_t k = 0; k < numClassifier; k++)
   {
-    double threshold = arma::as_scalar(arma::mean(scores.row(k), 1));
+    double threshold = arma::as_scalar(arma::mean(scores.row(k)));
 
     for (size_t i = 0; i< data.n_cols; i++)
     {

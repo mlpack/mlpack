@@ -13,21 +13,20 @@
 #include <mlpack/methods/kernel_svm/kernel_svm.hpp>
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "serialization_catch.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::svm;
 using namespace mlpack::distribution;
 using namespace mlpack::kernel;
 
-BOOST_AUTO_TEST_SUITE(KernelSVMTest);
-
 /**
  * Test training of linear svm for two classes on a complex gaussian dataset
  * using smo optimizer.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
+TEST_CASE("LinearSVMFitIntercept", "[KernelSVMTest]")
 {
   const size_t points = 1000;
   const size_t inputSize = 3;
@@ -85,14 +84,14 @@ BOOST_AUTO_TEST_CASE(LinearSVMFitIntercept)
     }
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 /**
  * Test training of kernel svm for two classes on a mnist 4
  * and 9 dataset.
  */
-BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
+TEST_CASE("GaussianKernelSVMMnistDataset", "[KernelSVMTest]")
 {
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -125,13 +124,13 @@ BOOST_AUTO_TEST_CASE(GaussianKernelSVMMnistDataset)
     }
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 /**
  * Test training of kernel svm on concentric circle dataset.
  */
-BOOST_AUTO_TEST_CASE(ConcentricCircleDataset)
+TEST_CASE("ConcentricCircleDataset", "[KernelSVMTest]")
 {
   // The dataset, which will have three concentric rings in three dimensions.
   arma::mat dataset;
@@ -170,7 +169,5 @@ BOOST_AUTO_TEST_CASE(ConcentricCircleDataset)
     }
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
