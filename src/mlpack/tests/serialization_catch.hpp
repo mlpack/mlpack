@@ -12,15 +12,7 @@
 #ifndef MLPACK_TESTS_SERIALIZATION_CATCH_HPP
 #define MLPACK_TESTS_SERIALIZATION_CATCH_HPP
 
-#include <boost/serialization/serialization.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/json_iarchive.hpp>
-#include <boost/archive/json_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
 #include <mlpack/core.hpp>
-
 
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
@@ -44,9 +36,9 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 
     try
     {
-      o << BOOST_SERIALIZATION_NVP(x);
+      o << CEREAL_NVP(x);
     }
-    catch (boost::archive::archive_exception& e)
+    catch (cereal::Exception& e)
     {
       success = false;
     }
@@ -65,9 +57,9 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 
     try
     {
-      i >> BOOST_SERIALIZATION_NVP(x);
+      i >> CEREAL_NVP(x);
     }
-    catch (boost::archive::archive_exception& e)
+    catch (cereal::Exception& e)
     {
       success = false;
     }
@@ -130,9 +122,9 @@ void TestArmadilloSerialization(MatType& x)
 
     try
     {
-      o << BOOST_SERIALIZATION_NVP(x);
+      o << CEREAL_NVP(x);
     }
-    catch (boost::archive::archive_exception& e)
+    catch (cereal::Exception& e)
     {
       success = false;
     }
@@ -151,9 +143,9 @@ void TestArmadilloSerialization(MatType& x)
 
     try
     {
-      i >> BOOST_SERIALIZATION_NVP(x);
+      i >> CEREAL_NVP(x);
     }
-    catch (boost::archive::archive_exception& e)
+    catch (cereal::Exception& e)
     {
       success = false;
     }
@@ -203,9 +195,9 @@ void SerializeObject(T& t, T& newT)
 
     try
     {
-      o << BOOST_SERIALIZATION_NVP(t);
+      o << CEREAL_NVP(t);
     }
-    catch (boost::archive::archive_exception& e)
+    catch (cereal::Exception& e)
     {
       std::cerr << e.what() << std::endl;
       success = false;
@@ -222,9 +214,9 @@ void SerializeObject(T& t, T& newT)
 
     try
     {
-      i >> BOOST_SERIALIZATION_NVP(newT);
+      i >> CEREAL_NVP(newT);
     }
-    catch (boost::archive::archive_exception& e)
+    catch (cereal::Exception& e)
     {
       std::cout << e.what() << "\n";
       success = false;
@@ -261,9 +253,9 @@ void SerializePointerObject(T* t, T*& newT)
     OArchiveType o(ofs);
     try
     {
-      o << BOOST_SERIALIZATION_NVP(t);
+      o << CEREAL_NVP(t);
     }
-    catch (boost::archive::archive_exception& e)
+    catch (cereal::Exception& e)
     {
       std::cout << e.what() << "\n";
       success = false;
@@ -280,7 +272,7 @@ void SerializePointerObject(T* t, T*& newT)
 
     try
     {
-      i >> BOOST_SERIALIZATION_NVP(newT);
+      i >> CEREAL_NVP(newT);
     }
     catch (std::exception& e)
     {
