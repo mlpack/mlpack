@@ -1,8 +1,6 @@
 # mlpack test executable.
 add_executable(mlpack_test
 # # adaboost_test.cpp
-    akfn_test.cpp
-    aknn_test.cpp
     ann_dist_test.cpp
 # # ann_layer_test.cpp
     ann_regularizer_test.cpp
@@ -19,8 +17,6 @@ add_executable(mlpack_test
 # # cf_test.cpp
     cli_binding_test.cpp
     io_test.cpp
-    convolution_test.cpp
-    convolutional_network_test.cpp
     cosine_tree_test.cpp
     cv_test.cpp
     dbscan_test.cpp
@@ -46,7 +42,6 @@ add_executable(mlpack_test
    kernel_pca_test.cpp
    kernel_test.cpp
    kernel_traits_test.cpp
-   kfn_test.cpp
 # # kmeans_test.cpp
 # # knn_test.cpp
    krann_search_test.cpp
@@ -57,7 +52,6 @@ add_executable(mlpack_test
 # #  linear_regression_test.cpp
    linear_svm_test.cpp
    lmnn_test.cpp
-   load_save_test.cpp
 # #  local_coordinate_coding_test.cpp
    log_test.cpp
 #   logistic_regression_test.cpp
@@ -98,10 +92,9 @@ add_executable(mlpack_test
    serialization.hpp
 #   serialization_test.cpp
    sfinae_test.cpp
-   softmax_regression_test.cpp
    sort_policy_test.cpp
    sparse_autoencoder_test.cpp
-#   sparse_coding_test.cpp
+#  sparse_coding_test.cpp
    spill_tree_test.cpp
    split_data_test.cpp
 # # string_encoding_test.cpp
@@ -148,7 +141,7 @@ add_executable(mlpack_test
 # # main_tests/lmnn_test.cpp
 # # main_tests/local_coordinate_coding_test.cpp
 # # main_tests/logistic_regression_test.cpp
-# # main_tests/lsh_test.cpp
+    main_tests/lsh_test.cpp
     main_tests/mean_shift_test.cpp
     main_tests/nbc_test.cpp
     main_tests/nca_test.cpp
@@ -161,9 +154,8 @@ add_executable(mlpack_test
     main_tests/preprocess_split_test.cpp
 # # main_tests/radical_test.cpp
 # # main_tests/random_forest_test.cpp
-    main_tests/range_search_test.cpp
-    main_tests/softmax_regression_test.cpp
-# # main_tests/sparse_coding_test.cpp
+##  main_tests/range_search_test.cpp
+  # main_tests/sparse_coding_test.cpp
 )
 
 add_executable(mlpack_catch_test
@@ -189,7 +181,6 @@ add_executable(mlpack_catch_test
   main_tests/kfn_test.cpp
   main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
-  main_tests/softmax_regression_test.cpp
   main_tests/test_helper.hpp
 )
 
@@ -248,12 +239,12 @@ set(parallel_tests
   # "SparseAutoencoderTest;"
   # "GMMTest;"
   # "CFTest;"
-  # "ConvolutionalNetworkTest;"
   # "HMMTest;"
   # "LARSTest;"
   # "LogisticRegressionTest;"
   # "GmmTrainMainTest;"
-  # "LinearSVMTest")
+  # "LinearSVMTest"
+)
 
 # Add tests to the testing framework
 # Get the list of sources from the test target
