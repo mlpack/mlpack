@@ -19,26 +19,35 @@
 #include <cereal/types/boost_variant.hpp>
 
 #include <boost/variant.hpp>
+#include <boost/variant/variant_fwd.hpp>
+#include <boost/variant/static_visitor.hpp>
 
 #include "pointer_wrapper.hpp"
 
 namespace cereal {
 
-struct save_vistor : public boost::static_visitor<>
+template<class Archive>
+struct save_visitor : public boost::static_visitor<void>
 {
-  template<class Archive, class T>
-  void operator()(Archive& ar, T t) const 
+  save_visitor(Archive& ar) : ar_(ar) {}
+  
+  template<class T>
+  void operator()(const T& value) const 
   {
-    ar & CEREAL_POINTER(t);
+    ar_ & CEREAL_POINTER(value);
   }
+
+  Archive& ar_;
 };
 
-struct load_visitor : public boost::static_visitor<>
+struct load_visitor : public boost::static_visitor<void>
 {
-  template<class Archive, class T>
-  void operator()(Archive& ar, T t) const 
+  template<class Archive, class VariantType>
+  void operator()(Archive& ar, VariantType& variant) const 
   {
-    ar & CEREAL_POINTER(t);
+    VariantType loadVariant;
+    ar & CEREAL_POINTER(loadVariant);
+    variant = std::move(loadVariant);
   }
 };
 
@@ -58,16 +67,33 @@ class pointer_variant_wrapper
 
   template<class Archive>
   void save(Archive& ar) const
-  { 
-    save_vistor s(ar);
+  {
+    // which represent the index in std::variant.
+    int which = PointerVariant.which();
+    ar & CEREAL_NVP(which);
+    save_visitor<Archive> s(ar);
     boost::apply_visitor(s, PointerVariant);
   }
 
   template<class Archive>
   void load(Archive& ar)
-  { 
-    load_visitor l(ar);
-    boost::apply_visitor(l, PointerVariant);
+  {
+    // Load the size of the serialized type.
+    int which;
+    ar & CEREAL_NVP(which);
+
+    // A function pointer used to define which type is used from boost::visitor
+    using LoadFuncType = 
+        std::function<void(Archive &, 
+            boost::variant<VariantType1*, VariantTypes*...> &)>;
+
+    // Basically I have inspired myself from the cereal Implementation.
+    LoadFuncType loadFuncArray[0] = load_visitor(); 
+
+    if(which >= int(sizeof(loadFuncArray)/sizeof(loadFuncArray[0])))
+      throw std::runtime_error("Invalid 'which' selector when deserializing boost::variant");
+
+    loadFuncArray[which](ar, PointerVariant);
   }
 
 private:
