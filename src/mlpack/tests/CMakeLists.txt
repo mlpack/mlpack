@@ -6,13 +6,10 @@ add_executable(mlpack_test
   ann_test_tools.hpp
   ann_visitor_test.cpp
   arma_extend_test.cpp
-  armadillo_svd_test.cpp
   async_learning_test.cpp
   augmented_rnns_tasks_test.cpp
-  bias_svd_test.cpp
   binarize_test.cpp
   bayesian_linear_regression_test.cpp
-  block_krylov_svd_test.cpp
   callback_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
@@ -73,16 +70,13 @@ add_executable(mlpack_test
   python_binding_test.cpp
   q_learning_test.cpp
   qdafn_test.cpp
-  quic_svd_test.cpp
   radical_test.cpp
   random_forest_test.cpp
   random_test.cpp
-  randomized_svd_test.cpp
   range_search_test.cpp
   rbm_network_test.cpp
   rectangle_tree_test.cpp
   recurrent_network_test.cpp
-  regularized_svd_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
   scaling_test.cpp
@@ -97,9 +91,6 @@ add_executable(mlpack_test
   split_data_test.cpp
   string_encoding_test.cpp
   sumtree_test.cpp
-  svd_batch_test.cpp
-  svd_incremental_test.cpp
-  svdplusplus_test.cpp
   termination_policy_test.cpp
   test_function_tools.hpp
   test_tools.hpp
@@ -158,6 +149,9 @@ add_executable(mlpack_catch_test
   adaboost_test.cpp
   akfn_test.cpp
   aknn_test.cpp
+  armadillo_svd_test.cpp
+  bias_svd_test.cpp
+  block_krylov_svd_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
   image_load_test.cpp
@@ -169,6 +163,12 @@ add_executable(mlpack_catch_test
   serialization_catch.cpp
   serialization_catch.hpp
   softmax_regression_test.cpp
+  quic_svd_test.cpp
+  randomized_svd_test.cpp
+  regularized_svd_test.cpp
+  svd_batch_test.cpp
+  svd_incremental_test.cpp
+  svdplusplus_test.cpp
   test_catch_tools.hpp
   main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
@@ -227,8 +227,6 @@ add_custom_command(TARGET mlpack_test
 set(parallel_tests
   "ANNLayerTest;"
   "AsyncLearningTest;"
-  "SVDIncrementalTest;"
-  "SVDBatchTest;"
   "LocalCoordinateCodingTest;"
   "FeedForwardNetworkTest;"
   "RecurrentNetworkTest;"
