@@ -131,7 +131,7 @@ void KernelSVM<MatType, KernelType>::Classify(
   }
 
   labels.zeros(data.n_cols);
-  for (int i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; i++)
   {
     labels(i) = prediction.col(i).index_max();
   }
