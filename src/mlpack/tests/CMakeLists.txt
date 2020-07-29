@@ -41,7 +41,6 @@ add_executable(mlpack_test
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
-  kernel_svm_test.cpp
   kmeans_test.cpp
   krann_search_test.cpp
   ksinit_test.cpp
@@ -160,6 +159,7 @@ add_executable(mlpack_catch_test
   convolutional_network_test.cpp
   convolution_test.cpp
   image_load_test.cpp
+  kernel_svm_test.cpp
   kfn_test.cpp
   knn_test.cpp
   linear_regression_test.cpp
