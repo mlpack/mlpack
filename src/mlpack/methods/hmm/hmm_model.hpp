@@ -218,7 +218,4 @@ class HMMModel
 } // namespace hmm
 } // namespace mlpack
 
-//! Set the serialization version of the HMMModel class.
-BOOST_CLASS_VERSION(mlpack::hmm::HMMModel, 1);
-
 #endif
