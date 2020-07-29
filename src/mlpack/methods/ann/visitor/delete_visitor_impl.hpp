@@ -1,5 +1,5 @@
 /**
- * @file delete_visitor_impl.hpp
+ * @file methods/ann/visitor/delete_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Delete() function layer abstraction.
@@ -20,10 +20,26 @@ namespace ann {
 
 //! DeleteVisitor visitor class.
 template<typename LayerType>
-inline void DeleteVisitor::operator()(LayerType* layer) const
+inline typename std::enable_if<
+    !HasModelCheck<LayerType>::value, void>::type
+DeleteVisitor::operator()(LayerType* layer) const
 {
   if (layer)
     delete layer;
+}
+
+template<typename LayerType>
+inline typename std::enable_if<
+    HasModelCheck<LayerType>::value, void>::type
+DeleteVisitor::operator()(LayerType* layer) const
+{
+  if (layer)
+  {
+    for (size_t i = 0; i < layer->Model().size(); ++i)
+      boost::apply_visitor(DeleteVisitor(), layer->Model()[i]);
+
+    delete layer;
+  }
 }
 
 inline void DeleteVisitor::operator()(MoreTypes layer) const

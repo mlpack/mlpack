@@ -1,5 +1,5 @@
 /**
- * @file sfinae_test.cpp
+ * @file tests/sfinae_test.cpp
  * @author Kirill Mishchenko
  *
  * Test file for SFINAE utilities.

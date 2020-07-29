@@ -1,5 +1,5 @@
 /**
- * @file program_doc.hpp
+ * @file core/util/program_doc.hpp
  * @author Matthew Amidon
  *
  * The structure used to store a program's name and documentation.
@@ -17,18 +17,18 @@ namespace util {
 
 /**
  * A static object whose constructor registers program documentation with the
- * CLI class.  This should not be used outside of CLI itself, and you should use
+ * IO class.  This should not be used outside of IO itself, and you should use
  * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
  * object should ever exist.
  *
- * @see core/util/cli.hpp, mlpack::CLI
+ * @see core/util/io.hpp, mlpack::IO
  */
 class ProgramDoc
 {
  public:
   /**
    * Construct a ProgramDoc object.  When constructed, it will register itself
-   * with CLI, and when the user calls --help (or whatever the option is named
+   * with IO, and when the user calls --help (or whatever the option is named
    * for the given binding type), the given function that returns a std::string
    * will be returned.
    *
@@ -37,14 +37,14 @@ class ProgramDoc
    *     what it does, and what it is useful for.
    * @param documentation Long string containing documentation on how to use the
    *     program and what it is.  No newline characters are necessary; this is
-   *     taken care of by CLI later.
+   *     taken care of by IO later.
    * @param seeAlso A set of pairs of strings with useful "see also"
    *     information; each pair is <description, url>.
    */
-  ProgramDoc(const std::string& programName,
-             const std::string& shortDocumentation,
-             const std::function<std::string()>& documentation,
-             const std::vector<std::pair<std::string, std::string>>& seeAlso);
+  ProgramDoc(const std::string programName,
+             const std::string shortDocumentation,
+             const std::function<std::string()> documentation,
+             const std::vector<std::pair<std::string, std::string>> seeAlso);
 
   /**
    * Construct an empty ProgramDoc object.  (This is not meant to be used!)

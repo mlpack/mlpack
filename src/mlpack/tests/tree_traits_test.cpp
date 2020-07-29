@@ -1,5 +1,5 @@
 /**
- * @file tree_traits_test.cpp
+ * @file tests/tree_traits_test.cpp
  * @author Ryan Curtin
  *
  * Tests for the TreeTraits class.  These could all be known at compile-time,

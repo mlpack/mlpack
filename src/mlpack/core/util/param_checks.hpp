@@ -1,5 +1,5 @@
 /**
- * @file param_checks.hpp
+ * @file core/util/param_checks.hpp
  * @author Ryan Curtin
  *
  * A set of utility functions to check parameter values for mlpack programs.
@@ -21,7 +21,7 @@ namespace util {
 
 /**
  * Require that only one of the given parameters in the constraints set was
- * passed to the CLI object; otherwise, issue a warning or fatal error,
+ * passed to the IO object; otherwise, issue a warning or fatal error,
  * optionally with the given custom error message.
  *
  * This uses the correct binding type name for each parameter (i.e.
@@ -51,7 +51,7 @@ void RequireOnlyOnePassed(
 
 /**
  * Require that at least one of the given parameters in the constraints set was
- * passed to the CLI object; otherwise, issue a warning or fatal error,
+ * passed to the IO object; otherwise, issue a warning or fatal error,
  * optionally with the given custom error message.
  *
  * This uses the correct binding type name for each parameter (i.e.
@@ -84,7 +84,7 @@ void RequireAtLeastOnePassed(
 
 /**
  * Require that either none or all of the given parameters in the constraints
- * set were passed to the CLI object; otherwise, issue a warning or fatal error,
+ * set were passed to the IO object; otherwise, issue a warning or fatal error,
  * optionally with the given custom error message.
  *
  * This uses the correct binding type name for each parameter (i.e.

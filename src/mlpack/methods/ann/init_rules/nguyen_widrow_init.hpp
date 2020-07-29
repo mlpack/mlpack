@@ -1,5 +1,5 @@
 /**
- * @file nguyen_widrow_init.hpp
+ * @file methods/ann/init_rules/nguyen_widrow_init.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the Nguyen-Widrow method. This
@@ -99,7 +99,7 @@ class NguyenWidrowInitialization
   {
     W = arma::Cube<eT>(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
   }
 

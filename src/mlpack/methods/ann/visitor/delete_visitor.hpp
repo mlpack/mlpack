@@ -1,5 +1,5 @@
 /**
- * @file delete_visitor.hpp
+ * @file methods/ann/visitor/delete_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Delete() function for different
@@ -27,9 +27,17 @@ namespace ann {
 class DeleteVisitor : public boost::static_visitor<void>
 {
  public:
-  //! Execute the destructor.
+  //! Execute the destructor if the layer does not hold layers internally.
   template<typename LayerType>
-  void operator()(LayerType* layer) const;
+  typename std::enable_if<
+      !HasModelCheck<LayerType>::value, void>::type
+  operator()(LayerType* layer) const;
+
+  //! Execute the destructor if the layer does hold layers internally.
+  template<typename LayerType>
+  typename std::enable_if<
+      HasModelCheck<LayerType>::value, void>::type
+  operator()(LayerType* layer) const;
 
   void operator()(MoreTypes layer) const;
 };

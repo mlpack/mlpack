@@ -1,5 +1,5 @@
 /**
- * @file decision_stump_impl.hpp
+ * @file methods/decision_stump/decision_stump_impl.hpp
  * @author Udit Saxena
  *
  * Implementation of DecisionStump class.
@@ -108,7 +108,7 @@ double DecisionStump<MatType>::Train(const MatType& data,
   const double rootEntropy = CalculateEntropy<UseWeights>(labels, weights);
 
   double gain, bestGain = 0.0;
-  for (size_t i = 0; i < data.n_rows; i++)
+  for (size_t i = 0; i < data.n_rows; ++i)
   {
     // Go through each dimension of the data.
     if (IsDistinct(data.row(i)))
@@ -150,7 +150,7 @@ void DecisionStump<MatType>::Classify(const MatType& test,
                                       arma::Row<size_t>& predictedLabels)
 {
   predictedLabels.set_size(test.n_cols);
-  for (size_t i = 0; i < test.n_cols; i++)
+  for (size_t i = 0; i < test.n_cols; ++i)
   {
     // Determine which bin the test point falls into.
     // Assume first that it falls into the first bin, then proceed through the
@@ -236,7 +236,7 @@ double DecisionStump<MatType>::SetupSplitDimension(
   arma::Row<size_t> sortedLabels(dimension.n_elem);
   arma::rowvec sortedWeights(dimension.n_elem);
 
-  for (i = 0; i < dimension.n_elem; i++)
+  for (i = 0; i < dimension.n_elem; ++i)
   {
     sortedLabels(i) = labels(sortedIndexDim(i));
 
@@ -265,7 +265,7 @@ double DecisionStump<MatType>::SetupSplitDimension(
 
       entropy += ratioEl * CalculateEntropy<UseWeights>(
           sortedLabels.subvec(begin, end), sortedWeights.subvec(begin, end));
-      i++;
+      ++i;
     }
     else if (sortedLabels(i) != sortedLabels(i + 1))
     {
@@ -297,7 +297,7 @@ double DecisionStump<MatType>::SetupSplitDimension(
       count = 0;
     }
     else
-      i++;
+      ++i;
   }
   return entropy;
 }
@@ -321,7 +321,7 @@ void DecisionStump<MatType>::TrainOnDim(const VecType& dimension,
   arma::Row<size_t> sortedLabels(dimension.n_elem);
   sortedLabels.fill(0);
 
-  for (i = 0; i < dimension.n_elem; i++)
+  for (i = 0; i < dimension.n_elem; ++i)
     sortedLabels(i) = labels(sortedSplitIndexDim(i));
 
   arma::rowvec subCols;
@@ -343,7 +343,7 @@ void DecisionStump<MatType>::TrainOnDim(const VecType& dimension,
       binLabels.resize(binLabels.n_elem + 1);
       binLabels(binLabels.n_elem - 1) = mostFreq;
 
-      i++;
+      ++i;
     }
     else if (sortedLabels(i) != sortedLabels(i + 1))
     {
@@ -375,7 +375,7 @@ void DecisionStump<MatType>::TrainOnDim(const VecType& dimension,
       count = 0;
     }
     else
-      i++;
+      ++i;
   }
 
   // Now trim the split matrix so that buckets one after the after which point
@@ -390,7 +390,7 @@ void DecisionStump<MatType>::TrainOnDim(const VecType& dimension,
 template<typename MatType>
 void DecisionStump<MatType>::MergeRanges()
 {
-  for (size_t i = 1; i < split.n_rows; i++)
+  for (size_t i = 1; i < split.n_rows; ++i)
   {
     if (binLabels(i) == binLabels(i - 1))
     {
@@ -477,13 +477,13 @@ double DecisionStump<MatType>::CalculateEntropy(
 
   if (UseWeights)
   {
-    for (j = 0; j < labels.n_elem; j++)
+    for (j = 0; j < labels.n_elem; ++j)
     {
       numElem(labels(j)) += weights(j);
       accWeight += weights(j);
     }
 
-    for (j = 0; j < numClasses; j++)
+    for (j = 0; j < numClasses; ++j)
     {
       const double p1 = ((double) numElem(j) / accWeight);
 
@@ -495,10 +495,10 @@ double DecisionStump<MatType>::CalculateEntropy(
   }
   else
   {
-    for (j = 0; j < labels.n_elem; j++)
+    for (j = 0; j < labels.n_elem; ++j)
       numElem(labels(j))++;
 
-    for (j = 0; j < numClasses; j++)
+    for (j = 0; j < numClasses; ++j)
     {
       const double p1 = ((double) numElem(j) / labels.n_elem);
 

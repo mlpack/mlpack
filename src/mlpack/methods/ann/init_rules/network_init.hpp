@@ -1,5 +1,5 @@
 /**
- * @file network_init.hpp
+ * @file methods/ann/init_rules/network_init.hpp
  * @author Marcus Edel
  *
  * Intialization of a given network with a given initialization rule
@@ -51,6 +51,7 @@ class NetworkInitialization
    *
    * @param network Network that should be initialized.
    * @param parameter The network parameter.
+   * @param parameterOffset Offset for network paramater, default 0.
    */
   void Initialize(const std::vector<LayerTypes<CustomLayers...> >& network,
                   arma::mat& parameter, size_t parameterOffset = 0)
@@ -92,8 +93,8 @@ class NetworkInitialization
     // hold various other modules.
     for (size_t i = 0, offset = parameterOffset; i < network.size(); ++i)
     {
-      offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
-          offset), network[i]);
+      offset += boost::apply_visitor(WeightSetVisitor(parameter, offset),
+          network[i]);
 
       boost::apply_visitor(resetVisitor, network[i]);
     }

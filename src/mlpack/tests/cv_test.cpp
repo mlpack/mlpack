@@ -1,5 +1,5 @@
 /**
- * @file cv_test.cpp
+ * @file tests/cv_test.cpp
  *
  * Unit tests for the cross-validation module.
  *
@@ -17,6 +17,8 @@
 #include <mlpack/core/cv/metrics/mse.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
+#include <mlpack/core/cv/metrics/r2_score.hpp>
+#include <mlpack/core/cv/metrics/silhouette_score.hpp>
 #include <mlpack/core/cv/simple_cv.hpp>
 #include <mlpack/core/cv/k_fold_cv.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
@@ -162,6 +164,28 @@ BOOST_AUTO_TEST_CASE(MSETest)
   double expectedMSE = (0 * 0 + 1 * 1 + 2 * 2) / 3.0;
 
   BOOST_REQUIRE_CLOSE(MSE::Evaluate(lr, data, responses), expectedMSE, 1e-5);
+}
+
+/**
+ * Test the R squared metric (R2 Score).
+ */
+BOOST_AUTO_TEST_CASE(R2ScoreTest)
+{
+  // Making two points that define the linear function f(x) = x - 1.
+  arma::mat trainingData("0 1");
+  arma::rowvec trainingResponses("-1 0");
+
+  LinearRegression lr(trainingData, trainingResponses);
+
+  // Making five responses that are the output of regression function f(x)
+  // with some responses having a slight deviation of 0.005.
+  // Mean Responses = (1 + 2 + 3 + 6 + 8)/5 = 4.
+  arma::mat data("2 3 4 7 9");
+  arma::rowvec responses("1 2.005 3 6.005 8.005");
+
+  double expectedR2 = 0.99999779;
+
+  BOOST_REQUIRE_CLOSE(R2Score::Evaluate(lr, data, responses), expectedR2, 1e-5);
 }
 
 /**
@@ -694,6 +718,21 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestUnevenBinsWeighted)
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
   BOOST_REQUIRE_GT(accuracy, 0.7);
+}
+
+/**
+ * Test Silhouette Score
+ */
+BOOST_AUTO_TEST_CASE(SilhouetteScoreTest)
+{
+  arma::mat X;
+  X << 0 << 1 << 1 << 0 << 0 << arma::endr
+    << 0 << 1 << 2 << 0 << 0 << arma::endr
+    << 1 << 1 << 3 << 2 << 0 << arma::endr;
+  arma::Row<size_t> labels = {0, 1, 2, 0, 0};
+  metric::EuclideanDistance metric;
+  double silhouetteScore = SilhouetteScore::Overall(X, labels, metric);
+  BOOST_REQUIRE_CLOSE(silhouetteScore, 0.1121684822489150, 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

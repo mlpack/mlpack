@@ -1,7 +1,7 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  add_to_po.hpp
+  add_to_cli11.hpp
   cli_option.hpp
   default_param.hpp
   default_param_impl.hpp
@@ -16,6 +16,7 @@ set(SOURCES
   get_printable_param_name_impl.hpp
   get_printable_param_value.hpp
   get_printable_param_value_impl.hpp
+  in_place_copy.hpp
   map_parameter_name.hpp
   output_param.hpp
   output_param_impl.hpp
@@ -59,7 +60,7 @@ if (BUILD_CLI_EXECUTABLES)
   # compiled with the correct int main() call.
   set_target_properties(mlpack_${name} PROPERTIES COMPILE_FLAGS
       -DBINDING_TYPE=BINDING_TYPE_CLI)
-  install(TARGETS mlpack_${name} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS mlpack_${name} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
   # If man documentation is being generated, make sure this is a dependency.
   if (TXT2MAN)

@@ -1,5 +1,5 @@
 /**
- * @file hmm_train_main.cpp
+ * @file methods/hmm/hmm_train_main.cpp
  * @author Ryan Curtin
  *
  * Executable which trains an HMM and saves the trained HMM to file.
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
@@ -89,8 +89,8 @@ struct Init
   template<typename HMMType>
   static void Apply(HMMType& hmm, vector<mat>* trainSeq)
   {
-    const size_t states = CLI::GetParam<int>("states");
-    const double tolerance = CLI::GetParam<double>("tolerance");
+    const size_t states = IO::GetParam<int>("states");
+    const double tolerance = IO::GetParam<double>("tolerance");
 
     // Create the initialized-to-zero model.
     Create(hmm, *trainSeq, states, tolerance);
@@ -155,7 +155,7 @@ struct Init
   {
     // Find dimension of the data.
     const size_t dimensionality = trainSeq[0].n_rows;
-    const int gaussians = CLI::GetParam<int>("gaussians");
+    const int gaussians = IO::GetParam<int>("gaussians");
 
     if (gaussians == 0)
     {
@@ -174,7 +174,7 @@ struct Init
         tolerance);
 
     // Issue a warning if the user didn't give labels.
-    if (!CLI::HasParam("labels_file"))
+    if (!IO::HasParam("labels_file"))
     {
       Log::Warn << "Unlabeled training of GMM HMMs is almost certainly not "
           << "going to produce good results!" << endl;
@@ -189,7 +189,7 @@ struct Init
   {
     // Find dimension of the data.
     const size_t dimensionality = trainSeq[0].n_rows;
-    const int gaussians = CLI::GetParam<int>("gaussians");
+    const int gaussians = IO::GetParam<int>("gaussians");
 
     if (gaussians == 0)
     {
@@ -208,7 +208,7 @@ struct Init
         dimensionality), tolerance);
 
     // Issue a warning if the user didn't give labels.
-    if (!CLI::HasParam("labels_file"))
+    if (!IO::HasParam("labels_file"))
     {
       Log::Warn << "Unlabeled training of Diagonal GMM HMMs is almost "
           << "certainly not going to produce good results!" << endl;
@@ -248,7 +248,7 @@ struct Init
       e[i].Weights() /= arma::accu(e[i].Weights());
 
       // Random means and covariances.
-      for (int g = 0; g < CLI::GetParam<int>("gaussians"); ++g)
+      for (int g = 0; g < IO::GetParam<int>("gaussians"); ++g)
       {
         const size_t dimensionality = e[i].Component(g).Mean().n_rows;
         e[i].Component(g).Mean().randu();
@@ -271,7 +271,7 @@ struct Init
       e[i].Weights() /= arma::accu(e[i].Weights());
 
       // Random means and covariances.
-      for (int g = 0; g < CLI::GetParam<int>("gaussians"); ++g)
+      for (int g = 0; g < IO::GetParam<int>("gaussians"); ++g)
       {
         const size_t dimensionality = e[i].Component(g).Mean().n_rows;
         e[i].Component(g).Mean().randu();
@@ -291,14 +291,14 @@ struct Train
   template<typename HMMType>
   static void Apply(HMMType& hmm, vector<mat>* trainSeqPtr)
   {
-    const bool batch = CLI::HasParam("batch");
-    const double tolerance = CLI::GetParam<double>("tolerance");
+    const bool batch = IO::HasParam("batch");
+    const double tolerance = IO::GetParam<double>("tolerance");
 
     // Do we need to replace the tolerance?
-    if (CLI::HasParam("tolerance"))
+    if (IO::HasParam("tolerance"))
       hmm.Tolerance() = tolerance;
 
-    const string labelsFile = CLI::GetParam<string>("labels_file");
+    const string labelsFile = IO::GetParam<string>("labels_file");
 
     // Verify that the dimensionality of our observations is the same as the
     // dimensionality of our HMM's emissions.
@@ -315,7 +315,7 @@ struct Train
     }
 
     vector<arma::Row<size_t>> labelSeq; // May be empty.
-    if (CLI::HasParam("labels_file"))
+    if (IO::HasParam("labels_file"))
     {
       // Do we have multiple label files to load?
       char lineBuf[1024];
@@ -413,19 +413,19 @@ struct Train
 static void mlpackMain()
 {
   // Set random seed.
-  if (CLI::GetParam<int>("seed") != 0)
-    RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     RandomSeed((size_t) time(NULL));
 
   // Validate parameters.
-  const string inputFile = CLI::GetParam<string>("input_file");
-  const string type = CLI::GetParam<string>("type");
-  const bool batch = CLI::HasParam("batch");
-  const double tolerance = CLI::GetParam<double>("tolerance");
+  const string inputFile = IO::GetParam<string>("input_file");
+  const string type = IO::GetParam<string>("type");
+  const bool batch = IO::HasParam("batch");
+  const double tolerance = IO::GetParam<double>("tolerance");
 
   // If no model is specified, make sure we are training with valid parameters.
-  if (!CLI::HasParam("input_model"))
+  if (!IO::HasParam("input_model"))
   {
     // Validate number of states.
     RequireAtLeastOnePassed({ "states" }, true);
@@ -434,16 +434,16 @@ static void mlpackMain()
         "number of states must be positive");
   }
 
-  if (CLI::HasParam("input_model") && CLI::HasParam("tolerance"))
+  if (IO::HasParam("input_model") && IO::HasParam("tolerance"))
   {
     Log::Info << "Tolerance of existing model in '"
-        << CLI::GetPrintableParam<HMMModel*>("input_model") << "' will be "
+        << IO::GetPrintableParam<HMMModel*>("input_model") << "' will be "
         << "replaced with specified tolerance of " << tolerance << "." << endl;
   }
 
   ReportIgnoredParam({{ "input_model", true }}, "type");
 
-  if (!CLI::HasParam("input_model"))
+  if (!IO::HasParam("input_model"))
   {
     RequireParamInSet<string>("type", { "discrete", "gaussian", "gmm",
         "diag_gmm" }, true, "unknown HMM type");
@@ -512,20 +512,30 @@ static void mlpackMain()
 
   // If we have a model file, we can autodetect the type.
   HMMModel* hmm;
-  if (CLI::HasParam("input_model"))
+  if (IO::HasParam("input_model"))
   {
-    hmm = CLI::GetParam<HMMModel*>("input_model");
+    hmm = IO::GetParam<HMMModel*>("input_model");
+
+    hmm->PerformAction<Train, vector<mat>>(&trainSeq);
   }
   else
   {
     // We need to initialize the model.
     hmm = new HMMModel(typeId);
-    hmm->PerformAction<Init, vector<mat>>(&trainSeq);
+
+    // Catch any exceptions so that we can clean the model if needed.
+    try
+    {
+      hmm->PerformAction<Init, vector<mat>>(&trainSeq);
+      hmm->PerformAction<Train, vector<mat>>(&trainSeq);
+    }
+    catch (std::exception& e)
+    {
+      delete hmm;
+      throw;
+    }
   }
 
-  // Train the model.
-  hmm->PerformAction<Train, vector<mat>>(&trainSeq);
-
   // If necessary, save the output.
-  CLI::GetParam<HMMModel*>("output_model") = hmm;
+  IO::GetParam<HMMModel*>("output_model") = hmm;
 }

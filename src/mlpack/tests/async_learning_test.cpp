@@ -1,5 +1,5 @@
 /**
- * @file async_learning_test.hpp
+ * @file tests/async_learning_test.cpp
  * @author Shangtong Zhang
  *
  * Test for async deep RL methods.

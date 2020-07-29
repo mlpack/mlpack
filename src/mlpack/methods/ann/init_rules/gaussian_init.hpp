@@ -1,5 +1,5 @@
 /**
- * @file gaussian_init.hpp
+ * @file methods/ann/init_rules/gaussian_init.hpp
  * @author Kris Singh
  *
  * Intialization rule for the neural networks. This simple initialization is
@@ -65,7 +65,7 @@ class GaussianInitialization
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
    * @param cols Number of columns.
-   * @param slice Numbers of slices.
+   * @param slices Number of slices.
    */
   template<typename eT>
   void Initialize(arma::Cube<eT> & W,
@@ -75,7 +75,7 @@ class GaussianInitialization
   {
     W = arma::Cube<eT>(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
   }
 

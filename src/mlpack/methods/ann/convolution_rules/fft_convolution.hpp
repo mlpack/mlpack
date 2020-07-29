@@ -1,5 +1,5 @@
 /**
- * @file fft_convolution.hpp
+ * @file methods/ann/convolution_rules/fft_convolution.hpp
  * @author Shangtong Zhang
  * @author Marcus Edel
  *
@@ -144,7 +144,7 @@ class FFTConvolution
         input.n_slices);
     output.slice(0) = convOutput;
 
-    for (size_t i = 1; i < input.n_slices; i++)
+    for (size_t i = 1; i < input.n_slices; ++i)
     {
       FFTConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
           output.slice(i));
@@ -175,7 +175,7 @@ class FFTConvolution
         filter.n_slices);
     output.slice(0) = convOutput;
 
-    for (size_t i = 1; i < filter.n_slices; i++)
+    for (size_t i = 1; i < filter.n_slices; ++i)
     {
       FFTConvolution<BorderMode>::Convolution(input, filter.slice(i),
           output.slice(i));
@@ -203,7 +203,7 @@ class FFTConvolution
         input.n_slices);
     output.slice(0) = convOutput;
 
-    for (size_t i = 1; i < input.n_slices; i++)
+    for (size_t i = 1; i < input.n_slices; ++i)
     {
       FFTConvolution<BorderMode>::Convolution(input.slice(i), filter,
           output.slice(i));

@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_function.cpp
+ * @file methods/logistic_regression/logistic_regression_function_impl.hpp
  * @author Sumedh Ghaisas
  *
  * Implementation of the LogisticRegressionFunction class.
@@ -14,6 +14,8 @@
 
 // In case it hasn't been included yet.
 #include "logistic_regression_function.hpp"
+
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace regression {

@@ -1,5 +1,5 @@
 /**
- * @file hmm_model.hpp
+ * @file methods/hmm/hmm_model.hpp
  * @author Ryan Curtin
  *
  * A serializable HMM model that also stores the type.

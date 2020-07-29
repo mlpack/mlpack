@@ -1,5 +1,5 @@
 /**
- * @file version.hpp
+ * @file core/util/version.hpp
  * @author Ryan Curtin
  *
  * The current version of mlpack, available as macros and as a string.
@@ -17,8 +17,8 @@
 // The version of mlpack.  If this is a git repository, this will be a version
 // with higher number than the most recent release.
 #define MLPACK_VERSION_MAJOR 3
-#define MLPACK_VERSION_MINOR 1
-#define MLPACK_VERSION_PATCH 2
+#define MLPACK_VERSION_MINOR 2
+#define MLPACK_VERSION_PATCH 3
 
 // The name of the version (for use by --version).
 namespace mlpack {

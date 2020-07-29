@@ -1,5 +1,5 @@
 /**
- * @file concat_performance_impl.hpp
+ * @file methods/ann/layer/concat_performance_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the ConcatPerformance class.
@@ -44,7 +44,7 @@ double ConcatPerformance<
     OutputLayerType,
     InputDataType,
     OutputDataType
->::Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& target)
+>::Forward(const arma::Mat<eT>& input, arma::Mat<eT>& target)
 {
   const size_t elements = input.n_elem / inSize;
 
@@ -52,7 +52,7 @@ double ConcatPerformance<
   for (size_t i = 0; i < input.n_elem; i+= elements)
   {
     arma::mat subInput = input.submat(i, 0, i + elements - 1, 0);
-    output += outputLayer.Forward(std::move(subInput), std::move(target));
+    output += outputLayer.Forward(subInput, target);
   }
 
   return output;
@@ -69,26 +69,24 @@ void ConcatPerformance<
     InputDataType,
     OutputDataType
 >::Backward(
-    const arma::Mat<eT>&& input,
-    const arma::Mat<eT>&& target,
-    arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& target,
+    arma::Mat<eT>& output)
 {
   const size_t elements = input.n_elem / inSize;
 
   arma::mat subInput = input.submat(0, 0, elements - 1, 0);
   arma::mat subOutput;
 
-  outputLayer.Backward(std::move(subInput), std::move(target),
-      std::move(subOutput));
+  outputLayer.Backward(subInput, target, subOutput);
 
   output = arma::zeros(subOutput.n_elem, inSize);
   output.col(0) = subOutput;
 
-  for (size_t i = elements, j = 0; i < input.n_elem; i+= elements, j++)
+  for (size_t i = elements, j = 0; i < input.n_elem; i+= elements, ++j)
   {
     subInput = input.submat(i, 0, i + elements - 1, 0);
-    outputLayer.Backward(std::move(subInput), std::move(target),
-      std::move(subOutput));
+    outputLayer.Backward(subInput, target, subOutput);
 
     output.col(j) = subOutput;
   }
@@ -104,9 +102,9 @@ void ConcatPerformance<
     OutputLayerType,
     InputDataType,
     OutputDataType
->::serialize(Archive& /* ar */, const unsigned int /* version */)
+>::serialize(Archive& ar, const unsigned int /* version */)
 {
-  // Nothing to do here.
+  ar & BOOST_SERIALIZATION_NVP(inSize);
 }
 
 } // namespace ann

@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_categorical_split.hpp
+ * @file methods/hoeffding_trees/hoeffding_categorical_split.hpp
  * @author Ryan Curtin
  *
  * A class that contains the information necessary to perform a categorical

@@ -1,5 +1,5 @@
 /**
- * @file spill_tree.hpp
+ * @file core/tree/spill_tree/spill_tree.hpp
  *
  * Definition of generalized hybrid spill tree (SpillTree).
  *
@@ -208,6 +208,20 @@ class SpillTree
    * @param other tree to be moved.
    */
   SpillTree(SpillTree&& other);
+
+   /**
+   * Copy the given Spill Tree.
+   *
+   * @param other The tree to be copied.
+   */
+  SpillTree& operator=(const SpillTree& other);
+
+  /**
+   * Take ownership of the given Spill Tree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  SpillTree& operator=(SpillTree&& other);
 
   /**
    * Initialize the tree from a boost::serialization archive.

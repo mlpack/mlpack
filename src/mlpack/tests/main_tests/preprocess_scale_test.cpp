@@ -1,5 +1,5 @@
 /**
- * @file preprocess_scale_test.cpp
+ * @file tests/main_tests/preprocess_scale_test.cpp
  * @author Jeffin Sam
  *
  * Test mlpackMain() of preprocess_scale_main.cpp.
@@ -29,14 +29,14 @@ struct PreprocessScaleTestFixture
   PreprocessScaleTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~PreprocessScaleTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -57,16 +57,18 @@ BOOST_AUTO_TEST_CASE(TwoScalerTest)
   SetInputParam("scaler_method", method);
 
   mlpackMain();
-  arma::mat max_abs_scaler_output = CLI::GetParam<arma::mat>("output");
+  arma::mat maxAbsScalerOutput = IO::GetParam<arma::mat>("output");
+
+  bindings::tests::CleanMemory();
 
   method = "standard_scaler";
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", std::move(method));
 
   mlpackMain();
-  arma::mat standard_scaler_output = CLI::GetParam<arma::mat>("output");
+  arma::mat standardScalerOutput = IO::GetParam<arma::mat>("output");
 
-  CheckMatricesNotEqual(standard_scaler_output, max_abs_scaler_output);
+  CheckMatricesNotEqual(standardScalerOutput, maxAbsScalerOutput);
 }
 
 /**
@@ -81,7 +83,9 @@ BOOST_AUTO_TEST_CASE(TwoOptionTest)
   SetInputParam("scaler_method", method);
 
   mlpackMain();
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
+
+  bindings::tests::CleanMemory();
 
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", std::move(method));
@@ -89,7 +93,7 @@ BOOST_AUTO_TEST_CASE(TwoOptionTest)
   SetInputParam("max_value", 4);
 
   mlpackMain();
-  arma::mat output_with_param = CLI::GetParam<arma::mat>("output");
+  arma::mat output_with_param = IO::GetParam<arma::mat>("output");
 
   CheckMatricesNotEqual(output, output_with_param);
 }
@@ -105,7 +109,9 @@ BOOST_AUTO_TEST_CASE(UnrelatedOptionTest)
   SetInputParam("scaler_method", method);
 
   mlpackMain();
-  arma::mat scaled = CLI::GetParam<arma::mat>("output");
+  arma::mat scaled = IO::GetParam<arma::mat>("output");
+
+  bindings::tests::CleanMemory();
 
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", std::move(method));
@@ -114,7 +120,7 @@ BOOST_AUTO_TEST_CASE(UnrelatedOptionTest)
   SetInputParam("epsilon", 0.005);
 
   mlpackMain();
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
 
   CheckMatrices(scaled, output);
 }
@@ -130,15 +136,15 @@ BOOST_AUTO_TEST_CASE(InverseScalingTest)
   SetInputParam("scaler_method", std::move(method));
 
   mlpackMain();
-  arma::mat scaled = CLI::GetParam<arma::mat>("output");
+  arma::mat scaled = IO::GetParam<arma::mat>("output");
 
   SetInputParam("input", scaled);
   SetInputParam("input_model",
-                CLI::GetParam<ScalingModel*>("output_model"));
+                IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
 
   mlpackMain();
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
   CheckMatrices(dataset, output);
 }
 
@@ -153,14 +159,14 @@ BOOST_AUTO_TEST_CASE(SavedModelTest)
   SetInputParam("scaler_method", std::move(method));
 
   mlpackMain();
-  arma::mat scaled = CLI::GetParam<arma::mat>("output");
+  arma::mat scaled = IO::GetParam<arma::mat>("output");
 
   SetInputParam("input", dataset);
   SetInputParam("input_model",
-                CLI::GetParam<ScalingModel*>("output_model"));
+                IO::GetParam<ScalingModel*>("output_model"));
 
   mlpackMain();
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
   CheckMatrices(scaled, output);
 }
 
@@ -175,14 +181,16 @@ BOOST_AUTO_TEST_CASE(EpsilonTest)
   SetInputParam("scaler_method", method);
 
   mlpackMain();
-  arma::mat scaled = CLI::GetParam<arma::mat>("output");
+  arma::mat scaled = IO::GetParam<arma::mat>("output");
+
+  bindings::tests::CleanMemory();
 
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("epsilon", 1.0);
 
   mlpackMain();
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
 
   CheckMatricesNotEqual(scaled, output);
 }
@@ -246,7 +254,7 @@ BOOST_AUTO_TEST_CASE(StandardScalerTest)
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
-                CLI::GetParam<ScalingModel*>("output_model"));
+                IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
   BOOST_REQUIRE_NO_THROW(mlpackMain());
 }
@@ -264,7 +272,7 @@ BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
-                CLI::GetParam<ScalingModel*>("output_model"));
+                IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
   BOOST_REQUIRE_NO_THROW(mlpackMain());
 }
@@ -284,7 +292,7 @@ BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
-                CLI::GetParam<ScalingModel*>("output_model"));
+                IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
   BOOST_REQUIRE_NO_THROW(mlpackMain());
 }
@@ -303,7 +311,7 @@ BOOST_AUTO_TEST_CASE(PCAScalerTest)
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
-                CLI::GetParam<ScalingModel*>("output_model"));
+                IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
   BOOST_REQUIRE_NO_THROW(mlpackMain());
 }
@@ -322,7 +330,7 @@ BOOST_AUTO_TEST_CASE(ZCAScalerTest)
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
-                CLI::GetParam<ScalingModel*>("output_model"));
+                IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
   BOOST_REQUIRE_NO_THROW(mlpackMain());
 }
@@ -340,7 +348,7 @@ BOOST_AUTO_TEST_CASE(MeanNormalizationTest)
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
-                CLI::GetParam<ScalingModel*>("output_model"));
+                IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
   BOOST_REQUIRE_NO_THROW(mlpackMain());
 }

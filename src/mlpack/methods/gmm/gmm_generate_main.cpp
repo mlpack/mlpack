@@ -1,5 +1,5 @@
 /**
- * @file gmm_generate_main.cpp
+ * @file methods/gmm/gmm_generate_main.cpp
  * @author Ryan Curtin
  *
  * Load a GMM from file, then generate samples from it.
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "gmm.hpp"
 
@@ -57,22 +57,22 @@ static void mlpackMain()
   // Parameter sanity checks.
   RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
-  if (CLI::GetParam<int>("seed") == 0)
+  if (IO::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(time(NULL));
   else
-    mlpack::math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+    mlpack::math::RandomSeed((size_t) IO::GetParam<int>("seed"));
 
   RequireParamValue<int>("samples", [](int x) { return x > 0; }, true,
       "number of samples must be greater than 0");
 
-  GMM* gmm = CLI::GetParam<GMM*>("input_model");
+  GMM* gmm = IO::GetParam<GMM*>("input_model");
 
-  size_t length = (size_t) CLI::GetParam<int>("samples");
+  size_t length = (size_t) IO::GetParam<int>("samples");
   Log::Info << "Generating " << length << " samples..." << endl;
   arma::mat samples(gmm->Dimensionality(), length);
   for (size_t i = 0; i < length; ++i)
     samples.col(i) = gmm->Random();
 
   // Save, if the user asked for it.
-  CLI::GetParam<arma::mat>("output") = std::move(samples);
+  IO::GetParam<arma::mat>("output") = std::move(samples);
 }

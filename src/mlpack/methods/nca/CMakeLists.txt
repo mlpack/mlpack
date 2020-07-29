@@ -18,4 +18,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(nca)
 add_python_binding(nca)
-add_markdown_docs(nca "cli;python" "transformations")
+add_julia_binding(nca)
+add_go_binding(nca)
+add_markdown_docs(nca "cli;python;julia;go" "transformations")

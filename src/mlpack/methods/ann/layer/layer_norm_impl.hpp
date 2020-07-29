@@ -1,5 +1,5 @@
 /**
- * @file layer_norm_impl.hpp
+ * @file methods/ann/layer/layer_norm_impl.hpp
  * @author Shikhar Jaiswal
  *
  * Implementation of the Layer Normalization class.
@@ -57,7 +57,7 @@ void LayerNorm<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void LayerNorm<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   mean = arma::mean(input, 0);
   variance = arma::var(input, 1, 0);
@@ -78,7 +78,7 @@ void LayerNorm<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void LayerNorm<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
@@ -102,9 +102,9 @@ void LayerNorm<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void LayerNorm<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   gradient.set_size(size + size, 1);
 

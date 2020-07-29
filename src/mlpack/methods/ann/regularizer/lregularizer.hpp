@@ -1,5 +1,5 @@
 /**
- * @file lregularizer.hpp
+ * @file methods/ann/regularizer/lregularizer.hpp
  * @author Saksham Bansal
  *
  * Generalized L-regularizer, allowing both l1 and l2 regularization methods.

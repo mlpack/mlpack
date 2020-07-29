@@ -1,5 +1,5 @@
 /**
- * @file midpoint_split_impl.hpp
+ * @file core/tree/binary_space_tree/midpoint_split_impl.hpp
  * @author Yash Vadalia
  * @author Ryan Curtin
  *

@@ -1,5 +1,5 @@
 /**
- * @file image_info.hpp
+ * @file core/data/image_info.hpp
  * @author Mehul Kumar Nirala
  *
  * An image information holder.
@@ -13,28 +13,17 @@
 #ifndef MLPACK_CORE_DATA_IMAGE_INFO_HPP
 #define MLPACK_CORE_DATA_IMAGE_INFO_HPP
 
-
 #include <mlpack/prereqs.hpp>
-
 #include "extension.hpp"
-
-#define STB_IMAGE_STATIC
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
-#define STB_IMAGE_WRITE_STATIC
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb_image_write.h>
 
 namespace mlpack {
 namespace data {
 
-#ifdef HAS_STB // Compile this only if stb is present.
-
 /**
  * Checks if the given image filename is supported.
  *
- * @param filename Name of the image file.
+ * @param fileName Name of the image file.
+ * @param save Set to true to check if the file format can be saved, else loaded.
  * @return Boolean value indicating success if it is an image.
  */
 inline bool ImageFormatSupported(const std::string& fileName,
@@ -81,6 +70,15 @@ class ImageInfo
   //! Modify the image quality.
   size_t& Quality() { return quality; }
 
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & BOOST_SERIALIZATION_NVP(width);
+    ar & BOOST_SERIALIZATION_NVP(channels);
+    ar & BOOST_SERIALIZATION_NVP(height);
+    ar & BOOST_SERIALIZATION_NVP(quality);
+  }
+
  private:
   // To store the image width.
   size_t width;
@@ -94,10 +92,6 @@ class ImageInfo
   // Compression of the image if saved as jpg (0 - 100).
   size_t quality;
 };
-#else
-class ImageInfo { };
-
-#endif // HAS_STB.
 
 } // namespace data
 } // namespace mlpack

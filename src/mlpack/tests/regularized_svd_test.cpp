@@ -1,5 +1,5 @@
 /**
- * @file regularized_svd_test.cpp
+ * @file tests/regularized_svd_test.cpp
  * @author Siddharth Agrawal
  *
  * Test the RegularizedSVDFunction class.
@@ -46,13 +46,13 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRandomEvaluate)
   // Make a RegularizedSVDFunction with zero regularization.
   RegularizedSVDFunction<arma::mat> rSVDFunc(data, rank, 0);
 
-  for (size_t i = 0; i < numTrials; i++)
+  for (size_t i = 0; i < numTrials; ++i)
   {
     arma::mat parameters = arma::randu(rank, numUsers + numItems);
 
     // Calculate cost by summing up cost of each example.
     double cost = 0;
-    for (size_t j = 0; j < numRatings; j++)
+    for (size_t j = 0; j < numRatings; ++j)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRegularizationEvaluate)
   RegularizedSVDFunction<arma::mat> rSVDFuncSmallReg(data, rank, 0.5);
   RegularizedSVDFunction<arma::mat> rSVDFuncBigReg(data, rank, 20);
 
-  for (size_t i = 0; i < numTrials; i++)
+  for (size_t i = 0; i < numTrials; ++i)
   {
     arma::mat parameters = arma::randu(rank, numUsers + numItems);
 
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRegularizationEvaluate)
     // each rating and sum them up.
     double smallRegTerm = 0;
     double bigRegTerm = 0;
-    for (size_t j = 0; j < numRatings; j++)
+    for (size_t j = 0; j < numRatings; ++j)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
@@ -162,9 +162,9 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionGradient)
   double costPlus1, costMinus1, numGradient1;
   double costPlus2, costMinus2, numGradient2;
 
-  for (size_t i = 0; i < rank; i++)
+  for (size_t i = 0; i < rank; ++i)
   {
-    for (size_t j = 0; j < numUsers + numItems; j++)
+    for (size_t j = 0; j < numUsers + numItems; ++j)
     {
       // Perturb parameter with a positive constant and get costs.
       parameters(i, j) += epsilon;
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
   data(1, numRatings - 1) = numItems - 1;
 
   // Make rating entries based on the parameters.
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     data(2, i) = arma::dot(parameters.col(data(0, i)),
                            parameters.col(numUsers + data(1, i)));
@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
 
   // Get predicted ratings from optimized parameters.
   arma::mat predictedData(1, numRatings);
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     predictedData(0, i) = arma::dot(optParameters.col(data(0, i)),
                                     optParameters.col(numUsers + data(1, i)));
@@ -279,7 +279,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimizeHOGWILD)
   data(1, numRatings - 1) = numItems - 1;
 
   // Make rating entries based on the parameters.
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     data(2, i) = arma::dot(parameters.col(data(0, i)),
                            parameters.col(numUsers + data(1, i)));
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimizeHOGWILD)
 
   // Get predicted ratings from optimized parameters.
   arma::mat predictedData(1, numRatings);
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     predictedData(0, i) = arma::dot(optParameters.col(data(0, i)),
                                     optParameters.col(numUsers + data(1, i)));

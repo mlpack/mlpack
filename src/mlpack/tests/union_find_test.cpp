@@ -1,5 +1,5 @@
 /**
- * @file union_find_test.cpp
+ * @file tests/union_find_test.cpp
  * @author Bill March (march@gatech.edu)
  *
  * Unit tests for the Union-Find data structure.
@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(TestFind)
   static const size_t testSize = 10;
   UnionFind testUnionFind(testSize);
 
-  for (size_t i = 0; i < testSize; i++)
+  for (size_t i = 0; i < testSize; ++i)
     BOOST_REQUIRE(testUnionFind.Find(i) == i);
 
   testUnionFind.Union(0, 1);

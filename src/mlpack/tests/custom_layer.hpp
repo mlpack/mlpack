@@ -1,5 +1,5 @@
 /**
- * @file custom_layer.hpp
+ * @file tests/custom_layer.hpp
  * @author Projyal Dev
  *
  * A simple custom layer mimicing SigmoidLayer for testing if custom

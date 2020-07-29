@@ -1,5 +1,5 @@
 /**
- * @file gru.hpp
+ * @file methods/ann/layer/gru.hpp
  * @author Sumedh Ghaisas
  *
  * Definition of the GRU layer.
@@ -13,7 +13,8 @@
                   Kyunghyun and Bengio, Yoshua},
  *    booktitle = {ICML},
  *    pages     = {2067--2075},
- *    year      = {2015}
+ *    year      = {2015},
+ *    url       = {https://arxiv.org/abs/1502.02367}
  * }
  * @endcode
  *
@@ -72,11 +73,6 @@ class GRU
       const size_t rho = std::numeric_limits<size_t>::max());
 
   /**
-   * Delete the GRU and the layers it holds.
-   */
-  ~GRU();
-
-  /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
@@ -84,21 +80,21 @@ class GRU
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -108,9 +104,9 @@ class GRU
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& /* error */,
-                arma::Mat<eT>&& /* gradient */);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& /* error */,
+                arma::Mat<eT>& /* gradient */);
 
   /*
    * Resets the cell to accept a new input. This breaks the BPTT chain starts a
@@ -152,6 +148,12 @@ class GRU
 
   //! Get the model modules.
   std::vector<LayerTypes<> >& Model() { return network; }
+
+  //! Get the number of input units.
+  size_t InSize() const { return inSize; }
+
+  //! Get the number of output units.
+  size_t OutSize() const { return outSize; }
 
   /**
    * Serialize the layer

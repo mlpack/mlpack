@@ -1,5 +1,5 @@
 /**
- * @file logistic_function.hpp
+ * @file methods/ann/activation_functions/logistic_function.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the logistic function.
@@ -64,12 +64,12 @@ class LogisticFunction
   /**
    * Computes the first derivative of the logistic function.
    *
-   * @param x Input data.
+   * @param x Input activation.
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x)
   {
-    return y * (1.0 - y);
+    return x * (1.0 - x);
   }
 
   /**
@@ -99,7 +99,7 @@ class LogisticFunction
    * Computes the inverse of the logistic function.
    *
    * @param y Input data.
-   * @return x The resulting inverse of the input data.
+   * @param x The resulting inverse of the input data.
    */
   template<typename InputVecType, typename OutputVecType>
   static void Inv(const InputVecType& y, OutputVecType& x)

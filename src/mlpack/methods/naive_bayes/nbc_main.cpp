@@ -1,6 +1,6 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file nbc_main.cpp
+ * @file methods/naive_bayes/nbc_main.cpp
  *
  * This program runs the Simple Naive Bayes Classifier.
  *
@@ -13,7 +13,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -138,23 +138,23 @@ static void mlpackMain()
       "output_probs", "probabilities" }, false, "no output will be saved");
   ReportIgnoredParam({{ "test", false }}, "output");
   ReportIgnoredParam({{ "test", false }}, "predictions");
-  if (CLI::HasParam("input_model") && !CLI::HasParam("test"))
+  if (IO::HasParam("input_model") && !IO::HasParam("test"))
     Log::Warn << "No test set given; no task will be performed!" << std::endl;
 
   // Either we have to train a model, or load a model.
   NBCModel* model;
-  if (CLI::HasParam("training"))
+  if (IO::HasParam("training"))
   {
     model = new NBCModel();
-    mat trainingData = std::move(CLI::GetParam<mat>("training"));
+    mat trainingData = std::move(IO::GetParam<mat>("training"));
 
     Row<size_t> labels;
 
     // Did the user pass in labels?
-    if (CLI::HasParam("labels"))
+    if (IO::HasParam("labels"))
     {
       // Load labels.
-      Row<size_t> rawLabels = std::move(CLI::GetParam<Row<size_t>>("labels"));
+      Row<size_t> rawLabels = std::move(IO::GetParam<Row<size_t>>("labels"));
       data::NormalizeLabels(rawLabels, labels, model->mappings);
     }
     else
@@ -167,7 +167,7 @@ static void mlpackMain()
       // Remove the label row.
       trainingData.shed_row(trainingData.n_rows - 1);
     }
-    const bool incrementalVariance = CLI::HasParam("incremental_variance");
+    const bool incrementalVariance = IO::HasParam("incremental_variance");
 
     Timer::Start("nbc_training");
     model->nbc = NaiveBayesClassifier<>(trainingData, labels,
@@ -177,13 +177,13 @@ static void mlpackMain()
   else
   {
     // Load the model from file.
-    model = CLI::GetParam<NBCModel*>("input_model");
+    model = IO::GetParam<NBCModel*>("input_model");
   }
 
   // Do we need to do testing?
-  if (CLI::HasParam("test"))
+  if (IO::HasParam("test"))
   {
-    mat testingData = std::move(CLI::GetParam<mat>("test"));
+    mat testingData = std::move(IO::GetParam<mat>("test"));
 
     if (testingData.n_rows != model->nbc.Means().n_rows)
     {
@@ -199,25 +199,25 @@ static void mlpackMain()
     model->nbc.Classify(testingData, predictions, probabilities);
     Timer::Stop("nbc_testing");
 
-    if (CLI::HasParam("output") || CLI::HasParam("predictions"))
+    if (IO::HasParam("output") || IO::HasParam("predictions"))
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
       data::RevertLabels(predictions, model->mappings, rawResults);
 
-      if (CLI::HasParam("predictions"))
-        CLI::GetParam<Row<size_t>>("predictions") = rawResults;
-      if (CLI::HasParam("output"))
-        CLI::GetParam<Row<size_t>>("output") = std::move(rawResults);
+      if (IO::HasParam("predictions"))
+        IO::GetParam<Row<size_t>>("predictions") = rawResults;
+      if (IO::HasParam("output"))
+        IO::GetParam<Row<size_t>>("output") = std::move(rawResults);
     }
-    if (CLI::HasParam("output_probs") || CLI::HasParam("probabilities"))
+    if (IO::HasParam("output_probs") || IO::HasParam("probabilities"))
     {
-      if (CLI::HasParam("probabilities"))
-        CLI::GetParam<mat>("probabilities") = probabilities;
-      if (CLI::HasParam("output_probs"))
-        CLI::GetParam<mat>("output_probs") = std::move(probabilities);
+      if (IO::HasParam("probabilities"))
+        IO::GetParam<mat>("probabilities") = probabilities;
+      if (IO::HasParam("output_probs"))
+        IO::GetParam<mat>("output_probs") = std::move(probabilities);
     }
   }
 
-  CLI::GetParam<NBCModel*>("output_model") = model;
+  IO::GetParam<NBCModel*>("output_model") = model;
 }

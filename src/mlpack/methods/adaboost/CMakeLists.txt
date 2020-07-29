@@ -18,4 +18,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(adaboost)
 add_python_binding(adaboost)
-add_markdown_docs(adaboost "cli;python" "classification")
+add_julia_binding(adaboost)
+add_go_binding(adaboost)
+add_markdown_docs(adaboost "cli;python;julia;go" "classification")

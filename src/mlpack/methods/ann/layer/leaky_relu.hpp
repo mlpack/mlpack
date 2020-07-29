@@ -1,5 +1,5 @@
 /**
- * @file leaky_relu.hpp
+ * @file methods/ann/layer/leaky_relu.hpp
  * @author Dhawal Arora
  *
  * Definition of LeakyReLU layer first introduced in the acoustic model,
@@ -61,7 +61,7 @@ class LeakyReLU
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -73,7 +73,7 @@ class LeakyReLU
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& gy, DataType&& g);
+  void Backward(const DataType& input, const DataType& gy, DataType& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -97,58 +97,6 @@ class LeakyReLU
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  /**
-   * Computes the LeakyReLU function
-   *
-   * @param x Input data.
-   * @return f(x).
-   */
-  double Fn(const double x)
-  {
-    return std::max(x, alpha * x);
-  }
-
-  /**
-   * Computes the LeakyReLU function using a dense matrix as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
-  {
-    y = arma::max(x, alpha * x);
-  }
-
-  /**
-   * Computes the first derivative of the LeakyReLU function.
-   *
-   * @param x Input data.
-   * @return f'(x)
-   */
-  double Deriv(const double x)
-  {
-    return (x >= 0) ? 1 : alpha;
-  }
-
-  /**
-   * Computes the first derivative of the LeakyReLU function.
-   *
-   * @param x Input activations.
-   * @param y The resulting derivatives.
-   */
-
-  template<typename InputType, typename OutputType>
-  void Deriv(const InputType& x, OutputType& y)
-  {
-    y.set_size(arma::size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      y(i) = Deriv(x(i));
-    }
-  }
-
   //! Locally-stored delta object.
   OutputDataType delta;
 

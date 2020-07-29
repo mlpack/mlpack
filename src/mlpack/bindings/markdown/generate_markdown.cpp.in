@@ -1,5 +1,5 @@
 /**
- * @file generate_markdown.cpp.in
+ * @file markdown/generate_markdown.cpp.in
  * @author Ryan Curtin
  *
  * This file is configured by CMake to generate all of the Markdown required by

@@ -21,4 +21,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(range_search)
 #add_python_binding(range_search)
-add_markdown_docs(range_search "cli" "geometry")
+#add_julia_binding(range_search)
+add_go_binding(range_search)
+add_markdown_docs(range_search "cli;go" "geometry")

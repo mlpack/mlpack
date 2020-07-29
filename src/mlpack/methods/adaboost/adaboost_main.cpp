@@ -1,5 +1,5 @@
 /**
- * @file adaboost_main.cpp
+ * @file methods/adaboost/adaboost_main.cpp
  * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.
@@ -32,7 +32,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "adaboost.hpp"
@@ -42,7 +42,7 @@ using namespace mlpack;
 using namespace std;
 using namespace arma;
 using namespace mlpack::adaboost;
-using namespace mlpack::decision_stump;
+using namespace mlpack::tree;
 using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
@@ -89,12 +89,12 @@ PROGRAM_INFO("AdaBoost",
     PRINT_PARAM_STRING("output") + '.' +
     "\n\n"
     "For example, to run AdaBoost on an input dataset " +
-    PRINT_DATASET("data") + " with perceptrons as the weak learner type, "
-    "storing the trained model in " + PRINT_MODEL("model") + ", one could "
-    "use the following command: "
+    PRINT_DATASET("data") + " with labels " + PRINT_DATASET("labels") +
+    "and perceptrons as the weak learner type, storing the trained model in " +
+    PRINT_MODEL("model") + ", one could use the following command: "
     "\n\n" +
-    PRINT_CALL("adaboost", "training", "data", "output_model", "model",
-        "weak_learner", "perceptron") +
+    PRINT_CALL("adaboost", "training", "data", "labels", "labels",
+        "output_model", "model", "weak_learner", "perceptron") +
     "\n\n"
     "Similarly, an already-trained model in " + PRINT_MODEL("model") + " can"
     " be used to provide class predictions from test data " +
@@ -121,6 +121,8 @@ PARAM_MATRIX_IN("test", "Test dataset.", "T");
 // PARAM_UROW_OUT("output") is deprecated and will be removed in mlpack 4.0.0.
 PARAM_UROW_OUT("output", "Predicted labels for the test set.", "o");
 PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
+PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
+    "point in the test set.", "p");
 
 // Training options.
 PARAM_INT_IN("iterations", "The maximum number of boosting iterations to be run"
@@ -161,7 +163,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "iterations");
 
   // If we gave an input model but no test set, issue a warning.
-  if (CLI::HasParam("input_model"))
+  if (IO::HasParam("input_model"))
     RequireAtLeastOnePassed({ "test" }, false, "no task will be performed");
 
   RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
@@ -171,18 +173,18 @@ static void mlpackMain()
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
   AdaBoostModel* m;
-  if (CLI::HasParam("training"))
+  if (IO::HasParam("training"))
   {
-    mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
+    mat trainingData = std::move(IO::GetParam<arma::mat>("training"));
     m = new AdaBoostModel();
 
     // Load labels.
     arma::Row<size_t> labelsIn;
 
-    if (CLI::HasParam("labels"))
+    if (IO::HasParam("labels"))
     {
       // Load labels.
-      labelsIn = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+      labelsIn = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
     }
     else
     {
@@ -201,9 +203,9 @@ static void mlpackMain()
     data::NormalizeLabels(labelsIn, labels, m->Mappings());
 
     // Get other training parameters.
-    const double tolerance = CLI::GetParam<double>("tolerance");
-    const size_t iterations = (size_t) CLI::GetParam<int>("iterations");
-    const string weakLearner = CLI::GetParam<string>("weak_learner");
+    const double tolerance = IO::GetParam<double>("tolerance");
+    const size_t iterations = (size_t) IO::GetParam<int>("iterations");
+    const string weakLearner = IO::GetParam<string>("weak_learner");
     if (weakLearner == "decision_stump")
       m->WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::DECISION_STUMP;
     else if (weakLearner == "perceptron")
@@ -219,13 +221,13 @@ static void mlpackMain()
   else
   {
     // We have a specified input model.
-    m = CLI::GetParam<AdaBoostModel*>("input_model");
+    m = IO::GetParam<AdaBoostModel*>("input_model");
   }
 
   // Perform classification, if desired.
-  if (CLI::HasParam("test"))
+  if (IO::HasParam("test"))
   {
-    mat testingData = std::move(CLI::GetParam<arma::mat>("test"));
+    mat testingData = std::move(IO::GetParam<arma::mat>("test"));
 
     if (testingData.n_rows != m->Dimensionality())
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
@@ -233,19 +235,32 @@ static void mlpackMain()
           << m->Dimensionality() << ")!" << endl;
 
     Row<size_t> predictedLabels(testingData.n_cols);
-    Timer::Start("adaboost_classification");
-    m->Classify(testingData, predictedLabels);
-    Timer::Stop("adaboost_classification");
+    mat probabilities;
+
+    if (IO::HasParam("probabilities"))
+    {
+      Timer::Start("adaboost_classification");
+      m->Classify(testingData, predictedLabels, probabilities);
+      Timer::Stop("adaboost_classification");
+    }
+    else
+    {
+      Timer::Start("adaboost_classification");
+      m->Classify(testingData, predictedLabels);
+      Timer::Stop("adaboost_classification");
+    }
 
     Row<size_t> results;
     data::RevertLabels(predictedLabels, m->Mappings(), results);
 
     // Save the predicted labels.
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::Row<size_t>>("output") = results;
-    if (CLI::HasParam("predictions"))
-      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
+    if (IO::HasParam("output"))
+      IO::GetParam<arma::Row<size_t>>("output") = results;
+    if (IO::HasParam("predictions"))
+      IO::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
+    if (IO::HasParam("probabilities"))
+      IO::GetParam<arma::mat>("probabilities") = std::move(probabilities);
   }
 
-  CLI::GetParam<AdaBoostModel*>("output_model") = m;
+  IO::GetParam<AdaBoostModel*>("output_model") = m;
 }

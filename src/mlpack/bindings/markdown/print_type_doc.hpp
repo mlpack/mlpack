@@ -1,5 +1,5 @@
 /**
- * @file print_type_doc.hpp
+ * @file bindings/markdown/print_type_doc.hpp
  * @author Ryan Curtin
  *
  * Print documentation for a given type, depending on the current language (as
@@ -17,6 +17,8 @@
 
 #include <mlpack/bindings/cli/print_type_doc.hpp>
 #include <mlpack/bindings/python/print_type_doc.hpp>
+#include <mlpack/bindings/julia/print_type_doc.hpp>
+#include <mlpack/bindings/go/print_type_doc.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -27,7 +29,7 @@ namespace markdown {
  * depends on the current setting of BindingInfo::Language().
  */
 template<typename T>
-std::string PrintTypeDoc(const util::ParamData& data)
+std::string PrintTypeDoc(util::ParamData& data)
 {
   if (BindingInfo::Language() == "cli")
   {
@@ -36,6 +38,14 @@ std::string PrintTypeDoc(const util::ParamData& data)
   else if (BindingInfo::Language() == "python")
   {
     return python::PrintTypeDoc<typename std::remove_pointer<T>::type>(data);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    return julia::PrintTypeDoc<typename std::remove_pointer<T>::type>(data);
+  }
+  else if (BindingInfo::Language() == "go")
+  {
+    return go::PrintTypeDoc<typename std::remove_pointer<T>::type>(data);
   }
   else
   {

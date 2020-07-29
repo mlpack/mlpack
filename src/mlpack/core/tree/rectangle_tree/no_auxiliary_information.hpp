@@ -1,5 +1,5 @@
 /**
- * @file no_auxiliary_information.hpp
+ * @file core/tree/rectangle_tree/no_auxiliary_information.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the NoAuxiliaryInformation class, a class that provides
@@ -44,8 +44,8 @@ class NoAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    *
-   * @param node The node in which the point is being inserted.
-   * @param point The global number of the point being inserted.
+   * @param * (node) The node in which the point is being inserted.
+   * @param * (point) The global number of the point being inserted.
    */
   bool HandlePointInsertion(TreeType* /* node */, const size_t /* point */)
   {
@@ -59,9 +59,9 @@ class NoAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    *
-   * @param node The node in which the nodeToInsert is being inserted.
-   * @param nodeToInsert The node being inserted.
-   * @param insertionLevel The level of the tree at which the nodeToInsert
+   * @param * (node) The node in which the nodeToInsert is being inserted.
+   * @param * (nodeToInsert) The node being inserted.
+   * @param * (insertionLevel) The level of the tree at which the nodeToInsert
    *        should be inserted.
    */
   bool HandleNodeInsertion(TreeType* /* node */,
@@ -78,8 +78,8 @@ class NoAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    *
-   * @param node The node from which the point is being deleted.
-   * @param localIndex The local index of the point being deleted.
+   * @param * (node) The node from which the point is being deleted.
+   * @param * (localIndex) The local index of the point being deleted.
    */
   bool HandlePointDeletion(TreeType* /* node */, const size_t /* localIndex */)
   {
@@ -93,8 +93,8 @@ class NoAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    *
-   * @param node The node from which the node is being deleted.
-   * @param nodeIndex The local index of the node being deleted.
+   * @param * (node) The node from which the node is being deleted.
+   * @param * (nodeIndex) The local index of the node being deleted.
    */
   bool HandleNodeRemoval(TreeType* /* node */, const size_t /* nodeIndex */)
   {
@@ -106,7 +106,7 @@ class NoAuxiliaryInformation
    * This method should return false if this is not the case. If true is
    * returned, the update will be propagated upward.
    *
-   * @param node The node in which the auxiliary information being update.
+   * @param * (node) The node in which the auxiliary information being update.
    */
   bool UpdateAuxiliaryInfo(TreeType* /* node */)
   {
@@ -119,10 +119,10 @@ class NoAuxiliaryInformation
    * necessary for an AuxiliaryInformationType that is being used in conjunction
    * with RPlusTreeSplit.
    *
-   * @param treeOne The first subtree.
-   * @param treeTwo The second subtree.
-   * @param axis The axis along which the split is performed.
-   * @param cut The coordinate at which the node is split.
+   * @param * (treeOne) The first subtree.
+   * @param * (treeTwo) The second subtree.
+   * @param * (axis) The axis along which the split is performed.
+   * @param * (cut) The coordinate at which the node is split.
    */
   void SplitAuxiliaryInfo(TreeType* /* treeOne */,
                           TreeType* /* treeTwo */,

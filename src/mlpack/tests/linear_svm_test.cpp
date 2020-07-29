@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_test.cpp
+ * @file tests/linear_svm_test.cpp
  * @author Ayush Chamoli
  *
  * Test the Linear SVM class.
@@ -19,6 +19,26 @@
 using namespace mlpack;
 using namespace mlpack::svm;
 using namespace mlpack::distribution;
+
+/**
+ * Callback test function, based on the EndOptimization callback function.
+ */
+class CallbackTestFunction
+{
+ public:
+  CallbackTestFunction() : calledEndOptimization(false) {}
+
+  template<typename OptimizerType, typename FunctionType, typename MatType>
+  void EndOptimization(OptimizerType& /* optimizer */,
+                       FunctionType& /* function */,
+                       MatType& /* coordinates */)
+  {
+    calledEndOptimization = true;
+  }
+
+  //! Track to check if callback is executed.
+  bool calledEndOptimization;
+};
 
 BOOST_AUTO_TEST_SUITE(LinearSVMTest);
 
@@ -80,7 +100,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomBinaryEvaluate)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   // Create a LinearSVMFunction, Regularization term ignored.
@@ -136,7 +156,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRandomEvaluate)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   // Create a LinearSVMFunction, Regularization term ignored.
@@ -191,7 +211,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationEvaluate)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   // 3 objects for comparing regularization costs.
@@ -200,7 +220,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationEvaluate)
   LinearSVMFunction<arma::mat> svmfBigReg(data, labels, numClasses, 20);
 
   // Run a number of trials.
-  for (size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; ++i)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -237,7 +257,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionSeparableEvaluate)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   LinearSVMFunction<> svmf(data, labels, numClasses);
@@ -277,7 +297,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionRegularizationSeparableEvaluate)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   LinearSVMFunction<> svmfNoReg(data, labels, numClasses, 0.0);
@@ -331,7 +351,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionGradient)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   // Create a LinearSVMFunction, Regularization term ignored.
@@ -403,7 +423,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMFunctionSeparableGradient)
 
   // Create random class labels.
   arma::Row<size_t> labels(points);
-  for (size_t i = 0; i < points; i++)
+  for (size_t i = 0; i < points; ++i)
     labels(i) = math::RandInt(0, numClasses);
 
   LinearSVMFunction<> svmfNoReg(data, labels, numClasses, 0.0);
@@ -455,14 +475,14 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSSimpleTest)
   const size_t numClasses = 2;
   const double lambda = 0.0001;
 
-  // A very simple fake dataset
+  // A very simple fake dataset.
   arma::mat dataset = "2 0 0;"
                       "0 0 0;"
                       "0 2 1;"
                       "1 0 2;"
                       "0 1 0";
 
-  //  Corresponding labels
+  // Corresponding labels.
   arma::Row<size_t> labels = "1 0 1";
 
   // Create a linear svm object using L-BFGS optimizer.
@@ -532,12 +552,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
   bool success = false;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    for (size_t i = 0; i < points / 2; i++)
+    for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
       labels(i) = 0;
     }
-    for (size_t i = points / 2; i < points; i++)
+    for (size_t i = points / 2; i < points; ++i)
     {
       data.col(i) = g2.Random();
       labels(i) = 1;
@@ -554,12 +574,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSTwoClasses)
     }
 
     // Create test dataset.
-    for (size_t i = 0; i < points / 2; i++)
+    for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
       labels(i) =  0;
     }
-    for (size_t i = points / 2; i < points; i++)
+    for (size_t i = points / 2; i < points; ++i)
     {
       data.col(i) = g2.Random();
       labels(i) = 1;
@@ -678,12 +698,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDeltaLBFGSTwoClasses)
     arma::mat data(inputSize, points);
     arma::Row<size_t> labels(points);
 
-    for (size_t i = 0; i < points / 2; i++)
+    for (size_t i = 0; i < points / 2; ++i)
     {
       data.col(i) = g1.Random();
       labels(i) = 0;
     }
-    for (size_t i = points / 2; i < points; i++)
+    for (size_t i = points / 2; i < points; ++i)
     {
       data.col(i) = g2.Random();
       labels(i) = 1;
@@ -787,12 +807,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMParallelSGDTwoClasses)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 2; i++)
+  for (size_t i = 0; i < points / 2; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 2; i < points; i++)
+  for (size_t i = points / 2; i < points; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
@@ -810,15 +830,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMParallelSGDTwoClasses)
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(acc, 1.0, 2.0);
+  BOOST_REQUIRE_CLOSE(acc, 1.0, 3.5);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 2; i++)
+  for (size_t i = 0; i < points / 2; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) =  0;
   }
-  for (size_t i = points / 2; i < points; i++)
+  for (size_t i = points / 2; i < points; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
@@ -826,7 +846,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMParallelSGDTwoClasses)
 
   // Compare test accuracy to 1.
   const double testAcc = lsvm.ComputeAccuracy(data, labels);
-  BOOST_REQUIRE_CLOSE(testAcc, 1.0, 2.0);
+  BOOST_REQUIRE_CLOSE(testAcc, 1.0, 3.5);
 }
 
 #endif
@@ -885,27 +905,27 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSMultipleClasses)
   bool success = false;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    for (size_t i = 0; i < points / 5; i++)
+    for (size_t i = 0; i < points / 5; ++i)
     {
       data.col(i) = g1.Random();
       labels(i) = 0;
     }
-    for (size_t i = points / 5; i < (2 * points) / 5; i++)
+    for (size_t i = points / 5; i < (2 * points) / 5; ++i)
     {
       data.col(i) = g2.Random();
       labels(i) = 1;
     }
-    for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+    for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
     {
       data.col(i) = g3.Random();
       labels(i) = 2;
     }
-    for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+    for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
     {
       data.col(i) = g4.Random();
       labels(i) = 3;
     }
-    for (size_t i = (4 * points) / 5; i < points; i++)
+    for (size_t i = (4 * points) / 5; i < points; ++i)
     {
       data.col(i) = g5.Random();
       labels(i) = 4;
@@ -920,27 +940,27 @@ BOOST_AUTO_TEST_CASE(LinearSVMLBFGSMultipleClasses)
       continue;
 
     // Create test dataset.
-    for (size_t i = 0; i < points / 5; i++)
+    for (size_t i = 0; i < points / 5; ++i)
     {
       data.col(i) = g1.Random();
       labels(i) = 0;
     }
-    for (size_t i = points / 5; i < (2 * points) / 5; i++)
+    for (size_t i = points / 5; i < (2 * points) / 5; ++i)
     {
       data.col(i) = g2.Random();
       labels(i) = 1;
     }
-    for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+    for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
     {
       data.col(i) = g3.Random();
       labels(i) = 2;
     }
-    for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+    for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
     {
       data.col(i) = g4.Random();
       labels(i) = 3;
     }
-    for (size_t i = (4 * points) / 5; i < points; i++)
+    for (size_t i = (4 * points) / 5; i < points; ++i)
     {
       data.col(i) = g5.Random();
       labels(i) = 4;
@@ -979,27 +999,27 @@ BOOST_AUTO_TEST_CASE(LinearSVMClassifySinglePointTest)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -1009,27 +1029,27 @@ BOOST_AUTO_TEST_CASE(LinearSVMClassifySinglePointTest)
   LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -1065,27 +1085,27 @@ BOOST_AUTO_TEST_CASE(SinglePointClassifyTest)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -1095,27 +1115,27 @@ BOOST_AUTO_TEST_CASE(SinglePointClassifyTest)
   LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; i++)
+  for (size_t i = 0; i < points / 5; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 5; i < (2 * points) / 5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4 * points) / 5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; ++i)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -1130,6 +1150,34 @@ BOOST_AUTO_TEST_CASE(SinglePointClassifyTest)
 
     BOOST_REQUIRE_EQUAL(pred, predictions[i]);
   }
+}
+
+/**
+ * Test a Linear SVM model with EndOptimization callback.
+ */
+BOOST_AUTO_TEST_CASE(LinearSVMCallbackTest)
+{
+  const size_t numClasses = 2;
+  const double lambda = 0.0001;
+  const double delta = 1.0;
+
+  // A very simple fake dataset.
+  arma::mat dataset = "2 0 0;"
+                      "0 0 0;"
+                      "0 2 1;"
+                      "1 0 2;"
+                      "0 1 0";
+
+  // Corresponding labels.
+  arma::Row<size_t> labels = "1 0 1";
+
+  CallbackTestFunction cb;
+
+  ens::L_BFGS opt;
+  LinearSVM<arma::mat> lsvm(dataset, labels, numClasses, lambda,
+      delta, false, opt, cb);
+
+  BOOST_REQUIRE(cb.calledEndOptimization == true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

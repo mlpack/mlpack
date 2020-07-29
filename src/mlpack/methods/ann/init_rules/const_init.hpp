@@ -1,5 +1,5 @@
 /**
- * @file const_init.hpp
+ * @file methods/ann/init_rules/const_init.hpp
  * @author Sumedh Ghaisas
  *
  * Intialization rule for the neural networks. This simple initialization is
@@ -51,6 +51,7 @@ class ConstInitialization
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
    * @param cols Number of columns.
+   * @param slices Number of slices.
    */
   template<typename eT>
   void Initialize(arma::Cube<eT>& W,

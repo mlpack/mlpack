@@ -1,5 +1,5 @@
 /**
- * @file discrete_hilbert_value.hpp
+ * @file core/tree/rectangle_tree/discrete_hilbert_value_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the DiscreteHilbertValue class, a class that calculates
@@ -163,7 +163,7 @@ CalculateValue(const VecType& pt,
   // Calculate the number of bits for the mantissa.
   const int numMantBits = order - numExpBits - 1;
 
-  for (size_t i = 0; i < pt.n_rows; i++)
+  for (size_t i = 0; i < pt.n_rows; ++i)
   {
     int e;
     VecElemType normalizedVal = std::frexp(pt(i), &e);
@@ -216,7 +216,7 @@ CalculateValue(const VecType& pt,
   {
     HilbertElemType P = Q - 1;
 
-    for (size_t i = 0; i < pt.n_rows; i++)
+    for (size_t i = 0; i < pt.n_rows; ++i)
     {
       if (res(i) & Q) // Invert.
         res(0) ^= P;
@@ -230,7 +230,7 @@ CalculateValue(const VecType& pt,
   }
 
   // Gray encode.
-  for (size_t i = 1; i < pt.n_rows; i++)
+  for (size_t i = 1; i < pt.n_rows; ++i)
     res(i) ^= res(i - 1);
 
   HilbertElemType t = 0;
@@ -240,14 +240,14 @@ CalculateValue(const VecType& pt,
     if (res(pt.n_rows - 1) & Q)
       t ^= Q - 1;
 
-  for (size_t i = 0; i < pt.n_rows; i++)
+  for (size_t i = 0; i < pt.n_rows; ++i)
     res(i) ^= t;
 
   // We should rearrange bits in order to compare two Hilbert values faster.
   arma::Col<HilbertElemType> rearrangedResult(pt.n_rows, arma::fill::zeros);
 
-  for (size_t i = 0; i < order; i++)
-    for (size_t j = 0; j < pt.n_rows; j++)
+  for (size_t i = 0; i < order; ++i)
+    for (size_t j = 0; j < pt.n_rows; ++j)
     {
       size_t bit = (i * pt.n_rows + j) % order;
       size_t row = (i * pt.n_rows + j) / order;
@@ -264,7 +264,7 @@ int DiscreteHilbertValue<TreeElemType>::
 CompareValues(const arma::Col<HilbertElemType>& value1,
               const arma::Col<HilbertElemType>& value2)
 {
-  for (size_t i = 0; i < value1.n_rows; i++)
+  for (size_t i = 0; i < value1.n_rows; ++i)
   {
     if (value1(i) > value2(i))
       return 1;
@@ -355,7 +355,7 @@ InsertPoint(TreeType *node,
   if (node->IsLeaf())
   {
     // Find an appropriate place.
-    for (i = 0; i < numValues; i++)
+    for (i = 0; i < numValues; ++i)
       if (CompareValues(localHilbertValues->col(i), *valueToInsert) > 0)
         break;
 
@@ -436,6 +436,12 @@ template<typename TreeElemType>
 DiscreteHilbertValue<TreeElemType>& DiscreteHilbertValue<TreeElemType>::
 operator=(const DiscreteHilbertValue& val)
 {
+  if (this == &val)
+    return *this;
+
+  if (ownsLocalHilbertValues)
+    delete localHilbertValues;
+
   localHilbertValues = const_cast<arma::Mat<HilbertElemType>* >
       (val.LocalHilbertValues());
   ownsLocalHilbertValues = false;
@@ -473,19 +479,19 @@ void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
 {
   // We need to update the local dataset if points were redistributed.
   size_t numPoints = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
     numPoints += parent->Child(i).NumPoints();
 
   // Copy the local Hilbert values.
   arma::Mat<HilbertElemType> tmp(localHilbertValues->n_rows, numPoints);
 
   size_t iPoint = 0;
-  for (size_t i = firstSibling; i<= lastSibling; i++)
+  for (size_t i = firstSibling; i<= lastSibling; ++i)
   {
     DiscreteHilbertValue<TreeElemType> &value =
         parent->Child(i).AuxiliaryInfo().HilbertValue();
 
-    for (size_t j = 0; j < value.NumValues(); j++)
+    for (size_t j = 0; j < value.NumValues(); ++j)
     {
       tmp.col(iPoint) = value.LocalHilbertValues()->col(j);
       iPoint++;
@@ -496,12 +502,12 @@ void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
   iPoint = 0;
 
   // Redistribute the Hilbert values.
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
     DiscreteHilbertValue<TreeElemType> &value =
         parent->Child(i).AuxiliaryInfo().HilbertValue();
 
-    for (size_t j = 0; j < parent->Child(i).NumPoints(); j++)
+    for (size_t j = 0; j < parent->Child(i).NumPoints(); ++j)
     {
       value.LocalHilbertValues()->col(j) = tmp.col(iPoint);
       iPoint++;

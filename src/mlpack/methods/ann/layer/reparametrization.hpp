@@ -1,5 +1,5 @@
 /**
- * @file reparametrization.hpp
+ * @file methods/ann/layer/reparametrization.hpp
  * @author Atharva Khandait
  *
  * Definition of the Reparametrization layer class which samples from a gaussian
@@ -39,7 +39,8 @@ namespace ann /** Artificial Neural Network. */ {
  *              Xavier Glorot, Matthew Botvinick, Shakir Mohamed and
  *              Alexander Lerchner | Google DeepMind},
  *   journal = {2017 International Conference on Learning Representations(ICLR)},
- *   year    = {2017}
+ *   year    = {2017},
+ *   url     = {https://deepmind.com/research/publications/beta-VAE-Learning-Basic-Visual-Concepts-with-a-Constrained-Variational-Framework}
  * }
  * @endcode
  *
@@ -79,7 +80,7 @@ class Reparametrization
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -91,9 +92,9 @@ class Reparametrization
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -119,6 +120,15 @@ class Reparametrization
     return -0.5 * beta * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
         - arma::pow(mean, 2) + 1) / mean.n_cols;
   }
+
+  //! Get the value of the stochastic parameter.
+  bool Stochastic() const { return stochastic; }
+
+  //! Get the value of the includeKl parameter.
+  bool IncludeKL() const { return includeKl; }
+
+  //! Get the value of the beta hyperparameter.
+  double Beta() const { return beta; }
 
   /**
    * Serialize the layer

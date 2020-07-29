@@ -1,5 +1,5 @@
 /**
- * @file pca_impl.hpp
+ * @file methods/pca/pca_impl.hpp
  * @author Ajinkya Kale
  * @author Ryan Curtin
  * @author Marcus Edel
@@ -19,8 +19,6 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/lin_alg.hpp>
 #include "pca.hpp"
-
-using namespace std;
 
 namespace mlpack {
 namespace pca {
@@ -95,11 +93,11 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   // Parameter validation.
   if (newDimension == 0)
     Log::Fatal << "PCA::Apply(): newDimension (" << newDimension << ") cannot "
-        << "be zero!" << endl;
+        << "be zero!" << std::endl;
   if (newDimension > data.n_rows)
     Log::Fatal << "PCA::Apply(): newDimension (" << newDimension << ") cannot "
         << "be greater than the existing dimensionality of the data ("
-        << data.n_rows << ")!" << endl;
+        << data.n_rows << ")!" << std::endl;
 
   arma::mat eigvec;
   arma::vec eigVal;
@@ -146,10 +144,10 @@ double PCA<DecompositionPolicy>::Apply(arma::mat& data,
   // Parameter validation.
   if (varRetained < 0)
     Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") must be "
-        << "greater than or equal to 0." << endl;
+        << "greater than or equal to 0." << std::endl;
   if (varRetained > 1)
     Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") should be "
-        << "less than or equal to 1." << endl;
+        << "less than or equal to 1." << std::endl;
 
   arma::mat eigvec;
   arma::vec eigVal;

@@ -1,5 +1,5 @@
 /**
- * @file linear_regression_test.cpp
+ * @file tests/main_tests/linear_regression_test.cpp
  * @author Eugene Freyman
  *
  * Test mlpackMain() of linear_regression_main.cpp.
@@ -19,8 +19,8 @@ static const std::string testName = "LinearRegression";
 #include "test_helper.hpp"
 #include <mlpack/methods/linear_regression/linear_regression_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -30,30 +30,29 @@ struct LRTestFixture
   LRTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~LRTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
 void ResetSettings()
 {
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 }
-
-BOOST_FIXTURE_TEST_SUITE(LinearRegressionMainTest, LRTestFixture);
 
 /**
  * Training a model with different regularization parameter and ensuring that
  * predictions are different.
  */
-BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
+TEST_CASE_METHOD(LRTestFixture, "LRDifferentLambdas",
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   // A required minimal difference between solutions.
   const double delta = 0.1;
@@ -69,7 +68,7 @@ BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
 
   // The first solution.
   mlpackMain();
-  const double testY1 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
+  const double testY1 = IO::GetParam<arma::rowvec>("output_predictions")(0);
 
   bindings::tests::CleanMemory();
   ResetSettings();
@@ -81,11 +80,11 @@ BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
 
   // The second solution.
   mlpackMain();
-  const double testY2 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
+  const double testY2 = IO::GetParam<arma::rowvec>("output_predictions")(0);
 
   // Second solution has stronger regularization,
   // so the predicted value should be smaller.
-  BOOST_REQUIRE_GT(testY1 - delta, testY2);
+  REQUIRE(testY1 - delta > testY2);
 }
 
 
@@ -93,7 +92,8 @@ BOOST_AUTO_TEST_CASE(LRDifferentLambdas)
  * Checking two options of specifying responses (extra row in train matrix and
  * extra parameter) and ensuring that predictions are the same.
  */
-BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
+TEST_CASE_METHOD(LRTestFixture, "LRResponsesRepresentation",
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr double delta = 1e-5;
 
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
 
   // The first solution.
   mlpackMain();
-  const double testY1 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
+  const double testY1 = IO::GetParam<arma::rowvec>("output_predictions")(0);
 
   bindings::tests::CleanMemory();
   ResetSettings();
@@ -117,16 +117,17 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentation)
 
   // The second solution.
   mlpackMain();
-  const double testY2 = CLI::GetParam<arma::rowvec>("output_predictions")(0);
+  const double testY2 = IO::GetParam<arma::rowvec>("output_predictions")(0);
 
-  BOOST_REQUIRE(fabs(testY1 - testY2) < delta);
+  REQUIRE(fabs(testY1 - testY2) < delta);
 }
 
 /**
  * Check that model can saved / loaded and used. Ensuring that results are the
  * same.
  */
-BOOST_AUTO_TEST_CASE(LRModelReload)
+TEST_CASE_METHOD(LRTestFixture, "LRModelReload",
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr double delta = 1e-5;
   constexpr int N = 10;
@@ -142,8 +143,8 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
 
   mlpackMain();
 
-  LinearRegression* model = CLI::GetParam<LinearRegression*>("output_model");
-  const arma::rowvec testY1 = CLI::GetParam<arma::rowvec>("output_predictions");
+  LinearRegression* model = IO::GetParam<LinearRegression*>("output_model");
+  const arma::rowvec testY1 = IO::GetParam<arma::rowvec>("output_predictions");
 
   ResetSettings();
 
@@ -152,16 +153,17 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
 
   mlpackMain();
 
-  const arma::rowvec testY2 = CLI::GetParam<arma::rowvec>("output_predictions");
+  const arma::rowvec testY2 = IO::GetParam<arma::rowvec>("output_predictions");
 
   double norm = arma::norm(testY1 - testY2, 2);
-  BOOST_REQUIRE(norm < delta);
+  REQUIRE(norm < delta);
 }
 
 /**
  * Ensuring that response size is checked.
  */
-BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
+TEST_CASE_METHOD(LRTestFixture, "LRWrongResponseSizeTest",
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 2;
@@ -173,14 +175,15 @@ BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
   SetInputParam("training_responses", std::move(trainY));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that test data dimensionality is checked.
  */
-BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest1)
+TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest1t",
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -195,14 +198,15 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest1)
   SetInputParam("test", std::move(testX));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that test data dimensionality is checked when model is loaded.
  */
-BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
+TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest2",
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -216,7 +220,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
 
   mlpackMain();
 
-  LinearRegression* model = CLI::GetParam<LinearRegression*>("output_model");
+  LinearRegression* model = IO::GetParam<LinearRegression*>("output_model");
 
   ResetSettings();
 
@@ -225,14 +229,15 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfDataTest2)
   SetInputParam("test", std::move(testX));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Checking that that size and dimensionality of prediction is correct.
  */
-BOOST_AUTO_TEST_CASE(LRPredictionSizeCheck)
+TEST_CASE_METHOD(LRTestFixture, "LRPredictionSizeCheck",
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -248,16 +253,17 @@ BOOST_AUTO_TEST_CASE(LRPredictionSizeCheck)
 
   mlpackMain();
 
-  const arma::rowvec testY = CLI::GetParam<arma::rowvec>("output_predictions");
+  const arma::rowvec testY = IO::GetParam<arma::rowvec>("output_predictions");
 
-  BOOST_REQUIRE_EQUAL(testY.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(testY.n_cols, M);
+  REQUIRE(testY.n_rows == 1);
+  REQUIRE(testY.n_cols == M);
 }
 
 /**
  * Ensuring that absence of responses is checked.
  */
-BOOST_AUTO_TEST_CASE(LRNoResponses)
+TEST_CASE_METHOD(LRTestFixture, "LRNoResponses",
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 1;
@@ -266,14 +272,15 @@ BOOST_AUTO_TEST_CASE(LRNoResponses)
   SetInputParam("training", std::move(trainX));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that absence of training data is checked.
  */
-BOOST_AUTO_TEST_CASE(LRNoTrainingData)
+TEST_CASE_METHOD(LRTestFixture, "LRNoTrainingData",
+                 "[LinearRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
 
@@ -281,8 +288,6 @@ BOOST_AUTO_TEST_CASE(LRNoTrainingData)
   SetInputParam("training_responses", std::move(trainY));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-
-BOOST_AUTO_TEST_SUITE_END();

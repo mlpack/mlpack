@@ -1,5 +1,5 @@
 /**
- * @file prefixedoutstream.cpp
+ * @file core/util/prefixedoutstream.cpp
  * @author Ryan Curtin
  * @author Matthew Amidon
  *

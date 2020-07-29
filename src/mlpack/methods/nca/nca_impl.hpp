@@ -1,5 +1,5 @@
 /**
- * @file nca_impl.hpp
+ * @file methods/nca/nca_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of templated NCA class.
@@ -30,7 +30,9 @@ NCA<MetricType, OptimizerType>::NCA(const arma::mat& dataset,
 { /* Nothing to do. */ }
 
 template<typename MetricType, typename OptimizerType>
-void NCA<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix)
+template<typename... CallbackTypes>
+void NCA<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix,
+    CallbackTypes&&... callbacks)
 {
   // See if we were passed an initialized matrix.
   if ((outputMatrix.n_rows != dataset.n_rows) ||
@@ -39,7 +41,7 @@ void NCA<MetricType, OptimizerType>::LearnDistance(arma::mat& outputMatrix)
 
   Timer::Start("nca_sgd_optimization");
 
-  optimizer.Optimize(errorFunction, outputMatrix);
+  optimizer.Optimize(errorFunction, outputMatrix, callbacks...);
 
   Timer::Stop("nca_sgd_optimization");
 }

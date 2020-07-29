@@ -1,5 +1,5 @@
 /**
- * @file ann_test_tools.hpp
+ * @file tests/ann_test_tools.hpp
  * @author Marcus Edel
  *
  * This file includes some useful functions for ann tests.
@@ -53,7 +53,7 @@ double JacobianTest(ModuleType& module,
   ResetFunction(module);
 
   // Initialize the jacobian matrix.
-  module.Forward(std::move(input), std::move(output));
+  module.Forward(input, output);
   jacobianA = arma::zeros(input.n_elem, output.n_elem);
 
   // Share the input paramter matrix.
@@ -64,9 +64,9 @@ double JacobianTest(ModuleType& module,
   {
     double original = sin(i);
     sin(i) = original - perturbation;
-    module.Forward(std::move(input), std::move(outputA));
+    module.Forward(input, outputA);
     sin(i) = original + perturbation;
-    module.Forward(std::move(input), std::move(outputB));
+    module.Forward(input, outputB);
     sin(i) = original;
 
     outputB -= outputA;
@@ -90,7 +90,7 @@ double JacobianTest(ModuleType& module,
     derivTemp(i) = 1;
 
     arma::mat delta;
-    module.Backward(std::move(input), std::move(deriv), std::move(delta));
+    module.Backward(input, deriv, delta);
 
     jacobianB.col(i) = delta;
   }
@@ -106,10 +106,10 @@ double JacobianPerformanceTest(ModuleType& module,
                                arma::mat& target,
                                const double eps = 1e-6)
 {
-  module.Forward(std::move(input), std::move(target));
+  module.Forward(input, target);
 
   arma::mat delta;
-  module.Backward(std::move(input), std::move(target), std::move(delta));
+  module.Backward(input, target, delta);
 
   arma::mat centralDifference = arma::zeros(delta.n_rows, delta.n_cols);
   arma::mat inputTemp = arma::mat(input.memptr(), input.n_rows, input.n_cols,
@@ -121,9 +121,9 @@ double JacobianPerformanceTest(ModuleType& module,
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     inputTemp(i) = inputTemp(i) + eps;
-    double outputA = module.Forward(std::move(input), std::move(target));
+    double outputA = module.Forward(input, target);
     inputTemp(i) = inputTemp(i) - (2 * eps);
-    double outputB = module.Forward(std::move(input), std::move(target));
+    double outputB = module.Forward(input, target);
 
     centralDifferenceTemp(i) = (outputA - outputB) / (2 * eps);
     inputTemp(i) = inputTemp(i) + eps;

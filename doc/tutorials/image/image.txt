@@ -5,24 +5,24 @@
 
 @page imagetutorial Image Utilities tutorial
 
-@section intro_imagetut Introduction
+@section intro_imagetu Introduction
 
 Image datasets are becoming increasingly popular in deep learning.
 
 mlpack's image saving/loading functionality is based on [stb/](https://github.com/nothings/stb).
 
-@section toc_imagetut Table of Contents
+@section toc_imagetu Table of Contents
 
 This tutorial is split into the following sections:
 
- - \ref intro_imagetut
- - \ref toc_imagetut
- - \ref model_api_imagetut
- - \ref imageinfo_api_imagetut
- - \ref load_api_imagetut
- - \ref save_api_imagetut
+ - \ref intro_imagetu
+ - \ref toc_imagetu
+ - \ref model_api_imagetu
+ - \ref imageinfo_api_imagetu
+ - \ref load_api_imagetu
+ - \ref save_api_imagetu
 
-@section model_api_imagetut Model API
+@section model_api_imagetu Model API
 
 Image utilities supports loading and saving of images.
 
@@ -30,7 +30,7 @@ It supports filetypes "jpg", "png", "tga","bmp", "psd", "gif", "hdr", "pic", "pn
 
 The datatype associated is unsigned char to support RGB values in the range 1-255. To feed data into the network typecast of `arma::Mat` may be required. Images are stored in matrix as (width * height * channels, NumberOfImages). Therefore imageMatrix.col(0) would be the first image if images are loaded in imageMatrix.
 
-@section imageinfo_api_imagetut ImageInfo
+@section imageinfo_api_imagetu ImageInfo
 
 ImageInfo class contains the metadata of the images.
 @code
@@ -46,10 +46,9 @@ ImageInfo class contains the metadata of the images.
             const size_t channels);
 @endcode
 Other public memebers include:
-  - flipVertical Flip the image vertical upon loading.
   - quality Compression of the image if saved as jpg (0-100).
 
-@section load_api_imagetut Load
+@section load_api_imagetu Load
 
 
 Standalone loading of images.
@@ -61,7 +60,8 @@ Standalone loading of images.
    * @param matrix Matrix to load the image into.
    * @param info An object of ImageInfo class.
    * @param fatal If an error should be reported as fatal (default false).
-   * @param transpose If true, transpose the matrix after loading.
+   * @param transpose If true, flips the image, same as transposing the
+   *    matrix after loading.
    * @return Boolean value indicating success or failure of load.
    */
    template<typename eT>
@@ -97,7 +97,8 @@ Loading multiple images:
    * @param matrix Matrix to save the image from.
    * @param info An object of ImageInfo class.
    * @param fatal If an error should be reported as fatal (default false).
-   * @param transpose If true, transpose the matrix after loading.
+   * @param transpose If true, flips the image, same as transposing the
+   *    matrix after loading.
    * @return Boolean value indicating success or failure of load.
    */
    template<typename eT>
@@ -114,7 +115,7 @@ Loading multiple images:
   data::load(files, matrix, info, false, true);
 @endcode
 
-@section save_api_imagetut Save
+@section save_api_imagetu Save
 
 Save images expects a matrix of type unsigned char in the form (width * height * channels, NumberOfImages).
 Just like load it can be used to save one image or multiple images. Besides image data it also expects the shape of the image as input (width, height, channels).
@@ -129,7 +130,8 @@ Saving one image:
    * @param matrix Matrix to save the image from.
    * @param info An object of ImageInfo class.
    * @param fatal If an error should be reported as fatal (default false).
-   * @param transpose If true, transpose the matrix after loading.
+   * @param transpose If true, flips the image, same as transposing the
+   *    matrix after loading.
    * @return Boolean value indicating success or failure of load.
    */
    template<typename eT>
@@ -160,7 +162,8 @@ Saving multiple images:
    * @param matrix Matrix to save the image from.
    * @param info An object of ImageInfo class.
    * @param fatal If an error should be reported as fatal (default false).
-   * @param transpose If true, transpose the matrix after loading.
+   * @param transpose If true, Flips the image, same as transposing the
+   *    matrix after loading.
    * @return Boolean value indicating success or failure of load.
    */
    template<typename eT>

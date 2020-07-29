@@ -1,5 +1,5 @@
 /**
- * @file hard_sigmoid_function.hpp
+ * @file methods/ann/activation_functions/hard_sigmoid_function.hpp
  * @author Bishwa Karki
  *
  * Definition and implementation of the hard sigmoid function.
@@ -56,7 +56,7 @@ class HardSigmoidFunction
   {
     y.set_size(size(x));
 
-    for (size_t i = 0; i < x.n_elem; i++)
+    for (size_t i = 0; i < x.n_elem; ++i)
       y(i) = Fn(x(i));
   }
 
@@ -78,7 +78,7 @@ class HardSigmoidFunction
   /**
    * Computes the first derivatives of the hard sigmoid function.
    *
-   * @param y Input activations.
+   * @param y Input data.
    * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>
@@ -86,7 +86,7 @@ class HardSigmoidFunction
   {
     x.set_size(size(y));
 
-    for (size_t i = 0; i < y.n_elem; i++)
+    for (size_t i = 0; i < y.n_elem; ++i)
     {
       x(i) = Deriv(y(i));
     }

@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_impl.hpp
+ * @file methods/logistic_regression/logistic_regression_impl.hpp
  * @author Sumedh Ghaisas
  * @author Arun Reddy
  *
@@ -25,7 +25,6 @@ LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     const double lambda) :
-    parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   Train(predictors, responses);
@@ -60,35 +59,40 @@ LogisticRegression<MatType>::LogisticRegression(
     const arma::Row<size_t>& responses,
     OptimizerType& optimizer,
     const double lambda) :
-    parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   Train(predictors, responses, optimizer);
 }
 
 template<typename MatType>
-template<typename OptimizerType>
-double LogisticRegression<MatType>::Train(const MatType& predictors,
-                                        const arma::Row<size_t>& responses)
+template<typename OptimizerType, typename... CallbackTypes>
+double LogisticRegression<MatType>::Train(
+        const MatType& predictors,
+        const arma::Row<size_t>& responses,
+        CallbackTypes&&... callbacks)
 {
   OptimizerType optimizer;
-  return Train(predictors, responses, optimizer);
+  return Train(predictors, responses, optimizer, callbacks...);
 }
 
 template<typename MatType>
-template<typename OptimizerType>
+template<typename OptimizerType, typename... CallbackTypes>
 double LogisticRegression<MatType>::Train(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
-    OptimizerType& optimizer)
+    OptimizerType& optimizer,
+    CallbackTypes&&... callbacks)
 {
-  LogisticRegressionFunction<MatType> errorFunction(predictors,
-                                                    responses,
-                                                    lambda);
+  LogisticRegressionFunction<MatType> errorFunction(predictors, responses,
+      lambda);
+
+  // Set size of parameters vector according to the input data received.
+  parameters = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
   errorFunction.InitialPoint() = parameters;
 
   Timer::Start("logistic_regression_optimization");
-  const double out = optimizer.Optimize(errorFunction, parameters);
+  const double out = optimizer.Optimize(errorFunction, parameters,
+      callbacks...);
   Timer::Stop("logistic_regression_optimization");
 
   Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
@@ -157,7 +161,7 @@ double LogisticRegression<MatType>::ComputeAccuracy(
 
   // Count the number of responses that were correct.
   size_t count = 0;
-  for (size_t i = 0; i < responses.n_elem; i++)
+  for (size_t i = 0; i < responses.n_elem; ++i)
   {
     if (responses(i) == tempResponses(i))
       count++;

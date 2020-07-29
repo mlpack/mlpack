@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_main.cpp
+ * @file methods/softmax_regression/softmax_regression_main.cpp
  *
  * Main program for softmax regression.
  *
@@ -9,7 +9,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
@@ -131,11 +131,11 @@ Model* TrainSoftmax(const size_t maxIterations);
 
 static void mlpackMain()
 {
-  const int maxIterations = CLI::GetParam<int>("max_iterations");
+  const int maxIterations = IO::GetParam<int>("max_iterations");
 
   // One of inputFile and modelFile must be specified.
   RequireOnlyOnePassed({ "input_model", "training" }, true);
-  if (CLI::HasParam("training"))
+  if (IO::HasParam("training"))
   {
     RequireAtLeastOnePassed({ "labels" }, true, "if training data is specified,"
         " labels must also be specified");
@@ -162,7 +162,7 @@ static void mlpackMain()
 
   TestClassifyAcc(sm->NumClasses(), *sm);
 
-  CLI::GetParam<SoftmaxRegression*>("output_model") = sm;
+  IO::GetParam<SoftmaxRegression*>("output_model") = sm;
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,
@@ -186,7 +186,7 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
   using namespace mlpack;
 
   // If there is no test set, there is nothing to test on.
-  if (!CLI::HasParam("test"))
+  if (!IO::HasParam("test"))
   {
     ReportIgnoredParam({{ "test", false }}, "test_labels");
     ReportIgnoredParam({{ "test", false }}, "predictions");
@@ -195,16 +195,16 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
   }
 
   // Get the test dataset, and get predictions.
-  arma::mat testData = std::move(CLI::GetParam<arma::mat>("test"));
+  arma::mat testData = std::move(IO::GetParam<arma::mat>("test"));
 
   arma::Row<size_t> predictLabels;
   model.Classify(testData, predictLabels);
 
   // Calculate accuracy, if desired.
-  if (CLI::HasParam("test_labels"))
+  if (IO::HasParam("test_labels"))
   {
     arma::Row<size_t> testLabels =
-      std::move(CLI::GetParam<arma::Row<size_t>>("test_labels"));
+      std::move(IO::GetParam<arma::Row<size_t>>("test_labels"));
 
     if (testData.n_cols != testLabels.n_elem)
     {
@@ -239,8 +239,8 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
         << totalBingo << " of " << predictLabels.n_elem << ")." << endl;
   }
   // Save predictions, if desired.
-  if (CLI::HasParam("predictions"))
-    CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(predictLabels);
+  if (IO::HasParam("predictions"))
+    IO::GetParam<arma::Row<size_t>>("predictions") = std::move(predictLabels);
 }
 
 template<typename Model>
@@ -249,30 +249,29 @@ Model* TrainSoftmax(const size_t maxIterations)
   using namespace mlpack;
 
   Model* sm;
-  if (CLI::HasParam("input_model"))
+  if (IO::HasParam("input_model"))
   {
-    sm = CLI::GetParam<Model*>("input_model");
+    sm = IO::GetParam<Model*>("input_model");
   }
   else
   {
-    arma::mat trainData = std::move(CLI::GetParam<arma::mat>("training"));
+    arma::mat trainData = std::move(IO::GetParam<arma::mat>("training"));
     arma::Row<size_t> trainLabels =
-        std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+        std::move(IO::GetParam<arma::Row<size_t>>("labels"));
 
     if (trainData.n_cols != trainLabels.n_elem)
       Log::Fatal << "Samples of input_data should same as the size of "
           << "input_label." << endl;
 
     const size_t numClasses = CalculateNumberOfClasses(
-        (size_t) CLI::GetParam<int>("number_of_classes"), trainLabels);
+        (size_t) IO::GetParam<int>("number_of_classes"), trainLabels);
 
-    const bool intercept = CLI::HasParam("no_intercept") ? false : true;
+    const bool intercept = IO::HasParam("no_intercept") ? false : true;
 
     const size_t numBasis = 5;
     ens::L_BFGS optimizer(numBasis, maxIterations);
     sm = new Model(trainData, trainLabels, numClasses,
-        CLI::GetParam<double>("lambda"), intercept, std::move(optimizer));
+        IO::GetParam<double>("lambda"), intercept, std::move(optimizer));
   }
-
   return sm;
 }

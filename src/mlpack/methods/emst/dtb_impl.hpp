@@ -1,5 +1,5 @@
 /**
- * @file dtb_impl.hpp
+ * @file methods/emst/dtb_impl.hpp
  * @author Bill March (march@gatech.edu)
  *
  * Implementation of DTB.
@@ -195,7 +195,7 @@ template<
              typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::AddAllEdges()
 {
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
     size_t component = connections.Find(i);
     size_t inEdge = neighborsInComponent[component];
@@ -232,7 +232,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::EmitResults(
   // Need to unpermute the point labels.
   if (!naive && ownTree && tree::TreeTraits<Tree>::RearrangesDataset)
   {
-    for (size_t i = 0; i < (data.n_cols - 1); i++)
+    for (size_t i = 0; i < (data.n_cols - 1); ++i)
     {
       // Make sure the edge list stores the smaller index first to
       // make checking correctness easier
@@ -257,7 +257,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::EmitResults(
   }
   else
   {
-    for (size_t i = 0; i < edges.size(); i++)
+    for (size_t i = 0; i < edges.size(); ++i)
     {
       results(0, i) = edges[i].Lesser();
       results(1, i) = edges[i].Greater();
@@ -318,7 +318,7 @@ template<
              typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::Cleanup()
 {
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
     neighborsDistances[i] = DBL_MAX;
 
   if (!naive)

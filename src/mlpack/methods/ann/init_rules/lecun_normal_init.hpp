@@ -1,5 +1,5 @@
 /**
- * @file lecun_normal_init.hpp
+ * @file methods/ann/init_rules/lecun_normal_init.hpp
  * @author Dakshit Agrawal
  * @author Prabhat Sharma
  *
@@ -91,7 +91,7 @@ class LecunNormalInitialization
    * @param W Weight matrix to initialize.
    * @param rows Number of rows.
    * @param cols Number of columns.
-   * @param slice Numbers of slices.
+   * @param slices Number of slices.
    */
   void Initialize(arma::cube & W,
                   const size_t rows,
@@ -101,7 +101,7 @@ class LecunNormalInitialization
     if (W.is_empty())
       W.set_size(rows, cols, slices);
 
-    for (size_t i = 0; i < slices; i++)
+    for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
   }
 }; // class LecunNormalInitialization
