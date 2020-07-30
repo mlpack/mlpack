@@ -24,14 +24,14 @@ KernelSVM<MatType, KernelType>::KernelSVM(
     const arma::Row<size_t>& labels,
     const double regularization,
     const bool fitIntercept,
-    const size_t numClass,
+    const double numClass,
     const size_t maxIter,
     const double tol) :
     regularization(regularization),
     fitIntercept(fitIntercept),
     numClass(numClass)
 {
-  numClassifier = double(numClass) * ((double(numClass) - 1) / 2);
+  numClassifier = numClass * ((numClass - 1) / 2);
   Train(data, labels, maxIter, tol);
 }
 
@@ -39,7 +39,7 @@ template <typename MatType, typename KernelType>
 KernelSVM<MatType, KernelType>::KernelSVM(
     const double regularization,
     const bool fitIntercept,
-    const size_t numClass) :
+    const double numClass) :
     regularization(regularization),
     fitIntercept(fitIntercept),
     numClass(numClass)
@@ -105,11 +105,9 @@ void KernelSVM<MatType, KernelType>::Classify(
     arma::mat& scores) const
 {
   Classify(data, scores);
-  std::cout<<scores.n_rows<<std::endl;
   for (size_t k = 0; k < numClassifier; k++)
   {
     double threshold = arma::as_scalar(arma::mean(scores.row(k)));
-    std::cout<<k<<std::endl;
 
     for (size_t i = 0; i< data.n_cols; i++)
     {

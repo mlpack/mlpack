@@ -53,7 +53,7 @@ TEST_CASE("LinearSVMFitIntercept", "[KernelSVMTest]")
     }
 
     // Now train a svm object on it.
-    KernelSVM<> svm(data, labels, 1.0, false, 10);
+    KernelSVM<> svm(data, labels, 1.0, false, 2, 10);
 
     // Ensure that the error is close to zero.
     const double acc = svm.ComputeAccuracy(data, labels);
@@ -113,7 +113,7 @@ TEST_CASE("GaussianKernelSVMMnistDataset", "[KernelSVMTest]")
   {
     // Now train a svm object on it.
     KernelSVM<arma::mat, kernel::GaussianKernel> svm(
-        dataset, labels, 1.0, true, 10);
+        dataset, labels, 1.0, true, 2, 10);
 
     // Ensure that the error is close to zero.
     const double testAcc = svm.ComputeAccuracy(dataset, labels);
@@ -158,7 +158,7 @@ TEST_CASE("ConcentricCircleDataset", "[KernelSVMTest]")
   {
     // Now train a svm object on it.
     KernelSVM<arma::mat, kernel::GaussianKernel> svm(
-        dataset, labels, 1.0, true, 10);
+        dataset, labels, 1.0, true, 2, 10);
 
     // Ensure that the error is close to zero.
     const double testAcc = svm.ComputeAccuracy(dataset, labels);
