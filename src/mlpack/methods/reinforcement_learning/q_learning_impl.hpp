@@ -48,9 +48,14 @@ QLearning<
     totalSteps(0),
     deterministic(false)
 {
+  // To copy over the network structure.
+  targetNetwork = learningNetwork;
+
   // Set up q-learning network.
   if (learningNetwork.Parameters().is_empty())
     learningNetwork.ResetParameters();
+  if (targetNetwork.Parameters().is_empty())
+    targetNetwork.ResetParameters();
 
   #if ENS_VERSION_MAJOR == 1
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
@@ -62,7 +67,8 @@ QLearning<
                                    learningNetwork.Parameters().n_cols);
   #endif
 
-  targetNetwork = learningNetwork;
+  // Initialize the target network with the parameters of learning network.
+  targetNetwork.Parameters() = learningNetwork.Parameters();
 }
 
 template <
@@ -192,7 +198,7 @@ void QLearning<
   }
   // Update target network.
   if (totalSteps % config.TargetNetworkSyncInterval() == 0)
-    targetNetwork = learningNetwork;
+    targetNetwork.Parameters() = learningNetwork.Parameters();
 
   if (totalSteps > config.ExplorationSteps())
     policy.Anneal();
@@ -308,7 +314,7 @@ void QLearning<
   }
   // Update target network.
   if (totalSteps % config.TargetNetworkSyncInterval() == 0)
-    targetNetwork = learningNetwork;
+    targetNetwork.Parameters() = learningNetwork.Parameters();
 
   if (totalSteps > config.ExplorationSteps())
     policy.Anneal();
