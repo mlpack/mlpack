@@ -289,16 +289,13 @@ void QLearning<
   arma::mat lossGradients = arma::zeros<arma::mat>(arma::size(dists));
   for (size_t i = 0; i < batchSize; ++i)
   {
-    lossGradients(sampledActions[i].action * atomSize, i, arma::size(atomSize, 1))
-        = -(projDist.col(i) / (1e-10 + dists(sampledActions[i].action * atomSize,
-        i, arma::size(atomSize, 1))));
+    lossGradients(sampledActions[i].action * atomSize, i,
+        arma::size(atomSize, 1)) = -(projDist.col(i) / (1e-10 + dists(
+        sampledActions[i].action * atomSize, i, arma::size(atomSize, 1))));
   }
   // Learn from experience.
   arma::mat gradients;
   learningNetwork.Backward(sampledStates, lossGradients, gradients);
-
-  // TODO: verify for PER
-  replayMethod.Update(lossGradients, sampledActions, nextActionValues, gradients);
 
   #if ENS_VERSION_MAJOR == 1
   updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
@@ -387,7 +384,7 @@ double QLearning<
     if (config.IsCategorical())
       TrainCategoricalAgent();
     else
-      TrainAgent();    
+      TrainAgent();
   }
   return totalReturn;
 }

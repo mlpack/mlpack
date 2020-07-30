@@ -25,16 +25,22 @@ namespace rl {
 using namespace mlpack::ann;
 
 /**
- * @tparam NetworkType The type of network used for categorical dqn.
+ * @tparam OutputLayerType The output layer type of the network.
+ * @tparam InitType The initialization type used for the network.
+ * @tparam NetworkType The type of network used for simple dqn.
  */
-template <typename NetworkType = FFN<EmptyLoss<>, GaussianInitialization>>
+template<
+  typename OutputLayerType = EmptyLoss<>,
+  typename InitType = GaussianInitialization,
+  typename NetworkType = FFN<OutputLayerType, InitType>
+>
 class CategoricalDQN
 {
  public:
   /**
    * Default constructor.
    */
-  CategoricalDQN() : network(), isNoisy(false), atomSize(0) 
+  CategoricalDQN() : network(), isNoisy(false), atomSize(0)
   { /* Nothing to do here. */ }
 
   /**
@@ -44,20 +50,26 @@ class CategoricalDQN
    * @param h1 Number of neurons in hiddenlayer-1.
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
+   * @param isNoisy Specifies whether the network needs to be of type noisy.
+   * @param init Specifies the initialization rule for the network.
+   * @param outputLayer Specifies the output layer type for network.
+   * @param atomSize Specifies the number of atoms to be used.
    */
   CategoricalDQN(const int inputDim,
             const int h1,
             const int h2,
             const int outputDim,
             const bool isNoisy = false,
+            InitType init = InitType(),
+            OutputLayerType outputLayer = OutputLayerType(),
             const size_t atomSize = 51):
-      network(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
+      network(outputLayer, init),
       isNoisy(isNoisy),
       atomSize(atomSize)
   {
     network.Add(new Linear<>(inputDim, h1));
     network.Add(new ReLULayer<>());
-    if(isNoisy)
+    if (isNoisy)
     { 
       noisyLayerIndex.push_back(network.Model().size());
       network.Add(new NoisyLinear<>(h1, h2));
@@ -170,7 +182,9 @@ class CategoricalDQN
    * @param lossGardients The loss gradients.
    * @param gradient The gradient.
    */
-  void Backward(const arma::mat state, arma::mat& lossGradients, arma::mat& gradient)
+  void Backward(const arma::mat state,
+                arma::mat& lossGradients,
+                arma::mat& gradient)
   {
     arma::mat activationGradients(arma::size(activations));
     for(size_t i = 0; i < activations.n_rows; i += atomSize)
