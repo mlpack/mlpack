@@ -82,7 +82,7 @@ class KernelSVM
             const arma::Row<size_t>& labels,
             const double regularization = 1.0,
             const bool fitIntercept = false,
-            const size_t numClass = 2,
+            const double numClass = 2,
             const size_t max_iter = 10,
             const double tol = 1e-3);
 
@@ -97,7 +97,7 @@ class KernelSVM
    */
   KernelSVM(const double regularization = 1.0,
             const bool fitIntercept = false,
-            const size_t numClass = 2);
+            const double numClass = 2);
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -187,7 +187,7 @@ class KernelSVM
 
  private:
   //! Locally saved number of classes.
-  size_t numClass;
+  double numClass;
   //! Locally saved number of classifier trained.
   double numClassifier;
   //! Locally saved classes of classifiers.
