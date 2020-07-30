@@ -213,12 +213,6 @@ void QLearning<
   ReplayType
 >::TrainCategoricalAgent()
 {
-  arma::colvec params = {2.2145,2.2145,2.2145,2.2145,2.2145,2.2145,2.2145,2.2145,
-                      -0.274,-0.274, 
-                      2.2145,2.2145,2.2145,2.2145,2.2145,2.2145,2.2145,2.2145,
-                      -0.274,-0.274, -0.274,-0.274};
-  learningNetwork.Parameters() = arma::mat(params);
-  targetNetwork.Parameters() = arma::mat(params);
   // Start experience replay.
 
   // Sample from previous experience.
@@ -232,18 +226,14 @@ void QLearning<
       sampledNextStates, isTerminal);
 
   double vMin = 0, vMax = 200.0;
-  size_t atomSize = 2;
+  size_t atomSize = 51;
   arma::rowvec support = arma::linspace<arma::rowvec>(vMin, vMax, atomSize);
-
-  std::cout << "support: " << support << std::endl;
 
   size_t batchSize = sampledNextStates.n_cols;
 
   // Compute action value for next state with target network.
   arma::mat nextActionValues;
   targetNetwork.Predict(sampledNextStates, nextActionValues);
-
-  std::cout << "nextActionValues: " << nextActionValues << std::endl;
 
   arma::Col<size_t> nextAction;
   if (config.DoubleQLearning())
@@ -290,9 +280,6 @@ void QLearning<
   }
   arma::mat dists;
   learningNetwork.Forward(sampledStates, dists);
-
-  std::cout << "dists: " << dists << std::endl;
-
   arma::mat lossGradients = arma::zeros<arma::mat>(arma::size(dists));
   for (size_t i = 0; i < batchSize; ++i)
   {
@@ -300,14 +287,9 @@ void QLearning<
         = -(projDist.col(i) / (1e-10 + dists(sampledActions[i].action * atomSize,
         i, arma::size(atomSize, 1))));
   }
-
-  std::cout << "lossGradients: " << lossGradients << std::endl;
-
   // Learn from experience.
   arma::mat gradients;
   learningNetwork.Backward(sampledStates, lossGradients, gradients);
-
-  std::cout << "gradients: " << gradients << std::endl;
 
   // TODO: verify for PER
   replayMethod.Update(lossGradients, sampledActions, nextActionValues, gradients);
@@ -388,12 +370,9 @@ double QLearning<
     totalReturn += reward;
     totalSteps++;
 
-    state.Data() = {1.2, 0.1, -5, 0.8};
-    action.action = CartPole::Action::actions::forward;
-    reward = 1.7;
-    nextState.Data() = {0.2, -0.1, -0.5, 1.8};
+    // Store the transition for replay.
     replayMethod.Store(state, action, reward, nextState,
-        false, config.Discount());
+        environment.IsTerminal(nextState), config.Discount());
     // Update current state.
     state = nextState;
 

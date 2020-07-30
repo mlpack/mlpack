@@ -67,7 +67,9 @@ class CategoricalDQN
     }
     else
     {
-      network.Add(new Linear<>(h1, outputDim * atomSize));
+      network.Add(new Linear<>(h1, h2));
+      network.Add(new ReLULayer<>());
+      network.Add(new Linear<>(h2, outputDim * atomSize));
     }
   }
 
@@ -91,9 +93,7 @@ class CategoricalDQN
   void Predict(const arma::mat state, arma::mat& actionValue)
   {
     arma::mat q_atoms;
-    std::cout << "network params:" <<  network.Parameters() << std::endl;
     network.Predict(state, q_atoms);
-    std::cout << "q_atoms:" <<  q_atoms << std::endl;
     activations.copy_size(q_atoms);
     actionValue.set_size(q_atoms.n_rows / atomSize, q_atoms.n_cols);
     double vMin = 0, vMax = 200.0;
