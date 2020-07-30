@@ -73,7 +73,16 @@ class CategoricalDQN
     }
   }
 
-  CategoricalDQN(NetworkType network, const bool isNoisy, size_t atomSize):
+  /**
+   * Construct an instance of CategoricalDQN class from a pre-constructed network.
+   *
+   * @param network The network to be used by CategoricalDQN class.
+   * @param isNoisy Specifies whether the network needs to be of type noisy.
+   * @param atomSize Specifies the number of atoms to be used.
+   */
+  CategoricalDQN(NetworkType& network,
+                 const bool isNoisy = false,
+                 size_t atomSize = 51):
       network(std::move(network)),
       isNoisy(isNoisy),
       atomSize(atomSize)
