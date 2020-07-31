@@ -271,7 +271,7 @@ class BayesianLinearRegression
    * Center and scale the points before prediction.
    *
    * @param data Design matrix in column-major format, dim(P, N).
-   * @param dataProc data processed, dim(P, N).
+   * @param dataProc Data processed, dim(P, N).
    */
   void CenterScaleDataPred(const arma::mat& data,
                            arma::mat& dataProc) const;
