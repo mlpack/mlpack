@@ -4095,20 +4095,23 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerTestCase)
       << 32 << 13 << 42 << arma::endr;
 
   Convolution<> layer(2, 4, 1, 1, 1, 1, 0, 0, 4, 1);
-
   layer.Reset();
+
   // Set weights to 1.0 and bias to 0.0.
   layer.Parameters().zeros();
   arma::mat weight(2 * 4, 1);
   weight.fill(1.0);
   layer.Parameters().submat(arma::span(0, 2 * 4 - 1), arma::span()) = weight;
-
   layer.Forward(input, output);
+
+  // Value calculated using torch.nn.Conv2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 4108);
 
   // Set bias to one.
   layer.Parameters().fill(1.0);
   layer.Forward(input, output);
+
+  // Value calculated using torch.nn.Conv2d().
   BOOST_REQUIRE_EQUAL(arma::accu(output), 4156);
 }
 
