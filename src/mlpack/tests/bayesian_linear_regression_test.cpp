@@ -1,5 +1,5 @@
 /**
- * @file bayesian_linear_regression_test.cpp
+ * @file tests/bayesian_linear_regression_test.cpp 
  * @author Clement Mercier
  *
  * Test for BayesianLinearRegression.
