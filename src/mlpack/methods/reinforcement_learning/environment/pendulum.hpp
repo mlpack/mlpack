@@ -69,7 +69,7 @@ class Pendulum
     //! Encode the state to a column vector.
     const arma::colvec& Encode() {
       return convertedData; }
-    
+
     void SetState()
     {
       convertedData[0] = std::sin(data[0]);

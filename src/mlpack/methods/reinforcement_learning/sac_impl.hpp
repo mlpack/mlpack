@@ -332,7 +332,7 @@ double SAC<
 
     if (deterministic || totalSteps < config.ExplorationSteps())
       continue;
-    for(size_t i = 0; i < config.UpdateInterval(); i++)
+    for (size_t i = 0; i < config.UpdateInterval(); i++)
       Update();
   }
   return totalReturn;
