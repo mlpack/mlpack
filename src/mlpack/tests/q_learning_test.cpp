@@ -480,14 +480,14 @@ BOOST_AUTO_TEST_CASE(PendulumWithSAC)
 
   FFN<EmptyLoss<>, GaussianInitialization>
       policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
-  policyNetwork.Add(new Linear<>(2, 128));
+  policyNetwork.Add(new Linear<>(3, 128));
   policyNetwork.Add(new ReLULayer<>());
   policyNetwork.Add(new Linear<>(128, 1));
   policyNetwork.Add(new TanHLayer<>());
 
   FFN<EmptyLoss<>, GaussianInitialization>
       qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
-  qNetwork.Add(new Linear<>(2+1, 128));
+  qNetwork.Add(new Linear<>(3+1, 128));
   qNetwork.Add(new ReLULayer<>());
   qNetwork.Add(new Linear<>(128, 1));
 

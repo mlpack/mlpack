@@ -41,7 +41,8 @@ class Pendulum
     /**
      * Construct a state instance.
      */
-    State() : data(dimension, arma::fill::zeros)
+    State() : data(dimension, arma::fill::zeros),
+              convertedData(3, arma::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**
@@ -53,7 +54,7 @@ class Pendulum
     { /* Nothing to do here. */ }
 
     //! Modify the internal representation of the state.
-    arma::colvec& Data() { return data; }
+    arma::colvec& Data() { return convertedData; }
 
     //! Get the theta.
     double Theta() const { return data[0]; }
@@ -66,14 +67,25 @@ class Pendulum
     double& AngularVelocity() { return data[1]; }
 
     //! Encode the state to a column vector.
-    const arma::colvec& Encode() const { return data; }
+    const arma::colvec& Encode() {
+      return convertedData; }
+    
+    void SetState()
+    {
+      convertedData[0] = std::sin(data[0]);
+      convertedData[1] = std::cos(data[0]);
+      convertedData[2] = data[1];
+    }
 
     //! Dimension of the encoded state.
-    static constexpr size_t dimension = 2;
+    static constexpr size_t dimension = 3;
 
    private:
-    //! Locally-stored (theta, angular velocity) vector
+    //! Locally-stored (theta, angular velocity) vector.
     arma::colvec data;
+
+    //! Locally-stored (sin(theta), cos(theta), angular velocity) vector.
+    arma::colvec convertedData;
   };
 
   /**
@@ -152,6 +164,8 @@ class Pendulum
     nextState.AngularVelocity() = math::ClampRange(newAngularVelocity,
         -maxAngularVelocity, maxAngularVelocity);
 
+    nextState.SetState();
+
     // Return the reward of taking the action in current state.
     // The reward is simply the negative of cost incurred for the action.
     return -costs;
@@ -182,6 +196,7 @@ class Pendulum
     state.Theta() = math::Random(-M_PI, M_PI);
     state.AngularVelocity() = math::Random(-1.0, 1.0);
     stepsPerformed = 0;
+    state.SetState();
     return state;
   }
 
