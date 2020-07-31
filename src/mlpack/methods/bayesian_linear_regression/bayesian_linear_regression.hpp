@@ -258,8 +258,8 @@ class BayesianLinearRegression
    *
    * @param data Design matrix in column-major format, dim(P, N).
    * @param responses A vector of targets.
-   * @param dataProc data processed, dim(P, N).
-   * @param responsesProc responses processed, dim(N).
+   * @param dataProc Data processed, dim(P, N).
+   * @param responsesProc Responses processed, dim(N).
    * @return reponsesOffset Mean of responses.
    */
   double CenterScaleData(const arma::mat& data,
