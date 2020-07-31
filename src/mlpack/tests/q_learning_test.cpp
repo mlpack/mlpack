@@ -17,6 +17,7 @@
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/empty_loss.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp>
@@ -464,8 +465,8 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNStepPrioritizedDQN)
   BOOST_REQUIRE(converged);
 }
 
-//! Test Categorical DQN in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithCategoricalDQN)
+//! Test Categorical DQN in Acrobot task.
+BOOST_AUTO_TEST_CASE(AcrobotWithCategoricalDQN)
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations.
@@ -475,21 +476,28 @@ BOOST_AUTO_TEST_CASE(CartPoleWithCategoricalDQN)
     Log::Debug << "Trial number: " << trial << std::endl;
 
     // Set up the policy and replay method.
-    GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
-    RandomReplay<CartPole> replayMethod(32, 2000);
+    GreedyPolicy<Acrobot> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<Acrobot> replayMethod(32, 10000);
 
     TrainingConfig config;
-    config.StepLimit() = 200;
     config.IsCategorical() = true;
+    config.ExplorationSteps() = 64;
 
-    // Set up the network with a flag to enable noisy layers.
-    CategoricalDQN<> network(4, 128, 128, 2);
+    // Set up the module. Note that we use a custom network here.
+    FFN<EmptyLoss<>, GaussianInitialization> module(
+        EmptyLoss<>(), GaussianInitialization(0, 0.1));
+    module.Add<Linear<>>(4, 128);
+    module.Add<ReLULayer<>>();
+    module.Add<Linear<>>(128, 3 * 51);
+
+    // Adding the module to the CategoricalDQN network.
+    CategoricalDQN<> network(module);
 
     // Set up DQN agent.
-    QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+    QLearning<Acrobot, decltype(network), AdamUpdate, decltype(policy)>
         agent(config, network, policy, replayMethod);
 
-    converged = testAgent<decltype(agent)>(agent, 40, 500, 50);
+    converged = testAgent<decltype(agent)>(agent, -380, 1000);
     if (converged)
       break;
   }
