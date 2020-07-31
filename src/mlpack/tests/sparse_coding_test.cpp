@@ -150,42 +150,42 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   mat codes;
   sc.Encode(Y, codes);
 
-  SparseCoding scXml(50, 0.01), scText(nAtoms, 0.05), scBinary(0, 0.0);
-  SerializeObjectAll(sc, scXml, scText, scBinary);
+  SparseCoding scXml(50, 0.01), scJson(nAtoms, 0.05), scBinary(0, 0.0);
+  SerializeObjectAll(sc, scXml, scJson, scBinary);
 
-  CheckMatrices(sc.Dictionary(), scXml.Dictionary(), scText.Dictionary(),
+  CheckMatrices(sc.Dictionary(), scXml.Dictionary(), scJson.Dictionary(),
       scBinary.Dictionary());
 
-  mat xmlCodes, textCodes, binaryCodes;
+  mat xmlCodes, jsonCodes, binaryCodes;
   scXml.Encode(Y, xmlCodes);
-  scText.Encode(Y, textCodes);
+  scJson.Encode(Y, jsonCodes);
   scBinary.Encode(Y, binaryCodes);
 
-  CheckMatrices(codes, xmlCodes, textCodes, binaryCodes);
+  CheckMatrices(codes, xmlCodes, jsonCodes, binaryCodes);
 
   // Check the parameters, too.
   BOOST_REQUIRE_EQUAL(sc.Atoms(), scXml.Atoms());
-  BOOST_REQUIRE_EQUAL(sc.Atoms(), scText.Atoms());
+  BOOST_REQUIRE_EQUAL(sc.Atoms(), scJson.Atoms());
   BOOST_REQUIRE_EQUAL(sc.Atoms(), scBinary.Atoms());
 
   BOOST_REQUIRE_CLOSE(sc.Lambda1(), scXml.Lambda1(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.Lambda1(), scText.Lambda1(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.Lambda1(), scJson.Lambda1(), 1e-5);
   BOOST_REQUIRE_CLOSE(sc.Lambda1(), scBinary.Lambda1(), 1e-5);
 
   BOOST_REQUIRE_CLOSE(sc.Lambda2(), scXml.Lambda2(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.Lambda2(), scText.Lambda2(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.Lambda2(), scJson.Lambda2(), 1e-5);
   BOOST_REQUIRE_CLOSE(sc.Lambda2(), scBinary.Lambda2(), 1e-5);
 
   BOOST_REQUIRE_EQUAL(sc.MaxIterations(), scXml.MaxIterations());
-  BOOST_REQUIRE_EQUAL(sc.MaxIterations(), scText.MaxIterations());
+  BOOST_REQUIRE_EQUAL(sc.MaxIterations(), scJson.MaxIterations());
   BOOST_REQUIRE_EQUAL(sc.MaxIterations(), scBinary.MaxIterations());
 
   BOOST_REQUIRE_CLOSE(sc.ObjTolerance(), scXml.ObjTolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.ObjTolerance(), scText.ObjTolerance(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.ObjTolerance(), scJson.ObjTolerance(), 1e-5);
   BOOST_REQUIRE_CLOSE(sc.ObjTolerance(), scBinary.ObjTolerance(), 1e-5);
 
   BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scXml.NewtonTolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scText.NewtonTolerance(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scJson.NewtonTolerance(), 1e-5);
   BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scBinary.NewtonTolerance(), 1e-5);
 }
 

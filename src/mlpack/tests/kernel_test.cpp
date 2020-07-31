@@ -302,14 +302,14 @@ BOOST_AUTO_TEST_CASE(GaussianKernelTest)
 BOOST_AUTO_TEST_CASE(GaussianKernelSerializationTest)
 {
   GaussianKernel gk(0.5);
-  GaussianKernel xmlGk(1.5), textGk, binaryGk(15.0);
+  GaussianKernel xmlGk(1.5), jsonGk, binaryGk(15.0);
 
   // Serialize the kernels.
-  SerializeObjectAll(gk, xmlGk, textGk, binaryGk);
+  SerializeObjectAll(gk, xmlGk, jsonGk, binaryGk);
 
   BOOST_REQUIRE_CLOSE(gk.Bandwidth(), 0.5, 1e-5);
   BOOST_REQUIRE_CLOSE(xmlGk.Bandwidth(), 0.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(textGk.Bandwidth(), 0.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(jsonGk.Bandwidth(), 0.5, 1e-5);
   BOOST_REQUIRE_CLOSE(binaryGk.Bandwidth(), 0.5, 1e-5);
 }
 

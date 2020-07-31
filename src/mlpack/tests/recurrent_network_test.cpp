@@ -1031,17 +1031,17 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   model.Train(input, labels, opt);
 
   // Serialize the network.
-  RNN<> xmlModel(1), textModel(3), binaryModel(5);
-  SerializeObjectAll(model, xmlModel, textModel, binaryModel);
+  RNN<> xmlModel(1), jsonModel(3), binaryModel(5);
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
   // Take predictions, check the output.
-  arma::cube prediction, xmlPrediction, textPrediction, binaryPrediction;
+  arma::cube prediction, xmlPrediction, jsonPrediction, binaryPrediction;
   model.Predict(input, prediction);
   xmlModel.Predict(input, xmlPrediction);
-  textModel.Predict(input, textPrediction);
+  jsonModel.Predict(input, jsonPrediction);
   binaryModel.Predict(input, binaryPrediction);
 
-  CheckMatrices(prediction, xmlPrediction, textPrediction, binaryPrediction);
+  CheckMatrices(prediction, xmlPrediction, jsonPrediction, binaryPrediction);
 }
 
 /**

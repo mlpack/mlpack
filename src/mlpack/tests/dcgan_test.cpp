@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   dcgan.Predict(noise, orgPredictions);
 
   GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
-      std::function<double()>, DCGAN> dcganText(generator, discriminator,
+      std::function<double()>, DCGAN> dcganJson(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
@@ -177,17 +177,17 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
-  SerializeObjectAll(dcgan, dcganXml, dcganText, dcganBinary);
+  SerializeObjectAll(dcgan, dcganXml, dcganJson, dcganBinary);
 
-  arma::mat predictions, xmlPredictions, textPredictions, binaryPredictions;
+  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
   dcgan.Predict(noise, predictions);
   dcganXml.Predict(noise, xmlPredictions);
-  dcganText.Predict(noise, textPredictions);
+  dcganJson.Predict(noise, jsonPredictions);
   dcganBinary.Predict(noise, binaryPredictions);
 
   CheckMatrices(orgPredictions, predictions);
   CheckMatrices(orgPredictions, xmlPredictions);
-  CheckMatrices(orgPredictions, textPredictions);
+  CheckMatrices(orgPredictions, jsonPredictions);
   CheckMatrices(orgPredictions, binaryPredictions);
 }
 

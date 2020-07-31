@@ -1024,10 +1024,10 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionTest)
   std::vector<arma::vec> probVector = std::vector<arma::vec>(1, prob);
   DiscreteDistribution t(probVector);
 
-  DiscreteDistribution xmlT, textT, binaryT;
+  DiscreteDistribution xmlT, jsonT, binaryT;
 
   // Load and save with all serializers.
-  SerializeObjectAll(t, xmlT, textT, binaryT);
+  SerializeObjectAll(t, xmlT, jsonT, binaryT);
 
   for (size_t i = 0; i < 12; ++i)
   {
@@ -1037,13 +1037,13 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionTest)
     if (prob == 0.0)
     {
       BOOST_REQUIRE_SMALL(xmlT.Probability(obs), 1e-8);
-      BOOST_REQUIRE_SMALL(textT.Probability(obs), 1e-8);
+      BOOST_REQUIRE_SMALL(jsonT.Probability(obs), 1e-8);
       BOOST_REQUIRE_SMALL(binaryT.Probability(obs), 1e-8);
     }
     else
     {
       BOOST_REQUIRE_CLOSE(prob, xmlT.Probability(obs), 1e-8);
-      BOOST_REQUIRE_CLOSE(prob, textT.Probability(obs), 1e-8);
+      BOOST_REQUIRE_CLOSE(prob, jsonT.Probability(obs), 1e-8);
       BOOST_REQUIRE_CLOSE(prob, binaryT.Probability(obs), 1e-8);
     }
   }
@@ -1062,19 +1062,19 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTest)
   cov = (cov * cov.t());
 
   GaussianDistribution g(mean, cov);
-  GaussianDistribution xmlG, textG, binaryG;
+  GaussianDistribution xmlG, jsonG, binaryG;
 
-  SerializeObjectAll(g, xmlG, textG, binaryG);
+  SerializeObjectAll(g, xmlG, jsonG, binaryG);
 
   BOOST_REQUIRE_EQUAL(g.Dimensionality(), xmlG.Dimensionality());
-  BOOST_REQUIRE_EQUAL(g.Dimensionality(), textG.Dimensionality());
+  BOOST_REQUIRE_EQUAL(g.Dimensionality(), jsonG.Dimensionality());
   BOOST_REQUIRE_EQUAL(g.Dimensionality(), binaryG.Dimensionality());
 
   // First, check the means.
-  CheckMatrices(g.Mean(), xmlG.Mean(), textG.Mean(), binaryG.Mean());
+  CheckMatrices(g.Mean(), xmlG.Mean(), jsonG.Mean(), binaryG.Mean());
 
   // Now, check the covariance.
-  CheckMatrices(g.Covariance(), xmlG.Covariance(), textG.Covariance(),
+  CheckMatrices(g.Covariance(), xmlG.Covariance(), jsonG.Covariance(),
       binaryG.Covariance());
 
   // Lastly, run some observations through and make sure the probability is the
@@ -1089,14 +1089,14 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionTest)
     if (prob == 0.0)
     {
       BOOST_REQUIRE_SMALL(xmlG.Probability(randomObs.unsafe_col(i)), 1e-8);
-      BOOST_REQUIRE_SMALL(textG.Probability(randomObs.unsafe_col(i)), 1e-8);
+      BOOST_REQUIRE_SMALL(jsonG.Probability(randomObs.unsafe_col(i)), 1e-8);
       BOOST_REQUIRE_SMALL(binaryG.Probability(randomObs.unsafe_col(i)), 1e-8);
     }
     else
     {
       BOOST_REQUIRE_CLOSE(prob, xmlG.Probability(randomObs.unsafe_col(i)),
           1e-8);
-      BOOST_REQUIRE_CLOSE(prob, textG.Probability(randomObs.unsafe_col(i)),
+      BOOST_REQUIRE_CLOSE(prob, jsonG.Probability(randomObs.unsafe_col(i)),
           1e-8);
       BOOST_REQUIRE_CLOSE(prob, binaryG.Probability(randomObs.unsafe_col(i)),
           1e-8);
@@ -1113,15 +1113,15 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionTest)
   mean.randu();
 
   LaplaceDistribution l(mean, 2.5);
-  LaplaceDistribution xmlL, textL, binaryL;
+  LaplaceDistribution xmlL, jsonL, binaryL;
 
-  SerializeObjectAll(l, xmlL, textL, binaryL);
+  SerializeObjectAll(l, xmlL, jsonL, binaryL);
 
   BOOST_REQUIRE_CLOSE(l.Scale(), xmlL.Scale(), 1e-8);
-  BOOST_REQUIRE_CLOSE(l.Scale(), textL.Scale(), 1e-8);
+  BOOST_REQUIRE_CLOSE(l.Scale(), jsonL.Scale(), 1e-8);
   BOOST_REQUIRE_CLOSE(l.Scale(), binaryL.Scale(), 1e-8);
 
-  CheckMatrices(l.Mean(), xmlL.Mean(), textL.Mean(), binaryL.Mean());
+  CheckMatrices(l.Mean(), xmlL.Mean(), jsonL.Mean(), binaryL.Mean());
 }
 
 /**
@@ -1184,14 +1184,14 @@ BOOST_AUTO_TEST_CASE(MahalanobisDistanceTest)
   MahalanobisDistance<> d;
   d.Covariance().randu(50, 50);
 
-  MahalanobisDistance<> xmlD, textD, binaryD;
+  MahalanobisDistance<> xmlD, jsonD, binaryD;
 
-  SerializeObjectAll(d, xmlD, textD, binaryD);
+  SerializeObjectAll(d, xmlD, jsonD, binaryD);
 
   // Check the covariance matrices.
   CheckMatrices(d.Covariance(),
                 xmlD.Covariance(),
-                textD.Covariance(),
+                jsonD.Covariance(),
                 binaryD.Covariance());
 }
 
@@ -1207,38 +1207,38 @@ BOOST_AUTO_TEST_CASE(RegressionDistributionTest)
   responses.randn(800);
 
   RegressionDistribution rd(data, responses);
-  RegressionDistribution xmlRd, textRd, binaryRd;
+  RegressionDistribution xmlRd, jsonRd, binaryRd;
 
   // Okay, now save it and load it.
-  SerializeObjectAll(rd, xmlRd, textRd, binaryRd);
+  SerializeObjectAll(rd, xmlRd, jsonRd, binaryRd);
 
   // Check the gaussian distribution.
   CheckMatrices(rd.Err().Mean(),
                 xmlRd.Err().Mean(),
-                textRd.Err().Mean(),
+                jsonRd.Err().Mean(),
                 binaryRd.Err().Mean());
   CheckMatrices(rd.Err().Covariance(),
                 xmlRd.Err().Covariance(),
-                textRd.Err().Covariance(),
+                jsonRd.Err().Covariance(),
                 binaryRd.Err().Covariance());
 
   // Check the regression function.
   if (rd.Rf().Lambda() == 0.0)
   {
     BOOST_REQUIRE_SMALL(xmlRd.Rf().Lambda(), 1e-8);
-    BOOST_REQUIRE_SMALL(textRd.Rf().Lambda(), 1e-8);
+    BOOST_REQUIRE_SMALL(jsonRd.Rf().Lambda(), 1e-8);
     BOOST_REQUIRE_SMALL(binaryRd.Rf().Lambda(), 1e-8);
   }
   else
   {
     BOOST_REQUIRE_CLOSE(rd.Rf().Lambda(), xmlRd.Rf().Lambda(), 1e-8);
-    BOOST_REQUIRE_CLOSE(rd.Rf().Lambda(), textRd.Rf().Lambda(), 1e-8);
+    BOOST_REQUIRE_CLOSE(rd.Rf().Lambda(), jsonRd.Rf().Lambda(), 1e-8);
     BOOST_REQUIRE_CLOSE(rd.Rf().Lambda(), binaryRd.Rf().Lambda(), 1e-8);
   }
 
   CheckMatrices(rd.Rf().Parameters(),
                 xmlRd.Rf().Parameters(),
-                textRd.Rf().Parameters(),
+                jsonRd.Rf().Parameters(),
                 binaryRd.Rf().Parameters());
 }
 

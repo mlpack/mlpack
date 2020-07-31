@@ -134,34 +134,34 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   mat codes;
   lcc.Encode(Y, codes);
 
-  LocalCoordinateCoding lccXml(50, 0.1), lccText(12, 0.0), lccBinary(0, 0.0);
-  SerializeObjectAll(lcc, lccXml, lccText, lccBinary);
+  LocalCoordinateCoding lccXml(50, 0.1), lccJson(12, 0.0), lccBinary(0, 0.0);
+  SerializeObjectAll(lcc, lccXml, lccJson, lccBinary);
 
-  CheckMatrices(lcc.Dictionary(), lccXml.Dictionary(), lccText.Dictionary(),
+  CheckMatrices(lcc.Dictionary(), lccXml.Dictionary(), lccJson.Dictionary(),
       lccBinary.Dictionary());
 
-  mat xmlCodes, textCodes, binaryCodes;
+  mat xmlCodes, jsonCodes, binaryCodes;
   lccXml.Encode(Y, xmlCodes);
-  lccText.Encode(Y, textCodes);
+  lccJson.Encode(Y, jsonCodes);
   lccBinary.Encode(Y, binaryCodes);
 
-  CheckMatrices(codes, xmlCodes, textCodes, binaryCodes);
+  CheckMatrices(codes, xmlCodes, jsonCodes, binaryCodes);
 
   // Check the parameters, too.
   BOOST_REQUIRE_EQUAL(lcc.Atoms(), lccXml.Atoms());
-  BOOST_REQUIRE_EQUAL(lcc.Atoms(), lccText.Atoms());
+  BOOST_REQUIRE_EQUAL(lcc.Atoms(), lccJson.Atoms());
   BOOST_REQUIRE_EQUAL(lcc.Atoms(), lccBinary.Atoms());
 
   BOOST_REQUIRE_CLOSE(lcc.Tolerance(), lccXml.Tolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(lcc.Tolerance(), lccText.Tolerance(), 1e-5);
+  BOOST_REQUIRE_CLOSE(lcc.Tolerance(), lccJson.Tolerance(), 1e-5);
   BOOST_REQUIRE_CLOSE(lcc.Tolerance(), lccBinary.Tolerance(), 1e-5);
 
   BOOST_REQUIRE_CLOSE(lcc.Lambda(), lccXml.Lambda(), 1e-5);
-  BOOST_REQUIRE_CLOSE(lcc.Lambda(), lccText.Lambda(), 1e-5);
+  BOOST_REQUIRE_CLOSE(lcc.Lambda(), lccJson.Lambda(), 1e-5);
   BOOST_REQUIRE_CLOSE(lcc.Lambda(), lccBinary.Lambda(), 1e-5);
 
   BOOST_REQUIRE_EQUAL(lcc.MaxIterations(), lccXml.MaxIterations());
-  BOOST_REQUIRE_EQUAL(lcc.MaxIterations(), lccText.MaxIterations());
+  BOOST_REQUIRE_EQUAL(lcc.MaxIterations(), lccJson.MaxIterations());
   BOOST_REQUIRE_EQUAL(lcc.MaxIterations(), lccBinary.MaxIterations());
 }
 
