@@ -1,5 +1,5 @@
 /**
- * @file bayesian_linear_regression_impl.hpp
+ * @file methods/bayesian_linear_regression/bayesian_linear_regression_impl.hpp
  * @author Clement Mercier
  *
  * Implementation of templated BayesianLinearRegression functions.
