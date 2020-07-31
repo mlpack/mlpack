@@ -148,7 +148,7 @@ class BayesianLinearRegression
 
   /**
    * Compute the Root Mean Square Error between the predictions returned by the
-   * model and the true repsonses.
+   * model and the true responses.
    *
    * @param data Data points to predict
    * @param responses A vector of targets.
