@@ -139,7 +139,7 @@ class BayesianLinearRegression
    * currently-trained Bayesian Ridge estimator.
    *
    * @param points The data point to apply the model.
-   * @param predictions y, which will contained calculated values on completion.
+   * @param predictions Vector which will contain calculated values on completion.
    * @param std Standard deviations of the predictions.
    */
   void Predict(const arma::mat& points,
