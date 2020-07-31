@@ -1,5 +1,5 @@
 /**
- * @file bayesian_linear_regression.hpp
+ * @file methods/bayesian_linear_regression/bayesian_linear_regression.hpp
  * @author Clement Mercier
  *
  * Definition of the BayesianRidge class, which performs the
