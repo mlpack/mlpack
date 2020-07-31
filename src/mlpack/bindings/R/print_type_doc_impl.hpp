@@ -53,7 +53,7 @@ std::string PrintTypeDoc(
   // Not sure what it is...
   else
   {
-    throw std::invalid_argument("unknown parameter type " + data.cppType);
+    throw std::invalid_argument("Unknown parameter type '" + data.cppType + "'.");
   }
 }
 
@@ -75,7 +75,7 @@ std::string PrintTypeDoc(
   }
   else
   {
-    throw std::invalid_argument("unknown vector type " + data.cppType);
+    throw std::invalid_argument("Unknown vector type '" + data.cppType + "'.");
   }
 }
 
@@ -117,7 +117,7 @@ std::string PrintTypeDoc(
   }
   else
   {
-    throw std::invalid_argument("unknown matrix type " + data.cppType);
+    throw std::invalid_argument("Unknown matrix type '" + data.cppType + "'.");
   }
 }
 

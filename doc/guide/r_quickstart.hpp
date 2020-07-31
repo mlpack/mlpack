@@ -13,14 +13,16 @@ This quickstart guide is also available for @ref python_quickstart "Python"
 @ref cli_quickstart "the command-line", @ref julia_quickstart "Julia" and
 @ref go_quickstart "Go".
 
-@section r_quickstart_install Installing mlpack
+@section r_quickstart_install Installing mlpack binary package
 
 Installing the mlpack bindings for R is straightforward; you can just use
-cran mirror:
+CRAN mirror:
 
 @code{.R}
 install.packages('mlpack')
 @endcode
+
+@section r_quickstart_install Installing mlpack package from source
 
 Building the R bindings from scratch is a little more in-depth, though.  For
 information on that, follow the instructions on the @ref build page, and be sure
@@ -167,9 +169,7 @@ Recommendations for user 1:
 
 @section r_quickstart_nextsteps Next steps with mlpack
 
-Now that you have done some simple work with mlpack, you have seen how it can
-easily plug into a data science workflow in R.  A great thing to do next
-would be to look at more documentation for the R mlpack bindings:
+After working through this overview to `mlpack`'s R package, we hope you are inspired to use `mlpack`' in your data science workflow.  We recommend as part of your next steps to look at more documentation for the R mlpack bindings:
 
  - <a href="https://www.mlpack.org/doc/mlpack-git/r_documentation.html">R mlpack
    binding documentation</a>

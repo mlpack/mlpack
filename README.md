@@ -122,7 +122,7 @@ If you would like to build the Julia bindings, make sure that Julia >= 1.3.0 is
 installed.
 
 If you would like to build the Go bindings, make sure that Go >= 1.11.0 is
-installed with this package.
+installed with this package:
 
      gonum
 
