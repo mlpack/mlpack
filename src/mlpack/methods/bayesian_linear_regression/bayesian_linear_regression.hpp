@@ -146,13 +146,13 @@ class BayesianLinearRegression
                arma::rowvec& predictions,
                arma::rowvec& std) const;
 
-   /**
+  /**
    * Compute the Root Mean Square Error between the predictions returned by the
    * model and the true repsonses.
    *
    * @param data Data points to predict
    * @param responses A vector of targets.
-   * @return RMSE
+   * @return Root mean squared error.
    **/
   double RMSE(const arma::mat& data,
               const arma::rowvec& responses) const;
