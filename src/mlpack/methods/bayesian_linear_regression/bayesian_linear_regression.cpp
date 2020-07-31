@@ -1,5 +1,5 @@
 /**
- * @file bayesian_linear_regression.cpp
+ * @file methods/bayesian_linear_regression/bayesian_linear_regression.cpp
  * @author Clement Mercier 
  *
  * Implementation of Bayesian linear regression.
