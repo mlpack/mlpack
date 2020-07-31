@@ -70,7 +70,7 @@ class CategoricalDQN
     network.Add(new Linear<>(inputDim, h1));
     network.Add(new ReLULayer<>());
     if (isNoisy)
-    { 
+    {
       noisyLayerIndex.push_back(network.Model().size());
       network.Add(new NoisyLinear<>(h1, h2));
       network.Add(new ReLULayer<>());
@@ -119,7 +119,7 @@ class CategoricalDQN
     actionValue.set_size(q_atoms.n_rows / atomSize, q_atoms.n_cols);
     double vMin = 0, vMax = 200.0;
     arma::rowvec support = arma::linspace<arma::rowvec>(vMin, vMax, atomSize);
-    for(size_t i = 0; i < q_atoms.n_rows; i += atomSize)
+    for (size_t i = 0; i < q_atoms.n_rows; i += atomSize)
     {
       arma::mat activation = activations.rows(i, i + atomSize - 1);
       arma::mat input = q_atoms.rows(i, i + atomSize - 1);
@@ -140,7 +140,7 @@ class CategoricalDQN
     arma::mat q_atoms;
     network.Forward(state, q_atoms);
     activations.copy_size(q_atoms);
-    for(size_t i = 0; i < q_atoms.n_rows; i += atomSize)
+    for (size_t i = 0; i < q_atoms.n_rows; i += atomSize)
     {
       arma::mat activation = activations.rows(i, i + atomSize - 1);
       arma::mat input = q_atoms.rows(i, i + atomSize - 1);
@@ -163,7 +163,7 @@ class CategoricalDQN
    */
   void ResetNoise()
   {
-    for(size_t i = 0; i < noisyLayerIndex.size(); i++)
+    for (size_t i = 0; i < noisyLayerIndex.size(); i++)
     {
       boost::get<NoisyLinear<>*>
           (network.Model()[noisyLayerIndex[i]])->ResetNoise();
@@ -179,7 +179,7 @@ class CategoricalDQN
    * Perform the backward pass of the state in real batch mode.
    *
    * @param state The input state.
-   * @param lossGardients The loss gradients.
+   * @param lossGradients The loss gradients.
    * @param gradient The gradient.
    */
   void Backward(const arma::mat state,
@@ -187,7 +187,7 @@ class CategoricalDQN
                 arma::mat& gradient)
   {
     arma::mat activationGradients(arma::size(activations));
-    for(size_t i = 0; i < activations.n_rows; i += atomSize)
+    for (size_t i = 0; i < activations.n_rows; i += atomSize)
     {
       arma::mat activationGrad;
       arma::mat lossGrad = lossGradients.rows(i, i + atomSize - 1);
