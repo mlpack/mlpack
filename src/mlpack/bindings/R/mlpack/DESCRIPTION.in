@@ -10,7 +10,7 @@ Description: 'mlpack' is a fast, flexible machine learning library, written
 SystemRequirements: A C++11 compiler. Versions 4.8.*, 4.9.* or later of GCC
                     will be fine.
 License: GPL (>= 2)
-Depends: R (>= 3.5.0)
+Depends: R (>= 4.0.0)
 Imports: Rcpp (>= 0.12.12)
 LinkingTo: Rcpp,
            RcppArmadillo (>= @RcppArmadillo_Version@),

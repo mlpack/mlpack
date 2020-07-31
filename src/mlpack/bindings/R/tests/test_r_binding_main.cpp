@@ -118,7 +118,7 @@ static void mlpackMain()
   {
     arma::Col<size_t> out =
         move(IO::GetParam<arma::Col<size_t>>("ucol_in"));
-    out *= 2;
+    out += 1;
 
     IO::GetParam<arma::Col<size_t>>("ucol_out") = move(out);
   }
@@ -135,7 +135,7 @@ static void mlpackMain()
   {
     arma::Row<size_t> out =
         move(IO::GetParam<arma::Row<size_t>>("urow_in"));
-    out *= 2;
+    out += 1;
 
     IO::GetParam<arma::Row<size_t>>("urow_out") = move(out);
   }

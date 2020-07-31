@@ -19,6 +19,11 @@ option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 
+# Set minimum library version required by mlpack.
+set(ARMADILLO_VERSION "8.400.0")
+set(ENSMALLEN_VERSION "2.10.0")
+set(BOOST_VERSION "1.58")
+
 if (WIN32)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
@@ -278,12 +283,6 @@ endif()
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
-
-# Set minimum library version required by mlpack.
-set(ARMADILLO_VERSION "8.400.0")
-set(ENSMALLEN_VERSION "2.10.0")
-set(BOOST_VERSION "1.58")
-
 find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 
 # Include directories for the previous dependencies.

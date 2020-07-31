@@ -132,7 +132,7 @@ test_that("TestUCol", {
                            ucol_in=x)
 
   expect_identical(dim(output$ucol_out), as.integer(c(1, 100)))
-  expect_identical(output$ucol_out, 2 * x)
+  expect_identical(output$ucol_out, 1 + x)
 })
 
 # Test a row vector input parameter.
@@ -154,7 +154,7 @@ test_that("TestURow", {
                            urow_in=x)
 
   expect_identical(dim(output$urow_out), as.integer(c(100, 1)))
-  expect_identical(output$urow_out, 2 * x)
+  expect_identical(output$urow_out, 1 + x)
 })
 
 # Test that we can pass a matrix with all numeric features.

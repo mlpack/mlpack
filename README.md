@@ -126,7 +126,7 @@ installed with this package:
 
      gonum
 
-If you would like to build the R bindings, make sure that R >= 3.5 is
+If you would like to build the R bindings, make sure that R >= 4.0 is
 installed with these R packages.
 
      Rcpp >= 0.12.12
