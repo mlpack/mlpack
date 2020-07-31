@@ -18,7 +18,7 @@ using namespace mlpack::regression;
 
 BayesianLinearRegression::BayesianLinearRegression(const bool centerData,
                                                    const bool scaleData,
-                                                   const int nIterMax,
+                                                   const size_t nIterMax,
                                                    const double tol) :
   centerData(centerData),
   scaleData(scaleData),
