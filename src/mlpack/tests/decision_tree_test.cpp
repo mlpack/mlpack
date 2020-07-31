@@ -35,8 +35,10 @@ TEST_CASE("GiniGainPerfectTest", "[DecisionTreeTest]")
 
   // Test that it's perfect regardless of number of classes.
   for (size_t c = 1; c < 10; ++c)
+  {
     REQUIRE(GiniGain::Evaluate<false>(labels, c, weights) ==
-        Approx(0.0).margin(1e-7));
+        Approx(0.0).margin(1e-5));
+  }
 }
 
 /**
@@ -74,12 +76,16 @@ TEST_CASE("GiniGainEmptyTest", "[DecisionTreeTest]")
   // Test across some numbers of classes.
   arma::Row<size_t> labels;
   for (size_t c = 1; c < 10; ++c)
+  {
     REQUIRE(GiniGain::Evaluate<false>(labels, c, weights) ==
-        Approx(0.0).margin(1e-7));
+        Approx(0.0).margin(1e-5));
+  }
 
   for (size_t c = 1; c < 10; ++c)
+  {
     REQUIRE(GiniGain::Evaluate<true>(labels, c, weights) ==
-        Approx(0.0).margin(1e-7));
+        Approx(0.0).margin(1e-5));
+  }
 }
 
 /**
@@ -202,9 +208,9 @@ TEST_CASE("InformationGainEmptyTest", "[DecisionTreeTest]")
   for (size_t c = 1; c < 10; ++c)
   {
     REQUIRE(InformationGain::Evaluate<false>(labels, c, weights) ==
-        Approx(0.0).margin(1e-7));
+        Approx(0.0).margin(1e-5));
     REQUIRE(InformationGain::Evaluate<true>(labels, c, weights) ==
-        Approx(0.0).margin(1e-7));
+        Approx(0.0).margin(1e-5));
   }
 }
 
@@ -558,7 +564,7 @@ TEST_CASE("PerfectTrainingSet", "[DecisionTreeTest]")
       if (labels[i] == j)
         REQUIRE(probabilities[j] == Approx(1.0).epsilon(1e-7));
       else
-        REQUIRE(probabilities[j] == Approx(0.0).margin(1e-7));
+        REQUIRE(probabilities[j] == Approx(0.0).margin(1e-5));
     }
   }
 }
@@ -601,7 +607,7 @@ TEST_CASE("PerfectTrainingSetWithWeight", "[DecisionTreeTest]")
       if (labels[i] == j)
         REQUIRE(probabilities[j] == Approx(1.0).epsilon(1e-7));
       else
-        REQUIRE(probabilities[j] == Approx(0.0).margin(1e-7));
+        REQUIRE(probabilities[j] == Approx(0.0).margin(1e-5));
     }
   }
 }
@@ -1034,8 +1040,8 @@ TEST_CASE("RandomDimensionSelectRandomTest", "[DecisionTreeTest]")
   r4.Dimensions() = 100000;
 
   REQUIRE(((r1.Begin() != r2.Begin()) ||
-          (r1.Begin() != r3.Begin()) ||
-          (r1.Begin() != r4.Begin())));
+           (r1.Begin() != r3.Begin()) ||
+           (r1.Begin() != r4.Begin())));
 }
 
 /**
