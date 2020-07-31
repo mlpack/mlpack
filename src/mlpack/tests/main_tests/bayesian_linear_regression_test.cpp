@@ -2,7 +2,7 @@
  * @file bayesian_linear_regression_test.cpp
  * @author Clement Mercier
  *
- * Test mlpackMain() of pca_main.cpp.
+ * Test mlpackMain() of bayesian_linear_regression_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
