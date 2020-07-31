@@ -108,7 +108,7 @@ class BayesianLinearRegression
    */
   BayesianLinearRegression(const bool centerData = true,
                            const bool scaleData = false,
-                           const int nIterMax = 50,
+                           const size_t nIterMax = 50,
                            const double tol = 1e-4);
 
   /**
