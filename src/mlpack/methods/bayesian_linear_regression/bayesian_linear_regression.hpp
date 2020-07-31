@@ -223,7 +223,7 @@ class BayesianLinearRegression
   bool scaleData;
 
   //! Maximum number of iterations for convergency.
-  int nIterMax;
+  size_t nIterMax;
 
   //! Level from which the solution is considered sufficientlly stable.
   double tol;
