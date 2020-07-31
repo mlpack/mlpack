@@ -1,5 +1,5 @@
 /**
- * @file bayesian_linear_regression_main.cpp
+ * @file methods/bayesian_linear_regression/bayesian_linear_regression_main.cpp
  * @author Clement Mercier
  *
  * Executable for BayesianLinearRegression.
