@@ -117,7 +117,7 @@ class BayesianLinearRegression
    * 
    * @param data Column-major input data, dim(P, N).
    * @param responses A vector of targets, dim(N).
-   * @return score. Root Mean Square Error.
+   * @return Root mean squared error.
    */
   double Train(const arma::mat& data,
                const arma::rowvec& responses);
