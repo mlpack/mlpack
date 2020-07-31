@@ -467,14 +467,16 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNStepPrioritizedDQN)
   BOOST_REQUIRE(converged);
 }
 
-//! Simple test for prediction of action in SAC.
-BOOST_AUTO_TEST_CASE(FeedForwardSACCartPole)
+//! Test SAC on Pendulum task.
+BOOST_AUTO_TEST_CASE(PendulumWithSAC)
 {
   // Set up the policy and replay method.
   RandomReplay<Pendulum> replayMethod(32, 10000);
 
   TrainingConfig config;
   config.StepSize() = 0.001;
+  config.TargetNetworkSyncInterval() = 1;
+  config.UpdateInterval() = 3;
 
   FFN<EmptyLoss<>, GaussianInitialization>
       policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
@@ -484,7 +486,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardSACCartPole)
   policyNetwork.Add(new TanHLayer<>());
 
   FFN<EmptyLoss<>, GaussianInitialization>
-      qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001));
+      qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
   qNetwork.Add(new Linear<>(2+1, 128));
   qNetwork.Add(new ReLULayer<>());
   qNetwork.Add(new Linear<>(128, 1));
@@ -493,7 +495,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardSACCartPole)
   SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
       agent(config, qNetwork, policyNetwork, replayMethod);
 
-  bool converged = testAgent<decltype(agent)>(agent, -1250, 1000);
+  bool converged = testAgent<decltype(agent)>(agent, -1000, 1000);
   BOOST_REQUIRE(converged);
 }
 

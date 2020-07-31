@@ -55,9 +55,12 @@ class SAC
    * object, be sure to use std::move to avoid unnecessary copy.
    *
    * @param config Hyper-parameters for training.
-   * @param network The network to compute action value.
+   * @param learningQ1Network The network to compute action value.
+   * @param policyNetwork The network to produce an action given a state.
    * @param replayMethod Experience replay method.
-   * @param updater How to apply gradients when training.
+   * @param qNetworkUpdater How to apply gradients to Q network when training.
+   * @param policyNetworkUpdater How to apply gradients to policy network
+   *        when training.
    * @param environment Reinforcement learning task.
    */
   SAC(TrainingConfig& config,

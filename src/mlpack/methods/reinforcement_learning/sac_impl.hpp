@@ -227,10 +227,12 @@ void SAC<
     learningQ1Network.Forward(input, q);
     learningQ1Network.Backward(input, -1, gradQ);
 
-    //! TODO: Check for the correct location of pi grad.
-    size_t hidden1 = boost::get<mlpack::ann::Linear<> *>(learningQ1Network.Model()[0])->OutputSize();
-    arma::colvec gradQBias = gradQ(input.n_rows * hidden1, 0, arma::size(hidden1, 1));
-    arma::rowvec weightLastLayer = learningQ1Network.Parameters().rows(0, hidden1-1).t();
+    size_t hidden1 = boost::get<mlpack::ann::Linear<> *>
+        (learningQ1Network.Model()[0])->OutputSize();
+    arma::colvec gradQBias = gradQ(input.n_rows * hidden1, 0,
+        arma::size(hidden1, 1));
+    arma::rowvec weightLastLayer = learningQ1Network.Parameters().
+        rows(0, hidden1-1).t();
     arma::mat gradPolicy = weightLastLayer * gradQBias;
     policyNetwork.Backward(singleState, gradPolicy, grad);
     if (i == 0)
@@ -333,7 +335,6 @@ double SAC<
     for(size_t i = 0; i < config.UpdateInterval(); i++)
       Update();
   }
-
   return totalReturn;
 }
 
