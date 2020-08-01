@@ -19,8 +19,8 @@ static const std::string testName = "ApproxK-FurthestNeighbors";
 #include "test_helper.hpp"
 #include <mlpack/methods/approx_kfn/approx_kfn_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -41,12 +41,11 @@ struct ApproxKFNTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(ApproxKFNMainTest, ApproxKFNTestFixture);
-
 /**
  * Check that we can't specify both a reference set and an input model.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNRefModelTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNRefModelTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -61,14 +60,15 @@ BOOST_AUTO_TEST_CASE(ApproxKFNRefModelTest)
 
   // Input pre-trained model.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that we can't specify an invalid k.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNInvalidKTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNInvalidKTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(ApproxKFNInvalidKTest)
   SetInputParam("k", (int) 81); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -86,7 +86,8 @@ BOOST_AUTO_TEST_CASE(ApproxKFNInvalidKTest)
  * Make sure that the dimensions of neighbors and distances is correct given a
  * value of k.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNOutputDimensionTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNOutputDimensionTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -98,18 +99,19 @@ BOOST_AUTO_TEST_CASE(ApproxKFNOutputDimensionTest)
   mlpackMain();
 
   // Check the neighbors matrix has 10 points for each of the 80 input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols, 80);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows == 10);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols == 80);
 
   // Check the distances matrix has 10 points for each of the 80 input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_cols, 80);
+  REQUIRE(IO::GetParam<arma::mat>("distances").n_rows == 10);
+  REQUIRE(IO::GetParam<arma::mat>("distances").n_cols == 80);
 }
 
 /**
  * Check that we can't specify an invalid algorithm.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNInvalidAlgorithmTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNInvalidAlgorithmTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -118,14 +120,15 @@ BOOST_AUTO_TEST_CASE(ApproxKFNInvalidAlgorithmTest)
   SetInputParam("algorithm", (string) "any_algo"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that we can't specify num_projections as zero.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNZeroNumProjTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNZeroNumProjTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -135,14 +138,15 @@ BOOST_AUTO_TEST_CASE(ApproxKFNZeroNumProjTest)
   SetInputParam("num_projections", (int) 0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that we can't specify num_projections as negative.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNNegativeNumProjTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNegativeNumProjTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -152,14 +156,15 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNegativeNumProjTest)
   SetInputParam("num_projections", (int) -5); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that we can't specify num_tables as zero.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNZeroNumTablesTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNZeroNumTablesTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -169,14 +174,15 @@ BOOST_AUTO_TEST_CASE(ApproxKFNZeroNumTablesTest)
   SetInputParam("num_tables", (int) 0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that we can't specify num_tables as negative.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNNegativeNumTablesTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNegativeNumTablesTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -186,14 +192,15 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNegativeNumTablesTest)
   SetInputParam("num_tables", (int) -5); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that a saved model can be loaded and used again correctly.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNModelReuseTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNModelReuseTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -236,7 +243,8 @@ BOOST_AUTO_TEST_CASE(ApproxKFNModelReuseTest)
 /**
  * Ensuring that num_tables has some effects on output.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNNumTablesChangeTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNumTablesChangeTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -285,7 +293,8 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumTablesChangeTest)
 /**
  * Ensuring that num_projections has some effects on output.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNumProjectionsChangeTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -333,7 +342,8 @@ BOOST_AUTO_TEST_CASE(ApproxKFNNumProjectionsChangeTest)
 /**
  * Make sure that the dimensions of the exact distances matrix are correct.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNExactDistDimensionTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNExactDistDimensionTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -351,15 +361,16 @@ BOOST_AUTO_TEST_CASE(ApproxKFNExactDistDimensionTest)
   SetInputParam("exact_distances", std::move(exactDistances));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
- * Make sure that the two strategie (Drusilla Select and QDAFN) output different
- * results.
+ * Make sure that the two strategie (Drusilla Select and QDAFN) output
+ * different results.
  */
-BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
+TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNDifferentAlgoTest",
+                 "[ApproxKFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(6, 100); // 100 points in 6 dimensions.
@@ -402,5 +413,3 @@ BOOST_AUTO_TEST_CASE(ApproxKFNDifferentAlgoTest)
   CheckMatricesNotEqual(firstOutputDistances, secondOutputDistances);
   CheckMatricesNotEqual(firstOutputNeighbors, secondOutputNeighbors);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -13,12 +13,13 @@
 #include <boost/test/unit_test.hpp>
 #include <mlpack/core/metrics/iou_metric.hpp>
 #include <mlpack/core/metrics/non_maximal_supression.hpp>
+#include <mlpack/core/metrics/bleu.hpp>
 #include "test_tools.hpp"
 
 using namespace std;
 using namespace mlpack::metric;
 
-BOOST_AUTO_TEST_SUITE(LMetricTest);
+BOOST_AUTO_TEST_SUITE(MetricTest);
 
 /**
  * Simple test for L-1 metric.
@@ -299,6 +300,64 @@ BOOST_AUTO_TEST_CASE(NMSMetricTest)
   BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_cols, 2);
   BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_rows, 4);
   CheckMatrices(desiredBoundingBox, selectedBoundingBox);
+}
+
+/**
+ *
+ */
+BOOST_AUTO_TEST_CASE(BLEUScoreTest)
+{
+  typedef typename std::vector<std::string> WordVector;
+  std::vector<std::vector<WordVector>> referenceCorpus
+      = {{{"this", "is", "my", "house"},
+          {"this", "is", "my", "car"},
+          {"this", "is", "my", "bike"}},
+
+         {{"this", "is", "my", "table"},
+          {"this", "is", "my", "chair"},
+          {"this", "is", "my", "laptop"}},
+
+         {{"this", "is", "my", "table"},
+          {"this", "is", "your", "car"},
+          {"this", "is", "my", "notebook"}}};
+
+  std::vector<WordVector> translationCorpus
+      = {{"this", "is", "my", "book"},
+         {"this", "is", "your", "car"},
+         {"this", "is", "my", "watch"}};
+
+  BLEU<> bleu(4);
+
+  //! We are not using smoothing function here.
+  bleu.Evaluate(referenceCorpus, translationCorpus);
+  BOOST_REQUIRE_CLOSE_FRACTION(bleu.BLEUScore(), 0.0, 1e-05);
+  BOOST_REQUIRE_EQUAL(bleu.BrevityPenalty(), 1.0);
+  BOOST_REQUIRE_EQUAL(bleu.Ratio(), 1.0);
+  BOOST_REQUIRE_EQUAL(bleu.TranslationLength(), 12);
+  BOOST_REQUIRE_EQUAL(bleu.ReferenceLength(), 12);
+
+  std::vector<float> expectedPrecision = {0.666666f, 0.5555555f,
+      0.3333333f, 0.0f};
+  for (size_t i = 0; i < bleu.Precisions().size(); ++i)
+  {
+    BOOST_REQUIRE_CLOSE_FRACTION(bleu.Precisions()[i],
+        expectedPrecision[i], 1e-04);
+  }
+
+  //! We will use smoothing function here by setting smooth to true.
+  bleu.Evaluate(referenceCorpus, translationCorpus, true);
+  BOOST_REQUIRE_CLOSE_FRACTION(bleu.BLEUScore(), 0.459307, 1e-05);
+  BOOST_REQUIRE_EQUAL(bleu.BrevityPenalty(), 1.0);
+  BOOST_REQUIRE_EQUAL(bleu.Ratio(), 1.0);
+  BOOST_REQUIRE_EQUAL(bleu.TranslationLength(), 12);
+  BOOST_REQUIRE_EQUAL(bleu.ReferenceLength(), 12);
+
+  expectedPrecision = {0.692308f, 0.6f, 0.428571f, 0.25f};
+  for (size_t i = 0; i < bleu.Precisions().size(); ++i)
+  {
+    BOOST_REQUIRE_CLOSE_FRACTION(bleu.Precisions()[i],
+        expectedPrecision[i], 1e-04);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

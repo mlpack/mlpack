@@ -1,19 +1,14 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  akfn_test.cpp
-  aknn_test.cpp
   ann_dist_test.cpp
   ann_layer_test.cpp
   ann_regularizer_test.cpp
   ann_test_tools.hpp
   ann_visitor_test.cpp
   arma_extend_test.cpp
-  armadillo_svd_test.cpp
   async_learning_test.cpp
   augmented_rnns_tasks_test.cpp
-  bias_svd_test.cpp
   binarize_test.cpp
-  block_krylov_svd_test.cpp
   callback_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
@@ -43,9 +38,7 @@ add_executable(mlpack_test
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
-  kfn_test.cpp
   kmeans_test.cpp
-  knn_test.cpp
   krann_search_test.cpp
   ksinit_test.cpp
   lars_test.cpp
@@ -53,7 +46,6 @@ add_executable(mlpack_test
   lin_alg_test.cpp
   linear_svm_test.cpp
   lmnn_test.cpp
-  load_save_test.cpp
   local_coordinate_coding_test.cpp
   log_test.cpp
   logistic_regression_test.cpp
@@ -77,16 +69,13 @@ add_executable(mlpack_test
   python_binding_test.cpp
   q_learning_test.cpp
   qdafn_test.cpp
-  quic_svd_test.cpp
   radical_test.cpp
   random_forest_test.cpp
   random_test.cpp
-  randomized_svd_test.cpp
   range_search_test.cpp
   rbm_network_test.cpp
   rectangle_tree_test.cpp
   recurrent_network_test.cpp
-  regularized_svd_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
   scaling_test.cpp
@@ -101,9 +90,6 @@ add_executable(mlpack_test
   split_data_test.cpp
   string_encoding_test.cpp
   sumtree_test.cpp
-  svd_batch_test.cpp
-  svd_incremental_test.cpp
-  svdplusplus_test.cpp
   termination_policy_test.cpp
   test_function_tools.hpp
   test_tools.hpp
@@ -114,7 +100,6 @@ add_executable(mlpack_test
   union_find_test.cpp
   vantage_point_tree_test.cpp
   wgan_test.cpp
-  main_tests/approx_kfn_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/decision_stump_test.cpp
@@ -133,9 +118,7 @@ add_executable(mlpack_test
   main_tests/hoeffding_tree_test.cpp
   main_tests/kde_test.cpp
   main_tests/kernel_pca_test.cpp
-  main_tests/kfn_test.cpp
   main_tests/kmeans_test.cpp
-  main_tests/knn_test.cpp
   main_tests/krann_test.cpp
   main_tests/linear_svm_test.cpp
   main_tests/lmnn_test.cpp
@@ -162,17 +145,34 @@ add_executable(mlpack_test
 add_executable(mlpack_catch_test
   activation_functions_test.cpp
   adaboost_test.cpp
+  akfn_test.cpp
+  aknn_test.cpp
+  armadillo_svd_test.cpp
+  bias_svd_test.cpp
+  block_krylov_svd_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
   image_load_test.cpp
+  kfn_test.cpp
+  knn_test.cpp
   linear_regression_test.cpp
+  load_save_test.cpp
   main.cpp
   serialization_catch.cpp
   serialization_catch.hpp
   softmax_regression_test.cpp
+  quic_svd_test.cpp
+  randomized_svd_test.cpp
+  regularized_svd_test.cpp
+  svd_batch_test.cpp
+  svd_incremental_test.cpp
+  svdplusplus_test.cpp
   test_catch_tools.hpp
   main_tests/adaboost_test.cpp
+  main_tests/approx_kfn_test.cpp
   main_tests/image_converter_test.cpp
+  main_tests/kfn_test.cpp
+  main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/test_helper.hpp
@@ -225,8 +225,6 @@ add_custom_command(TARGET mlpack_test
 set(parallel_tests
   "ANNLayerTest;"
   "AsyncLearningTest;"
-  "SVDIncrementalTest;"
-  "SVDBatchTest;"
   "LocalCoordinateCodingTest;"
   "FeedForwardNetworkTest;"
   "RecurrentNetworkTest;"
