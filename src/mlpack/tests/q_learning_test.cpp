@@ -465,6 +465,38 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNStepPrioritizedDQN)
   BOOST_REQUIRE(converged);
 }
 
+//! Test Categorical DQN in Cart Pole task.
+BOOST_AUTO_TEST_CASE(CartPoleWithCategoricalDQN)
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations.
+  bool converged = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+
+    // Set up the policy and replay method.
+    GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<CartPole> replayMethod(32, 10000);
+
+    TrainingConfig config;
+    config.IsCategorical() = true;
+    config.ExplorationSteps() = 32;
+
+    // Set up the CategoricalDQN network.
+    CategoricalDQN<> network(4, 64, 64, 2);
+
+    // Set up DQN agent.
+    QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, 60, 500, 20);
+    if (converged)
+      break;
+  }
+  BOOST_REQUIRE(converged);
+}
+
 //! Test Categorical DQN in Acrobot task.
 BOOST_AUTO_TEST_CASE(AcrobotWithCategoricalDQN)
 {
@@ -497,7 +529,7 @@ BOOST_AUTO_TEST_CASE(AcrobotWithCategoricalDQN)
     QLearning<Acrobot, decltype(network), AdamUpdate, decltype(policy)>
         agent(config, network, policy, replayMethod);
 
-    converged = testAgent<decltype(agent)>(agent, -380, 1000);
+    converged = testAgent<decltype(agent)>(agent, -380, 1000, 20);
     if (converged)
       break;
   }
