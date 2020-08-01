@@ -57,19 +57,16 @@ SAC<
   deterministic(false)
 {
   // Set up q-learning and policy networks.
-  learningQ2Network = learningQ1Network;
   targetQ1Network = learningQ1Network;
+  learningQ2Network = learningQ1Network;
   targetQ2Network = learningQ2Network;
-  if (learningQ1Network.Parameters().is_empty())
-    learningQ1Network.ResetParameters();
-  if (learningQ2Network.Parameters().is_empty())
-    learningQ2Network.ResetParameters();
-  if (targetQ1Network.Parameters().is_empty())
-    targetQ1Network.ResetParameters();
-  if (targetQ2Network.Parameters().is_empty())
-    targetQ2Network.ResetParameters();
-  if (policyNetwork.Parameters().is_empty())
-    policyNetwork.ResetParameters();
+
+  // Reset all the networks.
+  learningQ1Network.ResetParameters();
+  targetQ1Network.ResetParameters();
+  policyNetwork.ResetParameters();
+  learningQ2Network.ResetParameters();
+  targetQ2Network.ResetParameters();
 
   #if ENS_VERSION_MAJOR == 1
   this->qNetworkUpdater.Initialize(learningQ1Network.Parameters().n_rows,
@@ -91,7 +88,9 @@ SAC<
                                    policyNetwork.Parameters().n_cols);
   #endif
 
+  // Copy over the learning networks to their respective target networks.
   targetQ1Network.Parameters() = learningQ1Network.Parameters();
+  targetQ2Network.Parameters() = learningQ2Network.Parameters();
 }
 
 template <
