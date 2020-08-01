@@ -4078,4 +4078,41 @@ BOOST_AUTO_TEST_CASE(GradientBatchNormWithMiniBatchesTest)
   BOOST_REQUIRE(pass);
 }
 
+BOOST_AUTO_TEST_CASE(ConvolutionLayerTestCase)
+{
+  arma::mat input, output;
+
+  // The input test matrix is of the form 3 x 2 x 4 x 1 where
+  // number of images are 3 and number of feature maps are 2.
+  input = arma::mat(8, 3);
+  input << 1 << 446 << 42 << arma::endr
+      << 2 << 16 << 63 << arma::endr
+      << 3 << 13 << 63 << arma::endr
+      << 4 << 21 << 21 << arma::endr
+      << 1 << 13 << 11 << arma::endr
+      << 32 << 45 << 42 << arma::endr
+      << 22 << 16 << 63 << arma::endr
+      << 32 << 13 << 42 << arma::endr;
+
+  Convolution<> layer(2, 4, 1, 1, 1, 1, 0, 0, 4, 1);
+  layer.Reset();
+
+  // Set weights to 1.0 and bias to 0.0.
+  layer.Parameters().zeros();
+  arma::mat weight(2 * 4, 1);
+  weight.fill(1.0);
+  layer.Parameters().submat(arma::span(0, 2 * 4 - 1), arma::span()) = weight;
+  layer.Forward(input, output);
+
+  // Value calculated using torch.nn.Conv2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 4108);
+
+  // Set bias to one.
+  layer.Parameters().fill(1.0);
+  layer.Forward(input, output);
+
+  // Value calculated using torch.nn.Conv2d().
+  BOOST_REQUIRE_EQUAL(arma::accu(output), 4156);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
