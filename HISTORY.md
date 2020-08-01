@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Categorical DQN to q_networks (#2454).
+
   * Added N-step DQN to q_networks (#2461).
 
   * Add Silhoutte Score metric and Pairwise Distances (#2406).
