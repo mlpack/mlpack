@@ -171,3 +171,60 @@ TEST_CASE("ConcentricCircleDataset", "[KernelSVMTest]")
 
   REQUIRE(success == true);
 }
+
+/**
+ * Test training of kernel svm on concentric circle dataset.
+ */
+TEST_CASE("MultiClassClassification", "[KernelSVMTest]")
+{
+  // The dataset, which will have three concentric rings in three dimensions.
+  arma::mat dataset;
+
+  // Now, there are 500 points centered at the origin with unit variance.
+  dataset = arma::randn(3, 750);
+  dataset *= 0.05;
+  arma::Row<size_t> labels = arma::zeros<
+                             arma::Row<size_t>>(dataset.n_cols);
+
+  // Take the second 250 points and spread them away from the origin.
+  for (size_t i = 250; i < 500; ++i)
+  {
+    // Push the point away from the origin by 2.
+    const double pointNorm = norm(dataset.col(i), 2);
+
+    dataset(0, i) += 2.0 * (dataset(0, i) / pointNorm);
+    dataset(1, i) += 2.0 * (dataset(1, i) / pointNorm);
+    dataset(2, i) += 2.0 * (dataset(2, i) / pointNorm);
+    labels[i] = 1;
+  }
+
+  // Take the third 500 points and spread them away from the origin.
+  for (size_t i = 500; i < 750; ++i)
+  {
+    // Push the point away from the origin by 5.
+    const double pointNorm = norm(dataset.col(i), 2);
+
+    dataset(0, i) += 5.0 * (dataset(0, i) / pointNorm);
+    dataset(1, i) += 5.0 * (dataset(1, i) / pointNorm);
+    dataset(2, i) += 5.0 * (dataset(2, i) / pointNorm);
+    labels[i] = 2;
+  }
+
+  bool success = false;
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    // Now train a svm object on it.
+    KernelSVM<arma::mat, kernel::GaussianKernel> svm(
+        dataset, labels, 1.0, true, 3, 10);
+
+    // Ensure that the error is close to zero.
+    const double testAcc = svm.ComputeAccuracy(dataset, labels);
+    if (testAcc >= 0.95)
+    {
+      success = true;
+      break;
+    }
+  }
+
+  REQUIRE(success == true);
+}
