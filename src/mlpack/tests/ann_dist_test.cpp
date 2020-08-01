@@ -141,23 +141,23 @@ TEST_CASE("NormalDistributionTest", "[ANNDistTest]")
   normalDist.LogProbability(x, prob);
 
   // Testing output of log probability for some random mu, sigma and x.
-  REQUIRE(prob[0] == Approx( 1.2586464).epsilon(1e-5));
-  REQUIRE(prob[1] == Approx( 0.8751131).epsilon(1e-5));
-  REQUIRE(prob[2] == Approx( -0.30579138).epsilon(1e-5));
-  REQUIRE(prob[3] == Approx( -5.498411).epsilon(1e-5));
+  REQUIRE(prob[0] == Approx(1.2586464).epsilon(1e-5));
+  REQUIRE(prob[1] == Approx(0.8751131).epsilon(1e-5));
+  REQUIRE(prob[2] == Approx(-0.30579138).epsilon(1e-5));
+  REQUIRE(prob[3] == Approx(-5.498411).epsilon(1e-5));
 
   arma::vec dmu, dsigma;
   normalDist.ProbBackward(x, dmu, dsigma);
 
   // Testing output of dmu and dsigma for some random mu, sigma and x.
-  REQUIRE(dmu[0] == Approx( -17.603287).epsilon(1e-5));
-  REQUIRE(dsigma[0] == Approx( -26.40487).epsilon(1e-5));
-  REQUIRE(dmu[1] == Approx( -19.827663).epsilon(1e-5));
-  REQUIRE(dsigma[1] == Approx( -3.7852707).epsilon(1e-5));
-  REQUIRE(dmu[2] == Approx( 0.5892323).epsilon(1e-5));
-  REQUIRE(dsigma[2] == Approx( -1.2373875).epsilon(1e-5));
-  REQUIRE(dmu[3] == Approx( 0.061901994).epsilon(1e-5));
-  REQUIRE(dsigma[3] == Approx( 0.19751444).epsilon(1e-5));
+  REQUIRE(dmu[0] == Approx(-17.603287).epsilon(1e-5));
+  REQUIRE(dsigma[0] == Approx(-26.40487).epsilon(1e-5));
+  REQUIRE(dmu[1] == Approx(-19.827663).epsilon(1e-5));
+  REQUIRE(dsigma[1] == Approx(-3.7852707).epsilon(1e-5));
+  REQUIRE(dmu[2] == Approx(0.5892323).epsilon(1e-5));
+  REQUIRE(dsigma[2] == Approx(-1.2373875).epsilon(1e-5));
+  REQUIRE(dmu[3] == Approx(0.061901994).epsilon(1e-5));
+  REQUIRE(dsigma[3] == Approx(0.19751444).epsilon(1e-5));
 }
 
 /**

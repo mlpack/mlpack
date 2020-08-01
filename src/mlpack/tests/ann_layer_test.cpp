@@ -292,10 +292,12 @@ TEST_CASE("SimpleAlphaDropoutLayerTest", "[ANNLayerTest]")
   arma::mat output;
   module.Forward(input, output);
   // Check whether mean remains nearly same.
-  REQUIRE(arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))) <= 0.1);
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))) <=
+      0.1);
 
   // Check whether variance remains nearly same.
-  REQUIRE(arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))) <= 0.1);
+  REQUIRE(arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))) <=
+      0.1);
 
   // Test the Backward function when training phase.
   arma::mat delta;
@@ -1412,7 +1414,8 @@ TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
   const double sumModuleB = arma::accu(
       moduleB->Parameters().submat(
       100, 0, moduleB->Parameters().n_elem - 1, 0));
-  REQUIRE(sumModuleA + sumModuleB == Approx(arma::accu(output.col(0))).epsilon(1e-5));
+  REQUIRE(sumModuleA + sumModuleB ==
+      Approx(arma::accu(output.col(0))).epsilon(1e-5));
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
