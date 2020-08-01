@@ -26,7 +26,7 @@ Lookup<InputDataType, OutputDataType>::Lookup(
     vocabSize(vocabSize),
     embeddingSize(embeddingSize)
 {
-  weights.set_size(embeddingSize, vocabSize);
+  weights.set_size(vocabSize, embeddingSize);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -37,11 +37,11 @@ void Lookup<InputDataType, OutputDataType>::Forward(
   const size_t seqLength = input.n_rows;
   const size_t batchSize = input.n_cols;
 
-  output.set_size(embeddingSize * seqLength, batchSize);
+  output.set_size(seqLength * embeddingSize, batchSize);
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-    output.col(i) = arma::vectorise(weights.cols(
+    output.col(i) = arma::vectorise(weights.rows(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
   }
 }
@@ -67,14 +67,14 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
   const size_t batchSize = input.n_cols;
 
   arma::Cube<eT> errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(),
-      embeddingSize, seqLength, batchSize, false, false);
+      seqLength, embeddingSize, batchSize, false, false);
 
   gradient.set_size(arma::size(weights));
   gradient.zeros();
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-    gradient.cols(arma::conv_to<arma::uvec>::from(input.col(i)) - 1)
+    gradient.rows(arma::conv_to<arma::uvec>::from(input.col(i)) - 1)
         += errorTemp.slice(i);
   }
 }
@@ -90,7 +90,7 @@ void Lookup<InputDataType, OutputDataType>::serialize(
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
   if (Archive::is_loading::value)
-    weights.set_size(embeddingSize, vocabSize);
+    weights.set_size(vocabSize, embeddingSize);
 }
 
 } // namespace ann

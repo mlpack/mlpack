@@ -1674,7 +1674,7 @@ BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
   for (size_t i = 0; i < batchSize; ++i)
   {
     // The Lookup module uses index - 1 for the cols.
-    const double outputSum = arma::accu(module.Parameters().cols(
+    const double outputSum = arma::accu(module.Parameters().rows(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
     BOOST_REQUIRE_CLOSE(outputSum, arma::accu(output.col(i)), 1e-3);
@@ -1740,7 +1740,7 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
     const size_t batchSize = 4;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-5);
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-7);
 }
 
 /**
