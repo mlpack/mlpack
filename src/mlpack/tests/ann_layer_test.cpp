@@ -1740,7 +1740,7 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
     const size_t batchSize = 4;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-7);
+  BOOST_REQUIRE_LE(CheckGradient(function), 1e-5);
 }
 
 /**
