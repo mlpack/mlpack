@@ -477,20 +477,27 @@ BOOST_AUTO_TEST_CASE(CartPoleWithCategoricalDQN)
 
     // Set up the policy and replay method.
     GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
-    RandomReplay<CartPole> replayMethod(32, 10000);
+    RandomReplay<CartPole> replayMethod(32, 4000);
 
     TrainingConfig config;
     config.IsCategorical() = true;
     config.ExplorationSteps() = 32;
 
-    // Set up the CategoricalDQN network.
-    CategoricalDQN<> network(4, 64, 64, 2);
+    // Set up the module. Note that we use a custom network here.
+    FFN<EmptyLoss<>, GaussianInitialization> module(
+        EmptyLoss<>(), GaussianInitialization(0, 0.1));
+    module.Add<Linear<>>(4, 128);
+    module.Add<ReLULayer<>>();
+    module.Add<Linear<>>(128, 2 * 51);
+
+    // Adding the module to the CategoricalDQN network.
+    CategoricalDQN<> network(module);
 
     // Set up DQN agent.
     QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
         agent(config, network, policy, replayMethod);
 
-    converged = testAgent<decltype(agent)>(agent, 60, 500, 20);
+    converged = testAgent<decltype(agent)>(agent, 40, 1000, 20);
     if (converged)
       break;
   }
