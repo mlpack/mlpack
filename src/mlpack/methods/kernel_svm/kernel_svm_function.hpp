@@ -39,17 +39,21 @@ class KernelSVMFunction
    * @param labels Labels associated with the feature data.
    * @param regularization standard svm regularization parameter.
    * @param fitIntercept add intercept term or not.
+   * @param firstClasslabel label used for first class.
+   * @param secondClasslabel label used for second class.
    * @param max_iter maximum number of iteration for training.
    * @param tol tolerance value.
    * @param kernel kernel type of kernel used with svm.
    */
   KernelSVMFunction(const MatType& data,
-            const arma::rowvec& labels,
-            const double regularization = 1.0,
-            const bool fitIntercept = false,
-            const size_t max_iter = 10,
-            const double tol = 1e-3,
-            const KernelType kernel = KernelType());
+                    const arma::Row<size_t>& labels,
+                    const double regularization = 1.0,
+                    const bool fitIntercept = false,
+                    const size_t firstClasslabel = 0,
+                    const size_t secondClasslabel = 1,
+                    const size_t max_iter = 10,
+                    const double tol = 1e-3,
+                    const KernelType kernel = KernelType());
 
   /**
    * Initialize the Kernel SVM without performing training.  Default  Be sure 
@@ -58,11 +62,15 @@ class KernelSVMFunction
    *
    * @param regularization standard svm regularization parameter.
    * @param fitIntercept add intercept term or not.
+   * @param firstClasslabel label used for first class.
+   * @param secondClasslabel label used for second class.
    * @param kernel kernel type of kernel used with svm.
    */
   KernelSVMFunction(const double regularization = 1.0,
-            const bool fitIntercept = false,
-            const KernelType kernel = KernelType());
+                    const bool fitIntercept = false,
+                    const size_t firstClasslabel = 0,
+                    const size_t secondClasslabel = 1,
+                    const KernelType kernel = KernelType());
 
   /**
    * Classify the given points, returning class scores for each point.
@@ -82,7 +90,7 @@ class KernelSVMFunction
    * @return Objective value of the final point.
    */
   double Train(const MatType& data,
-               const arma::rowvec& labels,
+               const arma::Row<size_t>& labels,
                const size_t max_iter = 5,
                const double tol = 1e-3);
 
@@ -103,6 +111,10 @@ class KernelSVMFunction
   }
 
  private:
+  //! Locally saved label for first class.
+  size_t firstClasslabel;
+  //! Locally saved label for second class.
+  size_t secondClasslabel;
   //! Locally saved standard svm regularization parameter.
   double regularization;
   //! Intercept term flag.

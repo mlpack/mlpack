@@ -64,22 +64,14 @@ double KernelSVM<MatType, KernelType>::Train(
     {
       classesClassifier(countClass, 0) = i;
       classesClassifier(countClass, 1) = j;
-      arma::rowvec tempLables = arma::zeros(1, data.n_cols);
-      for (size_t k = 0; k < data.n_cols; k++)
-      {
-        if (labels(k) == j)
-          tempLables(k) = -1;
-        if (labels(k) ==  i)
-          tempLables(k) = 1;
-      }
 
       KernelSVMFunction<MatType,
                         KernelType> svm(
                           data.cols(
-                            arma::find(tempLables == 1 || tempLables == -1)),
-                          tempLables.cols(
-                            arma::find(tempLables == 1 || tempLables == -1)),
-                          regularization, fitIntercept, maxIter, tol);
+                            arma::find(labels == i || labels == j)),
+                          labels.cols(
+                            arma::find(labels == i || labels == j)),
+                          regularization, fitIntercept, i, j, maxIter, tol);
       network.push_back(svm);
 
       countClass++;
