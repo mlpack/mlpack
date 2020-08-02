@@ -37,7 +37,7 @@ class pointer_vector_wrapper
   {}
 
   template<class Archive>
-  void save(Archive& ar, const unsigned int /*version*/) const
+  void save(Archive& ar) const
   { 
     ar & CEREAL_NVP(PointerVector.size()); 
     for (size_t i = 0; i < PointerVector.size(); ++i) 
@@ -47,7 +47,7 @@ class pointer_vector_wrapper
   }
 
   template<class Archive>
-  void load(Archive& ar, const unsigned int /*version*/)
+  void load(Archive& ar)
   {
     ar & CEREAL_NVP(PointerVector.size()); 
     for (size_t i = 0; i < PointerVector.size(); ++i) 

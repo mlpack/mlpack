@@ -17,7 +17,6 @@
 
 #include <armadillo>
 
-
 /**
  * Add an external serialization function for SpMat.
  */
