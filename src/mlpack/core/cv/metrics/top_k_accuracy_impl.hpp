@@ -47,7 +47,7 @@ double TopKAccuracy::Evaluate(MLAlgorithm& model,
   size_t srt = arma::sort_index(predsprob);
   for (size_t i = 1; i < predictedProb.n_elem; i++)
   {
-    if (labels[i] != arma::span(i, idx + 1), srma::span::all)
+    if (labels[i] != arma::span(i, idx + 1), arma::span::all)
     {
       count = count + 1;
     }
