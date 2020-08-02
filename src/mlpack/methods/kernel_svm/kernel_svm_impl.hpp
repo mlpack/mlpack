@@ -105,36 +105,22 @@ void KernelSVM<MatType, KernelType>::Classify(
     arma::mat& scores) const
 {
   Classify(data, scores);
-  for (size_t k = 0; k < numClassifier; k++)
-  {
-    double threshold = arma::as_scalar(arma::mean(scores.row(k)));
-
-    for (size_t i = 0; i< data.n_cols; i++)
-    {
-      if (scores(k, i) >= threshold)
-        scores(k, i) = 1;
-      if (scores(k, i) < threshold)
-        scores(k, i) = 0;
-    }
-  }
 
   arma::mat prediction = arma::zeros(numClass, data.n_cols);
   for (size_t i = 0; i< data.n_cols; i++)
   {
     for (size_t k = 0; k < numClassifier; k++)
     {
-      if (scores(k, i) == 1)
+      double threshold = arma::as_scalar(arma::mean(scores.row(k)));
+      if (scores(k, i) >= threshold)
         prediction(classesClassifier(k, 0), i) += 1;
-      if (scores(k, i) == 0)
+      if (scores(k, i) < threshold)
         prediction(classesClassifier(k, 1), i) += 1;
     }
   }
 
-  labels.zeros(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
-  {
-    labels(i) = prediction.col(i).index_max();
-  }
+  labels = arma::conv_to<arma::Row<size_t>>::from(
+                                    arma::index_max(prediction, 0));
 }
 
 template <typename MatType, typename KernelType>
