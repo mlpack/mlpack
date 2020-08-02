@@ -21,14 +21,18 @@ namespace svm {
 template <typename MatType, typename KernelType>
 KernelSVMFunction<MatType, KernelType>::KernelSVMFunction(
     const MatType& data,
-    const arma::rowvec& labels,
+    const arma::Row<size_t>& labels,
     const double regularization,
     const bool fitIntercept,
+    const size_t firstClasslabel,
+    const size_t secondClasslabel,
     const size_t maxIter,
     const double tol,
     const KernelType kernel) :
     regularization(regularization),
     fitIntercept(fitIntercept),
+    firstClasslabel(firstClasslabel),
+    secondClasslabel(secondClasslabel),
     kernel(kernel)
 {
   intercept = 0;
@@ -39,9 +43,13 @@ template <typename MatType, typename KernelType>
 KernelSVMFunction<MatType, KernelType>::KernelSVMFunction(
     const double regularization,
     const bool fitIntercept,
+    const size_t firstClasslabel,
+    const size_t secondClasslabel,
     const KernelType kernel) :
     regularization(regularization),
     fitIntercept(fitIntercept),
+    firstClasslabel(firstClasslabel),
+    secondClasslabel(secondClasslabel),
     kernel(kernel)
 {
   intercept = 0;
@@ -50,7 +58,7 @@ KernelSVMFunction<MatType, KernelType>::KernelSVMFunction(
 template<typename MatType, typename KernelType>
 double KernelSVMFunction<MatType, KernelType>::Train(
     const MatType& data,
-    const arma::rowvec& labels,
+    const arma::Row<size_t>& labels,
     const size_t maxIter,
     const double tol)
 {
@@ -60,7 +68,8 @@ double KernelSVMFunction<MatType, KernelType>::Train(
 
   // Changing labels values to 1, -1 values provided
   // by user should 0 and 1.
-  trainCoefficients = labels;
+  trainCoefficients = arma::ones(1, data.n_cols);
+  trainCoefficients.cols(arma::find(labels == secondClasslabel)) += -2;
 
   // Intializing variable to calculate alphas.
   alpha = arma::zeros(1, data.n_cols);
