@@ -732,9 +732,9 @@ void Octree<MetricType, StatisticType, MatType>::serialize(
   ar & CEREAL_NVP(parentDistance);
   ar & CEREAL_NVP(furthestDescendantDistance);
   ar & CEREAL_NVP(metric);
-  ar & CEREAL_NVP(dataset);
+  ar & CEREAL_POINTER(dataset);
 
-  ar & CEREAL_NVP(children);
+  ar & CEREAL_VECTOR_POINTER(children);
 
   if (Archive::is_loading::value)
   {
