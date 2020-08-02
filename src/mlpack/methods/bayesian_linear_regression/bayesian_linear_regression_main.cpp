@@ -57,8 +57,8 @@ PROGRAM_INFO("BayesianLinearRegression",
     "responses to the test points can be saved with the " +
     PRINT_PARAM_STRING("predictions") + " output parameter. The "
     "corresponding standard deviation can be save by precising the " +
-    PRINT_PARAM_STRING("stds") + " parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("stds") + " parameter.",
+    // Example.
     "For example, the following command trains a model on the data " +
     PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
     "with center set to true and scale set to false (so, Bayesian "

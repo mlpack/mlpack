@@ -225,9 +225,9 @@ static void mlpackMain()
 
   // Apply the parameters for search.
   if (IO::HasParam("tau"))
-    rann->Tau() = tau;
+    rann->Tau() = IO::GetParam<double>("tau");
   if (IO::HasParam("alpha"))
-    rann->Alpha() = alpha;
+    rann->Alpha() = IO::GetParam<double>("alpha");
   if (IO::HasParam("single_sample_limit"))
     rann->SingleSampleLimit() = IO::GetParam<int>("single_sample_limit");
   rann->SampleAtLeaves() = IO::HasParam("sample_at_leaves");
