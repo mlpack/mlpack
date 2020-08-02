@@ -14,7 +14,7 @@ add_executable(mlpack_test
     binarize_test.cpp
     block_krylov_svd_test.cpp
     callback_test.cpp
-# # cf_test.cpp
+#    cf_test.cpp
     cli_binding_test.cpp
     io_test.cpp
     cosine_tree_test.cpp
@@ -30,9 +30,9 @@ add_executable(mlpack_test
 # # fastmks_test.cpp
     facilities_test.cpp
 # # feedforward_network_test.cpp
-# # gan_test.cpp
+#    gan_test.cpp
 # #  gmm_test.cpp
-# #  hmm_test.cpp
+#    hmm_test.cpp
 # #  hoeffding_tree_test.cpp
     hpt_test.cpp
     hyperplane_test.cpp
@@ -46,17 +46,17 @@ add_executable(mlpack_test
 # # knn_test.cpp
    krann_search_test.cpp
    ksinit_test.cpp
-# # lars_test.cpp
+   lars_test.cpp
    layer_names_test.cpp
    lin_alg_test.cpp
-# #  linear_regression_test.cpp
+#   linear_regression_test.cpp
    linear_svm_test.cpp
    lmnn_test.cpp
-# #  local_coordinate_coding_test.cpp
+#   local_coordinate_coding_test.cpp
    log_test.cpp
-#   logistic_regression_test.cpp
+   logistic_regression_test.cpp
    loss_functions_test.cpp
-# # lsh_test.cpp
+   lsh_test.cpp
    math_test.cpp
    matrix_completion_test.cpp
    maximal_inputs_test.cpp
@@ -68,8 +68,8 @@ add_executable(mlpack_test
    nca_test.cpp
    nmf_test.cpp
    nystroem_method_test.cpp
-# # octree_test.cpp
-# # pca_test.cpp
+#   octree_test.cpp
+   pca_test.cpp
    perceptron_test.cpp
    prefixedoutstream_test.cpp
    python_binding_test.cpp
@@ -77,12 +77,12 @@ add_executable(mlpack_test
 #   qdafn_test.cpp
    quic_svd_test.cpp
    radical_test.cpp
-# #  random_forest_test.cpp
-#   random_test.cpp
-#   randomized_svd_test.cpp
-# # range_search_test.cpp
-# # rbm_network_test.cpp
-# # rectangle_tree_test.cpp
+#   random_forest_test.cpp
+   random_test.cpp
+   randomized_svd_test.cpp
+   range_search_test.cpp
+   rbm_network_test.cpp
+   rectangle_tree_test.cpp
 # # recurrent_network_test.cpp
    regularized_svd_test.cpp
    reward_clipping_test.cpp
@@ -94,7 +94,7 @@ add_executable(mlpack_test
    sfinae_test.cpp
    sort_policy_test.cpp
    sparse_autoencoder_test.cpp
-#  sparse_coding_test.cpp
+#   sparse_coding_test.cpp
    spill_tree_test.cpp
    split_data_test.cpp
 # # string_encoding_test.cpp
@@ -149,7 +149,7 @@ add_executable(mlpack_test
     main_tests/preprocess_split_test.cpp
     main_tests/radical_test.cpp
     main_tests/random_forest_test.cpp
-    main_tests/range_search_test.cpp
+#    main_tests/range_search_test.cpp
     main_tests/sparse_coding_test.cpp
 )
 
