@@ -27,8 +27,6 @@
 #include <tuple>
 #include <utility>
 
-#include <armadillo>
-
 // But if it's not defined, we'll do it.
 #ifndef M_PI
   #define M_PI 3.141592653589793238462643383279
@@ -62,6 +60,10 @@ using enable_if_t = typename enable_if<B, T>::type;
 #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 #define BOOST_MPL_LIMIT_LIST_SIZE 50
 
+// Now include Armadillo through the special mlpack extensions.
+#include <mlpack/core/arma_extend/arma_extend.hpp>
+#include <mlpack/core/util/arma_traits.hpp>
+
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/portable_binary.hpp>
 #include <cereal/archives/xml.hpp>
@@ -76,6 +78,7 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <mlpack/core/cereal/pointer_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_vector_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_variant_wrapper.hpp>
+#include <mlpack/core/arma_extend/serialize_armadillo.hpp>
 
 #include <mlpack/core/data/has_serialize.hpp>
 #include <mlpack/core/data/serialization_template_version.hpp>
@@ -95,10 +98,6 @@ or upgrade Boost to 1.59 or newer.
   #pragma warning(disable : 4519)
   #define ARMA_USE_CXX11
 #endif
-
-// Now include Armadillo through the special mlpack extensions.
-#include <mlpack/core/arma_extend/arma_extend.hpp>
-#include <mlpack/core/util/arma_traits.hpp>
 
 // Ensure that the user isn't doing something stupid with their Armadillo
 // defines.
