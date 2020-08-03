@@ -43,8 +43,8 @@ void Lookup<InputDataType, OutputDataType>::Forward(
   {
     //! ith column of output is a vectorized form of a matrix of shape
     //! (seqLength, embeddingSize) selected as a combination of rows from the
-    //! weights. This particular ordering of matrix dimensions is required by
-    //! the MultiheadAttention class.
+    //! weights. The MultiheadAttention class requires this particular ordering
+    //! of matrix dimensions.
     output.col(i) = arma::vectorise(weights.rows(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
   }
