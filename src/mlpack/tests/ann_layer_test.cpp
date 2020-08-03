@@ -1673,20 +1673,20 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
     const double outputSum = arma::accu(module.Parameters().rows(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
-    REQUIRE(outputSum == Approx(arma::accu(output.col(i))).epsilon(1e-3);
+    REQUIRE(std::abs(outputSum - arma::accu(output.col(i))) <= 1e-5);
   }
 
   // Test the Gradient function.
   arma::mat error = 0.01 * arma::randu(embeddingSize * seqLength, batchSize);
   module.Gradient(input, error, gradient);
 
-  REQUIRE(arma::accu(error) == Approx(arma::accu(gradient)).epsilon(1e-05);
+  REQUIRE(std::abs(arma::accu(error) - arma::accu(gradient)) <= 1e-07);
 }
 
 /**
  * Lookup layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
+TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
 {
   // Lookup function gradient instantiation.
   struct GradientFunction
@@ -1736,7 +1736,7 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
     const size_t batchSize = 4;
   } function;
 
-  REQUIRE(CheckGradient(function) <= 1e-5);
+  REQUIRE(CheckGradient(function) <= 1e-6);
 }
 
 /**
@@ -1745,12 +1745,12 @@ BOOST_AUTO_TEST_CASE(GradientLookupLayerTest)
  */
 TEST_CASE("LookupLayerParametersTest", "[ANNLayerTest]")
 {
-  // Parameter order : inSize, outSize.
+  // Parameter order : vocabSize, embedingSize.
   Lookup<> layer(100, 8);
 
   // Make sure we can get the parameters successfully.
-  REQUIRE(layer.InSize() == 5);
-  REQUIRE(layer.OutSize() == 7);
+  REQUIRE(layer.VocabSize() == 100);
+  REQUIRE(layer.EmbeddingSize() == 8);
 }
 
 /**
