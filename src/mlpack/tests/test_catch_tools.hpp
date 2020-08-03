@@ -33,7 +33,7 @@ inline void CheckMatrices(const arma::mat& a,
   for (size_t i = 0; i < a.n_elem; ++i)
   {
     if (std::abs(a[i]) < tolerance / 2)
-      REQUIRE(b[i] == Approx(0.0).margin(tolerance / 200));
+      REQUIRE(b[i] == Approx(0.0).margin(tolerance / 2));
     else
       REQUIRE(a[i] == Approx(b[i]).epsilon(tolerance / 100));
   }
@@ -62,7 +62,7 @@ inline void CheckMatrices(const arma::cube& a,
   for (size_t i = 0; i < a.n_elem; ++i)
   {
     if (std::abs(a[i]) < tolerance / 2)
-      REQUIRE(b[i] == Approx(0.0).margin(tolerance / 200));
+      REQUIRE(b[i] == Approx(0.0).margin(tolerance / 2));
     else
       REQUIRE(a[i] == Approx(b[i]).epsilon(tolerance / 100));
   }
