@@ -43,9 +43,8 @@ void Lookup<InputDataType, OutputDataType>::Forward(
   {
     //! ith column of output is a vectorized form of a matrix of shape
     //! (seqLength, embeddingSize) selected as a combination of rows from the
-    //! weights. It is done to ensure that the feature dimension remains beside
-    //! the batch dimension when vectorized form is unpacked for some other
-    //! layer.
+    //! weights. This particular ordering of matrix dimensions is required by
+    //! the MultiheadAttention class.
     output.col(i) = arma::vectorise(weights.rows(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
   }
