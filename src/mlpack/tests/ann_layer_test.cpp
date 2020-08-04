@@ -1673,14 +1673,14 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
     const double outputSum = arma::accu(module.Parameters().rows(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
-    REQUIRE(std::abs(outputSum - arma::accu(output.col(i))) <= 1e-5);
+    REQUIRE(std::fabs(outputSum - arma::accu(output.col(i))) <= 1e-5);
   }
 
   // Test the Gradient function.
   arma::mat error = 0.01 * arma::randu(embeddingSize * seqLength, batchSize);
   module.Gradient(input, error, gradient);
 
-  REQUIRE(std::abs(arma::accu(error) - arma::accu(gradient)) <= 1e-07);
+  REQUIRE(std::fabs(arma::accu(error) - arma::accu(gradient)) <= 1e-07);
 }
 
 /**
