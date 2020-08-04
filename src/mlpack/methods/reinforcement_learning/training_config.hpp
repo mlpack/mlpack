@@ -30,7 +30,10 @@ class TrainingConfig
       gradientLimit(40),
       doubleQLearning(false),
       noisyQLearning(false),
-      isCategorical(false)
+      isCategorical(false),
+      atomSize(51),
+      vMin(0),
+      vMax(200)
   { /* Nothing to do here. */ }
 
   TrainingConfig(
@@ -44,7 +47,10 @@ class TrainingConfig
       double gradientLimit,
       bool doubleQLearning,
       bool noisyQLearning,
-      bool isCategorical) :
+      bool isCategorical,
+      size_t atomSize,
+      double vMin,
+      double vMax) :
       numWorkers(numWorkers),
       updateInterval(updateInterval),
       targetNetworkSyncInterval(targetNetworkSyncInterval),
@@ -55,7 +61,10 @@ class TrainingConfig
       gradientLimit(gradientLimit),
       doubleQLearning(doubleQLearning),
       noisyQLearning(noisyQLearning),
-      isCategorical(isCategorical)
+      isCategorical(isCategorical),
+      atomSize(atomSize),
+      vMin(vMin),
+      vMax(vMax)
   { /* Nothing to do here. */ }
 
   //! Get the amount of workers.
@@ -116,6 +125,21 @@ class TrainingConfig
   bool IsCategorical() const { return isCategorical; }
   //! Modify the indicator of categorical q-learning.
   bool& IsCategorical() { return isCategorical; }
+
+  //! Get the number of atoms.
+  size_t AtomSize() const { return atomSize; }
+  //! Modify the number of atoms.
+  size_t& AtomSize() { return atomSize; }
+
+  //! Get the minimum value for support.
+  double VMin() const { return vMin; }
+  //! Modify the minimum value for support.
+  double& VMin() { return vMin; }
+
+  //! Get the maximum value for support.
+  double VMax() const { return vMax; }
+  //! Modify the maximum value for support.
+  double& VMax() { return vMax; }
 
  private:
   /**
@@ -186,6 +210,24 @@ class TrainingConfig
    * This is valid only for q-learning agent.
    */
   bool isCategorical;
+
+  /**
+   * Locally-stored number of atoms to be used.
+   * This is valid only for categorical q-network.
+   */
+  size_t atomSize;
+
+  /**
+   * Locally-stored minimum value of support.
+   * This is valid only for categorical q-network.
+   */
+  double vMin;
+
+  /**
+   * Locally-stored maximum value of support.
+   * This is valid only for categorical q-network.
+   */
+  double vMax;
 };
 
 } // namespace rl

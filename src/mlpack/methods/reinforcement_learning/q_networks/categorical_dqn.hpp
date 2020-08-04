@@ -18,6 +18,7 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/empty_loss.hpp>
+#include "../training_config.hpp"
 
 namespace mlpack {
 namespace rl {
@@ -25,6 +26,18 @@ namespace rl {
 using namespace mlpack::ann;
 
 /**
+ * Implementation of the Distributional Deep Q-Learning network.
+ * For more information, see the following.
+ *
+ * @code
+ * @misc{bellemare2017distributional,
+ *   author  = {Marc G. Bellemare, Will Dabney, Rémi Munos},
+ *   title   = {A Distributional Perspective on Reinforcement Learning},
+ *   year    = {2017},
+ *   url     = {http://arxiv.org/abs/1707.06887}
+ * }
+ * @endcode
+ * 
  * @tparam OutputLayerType The output layer type of the network.
  * @tparam InitType The initialization type used for the network.
  * @tparam NetworkType The type of network used for simple dqn.
@@ -40,7 +53,7 @@ class CategoricalDQN
   /**
    * Default constructor.
    */
-  CategoricalDQN() : network(), isNoisy(false), atomSize(0)
+  CategoricalDQN() : network(), isNoisy(false)
   { /* Nothing to do here. */ }
 
   /**
@@ -50,22 +63,24 @@ class CategoricalDQN
    * @param h1 Number of neurons in hiddenlayer-1.
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
+   * @param config Hyper-parameters for categorical dqn.
    * @param isNoisy Specifies whether the network needs to be of type noisy.
    * @param init Specifies the initialization rule for the network.
    * @param outputLayer Specifies the output layer type for network.
-   * @param atomSize Specifies the number of atoms to be used.
    */
   CategoricalDQN(const int inputDim,
-            const int h1,
-            const int h2,
-            const int outputDim,
-            const bool isNoisy = false,
-            InitType init = InitType(),
-            OutputLayerType outputLayer = OutputLayerType(),
-            const size_t atomSize = 51):
+                 const int h1,
+                 const int h2,
+                 const int outputDim,
+                 TrainingConfig config,
+                 const bool isNoisy = false,
+                 InitType init = InitType(),
+                 OutputLayerType outputLayer = OutputLayerType()):
       network(outputLayer, init),
-      isNoisy(isNoisy),
-      atomSize(atomSize)
+      atomSize(config.AtomSize()),
+      vMin(config.VMin()),
+      vMax(config.VMax()),
+      isNoisy(isNoisy)
   {
     network.Add(new Linear<>(inputDim, h1));
     network.Add(new ReLULayer<>());
@@ -89,15 +104,17 @@ class CategoricalDQN
    * Construct an instance of CategoricalDQN class from a pre-constructed network.
    *
    * @param network The network to be used by CategoricalDQN class.
+   * @param config Hyper-parameters for categorical dqn.
    * @param isNoisy Specifies whether the network needs to be of type noisy.
-   * @param atomSize Specifies the number of atoms to be used.
    */
   CategoricalDQN(NetworkType& network,
-                 const bool isNoisy = false,
-                 size_t atomSize = 51):
+                 TrainingConfig config,
+                 const bool isNoisy = false):
       network(std::move(network)),
-      isNoisy(isNoisy),
-      atomSize(atomSize)
+      atomSize(config.AtomSize()),
+      vMin(config.VMin()),
+      vMax(config.VMax()),
+      isNoisy(isNoisy)
   { /* Nothing to do here. */ }
 
   /**
@@ -117,7 +134,6 @@ class CategoricalDQN
     network.Predict(state, q_atoms);
     activations.copy_size(q_atoms);
     actionValue.set_size(q_atoms.n_rows / atomSize, q_atoms.n_cols);
-    double vMin = 0, vMax = 200.0;
     arma::rowvec support = arma::linspace<arma::rowvec>(vMin, vMax, atomSize);
     for (size_t i = 0; i < q_atoms.n_rows; i += atomSize)
     {
@@ -159,7 +175,7 @@ class CategoricalDQN
   }
 
   /**
-   * Resets noise of the network, is the network is of type noisy.
+   * Resets noise of the network, if the network is of type noisy.
    */
   void ResetNoise()
   {
@@ -202,11 +218,17 @@ class CategoricalDQN
   //! Locally-stored network.
   NetworkType network;
 
-  //! Locally-stored check for noisy network.
-  bool isNoisy;
-
   //! Locally-stored number of atoms.
   size_t atomSize;
+
+  //! Locally-stored minimum value of support.
+  double vMin;
+
+  //! Locally-stored maximum value of support.
+  double vMax;
+
+  //! Locally-stored check for noisy network.
+  bool isNoisy;
 
   //! Locally-stored indexes of noisy layers in the network.
   std::vector<size_t> noisyLayerIndex;

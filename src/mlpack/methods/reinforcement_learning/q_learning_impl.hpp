@@ -52,10 +52,8 @@ QLearning<
   targetNetwork = learningNetwork;
 
   // Set up q-learning network.
-  if (learningNetwork.Parameters().is_empty())
-    learningNetwork.ResetParameters();
-  if (targetNetwork.Parameters().is_empty())
-    targetNetwork.ResetParameters();
+  learningNetwork.ResetParameters();
+  targetNetwork.ResetParameters();
 
   #if ENS_VERSION_MAJOR == 1
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
@@ -231,9 +229,9 @@ void QLearning<
   replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
       sampledNextStates, isTerminal);
 
-  double vMin = 0, vMax = 200.0;
-  size_t atomSize = 51;
-  arma::rowvec support = arma::linspace<arma::rowvec>(vMin, vMax, atomSize);
+  size_t atomSize = config.AtomSize();
+  arma::rowvec support = arma::linspace<arma::rowvec>(config.VMin(),
+      config.VMax(), atomSize);
 
   size_t batchSize = sampledNextStates.n_cols;
 
@@ -264,8 +262,9 @@ void QLearning<
 
   arma::mat tZ = (arma::conv_to<arma::mat>::from(config.Discount() *
       ((1 - isTerminal) * support)).each_col() + sampledRewards).t();
-  tZ = arma::clamp(tZ, vMin, vMax);
-  arma::mat b = (tZ - vMin) / (vMax - vMin) * (atomSize - 1);
+  tZ = arma::clamp(tZ, config.VMin(), config.VMax());
+  arma::mat b = (tZ - config.VMin()) / (config.VMax() - config.VMin()) *
+      (atomSize - 1);
   arma::mat l = arma::floor(b);
   arma::mat u = arma::ceil(b);
 

@@ -488,10 +488,10 @@ BOOST_AUTO_TEST_CASE(CartPoleWithCategoricalDQN)
         EmptyLoss<>(), GaussianInitialization(0, 0.1));
     module.Add<Linear<>>(4, 128);
     module.Add<ReLULayer<>>();
-    module.Add<Linear<>>(128, 2 * 51);
+    module.Add<Linear<>>(128, 2 * config.AtomSize());
 
     // Adding the module to the CategoricalDQN network.
-    CategoricalDQN<> network(module);
+    CategoricalDQN<> network(module, config);
 
     // Set up DQN agent.
     QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
