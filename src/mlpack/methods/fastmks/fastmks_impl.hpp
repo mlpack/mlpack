@@ -640,8 +640,7 @@ template<typename KernelType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void FastMKS<KernelType, MatType, TreeType>::serialize(
-    Archive& ar
-)
+    Archive& ar)
 {
   // Serialize preferences for search.
   ar & CEREAL_NVP(naive);

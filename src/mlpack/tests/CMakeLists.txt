@@ -19,9 +19,9 @@ add_executable(mlpack_test
     distribution_test.cpp
     drusilla_select_test.cpp
     emst_test.cpp
- #  fastmks_test.cpp
+    fastmks_test.cpp
     facilities_test.cpp
-# # feedforward_network_test.cpp
+#   feedforward_network_test.cpp
 #   gan_test.cpp
     gmm_test.cpp
     hmm_test.cpp
@@ -58,16 +58,16 @@ add_executable(mlpack_test
    nca_test.cpp
    nmf_test.cpp
    nystroem_method_test.cpp
-#   octree_test.cpp
+   octree_test.cpp
    pca_test.cpp
    perceptron_test.cpp
    prefixedoutstream_test.cpp
    python_binding_test.cpp
    q_learning_test.cpp
-#   qdafn_test.cpp
+   qdafn_test.cpp
    quic_svd_test.cpp
    radical_test.cpp
-#   random_forest_test.cpp
+   random_forest_test.cpp
    random_test.cpp
    randomized_svd_test.cpp
    range_search_test.cpp
@@ -84,10 +84,10 @@ add_executable(mlpack_test
    sfinae_test.cpp
    sort_policy_test.cpp
    sparse_autoencoder_test.cpp
-#   sparse_coding_test.cpp
+   sparse_coding_test.cpp
    spill_tree_test.cpp
    split_data_test.cpp
-# # string_encoding_test.cpp
+#   string_encoding_test.cpp
    sumtree_test.cpp
    svd_batch_test.cpp
    svd_incremental_test.cpp
@@ -139,7 +139,7 @@ add_executable(mlpack_test
     main_tests/preprocess_split_test.cpp
     main_tests/radical_test.cpp
     main_tests/random_forest_test.cpp
-#    main_tests/range_search_test.cpp
+    main_tests/range_search_test.cpp
     main_tests/sparse_coding_test.cpp
 )
 
