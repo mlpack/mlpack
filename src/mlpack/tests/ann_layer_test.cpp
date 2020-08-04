@@ -4127,5 +4127,5 @@ TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
   output.ones();
   module.Train(input, output);
   // The model should switch to training mode for predicting.
-  REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == false);
+  REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == 0);
 }
