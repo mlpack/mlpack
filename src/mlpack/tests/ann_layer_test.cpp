@@ -972,7 +972,7 @@ TEST_CASE("LSTMLayerParametersTest", "[ANNLayerTest]")
 
   // Now ensure all the results are the same.
   REQUIRE(layer1.InSize() == layer2.InSize());
-  REQUIRE(layer2.OutSize() == layer2.OutSize());
+  REQUIRE(layer1.OutSize() == layer2.OutSize());
   REQUIRE(layer1.Rho() == layer2.Rho());
 }
 
@@ -1080,7 +1080,7 @@ TEST_CASE("FastLSTMLayerParametersTest", "[ANNLayerTest]")
 
   // Now ensure all the results are the same.
   REQUIRE(layer1.InSize() == layer2.InSize());
-  REQUIRE(layer2.OutSize() == layer2.OutSize());
+  REQUIRE(layer1.OutSize() == layer2.OutSize());
   REQUIRE(layer1.Rho() == layer2.Rho());
 }
 
@@ -1277,7 +1277,7 @@ TEST_CASE("GRULayerParametersTest", "[ANNLayerTest]")
 
   // Now ensure all the results are the same.
   REQUIRE(layer1.InSize() == layer2.InSize());
-  REQUIRE(layer2.OutSize() == layer2.OutSize());
+  REQUIRE(layer1.OutSize() == layer2.OutSize());
   REQUIRE(layer1.Rho() == layer2.Rho());
 }
 
@@ -1662,10 +1662,6 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
       arma::accu(module.Parameters().col(2));
 
   REQUIRE(outputSum == Approx(arma::accu(output)).epsilon(1e-5));
-
-  // Test the Backward function.
-  module.Backward(input, input, delta);
-  REQUIRE(arma::accu(input) == arma::accu(input));
 
   // Test the Gradient function.
   arma::mat error = arma::ones(2, 5);
