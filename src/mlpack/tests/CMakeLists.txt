@@ -1,58 +1,48 @@
 # mlpack test executable.
 add_executable(mlpack_test
-# # adaboost_test.cpp
-    ann_dist_test.cpp
-# # ann_layer_test.cpp
-    ann_regularizer_test.cpp
-    ann_test_tools.hpp
-    ann_visitor_test.cpp
     arma_extend_test.cpp
-    armadillo_svd_test.cpp
     async_learning_test.cpp
     augmented_rnns_tasks_test.cpp
-    bias_svd_test.cpp
     binarize_test.cpp
     block_krylov_svd_test.cpp
     callback_test.cpp
-#    cf_test.cpp
+    cf_test.cpp
     cli_binding_test.cpp
     io_test.cpp
     cosine_tree_test.cpp
     cv_test.cpp
     dbscan_test.cpp
-# # dcgan_test.cpp
-# #  decision_stump_test.cpp
-# #  decision_tree_test.cpp
-     det_test.cpp
-# #  distribution_test.cpp
-# #  drusilla_select_test.cpp
+#   dcgan_test.cpp
+    decision_stump_test.cpp
+    decision_tree_test.cpp
+    det_test.cpp
+    distribution_test.cpp
+    drusilla_select_test.cpp
     emst_test.cpp
-# # fastmks_test.cpp
+ #  fastmks_test.cpp
     facilities_test.cpp
 # # feedforward_network_test.cpp
-#    gan_test.cpp
-# #  gmm_test.cpp
-#    hmm_test.cpp
-# #  hoeffding_tree_test.cpp
+#   gan_test.cpp
+    gmm_test.cpp
+    hmm_test.cpp
+    hoeffding_tree_test.cpp
     hpt_test.cpp
     hyperplane_test.cpp
     imputation_test.cpp
     init_rules_test.cpp
-# # kde_test.cpp
+   kde_test.cpp
    kernel_pca_test.cpp
    kernel_test.cpp
    kernel_traits_test.cpp
-# # kmeans_test.cpp
-#  # knn_test.cpp
+   kmeans_test.cpp
    krann_search_test.cpp
    ksinit_test.cpp
    lars_test.cpp
    layer_names_test.cpp
    lin_alg_test.cpp
-#   linear_regression_test.cpp
    linear_svm_test.cpp
    lmnn_test.cpp
-#   local_coordinate_coding_test.cpp
+   local_coordinate_coding_test.cpp
    log_test.cpp
    logistic_regression_test.cpp
    loss_functions_test.cpp
