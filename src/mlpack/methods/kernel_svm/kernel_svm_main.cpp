@@ -172,11 +172,12 @@ PARAM_INT_IN("epochs", "Maximum number of full epochs over dataset for "
     "psgd", "E", 50);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
+template<typename KernelType>
 class KernelSVMModel
 {
  public:
   arma::Col<size_t> mappings;
-  LinearSVM<> svm;
+  KernelSVM<arma::mat, KernelType> svm;
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
@@ -186,12 +187,11 @@ class KernelSVMModel
   }
 };
 
-
 // Model loading/saving.
 PARAM_MODEL_IN(LinearSVMModel, "input_model", "Existing model "
     "(parameters).", "m");
 PARAM_MODEL_OUT(LinearSVMModel, "output_model", "Output for trained "
-    "linear svm model.", "M");
+    "kernel svm model.", "M");
 
 // Testing.
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
@@ -204,4 +204,267 @@ PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
 
 static void mlpackMain()
 {
+  if (IO::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
+
+  // Collect command-line options.
+  const double lambda = IO::GetParam<double>("lambda");
+  const double delta = IO::GetParam<double>("delta");
+  const string optimizerType = IO::GetParam<string>("optimizer");
+  const double tolerance = IO::GetParam<double>("tolerance");
+  const bool intercept = !IO::HasParam("no_intercept");
+  const size_t epochs = (size_t) IO::GetParam<int>("epochs");
+  const size_t maxIterations = (size_t) IO::GetParam<int>("max_iterations");
+
+  // One of training and input_model must be specified.
+  RequireAtLeastOnePassed({ "training", "input_model" }, true);
+
+  // If no output file is given, the user should know that the model will not be
+  // saved, but only if a model is being trained.
+  RequireAtLeastOnePassed({ "output_model", "predictions", "probabilities"},
+      false, "no output will be saved");
+
+  ReportIgnoredParam({{ "test", false }}, "predictions");
+  ReportIgnoredParam({{ "test", false }}, "probabilities");
+  ReportIgnoredParam({{ "test", false }}, "test_labels");
+
+  // Max Iterations needs to be positive.
+  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
+      true, "max_iterations must be non-negative");
+
+  // Tolerance needs to be positive.
+  RequireParamValue<double>("tolerance", [](double x) { return x >= 0.0; },
+      true, "tolerance must be non-negative");
+
+  // Epochs needs to be non-negative.
+  RequireParamValue<int>("epochs", [](int x) { return x >= 0; }, true,
+      "maximum number of epochs must be non-negative");
+
+  // Get the kernel type and make sure it is valid.
+  RequireParamInSet<string>("kernel", { "linear", "gaussian", "polynomial",
+      "hyptan", "laplacian", "epanechnikov", "cosine" }, true,
+      "unknown kernel type");
+
+
+  if (kernelType == "linear")
+  {
+    LinearKernel kernel;
+    KernelSVMModel<LinearKernel>(dataset, centerTransformedData, nystroem, newDim,
+        sampling, kernel);
+  }
+  else if (kernelType == "gaussian")
+  {
+    const double bandwidth = IO::GetParam<double>("bandwidth");
+
+    GaussianKernel kernel(bandwidth);
+    KernelSVMModel<GaussianKernel>(dataset, centerTransformedData, nystroem, newDim,
+        sampling, kernel);
+  }
+  else if (kernelType == "polynomial")
+  {
+    const double degree = IO::GetParam<double>("degree");
+    const double offset = IO::GetParam<double>("offset");
+
+    PolynomialKernel kernel(degree, offset);
+    KernelSVMModel<PolynomialKernel>(dataset, centerTransformedData, nystroem,
+        newDim, sampling, kernel);
+  }
+  else if (kernelType == "hyptan")
+  {
+    const double scale = IO::GetParam<double>("kernel_scale");
+    const double offset = IO::GetParam<double>("offset");
+
+    HyperbolicTangentKernel kernel(scale, offset);
+    KernelSVMModel<HyperbolicTangentKernel>(dataset, centerTransformedData, nystroem,
+        newDim, sampling, kernel);
+  }
+  else if (kernelType == "laplacian")
+  {
+    const double bandwidth = IO::GetParam<double>("bandwidth");
+
+    LaplacianKernel kernel(bandwidth);
+    KernelSVMModel<LaplacianKernel>(dataset, centerTransformedData, nystroem, newDim,
+        sampling, kernel);
+  }
+  else if (kernelType == "epanechnikov")
+  {
+    const double bandwidth = IO::GetParam<double>("bandwidth");
+
+    EpanechnikovKernel kernel(bandwidth);
+    KernelSVMModel<EpanechnikovKernel>(dataset, centerTransformedData, nystroem,
+        newDim, sampling, kernel);
+  }
+  else if (kernelType == "cosine")
+  {
+    CosineDistance kernel;
+    KernelSVMModel<CosineDistance>(dataset, centerTransformedData, nystroem, newDim,
+        sampling, kernel);
+  }
+
+  // Now, do the training.
+  if (IO::HasParam("training"))
+  {
+    data::NormalizeLabels(rawLabels, labels, model->mappings);
+    numClasses = IO::GetParam<int>("num_classes") == 0 ?
+        model->mappings.n_elem : IO::GetParam<int>("num_classes");
+    model->svm.Lambda() = lambda;
+    model->svm.Delta() = delta;
+    model->svm.NumClasses() = numClasses;
+    model->svm.FitIntercept() = intercept;
+
+    if (numClasses <= 1)
+    {
+      if (!IO::HasParam("input_model"))
+        delete model;
+      throw std::invalid_argument("Given input data has only 1 class!");
+    }
+
+    if (optimizerType == "lbfgs")
+    {
+      ens::L_BFGS lbfgsOpt;
+      lbfgsOpt.MaxIterations() = maxIterations;
+      lbfgsOpt.MinGradientNorm() = tolerance;
+
+      Log::Info << "Training model with L-BFGS optimizer." << endl;
+
+      // This will train the model.
+      model->svm.Train(trainingSet, labels, numClasses, lbfgsOpt);
+    }
+    else if (optimizerType == "psgd")
+    {
+      const double stepSize = IO::GetParam<double>("step_size");
+      const bool shuffle = !IO::HasParam("shuffle");
+      const size_t maxIt = epochs * trainingSet.n_cols;
+
+      ens::ConstantStep decayPolicy(stepSize);
+
+      #ifdef HAS_OPENMP
+      size_t threads = omp_get_max_threads();
+      #else
+      size_t threads = 1;
+      Log::Warn << "Using parallel SGD, but OpenMP support is "
+                << "not available!" << endl;
+      #endif
+
+      ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIt, std::ceil(
+        (float) trainingSet.n_cols / threads), tolerance, shuffle,
+        decayPolicy);
+
+      Log::Info << "Training model with ParallelSGD optimizer." << endl;
+
+      // This will train the model.
+      model->svm.Train(trainingSet, labels, numClasses, psgdOpt);
+    }
+  }
+
+  if (IO::HasParam("test"))
+  {
+    // Cache the value of GetPrintableParam for the test matrix before we
+    // std::move() it.
+    std::ostringstream oss;
+    oss << IO::GetPrintableParam<arma::mat>("test");
+    std::string testOutput = oss.str();
+
+    if (!IO::HasParam("training"))
+    {
+      numClasses = model->svm.NumClasses();
+    }
+    // Get the test dataset, and get predictions.
+    testSet = std::move(IO::GetParam<arma::mat>("test"));
+    arma::Row<size_t> predictions;
+    size_t trainingDimensionality;
+
+    // Set the dimensionality according to fitintercept.
+    if (intercept)
+      trainingDimensionality = model->svm.Parameters().n_rows - 1;
+    else
+      trainingDimensionality = model->svm.Parameters().n_rows;
+
+    // Checking the dimensionality of the test data.
+    if (testSet.n_rows != trainingDimensionality)
+    {
+      // Clean memory if needed.
+      if (!IO::HasParam("input_model"))
+        delete model;
+      Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
+          << "be the same as the dimensionality of the training data ("
+          << trainingDimensionality << ")!" << endl;
+    }
+
+    // Save class probabilities, if desired.
+    if (IO::HasParam("probabilities"))
+    {
+      Log::Info << "Calculating class probabilities of points in " << testOutput
+          << "." << endl;
+      arma::mat probabilities;
+      model->svm.Classify(testSet, probabilities);
+      IO::GetParam<arma::mat>("probabilities") = std::move(probabilities);
+    }
+
+    model->svm.Classify(testSet, predictedLabels);
+    data::RevertLabels(predictedLabels, model->mappings, predictions);
+
+    // Calculate accuracy, if desired.
+    if (IO::HasParam("test_labels"))
+    {
+      arma::Row<size_t> testLabels;
+      arma::Row<size_t> testRawLabels =
+          std::move(IO::GetParam<arma::Row<size_t>>("test_labels"));
+
+      data::NormalizeLabels(testRawLabels, testLabels, model->mappings);
+
+      if (testSet.n_cols != testLabels.n_elem)
+      {
+        if (!IO::HasParam("input_model"))
+          delete model;
+        Log::Fatal << "Test data given with " << PRINT_PARAM_STRING("test")
+            << " has " << testSet.n_cols << " points, but labels in "
+            << PRINT_PARAM_STRING("test_labels") << " have "
+            << testLabels.n_elem << " labels!" << endl;
+      }
+
+      numClasses = IO::GetParam<int>("num_classes") == 0 ?
+          model->mappings.n_elem : IO::GetParam<int>("num_classes");
+      arma::Col<size_t> correctClassCounts;
+      arma::Col<size_t> labelSize;
+      correctClassCounts.zeros(numClasses);
+      labelSize.zeros(numClasses);
+
+      for (arma::uword i = 0; i != predictions.n_elem; ++i)
+      {
+        if (predictions(i) == testLabels(i))
+        {
+          ++correctClassCounts[testLabels(i)];
+        }
+        ++labelSize[testLabels(i)];
+      }
+
+      size_t totalCorrectClass = 0;
+      for (size_t i = 0; i != correctClassCounts.size(); ++i)
+      {
+        Log::Info << "Accuracy for points with label " << i << " is "
+            << (correctClassCounts[i] / static_cast<double>(labelSize[i]))
+            << " (" << correctClassCounts[i] << " of " << labelSize[i] << ")."
+            << endl;
+        totalCorrectClass += correctClassCounts[i];
+      }
+
+      Log::Info << "Total accuracy for all points is "
+          << (totalCorrectClass) / static_cast<double>(predictions.n_elem)
+          << " (" << totalCorrectClass << " of " << predictions.n_elem << ")."
+          << endl;
+    }
+
+    // Save predictions, if desired.
+    if (IO::HasParam("predictions"))
+    {
+      Log::Info << "Predicting classes of points in '" << testOutput << "'."
+          << endl;
+      IO::GetParam<arma::Row<size_t>>("predictions") = std::move(predictions);
+    }
+  }
+
+  IO::GetParam<LinearSVMModel*>("output_model") = model;
 }
