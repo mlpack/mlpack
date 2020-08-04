@@ -8,6 +8,9 @@
 // Written by Conrad Sanderson - http://conradsanderson.id.au
 // Written by Ryan Curtin
 
+#ifndef MLPACK_CORE_ARMA_EXTEND_SERIALIZE_ARMADILLO_HPP
+#define MLPACK_CORE_ARMA_EXTEND_SERIALIZE_ARMADILLO_HPP
+
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/portable_binary.hpp>
 #include <cereal/archives/xml.hpp>
@@ -98,3 +101,5 @@ void serialize(Archive& ar, arma::Cube<eT>& cube)
   ar & cereal::make_array(arma::access::rwp(cube.mem), cube.n_elem);
 }
 } // end namespace cereal
+
+#endif //MLPACK_CORE_ARMA_EXTEND_SERIALIZE_ARMADILLO_HPP
