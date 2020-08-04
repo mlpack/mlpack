@@ -4167,3 +4167,22 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
   // Value calculated using torch.nn.Conv2d().
   REQUIRE(arma::accu(output) == 4156);
 }
+
+TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
+{
+  FFN<> module;
+  module.Add<BatchNorm<>>(2, 1e-5, false);
+  module.Add<LogSoftMax<>>();
+
+  arma::mat input(4, 3), output;
+  module.ResetParameters();
+
+  // The model should switch to Deterministic mode for predicting.
+  module.Predict(input, output);
+  REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == true);
+
+  output.ones();
+  module.Train(input, output);
+  // The model should switch to training mode for predicting.
+  REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == 0);
+}
