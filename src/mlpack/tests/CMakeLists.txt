@@ -104,9 +104,9 @@ add_executable(mlpack_test
 #   wgan_test.cpp
     main_tests/cf_test.cpp
     main_tests/dbscan_test.cpp
-#   main_tests/decision_stump_test.cpp
-#   main_tests/decision_tree_test.cpp
-#   main_tests/det_test.cpp
+    main_tests/decision_stump_test.cpp
+    main_tests/decision_tree_test.cpp
+    main_tests/det_test.cpp
     main_tests/emst_test.cpp
     main_tests/fastmks_test.cpp
     main_tests/gmm_generate_test.cpp
@@ -139,7 +139,7 @@ add_executable(mlpack_test
     main_tests/preprocess_split_test.cpp
     main_tests/radical_test.cpp
     main_tests/random_forest_test.cpp
-    main_tests/range_search_test.cpp
+#    main_tests/range_search_test.cpp
     main_tests/sparse_coding_test.cpp
 )
 
