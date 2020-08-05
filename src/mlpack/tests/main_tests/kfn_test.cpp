@@ -20,8 +20,8 @@ static const std::string testName = "K-FurthestNeighborsSearch";
 #include "test_helper.hpp"
 #include <mlpack/methods/neighbor_search/kfn_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -42,13 +42,12 @@ struct KFNTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(KFNMainTest, KFNTestFixture);
-
 /*
  * Check that we can't provide reference and query matrices
  * with different dimensions.
  */
-BOOST_AUTO_TEST_CASE(KFNEqualDimensionTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNEqualDimensionTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -65,7 +64,7 @@ BOOST_AUTO_TEST_CASE(KFNEqualDimensionTest)
   SetInputParam("k", (int) 10);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -73,7 +72,8 @@ BOOST_AUTO_TEST_CASE(KFNEqualDimensionTest)
  * Check that we can't specify an invalid k when only reference
  * matrix is given.
  */
-BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidKTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
   SetInputParam("k", (int) 101);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 
   delete IO::GetParam<KFNModel*>("output_model");
   IO::GetParam<KFNModel*>("output_model") = NULL;
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
   // SetInputParam("reference", referenceData);
   // SetInputParam("k", (int) 0); // Invalid.
 
-  // BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  // REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 
   // IO::GetSingleton().Parameters()["reference"].wasPassed = false;
   // IO::GetSingleton().Parameters()["k"].wasPassed = false;
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) -1); // Invalid.
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -110,7 +110,8 @@ BOOST_AUTO_TEST_CASE(KFNInvalidKTest)
  * Check that we can't specify an invalid k when both reference
  * and query matrices are given.
  */
-BOOST_AUTO_TEST_CASE(KFNInvalidKQueryDataTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidKQueryDataTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -124,14 +125,15 @@ BOOST_AUTO_TEST_CASE(KFNInvalidKQueryDataTest)
   SetInputParam("k", (int) 101);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that we can't specify a negative leaf size.
  */
-BOOST_AUTO_TEST_CASE(KFNLeafSizeTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNLeafSizeTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -141,14 +143,15 @@ BOOST_AUTO_TEST_CASE(KFNLeafSizeTest)
   SetInputParam("leaf_size", (int) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass both input_model and reference matrix.
  */
-BOOST_AUTO_TEST_CASE(KFNRefModelTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNRefModelTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -164,14 +167,15 @@ BOOST_AUTO_TEST_CASE(KFNRefModelTest)
       std::move(IO::GetParam<KFNModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid tree type.
  */
-BOOST_AUTO_TEST_CASE(KFNInvalidTreeTypeTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidTreeTypeTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -182,14 +186,15 @@ BOOST_AUTO_TEST_CASE(KFNInvalidTreeTypeTest)
   SetInputParam("tree_type", (string) "min-rp"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid algorithm.
  */
-BOOST_AUTO_TEST_CASE(KFNInvalidAlgoTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidAlgoTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -200,14 +205,15 @@ BOOST_AUTO_TEST_CASE(KFNInvalidAlgoTest)
   SetInputParam("algorithm", (string) "triple_tree"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid value of epsilon.
  */
-BOOST_AUTO_TEST_CASE(KFNInvalidEpsilonTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidEpsilonTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -218,7 +224,7 @@ BOOST_AUTO_TEST_CASE(KFNInvalidEpsilonTest)
   SetInputParam("epsilon", (double) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
   IO::GetSingleton().Parameters()["epsilon"].wasPassed = false;
@@ -226,7 +232,7 @@ BOOST_AUTO_TEST_CASE(KFNInvalidEpsilonTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("epsilon", (double) 2); // Invalid.
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
   IO::GetSingleton().Parameters()["epsilon"].wasPassed = false;
@@ -234,14 +240,15 @@ BOOST_AUTO_TEST_CASE(KFNInvalidEpsilonTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("epsilon", (double) 1); // Invalid.
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid value of percentage.
  */
-BOOST_AUTO_TEST_CASE(KFNInvalidPercentageTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNInvalidPercentageTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -252,7 +259,7 @@ BOOST_AUTO_TEST_CASE(KFNInvalidPercentageTest)
   SetInputParam("percentage", (double) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
   IO::GetSingleton().Parameters()["percentage"].wasPassed = false;
@@ -260,7 +267,7 @@ BOOST_AUTO_TEST_CASE(KFNInvalidPercentageTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("percentage", (double) 0); // Invalid.
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
   IO::GetSingleton().Parameters()["epsilon"].wasPassed = false;
@@ -268,7 +275,7 @@ BOOST_AUTO_TEST_CASE(KFNInvalidPercentageTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("percentage", (double) 2); // Invalid.
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -276,7 +283,8 @@ BOOST_AUTO_TEST_CASE(KFNInvalidPercentageTest)
  * Make sure that dimensions of the neighbors and distances
  * matrices are correct given a value of k.
  */
-BOOST_AUTO_TEST_CASE(KFNOutputDimensionTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNOutputDimensionTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -288,20 +296,19 @@ BOOST_AUTO_TEST_CASE(KFNOutputDimensionTest)
   mlpackMain();
 
   // Check the neighbors matrix has 4 points for each input point.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>
-      ("neighbors").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>
-      ("neighbors").n_cols, 100);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows == 10);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols == 100);
 
   // Check the distances matrix has 4 points for each input point.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_cols, 100);
+  REQUIRE(IO::GetParam<arma::mat>("distances").n_rows == 10);
+  REQUIRE(IO::GetParam<arma::mat>("distances").n_cols == 100);
 }
 
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(KFNModelReuseTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNModelReuseTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -344,7 +351,8 @@ BOOST_AUTO_TEST_CASE(KFNModelReuseTest)
  * Ensure that changing the value of epsilon gives us different
  * approximate KFN results.
  */
-BOOST_AUTO_TEST_CASE(KFNDifferentEpsilonTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNDifferentEpsilonTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
@@ -381,7 +389,8 @@ BOOST_AUTO_TEST_CASE(KFNDifferentEpsilonTest)
  * Ensure that changing the value of percentage gives us different
  * approximate KFN results.
  */
-BOOST_AUTO_TEST_CASE(KFNDifferentPercentageTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNDifferentPercentageTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
@@ -418,7 +427,8 @@ BOOST_AUTO_TEST_CASE(KFNDifferentPercentageTest)
  * Ensure that we get different results on running twice in greedy
  * search mode when random_basis is specified.
  */
-BOOST_AUTO_TEST_CASE(KFNRandomBasisTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNRandomBasisTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
@@ -434,8 +444,7 @@ BOOST_AUTO_TEST_CASE(KFNRandomBasisTest)
   arma::mat distances;
   neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(IO::GetParam<arma::mat>("distances"));
-  BOOST_REQUIRE_EQUAL(IO::GetParam<KFNModel*>("output_model")->RandomBasis(),
-      true);
+  REQUIRE(IO::GetParam<KFNModel*>("output_model")->RandomBasis() == true);
 
   bindings::tests::CleanMemory();
 
@@ -448,15 +457,15 @@ BOOST_AUTO_TEST_CASE(KFNRandomBasisTest)
 
   CheckMatrices(neighbors, IO::GetParam<arma::Mat<size_t>>("neighbors"));
   CheckMatrices(distances, IO::GetParam<arma::mat>("distances"));
-  BOOST_REQUIRE_EQUAL(IO::GetParam<KFNModel*>("output_model")->RandomBasis(),
-      false);
+  REQUIRE(IO::GetParam<KFNModel*>("output_model")->RandomBasis() == false);
 }
 
 /*
  * Ensure that the program runs successfully when we pass true_neighbors
  * and/or true_distances and fails when those matrices have the wrong shape.
  */
-BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNTrueNeighborDistanceTest",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -480,7 +489,7 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
   SetInputParam("true_distances", distances);
   SetInputParam("epsilon", (double) 0.5);
 
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
 
   // True output matrices have incorrect shape.
   arma::Mat<size_t> dummyNeighbors;
@@ -500,7 +509,7 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
   SetInputParam("true_distances", std::move(dummyDistances));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -508,7 +517,8 @@ BOOST_AUTO_TEST_CASE(KFNTrueNeighborDistanceTest)
  * Ensure that different search algorithms give same result.
  * We do not consider greedy because it is an approximate algorithm.
  */
-BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNAllAlgorithmsTest",
+                 "[KFNMainTest][BindingTests]")
 {
   string algorithms[] = {"dual_tree", "naive", "single_tree"};
   const int nofalgorithms = 3;
@@ -566,7 +576,8 @@ BOOST_AUTO_TEST_CASE(KFNAllAlgorithmsTest)
 /*
  * Ensure that different tree types give same result.
  */
-BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
+TEST_CASE_METHOD(KFNTestFixture, "KFNAllTreeTypesTest",
+                 "[KFNMainTest][BindingTests]")
 {
   string treetypes[] = {"kd", "vp", "rp", "max-rp", "ub", "cover", "r",
       "r-star", "x", "ball", "hilbert-r", "r-plus", "r-plus-plus",
@@ -626,7 +637,8 @@ BOOST_AUTO_TEST_CASE(KFNAllTreeTypesTest)
 /**
   * Ensure that different leaf sizes give different results.
  */
-BOOST_AUTO_TEST_CASE(KFNDifferentLeafSizes)
+TEST_CASE_METHOD(KFNTestFixture, "KFNDifferentLeafSizes",
+                 "[KFNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -638,8 +650,7 @@ BOOST_AUTO_TEST_CASE(KFNDifferentLeafSizes)
 
   mlpackMain();
 
-  BOOST_CHECK_EQUAL(IO::GetParam<KFNModel*>("output_model")->LeafSize(),
-      (int) 1);
+  REQUIRE(IO::GetParam<KFNModel*>("output_model")->LeafSize() == (int) 1);
 
   bindings::tests::CleanMemory();
 
@@ -655,8 +666,5 @@ BOOST_AUTO_TEST_CASE(KFNDifferentLeafSizes)
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  BOOST_CHECK_EQUAL(IO::GetParam<KFNModel*>("output_model")->LeafSize(),
-      (int) 10);
+  REQUIRE(IO::GetParam<KFNModel*>("output_model")->LeafSize() == (int) 10);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
