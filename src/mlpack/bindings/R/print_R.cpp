@@ -81,7 +81,6 @@ void PrintR(const util::ProgramDoc& programInfo,
     const string& opt = inputOptions[i];
     util::ParamData& d = parameters.at(opt);
 
-    cout << "#' @param ";
     bool out = false;
     IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &out);
 
@@ -96,8 +95,6 @@ void PrintR(const util::ProgramDoc& programInfo,
   {
     const string& opt = outputOptions[i];
     util::ParamData& d = parameters.at(opt);
-
-    cout << "#' \\item{";
 
     bool out = true;
     IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &out);

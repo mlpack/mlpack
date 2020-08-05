@@ -160,6 +160,7 @@ std::string PrintOutputOptions(const bool markdown,
 {
   // See if this is part of the program.
   std::string result = "";
+  std::string command_prefix = "R> ";  
   if (IO::Parameters().count(paramName) > 0)
   {
     util::ParamData& d = IO::Parameters()[paramName];
@@ -168,7 +169,7 @@ std::string PrintOutputOptions(const bool markdown,
       // Print a new line for the output option.
       std::ostringstream oss;
       if (markdown)
-        oss << "R> ";
+        oss << command_prefix;
       oss << value << " <- output$" << paramName;
       result = oss.str();
     }
@@ -240,7 +241,8 @@ std::string ProgramCall(const bool markdown,
 inline std::string ProgramCall(const std::string& programName)
 {
   std::ostringstream oss;
-  oss << "R> ";
+  std::string command_prefix = "R> ";
+  oss << command_prefix;
 
   // Determine if we have any output options.
   std::map<std::string, util::ParamData>& parameters = IO::Parameters();
@@ -294,7 +296,8 @@ inline std::string ProgramCall(const std::string& programName)
       continue;
 
     // Print a new line for the output option.
-    oss << std::endl << "R> " << it->second.name << " <- d$" << it->second.name;
+    oss << std::endl << command_prefix << it->second.name << " <- d$"
+        << it->second.name;
   }
 
   return oss.str();

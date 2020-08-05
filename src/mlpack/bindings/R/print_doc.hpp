@@ -40,11 +40,10 @@ void PrintDoc(util::ParamData& d,
 
   bool out = *((bool*) output);
   std::ostringstream oss;
-  oss << d.name;
   if (out)
-    oss << "}{";
+    oss << "#' \\item{" << d.name << "}{";
   else
-    oss << " ";
+    oss << "#' @param " << d.name << " ";
   oss << d.desc.substr(0, d.desc.size() - 1);
   // Print a default, if possible.
   if (!d.required)
