@@ -51,7 +51,7 @@ struct load_visitor : public boost::static_visitor<void>
   }
 };
 
-template<typename VariantType1, typename... VariantTypes>
+template<typename... VariantTypes>
 class pointer_variant_wrapper
 {
 /*
@@ -61,7 +61,7 @@ class pointer_variant_wrapper
  * we need to serialize it if it holds a raw pointers.
  */
  public:
-   pointer_variant_wrapper(boost::variant<VariantType1*, VariantTypes*...>& PointerVar)
+   pointer_variant_wrapper(boost::variant<VariantTypes*...>& PointerVar)
     : PointerVariant(PointerVar)
   {}
 
@@ -85,7 +85,7 @@ class pointer_variant_wrapper
     // A function pointer used to define which type is used from boost::visitor
     using LoadFuncType = 
         std::function<void(Archive &, 
-            boost::variant<VariantType1*, VariantTypes*...> &)>;
+            boost::variant<VariantTypes*...> &)>;
 
     // Basically I have inspired myself from the cereal Implementation.
     LoadFuncType loadFuncArray[0] = load_visitor(); 
@@ -97,14 +97,14 @@ class pointer_variant_wrapper
   }
 
 private:
-   boost::variant<VariantType1*, VariantTypes*...>& PointerVariant;
+   boost::variant<VariantTypes*...>& PointerVariant;
 };
 
-template<typename VariantType1, typename... VariantTypes>
-inline pointer_variant_wrapper<VariantType1, VariantTypes...>
-make_pointer_variant(boost::variant<VariantType1*, VariantTypes*...>& t)
+template<typename... VariantTypes>
+inline pointer_variant_wrapper<VariantTypes...>
+make_pointer_variant(boost::variant<VariantTypes*...>& t)
 {
-  return pointer_variant_wrapper<VariantType1, VariantTypes...>(t);
+  return pointer_variant_wrapper<VariantTypes...>(t);
 }
 
 #define CEREAL_VARIANT_POINTER(T) cereal::make_pointer_variant(T)
