@@ -26,7 +26,7 @@ namespace rl {
 using namespace mlpack::ann;
 
 /**
- * Implementation of the Distributional Deep Q-Learning network.
+ * Implementation of the Categorical Deep Q-Learning network.
  * For more information, see the following.
  *
  * @code
