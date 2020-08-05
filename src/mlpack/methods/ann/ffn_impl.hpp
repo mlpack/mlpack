@@ -563,7 +563,10 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & CEREAL_NVP(network);
+  for (size_t i = 0; i < network.size(); ++i) 
+  {
+   ar & CEREAL_VARIANT_POINTER(network.at(i));
+  }
 
   // If we are loading, we need to initialize the weights.
   if (Archive::is_loading::value)
