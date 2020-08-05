@@ -20,14 +20,14 @@ namespace math /** Miscellaneous math routines. */ {
 
 /**
  * Matrix multiplication of slices of two cubes. This function expects
- * both cubes to have same number of slices. For example. a valid operation
- * would be: cube A of shape (m, p, s) multiplied with cube B of shape (p, n, s)
+ * both cubes to have the same number of slices. For example, a valid operation
+ * would be: cube A of shape (m, p, s) multiplied by cube B of shape (p, n, s)
  * resulting in a cube of shape (m, n, s).
  *
  * @param cubeA First cube.
  * @param cubeB Second cube.
- * @param aTranspose Whether slices of first cube has to be transposed.
- * @param bTranspose Whether slices of second cube has to be transposed.
+ * @param aTranspose Whether slices of first cube have to be transposed.
+ * @param bTranspose Whether slices of second cube have to be transposed.
  */
 template <typename CubeType>
 CubeType MultiplyCube2Cube(const CubeType& cubeA,
@@ -36,14 +36,15 @@ CubeType MultiplyCube2Cube(const CubeType& cubeA,
                            const bool bTranspose = false);
 /**
  * Matrix multiplication of a matrix and all the slices of a cube. This function
- * is used when first object is matrix and second object is cube. For example.
- * a valid operation would be: matrix A of shape (m, p) multiplied with cube B
- * of shape (p, n, s) resulting in a cube of shape (m, n, s).
+ * is used when the first object is a matrix and the second object is a cube.
+ * For example, a valid operation would be: matrix A of shape (m, p)
+ * multiplied by cube B of shape (p, n, s) resulting in a cube
+ * of shape (m, n, s).
  *
  * @param matA The matrix as the first operand.
  * @param cubeB The cube as the second operand.
  * @param aTranspose Whether matrix has to be transposed.
- * @param bTranspose Whether slices of cube has to be transposed.
+ * @param bTranspose Whether slices of cube have to be transposed.
  */
 template <typename MatType, typename CubeType>
 CubeType MultiplyMat2Cube(const MatType& matA,
@@ -52,16 +53,17 @@ CubeType MultiplyMat2Cube(const MatType& matA,
                           const bool bTranspose = false);
 /**
  * Matrix multiplication of all slices of a cube with a matrix. This function
- * is used when first object is a cube and the second object is a matrix. For
- * example. a valid operation would be: cube A of shape (m, p, s) multiplied
- * with a matrix of shape (p, n) resulting in a cube of shape (m, n, s).
+ * is used when the first object is a cube and the second object is a matrix.
+ * For example, a valid operation would be: cube A of shape (m, p, s)
+ * multiplied by a matrix of shape (p, n) resulting in a cube
+ * of shape (m, n, s).
  *
  * @param cubeA The cube as the first operand.
  * @param matB The matrix as the second operand.
- * @param aTranspose Whether slices of cube has to be transposed.
+ * @param aTranspose Whether slices of cube have to be transposed.
  * @param bTranspose Whether matrix has to be transposed.
  */
-template <typename MatType, typename CubeType>
+template <typename CubeType, typename MatType>
 CubeType MultiplyCube2Mat(const CubeType& cubeA,
                           const MatType& matB,
                           const bool aTranspose = false,
