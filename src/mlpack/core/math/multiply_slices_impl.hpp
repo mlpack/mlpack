@@ -137,7 +137,7 @@ CubeType MultiplyMat2Cube(const MatType& matA,
   return z;
 }
 
-template <typename MatType, typename CubeType>
+template <typename CubeType, typename MatType>
 CubeType MultiplyCube2Mat(const CubeType& cubeA,
     const MatType& matB,
     const bool aTranspose,
