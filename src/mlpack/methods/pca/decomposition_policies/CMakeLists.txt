@@ -5,6 +5,7 @@ set(SOURCES
   randomized_block_krylov_method.hpp
   randomized_svd_method.hpp
   quic_svd_method.hpp
+  stochastic_method.hpp
 )
 
 # Add directory name to sources.

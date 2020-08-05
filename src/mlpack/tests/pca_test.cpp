@@ -14,6 +14,7 @@
 #include <mlpack/methods/pca/pca.hpp>
 #include <mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp>
+#include <mlpack/methods/pca/decomposition_policies/stochastic_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_block_krylov_method.hpp>
 
@@ -34,7 +35,8 @@ using namespace mlpack::distribution;
 template<typename DecompositionPolicy>
 void ArmaComparisonPCA(
     const bool scaleData = false,
-    const DecompositionPolicy& decomposition = DecompositionPolicy())
+    const DecompositionPolicy& decomposition = DecompositionPolicy(),
+    const double tolerance = 0.0001)
 {
   arma::mat coeff, coeff1, score, score1;
   arma::vec eigVal, eigVal1;
@@ -52,7 +54,7 @@ void ArmaComparisonPCA(
     if (eigVal[i] == 0.0)
       BOOST_REQUIRE_SMALL(eigVal1[i], 1e-15);
     else
-      BOOST_REQUIRE_CLOSE(eigVal[i], eigVal1[i], 0.0001);
+      BOOST_REQUIRE_CLOSE(eigVal[i], eigVal1[i], tolerance);
   }
 }
 
@@ -205,6 +207,23 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedBlockKrylovPCATest)
 BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedPCATest)
 {
   ArmaComparisonPCA<RandomizedSVDPolicy>();
+}
+
+
+/**
+ * Compare the output of stochastic SGD PCA implementation with Armadillo's.
+ */
+BOOST_AUTO_TEST_CASE(ArmaComparisonStochasticSGDPCATest)
+{
+  ArmaComparisonPCA<StochasticSGDPolicy>();
+}
+
+/**
+ * Compare the output of stochastic Adam PCA implementation with Armadillo's.
+ */
+BOOST_AUTO_TEST_CASE(ArmaComparisonStochasticAdamPCATest)
+{
+  ArmaComparisonPCA<StochasticAdamPolicy>();
 }
 
 /**

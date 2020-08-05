@@ -19,6 +19,7 @@
 #include <mlpack/methods/pca/decomposition_policies/quic_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_block_krylov_method.hpp>
+#include <mlpack/methods/pca/decomposition_policies/stochastic_method.hpp>
 
 using namespace mlpack;
 using namespace mlpack::pca;
@@ -34,7 +35,8 @@ PROGRAM_INFO("Principal Components Analysis",
     "linear transformation determined by PCA.",
     // Long description.
     "This program performs principal components analysis on the given dataset "
-    "using the exact, randomized, randomized block Krylov, or QUIC SVD method. "
+    "using the exact, randomized, randomized block Krylov, SGD, SVRG, Adam or "
+    "QUIC SVD method. "
     "It will transform the data onto its principal components, optionally "
     "performing dimensionality reduction by ignoring the principal components "
     "with the smallest eigenvalues."
@@ -50,7 +52,8 @@ PROGRAM_INFO("Principal Components Analysis",
     "Multiple different decomposition techniques can be used.  The method to "
     "use can be specified with the " +
     PRINT_PARAM_STRING("decomposition_method") + " parameter, and it may take "
-    "the values 'exact', 'randomized', or 'quic'."
+    "the values 'exact', 'randomized', 'randomized-block-krylov', 'sgd', "
+    "'svrg', adam' or 'quic'."
     "\n\n"
     "For example, to reduce the dimensionality of the matrix " +
     PRINT_DATASET("data") + " to 5 dimensions using randomized SVD for the "
@@ -77,18 +80,21 @@ PARAM_FLAG("scale", "If set, the data will be scaled before running PCA, such "
 
 PARAM_STRING_IN("decomposition_method", "Method used for the principal "
     "components analysis: 'exact', 'randomized', 'randomized-block-krylov', "
-    "'quic'.", "c", "exact");
+    "'sgd', 'svrg', 'adam', 'quic'.", "c", "exact");
+
+PARAM_DOUBLE_IN("step_size", "The step-size for 'sgd', 'svrg' and 'adam' "
+    "decomposition method.", "l", 0.001);
+PARAM_INT_IN("max_iterations", "The maximum number of iterations to be run "
+    "for the 'sgd', 'svrg' and 'adam' decompostion method.", "n", 100000);
 
 
 //! Run RunPCA on the specified dataset with the given decomposition method.
-template<typename DecompositionPolicy>
-void RunPCA(arma::mat& dataset,
+template<typename PCAType>
+void RunPCA(PCAType& p,
+            arma::mat& dataset,
             const size_t newDimension,
-            const bool scale,
             const double varToRetain)
 {
-  PCA<DecompositionPolicy> p(scale);
-
   Log::Info << "Performing PCA on dataset..." << endl;
   double varRetained;
 
@@ -119,7 +125,7 @@ static void mlpackMain()
 
   // Check decomposition method validity.
   RequireParamInSet<string>("decomposition_method", { "exact", "randomized",
-      "randomized-block-krylov", "quic" }, true,
+      "randomized-block-krylov", "sgd", "svrg", "adam", "quic" }, true,
       "unknown decomposition method");
 
   // Find out what dimension we want.
@@ -143,24 +149,56 @@ static void mlpackMain()
   const double varToRetain = IO::GetParam<double>("var_to_retain");
   const string decompositionMethod = IO::GetParam<string>(
       "decomposition_method");
+  const double stepSize = CLI::GetParam<double>("step_size");
+  const size_t maxIterations = CLI::GetParam<int>("max_iterations");
 
   // Perform PCA.
   if (decompositionMethod == "exact")
   {
-    RunPCA<ExactSVDPolicy>(dataset, newDimension, scale, varToRetain);
+    PCA<ExactSVDPolicy> p(scale);
+    RunPCA(p, dataset, newDimension, varToRetain);
   }
   else if (decompositionMethod == "randomized")
   {
-    RunPCA<RandomizedSVDPolicy>(dataset, newDimension, scale, varToRetain);
+    PCA<RandomizedSVDPolicy> p(scale);
+    RunPCA(p, dataset, newDimension, varToRetain);
   }
   else if (decompositionMethod == "randomized-block-krylov")
   {
-    RunPCA<RandomizedBlockKrylovSVDPolicy>(dataset, newDimension, scale,
-        varToRetain);
+    PCA<RandomizedBlockKrylovSVDPolicy> p(scale);
+    RunPCA(p, dataset, newDimension, varToRetain);
+  }
+  else if (decompositionMethod == "sgd")
+  {
+    StochasticSGDPolicy dp;
+    dp.Optimizer().StepSize() = stepSize;
+    dp.Optimizer().MaxIterations() = maxIterations;
+
+    PCA<StochasticSGDPolicy> p(scale, dp);
+    RunPCA(p, dataset, newDimension, varToRetain);
+  }
+  else if (decompositionMethod == "svrg")
+  {
+    StochasticSVRGPolicy dp;
+    dp.Optimizer().StepSize() = stepSize;
+    dp.Optimizer().MaxIterations() = maxIterations;
+
+    PCA<StochasticSVRGPolicy> p(scale, dp);
+    RunPCA(p, dataset, newDimension, varToRetain);
+  }
+  else if (decompositionMethod == "adam")
+  {
+    StochasticAdamPolicy dp;
+    dp.Optimizer().StepSize() = stepSize;
+    dp.Optimizer().MaxIterations() = maxIterations;
+
+    PCA<StochasticAdamPolicy> p(scale, dp);
+    RunPCA(p, dataset, newDimension, varToRetain);
   }
   else if (decompositionMethod == "quic")
   {
-    RunPCA<QUICSVDPolicy>(dataset, newDimension, scale, varToRetain);
+    PCA<QUICSVDPolicy> p(scale);
+    RunPCA(p, dataset, newDimension, varToRetain);
   }
 
   // Now save the results.

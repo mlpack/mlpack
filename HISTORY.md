@@ -200,6 +200,8 @@
   * Better handling of when STB is not installed (#2033).
 
   * Fix Naive Bayes classifier computations in high dimensions (#2022).
+  
+  * Add Stochastic Approximation Algorithms for Principal Component Analysis (#1391).
 
 ### mlpack 3.2.0
 ###### 2019-09-25
