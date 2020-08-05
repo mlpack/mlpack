@@ -124,7 +124,7 @@ installed.
 If you would like to build the Go bindings, make sure that Go >= 1.11.0 is
 installed with this package:
 
-     gonum
+     Gonum
 
 If you would like to build the R bindings, make sure that R >= 4.0 is
 installed with these R packages.
