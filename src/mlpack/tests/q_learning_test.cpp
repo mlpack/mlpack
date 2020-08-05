@@ -17,6 +17,7 @@
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/empty_loss.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
 #include <mlpack/methods/reinforcement_learning/sac.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
@@ -58,7 +59,7 @@ bool testAgent(AgentType& agent,
     returnList.push_back(episodeReturn);
 
     if (returnList.size() > consecutiveEpisodesTest)
-      returnList.erase(returnList.begin());      
+      returnList.erase(returnList.begin());
 
     double averageReturn = std::accumulate(returnList.begin(),
         returnList.end(), 0.0) / returnList.size();
