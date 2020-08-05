@@ -15,9 +15,11 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/init_rules/glorot_init.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
@@ -1646,36 +1648,95 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
 {
-  arma::mat output, input, delta, gradient;
-  Lookup<> module(10, 5);
+  const size_t vocabSize = 10;
+  const size_t embeddingSize = 2;
+  const size_t seqLength = 3;
+  const size_t batchSize = 4;
+
+  arma::mat output, input, gy, g, gradient;
+
+  Lookup<> module(vocabSize, embeddingSize);
   module.Parameters().randu();
 
   // Test the Forward function.
-  input = arma::zeros(2, 1);
-  input(0) = 1;
-  input(1) = 3;
+  input = arma::zeros(seqLength, batchSize);
+  for (size_t i = 0; i < input.n_elem; ++i)
+  {
+    int token = math::RandInt(1, vocabSize);
+    input(i) = token;
+  }
 
   module.Forward(input, output);
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    // The Lookup module uses index - 1 for the cols.
+    const double outputSum = arma::accu(module.Parameters().rows(
+        arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
-  // The Lookup module uses index - 1 for the cols.
-  const double outputSum = arma::accu(module.Parameters().col(0)) +
-      arma::accu(module.Parameters().col(2));
-
-  REQUIRE(outputSum == Approx(arma::accu(output)).epsilon(1e-5));
+    REQUIRE(std::fabs(outputSum - arma::accu(output.col(i))) <= 1e-5);
+  }
 
   // Test the Gradient function.
-  arma::mat error = arma::ones(2, 5);
-  error = error.t();
-  error.col(1) *= 0.5;
-
+  arma::mat error = 0.01 * arma::randu(embeddingSize * seqLength, batchSize);
   module.Gradient(input, error, gradient);
 
-  // The Lookup module uses index - 1 for the cols.
-  const double gradientSum = arma::accu(gradient.col(0)) +
-      arma::accu(gradient.col(2));
+  REQUIRE(std::fabs(arma::accu(error) - arma::accu(gradient)) <= 1e-07);
+}
 
-  REQUIRE(gradientSum == Approx(arma::accu(error)).epsilon(1e-5));
-  REQUIRE(arma::accu(gradient) == Approx(arma::accu(error)).epsilon(1e-5));
+/**
+ * Lookup layer numerical gradient test.
+ */
+TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
+{
+  // Lookup function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input.set_size(seqLength, batchSize);
+      for (size_t i = 0; i < input.n_elem; ++i)
+      {
+        input(i) = math::RandInt(1, vocabSize);
+      }
+      target = arma::zeros(vocabSize, batchSize);
+      for (size_t i = 0; i < batchSize; ++i)
+      {
+        const size_t targetWord = math::RandInt(1, vocabSize);
+        target(targetWord, i) = 1;
+      }
+
+      model = new FFN<CrossEntropyError<>, GlorotInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<Lookup<> >(vocabSize, embeddingSize);
+      model->Add<Linear<> >(embeddingSize * seqLength, vocabSize);
+      model->Add<Softmax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, batchSize);
+      model->Gradient(model->Parameters(), 0, gradient, batchSize);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<CrossEntropyError<>, GlorotInitialization>* model;
+    arma::mat input, target;
+
+    const size_t seqLength = 10;
+    const size_t embeddingSize = 8;
+    const size_t vocabSize = 20;
+    const size_t batchSize = 4;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-6);
 }
 
 /**
@@ -1684,12 +1745,12 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("LookupLayerParametersTest", "[ANNLayerTest]")
 {
-  // Parameter order : inSize, outSize.
-  Lookup<> layer(5, 7);
+  // Parameter order : vocabSize, embedingSize.
+  Lookup<> layer(100, 8);
 
   // Make sure we can get the parameters successfully.
-  REQUIRE(layer.InSize() == 5);
-  REQUIRE(layer.OutSize() == 7);
+  REQUIRE(layer.VocabSize() == 100);
+  REQUIRE(layer.EmbeddingSize() == 8);
 }
 
 /**
