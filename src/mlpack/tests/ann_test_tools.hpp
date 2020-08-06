@@ -98,6 +98,65 @@ double JacobianTest(ModuleType& module,
   return arma::max(arma::max(arma::abs(jacobianA - jacobianB)));
 }
 
+// Custom Jacobian Test where we get the input from outside of this function
+// unlike the original Jacobian Test where input is generated inside that
+// funcion.
+template <typename ModuleType>
+double CustomJacobianTest(ModuleType& module,
+                          arma::mat& input,
+                          const double perturbation = 1e-6)
+{
+  arma::mat output, outputA, outputB, jacobianA, jacobianB;
+
+  // Initialize the module parameters.
+  ResetFunction(module);
+
+  // Initialize the jacobian matrix.
+  module.Forward(input, output);
+  jacobianA = arma::zeros(input.n_elem, output.n_elem);
+
+  // Share the input paramter matrix.
+  arma::mat sin = arma::mat(input.memptr(), input.n_rows, input.n_cols,
+      false, false);
+
+  for (size_t i = 0; i < input.n_elem; ++i)
+  {
+    double original = sin(i);
+    sin(i) = original - perturbation;
+    module.Forward(input, outputA);
+    sin(i) = original + perturbation;
+    module.Forward(input, outputB);
+    sin(i) = original;
+
+    outputB -= outputA;
+    outputB /= 2 * perturbation;
+    jacobianA.row(i) = outputB.t();
+  }
+
+  // Initialize the derivative parameter.
+  arma::mat deriv = arma::zeros(output.n_rows, output.n_cols);
+
+  // Share the derivative parameter.
+  arma::mat derivTemp = arma::mat(deriv.memptr(), deriv.n_rows, deriv.n_cols,
+      false, false);
+
+  // Initialize the jacobian matrix.
+  jacobianB = arma::zeros(input.n_elem, output.n_elem);
+
+  for (size_t i = 0; i < derivTemp.n_elem; ++i)
+  {
+    deriv.zeros();
+    derivTemp(i) = 1;
+
+    arma::mat delta;
+    module.Backward(input, deriv, delta);
+
+    jacobianB.col(i) = delta;
+  }
+
+  return arma::max(arma::max(arma::abs(jacobianA - jacobianB)));
+}
+
 // Approximate Jacobian and supposedly-true Jacobian, then compare them
 // similarly to before.
 template<typename ModuleType>

@@ -106,12 +106,9 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-    qProj.slice(i) = q.slice(i) * queryWt
-        + arma::repmat(qBias, tgtSeqLen, 1);
-    kProj.slice(i) = k.slice(i) * keyWt
-        + arma::repmat(kBias, srcSeqLen, 1);
-    vProj.slice(i) = v.slice(i) * valueWt
-        + arma::repmat(vBias, srcSeqLen, 1);
+    qProj.slice(i) = q.slice(i) * queryWt + arma::repmat(qBias, tgtSeqLen, 1);
+    kProj.slice(i) = k.slice(i) * keyWt + arma::repmat(kBias, srcSeqLen, 1);
+    vProj.slice(i) = v.slice(i) * valueWt + arma::repmat(vBias, srcSeqLen, 1);
   }
 
   // The scaling factor sqrt(headDim) is used to prevent exploding values
