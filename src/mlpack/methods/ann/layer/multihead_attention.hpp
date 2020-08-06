@@ -201,8 +201,6 @@ class MultiheadAttention
         must be divisible by embedding dimension");
     Log::Assert(key.n_rows % embedDim == 0, "Number of rows in 'key' \
         must be divisible by embedding dimension");
-    Log::Assert(arma::size(key) == arma::size(value), "'key' and 'value' \
-        must have same dimensions.");
 
     q = CubeType(const_cast<arma::Mat<eT>&>(query).memptr(),
         query.n_rows / embedDim, embedDim, query.n_cols, true, false);
