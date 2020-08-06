@@ -388,132 +388,6 @@ TEST_CASE("SimpleLinearLayerTest", "[ANNLayerTest]")
 }
 
 /**
- * Linear module weight initialization test.
- */
-BOOST_AUTO_TEST_CASE(LinearLayerWeightInitializationTest)
-{
-  size_t inSize = 10, outSize = 4;
-  Linear<>* linear = new Linear<>(inSize, outSize);
-  linear->Reset();
-  RandomInitialization().Initialize(linear->Weight());
-  linear->Bias().ones();
-
-  BOOST_CHECK_EQUAL_COLLECTIONS(linear->Weight().begin(),
-      linear->Weight().end(), linear->Parameters().begin(),
-      linear->Parameters().end() - outSize);
-
-  BOOST_CHECK_EQUAL_COLLECTIONS(linear->Bias().begin(),
-      linear->Bias().end(), linear->Parameters().begin() + inSize * outSize,
-      linear->Parameters().end());
-
-  BOOST_REQUIRE_EQUAL(linear->Weight().n_rows, outSize);
-  BOOST_REQUIRE_EQUAL(linear->Weight().n_cols, inSize);
-  BOOST_REQUIRE_EQUAL(linear->Bias().n_rows, outSize);
-  BOOST_REQUIRE_EQUAL(linear->Bias().n_cols, 1);
-  BOOST_REQUIRE_EQUAL(linear->Parameters().n_rows, inSize * outSize + outSize);
-
-  delete linear;
-}
-
-/**
- * Atrous Convolution module weight initialization test.
- */
-BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerWeightInitializationTest)
-{
-  size_t inSize = 2, outSize = 3;
-  size_t kernelWidth = 4, kernelHeight = 5;
-  AtrousConvolution<>* module = new AtrousConvolution<>(inSize, outSize,
-      kernelWidth, kernelHeight, 6, 7, std::make_tuple(8, 9),
-      std::make_tuple(10, 11), 12, 13, 14, 15);
-  module->Reset();
-  RandomInitialization().Initialize(module->Weight());
-  module->Bias().ones();
-
-  BOOST_CHECK_EQUAL_COLLECTIONS(module->Weight().begin(),
-      module->Weight().end(), module->Parameters().begin(),
-      module->Parameters().end() - outSize);
-
-  BOOST_CHECK_EQUAL_COLLECTIONS(module->Bias().begin(),
-      module->Bias().end(), module->Parameters().end() - outSize,
-      module->Parameters().end());
-
-  BOOST_REQUIRE_EQUAL(module->Weight().n_rows, kernelWidth);
-  BOOST_REQUIRE_EQUAL(module->Weight().n_cols, kernelHeight);
-  BOOST_REQUIRE_EQUAL(module->Weight().n_slices, inSize * outSize);
-  BOOST_REQUIRE_EQUAL(module->Bias().n_rows, outSize);
-  BOOST_REQUIRE_EQUAL(module->Bias().n_cols, 1);
-  BOOST_REQUIRE_EQUAL(module->Parameters().n_rows,
-      (outSize * inSize * kernelWidth * kernelHeight) + outSize);
-
-  delete module;
-}
-
-/**
- * Convolution module weight initialization test.
- */
-BOOST_AUTO_TEST_CASE(ConvolutionLayerWeightInitializationTest)
-{
-  size_t inSize = 2, outSize = 3;
-  size_t kernelWidth = 4, kernelHeight = 5;
-  Convolution<>* module = new Convolution<>(inSize, outSize,
-      kernelWidth, kernelHeight, 6, 7, std::tuple<size_t, size_t>(8, 9),
-      std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
-  module->Reset();
-  RandomInitialization().Initialize(module->Weight());
-  module->Bias().ones();
-
-  BOOST_CHECK_EQUAL_COLLECTIONS(module->Weight().begin(),
-      module->Weight().end(), module->Parameters().begin(),
-      module->Parameters().end() - outSize);
-
-  BOOST_CHECK_EQUAL_COLLECTIONS(module->Bias().begin(),
-      module->Bias().end(), module->Parameters().end() - outSize,
-      module->Parameters().end());
-
-  BOOST_REQUIRE_EQUAL(module->Weight().n_rows, kernelWidth);
-  BOOST_REQUIRE_EQUAL(module->Weight().n_cols, kernelHeight);
-  BOOST_REQUIRE_EQUAL(module->Weight().n_slices, inSize * outSize);
-  BOOST_REQUIRE_EQUAL(module->Bias().n_rows, outSize);
-  BOOST_REQUIRE_EQUAL(module->Bias().n_cols, 1);
-  BOOST_REQUIRE_EQUAL(module->Parameters().n_rows,
-      (outSize * inSize * kernelWidth * kernelHeight) + outSize);
-
-  delete module;
-}
-
-/**
- * Transposed Convolution module weight initialization test.
- */
-BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerWeightInitializationTest)
-{
-  size_t inSize = 3, outSize = 3;
-  size_t kernelWidth = 4, kernelHeight = 4;
-  TransposedConvolution<>* module = new TransposedConvolution<>(inSize, outSize,
-      kernelWidth, kernelHeight, 1, 1, 1, 1, 5, 5, 6, 6);
-  module->Reset();
-  RandomInitialization().Initialize(module->Weight());
-  module->Bias().ones();
-
-  BOOST_CHECK_EQUAL_COLLECTIONS(module->Weight().begin(),
-      module->Weight().end(), module->Parameters().begin(),
-      module->Parameters().end() - outSize);
-
-  BOOST_CHECK_EQUAL_COLLECTIONS(module->Bias().begin(),
-      module->Bias().end(), module->Parameters().end() - outSize,
-      module->Parameters().end());
-
-  BOOST_REQUIRE_EQUAL(module->Weight().n_rows, kernelWidth);
-  BOOST_REQUIRE_EQUAL(module->Weight().n_cols, kernelHeight);
-  BOOST_REQUIRE_EQUAL(module->Weight().n_slices, inSize * outSize);
-  BOOST_REQUIRE_EQUAL(module->Bias().n_rows, outSize);
-  BOOST_REQUIRE_EQUAL(module->Bias().n_cols, 1);
-  BOOST_REQUIRE_EQUAL(module->Parameters().n_rows,
-      (outSize * inSize * kernelWidth * kernelHeight) + outSize);
-
-  delete module;
-}
-
-/**
  * Jacobian linear module test.
  */
 TEST_CASE("JacobianLinearLayerTest", "[ANNLayerTest]")
@@ -4311,4 +4185,122 @@ TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
   module.Train(input, output);
   // The model should switch to training mode for predicting.
   REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == 0);
+}
+
+/**
+ * Linear module weight initialization test.
+ */
+TEST_CASE("LinearLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 10, outSize = 4;
+  Linear<>* linear = new Linear<>(inSize, outSize);
+  linear->Reset();
+  RandomInitialization().Initialize(linear->Weight());
+  linear->Bias().ones();
+
+  REQUIRE(std::equal(linear->Weight().begin(),
+      linear->Weight().end(), linear->Parameters().begin()));
+
+  REQUIRE(std::equal(linear->Bias().begin(),
+      linear->Bias().end(), linear->Parameters().begin() + inSize * outSize));
+
+  REQUIRE(linear->Weight().n_rows == outSize);
+  REQUIRE(linear->Weight().n_cols == inSize);
+  REQUIRE(linear->Bias().n_rows == outSize);
+  REQUIRE(linear->Bias().n_cols == 1);
+  REQUIRE(linear->Parameters().n_rows == inSize * outSize + outSize);
+
+  delete linear;
+}
+
+/**
+ * Atrous Convolution module weight initialization test.
+ */
+TEST_CASE("AtrousConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
+  AtrousConvolution<>* module = new AtrousConvolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 6, 7, std::make_tuple(8, 9),
+      std::make_tuple(10, 11), 12, 13, 14, 15);
+  module->Reset();
+  RandomInitialization().Initialize(module->Weight());
+  module->Bias().ones();
+
+  REQUIRE(std::equal(module->Weight().begin(),
+      module->Weight().end(), module->Parameters().begin()));
+
+  REQUIRE(std::equal(module->Bias().begin(),
+      module->Bias().end(), module->Parameters().end() - outSize));
+
+  REQUIRE(module->Weight().n_rows == kernelWidth);
+  REQUIRE(module->Weight().n_cols == kernelHeight);
+  REQUIRE(module->Weight().n_slices == inSize * outSize);
+  REQUIRE(module->Bias().n_rows == outSize);
+  REQUIRE(module->Bias().n_cols == 1);
+  REQUIRE(module->Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+
+  delete module;
+}
+
+/**
+ * Convolution module weight initialization test.
+ */
+TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
+  Convolution<>* module = new Convolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 6, 7, std::tuple<size_t, size_t>(8, 9),
+      std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
+  module->Reset();
+  RandomInitialization().Initialize(module->Weight());
+  module->Bias().ones();
+
+  REQUIRE(std::equal(module->Weight().begin(),
+      module->Weight().end(), module->Parameters().begin()));
+
+  REQUIRE(std::equal(module->Bias().begin(),
+      module->Bias().end(), module->Parameters().end() - outSize));
+
+  REQUIRE(module->Weight().n_rows == kernelWidth);
+  REQUIRE(module->Weight().n_cols == kernelHeight);
+  REQUIRE(module->Weight().n_slices == inSize * outSize);
+  REQUIRE(module->Bias().n_rows == outSize);
+  REQUIRE(module->Bias().n_cols == 1);
+  REQUIRE(module->Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+
+  delete module;
+}
+
+/**
+ * Transposed Convolution module weight initialization test.
+ */
+TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 3, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 4;
+  TransposedConvolution<>* module = new TransposedConvolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 1, 1, 1, 1, 5, 5, 6, 6);
+  module->Reset();
+  RandomInitialization().Initialize(module->Weight());
+  module->Bias().ones();
+
+  REQUIRE(std::equal(module->Weight().begin(),
+      module->Weight().end(), module->Parameters().begin()));
+
+  REQUIRE(std::equal(module->Bias().begin(),
+      module->Bias().end(), module->Parameters().end() - outSize));
+
+  REQUIRE(module->Weight().n_rows == kernelWidth);
+  REQUIRE(module->Weight().n_cols == kernelHeight);
+  REQUIRE(module->Weight().n_slices == inSize * outSize);
+  REQUIRE(module->Bias().n_rows == outSize);
+  REQUIRE(module->Bias().n_cols == 1);
+  REQUIRE(module->Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+
+  delete module;
 }
