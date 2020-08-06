@@ -112,17 +112,17 @@ std::string DefaultParamImpl(
       std::is_same<T, arma::vec>::value ||
       std::is_same<T, arma::mat>::value)
   {
-    return "matrix(as.double(c()), 0, 0)";
+    return "matrix(numeric(), 0, 0)";
   }
   else if (std::is_same<T, arma::Row<size_t>>::value ||
       std::is_same<T, arma::Col<size_t>>::value ||
       std::is_same<T, arma::Mat<size_t>>::value)
   {
-    return "matrix(as.integer(c()), 0, 0)";
+    return "matrix(integer(), 0, 0)";
   }
   else
   {
-    return "matrix(as.double(c()), 0, 0)";
+    return "matrix(numeric(), 0, 0)";
   }
 }
 
