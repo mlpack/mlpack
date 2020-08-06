@@ -43,7 +43,7 @@ PROGRAM_INFO("Kernel SVM is an smo algorithm.",
     "future use; or, a pre-trained model can be used to classify new points.",
     // Long description.
     "An implementation of kerne SVMs that uses many kernels "
-    " like polynomial_kernel, linear_kernel and gaussian_kernel etc. to train the model."
+    " like polynomial_kernel, linear_kernel and gaussian_kernel etc."
     "\n\n"
     "The kernels that are supported are listed below:"
     "\n\n"
@@ -188,9 +188,9 @@ class KernelSVMModel
 };
 
 // Model loading/saving.
-PARAM_MODEL_IN(LinearSVMModel, "input_model", "Existing model "
+PARAM_MODEL_IN(KernelSVMModel, "input_model", "Existing model "
     "(parameters).", "m");
-PARAM_MODEL_OUT(LinearSVMModel, "output_model", "Output for trained "
+PARAM_MODEL_OUT(KernelSVMModel, "output_model", "Output for trained "
     "kernel svm model.", "M");
 
 // Testing.
@@ -248,59 +248,106 @@ static void mlpackMain()
       "unknown kernel type");
 
 
+  // Load the model, if necessary.
   if (kernelType == "linear")
   {
-    LinearKernel kernel;
-    KernelSVMModel<LinearKernel>(dataset, centerTransformedData, nystroem, newDim,
-        sampling, kernel);
+    KernelSVMModel<LinearKernel>* model;
+    if (IO::HasParam("input_model"))
+    {
+      model = IO::GetParam<KernelSVMModel<LinearKernel>*>("input_model");
+    }
+    else
+    {
+      model = new KernelSVMModel<LinearKernel>();
+    }
   }
   else if (kernelType == "gaussian")
   {
     const double bandwidth = IO::GetParam<double>("bandwidth");
 
-    GaussianKernel kernel(bandwidth);
-    KernelSVMModel<GaussianKernel>(dataset, centerTransformedData, nystroem, newDim,
-        sampling, kernel);
+    KernelSVMModel<GaussianKernel(bandwidth)>* model;
+    if (IO::HasParam("input_model"))
+    {
+      model = IO::GetParam<GaussianKernel(bandwidth)>*("input_model");
+    }
+    else
+    {
+      model = new KernelSVMModel<GaussianKernel(bandwidth)>();
+    }
   }
   else if (kernelType == "polynomial")
   {
     const double degree = IO::GetParam<double>("degree");
     const double offset = IO::GetParam<double>("offset");
 
-    PolynomialKernel kernel(degree, offset);
-    KernelSVMModel<PolynomialKernel>(dataset, centerTransformedData, nystroem,
-        newDim, sampling, kernel);
+    KernelSVMModel<PolynomialKernel(degree, offset)>* model;
+    if (IO::HasParam("input_model"))
+    {
+      model = IO::GetParam<KernelSVMModel<PolynomialKernel(degree,
+      	                                            offset)>*>("input_model");
+    }
+    else
+    {
+      model = new KernelSVMModel<PolynomialKernel(degree, offset)>();
+    }
   }
   else if (kernelType == "hyptan")
   {
     const double scale = IO::GetParam<double>("kernel_scale");
     const double offset = IO::GetParam<double>("offset");
 
-    HyperbolicTangentKernel kernel(scale, offset);
-    KernelSVMModel<HyperbolicTangentKernel>(dataset, centerTransformedData, nystroem,
-        newDim, sampling, kernel);
+    KernelSVMModel<HyperbolicTangentKernel(scale, offset)>* model;
+    if (IO::HasParam("input_model"))
+    {
+      model = IO::GetParam<KernelSVMModel<HyperbolicTangentKernel(scale,
+                                                    offset)>*>("input_model");
+    }
+    else
+    {
+      model = new KernelSVMModel<HyperbolicTangentKernel(scale, offset)>();
+    }
   }
   else if (kernelType == "laplacian")
   {
     const double bandwidth = IO::GetParam<double>("bandwidth");
 
-    LaplacianKernel kernel(bandwidth);
-    KernelSVMModel<LaplacianKernel>(dataset, centerTransformedData, nystroem, newDim,
-        sampling, kernel);
+    KernelSVMModel<LaplacianKernel(bandwidth)>* model;
+    if (IO::HasParam("input_model"))
+    {
+      model = IO::GetParam<KernelSVMModel<LaplacianKernel(
+      	                                            bandwidth)>*>("input_model");
+    }
+    else
+    {
+      model = new KernelSVMModel<LaplacianKernel(bandwidth)>();
+    }
   }
   else if (kernelType == "epanechnikov")
   {
     const double bandwidth = IO::GetParam<double>("bandwidth");
 
-    EpanechnikovKernel kernel(bandwidth);
-    KernelSVMModel<EpanechnikovKernel>(dataset, centerTransformedData, nystroem,
-        newDim, sampling, kernel);
+    KernelSVMModel<EpanechnikovKernel(bandwidth)>* model;
+    if (IO::HasParam("input_model"))
+    {
+      model = IO::GetParam<KernelSVMModel<EpanechnikovKernel(
+      	                                               bandwidth)>*>("input_model");
+    }
+    else
+    {
+      model = new KernelSVMModel();
+    }
   }
   else if (kernelType == "cosine")
   {
-    CosineDistance kernel;
-    KernelSVMModel<CosineDistance>(dataset, centerTransformedData, nystroem, newDim,
-        sampling, kernel);
+    KernelSVMModel<CosineDistance>* model;
+    if (IO::HasParam("input_model"))
+    {
+      model = IO::GetParam<KernelSVMModel<CosineDistance>*>("input_model");
+    }
+    else
+    {
+      model = new KernelSVMModel<CosineDistance>();
+    }
   }
 
   // Now, do the training.
@@ -309,7 +356,6 @@ static void mlpackMain()
     data::NormalizeLabels(rawLabels, labels, model->mappings);
     numClasses = IO::GetParam<int>("num_classes") == 0 ?
         model->mappings.n_elem : IO::GetParam<int>("num_classes");
-    model->svm.Lambda() = lambda;
     model->svm.Delta() = delta;
     model->svm.NumClasses() = numClasses;
     model->svm.FitIntercept() = intercept;
@@ -321,42 +367,10 @@ static void mlpackMain()
       throw std::invalid_argument("Given input data has only 1 class!");
     }
 
-    if (optimizerType == "lbfgs")
-    {
-      ens::L_BFGS lbfgsOpt;
-      lbfgsOpt.MaxIterations() = maxIterations;
-      lbfgsOpt.MinGradientNorm() = tolerance;
+    Log::Info << "Training model with smo." << endl;
 
-      Log::Info << "Training model with L-BFGS optimizer." << endl;
-
-      // This will train the model.
-      model->svm.Train(trainingSet, labels, numClasses, lbfgsOpt);
-    }
-    else if (optimizerType == "psgd")
-    {
-      const double stepSize = IO::GetParam<double>("step_size");
-      const bool shuffle = !IO::HasParam("shuffle");
-      const size_t maxIt = epochs * trainingSet.n_cols;
-
-      ens::ConstantStep decayPolicy(stepSize);
-
-      #ifdef HAS_OPENMP
-      size_t threads = omp_get_max_threads();
-      #else
-      size_t threads = 1;
-      Log::Warn << "Using parallel SGD, but OpenMP support is "
-                << "not available!" << endl;
-      #endif
-
-      ens::ParallelSGD<ens::ConstantStep> psgdOpt(maxIt, std::ceil(
-        (float) trainingSet.n_cols / threads), tolerance, shuffle,
-        decayPolicy);
-
-      Log::Info << "Training model with ParallelSGD optimizer." << endl;
-
-      // This will train the model.
-      model->svm.Train(trainingSet, labels, numClasses, psgdOpt);
-    }
+    // This will train the model.
+    model->svm.Train(trainingSet, labels, maxIterations, tolerance);
   }
 
   if (IO::HasParam("test"))
@@ -466,5 +480,5 @@ static void mlpackMain()
     }
   }
 
-  IO::GetParam<LinearSVMModel*>("output_model") = model;
+  IO::GetParam<KernelSVMModel*>("output_model") = model;
 }

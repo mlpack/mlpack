@@ -29,7 +29,6 @@ namespace svm {
  * on sparse datasets by specifying arma::sp_mat as the MatType parameter.
  *
  *
-
  * @code
  * @article{Microsoft Research,
  *   author    = {John C. Platt},
@@ -75,7 +74,7 @@ class KernelSVM
    * @param regularization standard svm regularization parameter.
    * @param fitIntercept add intercept term or not.
    * @param numClass Number of classes for classification.
-   * @param max_iter maximum number of iteration for training.
+   * @param maxIter maximum number of iteration for training.
    * @param tol tolerance value.
    */
   KernelSVM(const MatType& data,
@@ -83,7 +82,7 @@ class KernelSVM
             const double regularization = 1.0,
             const bool fitIntercept = false,
             const double numClass = 2,
-            const size_t max_iter = 10,
+            const size_t maxIter = 10,
             const double tol = 1e-3);
 
   /**
@@ -94,10 +93,12 @@ class KernelSVM
    * @param regularization standard svm regularization parameter.
    * @param fitIntercept add intercept term or not.
    * @param numClass Number of classes for classification.
+   * @param maxIter maximum number of iteration for training.
    */
   KernelSVM(const double regularization = 1.0,
             const bool fitIntercept = false,
-            const double numClass = 2);
+            const double numClass = 2,
+            const size_t maxIter = 10);
 
   /**
    * Classify the given points, returning the predicted labels for each point.
@@ -164,17 +165,36 @@ class KernelSVM
    * @tparam OptimizerType Desired optimizer.
    * @param data Input training features. Each column associate with one sample.
    * @param labels Labels associated with the feature data.
-   * @param max_iter maximum number of iteration for training.
+   * @param maxIter maximum number of iteration for training.
    * @param tol tolerance value.
    * @return Objective value of the final point.
    */
   double Train(const MatType& data,
                const arma::Row<size_t>& labels,
-               const size_t max_iter = 5,
+               const size_t maxIter = 5,
                const double tol = 1e-3);
+
+  //! Sets the number of classes.
+  size_t& NumClasses() { return numClass; }
+  //! Gets the number of classes.
+  size_t NumClasses() const { return numClass; }
+
+  //! Sets the regularization parameter.
+  double& Lambda() { return regularization; }
+  //! Gets the regularization parameter.
+  double Lambda() const { return regularization; }
+
+  //! Sets the margin between the correct class and all other classes.
+  double& MaxIter() { return maxIter; }
+  //! Gets the margin between the correct class and all other classes.
+  double MaxIter() const { return maxIter; }
 
   //! Sets the intercept term flag.
   bool& FitIntercept() { return fitIntercept; }
+
+  //! Gets the features size of the training data
+  size_t FeatureSize() const
+  { return features; }
 
   /**
    * Serialize the KernelSVM model.
@@ -183,13 +203,19 @@ class KernelSVM
   void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & BOOST_SERIALIZATION_NVP(fitIntercept);
+    ar & BOOST_SERIALIZATION_NVP(numClass);
+    ar & BOOST_SERIALIZATION_NVP(maxIter);
   }
 
  private:
   //! Locally saved number of classes.
   double numClass;
+  //! Locally stored maximum iteration.
+  double maxIter;
   //! Locally saved number of classifier trained.
   double numClassifier;
+  //! Locally saved features.
+  size_t features;
   //! Locally saved classes of classifiers.
   arma::mat classesClassifier;
   //! Locally saved network of trained svms.
