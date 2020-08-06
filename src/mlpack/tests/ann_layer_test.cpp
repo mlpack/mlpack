@@ -4355,6 +4355,46 @@ TEST_CASE("SimpleMultiheadAttentionTest", "[AttentionTest]")
  */
 TEST_CASE("JacobianMultiheadAttentionTest", "[AttentionTest]")
 {
+  // Check when query = key = value.
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat input = arma::randu(embedDim * tgtSeqLen, batchSize);
+
+    MultiheadAttention<> module(embedDim, nHeads);
+    module.Key() = input;
+    module.Value() = input;
+    module.Parameters().randu();
+
+    double error = CustomJacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+
+  // Check when key = value.
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t srcSeqLen = math::RandInt(2, 10);
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat input;
+    input.set_size(embedDim * tgtSeqLen, batchSize);
+
+    MultiheadAttention<> module(embedDim, nHeads);
+    module.Key() = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
+    module.Parameters().randu();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+
+  // Check when query, key and value are not same.
   for (size_t i = 0; i < 5; ++i)
   {
     const size_t tgtSeqLen = 2;

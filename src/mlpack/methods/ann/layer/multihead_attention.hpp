@@ -197,9 +197,9 @@ class MultiheadAttention
   {
     typedef typename arma::Cube<eT> CubeType;
 
-    Log::Assert(query.n_rows % embedDim == 0, "Number of features in 'query' \
+    Log::Assert(query.n_rows % embedDim == 0, "Number of rows in 'query' \
         must be divisible by embedding dimension");
-    Log::Assert(key.n_rows % embedDim == 0, "Number of features in 'key' \
+    Log::Assert(key.n_rows % embedDim == 0, "Number of rows in 'key' \
         must be divisible by embedding dimension");
     Log::Assert(arma::size(key) == arma::size(value), "'key' and 'value' \
         must have same dimensions.");
