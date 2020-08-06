@@ -36,6 +36,12 @@ struct save_visitor : public boost::static_visitor<void>
   {
     ar_ & CEREAL_POINTER(value);
   }
+  
+  template<typename... VariantTypes>
+  void operator()(Archive& ar, boost::variant<VariantTypes...>& variant) const
+  {
+    ar & CEREAL_VARIANT_POINTER(variant);
+  }
 
   Archive& ar_;
 };
@@ -48,6 +54,12 @@ struct load_visitor : public boost::static_visitor<void>
     VariantType* loadVariant;
     ar & CEREAL_POINTER(loadVariant);
     variant = loadVariant;
+  }
+
+  template<typename Archive, typename... VariantTypes>
+  void operator()(Archive& ar, boost::variant<VariantTypes...>& variant) const
+  {
+    ar & CEREAL_VARIANT_POINTER(variant);
   }
 };
 
