@@ -22,7 +22,7 @@ CRAN:
 install.packages('mlpack')
 @endcode
 
-@section r_quickstart_install Installing mlpack package from source
+@section r_quickstart_source_install Installing mlpack package from source
 
 Building the R bindings from scratch is a little more in-depth, though.  For
 information on that, follow the instructions on the @ref build page, and be sure

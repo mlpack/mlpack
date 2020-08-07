@@ -34,7 +34,7 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
 // [[Rcpp::export]]
 void IO_RestoreSettings(const std::string& programName)
 {
- IO::RestoreSettings(programName);
+  IO::RestoreSettings(programName);
 }
 
 // Call IO::SetParam<int>().

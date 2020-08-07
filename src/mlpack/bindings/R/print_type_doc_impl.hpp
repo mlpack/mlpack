@@ -53,7 +53,8 @@ std::string PrintTypeDoc(
   // Not sure what it is...
   else
   {
-    throw std::invalid_argument("Unknown parameter type '" + data.cppType + "'.");
+    throw std::invalid_argument("Unknown parameter type '" + data.cppType +
+        "'.");
   }
 }
 

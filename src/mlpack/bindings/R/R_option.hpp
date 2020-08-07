@@ -105,8 +105,8 @@ class ROption
         &PrintSerializeUtil<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
-    // import more than one .so or .o that uses IO, so we have to keep the options
-    // separate.  programName is a global variable from mlpack_main.hpp.
+    // import more than one .so or .o that uses IO, so we have to keep the
+    // options separate.  programName is a global variable from mlpack_main.hpp.
     IO::Add(std::move(data));
     if (identifier != "verbose")
       IO::StoreSettings(IO::ProgramName());

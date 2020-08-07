@@ -105,7 +105,7 @@ void PrintOutputProcessing(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   std::string type = util::StripType(d.cppType);
-  std::cout << functionName << "_internal.CLIGetParam"
+  std::cout << functionName << "_internal.IOGetParam"
       << type << "(\"" << d.name << "\")";
 }
 

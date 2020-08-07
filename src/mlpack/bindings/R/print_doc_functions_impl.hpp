@@ -160,7 +160,7 @@ std::string PrintOutputOptions(const bool markdown,
 {
   // See if this is part of the program.
   std::string result = "";
-  std::string command_prefix = "R> ";  
+  std::string command_prefix = "R> ";
   if (IO::Parameters().count(paramName) > 0)
   {
     util::ParamData& d = IO::Parameters()[paramName];
@@ -226,7 +226,7 @@ std::string ProgramCall(const bool markdown,
     else
       return util::HyphenateString(call, 2) + "\n" + oss.str();
   }
-  
+
   if (oss.str() == "")
     return "\\donttest{\n" + util::HyphenateString(call, 2) + "\n}";
   else

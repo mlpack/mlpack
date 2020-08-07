@@ -35,11 +35,13 @@ steps:
     fi
 
     if [ 'a$(R.version)' != 'a' ]; then
-      add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/'
-      apt-get -y update
-      apt-get remove -y r-base-core
-      apt-get install -y r-base-core
-      R -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'))"
+      sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/'
+      sudo apt-get -y update
+      sudo apt-get remove -y r-base-core
+      sudo apt-get install -y r-base-core
+      env:
+         MAKEFLAGS: "-j 2"
+      sudo Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'))"
     fi
 
     # Install armadillo.

@@ -40,7 +40,7 @@ void PrintInputProcessing(
      *     IO_SetParam<type>("<param_name>", <param_name>)
      *  }
      */
-    MLPACK_COUT_STREAM << "  if (!identical(" << d.name ;
+    MLPACK_COUT_STREAM << "  if (!identical(" << d.name;
     if (d.cppType == "bool")
     {
       MLPACK_COUT_STREAM << ", FALSE)) {" << std::endl;
@@ -169,8 +169,8 @@ void PrintInputProcessing(
      */
     MLPACK_COUT_STREAM << "  if (!identical(" << d.name << ", NA)) {"
         << std::endl;
-    MLPACK_COUT_STREAM << "    IO_SetParam" << util::StripType(d.cppType) << "Ptr(\""
-        << d.name << "\", " << d.name << ")" << std::endl;
+    MLPACK_COUT_STREAM << "    IO_SetParam" << util::StripType(d.cppType)
+        << "Ptr(\"" << d.name << "\", " << d.name << ")" << std::endl;
     MLPACK_COUT_STREAM << "  }" << std::endl; // Closing brace.
   }
   else
@@ -180,8 +180,8 @@ void PrintInputProcessing(
      *
      *     IO_SetParam<ModelType>Ptr("<param_name>", <param_name>)
      */
-    MLPACK_COUT_STREAM << "  IO_SetParam" << util::StripType(d.cppType) << "Ptr(\""
-              << d.name << "\", " << d.name << ")" << std::endl;
+    MLPACK_COUT_STREAM << "  IO_SetParam" << util::StripType(d.cppType)
+        << "Ptr(\"" << d.name << "\", " << d.name << ")" << std::endl;
   }
   MLPACK_COUT_STREAM << std::endl; // Extra line is to clear up the code a bit.
 }

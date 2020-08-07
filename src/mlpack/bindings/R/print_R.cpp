@@ -112,7 +112,7 @@ void PrintR(const util::ProgramDoc& programInfo,
   cout << "#' mlpack developers" << endl;
   cout << "#'" << endl;
 
-  // Next print the example as @examples.  
+  // Next print the example as @examples.
   cout << "#' @export" << endl;
   if (programInfo.example().size() != 0)
     cout << "#' @examples" << endl;

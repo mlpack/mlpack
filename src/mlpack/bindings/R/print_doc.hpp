@@ -37,7 +37,6 @@ void PrintDoc(util::ParamData& d,
               const void* /* input */,
               void* output)
 {
-
   bool out = *((bool*) output);
   std::ostringstream oss;
   if (out)

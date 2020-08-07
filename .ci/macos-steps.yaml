@@ -23,7 +23,9 @@ steps:
 
     if [ "a$(R.version)" != "a" ]; then
       brew install r
-      R -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'))"
+      env:
+         MAKEFLAGS: "-j 2"      
+      Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'), repos = 'http://cran.us.r-project.org')"
     fi
 
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
