@@ -21,6 +21,11 @@ steps:
       brew cask install julia
     fi
 
+    if [ "a$(R.version)" != "a" ]; then
+      brew install r
+      R -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'))"
+    fi
+
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
   displayName: 'Install Build Dependencies'
 

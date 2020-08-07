@@ -236,14 +236,14 @@ if (BUILD_R_BINDINGS)
 
   # Build RcppExports.cpp/.R, NAMESPACE and man/ files.
   add_custom_command(TARGET r_build POST_BUILD
-      COMMAND Rscript ARGS "-e" "'Rcpp::compileAttributes()'"
-      COMMAND Rscript ARGS "-e" "'roxygen2::roxygenize(\".\")'"
+      COMMAND ${RSCRIPT_EXECUTABLE} ARGS "-e" "'Rcpp::compileAttributes()'"
+      COMMAND ${RSCRIPT_EXECUTABLE} ARGS "-e" "'roxygen2::roxygenize(\".\")'"
       WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/mlpack"
   )
 
   # Build mlpack_${PACKAGE_VERSION}.tar.gz package.
   add_custom_command(TARGET r_build POST_BUILD
-      COMMAND R CMD build mlpack
+      COMMAND ${R_EXECUTABLE} CMD build mlpack
       WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
   )
 

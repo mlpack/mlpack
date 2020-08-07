@@ -45,6 +45,11 @@ endif ( R_EXECUTABLE AND R_LIBRARIES )
 # SET(R_DEFINITIONS ${PC_R_CFLAGS_OTHER})
 #ENDIF (NOT WIN32)
 
+find_program ( RSCRIPT_EXECUTABLE
+               NAMES Rscript Rscript.exe
+               DOC "Path to the Rscript command interpreter"
+              )
+
 find_program ( R_EXECUTABLE
                NAMES R R.exe
                DOC "Path to the R command interpreter"
@@ -99,6 +104,6 @@ include ( FindPackageHandleStandardArgs )
 
 # handle the QUIETLY and REQUIRED arguments and set R_FOUND to TRUE if
 # all listed variables are TRUE
-find_package_handle_standard_args ( R DEFAULT_MSG R_EXECUTABLE R_LIBRARIES R_CXX_FLAGS ${R_PACKAGES} )
+find_package_handle_standard_args ( R DEFAULT_MSG R_EXECUTABLE RSCRIPT_EXECUTABLE R_LIBRARIES R_CXX_FLAGS ${R_PACKAGES} )
 
 mark_as_advanced ( R_EXECUTABLE R_LIBRARIES R_CXX_FLAGS ${R_PACKAGES} )
