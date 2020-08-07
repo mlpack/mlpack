@@ -29,7 +29,7 @@ namespace r {
  * should be passed to know how much to indent for a new line.
  *
  * @param d Parameter data struct.
- * @param input Pointer to size_t containing indent.
+ * @param * (input) Pointer to size_t containing indent.
  * @param output Unused parameter.
  */
 template<typename T>

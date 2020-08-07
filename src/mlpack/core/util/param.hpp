@@ -64,6 +64,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *     care of by IO (however, you can explicitly specify newlines to denote
  *     new paragraphs).  You can also use printing macros like
  *     PRINT_PARAM_STRING(), PRINT_DATASET(), and others.
+ * @param EXAMPLE A simple usage example.  You can also use printing macros like
+ *     PRINT_PARAM_STRING(), PRINT_CALL(), and others.
  * @param ... A set of SEE_ALSO() macros that are used for generating
  *     documentation.  See the SEE_ALSO() macro.  This is a varargs argument, so
  *     you can add as many SEE_ALSO()s as you like.

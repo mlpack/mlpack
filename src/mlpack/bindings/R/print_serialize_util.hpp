@@ -54,8 +54,8 @@ void PrintSerializeUtil(
   /**
    * This gives us code like:
    *
-   *  <paramName> <- IO_GetParam<ModelType>Ptr("<paramName>")
-   *  attr(<paramName>, "type") <- "<ModelType>"
+   *  \<param_name\> <- IO_GetParam\<ModelType\>Ptr("\<param_name\>")
+   *  attr(\<param_name\>, "type") <- "\<ModelType\>"
    *
    */
   MLPACK_COUT_STREAM << "  " << d.name << " <- IO_GetParam"

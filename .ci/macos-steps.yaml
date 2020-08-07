@@ -22,9 +22,7 @@ steps:
     fi
 
     if [ "a$(R.version)" != "a" ]; then
-      brew install r
-      env:
-         MAKEFLAGS: "-j 2"      
+      brew install r     
       Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'), repos = 'http://cran.us.r-project.org')"
     fi
 

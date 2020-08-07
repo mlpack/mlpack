@@ -1,5 +1,5 @@
 /**
- * @file bindings/r/default_param.hpp
+ * @file bindings/R/default_param.hpp
  * @author Yashwant Singh Parihar
  *
  * Return the default value of a parameter, depending on its type.

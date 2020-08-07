@@ -160,6 +160,9 @@ if (BUILD_R_BINDINGS)
     "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/testthat.R"
   )
 
+  set(LICENSE_SOURCES
+    "${CMAKE_SOURCE_DIR}/LICENSE.txt"
+  )
   add_custom_target(r_copy ALL)
 
   # First we have to create all the required directories for copy.
@@ -214,6 +217,10 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
           ${R_TESTS_SOURCES}
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests)
+  add_custom_command(TARGET r_copy PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
+          ${LICENSE_SOURCES}
+          ${CMAKE_CURRENT_BINARY_DIR}/mlpack)
 
   file(COPY
        "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/cleanup"
@@ -276,8 +283,8 @@ if (BUILD_R_BINDINGS)
   # Extract the requried part from *main.cpp.
   # Example: mlpack/methods/adaboost/adaboost_main.cpp
   set(INCLUDE_MODEL "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
-  string(REGEX MATCHALL "mlpack/src/[A-Za-z/._]*" INCLUDE_MODEL "${INCLUDE_MODEL}")
-  string(REGEX REPLACE "mlpack/src/" "" INCLUDE_MODEL "${INCLUDE_MODEL}")
+  string(REGEX MATCHALL "mlpack/src/[A-Za-z/._]*" INCLUDE_MODEL_SAFE1 "${INCLUDE_MODEL}")
+  string(REGEX REPLACE "mlpack/src/" "" INCLUDE_MODEL_SAFE2 "${INCLUDE_MODEL_SAFE1}")
 
   # 1. Generate ${name}.cpp.
   add_custom_command(OUTPUT
@@ -286,7 +293,7 @@ if (BUILD_R_BINDINGS)
           -DMODEL_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/model.txt
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
-          -DINCLUDE_MODEL=${INCLUDE_MODEL}
+          -DINCLUDE_FILE="${INCLUDE_MODEL_SAFE2}"
           -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DR_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
           -DR_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp

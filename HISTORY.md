@@ -1,7 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Rename InformationGain to HoeffdingInformationGain in
-    methods/hoeffding_trees/information_gain.hpp (#____).
+  * R-bindings, Add comman striptype function for all bindings, move comman
+    utility function of bindings to bindings/util, rename InformationGain
+    to HoeffdingInformationGain in methods/hoeffding_trees/information_gain.hpp
+    and Add macro for changing stream of printing and warnings/errors (#2556).
 
   * Added Categorical DQN to q_networks (#2454).
 
