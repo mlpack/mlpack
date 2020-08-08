@@ -67,9 +67,8 @@ class GaussianInitialization
   void Initialize(arma::Mat<eT>& W)
   {
     if (W.is_empty())
-    {
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
-    }
+
     W.imbue( [&]() { return arma::as_scalar(RandNormal(mean, variance)); } );
   }
 
@@ -103,9 +102,8 @@ class GaussianInitialization
   void Initialize(arma::Cube<eT> & W)
   {
     if (W.is_empty())
-    {
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
-    }
+
     for (size_t i = 0; i < W.n_slices; ++i)
       Initialize(W.slice(i));
   }

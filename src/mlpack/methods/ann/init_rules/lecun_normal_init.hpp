@@ -133,7 +133,8 @@ class LecunNormalInitialization
    *
    * @param W Weight matrix to initialize.
    */
-  void Initialize(arma::cube & W)
+  template <typename eT>
+  void Initialize(arma::Cube<eT> & W)
   {
     if (W.is_empty())
       Log::Fatal << "Cannot initialize an empty cube." << std::endl;

@@ -115,9 +115,9 @@ inline void GlorotInitializationType<false>::Initialize(arma::Mat<eT>& W,
                                                        const size_t cols)
 {
   if (W.is_empty())
-    W = arma::mat(rows, cols);
+    W.set_size(rows, cols);
 
-  double var = 2.0/double(rows + cols);
+  double var = 2.0 / double(rows + cols);
   GaussianInitialization normalInit(0.0, var);
   normalInit.Initialize(W, rows, cols);
 }
@@ -181,9 +181,7 @@ template<typename eT>
 inline void GlorotInitializationType<Uniform>::Initialize(arma::Cube<eT>& W)
 {
   if (W.is_empty())
-  {
     Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
-  }
 
   for (size_t i = 0; i < W.n_slices; ++i)
     Initialize(W.slice(i));

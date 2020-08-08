@@ -83,7 +83,8 @@ class HeInitialization
    *
    * @param W Weight matrix to initialize.
    */
-  void Initialize(arma::mat& W)
+  template <typename eT>
+  void Initialize(arma::Mat<eT>& W)
   {
     // He initialization rule says to initialize weights with random
     // values taken from a gaussian distribution with mean = 0 and
@@ -91,9 +92,7 @@ class HeInitialization
     const double variance = 2.0 / (double) W.n_rows;
 
     if (W.is_empty())
-    {
       Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
-    }
 
     // Multipling a random variable X with variance V(X) by some factor c,
     // then the variance V(cX) = (c^2) * V(X).
