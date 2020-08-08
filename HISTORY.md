@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Soft Actor-Critic to RL methods (#2487).
+
   * Added Categorical DQN to q_networks (#2454).
 
   * Added N-step DQN to q_networks (#2461).
