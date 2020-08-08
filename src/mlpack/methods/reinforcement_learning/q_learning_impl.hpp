@@ -230,7 +230,7 @@ void QLearning<
       sampledNextStates, isTerminal);
 
   size_t atomSize = config.AtomSize();
-  arma::rowvec support = arma::linspace<arma::rowvec>(config.VMin(),
+  arma::colvec support = arma::linspace<arma::colvec>(config.VMin(),
       config.VMax(), atomSize);
 
   size_t batchSize = sampledNextStates.n_cols;
@@ -261,7 +261,7 @@ void QLearning<
   }
 
   arma::mat tZ = (arma::conv_to<arma::mat>::from(config.Discount() *
-      ((1 - isTerminal) * support)).each_col() + sampledRewards).t();
+      (support * (1 - isTerminal))).each_row() + sampledRewards);
   tZ = arma::clamp(tZ, config.VMin(), config.VMax());
   arma::mat b = (tZ - config.VMin()) / (config.VMax() - config.VMin()) *
       (atomSize - 1);
