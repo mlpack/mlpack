@@ -265,7 +265,7 @@ void SAC<
 
   // Update target network
   if (totalSteps % config.TargetNetworkSyncInterval() == 0)
-    SoftUpdate(0.005);
+    SoftUpdate(config.Rho());
 }
 
 template <
