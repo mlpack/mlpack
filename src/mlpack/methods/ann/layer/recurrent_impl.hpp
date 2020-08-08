@@ -268,10 +268,10 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & CEREAL_NVP(startModule);
-  ar & CEREAL_NVP(inputModule);
-  ar & CEREAL_NVP(feedbackModule);
-  ar & CEREAL_NVP(transferModule);
+  ar & CEREAL_VARIANT_POINTER(startModule);
+  ar & CEREAL_VARIANT_POINTER(inputModule);
+  ar & CEREAL_VARIANT_POINTER(feedbackModule);
+  ar & CEREAL_VARIANT_POINTER(transferModule);
   ar & CEREAL_NVP(rho);
   ar & CEREAL_NVP(ownsLayer);
 

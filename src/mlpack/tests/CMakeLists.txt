@@ -21,8 +21,8 @@ add_executable(mlpack_test
     emst_test.cpp
     fastmks_test.cpp
     facilities_test.cpp
-    feedforward_network_test.cpp
-#   gan_test.cpp
+#    feedforward_network_test.cpp
+#    gan_test.cpp
     gmm_test.cpp
     hmm_test.cpp
     hoeffding_tree_test.cpp
@@ -73,7 +73,7 @@ add_executable(mlpack_test
    range_search_test.cpp
    rbm_network_test.cpp
    rectangle_tree_test.cpp
-#   recurrent_network_test.cpp
+   recurrent_network_test.cpp
    regularized_svd_test.cpp
    reward_clipping_test.cpp
    rl_components_test.cpp
