@@ -280,12 +280,6 @@ if (BUILD_R_BINDINGS)
   # Append content to the list of models.
   set_property(GLOBAL APPEND PROPERTY R_MODELS ${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp)
 
-  # Extract the requried part from *main.cpp.
-  # Example: mlpack/methods/adaboost/adaboost_main.cpp
-  set(INCLUDE_MODEL "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
-  string(REGEX MATCHALL "mlpack/src/[A-Za-z/._]*" INCLUDE_MODEL_SAFE1 "${INCLUDE_MODEL}")
-  string(REGEX REPLACE "mlpack/src/" "" INCLUDE_MODEL_SAFE2 "${INCLUDE_MODEL_SAFE1}")
-
   # 1. Generate ${name}.cpp.
   add_custom_command(OUTPUT
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
@@ -293,7 +287,6 @@ if (BUILD_R_BINDINGS)
           -DMODEL_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/model.txt
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
-          -DINCLUDE_FILE="${INCLUDE_MODEL_SAFE2}"
           -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DR_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
           -DR_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp

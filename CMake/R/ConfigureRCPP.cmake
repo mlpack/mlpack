@@ -10,6 +10,11 @@
 include("${SOURCE_DIR}/CMake/StripType.cmake")
 strip_type("${PROGRAM_MAIN_FILE}")
 
+# Extract the requried part from *main.cpp.
+# Example: mlpack/methods/adaboost/adaboost_main.cpp
+string(REGEX MATCHALL "mlpack/src/[A-Za-z/._]*" INCLUDE_MODEL_SAFE "${PROGRAM_MAIN_FILE}")
+string(REGEX REPLACE "mlpack/src/" "" INCLUDE_FILE "${INCLUDE_MODEL_SAFE}")
+
 file(READ "${MODEL_FILE}" MODEL_FILE_TYPE)
 if (NOT (MODEL_FILE_TYPE MATCHES "\"${MODEL_SAFE_TYPES}\""))
   file(APPEND "${MODEL_FILE}" "\"${MODEL_SAFE_TYPES}\"\n")
