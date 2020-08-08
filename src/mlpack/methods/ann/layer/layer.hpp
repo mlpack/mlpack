@@ -55,6 +55,7 @@
 #include "noisylinear.hpp"
 #include "padding.hpp"
 #include "parametric_relu.hpp"
+#include "positional_encoding.hpp"
 #include "recurrent_attention.hpp"
 #include "recurrent.hpp"
 #include "reinforce_normal.hpp"

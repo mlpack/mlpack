@@ -40,6 +40,7 @@
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
+#include <mlpack/methods/ann/layer/positional_encoding.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
@@ -217,7 +218,8 @@ using MoreTypes = boost::variant<
         VRClassReward<arma::mat, arma::mat>*,
         VirtualBatchNorm<arma::mat, arma::mat>*,
         RBF<arma::mat, arma::mat, GaussianFunction>*,
-        BaseLayer<GaussianFunction, arma::mat, arma::mat>*
+        BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
+        PositionalEncoding<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
