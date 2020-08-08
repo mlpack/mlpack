@@ -26,6 +26,17 @@
 
 namespace cereal {
 
+// Forward declaration.
+template<typename... VariantTypes>
+class pointer_variant_wrapper;
+
+template<typename... VariantTypes>
+inline pointer_variant_wrapper<VariantTypes...>
+make_pointer_variant(boost::variant<VariantTypes...>& t)
+{
+  return pointer_variant_wrapper<VariantTypes...>(t);
+}
+
 template<class Archive>
 struct save_visitor : public boost::static_visitor<void>
 {
@@ -37,29 +48,41 @@ struct save_visitor : public boost::static_visitor<void>
     ar_ & CEREAL_POINTER(value);
   }
   
-  template<typename... VariantTypes>
-  void operator()(Archive& ar, boost::variant<VariantTypes...>& variant) const
+  template<typename... Types>
+  void operator()(boost::variant<Types*...>& value) const
   {
-    ar & CEREAL_VARIANT_POINTER(variant);
+    ar_ & make_pointer_variant(value);
   }
 
   Archive& ar_;
 };
 
+template<typename T>
 struct load_visitor : public boost::static_visitor<void>
 {
-  template<class Archive, class VariantType>
-  void operator()(Archive& ar, VariantType* variant) const 
+  template<typename Archive, typename VariantType>
+  static void load_impl(Archive& ar, VariantType& variant, std::true_type)
   {
-    VariantType* loadVariant;
+    // Note that T will be a pointer type.
+    T loadVariant;
     ar & CEREAL_POINTER(loadVariant);
     variant = loadVariant;
   }
 
-  template<typename Archive, typename... VariantTypes>
-  void operator()(Archive& ar, boost::variant<VariantTypes...>& variant) const
+  template<typename Archive, typename VariantType>
+  static void load_impl(Archive& ar, VariantType& value, std::false_type)
   {
-    ar & CEREAL_VARIANT_POINTER(variant);
+    // This must be a nested boost::variant.
+    ar & make_pointer_variant(value);
+  }
+
+  template<typename Archive, typename VariantType>
+  static void load(Archive& ar, VariantType& variant)
+  {
+    // Delegate to the proper load_impl() overload depending on whether T is a
+    // pointer type.  If T is not a pointer type, then we expect it to be a
+    // nested boost::variant.
+    load_impl(ar, variant, typename std::is_pointer<T>::type());
   }
 };
 
@@ -73,7 +96,7 @@ class pointer_variant_wrapper
  * we need to serialize it if it holds a raw pointers.
  */
  public:
-   pointer_variant_wrapper(boost::variant<VariantTypes*...>& PointerVar)
+   pointer_variant_wrapper(boost::variant<VariantTypes...>& PointerVar)
     : PointerVariant(PointerVar)
   {}
 
@@ -93,14 +116,11 @@ class pointer_variant_wrapper
     // Load the size of the serialized type.
     int which;
     ar & CEREAL_NVP(which);
-
-    // A function pointer used to define which type is used from boost::visitor
-    using LoadFuncType = 
-        std::function<void(Archive &, 
-            boost::variant<VariantTypes*...> &)>;
-
-    // Basically I have inspired myself from the cereal Implementation.
-    LoadFuncType loadFuncArray[0] = load_visitor(); 
+    
+    // Create function pointers to each overload of load_visitor<T>::load, for
+    // all T in VariantTypes.
+    using LoadFuncType = void(*)(Archive&, boost::variant<VariantTypes...>&);
+    LoadFuncType loadFuncArray[] = { &load_visitor<VariantTypes>::load... };
 
     if(which >= int(sizeof(loadFuncArray)/sizeof(loadFuncArray[0])))
       throw std::runtime_error("Invalid 'which' selector when deserializing boost::variant");
@@ -109,18 +129,11 @@ class pointer_variant_wrapper
   }
 
 private:
-   boost::variant<VariantTypes*...>& PointerVariant;
+   boost::variant<VariantTypes...>& PointerVariant;
 };
-
-template<typename... VariantTypes>
-inline pointer_variant_wrapper<VariantTypes...>
-make_pointer_variant(boost::variant<VariantTypes*...>& t)
-{
-  return pointer_variant_wrapper<VariantTypes...>(t);
-}
 
 #define CEREAL_VARIANT_POINTER(T) cereal::make_pointer_variant(T)
 
-} // end namespace cereal
+} // end namespace cereal;
 
 #endif // CEREAL_POINTER_VARIANT_WRAPPER_HPP
