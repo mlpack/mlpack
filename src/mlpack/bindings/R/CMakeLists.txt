@@ -33,7 +33,9 @@ if (BUILD_R_BINDINGS)
     find_r_module(RcppArmadillo "${RcppArmadillo_Version}")
     find_r_module(RcppEnsmallen "${RcppEnsmallen_Version}")
     find_r_module(BH "${BH_Version}")
-    if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN OR NOT R_BH OR NOT R_ROXYGEN2)
+    find_r_module(testthat)
+    if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN
+        OR NOT R_BH OR NOT R_ROXYGEN2 OR NOT R_TESTTHAT)
       unset(BUILD_R_BINDINGS CACHE)
       message(FATAL_ERROR "Could not Build R Bindings")
     endif()
@@ -44,7 +46,9 @@ if (BUILD_R_BINDINGS)
     find_r_module(RcppArmadillo "${RcppArmadillo_Version}")
     find_r_module(RcppEnsmallen "${RcppEnsmallen_Version}")
     find_r_module(BH "${BH_Version}")
-    if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN OR NOT R_BH OR NOT R_ROXYGEN2)
+    find_r_module(testthat)
+    if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN
+        OR NOT R_BH OR NOT R_ROXYGEN2 OR NOT R_TESTTHAT)
       unset(BUILD_R_BINDINGS CACHE)
     endif()
   endif ()
@@ -66,6 +70,9 @@ if (BUILD_R_BINDINGS)
   endif ()
   if (NOT R_ROXYGEN2)
     not_found_return("roxygen2 not found; not building R bindings.")
+  endif ()
+  if (NOT R_TESTTHAT)
+    not_found_return("testthat not found; not building R bindings.")
   endif ()
 
   add_custom_target(R ALL)
@@ -221,15 +228,15 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
           ${LICENSE_SOURCES}
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack)
+  # This file will take care of multiple definition of functions in .cpp files.
+  add_custom_command(TARGET r_copy PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} ARGS -E touch
+          "${CMAKE_CURRENT_BINARY_DIR}/mlpack/model.txt")
 
   file(COPY
        "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/cleanup"
        DESTINATION
        "${CMAKE_CURRENT_BINARY_DIR}/mlpack/")
-
-  # This file will take care of multiple definition of functions in .cpp files.
-  file(TOUCH
-      "${CMAKE_CURRENT_BINARY_DIR}/mlpack/model.txt")
 
   # Do the actual build.
   add_custom_target(r_build ALL)

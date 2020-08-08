@@ -8,7 +8,7 @@ function(find_r_module module)
     endif ()
     # A module's location is usually a directory, but for binary modules
     # it's a .so file.
-    execute_process(COMMAND "Rscript" "-e" "find.package('${module}')"
+    execute_process(COMMAND ${RSCRIPT_EXECUTABLE} "-e" "find.package('${module}')"
       RESULT_VARIABLE _${module}_status
       OUTPUT_VARIABLE _${module}_location
       ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -20,7 +20,7 @@ function(find_r_module module)
     if (NOT _${module}_status)
       # Now we have to check the version.
       if (VERSION_REQ)
-        execute_process(COMMAND "Rscript" "-e" "packageVersion('${module}')"
+        execute_process(COMMAND ${RSCRIPT_EXECUTABLE} "-e" "packageVersion('${module}')"
             RESULT_VARIABLE _version_status
             OUTPUT_VARIABLE _version_compare
             OUTPUT_STRIP_TRAILING_WHITESPACE)

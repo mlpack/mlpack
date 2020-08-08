@@ -92,7 +92,7 @@ void IO_SetParamVecInt(const std::string& paramName,
 void IO_SetParamMat(const std::string& paramName,
                     const arma::mat& paramValue)
 {
-  IO::GetParam<arma::mat>(paramName) = std::move(paramValue.t());
+  IO::GetParam<arma::mat>(paramName) = paramValue.t();
   IO::SetPassed(paramName);
 }
 
@@ -101,7 +101,7 @@ void IO_SetParamMat(const std::string& paramName,
 void IO_SetParamUMat(const std::string& paramName,
                      const arma::Mat<size_t>& paramValue)
 {
-  IO::GetParam<arma::Mat<size_t>>(paramName) = std::move(paramValue.t());
+  IO::GetParam<arma::Mat<size_t>>(paramName) = paramValue.t();
   IO::SetPassed(paramName);
 }
 
@@ -156,7 +156,7 @@ void IO_SetParamMatWithInfo(const std::string& paramName,
   std::get<0>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
   std::get<1>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
-      paramName)) = std::move(paramValue.t());
+      paramName)) = paramValue.t();
   IO::SetPassed(paramName);
 }
 
@@ -223,7 +223,7 @@ const arma::Mat<size_t>& IO_GetParamUMat(const std::string& paramName)
 // [[Rcpp::export]]
 const arma::vec IO_GetParamRow(const std::string& paramName)
 {
-  return std::move(IO::GetParam<arma::rowvec>(paramName).t());
+  return IO::GetParam<arma::rowvec>(paramName).t();
 }
 
 // Call IO::GetParam<arma::Row<size_t>>().
@@ -237,7 +237,7 @@ const arma::Col<size_t> IO_GetParamURow(const std::string& paramName)
 // [[Rcpp::export]]
 const arma::rowvec IO_GetParamCol(const std::string& paramName)
 {
-  return std::move(IO::GetParam<arma::vec>(paramName).t());
+  return IO::GetParam<arma::vec>(paramName).t();
 }
 
 // Call IO::GetParam<arma::Col<size_t>>().

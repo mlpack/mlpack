@@ -133,7 +133,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "tolerance");
 
   // Do we have an existing model?
-  LocalCoordinateCoding* lcc;
+  LocalCoordinateCoding* lcc = NULL;
   if (IO::HasParam("input_model"))
     lcc = IO::GetParam<LocalCoordinateCoding*>("input_model");
 
