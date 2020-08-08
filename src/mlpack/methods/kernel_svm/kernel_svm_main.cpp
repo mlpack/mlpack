@@ -284,7 +284,7 @@ static void mlpackMain()
     if (IO::HasParam("input_model"))
     {
       model = IO::GetParam<KernelSVMModel<PolynomialKernel(degree,
-      	                                            offset)>*>("input_model");
+                                                offset)>*>("input_model");
     }
     else
     {
@@ -300,7 +300,7 @@ static void mlpackMain()
     if (IO::HasParam("input_model"))
     {
       model = IO::GetParam<KernelSVMModel<HyperbolicTangentKernel(scale,
-                                                    offset)>*>("input_model");
+                                               offset)>*>("input_model");
     }
     else
     {
@@ -315,7 +315,7 @@ static void mlpackMain()
     if (IO::HasParam("input_model"))
     {
       model = IO::GetParam<KernelSVMModel<LaplacianKernel(
-      	                                            bandwidth)>*>("input_model");
+      	                                        bandwidth)>*>("input_model");
     }
     else
     {
@@ -330,7 +330,7 @@ static void mlpackMain()
     if (IO::HasParam("input_model"))
     {
       model = IO::GetParam<KernelSVMModel<EpanechnikovKernel(
-      	                                               bandwidth)>*>("input_model");
+      	                                        bandwidth)>*>("input_model");
     }
     else
     {
