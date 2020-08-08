@@ -33,7 +33,7 @@ class Pendulum
  public:
   /**
    * Implementation of state of Pendulum. Each state is a
-   * (theta, angular velocity) vector.
+   * (cos(theta), sin(theta), angular velocity) vector.
    */
   class State
   {
@@ -41,7 +41,7 @@ class Pendulum
     /**
      * Construct a state instance.
      */
-    State() : data(dimension, arma::fill::zeros)
+    State() : theta(0), data(dimension, arma::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**
@@ -50,7 +50,7 @@ class Pendulum
      * @param data Data for the cos(theta), sin(theta) and
      *             angular velocity.
      */
-    State(const arma::colvec& data): data(data)
+    State(const arma::colvec& data): theta(0), data(data)
     { /* Nothing to do here. */ }
 
     //! Modify the internal representation of the state.
@@ -67,8 +67,7 @@ class Pendulum
     double& AngularVelocity() { return data[2]; }
 
     //! Encode the state to a column vector.
-    const arma::colvec& Encode() {
-      return data; }
+    const arma::colvec& Encode() { return data; }
 
     //! Updates the theta transformations in data.
     void SetState()

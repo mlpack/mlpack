@@ -25,7 +25,28 @@ namespace mlpack {
 namespace rl {
 
 /**
- * TODO: Add citation
+ * Implementation of Soft Actor-Critic, a model-free off-policy actor-critic
+ * based deep reinforcement learning algorithm.
+ *
+ * For more details, see the following:
+ * @code
+ * @misc{haarnoja2018soft,
+ *  author    = {Tuomas Haarnoja and
+ *               Aurick Zhou and
+ *               Kristian Hartikainen and
+ *               George Tucker and
+ *               Sehoon Ha and
+ *               Jie Tan and
+ *               Vikash Kumar and
+ *               Henry Zhu and
+ *               Abhishek Gupta and
+ *               Pieter Abbeel and
+ *               Sergey Levine},
+ *  title     = {Soft Actor-Critic Algorithms and Applications},
+ *  year      = {2018},
+ *  url       = {https://arxiv.org/abs/1812.05905}
+ * }
+ * @endcode
  *
  * @tparam EnvironmentType The environment of the reinforcement learning task.
  * @tparam NetworkType The network to compute action value.
@@ -77,7 +98,7 @@ class SAC
   ~SAC();
 
   /**
-   * Softly update the learning Q_network parameters to the target Q_network
+   * Softly update the learning Q network parameters to the target Q_network
    * parameters.
    * 
    * @param rho How "softly" should the parameters be copied.
