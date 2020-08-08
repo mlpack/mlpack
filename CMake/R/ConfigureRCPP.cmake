@@ -7,25 +7,15 @@
 #  * PROGRAM_MAIN_FILE: the file containing the mlpackMain() function.
 #  * R_CPP_IN: path of the r_method.cpp.in file.
 #  * R_CPP_OUT: name of the output .cpp file.
-message(1: "${PROGRAM_MAIN_FILE}")
 include("${SOURCE_DIR}/CMake/StripType.cmake")
 strip_type("${PROGRAM_MAIN_FILE}")
 
 # Extract the requried part from *main.cpp.
 # Example: mlpack/methods/adaboost/adaboost_main.cpp
-message(2: "${PROGRAM_MAIN_FILE}")
-set(INCLUDE_FILE "")
-string(REGEX MATCHALL "mlpack\\/src\\/[A-Za-z\\/._]*" INCLUDE_MODEL_SAFE 
+string(REGEX MATCHALL "\\/src\\/[A-Za-z\\/._]*" INCLUDE_MODEL_SAFE 
     "${PROGRAM_MAIN_FILE}")
-message(INCLUDE_MODEL_SAFE: "${INCLUDE_MODEL_SAFE}")
-string(REGEX REPLACE "mlpack\\/src\\/" "" INCLUDE_FILE "${INCLUDE_MODEL_SAFE}")
-message(3: "${PROGRAM_MAIN_FILE}")
-if (INCLUDE_FILE)
-  list(REMOVE_DUPLICATES INCLUDE_FILE)
-endif ()
+string(REGEX REPLACE "\\/src\\/" "" INCLUDE_FILE "${INCLUDE_MODEL_SAFE}")
 
-set(INCLUDE_FILE ${INCLUDE_FILE})
-message("${INCLUDE_FILE}")
 file(READ "${MODEL_FILE}" MODEL_FILE_TYPE)
 if (NOT (MODEL_FILE_TYPE MATCHES "\"${MODEL_SAFE_TYPES}\""))
   file(APPEND "${MODEL_FILE}" "\"${MODEL_SAFE_TYPES}\"\n")
