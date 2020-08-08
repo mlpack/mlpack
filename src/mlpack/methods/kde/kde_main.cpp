@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core.hpp>
 
@@ -188,17 +188,17 @@ PARAM_COL_OUT("predictions", "Vector to store density predictions.",
 static void mlpackMain()
 {
   // Get some parameters.
-  const double bandwidth = CLI::GetParam<double>("bandwidth");
-  const std::string kernelStr = CLI::GetParam<std::string>("kernel");
-  const std::string treeStr = CLI::GetParam<std::string>("tree");
-  const std::string modeStr = CLI::GetParam<std::string>("algorithm");
-  const double relError = CLI::GetParam<double>("rel_error");
-  const double absError = CLI::GetParam<double>("abs_error");
-  const bool monteCarlo = CLI::GetParam<bool>("monte_carlo");
-  const double mcProb = CLI::GetParam<double>("mc_probability");
-  const int initialSampleSize = CLI::GetParam<int>("initial_sample_size");
-  const double mcEntryCoef = CLI::GetParam<double>("mc_entry_coef");
-  const double mcBreakCoef = CLI::GetParam<double>("mc_break_coef");
+  const double bandwidth = IO::GetParam<double>("bandwidth");
+  const std::string kernelStr = IO::GetParam<std::string>("kernel");
+  const std::string treeStr = IO::GetParam<std::string>("tree");
+  const std::string modeStr = IO::GetParam<std::string>("algorithm");
+  const double relError = IO::GetParam<double>("rel_error");
+  const double absError = IO::GetParam<double>("abs_error");
+  const bool monteCarlo = IO::GetParam<bool>("monte_carlo");
+  const double mcProb = IO::GetParam<double>("mc_probability");
+  const int initialSampleSize = IO::GetParam<int>("initial_sample_size");
+  const double mcEntryCoef = IO::GetParam<double>("mc_entry_coef");
+  const double mcBreakCoef = IO::GetParam<double>("mc_break_coef");
 
   // Initialize results vector.
   arma::vec estimations;
@@ -245,9 +245,9 @@ static void mlpackMain()
 
   KDEModel* kde;
 
-  if (CLI::HasParam("reference"))
+  if (IO::HasParam("reference"))
   {
-    arma::mat reference = std::move(CLI::GetParam<arma::mat>("reference"));
+    arma::mat reference = std::move(IO::GetParam<arma::mat>("reference"));
 
     kde = new KDEModel();
 
@@ -287,7 +287,7 @@ static void mlpackMain()
   else
   {
     // Load model.
-    kde = CLI::GetParam<KDEModel*>("input_model");
+    kde = IO::GetParam<KDEModel*>("input_model");
   }
 
   // Set model parameters.
@@ -301,9 +301,9 @@ static void mlpackMain()
   kde->MCBreakCoefficient(mcBreakCoef);
 
   // Evaluation.
-  if (CLI::HasParam("query"))
+  if (IO::HasParam("query"))
   {
-    arma::mat query = std::move(CLI::GetParam<arma::mat>("query"));
+    arma::mat query = std::move(IO::GetParam<arma::mat>("query"));
     kde->Evaluate(std::move(query), estimations);
   }
   else
@@ -312,9 +312,9 @@ static void mlpackMain()
   }
 
   // Output predictions if needed.
-  if (CLI::HasParam("predictions"))
-    CLI::GetParam<arma::vec>("predictions") = std::move(estimations);
+  if (IO::HasParam("predictions"))
+    IO::GetParam<arma::vec>("predictions") = std::move(estimations);
 
   // Save model.
-  CLI::GetParam<KDEModel*>("output_model") = kde;
+  IO::GetParam<KDEModel*>("output_model") = kde;
 }

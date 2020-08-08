@@ -41,51 +41,51 @@ class Pendulum
     /**
      * Construct a state instance.
      */
-    State() : data(dimension, arma::fill::zeros),
-              convertedData(3, arma::fill::zeros)
+    State() : data(dimension, arma::fill::zeros)
     { /* Nothing to do here. */ }
 
     /**
      * Construct a state based on the given data.
      *
-     * @param data Data for the theta and angular velocity.
+     * @param data Data for the cos(theta), sin(theta) and
+     *             angular velocity.
      */
     State(const arma::colvec& data): data(data)
     { /* Nothing to do here. */ }
 
     //! Modify the internal representation of the state.
-    arma::colvec& Data() { return convertedData; }
+    arma::colvec& Data() { return data; }
 
     //! Get the theta.
-    double Theta() const { return data[0]; }
+    double Theta() const { return theta; }
     //! Modify the value of theta.
-    double& Theta() { return data[0]; }
+    double& Theta() { return theta; }
 
     //! Get the angular velocity.
-    double AngularVelocity() const { return data[1]; }
+    double AngularVelocity() const { return data[2]; }
     //! Modify the value of angular velocity.
-    double& AngularVelocity() { return data[1]; }
+    double& AngularVelocity() { return data[2]; }
 
     //! Encode the state to a column vector.
     const arma::colvec& Encode() {
-      return convertedData; }
+      return data; }
 
+    //! Updates the theta transformations in data.
     void SetState()
     {
-      convertedData[0] = std::sin(data[0]);
-      convertedData[1] = std::cos(data[0]);
-      convertedData[2] = data[1];
+      data[0] = std::sin(theta);
+      data[1] = std::cos(theta);
     }
 
     //! Dimension of the encoded state.
     static constexpr size_t dimension = 3;
 
    private:
-    //! Locally-stored (theta, angular velocity) vector.
-    arma::colvec data;
+    //! Locally-stored theta.
+    double theta;
 
     //! Locally-stored (sin(theta), cos(theta), angular velocity) vector.
-    arma::colvec convertedData;
+    arma::colvec data;
   };
 
   /**

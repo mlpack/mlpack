@@ -38,13 +38,17 @@ using namespace mlpack::ann;
  * }
  * @endcode
  * 
+ * @tparam OutputLayerType The output layer type of the network.
+ * @tparam InitType The initialization type used for the network.
  * @tparam CompleteNetworkType The type of network used for full dueling dqn.
  * @tparam FeatureNetworkType The type of network used for feature network.
  * @tparam AdvantageNetworkType The type of network used for advantage network.
  * @tparam ValueNetworkType The type of network used for value network.
  */
 template <
-  typename CompleteNetworkType = FFN<EmptyLoss<>, GaussianInitialization>,
+  typename OutputLayerType = EmptyLoss<>,
+  typename InitType = GaussianInitialization,
+  typename CompleteNetworkType = FFN<OutputLayerType, InitType>,
   typename FeatureNetworkType = Sequential<>,
   typename AdvantageNetworkType = Sequential<>,
   typename ValueNetworkType = Sequential<>
@@ -75,13 +79,17 @@ class DuelingDQN
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
    * @param isNoisy Specifies whether the network needs to be of type noisy.
+   * @param init Specifies the initialization rule for the network.
+   * @param outputLayer Specifies the output layer type for network.
    */
   DuelingDQN(const int inputDim,
              const int h1,
              const int h2,
              const int outputDim,
-             const bool isNoisy = false):
-      completeNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.001)),
+             const bool isNoisy = false,
+             InitType init = InitType(),
+             OutputLayerType outputLayer = OutputLayerType()):
+      completeNetwork(outputLayer, init),
       isNoisy(isNoisy)
   {
     featureNetwork = new Sequential<>();
@@ -125,13 +133,21 @@ class DuelingDQN
     this->ResetParameters();
   }
 
-  DuelingDQN(FeatureNetworkType featureNetwork,
-             AdvantageNetworkType advantageNetwork,
-             ValueNetworkType valueNetwork,
+  /**
+   * Construct an instance of DuelingDQN class from a pre-constructed network.
+   *
+   * @param featureNetwork The feature network to be used by DuelingDQN class.
+   * @param advantageNetwork The advantage network to be used by DuelingDQN class.
+   * @param valueNetwork The value network to be used by DuelingDQN class.
+   * @param isNoisy Specifies whether the network needs to be of type noisy.
+   */
+  DuelingDQN(FeatureNetworkType& featureNetwork,
+             AdvantageNetworkType& advantageNetwork,
+             ValueNetworkType& valueNetwork,
              const bool isNoisy = false):
-      featureNetwork(std::move(featureNetwork)),
-      advantageNetwork(std::move(advantageNetwork)),
-      valueNetwork(std::move(valueNetwork)),
+      featureNetwork(featureNetwork),
+      advantageNetwork(advantageNetwork),
+      valueNetwork(valueNetwork),
       isNoisy(isNoisy)
   {
     concat = new Concat<>(true);
@@ -144,7 +160,7 @@ class DuelingDQN
   }
 
   //! Copy constructor.
-  DuelingDQN(const DuelingDQN& model) : isNoisy(false)
+  DuelingDQN(const DuelingDQN& /* model */) : isNoisy(false)
   { /* Nothing to do here. */ }
 
   //! Copy assignment operator.

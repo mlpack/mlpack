@@ -2,8 +2,8 @@ package mlpack
 
 /*
 #cgo CFLAGS: -I. -I/capi -g -Wall
-#cgo LDFLAGS: -L${SRCDIR} -Wl,-rpath,${SRCDIR} -lgo_util
-#include <capi/cli_util.h>
+#cgo LDFLAGS: -L${SRCDIR} -Wl,-rpath,${SRCDIR} -lmlpack_go_util
+#include <capi/io_util.h>
 */
 import "C"
 

@@ -27,7 +27,7 @@ namespace go {
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
@@ -93,7 +93,7 @@ void PrintInputProcessing(
       std::cout << "nil";
     }
 
-    // Print function call to set the given parameter into the cli.
+    // Print function call to set the given parameter into the io.
     std::cout << " {" << std::endl;
     std::cout << prefix << prefix << "setParam" << GetType<T>(d) << "(\""
               << d.name << "\", param." << goParamName << ")" << std::endl;
@@ -127,7 +127,7 @@ void PrintInputProcessing(
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
@@ -158,7 +158,7 @@ void PrintInputProcessing(
     std::cout << prefix << "if param." << goParamName
               << " != nil {" << std::endl;
 
-    // Print function call to set the given parameter into the cli.
+    // Print function call to set the given parameter into the io.
     std::cout << prefix << prefix << "gonumToArma" << GetType<T>(d)
               << "(\"" << d.name << "\", param." << goParamName
               << ")" << std::endl;
@@ -187,7 +187,7 @@ void PrintInputProcessing(
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
@@ -219,7 +219,7 @@ void PrintInputProcessing(
     std::cout << prefix << "if param." << goParamName
               << " != nil {" << std::endl;
 
-    // Print function call to set the given parameter into the cli.
+    // Print function call to set the given parameter into the io.
     std::cout << prefix << prefix << "gonumToArmaMatWithInfo"
               << "(\"" << d.name << "\", param." << goParamName
               << ")" << std::endl;
@@ -248,7 +248,7 @@ void PrintInputProcessing(
  */
 template<typename T>
 void PrintInputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
@@ -283,7 +283,7 @@ void PrintInputProcessing(
   {
     std::cout << prefix << "if param." << goParamName << " != nil {"
               << std::endl;
-    // Print function call to set the given parameter into the cli.
+    // Print function call to set the given parameter into the io.
     std::cout << prefix << prefix << "set" << strippedType << "(\""
               << d.name << "\", param." << goParamName << ")" << std::endl;
 
@@ -317,7 +317,7 @@ void PrintInputProcessing(
  * @param * (output) Unused parameter.
  */
 template<typename T>
-void PrintInputProcessing(const util::ParamData& d,
+void PrintInputProcessing(util::ParamData& d,
                           const void* input,
                           void* /* output */)
 {

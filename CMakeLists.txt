@@ -418,7 +418,6 @@ set(Boost_ADDITIONAL_VERSIONS
 set(Boost_NO_BOOST_CMAKE 1)
 find_package(Boost 1.58
     COMPONENTS
-      program_options
       unit_test_framework
       serialization
     REQUIRED

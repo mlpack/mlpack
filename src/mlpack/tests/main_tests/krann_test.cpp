@@ -29,13 +29,13 @@ struct KRANNTestFixture
 {
   KRANNTestFixture()
   {
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~KRANNTestFixture()
   {
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -82,24 +82,24 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidKTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["k"].wasPassed = false;
 
   SetInputParam("reference", referenceData);
   SetInputParam("k", (int) -1); // Invalid.
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["k"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 6); // Invalid.
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["k"].wasPassed = false;
 
   // Test on empty reference matrix since referenceData has been moved.
   SetInputParam("reference", std::move(referenceData));
@@ -129,24 +129,24 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidKQueryDataTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["k"].wasPassed = false;
 
   SetInputParam("reference",  referenceData);
   SetInputParam("k", (int) -1); // Invalid.
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["k"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 6); // Invalid.
 
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["k"].wasPassed = false;
 
   // Test on empty reference marix since referenceData has been moved.
   SetInputParam("reference", std::move(referenceData));
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(KRANNRefModelTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-      std::move(CLI::GetParam<RANNModel*>("output_model")));
+      std::move(IO::GetParam<RANNModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -249,14 +249,14 @@ BOOST_AUTO_TEST_CASE(KRANNOutputDimensionTest)
   mlpackMain();
 
   // Check the neighbors matrix has 5 points for each input point.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_rows,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows,
       5);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>("neighbors").n_cols,
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols,
       100);
 
   // Check the distances matrix has 10 points for each input point.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_rows, 5);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("distances").n_cols, 100);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_rows, 5);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_cols, 100);
 }
 
 /**
@@ -281,13 +281,13 @@ BOOST_AUTO_TEST_CASE(KRANNModelReuseTest)
   arma::Mat<size_t> neighbors;
   arma::mat distances;
   RANNModel* output_model;
-  neighbors = std::move(CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(CLI::GetParam<arma::mat>("distances"));
-  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(IO::GetParam<arma::mat>("distances"));
+  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["query"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["query"].wasPassed = false;
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("input_model", output_model);
@@ -298,8 +298,8 @@ BOOST_AUTO_TEST_CASE(KRANNModelReuseTest)
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  CheckMatrices(neighbors, CLI::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances, CLI::GetParam<arma::mat>("distances"));
+  CheckMatrices(neighbors, IO::GetParam<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, IO::GetParam<arma::mat>("distances"));
 }
 
 /**
@@ -319,10 +319,10 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentLeafSizes)
   mlpackMain();
 
   RANNModel* output_model;
-  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -335,7 +335,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentLeafSizes)
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
   BOOST_CHECK_EQUAL(output_model->LeafSize(), (int) 1);
-  BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->LeafSize(),
+  BOOST_CHECK_EQUAL(IO::GetParam<RANNModel*>("output_model")->LeafSize(),
       (int) 10);
   delete output_model;
 }
@@ -356,10 +356,10 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTau)
   mlpackMain();
 
   RANNModel* output_model;
-  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
 
   // Reset the passed parameters.
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
 
   // Changing value of tau and keeping everything else unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -372,7 +372,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTau)
   // Check that initial output matrices and the output matrices using
   // saved model are equal
   BOOST_CHECK_EQUAL(output_model->Tau(), (double) 5);
-  BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->Tau(),
+  BOOST_CHECK_EQUAL(IO::GetParam<RANNModel*>("output_model")->Tau(),
       (double) 10);
   delete output_model;
 }
@@ -393,10 +393,10 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentAlpha)
   mlpackMain();
 
   RANNModel* output_model;
-  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
 
   // Reset the passed parameters.
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
 
   // Changing value of tau and keeping everything else unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -409,7 +409,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentAlpha)
   // Check that initial output matrices and the output matrices using
   // saved model are equal
   BOOST_CHECK_EQUAL(output_model->Alpha(), (double) 0.95);
-  BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->Alpha(),
+  BOOST_CHECK_EQUAL(IO::GetParam<RANNModel*>("output_model")->Alpha(),
       (double) 0.80);
   delete output_model;
 }
@@ -430,10 +430,10 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTreeType)
   mlpackMain();
 
   RANNModel* output_model;
-  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
 
   // Reset the passed parameters.
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
 
   // Changing value of tau and keeping everything else unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -446,7 +446,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentTreeType)
   // Check that initial output matrices and the output matrices using
   // saved model are equal
   BOOST_CHECK_EQUAL(output_model->TreeType(), 0);
-  BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->TreeType(),
+  BOOST_CHECK_EQUAL(IO::GetParam<RANNModel*>("output_model")->TreeType(),
       8);
   delete output_model;
 }
@@ -467,10 +467,10 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSingleSampleLimit)
   mlpackMain();
 
   RANNModel* output_model;
-  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -483,7 +483,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSingleSampleLimit)
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
   BOOST_CHECK_EQUAL(
-    CLI::GetParam<RANNModel*>("output_model")->SingleSampleLimit(), (int) 15);
+    IO::GetParam<RANNModel*>("output_model")->SingleSampleLimit(), (int) 15);
   BOOST_CHECK_EQUAL(output_model->SingleSampleLimit(), (int) 20);
   delete output_model;
 }
@@ -504,10 +504,10 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSampleAtLeaves)
   mlpackMain();
 
   RANNModel* output_model;
-  output_model = std::move(CLI::GetParam<RANNModel*>("output_model"));
+  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("reference", std::move(referenceData));
@@ -519,7 +519,7 @@ BOOST_AUTO_TEST_CASE(KRANNDifferentSampleAtLeaves)
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  BOOST_CHECK_EQUAL(CLI::GetParam<RANNModel*>("output_model")->SampleAtLeaves(),
+  BOOST_CHECK_EQUAL(IO::GetParam<RANNModel*>("output_model")->SampleAtLeaves(),
       (bool) true);
   BOOST_CHECK_EQUAL(output_model->SampleAtLeaves(), (bool) false);
   delete output_model;
@@ -540,8 +540,8 @@ BOOST_AUTO_TEST_CASE(KRANNInvalidAlphaTest)
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["alpha"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["alpha"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("alpha", (double) -1);

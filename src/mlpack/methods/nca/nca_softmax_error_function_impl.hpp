@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_IMPL_H
-#define MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_IMPL_H
+#ifndef MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_IMPL_H
+#define MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_IMPL_H
 
 // In case it hasn't been included already.
 #include "nca_softmax_error_function.hpp"
