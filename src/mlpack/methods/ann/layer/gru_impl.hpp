@@ -397,12 +397,12 @@ void GRU<InputDataType, OutputDataType>::serialize(
   ar & CEREAL_NVP(outSize);
   ar & CEREAL_NVP(rho);
 
-  ar & CEREAL_NVP(input2GateModule);
-  ar & CEREAL_NVP(output2GateModule);
-  ar & CEREAL_NVP(outputHidden2GateModule);
-  ar & CEREAL_NVP(inputGateModule);
-  ar & CEREAL_NVP(forgetGateModule);
-  ar & CEREAL_NVP(hiddenStateModule);
+  ar & CEREAL_VARIANT_POINTER(input2GateModule);
+  ar & CEREAL_VARIANT_POINTER(output2GateModule);
+  ar & CEREAL_VARIANT_POINTER(outputHidden2GateModule);
+  ar & CEREAL_VARIANT_POINTER(inputGateModule);
+  ar & CEREAL_VARIANT_POINTER(forgetGateModule);
+  ar & CEREAL_VARIANT_POINTER(hiddenStateModule);
 }
 
 } // namespace ann

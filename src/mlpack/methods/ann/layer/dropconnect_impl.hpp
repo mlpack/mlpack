@@ -116,7 +116,7 @@ void DropConnect<InputDataType, OutputDataType>::serialize(
 
   ar & CEREAL_NVP(ratio);
   ar & CEREAL_NVP(scale);
-  ar & CEREAL_NVP(baseLayer);
+  ar & CEREAL_VARIANT_POINTER(baseLayer);
 
   if (Archive::is_loading::value)
   {

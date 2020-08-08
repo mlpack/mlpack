@@ -215,8 +215,8 @@ void RecurrentAttention<InputDataType, OutputDataType>::serialize(
   ar & CEREAL_NVP(forwardStep);
   ar & CEREAL_NVP(backwardStep);
 
-  ar & CEREAL_NVP(rnnModule);
-  ar & CEREAL_NVP(actionModule);
+  ar & CEREAL_VARIANT_POINTER(rnnModule);
+  ar & CEREAL_VARIANT_POINTER(actionModule);
 }
 
 } // namespace ann

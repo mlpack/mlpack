@@ -283,7 +283,10 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::serialize(
           boost::apply_visitor(deleteVisitor));
     }
 
-    ar & CEREAL_NVP(network);
+  for (size_t i = 0; i < network.size(); ++i) 
+  {
+    ar & CEREAL_VARIANT_POINTER(network.at(i));
+  }
   }
 }
 
