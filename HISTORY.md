@@ -1,9 +1,14 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * R-bindings, Add comman striptype function for all bindings, move comman
-    utility function of bindings to bindings/util, rename InformationGain
-    to HoeffdingInformationGain in methods/hoeffding_trees/information_gain.hpp
-    and Add macro for changing stream of printing and warnings/errors (#2556).
+  * Added bindings for _R_ during Google Summer of Code (#2556).
+  
+  * Added common striptype function for all bindings (#2556).
+  
+  * Refactored common utility function of bindings to bindings/util (#2556).
+  
+  * Renamed InformationGain to HoeffdingInformationGain in methods/hoeffding_trees/information_gain.hpp (#2556).
+  
+  * Added macro for changing stream of printing and warnings/errors (#2556).
 
   * Added Categorical DQN to q_networks (#2454).
 

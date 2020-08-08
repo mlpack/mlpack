@@ -18,13 +18,12 @@
 # data.frame), convert it into a matrix.
 to_matrix <- function(x) {
   if (!is.matrix(x) && !is.data.frame(x)) {
-    stop("given argument is not matrix-like")
+    stop("Input must be either a `matrix` or `data.frame` not `", class(x)[1], "`.", call. = FALSE)
   }
   if (is.matrix(x)) {
     return(x)
-  }
-  else if (is.data.frame(x)) {
-    y <- data.matrix(x)
+  } else if (is.data.frame(x)) {
+    y <- data.matrix(x) # requires R 4.0.0 for factor conversion.
     return(y)
   }
 }
