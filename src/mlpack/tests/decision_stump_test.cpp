@@ -12,22 +12,19 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::decision_stump;
 using namespace arma;
 using namespace mlpack::distribution;
 
-BOOST_AUTO_TEST_SUITE(DecisionStumpTest);
-
 /**
  * This tests handles the case wherein only one class exists in the input
  * labels.  It checks whether the only class supplied was the only class
  * predicted.
  */
-BOOST_AUTO_TEST_CASE(OneClass)
+TEST_CASE("OneClass", "[DecisionStumpTest]")
 {
   const size_t numClasses = 2;
   const size_t inpBucketSize = 6;
@@ -50,7 +47,7 @@ BOOST_AUTO_TEST_CASE(OneClass)
   ds.Classify(testingData, predictedLabels);
 
   for (size_t i = 0; i < predictedLabels.size(); ++i)
-    BOOST_CHECK_EQUAL(predictedLabels(i), 1);
+    REQUIRE(predictedLabels(i) == 1);
 }
 
 /**
@@ -58,7 +55,7 @@ BOOST_AUTO_TEST_CASE(OneClass)
  * correct value of the splitting column value.  This test is for an
  * inpBucketSize of 4 and the correct value of the splitting dimension is 0.
  */
-BOOST_AUTO_TEST_CASE(CorrectDimensionChosen)
+TEST_CASE("CorrectDimensionChosen", "[DecisionStumpTest]")
 {
   const size_t numClasses = 2;
   const size_t inpBucketSize = 4;
@@ -84,7 +81,7 @@ BOOST_AUTO_TEST_CASE(CorrectDimensionChosen)
 
   // Only need to check the value of the splitting column, no need of
   // classification.
-  BOOST_CHECK_EQUAL(ds.SplitDimension(), 0);
+  REQUIRE(ds.SplitDimension() == 0);
 }
 
 /**
@@ -93,7 +90,7 @@ BOOST_AUTO_TEST_CASE(CorrectDimensionChosen)
  *   if testinput > 0 - class 1
  * An almost perfect split on zero.
  */
-BOOST_AUTO_TEST_CASE(PerfectSplitOnZero)
+TEST_CASE("PerfectSplitOnZero", "[DecisionStumpTest]")
 {
   const size_t numClasses = 2;
   const size_t inpBucketSize = 2;
@@ -113,18 +110,18 @@ BOOST_AUTO_TEST_CASE(PerfectSplitOnZero)
   Row<size_t> predictedLabels;
   ds.Classify(testingData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 4), 1);
+  REQUIRE(predictedLabels(0, 0) == 0);
+  REQUIRE(predictedLabels(0, 1) == 1);
+  REQUIRE(predictedLabels(0, 2) == 0);
+  REQUIRE(predictedLabels(0, 3) == 0);
+  REQUIRE(predictedLabels(0, 4) == 1);
 }
 
 /**
  * This tests the binning function for the case when a dataset with cardinality
  * of input < inpBucketSize is provided.
  */
-BOOST_AUTO_TEST_CASE(BinningTesting)
+TEST_CASE("BinningTesting", "[DecisionStumpTest]")
 {
   const size_t numClasses = 2;
   const size_t inpBucketSize = 10;
@@ -144,7 +141,7 @@ BOOST_AUTO_TEST_CASE(BinningTesting)
   Row<size_t> predictedLabels;
   ds.Classify(testingData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
+  REQUIRE(predictedLabels(0, 0) == 0);
 }
 
 /**
@@ -152,7 +149,7 @@ BOOST_AUTO_TEST_CASE(BinningTesting)
  * provided. It tests for a perfect split due to the non-overlapping nature of
  * the input classes.
  */
-BOOST_AUTO_TEST_CASE(PerfectMultiClassSplit)
+TEST_CASE("PerfectMultiClassSplit", "[DecisionStumpTest]")
 {
   const size_t numClasses = 4;
   const size_t inpBucketSize = 3;
@@ -174,10 +171,10 @@ BOOST_AUTO_TEST_CASE(PerfectMultiClassSplit)
   Row<size_t> predictedLabels;
   ds.Classify(testingData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 2);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 3);
+  REQUIRE(predictedLabels(0, 0) == 0);
+  REQUIRE(predictedLabels(0, 1) == 1);
+  REQUIRE(predictedLabels(0, 2) == 2);
+  REQUIRE(predictedLabels(0, 3) == 3);
 }
 
 /**
@@ -186,7 +183,7 @@ BOOST_AUTO_TEST_CASE(PerfectMultiClassSplit)
  * with a reasonable amount of error due to the overlapping nature of input
  * classes.
  */
-BOOST_AUTO_TEST_CASE(MultiClassSplit)
+TEST_CASE("MultiClassSplit", "[DecisionStumpTest]")
 {
   const size_t numClasses = 3;
   const size_t inpBucketSize = 3;
@@ -209,21 +206,21 @@ BOOST_AUTO_TEST_CASE(MultiClassSplit)
   Row<size_t> predictedLabels;
   ds.Classify(testingData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 4), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 5), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 6), 2);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 7), 2);
+  REQUIRE(predictedLabels(0, 0) == 0);
+  REQUIRE(predictedLabels(0, 1) == 0);
+  REQUIRE(predictedLabels(0, 2) == 1);
+  REQUIRE(predictedLabels(0, 3) == 1);
+  REQUIRE(predictedLabels(0, 4) == 1);
+  REQUIRE(predictedLabels(0, 5) == 1);
+  REQUIRE(predictedLabels(0, 6) == 2);
+  REQUIRE(predictedLabels(0, 7) == 2);
 }
 
 /**
  * This tests that the decision stump can learn a good split on a dataset with
  * four dimensions that have progressing levels of separation.
  */
-BOOST_AUTO_TEST_CASE(DimensionSelectionTest)
+TEST_CASE("DimensionSelectionTest", "[DecisionStumpTest]")
 {
   const size_t numClasses = 2;
   const size_t inpBucketSize = 2500;
@@ -299,16 +296,16 @@ BOOST_AUTO_TEST_CASE(DimensionSelectionTest)
   DecisionStump<> ds(dataset, labels, numClasses, inpBucketSize);
 
   // Make sure it split on the dimension that is most separable.
-  BOOST_CHECK_EQUAL(ds.SplitDimension(), 1);
+  REQUIRE(ds.SplitDimension() == 1);
 
   // Make sure every bin below -1 classifies as label 0, and every bin above 1
   // classifies as label 1 (What happens in [-1, 1] isn't that big a deal.).
   for (size_t i = 0; i < ds.Split().n_elem; ++i)
   {
     if (ds.Split()[i] <= -3.0)
-      BOOST_CHECK_EQUAL(ds.BinLabels()[i], 0);
+      REQUIRE(ds.BinLabels()[i] == 0);
     else if (ds.Split()[i] >= 3.0)
-      BOOST_CHECK_EQUAL(ds.BinLabels()[i], 1);
+      REQUIRE(ds.BinLabels()[i] == 1);
   }
 }
 
@@ -316,7 +313,7 @@ BOOST_AUTO_TEST_CASE(DimensionSelectionTest)
  * Ensure that the default constructor works and that it classifies things as 0
  * always.
  */
-BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
+TEST_CASE("EmptyConstructorTest", "[DecisionStumpTest]")
 {
   DecisionStump<> d;
 
@@ -326,7 +323,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
   d.Classify(data, labels);
 
   for (size_t i = 0; i < 10; ++i)
-    BOOST_REQUIRE_EQUAL(labels[i], 0);
+    REQUIRE(labels[i] == 0);
 
   // Now train on another dataset and make sure something kind of makes sense.
   mat trainingData;
@@ -347,21 +344,21 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
   Row<size_t> predictedLabels(testingData.n_cols);
   ds.Classify(testingData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 4), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 5), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 6), 2);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 7), 2);
+  REQUIRE(predictedLabels(0, 0) == 0);
+  REQUIRE(predictedLabels(0, 1) == 0);
+  REQUIRE(predictedLabels(0, 2) == 1);
+  REQUIRE(predictedLabels(0, 3) == 1);
+  REQUIRE(predictedLabels(0, 4) == 1);
+  REQUIRE(predictedLabels(0, 5) == 1);
+  REQUIRE(predictedLabels(0, 6) == 2);
+  REQUIRE(predictedLabels(0, 7) == 2);
 }
 
 /**
  * Ensure that a matrix holding ints can be trained.  The bigger issue here is
  * just compilation.
  */
-BOOST_AUTO_TEST_CASE(IntTest)
+TEST_CASE("IntTest", "[DecisionStumpTest]")
 {
   // Train on a dataset and make sure something kind of makes sense.
   imat trainingData;
@@ -381,20 +378,20 @@ BOOST_AUTO_TEST_CASE(IntTest)
   arma::Row<size_t> predictedLabels;
   ds.Classify(testingData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 4), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 5), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 6), 2);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 7), 2);
+  REQUIRE(predictedLabels(0, 0) == 0);
+  REQUIRE(predictedLabels(0, 1) == 0);
+  REQUIRE(predictedLabels(0, 2) == 1);
+  REQUIRE(predictedLabels(0, 3) == 1);
+  REQUIRE(predictedLabels(0, 4) == 1);
+  REQUIRE(predictedLabels(0, 5) == 1);
+  REQUIRE(predictedLabels(0, 6) == 2);
+  REQUIRE(predictedLabels(0, 7) == 2);
 }
 
 /**
  * Test that DecisionStump::Train() returns finite gain.
  */
-BOOST_AUTO_TEST_CASE(DecisionStumpTrainReturnEntropy)
+TEST_CASE("DecisionStumpTrainReturnEntropy", "[DecisionStumpTest]")
 {
   const size_t numClasses = 2;
   const size_t inpBucketSize = 2;
@@ -413,14 +410,12 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTrainReturnEntropy)
   double gain = ds.Train(trainingData, labelsIn.row(0), numClasses,
       inpBucketSize);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(gain), true);
+  REQUIRE(std::isfinite(gain) == true);
 
   // Train decision stump with weights.
   DecisionStump<> wds;
   gain = wds.Train(trainingData, labelsIn.row(0), weights, numClasses,
       inpBucketSize);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(gain), true);
+  REQUIRE(std::isfinite(gain) == true);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

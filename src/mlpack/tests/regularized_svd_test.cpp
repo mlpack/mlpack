@@ -14,16 +14,13 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::svd;
 using namespace ens;
 
-BOOST_AUTO_TEST_SUITE(RegularizedSVDTest);
-
-BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRandomEvaluate)
+TEST_CASE("RegularizedSVDFunctionRandomEvaluate", "[RegularizedSVDTest]")
 {
   // Define useful constants.
   const size_t numUsers = 100;
@@ -66,11 +63,12 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRandomEvaluate)
     }
 
     // Compare calculated cost and value obtained using Evaluate().
-    BOOST_REQUIRE_CLOSE(cost, rSVDFunc.Evaluate(parameters), 1e-5);
+    REQUIRE(cost == Approx(rSVDFunc.Evaluate(parameters)).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRegularizationEvaluate)
+TEST_CASE("RegularizedSVDFunctionRegularizationEvaluate",
+          "[RegularizedSVDTest]")
 {
   // Define useful constants.
   const size_t numUsers = 100;
@@ -119,14 +117,14 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionRegularizationEvaluate)
 
     // Cost with regularization should be close to the sum of cost without
     // regularization and the regularization terms.
-    BOOST_REQUIRE_CLOSE(rSVDFuncNoReg.Evaluate(parameters) + smallRegTerm,
-        rSVDFuncSmallReg.Evaluate(parameters), 1e-5);
-    BOOST_REQUIRE_CLOSE(rSVDFuncNoReg.Evaluate(parameters) + bigRegTerm,
-        rSVDFuncBigReg.Evaluate(parameters), 1e-5);
+    REQUIRE(rSVDFuncNoReg.Evaluate(parameters) + smallRegTerm ==
+        Approx(rSVDFuncSmallReg.Evaluate(parameters)).epsilon(1e-7));
+    REQUIRE(rSVDFuncNoReg.Evaluate(parameters) + bigRegTerm ==
+        Approx(rSVDFuncBigReg.Evaluate(parameters)).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionGradient)
+TEST_CASE("RegularizedSVDFunctionGradient", "[RegularizedSVDTest]")
 {
   // Define useful constants.
   const size_t numUsers = 50;
@@ -185,19 +183,19 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionGradient)
 
       // Compare numerical and backpropagation gradient values.
       if (std::abs(gradient1(i, j)) <= 1e-6)
-        BOOST_REQUIRE_SMALL(numGradient1, 1e-5);
+        REQUIRE(numGradient1 == Approx(0.0).margin(1e-5));
       else
-        BOOST_REQUIRE_CLOSE(numGradient1, gradient1(i, j), 0.02);
+        REQUIRE(numGradient1 == Approx(gradient1(i, j)).epsilon(0.0002));
 
       if (std::abs(gradient2(i, j)) <= 1e-6)
-        BOOST_REQUIRE_SMALL(numGradient2, 1e-5);
+        REQUIRE(numGradient2 == Approx(0.0).margin(1e-5));
       else
-        BOOST_REQUIRE_CLOSE(numGradient2, gradient2(i, j), 0.02);
+        REQUIRE(numGradient2 == Approx(gradient2(i, j)).epsilon(0.0002));
     }
   }
 }
 
-BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
+TEST_CASE("RegularizedSVDFunctionOptimize", "[RegularizedSVDTest]")
 {
   // Define useful constants.
   const size_t numUsers = 50;
@@ -248,7 +246,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
                                arma::norm(data, "frob");
 
   // Relative error should be small.
-  BOOST_REQUIRE_SMALL(relativeError, 1e-2);
+  REQUIRE(relativeError == Approx(0.0).margin(1e-2));
 }
 
 // The test is only compiled if the user has specified OpenMP to be
@@ -256,7 +254,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimize)
 #ifdef HAS_OPENMP
 
 // Test Regularized SVD with parallel SGD.
-BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimizeHOGWILD)
+TEST_CASE("RegularizedSVDFunctionOptimizeHOGWILD", "[RegularizedSVDTest]")
 {
   // Define useful constants.
   const size_t numUsers = 50;
@@ -313,9 +311,7 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionOptimizeHOGWILD)
                                arma::norm(data, "frob");
 
   // Relative error should be small.
-  BOOST_REQUIRE_SMALL(relativeError, 1e-2);
+  REQUIRE(relativeError == Approx(0.0).margin(1e-2));
 }
 
 #endif
-
-BOOST_AUTO_TEST_SUITE_END();

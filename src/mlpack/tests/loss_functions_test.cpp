@@ -31,6 +31,7 @@
 #include <mlpack/methods/ann/loss_functions/hinge_embedding_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/cosine_embedding_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/l1_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -814,6 +815,61 @@ BOOST_AUTO_TEST_CASE(MarginRankingLossTest)
 
   CheckMatrices(output, arma::mat("0.000000 0.000000 0.091240 0.000000 "
       "-0.753830 1.336900 0.000000 0.000000 -0.207000 0.328810"), 1e-6);
+}
+
+/**
+ * Simple test for the Softmargin Loss function.
+ */
+BOOST_AUTO_TEST_CASE(SoftMarginLossTest)
+{
+  arma::mat input, target, output, expectedOutput;
+  double loss;
+  SoftMarginLoss<> module1;
+  SoftMarginLoss<> module2(false);
+
+  input = arma::mat("0.1778 0.0957 0.1397 0.1203 0.2403 0.1925 -0.2264 -0.3400 "
+      "-0.3336");
+  target = arma::mat("1 1 -1 1 -1 1 -1 1 1");
+  input.reshape(3, 3);
+  target.reshape(3, 3);
+
+  // Test for sum reduction.
+
+  // Calculated using torch.nn.SoftMarginLoss(reduction='sum').
+  expectedOutput = arma::mat("-0.4557 -0.4761 0.5349 -0.4700 0.5598 -0.4520 "
+      "0.4436 -0.5842 -0.5826");
+  expectedOutput.reshape(3, 3);
+
+  // Test the Forward function. Loss should be 6.41456.
+  // Value calculated using torch.nn.SoftMarginLoss(reduction='sum').
+  loss = module1.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 6.41456, 1e-3);
+
+  // Test the Backward function.
+  module1.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -1.48227, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
+
+  // Test for mean reduction.
+
+  // Calculated using torch.nn.SoftMarginLoss(reduction='mean').
+  expectedOutput = arma::mat("-0.0506 -0.0529 0.0594 -0.0522 0.0622 -0.0502 "
+      "0.0493 -0.0649 -0.0647");
+  expectedOutput.reshape(3, 3);
+
+  // Test the Forward function. Loss should be 0.712729.
+  // Value calculated using torch.nn.SoftMarginLoss(reduction='mean').
+  loss = module2.Forward(input, target);
+  BOOST_REQUIRE_CLOSE(loss, 0.712729, 1e-3);
+
+  // Test the Backward function.
+  module2.Backward(input, target, output);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -0.164697, 1e-3);
+  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  CheckMatrices(output, expectedOutput, 0.1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

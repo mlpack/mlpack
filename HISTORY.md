@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Categorical DQN to q_networks (#2454).
+
   * Added N-step DQN to q_networks (#2461).
 
   * Add Silhoutte Score metric and Pairwise Distances (#2406).
@@ -10,6 +12,11 @@
 
   * Additional functionality for the ARFF loader (#2486); use case sensitive
     categories (#2516).
+
+  * Add `bayesian_linear_regression` binding for the command-line, Python,
+    Julia, and Go.  Also called "Bayesian Ridge", this is equivalent to a
+    version of linear regression where the regularization parameter is
+    automatically tuned (#2030).
 
 ### mlpack 3.3.2
 ###### 2020-06-18
