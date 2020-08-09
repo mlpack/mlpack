@@ -1409,17 +1409,17 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTfIdfEncodingSerialization)
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
-  EncoderType xmlEncoder, textEncoder, binaryEncoder;
-  arma::mat xmlOutput, textOutput, binaryOutput;
+  EncoderType xmlEncoder, jsonEncoder, binaryEncoder;
+  arma::mat xmlOutput, jsonOutput, binaryOutput;
 
-  SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
+  SerializeObjectAll(encoder, xmlEncoder, jsonEncoder, binaryEncoder);
 
   CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
-  CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), jsonEncoder.Dictionary());
   CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
 
   xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
-  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
+  jsonEncoder.Encode(stringEncodingInput, jsonOutput, tokenizer);
   binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
 
   CheckMatrices(output, xmlOutput, jsonOutput, binaryOutput);
