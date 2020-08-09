@@ -155,11 +155,8 @@ void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
   // Be sure to clear other layers before loading.
   if (Archive::is_loading::value)
     network.clear();
-  
-  for (size_t i = 0; i < network.size(); ++i) 
-  {
-   ar & CEREAL_VARIANT_POINTER(network.at(i));
-  }
+
+  ar & CEREAL_VECTOR_VARIANT_POINTER(network);
   ar & CEREAL_NVP(model);
   ar & CEREAL_NVP(run);
   ar & CEREAL_NVP(ownsLayers);
