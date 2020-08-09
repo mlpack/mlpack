@@ -79,9 +79,6 @@ class HRectBound
   //! Move constructor: take possession of another bound's information.
   HRectBound(HRectBound&& other);
 
-  //! Destructor: clean up memory.
-  ~HRectBound();
-
   /**
    * Resets all dimensions to the empty set (so that this bound contains
    * nothing).
@@ -235,7 +232,7 @@ class HRectBound
   //! The dimensionality of the bound.
   size_t dim;
   //! The bounds for each dimension.
-  math::RangeType<ElemType>* bounds;
+  std::vector<math::RangeType<ElemType>> bounds;
   //! Cached minimum width of bound.
   ElemType minWidth;
   //! Instantiated metric (likely has size 0).
