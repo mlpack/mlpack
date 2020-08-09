@@ -152,12 +152,6 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 // testName symbol should be defined in each binding test file
 #include <mlpack/core/util/param.hpp>
 
-#undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
-    static mlpack::util::ProgramDoc \
-    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
-    []() { return DESC; }, { __VA_ARGS__ })
-
 #elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
 // Matrices are transposed on load/save.
@@ -217,11 +211,10 @@ using Option = mlpack::bindings::python::PyOption<T>;
 static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
-    static mlpack::util::ProgramDoc \
-    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
-    []() { return DESC; }, { __VA_ARGS__ }); \
+#undef BINDING_PNAME
+#define BINDING_PNAME(NAME) static \
+    mlpack::util::ProgramName \
+    io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
     namespace mlpack { \
     namespace bindings { \
     namespace python { \
@@ -266,11 +259,10 @@ using Option = mlpack::bindings::julia::JuliaOption<T>;
 static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static \
-    mlpack::util::ProgramDoc \
-    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
-    []() { return DESC; }, { __VA_ARGS__ }); \
+#undef BINDING_PNAME
+#define BINDING_PNAME(NAME) static \
+    mlpack::util::ProgramName \
+    io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
     namespace mlpack { \
     namespace bindings { \
     namespace julia { \
@@ -311,11 +303,10 @@ using Option = mlpack::bindings::go::GoOption<T>;
 static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
-    static mlpack::util::ProgramDoc \
-    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
-    []() { return DESC; }, { __VA_ARGS__ }); \
+#undef BINDING_PNAME
+#define BINDING_PNAME(NAME) static \
+    mlpack::util::ProgramName \
+    io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
     namespace mlpack { \
     namespace bindings { \
     namespace go { \
@@ -331,7 +322,9 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 
 #elif BINDING_TYPE == BINDING_TYPE_MARKDOWN
 
-// We use BINDING_NAME in PROGRAM_INFO() so it needs to be defined.
+// We use BINDING_NAME in BINDING_PNAME(), BINDING_SHORT_DESC(),
+// BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO()
+// so it needs to be defined.
 #ifndef BINDING_NAME
   #error "BINDING_NAME must be defined when BINDING_TYPE is Markdown!"
 #endif
@@ -396,12 +389,55 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/bindings/markdown/program_doc_wrapper.hpp>
 
-#undef PROGRAM_INFO
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static \
-    mlpack::bindings::markdown::ProgramDocWrapper \
-    io_programdoc_dummy_object = \
-    mlpack::bindings::markdown::ProgramDocWrapper(BINDING_NAME, NAME, \
-    SHORT_DESC, []() { return DESC; }, { __VA_ARGS__ }); \
+#undef BINDING_PNAME
+#undef BINDING_SHORT_DESC
+#undef BINDING_LONG_DESC
+#undef BINDING_EXAMPLE
+#undef BINDING_SEE_ALSO
+
+#define BINDING_PNAME(NAME) static \
+    mlpack::bindings::markdown::ProgramNameWrapper \
+    io_programname_dummy_object = \
+    mlpack::bindings::markdown::ProgramNameWrapper( \
+    BINDING_NAME, NAME);
+
+#define BINDING_SHORT_DESC(SHORT_DESC) static \
+    mlpack::bindings::markdown::ShortDescriptionWrapper \
+    io_programshort_desc_dummy_object = \
+    mlpack::bindings::markdown::ShortDescriptionWrapper( \
+    BINDING_NAME, SHORT_DESC);
+
+#define BINDING_LONG_DESC(LONG_DESC) static \
+    mlpack::bindings::markdown::LongDescriptionWrapper \
+    io_programlong_desc_dummy_object = \
+    mlpack::bindings::markdown::LongDescriptionWrapper( \
+    BINDING_NAME, []() { return std::string(LONG_DESC); });
+
+#ifdef __COUNTER__
+  #define BINDING_EXAMPLE(EXAMPLE) static \
+      mlpack::bindings::markdown::ExampleWrapper \
+      JOIN(io_programexample_dummy_object_, __COUNTER__) = \
+      mlpack::bindings::markdown::ExampleWrapper(BINDING_NAME, \
+      []() { return(std::string(EXAMPLE)); });
+
+  #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
+      mlpack::bindings::markdown::SeeAlsoWrapper \
+      JOIN(io_programsee_also_dummy_object_, __COUNTER__) = \
+      mlpack::bindings::markdown::SeeAlsoWrapper(BINDING_NAME, \
+      DESCRIPTION, LINK);
+#else
+  #define BINDING_EXAMPLE(EXAMPLE) static \
+      mlpack::bindings::markdown::ExampleWrapper \
+      JOIN(JOIN(io_programexample_dummy_object_, __LINE__), opt) = \
+      mlpack::bindings::markdown::ExampleWrapper(BINDING_NAME, \
+      []() { return(std::string(EXAMPLE)); });
+
+  #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
+      mlpack::bindings::markdown::SeeAlsoWrapper \
+      JOIN(JOIN(io_programsee_also_dummy_object_, __LINE__), opt) = \
+      mlpack::bindings::markdown::SeeAlsoWrapper(BINDING_NAME, \
+      DESCRIPTION, LINK);
+#endif
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");

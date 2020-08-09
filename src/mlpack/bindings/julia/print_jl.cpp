@@ -27,12 +27,13 @@ extern std::string programName;
 /**
  * Print the code for a .jl binding for an mlpack program to stdout.
  */
-void PrintJL(const util::ProgramDoc& programInfo,
-             const string& functionName,
+void PrintJL(const string& functionName,
              const std::string& mlpackJuliaLibSuffix)
 {
+  util::ProgramName& pname = *IO::GetSingleton().pname;
+  util::LongDescription& longDesc = *IO::GetSingleton().longDesc;
   // Restore parameters.
-  IO::RestoreSettings(programInfo.programName);
+  IO::RestoreSettings(pname.programName);
 
   map<string, util::ParamData>& parameters = IO::Parameters();
   typedef map<string, util::ParamData>::iterator ParamIter;
@@ -168,8 +169,13 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // Next print the description.
-  cout << util::HyphenateString(programInfo.documentation(), 0) << endl;
-
+  cout << util::HyphenateString(longDesc.longDescription(), 0) << endl;
+  for (size_t j = 0; j < IO::GetSingleton().examples.size(); ++j)
+  {
+    util::Example& example = *IO::GetSingleton().examples[j];
+    cout << util::HyphenateString(example.example(), 0)
+        << endl;
+  }
   // Next, print information on the input options.
   cout << endl;
   cout << "# Arguments" << endl;

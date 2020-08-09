@@ -21,8 +21,7 @@ namespace julia {
 /**
  * Print the code for a .jl binding for an mlpack program to stdout.
  */
-void PrintJL(const util::ProgramDoc& programInfo,
-             const std::string& functionName,
+void PrintJL(const std::string& functionName,
              const std::string& mlpackJuliaLibSuffix);
 
 } // namespace julia

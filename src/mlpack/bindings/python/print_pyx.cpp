@@ -27,17 +27,17 @@ namespace python {
  * generated .pyx file to stdout.
  *
  * @param parameters List of parameters the program will use (from IO).
- * @param programInfo Documentation for the program.
  * @param mainFilename Filename of the main program (i.e.
  *      "/path/to/pca_main.cpp").
  * @param functionName Name of the function (i.e. "pca").
  */
-void PrintPYX(const ProgramDoc& programInfo,
-              const string& mainFilename,
+void PrintPYX(const string& mainFilename,
               const string& functionName)
 {
+  util::ProgramName& pname = *IO::GetSingleton().pname;
+  util::LongDescription& longDesc = *IO::GetSingleton().longDesc;
   // Restore parameters.
-  IO::RestoreSettings(programInfo.programName);
+  IO::RestoreSettings(pname.programName);
 
   std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   typedef std::map<std::string, util::ParamData>::iterator ParamIter;
@@ -143,10 +143,16 @@ void PrintPYX(const ProgramDoc& programInfo,
 
   // Print the comment describing the function and its parameters.
   cout << "  \"\"\"" << endl;
-  cout << "  " << programInfo.programName << endl;
+  cout << "  " << pname.programName << endl;
   cout << endl;
-  cout << "  " << HyphenateString(programInfo.documentation(), 2) << endl;
-  cout << endl << endl;
+  cout << "  " << HyphenateString(longDesc.longDescription(), 2) << endl;
+    cout << endl;
+  for (size_t j = 0; j < IO::GetSingleton().examples.size(); ++j)
+  {
+    util::Example& example = *IO::GetSingleton().examples[j];
+    cout << "  " << util::HyphenateString(example.example(), 2)
+        << endl << endl;
+  }
   cout << "  Input parameters:" << endl;
   cout << endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
@@ -184,7 +190,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "  DisableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  IO.RestoreSettings(\"" << programInfo.programName << "\")"
+  cout << "  IO.RestoreSettings(\"" << pname.programName << "\")"
       << endl;
 
   // Determine whether or not we need to copy parameters.

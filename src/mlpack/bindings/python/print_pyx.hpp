@@ -23,13 +23,11 @@ namespace python {
  * Given a list of parameter definition and program documentation, print a
  * generated .pyx file to stdout.
  *
- * @param programInfo Documentation for the program.
  * @param mainFilename Filename of the main program (i.e.
  *      "/path/to/pca_main.cpp").
  * @param functionName Name of the function (i.e. "pca").
  */
-void PrintPYX(const util::ProgramDoc& programInfo,
-              const std::string& mainFilename,
+void PrintPYX(const std::string& mainFilename,
               const std::string& functionName);
 
 

@@ -1,8 +1,9 @@
 /**
  * @file core/util/program_doc.cpp
+ * @author Yashwant Singh Parihar
  * @author Ryan Curtin
  *
- * Implementation of the ProgramDoc class.  The class registers itself with IO
+ * Implementation of the mutiple classes.  The classes registers itself with IO
  * when constructed.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -20,36 +21,117 @@ using namespace mlpack::util;
 using namespace std;
 
 /**
- * Construct a ProgramDoc object.  When constructed, it will register itself
+ * Construct a ProgramName object.  When constructed, it will register itself
  * with IO.  A fatal error will be thrown if more than one is constructed.
  *
  * @param defaultModule Name of the default module.
- * @param shortDocumentation A short two-sentence description of the program,
- *     what it does, and what it is useful for.
- * @param documentation Long string containing documentation on how to use the
- *     program and what it is.  No newline characters are necessary; this is
- *     taken care of by IO later.
- * @param seeAlso A set of pairs of strings with useful "see also"
- *     information; each pair is <description, url>.
  */
-ProgramDoc::ProgramDoc(
-    const std::string programName,
-    const std::string shortDocumentation,
-    const std::function<std::string()> documentation,
-    const std::vector<std::pair<std::string, std::string>> seeAlso) :
-    programName(std::move(programName)),
-    shortDocumentation(std::move(shortDocumentation)),
-    documentation(std::move(documentation)),
-    seeAlso(std::move(seeAlso))
+ProgramName::ProgramName(
+    const std::string programName) :
+    programName(std::move(programName))
 {
   // Register this with IO.
-  IO::RegisterProgramDoc(this);
+  IO::RegisterProgramName(this);
 }
 
 /**
- * Construct an empty ProgramDoc object.
+ * Construct an empty ProgramName object.
  */
-ProgramDoc::ProgramDoc()
+ProgramName::ProgramName()
 {
-  IO::RegisterProgramDoc(this);
+  IO::RegisterProgramName(this);
+}
+
+/**
+ * Construct a ShortDescription object.  When constructed, it will register
+ * itself with IO.  A fatal error will be thrown if more than one is
+ * constructed.
+ *
+ * @param shortDescription A short two-sentence description of the program,
+ *     what it does, and what it is useful for.
+ */
+ShortDescription::ShortDescription(
+    const std::string shortDescription) :
+    shortDescription(std::move(shortDescription))
+{
+  // Register this with IO.
+  IO::RegisterShortDescription(this);
+}
+
+/**
+ * Construct an empty ShortDescription object.
+ */
+ShortDescription::ShortDescription()
+{
+  IO::RegisterShortDescription(this);
+}
+
+/**
+ * Construct a LongDescription object. When constructed, it will register itself
+ * with IO.  A fatal error will be thrown if more than one is constructed.
+ *
+ * @param longDescription Long string containing documentation on 
+ *     what it is.  No newline characters are necessary; this is
+ *     taken care of by IO later.
+ */
+LongDescription::LongDescription(
+    const std::function<std::string()> longDescription) :
+    longDescription(std::move(longDescription))
+{
+  // Register this with IO.
+  IO::RegisterLongDescription(this);
+}
+
+/**
+ * Construct an empty LongDescription object.
+ */
+LongDescription::LongDescription()
+{
+  IO::RegisterLongDescription(this);
+}
+
+/**
+ * Construct a Example object.  When constructed, it will register itself
+ * with IO.  A fatal error will be thrown if more than one is constructed.
+ *
+ * @param example Documentation on how to use the program.
+ */
+Example::Example(
+    const std::function<std::string()> example) :
+    example(std::move(example))
+{
+  // Register this with IO.
+  IO::RegisterExample(this);
+}
+
+/**
+ * Construct an empty Example object.
+ */
+Example::Example()
+{
+  IO::RegisterExample(this);
+}
+
+/**
+ * Construct a SeeAlso object.  When constructed, it will register itself
+ * with IO.  A fatal error will be thrown if more than one is constructed.
+ *
+ * @param seeAlso A set of pairs of strings with useful "see also"
+ *     information; each pair is <description, url>.
+ */
+SeeAlso::SeeAlso(
+    const std::string description, const std::string link) :
+    description(std::move(description)),
+    link(std::move(link))
+{
+  // Register this with IO.
+  IO::RegisterSeeAlso(this);
+}
+
+/**
+ * Construct an empty SeeAlso object.
+ */
+SeeAlso::SeeAlso()
+{
+  IO::RegisterSeeAlso(this);
 }

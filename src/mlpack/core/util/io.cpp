@@ -17,19 +17,43 @@
 using namespace mlpack;
 using namespace mlpack::util;
 
-// Fake ProgramDoc in case none is supplied.
-static ProgramDoc emptyProgramDoc = ProgramDoc("", "", []() { return ""; },
-    {});
+// Fake ProgramName in case none is supplied.
+static ProgramName emptyProgramName = ProgramName("");
+
+// Fake ShortDescription in case none is supplied.
+static ShortDescription emptyShortDescription = ShortDescription("");
+
+// Fake LongDescription in case none is supplied.
+static LongDescription emptyLongDescription = LongDescription(
+    []() { return ""; });
+
+// Fake Example in case none is supplied.
+static Example emptyExample = Example([]() { return ""; });
+
+// Fake SeeAlso in case none is supplied.
+static SeeAlso emptySeeAlso = SeeAlso("", "");
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-IO::IO() : didParse(false), doc(&emptyProgramDoc)
+IO::IO() :
+    didParse(false),
+    pname(&emptyProgramName),
+    shortDesc(&emptyShortDescription),
+    longDesc(&emptyLongDescription),
+    examples({}),
+    seeAlsos({})
 {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
-IO::IO(const IO& /* other */) : didParse(false), doc(&emptyProgramDoc)
+IO::IO(const IO& /* other */) :
+    didParse(false),
+    pname(&emptyProgramName),
+    shortDesc(&emptyShortDescription),
+    longDesc(&emptyLongDescription),
+    examples({}),
+    seeAlsos({})
 {
   return;
 }
@@ -155,17 +179,73 @@ IO& IO::GetSingleton()
 }
 
 /**
- * Registers a ProgramDoc object, which contains documentation about the
+ * Registers a ProgramName object, which contains documentation about the
  * program.
  *
- * @param doc Pointer to the ProgramDoc object.
+ * @param pname Pointer to the ProgramName object.
  */
-void IO::RegisterProgramDoc(ProgramDoc* doc)
+void IO::RegisterProgramName(util::ProgramName* pname)
+{
+  // Only register the pname if it is not the dummy object we created at the
+  // beginning of the file (as a default value in case this is never called).
+  if (pname != &emptyProgramName)
+    GetSingleton().pname = pname;
+}
+
+/**
+ * Registers a ShortDescription object, which contains documentation about
+ * the program.
+ *
+ * @param shortDesc Pointer to the ShortDescription object.
+ */
+void IO::RegisterShortDescription(ShortDescription* shortDesc)
+{
+  // Only register the shortDesc if it is not the dummy object we created at the
+  // beginning of the file (as a default value in case this is never called).
+  if (shortDesc != &emptyShortDescription)
+    GetSingleton().shortDesc = shortDesc;
+}
+
+/**
+ * Registers a LongDescription object, which contains documentation about
+ * the program.
+ *
+ * @param longDesc Pointer to the LongDescription object.
+ */
+void IO::RegisterLongDescription(LongDescription* longDesc)
+{
+  // Only register the longDesc if it is not the dummy object we created at the
+  // beginning of the file (as a default value in case this is never called).
+  if (longDesc != &emptyLongDescription)
+    GetSingleton().longDesc = longDesc;
+}
+
+/**
+ * Registers a Example object, which contains documentation about the
+ * program.
+ *
+ * @param example Pointer to the Example object.
+ */
+void IO::RegisterExample(Example* example)
+{
+  // Only register the example if it is not the dummy object we created at the
+  // beginning of the file (as a default value in case this is never called).
+  if (example != &emptyExample)
+    GetSingleton().examples.push_back(example);
+}
+
+/**
+ * Registers a SeeAlso object, which contains documentation about the
+ * program.
+ *
+ * @param seeAlso Pointer to the SeeAlso object.
+ */
+void IO::RegisterSeeAlso(SeeAlso* seeAlso)
 {
   // Only register the doc if it is not the dummy object we created at the
   // beginning of the file (as a default value in case this is never called).
-  if (doc != &emptyProgramDoc)
-    GetSingleton().doc = doc;
+  if (seeAlso != &emptySeeAlso)
+    GetSingleton().seeAlsos.push_back(seeAlso);
 }
 
 // Get the parameters that the IO object knows about.
@@ -180,10 +260,10 @@ std::map<char, std::string>& IO::Aliases()
   return GetSingleton().aliases;
 }
 
-// Get the program name as set by PROGRAM_INFO().
+// Get the program name as set by BINDING_PNAME().
 std::string IO::ProgramName()
 {
-  return GetSingleton().doc->programName;
+  return GetSingleton().pname->programName;
 }
 
 // Set a particular parameter as passed.

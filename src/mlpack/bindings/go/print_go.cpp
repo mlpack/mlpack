@@ -27,14 +27,14 @@ namespace go {
  * Given a list of parameter definition and program documentation, print a
  * generated .go file to stdout.
  *
- * @param programInfo Documentation for the program.
  * @param functionName Name of the function (i.e. "pca").
  */
-void PrintGo(const util::ProgramDoc& programInfo,
-              const std::string& functionName)
+void PrintGo(const std::string& functionName)
 {
+  util::ProgramName& pname = *IO::GetSingleton().pname;
+  util::LongDescription& longDesc = *IO::GetSingleton().longDesc;
   // Restore parameters.
-  IO::RestoreSettings(programInfo.programName);
+  IO::RestoreSettings(pname.programName);
 
   std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   typedef std::map<std::string, util::ParamData>::iterator ParamIter;
@@ -124,8 +124,14 @@ void PrintGo(const util::ProgramDoc& programInfo,
 
   // Print the comment describing the function and its parameters.
   cout << "/*" << endl;
-  cout << "  " << HyphenateString(programInfo.documentation(), 2) << endl;
-  cout << endl << endl;
+  cout << "  " << HyphenateString(longDesc.longDescription(), 2) << endl;
+  cout << endl;
+  for (size_t j = 0; j < IO::GetSingleton().examples.size(); ++j)
+  {
+    util::Example& example = *IO::GetSingleton().examples[j];
+    cout << "  " << util::HyphenateString(example.example(), 2)
+        << endl << endl;
+  }
   cout << "  Input parameters:" << endl;
   cout << endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
@@ -216,7 +222,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
   cout << "  " << "disableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  " << "restoreSettings(\"" << programInfo.programName
+  cout << "  " << "restoreSettings(\"" << pname.programName
       << "\")" << endl;
   cout << endl;
 

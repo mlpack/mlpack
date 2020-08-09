@@ -35,8 +35,24 @@ namespace mlpack {
 namespace util {
 
 // Externally defined in option.hpp, this class holds information about the
-// program being run.
-class ProgramDoc;
+// name of the program being run.
+class ProgramName;
+
+// Externally defined in option.hpp, this class holds information about the
+// short description of the program being run.
+class ShortDescription;
+
+// Externally defined in option.hpp, this class holds information about the
+// long description of the program being run.
+class LongDescription;
+
+// Externally defined in option.hpp, this class holds information about the
+// examples of the program being run.
+class Example;
+
+// Externally defined in option.hpp, this class holds information about see
+// also of the program being run.
+class SeeAlso;
 
 } // namespace util
 
@@ -96,17 +112,31 @@ class ProgramDoc;
  * More documentation is available on the PARAM_*() macros in the documentation
  * for core/io/io.hpp.
  *
- * @section programinfo Documenting the program itself
+ * @section bindingpname Documenting the programName.
+ * @section bindingshortdescription Documenting the shortDescription.
+ * @section bindinglongdescription Documenting the longDescription.
+ * @section bindingexample Documenting the example.
+ * @section bindingseealso Documenting the seeAlso.
  *
  * In addition to allowing documentation for each individual parameter and
- * module, the PROGRAM_INFO() macro provides support for documenting the program
- * itself.  There should only be one instance of the PROGRAM_INFO() macro.
+ * module, the BINDING_PNAME() macro provides support for documenting the
+ * programName, BINDING_SHORT_DESC() macro provides support for documenting the
+ * shortDescription, BINDING_LONG_DESC() macro provides support for documenting
+ * the longDescription, the BINDING_EXAMPLE() macro provides support for
+ * documenting the example and the BINDING_SEE_ALSO() macro provides support for
+ * documenting the seeAlso. There should only be one instance of the
+ * BINDING_PNAME(), BINDING_SHORT_DESC() and BINDING_LONG_DESC() macros and there
+ * can be multiple instance of BINDING_EXAMPLE() and BINDING_SEE_ALSO() macro.
  * Below is an example:
  *
  * @code
- * PROGRAM_INFO("Maximum Variance Unfolding", "This program performs maximum "
+ * BINDING_PNAME("Maximum Variance Unfolding");
+ * BINDING_SHORT_DESC("An implementation of Maximum Variance Unfolding");
+ * BINDING_LONG_DESC( "This program performs maximum "
  *    "variance unfolding on the given dataset, writing a lower-dimensional "
  *    "unfolded dataset to the given output file.");
+ * BINDING_EXAMPLE("mvu", "input", "dataset", "new_dim", 5, "output", "output");
+ * BINDING_SEE_ALSO("Perceptron", "#perceptron");
  * @endcode
  *
  * This description should be verbose, and explain to a non-expert user what the
@@ -241,20 +271,58 @@ class IO
   static IO& GetSingleton();
 
   /**
-   * Registers a ProgramDoc object, which contains documentation about the
+   * Registers a ProgramName object, which contains documentation about the
    * program.  If this method has been called before (that is, if two
-   * ProgramDocs are instantiated in the program), a fatal error will occur.
+   * ProgramNames are instantiated in the program), a fatal error will occur.
    *
-   * @param doc Pointer to the ProgramDoc object.
+   * @param pname Pointer to the ProgramName object.
    */
-  static void RegisterProgramDoc(util::ProgramDoc* doc);
+  static void RegisterProgramName(util::ProgramName* pname);
+
+  /**
+   * Registers a ShortDescription object, which contains documentation about the
+   * program.  If this method has been called before (that is, if two
+   * ShortDescriptions are instantiated in the program), a fatal error will
+   * occur.
+   *
+   * @param shortDesc Pointer to the ShortDescription object.
+   */
+  static void RegisterShortDescription(util::ShortDescription* shortDesc);
+
+  /**
+   * Registers a LongDescription object, which contains documentation about the
+   * program.  If this method has been called before (that is, if two
+   * LongDescriptions are instantiated in the program), a fatal error will
+   * occur.
+   *
+   * @param longDesc Pointer to the LongDescription object.
+   */
+  static void RegisterLongDescription(util::LongDescription* longDesc);
+
+  /**
+   * Registers a Example object, which contains documentation about the
+   * program.  If this method has been called before (that is, if two
+   * Examples are instantiated in the program), a fatal error will occur.
+   *
+   * @param examples Pointer to the Example object.
+   */
+  static void RegisterExample(util::Example* examples);
+
+  /**
+   * Registers a SeeAlso object, which contains documentation about the
+   * program.  If this method has been called before (that is, if two
+   * SeeAlsos are instantiated in the program), a fatal error will occur.
+   *
+   * @param seeAlsos Pointer to the SeeAlso object.
+   */
+  static void RegisterSeeAlso(util::SeeAlso* seeAlsos);
 
   //! Return a modifiable list of parameters that IO knows about.
   static std::map<std::string, util::ParamData>& Parameters();
   //! Return a modifiable list of aliases that IO knows about.
   static std::map<char, std::string>& Aliases();
 
-  //! Get the program name as set by the PROGRAM_INFO() macro.
+  //! Get the program name as set by the BINDING_PNAME() macro.
   static std::string ProgramName();
 
   /**
@@ -313,7 +381,7 @@ class IO
   bool didParse;
 
   //! Holds the name of the program for --version.  This is the true program
-  //! name (argv[0]) not what is given in ProgramDoc.
+  //! name (argv[0]) not what is given in ProgramName().
   std::string programName;
 
   //! Holds the timer objects.
@@ -322,9 +390,20 @@ class IO
   //! So that Timer::Start() and Timer::Stop() can access the timer variable.
   friend class Timer;
 
-  //! Pointer to the ProgramDoc object.
-  util::ProgramDoc* doc;
+  //! Pointer to the ProgramName object.
+  util::ProgramName* pname;
 
+  //! Pointer to the ShortDescription object.
+  util::ShortDescription* shortDesc;
+
+  //! Pointer to the LongDescription object.
+  util::LongDescription* longDesc;
+
+  //! Pointer to the Example object.
+  std::vector<util::Example*> examples;
+
+  //! Pointer to the SeeAlso object.
+  std::vector<util::SeeAlso*> seeAlsos;
  private:
   /**
    * Make the constructor private, to preclude unauthorized instances.

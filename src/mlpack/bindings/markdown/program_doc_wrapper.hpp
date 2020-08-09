@@ -2,8 +2,11 @@
  * @file bindings/markdown/program_doc_wrapper.hpp
  * @author Ryan Curtin
  *
- * A simple wrapper around ProgramDoc that also calls
- * BindingInfo::RegisterProgramDoc() upon construction.
+ * A simple wrapper around ProgramName, ShortDescription, LongDescription,
+ * Example and SeeAlso that also respectively calls 
+ * BindingInfo::RegisterProgramName(), BindingInfo::RegisterShortDescription(),
+ * BindingInfo::RegisterLongDescription(), BindingInfo::RegisterExample() and 
+ * BindingInfo::RegisterSeeAlso() upon construction.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,23 +22,78 @@ namespace mlpack {
 namespace bindings {
 namespace markdown {
 
-class ProgramDocWrapper
+class ProgramNameWrapper
 {
  public:
   /**
-   * Construct a ProgramDoc object and register it with
-   * BindingInfo::RegisterProgramDoc().
+   * Construct a ProgramName object and register it with
+   * BindingInfo::RegisterProgramName().
    */
-  ProgramDocWrapper(const std::string& bindingName,
-                    const std::string& programName,
-                    const std::string& shortDocumentation,
-                    const std::function<std::string()>& documentation,
-                    const std::vector<std::pair<std::string, std::string>>&
-                        seeAlso)
+  ProgramNameWrapper(const std::string& bindingName,
+                     const std::string& programName)
   {
-    util::ProgramDoc pd(programName, shortDocumentation, documentation,
-        seeAlso);
-    BindingInfo::RegisterProgramDoc(bindingName, pd);
+    util::ProgramName pd(programName);
+    BindingInfo::RegisterProgramName(bindingName, pd);
+  }
+};
+
+class ShortDescriptionWrapper
+{
+ public:
+  /**
+   * Construct a ShortDescription object and register it with
+   * BindingInfo::RegisterShortDescription().
+   */
+  ShortDescriptionWrapper(const std::string& bindingName,
+                          const std::string shortDescription)
+  {
+    util::ShortDescription pd(shortDescription);
+    BindingInfo::RegisterShortDescription(bindingName, pd);
+  }
+};
+
+class LongDescriptionWrapper
+{
+ public:
+  /**
+   * Construct a LongDescription object and register it with
+   * BindingInfo::RegisterLongDescription().
+   */
+  LongDescriptionWrapper(const std::string& bindingName,
+                         const std::function<std::string()> longDescription)
+  {
+    util::LongDescription pd(longDescription);
+    BindingInfo::RegisterLongDescription(bindingName, pd);
+  }
+};
+
+class ExampleWrapper
+{
+ public:
+  /**
+   * Construct a Example object and register it with
+   * BindingInfo::RegisterExample().
+   */
+  ExampleWrapper(const std::string& bindingName,
+                 const std::function<std::string()> example)
+  {
+    util::Example pd(example);
+    BindingInfo::RegisterExample(bindingName, pd);
+  }
+};
+
+class SeeAlsoWrapper
+{
+ public:
+  /**
+   * Construct a SeeAlso object and register it with
+   * BindingInfo::RegisterSeeAlso().
+   */
+  SeeAlsoWrapper(const std::string& bindingName,
+                 const std::string description, const std::string link)
+  {
+    util::SeeAlso pd(description, link);
+    BindingInfo::RegisterSeeAlso(bindingName, pd);
   }
 };
 

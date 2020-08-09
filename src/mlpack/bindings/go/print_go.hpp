@@ -23,11 +23,9 @@ namespace go {
  * Given a list of parameter definition and program documentation, print a
  * generated .go file to stdout.
  *
- * @param programInfo Documentation for the program.
  * @param functionName Name of the function (i.e. "pca").
  */
-void PrintGo(const util::ProgramDoc& programInfo,
-             const std::string& functionName);
+void PrintGo(const std::string& functionName);
 
 
 } // namespace go

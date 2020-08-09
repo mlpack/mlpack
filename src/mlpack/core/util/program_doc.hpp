@@ -1,8 +1,10 @@
 /**
  * @file core/util/program_doc.hpp
+ * @author Yashwant Singh Parihar
  * @author Matthew Amidon
  *
- * The structure used to store a program's name and documentation.
+ * The structure used to store a program's name, documentation, example and
+ * see also.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,49 +20,108 @@ namespace util {
 /**
  * A static object whose constructor registers program documentation with the
  * IO class.  This should not be used outside of IO itself, and you should use
- * the PROGRAM_INFO() macro to declare these objects.  Only one ProgramDoc
- * object should ever exist.
+ * these BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(), 
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO() macros to declare these objects.
+ * Only correspond object should ever exist.
  *
  * @see core/util/io.hpp, mlpack::IO
  */
-class ProgramDoc
+class ProgramName
 {
  public:
   /**
-   * Construct a ProgramDoc object.  When constructed, it will register itself
-   * with IO, and when the user calls --help (or whatever the option is named
-   * for the given binding type), the given function that returns a std::string
-   * will be returned.
+   * Construct a ProgramName object.  When constructed, it will register itself
+   * with IO.  A fatal error will be thrown if more than one is constructed.
    *
-   * @param programName Short string representing the name of the program.
-   * @param shortDocumentation A short two-sentence description of the program,
-   *     what it does, and what it is useful for.
-   * @param documentation Long string containing documentation on how to use the
-   *     program and what it is.  No newline characters are necessary; this is
-   *     taken care of by IO later.
-   * @param seeAlso A set of pairs of strings with useful "see also"
-   *     information; each pair is <description, url>.
+   * @param programName Name of the default module.
    */
-  ProgramDoc(const std::string programName,
-             const std::string shortDocumentation,
-             const std::function<std::string()> documentation,
-             const std::vector<std::pair<std::string, std::string>> seeAlso);
+  ProgramName(const std::string programName);
 
   /**
-   * Construct an empty ProgramDoc object.  (This is not meant to be used!)
+   * Construct an empty ProgramName object.  (This is not meant to be used!)
    */
-  ProgramDoc();
-
-  //! The name of the program.
+  ProgramName();
   std::string programName;
-  //! The short documentation for the program.
-  std::string shortDocumentation;
-  //! Documentation for what the program does.
-  std::function<std::string()> documentation;
-  //! Set of see also information.
-  std::vector<std::pair<std::string, std::string>> seeAlso;
 };
 
+class ShortDescription
+{
+ public:
+  /**
+   * Construct a ShortDescription object.  When constructed, it will register
+   * itself with IO.  A fatal error will be thrown if more than one is
+   * constructed.
+   *
+   * @param shortDescription A short two-sentence description of the program,
+   *     what it does, and what it is useful for.
+   */
+  ShortDescription(const std::string shortDescription);
+
+  /**
+   * Construct an empty ShortDescription object.
+   * (This is not meant to be used!)
+   */
+  ShortDescription();
+  std::string shortDescription;
+};
+
+class LongDescription
+{
+ public:
+  /**
+   * Construct a LongDescription object. When constructed, it will register itself
+   * with IO.  A fatal error will be thrown if more than one is constructed.
+   *
+   * @param longDescription Long string containing documentation on 
+   *     what it is.  No newline characters are necessary; this is
+   *     taken care of by IO later.
+   */
+  LongDescription(const std::function<std::string()> longDescription);
+
+  /**
+   * Construct an empty LongDescription object.  (This is not meant to be used!)
+   */
+  LongDescription();
+  std::function<std::string()> longDescription;
+};
+
+class Example
+{
+ public:
+  /**
+   * Construct a Example object.  When constructed, it will register itself
+   * with IO.  A fatal error will be thrown if more than one is constructed.
+   *
+   * @param example Documentation on how to use the program.
+   */
+  Example(const std::function<std::string()> example);
+
+  /**
+   * Construct an empty Example object.  (This is not meant to be used!)
+   */
+  Example();
+  std::function<std::string()> example;
+};
+
+class SeeAlso
+{
+ public:
+  /**
+   * Construct a SeeAlso object.  When constructed, it will register itself
+   * with IO.  A fatal error will be thrown if more than one is constructed.
+   *
+   * @param description Description of SeeAlso.
+   * @param link Link of SeeAlso.
+   */
+  SeeAlso(const std::string description, const std::string link);
+
+  /**
+   * Construct an empty SeeAlso object.  (This is not meant to be used!)
+   */
+  SeeAlso();
+  std::string description;
+  std::string link;
+};
 } // namespace util
 } // namespace mlpack
 

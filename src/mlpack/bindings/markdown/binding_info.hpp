@@ -4,7 +4,7 @@
  *
  * This file defines the BindingInfo singleton class that is used specifically
  * for the Markdown bindings to map from a binding name (i.e. "knn") to
- * multiple ProgramDoc objects, which are then used to generate the
+ * multiple documentation objects, which are then used to generate the
  * documentation.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -24,18 +24,50 @@ namespace markdown {
 
 /**
  * The BindingInfo class is used by the Markdown documentation generator to
- * store multiple ProgramDoc objects, indexed by both the binding name (i.e.
+ * store multiple documentation objects, indexed by both the binding name (i.e.
  * "knn") and the language (i.e. "cli").
  */
 class BindingInfo
 {
  public:
-  //! Return a ProgramDoc object for a given bindingName.
-  static util::ProgramDoc& GetProgramDoc(const std::string& bindingName);
+  //! Return a ProgramName object for a given bindingName.
+  static util::ProgramName& GetProgramName(const std::string& bindingName);
 
-  //! Register a ProgramDoc object with the given bindingName.
-  static void RegisterProgramDoc(const std::string& bindingName,
-                                 const util::ProgramDoc& programDoc);
+  //! Return a ShortDescription object for a given bindingName.
+  static util::ShortDescription& GetShortDescription(
+      const std::string& bindingName);
+
+  //! Return a LongDescription object for a given bindingName.
+  static util::LongDescription& GetLongDescription(
+      const std::string& bindingName);
+
+  //! Return a Example object for a given bindingName.
+  static std::vector<util::Example>& GetExample(const std::string& bindingName);
+
+  //! Return a SeeAlso object for a given bindingName.
+  static std::vector<util::SeeAlso>& GetSeeAlso(const std::string& bindingName);
+
+  //! Register a ProgramName object with the given bindingName.
+  static void RegisterProgramName(const std::string& bindingName,
+                                  const util::ProgramName& programName);
+
+  //! Register a ShortDescription object with the given bindingName.
+  static void RegisterShortDescription(const std::string& bindingName,
+                                       const util::ShortDescription&
+                                             shortDescription);
+
+  //! Register a LongDescription object with the given bindingName.
+  static void RegisterLongDescription(const std::string& bindingName,
+                                      const util::LongDescription&
+                                            longDescription);
+
+  //! Register a Example object with the given bindingName.
+  static void RegisterExample(const std::string& bindingName,
+                              const util::Example& example);
+
+  //! Register a SeeAlso object with the given bindingName.
+  static void RegisterSeeAlso(const std::string& bindingName,
+                              const util::SeeAlso& seeAlso);
 
   //! Get or modify the current language (don't set it to something invalid!).
   static std::string& Language();
@@ -47,8 +79,20 @@ class BindingInfo
   //! Get the singleton.
   static BindingInfo& GetSingleton();
 
-  //! Internally-held map for mapping a binding name to a ProgramDoc name.
-  std::unordered_map<std::string, util::ProgramDoc> map;
+  //! Internally-held map for mapping a binding name to a ProgramName name.
+  std::unordered_map<std::string, util::ProgramName> mapProgramName;
+
+  //! Internally-held map for mapping a binding name to a ShortDescription name.
+  std::unordered_map<std::string, util::ShortDescription> mapShortDescription;
+
+  //! Internally-held map for mapping a binding name to a LongDescription name.
+  std::unordered_map<std::string, util::LongDescription> mapLongDescription;
+
+  //! Internally-held map for mapping a binding name to a Example name.
+  std::unordered_map<std::string, std::vector<util::Example>> mapExample;
+
+  //! Internally-held map for mapping a binding name to a SeeAlso name.
+  std::unordered_map<std::string, std::vector<util::SeeAlso>> mapSeeAlso;
 
   //! Holds the name of the language that we are currently printing.  This is
   //! modified before printing the documentation, and then used by
