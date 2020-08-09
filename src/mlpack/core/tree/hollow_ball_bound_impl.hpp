@@ -440,7 +440,7 @@ void HollowBallBound<TMetricType, ElemType>::serialize(
       delete metric;
   }
 
-  ar & CEREAL_NVP(metric);
+  ar & CEREAL_POINTER(metric);
   ar & CEREAL_NVP(ownsMetric);
 }
 
