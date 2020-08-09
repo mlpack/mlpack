@@ -6,7 +6,6 @@ set(SOURCES
   pointer_vector_wrapper.hpp
   pointer_variant_wrapper.hpp
   pointer_vector_variant_wrapper.hpp
-  string_view_wrapper.hpp
 )
 
 # add directory name to sources

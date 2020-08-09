@@ -68,6 +68,7 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <cereal/archives/portable_binary.hpp>
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/json.hpp>
+#include <cereal/types/array.hpp>
 #include <cereal/types/boost_variant.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/vector.hpp>

@@ -87,7 +87,7 @@ add_executable(mlpack_test
     sparse_coding_test.cpp
     spill_tree_test.cpp
     split_data_test.cpp
-#   string_encoding_test.cpp
+    string_encoding_test.cpp
     sumtree_test.cpp
     svd_batch_test.cpp
     svd_incremental_test.cpp
