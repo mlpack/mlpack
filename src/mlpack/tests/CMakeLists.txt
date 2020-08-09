@@ -1,14 +1,8 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  ann_dist_test.cpp
-  ann_layer_test.cpp
-  ann_regularizer_test.cpp
-  ann_test_tools.hpp
-  ann_visitor_test.cpp
   arma_extend_test.cpp
   async_learning_test.cpp
   augmented_rnns_tasks_test.cpp
-  binarize_test.cpp
   bayesian_linear_regression_test.cpp
   callback_test.cpp
   cf_test.cpp
@@ -18,8 +12,6 @@ add_executable(mlpack_test
   cv_test.cpp
   dbscan_test.cpp
   dcgan_test.cpp
-  decision_stump_test.cpp
-  decision_tree_test.cpp
   det_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
@@ -33,7 +25,6 @@ add_executable(mlpack_test
   hoeffding_tree_test.cpp
   hpt_test.cpp
   hyperplane_test.cpp
-  imputation_test.cpp
   init_rules_test.cpp
   kde_test.cpp
   kernel_pca_test.cpp
@@ -79,7 +70,6 @@ add_executable(mlpack_test
   recurrent_network_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
-  scaling_test.cpp
   serialization.cpp
   serialization.hpp
   serialization_test.cpp
@@ -88,7 +78,6 @@ add_executable(mlpack_test
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
   spill_tree_test.cpp
-  split_data_test.cpp
   string_encoding_test.cpp
   sumtree_test.cpp
   termination_policy_test.cpp
@@ -104,8 +93,6 @@ add_executable(mlpack_test
   main_tests/bayesian_linear_regression_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
-  main_tests/decision_stump_test.cpp
-  main_tests/decision_tree_test.cpp
   main_tests/det_test.cpp
   main_tests/emst_test.cpp
   main_tests/fastmks_test.cpp
@@ -133,10 +120,6 @@ add_executable(mlpack_test
   main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
-  main_tests/preprocess_binarize_test.cpp
-  main_tests/preprocess_imputer_test.cpp
-  main_tests/preprocess_scale_test.cpp
-  main_tests/preprocess_split_test.cpp
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
   main_tests/range_search_test.cpp
@@ -149,33 +132,50 @@ add_executable(mlpack_catch_test
   adaboost_test.cpp
   akfn_test.cpp
   aknn_test.cpp
+  ann_dist_test.cpp
+  ann_layer_test.cpp
+  ann_regularizer_test.cpp
+  ann_test_tools.hpp
+  ann_visitor_test.cpp
   armadillo_svd_test.cpp
   bias_svd_test.cpp
+  binarize_test.cpp
   block_krylov_svd_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
+  decision_stump_test.cpp
+  decision_tree_test.cpp
   image_load_test.cpp
+  imputation_test.cpp
   kfn_test.cpp
   knn_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
   main.cpp
-  serialization_catch.cpp
-  serialization_catch.hpp
-  softmax_regression_test.cpp
   quic_svd_test.cpp
   randomized_svd_test.cpp
   regularized_svd_test.cpp
+  scaling_test.cpp
+  serialization_catch.cpp
+  serialization_catch.hpp
+  softmax_regression_test.cpp
+  split_data_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
   svdplusplus_test.cpp
   test_catch_tools.hpp
   main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
+  main_tests/decision_stump_test.cpp
+  main_tests/decision_tree_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/kfn_test.cpp
   main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/preprocess_binarize_test.cpp
+  main_tests/preprocess_scale_test.cpp
+  main_tests/preprocess_split_test.cpp
+  main_tests/preprocess_imputer_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/test_helper.hpp
 )
@@ -225,7 +225,6 @@ add_custom_command(TARGET mlpack_test
 
 # The list of long running parallel tests
 set(parallel_tests
-  "ANNLayerTest;"
   "AsyncLearningTest;"
   "LocalCoordinateCodingTest;"
   "FeedForwardNetworkTest;"

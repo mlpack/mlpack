@@ -3,6 +3,8 @@
   * Refactor ProgramInfo() to separate out all the different
     information. (#2558)
 
+  * Added Categorical DQN to q_networks (#2454).
+
   * Added N-step DQN to q_networks (#2461).
 
   * Add Silhoutte Score metric and Pairwise Distances (#2406).

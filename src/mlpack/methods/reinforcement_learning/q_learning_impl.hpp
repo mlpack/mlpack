@@ -48,9 +48,12 @@ QLearning<
     totalSteps(0),
     deterministic(false)
 {
+  // To copy over the network structure.
+  targetNetwork = learningNetwork;
+
   // Set up q-learning network.
-  if (learningNetwork.Parameters().is_empty())
-    learningNetwork.ResetParameters();
+  learningNetwork.ResetParameters();
+  targetNetwork.ResetParameters();
 
   #if ENS_VERSION_MAJOR == 1
   this->updater.Initialize(learningNetwork.Parameters().n_rows,
@@ -62,7 +65,8 @@ QLearning<
                                    learningNetwork.Parameters().n_cols);
   #endif
 
-  targetNetwork = learningNetwork;
+  // Initialize the target network with the parameters of learning network.
+  targetNetwork.Parameters() = learningNetwork.Parameters();
 }
 
 template <
@@ -192,7 +196,118 @@ void QLearning<
   }
   // Update target network.
   if (totalSteps % config.TargetNetworkSyncInterval() == 0)
-    targetNetwork = learningNetwork;
+    targetNetwork.Parameters() = learningNetwork.Parameters();
+
+  if (totalSteps > config.ExplorationSteps())
+    policy.Anneal();
+}
+
+template <
+  typename EnvironmentType,
+  typename NetworkType,
+  typename UpdaterType,
+  typename BehaviorPolicyType,
+  typename ReplayType
+>
+void QLearning<
+  EnvironmentType,
+  NetworkType,
+  UpdaterType,
+  BehaviorPolicyType,
+  ReplayType
+>::TrainCategoricalAgent()
+{
+  // Start experience replay.
+
+  // Sample from previous experience.
+  arma::mat sampledStates;
+  std::vector<ActionType> sampledActions;
+  arma::colvec sampledRewards;
+  arma::mat sampledNextStates;
+  arma::icolvec isTerminal;
+
+  replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
+      sampledNextStates, isTerminal);
+
+  size_t atomSize = config.AtomSize();
+  arma::rowvec support = arma::linspace<arma::rowvec>(config.VMin(),
+      config.VMax(), atomSize);
+
+  size_t batchSize = sampledNextStates.n_cols;
+
+  // Compute action value for next state with target network.
+  arma::mat nextActionValues;
+  targetNetwork.Predict(sampledNextStates, nextActionValues);
+
+  arma::Col<size_t> nextAction;
+  if (config.DoubleQLearning())
+  {
+    // If use double Q-Learning, use learning network to select the best action.
+    arma::mat nextActionValues;
+    learningNetwork.Predict(sampledNextStates, nextActionValues);
+    nextAction = BestAction(nextActionValues);
+  }
+  else
+  {
+    nextAction = BestAction(nextActionValues);
+  }
+
+  arma::mat nextDists, nextDist(atomSize, batchSize);
+  targetNetwork.Forward(sampledNextStates, nextDists);
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    nextDist.col(i) = nextDists(nextAction(i) * atomSize, i,
+        arma::size(atomSize, 1));
+  }
+
+  arma::mat tZ = (arma::conv_to<arma::mat>::from(config.Discount() *
+      ((1 - isTerminal) * support)).each_col() + sampledRewards).t();
+  tZ = arma::clamp(tZ, config.VMin(), config.VMax());
+  arma::mat b = (tZ - config.VMin()) / (config.VMax() - config.VMin()) *
+      (atomSize - 1);
+  arma::mat l = arma::floor(b);
+  arma::mat u = arma::ceil(b);
+
+  arma::mat projDistUpper = nextDist % (u - b);
+  arma::mat projDistLower = nextDist % (b - l);
+
+  arma::mat projDist = arma::zeros<arma::mat>(arma::size(nextDist));
+  for (size_t batchNo = 0; batchNo < batchSize; batchNo++)
+  {
+    for (size_t j = 0; j < atomSize; j++)
+    {
+      projDist(l(j, batchNo), batchNo) += projDistUpper(j, batchNo);
+      projDist(u(j, batchNo), batchNo) += projDistLower(j, batchNo);
+    }
+  }
+  arma::mat dists;
+  learningNetwork.Forward(sampledStates, dists);
+  arma::mat lossGradients = arma::zeros<arma::mat>(arma::size(dists));
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    lossGradients(sampledActions[i].action * atomSize, i,
+        arma::size(atomSize, 1)) = -(projDist.col(i) / (1e-10 + dists(
+        sampledActions[i].action * atomSize, i, arma::size(atomSize, 1))));
+  }
+  // Learn from experience.
+  arma::mat gradients;
+  learningNetwork.Backward(sampledStates, lossGradients, gradients);
+
+  #if ENS_VERSION_MAJOR == 1
+  updater.Update(learningNetwork.Parameters(), config.StepSize(), gradients);
+  #else
+  updatePolicy->Update(learningNetwork.Parameters(), config.StepSize(),
+      gradients);
+  #endif
+
+  if (config.NoisyQLearning() == true)
+  {
+    learningNetwork.ResetNoise();
+    targetNetwork.ResetNoise();
+  }
+  // Update target network.
+  if (totalSteps % config.TargetNetworkSyncInterval() == 0)
+    targetNetwork.Parameters() = learningNetwork.Parameters();
 
   if (totalSteps > config.ExplorationSteps())
     policy.Anneal();
@@ -262,7 +377,10 @@ double QLearning<
 
     if (deterministic || totalSteps < config.ExplorationSteps())
       continue;
-    TrainAgent();
+    if (config.IsCategorical())
+      TrainCategoricalAgent();
+    else
+      TrainAgent();
   }
   return totalReturn;
 }
