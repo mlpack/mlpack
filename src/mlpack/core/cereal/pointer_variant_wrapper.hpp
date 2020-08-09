@@ -92,7 +92,7 @@ class pointer_variant_wrapper
 /*
  * The objective of this class is to create a wrapper for
  * boost::variant. 
- * Cereal supports the serialization of boost::vairnat, but 
+ * Cereal supports the serialization of boost::variant, but 
  * we need to serialize it if it holds a raw pointers.
  */
  public:
