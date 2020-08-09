@@ -27,7 +27,7 @@ using namespace std;
  * @param defaultModule Name of the default module.
  */
 ProgramName::ProgramName(
-    const std::string programName) :
+    const std::string& programName) :
     programName(std::move(programName))
 {
   // Register this with IO.
@@ -51,7 +51,7 @@ ProgramName::ProgramName()
  *     what it does, and what it is useful for.
  */
 ShortDescription::ShortDescription(
-    const std::string shortDescription) :
+    const std::string& shortDescription) :
     shortDescription(std::move(shortDescription))
 {
   // Register this with IO.
@@ -75,7 +75,7 @@ ShortDescription::ShortDescription()
  *     taken care of by IO later.
  */
 LongDescription::LongDescription(
-    const std::function<std::string()> longDescription) :
+    const std::function<std::string()>& longDescription) :
     longDescription(std::move(longDescription))
 {
   // Register this with IO.
@@ -97,7 +97,7 @@ LongDescription::LongDescription()
  * @param example Documentation on how to use the program.
  */
 Example::Example(
-    const std::function<std::string()> example) :
+    const std::function<std::string()>& example) :
     example(std::move(example))
 {
   // Register this with IO.
@@ -120,7 +120,7 @@ Example::Example()
  *     information; each pair is <description, url>.
  */
 SeeAlso::SeeAlso(
-    const std::string description, const std::string link) :
+    const std::string& description, const std::string& link) :
     description(std::move(description)),
     link(std::move(link))
 {

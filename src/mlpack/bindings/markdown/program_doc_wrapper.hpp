@@ -45,7 +45,7 @@ class ShortDescriptionWrapper
    * BindingInfo::RegisterShortDescription().
    */
   ShortDescriptionWrapper(const std::string& bindingName,
-                          const std::string shortDescription)
+                          const std::string& shortDescription)
   {
     util::ShortDescription pd(shortDescription);
     BindingInfo::RegisterShortDescription(bindingName, pd);
@@ -60,7 +60,7 @@ class LongDescriptionWrapper
    * BindingInfo::RegisterLongDescription().
    */
   LongDescriptionWrapper(const std::string& bindingName,
-                         const std::function<std::string()> longDescription)
+                         const std::function<std::string()>& longDescription)
   {
     util::LongDescription pd(longDescription);
     BindingInfo::RegisterLongDescription(bindingName, pd);
@@ -75,7 +75,7 @@ class ExampleWrapper
    * BindingInfo::RegisterExample().
    */
   ExampleWrapper(const std::string& bindingName,
-                 const std::function<std::string()> example)
+                 const std::function<std::string()>& example)
   {
     util::Example pd(example);
     BindingInfo::RegisterExample(bindingName, pd);
@@ -90,7 +90,7 @@ class SeeAlsoWrapper
    * BindingInfo::RegisterSeeAlso().
    */
   SeeAlsoWrapper(const std::string& bindingName,
-                 const std::string description, const std::string link)
+                 const std::string& description, const std::string& link)
   {
     util::SeeAlso pd(description, link);
     BindingInfo::RegisterSeeAlso(bindingName, pd);

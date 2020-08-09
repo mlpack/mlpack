@@ -35,7 +35,7 @@ class ProgramName
    *
    * @param programName Name of the default module.
    */
-  ProgramName(const std::string programName);
+  ProgramName(const std::string& programName);
 
   /**
    * Construct an empty ProgramName object.  (This is not meant to be used!)
@@ -55,7 +55,7 @@ class ShortDescription
    * @param shortDescription A short two-sentence description of the program,
    *     what it does, and what it is useful for.
    */
-  ShortDescription(const std::string shortDescription);
+  ShortDescription(const std::string& shortDescription);
 
   /**
    * Construct an empty ShortDescription object.
@@ -76,7 +76,7 @@ class LongDescription
    *     what it is.  No newline characters are necessary; this is
    *     taken care of by IO later.
    */
-  LongDescription(const std::function<std::string()> longDescription);
+  LongDescription(const std::function<std::string()>& longDescription);
 
   /**
    * Construct an empty LongDescription object.  (This is not meant to be used!)
@@ -94,7 +94,7 @@ class Example
    *
    * @param example Documentation on how to use the program.
    */
-  Example(const std::function<std::string()> example);
+  Example(const std::function<std::string()>& example);
 
   /**
    * Construct an empty Example object.  (This is not meant to be used!)
@@ -113,7 +113,7 @@ class SeeAlso
    * @param description Description of SeeAlso.
    * @param link Link of SeeAlso.
    */
-  SeeAlso(const std::string description, const std::string link);
+  SeeAlso(const std::string& description, const std::string& link);
 
   /**
    * Construct an empty SeeAlso object.  (This is not meant to be used!)
