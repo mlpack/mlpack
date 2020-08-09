@@ -23,7 +23,7 @@ template<typename... VariantTypes>
 class pointer_vector_variant_wrapper;
 
 template<typename... VariantTypes>
-inline pointer_variant_wrapper<VariantTypes...>
+inline pointer_vector_variant_wrapper<VariantTypes...>
 make_vector_pointer_variant(std::vector<boost::variant<VariantTypes...>>& t)
 {
   return pointer_vector_variant_wrapper<VariantTypes...>(t);
@@ -39,6 +39,7 @@ class pointer_vector_variant_wrapper
  * we need to serialize it if it holds a vector of boost::variant that holds a
  * pointers.
  */
+public:
   pointer_vector_variant_wrapper(
       std::vector<boost::variant<VariantTypes...>>& VecPointerVar)
       : VectorPointerVariant(VecPointerVar)
