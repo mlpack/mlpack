@@ -71,4 +71,4 @@ make_pointer_vector(std::vector<T*>& t)
 
 } // end namespace cereal
 
-#endif // CEREAL_POINTER_VECTPR_WRAPPER_HPP
+#endif // CEREAL_POINTER_VECTOR_WRAPPER_HPP
