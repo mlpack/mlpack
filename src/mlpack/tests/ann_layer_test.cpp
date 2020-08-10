@@ -4186,3 +4186,77 @@ TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
   // The model should switch to training mode for predicting.
   REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == 0);
 }
+
+/**
+ * Simple Test for PixelShuffle layer.
+ */
+TEST_CASE("PixelShuffleLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, gy, g, outputExpected, gExpected;
+  PixelShuffle<> module(2, 2, 2, 4);
+
+  // Input is a batch of 2 images, each of size (2,2) and having 4 channels.
+  input << 1 << 3 << 2 << 4 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << arma::endr << 5 << 7 << 6 << 8 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << 0 << 0 << arma::endr;
+
+  gy << 1 << 5 << 9 << 13 << 2 << 6 << 10 << 14 << 3 << 7 << 11 << 15 << 4 << 8
+      << 12 << 16 << arma::endr << 17 << 21 << 25 << 29 << 18 << 22 << 26 << 30
+      << 19 << 23 << 27 << 31 << 20 << 24 << 28 << 32 << arma::endr;
+
+  // Calculated using torch.nn.PixelShuffle().
+  outputExpected << 1 << 0 << 3 << 0 << 0 << 0 << 0 << 0 << 2 << 0 << 4 << 0
+      << 0 << 0 << 0 << 0 << arma::endr << 5 << 0 << 7 << 0 << 0 << 0 << 0 << 0
+      << 6 << 0 << 8 << 0 << 0 << 0 << 0 << 0 << arma::endr;
+  gExpected << 1 << 9 << 3 << 11 << 5 << 13 << 7 << 15 << 2 << 10 << 4 << 12
+      << 6 << 14 << 8 << 16 << arma::endr << 17 << 25 << 19 << 27 << 21 << 29
+      << 23 << 31 << 18 << 26 << 20 << 28 << 22 << 30 << 24 << 32 << arma::endr;
+
+  input = input.t();
+  outputExpected = outputExpected.t();
+  gy = gy.t();
+  gExpected = gExpected.t();
+
+  // Check the Forward pass of the layer.
+  module.Forward(input, output);
+  CheckMatrices(output, outputExpected);
+
+  // Check the Backward pass of the layer.
+  module.Backward(input, gy, g);
+  CheckMatrices(g, gExpected);
+}
+
+/**
+ * Test that the function that can access the parameters of the
+ * PixelShuffle layer works.
+ */
+TEST_CASE("PixelShuffleLayerParametersTest", "[ANNLayerTest]")
+{
+  // Create the layer using the empty constructor.
+  PixelShuffle<> layer;
+
+  // Set the different input parameters of the layer.
+  layer.UpscaleFactor() = 2;
+  layer.InputHeight() = 2;
+  layer.InputWidth() = 2;
+  layer.InputChannels() = 4;
+
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer.UpscaleFactor() == 2);
+  REQUIRE(layer.InputHeight() == 2);
+  REQUIRE(layer.InputWidth() == 2);
+  REQUIRE(layer.InputChannels() == 4);
+
+  arma::mat input, output;
+  // Input is a batch of 2 images, each of size (2,2) and having 4 channels.
+  input << 1 << 3 << 2 << 4 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << arma::endr << 5 << 7 << 6 << 8 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << 0 << 0 << arma::endr;
+  input = input.t();
+  layer.Forward(input, output);
+
+  // Check whether output parameters are returned correctly.
+  REQUIRE(layer.OutputHeight() == 4 );
+  REQUIRE(layer.OutputWidth() == 4);
+  REQUIRE(layer.OutputChannels() == 1);
+}

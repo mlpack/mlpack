@@ -79,6 +79,8 @@ set(SOURCES
   noisylinear_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
+  pixel_shuffle.hpp
+  pixel_shuffle_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp

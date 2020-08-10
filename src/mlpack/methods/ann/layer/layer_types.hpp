@@ -40,6 +40,7 @@
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
+#include <mlpack/methods/ann/layer/pixel_shuffle.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
@@ -272,6 +273,7 @@ using LayerTypes = boost::variant<
     NoisyLinear<arma::mat, arma::mat>*,
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
+    PixelShuffle<arma::mat, arma::mat>*,
     Softmax<arma::mat, arma::mat>*,
     TransposedConvolution<NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>,
