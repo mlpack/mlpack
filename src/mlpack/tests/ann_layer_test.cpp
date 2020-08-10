@@ -4186,3 +4186,200 @@ TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
   // The model should switch to training mode for predicting.
   REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == 0);
 }
+
+/**
+ * Simple tests for instance normalization layer.
+ */
+TEST_CASE("InstanceNormLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input, result, output, delta, deltaExpected;
+  arma::mat runningMean, runningVar;
+
+  // Represents 2 images, each having 3 channels, and shape (3,2).
+  input << 1  << 19  << arma::endr
+        << 2  << 20  << arma::endr
+        << 3  << 21  << arma::endr
+        << 4  << 22  << arma::endr
+        << 5  << 23  << arma::endr
+        << 6  << 24  << arma::endr
+        << 7  << 25  << arma::endr
+        << 8  << 26  << arma::endr
+        << 9  << 27  << arma::endr
+        << 10 << 28  << arma::endr
+        << 11 << 29  << arma::endr
+        << 12 << 30  << arma::endr
+        << 13 << 31  << arma::endr
+        << 14 << 32  << arma::endr
+        << 15 << 33  << arma::endr
+        << 16 << 34  << arma::endr
+        << 17 << 35  << arma::endr
+        << 18 << 36  << arma::endr;
+
+  // Output calculated using torch.nn.InstanceNorm2d().
+  result  << -1.4638  << -1.4638 << arma::endr
+          << -0.8783  << -0.8783 << arma::endr
+          << -0.2928  << -0.2928 << arma::endr
+          <<  0.2928  <<  0.2928 << arma::endr
+          <<  0.8783  <<  0.8783 << arma::endr
+          <<  1.4638  <<  1.4638 << arma::endr
+          << -1.4638  << -1.4638 << arma::endr
+          << -0.8783  << -0.8783 << arma::endr
+          << -0.2928  << -0.2928 << arma::endr
+          <<  0.2928  <<  0.2928 << arma::endr
+          <<  0.8783  <<  0.8783 << arma::endr
+          <<  1.4638  <<  1.4638 << arma::endr
+          << -1.4638  << -1.4638 << arma::endr
+          << -0.8783  << -0.8783 << arma::endr
+          << -0.2928  << -0.2928 << arma::endr
+          <<  0.2928  <<  0.2928 << arma::endr
+          <<  0.8783  <<  0.8783 << arma::endr
+          <<  1.4638  <<  1.4638 << arma::endr;
+
+  // Calculated using torch.nn.InstanceNorm2d().
+  deltaExpected << 1.8367 <<  1.8367 << arma::endr
+                << 0.3967 <<  0.3967 << arma::endr
+                << 0.0147 <<  0.0147 << arma::endr
+                <<-0.0147 << -0.0147 << arma::endr
+                <<-0.3967 << -0.3967 << arma::endr
+                <<-1.8367 << -1.8367 << arma::endr
+                << 1.8367 <<  1.8367 << arma::endr
+                << 0.3967 <<  0.3967 << arma::endr
+                << 0.0147 <<  0.0147 << arma::endr
+                <<-0.0147 << -0.0147 << arma::endr
+                <<-0.3967 << -0.3967 << arma::endr
+                <<-1.8367 << -1.8367 << arma::endr
+                << 1.8367 <<  1.8367 << arma::endr
+                << 0.3967 <<  0.3967 << arma::endr
+                << 0.0147 <<  0.0147 << arma::endr
+                <<-0.0147 << -0.0147 << arma::endr
+                <<-0.3967 << -0.3967 << arma::endr
+                <<-1.8367 << -1.8367 << arma::endr;
+
+  // Check Forward and Backward pass in non-deterministic mode.
+  InstanceNorm<> module(3, 1e-5, false, 0.1);
+  output.zeros(arma::size(input));
+  module.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
+
+  module.Backward(input, output, delta);
+  CheckMatrices(delta, deltaExpected, 1e-1);
+
+  runningMean = arma::mat(3, 1);
+  runningVar = arma::mat(3, 1);
+  runningMean(0) = 1.2500;
+  runningMean(1) = 1.8500;
+  runningMean(2) = 2.4500;
+  runningVar(0) = 1.2500;
+  runningVar(1) = 1.2500;
+  runningVar(2) = 1.2500;
+
+  CheckMatrices(runningMean, module.TrainingMean(), 1e-1);
+  CheckMatrices(runningVar, module.TrainingVariance(), 1e-1);
+
+  // Check Forward pass in deterministic mode.
+  InstanceNorm<> module1(3, 1e-5, false, 0.1);
+  module1.Deterministic() = true;
+  output.zeros(arma::size(input));
+  module1.Forward(input, output);
+
+  // Calculated using torch.nn.InstanceNorm2d().
+  result  <<  1.0000 <<  18.9999 << arma::endr
+          <<  2.0000 <<  19.9999 << arma::endr
+          <<  3.0000 <<  20.9999 << arma::endr
+          <<  4.0000 <<  21.9999 << arma::endr
+          <<  5.0000 <<  22.9999 << arma::endr
+          <<  6.0000 <<  23.9999 << arma::endr
+          <<  7.0000 <<  24.9999 << arma::endr
+          <<  8.0000 <<  25.9999 << arma::endr
+          <<  9.0000 <<  26.9999 << arma::endr
+          << 10.0000 <<  27.9999 << arma::endr
+          << 10.9999 <<  28.9999 << arma::endr
+          << 11.9999 <<  29.9999 << arma::endr
+          << 12.9999 <<  30.9998 << arma::endr
+          << 13.9999 <<  31.9998 << arma::endr
+          << 14.9999 <<  32.9998 << arma::endr
+          << 15.9999 <<  33.9998 << arma::endr
+          << 16.9999 <<  34.9998 << arma::endr
+          << 17.9999 <<  35.9998 << arma::endr;
+
+  CheckMatrices(output, result, 1e-1);
+}
+
+/**
+ * Test that the functions that can access the parameters of the
+ * Instance Norm layer work.
+ */
+TEST_CASE("InstanceNormLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter order : size, eps.
+  InstanceNorm<> layer(7, 1e-3);
+
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer.InputSize() == 7);
+  REQUIRE(layer.Epsilon() == 1e-3);
+
+  arma::mat runningMean(7, 1, arma::fill::randn);
+  arma::mat runningVariance(7, 1, arma::fill::randn);
+
+  layer.TrainingVariance() = runningVariance;
+  layer.TrainingMean() = runningMean;
+  CheckMatrices(layer.TrainingVariance(), runningVariance);
+  CheckMatrices(layer.TrainingMean(), runningMean);
+}
+
+/**
+ * Instance Norm layer numerical gradient test.
+ */
+TEST_CASE("GradientInstanceNormLayerTest", "[ANNLayerTest]")
+{
+  // Add function gradient instantiation.
+  // To make this test robust, check it ten times.
+  bool pass = false;
+  for (size_t trial = 0; trial < 10; trial++)
+  {
+    struct GradientFunction
+    {
+      GradientFunction()
+      {
+        input = arma::randn(16, 1024);
+        arma::mat target;
+        target.ones(1, 1024);
+
+        model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+        model->Predictors() = input;
+        model->Responses() = target;
+        model->Add<IdentityLayer<> >();
+        model->Add<Convolution<> >(1, 2, 3, 3, 1, 1, 0, 0, 4, 4);
+        model->Add<InstanceNorm<> >(2);
+        model->Add<Linear<> >(2 * 2 * 2, 2);
+        model->Add<LogSoftMax<> >();
+      }
+
+      ~GradientFunction()
+      {
+        delete model;
+      }
+
+      double Gradient(arma::mat& gradient) const
+      {
+        double error = model->Evaluate(model->Parameters(), 0, 1024, false);
+        model->Gradient(model->Parameters(), 0, gradient, 1024);
+        return error;
+      }
+
+      arma::mat& Parameters() { return model->Parameters(); }
+
+      FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+      arma::mat input, target;
+    } function;
+
+    double gradient = CheckGradient(function);
+    if (gradient < 1e-1)
+    {
+      pass = true;
+      break;
+    }
+  }
+
+  REQUIRE(pass);
+}
