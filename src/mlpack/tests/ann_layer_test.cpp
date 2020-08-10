@@ -4186,3 +4186,65 @@ TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
   // The model should switch to training mode for predicting.
   REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == 0);
 }
+
+/**
+ * Simple Test for SpatialDropout layer.
+ */
+TEST_CASE("SpatialDropoutLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, gy, g, outputExpected, gExpected;
+
+  // Set the seed so that the second channel is dropped every time.
+  arma::arma_rng::set_seed(0);
+  SpatialDropout<> module(3, 0.2);
+
+  // Input is a batch of 2 images, each of size (2,2) and having 4 channels.
+  input << 0.4963 << 0.0885 << 0.7682 << 0.1320 << 0.3074 << 0.4901 << 0.6341
+      << 0.8964 << 0.4556 << 0.3489 << 0.6323 << 0.4017 << arma::endr;
+
+  gy << 1 << 3 << 2 << 4 << 5 << 7 << 6 << 8 << 9 << 11
+      << 10 << 12 << arma::endr;
+
+  // Calculated using torch.nn.PixelShuffle().
+  outputExpected << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0 << 0 << 0 << 0
+      << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  gExpected << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 0 << 0 << 0 << 0
+      << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+
+  input = input.t();
+  outputExpected = outputExpected.t();
+  gy = gy.t();
+  gExpected = gExpected.t();
+
+  // Check the Forward pass of the layer.
+  module.Forward(input, output);
+  CheckMatrices(output, outputExpected, 1e-1);
+
+  // Check the Backward pass of the layer.
+  module.Backward(input, gy, g);
+  CheckMatrices(g, gExpected, 1e-1);
+
+  // Check if the output is same as input when using deterministic mode.
+  module.Deterministic() = true;
+  output.clear();
+  module.Forward(input, output);
+  CheckMatrices(output, input, 1e-1);
+}
+
+/**
+ * Test that the function that can access the parameters of the
+ * PixelShuffle layer works.
+ */
+TEST_CASE("SpatialDropoutLayerParametersTest", "[ANNLayerTest]")
+{
+  // Create the layer using the empty constructor.
+  SpatialDropout<> layer;
+
+  // Set the input parameters.
+  layer.Size() = 3;
+  layer.Ratio(0.2);
+
+  // Check whether the input parameters have been set correctly.
+  REQUIRE(layer.Size() == 3);
+  REQUIRE(layer.Ratio() == 0.2);
+}
