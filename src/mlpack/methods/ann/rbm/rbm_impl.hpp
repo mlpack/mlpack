@@ -210,7 +210,8 @@ template<
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::VisibleMean(InputType& input,
+RBM<InitializationRuleType, InputType, DataType, PolicyType>::VisibleMean(
+    InputType& input,
     DataType& output)
 {
   output = weight.slice(0).t() * input;
@@ -226,7 +227,8 @@ template<
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::HiddenMean(const InputType& input,
+RBM<InitializationRuleType, InputType, DataType, PolicyType>::HiddenMean(
+    const InputType& input,
     DataType& output)
 {
   output = weight.slice(0) * input;

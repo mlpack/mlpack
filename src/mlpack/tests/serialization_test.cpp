@@ -1578,9 +1578,9 @@ BOOST_AUTO_TEST_CASE(ssRBMTest)
   RBM<GaussianInitialization, arma::mat, arma::mat, SpikeSlabRBM> RbmText(data,
       gaussian, data.n_rows, hiddenLayerSize, 1, 1, 1, poolSize, slabPenalty,
       radius, true);
-  RBM<GaussianInitialization, arma::mat, arma::mat, SpikeSlabRBM> RbmBinary(data,
-      gaussian, data.n_rows, hiddenLayerSize, 1, 1, 1, poolSize, slabPenalty,
-      radius, true);
+  RBM<GaussianInitialization, arma::mat, arma::mat, SpikeSlabRBM> RbmBinary(
+      data, gaussian, data.n_rows, hiddenLayerSize, 1, 1, 1, poolSize,
+      slabPenalty, radius, true);
   Rbm.Reset();
   Rbm.VisiblePenalty().fill(15);
   Rbm.SpikeBias().ones();

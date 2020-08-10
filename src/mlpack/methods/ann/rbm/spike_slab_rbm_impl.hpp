@@ -70,7 +70,7 @@ template<
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, double>::type
 RBM<InitializationRuleType, InputType, DataType, PolicyType>::FreeEnergy(
-   const arma::Mat<ElemType>& input)
+    const arma::Mat<ElemType>& input)
 {
   ElemType freeEnergy = 0.5 * visiblePenalty(0) * arma::dot(input, input);
 
