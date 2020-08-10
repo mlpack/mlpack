@@ -21,10 +21,11 @@ namespace ann /** Artificial neural networks. */ {
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
-RBM<InitializationRuleType, DataType, PolicyType>::RBM(
+RBM<InitializationRuleType, InputType, DataType, PolicyType>::RBM(
     arma::Mat<ElemType> predictors,
     InitializationRuleType initializeRule,
     const size_t visibleSize,
@@ -55,12 +56,13 @@ RBM<InitializationRuleType, DataType, PolicyType>::RBM(
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-RBM<InitializationRuleType, DataType, PolicyType>::Reset()
+RBM<InitializationRuleType, InputType, DataType, PolicyType>::Reset()
 {
   size_t shape = (visibleSize * hiddenSize) + visibleSize + hiddenSize;
 
@@ -88,11 +90,12 @@ RBM<InitializationRuleType, DataType, PolicyType>::Reset()
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
 template<typename OptimizerType, typename... CallbackType>
-double RBM<InitializationRuleType, DataType, PolicyType>::Train(
+double RBM<InitializationRuleType, InputType, DataType, PolicyType>::Train(
     OptimizerType& optimizer, CallbackType&&... callbacks)
 {
   if (!reset)
@@ -105,13 +108,14 @@ double RBM<InitializationRuleType, DataType, PolicyType>::Train(
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, double>::type
-RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
-    arma::Mat<ElemType>&& input)
+RBM<InitializationRuleType, InputType, DataType, PolicyType>::FreeEnergy(
+    const arma::Mat<ElemType>& input)
 {
   preActivation = (weight.slice(0) * input);
   preActivation.each_col() += hiddenBias;
@@ -121,14 +125,15 @@ RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-RBM<InitializationRuleType, DataType, PolicyType>::Phase(
-    DataType&& input,
-    DataType&& gradient)
+RBM<InitializationRuleType, InputType, DataType, PolicyType>::Phase(
+    const InputType& input,
+    DataType& gradient)
 {
   arma::Cube<ElemType> weightGrad = arma::Cube<ElemType>(gradient.memptr(),
       hiddenSize, visibleSize, 1, false, false);
@@ -136,38 +141,40 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
   DataType hiddenBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem,
       hiddenSize, 1, false, false);
 
-  HiddenMean(std::move(input), std::move(hiddenBiasGrad));
+  HiddenMean(input, hiddenBiasGrad);
   weightGrad.slice(0) = hiddenBiasGrad * input.t();
 }
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
-double RBM<InitializationRuleType, DataType, PolicyType>::Evaluate(
+double RBM<InitializationRuleType, InputType, DataType, PolicyType>::Evaluate(
     const arma::Mat<ElemType>& /* parameters*/,
     const size_t i,
     const size_t batchSize)
 {
-  Gibbs(std::move(predictors.cols(i, i + batchSize - 1)),
-      std::move(negativeSamples));
-  return std::fabs(FreeEnergy(std::move(predictors.cols(i,
-      i + batchSize - 1))) - FreeEnergy(std::move(negativeSamples)));
+  Gibbs(predictors.cols(i, i + batchSize - 1),
+      negativeSamples);
+  return std::fabs(FreeEnergy(predictors.cols(i,
+      i + batchSize - 1)) - FreeEnergy(negativeSamples));
 }
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-RBM<InitializationRuleType, DataType, PolicyType>::SampleHidden(
-    arma::Mat<ElemType>&& input,
-    arma::Mat<ElemType>&& output)
+RBM<InitializationRuleType, InputType, DataType, PolicyType>::SampleHidden(
+    const arma::Mat<ElemType>& input,
+    arma::Mat<ElemType>& output)
 {
-  HiddenMean(std::move(input), std::move(output));
+  HiddenMean(input, output);
 
   for (size_t i = 0; i < output.n_elem; ++i)
   {
@@ -177,16 +184,17 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleHidden(
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
-    arma::Mat<ElemType>&& input,
-    arma::Mat<ElemType>&& output)
+RBM<InitializationRuleType, InputType, DataType, PolicyType>::SampleVisible(
+    arma::Mat<ElemType>& input,
+    arma::Mat<ElemType>& output)
 {
-  VisibleMean(std::move(input), std::move(output));
+  VisibleMean(input, output);
 
   for (size_t i = 0; i < output.n_elem; ++i)
   {
@@ -196,13 +204,14 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(DataType&& input,
-    DataType&& output)
+RBM<InitializationRuleType, InputType, DataType, PolicyType>::VisibleMean(InputType& input,
+    DataType& output)
 {
   output = weight.slice(0).t() * input;
   output.each_col() += visibleBias;
@@ -211,13 +220,14 @@ RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(DataType&& input,
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-RBM<InitializationRuleType, DataType, PolicyType>::HiddenMean(DataType&& input,
-    DataType&& output)
+RBM<InitializationRuleType, InputType, DataType, PolicyType>::HiddenMean(const InputType& input,
+    DataType& output)
 {
   output = weight.slice(0) * input;
   output.each_col() += hiddenBias;
@@ -226,31 +236,32 @@ RBM<InitializationRuleType, DataType, PolicyType>::HiddenMean(DataType&& input,
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
-void RBM<InitializationRuleType, DataType, PolicyType>::Gibbs(
-    arma::Mat<ElemType>&& input,
-    arma::Mat<ElemType>&& output,
+void RBM<InitializationRuleType, InputType, DataType, PolicyType>::Gibbs(
+    const arma::Mat<ElemType>& input,
+    arma::Mat<ElemType>& output,
     const size_t steps)
 {
   this->steps = (steps == SIZE_MAX) ? this->numSteps : steps;
 
   if (persistence && !state.is_empty())
   {
-    SampleHidden(std::move(state), std::move(gibbsTemporary));
-    SampleVisible(std::move(gibbsTemporary), std::move(output));
+    SampleHidden(state, gibbsTemporary);
+    SampleVisible(gibbsTemporary, output);
   }
   else
   {
-    SampleHidden(std::move(input), std::move(gibbsTemporary));
-    SampleVisible(std::move(gibbsTemporary), std::move(output));
+    SampleHidden(input, gibbsTemporary);
+    SampleVisible(gibbsTemporary, output);
   }
 
   for (size_t j = 1; j < this->steps; ++j)
   {
-    SampleHidden(std::move(output), std::move(gibbsTemporary));
-    SampleVisible(std::move(gibbsTemporary), std::move(output));
+    SampleHidden(output, gibbsTemporary);
+    SampleVisible(gibbsTemporary, output);
   }
   if (persistence)
   {
@@ -260,10 +271,11 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Gibbs(
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
-void RBM<InitializationRuleType, DataType, PolicyType>::Gradient(
+void RBM<InitializationRuleType, InputType, DataType, PolicyType>::Gradient(
     const arma::Mat<ElemType>& /*parameters*/,
     const size_t i,
     arma::Mat<ElemType>& gradient,
@@ -272,14 +284,14 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Gradient(
   positiveGradient.zeros();
   negativeGradient.zeros();
 
-  Phase(std::move(predictors.cols(i, i + batchSize - 1)),
-      std::move(positiveGradient));
+  Phase(predictors.cols(i, i + batchSize - 1),
+      positiveGradient);
 
   for (size_t i = 0; i < negSteps; ++i)
   {
-    Gibbs(std::move(predictors.cols(i, i + batchSize - 1)),
-        std::move(negativeSamples));
-    Phase(std::move(negativeSamples), std::move(tempNegativeGradient));
+    Gibbs(predictors.cols(i, i + batchSize - 1),
+        negativeSamples);
+    Phase(negativeSamples, tempNegativeGradient);
 
     negativeGradient += tempNegativeGradient;
   }
@@ -289,10 +301,11 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Gradient(
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
-void RBM<InitializationRuleType, DataType, PolicyType>::Shuffle()
+void RBM<InitializationRuleType, InputType, DataType, PolicyType>::Shuffle()
 {
   predictors = predictors.cols(arma::shuffle(arma::linspace<arma::uvec>(0,
       predictors.n_cols - 1, predictors.n_cols)));
@@ -300,11 +313,12 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Shuffle()
 
 template<
   typename InitializationRuleType,
+  typename InputType,
   typename DataType,
   typename PolicyType
 >
 template<typename Archive>
-void RBM<InitializationRuleType, DataType, PolicyType>::serialize(
+void RBM<InitializationRuleType, InputType, DataType, PolicyType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(parameter);

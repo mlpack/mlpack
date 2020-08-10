@@ -88,14 +88,14 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
 
   for (size_t i = 0; i < trainData.n_cols; ++i)
   {
-    model.HiddenMean(std::move(trainData.col(i)), std::move(output));
+    model.HiddenMean(trainData.col(i), output);
     XRbm.col(i) = output;
   }
 
   for (size_t i = 0; i < testData.n_cols; ++i)
   {
-    model.HiddenMean(std::move(testData.col(i)),
-      std::move(output));
+    model.HiddenMean(testData.col(i),
+      output);
     YRbm.col(i) = output;
   }
   const size_t numClasses = 10; // Number of classes.
@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   YRbm.zeros();
   double slabPenalty = 8;
 
-  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> modelssRBM(trainData,
+  RBM<GaussianInitialization, arma::mat, arma::mat, SpikeSlabRBM> modelssRBM(trainData,
       gaussian, trainData.n_rows, hiddenLayerSize, batchSize, 1, 1, poolSize,
       slabPenalty, radius);
 
@@ -189,15 +189,15 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
 
   for (size_t i = 0; i < trainData.n_cols; ++i)
   {
-    modelssRBM.HiddenMean(std::move(trainData.col(i)),
-        std::move(output));
+    modelssRBM.HiddenMean(trainData.col(i),
+        output);
     XRbm.col(i) = output;
   }
 
   for (size_t i = 0; i < testData.n_cols; ++i)
   {
-    modelssRBM.HiddenMean(std::move(testData.col(i)),
-      std::move(output));
+    modelssRBM.HiddenMean(testData.col(i),
+      output);
     YRbm.col(i) = output;
   }
   const size_t numClasses = 10; // Number of classes.
@@ -223,7 +223,7 @@ void BuildVanillaNetwork(MatType& trainData,
 {
   MatType output;
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, MatType, BinaryRBM> model(trainData, gaussian,
+  RBM<GaussianInitialization, MatType, MatType, BinaryRBM> model(trainData, gaussian,
       trainData.n_rows, hiddenLayerSize, 1, 1, 1, 2, 8, 1, true);
 
   model.Reset();
@@ -238,7 +238,7 @@ void BuildVanillaNetwork(MatType& trainData,
   arma::vec calculatedFreeEnergy(4, arma::fill::zeros);
   for (size_t i = 0; i < trainData.n_cols; ++i)
   {
-    calculatedFreeEnergy(i) = model.FreeEnergy(std::move(trainData.col(i)));
+    calculatedFreeEnergy(i) = model.FreeEnergy(trainData.col(i));
   }
 
   for (size_t i = 0; i < freeEnergy.n_elem; ++i)
