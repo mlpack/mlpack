@@ -17,9 +17,11 @@
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/empty_loss.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp>
+#include <mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
@@ -117,7 +119,7 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   bool converged = testAgent<decltype(agent)>(agent, 40, 1000);
 
   // To check if the action returned by the agent is not nan and is finite.
-  BOOST_REQUIRE(std::isfinite(double(agent.Action())));
+  BOOST_REQUIRE(std::isfinite(double(agent.Action().action)));
   BOOST_REQUIRE(converged);
 }
 
@@ -320,7 +322,6 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
   BOOST_REQUIRE(converged);
 }
 
-
 //! Test Dueling DQN in Cart Pole task with Prioritized Replay.
 BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
 {
@@ -375,7 +376,6 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNoisyDQN)
   }
   BOOST_REQUIRE(converged);
 }
-
 
 //! Test Dueling-Double-Noisy DQN in Cart Pole task.
 BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDoubleNoisyDQN)
@@ -462,6 +462,45 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNStepPrioritizedDQN)
       agent(config, network, policy, replayMethod);
 
   bool converged = testAgent<decltype(agent)>(agent, 50, 1000);
+  BOOST_REQUIRE(converged);
+}
+
+//! Test Categorical DQN in Cart Pole task.
+BOOST_AUTO_TEST_CASE(CartPoleWithCategoricalDQN)
+{
+  // It isn't guaranteed that the network will converge in the specified number
+  // of iterations.
+  bool converged = false;
+  for (size_t trial = 0; trial < 3; ++trial)
+  {
+    Log::Debug << "Trial number: " << trial << std::endl;
+
+    // Set up the policy and replay method.
+    GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
+    RandomReplay<CartPole> replayMethod(32, 4000);
+
+    TrainingConfig config;
+    config.IsCategorical() = true;
+    config.ExplorationSteps() = 32;
+
+    // Set up the module. Note that we use a custom network here.
+    FFN<EmptyLoss<>, GaussianInitialization> module(
+        EmptyLoss<>(), GaussianInitialization(0, 0.1));
+    module.Add<Linear<>>(4, 128);
+    module.Add<ReLULayer<>>();
+    module.Add<Linear<>>(128, 2 * config.AtomSize());
+
+    // Adding the module to the CategoricalDQN network.
+    CategoricalDQN<> network(module, config);
+
+    // Set up DQN agent.
+    QLearning<CartPole, decltype(network), AdamUpdate, decltype(policy)>
+        agent(config, network, policy, replayMethod);
+
+    converged = testAgent<decltype(agent)>(agent, 40, 1000, 20);
+    if (converged)
+      break;
+  }
   BOOST_REQUIRE(converged);
 }
 

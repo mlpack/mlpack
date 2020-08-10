@@ -45,14 +45,14 @@ size_t RPlusTreeDescentHeuristic::ChooseDescentNode(TreeType* node,
 
     success = true;
 
-    for (size_t j = 0; j < node->NumChildren(); j++)
+    for (size_t j = 0; j < node->NumChildren(); ++j)
     {
       if (j == bestIndex)
         continue;
       success = false;
       // Two nodes overlap if and only if there are no dimension in which
       // they do not overlap each other.
-      for (size_t k = 0; k < node->Bound().Dim(); k++)
+      for (size_t k = 0; k < node->Bound().Dim(); ++k)
       {
         if (bound[k].Lo() >= node->Child(j).Bound()[k].Hi() ||
             node->Child(j).Bound()[k].Lo() >= bound[k].Hi())

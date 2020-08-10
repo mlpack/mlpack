@@ -128,7 +128,7 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(
 
   // Row pointers are the labels of the examples, and column pointers are the
   // number of cumulative entries made uptil that column.
-  for (size_t i = 0; i < labels.n_elem; i++)
+  for (size_t i = 0; i < labels.n_elem; ++i)
   {
     rowPointers(i) = labels(i);
     colPointers(i + 1) = i + 1;

@@ -30,7 +30,7 @@ namespace markdown {
  * printed depends on the current setting of BindingInfo::Language().
  */
 template<typename T>
-void DefaultParam(const util::ParamData& data,
+void DefaultParam(util::ParamData& data,
                   const void* /* input */,
                   void* output)
 {

@@ -49,7 +49,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * present in your program!  Therefore, use it in the main.cpp
  * (or corresponding executable) in your program.
  *
- * @see mlpack::CLI, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
+ * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
  * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
  * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
  * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
@@ -61,7 +61,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *     how it can be used and what it should be used for.
  * @param DESC Long string describing what the program does and possibly a
  *     simple usage example.  Newlines should not be used here; this is taken
- *     care of by CLI (however, you can explicitly specify newlines to denote
+ *     care of by IO (however, you can explicitly specify newlines to denote
  *     new paragraphs).  You can also use printing macros like
  *     PRINT_PARAM_STRING(), PRINT_DATASET(), and others.
  * @param ... A set of SEE_ALSO() macros that are used for generating
@@ -70,7 +70,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  */
 #define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
     static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ } )
 
 /**
@@ -82,7 +82,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -108,7 +108,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
 // Use a forward declaration of the class.
@@ -139,7 +139,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -165,7 +165,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -195,7 +195,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -222,7 +222,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -253,7 +253,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -324,7 +324,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 
 /**
  * Define a matrix output parameter.  When the program terminates, the matrix
- * will be saved to whatever it was set to by CLI::GetParam<arma::mat>(ID)
+ * will be saved to whatever it was set to by IO::GetParam<arma::mat>(ID)
  * during the program.  From the command-line, the user may specify the file in
  * which to save the output matrix using a string option that is the name of the
  * matrix parameter with "_file" appended.  So, for instance, if the name of the
@@ -418,7 +418,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * Define a transposed matrix output parameter.  This is useful when data is
  * stored in a row-major form instead of the usual column-major form.  When the
  * program terminates, the matrix will be saved to whatever it was set to by
- * CLI::GetParam<arma::mat>(ID) during the program.  From the command-line, the
+ * IO::GetParam<arma::mat>(ID) during the program.  From the command-line, the
  * user may specify the file in which to save the output matrix using a string
  * option that is the name of the matrix parameter with "_file" appended.  So,
  * for instance, if the name of the output matrix parameter was "mat", the user
@@ -509,7 +509,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 /**
  * Define an unsigned matrix output parameter (arma::Mat<size_t>).  When the
  * program terminates, the matrix will be saved to whatever it was set to by
- * CLI::GetParam<arma::Mat<size_t>>(ID) during the program.  From the
+ * IO::GetParam<arma::Mat<size_t>>(ID) during the program.  From the
  * command-line, the user may specify the file in which to save the output
  * matrix using a string option that is the name of the matrix parameter with
  * "_file" appended.  So, for instance, if the name of the output matrix
@@ -827,7 +827,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -860,7 +860,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -888,9 +888,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @code
  * DatasetInfo d = std::move(
- *     CLI::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
+ *     IO::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<0>());
  * arma::mat m = std::move(
- *     CLI::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
+ *     IO::GetParam<std::tuple<DatasetInfo, arma::mat>>("matrix").get<1>());
  * @endcode
  *
  * @param ID Name of the parameter.
@@ -899,7 +899,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS One-character string representing the alias of the parameter.
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -987,7 +987,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @endcode
  *
  * The model will be saved at the termination of the program.  If you use a
- * parameter of this type, you must call CLI::Destroy() at the end of your
+ * parameter of this type, you must call IO::Destroy() at the end of your
  * program.
  *
  * @param TYPE Type of the model to be saved.
@@ -1011,7 +1011,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1035,7 +1035,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1059,7 +1059,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1085,7 +1085,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::CLI, PROGRAM_INFO()
+ * @see mlpack::IO, PROGRAM_INFO()
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1129,47 +1129,47 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 #ifdef __COUNTER__
   #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
-      JOIN(cli_option_dummy_object_in_, __COUNTER__) \
+      JOIN(io_option_dummy_object_in_, __COUNTER__) \
       (DEF, ID, DESC, ALIAS, #T, REQ, true, false, testName);
 
   #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
-      JOIN(cli_option_dummy_object_out_, __COUNTER__) \
+      JOIN(io_option_dummy_object_out_, __COUNTER__) \
       (DEF, ID, DESC, ALIAS, #T, REQ, false, false, testName);
 
   #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::mat> \
-      JOIN(cli_option_dummy_matrix_, __COUNTER__) \
+      JOIN(io_option_dummy_matrix_, __COUNTER__) \
       (arma::mat(), ID, DESC, ALIAS, "arma::mat", \
       REQ, IN, !TRANS, testName);
 
   #define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Mat<size_t>> \
-      JOIN(cli_option_dummy_umatrix_, __COUNTER__) \
+      JOIN(io_option_dummy_umatrix_, __COUNTER__) \
       (arma::Mat<size_t>(), ID, DESC, ALIAS, "arma::Mat<size_t>", \
       REQ, IN, !TRANS, testName);
 
   #define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::vec> \
-      JOIN(cli_option_dummy_col_, __COUNTER__) \
+      JOIN(io_option_dummy_col_, __COUNTER__) \
       (arma::vec(), ID, DESC, ALIAS, "arma::vec", \
       REQ, IN, !TRANS, testName);
 
   #define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Col<size_t>> \
-      JOIN(cli_option_dummy_ucol_, __COUNTER__) \
+      JOIN(io_option_dummy_ucol_, __COUNTER__) \
       (arma::Col<size_t>(), ID, DESC, ALIAS, "arma::Col<size_t>", \
       REQ, IN, !TRANS, testName);
 
   #define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::rowvec> \
-      JOIN(cli_option_dummy_row_, __COUNTER__) \
+      JOIN(io_option_dummy_row_, __COUNTER__) \
       (arma::rowvec(), ID, DESC, ALIAS, "arma::rowvec", \
       REQ, IN, !TRANS, testName);
 
   #define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Row<size_t>> \
-      JOIN(cli_option_dummy_urow_, __COUNTER__) \
+      JOIN(io_option_dummy_urow_, __COUNTER__) \
       (arma::Row<size_t>(), ID, DESC, ALIAS, "arma::Row<size_t>", \
       REQ, IN, !TRANS, testName);
 
@@ -1177,7 +1177,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
   // macro (it would be easy to add).
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
       static mlpack::util::Option<TYPE*> \
-      JOIN(cli_option_dummy_model_, __COUNTER__) \
+      JOIN(io_option_dummy_model_, __COUNTER__) \
       (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, testName);
 #else
   // We have to do some really bizarre stuff since __COUNTER__ isn't defined. I
@@ -1186,53 +1186,53 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
   // and get a good guess at something unique.
   #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
-      JOIN(JOIN(cli_option_dummy_object_in_, __LINE__), opt) \
+      JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
       (DEF, ID, DESC, ALIAS, #T, REQ, true, false, testName);
 
   #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
-      JOIN(JOIN(cli_option_dummy_object_out_, __LINE__), opt) \
+      JOIN(JOIN(io_option_dummy_object_out_, __LINE__), opt) \
       (DEF, ID, DESC, ALIAS, #T, REQ, false, false, testName);
 
   #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::mat> \
-      JOIN(JOIN(cli_option_dummy_object_matrix_, __LINE__), opt) \
+      JOIN(JOIN(io_option_dummy_object_matrix_, __LINE__), opt) \
       (arma::mat(), ID, DESC, ALIAS, "arma::mat", REQ, IN, !TRANS, \
       testName);
 
   #define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Mat<size_t>> \
-      JOIN(JOIN(cli_option_dummy_object_umatrix_, __LINE__), opt) \
+      JOIN(JOIN(io_option_dummy_object_umatrix_, __LINE__), opt) \
       (arma::Mat<size_t>(), ID, DESC, ALIAS, "arma::Mat<size_t>", REQ, IN, \
       !TRANS, testName);
 
   #define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::vec> \
-      JOIN(cli_option_dummy_object_col_, __LINE__) \
+      JOIN(io_option_dummy_object_col_, __LINE__) \
       (arma::vec(), ID, DESC, ALIAS, "arma::vec", REQ, IN, !TRANS, \
       testName);
 
   #define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Col<size_t>> \
-      JOIN(cli_option_dummy_object_ucol_, __LINE__) \
+      JOIN(io_option_dummy_object_ucol_, __LINE__) \
       (arma::Col<size_t>(), ID, DESC, ALIAS, "arma::Col<size_t>", REQ, IN, \
       !TRANS, testName);
 
   #define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::rowvec> \
-      JOIN(cli_option_dummy_object_row_, __LINE__) \
+      JOIN(io_option_dummy_object_row_, __LINE__) \
       (arma::rowvec(), ID, DESC, ALIAS, "arma::rowvec", REQ, IN, !TRANS, \
       testName);
 
   #define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
       static mlpack::util::Option<arma::Row<size_t>> \
-      JOIN(cli_option_dummy_object_urow_, __LINE__) \
+      JOIN(io_option_dummy_object_urow_, __LINE__) \
       (arma::Row<size_t>(), ID, DESC, ALIAS, "arma::Row<size_t>", REQ, IN, \
       !TRANS, testName);
 
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
       static mlpack::util::Option<TYPE*> \
-      JOIN(JOIN(cli_option_dummy_object_model_, __LINE__), opt) \
+      JOIN(JOIN(io_option_dummy_object_model_, __LINE__), opt) \
       (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, \
       testName);
 #endif

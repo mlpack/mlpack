@@ -1,18 +1,18 @@
 /**
- * @file bindings/go/mlpack/capi/cli_util.cpp
+ * @file bindings/go/mlpack/capi/io_util.cpp
  * @author Yasmine Dumouchel
  * @author Yashwant Singh
  *
- * Utility function for Go to set and get parameters to and from the CLI.
+ * Utility function for Go to set and get parameters to and from the IO.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/bindings/go/mlpack/capi/cli_util.h>
-#include "cli_util.hpp"
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/bindings/go/mlpack/capi/io_util.h>
+#include "io_util.hpp"
+#include <mlpack/core/util/io.hpp>
 
 namespace mlpack {
 
@@ -55,9 +55,7 @@ void mlpackSetParamBool(const char* identifier, bool value)
  */
 void mlpackSetParamString(const char* identifier, const char* value)
 {
-  std::string val;
-  val.assign(value);
-  util::SetParam(identifier, val);
+  IO::GetParam<std::string>(identifier) = value;
 }
 
 /**
@@ -73,19 +71,19 @@ void mlpackSetParamVectorInt(const char* identifier,
   for (size_t i = 0; i < length; ++i)
     vec[i] = ints[i];
 
-  CLI::GetParam<std::vector<int>>(identifier) = std::move(vec);
-  CLI::SetPassed(identifier);
+  IO::GetParam<std::vector<int>>(identifier) = std::move(vec);
+  IO::SetPassed(identifier);
 }
 
 /**
- * Call CLI::SetParam<std::vector<std::string>>() to set the length.
+ * Call IO::SetParam<std::vector<std::string>>() to set the length.
  */
 void mlpackSetParamVectorStrLen(const char* identifier,
                                 const size_t length)
 {
-  CLI::GetParam<std::vector<std::string>>(identifier).clear();
-  CLI::GetParam<std::vector<std::string>>(identifier).resize(length);
-  CLI::SetPassed(identifier);
+  IO::GetParam<std::vector<std::string>>(identifier).clear();
+  IO::GetParam<std::vector<std::string>>(identifier).resize(length);
+  IO::SetPassed(identifier);
 }
 
 /**
@@ -95,7 +93,7 @@ void mlpackSetParamVectorStr(const char* identifier,
                              const char* str,
                              const size_t element)
 {
-  CLI::GetParam<std::vector<std::string>>(identifier)[element] =
+  IO::GetParam<std::vector<std::string>>(identifier)[element] =
       std::string(str);
 }
 
@@ -109,11 +107,11 @@ void mlpackSetParamPtr(const char* identifier,
 }
 
 /**
- * Check if CLI has a specified parameter.
+ * Check if IO has a specified parameter.
  */
 bool mlpackHasParam(const char* identifier)
 {
-  return CLI::HasParam(identifier);
+  return IO::HasParam(identifier);
 }
 
 /**
@@ -121,8 +119,7 @@ bool mlpackHasParam(const char* identifier)
  */
 const char* mlpackGetParamString(const char* identifier)
 {
-  std::string val = CLI::GetParam<std::string>(identifier);
-  return val.c_str();;
+  return IO::GetParam<std::string>(identifier).c_str();
 }
 
 /**
@@ -130,7 +127,7 @@ const char* mlpackGetParamString(const char* identifier)
  */
 double mlpackGetParamDouble(const char* identifier)
 {
-  return CLI::GetParam<double>(identifier);
+  return IO::GetParam<double>(identifier);
 }
 
 /**
@@ -138,7 +135,7 @@ double mlpackGetParamDouble(const char* identifier)
  */
 int mlpackGetParamInt(const char* identifier)
 {
-  return CLI::GetParam<int>(identifier);
+  return IO::GetParam<int>(identifier);
 }
 
 /**
@@ -146,7 +143,7 @@ int mlpackGetParamInt(const char* identifier)
  */
 bool mlpackGetParamBool(const char* identifier)
 {
-  return CLI::GetParam<bool>(identifier);
+  return IO::GetParam<bool>(identifier);
 }
 
 /**
@@ -158,7 +155,7 @@ void* mlpackGetVecIntPtr(const char* identifier)
   long long* ints = new long long[size];
 
   for (size_t i = 0; i < size; i++)
-    ints[i] = CLI::GetParam<std::vector<int>>(identifier)[i];
+    ints[i] = IO::GetParam<std::vector<int>>(identifier)[i];
 
   return ints;
 }
@@ -168,7 +165,7 @@ void* mlpackGetVecIntPtr(const char* identifier)
  */
 const char* mlpackGetVecStringPtr(const char* identifier, const size_t i)
 {
-  return CLI::GetParam<std::vector<std::string>>(identifier)[i].c_str();
+  return IO::GetParam<std::vector<std::string>>(identifier)[i].c_str();
 }
 
 /**
@@ -176,7 +173,7 @@ const char* mlpackGetVecStringPtr(const char* identifier, const size_t i)
  */
 int mlpackVecIntSize(const char* identifier)
 {
-  return CLI::GetParam<std::vector<int>>(identifier).size();
+  return IO::GetParam<std::vector<int>>(identifier).size();
 }
 
 /**
@@ -184,7 +181,7 @@ int mlpackVecIntSize(const char* identifier)
  */
 int mlpackVecStringSize(const char* identifier)
 {
-  return CLI::GetParam<std::vector<std::string>>(identifier).size();
+  return IO::GetParam<std::vector<std::string>>(identifier).size();
 }
 
 /**
@@ -192,7 +189,7 @@ int mlpackVecStringSize(const char* identifier)
  */
 void mlpackSetPassed(const char* name)
 {
-  CLI::SetPassed(name);
+  IO::SetPassed(name);
 }
 
 /**
@@ -200,7 +197,7 @@ void mlpackSetPassed(const char* name)
  */
 void mlpackResetTimers()
 {
-  CLI::GetSingleton().timer.Reset();
+  IO::GetSingleton().timer.Reset();
 }
 
 /**
@@ -240,7 +237,7 @@ void mlpackDisableVerbose()
  */
 void mlpackClearSettings()
 {
-  CLI::ClearSettings();
+  IO::ClearSettings();
 }
 
 /**
@@ -248,7 +245,7 @@ void mlpackClearSettings()
  */
 void mlpackRestoreSettings(const char* name)
 {
-  CLI::RestoreSettings(name);
+  IO::RestoreSettings(name);
 }
 
 } // extern C

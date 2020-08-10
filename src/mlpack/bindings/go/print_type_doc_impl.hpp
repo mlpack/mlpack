@@ -23,7 +23,7 @@ namespace go {
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::disable_if<util::IsStdVector<T>>::type*,
     const typename boost::disable_if<data::HasSerialize<T>>::type*,
@@ -62,7 +62,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type*)
 {
   if (std::is_same<T, std::vector<int>>::value)
@@ -84,7 +84,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
   if (std::is_same<typename T::elem_type, double>::value)
@@ -124,7 +124,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
@@ -141,7 +141,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {

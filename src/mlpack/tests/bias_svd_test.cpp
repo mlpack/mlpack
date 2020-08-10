@@ -15,15 +15,12 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::svd;
 
-BOOST_AUTO_TEST_SUITE(BiasSVDTest);
-
-BOOST_AUTO_TEST_CASE(BiasSVDFunctionRandomEvaluate)
+TEST_CASE("BiasSVDFunctionRandomEvaluate", "[BiasSVDTest]")
 {
   // Define useful constants.
   const size_t numUsers = 100;
@@ -46,13 +43,13 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionRandomEvaluate)
   // Make a BiasSVDFunction with zero regularization.
   BiasSVDFunction<arma::mat> biasSVDFunc(data, rank, 0);
 
-  for (size_t i = 0; i < numTrials; i++)
+  for (size_t i = 0; i < numTrials; ++i)
   {
     arma::mat parameters = arma::randu(rank + 1, numUsers + numItems);
 
     // Calculate cost by summing up cost of each example.
     double cost = 0;
-    for (size_t j = 0; j < numRatings; j++)
+    for (size_t j = 0; j < numRatings; ++j)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
@@ -69,11 +66,11 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionRandomEvaluate)
     }
 
     // Compare calculated cost and value obtained using Evaluate().
-    BOOST_REQUIRE_CLOSE(cost, biasSVDFunc.Evaluate(parameters), 1e-5);
+    REQUIRE(cost == Approx(biasSVDFunc.Evaluate(parameters)).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(BiasSVDFunctionRegularizationEvaluate)
+TEST_CASE("BiasSVDFunctionRegularizationEvaluate", "[BiasSVDTest]")
 {
   // Define useful constants.
   const size_t numUsers = 100;
@@ -99,7 +96,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionRegularizationEvaluate)
   BiasSVDFunction<arma::mat> biasSVDFuncSmallReg(data, rank, 0.5);
   BiasSVDFunction<arma::mat> biasSVDFuncBigReg(data, rank, 20);
 
-  for (size_t i = 0; i < numTrials; i++)
+  for (size_t i = 0; i < numTrials; ++i)
   {
     arma::mat parameters = arma::randu(rank + 1, numUsers + numItems);
 
@@ -107,7 +104,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionRegularizationEvaluate)
     // each rating and sum them up.
     double smallRegTerm = 0;
     double bigRegTerm = 0;
-    for (size_t j = 0; j < numRatings; j++)
+    for (size_t j = 0; j < numRatings; ++j)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
@@ -123,14 +120,14 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionRegularizationEvaluate)
 
     // Cost with regularization should be close to the sum of cost without
     // regularization and the regularization terms.
-    BOOST_REQUIRE_CLOSE(biasSVDFuncNoReg.Evaluate(parameters) + smallRegTerm,
-        biasSVDFuncSmallReg.Evaluate(parameters), 1e-5);
-    BOOST_REQUIRE_CLOSE(biasSVDFuncNoReg.Evaluate(parameters) + bigRegTerm,
-        biasSVDFuncBigReg.Evaluate(parameters), 1e-5);
+    REQUIRE(biasSVDFuncNoReg.Evaluate(parameters) + smallRegTerm ==
+        Approx(biasSVDFuncSmallReg.Evaluate(parameters)).epsilon(1e-7));
+    REQUIRE(biasSVDFuncNoReg.Evaluate(parameters) + bigRegTerm ==
+        Approx(biasSVDFuncBigReg.Evaluate(parameters)).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(BiasSVDFunctionGradient)
+TEST_CASE("BiasSVDFunctionGradient", "[BiasSVDTest]")
 {
   // Define useful constants.
   const size_t numUsers = 50;
@@ -166,9 +163,9 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionGradient)
   double costPlus1, costMinus1, numGradient1;
   double costPlus2, costMinus2, numGradient2;
 
-  for (size_t i = 0; i < rank; i++)
+  for (size_t i = 0; i < rank; ++i)
   {
-    for (size_t j = 0; j < numUsers + numItems; j++)
+    for (size_t j = 0; j < numUsers + numItems; ++j)
     {
       // Perturb parameter with a positive constant and get costs.
       parameters(i, j) += epsilon;
@@ -189,19 +186,19 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionGradient)
 
       // Compare numerical and backpropagation gradient values.
       if (std::abs(gradient1(i, j)) <= 1e-6)
-        BOOST_REQUIRE_SMALL(numGradient1, 1e-5);
+        REQUIRE(numGradient1 == Approx(0.0).margin(1e-5));
       else
-        BOOST_REQUIRE_CLOSE(numGradient1, gradient1(i, j), 0.02);
+        REQUIRE(numGradient1 == Approx(gradient1(i, j)).epsilon(0.0002));
 
       if (std::abs(gradient2(i, j)) <= 1e-6)
-        BOOST_REQUIRE_SMALL(numGradient2, 1e-5);
+        REQUIRE(numGradient2 == Approx(0.0).margin(1e-5));
       else
-        BOOST_REQUIRE_CLOSE(numGradient2, gradient2(i, j), 0.02);
+        REQUIRE(numGradient2 == Approx(gradient2(i, j)).epsilon(0.0002));
     }
   }
 }
 
-BOOST_AUTO_TEST_CASE(BiasSVDOutputSizeTest)
+TEST_CASE("BiasSVDOutputSizeTest", "[BiasSVDTest]")
 {
   // Define useful constants.
   const size_t numUsers = 100;
@@ -230,15 +227,15 @@ BOOST_AUTO_TEST_CASE(BiasSVDOutputSizeTest)
   biasSVD.Apply(data, rank, itemLatent, userLatent, itemBias, userBias);
 
   // Check the size of outputs.
-  BOOST_REQUIRE_EQUAL(itemLatent.n_rows, numItems);
-  BOOST_REQUIRE_EQUAL(itemLatent.n_cols, rank);
-  BOOST_REQUIRE_EQUAL(userLatent.n_rows, rank);
-  BOOST_REQUIRE_EQUAL(userLatent.n_cols, numUsers);
-  BOOST_REQUIRE_EQUAL(itemBias.n_elem, numItems);
-  BOOST_REQUIRE_EQUAL(userBias.n_elem, numUsers);
+  REQUIRE(itemLatent.n_rows == numItems);
+  REQUIRE(itemLatent.n_cols == rank);
+  REQUIRE(userLatent.n_rows == rank);
+  REQUIRE(userLatent.n_cols == numUsers);
+  REQUIRE(itemBias.n_elem == numItems);
+  REQUIRE(userBias.n_elem == numUsers);
 }
 
-BOOST_AUTO_TEST_CASE(BiasSVDFunctionOptimize)
+TEST_CASE("BiasSVDFunctionOptimize", "[BiasSVDTest]")
 {
   // Define useful constants.
   const size_t numUsers = 50;
@@ -262,7 +259,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionOptimize)
   data(1, numRatings - 1) = numItems - 1;
 
   // Make rating entries based on the parameters.
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -283,7 +280,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionOptimize)
 
   // Get predicted ratings from optimized parameters.
   arma::mat predictedData(1, numRatings);
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -299,7 +296,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionOptimize)
                                arma::norm(data, "frob");
 
   // Relative error should be small.
-  BOOST_REQUIRE_SMALL(relativeError, 1e-2);
+  REQUIRE(relativeError == Approx(0.0).margin(1e-2));
 }
 
 // The test is only compiled if the user has specified OpenMP to be
@@ -307,7 +304,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionOptimize)
 #ifdef HAS_OPENMP
 
 // Test Bias SVD with parallel SGD.
-BOOST_AUTO_TEST_CASE(BiasSVDFunctionParallelOptimize)
+TEST_CASE("BiasSVDFunctionParallelOptimize", "[BiasSVDTest]")
 {
   // Define useful constants.
   const size_t numUsers = 50;
@@ -330,7 +327,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionParallelOptimize)
   data(1, numRatings - 1) = numItems - 1;
 
   // Make rating entries based on the parameters.
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -358,7 +355,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionParallelOptimize)
 
   // Get predicted ratings from optimized parameters.
   arma::mat predictedData(1, numRatings);
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -374,9 +371,7 @@ BOOST_AUTO_TEST_CASE(BiasSVDFunctionParallelOptimize)
                                arma::norm(data, "frob");
 
   // Relative error should be small.
-  BOOST_REQUIRE_SMALL(relativeError, 1e-2);
+  REQUIRE(relativeError == Approx(0.0).margin(1e-2));
 }
 
 #endif
-
-BOOST_AUTO_TEST_SUITE_END();

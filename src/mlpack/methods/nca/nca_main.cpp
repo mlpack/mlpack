@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
@@ -139,14 +139,14 @@ using namespace std;
 
 static void mlpackMain()
 {
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
-  const string optimizerType = CLI::GetParam<string>("optimizer");
+  const string optimizerType = IO::GetParam<string>("optimizer");
   RequireParamInSet<string>("optimizer", { "sgd", "lbfgs" },
       true, "unknown optimizer type");
 
@@ -169,27 +169,27 @@ static void mlpackMain()
     ReportIgnoredParam("batch_size", "SGD optimizer is not being used");
   }
 
-  const double stepSize = CLI::GetParam<double>("step_size");
-  const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
-  const double tolerance = CLI::GetParam<double>("tolerance");
-  const bool normalize = CLI::HasParam("normalize");
-  const bool shuffle = !CLI::HasParam("linear_scan");
-  const int numBasis = CLI::GetParam<int>("num_basis");
-  const double armijoConstant = CLI::GetParam<double>("armijo_constant");
-  const double wolfe = CLI::GetParam<double>("wolfe");
-  const int maxLineSearchTrials = CLI::GetParam<int>("max_line_search_trials");
-  const double minStep = CLI::GetParam<double>("min_step");
-  const double maxStep = CLI::GetParam<double>("max_step");
-  const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
+  const double stepSize = IO::GetParam<double>("step_size");
+  const size_t maxIterations = (size_t) IO::GetParam<int>("max_iterations");
+  const double tolerance = IO::GetParam<double>("tolerance");
+  const bool normalize = IO::HasParam("normalize");
+  const bool shuffle = !IO::HasParam("linear_scan");
+  const int numBasis = IO::GetParam<int>("num_basis");
+  const double armijoConstant = IO::GetParam<double>("armijo_constant");
+  const double wolfe = IO::GetParam<double>("wolfe");
+  const int maxLineSearchTrials = IO::GetParam<int>("max_line_search_trials");
+  const double minStep = IO::GetParam<double>("min_step");
+  const double maxStep = IO::GetParam<double>("max_step");
+  const size_t batchSize = (size_t) IO::GetParam<int>("batch_size");
 
   // Load data.
-  arma::mat data = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat data = std::move(IO::GetParam<arma::mat>("input"));
 
   // Do we want to load labels separately?
   arma::Row<size_t> rawLabels(data.n_cols);
-  if (CLI::HasParam("labels"))
+  if (IO::HasParam("labels"))
   {
-    rawLabels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+    rawLabels = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
 
     if (rawLabels.n_elem != data.n_cols)
     {
@@ -200,7 +200,7 @@ static void mlpackMain()
   else
   {
     Log::Info << "Using last column of input dataset as labels." << endl;
-    for (size_t i = 0; i < data.n_cols; i++)
+    for (size_t i = 0; i < data.n_cols; ++i)
       rawLabels[i] = (size_t) data(data.n_rows - 1, i);
 
     data.shed_row(data.n_rows - 1);
@@ -259,6 +259,6 @@ static void mlpackMain()
   }
 
   // Save the output.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(distance);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(distance);
 }
