@@ -1569,16 +1569,16 @@ BOOST_AUTO_TEST_CASE(ssRBMTest)
   size_t poolSize = 1;
 
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, arma::mat, arma::mat, SpikeSlabRBM> Rbm(data,
+  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> Rbm(data,
       gaussian, data.n_rows, hiddenLayerSize, 1, 1, 1, poolSize, slabPenalty,
       radius, true);
-  RBM<GaussianInitialization, arma::mat, arma::mat, SpikeSlabRBM> RbmXml(data,
+  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> RbmXml(data,
       gaussian, data.n_rows, hiddenLayerSize, 1, 1, 1, poolSize, slabPenalty,
       radius, true);
-  RBM<GaussianInitialization, arma::mat, arma::mat, SpikeSlabRBM> RbmText(data,
+  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> RbmText(data,
       gaussian, data.n_rows, hiddenLayerSize, 1, 1, 1, poolSize, slabPenalty,
       radius, true);
-  RBM<GaussianInitialization, arma::mat, arma::mat, SpikeSlabRBM> RbmBinary(
+  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> RbmBinary(
       data, gaussian, data.n_rows, hiddenLayerSize, 1, 1, 1, poolSize,
       slabPenalty, radius, true);
   Rbm.Reset();

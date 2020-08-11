@@ -22,13 +22,12 @@ namespace ann {
 
 template<
   typename InitializationRuleType,
-  typename InputType,
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::Reset()
+RBM<InitializationRuleType, DataType, PolicyType>::Reset()
 {
   size_t shape = (visibleSize * hiddenSize * poolSize) + visibleSize +
       hiddenSize;
@@ -63,13 +62,12 @@ RBM<InitializationRuleType, InputType, DataType, PolicyType>::Reset()
 
 template<
   typename InitializationRuleType,
-  typename InputType,
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, double>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::FreeEnergy(
+RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
     const arma::Mat<ElemType>& input)
 {
   ElemType freeEnergy = 0.5 * visiblePenalty(0) * arma::dot(input, input);
@@ -89,13 +87,12 @@ RBM<InitializationRuleType, InputType, DataType, PolicyType>::FreeEnergy(
 
 template<
   typename InitializationRuleType,
-  typename InputType,
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::Phase(
+RBM<InitializationRuleType, DataType, PolicyType>::Phase(
     const InputType& input,
     DataType& gradient)
 {
@@ -126,13 +123,12 @@ RBM<InitializationRuleType, InputType, DataType, PolicyType>::Phase(
 
 template<
   typename InitializationRuleType,
-  typename InputType,
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::SampleHidden(
+RBM<InitializationRuleType, DataType, PolicyType>::SampleHidden(
     const arma::Mat<ElemType>& input,
     arma::Mat<ElemType>& output)
 {
@@ -150,13 +146,12 @@ RBM<InitializationRuleType, InputType, DataType, PolicyType>::SampleHidden(
 
 template<
   typename InitializationRuleType,
-  typename InputType,
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::SampleVisible(
+RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
     arma::Mat<ElemType>& input,
     arma::Mat<ElemType>& output)
 {
@@ -189,13 +184,12 @@ RBM<InitializationRuleType, InputType, DataType, PolicyType>::SampleVisible(
 
 template<
   typename InitializationRuleType,
-  typename InputType,
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::VisibleMean(
+RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(
     InputType& input,
     DataType& output)
 {
@@ -215,13 +209,12 @@ RBM<InitializationRuleType, InputType, DataType, PolicyType>::VisibleMean(
 
 template<
   typename InitializationRuleType,
-  typename InputType,
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::HiddenMean(
+RBM<InitializationRuleType, DataType, PolicyType>::HiddenMean(
     const InputType& input,
     DataType& output)
 {
@@ -238,13 +231,12 @@ RBM<InitializationRuleType, InputType, DataType, PolicyType>::HiddenMean(
 
 template<
   typename InitializationRuleType,
-  typename InputType,
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::SpikeMean(
+RBM<InitializationRuleType, DataType, PolicyType>::SpikeMean(
     const InputType& visible,
     DataType& spikeMean)
 {
@@ -258,13 +250,12 @@ RBM<InitializationRuleType, InputType, DataType, PolicyType>::SpikeMean(
 
 template<
   typename InitializationRuleType,
-  typename InputType,
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::SampleSpike(
+RBM<InitializationRuleType, DataType, PolicyType>::SampleSpike(
     InputType& spikeMean,
     DataType& spike)
 {
@@ -276,13 +267,12 @@ RBM<InitializationRuleType, InputType, DataType, PolicyType>::SampleSpike(
 
 template<
   typename InitializationRuleType,
-  typename InputType,
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::SlabMean(
+RBM<InitializationRuleType, DataType, PolicyType>::SlabMean(
     const DataType& visible,
     DataType& spike,
     DataType& slabMean)
@@ -296,13 +286,12 @@ RBM<InitializationRuleType, InputType, DataType, PolicyType>::SlabMean(
 
 template<
   typename InitializationRuleType,
-  typename InputType,
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-RBM<InitializationRuleType, InputType, DataType, PolicyType>::SampleSlab(
+RBM<InitializationRuleType, DataType, PolicyType>::SampleSlab(
     InputType& slabMean,
     DataType& slab)
 {
