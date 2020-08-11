@@ -20,7 +20,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Density Estimation With Density Estimation Trees");
+BINDING_NAME("Density Estimation With Density Estimation Trees");
 
 // Short description.
 BINDING_SHORT_DESC(

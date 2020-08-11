@@ -260,7 +260,7 @@ std::map<char, std::string>& IO::Aliases()
   return GetSingleton().aliases;
 }
 
-// Get the program name as set by BINDING_PNAME().
+// Get the program name as set by BINDING_NAME().
 std::string IO::ProgramName()
 {
   return GetSingleton().pname->programName;

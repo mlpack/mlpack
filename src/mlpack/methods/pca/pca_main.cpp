@@ -26,7 +26,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Principal Components Analysis");
+BINDING_NAME("Principal Components Analysis");
 
 // Short description.
 BINDING_SHORT_DESC(

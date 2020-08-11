@@ -23,7 +23,7 @@ using namespace std;
 using namespace boost;
 
 // Program Name.
-BINDING_PNAME("Descriptive Statistics");
+BINDING_NAME("Descriptive Statistics");
 
 // Short description.
 BINDING_SHORT_DESC(

@@ -54,7 +54,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @param NAME Short string representing the name of the program.
  */
-#define BINDING_PNAME(NAME) static \
+#define BINDING_NAME(NAME) static \
     mlpack::util::ProgramName \
     io_programname_dummy_object = mlpack::util::ProgramName(NAME);
 
@@ -173,7 +173,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -200,7 +200,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -232,7 +232,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -259,7 +259,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -290,7 +290,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -319,7 +319,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -351,7 +351,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -926,7 +926,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -960,7 +960,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -1000,7 +1000,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS One-character string representing the alias of the parameter.
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -1113,7 +1113,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -1138,7 +1138,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -1163,7 +1163,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
@@ -1190,7 +1190,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug

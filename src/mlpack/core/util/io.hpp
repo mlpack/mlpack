@@ -119,18 +119,18 @@ class SeeAlso;
  * @section bindingseealso Documenting the seeAlso.
  *
  * In addition to allowing documentation for each individual parameter and
- * module, the BINDING_PNAME() macro provides support for documenting the
+ * module, the BINDING_NAME() macro provides support for documenting the
  * programName, BINDING_SHORT_DESC() macro provides support for documenting the
  * shortDescription, BINDING_LONG_DESC() macro provides support for documenting
  * the longDescription, the BINDING_EXAMPLE() macro provides support for
  * documenting the example and the BINDING_SEE_ALSO() macro provides support for
  * documenting the seeAlso. There should only be one instance of the
- * BINDING_PNAME(), BINDING_SHORT_DESC() and BINDING_LONG_DESC() macros and there
+ * BINDING_NAME(), BINDING_SHORT_DESC() and BINDING_LONG_DESC() macros and there
  * can be multiple instance of BINDING_EXAMPLE() and BINDING_SEE_ALSO() macro.
  * Below is an example:
  *
  * @code
- * BINDING_PNAME("Maximum Variance Unfolding");
+ * BINDING_NAME("Maximum Variance Unfolding");
  * BINDING_SHORT_DESC("An implementation of Maximum Variance Unfolding");
  * BINDING_LONG_DESC( "This program performs maximum "
  *    "variance unfolding on the given dataset, writing a lower-dimensional "
@@ -322,7 +322,7 @@ class IO
   //! Return a modifiable list of aliases that IO knows about.
   static std::map<char, std::string>& Aliases();
 
-  //! Get the program name as set by the BINDING_PNAME() macro.
+  //! Get the program name as set by the BINDING_NAME() macro.
   static std::string ProgramName();
 
   /**

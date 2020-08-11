@@ -31,7 +31,7 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Hidden Markov Model (HMM) Sequence Generator");
+BINDING_NAME("Hidden Markov Model (HMM) Sequence Generator");
 
 // Short description.
 BINDING_SHORT_DESC(

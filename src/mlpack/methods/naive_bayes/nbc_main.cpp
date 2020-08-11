@@ -26,7 +26,7 @@ using namespace std;
 using namespace arma;
 
 // Program Name.
-BINDING_PNAME("Parametric Naive Bayes Classifier");
+BINDING_NAME("Parametric Naive Bayes Classifier");
 
 // Short description.
 BINDING_SHORT_DESC(

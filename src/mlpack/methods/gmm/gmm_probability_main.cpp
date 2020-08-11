@@ -20,7 +20,7 @@ using namespace mlpack::gmm;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("GMM Probability Calculator");
+BINDING_NAME("GMM Probability Calculator");
 
 // Short description.
 BINDING_SHORT_DESC(

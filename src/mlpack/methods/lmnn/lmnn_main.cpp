@@ -22,7 +22,7 @@
 #include <ensmallen.hpp>
 
 // Program Name.
-BINDING_PNAME("Large Margin Nearest Neighbors (LMNN)");
+BINDING_NAME("Large Margin Nearest Neighbors (LMNN)");
 
 // Short description.
 BINDING_SHORT_DESC(

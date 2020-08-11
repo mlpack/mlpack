@@ -29,7 +29,7 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Hidden Markov Model (HMM) Viterbi State Prediction");
+BINDING_NAME("Hidden Markov Model (HMM) Viterbi State Prediction");
 
 // Short description.
 BINDING_SHORT_DESC(

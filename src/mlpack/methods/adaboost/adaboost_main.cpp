@@ -47,7 +47,7 @@ using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("AdaBoost");
+BINDING_NAME("AdaBoost");
 
 // Short description.
 BINDING_SHORT_DESC(

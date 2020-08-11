@@ -31,7 +31,7 @@
 #include "dtb.hpp"
 
 // Program Name.
-BINDING_PNAME("Fast Euclidean Minimum Spanning Tree");
+BINDING_NAME("Fast Euclidean Minimum Spanning Tree");
 
 // Short description.
 BINDING_SHORT_DESC(

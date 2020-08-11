@@ -211,8 +211,8 @@ using Option = mlpack::bindings::python::PyOption<T>;
 static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef BINDING_PNAME
-#define BINDING_PNAME(NAME) static \
+#undef BINDING_NAME
+#define BINDING_NAME(NAME) static \
     mlpack::util::ProgramName \
     io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
     namespace mlpack { \
@@ -259,8 +259,8 @@ using Option = mlpack::bindings::julia::JuliaOption<T>;
 static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef BINDING_PNAME
-#define BINDING_PNAME(NAME) static \
+#undef BINDING_NAME
+#define BINDING_NAME(NAME) static \
     mlpack::util::ProgramName \
     io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
     namespace mlpack { \
@@ -303,8 +303,8 @@ using Option = mlpack::bindings::go::GoOption<T>;
 static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef BINDING_PNAME
-#define BINDING_PNAME(NAME) static \
+#undef BINDING_NAME
+#define BINDING_NAME(NAME) static \
     mlpack::util::ProgramName \
     io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
     namespace mlpack { \
@@ -322,11 +322,11 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 
 #elif BINDING_TYPE == BINDING_TYPE_MARKDOWN
 
-// We use BINDING_NAME in BINDING_PNAME(), BINDING_SHORT_DESC(),
+// We use MARKDOWN_BINDING_NAME in BINDING_NAME(), BINDING_SHORT_DESC(),
 // BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO()
 // so it needs to be defined.
-#ifndef BINDING_NAME
-  #error "BINDING_NAME must be defined when BINDING_TYPE is Markdown!"
+#ifndef MARKDOWN_BINDING_NAME
+  #error "MARKDOWN_BINDING_NAME must be defined when BINDING_TYPE is Markdown!"
 #endif
 
 // This value doesn't actually matter, but it needs to be defined as something.
@@ -389,53 +389,53 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/bindings/markdown/program_doc_wrapper.hpp>
 
-#undef BINDING_PNAME
+#undef BINDING_NAME
 #undef BINDING_SHORT_DESC
 #undef BINDING_LONG_DESC
 #undef BINDING_EXAMPLE
 #undef BINDING_SEE_ALSO
 
-#define BINDING_PNAME(NAME) static \
+#define BINDING_NAME(NAME) static \
     mlpack::bindings::markdown::ProgramNameWrapper \
     io_programname_dummy_object = \
     mlpack::bindings::markdown::ProgramNameWrapper( \
-    BINDING_NAME, NAME);
+    MARKDOWN_BINDING_NAME, NAME);
 
 #define BINDING_SHORT_DESC(SHORT_DESC) static \
     mlpack::bindings::markdown::ShortDescriptionWrapper \
     io_programshort_desc_dummy_object = \
     mlpack::bindings::markdown::ShortDescriptionWrapper( \
-    BINDING_NAME, SHORT_DESC);
+    MARKDOWN_BINDING_NAME, SHORT_DESC);
 
 #define BINDING_LONG_DESC(LONG_DESC) static \
     mlpack::bindings::markdown::LongDescriptionWrapper \
     io_programlong_desc_dummy_object = \
     mlpack::bindings::markdown::LongDescriptionWrapper( \
-    BINDING_NAME, []() { return std::string(LONG_DESC); });
+    MARKDOWN_BINDING_NAME, []() { return std::string(LONG_DESC); });
 
 #ifdef __COUNTER__
   #define BINDING_EXAMPLE(EXAMPLE) static \
       mlpack::bindings::markdown::ExampleWrapper \
       JOIN(io_programexample_dummy_object_, __COUNTER__) = \
-      mlpack::bindings::markdown::ExampleWrapper(BINDING_NAME, \
+      mlpack::bindings::markdown::ExampleWrapper(MARKDOWN_BINDING_NAME, \
       []() { return(std::string(EXAMPLE)); });
 
   #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
       mlpack::bindings::markdown::SeeAlsoWrapper \
       JOIN(io_programsee_also_dummy_object_, __COUNTER__) = \
-      mlpack::bindings::markdown::SeeAlsoWrapper(BINDING_NAME, \
+      mlpack::bindings::markdown::SeeAlsoWrapper(MARKDOWN_BINDING_NAME, \
       DESCRIPTION, LINK);
 #else
   #define BINDING_EXAMPLE(EXAMPLE) static \
       mlpack::bindings::markdown::ExampleWrapper \
       JOIN(JOIN(io_programexample_dummy_object_, __LINE__), opt) = \
-      mlpack::bindings::markdown::ExampleWrapper(BINDING_NAME, \
+      mlpack::bindings::markdown::ExampleWrapper(MARKDOWN_BINDING_NAME, \
       []() { return(std::string(EXAMPLE)); });
 
   #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
       mlpack::bindings::markdown::SeeAlsoWrapper \
       JOIN(JOIN(io_programsee_also_dummy_object_, __LINE__), opt) = \
-      mlpack::bindings::markdown::SeeAlsoWrapper(BINDING_NAME, \
+      mlpack::bindings::markdown::SeeAlsoWrapper(MARKDOWN_BINDING_NAME, \
       DESCRIPTION, LINK);
 #endif
 

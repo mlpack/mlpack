@@ -24,7 +24,7 @@ using namespace mlpack::regression;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("Softmax Regression");
+BINDING_NAME("Softmax Regression");
 
 // Short description.
 BINDING_SHORT_DESC(

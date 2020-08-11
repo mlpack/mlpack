@@ -22,7 +22,7 @@ using namespace mlpack::regression;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("LARS");
+BINDING_NAME("LARS");
 
 // Short description.
 BINDING_SHORT_DESC(

@@ -24,7 +24,7 @@ using namespace mlpack::svm;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("Linear SVM is an L2-regularized support vector machine.");
+BINDING_NAME("Linear SVM is an L2-regularized support vector machine.");
 
 // Short description.
 BINDING_SHORT_DESC(

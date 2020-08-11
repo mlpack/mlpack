@@ -28,7 +28,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("K-Means Clustering");
+BINDING_NAME("K-Means Clustering");
 
 // Short description.
 BINDING_SHORT_DESC(

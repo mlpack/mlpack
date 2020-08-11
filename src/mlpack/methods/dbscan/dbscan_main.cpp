@@ -28,7 +28,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("DBSCAN clustering");
+BINDING_NAME("DBSCAN clustering");
 
 // Short description.
 BINDING_SHORT_DESC(

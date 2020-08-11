@@ -22,7 +22,7 @@ using namespace std;
 using namespace arma;
 
 // Program Name.
-BINDING_PNAME("Decision Stump");
+BINDING_NAME("Decision Stump");
 
 // Short description.
 BINDING_SHORT_DESC(

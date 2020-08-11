@@ -24,7 +24,7 @@ using namespace mlpack::neighbor;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("K-Approximate-Nearest-Neighbor Search with LSH");
+BINDING_NAME("K-Approximate-Nearest-Neighbor Search with LSH");
 
 // Short description.
 BINDING_SHORT_DESC(

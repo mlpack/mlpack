@@ -28,7 +28,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Non-negative Matrix Factorization");
+BINDING_NAME("Non-negative Matrix Factorization");
 
 // Short description.
 BINDING_SHORT_DESC(

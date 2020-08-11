@@ -28,7 +28,7 @@ using namespace mlpack::metric;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("Range Search");
+BINDING_NAME("Range Search");
 
 // Short description.
 BINDING_SHORT_DESC(

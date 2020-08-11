@@ -19,7 +19,7 @@ using namespace mlpack;
 using namespace mlpack::kernel;
 
 // Program Name.
-BINDING_PNAME("Python binding test");
+BINDING_NAME("Python binding test");
 
 // Short description.
 BINDING_SHORT_DESC(

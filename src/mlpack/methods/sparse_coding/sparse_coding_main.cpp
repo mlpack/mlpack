@@ -23,7 +23,7 @@ using namespace mlpack::sparse_coding;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("Sparse Coding");
+BINDING_NAME("Sparse Coding");
 
 // Short description.
 BINDING_SHORT_DESC(

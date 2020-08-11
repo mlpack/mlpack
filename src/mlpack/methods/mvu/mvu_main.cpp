@@ -16,7 +16,7 @@
 #include "mvu.hpp"
 
 // Program Name.
-BINDING_PNAME("Maximum Variance Unfolding (MVU)");
+BINDING_NAME("Maximum Variance Unfolding (MVU)");
 
 // Long description.
 BINDING_LONG_DESC("This program implements "

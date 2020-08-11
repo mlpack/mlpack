@@ -19,7 +19,7 @@ using namespace mlpack;
 using namespace mlpack::kernel;
 
 // Program Name.
-BINDING_PNAME("Golang binding test");
+BINDING_NAME("Golang binding test");
 
 // Short description.
 BINDING_SHORT_DESC(

@@ -41,7 +41,7 @@ using namespace std;
 using namespace arma;
 
 // Program Name.
-BINDING_PNAME("Kernel Principal Components Analysis");
+BINDING_NAME("Kernel Principal Components Analysis");
 
 // Short description.
 BINDING_SHORT_DESC(

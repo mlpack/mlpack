@@ -15,7 +15,7 @@
 #include <mlpack/core/data/binarize.hpp>
 
 // Program Name.
-BINDING_PNAME("Binarize Data");
+BINDING_NAME("Binarize Data");
 
 // Short description.
 BINDING_SHORT_DESC(

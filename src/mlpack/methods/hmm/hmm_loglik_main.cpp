@@ -28,7 +28,7 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Hidden Markov Model (HMM) Sequence Log-Likelihood");
+BINDING_NAME("Hidden Markov Model (HMM) Sequence Log-Likelihood");
 
 // Short description.
 BINDING_SHORT_DESC(

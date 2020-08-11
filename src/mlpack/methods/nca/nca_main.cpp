@@ -21,7 +21,7 @@
 #include <ensmallen.hpp>
 
 // Program Name.
-BINDING_PNAME("Neighborhood Components Analysis (NCA)");
+BINDING_NAME("Neighborhood Components Analysis (NCA)");
 
 // Short description.
 BINDING_SHORT_DESC(

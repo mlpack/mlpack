@@ -130,7 +130,7 @@ using namespace std;
 // generate documentation for the website.
 
 // Program Name.
-BINDING_PNAME("Mean Shift Clustering");
+BINDING_NAME("Mean Shift Clustering");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -238,7 +238,7 @@ void mlpackMain()
 @endcode
 
 We can see that we have defined the basic program information in the
-@c BINDING_PNAME(), @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(),
+@c BINDING_NAME(), @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(),
 @c BINDING_EXAMPLE() and @c BINDING_SEE_ALSO() macros.  This is, for instance,
 what is displayed to describe the binding if the user passed the
 <tt>\--help</tt> option for a command-line program.
@@ -258,7 +258,7 @@ whether the parameter is input or output.  Some examples:
 Note that each of these macros may have slightly different syntax.  See the
 links above for further documentation.
 
-In order to write a new binding, then, you simply must write @c BINDING_PNAME(),
+In order to write a new binding, then, you simply must write @c BINDING_NAME(),
 @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(), @c BINDING_EXAMPLE() and
 @c BINDING_SEE_ALSO() definitions of the program with some docuentation, define
 the input and output parameters as @c PARAM macros, and then write an
@@ -292,10 +292,10 @@ add a binding for a new mlpack machine learning method.  If it is not clear,
 then the examples in the following sections should clarify.
 
 @subsection bindings_general_program_doc Documenting a program with
-@c BINDING_PNAME(), @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(),
+@c BINDING_NAME(), @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(),
 @c BINDING_EXAMPLE() and @c BINDING_SEE_ALSO().
 
-Any mlpack program should be documented with the @c BINDING_PNAME(),
+Any mlpack program should be documented with the @c BINDING_NAME(),
 @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC() , @c BINDING_EXAMPLE() and
 @c BINDING_SEE_ALSO() macros, which is available from the
 @c <mlpack/core/util/mlpack_main.hpp> header.  The macro
@@ -473,7 +473,7 @@ Go binding output (snippet):
 Input C++ (full program, 'random_numbers_main.cpp'):
 
 // Program Name.
-BINDING_PNAME("Random Numbers");
+BINDING_NAME("Random Numbers");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -822,7 +822,7 @@ could be created for the "random_numbers" program from earlier sections.
 @code
 #include <mlpack/core/util/mlpack_main.hpp>
 
-// BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC() , BINDING_EXAMPLE(),
+// BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC() , BINDING_EXAMPLE(),
 // BINDING_SEE_ALSO() and PARAM_*() definitions should go here:
 // ...
 
@@ -883,7 +883,7 @@ There are eight main components involved with mlpack bindings:
 
  - the IO module, a singleton class that stores parameter information
  - the mlpackMain() function that defines the functionality of the binding
- - the BINDING_PNAME() macro that defines the binding name
+ - the BINDING_NAME() macro that defines the binding name
  - the BINDING_SHORT_DESC() macro that defines the short description
  - the BINDING_LONG_DESC() macro that defines the long description
  - the BINDING_EXAMPLE() macro that defines the example
@@ -893,12 +893,12 @@ There are eight main components involved with mlpack bindings:
 The mlpack::IO module is a singleton class that stores, at runtime, the binding
 name, the documentation, and the parameter information and values.  In order to
 do this, each parameter and the program documentation must make themselves known
-to the IO singleton.  This is accomplished by having the @c BINDING_PNAME(), 
+to the IO singleton.  This is accomplished by having the @c BINDING_NAME(), 
 @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(), @c BINDING_EXAMPLE(),
 @c BINDING_SEE_ALSO() and @c PARAM_*() macros declare global variables that,
 in their constructors, register themselves with the IO singleton.
 
-The @c BINDING_PNAME() macro declares an object of type mlpack::util::ProgramName.
+The @c BINDING_NAME() macro declares an object of type mlpack::util::ProgramName.
 The @c BINDING_SHORT_DESC() macro declares an object of type
 mlpack::util::ShortDescription.
 The @c BINDING_LONG_DESC() macro declares an object of type
@@ -1188,7 +1188,7 @@ individually if you like).  The file
 the name of the program and the @c *_main.cpp file to include correctly, then
 the @c mlpack::bindings::python::PrintPYX() function is called by the program.
 The @c PrintPYX() function uses the parameters that have been set in the IO
-singleton by the @c BINDING_PNAME(), @c BINDING_SHORT_DESC(),
+singleton by the @c BINDING_NAME(), @c BINDING_SHORT_DESC(),
 @c BINDING_LONG_DESC(), @c BINDING_EXAMPLE(), @c BINDING_SEE_ALSO() and
 @c PARAM_*() macros in order to actually print a fully-working .pyx file that
 can be compiled.  The file has several sections:

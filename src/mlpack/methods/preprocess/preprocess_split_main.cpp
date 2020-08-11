@@ -16,7 +16,7 @@
 #include <mlpack/core/data/split_data.hpp>
 
 // Program Name.
-BINDING_PNAME("Split Data");
+BINDING_NAME("Split Data");
 
 // Short description.
 BINDING_SHORT_DESC(

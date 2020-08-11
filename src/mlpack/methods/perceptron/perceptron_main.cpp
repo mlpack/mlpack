@@ -26,7 +26,7 @@ using namespace std;
 using namespace arma;
 
 // Program Name.
-BINDING_PNAME("Perceptron");
+BINDING_NAME("Perceptron");
 
 // Short description.
 BINDING_SHORT_DESC(

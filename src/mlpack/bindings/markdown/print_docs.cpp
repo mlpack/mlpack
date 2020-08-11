@@ -69,7 +69,7 @@ void PrintDocs(const std::string& bindingName,
   cout << endl;
 
   // Next, print the logical name of the binding (that's known by
-  // BINDING_PNAME()).
+  // BINDING_NAME()).
   cout << "#### " << programName.programName << endl;
   cout << endl;
 

@@ -22,7 +22,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Approximate furthest neighbor search");
+BINDING_NAME("Approximate furthest neighbor search");
 
 // Short description.
 BINDING_SHORT_DESC(

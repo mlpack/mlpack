@@ -29,7 +29,7 @@ using namespace mlpack::util;
 typedef RAModel<NearestNeighborSort> RANNModel;
 
 // Program Name.
-BINDING_PNAME("K-Rank-Approximate-Nearest-Neighbors (kRANN)");
+BINDING_NAME("K-Rank-Approximate-Nearest-Neighbors (kRANN)");
 
 // Short description.
 BINDING_SHORT_DESC(

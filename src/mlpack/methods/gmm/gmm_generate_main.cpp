@@ -20,7 +20,7 @@ using namespace mlpack::gmm;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("GMM Sample Generator");
+BINDING_NAME("GMM Sample Generator");
 
 // Short description.
 BINDING_SHORT_DESC(

@@ -25,7 +25,7 @@ using namespace mlpack::metric;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("FastMKS (Fast Max-Kernel Search)");
+BINDING_NAME("FastMKS (Fast Max-Kernel Search)");
 
 // Short description.
 BINDING_SHORT_DESC(

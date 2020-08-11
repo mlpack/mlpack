@@ -21,7 +21,7 @@ using namespace mlpack::data;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("Decision tree");
+BINDING_NAME("Decision tree");
 
 // Short description.
 BINDING_SHORT_DESC(

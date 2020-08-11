@@ -23,7 +23,7 @@
 #include <mlpack/core/data/imputation_methods/listwise_deletion.hpp>
 
 // Program Name.
-BINDING_PNAME("Impute Data");
+BINDING_NAME("Impute Data");
 
 // Short description.
 BINDING_SHORT_DESC(

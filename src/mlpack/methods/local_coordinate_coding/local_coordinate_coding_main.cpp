@@ -24,7 +24,7 @@ using namespace mlpack::sparse_coding; // For NothingInitializer.
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("Local Coordinate Coding");
+BINDING_NAME("Local Coordinate Coding");
 
 // Short description.
 BINDING_SHORT_DESC(

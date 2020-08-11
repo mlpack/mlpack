@@ -20,7 +20,7 @@ namespace util {
 /**
  * A static object whose constructor registers program documentation with the
  * IO class.  This should not be used outside of IO itself, and you should use
- * these BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(), 
+ * these BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(), 
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO() macros to declare these objects.
  * Only correspond object should ever exist.
  *

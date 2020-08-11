@@ -27,7 +27,7 @@ using namespace mlpack::kmeans;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Gaussian Mixture Model (GMM) Training");
+BINDING_NAME("Gaussian Mixture Model (GMM) Training");
 
 // Short description.
 BINDING_SHORT_DESC(

@@ -29,7 +29,7 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Hidden Markov Model (HMM) Training");
+BINDING_NAME("Hidden Markov Model (HMM) Training");
 
 // Short description.
 BINDING_SHORT_DESC(

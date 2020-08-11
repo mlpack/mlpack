@@ -21,7 +21,7 @@ using namespace std;
 using namespace mlpack::data;
 
 // Program Name.
-BINDING_PNAME("Image Converter");
+BINDING_NAME("Image Converter");
 
 // Short description.
 BINDING_SHORT_DESC(

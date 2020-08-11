@@ -42,7 +42,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Collaborative Filtering");
+BINDING_NAME("Collaborative Filtering");
 
 // Short description.
 BINDING_SHORT_DESC(

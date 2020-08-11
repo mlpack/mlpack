@@ -120,7 +120,7 @@ and debugging output for your mlpack program.
 @section simpleio Simple IO Example
 
 Through the mlpack::IO object, command-line parameters can be easily added
-with the BINDING_PNAME, BINDING_SHORT_DESC, BINDING_LONG_DESC, BINDING_EXAMPLE,
+with the BINDING_NAME, BINDING_SHORT_DESC, BINDING_LONG_DESC, BINDING_EXAMPLE,
 BINDING_SEE_ALSO, PARAM_INT, PARAM_DOUBLE, PARAM_STRING, and PARAM_FLAG
 macros.
 
@@ -133,7 +133,7 @@ Here is a sample use of those macros, extracted from methods/pca/pca_main.cpp.
 #include <mlpack/core/util/mlpack_main.hpp>
 
 // Program Name.
-BINDING_PNAME("Principal Components Analysis");
+BINDING_NAME("Principal Components Analysis");
 
 // Short description.
 BINDING_SHORT_DESC(

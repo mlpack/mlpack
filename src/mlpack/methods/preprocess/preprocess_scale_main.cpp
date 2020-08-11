@@ -29,7 +29,7 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Scale Data");
+BINDING_NAME("Scale Data");
 
 // Short description.
 BINDING_SHORT_DESC(

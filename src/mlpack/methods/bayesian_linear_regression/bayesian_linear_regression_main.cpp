@@ -22,7 +22,7 @@ using namespace mlpack::regression;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("BayesianLinearRegression");
+BINDING_NAME("BayesianLinearRegression");
 
 // Short description.
 BINDING_SHORT_DESC(

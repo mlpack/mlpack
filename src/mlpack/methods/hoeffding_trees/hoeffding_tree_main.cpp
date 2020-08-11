@@ -26,7 +26,7 @@ using namespace mlpack::data;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_PNAME("Hoeffding trees");
+BINDING_NAME("Hoeffding trees");
 
 // Short description.
 BINDING_SHORT_DESC(

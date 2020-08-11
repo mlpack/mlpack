@@ -22,7 +22,7 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_PNAME("Simple Linear Regression and Prediction");
+BINDING_NAME("Simple Linear Regression and Prediction");
 
 // Short description.
 BINDING_SHORT_DESC(

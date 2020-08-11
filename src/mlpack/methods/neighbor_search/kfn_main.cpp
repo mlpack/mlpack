@@ -33,7 +33,7 @@ using namespace mlpack::util;
 typedef NSModel<FurthestNS> KFNModel;
 
 // Program Name.
-BINDING_PNAME("k-Furthest-Neighbors Search");
+BINDING_NAME("k-Furthest-Neighbors Search");
 
 // Short description.
 BINDING_SHORT_DESC(

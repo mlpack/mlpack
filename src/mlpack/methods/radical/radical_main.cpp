@@ -17,7 +17,7 @@
 #include "radical.hpp"
 
 // Program Name.
-BINDING_PNAME("RADICAL");
+BINDING_NAME("RADICAL");
 
 // Short description.
 BINDING_SHORT_DESC(

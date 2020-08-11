@@ -19,7 +19,7 @@ using namespace mlpack;
 using namespace mlpack::kernel;
 
 // Program Name.
-BINDING_PNAME("Julia binding test");
+BINDING_NAME("Julia binding test");
 
 // Short description.
 BINDING_SHORT_DESC(
