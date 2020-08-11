@@ -171,7 +171,7 @@ void SAC<
   arma::rowvec Q1, Q2;
   targetQ1Network.Predict(targetQInput, Q1);
   targetQ2Network.Predict(targetQInput, Q2);
-  arma::rowvec nextQ = sampledRewards +  config.Discount() * ((1 - isTerminal)
+  arma::rowvec nextQ = sampledRewards + config.Discount() * ((1 - isTerminal)
       % arma::min(Q1, Q2));
 
   arma::mat sampledActionValues(action.size, sampledActions.size());

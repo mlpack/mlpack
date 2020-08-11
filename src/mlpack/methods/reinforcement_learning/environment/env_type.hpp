@@ -21,8 +21,10 @@ namespace rl {
  * To use the dummy environment, one may start by specifying the state and
  * action dimensions.
  * Eg:
+ * @code
  *  DiscreteActionEnv::State::dimension = 4;
  *  DiscreteActionEnv::Action::size = 2;
+ * @endcode
  * 
  * Now the DiscreteActionEnv class can be used as an EnvironmentType in RL
  * methods just as any other mlpack's implementation of gym environments.
@@ -110,8 +112,10 @@ size_t DiscreteActionEnv::Action::size = 0;
  * To use the dummy environment, one may start by specifying the state and
  * action dimensions.
  * Eg:
+ * @code
  *  ContinuousActionEnv::State::dimension = 3;
  *  ContinuousActionEnv::Action::size = 1;
+ * @endcode
  * 
  * Now the ContinuousActionEnv class can be used as an EnvironmentType in RL
  * methods just as any other mlpack's implementation of gym environments.

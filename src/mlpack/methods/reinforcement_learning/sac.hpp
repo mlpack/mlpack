@@ -3,7 +3,7 @@
  * @author Nishant Kumar
  *
  * This file is the definition of SAC class, which implements the
- * soft actor-critic algorithm.
+ * Soft Actor-Critic algorithm.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -73,7 +73,8 @@ class SAC
    * Create the SAC object with given settings.
    *
    * If you want to pass in a parameter and discard the original parameter
-   * object, be sure to use std::move to avoid unnecessary copy.
+   * object, you can directly pass the parameter, as the constructor takes
+   * a reference. This avoids unnecessary copy.
    *
    * @param config Hyper-parameters for training.
    * @param learningQ1Network The network to compute action value.
@@ -98,7 +99,7 @@ class SAC
   ~SAC();
 
   /**
-   * Softly update the learning Q network parameters to the target Q_network
+   * Softly update the learning Q network parameters to the target Q network
    * parameters.
    * 
    * @param rho How "softly" should the parameters be copied.
