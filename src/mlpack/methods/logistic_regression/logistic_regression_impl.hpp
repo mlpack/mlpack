@@ -89,7 +89,6 @@ double LogisticRegression<MatType>::Train(
   // Set size of parameters vector according to the input data received.
   if (parameters.n_elem != predictors.n_rows + 1)
     parameters = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
-  errorFunction.InitialPoint() = parameters;
 
   Timer::Start("logistic_regression_optimization");
   const double out = optimizer.Optimize(errorFunction, parameters,
