@@ -330,7 +330,7 @@ class ExampleTree
   // Serialize the tree (load from the given archive / save to the given
   // archive, depending on its type).
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar);
 
  protected:
   // A default constructor; only meant to be used by cereal.  This
