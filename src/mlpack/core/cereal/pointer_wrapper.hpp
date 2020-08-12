@@ -49,7 +49,9 @@ class pointer_wrapper
   template<class Archive>
   void save(Archive& ar, const unsigned int /*version*/) const
   {
-    std::unique_ptr<T> smartPointer = std::make_unique<T>(*this->localPointer);
+    std::unique_ptr<T> smartPointer;
+    if (this->localPointer != NULL)
+      smartPointer = std::make_unique<T>(std::move(*this->localPointer));
     ar(CEREAL_NVP(smartPointer));
     localPointer = smartPointer.release();
   }
