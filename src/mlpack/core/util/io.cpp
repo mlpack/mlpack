@@ -19,15 +19,13 @@ using namespace mlpack::util;
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-IO::IO() :
-    didParse(false)
+IO::IO() : didParse(false)
 {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
-IO::IO(const IO& /* other */) :
-    didParse(false)
+IO::IO(const IO& /* other */) : didParse(false)
 {
   return;
 }

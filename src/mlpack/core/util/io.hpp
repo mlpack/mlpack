@@ -38,7 +38,7 @@ namespace util {
 // This class holds information about the program being run.
 struct BindingDetials;
 
-}
+} // namespace util
 /**
  * @brief Parses the command line for parameters and holds user-specified
  *     parameters.
@@ -313,7 +313,7 @@ class IO
   bool didParse;
 
   //! Holds the name of the program for --version.  This is the true program
-  //! name (argv[0]) not what is given in ProgramName().
+  //! name (argv[0]) not what is given in BindingDetails.
   std::string programName;
 
   //! Holds the timer objects.
