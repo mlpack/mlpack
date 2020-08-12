@@ -84,7 +84,6 @@ bool Load(const std::string& filename,
 
     return false;
   }
-  
   try
   {
     if (f == format::xml)
