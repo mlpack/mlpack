@@ -27,7 +27,6 @@ namespace ann /** Artificial Neural Network. */ {
  * machines, with the restriction that the neurons must form a bipartite graph.
  *
  * @tparam InitializationRuleType Rule used to initialize the network.
- * @tparam InputType The type of matrix to be used as input type.
  * @tparam DataType The type of matrix to be used.
  * @tparam PolicyType The RBM variant to be used (BinaryRBM or SpikeSlabRBM).
  */

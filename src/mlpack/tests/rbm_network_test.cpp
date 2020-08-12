@@ -169,9 +169,9 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   YRbm.zeros();
   double slabPenalty = 8;
 
-  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> modelssRBM(
-      trainData, gaussian, trainData.n_rows, hiddenLayerSize, batchSize, 1,
-      1, poolSize, slabPenalty, radius);
+  RBM<GaussianInitialization, arma::mat, SpikeSlabRBM> modelssRBM(trainData,
+      gaussian, trainData.n_rows, hiddenLayerSize, batchSize, 1, 1, poolSize,
+      slabPenalty, radius);
 
   size_t numRBMIterations = trainData.n_cols * numEpoches;
   numRBMIterations /= batchSize;
@@ -220,9 +220,8 @@ void BuildVanillaNetwork(MatType& trainData,
 {
   MatType output;
   GaussianInitialization gaussian(0, 0.1);
-  RBM<GaussianInitialization, MatType, BinaryRBM> model(
-      trainData, gaussian, trainData.n_rows, hiddenLayerSize,
-      1, 1, 1, 2, 8, 1, true);
+  RBM<GaussianInitialization, MatType, BinaryRBM> model(trainData, gaussian,
+      trainData.n_rows, hiddenLayerSize, 1, 1, 1, 2, 8, 1, true);
 
   model.Reset();
   // Set the parameters from a learned RBM Sklearn random state 23.
