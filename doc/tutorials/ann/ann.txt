@@ -574,7 +574,7 @@ a new reference set. This is functionally equivalent to creating a new model.
 @section model_saving_loading_anntut Saving & Loading
 
 Using \c cereal (for more information about the internals see
-[Serialization - Boost C++ Libraries](www.boost.org/libs/serialization/doc/)),
+[the Cereal website](http://uscilab.github.io/cereal/)),
 mlpack is able to load and save machine learning models with ease. To save a
 trained neural network to disk. The example below builds a model on the \c
 thyroid dataset and then saves the model to the file \c model.xml for later use.
