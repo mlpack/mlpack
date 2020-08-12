@@ -48,7 +48,8 @@ void GreedySingleTreeTraverser<TreeType, RuleType>::Traverse(
 
   // If number of descendants are more than rule.MinimumBaseCases() than we can
   // go along with best child otherwise we need to traverse for each descendant
-  // to ensure that we calculate at least minBaseCases number of base cases.
+  // to ensure that we calculate at least rule.MinimumBaseCases() number of base
+  // cases.
   if (!referenceNode.IsLeaf())
   {
     if (numDescendants > rule.MinimumBaseCases())
