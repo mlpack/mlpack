@@ -803,7 +803,7 @@ be useful to look at other \c Serialize() methods contained in other mlpack
 classes as an example.
 
 An important note is that it is very difficult to use references with
-\c cereal, because \c Serialize() may be called at any time during
+\c cereal, because \c serialize() may be called at any time during
 the object's lifetime, and references cannot be re-seated.  In general this will
 require the use of pointers, which then require manual memory management.
 Therefore, be careful that \c Serialize() (and the tree's destructor) properly
