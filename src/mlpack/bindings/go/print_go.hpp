@@ -25,7 +25,8 @@ namespace go {
  *
  * @param functionName Name of the function (i.e. "pca").
  */
-void PrintGo(const std::string& functionName);
+void PrintGo(const util::BindingDetails& doc,
+             const std::string& functionName);
 
 
 } // namespace go

@@ -31,13 +31,12 @@ namespace python {
  *      "/path/to/pca_main.cpp").
  * @param functionName Name of the function (i.e. "pca").
  */
-void PrintPYX(const string& mainFilename,
+void PrintPYX(const util::BindingDetails& doc,
+              const string& mainFilename,
               const string& functionName)
 {
-  util::ProgramName& pname = *IO::GetSingleton().pname;
-  util::LongDescription& longDesc = *IO::GetSingleton().longDesc;
   // Restore parameters.
-  IO::RestoreSettings(pname.programName);
+  IO::RestoreSettings(doc.programName->programName);
 
   std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   typedef std::map<std::string, util::ParamData>::iterator ParamIter;
@@ -143,15 +142,14 @@ void PrintPYX(const string& mainFilename,
 
   // Print the comment describing the function and its parameters.
   cout << "  \"\"\"" << endl;
-  cout << "  " << pname.programName << endl;
+  cout << "  " << doc.programName->programName << endl;
   cout << endl;
-  cout << "  " << HyphenateString(longDesc.longDescription(), 2) << endl;
-    cout << endl;
-  for (size_t j = 0; j < IO::GetSingleton().examples.size(); ++j)
+  cout << "  " << HyphenateString(doc.longDescription->longDescription(), 2)
+       << endl << endl;  
+  for (size_t j = 0; j < doc.example.size(); ++j)
   {
-    util::Example& example = *IO::GetSingleton().examples[j];
-    cout << "  " << util::HyphenateString(example.example(), 2)
-        << endl << endl;
+    cout << "  " << util::HyphenateString(doc.example[j]->example(), 2) << endl
+         << endl;
   }
   cout << "  Input parameters:" << endl;
   cout << endl;
@@ -190,7 +188,7 @@ void PrintPYX(const string& mainFilename,
   cout << "  DisableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  IO.RestoreSettings(\"" << pname.programName << "\")"
+  cout << "  IO.RestoreSettings(\"" << doc.programName->programName << "\")"
       << endl;
 
   // Determine whether or not we need to copy parameters.

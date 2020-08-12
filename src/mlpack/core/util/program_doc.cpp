@@ -31,7 +31,7 @@ ProgramName::ProgramName(
     programName(std::move(programName))
 {
   // Register this with IO.
-  IO::RegisterProgramName(this);
+  IO::GetSingleton().doc.programName = this;
 }
 
 /**
@@ -39,7 +39,7 @@ ProgramName::ProgramName(
  */
 ProgramName::ProgramName()
 {
-  IO::RegisterProgramName(this);
+  IO::GetSingleton().doc.programName = this;
 }
 
 /**
@@ -55,7 +55,7 @@ ShortDescription::ShortDescription(
     shortDescription(std::move(shortDescription))
 {
   // Register this with IO.
-  IO::RegisterShortDescription(this);
+  IO::GetSingleton().doc.shortDescription = this;
 }
 
 /**
@@ -63,7 +63,7 @@ ShortDescription::ShortDescription(
  */
 ShortDescription::ShortDescription()
 {
-  IO::RegisterShortDescription(this);
+  IO::GetSingleton().doc.shortDescription = this;
 }
 
 /**
@@ -79,7 +79,7 @@ LongDescription::LongDescription(
     longDescription(std::move(longDescription))
 {
   // Register this with IO.
-  IO::RegisterLongDescription(this);
+  IO::GetSingleton().doc.longDescription = this;
 }
 
 /**
@@ -87,7 +87,7 @@ LongDescription::LongDescription(
  */
 LongDescription::LongDescription()
 {
-  IO::RegisterLongDescription(this);
+  IO::GetSingleton().doc.longDescription = this;
 }
 
 /**
@@ -101,7 +101,7 @@ Example::Example(
     example(std::move(example))
 {
   // Register this with IO.
-  IO::RegisterExample(this);
+  IO::GetSingleton().doc.example.push_back(this);
 }
 
 /**
@@ -109,7 +109,7 @@ Example::Example(
  */
 Example::Example()
 {
-  IO::RegisterExample(this);
+  IO::GetSingleton().doc.example.push_back(this);
 }
 
 /**
@@ -121,11 +121,10 @@ Example::Example()
  */
 SeeAlso::SeeAlso(
     const std::string& description, const std::string& link) :
-    description(std::move(description)),
-    link(std::move(link))
+    seeAlso(std::move(make_pair(description, link)))
 {
   // Register this with IO.
-  IO::RegisterSeeAlso(this);
+  IO::GetSingleton().doc.seeAlso.push_back(this);
 }
 
 /**
@@ -133,5 +132,5 @@ SeeAlso::SeeAlso(
  */
 SeeAlso::SeeAlso()
 {
-  IO::RegisterSeeAlso(this);
+  IO::GetSingleton().doc.seeAlso.push_back(this);
 }

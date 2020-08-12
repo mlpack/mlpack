@@ -25,9 +25,7 @@ void PrintHelp(const std::string& param)
   std::string usedParam = param;
   std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   const std::map<char, std::string>& aliases = IO::Aliases();
-  util::ProgramName& pname = *IO::GetSingleton().pname;
-  util::LongDescription& longDesc = *IO::GetSingleton().longDesc;
-
+  util::BindingDetails& bindingDetails = IO::GetSingleton().doc;
   // If we pass a single param, alias it if necessary.
   if (usedParam.length() == 1 && aliases.count(usedParam[0]))
     usedParam = aliases.at(usedParam[0]);
@@ -65,16 +63,16 @@ void PrintHelp(const std::string& param)
   }
 
   // Print out the descriptions.
-  if (pname.programName != "")
+  if (bindingDetails.programName->programName != "")
   {
-    std::cout << pname.programName << std::endl << std::endl;
-    std::cout << "  " << util::HyphenateString(longDesc.longDescription(),
-        2) << std::endl << std::endl;
-    for (size_t j = 0; j < IO::GetSingleton().examples.size(); ++j)
+    std::cout << bindingDetails.programName->programName 
+         << std::endl << std::endl;
+    std::cout << "  " << util::HyphenateString(bindingDetails.longDescription->
+        longDescription(), 2) << std::endl << std::endl;
+    for (size_t j = 0; j < bindingDetails.example.size(); ++j)
     {
-      util::Example& example = *IO::GetSingleton().examples[j];
-      std::cout << "  " << util::HyphenateString(example.example(), 2)
-          << std::endl << std::endl;
+      std::cout << "  " << util::HyphenateString(bindingDetails.example[j]->
+          example(), 2) << std::endl << std::endl;
     }
   }
   else

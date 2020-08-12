@@ -119,8 +119,7 @@ class SeeAlso
    * Construct an empty SeeAlso object.  (This is not meant to be used!)
    */
   SeeAlso();
-  std::string description;
-  std::string link;
+  std::pair<std::string, std::string> seeAlso;
 };
 } // namespace util
 } // namespace mlpack

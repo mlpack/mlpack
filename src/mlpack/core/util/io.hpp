@@ -23,6 +23,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include "timers.hpp"
+#include "binding_details.hpp"
 #include "program_doc.hpp"
 #include "version.hpp"
 
@@ -34,28 +35,10 @@
 namespace mlpack {
 namespace util {
 
-// Externally defined in option.hpp, this class holds information about the
-// name of the program being run.
-class ProgramName;
+// This class holds information about the program being run.
+struct BindingDetials;
 
-// Externally defined in option.hpp, this class holds information about the
-// short description of the program being run.
-class ShortDescription;
-
-// Externally defined in option.hpp, this class holds information about the
-// long description of the program being run.
-class LongDescription;
-
-// Externally defined in option.hpp, this class holds information about the
-// examples of the program being run.
-class Example;
-
-// Externally defined in option.hpp, this class holds information about see
-// also of the program being run.
-class SeeAlso;
-
-} // namespace util
-
+}
 /**
  * @brief Parses the command line for parameters and holds user-specified
  *     parameters.
@@ -270,53 +253,6 @@ class IO
    */
   static IO& GetSingleton();
 
-  /**
-   * Registers a ProgramName object, which contains documentation about the
-   * program.  If this method has been called before (that is, if two
-   * ProgramNames are instantiated in the program), a fatal error will occur.
-   *
-   * @param pname Pointer to the ProgramName object.
-   */
-  static void RegisterProgramName(util::ProgramName* pname);
-
-  /**
-   * Registers a ShortDescription object, which contains documentation about the
-   * program.  If this method has been called before (that is, if two
-   * ShortDescriptions are instantiated in the program), a fatal error will
-   * occur.
-   *
-   * @param shortDesc Pointer to the ShortDescription object.
-   */
-  static void RegisterShortDescription(util::ShortDescription* shortDesc);
-
-  /**
-   * Registers a LongDescription object, which contains documentation about the
-   * program.  If this method has been called before (that is, if two
-   * LongDescriptions are instantiated in the program), a fatal error will
-   * occur.
-   *
-   * @param longDesc Pointer to the LongDescription object.
-   */
-  static void RegisterLongDescription(util::LongDescription* longDesc);
-
-  /**
-   * Registers a Example object, which contains documentation about the
-   * program.  If this method has been called before (that is, if two
-   * Examples are instantiated in the program), a fatal error will occur.
-   *
-   * @param examples Pointer to the Example object.
-   */
-  static void RegisterExample(util::Example* examples);
-
-  /**
-   * Registers a SeeAlso object, which contains documentation about the
-   * program.  If this method has been called before (that is, if two
-   * SeeAlsos are instantiated in the program), a fatal error will occur.
-   *
-   * @param seeAlsos Pointer to the SeeAlso object.
-   */
-  static void RegisterSeeAlso(util::SeeAlso* seeAlsos);
-
   //! Return a modifiable list of parameters that IO knows about.
   static std::map<std::string, util::ParamData>& Parameters();
   //! Return a modifiable list of aliases that IO knows about.
@@ -390,20 +326,8 @@ class IO
   //! So that Timer::Start() and Timer::Stop() can access the timer variable.
   friend class Timer;
 
-  //! Pointer to the ProgramName object.
-  util::ProgramName* pname;
-
-  //! Pointer to the ShortDescription object.
-  util::ShortDescription* shortDesc;
-
-  //! Pointer to the LongDescription object.
-  util::LongDescription* longDesc;
-
-  //! Pointer to the Example object.
-  std::vector<util::Example*> examples;
-
-  //! Pointer to the SeeAlso object.
-  std::vector<util::SeeAlso*> seeAlsos;
+  //! Holds the bindingDetails objects.
+  util::BindingDetails doc;
  private:
   /**
    * Make the constructor private, to preclude unauthorized instances.

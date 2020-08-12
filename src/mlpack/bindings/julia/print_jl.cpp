@@ -15,7 +15,7 @@
 
 #include <set>
 
-using namespace mlpack;
+using namespace mlpack::util;
 using namespace std;
 
 namespace mlpack {
@@ -27,13 +27,12 @@ extern std::string programName;
 /**
  * Print the code for a .jl binding for an mlpack program to stdout.
  */
-void PrintJL(const string& functionName,
+void PrintJL(const util::BindingDetails& doc,
+             const string& functionName,
              const std::string& mlpackJuliaLibSuffix)
 {
-  util::ProgramName& pname = *IO::GetSingleton().pname;
-  util::LongDescription& longDesc = *IO::GetSingleton().longDesc;
   // Restore parameters.
-  IO::RestoreSettings(pname.programName);
+  IO::RestoreSettings(doc.programName->programName);
 
   map<string, util::ParamData>& parameters = IO::Parameters();
   typedef map<string, util::ParamData>::iterator ParamIter;
@@ -169,12 +168,11 @@ void PrintJL(const string& functionName,
   cout << endl;
 
   // Next print the description.
-  cout << util::HyphenateString(longDesc.longDescription(), 0) << endl;
-  for (size_t j = 0; j < IO::GetSingleton().examples.size(); ++j)
+  cout << HyphenateString(doc.longDescription->longDescription(), 0)
+       << endl << endl;  
+  for (size_t j = 0; j < doc.example.size(); ++j)
   {
-    util::Example& example = *IO::GetSingleton().examples[j];
-    cout << util::HyphenateString(example.example(), 0)
-        << endl;
+    cout << util::HyphenateString(doc.example[j]->example(), 0) << endl << endl;
   }
   // Next, print information on the input options.
   cout << endl;
