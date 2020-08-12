@@ -148,7 +148,7 @@ void PrintPYX(const util::BindingDetails& doc,
   // print the description.
   cout << "  " << HyphenateString(doc.longDescription(), 2) << endl << endl;
 
-  // Next print the examples.  
+  // Next print the examples.
   for (size_t j = 0; j < doc.example.size(); ++j)
   {
     cout << "  " << util::HyphenateString(doc.example[j](), 2) << endl << endl;

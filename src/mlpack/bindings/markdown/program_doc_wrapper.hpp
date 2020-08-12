@@ -32,7 +32,7 @@ class ProgramNameWrapper
   ProgramNameWrapper(const std::string& bindingName,
                      const std::string& programName)
   {
-    BindingInfo::GetSingleton().map[bindingName].programName = 
+    BindingInfo::GetSingleton().map[bindingName].programName =
         std::move(programName);
   }
 };

@@ -25,7 +25,7 @@ struct BindingDetails
 {
   //! Name of the default module.
   std::string programName;
-  //! A short two-sentence description of the program, what it does, and what 
+  //! A short two-sentence description of the program, what it does, and what
   //! it is useful for.
   std::string shortDescription;
   //! Long string containing documentation on what it is.  No newline characters
@@ -35,7 +35,7 @@ struct BindingDetails
   std::vector<std::function<std::string()>> example;
   //! A  set of pairs of strings with useful "see also" information; each pair
   //! is <description, url>.
-  std::vector<std::pair<std::string, std::string>> seeAlso;  
+  std::vector<std::pair<std::string, std::string>> seeAlso;
 };
 
 } // namespace util

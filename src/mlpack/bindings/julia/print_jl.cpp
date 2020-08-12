@@ -168,7 +168,7 @@ void PrintJL(const util::BindingDetails& doc,
   cout << endl;
 
   // Next print the description.
-  cout << HyphenateString(doc.longDescription(), 0) << endl << endl;  
+  cout << HyphenateString(doc.longDescription(), 0) << endl << endl;
 
   // Next print the examples.
   for (size_t j = 0; j < doc.example.size(); ++j)
