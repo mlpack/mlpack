@@ -52,6 +52,7 @@ void serialize(Archive& ar, arma::SpMat<eT>& mat)
     // column pointers, if necessary, so we don't need to worry about them.
   }
 
+  // Manually set the values in the sparse matrix by assigning what we deserialized.
   ar(cereal::make_array(arma::access::rwp(mat.values), mat.n_nonzero));
   ar(cereal::make_array(arma::access::rwp(mat.row_indices), mat.n_nonzero));
   ar(cereal::make_array(arma::access::rwp(mat.col_ptrs), mat.n_cols + 1));
