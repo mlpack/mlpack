@@ -793,7 +793,7 @@ friend class cereal::access;
 On the other hand, the specifics of the functionality required for the
 \c Serialize() function are somewhat more difficult.  The \c Serialize()
 function will be called either when a tree is being saved to disk or loaded from
-disk.  The \c cereal documentation is fairly comprehensive, but
+disk.  The \c cereal documentation is fairly comprehensive.
 when writing a \c Serialize() method for mlpack trees you should use
 \c data::CreateNVP() instead of \c BOOST_SERIALIZATION_NVP().  This is because
 mlpack classes implement \c Serialize() instead of \c serialize() in order to
