@@ -533,11 +533,12 @@ double HMM<Distribution>::LogScaleEmissionProb(const arma::vec& emissionLogProb,
                                         arma::vec& forwardLogProb) const
 {
     double curLogSacle;
-    if(prevForwardLogProb.empty()){
-        //start os sequence or time t=0
+    if (prevForwardLogProb.empty()){
+        // start os sequence or time t=0
         ForwardAtT0(emissionLogProb, curLogSacle, forwardLogProb);
     }
-    else{
+    else
+	{
         ForwardAtTn(emissionLogProb, curLogSacle,
                     prevForwardLogProb, forwardLogProb);
     }
@@ -559,10 +560,8 @@ double HMM<Distribution>::LogLikelihoodEmissionProb(
 {
     auto curLogScale = LogScaleEmissionProb(emissionLogProb,
                                             prevForwardLogProb, forwardLogProb);
-    
     logLikelihood = prevForwardLogProb.empty()
                     ? curLogScale : curLogScale + logLikelihood;
-    
     return logLikelihood;
 }
 
@@ -583,7 +582,7 @@ double HMM<Distribution>::LogScale(const arma::vec &data,
           emissionLogProb(state) = emission[state].LogProbability(data);
     }
 
-    return LogScaleEmissionProb(emissionLogProb, 
+    return LogScaleEmissionProb(emissionLogProb,
                                      prevForwardLogProb, forwardLogProb);
 }
 
@@ -597,10 +596,9 @@ double HMM<Distribution>::LogLikelihood(const arma::vec &data,
                                         arma::vec& forwardLogProb) const
 {
     auto curLogScale = LogScale(data, prevForwardLogProb, forwardLogProb);
-    
     logLikelihood = prevForwardLogProb.empty()
                     ? curLogScale : curLogScale + logLikelihood;
-    return logLikelihood;                
+    return logLikelihood;
 }
 
 /**
