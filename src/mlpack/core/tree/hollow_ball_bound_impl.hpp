@@ -441,7 +441,8 @@ void HollowBallBound<TMetricType, ElemType>::serialize(
   }
 
   ar & CEREAL_POINTER(metric);
-  ar & CEREAL_NVP(ownsMetric);
+  if (Archive::is_loading::value)
+    ownsMetric = true;
 }
 
 } // namespace bound
