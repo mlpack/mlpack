@@ -99,6 +99,7 @@ void serialize(Archive& ar, arma::Cube<eT>& cube)
     cube.set_size(n_rows, n_cols, n_slices);
   }
 
+ // Directly serialize the contents of the matrix's memory.
   ar & cereal::make_array(arma::access::rwp(cube.mem), cube.n_elem);
 }
 
