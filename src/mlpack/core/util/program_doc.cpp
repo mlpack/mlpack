@@ -3,8 +3,8 @@
  * @author Yashwant Singh Parihar
  * @author Ryan Curtin
  *
- * Implementation of the mutiple classes.  The classes registers itself with IO
- * when constructed.
+ * Implementation of mutiple classes that store information related to a binding.
+ * The classes register themselves with IO when constructed.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

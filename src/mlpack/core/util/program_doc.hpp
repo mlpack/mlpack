@@ -20,7 +20,7 @@ namespace util {
 /**
  * A static object whose constructor registers program documentation with the
  * IO class.  This should not be used outside of IO itself, and you should use
- * these BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(), 
+ * these BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
  * BINDING_EXAMPLE() and BINDING_SEE_ALSO() macros to declare these objects.
  * Only correspond object should ever exist.
  *
@@ -41,6 +41,7 @@ class ProgramName
    * Construct an empty ProgramName object.  (This is not meant to be used!)
    */
   ProgramName();
+
   std::string programName;
 };
 
@@ -62,6 +63,7 @@ class ShortDescription
    * (This is not meant to be used!)
    */
   ShortDescription();
+
   std::string shortDescription;
 };
 
@@ -72,7 +74,7 @@ class LongDescription
    * Construct a LongDescription object. When constructed, it will register itself
    * with IO.  A fatal error will be thrown if more than one is constructed.
    *
-   * @param longDescription Long string containing documentation on 
+   * @param longDescription Long string containing documentation on
    *     what it is.  No newline characters are necessary; this is
    *     taken care of by IO later.
    */
@@ -82,6 +84,7 @@ class LongDescription
    * Construct an empty LongDescription object.  (This is not meant to be used!)
    */
   LongDescription();
+
   std::function<std::string()> longDescription;
 };
 
@@ -100,6 +103,7 @@ class Example
    * Construct an empty Example object.  (This is not meant to be used!)
    */
   Example();
+
   std::function<std::string()> example;
 };
 
@@ -119,8 +123,11 @@ class SeeAlso
    * Construct an empty SeeAlso object.  (This is not meant to be used!)
    */
   SeeAlso();
-  std::pair<std::string, std::string> seeAlso;
+
+  std::string description;
+  std::string link;
 };
+
 } // namespace util
 } // namespace mlpack
 

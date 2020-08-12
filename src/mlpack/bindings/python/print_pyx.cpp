@@ -144,9 +144,9 @@ void PrintPYX(const util::BindingDetails& doc,
   cout << "  \"\"\"" << endl;
   cout << "  " << doc.programName->programName << endl;
   cout << endl;
-  cout << "  " << HyphenateString(doc.longDescription->longDescription(), 2)
-       << endl << endl;  
-  for (size_t j = 0; j < doc.example.size(); ++j)
+  cout << "  " << HyphenateString(longDesc.longDescription(), 2) << endl;
+  cout << endl;
+  for (size_t j = 0; j < IO::GetSingleton().examples.size(); ++j)
   {
     cout << "  " << util::HyphenateString(doc.example[j]->example(), 2) << endl
          << endl;
