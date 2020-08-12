@@ -456,7 +456,7 @@ class HMM
    *
    * @param dataSeq Data sequence to compute probabilities for.
    * @param logScales Vector in which the log of scaling factors will be saved.
-   * @param forwardProb Matrix in which forward probabilities will be saved.
+   * @param forwardLogProb Matrix in which forward probabilities will be saved.
    */
   void Forward(const arma::mat& dataSeq,
                arma::vec& logScales,
@@ -471,7 +471,7 @@ class HMM
    *
    * @param dataSeq Data sequence to compute probabilities for.
    * @param logScales Vector of log of scaling factors.
-   * @param backwardProb Matrix in which backward probabilities will be saved.
+   * @param backwardLogProb Matrix in which backward probabilities will be saved.
    */
   void Backward(const arma::mat& dataSeq,
                 const arma::vec& logScales,
