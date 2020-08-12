@@ -806,7 +806,7 @@ An important note is that it is very difficult to use references with
 \c cereal, because \c serialize() may be called at any time during
 the object's lifetime, and references cannot be re-seated.  In general this will
 require the use of pointers, which then require manual memory management.
-Therefore, be careful that \c Serialize() (and the tree's destructor) properly
+Therefore, be careful that \c serialize() (and the tree's destructor) properly
 handle memory management!
 
 @section treetype_traits The TreeTraits trait class
