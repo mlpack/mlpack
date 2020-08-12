@@ -540,7 +540,7 @@ BOOST_AUTO_TEST_CASE(PendulumWithSAC)
     SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
         agent(config, qNetwork, policyNetwork, replayMethod);
 
-    converged = testAgent<decltype(agent)>(agent, -1000, 500, 10);
+    converged = testAgent<decltype(agent)>(agent, -900, 500, 10);
     if (converged)
       break;
   }
