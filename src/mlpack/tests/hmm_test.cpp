@@ -835,16 +835,37 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
       }
   };
 
-  arma::Row<size_t> stateSeq;
-  auto loglikelihood = hmm.LogLikelihood(obs);
+  const double loglikelihoodRef = -2734.43;
 
-  double loglikelihood2;
-  arma::vec prevForwardLogProb;
-  arma::vec forwardLogProb;
-  for(size_t t = 0; t<obs.n_cols; ++t){
-    loglikelihood2 = hmm.LogLikelihood(obs.col(t), loglikelihood2, prevForwardLogProb, forwardLogProb);
+  {  
+    auto loglikelihood = hmm.LogLikelihood(obs);
+    BOOST_REQUIRE_CLOSE(loglikelihood, loglikelihoodRef, 1e-3);
   }
 
+  {
+    double loglikelihood;
+    arma::vec prevForwardLogProb;
+    arma::vec forwardLogProb;
+    for(size_t t = 0; t<obs.n_cols; ++t){
+      loglikelihood = hmm.LogLikelihood(obs.col(t), loglikelihood,
+                                        prevForwardLogProb, forwardLogProb);
+    }
+    BOOST_REQUIRE_CLOSE(loglikelihood, loglikelihoodRef, 1e-3);
+  }
+
+  {
+    double loglikelihood = 0;
+    arma::vec prevForwardLogProb;
+    arma::vec forwardLogProb;
+    for(size_t t = 0; t<obs.n_cols; ++t){
+      auto logScale = hmm.LogScale(obs.col(t), prevForwardLogProb,
+                                    forwardLogProb);
+      loglikelihood += logScale;
+    }
+    BOOST_REQUIRE_CLOSE(loglikelihood, loglikelihoodRef, 1e-3);
+  }
+
+  arma::Row<size_t> stateSeq;
   hmm.Predict(obs, stateSeq);
 
   arma::Row<size_t> stateSeqRef = { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -852,9 +873,6 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
       4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7,
       7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9,
       9, 9, 9, 9, 9, 9, 9, 9, 9, 9 };
-
-  BOOST_REQUIRE_CLOSE(loglikelihood, -2734.43, 1e-3);
-  BOOST_REQUIRE_CLOSE(loglikelihood, loglikelihood2, 1e-5);
 
   for (size_t i = 0; i < stateSeqRef.n_cols; ++i)
   {

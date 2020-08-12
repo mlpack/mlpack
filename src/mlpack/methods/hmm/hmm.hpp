@@ -293,6 +293,23 @@ class HMM
   double LogLikelihood(const arma::mat& dataSeq) const;
 
   /**
+   * Compute the log of the scaling factor of the given emission probability
+   * at time t. To calculate the log-likelihood for the whole sequence,
+   * accumulate log scale over the entire sequence
+   *
+   * @param log emission probability at time t.
+   * probability up to time t-1
+   * @param prevForwardProb Vector in which forward probabilities for time t-1
+   * will be saved. Passing prevForwardProb as an empty vector indicates the
+   * start of sequence or time t=0 
+   * @param forwardProb Vector in which forward probabilities for time t
+   * will be saved.
+   * @return Log scale factor of the given sequence of emission at time t.
+   */
+  double LogScaleEmissionProb(const arma::vec& emissionLogProb,
+                       arma::vec& prevForwardLogProb,
+                       arma::vec& forwardLogProb) const;
+  /**
    * Compute the log-likelihood of the given emission probability up to time t
    *
    * @param log emission probability at time t.
@@ -310,10 +327,27 @@ class HMM
                        arma::vec& prevForwardLogProb,
                        arma::vec& forwardLogProb) const;
   /**
+   * Compute the log of the scaling factor of the given data at time t.
+   * To calculate the log-likelihood for the whole sequence, accumulate log
+   * scale over the entire sequence
+   *
+   * @param data observation at time t.
+   * @param prevForwardProb Vector in which forward probabilities for time t-1
+   * will be saved. Passing prevForwardProb as an empty vector indicates the
+   * start of sequence or time t=0 
+   * @param forwardProb Vector in which forward probabilities for time t
+   * will be saved.
+   * @return Log scale factor of the given sequence of data up at time t.
+   */
+  double LogScale(const arma::vec &data,
+                       arma::vec& prevForwardLogProb,
+                       arma::vec& forwardLogProb) const;
+  /**
    * Compute the log-likelihood of the given data up to time t
    *
    * @param data observation at time t.
-   * @param logScale Log-likelihood of the given sequence of data up to time t-1
+   * @param logLikelihood Log-likelihood of the given sequence of data
+   * up to time t-1
    * @param prevForwardProb Vector in which forward probabilities for time t-1
    * will be saved. Passing prevForwardProb as an empty vector indicates the
    * start of sequence or time t=0 
@@ -423,7 +457,7 @@ class HMM
    * states and columns equal to the number of observations.
    *
    * @param dataSeq Data sequence to compute probabilities for.
-   * @param scales Vector in which scaling factors will be saved.
+   * @param logScales Vector in which the log of scaling factors will be saved.
    * @param forwardProb Matrix in which forward probabilities will be saved.
    */
   void Forward(const arma::mat& dataSeq,
@@ -438,7 +472,7 @@ class HMM
    * columns equal to the number of observations.
    *
    * @param dataSeq Data sequence to compute probabilities for.
-   * @param scales Vector of scaling factors.
+   * @param logScales Vector of log of scaling factors.
    * @param backwardProb Matrix in which backward probabilities will be saved.
    */
   void Backward(const arma::mat& dataSeq,
