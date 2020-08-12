@@ -102,9 +102,6 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
   DataType spikeBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem,
       hiddenSize, 1, false, false);
 
-  DataType visiblePenaltyGrad = DataType(gradient.memptr() +
-      weightGrad.n_elem + spikeBiasGrad.n_elem, 1, 1, false, false);
-
   SpikeMean(input, spikeMean);
   SampleSpike(spikeMean, spikeSamples);
   SlabMean(input, spikeSamples, slabMean);
@@ -116,9 +113,9 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
   }
 
   spikeBiasGrad = spikeMean;
-
-  visiblePenaltyGrad = -0.5 * arma::dot(input, input)
-      / std::pow(input.n_cols, 2);
+  // Setting visiblePenaltyGrad.
+  gradient.row(weightGrad.n_elem + spikeBiasGrad.n_elem) = -0.5 * arma::dot(
+                                    input, input) / std::pow(input.n_cols, 2);
 }
 
 template<
