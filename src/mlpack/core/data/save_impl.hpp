@@ -329,7 +329,7 @@ bool Save(const std::string& filename,
       f = format::xml;
     else if (extension == "bin")
       f = format::binary;
-    else if (extension == "txt")
+    else if (extension == "json")
       f = format::json;
     else
     {
