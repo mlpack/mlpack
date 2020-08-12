@@ -239,9 +239,9 @@ BOOST_AUTO_TEST_CASE(RandomReplayTest)
       0.9);
   arma::mat sampledState;
   std::vector<MountainCar::Action> sampledAction;
-  arma::colvec sampledReward;
+  arma::rowvec sampledReward;
   arma::mat sampledNextState;
-  arma::icolvec sampledTerminal;
+  arma::irowvec sampledTerminal;
 
   //! So far there should be only one record in the memory
   replay.Sample(sampledState, sampledAction, sampledReward, sampledNextState,
