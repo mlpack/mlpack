@@ -63,7 +63,6 @@ template<typename Archive, typename eT>
 void serialize(Archive& ar, arma::Mat<eT>& mat)
 {
   // This is accurate from Armadillo 3.6.0 onwards.
-  // We can't use CEREAL_NVP() because of the arma::access::rw() call.
   arma::uword n_rows = mat.n_rows;
   arma::uword n_cols = mat.n_cols;
   arma::uword vec_state = mat.vec_state;
