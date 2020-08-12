@@ -46,17 +46,30 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
     const size_t queryIndex,
     SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
-        referenceNode)
+        referenceNode,
+    const bool bruteForce)
 {
-  // If we are a leaf, run the base case as necessary.
-  if (referenceNode.IsLeaf())
+  // If we have too few points, then we need to backtrack up one level and
+  // brute-force search.
+  if (!bruteForce && Defeatist &&
+      referenceNode.NumDescendants() < rule.MinimumBaseCases())
   {
-    for (size_t i = 0; i < referenceNode.NumPoints(); ++i)
-      rule.BaseCase(queryIndex, referenceNode.Point(i));
+    Traverse(queryIndex, *referenceNode.Parent(), true);
+  }
+  else if (referenceNode.IsLeaf() || bruteForce)
+  {
+    for (size_t i = 0; i < referenceNode.NumDescendants(); ++i)
+      rule.BaseCase(queryIndex, referenceNode.Descendant(i));
   }
   else
   {
-    if (Defeatist && referenceNode.Overlap())
+    // Determine if we have traversed too far; if so, we need to do brute-force
+    // search on the parent reference node.
+    if (Defeatist && referenceNode.NumDescendants() < rule.MinimumBaseCases())
+    {
+      Traverse(queryIndex, *referenceNode.Parent(), true);
+    }
+    else if (Defeatist && referenceNode.Overlap())
     {
       // If referenceNode is a overlapping node we do defeatist search.
       size_t bestChild = rule.GetBestChild(queryIndex, referenceNode);
@@ -78,8 +91,8 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
         rightScore = rule.Rescore(queryIndex, *referenceNode.Right(),
             rightScore);
 
-        if (rightScore != DBL_MAX)
-          Traverse(queryIndex, *referenceNode.Right()); // Recurse to the right.
+        if (rightScore != DBL_MAX) // Recurse to the right.
+          Traverse(queryIndex, *referenceNode.Right());
         else
           ++numPrunes;
       }
@@ -91,8 +104,8 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
         // Is it still valid to recurse to the left?
         leftScore = rule.Rescore(queryIndex, *referenceNode.Left(), leftScore);
 
-        if (leftScore != DBL_MAX)
-          Traverse(queryIndex, *referenceNode.Left()); // Recurse to the left.
+        if (leftScore != DBL_MAX) // Recurse to the left.
+          Traverse(queryIndex, *referenceNode.Left());
         else
           ++numPrunes;
       }
