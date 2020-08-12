@@ -43,7 +43,7 @@ public:
   * default implementation
   */
   template<class Archive>
-  void serialize(Archive &ar)
+  void serialize(Archive& ar)
   {
    // default implemention does the loop
     size_t c = count();
