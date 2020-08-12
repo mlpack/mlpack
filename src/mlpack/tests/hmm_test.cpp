@@ -847,7 +847,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
     arma::vec prevForwardLogProb;
     arma::vec forwardLogProb;
     for (size_t t = 0; t<obs.n_cols; ++t)
-	{
+    {
       loglikelihood = hmm.LogLikelihood(obs.col(t), loglikelihood,
                                         prevForwardLogProb, forwardLogProb);
     }
@@ -859,7 +859,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
     arma::vec prevForwardLogProb;
     arma::vec forwardLogProb;
     for (size_t t = 0; t<obs.n_cols; ++t)
-	{
+    {
       auto logScale = hmm.LogScale(obs.col(t), prevForwardLogProb,
                                     forwardLogProb);
       loglikelihood += logScale;

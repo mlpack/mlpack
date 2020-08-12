@@ -538,7 +538,7 @@ double HMM<Distribution>::LogScaleEmissionProb(const arma::vec& emissionLogProb,
         ForwardAtT0(emissionLogProb, curLogSacle, forwardLogProb);
     }
     else
-	{
+    {
         ForwardAtTn(emissionLogProb, curLogSacle,
                     prevForwardLogProb, forwardLogProb);
     }
