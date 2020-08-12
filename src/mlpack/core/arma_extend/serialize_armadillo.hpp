@@ -101,6 +101,7 @@ void serialize(Archive& ar, arma::Cube<eT>& cube)
 
   ar & cereal::make_array(arma::access::rwp(cube.mem), cube.n_elem);
 }
+
 } // end namespace cereal
 
 #endif //MLPACK_CORE_ARMA_EXTEND_SERIALIZE_ARMADILLO_HPP
