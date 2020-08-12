@@ -1,5 +1,5 @@
 /**
- * @file alpha_dropout_impl.hpp
+ * @file methods/ann/layer/alpha_dropout_impl.hpp
  * @author Dakshit Agrawal
  *
  * Definition of the Alpha-Dropout class, which implements a regularizer that
@@ -36,7 +36,7 @@ AlphaDropout<InputDataType, OutputDataType>::AlphaDropout(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void AlphaDropout<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   // The dropout mask will not be multiplied in the deterministic mode
   // (during testing).
@@ -58,7 +58,7 @@ void AlphaDropout<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void AlphaDropout<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   g = gy % mask * a;
 }

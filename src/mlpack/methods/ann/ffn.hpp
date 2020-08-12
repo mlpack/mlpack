@@ -1,5 +1,5 @@
 /**
- * @file ffn.hpp
+ * @file methods/ann/ffn.hpp
  * @author Marcus Edel
  * @author Shangtong Zhang
  *
@@ -30,6 +30,7 @@
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <ensmallen.hpp>
 
 namespace mlpack {
@@ -81,6 +82,35 @@ class FFN
 
   //! Destructor to release allocated memory.
   ~FFN();
+
+  /**
+   * Check if the optimizer has MaxIterations() parameter, if it does
+   * then check if it's value is less than the number of datapoints
+   * in the dataset.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+
+  /**
+   * Check if the optimizer has MaxIterations() parameter, if it
+   * doesn't then simply return from the function.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
   /**
    * Train the feedforward network on the given input data using the given
@@ -153,15 +183,15 @@ class FFN
    * @param predictors Input variables.
    * @param responses Target outputs for input variables.
    */
-  double Evaluate(arma::mat predictors, arma::mat responses);
+  template<typename PredictorsType, typename ResponsesType>
+  double Evaluate(const PredictorsType& predictors,
+                  const ResponsesType& responses);
 
   /**
    * Evaluate the feedforward network with the given parameters. This function
    * is usually called by the optimizer to train the model.
    *
    * @param parameters Matrix model parameters.
-   * @param deterministic Whether or not to train or test the model. Note some
-   *        layer act differently in training or testing mode.
    */
   double Evaluate(const arma::mat& parameters);
 
@@ -313,7 +343,8 @@ class FFN
    * @param inputs The input data.
    * @param results The predicted results.
    */
-  void Forward(arma::mat inputs, arma::mat& results);
+  template<typename PredictorsType, typename ResponsesType>
+  void Forward(const PredictorsType& inputs, ResponsesType& results);
 
   /**
    * Perform a partial forward pass of the data.
@@ -326,8 +357,9 @@ class FFN
    * @param begin The index of the first layer.
    * @param end The index of the last layer.
    */
-  void Forward(arma::mat inputs,
-               arma::mat& results,
+  template<typename PredictorsType, typename ResponsesType>
+  void Forward(const PredictorsType& inputs ,
+               ResponsesType& results,
                const size_t begin,
                const size_t end);
 
@@ -338,11 +370,17 @@ class FFN
    * for advanced users. User should try to use Predict and Train unless those
    * two functions can't satisfy some special requirements.
    *
+   * @param inputs Inputs of current pass.
    * @param targets The training target.
    * @param gradients Computed gradients.
    * @return Training error of the current pass.
    */
-  double Backward(arma::mat targets, arma::mat& gradients);
+  template<typename PredictorsType,
+           typename TargetsType,
+           typename GradientsType>
+  double Backward(const PredictorsType& inputs,
+                  const TargetsType& targets,
+                  GradientsType& gradients);
 
  private:
   // Helper functions.
@@ -352,7 +390,8 @@ class FFN
    *
    * @param input Data sequence to compute probabilities for.
    */
-  void Forward(arma::mat&& input);
+  template<typename InputType>
+  void Forward(const InputType& input);
 
   /**
    * Prepare the network for the given data.
@@ -373,7 +412,8 @@ class FFN
    * Iterate through all layer modules and update the the gradient using the
    * layer defined optimizer.
    */
-  void Gradient(arma::mat&& input);
+  template<typename InputType>
+  void Gradient(const InputType& input);
 
   /**
    * Reset the module status by setting the current deterministic parameter
@@ -426,9 +466,6 @@ class FFN
 
   //! The current error for the backward pass.
   arma::mat error;
-
-  //! THe current input of the forward/backward pass.
-  arma::mat currentInput;
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;
@@ -496,7 +533,7 @@ template<typename OutputLayerType,
 struct version<
     mlpack::ann::FFN<OutputLayerType, InitializationRuleType, CustomLayer...>>
 {
-  BOOST_STATIC_CONSTANT(int, value = 1);
+  BOOST_STATIC_CONSTANT(int, value = 2);
 };
 
 } // namespace serialization

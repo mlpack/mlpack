@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_impl.hpp
+ * @file methods/logistic_regression/logistic_regression_impl.hpp
  * @author Sumedh Ghaisas
  * @author Arun Reddy
  *
@@ -25,7 +25,6 @@ LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
     const double lambda) :
-    parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   Train(predictors, responses);
@@ -60,7 +59,6 @@ LogisticRegression<MatType>::LogisticRegression(
     const arma::Row<size_t>& responses,
     OptimizerType& optimizer,
     const double lambda) :
-    parameters(arma::rowvec(predictors.n_rows + 1, arma::fill::zeros)),
     lambda(lambda)
 {
   Train(predictors, responses, optimizer);
@@ -85,9 +83,11 @@ double LogisticRegression<MatType>::Train(
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
-  LogisticRegressionFunction<MatType> errorFunction(predictors,
-                                                    responses,
-                                                    lambda);
+  LogisticRegressionFunction<MatType> errorFunction(predictors, responses,
+      lambda);
+
+  // Set size of parameters vector according to the input data received.
+  parameters = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
   errorFunction.InitialPoint() = parameters;
 
   Timer::Start("logistic_regression_optimization");
@@ -161,7 +161,7 @@ double LogisticRegression<MatType>::ComputeAccuracy(
 
   // Count the number of responses that were correct.
   size_t count = 0;
-  for (size_t i = 0; i < responses.n_elem; i++)
+  for (size_t i = 0; i < responses.n_elem; ++i)
   {
     if (responses(i) == tempResponses(i))
       count++;

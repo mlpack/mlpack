@@ -1,5 +1,5 @@
 /**
- * @file gan.hpp
+ * @file methods/ann/gan/gan.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -111,11 +111,11 @@ class GAN
 
   /**
    * Train function.
-   * 
+   *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback functions.
    * @param trainData The data points of real distribution.
-   * @param optimizer Instantiated optimizer used to train the model. 
+   * @param Optimizer Instantiated optimizer used to train the model. 
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
@@ -289,7 +289,7 @@ class GAN
    *
    * @param input Sampled noise.
    */
-  void Forward(arma::mat&& input);
+  void Forward(const arma::mat& input);
 
   /**
    * This function predicts the output of the network on the given input.

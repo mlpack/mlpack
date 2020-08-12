@@ -1,5 +1,5 @@
 /**
- * @file max_iteration_termination.hpp
+ * @file methods/amf/termination_policies/max_iteration_termination.hpp
  * @author Ryan Curtin
  *
  * A termination policy which only terminates when the maximum number of

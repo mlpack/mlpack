@@ -1,9 +1,14 @@
 /**
- * @filename strip_type.hpp
+ * @file bindings/julia/strip_type.hpp
  * @author Ryan Curtin
  *
  * Given a C++ type name, turn it into something that has no special characters
  * that can simply be printed.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_JULIA_STRIP_TYPE_HPP
 #define MLPACK_BINDINGS_JULIA_STRIP_TYPE_HPP

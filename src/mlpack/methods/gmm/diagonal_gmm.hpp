@@ -1,6 +1,6 @@
 /**
  * @author Kim SangYeon
- * @file diagonal_gmm.hpp
+ * @file methods/gmm/diagonal_gmm.hpp
  *
  * Defines a Diagonal Gaussian Mixture model and estimates the parameters
  * of the model.

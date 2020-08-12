@@ -32,22 +32,22 @@ struct NMFTestFixture
   NMFTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~NMFTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
 static void ResetSettings()
 {
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(NMFMainTest, NMFTestFixture);
@@ -69,8 +69,8 @@ BOOST_AUTO_TEST_CASE(NMFMultdistShapeTest)
   mlpackMain();
 
   // Get resulting matrices.
-  const mat& w = CLI::GetParam<mat>("w");
-  const mat& h = CLI::GetParam<mat>("h");
+  const mat& w = IO::GetParam<mat>("w");
+  const mat& h = IO::GetParam<mat>("h");
 
   // Check the shapes of W and H.
   BOOST_REQUIRE_EQUAL(w.n_rows, 8);
@@ -96,8 +96,8 @@ BOOST_AUTO_TEST_CASE(NMFMultdivShapeTest)
   mlpackMain();
 
   // Get resulting matrices.
-  const mat& w = CLI::GetParam<mat>("w");
-  const mat& h = CLI::GetParam<mat>("h");
+  const mat& w = IO::GetParam<mat>("w");
+  const mat& h = IO::GetParam<mat>("h");
 
   // Check the shapes of W and H.
   BOOST_REQUIRE_EQUAL(w.n_rows, 8);
@@ -123,8 +123,8 @@ BOOST_AUTO_TEST_CASE(NMFAlsShapeTest)
   mlpackMain();
 
   // Get resulting matrices.
-  const mat& w = CLI::GetParam<mat>("w");
-  const mat& h = CLI::GetParam<mat>("h");
+  const mat& w = IO::GetParam<mat>("w");
+  const mat& h = IO::GetParam<mat>("h");
 
   // Check the shapes of W and H.
   BOOST_REQUIRE_EQUAL(w.n_rows, 8);
@@ -216,8 +216,8 @@ BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
 
   mlpackMain();
 
-  const mat w1 = CLI::GetParam<mat>("w");
-  const mat h1 = CLI::GetParam<mat>("h");
+  const mat w1 = IO::GetParam<mat>("w");
+  const mat h1 = IO::GetParam<mat>("h");
 
   ResetSettings();
 
@@ -230,8 +230,8 @@ BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
 
   mlpackMain();
 
-  const mat w2 = CLI::GetParam<mat>("w");
-  const mat h2 = CLI::GetParam<mat>("h");
+  const mat w2 = IO::GetParam<mat>("w");
+  const mat h2 = IO::GetParam<mat>("h");
 
   // The resulting matrices should be different.
   BOOST_REQUIRE_GT(arma::norm(w1 - w2), 1e-5);
@@ -260,8 +260,8 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
 
   mlpackMain();
 
-  const mat w1 = CLI::GetParam<mat>("w");
-  const mat h1 = CLI::GetParam<mat>("h");
+  const mat w1 = IO::GetParam<mat>("w");
+  const mat h1 = IO::GetParam<mat>("h");
 
   ResetSettings();
 
@@ -276,12 +276,91 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
 
   mlpackMain();
 
-  const mat w2 = CLI::GetParam<mat>("w");
-  const mat h2 = CLI::GetParam<mat>("h");
+  const mat w2 = IO::GetParam<mat>("w");
+  const mat h2 = IO::GetParam<mat>("h");
 
   // The resulting matrices should be different.
   BOOST_REQUIRE_GT(arma::norm(w1 - w2), 1e-5);
   BOOST_REQUIRE_GT(arma::norm(h1 - h2), 1e-5);
 }
 
+/**
+ * Test NMF with given initial_w and initial_h.
+ */
+BOOST_AUTO_TEST_CASE(NMFWHGivenInitTest)
+{
+  mat v = arma::randu(10, 10);
+  mat initialW = arma::randu(10, 5);
+  mat initialH = arma::randu(5, 10);
+  int r = 5;
+
+  SetInputParam("input", v);
+  SetInputParam("rank", r);
+  SetInputParam("initial_w", initialW);
+  SetInputParam("initial_h", initialH);
+
+  mlpackMain();
+
+  const mat w = IO::GetParam<mat>("w");
+  const mat h = IO::GetParam<mat>("h");
+
+  // Check the shapes of W and H.
+  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
+  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
+  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+}
+
+/**
+ * Test NMF with given initial_w.
+ */
+BOOST_AUTO_TEST_CASE(NMFWGivenInitTest)
+{
+  mat v = arma::randu(10, 10);
+  mat initialW = arma::randu(10, 5);
+  int r = 5;
+
+  SetInputParam("input", v);
+  SetInputParam("rank", r);
+  SetInputParam("initial_w", initialW);
+
+  mlpackMain();
+
+  const mat w = IO::GetParam<mat>("w");
+  const mat h = IO::GetParam<mat>("h");
+
+  // Check the shapes of W and H.
+  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
+  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
+  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+}
+
+/**
+ * Test NMF with given initial_h.
+ */
+BOOST_AUTO_TEST_CASE(NMFHGivenInitTest)
+{
+  mat v = arma::randu(10, 10);
+  mat initialH = arma::randu(5, 10);
+  int r = 5;
+
+  SetInputParam("input", v);
+  SetInputParam("rank", r);
+  SetInputParam("initial_h", initialH);
+
+  mlpackMain();
+
+  const mat w = IO::GetParam<mat>("w");
+  const mat h = IO::GetParam<mat>("h");
+
+  // Check the shapes of W and H.
+  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
+  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
+  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+}
+
+
 BOOST_AUTO_TEST_SUITE_END();
+

@@ -1,5 +1,5 @@
 /**
- * @file test_tools.hpp
+ * @file tests/test_tools.hpp
  * @author Ryan Curtin
  *
  * This file includes some useful macros for tests.

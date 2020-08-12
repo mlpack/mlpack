@@ -1,5 +1,5 @@
 /**
- * @file laplacian_kernel.hpp
+ * @file core/kernels/laplacian_kernel.hpp
  * @author Ajinkya Kale <kaleajinkya@gmail.com>
  *
  * Implementation of the Laplacian kernel (LaplacianKernel).

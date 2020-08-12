@@ -1,9 +1,9 @@
 /**
- * @file concat.hpp
+ * @file methods/ann/layer/concat.hpp
  * @author Marcus Edel
  * @author Mehul Kumar Nirala
  *
- * Definition of the Concat class, which acts as a concatenation contain.
+ * Definition of the Concat class, which acts as a concatenation container.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -80,35 +80,35 @@ class Concat
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /**
    * This is the overload of Backward() that runs only a specific layer with
    * the given input.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
-   * @param The index of the layer to run.
+   * @param index The index of the layer to run.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g,
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g,
                 const size_t index);
 
   /*
@@ -119,9 +119,9 @@ class Concat
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& /* gradient */);
+  void Gradient(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& /* gradient */);
 
   /*
    * This is the overload of Gradient() that runs a specific layer with the
@@ -133,18 +133,10 @@ class Concat
    * @param The index of the layer to run.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient,
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient,
                 const size_t index);
-
-  /*
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  template<typename LayerType>
-  void Add(const LayerType& layer) { network.push_back(new LayerType(layer)); }
 
   /*
    * Add a new module to the model.
@@ -200,6 +192,9 @@ class Concat
   arma::mat const& Gradient() const { return gradient; }
   //! Modify the gradient.
   arma::mat& Gradient() { return gradient; }
+
+  //! Get the axis of concatenation.
+  size_t const& ConcatAxis() const { return axis; }
 
   /**
    * Serialize the layer

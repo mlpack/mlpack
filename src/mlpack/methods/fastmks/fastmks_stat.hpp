@@ -1,5 +1,5 @@
 /**
- * @file fastmks_stat.hpp
+ * @file methods/fastmks/fastmks_stat.hpp
  * @author Ryan Curtin
  *
  * The statistic used in trees with FastMKS.

@@ -1,5 +1,5 @@
 /**
- * @file dtnn_rules.hpp
+ * @file methods/kmeans/dual_tree_kmeans_rules.hpp
  * @author Ryan Curtin
  *
  * A set of rules for the dual-tree k-means algorithm which uses dual-tree

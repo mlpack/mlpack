@@ -1,5 +1,5 @@
 /**
- * @param mlpack_cli_main.hpp
+ * @param mlpack_main.hpp
  * @author Ryan Curtin
  *
  * This file, based on the value of the macro BINDING_TYPE, will define the
@@ -22,6 +22,7 @@
 #define BINDING_TYPE_TEST 1
 #define BINDING_TYPE_PYX 2
 #define BINDING_TYPE_JL 3
+#define BINDING_TYPE_GO 4
 #define BINDING_TYPE_MARKDOWN 128
 #define BINDING_TYPE_UNKNOWN -1
 
@@ -154,7 +155,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
     static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ })
 
 #elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
@@ -219,7 +220,7 @@ static const std::string testName = "";
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
     static mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ }); \
     namespace mlpack { \
     namespace bindings { \
@@ -268,7 +269,7 @@ static const std::string testName = "";
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static \
     mlpack::util::ProgramDoc \
-    cli_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
     []() { return DESC; }, { __VA_ARGS__ }); \
     namespace mlpack { \
     namespace bindings { \
@@ -280,6 +281,53 @@ static const std::string testName = "";
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
+
+// Nothing else needs to be defined---the binding will use mlpackMain() as-is.
+
+#elif(BINDING_TYPE == BINDING_TYPE_GO) // This is a Go binding.
+
+// Matrices are transposed on load/save.
+#define BINDING_MATRIX_TRANSPOSED true
+
+#include <mlpack/bindings/go/go_option.hpp>
+#include <mlpack/bindings/go/print_doc_functions.hpp>
+
+#define PRINT_PARAM_STRING mlpack::bindings::go::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::go::PrintValue
+#define PRINT_DATASET mlpack::bindings::go::PrintDataset
+#define PRINT_MODEL mlpack::bindings::go::PrintModel
+#define PRINT_CALL mlpack::bindings::go::ProgramCall
+#define BINDING_IGNORE_CHECK mlpack::bindings::go::IgnoreCheck
+
+namespace mlpack {
+namespace util {
+
+template<typename T>
+using Option = mlpack::bindings::go::GoOption<T>;
+
+}
+}
+
+static const std::string testName = "";
+#include <mlpack/core/util/param.hpp>
+
+#undef PROGRAM_INFO
+#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
+    static mlpack::util::ProgramDoc \
+    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
+    []() { return DESC; }, { __VA_ARGS__ }); \
+    namespace mlpack { \
+    namespace bindings { \
+    namespace go { \
+    std::string programName = NAME; \
+    } \
+    } \
+    }
+
+PARAM_FLAG("verbose", "Display informational messages and the full list of "
+    "parameters and timers at the end of execution.", "v");
+
+// Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 
 #elif BINDING_TYPE == BINDING_TYPE_MARKDOWN
 
@@ -351,7 +399,7 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 #undef PROGRAM_INFO
 #define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) static \
     mlpack::bindings::markdown::ProgramDocWrapper \
-    cli_programdoc_dummy_object = \
+    io_programdoc_dummy_object = \
     mlpack::bindings::markdown::ProgramDocWrapper(BINDING_NAME, NAME, \
     SHORT_DESC, []() { return DESC; }, { __VA_ARGS__ }); \
 

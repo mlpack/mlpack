@@ -1,5 +1,5 @@
 /**
- * @file output_width_visitor.hpp
+ * @file methods/ann/visitor/output_width_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the OutputWidth() function for

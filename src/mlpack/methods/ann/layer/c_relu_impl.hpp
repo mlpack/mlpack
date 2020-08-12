@@ -1,5 +1,5 @@
 /**
- * @file c_relu_impl.hpp
+ * @file methods/ann/layer/c_relu_impl.hpp
  * @author Jeffin Sam
  *
  * Implementation of CReLU layer.
@@ -27,7 +27,7 @@ CReLU<InputDataType, OutputDataType>::CReLU()
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void CReLU<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   output = arma::join_cols(arma::max(input, 0.0 * input), arma::max(
       (-1 * input), 0.0 * input));
@@ -36,7 +36,7 @@ void CReLU<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void CReLU<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+    const DataType& input, const DataType& gy, DataType& g)
 {
   DataType temp;
   temp = gy % (input >= 0.0);

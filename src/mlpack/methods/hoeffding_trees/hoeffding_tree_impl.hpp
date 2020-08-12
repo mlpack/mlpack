@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_split_impl.hpp
+ * @file methods/hoeffding_trees/hoeffding_tree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the HoeffdingTree class.
@@ -96,7 +96,8 @@ HoeffdingTree<
                      categoricalSplitIn,
                  const NumericSplitType<FitnessFunction>& numericSplitIn,
                  std::unordered_map<size_t, std::pair<size_t, size_t>>*
-                     dimensionMappingsIn) :
+                     dimensionMappingsIn,
+                 const bool copyDatasetInfo) :
     dimensionMappings((dimensionMappingsIn != NULL) ? dimensionMappingsIn :
         new std::unordered_map<size_t, std::pair<size_t, size_t>>()),
     ownsMappings(dimensionMappingsIn == NULL),
@@ -105,8 +106,9 @@ HoeffdingTree<
     maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
     minSamples(minSamples),
-    datasetInfo(new data::DatasetInfo(datasetInfo)),
-    ownsInfo(true),
+    datasetInfo(copyDatasetInfo ? new data::DatasetInfo(datasetInfo) :
+        &datasetInfo),
+    ownsInfo(copyDatasetInfo),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
     majorityClass(0),
@@ -208,7 +210,18 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
 {
   // Copy each of the children.
   for (size_t i = 0; i < other.children.size(); ++i)
+  {
     children.push_back(new HoeffdingTree(*other.children[i]));
+
+    // Delete copied datasetInfo and dimension mappings.
+    delete children[i]->datasetInfo;
+    children[i]->datasetInfo = this->datasetInfo;
+    children[i]->ownsInfo = false;
+
+    delete children[i]->dimensionMappings;
+    children[i]->dimensionMappings = this->dimensionMappings;
+    children[i]->ownsMappings = false;
+  }
 }
 
 template<typename FitnessFunction,
@@ -744,7 +757,7 @@ void HoeffdingTree<
       children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
           successProbability, maxSamples, checkInterval, minSamples,
           CategoricalSplitType<FitnessFunction>(0, numClasses),
-          numericSplits[0], dimensionMappings));
+          numericSplits[0], dimensionMappings, false));
     }
     else if (numericSplits.size() == 0)
     {
@@ -752,14 +765,14 @@ void HoeffdingTree<
       children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
           successProbability, maxSamples, checkInterval, minSamples,
           categoricalSplits[0], NumericSplitType<FitnessFunction>(numClasses),
-          dimensionMappings));
+          dimensionMappings, false));
     }
     else
     {
       // Pass both splits that we already have.
       children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
           successProbability, maxSamples, checkInterval, minSamples,
-          categoricalSplits[0], numericSplits[0], dimensionMappings));
+          categoricalSplits[0], numericSplits[0], dimensionMappings, false));
     }
 
     children[i]->MajorityClass() = childMajorities[i];
@@ -874,7 +887,8 @@ void HoeffdingTree<
       {
         // The child doesn't actually own its own DatasetInfo.  We do.  The same
         // applies for the dimension mappings.
-        children[i]->ownsInfo = false;
+        if (children[i]->datasetInfo == datasetInfo)
+          children[i]->ownsInfo = false;
         children[i]->ownsMappings = false;
       }
 

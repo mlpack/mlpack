@@ -1,5 +1,5 @@
 /**
- * @file binary_space_tree.hpp
+ * @file core/tree/binary_space_tree/binary_space_tree.hpp
  *
  * Definition of generalized binary space partitioning tree (BinarySpaceTree).
  *
@@ -259,6 +259,7 @@ class BinarySpaceTree
    *     each new point.
    * @param newFromOld Vector which will be filled with the new positions for
    *     each old point.
+   * @param splitter Splitter matrix to use.
    * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(BinarySpaceTree* parent,
@@ -273,7 +274,7 @@ class BinarySpaceTree
    * Create a binary space tree by copying the other tree.  Be careful!  This
    * can take a long time and use a lot of memory.
    *
-   * @param other Tree to be replicated.
+   * @param other Tree to be copied.
    */
   BinarySpaceTree(const BinarySpaceTree& other);
 
@@ -282,6 +283,20 @@ class BinarySpaceTree
    * given tree.
    */
   BinarySpaceTree(BinarySpaceTree&& other);
+
+  /**
+   * Copy the given BinarySaceTree.
+   *
+   * @param other The tree to be copied.
+   */
+  BinarySpaceTree& operator=(const BinarySpaceTree& other);
+
+  /**
+   * Take ownership of the given BinarySpaceTree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  BinarySpaceTree& operator=(BinarySpaceTree&& other);
 
   /**
    * Initialize the tree from a boost::serialization archive.

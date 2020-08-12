@@ -1,5 +1,5 @@
 /**
- * @file random_forest.hpp
+ * @file methods/random_forest/random_forest.hpp
  * @author Ryan Curtin
  *
  * Definition of the RandomForest class.

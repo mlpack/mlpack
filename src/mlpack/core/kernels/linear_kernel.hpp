@@ -1,5 +1,5 @@
 /**
- * @file linear_kernel.hpp
+ * @file core/kernels/linear_kernel.hpp
  * @author Wei Guan
  * @author James Cline
  * @author Ryan Curtin

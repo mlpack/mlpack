@@ -1,5 +1,5 @@
 /**
- * @file random_forest_test.cpp
+ * @file tests/random_forest_test.cpp
  * @author Ryan Curtin
  *
  * Tests for the RandomForest class and related classes.

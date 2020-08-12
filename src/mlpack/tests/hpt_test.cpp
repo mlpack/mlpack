@@ -1,5 +1,5 @@
 /**
- * @file hpt_test.cpp
+ * @file tests/hpt_test.cpp
  *
  * Tests for the hyper-parameter tuning module.
  *

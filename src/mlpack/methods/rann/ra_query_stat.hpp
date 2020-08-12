@@ -1,5 +1,5 @@
 /**
- * @file ra_query_stat.hpp
+ * @file methods/rann/ra_query_stat.hpp
  * @author Parikshit Ram
  *
  * Defines the RAQueryStat class, which is the statistic used for

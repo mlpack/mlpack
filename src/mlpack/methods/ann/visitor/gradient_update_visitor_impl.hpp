@@ -1,5 +1,5 @@
 /**
- * @file gradient_update_visitor_impl.hpp
+ * @file methods/ann/visitor/gradient_update_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Gradient() function layer abstraction.
@@ -19,9 +19,9 @@ namespace mlpack {
 namespace ann {
 
 //! GradientUpdateVisitor visitor class.
-inline GradientUpdateVisitor::GradientUpdateVisitor(arma::mat&& gradient,
+inline GradientUpdateVisitor::GradientUpdateVisitor(arma::mat& gradient,
                                                     size_t offset) :
-    gradient(std::move(gradient)),
+    gradient(gradient),
     offset(offset)
 {
   /* Nothing to do here. */
@@ -63,7 +63,7 @@ GradientUpdateVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
     modelOffset += boost::apply_visitor(GradientUpdateVisitor(
-        std::move(gradient), modelOffset + offset), layer->Model()[i]);
+        gradient, modelOffset + offset), layer->Model()[i]);
   }
 
   return modelOffset;
@@ -85,7 +85,7 @@ GradientUpdateVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
     modelOffset += boost::apply_visitor(GradientUpdateVisitor(
-        std::move(gradient), modelOffset + offset), layer->Model()[i]);
+        gradient, modelOffset + offset), layer->Model()[i]);
   }
 
   return modelOffset;

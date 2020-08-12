@@ -1,5 +1,5 @@
 /**
- * @file lookup.hpp
+ * @file methods/ann/layer/lookup.hpp
  * @author Marcus Edel
  *
  * Definition of the Lookup class a particular convolution, where the width of
@@ -17,11 +17,17 @@
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 
 namespace mlpack {
-namespace ann /** Artificial Neural Network. */ {
+namespace ann /* Artificial Neural Network. */ {
 
 /**
- * Implementation of the Lookup class. The Lookup class is a particular
- * convolution, where the width of the convolution is 1.
+ * The Lookup class stores word embeddings and retrieves them using tokens. The
+ * Lookup layer is always the first layer of the network. The input to the
+ * Lookup class is a matrix of shape (sequenceLength, batchSize). The matrix
+ * consists of tokens which are used to lookup the table (i.e. weights) to find
+ * the embeddings of those tokens.
+ *
+ * The input shape : (sequenceLength, batchSize).
+ * The output shape : (sequenceLength * embeddingSize, batchSize).
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -36,13 +42,12 @@ class Lookup
 {
  public:
   /**
-   * Create the Lookup object using the specified number of input and output
-   * units.
+   * Create the Lookup object using the specified vocabulary and embedding size.
    *
-   * @param inSize The number of input units.
-   * @param outSize The number of output units.
+   * @param vocabSize The size of the vocabulary.
+   * @param embeddingSize The length of each embedding vector.
    */
-  Lookup(const size_t inSize = 0, const size_t outSize = 0);
+  Lookup(const size_t vocabSize = 0, const size_t embeddingSize = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -52,23 +57,23 @@ class Lookup
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                const arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
@@ -76,9 +81,9 @@ class Lookup
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -100,6 +105,12 @@ class Lookup
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the size of the vocabulary.
+  size_t VocabSize() const { return vocabSize; }
+
+  //! Get the length of each embedding vector.
+  size_t EmbeddingSize() const { return embeddingSize; }
+
   /**
    * Serialize the layer
    */
@@ -107,11 +118,11 @@ class Lookup
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally-stored number of input units.
-  size_t inSize;
+  //! Locally-stored size of the vocabulary.
+  size_t vocabSize;
 
-  //! Locally-stored number of output units.
-  size_t outSize;
+  //! Locally-stored length of each embedding vector.
+  size_t embeddingSize;
 
   //! Locally-stored weight object.
   OutputDataType weights;

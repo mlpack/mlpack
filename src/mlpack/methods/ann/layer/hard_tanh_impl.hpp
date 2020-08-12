@@ -1,5 +1,5 @@
 /**
- * @file hard_tanh_impl.hpp
+ * @file methods/ann/layer/hard_tanh_impl.hpp
  * @author Dhawal Arora
  *
  * Implementation and implementation of the HardTanH layer.
@@ -31,10 +31,10 @@ HardTanH<InputDataType, OutputDataType>::HardTanH(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void HardTanH<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   output = input;
-  for (size_t i = 0; i < input.n_elem; i++)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (output(i) > maxValue ? maxValue :
         (output(i) < minValue ? minValue : output(i)));
@@ -44,10 +44,10 @@ void HardTanH<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void HardTanH<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+    const DataType& input, const DataType& gy, DataType& g)
 {
   g = gy;
-  for (size_t i = 0; i < input.n_elem; i++)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     if (input(i) < minValue || input(i) > maxValue)
     {

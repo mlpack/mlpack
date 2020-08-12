@@ -1,5 +1,5 @@
 /**
- * @file serialization.cpp
+ * @file tests/serialization.cpp
  * @author Ryan Curtin
  *
  * Miscellaneous utility functions for serialization tests.

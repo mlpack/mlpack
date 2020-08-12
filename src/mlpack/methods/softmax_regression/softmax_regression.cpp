@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_impl.hpp
+ * @file methods/softmax_regression/softmax_regression.cpp
  * @author Siddharth Agrawal
  *
  * Implementation of softmax regression.
@@ -39,10 +39,10 @@ void SoftmaxRegression::Classify(const arma::mat& dataset,
   double maxProbability = 0;
 
   // For each test input.
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // For each class.
-    for (size_t j = 0; j < numClasses; j++)
+    for (size_t j = 0; j < numClasses; ++j)
     {
       // If a higher class probability is encountered, change prediction.
       if (probabilities(j, i) > maxProbability)
@@ -69,10 +69,10 @@ void SoftmaxRegression::Classify(const arma::mat& dataset,
   double maxProbability = 0;
 
   // For each test input.
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // For each class.
-    for (size_t j = 0; j < numClasses; j++)
+    for (size_t j = 0; j < numClasses; ++j)
     {
       // If a higher class probability is encountered, change prediction.
       if (probabilities(j, i) > maxProbability)
@@ -133,7 +133,7 @@ double SoftmaxRegression::ComputeAccuracy(
 
   // Increment count for every correctly predicted label.
   size_t count = 0;
-  for (size_t i = 0; i < predictions.n_elem; i++)
+  for (size_t i = 0; i < predictions.n_elem; ++i)
     if (predictions(i) == labels(i))
       count++;
 

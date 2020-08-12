@@ -1,5 +1,5 @@
 /**
- * @file gaussian_distribution.hpp
+ * @file core/dists/gaussian_distribution.hpp
  * @author Ryan Curtin
  * @author Michael Fox
  *
@@ -91,7 +91,7 @@ class GaussianDistribution
   void Probability(const arma::mat& x, arma::vec& probabilities) const
   {
     probabilities.set_size(x.n_cols);
-    for (size_t i = 0; i < x.n_cols; i++)
+    for (size_t i = 0; i < x.n_cols; ++i)
     {
       probabilities(i) = Probability(x.unsafe_col(i));
     }
@@ -116,7 +116,7 @@ class GaussianDistribution
     // so that later we are referencing columns, not rows -- that is faster.
     const arma::mat rhs = -0.5 * invCov * diffs;
     arma::vec logExponents(diffs.n_cols); // We will now fill this.
-    for (size_t i = 0; i < diffs.n_cols; i++)
+    for (size_t i = 0; i < diffs.n_cols; ++i)
       logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
 
     logProbabilities = -0.5 * x.n_rows * log2pi - 0.5 * logDetCov +

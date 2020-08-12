@@ -1,5 +1,5 @@
 /**
- * @file midpoint_split.hpp
+ * @file core/tree/binary_space_tree/midpoint_split.hpp
  * @author Yash Vadalia
  * @author Ryan Curtin
  *
@@ -63,7 +63,6 @@ class MidpointSplit
    * subtree are on the left of the split column, and points from the right
    * subtree are on the right side of the split column.
    *
-   * @param bound The bound used for this node.
    * @param data The dataset used by the binary space tree.
    * @param begin Index of the starting point in the dataset that belongs to
    *    this node.
@@ -86,7 +85,6 @@ class MidpointSplit
    * and points from the right subtree are on the right side of the split
    * column.
    *
-   * @param bound The bound used for this node.
    * @param data The dataset used by the binary space tree.
    * @param begin Index of the starting point in the dataset that belongs to
    *    this node.

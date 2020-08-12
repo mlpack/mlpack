@@ -1,5 +1,5 @@
 /**
- * @file tree_traits_test.cpp
+ * @file tests/rectangle_tree_test.cpp
  * @author Andrew Wells
  *
  * Tests for the RectangleTree class.  This should ensure that the class works
@@ -72,7 +72,7 @@ std::vector<arma::vec*> GetAllPointsInTree(const TreeType& tree)
   std::vector<arma::vec*> vec;
   if (tree.NumChildren() > 0)
   {
-    for (size_t i = 0; i < tree.NumChildren(); i++)
+    for (size_t i = 0; i < tree.NumChildren(); ++i)
     {
       std::vector<arma::vec*> tmp = GetAllPointsInTree(tree.Child(i));
       vec.insert(vec.begin(), tmp.begin(), tmp.end());
@@ -80,7 +80,7 @@ std::vector<arma::vec*> GetAllPointsInTree(const TreeType& tree)
   }
   else
   {
-    for (size_t i = 0; i < tree.Count(); i++)
+    for (size_t i = 0; i < tree.Count(); ++i)
     {
       arma::vec* c = new arma::vec(tree.Dataset().col(tree.Point(i)));
       vec.push_back(c);
@@ -103,21 +103,21 @@ BOOST_AUTO_TEST_CASE(RectangleTreeConstructionRepeatTest)
   TreeType tree(dataset, 20, 6, 5, 2, 0);
 
   std::vector<arma::vec*> allPoints = GetAllPointsInTree(tree);
-  for (size_t i = 0; i < allPoints.size(); i++)
+  for (size_t i = 0; i < allPoints.size(); ++i)
   {
-    for (size_t j = i + 1; j < allPoints.size(); j++)
+    for (size_t j = i + 1; j < allPoints.size(); ++j)
     {
       arma::vec v1 = *(allPoints[i]);
       arma::vec v2 = *(allPoints[j]);
       bool same = true;
-      for (size_t k = 0; k < v1.n_rows; k++)
+      for (size_t k = 0; k < v1.n_rows; ++k)
         same &= (v1[k] == v2[k]);
 
       BOOST_REQUIRE_NE(same, true);
     }
   }
 
-  for (size_t i = 0; i < allPoints.size(); i++)
+  for (size_t i = 0; i < allPoints.size(); ++i)
     delete allPoints[i];
 }
 
@@ -133,15 +133,15 @@ void CheckContainment(const TreeType& tree)
 {
   if (tree.NumChildren() == 0)
   {
-    for (size_t i = 0; i < tree.Count(); i++)
+    for (size_t i = 0; i < tree.Count(); ++i)
       BOOST_REQUIRE(tree.Bound().Contains(
           tree.Dataset().unsafe_col(tree.Point(i))));
   }
   else
   {
-    for (size_t i = 0; i < tree.NumChildren(); i++)
+    for (size_t i = 0; i < tree.NumChildren(); ++i)
     {
-      for (size_t j = 0; j < tree.Bound().Dim(); j++)
+      for (size_t j = 0; j < tree.Bound().Dim(); ++j)
       {
         //  All children should be covered by the parent node.
         //  Some children can be empty (only in case of the R++ tree)
@@ -167,11 +167,11 @@ void CheckExactContainment(const TreeType& tree)
 {
   if (tree.NumChildren() == 0)
   {
-    for (size_t i = 0; i < tree.Bound().Dim(); i++)
+    for (size_t i = 0; i < tree.Bound().Dim(); ++i)
     {
       double min = DBL_MAX;
       double max = -1.0 * DBL_MAX;
-      for (size_t j = 0; j < tree.Count(); j++)
+      for (size_t j = 0; j < tree.Count(); ++j)
       {
         if (tree.Dataset().col(tree.Point(j))[i] < min)
           min = tree.Dataset().col(tree.Point(j))[i];
@@ -184,11 +184,11 @@ void CheckExactContainment(const TreeType& tree)
   }
   else
   {
-    for (size_t i = 0; i < tree.Bound().Dim(); i++)
+    for (size_t i = 0; i < tree.Bound().Dim(); ++i)
     {
       double min = DBL_MAX;
       double max = -1.0 * DBL_MAX;
-      for (size_t j = 0; j < tree.NumChildren(); j++)
+      for (size_t j = 0; j < tree.NumChildren(); ++j)
       {
         if (tree.Child(j).Bound()[i].Lo() < min)
           min = tree.Child(j).Bound()[i].Lo();
@@ -200,7 +200,7 @@ void CheckExactContainment(const TreeType& tree)
       BOOST_REQUIRE_EQUAL(min, tree.Bound()[i].Lo());
     }
 
-    for (size_t i = 0; i < tree.NumChildren(); i++)
+    for (size_t i = 0; i < tree.NumChildren(); ++i)
       CheckExactContainment(tree.Child(i));
   }
 }
@@ -211,7 +211,7 @@ void CheckExactContainment(const TreeType& tree)
 template<typename TreeType>
 void CheckHierarchy(const TreeType& tree)
 {
-  for (size_t i = 0; i < tree.NumChildren(); i++)
+  for (size_t i = 0; i < tree.NumChildren(); ++i)
   {
     BOOST_REQUIRE_EQUAL(&tree, tree.Child(i).Parent());
     CheckHierarchy(tree.Child(i));
@@ -254,7 +254,7 @@ void CheckFills(const TreeType& tree)
   }
   else
   {
-    for (size_t i = 0; i < tree.NumChildren(); i++)
+    for (size_t i = 0; i < tree.NumChildren(); ++i)
     {
       BOOST_REQUIRE(tree.NumChildren() >= tree.MinNumChildren() ||
                     tree.Parent() == NULL);
@@ -292,7 +292,7 @@ int GetMaxLevel(const TreeType& tree)
   if (!tree.IsLeaf())
   {
     int m = 0;
-    for (size_t i = 0; i < tree.NumChildren(); i++)
+    for (size_t i = 0; i < tree.NumChildren(); ++i)
     {
       int n = GetMaxLevel(tree.Child(i));
       if (n > m)
@@ -319,7 +319,7 @@ int GetMinLevel(const TreeType& tree)
   if (!tree.IsLeaf())
   {
     int m = INT_MAX;
-    for (size_t i = 0; i < tree.NumChildren(); i++)
+    for (size_t i = 0; i < tree.NumChildren(); ++i)
     {
       int n = GetMinLevel(tree.Child(i));
       if (n < m)
@@ -345,7 +345,7 @@ size_t CheckNumDescendants(const TreeType& tree)
 
   size_t numDescendants = 0;
 
-  for (size_t i = 0; i < tree.NumChildren(); i++)
+  for (size_t i = 0; i < tree.NumChildren(); ++i)
     numDescendants += CheckNumDescendants(tree.Child(i));
 
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), numDescendants);
@@ -387,28 +387,28 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
       arma::mat> TreeType;
   TreeType tree(dataset, 20, 6, 5, 2, 0);
 
-  for (int i = 0; i < numIter; i++)
+  for (int i = 0; i < numIter; ++i)
     tree.DeletePoint(999 - i);
 
   // Do a few sanity checks.  Ensure each point is unique, the tree has the
   // correct number of points, the tree has legal containment, and the tree's
   // data is in sync.
   std::vector<arma::vec*> allPoints = GetAllPointsInTree(tree);
-  for (size_t i = 0; i < allPoints.size(); i++)
+  for (size_t i = 0; i < allPoints.size(); ++i)
   {
-    for (size_t j = i + 1; j < allPoints.size(); j++)
+    for (size_t j = i + 1; j < allPoints.size(); ++j)
     {
       arma::vec v1 = *(allPoints[i]);
       arma::vec v2 = *(allPoints[j]);
       bool same = true;
-      for (size_t k = 0; k < v1.n_rows; k++)
+      for (size_t k = 0; k < v1.n_rows; ++k)
         same &= (v1[k] == v2[k]);
 
       BOOST_REQUIRE(!same);
     }
   }
 
-  for (size_t i = 0; i < allPoints.size(); i++)
+  for (size_t i = 0; i < allPoints.size(); ++i)
     delete allPoints[i];
 
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000 - numIter);
@@ -437,7 +437,7 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
 
   knn2.Search(querySet, 5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
@@ -467,7 +467,7 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
   dataset.reshape(8, 1000 + numIter);
   arma::mat tmpData;
   tmpData.randu(8, numIter);
-  for (int i = 0; i < numIter; i++)
+  for (int i = 0; i < numIter; ++i)
   {
     tree.Dataset().col(1000 + i) = tmpData.col(i);
     dataset.col(1000 + i) = tmpData.col(i);
@@ -478,21 +478,21 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
   // correct number of points, the tree has legal containment, and the tree's
   // data is in sync.
   std::vector<arma::vec*> allPoints = GetAllPointsInTree(tree);
-  for (size_t i = 0; i < allPoints.size(); i++)
+  for (size_t i = 0; i < allPoints.size(); ++i)
   {
-    for (size_t j = i + 1; j < allPoints.size(); j++)
+    for (size_t j = i + 1; j < allPoints.size(); ++j)
     {
       arma::vec v1 = *(allPoints[i]);
       arma::vec v2 = *(allPoints[j]);
       bool same = true;
-      for (size_t k = 0; k < v1.n_rows; k++)
+      for (size_t k = 0; k < v1.n_rows; ++k)
         same &= (v1[k] == v2[k]);
 
       BOOST_REQUIRE(!same);
     }
   }
 
-  for (size_t i = 0; i < allPoints.size(); i++)
+  for (size_t i = 0; i < allPoints.size(); ++i)
     delete allPoints[i];
 
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000 + numIter);
@@ -518,7 +518,7 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
@@ -558,7 +558,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
@@ -601,7 +601,7 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
@@ -642,7 +642,7 @@ BOOST_AUTO_TEST_CASE(HilbertRTreeTraverserTest)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
@@ -654,7 +654,7 @@ void CheckHilbertOrdering(const TreeType& tree)
 {
   if (tree.IsLeaf())
   {
-    for (size_t i = 0; i < tree.NumPoints() - 1; i++)
+    for (size_t i = 0; i < tree.NumPoints() - 1; ++i)
       BOOST_REQUIRE_LE(tree.AuxiliaryInfo().HilbertValue().ComparePoints(
           tree.Dataset().col(tree.Point(i)),
           tree.Dataset().col(tree.Point(i + 1))),
@@ -666,7 +666,7 @@ void CheckHilbertOrdering(const TreeType& tree)
   }
   else
   {
-    for (size_t i = 0; i < tree.NumChildren() - 1; i++)
+    for (size_t i = 0; i < tree.NumChildren() - 1; ++i)
       BOOST_REQUIRE_LE(tree.AuxiliaryInfo().HilbertValue().CompareValues(
           tree.Child(i).AuxiliaryInfo().HilbertValue(),
           tree.Child(i + 1).AuxiliaryInfo().HilbertValue()),
@@ -676,7 +676,7 @@ void CheckHilbertOrdering(const TreeType& tree)
         tree.Child(tree.NumChildren() - 1).AuxiliaryInfo().HilbertValue()),
         0);
 
-    for (size_t i = 0; i < tree.NumChildren(); i++)
+    for (size_t i = 0; i < tree.NumChildren(); ++i)
       CheckHilbertOrdering(tree.Child(i));
   }
 }
@@ -704,7 +704,7 @@ void CheckDiscreteHilbertValueSync(const TreeType& tree)
   {
     const HilbertValue& value = tree.AuxiliaryInfo().HilbertValue();
 
-    for (size_t i = 0; i < tree.NumPoints(); i++)
+    for (size_t i = 0; i < tree.NumPoints(); ++i)
     {
       arma::Col<HilbertElemType> pointValue =
           HilbertValue::CalculateValue(tree.Dataset().col(tree.Point(i)));
@@ -717,7 +717,7 @@ void CheckDiscreteHilbertValueSync(const TreeType& tree)
   }
   else
   {
-    for (size_t i = 0; i < tree.NumChildren(); i++)
+    for (size_t i = 0; i < tree.NumChildren(); ++i)
       CheckDiscreteHilbertValueSync(tree.Child(i));
   }
 }
@@ -885,7 +885,7 @@ void CheckHilbertValue(const TreeType& tree)
     return;
   }
 
-  for (size_t i = 0; i < tree.NumChildren(); i++)
+  for (size_t i = 0; i < tree.NumChildren(); ++i)
   {
     const HilbertValue& childValue =
         tree.Child(i).AuxiliaryInfo().HilbertValue();
@@ -904,7 +904,7 @@ void CheckHilbertValue(const TreeType& tree)
 
   BOOST_REQUIRE_EQUAL(value.OwnsLocalHilbertValues(), false);
 
-  for (size_t i = 0; i < tree.NumChildren(); i++)
+  for (size_t i = 0; i < tree.NumChildren(); ++i)
     CheckHilbertValue(tree.Child(i));
 }
 
@@ -954,11 +954,11 @@ void CheckOverlap(const TreeType& tree)
   bool success = true;
 
   // Check if two nodes overlap each other.
-  for (size_t i = 0; i < tree.NumChildren(); i++)
+  for (size_t i = 0; i < tree.NumChildren(); ++i)
   {
     success = true;
 
-    for (size_t j = 0; j < tree.NumChildren(); j++)
+    for (size_t j = 0; j < tree.NumChildren(); ++j)
     {
       if (j == i)
         continue;
@@ -973,7 +973,7 @@ void CheckOverlap(const TreeType& tree)
   }
   BOOST_REQUIRE_EQUAL(success, true);
 
-  for (size_t i = 0; i < tree.NumChildren(); i++)
+  for (size_t i = 0; i < tree.NumChildren(); ++i)
     CheckOverlap(tree.Child(i));
 }
 
@@ -1034,7 +1034,7 @@ BOOST_AUTO_TEST_CASE(RPlusTreeTraverserTest)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
@@ -1050,7 +1050,7 @@ void CheckRPlusPlusTreeBound(const TreeType& tree)
   bool success = true;
 
   // Ensure that the maximum bounding rectangle contains all children.
-  for (size_t k = 0; k < tree.Bound().Dim(); k++)
+  for (size_t k = 0; k < tree.Bound().Dim(); ++k)
   {
     BOOST_REQUIRE_LE(tree.Bound()[k].Hi(),
         tree.AuxiliaryInfo().OuterBound()[k].Hi());
@@ -1061,7 +1061,7 @@ void CheckRPlusPlusTreeBound(const TreeType& tree)
   if (tree.IsLeaf())
   {
     // Ensure that the maximum bounding rectangle contains all points.
-    for (size_t i = 0; i < tree.Count(); i++)
+    for (size_t i = 0; i < tree.Count(); ++i)
       BOOST_REQUIRE_EQUAL(true,
           tree.Bound().Contains(tree.Dataset().col(tree.Point(i))));
 
@@ -1070,12 +1070,12 @@ void CheckRPlusPlusTreeBound(const TreeType& tree)
 
   // Ensure that two children's maximum bounding rectangles do not overlap
   // each other.
-  for (size_t i = 0; i < tree.NumChildren(); i++)
+  for (size_t i = 0; i < tree.NumChildren(); ++i)
   {
     const Bound& bound1 = tree.Child(i).AuxiliaryInfo().OuterBound();
     success = true;
 
-    for (size_t j = 0; j < tree.NumChildren(); j++)
+    for (size_t j = 0; j < tree.NumChildren(); ++j)
     {
       if (j == i)
         continue;
@@ -1091,7 +1091,7 @@ void CheckRPlusPlusTreeBound(const TreeType& tree)
   }
   BOOST_REQUIRE_EQUAL(success, true);
 
-  for (size_t i = 0; i < tree.NumChildren(); i++)
+  for (size_t i = 0; i < tree.NumChildren(); ++i)
     CheckRPlusPlusTreeBound(tree.Child(i));
 }
 
@@ -1165,7 +1165,7 @@ BOOST_AUTO_TEST_CASE(RPlusPlusTreeTraverserTest)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);

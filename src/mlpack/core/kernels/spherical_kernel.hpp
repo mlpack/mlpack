@@ -1,5 +1,5 @@
 /**
- * @file spherical_kernel.hpp
+ * @file core/kernels/spherical_kernel.hpp
  * @author Neil Slagle
  *
  * mlpack is free software; you may redistribute it and/or modify it under the

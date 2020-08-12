@@ -1,5 +1,5 @@
 /**
- * @file save_impl.hpp
+ * @file core/data/save_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of save functionality.
@@ -158,10 +158,14 @@ bool Save(const std::string& filename,
   {
     arma::Mat<eT> tmp = trans(matrix);
 
+#ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
     const bool success = (saveType == arma::hdf5_binary) ?
         tmp.quiet_save(filename, saveType) :
         tmp.quiet_save(stream, saveType);
+#else
+    const bool success = tmp.quiet_save(stream, saveType);
+#endif
     if (!success)
     {
       Timer::Stop("saving_data");
@@ -175,10 +179,14 @@ bool Save(const std::string& filename,
   }
   else
   {
+#ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
     const bool success = (saveType == arma::hdf5_binary) ?
         matrix.quiet_save(filename, saveType) :
         matrix.quiet_save(stream, saveType);
+#else
+    const bool success = matrix.quiet_save(stream, saveType);
+#endif
     if (!success)
     {
       Timer::Stop("saving_data");
@@ -189,6 +197,115 @@ bool Save(const std::string& filename,
 
       return false;
     }
+  }
+
+  Timer::Stop("saving_data");
+
+  // Finally return success.
+  return true;
+}
+
+// Save a Sparse Matrix
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::SpMat<eT>& matrix,
+          const bool fatal,
+          bool transpose)
+{
+  Timer::Start("saving_data");
+
+  // First we will try to discriminate by file extension.
+  std::string extension = Extension(filename);
+  if (extension == "")
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "No extension given with filename '" << filename << "'; "
+          << "type unknown.  Save failed." << std::endl;
+    else
+      Log::Warn << "No extension given with filename '" << filename << "'; "
+          << "type unknown.  Save failed." << std::endl;
+
+    return false;
+  }
+
+  // Catch errors opening the file.
+  std::fstream stream;
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+  stream.open(filename.c_str(), std::fstream::out | std::fstream::binary);
+#else
+  stream.open(filename.c_str(), std::fstream::out);
+#endif
+  if (!stream.is_open())
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Cannot open file '" << filename << "' for writing. "
+          << "Save failed." << std::endl;
+    else
+      Log::Warn << "Cannot open file '" << filename << "' for writing; save "
+          << "failed." << std::endl;
+
+    return false;
+  }
+
+  bool unknownType = false;
+  arma::file_type saveType;
+  std::string stringType;
+
+  if (extension == "txt" || extension == "tsv")
+  {
+    saveType = arma::coord_ascii;
+    stringType = "raw ASCII formatted data";
+  }
+  else if (extension == "bin")
+  {
+    saveType = arma::arma_binary;
+    stringType = "Armadillo binary formatted data";
+  }
+  else
+  {
+    unknownType = true;
+    saveType = arma::raw_binary; // Won't be used; prevent a warning.
+    stringType = "";
+  }
+
+  // Provide error if we don't know the type.
+  if (unknownType)
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Unable to determine format to save to from filename '"
+          << filename << "'.  Save failed." << std::endl;
+    else
+      Log::Warn << "Unable to determine format to save to from filename '"
+          << filename << "'.  Save failed." << std::endl;
+
+    return false;
+  }
+
+  // Try to save the file.
+  Log::Info << "Saving " << stringType << " to '" << filename << "'."
+      << std::endl;
+
+  arma::SpMat<eT> tmp = matrix;
+
+  // Transpose the matrix.
+  if (transpose)
+  {
+    tmp = trans(matrix);
+  }
+
+  const bool success = tmp.quiet_save(stream, saveType);
+  if (!success)
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
+    else
+      Log::Warn << "Save to '" << filename << "' failed." << std::endl;
+
+    return false;
   }
 
   Timer::Stop("saving_data");
@@ -283,86 +400,25 @@ bool Save(const std::string& filename,
   }
 }
 
-#ifdef HAS_STB
-// Image saving API.
+/**
+ * Save the given image to the given filename.
+ *
+ * @param filename Filename to save to.
+ * @param matrix Matrix containing image to be saved.
+ * @param info Information about the image (width/height/channels/etc.).
+ * @param fatal Whether an exception should be thrown on save failure.
+ */
 template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal,
-          const bool transpose)
+          const bool fatal)
 {
-  Timer::Start("saving_image");
-  // We transpose by default. So, un-transpose if necessary.
-  if (!transpose)
-    matrix = arma::trans(matrix);
+  arma::Mat<unsigned char> tmpMatrix =
+      arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
 
-  int tempWidth, tempHeight, tempChannels, tempQuality;
-
-  tempWidth = info.Width();
-  tempHeight = info.Height();
-  tempChannels = info.Channels();
-  tempQuality = info.Quality();
-
-  if (!ImageFormatSupported(filename, true))
-  {
-    std::ostringstream oss;
-    oss << "File type " << Extension(filename) << " not supported.\n";
-    oss << "Currently it supports ";
-    for (auto extension : saveFileTypes)
-      oss << ", " << extension;
-    oss << std::endl;
-    throw std::runtime_error(oss.str());
-    return false;
-  }
-  if (matrix.n_cols > 1)
-  {
-    std::cout << "Input Matrix contains more than 1 image." << std::endl;
-    std::cout << "Only the firstimage will be saved!" << std::endl;
-  }
-  stbi_flip_vertically_on_write(transpose);
-
-  bool status = false;
-  try
-  {
-    unsigned char* image = matrix.memptr();
-
-    if ("png" == Extension(filename))
-    {
-      status = stbi_write_png(filename.c_str(), tempWidth, tempHeight,
-          tempChannels, image, tempWidth * tempChannels);
-    }
-    else if ("bmp" == Extension(filename))
-    {
-      status = stbi_write_bmp(filename.c_str(), tempWidth, tempHeight,
-          tempChannels, image);
-    }
-    else if ("tga" == Extension(filename))
-    {
-      status = stbi_write_tga(filename.c_str(), tempWidth, tempHeight,
-          tempChannels, image);
-    }
-    else if ("hdr" == Extension(filename))
-    {
-      status = stbi_write_hdr(filename.c_str(), tempWidth, tempHeight,
-          tempChannels, reinterpret_cast<float*>(image));
-    }
-    else if ("jpg" == Extension(filename))
-    {
-      status = stbi_write_jpg(filename.c_str(), tempWidth, tempHeight,
-          tempChannels, image, tempQuality);
-    }
-  }
-  catch (std::exception& e)
-  {
-    Timer::Stop("saving_image");
-    if (fatal)
-      Log::Fatal << e.what() << std::endl;
-    Log::Warn << e.what() << std::endl;
-    return false;
-  }
-  Timer::Stop("saving_image");
-  return status;
+  // Call out to .cpp implementation.
+  return SaveImage(filename, tmpMatrix, info, fatal);
 }
 
 // Image saving API for multiple files.
@@ -370,59 +426,36 @@ template<typename eT>
 bool Save(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal,
-          const bool transpose)
+          const bool fatal)
 {
   if (files.size() == 0)
   {
-    std::ostringstream oss;
-    oss << "Files vector is empty." << std::endl;
+    if (fatal)
+    {
+      Log::Fatal << "Save(): vector of image files is empty; nothing to save."
+          << std::endl;
+    }
+    else
+    {
+      Log::Warn << "Save(): vector of image files is empty; nothing to save."
+          << std::endl;
+    }
 
-    throw std::runtime_error(oss.str());
     return false;
   }
-  // We transpose by default. So, un-transpose if necessary.
-  if (!transpose)
-    matrix = arma::trans(matrix);
 
   arma::Mat<unsigned char> img;
-  bool status = Save(files[0], img, info, fatal, transpose);
+  bool status = true;
 
-  // Decide matrix dimension using the image height and width.
-  matrix.set_size(info.Width() * info.Height() * info.Channels(), files.size());
-  matrix.col(0) = img;
-
-  for (size_t i = 1; i < files.size() ; i++)
+  for (size_t i = 0; i < files.size() ; ++i)
   {
-    arma::Mat<unsigned char> colImg(matrix.colptr(i), matrix.n_rows, 1,
+    arma::Mat<eT> colImg(matrix.colptr(i), matrix.n_rows, 1,
         false, true);
-    status &= Save(files[i], colImg, info, fatal, transpose);
+    status &= Save(files[i], colImg, info, fatal);
   }
+
   return status;
 }
-#else
-template<typename eT>
-bool Save(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true)
-{
-  throw std::runtime_error("Save(): HAS_STB is not defined, "
-      "so STB is not available and images cannot be saved!");
-}
-
-template<typename eT>
-bool Save(const std::vector<std::string>& files,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true)
-{
-  throw std::runtime_error("Save(): HAS_STB is not defined, "
-      "so STB is not available and images cannot be saved!");
-}
-#endif // HAS_STB.
 
 } // namespace data
 } // namespace mlpack

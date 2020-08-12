@@ -1,5 +1,5 @@
 /**
- * @file weight_norm_impl.hpp
+ * @file methods/ann/layer/weight_norm_impl.hpp
  * @author Toshal Agrawal
  *
  * Implementation of the WeightNorm Layer.
@@ -50,13 +50,12 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Reset()
 {
   // Set the weights of the inside layer to layerWeights.
   // This is done to set the non-bias terms correctly.
-  boost::apply_visitor(WeightSetVisitor(std::move(layerWeights), 0),
-      wrappedLayer);
+  boost::apply_visitor(WeightSetVisitor(layerWeights, 0), wrappedLayer);
 
   boost::apply_visitor(resetVisitor, wrappedLayer);
 
-  biasWeightSize = boost::apply_visitor(BiasSetVisitor(std::move(weights),
-      0), wrappedLayer);
+  biasWeightSize = boost::apply_visitor(BiasSetVisitor(weights, 0),
+      wrappedLayer);
 
   vectorParameter = arma::mat(weights.memptr() + biasWeightSize,
       layerWeightSize - biasWeightSize, 1, false, false);
@@ -69,15 +68,15 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Forward(
-    arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   // Initialize the non-bias weights of wrapped layer.
   const double normVectorParameter = arma::norm(vectorParameter, 2);
   layerWeights.rows(0, layerWeightSize - biasWeightSize - 1) =
       scalarParameter(0) * vectorParameter / normVectorParameter;
 
-  boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-      boost::apply_visitor(outputParameterVisitor, wrappedLayer))),
+  boost::apply_visitor(ForwardVisitor(input,
+      boost::apply_visitor(outputParameterVisitor, wrappedLayer)),
       wrappedLayer);
 
   output = boost::apply_visitor(outputParameterVisitor, wrappedLayer);
@@ -87,11 +86,11 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
-  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, wrappedLayer)), std::move(gy), std::move(
-      boost::apply_visitor(deltaVisitor, wrappedLayer))), wrappedLayer);
+  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+      outputParameterVisitor, wrappedLayer), gy,
+      boost::apply_visitor(deltaVisitor, wrappedLayer)), wrappedLayer);
 
   g = boost::apply_visitor(deltaVisitor, wrappedLayer);
 }
@@ -100,15 +99,14 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   ResetGradients(layerGradients);
 
   // Calculate the gradients of the wrapped layer.
-  boost::apply_visitor(GradientVisitor(std::move(input),
-      std::move(error)), wrappedLayer);
+  boost::apply_visitor(GradientVisitor(input, error), wrappedLayer);
 
   // Store the norm of vector parameter temporarily.
   const double normVectorParameter = arma::norm(vectorParameter, 2);
@@ -137,8 +135,7 @@ template<typename InputDataType, typename OutputDataType,
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::ResetGradients(
     arma::mat& gradient)
 {
-  boost::apply_visitor(GradientSetVisitor(std::move(gradient), 0),
-      wrappedLayer);
+  boost::apply_visitor(GradientSetVisitor(gradient, 0), wrappedLayer);
 }
 
 template<typename InputDataType, typename OutputDataType,

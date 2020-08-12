@@ -1,5 +1,5 @@
 /**
- * @file kernel_pca_test.cpp
+ * @file tests/kernel_pca_test.cpp
  * @author Ryan Curtin
  *
  * Test file for Kernel PCA.

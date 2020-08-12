@@ -1,5 +1,5 @@
 /**
- * @file add_impl.hpp
+ * @file methods/ann/layer/add_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Add class that applies a bias term to the incoming
@@ -29,7 +29,7 @@ Add<InputDataType, OutputDataType>::Add(const size_t outSize) :
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Add<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   output = input;
   output.each_col() += weights;
@@ -38,9 +38,9 @@ void Add<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Add<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */,
-    const arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   g = gy;
 }
@@ -48,9 +48,9 @@ void Add<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Add<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   gradient = error;
 }

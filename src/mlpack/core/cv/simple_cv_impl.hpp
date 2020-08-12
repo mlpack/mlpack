@@ -1,5 +1,5 @@
 /**
- * @file simple_cv_impl.hpp
+ * @file core/cv/simple_cv_impl.hpp
  * @author Kirill Mishchenko
  *
  * The implementation of the class SimpleCV.

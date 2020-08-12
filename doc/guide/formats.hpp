@@ -2,10 +2,35 @@
 
 @section formatintro Introduction
 
-mlpack supports a wide variety of data and model formats for use in both its
+mlpack supports a wide variety of data (including images) and model formats for use in both its
 command-line programs and in C++ programs using mlpack via the
 mlpack::data::Load() function.  This tutorial discusses the formats that are
 supported and how to use them.
+
+@section toc_tut Table of Contents
+
+This tutorial is split into the following sections:
+
+ - \ref formatintro
+ - \ref toc_tut
+ - Data
+    - Data Formats
+        - \ref formatsimple
+        - \ref formattypes
+        - \ref formatcpp
+        - \ref sparseload
+        - \ref formatcat
+        - \ref formatcatcpp
+    - Image Support
+        - \ref intro_imagetut
+        - \ref model_api_imagetut
+        - \ref imageinfo_api_imagetut
+        - \ref load_api_imagetut
+        - \ref save_api_imagetut
+ - Models
+    - \ref formatmodels
+    - \ref formatmodelscpp
+ - \ref formatfinal
 
 @section formatsimple Simple examples to load data in C++
 
@@ -294,6 +319,131 @@ mlpack::data::Save("dataset-new.tsv", dataset, info);
 
 There is more functionality to the DatasetInfo class; for more information, see
 the mlpack::data::DatasetInfo documentation.
+
+@section intro_imagetut Loading and Saving Images
+
+Image datasets are becoming increasingly popular in deep learning.
+
+mlpack's image saving/loading functionality is based on [stb/](https://github.com/nothings/stb).
+
+@section model_api_imagetut Image Utilities API
+
+Image utilities supports loading and saving of images.
+
+It supports filetypes "jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic",
+"pnm" for loading and "jpg", "png", "tga", "bmp", "hdr" for saving.
+
+The datatype associated is unsigned char to support RGB values in the range
+1-255. To feed data into the network typecast of `arma::Mat` may be required.
+Images are stored in the matrix as (width * height * channels, NumberOfImages).
+Therefore @c imageMatrix.col(0) would be the first image if images are loaded in
+@c imageMatrix.
+
+@section imageinfo_api_imagetut Accessing Metadata of Images: ImageInfo
+
+ImageInfo class contains the metadata of the images.
+@code
+ImageInfo(const size_t width,
+          const size_t height,
+          const size_t channels,
+          const size_t quality = 90);
+@endcode
+
+The @c quality member denotes the compression of the image if it is saved as
+`jpg`; it takes values from 0 to 100.
+
+@section load_api_imagetut Loading Images in C++
+
+Standalone loading of images.
+
+@code
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal);
+@endcode
+
+The example below loads a test image. It also fills up the ImageInfo class
+object.
+
+@code
+data::ImageInfo info;
+data::Load("test_image.png", matrix, info, false);
+@endcode
+
+ImageInfo requires height, width, number of channels of the image.
+
+@code
+size_t height = 64, width = 64, channels = 1;
+data::ImageInfo info(width, height, channels);
+@endcode
+
+More than one image can be loaded into the same matrix.
+
+Loading multiple images:
+
+@code
+template<typename eT>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal);
+@endcode
+
+@code
+data::ImageInfo info;
+std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
+data::Load(files, matrix, info, false);
+@endcode
+
+@section save_api_imagetut Saving Images in C++
+
+Save images expects a matrix of type unsigned char in the form (width * height * channels, NumberOfImages).
+Just like load it can be used to save one image or multiple images. Besides image data it also expects the shape of the image as input (width, height, channels).
+
+Saving one image:
+
+@code
+   template<typename eT>
+   bool Save(const std::string& filename,
+             arma::Mat<eT>& matrix,
+             ImageInfo& info,
+             const bool fatal,
+             const bool transpose);
+@endcode
+
+@code
+  data::ImageInfo info;
+  info.width = info.height = 25;
+  info.channels = 3;
+  info.quality = 90;
+  data::Save("test_image.bmp", matrix, info, false, true);
+@endcode
+
+If the matrix contains more than one image, only the first one is saved.
+
+Saving multiple images:
+
+@code
+   template<typename eT>
+   bool Save(const std::vector<std::string>& files,
+             arma::Mat<eT>& matrix,
+             ImageInfo& info,
+             const bool fatal,
+             const bool transpose);
+@endcode
+
+@code
+  data::ImageInfo info;
+  info.width = info.height = 25;
+  info.channels = 3;
+  info.quality = 90;
+  std::vector<std::string>> files{"test_image1.bmp", "test_image2.bmp"};
+  data::Save(files, matrix, info, false, true);
+@endcode
+
+Multiple images are saved according to the vector of filenames specified.
 
 @section formatmodels Loading and saving models
 

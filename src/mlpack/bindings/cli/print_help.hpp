@@ -1,5 +1,5 @@
 /**
- * @file print_help.hpp
+ * @file bindings/cli/print_help.hpp
  * @author Ryan Curtin
  *
  * Print help for a command-line program.

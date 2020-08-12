@@ -1,16 +1,37 @@
+macro (not_found_return message)
+  message(STATUS "${message}")
+  macro (add_julia_binding name)
+    # Do nothing.
+  endmacro ()
+
+  return()
+endmacro ()
+
+# If we are not supposed to make Julia bindings, define the macro so it does
+# nothing and leave this file.
+if (NOT BUILD_JULIA_BINDINGS)
+  not_found_return("Not building Julia bindings.")
+endif ()
+
 if (BUILD_JULIA_BINDINGS)
   ## We need to check here if Julia is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
-  find_package(Julia 0.7.0)
+  if (FORCE_BUILD_JULIA_BINDINGS)
+    find_package(Julia 0.7.0)
+    if (NOT JULIA_FOUND)
+      unset(BUILD_JULIA_BINDINGS CACHE)
+      message(FATAL_ERROR "Julia not found; cannot build Julia bindings!")
+    endif()
+  else ()
+    find_package(Julia 0.7.0)
+    if (NOT JULIA_FOUND)
+      unset(BUILD_JULIA_BINDINGS CACHE)
+    endif()
+  endif ()
 
   if (NOT JULIA_FOUND)
-    # We can't build anything, so define the macro to do nothing.
-    macro (add_julia_binding name)
-      # Do nothing.
-    endmacro ()
-
-    return ()
+      not_found_return("Julia not found; not building Julia bindings.")
   endif ()
 
   add_custom_target(julia ALL)
@@ -18,10 +39,6 @@ if (BUILD_JULIA_BINDINGS)
   add_custom_command(TARGET julia PRE_BUILD
       COMMAND ${CMAKE_COMMAND} -E make_directory
           ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/)
-  add_custom_command(TARGET julia PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy
-          ${CMAKE_CURRENT_SOURCE_DIR}/mlpack/REQUIRE
-          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/REQUIRE)
 
   add_library(mlpack_julia_util
     julia_util.h
@@ -48,22 +65,79 @@ if (BUILD_JULIA_BINDINGS)
       PROPERTY INCLUDE_DIRECTORIES)
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml.in
                  ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml)
-  # Configure cli.jl.in with the right suffix for libraries.
-  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/cli.jl.in
-                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/cli.jl)
+  # Configure io.jl.in with the right suffix for libraries.
+  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/io.jl.in
+                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/io.jl)
 
-  # Create the empty mlpack.jl file that we will fill with includes.
-  file(WRITE
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
-      "module mlpack\n\n"
-      "module util\n\n"
-      "include(\"cli.jl\")\n")
+  # Create the empty mlpack.jl file that we will fill with includes using the
+  # exsiting template.  Unfortunately COPY doesn't let us change the extension
+  # so we need a follow-up RENAME command.
+  file(COPY
+       "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/mlpack.jl.in"
+       DESTINATION
+       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/")
+  file(RENAME
+       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl.in"
+       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl")
 
   file(WRITE
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/functions.jl"
       "# This file imports all of the mlpack functions into the mlpack module."
       "\n\n")
+
+  file(WRITE
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/types.jl"
+      "# This file defines all of the mlpack types."
+      "\n\n")
+
+  file(WRITE
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/serialization.jl"
+      "# This file imports all serialization and deserialization functions\n"
+      "# from internal modules.\n"
+      "import Serialization\n"
+      "\n"
+      "\"\"\"\n"
+      "    serialize_bin(stream::IO, model)\n"
+      "\n"
+      "Serialize an mlpack model `model` in the binary boost::serialization\n"
+      "format to the given `stream`.  Example:\n"
+      "\n"
+      "```julia\n"
+      "_, model, _, _ = mlpack.logistic_regression(training=x, labels=y)\n"
+      "mlpack.serialize_bin(open(\"model.bin\", \"w\"), model)\n"
+      "```\n"
+      "\n"
+      "The model can later be loaded with `mlpack.deserialize_bin()`, or even\n"
+      "from mlpack bindings in other languages.  However, the format used\n"
+      "here will *not* work with Julia's `Serialization` package!  Use\n"
+      "`Serialization.serialize()` instead.\n"
+      "\"\"\"\n"
+      "function serialize_bin(stream::IO, model) end\n"
+      "\n"
+      "\"\"\"\n"
+      "    deserialize_bin(stream::IO, model_type::Type)\n"
+      ""
+      "Deserialize an mlpack model type from an input stream.  Specify the \n"
+      "type of the model manually with the `t` argument.  Example usage:\n"
+      "\n"
+      "```julia\n"
+      "lr_model = mlpack.deserialize_bin(stream, LogisticRegression)\n"
+      "```\n"
+      "\n"
+      "Only use this if you have saved the model in the boost::serialization\n"
+      "binary format using `serialize_bin()` or an mlpack binding in another\n"
+      "language!  If you used `Serialization.serialize()` to serialize your\n"
+      "model, then use `Serialization.deserialize()` to deserialize it.\n"
+      "\n"
+      "Then, the returned model can be passed to appropriate mlpack functions\n"
+      "for machine learning tasks.\n"
+      "\"\"\"\n"
+      "function deserialize_bin(stream::IO, t::Type) end"
+      "\n\n")
 endif ()
+
+include("${CMAKE_SOURCE_DIR}/CMake/julia/AppendType.cmake")
+include("${CMAKE_SOURCE_DIR}/CMake/julia/AppendSerialization.cmake")
 
 macro (add_julia_binding name)
 if (BUILD_JULIA_BINDINGS)
@@ -74,18 +148,29 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp
       COMMAND ${CMAKE_COMMAND}
-          -DPROGRAM_NAME="${name}"
-          -DPROGRAM_MAIN_FILE="${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp"
-          -DJULIA_H_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in"
-          -DJULIA_H_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h"
-          -DJULIA_CPP_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.cpp.in"
-          -DJULIA_CPP_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp"
+          -DPROGRAM_NAME=${name}
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DJULIA_H_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in
+          -DJULIA_H_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
+          -DJULIA_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.cpp.in
+          -DJULIA_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp
           -P ${CMAKE_SOURCE_DIR}/CMake/julia/ConfigureJuliaHCPP.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in
               ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.cpp.in
               ${CMAKE_SOURCE_DIR}/CMake/julia/ConfigureJuliaHCPP.cmake)
 
-  # 2. Build libmlpack_julia_${name}.so.
+  # 2. Append any types to the list of types and serialization imports (this is
+  # done immediately, not as a separate target).
+  append_type(
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/types.jl"
+      "${name}"
+      "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
+  append_serialization(
+      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/serialization.jl"
+      "${name}"
+      "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
+
+  # 3. Build libmlpack_julia_${name}.so.
   add_library(mlpack_julia_${name}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp)
@@ -93,7 +178,7 @@ if (BUILD_JULIA_BINDINGS)
   set_target_properties(mlpack_julia_${name} PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/")
 
-  # 3. Generate ${name}.jl.
+  # 4. Generate ${name}.jl.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_${name}.cpp
       COMMAND ${CMAKE_COMMAND}
           -DNAME=${name}
@@ -123,6 +208,7 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_param_defn.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_model_type_import.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/strip_type.hpp)
@@ -132,7 +218,7 @@ if (BUILD_JULIA_BINDINGS)
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/")
   add_custom_command(TARGET generate_jl_${name} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
-          -DGENERATE_BINDING_PROGRAM="${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/generate_jl_${name}"
+          -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/generate_jl_${name}
           -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/${name}.jl
           -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
 
@@ -150,10 +236,10 @@ if (BUILD_JULIA_BINDINGS)
   # Append the code to define the function in the module.
   file(APPEND
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/functions.jl"
-      "${name} = util.${name}\n")
+      "${name} = _Internal.${name}\n")
 endif ()
 endmacro ()
 
-if (BUILD_TESTS)
+if (BUILD_TESTS AND BUILD_JULIA_BINDINGS)
   add_subdirectory(tests)
 endif ()

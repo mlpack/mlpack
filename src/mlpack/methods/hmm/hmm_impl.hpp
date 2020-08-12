@@ -1,5 +1,5 @@
 /**
- * @file hmm_impl.hpp
+ * @file methods/hmm/hmm_impl.hpp
  * @author Ryan Curtin
  * @author Tran Quoc Long
  * @author Michael Fox

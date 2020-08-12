@@ -1,5 +1,5 @@
-/***
- * @file mahalanobis_distance_impl.hpp
+/**
+ * @file core/metrics/mahalanobis_distance_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the Mahalanobis distance.

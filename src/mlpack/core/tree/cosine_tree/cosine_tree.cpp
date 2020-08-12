@@ -1,5 +1,5 @@
 /**
- * @file cosine_tree_impl.hpp
+ * @file core/tree/cosine_tree/cosine_tree.cpp
  * @author Siddharth Agrawal
  *
  * Implementation of cosine tree.
@@ -18,18 +18,19 @@ namespace mlpack {
 namespace tree {
 
 CosineTree::CosineTree(const arma::mat& dataset) :
-    dataset(dataset),
+    dataset(&dataset),
     parent(NULL),
     left(NULL),
     right(NULL),
-    numColumns(dataset.n_cols)
+    numColumns(dataset.n_cols),
+    localDataset(false)
 {
   // Initialize sizes of column indices and l2 norms.
   indices.resize(numColumns);
   l2NormsSquared.zeros(numColumns);
 
   // Set indices and calculate squared norms of the columns.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     indices[i] = i;
     double l2Norm = arma::norm(dataset.col(i), 2);
@@ -47,18 +48,19 @@ CosineTree::CosineTree(const arma::mat& dataset) :
 
 CosineTree::CosineTree(CosineTree& parentNode,
                        const std::vector<size_t>& subIndices) :
-    dataset(parentNode.GetDataset()),
+    dataset(&parentNode.GetDataset()),
     parent(&parentNode),
     left(NULL),
     right(NULL),
-    numColumns(subIndices.size())
+    numColumns(subIndices.size()),
+    localDataset(false)
 {
   // Initialize sizes of column indices and l2 norms.
   indices.resize(numColumns);
   l2NormsSquared.zeros(numColumns);
 
   // Set indices and squared norms of the columns.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     indices[i] = parentNode.indices[subIndices[i]];
     l2NormsSquared(i) = parentNode.l2NormsSquared(subIndices[i]);
@@ -76,10 +78,11 @@ CosineTree::CosineTree(CosineTree& parentNode,
 CosineTree::CosineTree(const arma::mat& dataset,
                        const double epsilon,
                        const double delta) :
-    dataset(dataset),
+    dataset(&dataset),
     delta(delta),
     left(NULL),
-    right(NULL)
+    right(NULL),
+    localDataset(false)
 {
   // Declare the cosine tree priority queue.
   CosineNodeQueue treeQueue;
@@ -150,8 +153,214 @@ CosineTree::CosineTree(const arma::mat& dataset,
   ConstructBasis(treeQueue);
 }
 
+//! Copy the given tree.
+CosineTree::CosineTree(const CosineTree& other) :
+    // Copy matrix, but only if we are the root.
+    dataset((other.parent == NULL) ? new arma::mat(*other.dataset) : NULL),
+    delta(other.delta),
+    parent(NULL),
+    left(NULL),
+    right(NULL),
+    indices(other.indices),
+    l2NormsSquared(other.l2NormsSquared),
+    centroid(other.centroid),
+    basisVector(other.basisVector),
+    splitPointIndex(other.SplitPointIndex()),
+    numColumns(other.NumColumns()),
+    l2Error(other.L2Error()),
+    frobNormSquared(other.FrobNormSquared()),
+    localDataset(other.parent == NULL)
+{
+  // Create left and right children (if any).
+  if (other.Left())
+  {
+    left = new CosineTree(*other.Left());
+    left->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  if (other.Right())
+  {
+    right = new CosineTree(*other.Right());
+    right->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL && localDataset)
+  {
+    std::queue<CosineTree*> queue;
+    if (left)
+      queue.push(left);
+    if (right)
+      queue.push(right);
+    while (!queue.empty())
+    {
+      CosineTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      if (node->left)
+        queue.push(node->left);
+      if (node->right)
+        queue.push(node->right);
+    }
+  }
+}
+
+//! Copy assignment operator: copy the given other tree.
+CosineTree& CosineTree::operator=(const CosineTree& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
+
+  delete left;
+  delete right;
+
+  // Performing a deep copy of the dataset.
+  dataset = (other.parent == NULL) ? new arma::mat(*other.dataset) : NULL;
+
+  delta = other.delta;
+  parent = other.Parent();
+  left = other.Left();
+  right = other.Right();
+  indices = other.indices;
+  l2NormsSquared = other.l2NormsSquared;
+  centroid = other.centroid;
+  basisVector = other.basisVector;
+  splitPointIndex = other.SplitPointIndex();
+  numColumns = other.NumColumns();
+  l2Error = other.L2Error();
+  localDataset = (other.parent == NULL) ? true : false;
+  frobNormSquared = other.FrobNormSquared();
+
+  // Create left and right children (if any).
+  if (other.Left())
+  {
+    left = new CosineTree(*other.Left());
+    left->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  if (other.Right())
+  {
+    right = new CosineTree(*other.Right());
+    right->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL && localDataset)
+  {
+    std::queue<CosineTree*> queue;
+    if (left)
+      queue.push(left);
+    if (right)
+      queue.push(right);
+    while (!queue.empty())
+    {
+      CosineTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      if (node->left)
+        queue.push(node->left);
+      if (node->right)
+        queue.push(node->right);
+    }
+  }
+
+  return *this;
+}
+
+//! Move the given tree.
+CosineTree::CosineTree(CosineTree&& other) :
+    dataset(other.dataset),
+    delta(std::move(other.delta)),
+    parent(other.parent),
+    left(other.left),
+    right(other.right),
+    indices(std::move(other.indices)),
+    l2NormsSquared(std::move(other.l2NormsSquared)),
+    centroid(std::move(other.centroid)),
+    basisVector(std::move(other.basisVector)),
+    splitPointIndex(other.splitPointIndex),
+    numColumns(other.numColumns),
+    l2Error(other.l2Error),
+    frobNormSquared(other.frobNormSquared),
+    localDataset(other.localDataset)
+{
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.dataset = NULL;
+  other.parent = NULL;
+  other.left = NULL;
+  other.right = NULL;
+  other.splitPointIndex = 0;
+  other.numColumns = 0;
+  other.l2Error = -1;
+  other.localDataset = false;
+  other.frobNormSquared = 0;
+  // Set new parent.
+  if (left)
+    left->parent = this;
+  if (right)
+    right->parent = this;
+}
+
+//! Move assignment operator: take ownership of the given tree.
+CosineTree& CosineTree::operator=(CosineTree&& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
+  delete left;
+  delete right;
+
+  dataset = other.dataset;
+  delta = std::move(other.delta);
+  parent = other.Parent();
+  left = other.Left();
+  right = other.Right();
+  indices = std::move(other.indices);
+  l2NormsSquared = std::move(other.l2NormsSquared);
+  centroid = std::move(other.centroid);
+  basisVector = std::move(other.basisVector);
+  splitPointIndex = other.SplitPointIndex();
+  numColumns = other.NumColumns();
+  l2Error = other.L2Error();
+  localDataset = other.localDataset;
+  frobNormSquared = other.FrobNormSquared();
+
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.dataset = NULL;
+  other.parent = NULL;
+  other.left = NULL;
+  other.right = NULL;
+  other.splitPointIndex = 0;
+  other.numColumns = 0;
+  other.l2Error = -1;
+  other.localDataset = false;
+  other.frobNormSquared = 0;
+  // Set new parent.
+  if (left)
+    left->parent = this;
+  if (right)
+    right->parent = this;
+
+  return *this;
+}
+
 CosineTree::~CosineTree()
 {
+  if (localDataset)
+    delete dataset;
   if (left)
     delete left;
   if (right)
@@ -172,7 +381,7 @@ void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
 
   // For every vector in the current basis, remove its projection from the
   // centroid.
-  for ( ; i != treeQueue.end(); i++)
+  for ( ; i != treeQueue.end(); ++i)
   {
     currentNode = *i;
 
@@ -206,7 +415,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
   node->ColumnSamplesLS(sampledIndices, probabilities, numSamples);
 
   // Get pointer to the original dataset.
-  arma::mat dataset = node->GetDataset();
+  const arma::mat& dataset = node->GetDataset();
 
   // Initialize weighted projection magnitudes as zeros.
   arma::vec weightedMagnitudes;
@@ -221,7 +430,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
     projectionSize = treeQueue.size();
 
   // For each sample, calculate the weighted projection onto the current basis.
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     // Initialize projection as a vector of zeros.
     arma::vec projection;
@@ -232,7 +441,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
 
     size_t k = 0;
     // Compute the projection of the sampled vector onto the existing subspace.
-    for ( ; j != treeQueue.end(); j++, k++)
+    for ( ; j != treeQueue.end(); ++j, ++k)
     {
       currentNode = *j;
 
@@ -280,7 +489,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
 void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
 {
   // Initialize basis as matrix of zeros.
-  basis.zeros(dataset.n_rows, treeQueue.size());
+  basis.zeros(dataset->n_rows, treeQueue.size());
 
   // Variables for iterating through the priority queue.
   CosineTree *currentNode;
@@ -288,7 +497,7 @@ void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
 
   // Transfer basis vectors from the queue to the basis matrix.
   size_t j = 0;
-  for ( ; i != treeQueue.end(); i++, j++)
+  for ( ; i != treeQueue.end(); ++i, ++j)
   {
     currentNode = *i;
     basis.col(j) = currentNode->BasisVector();
@@ -319,7 +528,7 @@ void CosineTree::CosineNodeSplit()
   // We deviate from the paper here and use < instead of <= in order to handle
   // the edge case where cosineMax == cosineMin, and force there to be at least
   // one point in the right node.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     if (cosineMax - cosines(i) < cosines(i) - cosineMin)
       leftIndices.push_back(i);
@@ -341,7 +550,7 @@ void CosineTree::ColumnSamplesLS(std::vector<size_t>& sampledIndices,
   cDistribution.zeros(numColumns + 1);
 
   // Calculate cumulative length-squared distribution for the node.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     cDistribution(i + 1) = cDistribution(i) +
         (l2NormsSquared(i) / frobNormSquared);
@@ -351,7 +560,7 @@ void CosineTree::ColumnSamplesLS(std::vector<size_t>& sampledIndices,
   sampledIndices.resize(numSamples);
   probabilities.zeros(numSamples);
 
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     // Generate a random value for sampling.
     double randValue = arma::randu();
@@ -377,7 +586,7 @@ size_t CosineTree::ColumnSampleLS()
   cDistribution.zeros(numColumns + 1);
 
   // Calculate cumulative length-squared distribution for the node.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     cDistribution(i + 1) = cDistribution(i) +
         (l2NormsSquared(i) / frobNormSquared);
@@ -424,7 +633,7 @@ void CosineTree::CalculateCosines(arma::vec& cosines)
   // Initialize cosine vector as a vector of zeros.
   cosines.zeros(numColumns);
 
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     // If norm is zero, store cosine value as zero. Else, calculate cosine value
     // between two vectors.
@@ -435,8 +644,8 @@ void CosineTree::CalculateCosines(arma::vec& cosines)
     else
     {
       cosines(i) =
-          std::abs(arma::norm_dot(dataset.col(indices[splitPointIndex]),
-                                  dataset.col(indices[i])));
+          std::abs(arma::norm_dot(dataset->col(indices[splitPointIndex]),
+                                  dataset->col(indices[i])));
     }
   }
 }
@@ -444,12 +653,12 @@ void CosineTree::CalculateCosines(arma::vec& cosines)
 void CosineTree::CalculateCentroid()
 {
   // Initialize centroid as vector of zeros.
-  centroid.zeros(dataset.n_rows);
+  centroid.zeros(dataset->n_rows);
 
   // Calculate centroid of columns in the node.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
-    centroid += dataset.col(indices[i]);
+    centroid += dataset->col(indices[i]);
   }
   centroid /= numColumns;
 }

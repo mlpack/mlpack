@@ -1,5 +1,5 @@
 /**
- * @file prefixedoutstream.hpp
+ * @file core/util/prefixedoutstream_impl.hpp
  * @author Ryan Curtin
  * @author Matthew Amidon
  *

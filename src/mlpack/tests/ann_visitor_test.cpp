@@ -1,5 +1,5 @@
 /**
- * @file ann_visitor_test.cpp
+ * @file tests/ann_visitor_test.cpp
  *
  * Tests for testing visitors in ANN's of mlpack.
  *
@@ -15,18 +15,16 @@
 #include <mlpack/methods/ann/visitor/weight_set_visitor.hpp>
 #include <mlpack/methods/ann/visitor/reset_visitor.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 
-BOOST_AUTO_TEST_SUITE(ANNVisitorTest);
-
 /**
  * Test that the BiasSetVisitor works properly.
  */
-BOOST_AUTO_TEST_CASE(BiasSetVisitorTest)
+TEST_CASE("BiasSetVisitorTest", "[ANNVisitorTest]")
 {
   LayerTypes<> linear = new Linear<>(10, 10);
 
@@ -35,24 +33,22 @@ BOOST_AUTO_TEST_CASE(BiasSetVisitorTest)
 
   ResetVisitor resetVisitor;
 
-  boost::apply_visitor(WeightSetVisitor(std::move(layerWeights), 0), linear);
+  boost::apply_visitor(WeightSetVisitor(layerWeights, 0), linear);
 
   boost::apply_visitor(resetVisitor, linear);
 
   arma::mat weight = {"1 2 3 4 5 6 7 8 9 10"};
 
-  size_t biasSize = boost::apply_visitor(BiasSetVisitor(std::move(weight),
-      0), linear);
+  size_t biasSize = boost::apply_visitor(BiasSetVisitor(weight, 0), linear);
 
-  BOOST_REQUIRE_EQUAL(biasSize, 10);
+  REQUIRE(biasSize == 10);
 
   arma::mat input(10, 1), output;
   input.randu();
 
-  boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
-      linear);
+  boost::apply_visitor(ForwardVisitor(input, output), linear);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 55);
+  REQUIRE(arma::accu(output) == 55);
+
+  boost::apply_visitor(DeleteVisitor(), linear);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

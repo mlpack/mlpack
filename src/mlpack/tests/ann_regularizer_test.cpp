@@ -1,5 +1,5 @@
 /**
- * @file ann_regularizer_test.cpp
+ * @file tests/ann_regularizer_test.cpp
  * @author Saksham Bansal
  *
  * Tests the ANN regularizer modules.
@@ -16,16 +16,14 @@
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 #include <mlpack/methods/ann/regularizer/regularizer.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include "catch.hpp"
 #include "ann_test_tools.hpp"
-#include "serialization.hpp"
+#include "serialization_catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 
-BOOST_AUTO_TEST_SUITE(ANNRegularizerTest);
-
-BOOST_AUTO_TEST_CASE(GradientL1RegularizerTest)
+TEST_CASE("GradientL1RegularizerTest", "[ANNRegularizerTest]")
 {
   // Add function gradient instantiation.
   struct GradientFunction
@@ -51,10 +49,10 @@ BOOST_AUTO_TEST_CASE(GradientL1RegularizerTest)
     L1Regularizer reg;
   } function;
 
-  BOOST_REQUIRE_LE(CheckRegularizerGradient(function), 1e-4);
+  REQUIRE(CheckRegularizerGradient(function) <= 1e-4);
 }
 
-BOOST_AUTO_TEST_CASE(GradientL2RegularizerTest)
+TEST_CASE("GradientL2RegularizerTest", "[ANNRegularizerTest]")
 {
   // Add function gradient instantiation.
   struct GradientFunction
@@ -80,10 +78,10 @@ BOOST_AUTO_TEST_CASE(GradientL2RegularizerTest)
     L2Regularizer reg;
   } function;
 
-  BOOST_REQUIRE_LE(CheckRegularizerGradient(function), 1e-4);
+  REQUIRE(CheckRegularizerGradient(function) <= 1e-4);
 }
 
-BOOST_AUTO_TEST_CASE(GradientOrthogonalRegularizerTest)
+TEST_CASE("GradientOrthogonalRegularizerTest", "[ANNRegularizerTest]")
 {
   // Add function gradient instantiation.
   struct GradientFunction
@@ -111,7 +109,5 @@ BOOST_AUTO_TEST_CASE(GradientOrthogonalRegularizerTest)
     OrthogonalRegularizer reg;
   } function;
 
-  BOOST_REQUIRE_LE(CheckRegularizerGradient(function), 1e-4);
+  REQUIRE(CheckRegularizerGradient(function) <= 1e-4);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -1,5 +1,5 @@
 /**
- * @file diagonal_gmm.cpp
+ * @file methods/gmm/diagonal_gmm.cpp
  * @author Kim SangYeon
  *
  * Implementation of template-based GMM methods.
@@ -59,7 +59,7 @@ double DiagonalGMM::LogProbability(const arma::vec& observation) const
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
   {
     sum = math::LogAdd(sum, log(weights[i]) +
         dists[i].LogProbability(observation));
@@ -163,14 +163,14 @@ double DiagonalGMM::LogLikelihood(
   arma::vec phis;
   arma::mat likelihoods(gaussians, observations.n_cols);
 
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
   {
     dists[i].Probability(observations, phis);
     likelihoods.row(i) = weights(i) * trans(phis);
   }
 
   // Now sum over every point.
-  for (size_t j = 0; j < observations.n_cols; j++)
+  for (size_t j = 0; j < observations.n_cols; ++j)
   {
     if (accu(likelihoods.col(j)) == 0)
       Log::Info << "Likelihood of point " << j << " is 0!  It is probably an "

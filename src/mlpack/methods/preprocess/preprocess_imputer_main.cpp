@@ -1,5 +1,5 @@
 /**
- * @file preprocess_imputer_main.cpp
+ * @file methods/preprocess/preprocess_imputer_main.cpp
  * @author Keon Kim
  *
  * A utility that provides imputation strategies for missing values.
@@ -11,7 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/data/load_impl.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/imputer.hpp>
 #include <mlpack/core/data/dataset_mapper.hpp>
@@ -63,18 +63,18 @@ using namespace data;
 
 static void mlpackMain()
 {
-  const string inputFile = CLI::GetParam<string>("input_file");
-  const string outputFile = CLI::GetParam<string>("output_file");
-  const string missingValue = CLI::GetParam<string>("missing_value");
-  const double customValue = CLI::GetParam<double>("custom_value");
-  const size_t dimension = (size_t) CLI::GetParam<int>("dimension");
-  string strategy = CLI::GetParam<string>("strategy");
+  const string inputFile = IO::GetParam<string>("input_file");
+  const string outputFile = IO::GetParam<string>("output_file");
+  const string missingValue = IO::GetParam<string>("missing_value");
+  const double customValue = IO::GetParam<double>("custom_value");
+  const size_t dimension = (size_t) IO::GetParam<int>("dimension");
+  string strategy = IO::GetParam<string>("strategy");
 
   RequireParamInSet<string>("strategy", { "custom", "mean", "median",
       "listwise_deletion" }, true, "unknown imputation strategy");
   RequireAtLeastOnePassed({ "output_file" }, false, "no output will be saved");
 
-  if (!CLI::HasParam("dimension"))
+  if (!IO::HasParam("dimension"))
   {
     Log::Warn << "--dimension is not specified; the imputation will be "
         << "applied to all dimensions."<< endl;
@@ -114,7 +114,7 @@ static void mlpackMain()
     Log::Warn << "The file does not contain any user-defined missing "
         << "variables. The program did not perform any imputation." << endl;
   }
-  else if (CLI::HasParam("dimension") &&
+  else if (IO::HasParam("dimension") &&
       !(std::find(dirtyDimensions.begin(), dirtyDimensions.end(), dimension)
       != dirtyDimensions.end()))
   {
@@ -125,7 +125,7 @@ static void mlpackMain()
   else
   {
     Timer::Start("imputation");
-    if (CLI::HasParam("dimension"))
+    if (IO::HasParam("dimension"))
     {
       // when --dimension is specified,
       // the program will apply the changes to only the given dimension.

@@ -1,5 +1,5 @@
 /**
- * @file arma_extend_test.cpp
+ * @file tests/arma_extend_test.cpp
  * @author Ryan Curtin
  *
  * Test of the mlpack extensions to Armadillo.

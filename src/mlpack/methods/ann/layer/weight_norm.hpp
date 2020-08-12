@@ -1,5 +1,5 @@
 /**
- * @file weight_norm.hpp
+ * @file methods/ann/layer/weight_norm.hpp
  * @author Toshal Agrawal
  *
  * Definition of the WeightNorm layer class.
@@ -42,7 +42,8 @@ namespace ann /** Artificial Neural Network. */ {
  *            Training of Deep Neural Networks},
  *   author = {Tim Salimans, Diederik P. Kingma},
  *   booktitle = {Neural Information Processing Systems 2016},
- *   year = {2016}
+ *   year = {2016},
+ *   url  = {https://arxiv.org/abs/1602.07868},
  * }
  * @endcode
  *
@@ -85,7 +86,7 @@ class WeightNorm
    * @param output Resulting output activations.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Backward pass through the layer. This function calls the Backward()
@@ -96,9 +97,9 @@ class WeightNorm
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /**
    * Calculate the gradient using the output delta, input activations and the
@@ -109,9 +110,9 @@ class WeightNorm
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the delta.
   OutputDataType const& Delta() const { return delta; }

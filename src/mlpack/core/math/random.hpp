@@ -1,5 +1,5 @@
 /**
- * @file random.hpp
+ * @file core/math/random.hpp
  *
  * Miscellaneous math random-related routines.
  *
@@ -158,7 +158,7 @@ inline void ObtainDistinctSamples(const size_t loInclusive,
 
     samples.zeros(samplesRangeSize);
 
-    for (size_t i = 0; i < maxNumSamples; i++)
+    for (size_t i = 0; i < maxNumSamples; ++i)
       samples [ (size_t) math::RandInt(samplesRangeSize) ]++;
 
     distinctSamples = arma::find(samples > 0);
@@ -169,7 +169,7 @@ inline void ObtainDistinctSamples(const size_t loInclusive,
   else
   {
     distinctSamples.set_size(samplesRangeSize);
-    for (size_t i = 0; i < samplesRangeSize; i++)
+    for (size_t i = 0; i < samplesRangeSize; ++i)
       distinctSamples[i] = loInclusive + i;
   }
 }

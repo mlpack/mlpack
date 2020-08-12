@@ -1,5 +1,5 @@
 /**
- * @file naive_bayes_classifier_impl.hpp
+ * @file methods/naive_bayes/naive_bayes_classifier_impl.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Vahab Akbarzadeh (v.akbarzadeh@gmail.com)
  * @author Shihao Jing (shihao.jing810@gmail.com)
@@ -217,7 +217,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
   // means.n_cols.
 
   // Loop over every class.
-  for (size_t i = 0; i < means.n_cols; i++)
+  for (size_t i = 0; i < means.n_cols; ++i)
   {
     // This is an adaptation of gmm::phi() for the case where the covariance is
     // a diagonal matrix.

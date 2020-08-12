@@ -1,8 +1,8 @@
 /**
- * @file SVD_complete_incremental.hpp
+ * @file methods/cf/decomposition_policies/svd_complete_method.hpp
  * @author Haritha Nair
  *
- * Implementation of the SVD complete incremental method for use in the 
+ * Implementation of the SVD complete incremental method for use in the
  * Collaborative Filtering.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -48,7 +48,7 @@ class SVDCompletePolicy
    * Apply Collaborative Filtering to the provided data set using the
    * SVD complete incremental policy.
    *
-   * @param data Data matrix: dense matrix (coordinate lists) 
+   * @param * (data) Data matrix: dense matrix (coordinate lists)
    *    or sparse matrix(cleaned).
    * @param cleanedData item user table in form of sparse matrix.
    * @param rank Rank parameter for matrix factorization.
@@ -141,7 +141,7 @@ class SVDCompletePolicy
     // Temporarily store feature vector of queried users.
     arma::mat query(stretchedH.n_rows, users.n_elem);
     // Select feature vectors of queried users.
-    for (size_t i = 0; i < users.n_elem; i++)
+    for (size_t i = 0; i < users.n_elem; ++i)
       query.col(i) = stretchedH.col(users(i));
 
     NeighborSearchPolicy neighborSearch(stretchedH);

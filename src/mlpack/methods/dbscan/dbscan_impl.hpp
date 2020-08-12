@@ -1,5 +1,5 @@
 /**
- * @file dbscan_impl.hpp
+ * @file methods/dbscan/dbscan_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of DBSCAN.

@@ -1,5 +1,5 @@
 /**
- * @file decision_tree_test.cpp
+ * @file tests/decision_tree_test.cpp
  * @author Ryan Curtin
  *
  * Tests for the DecisionTree class and related classes.
@@ -16,8 +16,7 @@
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 #include "serialization.hpp"
 #include "mock_categorical_data.hpp"
 
@@ -25,12 +24,10 @@ using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::distribution;
 
-BOOST_AUTO_TEST_SUITE(DecisionTreeTest);
-
 /**
  * Make sure the Gini gain is zero when the labels are perfect.
  */
-BOOST_AUTO_TEST_CASE(GiniGainPerfectTest)
+TEST_CASE("GiniGainPerfectTest", "[DecisionTreeTest]")
 {
   arma::rowvec weights(10, arma::fill::ones);
   arma::Row<size_t> labels;
@@ -38,14 +35,17 @@ BOOST_AUTO_TEST_CASE(GiniGainPerfectTest)
 
   // Test that it's perfect regardless of number of classes.
   for (size_t c = 1; c < 10; ++c)
-    BOOST_REQUIRE_SMALL(GiniGain::Evaluate<false>(labels, c, weights), 1e-5);
+  {
+    REQUIRE(GiniGain::Evaluate<false>(labels, c, weights) ==
+        Approx(0.0).margin(1e-5));
+  }
 }
 
 /**
  * Make sure the Gini gain is -0.5 when the class split between two classes
  * is even.
  */
-BOOST_AUTO_TEST_CASE(GiniGainEvenSplitTest)
+TEST_CASE("GiniGainEvenSplitTest", "[DecisionTreeTest]")
 {
   arma::rowvec weights = arma::ones<arma::rowvec>(10);
   arma::Row<size_t> labels(10);
@@ -57,35 +57,41 @@ BOOST_AUTO_TEST_CASE(GiniGainEvenSplitTest)
   // Test that it's -0.5 regardless of the number of classes.
   for (size_t c = 2; c < 10; ++c)
   {
-    BOOST_REQUIRE_CLOSE(
-        GiniGain::Evaluate<false>(labels, c, weights), -0.5, 1e-5);
+    REQUIRE(GiniGain::Evaluate<false>(labels, c, weights) ==
+        Approx(-0.5).epsilon(1e-7));
+
     double weightedGain = GiniGain::Evaluate<true>(labels, c, weights);
 
     // The weighted gain should stay the same with unweight one
-    BOOST_REQUIRE_EQUAL(
-        GiniGain::Evaluate<false>(labels, c, weights), weightedGain);
+    REQUIRE(GiniGain::Evaluate<false>(labels, c, weights) == weightedGain);
   }
 }
 
 /**
  * The Gini gain of an empty vector is 0.
  */
-BOOST_AUTO_TEST_CASE(GiniGainEmptyTest)
+TEST_CASE("GiniGainEmptyTest", "[DecisionTreeTest]")
 {
   arma::rowvec weights = arma::ones<arma::rowvec>(10);
   // Test across some numbers of classes.
   arma::Row<size_t> labels;
   for (size_t c = 1; c < 10; ++c)
-    BOOST_REQUIRE_SMALL(GiniGain::Evaluate<false>(labels, c, weights), 1e-5);
+  {
+    REQUIRE(GiniGain::Evaluate<false>(labels, c, weights) ==
+        Approx(0.0).margin(1e-5));
+  }
 
   for (size_t c = 1; c < 10; ++c)
-    BOOST_REQUIRE_SMALL(GiniGain::Evaluate<true>(labels, c, weights), 1e-5);
+  {
+    REQUIRE(GiniGain::Evaluate<true>(labels, c, weights) ==
+        Approx(0.0).margin(1e-5));
+  }
 }
 
 /**
  * The Gini gain is -(1 - 1/k) for k classes evenly split.
  */
-BOOST_AUTO_TEST_CASE(GiniGainEvenSplitManyClassTest)
+TEST_CASE("GiniGainEvenSplitManyClassTest", "[DecisionTreeTest]")
 {
   // Try with many different classes.
   for (size_t c = 2; c < 30; ++c)
@@ -99,17 +105,17 @@ BOOST_AUTO_TEST_CASE(GiniGainEvenSplitManyClassTest)
     }
 
     // Calculate Gini gain and make sure it is correct.
-    BOOST_REQUIRE_CLOSE(GiniGain::Evaluate<false>(labels, c, weights),
-        -(1.0 - 1.0 / c), 1e-5);
-    BOOST_REQUIRE_CLOSE(GiniGain::Evaluate<true>(labels, c, weights),
-        -(1.0 - 1.0 / c), 1e-5);
+    REQUIRE(GiniGain::Evaluate<false>(labels, c, weights) ==
+        Approx(-(1.0 - 1.0 / c)).epsilon(1e-7));
+    REQUIRE(GiniGain::Evaluate<true>(labels, c, weights) ==
+        Approx(-(1.0 - 1.0 / c)).epsilon(1e-7));
   }
 }
 
 /**
  * The Gini gain should not be sensitive to the number of points.
  */
-BOOST_AUTO_TEST_CASE(GiniGainManyPoints)
+TEST_CASE("GiniGainManyPoints", "[DecisionTreeTest]")
 {
   for (size_t i = 1; i < 20; ++i)
   {
@@ -121,11 +127,10 @@ BOOST_AUTO_TEST_CASE(GiniGainManyPoints)
       labels[j] = 0;
     for (size_t j = numPoints / 2; j < numPoints; ++j)
       labels[j] = 1;
-
-    BOOST_REQUIRE_CLOSE(GiniGain::Evaluate<false>(labels, 2, weights), -0.5,
-        1e-5);
-    BOOST_REQUIRE_CLOSE(GiniGain::Evaluate<true>(labels, 2, weights), -0.5,
-        1e-5);
+    REQUIRE(GiniGain::Evaluate<false>(labels, 2, weights) ==
+        Approx(-0.5).epsilon(1e-7));
+    REQUIRE(GiniGain::Evaluate<true>(labels, 2, weights) ==
+        Approx(-0.5).epsilon(1e-7));
   }
 }
 
@@ -133,7 +138,7 @@ BOOST_AUTO_TEST_CASE(GiniGainManyPoints)
 /**
  * To make sure the Gini gain can been cacluate proporately with weight.
  */
-BOOST_AUTO_TEST_CASE(GiniGainWithWeight)
+TEST_CASE("GiniGainWithWeight", "[DecisionTreeTest]")
 {
   arma::Row<size_t> labels(10);
   arma::rowvec weights(10);
@@ -148,14 +153,14 @@ BOOST_AUTO_TEST_CASE(GiniGainWithWeight)
     weights[i] = 0.7;
   }
 
-  BOOST_REQUIRE_CLOSE(
-      GiniGain::Evaluate<true>(labels, 2, weights), -0.42, 1e-5);
+  REQUIRE(GiniGain::Evaluate<true>(labels, 2, weights) ==
+      Approx(-0.42).epsilon(1e-7));
 }
 
 /**
  * The information gain should be zero when the labels are perfect.
  */
-BOOST_AUTO_TEST_CASE(InformationGainPerfectTest)
+TEST_CASE("InformationGainPerfectTest", "[DecisionTreeTest]")
 {
   arma::rowvec weights;
   arma::Row<size_t> labels;
@@ -164,15 +169,15 @@ BOOST_AUTO_TEST_CASE(InformationGainPerfectTest)
   // Test that it's perfect regardless of number of classes.
   for (size_t c = 1; c < 10; ++c)
   {
-    BOOST_REQUIRE_SMALL(
-        InformationGain::Evaluate<false>(labels, c, weights), 1e-5);
+    REQUIRE(InformationGain::Evaluate<false>(labels, c, weights) ==
+        Approx(0.0).margin(1e-5));
   }
 }
 
 /**
  * If we have an even split, the information gain should be -1.
  */
-BOOST_AUTO_TEST_CASE(InformationGainEvenSplitTest)
+TEST_CASE("InformationGainEvenSplitTest", "[DecisionTreeTest]")
 {
   arma::Row<size_t> labels(10);
   arma::rowvec weights(10);
@@ -186,33 +191,33 @@ BOOST_AUTO_TEST_CASE(InformationGainEvenSplitTest)
   for (size_t c = 2; c < 10; ++c)
   {
     // Weighted and unweighted result should be the same.
-    BOOST_REQUIRE_CLOSE(InformationGain::Evaluate<false>(labels, c, weights),
-        -1.0, 1e-5);
-    BOOST_REQUIRE_CLOSE(InformationGain::Evaluate<true>(labels, c, weights),
-        -1.0, 1e-5);
+    REQUIRE(InformationGain::Evaluate<false>(labels, c, weights) ==
+        Approx(-1.0).epsilon(1e-7));
+    REQUIRE(InformationGain::Evaluate<true>(labels, c, weights) ==
+        Approx(-1.0).epsilon(1e-7));
   }
 }
 
 /**
  * The information gain of an empty vector is 0.
  */
-BOOST_AUTO_TEST_CASE(InformationGainEmptyTest)
+TEST_CASE("InformationGainEmptyTest", "[DecisionTreeTest]")
 {
   arma::Row<size_t> labels;
   arma::rowvec weights = arma::ones<arma::rowvec>(10);
   for (size_t c = 1; c < 10; ++c)
   {
-    BOOST_REQUIRE_SMALL(InformationGain::Evaluate<false>(labels, c, weights),
-        1e-5);
-    BOOST_REQUIRE_SMALL(InformationGain::Evaluate<true>(labels, c, weights),
-        1e-5);
+    REQUIRE(InformationGain::Evaluate<false>(labels, c, weights) ==
+        Approx(0.0).margin(1e-5));
+    REQUIRE(InformationGain::Evaluate<true>(labels, c, weights) ==
+        Approx(0.0).margin(1e-5));
   }
 }
 
 /**
  * The information gain is log2(1/k) when splitting equal classes.
  */
-BOOST_AUTO_TEST_CASE(InformationGainEvenSplitManyClassTest)
+TEST_CASE("InformationGainEvenSplitManyClassTest", "[DecisionTreeTest]")
 {
   arma::rowvec weights;
   // Try with many different numbers of classes.
@@ -223,15 +228,15 @@ BOOST_AUTO_TEST_CASE(InformationGainEvenSplitManyClassTest)
       labels[i] = i;
 
     // Calculate information gain and make sure it is correct.
-    BOOST_REQUIRE_CLOSE(InformationGain::Evaluate<false>(labels, c, weights),
-        std::log2(1.0 / c), 1e-5);
+    REQUIRE(InformationGain::Evaluate<false>(labels, c, weights) ==
+        Approx(std::log2(1.0 / c)).epsilon(1e-7));
   }
 }
 
 /**
  * Test the information gain with weighted labels
  */
-BOOST_AUTO_TEST_CASE(InformationWithWeight)
+TEST_CASE("InformationWithWeight", "[DecisionTreeTest]")
 {
   arma::Row<size_t> labels(10);
   arma::rowvec weights("1 1 1 1 1 0 0 0 0 0");
@@ -242,15 +247,15 @@ BOOST_AUTO_TEST_CASE(InformationWithWeight)
 
   // Zero is not a good result as gain, but we just need to prove
   // cacluation works.
-  BOOST_REQUIRE_CLOSE(
-      InformationGain::Evaluate<true>(labels, 2, weights), 0, 1e-5);
+  REQUIRE(InformationGain::Evaluate<true>(labels, 2, weights) ==
+      Approx(0).epsilon(1e-7));
 }
 
 
 /**
  * The information gain should not be sensitive to the number of points.
  */
-BOOST_AUTO_TEST_CASE(InformationGainManyPoints)
+TEST_CASE("InformationGainManyPoints", "[DecisionTreeTest]")
 {
   for (size_t i = 1; i < 20; ++i)
   {
@@ -262,12 +267,13 @@ BOOST_AUTO_TEST_CASE(InformationGainManyPoints)
     for (size_t j = numPoints / 2; j < numPoints; ++j)
       labels[j] = 1;
 
-    BOOST_REQUIRE_CLOSE(InformationGain::Evaluate<false>(labels, 2, weights),
-        -1.0, 1e-5);
+    REQUIRE(InformationGain::Evaluate<false>(labels, 2, weights) ==
+        Approx(-1.0).epsilon(1e-7));
+
     // It should make no difference between a weighted and unweighted
     // calculation.
-    BOOST_REQUIRE_CLOSE(InformationGain::Evaluate<true>(labels, 2, weights),
-        -1.0, 1e-5);
+    REQUIRE(InformationGain::Evaluate<true>(labels, 2, weights) ==
+        Approx(-1.0).epsilon(1e-7));
   }
 }
 
@@ -275,7 +281,7 @@ BOOST_AUTO_TEST_CASE(InformationGainManyPoints)
  * Check that the BestBinaryNumericSplit will split on an obviously splittable
  * dimension.
  */
-BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitSimpleSplitTest)
+TEST_CASE("BestBinaryNumericSplitSimpleSplitTest", "[DecisionTreeTest]")
 {
   arma::vec values("0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0");
   arma::Row<size_t> labels("0 0 0 0 0 1 1 1 1 1 1");
@@ -295,26 +301,26 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitSimpleSplitTest)
       labels, 2, weights, 3, 1e-7, classProbabilities, aux);
 
   // Make sure that a split was made.
-  BOOST_REQUIRE_GT(gain, bestGain);
+  REQUIRE(gain > bestGain);
 
   // Make sure weight works and is not different than the unweighted one.
-  BOOST_REQUIRE_EQUAL(gain, weightedGain);
+  REQUIRE(gain == weightedGain);
 
   // The split is perfect, so we should be able to accomplish a gain of 0.
-  BOOST_REQUIRE_SMALL(gain, 1e-5);
+  REQUIRE(gain == Approx(0.0).margin(1e-7));
 
   // The class probabilities, for this split, hold the splitting point, which
   // should be between 4 and 5.
-  BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 1);
-  BOOST_REQUIRE_GT(classProbabilities[0], 0.4);
-  BOOST_REQUIRE_LT(classProbabilities[0], 0.5);
+  REQUIRE(classProbabilities.n_elem == 1);
+  REQUIRE(classProbabilities[0] > 0.4);
+  REQUIRE(classProbabilities[0] < 0.5);
 }
 
 /**
  * Check that the BestBinaryNumericSplit won't split if not enough points are
  * given.
  */
-BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitMinSamplesTest)
+TEST_CASE("BestBinaryNumericSplitMinSamplesTest", "[DecisionTreeTest]")
 {
   arma::vec values("0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0");
   arma::Row<size_t> labels("0 0 0 0 0 1 1 1 1 1 1");
@@ -334,16 +340,16 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitMinSamplesTest)
       labels, 2, weights, 8, 1e-7, classProbabilities, aux);
 
   // Make sure that no split was made.
-  BOOST_REQUIRE_EQUAL(gain, DBL_MAX);
-  BOOST_REQUIRE_EQUAL(gain, weightedGain);
-  BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 0);
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(gain == weightedGain);
+  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**
  * Check that the BestBinaryNumericSplit doesn't split a dimension that gives no
  * gain.
  */
-BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitNoGainTest)
+TEST_CASE("BestBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
 {
   arma::vec values(100);
   arma::Row<size_t> labels(100);
@@ -366,15 +372,15 @@ BOOST_AUTO_TEST_CASE(BestBinaryNumericSplitNoGainTest)
       aux);
 
   // Make sure there was no split.
-  BOOST_REQUIRE_EQUAL(gain, DBL_MAX);
-  BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 0);
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**
  * Check that the AllCategoricalSplit will split when the split is obviously
  * better.
  */
-BOOST_AUTO_TEST_CASE(AllCategoricalSplitSimpleSplitTest)
+TEST_CASE("AllCategoricalSplitSimpleSplitTest", "[DecisionTreeTest]")
 {
   arma::vec values("0 0 0 1 1 1 2 2 2 3 3 3");
   arma::Row<size_t> labels("0 0 0 2 2 2 1 1 1 2 2 2");
@@ -394,23 +400,23 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitSimpleSplitTest)
       labels, 3, weights, 3, 1e-7, classProbabilities, aux);
 
   // Make sure that a split was made.
-  BOOST_REQUIRE_GT(gain, bestGain);
+  REQUIRE(gain > bestGain);
 
   // Since the split is perfect, make sure the new gain is 0.
-  BOOST_REQUIRE_SMALL(gain, 1e-5);
+  REQUIRE(gain == Approx(0.0).margin(1e-7));
 
-  BOOST_REQUIRE_EQUAL(gain, weightedGain);
+  REQUIRE(gain == weightedGain);
 
   // Make sure the class probabilities now hold the number of children.
-  BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 1);
-  BOOST_REQUIRE_EQUAL((size_t) classProbabilities[0], 4);
+  REQUIRE(classProbabilities.n_elem == 1);
+  REQUIRE((size_t) classProbabilities[0] == 4);
 }
 
 /**
  * Make sure that AllCategoricalSplit respects the minimum number of samples
  * required to split.
  */
-BOOST_AUTO_TEST_CASE(AllCategoricalSplitMinSamplesTest)
+TEST_CASE("AllCategoricalSplitMinSamplesTest", "[DecisionTreeTest]")
 {
   arma::vec values("0 0 0 1 1 1 2 2 2 3 3 3");
   arma::Row<size_t> labels("0 0 0 2 2 2 1 1 1 2 2 2");
@@ -427,14 +433,14 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitMinSamplesTest)
       aux);
 
   // Make sure it's not split.
-  BOOST_REQUIRE_EQUAL(gain, DBL_MAX);
-  BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 0);
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**
  * Check that no split is made when it doesn't get us anything.
  */
-BOOST_AUTO_TEST_CASE(AllCategoricalSplitNoGainTest)
+TEST_CASE("AllCategoricalSplitNoGainTest", "[DecisionTreeTest]")
 {
   arma::vec values(300);
   arma::Row<size_t> labels(300);
@@ -463,16 +469,16 @@ BOOST_AUTO_TEST_CASE(AllCategoricalSplitNoGainTest)
       labels, 3, weights, 10, 1e-7, classProbabilities, aux);
 
   // Make sure that there was no split.
-  BOOST_REQUIRE_EQUAL(gain, DBL_MAX);
-  BOOST_REQUIRE_EQUAL(gain, weightedGain);
-  BOOST_REQUIRE_EQUAL(classProbabilities.n_elem, 0);
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(gain == weightedGain);
+  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**
  * A basic construction of the decision tree---ensure that we can create the
  * tree and that it split at least once.
  */
-BOOST_AUTO_TEST_CASE(BasicConstructionTest)
+TEST_CASE("BasicConstructionTest", "[DecisionTreeTest]")
 {
   arma::mat dataset(10, 100, arma::fill::randu);
   arma::Row<size_t> labels(100);
@@ -491,13 +497,13 @@ BOOST_AUTO_TEST_CASE(BasicConstructionTest)
   DecisionTree<> d(dataset, labels, 2, 10);
 
   // Now require that we have some children.
-  BOOST_REQUIRE_GT(d.NumChildren(), 0);
+  REQUIRE(d.NumChildren() > 0);
 }
 
 /**
  * Construct a tree with weighted labels.
  */
-BOOST_AUTO_TEST_CASE(BasicConstructionTestWithWeight)
+TEST_CASE("BasicConstructionTestWithWeight", "[DecisionTreeTest]")
 {
   arma::mat dataset(10, 100, arma::fill::randu);
   arma::Row<size_t> labels(100);
@@ -519,15 +525,15 @@ BOOST_AUTO_TEST_CASE(BasicConstructionTestWithWeight)
   DecisionTree<> d(dataset, labels, 2, 10);
 
   // Now require that we have some children.
-  BOOST_REQUIRE_GT(wd.NumChildren(), 0);
-  BOOST_REQUIRE_EQUAL(wd.NumChildren(), d.NumChildren());
+  REQUIRE(wd.NumChildren() > 0);
+  REQUIRE(wd.NumChildren() == d.NumChildren());
 }
 
 /**
  * Construct the decision tree on numeric data only and see that we can fit it
  * exactly and achieve perfect performance on the training set.
  */
-BOOST_AUTO_TEST_CASE(PerfectTrainingSet)
+TEST_CASE("PerfectTrainingSet", "[DecisionTreeTest]")
 {
   arma::mat dataset(10, 100, arma::fill::randu);
   arma::Row<size_t> labels(100);
@@ -551,14 +557,14 @@ BOOST_AUTO_TEST_CASE(PerfectTrainingSet)
     arma::vec probabilities;
     d.Classify(dataset.col(i), prediction, probabilities);
 
-    BOOST_REQUIRE_EQUAL(prediction, labels[i]);
-    BOOST_REQUIRE_EQUAL(probabilities.n_elem, 2);
+    REQUIRE(prediction == labels[i]);
+    REQUIRE(probabilities.n_elem == 2);
     for (size_t j = 0; j < 2; ++j)
     {
       if (labels[i] == j)
-        BOOST_REQUIRE_CLOSE(probabilities[j], 1.0, 1e-5);
+        REQUIRE(probabilities[j] == Approx(1.0).epsilon(1e-7));
       else
-        BOOST_REQUIRE_SMALL(probabilities[j], 1e-5);
+        REQUIRE(probabilities[j] == Approx(0.0).margin(1e-5));
     }
   }
 }
@@ -566,7 +572,7 @@ BOOST_AUTO_TEST_CASE(PerfectTrainingSet)
 /**
  * Construct the decision tree with weighted labels
  */
-BOOST_AUTO_TEST_CASE(PerfectTrainingSetWithWeight)
+TEST_CASE("PerfectTrainingSetWithWeight", "[DecisionTreeTest]")
 {
   // Completely random dataset with no structure.
   arma::mat dataset(10, 100, arma::fill::randu);
@@ -594,14 +600,14 @@ BOOST_AUTO_TEST_CASE(PerfectTrainingSetWithWeight)
     arma::vec probabilities;
     d.Classify(dataset.col(i), prediction, probabilities);
 
-    BOOST_REQUIRE_EQUAL(prediction, labels[i]);
-    BOOST_REQUIRE_EQUAL(probabilities.n_elem, 2);
+    REQUIRE(prediction == labels[i]);
+    REQUIRE(probabilities.n_elem == 2);
     for (size_t j = 0; j < 2; ++j)
     {
       if (labels[i] == j)
-        BOOST_REQUIRE_CLOSE(probabilities[j], 1.0, 1e-5);
+        REQUIRE(probabilities[j] == Approx(1.0).epsilon(1e-7));
       else
-        BOOST_REQUIRE_SMALL(probabilities[j], 1e-5);
+        REQUIRE(probabilities[j] == Approx(0.0).margin(1e-5));
     }
   }
 }
@@ -610,7 +616,7 @@ BOOST_AUTO_TEST_CASE(PerfectTrainingSetWithWeight)
 /**
  * Make sure class probabilities are computed correctly in the root node.
  */
-BOOST_AUTO_TEST_CASE(ClassProbabilityTest)
+TEST_CASE("ClassProbabilityTest", "[DecisionTreeTest]")
 {
   arma::mat dataset(5, 100, arma::fill::randu);
   arma::Row<size_t> labels(100);
@@ -623,30 +629,30 @@ BOOST_AUTO_TEST_CASE(ClassProbabilityTest)
   // Create a decision tree that can't split.
   DecisionTree<> d(dataset, labels, 2, 1000);
 
-  BOOST_REQUIRE_EQUAL(d.NumChildren(), 0);
+  REQUIRE(d.NumChildren() == 0);
 
   // Estimate a point's probabilities.
   arma::vec probabilities;
   size_t prediction;
   d.Classify(dataset.col(0), prediction, probabilities);
 
-  BOOST_REQUIRE_EQUAL(probabilities.n_elem, 2);
-  BOOST_REQUIRE_CLOSE(probabilities[0], 0.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(probabilities[1], 0.5, 1e-5);
+  REQUIRE(probabilities.n_elem == 2);
+  REQUIRE(probabilities[0] == Approx(0.5).epsilon(1e-7));
+  REQUIRE(probabilities[1] == Approx(0.5).epsilon(1e-7));
 }
 
 /**
  * Test that the decision tree generalizes reasonably.
  */
-BOOST_AUTO_TEST_CASE(SimpleGeneralizationTest)
+TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
   arma::rowvec weights(labels.n_cols, arma::fill::ones);
@@ -658,17 +664,17 @@ BOOST_AUTO_TEST_CASE(SimpleGeneralizationTest)
   // Load testing data.
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset vc2_test.csv!");
+    FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Mat<size_t> trueTestLabels;
   if (!data::Load("vc2_test_labels.txt", trueTestLabels))
-    BOOST_FAIL("Cannot load labels for vc2_test_labels.txt");
+    FAIL("Cannot load labels for vc2_test_labels.txt");
 
   // Get the predicted test labels.
   arma::Row<size_t> predictions;
   d.Classify(testData, predictions);
 
-  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+  REQUIRE(predictions.n_elem == testData.n_cols);
 
   // Figure out the accuracy.
   double correct = 0.0;
@@ -677,13 +683,13 @@ BOOST_AUTO_TEST_CASE(SimpleGeneralizationTest)
       ++correct;
   correct /= predictions.n_elem;
 
-  BOOST_REQUIRE_GT(correct, 0.75);
+  REQUIRE(correct > 0.75);
 
   // reset the prediction
   predictions.zeros();
   wd.Classify(testData, predictions);
 
-  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+  REQUIRE(predictions.n_elem == testData.n_cols);
 
   // Figure out the accuracy.
   double wdcorrect = 0.0;
@@ -692,13 +698,13 @@ BOOST_AUTO_TEST_CASE(SimpleGeneralizationTest)
       ++wdcorrect;
   wdcorrect /= predictions.n_elem;
 
-  BOOST_REQUIRE_GT(wdcorrect, 0.75);
+  REQUIRE(wdcorrect > 0.75);
 }
 
 /**
  * Test that we can build a decision tree on a simple categorical dataset.
  */
-BOOST_AUTO_TEST_CASE(CategoricalBuildTest)
+TEST_CASE("CategoricalBuildTest", "[DecisionTreeTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
@@ -718,7 +724,7 @@ BOOST_AUTO_TEST_CASE(CategoricalBuildTest)
   arma::Row<size_t> predictions;
   tree.Classify(testData, predictions);
 
-  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+  REQUIRE(predictions.n_elem == testData.n_cols);
   size_t correct = 0;
   for (size_t i = 0; i < testData.n_cols; ++i)
     if (testLabels[i] == predictions[i])
@@ -726,14 +732,14 @@ BOOST_AUTO_TEST_CASE(CategoricalBuildTest)
 
   // Make sure we got at least 70% accuracy.
   const double correctPct = double(correct) / double(testData.n_cols);
-  BOOST_REQUIRE_GT(correctPct, 0.70);
+  REQUIRE(correctPct > 0.70);
 }
 
 /**
  * Test that we can build a decision tree with weights on a simple categorical
  * dataset.
  */
-BOOST_AUTO_TEST_CASE(CategoricalBuildTestWithWeight)
+TEST_CASE("CategoricalBuildTestWithWeight", "[DecisionTreeTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
@@ -756,7 +762,7 @@ BOOST_AUTO_TEST_CASE(CategoricalBuildTestWithWeight)
   arma::Row<size_t> predictions;
   tree.Classify(testData, predictions);
 
-  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+  REQUIRE(predictions.n_elem == testData.n_cols);
   size_t correct = 0;
   for (size_t i = 0; i < testData.n_cols; ++i)
     if (testLabels[i] == predictions[i])
@@ -764,13 +770,13 @@ BOOST_AUTO_TEST_CASE(CategoricalBuildTestWithWeight)
 
   // Make sure we got at least 70% accuracy.
   const double correctPct = double(correct) / double(testData.n_cols);
-  BOOST_REQUIRE_GT(correctPct, 0.70);
+  REQUIRE(correctPct > 0.70);
 }
 
 /**
  * Make sure that when we ask for a decision stump, we get one.
  */
-BOOST_AUTO_TEST_CASE(DecisionStumpTest)
+TEST_CASE("DecisionStumpTest", "[DecisionTreeTest]")
 {
   // Use a random dataset.
   arma::mat dataset(10, 1000, arma::fill::randu);
@@ -783,10 +789,10 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTest)
       AllDimensionSelect, double, true> stump(dataset, labels, 3, 1);
 
   // Check that it has children.
-  BOOST_REQUIRE_EQUAL(stump.NumChildren(), 2);
+  REQUIRE(stump.NumChildren() == 2);
   // Check that its children doesn't have children.
-  BOOST_REQUIRE_EQUAL(stump.Child(0).NumChildren(), 0);
-  BOOST_REQUIRE_EQUAL(stump.Child(1).NumChildren(), 0);
+  REQUIRE(stump.Child(0).NumChildren() == 0);
+  REQUIRE(stump.Child(1).NumChildren() == 0);
 }
 
 /**
@@ -794,7 +800,7 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTest)
  * low-weighted data is random noise), and that the tree still builds correctly
  * enough to get good results.
  */
-BOOST_AUTO_TEST_CASE(WeightedDecisionTreeTest)
+TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
@@ -830,7 +836,7 @@ BOOST_AUTO_TEST_CASE(WeightedDecisionTreeTest)
   arma::Row<size_t> predictions;
   d.Classify(testData, predictions);
 
-  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+  REQUIRE(predictions.n_elem == testData.n_cols);
 
   // Figure out the accuracy.
   double correct = 0.0;
@@ -839,13 +845,13 @@ BOOST_AUTO_TEST_CASE(WeightedDecisionTreeTest)
       ++correct;
   correct /= predictions.n_elem;
 
-  BOOST_REQUIRE_GT(correct, 0.75);
+  REQUIRE(correct > 0.75);
 }
 /**
  * Test that we can build a decision tree on a simple categorical dataset using
  * weights, with low-weight noise added.
  */
-BOOST_AUTO_TEST_CASE(CategoricalWeightedBuildTest)
+TEST_CASE("CategoricalWeightedBuildTest", "[DecisionTreeTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
@@ -887,7 +893,7 @@ BOOST_AUTO_TEST_CASE(CategoricalWeightedBuildTest)
   arma::Row<size_t> predictions;
   tree.Classify(testData, predictions);
 
-  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+  REQUIRE(predictions.n_elem == testData.n_cols);
   size_t correct = 0;
   for (size_t i = 0; i < testData.n_cols; ++i)
     if (testLabels[i] == predictions[i])
@@ -895,7 +901,7 @@ BOOST_AUTO_TEST_CASE(CategoricalWeightedBuildTest)
 
   // Make sure we got at least 70% accuracy.
   const double correctPct = double(correct) / double(testData.n_cols);
-  BOOST_REQUIRE_GT(correctPct, 0.70);
+  REQUIRE(correctPct > 0.70);
 }
 
 /**
@@ -903,7 +909,7 @@ BOOST_AUTO_TEST_CASE(CategoricalWeightedBuildTest)
  * low-weighted data is random noise) with information gain, and that the tree
  * still builds correctly enough to get good results.
  */
-BOOST_AUTO_TEST_CASE(WeightedDecisionTreeInformationGainTest)
+TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
@@ -939,7 +945,7 @@ BOOST_AUTO_TEST_CASE(WeightedDecisionTreeInformationGainTest)
   arma::Row<size_t> predictions;
   d.Classify(testData, predictions);
 
-  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+  REQUIRE(predictions.n_elem == testData.n_cols);
 
   // Figure out the accuracy.
   double correct = 0.0;
@@ -948,13 +954,13 @@ BOOST_AUTO_TEST_CASE(WeightedDecisionTreeInformationGainTest)
       ++correct;
   correct /= predictions.n_elem;
 
-  BOOST_REQUIRE_GT(correct, 0.75);
+  REQUIRE(correct > 0.75);
 }
 /**
  * Test that we can build a decision tree using information gain on a simple
  * categorical dataset using weights, with low-weight noise added.
  */
-BOOST_AUTO_TEST_CASE(CategoricalInformationGainWeightedBuildTest)
+TEST_CASE("CategoricalInformationGainWeightedBuildTest", "[DecisionTreeTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
@@ -996,7 +1002,7 @@ BOOST_AUTO_TEST_CASE(CategoricalInformationGainWeightedBuildTest)
   arma::Row<size_t> predictions;
   tree.Classify(testData, predictions);
 
-  BOOST_REQUIRE_EQUAL(predictions.n_elem, testData.n_cols);
+  REQUIRE(predictions.n_elem == testData.n_cols);
   size_t correct = 0;
   for (size_t i = 0; i < testData.n_cols; ++i)
     if (testLabels[i] == predictions[i])
@@ -1004,27 +1010,27 @@ BOOST_AUTO_TEST_CASE(CategoricalInformationGainWeightedBuildTest)
 
   // Make sure we got at least 70% accuracy.
   const double correctPct = double(correct) / double(testData.n_cols);
-  BOOST_REQUIRE_GT(correctPct, 0.70);
+  REQUIRE(correctPct > 0.70);
 }
 
 /**
  * Make sure that the random dimension selector only has one element.
  */
-BOOST_AUTO_TEST_CASE(RandomDimensionSelectTest)
+TEST_CASE("RandomDimensionSelectTest", "[DecisionTreeTest]")
 {
   RandomDimensionSelect r;
   r.Dimensions() = 10;
 
-  BOOST_REQUIRE_LT(r.Begin(), 10);
-  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
-  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
-  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
+  REQUIRE(r.Begin() < 10);
+  REQUIRE(r.Next() == r.End());
+  REQUIRE(r.Next() == r.End());
+  REQUIRE(r.Next() == r.End());
 }
 
 /**
  * Make sure that the random dimension selector selects different values.
  */
-BOOST_AUTO_TEST_CASE(RandomDimensionSelectRandomTest)
+TEST_CASE("RandomDimensionSelectRandomTest", "[DecisionTreeTest]")
 {
   // We'll check that 4 values are not all the same.
   RandomDimensionSelect r1, r2, r3, r4;
@@ -1033,33 +1039,33 @@ BOOST_AUTO_TEST_CASE(RandomDimensionSelectRandomTest)
   r3.Dimensions() = 100000;
   r4.Dimensions() = 100000;
 
-  BOOST_REQUIRE((r1.Begin() != r2.Begin()) ||
-                (r1.Begin() != r3.Begin()) ||
-                (r1.Begin() != r4.Begin()));
+  REQUIRE(((r1.Begin() != r2.Begin()) ||
+           (r1.Begin() != r3.Begin()) ||
+           (r1.Begin() != r4.Begin())));
 }
 
 /**
  * Make sure that the multiple random dimension select only has the right number
  * of elements.
  */
-BOOST_AUTO_TEST_CASE(MultipleRandomDimensionSelectTest)
+TEST_CASE("MultipleRandomDimensionSelectTest", "[DecisionTreeTest]")
 {
   MultipleRandomDimensionSelect r(5);
   r.Dimensions() = 10;
 
   // Make sure we get five elements.
-  BOOST_REQUIRE_LT(r.Begin(), 10);
-  BOOST_REQUIRE_LT(r.Next(), 10);
-  BOOST_REQUIRE_LT(r.Next(), 10);
-  BOOST_REQUIRE_LT(r.Next(), 10);
-  BOOST_REQUIRE_LT(r.Next(), 10);
-  BOOST_REQUIRE_EQUAL(r.Next(), r.End());
+  REQUIRE(r.Begin() < 10);
+  REQUIRE(r.Next() < 10);
+  REQUIRE(r.Next() < 10);
+  REQUIRE(r.Next() < 10);
+  REQUIRE(r.Next() < 10);
+  REQUIRE(r.Next() == r.End());
 }
 
 /**
  * Make sure we get every element from the distribution.
  */
-BOOST_AUTO_TEST_CASE(MultipleRandomDimensionAllSelectTest)
+TEST_CASE("MultipleRandomDimensionAllSelectTest", "[DecisionTreeTest]")
 {
   MultipleRandomDimensionSelect r(3);
   r.Dimensions() = 3;
@@ -1071,24 +1077,24 @@ BOOST_AUTO_TEST_CASE(MultipleRandomDimensionAllSelectTest)
   found[r.Next()] = true;
   found[r.Next()] = true;
 
-  BOOST_REQUIRE_EQUAL(found[0], true);
-  BOOST_REQUIRE_EQUAL(found[1], true);
-  BOOST_REQUIRE_EQUAL(found[2], true);
+  REQUIRE(found[0] == true);
+  REQUIRE(found[1] == true);
+  REQUIRE(found[2] == true);
 }
 
 /**
  * Make sure the right number of classes is returned for an empty tree (1).
  */
-BOOST_AUTO_TEST_CASE(NumClassesEmptyTreeTest)
+TEST_CASE("NumClassesEmptyTreeTest", "[DecisionTreeTest]")
 {
   DecisionTree<> dt;
-  BOOST_REQUIRE_EQUAL(dt.NumClasses(), 1);
+  REQUIRE(dt.NumClasses() == 1);
 }
 
 /**
  * Make sure the right number of classes is returned for a nonempty tree.
  */
-BOOST_AUTO_TEST_CASE(NumClassesTest)
+TEST_CASE("NumClassesTest", "[DecisionTreeTest]")
 {
   // Load a dataset to train with.
   arma::mat dataset;
@@ -1098,13 +1104,13 @@ BOOST_AUTO_TEST_CASE(NumClassesTest)
 
   DecisionTree<> dt(dataset, labels, 3);
 
-  BOOST_REQUIRE_EQUAL(dt.NumClasses(), 3);
+  REQUIRE(dt.NumClasses() == 3);
 }
 
 /*
  * Test that we can pass const data into DecisionTree constructors.
  */
-BOOST_AUTO_TEST_CASE(ConstDataTest)
+TEST_CASE("ConstDataTest", "[DecisionTreeTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
@@ -1127,7 +1133,7 @@ BOOST_AUTO_TEST_CASE(ConstDataTest)
  * Construct the decision tree with splitting only if gain is more than
  * threshold.
  */
-BOOST_AUTO_TEST_CASE(RegularisedDecisionTree)
+TEST_CASE("RegularisedDecisionTree", "[DecisionTreeTest]")
 {
   // Completely random dataset with no structure.
   arma::mat dataset(10, 1000, arma::fill::randu);
@@ -1157,17 +1163,17 @@ BOOST_AUTO_TEST_CASE(RegularisedDecisionTree)
     if (prediction != predictionsregularised)
       count++;
 
-    BOOST_REQUIRE_EQUAL(probabilities.n_elem, 3);
-    BOOST_REQUIRE_EQUAL(probabilitiesRegularised.n_elem, 3);
+    REQUIRE(probabilities.n_elem == 3);
+    REQUIRE(probabilitiesRegularised.n_elem == 3);
   }
 
-  BOOST_REQUIRE_GT(count, 0);
+  REQUIRE(count > 0);
 }
 
 /**
  * Test that DecisionTree::Train() returns finite entropy on numeric dataset.
  */
-BOOST_AUTO_TEST_CASE(DecisionTreeNumericTrainReturnEntropy)
+TEST_CASE("DecisionTreeNumericTrainReturnEntropy", "[DecisionTreeTest]")
 {
   arma::mat dataset(10, 1000, arma::fill::randu);
   arma::Row<size_t> labels(1000);
@@ -1181,20 +1187,20 @@ BOOST_AUTO_TEST_CASE(DecisionTreeNumericTrainReturnEntropy)
   DecisionTree<> d(3);
   double entropy = d.Train(dataset, labels, 3, 50);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
+  REQUIRE(std::isfinite(entropy) == true);
 
   // Train a tree with weights on numeric dataset.
   DecisionTree<> wd(3);
   entropy = wd.Train(dataset, labels, 3, weights, 50);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
+  REQUIRE(std::isfinite(entropy) == true);
 }
 
 /**
  * Test that DecisionTree::Train() returns finite entropy on categorical
  * dataset.
  */
-BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalTrainReturnEntropy)
+TEST_CASE("DecisionTreeCategoricalTrainReturnEntropy", "[DecisionTreeTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
@@ -1207,19 +1213,19 @@ BOOST_AUTO_TEST_CASE(DecisionTreeCategoricalTrainReturnEntropy)
   DecisionTree<> dtree(5);
   double entropy = dtree.Train(d, di, l, 5, 10);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
+  REQUIRE(std::isfinite(entropy) == true);
 
   // Train a tree with weights on categorical dataset.
   DecisionTree<> wdtree(5);
   entropy = wdtree.Train(d, di, l, 5, weights, 10);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(entropy), true);
+  REQUIRE(std::isfinite(entropy) == true);
 }
 
 /**
  * Make sure different maximum depth values give different numbers of children.
  */
-BOOST_AUTO_TEST_CASE(DifferentMaximumDepthTest)
+TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
@@ -1233,17 +1239,15 @@ BOOST_AUTO_TEST_CASE(DifferentMaximumDepthTest)
   DecisionTree<> d2(dataset, labels, 3, 10, 1e-7);
 
   // Now require that we have zero children.
-  BOOST_REQUIRE_EQUAL(d.NumChildren(), 0);
+  REQUIRE(d.NumChildren() == 0);
 
   // Now require that we have two children.
-  BOOST_REQUIRE_EQUAL(d1.NumChildren(), 2);
-  BOOST_REQUIRE_EQUAL(d1.Child(0).NumChildren(), 0);
-  BOOST_REQUIRE_EQUAL(d1.Child(1).NumChildren(), 0);
+  REQUIRE(d1.NumChildren() == 2);
+  REQUIRE(d1.Child(0).NumChildren() == 0);
+  REQUIRE(d1.Child(1).NumChildren() == 0);
 
   // Now require that we have two children.
-  BOOST_REQUIRE_EQUAL(d2.NumChildren(), 2);
-  BOOST_REQUIRE_EQUAL(d2.Child(0).NumChildren(), 2);
-  BOOST_REQUIRE_EQUAL(d2.Child(1).NumChildren(), 2);
+  REQUIRE(d2.NumChildren() == 2);
+  REQUIRE(d2.Child(0).NumChildren() == 2);
+  REQUIRE(d2.Child(1).NumChildren() == 2);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

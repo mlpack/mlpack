@@ -1,5 +1,5 @@
 /**
- * @file mean_shift_main.cpp
+ * @file methods/mean_shift/mean_shift_main.cpp
  * @author Shangtong Zhang
  *
  * Executable for running Mean Shift.
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
@@ -86,8 +86,8 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
 
 static void mlpackMain()
 {
-  const double radius = CLI::GetParam<double>("radius");
-  const int maxIterations = CLI::GetParam<int>("max_iterations");
+  const double radius = IO::GetParam<double>("radius");
+  const int maxIterations = IO::GetParam<int>("max_iterations");
 
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
       "maximum iterations must be greater than or equal to 0");
@@ -99,7 +99,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "in_place", true }}, "output");
   ReportIgnoredParam({{ "in_place", true }}, "labels_only");
 
-  arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat dataset = std::move(IO::GetParam<arma::mat>("input"));
   arma::mat centroids;
   arma::Row<size_t> assignments;
 
@@ -108,54 +108,51 @@ static void mlpackMain()
   Timer::Start("clustering");
   Log::Info << "Performing mean shift clustering..." << endl;
   meanShift.Cluster(dataset, assignments, centroids,
-    CLI::HasParam("force_convergence"));
+    IO::HasParam("force_convergence"));
   Timer::Stop("clustering");
 
   Log::Info << "Found " << centroids.n_cols << " centroids." << endl;
   if (radius <= 0.0)
     Log::Info << "Estimated radius was " << meanShift.Radius() << ".\n";
 
-  if (CLI::HasParam("in_place"))
+  if (IO::HasParam("in_place"))
   {
     // Add the column of assignments to the dataset; but we have to convert them
     // to type double first.
     arma::vec converted(assignments.n_elem);
-    for (size_t i = 0; i < assignments.n_elem; i++)
+    for (size_t i = 0; i < assignments.n_elem; ++i)
       converted(i) = (double) assignments(i);
 
     dataset.insert_rows(dataset.n_rows, trans(converted));
 
-    // Save the dataset.  This takes a little trickery, because we have to set
-    // the output matrix parameter to have the same filename associated with it
-    // as the input.
-    CLI::GetPrintableParam<arma::mat>("output") =
-        CLI::GetPrintableParam<arma::mat>("input");
-    CLI::GetParam<arma::mat>("output") = std::move(dataset);
+    // Save the dataset.
+    IO::MakeInPlaceCopy("output", "input");
+    IO::GetParam<arma::mat>("output") = std::move(dataset);
   }
-  else if (CLI::HasParam("output"))
+  else if (IO::HasParam("output"))
   {
-    if (!CLI::HasParam("labels_only"))
+    if (!IO::HasParam("labels_only"))
     {
       // Convert the assignments to doubles.
       arma::vec converted(assignments.n_elem);
-      for (size_t i = 0; i < assignments.n_elem; i++)
+      for (size_t i = 0; i < assignments.n_elem; ++i)
         converted(i) = (double) assignments(i);
 
       dataset.insert_rows(dataset.n_rows, trans(converted));
 
       // Now save, in the different file.
-      CLI::GetParam<arma::mat>("output") = std::move(dataset);
+      IO::GetParam<arma::mat>("output") = std::move(dataset);
     }
     else
     {
       // TODO: figure out how to output as an arma::Mat<size_t> so that files
       // aren't way larger than needed.
-      CLI::GetParam<arma::mat>("output") =
+      IO::GetParam<arma::mat>("output") =
           arma::conv_to<arma::mat>::from(assignments);
     }
   }
 
   // Should we write the centroids to a file?
-  if (CLI::HasParam("centroid"))
-    CLI::GetParam<arma::mat>("centroid") = std::move(centroids);
+  if (IO::HasParam("centroid"))
+    IO::GetParam<arma::mat>("centroid") = std::move(centroids);
 }

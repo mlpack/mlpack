@@ -1,5 +1,5 @@
 /**
- * @file rectifier_function.hpp
+ * @file methods/ann/activation_functions/rectifier_function.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the rectifier function as described by
@@ -88,15 +88,15 @@ class RectifierFunction
    * @param x Input data.
    * @return f'(x)
    */
-  static double Deriv(const double y)
+  static double Deriv(const double x)
   {
-    return (double)(y > 0);
+    return (double)(x > 0);
   }
 
   /**
    * Computes the first derivatives of the rectifier function.
    *
-   * @param y Input activations.
+   * @param y Input data.
    * @param x The resulting derivatives.
    */
   template<typename InputType, typename OutputType>
@@ -104,7 +104,7 @@ class RectifierFunction
   {
     x.set_size(arma::size(y));
 
-    for (size_t i = 0; i < y.n_elem; i++)
+    for (size_t i = 0; i < y.n_elem; ++i)
       x(i) = Deriv(y(i));
   }
 }; // class RectifierFunction

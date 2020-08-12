@@ -1,5 +1,5 @@
 /**
- * @file generate_jl.cpp.in
+ * @file julia/generate_jl.cpp.in
  * @author Ryan Curtin
  *
  * This is a template file to call the PrintJL() function for a given binding.
@@ -33,7 +33,7 @@ int main(int /* argc */, char** /* argv */)
 {
   // All the parameters are registered, but stored, so restore them.
   // programName is defined in mlpack_main.hpp.
-  CLI::RestoreSettings(programName);
+  IO::RestoreSettings(programName);
 
-  PrintJL(*CLI::GetSingleton().doc, "${NAME}", "${MLPACK_JL_LIB_SUFFIX}");
+  PrintJL(*IO::GetSingleton().doc, "${NAME}", "${MLPACK_JL_LIB_SUFFIX}");
 }

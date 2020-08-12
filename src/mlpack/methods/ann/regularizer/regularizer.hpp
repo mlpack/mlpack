@@ -1,5 +1,5 @@
 /**
- * @file regularizer.hpp
+ * @file methods/ann/regularizer/regularizer.hpp
  * @author Saksham Bansal
  *
  * This includes various regularizers to construct a model.

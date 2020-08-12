@@ -1,5 +1,5 @@
 /**
- * @file kde_model.hpp
+ * @file methods/kde/kde_model.hpp
  * @author Roberto Hueso
  *
  * Model for KDE. It abstracts different types of tree, kernels, etc.
@@ -456,7 +456,7 @@ class KDEModel
    * @param kernelType Type of kernel to use.
    * @param treeType Type of tree to use.
    * @param monteCarlo Whether to use Monte Carlo estimations when possible.
-   * @param Probability of a Monte Carlo estimation to be bounded by relative
+   * @param mcProb of a Monte Carlo estimation to be bounded by relative
    *        error tolerance.
    * @param initialSampleSize Initial sample size for Monte Carlo estimations.
    * @param mcEntryCoef Coefficient to control how much larger does the amount

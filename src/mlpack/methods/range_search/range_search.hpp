@@ -1,5 +1,5 @@
 /**
- * @file range_search.hpp
+ * @file methods/range_search/range_search.hpp
  * @author Ryan Curtin
  *
  * Defines the RangeSearch class, which performs a generalized range search on
@@ -82,10 +82,8 @@ class RangeSearch
    * Because tree-building (at least with BinarySpaceTree) modifies the ordering
    * of a matrix, be aware that mapping of the points back to their original
    * indices is not done when this constructor is used.
-   * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
-   * @param referenceSet Set of reference points corresponding to referenceTree.
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
    * @param metric Instantiated distance metric.
@@ -251,7 +249,6 @@ class RangeSearch
    *
    * - neighbors[i] and distances[i] are not sorted in any particular order.
    *
-   * @param queryTree Tree built on query points.
    * @param range Range of distances in which to search.
    * @param neighbors Object which will hold the list of neighbors for each
    *      point which fell into the given range, for each query point.

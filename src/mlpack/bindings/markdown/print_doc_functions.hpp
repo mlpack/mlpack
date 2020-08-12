@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions.hpp
+ * @file bindings/markdown/print_doc_functions.hpp
  * @author Ryan Curtin
  *
  * This file wraps the different printing functionality of different binding
@@ -35,6 +35,11 @@ inline std::string PrintLanguage(const std::string& language);
  * Print any imports that need to be done before using the binding.
  */
 inline std::string PrintImport(const std::string& bindingName);
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo(const std::string& language);
 
 /**
  * Print any special information about output options.
@@ -82,7 +87,7 @@ inline std::string ProgramCall(const std::string& programName);
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the
- * name *must* exist in the CLI module.  (Note that because of the way
+ * name *must* exist in the IO module.  (Note that because of the way
  * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
  * declarataions need to come before the PROGRAM_INFO() declaration.)
  */
@@ -91,7 +96,7 @@ inline std::string ParamString(const std::string& paramName);
 /**
  * Print the user-encountered type of an option.
  */
-inline std::string ParamType(const util::ParamData& d);
+inline std::string ParamType(util::ParamData& d);
 
 /**
  * Return whether or not a runtime check on parameters should be ignored.

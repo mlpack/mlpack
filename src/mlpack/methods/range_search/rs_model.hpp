@@ -1,5 +1,5 @@
 /**
- * @file rs_model.hpp
+ * @file methods/range_search/rs_model.hpp
  * @author Ryan Curtin
  *
  * This is a model for range search.  It is useful in that it provides an easy

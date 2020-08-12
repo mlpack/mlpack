@@ -1,5 +1,5 @@
 /**
- * @file concat_impl.hpp
+ * @file methods/ann/layer/concat_impl.hpp
  * @author Marcus Edel
  * @author Mehul Kumar Nirala
  *
@@ -90,23 +90,26 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 Concat<InputDataType, OutputDataType, CustomLayers...>::~Concat()
 {
-  // Clear memory.
-  std::for_each(network.begin(), network.end(),
-      boost::apply_visitor(deleteVisitor));
+  if (!model)
+  {
+    // Clear memory.
+    std::for_each(network.begin(), network.end(),
+        boost::apply_visitor(deleteVisitor));
+  }
 }
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::Forward(
-    arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-          boost::apply_visitor(outputParameterVisitor, network[i]))),
+      boost::apply_visitor(ForwardVisitor(input,
+          boost::apply_visitor(outputParameterVisitor, network[i])),
           network[i]);
     }
   }
@@ -134,13 +137,14 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   size_t rowCount = 0;
   if (run)
   {
     arma::Mat<eT> delta;
-    gy.reshape(gy.n_rows / channels, gy.n_cols * channels);
+    arma::Mat<eT> gyTmp(((arma::Mat<eT>&) gy).memptr(), gy.n_rows / channels,
+        gy.n_cols * channels, false, false);
     for (size_t i = 0; i < network.size(); ++i)
     {
       // Use rows from the error corresponding to the output from each layer.
@@ -148,13 +152,13 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
           outputParameterVisitor, network[i]).n_rows;
 
       // Extract from gy the parameters for the i-th network.
-      delta = gy.rows(rowCount / channels, (rowCount + rows) / channels - 1);
+      delta = gyTmp.rows(rowCount / channels, (rowCount + rows) / channels - 1);
       delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
 
-      boost::apply_visitor(BackwardVisitor(std::move(
+      boost::apply_visitor(BackwardVisitor(
           boost::apply_visitor(outputParameterVisitor,
-          network[i])), std::move(delta), std::move(
-          boost::apply_visitor(deltaVisitor, network[i]))), network[i]);
+          network[i]), delta,
+          boost::apply_visitor(deltaVisitor, network[i])), network[i]);
       rowCount += rows;
     }
 
@@ -163,7 +167,6 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
     {
       g += boost::apply_visitor(deltaVisitor, network[i]);
     }
-    gy.reshape(gy.n_rows * channels, gy.n_cols / channels);
   }
   else
   {
@@ -175,7 +178,9 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g,
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g,
     const size_t index)
 {
   size_t rowCount = 0, rows = 0;
@@ -188,18 +193,16 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Backward(
   rows = boost::apply_visitor(outputParameterVisitor, network[index]).n_rows;
 
   // Reshape gy to extract the i-th layer gy.
-  gy.reshape(gy.n_rows / channels, gy.n_cols * channels);
+  arma::Mat<eT> gyTmp(((arma::Mat<eT>&) gy).memptr(), gy.n_rows / channels,
+      gy.n_cols * channels, false, false);
 
-  arma::Mat<eT> delta = gy.rows(rowCount / channels, (rowCount + rows) /
+  arma::Mat<eT> delta = gyTmp.rows(rowCount / channels, (rowCount + rows) /
       channels - 1);
   delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
 
-  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, network[index])), std::move(delta), std::move(
-      boost::apply_visitor(deltaVisitor, network[index]))), network[index]);
-
-  // Reshape gy to its original shape.
-  gy.reshape(gy.n_rows * channels, gy.n_cols / channels);
+  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+      outputParameterVisitor, network[index]), delta,
+      boost::apply_visitor(deltaVisitor, network[index])), network[index]);
 
   g = boost::apply_visitor(deltaVisitor, network[index]);
 }
@@ -208,32 +211,29 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& /* gradient */)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& /* gradient */)
 {
   if (run)
   {
     size_t rowCount = 0;
     // Reshape error to extract the i-th layer error.
-    error.reshape(error.n_rows / channels, error.n_cols * channels);
+    arma::Mat<eT> errorTmp(((arma::Mat<eT>&) error).memptr(),
+        error.n_rows / channels, error.n_cols * channels, false, false);
     for (size_t i = 0; i < network.size(); ++i)
     {
       size_t rows = boost::apply_visitor(
           outputParameterVisitor, network[i]).n_rows;
 
       // Extract from error the parameters for the i-th network.
-      arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) /
+      arma::Mat<eT> err = errorTmp.rows(rowCount / channels, (rowCount + rows) /
           channels - 1);
       err.reshape(err.n_rows * channels, err.n_cols / channels);
 
-      boost::apply_visitor(GradientVisitor(std::move(input),
-          std::move(err)), network[i]);
+      boost::apply_visitor(GradientVisitor(input, err), network[i]);
       rowCount += rows;
     }
-
-    // Reshape error to its original shape.
-    error.reshape(error.n_rows * channels, error.n_cols / channels);
   }
 }
 
@@ -241,9 +241,9 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename eT>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& /* gradient */,
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& /* gradient */,
     const size_t index)
 {
   size_t rowCount = 0;
@@ -255,15 +255,13 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::Gradient(
   size_t rows = boost::apply_visitor(
       outputParameterVisitor, network[index]).n_rows;
 
-  error.reshape(error.n_rows / channels, error.n_cols * channels);
-  arma::Mat<eT> err = error.rows(rowCount / channels, (rowCount + rows) /
+  arma::Mat<eT> errorTmp(((arma::Mat<eT>&) error).memptr(),
+      error.n_rows / channels, error.n_cols * channels, false, false);
+  arma::Mat<eT> err = errorTmp.rows(rowCount / channels, (rowCount + rows) /
       channels - 1);
   err.reshape(err.n_rows * channels, err.n_cols / channels);
 
-  boost::apply_visitor(GradientVisitor(std::move(input),
-      std::move(err)), network[index]);
-
-  error.reshape(error.n_rows * channels, error.n_cols / channels);
+  boost::apply_visitor(GradientVisitor(input, err), network[index]);
 }
 
 template<typename InputDataType, typename OutputDataType,

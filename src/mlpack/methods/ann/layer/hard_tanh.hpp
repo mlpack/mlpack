@@ -1,5 +1,5 @@
 /**
- * @file hard_tanh.hpp
+ * @file methods/ann/layer/hard_tanh.hpp
  * @author Dhawal Arora
  *
  * Definition and implementation of the HardTanH layer.
@@ -67,7 +67,7 @@ class HardTanH
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -79,9 +79,9 @@ class HardTanH
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input,
-                DataType&& gy,
-                DataType&& g);
+  void Backward(const DataType& input,
+                const DataType& gy,
+                DataType& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }

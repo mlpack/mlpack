@@ -1,5 +1,5 @@
 /**
- * @file glimpse_impl.hpp
+ * @file methods/ann/layer/glimpse_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the GlimpseLayer class, which takes an input image and a
@@ -45,7 +45,7 @@ Glimpse<InputDataType, OutputDataType>::Glimpse(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Glimpse<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   inputTemp = arma::cube(input.colptr(0), inputWidth, inputHeight, inSize);
   outputTemp = arma::Cube<eT>(size, size, depth * inputTemp.n_slices);
@@ -129,7 +129,7 @@ void Glimpse<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Glimpse<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   // Generate a cube using the backpropagated error matrix.
   arma::Cube<eT> mappedError = arma::zeros<arma::cube>(outputWidth,
@@ -138,9 +138,9 @@ void Glimpse<InputDataType, OutputDataType>::Backward(
   location = locationParameter.back();
   locationParameter.pop_back();
 
-  for (size_t s = 0, j = 0; s < mappedError.n_slices; s+= gy.n_cols, j++)
+  for (size_t s = 0, j = 0; s < mappedError.n_slices; s+= gy.n_cols, ++j)
   {
-    for (size_t i = 0; i < gy.n_cols; i++)
+    for (size_t i = 0; i < gy.n_cols; ++i)
     {
       mappedError.slice(s + i) = arma::Mat<eT>(gy.memptr(),
           outputWidth, outputHeight);

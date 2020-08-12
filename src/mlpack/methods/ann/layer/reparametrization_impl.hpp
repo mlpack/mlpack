@@ -1,5 +1,5 @@
 /**
- * @file reparametrization_impl.hpp
+ * @file methods/ann/layer/reparametrization_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the Reparametrization layer class which samples from a
@@ -50,7 +50,7 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Reparametrization<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   if (input.n_rows != 2 * latentSize)
   {
@@ -74,7 +74,7 @@ void Reparametrization<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Reparametrization<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   SoftplusFunction::Deriv(preStdDev, g);
 
