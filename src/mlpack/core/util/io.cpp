@@ -167,7 +167,7 @@ std::map<char, std::string>& IO::Aliases()
 // Get the program name as set by BINDING_NAME().
 std::string IO::ProgramName()
 {
-  return GetSingleton().doc.programName->programName;
+  return GetSingleton().doc.programName;
 }
 
 // Set a particular parameter as passed.

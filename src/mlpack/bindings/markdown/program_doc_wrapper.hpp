@@ -32,8 +32,8 @@ class ProgramNameWrapper
   ProgramNameWrapper(const std::string& bindingName,
                      const std::string& programName)
   {
-    util::ProgramName pd(programName);
-    BindingInfo::RegisterProgramName(bindingName, pd);
+    BindingInfo::GetSingleton().map[bindingName].programName = 
+        std::move(programName);
   }
 };
 
@@ -47,8 +47,8 @@ class ShortDescriptionWrapper
   ShortDescriptionWrapper(const std::string& bindingName,
                           const std::string& shortDescription)
   {
-    util::ShortDescription pd(shortDescription);
-    BindingInfo::RegisterShortDescription(bindingName, pd);
+    BindingInfo::GetSingleton().map[bindingName].shortDescription =
+        std::move(shortDescription);
   }
 };
 
@@ -62,8 +62,8 @@ class LongDescriptionWrapper
   LongDescriptionWrapper(const std::string& bindingName,
                          const std::function<std::string()>& longDescription)
   {
-    util::LongDescription pd(longDescription);
-    BindingInfo::RegisterLongDescription(bindingName, pd);
+    BindingInfo::GetSingleton().map[bindingName].longDescription =
+        std::move(longDescription);
   }
 };
 
@@ -77,8 +77,8 @@ class ExampleWrapper
   ExampleWrapper(const std::string& bindingName,
                  const std::function<std::string()>& example)
   {
-    util::Example pd(example);
-    BindingInfo::RegisterExample(bindingName, pd);
+    BindingInfo::GetSingleton().map[bindingName].example.push_back(
+        std::move(example));
   }
 };
 
@@ -92,8 +92,8 @@ class SeeAlsoWrapper
   SeeAlsoWrapper(const std::string& bindingName,
                  const std::string& description, const std::string& link)
   {
-    util::SeeAlso pd(description, link);
-    BindingInfo::RegisterSeeAlso(bindingName, pd);
+    BindingInfo::GetSingleton().map[bindingName].seeAlso.push_back(
+        std::move(std::make_pair(description, link)));
   }
 };
 

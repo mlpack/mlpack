@@ -36,7 +36,7 @@ void PrintPYX(const util::BindingDetails& doc,
               const string& functionName)
 {
   // Restore parameters.
-  IO::RestoreSettings(doc.programName->programName);
+  IO::RestoreSettings(doc.programName);
 
   std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   typedef std::map<std::string, util::ParamData>::iterator ParamIter;
@@ -142,13 +142,13 @@ void PrintPYX(const util::BindingDetails& doc,
 
   // Print the comment describing the function and its parameters.
   cout << "  \"\"\"" << endl;
-  cout << "  " << doc.programName->programName << endl;
+  cout << "  " << doc.programName << endl;
   cout << endl;
-  cout << "  " << HyphenateString(longDesc.longDescription(), 2) << endl;
+  cout << "  " << HyphenateString(doc.longDescription(), 2) << endl;
   cout << endl;
-  for (size_t j = 0; j < IO::GetSingleton().examples.size(); ++j)
+  for (size_t j = 0; j < doc.example.size(); ++j)
   {
-    cout << "  " << util::HyphenateString(doc.example[j]->example(), 2) << endl
+    cout << "  " << util::HyphenateString(doc.example[j](), 2) << endl
          << endl;
   }
   cout << "  Input parameters:" << endl;
@@ -188,7 +188,7 @@ void PrintPYX(const util::BindingDetails& doc,
   cout << "  DisableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  IO.RestoreSettings(\"" << doc.programName->programName << "\")"
+  cout << "  IO.RestoreSettings(\"" << doc.programName << "\")"
       << endl;
 
   // Determine whether or not we need to copy parameters.

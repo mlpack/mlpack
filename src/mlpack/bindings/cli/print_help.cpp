@@ -63,16 +63,15 @@ void PrintHelp(const std::string& param)
   }
 
   // Print out the descriptions.
-  if (bindingDetails.programName->programName != "")
+  if (bindingDetails.programName != "")
   {
-    std::cout << bindingDetails.programName->programName 
-         << std::endl << std::endl;
-    std::cout << "  " << util::HyphenateString(bindingDetails.longDescription->
-        longDescription(), 2) << std::endl << std::endl;
+    std::cout << bindingDetails.programName << std::endl << std::endl;
+    std::cout << "  " << util::HyphenateString(bindingDetails.longDescription(), 2)
+              << std::endl << std::endl;
     for (size_t j = 0; j < bindingDetails.example.size(); ++j)
     {
-      std::cout << "  " << util::HyphenateString(bindingDetails.example[j]->
-          example(), 2) << std::endl << std::endl;
+      std::cout << "  " << util::HyphenateString(bindingDetails.example[j](), 2)
+                << std::endl << std::endl;
     }
   }
   else

@@ -36,13 +36,6 @@ class ProgramName
    * @param programName Name of the default module.
    */
   ProgramName(const std::string& programName);
-
-  /**
-   * Construct an empty ProgramName object.  (This is not meant to be used!)
-   */
-  ProgramName();
-
-  std::string programName;
 };
 
 class ShortDescription
@@ -57,14 +50,6 @@ class ShortDescription
    *     what it does, and what it is useful for.
    */
   ShortDescription(const std::string& shortDescription);
-
-  /**
-   * Construct an empty ShortDescription object.
-   * (This is not meant to be used!)
-   */
-  ShortDescription();
-
-  std::string shortDescription;
 };
 
 class LongDescription
@@ -79,13 +64,6 @@ class LongDescription
    *     taken care of by IO later.
    */
   LongDescription(const std::function<std::string()>& longDescription);
-
-  /**
-   * Construct an empty LongDescription object.  (This is not meant to be used!)
-   */
-  LongDescription();
-
-  std::function<std::string()> longDescription;
 };
 
 class Example
@@ -98,13 +76,6 @@ class Example
    * @param example Documentation on how to use the program.
    */
   Example(const std::function<std::string()>& example);
-
-  /**
-   * Construct an empty Example object.  (This is not meant to be used!)
-   */
-  Example();
-
-  std::function<std::string()> example;
 };
 
 class SeeAlso
@@ -118,14 +89,6 @@ class SeeAlso
    * @param link Link of SeeAlso.
    */
   SeeAlso(const std::string& description, const std::string& link);
-
-  /**
-   * Construct an empty SeeAlso object.  (This is not meant to be used!)
-   */
-  SeeAlso();
-
-  std::string description;
-  std::string link;
 };
 
 } // namespace util

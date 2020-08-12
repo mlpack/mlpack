@@ -12,7 +12,7 @@
 #include "print_docs.hpp"
 
 #include <mlpack/core/util/io.hpp>
-#include <mlpack/core/util/program_doc.hpp>
+#include <mlpack/core/util/binding_details.hpp>
 #include "binding_info.hpp"
 #include "print_doc_functions.hpp"
 
@@ -45,13 +45,7 @@ void PrintHeaders(const std::string& bindingName,
 void PrintDocs(const std::string& bindingName,
                const vector<string>& languages)
 {
-  ProgramName& programName = BindingInfo::GetProgramName(bindingName);
-  ShortDescription& shortDescription =
-      BindingInfo::GetShortDescription(bindingName);
-  LongDescription& longDescription =
-      BindingInfo::GetLongDescription(bindingName);
-  std::vector<Example>& examples = BindingInfo::GetExample(bindingName);
-  std::vector<SeeAlso>& seeAlsos = BindingInfo::GetSeeAlso(bindingName);
+  BindingDetails& programDoc = BindingInfo::GetBindingDetails(bindingName);
 
   IO::RestoreSettings(bindingName);
 
@@ -69,8 +63,8 @@ void PrintDocs(const std::string& bindingName,
   cout << endl;
 
   // Next, print the logical name of the binding (that's known by
-  // BINDING_NAME()).
-  cout << "#### " << programName.programName << endl;
+  // ProgramInfo).
+  cout << "#### " << programDoc.programName << endl;
   cout << endl;
 
   for (size_t i = 0; i < languages.size(); ++i)
@@ -84,7 +78,7 @@ void PrintDocs(const std::string& bindingName,
   }
   cout << endl;
 
-  cout << shortDescription.shortDescription << " ";
+  cout << programDoc.shortDescription << " ";
   for (size_t i = 0; i < languages.size(); ++i)
   {
     cout << "[Detailed documentation](#" << languages[i] << "_"
@@ -93,7 +87,7 @@ void PrintDocs(const std::string& bindingName,
   }
   cout << "." << endl;
 
-  // Next, print the documentation for each language.
+  // Next, print the PROGRAM_INFO() documentation for each language.
   for (size_t i = 0; i < languages.size(); ++i)
   {
     BindingInfo::Language() = languages[i];
@@ -219,44 +213,41 @@ void PrintDocs(const std::string& bindingName,
     cout << "{: #" << languages[i] << "_" << bindingName
         << "_detailed-documentation }" << endl;
     cout << endl;
-    string desc = boost::replace_all_copy(longDescription.longDescription(),
-                                         "|", "\\|");
-    cout << desc << endl;
-    for (size_t j = 0; j < examples.size(); ++j)
+    string doc = boost::replace_all_copy(programDoc.longDescription(), "|", "\\|");
+    cout << doc << endl;
+    cout << endl;
+    for (size_t j = 0; j < programDoc.example.size(); ++j)
     {
-      util::Example& example = examples[j];
-      string eg = boost::replace_all_copy(example.example(), "|", "\\|");
+      string eg = boost::replace_all_copy(programDoc.example[j](),
+                                          "|", "\\|");
       cout << eg << endl;
     }
-    cout << endl;
-
     cout << "### See also" << endl;
     cout << endl;
-    for (size_t j = 0; j < seeAlsos.size(); ++j)
+    for (size_t j = 0; j < programDoc.seeAlso.size(); ++j)
     {
-      util::SeeAlso& seeAlso = seeAlsos[j];
       cout << " - " << "[";
       // We need special processing if the user has specified a binding name
       // starting with @ (i.e., '@kfn' or similar).
-      if (seeAlso.description[0] == '@')
-        cout << GetBindingName(seeAlso.description.substr(1));
+      if (programDoc.seeAlso[j].first[0] == '@')
+        cout << GetBindingName(programDoc.seeAlso[j].first.substr(1));
       else
-        cout << seeAlso.description;
+        cout << programDoc.seeAlso[j].first;
       cout << "](";
 
       // We need special handling of Doxygen information.
-      if (seeAlso.link.substr(0, 8) == "@doxygen")
+      if (programDoc.seeAlso[j].second.substr(0, 8) == "@doxygen")
       {
-        cout << DOXYGEN_PREFIX << seeAlso.link.substr(9);
+        cout << DOXYGEN_PREFIX << programDoc.seeAlso[j].second.substr(9);
       }
-      else if (seeAlso.link[0] == '#')
+      else if (programDoc.seeAlso[j].second[0] == '#')
       {
         cout << "#" << languages[i] << "_"
-            << seeAlso.link.substr(1);
+            << programDoc.seeAlso[j].second.substr(1);
       }
       else
       {
-        cout << seeAlso.link;
+        cout << programDoc.seeAlso[j].second;
       }
 
       cout << ")" << endl;

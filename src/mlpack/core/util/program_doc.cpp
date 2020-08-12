@@ -26,20 +26,10 @@ using namespace std;
  *
  * @param defaultModule Name of the default module.
  */
-ProgramName::ProgramName(
-    const std::string& programName) :
-    programName(std::move(programName))
+ProgramName::ProgramName(const std::string& programName)
 {
   // Register this with IO.
-  IO::GetSingleton().doc.programName = this;
-}
-
-/**
- * Construct an empty ProgramName object.
- */
-ProgramName::ProgramName()
-{
-  IO::GetSingleton().doc.programName = this;
+  IO::GetSingleton().doc.programName = std::move(programName);
 }
 
 /**
@@ -50,20 +40,10 @@ ProgramName::ProgramName()
  * @param shortDescription A short two-sentence description of the program,
  *     what it does, and what it is useful for.
  */
-ShortDescription::ShortDescription(
-    const std::string& shortDescription) :
-    shortDescription(std::move(shortDescription))
+ShortDescription::ShortDescription(const std::string& shortDescription)
 {
   // Register this with IO.
-  IO::GetSingleton().doc.shortDescription = this;
-}
-
-/**
- * Construct an empty ShortDescription object.
- */
-ShortDescription::ShortDescription()
-{
-  IO::GetSingleton().doc.shortDescription = this;
+  IO::GetSingleton().doc.shortDescription = std::move(shortDescription);
 }
 
 /**
@@ -75,19 +55,10 @@ ShortDescription::ShortDescription()
  *     taken care of by IO later.
  */
 LongDescription::LongDescription(
-    const std::function<std::string()>& longDescription) :
-    longDescription(std::move(longDescription))
+    const std::function<std::string()>& longDescription)
 {
   // Register this with IO.
-  IO::GetSingleton().doc.longDescription = this;
-}
-
-/**
- * Construct an empty LongDescription object.
- */
-LongDescription::LongDescription()
-{
-  IO::GetSingleton().doc.longDescription = this;
+  IO::GetSingleton().doc.longDescription = std::move(longDescription);
 }
 
 /**
@@ -97,19 +68,10 @@ LongDescription::LongDescription()
  * @param example Documentation on how to use the program.
  */
 Example::Example(
-    const std::function<std::string()>& example) :
-    example(std::move(example))
+    const std::function<std::string()>& example)
 {
   // Register this with IO.
-  IO::GetSingleton().doc.example.push_back(this);
-}
-
-/**
- * Construct an empty Example object.
- */
-Example::Example()
-{
-  IO::GetSingleton().doc.example.push_back(this);
+  IO::GetSingleton().doc.example.push_back(std::move(example));
 }
 
 /**
@@ -120,17 +82,8 @@ Example::Example()
  *     information; each pair is <description, url>.
  */
 SeeAlso::SeeAlso(
-    const std::string& description, const std::string& link) :
-    seeAlso(std::move(make_pair(description, link)))
+    const std::string& description, const std::string& link)
 {
   // Register this with IO.
-  IO::GetSingleton().doc.seeAlso.push_back(this);
-}
-
-/**
- * Construct an empty SeeAlso object.
- */
-SeeAlso::SeeAlso()
-{
-  IO::GetSingleton().doc.seeAlso.push_back(this);
+  IO::GetSingleton().doc.seeAlso.push_back(std::move(make_pair(description, link)));
 }

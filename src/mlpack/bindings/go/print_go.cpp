@@ -33,7 +33,7 @@ void PrintGo(const util::BindingDetails& doc,
              const std::string& functionName)
 {
   // Restore parameters.
-  IO::RestoreSettings(doc.programName->programName);
+  IO::RestoreSettings(doc.programName);
 
   std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   typedef std::map<std::string, util::ParamData>::iterator ParamIter;
@@ -123,11 +123,10 @@ void PrintGo(const util::BindingDetails& doc,
 
   // Print the comment describing the function and its parameters.
   cout << "/*" << endl;
-  cout << "  " << HyphenateString(doc.longDescription->longDescription(), 2)
-       << endl << endl;
+  cout << "  " << HyphenateString(doc.longDescription(), 2) << endl << endl;
   for (size_t j = 0; j < doc.example.size(); ++j)
   {
-    cout << "  " << util::HyphenateString(doc.example[j]->example(), 2)
+    cout << "  " << util::HyphenateString(doc.example[j](), 2)
          << endl << endl;
   }
   cout << "  Input parameters:" << endl;
@@ -220,7 +219,7 @@ void PrintGo(const util::BindingDetails& doc,
   cout << "  " << "disableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  " << "restoreSettings(\"" << doc.programName->programName
+  cout << "  " << "restoreSettings(\"" << doc.programName
       << "\")" << endl;
   cout << endl;
 

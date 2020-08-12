@@ -24,18 +24,18 @@ namespace util {
 struct BindingDetails
 {
   //! Name of the default module.
-  util::ProgramName* programName;
+  std::string programName;
   //! A short two-sentence description of the program, what it does, and what 
   //! it is useful for.
-  util::ShortDescription* shortDescription;
+  std::string shortDescription;
   //! Long string containing documentation on what it is.  No newline characters
   //! are necessary; this is taken care of by IO later.
-  util::LongDescription* longDescription;
+  std::function<std::string()> longDescription;
   //! Documentation on how to use the program.
-  std::vector<util::Example*> example;
+  std::vector<std::function<std::string()>> example;
   //! A  set of pairs of strings with useful "see also" information; each pair
   //! is <description, url>.
-  std::vector<util::SeeAlso*> seeAlso;  
+  std::vector<std::pair<std::string, std::string>> seeAlso;  
 };
 
 } // namespace util

@@ -32,7 +32,7 @@ void PrintJL(const util::BindingDetails& doc,
              const std::string& mlpackJuliaLibSuffix)
 {
   // Restore parameters.
-  IO::RestoreSettings(doc.programName->programName);
+  IO::RestoreSettings(doc.programName);
 
   map<string, util::ParamData>& parameters = IO::Parameters();
   typedef map<string, util::ParamData>::iterator ParamIter;
@@ -168,11 +168,11 @@ void PrintJL(const util::BindingDetails& doc,
   cout << endl;
 
   // Next print the description.
-  cout << HyphenateString(doc.longDescription->longDescription(), 0)
+  cout << HyphenateString(doc.longDescription(), 0)
        << endl << endl;  
   for (size_t j = 0; j < doc.example.size(); ++j)
   {
-    cout << util::HyphenateString(doc.example[j]->example(), 0) << endl << endl;
+    cout << util::HyphenateString(doc.example[j](), 0) << endl << endl;
   }
   // Next, print information on the input options.
   cout << endl;

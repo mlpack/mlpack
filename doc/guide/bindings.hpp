@@ -472,8 +472,8 @@ Go binding output (snippet):
 @code
 Input C++ (full program, 'random_numbers_main.cpp'):
 
-// Program Name.
-BINDING_NAME("Random Numbers");
+  // Program Name.
+  BINDING_NAME("Random Numbers");
 
   // Short description.
   BINDING_SHORT_DESC("An implementation of Random Numbers");
