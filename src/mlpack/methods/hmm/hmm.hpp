@@ -295,12 +295,12 @@ class HMM
    * at time t. To calculate the log-likelihood for the whole sequence,
    * accumulate log scale over the entire sequence
    *
-   * @param log emission probability at time t.
+   * @param emissionLogProb emission probability at time t.
    * probability up to time t-1
-   * @param prevForwardProb Vector in which forward probabilities for time t-1
-   * will be saved. Passing prevForwardProb as an empty vector indicates the
+   * @param prevForwardLogProb Vector in which forward probabilities for time
+   * t-1 will be saved. Passing prevForwardProb as an empty vector indicates the
    * start of sequence or time t=0 
-   * @param forwardProb Vector in which forward probabilities for time t
+   * @param forwardLogProb Vector in which forward probabilities for time t
    * will be saved.
    * @return Log scale factor of the given sequence of emission at time t.
    */
@@ -310,13 +310,13 @@ class HMM
   /**
    * Compute the log-likelihood of the given emission probability up to time t
    *
-   * @param log emission probability at time t.
+   * @param emissionLogProb emission probability at time t.
    * @param logLikelihood Log-likelihood of the given sequence of emission
    * probability up to time t-1
-   * @param prevForwardProb Vector in which forward probabilities for time t-1
-   * will be saved. Passing prevForwardProb as an empty vector indicates the
+   * @param prevForwardLogProb Vector in which forward probabilities for time
+   * t-1 will be saved. Passing prevForwardProb as an empty vector indicates the
    * start of sequence or time t=0 
-   * @param forwardProb Vector in which forward probabilities for time t
+   * @param forwardLogProb Vector in which forward probabilities for time t
    * will be saved.
    * @return Log-likelihood of the given sequence of emission up to time t.
    */
@@ -330,10 +330,10 @@ class HMM
    * scale over the entire sequence
    *
    * @param data observation at time t.
-   * @param prevForwardProb Vector in which forward probabilities for time t-1
-   * will be saved. Passing prevForwardProb as an empty vector indicates the
+   * @param prevForwardLogProb Vector in which forward probabilities for time
+   * t-1 will be saved. Passing prevForwardProb as an empty vector indicates the
    * start of sequence or time t=0 
-   * @param forwardProb Vector in which forward probabilities for time t
+   * @param forwardLogProb Vector in which forward probabilities for time t
    * will be saved.
    * @return Log scale factor of the given sequence of data up at time t.
    */
@@ -346,10 +346,10 @@ class HMM
    * @param data observation at time t.
    * @param logLikelihood Log-likelihood of the given sequence of data
    * up to time t-1
-   * @param prevForwardProb Vector in which forward probabilities for time t-1
-   * will be saved. Passing prevForwardProb as an empty vector indicates the
+   * @param prevForwardLogProb Vector in which forward probabilities for time
+   * t-1 will be saved. Passing prevForwardProb as an empty vector indicates the
    * start of sequence or time t=0 
-   * @param forwardProb Vector in which forward probabilities for time t
+   * @param forwardLogProb Vector in which forward probabilities for time t
    * will be saved.
    * @return Log-likelihood of the given sequence of data up to time t.
    */
