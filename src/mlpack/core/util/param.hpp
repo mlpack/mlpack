@@ -42,9 +42,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 /** @endcond */
 
 /**
- * Document an executable.  Only one instance of this macro should be
- * present in your program!  Therefore, use it in the main.cpp
- * (or corresponding executable) in your program.
+ * Specify the program name of a binding.  Only one instance of this macro
+ * should be present in your program!  Therefore, use it in the main.cpp
+ * (or corresponding binding) in your program.
  *
  * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
  * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
@@ -59,9 +59,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
     io_programname_dummy_object = mlpack::util::ProgramName(NAME);
 
 /**
- * Document an executable.  Only one instance of this macro should be
- * present in your program!  Therefore, use it in the main.cpp
- * (or corresponding executable) in your program.
+ * Specify the short description of a binding.  Only one instance of this macro
+ * should be present in your program!  Therefore, use it in the main.cpp
+ * (or corresponding binding) in your program.
  *
  * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
  * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
@@ -79,9 +79,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
     SHORT_DESC);
 
 /**
- * Document an executable.  Only one instance of this macro should be
+ * Specify the long description of a binding.  Only one instance of this macro
  * present in your program!  Therefore, use it in the main.cpp
- * (or corresponding executable) in your program.
+ * (or corresponding binding) in your program.
  *
  * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
  * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
@@ -101,9 +101,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
     []() { return std::string(LONG_DESC); });
 
 /**
- * Document an executable.  Mutiple instance of this macro can be
+ * Specify the example of a binding.  Mutiple instance of this macro can be
  * present in your program!  Therefore, use it in the main.cpp
- * (or corresponding executable) in your program.
+ * (or corresponding binding) in your program.
  *
  * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
  * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
@@ -132,9 +132,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 #endif
 
 /**
- * Document an executable.  Mutiple instance of this macro can be
+ * Specify the see-also of a binding.  Mutiple instance of this macro can be
  * present in your program!  Therefore, use it in the main.cpp
- * (or corresponding executable) in your program.
+ * (or corresponding binding) in your program.
  *
  * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
  * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),

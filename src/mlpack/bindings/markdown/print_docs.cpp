@@ -45,7 +45,7 @@ void PrintHeaders(const std::string& bindingName,
 void PrintDocs(const std::string& bindingName,
                const vector<string>& languages)
 {
-  BindingDetails& programDoc = BindingInfo::GetBindingDetails(bindingName);
+  BindingDetails& doc = BindingInfo::GetBindingDetails(bindingName);
 
   IO::RestoreSettings(bindingName);
 
@@ -64,7 +64,7 @@ void PrintDocs(const std::string& bindingName,
 
   // Next, print the logical name of the binding (that's known by
   // ProgramInfo).
-  cout << "#### " << programDoc.programName << endl;
+  cout << "#### " << doc.programName << endl;
   cout << endl;
 
   for (size_t i = 0; i < languages.size(); ++i)
@@ -78,7 +78,7 @@ void PrintDocs(const std::string& bindingName,
   }
   cout << endl;
 
-  cout << programDoc.shortDescription << " ";
+  cout << doc.shortDescription << " ";
   for (size_t i = 0; i < languages.size(); ++i)
   {
     cout << "[Detailed documentation](#" << languages[i] << "_"
@@ -213,41 +213,44 @@ void PrintDocs(const std::string& bindingName,
     cout << "{: #" << languages[i] << "_" << bindingName
         << "_detailed-documentation }" << endl;
     cout << endl;
-    string doc = boost::replace_all_copy(programDoc.longDescription(), "|", "\\|");
-    cout << doc << endl;
-    cout << endl;
-    for (size_t j = 0; j < programDoc.example.size(); ++j)
-    {
-      string eg = boost::replace_all_copy(programDoc.example[j](),
+    string desc = boost::replace_all_copy(doc.longDescription(),
                                           "|", "\\|");
-      cout << eg << endl;
+    cout << desc << endl << endl;
+
+    if (doc.example.size() > 0)
+      cout << "### Example" << endl;
+    for (size_t j = 0; j < doc.example.size(); ++j)
+    {
+      string eg = boost::replace_all_copy(doc.example[j](),
+                                          "|", "\\|");
+      cout << eg << endl << endl;
     }
     cout << "### See also" << endl;
     cout << endl;
-    for (size_t j = 0; j < programDoc.seeAlso.size(); ++j)
+    for (size_t j = 0; j < doc.seeAlso.size(); ++j)
     {
       cout << " - " << "[";
       // We need special processing if the user has specified a binding name
       // starting with @ (i.e., '@kfn' or similar).
-      if (programDoc.seeAlso[j].first[0] == '@')
-        cout << GetBindingName(programDoc.seeAlso[j].first.substr(1));
+      if (doc.seeAlso[j].first[0] == '@')
+        cout << GetBindingName(doc.seeAlso[j].first.substr(1));
       else
-        cout << programDoc.seeAlso[j].first;
+        cout << doc.seeAlso[j].first;
       cout << "](";
 
       // We need special handling of Doxygen information.
-      if (programDoc.seeAlso[j].second.substr(0, 8) == "@doxygen")
+      if (doc.seeAlso[j].second.substr(0, 8) == "@doxygen")
       {
-        cout << DOXYGEN_PREFIX << programDoc.seeAlso[j].second.substr(9);
+        cout << DOXYGEN_PREFIX << doc.seeAlso[j].second.substr(9);
       }
-      else if (programDoc.seeAlso[j].second[0] == '#')
+      else if (doc.seeAlso[j].second[0] == '#')
       {
         cout << "#" << languages[i] << "_"
-            << programDoc.seeAlso[j].second.substr(1);
+            << doc.seeAlso[j].second.substr(1);
       }
       else
       {
-        cout << programDoc.seeAlso[j].second;
+        cout << doc.seeAlso[j].second;
       }
 
       cout << ")" << endl;

@@ -27,6 +27,7 @@ namespace go {
  * Given a list of parameter definition and program documentation, print a
  * generated .go file to stdout.
  *
+ * @param doc Documentation for the program.
  * @param functionName Name of the function (i.e. "pca").
  */
 void PrintGo(const util::BindingDetails& doc,
@@ -124,11 +125,14 @@ void PrintGo(const util::BindingDetails& doc,
   // Print the comment describing the function and its parameters.
   cout << "/*" << endl;
   cout << "  " << HyphenateString(doc.longDescription(), 2) << endl << endl;
+
+  // Print the examples.
   for (size_t j = 0; j < doc.example.size(); ++j)
   {
-    cout << "  " << util::HyphenateString(doc.example[j](), 2)
-         << endl << endl;
+    cout << "  " << util::HyphenateString(doc.example[j](), 2) << endl << endl;
   }
+
+  // Next, print information on the input options.
   cout << "  Input parameters:" << endl;
   cout << endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
@@ -219,8 +223,7 @@ void PrintGo(const util::BindingDetails& doc,
   cout << "  " << "disableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  " << "restoreSettings(\"" << doc.programName
-      << "\")" << endl;
+  cout << "  " << "restoreSettings(\"" << doc.programName << "\")" << endl;
   cout << endl;
 
   // Do any input processing.

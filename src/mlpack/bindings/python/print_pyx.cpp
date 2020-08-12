@@ -26,7 +26,7 @@ namespace python {
  * Given a list of parameter definition and program documentation, print a
  * generated .pyx file to stdout.
  *
- * @param parameters List of parameters the program will use (from IO).
+ * @param doc Documentation for the program.
  * @param mainFilename Filename of the main program (i.e.
  *      "/path/to/pca_main.cpp").
  * @param functionName Name of the function (i.e. "pca").
@@ -144,13 +144,17 @@ void PrintPYX(const util::BindingDetails& doc,
   cout << "  \"\"\"" << endl;
   cout << "  " << doc.programName << endl;
   cout << endl;
-  cout << "  " << HyphenateString(doc.longDescription(), 2) << endl;
-  cout << endl;
+
+  // print the description.
+  cout << "  " << HyphenateString(doc.longDescription(), 2) << endl << endl;
+
+  // Next print the examples.  
   for (size_t j = 0; j < doc.example.size(); ++j)
   {
-    cout << "  " << util::HyphenateString(doc.example[j](), 2) << endl
-         << endl;
+    cout << "  " << util::HyphenateString(doc.example[j](), 2) << endl << endl;
   }
+
+  // Next, print information on the input options.
   cout << "  Input parameters:" << endl;
   cout << endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)

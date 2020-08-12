@@ -1,5 +1,5 @@
 /**
- * @file core/util/binding_detais.hpp
+ * @file core/util/binding_details.hpp
  * @author Yashwant Singh Parihar
  *
  * This defines the structure that holds documentation details for bindings.

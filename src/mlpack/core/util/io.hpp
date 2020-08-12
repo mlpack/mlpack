@@ -53,7 +53,7 @@ struct BindingDetials;
  * @section addparam Adding parameters to a program
  *
  * @code
- * $ ./executable --bar=5
+ * $ ./binding --bar=5
  * @endcode
  *
  * @note The = is optional; a space can also be used.
@@ -75,7 +75,7 @@ struct BindingDetials;
  * merely as a flag on the command line (no '=true' is required).
  *
  * Here is an example of a few parameters being defined; this is for the KNN
- * executable (methods/neighbor_search/knn_main.cpp):
+ * binding (methods/neighbor_search/knn_main.cpp):
  *
  * @code
  * PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
@@ -95,11 +95,7 @@ struct BindingDetials;
  * More documentation is available on the PARAM_*() macros in the documentation
  * for core/io/io.hpp.
  *
- * @section bindingpname Documenting the programName.
- * @section bindingshortdescription Documenting the shortDescription.
- * @section bindinglongdescription Documenting the longDescription.
- * @section bindingexample Documenting the example.
- * @section bindingseealso Documenting the seeAlso.
+ * @section programinfo Documenting the program itself
  *
  * In addition to allowing documentation for each individual parameter and
  * module, the BINDING_NAME() macro provides support for documenting the
@@ -165,10 +161,10 @@ struct BindingDetials;
  *
  * @note
  * Options should only be defined in files which define `main()` (that is, main
- * executables).  If options are defined elsewhere, they may be spuriously
- * included into other executables and confuse users.  Similarly, if your
- * executable has options which you did not define, it is probably because the
- * option is defined somewhere else and included in your executable.
+ * bindings).  If options are defined elsewhere, they may be spuriously
+ * included into other bindings and confuse users.  Similarly, if your
+ * binding has options which you did not define, it is probably because the
+ * option is defined somewhere else and included in your binding.
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
