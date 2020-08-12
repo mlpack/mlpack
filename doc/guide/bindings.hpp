@@ -298,8 +298,8 @@ then the examples in the following sections should clarify.
 Any mlpack program should be documented with the @c BINDING_PNAME(),
 @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC() , @c BINDING_EXAMPLE() and
 @c BINDING_SEE_ALSO() macros, which is available from the
-@c <mlpack/core/util/mlpack_main.hpp> header.  The macro
-is of the form
+@c <mlpack/core/util/mlpack_main.hpp> header.  The macros
+are of the form
 
 @code
 BINDING_NAME("program name");
@@ -472,15 +472,14 @@ Go binding output (snippet):
 @code
 Input C++ (full program, 'random_numbers_main.cpp'):
 
-// Program Name.
-BINDING_PNAME("Random Numbers");
+  // Program Name.
+  BINDING_PNAME("Random Numbers");
 
-// Short description.
-BINDING_SHORT_DESC(
-      "An implementation of Random Numbers");
+  // Short description.
+  BINDING_SHORT_DESC("An implementation of Random Numbers");
 
-// Long description.
-BINDING_LONG_DESC(
+  // Long description.
+  BINDING_LONG_DESC(
       "This program generates random numbers with a "
       "variety of nonsensical techniques and example parameters.  The input "
       "dataset, which will be ignored, can be specified with the " +
@@ -495,8 +494,8 @@ BINDING_LONG_DESC(
       "randomly generated linear regression model can be saved with the " +
       PRINT_PARAM_STRING("output_model") + " output parameter.");
 
-// Example.
-BINDING_EXAMPLE(
+  // Example.
+  BINDING_EXAMPLE(
       "For example, to generate 100 random numbers with 3 subtracted from them "
       "and save the output to " + PRINT_DATASET("rand") + " and the random "
       "model to " + PRINT_MODEL("rand_lr") + ", use the following "
@@ -607,7 +606,7 @@ There exist several macros that can be used after a @c BINDING_LONG_DESC() and
 for a given mlpack program. These macros all have the same general definition:
 the name of the macro specifies the type of the parameter, whether or not the
 parameter is required, and whether the parameter is an input or output parameter.
-Then as arguments to the macro, the name, description, and sometimes the
+Then as arguments to the macros, the name, description, and sometimes the
 single-character alias and the default value of the parameter.
 
 To give a flavor of how these definitions look, the definition
@@ -739,7 +738,7 @@ Python interface to the user.
 mlpack's @c IO module provides a unified abstract interface for getting input
 from and providing output to users without needing to consider the language
 (command-line, Python, MATLAB, etc.) that the user is running the program from.
-This means that after the @c BINDING_LONG_DESC() and @c BINDING_EXAMPLE() macro
+This means that after the @c BINDING_LONG_DESC() and @c BINDING_EXAMPLE() macros
 and the @c PARAM_*() macros have been defined, a language-agnostic
 @c mlpackMain() function can be written. This function then can perform the
 actual computation that the entire program is meant to.
@@ -822,7 +821,7 @@ could be created for the "random_numbers" program from earlier sections.
 @code
 #include <mlpack/core/util/mlpack_main.hpp>
 
-// BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC() , BINDING_EXAMPLE(),
+// The BINDING_PNAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(), BINDING_EXAMPLE(),
 // BINDING_SEE_ALSO() and PARAM_*() definitions should go here:
 // ...
 
@@ -886,8 +885,8 @@ There are eight main components involved with mlpack bindings:
  - the BINDING_PNAME() macro that defines the binding name
  - the BINDING_SHORT_DESC() macro that defines the short description
  - the BINDING_LONG_DESC() macro that defines the long description
- - the BINDING_EXAMPLE() macro that defines the example
- - the BINDING_SEE_ALSO() macro that defines the see also
+ - (optional) the BINDING_EXAMPLE() macro that defines example usages
+ - (optional) the BINDING_SEE_ALSO() macro that defines "see also" links
  - the PARAM_*() macros that define parameters for the binding
 
 The mlpack::IO module is a singleton class that stores, at runtime, the binding
@@ -915,7 +914,7 @@ register the given long description.
 The @c Example class constructor calls IO::RegisterExample() in order to
 register the given example.
 The @c SeeAlso class constructor calls IO::RegisterSeeAlso() in order to
-register the given seealso.
+register the given see-also link.
 
 The @c PARAM_*() macros declare an object that will, in its constructor, call
 IO::Add() to register that parameter with the IO singleton.  The specific type

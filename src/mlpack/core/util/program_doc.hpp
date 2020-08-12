@@ -41,6 +41,7 @@ class ProgramName
    * Construct an empty ProgramName object.  (This is not meant to be used!)
    */
   ProgramName();
+  
   std::string programName;
 };
 
@@ -62,6 +63,7 @@ class ShortDescription
    * (This is not meant to be used!)
    */
   ShortDescription();
+  
   std::string shortDescription;
 };
 
@@ -82,6 +84,7 @@ class LongDescription
    * Construct an empty LongDescription object.  (This is not meant to be used!)
    */
   LongDescription();
+  
   std::function<std::string()> longDescription;
 };
 
@@ -100,6 +103,7 @@ class Example
    * Construct an empty Example object.  (This is not meant to be used!)
    */
   Example();
+  
   std::function<std::string()> example;
 };
 
@@ -119,9 +123,11 @@ class SeeAlso
    * Construct an empty SeeAlso object.  (This is not meant to be used!)
    */
   SeeAlso();
+
   std::string description;
   std::string link;
 };
+
 } // namespace util
 } // namespace mlpack
 

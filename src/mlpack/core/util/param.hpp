@@ -130,6 +130,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
       mlpack::util::Example( \
       []() { return(std::string(EXAMPLE)); });
 #endif
+
 /**
  * Document an executable.  Mutiple instance of this macro can be
  * present in your program!  Therefore, use it in the main.cpp
@@ -164,6 +165,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
       JOIN(JOIN(io_programsee_also_dummy_object_, __LINE__), opt) = \
       mlpack::util::SeeAlso(DESCRIPTION, LINK);
 #endif
+
 /**
  * Define a flag parameter.
  *

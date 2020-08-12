@@ -146,7 +146,7 @@ void PrintPYX(const string& mainFilename,
   cout << "  " << pname.programName << endl;
   cout << endl;
   cout << "  " << HyphenateString(longDesc.longDescription(), 2) << endl;
-    cout << endl;
+  cout << endl;
   for (size_t j = 0; j < IO::GetSingleton().examples.size(); ++j)
   {
     util::Example& example = *IO::GetSingleton().examples[j];
