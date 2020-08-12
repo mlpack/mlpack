@@ -63,6 +63,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
   // realistic way to track how many base cases we've done for each point, so we
   // act as though we have done zero.
   if (!bruteForce && Defeatist &&
+      (referenceNode.Parent() != NULL) &&
+      (referenceNode.Parent()->Overlap()) &&
       (referenceNode.NumDescendants() < rule.MinimumBaseCases()))
   {
     // We've actually recursed too far.  Go back up one level and brute-force

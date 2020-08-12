@@ -52,7 +52,9 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
   // If we have too few points, then we need to backtrack up one level and
   // brute-force search.
   if (!bruteForce && Defeatist &&
-      referenceNode.NumDescendants() < rule.MinimumBaseCases())
+      (referenceNode.NumDescendants() < rule.MinimumBaseCases()) &&
+      (referenceNode.Parent() != NULL) &&
+      (referenceNode.Parent()->Overlap()))
   {
     Traverse(queryIndex, *referenceNode.Parent(), true);
   }
@@ -63,13 +65,7 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::Traverse(
   }
   else
   {
-    // Determine if we have traversed too far; if so, we need to do brute-force
-    // search on the parent reference node.
-    if (Defeatist && referenceNode.NumDescendants() < rule.MinimumBaseCases())
-    {
-      Traverse(queryIndex, *referenceNode.Parent(), true);
-    }
-    else if (Defeatist && referenceNode.Overlap())
+    if (Defeatist && referenceNode.Overlap())
     {
       // If referenceNode is a overlapping node we do defeatist search.
       size_t bestChild = rule.GetBestChild(queryIndex, referenceNode);
