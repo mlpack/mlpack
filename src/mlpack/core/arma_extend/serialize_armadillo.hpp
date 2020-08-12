@@ -77,6 +77,7 @@ void serialize(Archive& ar, arma::Mat<eT>& mat)
     arma::access::rw(mat.vec_state) = vec_state;
   }
 
+ // Directly serialize the contents of the matrix's memory.
   ar & cereal::make_array(arma::access::rwp(mat.mem), mat.n_elem);
 }
 
