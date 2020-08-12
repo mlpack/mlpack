@@ -295,36 +295,34 @@ class HMM
   /**
    * Compute the log-likelihood of the given emission probability up to time t
    *
-   * @param t time order
    * @param log emission probability at time t.
-   * @param logScale Log-likelihood of the given sequence of emission
-   * probability  up to time t-1
+   * @param logLikelihood Log-likelihood of the given sequence of emission
+   * probability up to time t-1
    * @param prevForwardProb Vector in which forward probabilities for time t-1
-   * will be saved.
+   * will be saved. Passing prevForwardProb as an empty vector indicates the
+   * start of sequence or time t=0 
    * @param forwardProb Vector in which forward probabilities for time t
    * will be saved.
    * @return Log-likelihood of the given sequence of emission up to time t.
    */
-  double LogLikelihoodEmissionProb(size_t t,
-                       const arma::vec& emissionLogProb,
-                       double &logScale,
+  double LogLikelihoodEmissionProb(const arma::vec& emissionLogProb,
+                       double &logLikelihood,
                        arma::vec& prevForwardLogProb,
                        arma::vec& forwardLogProb) const;
   /**
    * Compute the log-likelihood of the given data up to time t
    *
-   * @param t time order
    * @param data observation at time t.
    * @param logScale Log-likelihood of the given sequence of data up to time t-1
    * @param prevForwardProb Vector in which forward probabilities for time t-1
-   * will be saved.
+   * will be saved. Passing prevForwardProb as an empty vector indicates the
+   * start of sequence or time t=0 
    * @param forwardProb Vector in which forward probabilities for time t
    * will be saved.
    * @return Log-likelihood of the given sequence of data up to time t.
    */
-  double LogLikelihood(size_t t,
-                       const arma::vec &data,
-                       double &logScale,
+  double LogLikelihood(const arma::vec &data,
+                       double &logLikelihood,
                        arma::vec& prevForwardLogProb,
                        arma::vec& forwardLogProb) const;
   /**

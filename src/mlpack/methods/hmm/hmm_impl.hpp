@@ -526,34 +526,33 @@ double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq) const
  * Compute the log-likelihood of the given emission probability up to time t
  */
 template<typename Distribution>
-double HMM<Distribution>::LogLikelihoodEmissionProb(size_t t,
-                                        const arma::vec& emissionLogProb,
-                                        double &logScale,
+double HMM<Distribution>::LogLikelihoodEmissionProb(const arma::vec& emissionLogProb,
+                                        double &logLikelihood,
                                         arma::vec& prevForwardLogProb,
                                         arma::vec& forwardLogProb) const
 {
-    if(t == 0){
-        ForwardAtT0(emissionLogProb, logScale, forwardLogProb);
+    if(prevForwardLogProb.empty()){
+        //start os sequence or time t=0
+        ForwardAtT0(emissionLogProb, logLikelihood, forwardLogProb);
     }
     else{
         double curLogSacle;
         ForwardAtTn(emissionLogProb, curLogSacle,
                     prevForwardLogProb, forwardLogProb);
-        logScale += curLogSacle;
+        logLikelihood += curLogSacle;
     }
 
     prevForwardLogProb = forwardLogProb;
 
-    return logScale;
+    return logLikelihood;
 }
 
 /**
  * Compute the log-likelihood of the given data up to time t
  */
 template<typename Distribution>
-double HMM<Distribution>::LogLikelihood(size_t t,
-                                        const arma::vec &data,
-                                        double &logScale,
+double HMM<Distribution>::LogLikelihood(const arma::vec &data,
+                                        double &logLikelihood,
                                         arma::vec& prevForwardLogProb,
                                         arma::vec& forwardLogProb) const
 {
@@ -564,7 +563,7 @@ double HMM<Distribution>::LogLikelihood(size_t t,
           emissionLogProb(state) = emission[state].LogProbability(data);
     }
 
-    return LogLikelihoodEmissionProb(t, emissionLogProb, logScale,
+    return LogLikelihoodEmissionProb(emissionLogProb, logLikelihood,
                                      prevForwardLogProb, forwardLogProb);
 }
 
