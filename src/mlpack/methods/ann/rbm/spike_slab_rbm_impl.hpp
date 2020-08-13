@@ -115,7 +115,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
   spikeBiasGrad = spikeMean;
   // Setting visiblePenaltyGrad.
   gradient.row(weightGrad.n_elem + spikeBiasGrad.n_elem) = -0.5 * arma::dot(
-                                    input, input) / std::pow(input.n_cols, 2);
+       input, input) / std::pow(input.n_cols, 2);
 }
 
 template<
