@@ -1,5 +1,5 @@
 /**
- * @file svd_complete_incremental_learning.hpp
+ * @file methods/amf/update_rules/svd_complete_incremental_learning.hpp
  * @author Sumedh Ghaisas
  *
  * SVD factorizer used in AMF (Alternating Matrix Factorization).
@@ -66,8 +66,8 @@ class SVDCompleteIncrementalLearning
    * before a new factorization.  For this initialization, the input parameters
    * are unnecessary; we are only setting the current element index to 0.
    *
-   * @param dataset Input matrix to be factorized.
-   * @param rank rank of factorization
+   * @param * (dataset) Input matrix to be factorized.
+   * @param * (rank) Rank of factorization.
    */
   void Initialize(const MatType& /* dataset */, const size_t /* rank */)
   {
@@ -231,7 +231,7 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
    * The function takes in all the matrices and only changes the
    * value of the H matrix.
    *
-   * @param V Input matrix to be factorized.
+   * @param * (V) Input matrix to be factorized.
    * @param W Basis matrix.
    * @param H Encoding matrix to be updated.
    */
@@ -270,4 +270,3 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
 } // namespace mlpack
 
 #endif
-

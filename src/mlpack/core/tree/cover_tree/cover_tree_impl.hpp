@@ -1,5 +1,5 @@
 /**
- * @file cover_tree_impl.hpp
+ * @file core/tree/cover_tree/cover_tree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of CoverTree class.
@@ -151,9 +151,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parent(NULL),
     parentDistance(0),
     furthestDescendantDistance(0),
-    localMetric(false),
+    localMetric(true),
     localDataset(false),
-    metric(&metric),
+    metric(new MetricType(metric)),
     distanceComps(0)
 {
   // If there is only one point or zero points in the dataset... uh, we're done.
@@ -342,9 +342,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parent(NULL),
     parentDistance(0),
     furthestDescendantDistance(0),
-    localMetric(false),
+    localMetric(true),
     localDataset(true),
-    metric(&metric),
+    metric(new MetricType(metric)),
     distanceComps(0)
 {
   // If there is only one point or zero points in the dataset... uh, we're done.

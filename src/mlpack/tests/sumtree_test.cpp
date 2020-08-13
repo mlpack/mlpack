@@ -1,5 +1,5 @@
 /**
- * @file sumtree_test.hpp
+ * @file tests/sumtree_test.cpp
  * @author Xiaohong
  *
  * Test for Sumtree implementation.

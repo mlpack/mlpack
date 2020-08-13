@@ -1,5 +1,5 @@
 /**
- * @file log_cosh_loss_impl.hpp
+ * @file methods/ann/loss_functions/log_cosh_loss_impl.hpp
  * @author Kartik Dutt
  *
  * Implementation of the Log-Hyperbolic-Cosine loss function.

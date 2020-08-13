@@ -1,5 +1,5 @@
 /**
- * @file overall_mean_normalization.hpp
+ * @file methods/cf/normalization/overall_mean_normalization.hpp
  * @author Wenhao Huang
  *
  * This class performs overall mean normalization on raw ratings. In another
@@ -96,8 +96,8 @@ class OverallMeanNormalization
   /**
    * Denormalize computed rating by adding mean.
    *
-   * @param user User ID.
-   * @param item Item ID.
+   * @param * (user) User ID.
+   * @param * (item) Item ID.
    * @param rating Computed rating before denormalization.
    */
   double Denormalize(const size_t /* user */,
@@ -110,7 +110,7 @@ class OverallMeanNormalization
   /**
    * Denormalize computed rating by adding mean.
    *
-   * @param combinations User/Item combinations.
+   * @param * (combinations) User/Item combinations.
    * @param predictions Predicted ratings for each user/item combination.
    */
   void Denormalize(const arma::Mat<size_t>& /* combinations */,

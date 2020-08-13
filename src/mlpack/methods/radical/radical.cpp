@@ -1,5 +1,5 @@
 /**
- * @file radical.cpp
+ * @file methods/radical/radical.cpp
  * @author Nishant Mehta
  *
  * Implementation of Radical class
@@ -57,7 +57,7 @@ double Radical::Vasicek(vec& z) const
   // Apparently faster.
   double sum = 0;
   uword range = z.n_elem - m;
-  for (uword i = 0; i < range; i++)
+  for (uword i = 0; i < range; ++i)
   {
     sum += log(max(z(i + m) - z(i), DBL_MIN));
   }
@@ -74,7 +74,7 @@ double Radical::DoRadical2D(const mat& matX)
 
   vec values(angles);
 
-  for (size_t i = 0; i < angles; i++)
+  for (size_t i = 0; i < angles; ++i)
   {
     const double theta = (i / (double) angles) * M_PI / 2.0;
     const double cosTheta = cos(theta);
@@ -140,9 +140,9 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   {
     Log::Info << "RADICAL: sweep " << sweepNum << "." << std::endl;
 
-    for (size_t i = 0; i < nDims - 1; i++)
+    for (size_t i = 0; i < nDims - 1; ++i)
     {
-      for (size_t j = i + 1; j < nDims; j++)
+      for (size_t j = i + 1; j < nDims; ++j)
       {
         Log::Debug << "RADICAL 2D on dimensions " << i << " and " << j << "."
             << std::endl;

@@ -1,5 +1,5 @@
 /**
- * @file get_julia_type.hpp
+ * @file bindings/julia/get_julia_type.hpp
  * @author Ryan Curtin
  *
  * Get the Julia-named type of an mlpack C++ type.
@@ -20,6 +20,7 @@ namespace julia {
 
 template<typename T>
 inline std::string GetJuliaType(
+    util::ParamData& /* d */,
     const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
@@ -31,6 +32,7 @@ inline std::string GetJuliaType(
 
 template<>
 inline std::string GetJuliaType<bool>(
+    util::ParamData& /* d */,
     const typename std::enable_if<!util::IsStdVector<bool>::value>::type*,
     const typename std::enable_if<!arma::is_arma_type<bool>::value>::type*,
     const typename std::enable_if<!std::is_same<bool,
@@ -42,6 +44,7 @@ inline std::string GetJuliaType<bool>(
 
 template<>
 inline std::string GetJuliaType<int>(
+    util::ParamData& /* d */,
     const typename std::enable_if<!util::IsStdVector<int>::value>::type*,
     const typename std::enable_if<!arma::is_arma_type<int>::value>::type*,
     const typename std::enable_if<!std::is_same<int,
@@ -53,6 +56,7 @@ inline std::string GetJuliaType<int>(
 
 template<>
 inline std::string GetJuliaType<size_t>(
+    util::ParamData& /* d */,
     const typename std::enable_if<!util::IsStdVector<size_t>::value>::type*,
     const typename std::enable_if<!arma::is_arma_type<size_t>::value>::type*,
     const typename std::enable_if<!std::is_same<size_t,
@@ -64,6 +68,7 @@ inline std::string GetJuliaType<size_t>(
 
 template<>
 inline std::string GetJuliaType<double>(
+    util::ParamData& /* d */,
     const typename std::enable_if<!util::IsStdVector<double>::value>::type*,
     const typename std::enable_if<!arma::is_arma_type<double>::value>::type*,
     const typename std::enable_if<!std::is_same<double,
@@ -76,6 +81,7 @@ inline std::string GetJuliaType<double>(
 
 template<>
 inline std::string GetJuliaType<std::string>(
+    util::ParamData& /* d */,
     const typename std::enable_if<
         !util::IsStdVector<std::string>::value>::type*,
     const typename std::enable_if<
@@ -90,16 +96,18 @@ inline std::string GetJuliaType<std::string>(
 
 template<typename T>
 inline std::string GetJuliaType(
+    util::ParamData& d,
     const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
 {
-  return "Vector{" + GetJuliaType<typename T::value_type>() + "}";
+  return "Vector{" + GetJuliaType<typename T::value_type>(d) + "}";
 }
 
 template<typename T>
 inline std::string GetJuliaType(
+    util::ParamData& d,
     const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
@@ -111,12 +119,13 @@ inline std::string GetJuliaType(
     return std::string("Array{Int, ") + (T::is_col || T::is_row ? "1" : "2")
         + "}";
   else
-    return "Array{" + GetJuliaType<typename T::elem_type>() + ", "
+    return "Array{" + GetJuliaType<typename T::elem_type>(d) + ", "
         + (T::is_col || T::is_row ? "1" : "2") + "}";
 }
 
 template<typename T>
 inline std::string GetJuliaType(
+    util::ParamData& /* d */,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
@@ -126,12 +135,17 @@ inline std::string GetJuliaType(
 // for serializable types
 template<typename T>
 inline std::string GetJuliaType(
+    util::ParamData& d,
     const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
-  // Serializable types are just held as a pointer to nothing...
-  return "Ptr{Nothing}";
+  // Serializable types are just held as a pointer to nothing, but they're
+  // wrapped in a struct.
+  std::string type = StripType(d.cppType);
+  std::ostringstream oss;
+  oss << type;
+  return oss.str();
 }
 
 } // namespace julia

@@ -1,5 +1,5 @@
 /**
- * @file svdplusplus.hpp
+ * @file methods/svdplusplus/svdplusplus.hpp
  * @author Siddharth Agrawal
  * @author Wenhao Huang
  *
@@ -34,6 +34,7 @@ namespace svd {
  *
  * For more information, see the following paper:
  *
+ * @code
  * @inproceedings{koren2008factorization,
  * title={Factorization meets the neighborhood: a multifaceted collaborative
  *        filtering model},
@@ -44,6 +45,7 @@ namespace svd {
  * year={2008},
  * organization={ACM}
  * }
+ * @endcode
  *
  * An example of how to use the interface is shown below:
  *

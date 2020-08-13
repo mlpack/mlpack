@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_test.cpp
+ * @file tests/main_tests/linear_svm_test.cpp
  * @author Yashwant Singh Parihar
  *
  * Test mlpackMain() of logistic_regression_main.cpp
@@ -31,14 +31,14 @@ struct LinearSVMTestFixture
   LinearSVMTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~LinearSVMTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMOutputDimensionTest)
 
   // Get the output predictions of the test data.
   const arma::Row<size_t>& testLabels =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Output predictions size must match the test data set size.
   BOOST_REQUIRE_EQUAL(testLabels.n_rows, 1);
@@ -137,12 +137,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMLabelsRepresentationTest)
 
   // Get the output.
   const arma::Row<size_t> testLabels1 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+      std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   // Now train by providing labels as extra parameter.
   arma::mat trainData2({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}});
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMLabelsRepresentationTest)
 
   // get the output
   const arma::Row<size_t>& testLabels2 =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
   CheckMatrices(testLabels1, testLabels2);
@@ -190,15 +190,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMModelReuseTest)
 
   // Get the output model obtained from training.
   LinearSVMModel* model =
-      CLI::GetParam<LinearSVMModel*>("output_model");
+      IO::GetParam<LinearSVMModel*>("output_model");
   // Get the output.
   const arma::Row<size_t>& testLabels1 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+      std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset the data passed.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testData));
@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMModelReuseTest)
 
   // Get the output.
   const arma::Row<size_t>& testLabels2 =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
   CheckMatrices(testLabels1, testLabels2);
@@ -260,11 +260,11 @@ BOOST_AUTO_TEST_CASE(LinearSVMCheckDimOfTestData2)
 
   // Get the output model obtained from training.
   LinearSVMModel* model =
-      CLI::GetParam<LinearSVMModel*>("output_model");
+      IO::GetParam<LinearSVMModel*>("output_model");
 
   // Reset the data passed.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testData));
@@ -481,12 +481,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -498,7 +498,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -527,12 +527,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffLambdaTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -544,7 +544,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffLambdaTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -573,12 +573,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -590,7 +590,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -618,12 +618,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -635,7 +635,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -669,12 +669,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTestWithPsgd)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -691,7 +691,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTestWithPsgd)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -749,12 +749,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -771,7 +771,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -806,12 +806,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -829,7 +829,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -864,12 +864,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -887,7 +887,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -916,12 +916,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -937,7 +937,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);

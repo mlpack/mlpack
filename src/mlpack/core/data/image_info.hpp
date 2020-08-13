@@ -1,5 +1,5 @@
 /**
- * @file image_info.hpp
+ * @file core/data/image_info.hpp
  * @author Mehul Kumar Nirala
  *
  * An image information holder.
@@ -22,7 +22,8 @@ namespace data {
 /**
  * Checks if the given image filename is supported.
  *
- * @param filename Name of the image file.
+ * @param fileName Name of the image file.
+ * @param save Set to true to check if the file format can be saved, else loaded.
  * @return Boolean value indicating success if it is an image.
  */
 inline bool ImageFormatSupported(const std::string& fileName,

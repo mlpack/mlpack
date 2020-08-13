@@ -1,5 +1,5 @@
 /**
- * @file rnn_impl.hpp
+ * @file methods/ann/rnn_impl.hpp
  * @author Marcus Edel
  *
  * Definition of the RNN class, which implements recurrent neural networks.
@@ -90,7 +90,8 @@ typename std::enable_if<
       !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
       ::value, void>::type
 RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
-WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
+WarnMessageMaxIterations(OptimizerType& /* optimizer */,
+                         size_t /* samples */) const
 {
   return;
 }

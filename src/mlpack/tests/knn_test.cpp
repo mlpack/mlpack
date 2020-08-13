@@ -1,5 +1,5 @@
 /**
- * @file knn_test.cpp
+ * @file tests/knn_test.cpp
  *
  * Test file for KNN class.
  *
@@ -14,8 +14,8 @@
 #include <mlpack/methods/neighbor_search/ns_model.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/example_tree.hpp>
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "test_catch_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::neighbor;
@@ -23,12 +23,10 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::bound;
 
-BOOST_AUTO_TEST_SUITE(KNNTest);
-
 /**
  * Test that Unmap() works in the dual-tree case (see unmap.hpp).
  */
-BOOST_AUTO_TEST_CASE(DualTreeUnmapTest)
+TEST_CASE("KNNDualTreeUnmapTest", "[KNNTest]")
 {
   std::vector<size_t> refMap;
   refMap.push_back(3);
@@ -88,8 +86,8 @@ BOOST_AUTO_TEST_CASE(DualTreeUnmapTest)
 
   for (size_t i = 0; i < correctNeighbors.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighborsOut[i], correctNeighbors[i]);
-    BOOST_REQUIRE_CLOSE(distancesOut[i], correctDistances[i], 1e-5);
+    REQUIRE(neighborsOut[i] ==correctNeighbors[i]);
+    REQUIRE(distancesOut[i] == Approx(correctDistances[i]).epsilon(1e-7));
   }
 
   // Now try taking the square root.
@@ -98,15 +96,15 @@ BOOST_AUTO_TEST_CASE(DualTreeUnmapTest)
 
   for (size_t i = 0; i < correctNeighbors.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighborsOut[i], correctNeighbors[i]);
-    BOOST_REQUIRE_CLOSE(distancesOut[i], sqrt(correctDistances[i]), 1e-5);
+    REQUIRE(neighborsOut[i] ==correctNeighbors[i]);
+    REQUIRE(distancesOut[i] == Approx(sqrt(correctDistances[i])).epsilon(1e-7));
   }
 }
 
 /**
  * Check that Unmap() works in the single-tree case.
  */
-BOOST_AUTO_TEST_CASE(SingleTreeUnmapTest)
+TEST_CASE("KNNSingleTreeUnmapTest", "[KNNTest]")
 {
   std::vector<size_t> refMap;
   refMap.push_back(3);
@@ -152,8 +150,8 @@ BOOST_AUTO_TEST_CASE(SingleTreeUnmapTest)
 
   for (size_t i = 0; i < correctNeighbors.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighborsOut[i], correctNeighbors[i]);
-    BOOST_REQUIRE_CLOSE(distancesOut[i], correctDistances[i], 1e-5);
+    REQUIRE(neighborsOut[i] ==correctNeighbors[i]);
+    REQUIRE(distancesOut[i] == Approx(correctDistances[i]).epsilon(1e-7));
   }
 
   // Now try taking the square root.
@@ -161,8 +159,8 @@ BOOST_AUTO_TEST_CASE(SingleTreeUnmapTest)
 
   for (size_t i = 0; i < correctNeighbors.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighborsOut[i], correctNeighbors[i]);
-    BOOST_REQUIRE_CLOSE(distancesOut[i], sqrt(correctDistances[i]), 1e-5);
+    REQUIRE(neighborsOut[i] ==correctNeighbors[i]);
+    REQUIRE(distancesOut[i] == Approx(sqrt(correctDistances[i])).epsilon(1e-7));
   }
 }
 
@@ -170,7 +168,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeUnmapTest)
  * Test that an empty KNN object will throw exceptions when Search() is
  * called.
  */
-BOOST_AUTO_TEST_CASE(EmptySearchTest)
+TEST_CASE("KNNEmptySearchTest", "[KNNTest]")
 {
   KNN empty;
 
@@ -179,18 +177,18 @@ BOOST_AUTO_TEST_CASE(EmptySearchTest)
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  BOOST_REQUIRE_THROW(empty.Search(dataset, 5, neighbors, distances),
+  REQUIRE_THROWS_AS(empty.Search(dataset, 5, neighbors, distances),
       std::invalid_argument);
-  BOOST_REQUIRE_THROW(empty.Search(5, neighbors, distances),
+  REQUIRE_THROWS_AS(empty.Search(5, neighbors, distances),
       std::invalid_argument);
-  BOOST_REQUIRE_THROW(empty.Search(queryTree, 5, neighbors, distances),
+  REQUIRE_THROWS_AS(empty.Search(queryTree, 5, neighbors, distances),
       std::invalid_argument);
 }
 
 /**
  * Test that when training is performed, the results are the same.
  */
-BOOST_AUTO_TEST_CASE(TrainTest)
+TEST_CASE("KNNTrainTest", "[KNNTest]")
 {
   KNN empty;
 
@@ -205,26 +203,26 @@ BOOST_AUTO_TEST_CASE(TrainTest)
   empty.Search(5, neighbors, distances);
   baseline.Search(5, baselineNeighbors, baselineDistances);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, baselineNeighbors.n_rows);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
+  REQUIRE(neighbors.n_rows ==baselineNeighbors.n_rows);
+  REQUIRE(neighbors.n_cols ==baselineNeighbors.n_cols);
+  REQUIRE(distances.n_rows ==baselineDistances.n_rows);
+  REQUIRE(distances.n_cols ==baselineDistances.n_cols);
 
   for (size_t i = 0; i < distances.n_elem; ++i)
   {
     if (std::abs(baselineDistances[i]) < 1e-5)
-      BOOST_REQUIRE_SMALL(distances[i], 1e-5);
+      REQUIRE(distances[i] == Approx(0.0).margin(1e-7));
     else
-      BOOST_REQUIRE_CLOSE(distances[i], baselineDistances[i], 1e-5);
+      REQUIRE(distances[i] == Approx(baselineDistances[i]).epsilon(1e-7));
 
-    BOOST_REQUIRE_EQUAL(neighbors[i], baselineNeighbors[i]);
+    REQUIRE(neighbors[i] ==baselineNeighbors[i]);
   }
 }
 
 /**
  * Test that when training is performed with a tree, the results are the same.
  */
-BOOST_AUTO_TEST_CASE(TrainTreeTest)
+TEST_CASE("KNNTrainTreeTest", "[KNNTest]")
 {
   KNN empty;
 
@@ -241,11 +239,11 @@ BOOST_AUTO_TEST_CASE(TrainTreeTest)
   empty.Search(5, neighbors, distances);
   baseline.Search(5, baselineNeighbors, baselineDistances);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, baselineNeighbors.n_rows);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
-  BOOST_REQUIRE_EQUAL(oldFromNewReferences.size(), distances.n_cols);
+  REQUIRE(neighbors.n_rows ==baselineNeighbors.n_rows);
+  REQUIRE(neighbors.n_cols ==baselineNeighbors.n_cols);
+  REQUIRE(distances.n_rows ==baselineDistances.n_rows);
+  REQUIRE(distances.n_cols ==baselineDistances.n_cols);
+  REQUIRE(oldFromNewReferences.size() ==distances.n_cols);
 
   // We have to unmap the results.
   arma::mat tmpDistances(distances.n_rows, distances.n_cols);
@@ -263,31 +261,31 @@ BOOST_AUTO_TEST_CASE(TrainTreeTest)
   for (size_t i = 0; i < distances.n_elem; ++i)
   {
     if (std::abs(baselineDistances[i]) < 1e-5)
-      BOOST_REQUIRE_SMALL(tmpDistances[i], 1e-5);
+      REQUIRE(tmpDistances[i] == Approx(0.0).margin(1e-7));
     else
-      BOOST_REQUIRE_CLOSE(tmpDistances[i], baselineDistances[i], 1e-5);
+      REQUIRE(tmpDistances[i] == Approx(baselineDistances[i]).epsilon(1e-7));
 
-    BOOST_REQUIRE_EQUAL(tmpNeighbors[i], baselineNeighbors[i]);
+    REQUIRE(tmpNeighbors[i] ==baselineNeighbors[i]);
   }
 }
 
 /**
  * Test that training with a tree throws an exception when in naive mode.
  */
-BOOST_AUTO_TEST_CASE(NaiveTrainTreeTest)
+TEST_CASE("KNNNaiveTrainTreeTest", "[KNNTest]")
 {
   KNN empty(NAIVE_MODE);
 
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
   KNN::Tree tree(dataset);
 
-  BOOST_REQUIRE_THROW(empty.Train(std::move(tree)), std::invalid_argument);
+  REQUIRE_THROWS_AS(empty.Train(std::move(tree)), std::invalid_argument);
 }
 
 /**
  * Test that the rvalue reference move constructor works.
  */
-BOOST_AUTO_TEST_CASE(DatasetMoveConstructorTest)
+TEST_CASE("KNNDatasetMoveConstructorTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 200);
   arma::mat copy(dataset);
@@ -295,9 +293,9 @@ BOOST_AUTO_TEST_CASE(DatasetMoveConstructorTest)
   KNN moveknn(std::move(copy));
   KNN knn(dataset);
 
-  BOOST_REQUIRE_EQUAL(copy.n_elem, 0);
-  BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_rows, 3);
-  BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_cols, 200);
+  REQUIRE(copy.n_elem ==0);
+  REQUIRE(moveknn.ReferenceSet().n_rows ==3);
+  REQUIRE(moveknn.ReferenceSet().n_cols ==200);
 
   arma::mat moveDistances, distances;
   arma::Mat<size_t> moveNeighbors, neighbors;
@@ -305,24 +303,24 @@ BOOST_AUTO_TEST_CASE(DatasetMoveConstructorTest)
   moveknn.Search(1, moveNeighbors, moveDistances);
   knn.Search(1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);
-  BOOST_REQUIRE_EQUAL(moveNeighbors.n_cols, neighbors.n_cols);
-  BOOST_REQUIRE_EQUAL(moveDistances.n_rows, distances.n_rows);
-  BOOST_REQUIRE_EQUAL(moveDistances.n_cols, distances.n_cols);
+  REQUIRE(moveNeighbors.n_rows ==neighbors.n_rows);
+  REQUIRE(moveNeighbors.n_cols ==neighbors.n_cols);
+  REQUIRE(moveDistances.n_rows ==distances.n_rows);
+  REQUIRE(moveDistances.n_cols ==distances.n_cols);
   for (size_t i = 0; i < moveDistances.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(moveNeighbors[i], neighbors[i]);
+    REQUIRE(moveNeighbors[i] ==neighbors[i]);
     if (std::abs(distances[i]) < 1e-5)
-      BOOST_REQUIRE_SMALL(moveDistances[i], 1e-5);
+      REQUIRE(moveDistances[i] == Approx(0.0).margin(1e-7));
     else
-      BOOST_REQUIRE_CLOSE(moveDistances[i], distances[i], 1e-5);
+      REQUIRE(moveDistances[i] == Approx(distances[i]).epsilon(1e-7));
   }
 }
 
 /**
  * Test that the dataset can be retrained with the move Train() function.
  */
-BOOST_AUTO_TEST_CASE(MoveTrainTest)
+TEST_CASE("KNNMoveTrainTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 200);
 
@@ -334,18 +332,18 @@ BOOST_AUTO_TEST_CASE(MoveTrainTest)
   arma::Mat<size_t> neighbors;
   knn.Search(1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 200);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 200);
+  REQUIRE(dataset.n_elem ==0);
+  REQUIRE(neighbors.n_cols ==200);
+  REQUIRE(distances.n_cols ==200);
 
   dataset = arma::randu<arma::mat>(3, 300);
   knn.SearchMode() = NAIVE_MODE;
   knn.Train(std::move(dataset));
   knn.Search(1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 300);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 300);
+  REQUIRE(dataset.n_elem ==0);
+  REQUIRE(neighbors.n_cols ==300);
+  REQUIRE(distances.n_cols ==300);
 }
 
 /**
@@ -356,7 +354,7 @@ BOOST_AUTO_TEST_CASE(MoveTrainTest)
  * in one dimension for simplicity -- the correct functionality of distance
  * functions is not tested here.
  */
-BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
+TEST_CASE("KNNExhaustiveSyntheticTest", "[KNNTest]")
 {
   // Set up our data.
   arma::mat data(1, 11);
@@ -383,7 +381,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
 
   KNN knn(std::move(tree));
 
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
     switch (i)
     {
@@ -409,246 +407,246 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     // readability.
 
     // Neighbors of point 0.
-    BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[0]), newFromOld[2]);
-    BOOST_REQUIRE_CLOSE(distances(0, newFromOld[0]), 0.10, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(1, newFromOld[0]), newFromOld[5]);
-    BOOST_REQUIRE_CLOSE(distances(1, newFromOld[0]), 0.27, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(2, newFromOld[0]), newFromOld[1]);
-    BOOST_REQUIRE_CLOSE(distances(2, newFromOld[0]), 0.30, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(3, newFromOld[0]), newFromOld[8]);
-    BOOST_REQUIRE_CLOSE(distances(3, newFromOld[0]), 0.40, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(4, newFromOld[0]), newFromOld[9]);
-    BOOST_REQUIRE_CLOSE(distances(4, newFromOld[0]), 0.85, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(5, newFromOld[0]), newFromOld[10]);
-    BOOST_REQUIRE_CLOSE(distances(5, newFromOld[0]), 0.95, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(6, newFromOld[0]), newFromOld[3]);
-    BOOST_REQUIRE_CLOSE(distances(6, newFromOld[0]), 1.20, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(7, newFromOld[0]), newFromOld[7]);
-    BOOST_REQUIRE_CLOSE(distances(7, newFromOld[0]), 1.35, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(8, newFromOld[0]), newFromOld[6]);
-    BOOST_REQUIRE_CLOSE(distances(8, newFromOld[0]), 2.05, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[0]), newFromOld[4]);
-    BOOST_REQUIRE_CLOSE(distances(9, newFromOld[0]), 5.00, 1e-5);
+    REQUIRE(neighbors(0, newFromOld[0]) ==newFromOld[2]);
+    REQUIRE(distances(0, newFromOld[0]) == Approx(0.10).epsilon(1e-7));
+    REQUIRE(neighbors(1, newFromOld[0]) ==newFromOld[5]);
+    REQUIRE(distances(1, newFromOld[0]) == Approx(0.27).epsilon(1e-7));
+    REQUIRE(neighbors(2, newFromOld[0]) ==newFromOld[1]);
+    REQUIRE(distances(2, newFromOld[0]) == Approx(0.30).epsilon(1e-7));
+    REQUIRE(neighbors(3, newFromOld[0]) ==newFromOld[8]);
+    REQUIRE(distances(3, newFromOld[0]) == Approx(0.40).epsilon(1e-7));
+    REQUIRE(neighbors(4, newFromOld[0]) ==newFromOld[9]);
+    REQUIRE(distances(4, newFromOld[0]) == Approx(0.85).epsilon(1e-7));
+    REQUIRE(neighbors(5, newFromOld[0]) ==newFromOld[10]);
+    REQUIRE(distances(5, newFromOld[0]) == Approx(0.95).epsilon(1e-7));
+    REQUIRE(neighbors(6, newFromOld[0]) ==newFromOld[3]);
+    REQUIRE(distances(6, newFromOld[0]) == Approx(1.20).epsilon(1e-7));
+    REQUIRE(neighbors(7, newFromOld[0]) ==newFromOld[7]);
+    REQUIRE(distances(7, newFromOld[0]) == Approx(1.35).epsilon(1e-7));
+    REQUIRE(neighbors(8, newFromOld[0]) ==newFromOld[6]);
+    REQUIRE(distances(8, newFromOld[0]) == Approx(2.05).epsilon(1e-7));
+    REQUIRE(neighbors(9, newFromOld[0]) ==newFromOld[4]);
+    REQUIRE(distances(9, newFromOld[0]) == Approx(5.00).epsilon(1e-7));
 
     // Neighbors of point 1.
-    BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[1]), newFromOld[8]);
-    BOOST_REQUIRE_CLOSE(distances(0, newFromOld[1]), 0.10, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(1, newFromOld[1]), newFromOld[2]);
-    BOOST_REQUIRE_CLOSE(distances(1, newFromOld[1]), 0.20, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(2, newFromOld[1]), newFromOld[0]);
-    BOOST_REQUIRE_CLOSE(distances(2, newFromOld[1]), 0.30, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(3, newFromOld[1]), newFromOld[9]);
-    BOOST_REQUIRE_CLOSE(distances(3, newFromOld[1]), 0.55, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(4, newFromOld[1]), newFromOld[5]);
-    BOOST_REQUIRE_CLOSE(distances(4, newFromOld[1]), 0.57, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(5, newFromOld[1]), newFromOld[10]);
-    BOOST_REQUIRE_CLOSE(distances(5, newFromOld[1]), 0.65, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(6, newFromOld[1]), newFromOld[3]);
-    BOOST_REQUIRE_CLOSE(distances(6, newFromOld[1]), 0.90, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(7, newFromOld[1]), newFromOld[7]);
-    BOOST_REQUIRE_CLOSE(distances(7, newFromOld[1]), 1.65, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(8, newFromOld[1]), newFromOld[6]);
-    BOOST_REQUIRE_CLOSE(distances(8, newFromOld[1]), 2.35, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[1]), newFromOld[4]);
-    BOOST_REQUIRE_CLOSE(distances(9, newFromOld[1]), 4.70, 1e-5);
+    REQUIRE(neighbors(0, newFromOld[1]) ==newFromOld[8]);
+    REQUIRE(distances(0, newFromOld[1]) == Approx(0.10).epsilon(1e-7));
+    REQUIRE(neighbors(1, newFromOld[1]) ==newFromOld[2]);
+    REQUIRE(distances(1, newFromOld[1]) == Approx(0.20).epsilon(1e-7));
+    REQUIRE(neighbors(2, newFromOld[1]) ==newFromOld[0]);
+    REQUIRE(distances(2, newFromOld[1]) == Approx(0.30).epsilon(1e-7));
+    REQUIRE(neighbors(3, newFromOld[1]) ==newFromOld[9]);
+    REQUIRE(distances(3, newFromOld[1]) == Approx(0.55).epsilon(1e-7));
+    REQUIRE(neighbors(4, newFromOld[1]) ==newFromOld[5]);
+    REQUIRE(distances(4, newFromOld[1]) == Approx(0.57).epsilon(1e-7));
+    REQUIRE(neighbors(5, newFromOld[1]) ==newFromOld[10]);
+    REQUIRE(distances(5, newFromOld[1]) == Approx(0.65).epsilon(1e-7));
+    REQUIRE(neighbors(6, newFromOld[1]) ==newFromOld[3]);
+    REQUIRE(distances(6, newFromOld[1]) == Approx(0.90).epsilon(1e-7));
+    REQUIRE(neighbors(7, newFromOld[1]) ==newFromOld[7]);
+    REQUIRE(distances(7, newFromOld[1]) == Approx(1.65).epsilon(1e-7));
+    REQUIRE(neighbors(8, newFromOld[1]) ==newFromOld[6]);
+    REQUIRE(distances(8, newFromOld[1]) == Approx(2.35).epsilon(1e-7));
+    REQUIRE(neighbors(9, newFromOld[1]) ==newFromOld[4]);
+    REQUIRE(distances(9, newFromOld[1]) == Approx(4.70).epsilon(1e-7));
 
     // Neighbors of point 2.
-    BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[2]), newFromOld[0]);
-    BOOST_REQUIRE_CLOSE(distances(0, newFromOld[2]), 0.10, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(1, newFromOld[2]), newFromOld[1]);
-    BOOST_REQUIRE_CLOSE(distances(1, newFromOld[2]), 0.20, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(2, newFromOld[2]), newFromOld[8]);
-    BOOST_REQUIRE_CLOSE(distances(2, newFromOld[2]), 0.30, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(3, newFromOld[2]), newFromOld[5]);
-    BOOST_REQUIRE_CLOSE(distances(3, newFromOld[2]), 0.37, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(4, newFromOld[2]), newFromOld[9]);
-    BOOST_REQUIRE_CLOSE(distances(4, newFromOld[2]), 0.75, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(5, newFromOld[2]), newFromOld[10]);
-    BOOST_REQUIRE_CLOSE(distances(5, newFromOld[2]), 0.85, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(6, newFromOld[2]), newFromOld[3]);
-    BOOST_REQUIRE_CLOSE(distances(6, newFromOld[2]), 1.10, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(7, newFromOld[2]), newFromOld[7]);
-    BOOST_REQUIRE_CLOSE(distances(7, newFromOld[2]), 1.45, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(8, newFromOld[2]), newFromOld[6]);
-    BOOST_REQUIRE_CLOSE(distances(8, newFromOld[2]), 2.15, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[2]), newFromOld[4]);
-    BOOST_REQUIRE_CLOSE(distances(9, newFromOld[2]), 4.90, 1e-5);
+    REQUIRE(neighbors(0, newFromOld[2]) ==newFromOld[0]);
+    REQUIRE(distances(0, newFromOld[2]) == Approx(0.10).epsilon(1e-7));
+    REQUIRE(neighbors(1, newFromOld[2]) ==newFromOld[1]);
+    REQUIRE(distances(1, newFromOld[2]) == Approx(0.20).epsilon(1e-7));
+    REQUIRE(neighbors(2, newFromOld[2]) ==newFromOld[8]);
+    REQUIRE(distances(2, newFromOld[2]) == Approx(0.30).epsilon(1e-7));
+    REQUIRE(neighbors(3, newFromOld[2]) ==newFromOld[5]);
+    REQUIRE(distances(3, newFromOld[2]) == Approx(0.37).epsilon(1e-7));
+    REQUIRE(neighbors(4, newFromOld[2]) ==newFromOld[9]);
+    REQUIRE(distances(4, newFromOld[2]) == Approx(0.75).epsilon(1e-7));
+    REQUIRE(neighbors(5, newFromOld[2]) ==newFromOld[10]);
+    REQUIRE(distances(5, newFromOld[2]) == Approx(0.85).epsilon(1e-7));
+    REQUIRE(neighbors(6, newFromOld[2]) ==newFromOld[3]);
+    REQUIRE(distances(6, newFromOld[2]) == Approx(1.10).epsilon(1e-7));
+    REQUIRE(neighbors(7, newFromOld[2]) ==newFromOld[7]);
+    REQUIRE(distances(7, newFromOld[2]) == Approx(1.45).epsilon(1e-7));
+    REQUIRE(neighbors(8, newFromOld[2]) ==newFromOld[6]);
+    REQUIRE(distances(8, newFromOld[2]) == Approx(2.15).epsilon(1e-7));
+    REQUIRE(neighbors(9, newFromOld[2]) ==newFromOld[4]);
+    REQUIRE(distances(9, newFromOld[2]) == Approx(4.90).epsilon(1e-7));
 
     // Neighbors of point 3.
-    BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[3]), newFromOld[10]);
-    BOOST_REQUIRE_CLOSE(distances(0, newFromOld[3]), 0.25, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(1, newFromOld[3]), newFromOld[9]);
-    BOOST_REQUIRE_CLOSE(distances(1, newFromOld[3]), 0.35, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(2, newFromOld[3]), newFromOld[8]);
-    BOOST_REQUIRE_CLOSE(distances(2, newFromOld[3]), 0.80, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(3, newFromOld[3]), newFromOld[1]);
-    BOOST_REQUIRE_CLOSE(distances(3, newFromOld[3]), 0.90, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(4, newFromOld[3]), newFromOld[2]);
-    BOOST_REQUIRE_CLOSE(distances(4, newFromOld[3]), 1.10, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(5, newFromOld[3]), newFromOld[0]);
-    BOOST_REQUIRE_CLOSE(distances(5, newFromOld[3]), 1.20, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(6, newFromOld[3]), newFromOld[5]);
-    BOOST_REQUIRE_CLOSE(distances(6, newFromOld[3]), 1.47, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(7, newFromOld[3]), newFromOld[7]);
-    BOOST_REQUIRE_CLOSE(distances(7, newFromOld[3]), 2.55, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(8, newFromOld[3]), newFromOld[6]);
-    BOOST_REQUIRE_CLOSE(distances(8, newFromOld[3]), 3.25, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[3]), newFromOld[4]);
-    BOOST_REQUIRE_CLOSE(distances(9, newFromOld[3]), 3.80, 1e-5);
+    REQUIRE(neighbors(0, newFromOld[3]) ==newFromOld[10]);
+    REQUIRE(distances(0, newFromOld[3]) == Approx(0.25).epsilon(1e-7));
+    REQUIRE(neighbors(1, newFromOld[3]) ==newFromOld[9]);
+    REQUIRE(distances(1, newFromOld[3]) == Approx(0.35).epsilon(1e-7));
+    REQUIRE(neighbors(2, newFromOld[3]) ==newFromOld[8]);
+    REQUIRE(distances(2, newFromOld[3]) == Approx(0.80).epsilon(1e-7));
+    REQUIRE(neighbors(3, newFromOld[3]) ==newFromOld[1]);
+    REQUIRE(distances(3, newFromOld[3]) == Approx(0.90).epsilon(1e-7));
+    REQUIRE(neighbors(4, newFromOld[3]) ==newFromOld[2]);
+    REQUIRE(distances(4, newFromOld[3]) == Approx(1.10).epsilon(1e-7));
+    REQUIRE(neighbors(5, newFromOld[3]) ==newFromOld[0]);
+    REQUIRE(distances(5, newFromOld[3]) == Approx(1.20).epsilon(1e-7));
+    REQUIRE(neighbors(6, newFromOld[3]) ==newFromOld[5]);
+    REQUIRE(distances(6, newFromOld[3]) == Approx(1.47).epsilon(1e-7));
+    REQUIRE(neighbors(7, newFromOld[3]) ==newFromOld[7]);
+    REQUIRE(distances(7, newFromOld[3]) == Approx(2.55).epsilon(1e-7));
+    REQUIRE(neighbors(8, newFromOld[3]) ==newFromOld[6]);
+    REQUIRE(distances(8, newFromOld[3]) == Approx(3.25).epsilon(1e-7));
+    REQUIRE(neighbors(9, newFromOld[3]) ==newFromOld[4]);
+    REQUIRE(distances(9, newFromOld[3]) == Approx(3.80).epsilon(1e-7));
 
     // Neighbors of point 4.
-    BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[4]), newFromOld[3]);
-    BOOST_REQUIRE_CLOSE(distances(0, newFromOld[4]), 3.80, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(1, newFromOld[4]), newFromOld[10]);
-    BOOST_REQUIRE_CLOSE(distances(1, newFromOld[4]), 4.05, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(2, newFromOld[4]), newFromOld[9]);
-    BOOST_REQUIRE_CLOSE(distances(2, newFromOld[4]), 4.15, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(3, newFromOld[4]), newFromOld[8]);
-    BOOST_REQUIRE_CLOSE(distances(3, newFromOld[4]), 4.60, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(4, newFromOld[4]), newFromOld[1]);
-    BOOST_REQUIRE_CLOSE(distances(4, newFromOld[4]), 4.70, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(5, newFromOld[4]), newFromOld[2]);
-    BOOST_REQUIRE_CLOSE(distances(5, newFromOld[4]), 4.90, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(6, newFromOld[4]), newFromOld[0]);
-    BOOST_REQUIRE_CLOSE(distances(6, newFromOld[4]), 5.00, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(7, newFromOld[4]), newFromOld[5]);
-    BOOST_REQUIRE_CLOSE(distances(7, newFromOld[4]), 5.27, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(8, newFromOld[4]), newFromOld[7]);
-    BOOST_REQUIRE_CLOSE(distances(8, newFromOld[4]), 6.35, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[4]), newFromOld[6]);
-    BOOST_REQUIRE_CLOSE(distances(9, newFromOld[4]), 7.05, 1e-5);
+    REQUIRE(neighbors(0, newFromOld[4]) ==newFromOld[3]);
+    REQUIRE(distances(0, newFromOld[4]) == Approx(3.80).epsilon(1e-7));
+    REQUIRE(neighbors(1, newFromOld[4]) ==newFromOld[10]);
+    REQUIRE(distances(1, newFromOld[4]) == Approx(4.05).epsilon(1e-7));
+    REQUIRE(neighbors(2, newFromOld[4]) ==newFromOld[9]);
+    REQUIRE(distances(2, newFromOld[4]) == Approx(4.15).epsilon(1e-7));
+    REQUIRE(neighbors(3, newFromOld[4]) ==newFromOld[8]);
+    REQUIRE(distances(3, newFromOld[4]) == Approx(4.60).epsilon(1e-7));
+    REQUIRE(neighbors(4, newFromOld[4]) ==newFromOld[1]);
+    REQUIRE(distances(4, newFromOld[4]) == Approx(4.70).epsilon(1e-7));
+    REQUIRE(neighbors(5, newFromOld[4]) ==newFromOld[2]);
+    REQUIRE(distances(5, newFromOld[4]) == Approx(4.90).epsilon(1e-7));
+    REQUIRE(neighbors(6, newFromOld[4]) ==newFromOld[0]);
+    REQUIRE(distances(6, newFromOld[4]) == Approx(5.00).epsilon(1e-7));
+    REQUIRE(neighbors(7, newFromOld[4]) ==newFromOld[5]);
+    REQUIRE(distances(7, newFromOld[4]) == Approx(5.27).epsilon(1e-7));
+    REQUIRE(neighbors(8, newFromOld[4]) ==newFromOld[7]);
+    REQUIRE(distances(8, newFromOld[4]) == Approx(6.35).epsilon(1e-7));
+    REQUIRE(neighbors(9, newFromOld[4]) ==newFromOld[6]);
+    REQUIRE(distances(9, newFromOld[4]) == Approx(7.05).epsilon(1e-7));
 
     // Neighbors of point 5.
-    BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[5]), newFromOld[0]);
-    BOOST_REQUIRE_CLOSE(distances(0, newFromOld[5]), 0.27, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(1, newFromOld[5]), newFromOld[2]);
-    BOOST_REQUIRE_CLOSE(distances(1, newFromOld[5]), 0.37, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(2, newFromOld[5]), newFromOld[1]);
-    BOOST_REQUIRE_CLOSE(distances(2, newFromOld[5]), 0.57, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(3, newFromOld[5]), newFromOld[8]);
-    BOOST_REQUIRE_CLOSE(distances(3, newFromOld[5]), 0.67, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(4, newFromOld[5]), newFromOld[7]);
-    BOOST_REQUIRE_CLOSE(distances(4, newFromOld[5]), 1.08, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(5, newFromOld[5]), newFromOld[9]);
-    BOOST_REQUIRE_CLOSE(distances(5, newFromOld[5]), 1.12, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(6, newFromOld[5]), newFromOld[10]);
-    BOOST_REQUIRE_CLOSE(distances(6, newFromOld[5]), 1.22, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(7, newFromOld[5]), newFromOld[3]);
-    BOOST_REQUIRE_CLOSE(distances(7, newFromOld[5]), 1.47, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(8, newFromOld[5]), newFromOld[6]);
-    BOOST_REQUIRE_CLOSE(distances(8, newFromOld[5]), 1.78, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[5]), newFromOld[4]);
-    BOOST_REQUIRE_CLOSE(distances(9, newFromOld[5]), 5.27, 1e-5);
+    REQUIRE(neighbors(0, newFromOld[5]) ==newFromOld[0]);
+    REQUIRE(distances(0, newFromOld[5]) == Approx(0.27).epsilon(1e-7));
+    REQUIRE(neighbors(1, newFromOld[5]) ==newFromOld[2]);
+    REQUIRE(distances(1, newFromOld[5]) == Approx(0.37).epsilon(1e-7));
+    REQUIRE(neighbors(2, newFromOld[5]) ==newFromOld[1]);
+    REQUIRE(distances(2, newFromOld[5]) == Approx(0.57).epsilon(1e-7));
+    REQUIRE(neighbors(3, newFromOld[5]) ==newFromOld[8]);
+    REQUIRE(distances(3, newFromOld[5]) == Approx(0.67).epsilon(1e-7));
+    REQUIRE(neighbors(4, newFromOld[5]) ==newFromOld[7]);
+    REQUIRE(distances(4, newFromOld[5]) == Approx(1.08).epsilon(1e-7));
+    REQUIRE(neighbors(5, newFromOld[5]) ==newFromOld[9]);
+    REQUIRE(distances(5, newFromOld[5]) == Approx(1.12).epsilon(1e-7));
+    REQUIRE(neighbors(6, newFromOld[5]) ==newFromOld[10]);
+    REQUIRE(distances(6, newFromOld[5]) == Approx(1.22).epsilon(1e-7));
+    REQUIRE(neighbors(7, newFromOld[5]) ==newFromOld[3]);
+    REQUIRE(distances(7, newFromOld[5]) == Approx(1.47).epsilon(1e-7));
+    REQUIRE(neighbors(8, newFromOld[5]) ==newFromOld[6]);
+    REQUIRE(distances(8, newFromOld[5]) == Approx(1.78).epsilon(1e-7));
+    REQUIRE(neighbors(9, newFromOld[5]) ==newFromOld[4]);
+    REQUIRE(distances(9, newFromOld[5]) == Approx(5.27).epsilon(1e-7));
 
     // Neighbors of point 6.
-    BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[6]), newFromOld[7]);
-    BOOST_REQUIRE_CLOSE(distances(0, newFromOld[6]), 0.70, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(1, newFromOld[6]), newFromOld[5]);
-    BOOST_REQUIRE_CLOSE(distances(1, newFromOld[6]), 1.78, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(2, newFromOld[6]), newFromOld[0]);
-    BOOST_REQUIRE_CLOSE(distances(2, newFromOld[6]), 2.05, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(3, newFromOld[6]), newFromOld[2]);
-    BOOST_REQUIRE_CLOSE(distances(3, newFromOld[6]), 2.15, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(4, newFromOld[6]), newFromOld[1]);
-    BOOST_REQUIRE_CLOSE(distances(4, newFromOld[6]), 2.35, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(5, newFromOld[6]), newFromOld[8]);
-    BOOST_REQUIRE_CLOSE(distances(5, newFromOld[6]), 2.45, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(6, newFromOld[6]), newFromOld[9]);
-    BOOST_REQUIRE_CLOSE(distances(6, newFromOld[6]), 2.90, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(7, newFromOld[6]), newFromOld[10]);
-    BOOST_REQUIRE_CLOSE(distances(7, newFromOld[6]), 3.00, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(8, newFromOld[6]), newFromOld[3]);
-    BOOST_REQUIRE_CLOSE(distances(8, newFromOld[6]), 3.25, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[6]), newFromOld[4]);
-    BOOST_REQUIRE_CLOSE(distances(9, newFromOld[6]), 7.05, 1e-5);
+    REQUIRE(neighbors(0, newFromOld[6]) ==newFromOld[7]);
+    REQUIRE(distances(0, newFromOld[6]) == Approx(0.70).epsilon(1e-7));
+    REQUIRE(neighbors(1, newFromOld[6]) ==newFromOld[5]);
+    REQUIRE(distances(1, newFromOld[6]) == Approx(1.78).epsilon(1e-7));
+    REQUIRE(neighbors(2, newFromOld[6]) ==newFromOld[0]);
+    REQUIRE(distances(2, newFromOld[6]) == Approx(2.05).epsilon(1e-7));
+    REQUIRE(neighbors(3, newFromOld[6]) ==newFromOld[2]);
+    REQUIRE(distances(3, newFromOld[6]) == Approx(2.15).epsilon(1e-7));
+    REQUIRE(neighbors(4, newFromOld[6]) ==newFromOld[1]);
+    REQUIRE(distances(4, newFromOld[6]) == Approx(2.35).epsilon(1e-7));
+    REQUIRE(neighbors(5, newFromOld[6]) ==newFromOld[8]);
+    REQUIRE(distances(5, newFromOld[6]) == Approx(2.45).epsilon(1e-7));
+    REQUIRE(neighbors(6, newFromOld[6]) ==newFromOld[9]);
+    REQUIRE(distances(6, newFromOld[6]) == Approx(2.90).epsilon(1e-7));
+    REQUIRE(neighbors(7, newFromOld[6]) ==newFromOld[10]);
+    REQUIRE(distances(7, newFromOld[6]) == Approx(3.00).epsilon(1e-7));
+    REQUIRE(neighbors(8, newFromOld[6]) ==newFromOld[3]);
+    REQUIRE(distances(8, newFromOld[6]) == Approx(3.25).epsilon(1e-7));
+    REQUIRE(neighbors(9, newFromOld[6]) ==newFromOld[4]);
+    REQUIRE(distances(9, newFromOld[6]) == Approx(7.05).epsilon(1e-7));
 
     // Neighbors of point 7.
-    BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[7]), newFromOld[6]);
-    BOOST_REQUIRE_CLOSE(distances(0, newFromOld[7]), 0.70, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(1, newFromOld[7]), newFromOld[5]);
-    BOOST_REQUIRE_CLOSE(distances(1, newFromOld[7]), 1.08, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(2, newFromOld[7]), newFromOld[0]);
-    BOOST_REQUIRE_CLOSE(distances(2, newFromOld[7]), 1.35, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(3, newFromOld[7]), newFromOld[2]);
-    BOOST_REQUIRE_CLOSE(distances(3, newFromOld[7]), 1.45, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(4, newFromOld[7]), newFromOld[1]);
-    BOOST_REQUIRE_CLOSE(distances(4, newFromOld[7]), 1.65, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(5, newFromOld[7]), newFromOld[8]);
-    BOOST_REQUIRE_CLOSE(distances(5, newFromOld[7]), 1.75, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(6, newFromOld[7]), newFromOld[9]);
-    BOOST_REQUIRE_CLOSE(distances(6, newFromOld[7]), 2.20, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(7, newFromOld[7]), newFromOld[10]);
-    BOOST_REQUIRE_CLOSE(distances(7, newFromOld[7]), 2.30, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(8, newFromOld[7]), newFromOld[3]);
-    BOOST_REQUIRE_CLOSE(distances(8, newFromOld[7]), 2.55, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[7]), newFromOld[4]);
-    BOOST_REQUIRE_CLOSE(distances(9, newFromOld[7]), 6.35, 1e-5);
+    REQUIRE(neighbors(0, newFromOld[7]) ==newFromOld[6]);
+    REQUIRE(distances(0, newFromOld[7]) == Approx(0.70).epsilon(1e-7));
+    REQUIRE(neighbors(1, newFromOld[7]) ==newFromOld[5]);
+    REQUIRE(distances(1, newFromOld[7]) == Approx(1.08).epsilon(1e-7));
+    REQUIRE(neighbors(2, newFromOld[7]) ==newFromOld[0]);
+    REQUIRE(distances(2, newFromOld[7]) == Approx(1.35).epsilon(1e-7));
+    REQUIRE(neighbors(3, newFromOld[7]) ==newFromOld[2]);
+    REQUIRE(distances(3, newFromOld[7]) == Approx(1.45).epsilon(1e-7));
+    REQUIRE(neighbors(4, newFromOld[7]) ==newFromOld[1]);
+    REQUIRE(distances(4, newFromOld[7]) == Approx(1.65).epsilon(1e-7));
+    REQUIRE(neighbors(5, newFromOld[7]) ==newFromOld[8]);
+    REQUIRE(distances(5, newFromOld[7]) == Approx(1.75).epsilon(1e-7));
+    REQUIRE(neighbors(6, newFromOld[7]) ==newFromOld[9]);
+    REQUIRE(distances(6, newFromOld[7]) == Approx(2.20).epsilon(1e-7));
+    REQUIRE(neighbors(7, newFromOld[7]) ==newFromOld[10]);
+    REQUIRE(distances(7, newFromOld[7]) == Approx(2.30).epsilon(1e-7));
+    REQUIRE(neighbors(8, newFromOld[7]) ==newFromOld[3]);
+    REQUIRE(distances(8, newFromOld[7]) == Approx(2.55).epsilon(1e-7));
+    REQUIRE(neighbors(9, newFromOld[7]) ==newFromOld[4]);
+    REQUIRE(distances(9, newFromOld[7]) == Approx(6.35).epsilon(1e-7));
 
     // Neighbors of point 8.
-    BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[8]), newFromOld[1]);
-    BOOST_REQUIRE_CLOSE(distances(0, newFromOld[8]), 0.10, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(1, newFromOld[8]), newFromOld[2]);
-    BOOST_REQUIRE_CLOSE(distances(1, newFromOld[8]), 0.30, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(2, newFromOld[8]), newFromOld[0]);
-    BOOST_REQUIRE_CLOSE(distances(2, newFromOld[8]), 0.40, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(3, newFromOld[8]), newFromOld[9]);
-    BOOST_REQUIRE_CLOSE(distances(3, newFromOld[8]), 0.45, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(4, newFromOld[8]), newFromOld[10]);
-    BOOST_REQUIRE_CLOSE(distances(4, newFromOld[8]), 0.55, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(5, newFromOld[8]), newFromOld[5]);
-    BOOST_REQUIRE_CLOSE(distances(5, newFromOld[8]), 0.67, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(6, newFromOld[8]), newFromOld[3]);
-    BOOST_REQUIRE_CLOSE(distances(6, newFromOld[8]), 0.80, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(7, newFromOld[8]), newFromOld[7]);
-    BOOST_REQUIRE_CLOSE(distances(7, newFromOld[8]), 1.75, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(8, newFromOld[8]), newFromOld[6]);
-    BOOST_REQUIRE_CLOSE(distances(8, newFromOld[8]), 2.45, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[8]), newFromOld[4]);
-    BOOST_REQUIRE_CLOSE(distances(9, newFromOld[8]), 4.60, 1e-5);
+    REQUIRE(neighbors(0, newFromOld[8]) ==newFromOld[1]);
+    REQUIRE(distances(0, newFromOld[8]) == Approx(0.10).epsilon(1e-7));
+    REQUIRE(neighbors(1, newFromOld[8]) ==newFromOld[2]);
+    REQUIRE(distances(1, newFromOld[8]) == Approx(0.30).epsilon(1e-7));
+    REQUIRE(neighbors(2, newFromOld[8]) ==newFromOld[0]);
+    REQUIRE(distances(2, newFromOld[8]) == Approx(0.40).epsilon(1e-7));
+    REQUIRE(neighbors(3, newFromOld[8]) ==newFromOld[9]);
+    REQUIRE(distances(3, newFromOld[8]) == Approx(0.45).epsilon(1e-7));
+    REQUIRE(neighbors(4, newFromOld[8]) ==newFromOld[10]);
+    REQUIRE(distances(4, newFromOld[8]) == Approx(0.55).epsilon(1e-7));
+    REQUIRE(neighbors(5, newFromOld[8]) ==newFromOld[5]);
+    REQUIRE(distances(5, newFromOld[8]) == Approx(0.67).epsilon(1e-7));
+    REQUIRE(neighbors(6, newFromOld[8]) ==newFromOld[3]);
+    REQUIRE(distances(6, newFromOld[8]) == Approx(0.80).epsilon(1e-7));
+    REQUIRE(neighbors(7, newFromOld[8]) ==newFromOld[7]);
+    REQUIRE(distances(7, newFromOld[8]) == Approx(1.75).epsilon(1e-7));
+    REQUIRE(neighbors(8, newFromOld[8]) ==newFromOld[6]);
+    REQUIRE(distances(8, newFromOld[8]) == Approx(2.45).epsilon(1e-7));
+    REQUIRE(neighbors(9, newFromOld[8]) ==newFromOld[4]);
+    REQUIRE(distances(9, newFromOld[8]) == Approx(4.60).epsilon(1e-7));
 
     // Neighbors of point 9.
-    BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[9]), newFromOld[10]);
-    BOOST_REQUIRE_CLOSE(distances(0, newFromOld[9]), 0.10, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(1, newFromOld[9]), newFromOld[3]);
-    BOOST_REQUIRE_CLOSE(distances(1, newFromOld[9]), 0.35, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(2, newFromOld[9]), newFromOld[8]);
-    BOOST_REQUIRE_CLOSE(distances(2, newFromOld[9]), 0.45, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(3, newFromOld[9]), newFromOld[1]);
-    BOOST_REQUIRE_CLOSE(distances(3, newFromOld[9]), 0.55, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(4, newFromOld[9]), newFromOld[2]);
-    BOOST_REQUIRE_CLOSE(distances(4, newFromOld[9]), 0.75, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(5, newFromOld[9]), newFromOld[0]);
-    BOOST_REQUIRE_CLOSE(distances(5, newFromOld[9]), 0.85, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(6, newFromOld[9]), newFromOld[5]);
-    BOOST_REQUIRE_CLOSE(distances(6, newFromOld[9]), 1.12, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(7, newFromOld[9]), newFromOld[7]);
-    BOOST_REQUIRE_CLOSE(distances(7, newFromOld[9]), 2.20, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(8, newFromOld[9]), newFromOld[6]);
-    BOOST_REQUIRE_CLOSE(distances(8, newFromOld[9]), 2.90, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[9]), newFromOld[4]);
-    BOOST_REQUIRE_CLOSE(distances(9, newFromOld[9]), 4.15, 1e-5);
+    REQUIRE(neighbors(0, newFromOld[9]) ==newFromOld[10]);
+    REQUIRE(distances(0, newFromOld[9]) == Approx(0.10).epsilon(1e-7));
+    REQUIRE(neighbors(1, newFromOld[9]) ==newFromOld[3]);
+    REQUIRE(distances(1, newFromOld[9]) == Approx(0.35).epsilon(1e-7));
+    REQUIRE(neighbors(2, newFromOld[9]) ==newFromOld[8]);
+    REQUIRE(distances(2, newFromOld[9]) == Approx(0.45).epsilon(1e-7));
+    REQUIRE(neighbors(3, newFromOld[9]) ==newFromOld[1]);
+    REQUIRE(distances(3, newFromOld[9]) == Approx(0.55).epsilon(1e-7));
+    REQUIRE(neighbors(4, newFromOld[9]) ==newFromOld[2]);
+    REQUIRE(distances(4, newFromOld[9]) == Approx(0.75).epsilon(1e-7));
+    REQUIRE(neighbors(5, newFromOld[9]) ==newFromOld[0]);
+    REQUIRE(distances(5, newFromOld[9]) == Approx(0.85).epsilon(1e-7));
+    REQUIRE(neighbors(6, newFromOld[9]) ==newFromOld[5]);
+    REQUIRE(distances(6, newFromOld[9]) == Approx(1.12).epsilon(1e-7));
+    REQUIRE(neighbors(7, newFromOld[9]) ==newFromOld[7]);
+    REQUIRE(distances(7, newFromOld[9]) == Approx(2.20).epsilon(1e-7));
+    REQUIRE(neighbors(8, newFromOld[9]) ==newFromOld[6]);
+    REQUIRE(distances(8, newFromOld[9]) == Approx(2.90).epsilon(1e-7));
+    REQUIRE(neighbors(9, newFromOld[9]) ==newFromOld[4]);
+    REQUIRE(distances(9, newFromOld[9]) == Approx(4.15).epsilon(1e-7));
 
     // Neighbors of point 10.
-    BOOST_REQUIRE_EQUAL(neighbors(0, newFromOld[10]), newFromOld[9]);
-    BOOST_REQUIRE_CLOSE(distances(0, newFromOld[10]), 0.10, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(1, newFromOld[10]), newFromOld[3]);
-    BOOST_REQUIRE_CLOSE(distances(1, newFromOld[10]), 0.25, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(2, newFromOld[10]), newFromOld[8]);
-    BOOST_REQUIRE_CLOSE(distances(2, newFromOld[10]), 0.55, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(3, newFromOld[10]), newFromOld[1]);
-    BOOST_REQUIRE_CLOSE(distances(3, newFromOld[10]), 0.65, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(4, newFromOld[10]), newFromOld[2]);
-    BOOST_REQUIRE_CLOSE(distances(4, newFromOld[10]), 0.85, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(5, newFromOld[10]), newFromOld[0]);
-    BOOST_REQUIRE_CLOSE(distances(5, newFromOld[10]), 0.95, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(6, newFromOld[10]), newFromOld[5]);
-    BOOST_REQUIRE_CLOSE(distances(6, newFromOld[10]), 1.22, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(7, newFromOld[10]), newFromOld[7]);
-    BOOST_REQUIRE_CLOSE(distances(7, newFromOld[10]), 2.30, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(8, newFromOld[10]), newFromOld[6]);
-    BOOST_REQUIRE_CLOSE(distances(8, newFromOld[10]), 3.00, 1e-5);
-    BOOST_REQUIRE_EQUAL(neighbors(9, newFromOld[10]), newFromOld[4]);
-    BOOST_REQUIRE_CLOSE(distances(9, newFromOld[10]), 4.05, 1e-5);
+    REQUIRE(neighbors(0, newFromOld[10]) ==newFromOld[9]);
+    REQUIRE(distances(0, newFromOld[10]) == Approx(0.10).epsilon(1e-7));
+    REQUIRE(neighbors(1, newFromOld[10]) ==newFromOld[3]);
+    REQUIRE(distances(1, newFromOld[10]) == Approx(0.25).epsilon(1e-7));
+    REQUIRE(neighbors(2, newFromOld[10]) ==newFromOld[8]);
+    REQUIRE(distances(2, newFromOld[10]) == Approx(0.55).epsilon(1e-7));
+    REQUIRE(neighbors(3, newFromOld[10]) ==newFromOld[1]);
+    REQUIRE(distances(3, newFromOld[10]) == Approx(0.65).epsilon(1e-7));
+    REQUIRE(neighbors(4, newFromOld[10]) ==newFromOld[2]);
+    REQUIRE(distances(4, newFromOld[10]) == Approx(0.85).epsilon(1e-7));
+    REQUIRE(neighbors(5, newFromOld[10]) ==newFromOld[0]);
+    REQUIRE(distances(5, newFromOld[10]) == Approx(0.95).epsilon(1e-7));
+    REQUIRE(neighbors(6, newFromOld[10]) ==newFromOld[5]);
+    REQUIRE(distances(6, newFromOld[10]) == Approx(1.22).epsilon(1e-7));
+    REQUIRE(neighbors(7, newFromOld[10]) ==newFromOld[7]);
+    REQUIRE(distances(7, newFromOld[10]) == Approx(2.30).epsilon(1e-7));
+    REQUIRE(neighbors(8, newFromOld[10]) ==newFromOld[6]);
+    REQUIRE(distances(8, newFromOld[10]) == Approx(3.00).epsilon(1e-7));
+    REQUIRE(neighbors(9, newFromOld[10]) ==newFromOld[4]);
+    REQUIRE(distances(9, newFromOld[10]) == Approx(4.05).epsilon(1e-7));
   }
 }
 
@@ -658,13 +656,13 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
  *
  * Errors are produced if the results are not identical.
  */
-BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
+TEST_CASE("KNNDualTreeVsNaive", "[KNNTest]")
 {
   arma::mat dataset;
 
   // Hard-coded filename: bad?
   if (!data::Load("test_data_3_1000.csv", dataset))
-    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN knn(dataset);
 
@@ -678,10 +676,10 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
   arma::mat distancesNaive;
   naive.Search(dataset, 15, neighborsNaive, distancesNaive);
 
-  for (size_t i = 0; i < neighborsTree.n_elem; i++)
+  for (size_t i = 0; i < neighborsTree.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighborsTree(i), neighborsNaive(i));
-    BOOST_REQUIRE_CLOSE(distancesTree(i), distancesNaive(i), 1e-5);
+    REQUIRE(neighborsTree(i) ==neighborsNaive(i));
+    REQUIRE(distancesTree(i) == Approx(distancesNaive(i)).epsilon(1e-7));
   }
 }
 
@@ -691,14 +689,14 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
  *
  * Errors are produced if the results are not identical.
  */
-BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
+TEST_CASE("KNNDualTreeVsNaive2", "[KNNTest]")
 {
   arma::mat dataset;
 
   // Hard-coded filename: bad?
   // Code duplication: also bad!
   if (!data::Load("test_data_3_1000.csv", dataset))
-    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN knn(dataset);
 
@@ -713,10 +711,10 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
   arma::mat distancesNaive;
   naive.Search(15, neighborsNaive, distancesNaive);
 
-  for (size_t i = 0; i < neighborsTree.n_elem; i++)
+  for (size_t i = 0; i < neighborsTree.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighborsTree[i], neighborsNaive[i]);
-    BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 1e-5);
+    REQUIRE(neighborsTree[i] ==neighborsNaive[i]);
+    REQUIRE(distancesTree[i] == Approx(distancesNaive[i]).epsilon(1e-7));
   }
 }
 
@@ -726,14 +724,14 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
  *
  * Errors are produced if the results are not identical.
  */
-BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
+TEST_CASE("KNNSingleTreeVsNaive", "[KNNTest]")
 {
   arma::mat dataset;
 
   // Hard-coded filename: bad?
   // Code duplication: also bad!
   if (!data::Load("test_data_3_1000.csv", dataset))
-    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN knn(dataset, SINGLE_TREE_MODE);
 
@@ -748,10 +746,10 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   arma::mat distancesNaive;
   naive.Search(15, neighborsNaive, distancesNaive);
 
-  for (size_t i = 0; i < neighborsTree.n_elem; i++)
+  for (size_t i = 0; i < neighborsTree.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighborsTree[i], neighborsNaive[i]);
-    BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 1e-5);
+    REQUIRE(neighborsTree[i] ==neighborsNaive[i]);
+    REQUIRE(distancesTree[i] == Approx(distancesNaive[i]).epsilon(1e-7));
   }
 }
 
@@ -761,7 +759,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
  *
  * Errors are produced if the results are not identical.
  */
-BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
+TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]")
 {
   arma::mat data;
   data.randu(75, 1000); // 75 dimensional, 1000 points.
@@ -784,8 +782,8 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
 
   for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(coverTreeNeighbors[i], naiveNeighbors[i]);
-    BOOST_REQUIRE_CLOSE(coverTreeDistances[i], naiveDistances[i], 1e-5);
+    REQUIRE(coverTreeNeighbors[i] ==naiveNeighbors[i]);
+    REQUIRE(coverTreeDistances[i] == Approx(naiveDistances[i]).epsilon(1e-7));
   }
 }
 
@@ -793,7 +791,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
  * Test the cover tree dual-tree nearest neighbors method against the naive
  * method.
  */
-BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
+TEST_CASE("KNNDualCoverTreeTest", "[KNNTest]")
 {
   arma::mat dataset;
   data::Load("test_data_3_1000.csv", dataset);
@@ -816,8 +814,8 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
 
   for (size_t i = 0; i < coverNeighbors.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(coverNeighbors(i), kdNeighbors(i));
-    BOOST_REQUIRE_CLOSE(coverDistances(i), kdDistances(i), 1e-5);
+    REQUIRE(coverNeighbors(i) ==kdNeighbors(i));
+    REQUIRE(coverDistances(i) == Approx(kdDistances(i)).epsilon(1e-7));
   }
 }
 
@@ -827,7 +825,7 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
  *
  * Errors are produced if the results are not identical.
  */
-BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
+TEST_CASE("KNNSingleBallTreeTest", "[KNNTest]")
 {
   arma::mat data;
   data.randu(50, 300); // 50 dimensional, 300 points.
@@ -855,8 +853,8 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
 
   for (size_t i = 0; i < ballTreeNeighbors.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(ballTreeNeighbors[i], naiveNeighbors[i]);
-    BOOST_REQUIRE_CLOSE(ballTreeDistances[i], naiveDistances[i], 1e-5);
+    REQUIRE(ballTreeNeighbors[i] ==naiveNeighbors[i]);
+    REQUIRE(ballTreeDistances[i] == Approx(naiveDistances[i]).epsilon(1e-7));
   }
 }
 
@@ -864,7 +862,7 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
  * Test the ball tree dual-tree nearest neighbors method against the naive
  * method.
  */
-BOOST_AUTO_TEST_CASE(DualBallTreeTest)
+TEST_CASE("KNNDualBallTreeTest", "[KNNTest]")
 {
   arma::mat dataset;
   data::Load("test_data_3_1000.csv", dataset);
@@ -884,8 +882,8 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
 
   for (size_t i = 0; i < ballNeighbors.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(ballNeighbors(i), kdNeighbors(i));
-    BOOST_REQUIRE_CLOSE(ballDistances(i), kdDistances(i), 1e-5);
+    REQUIRE(ballNeighbors(i) ==kdNeighbors(i));
+    REQUIRE(ballDistances(i) == Approx(kdDistances(i)).epsilon(1e-7));
   }
 }
 
@@ -894,7 +892,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
  * nodes, and backtracking in non-overlapping nodes) against the naive method.
  * This uses only a random reference dataset.
  */
-BOOST_AUTO_TEST_CASE(HybridSpillSearchTest)
+TEST_CASE("KNNHybridSpillSearchTest", "[KNNTest]")
 {
   arma::mat dataset;
   dataset.randu(50, 300); // 50 dimensional, 300 points.
@@ -928,8 +926,8 @@ BOOST_AUTO_TEST_CASE(HybridSpillSearchTest)
 
     for (size_t i = 0; i < neighborsSPTree.n_elem; ++i)
     {
-      BOOST_REQUIRE_EQUAL(neighborsSPTree(i), neighborsNaive(i));
-      BOOST_REQUIRE_CLOSE(distancesSPTree(i), distancesNaive(i), 1e-5);
+      REQUIRE(neighborsSPTree(i) ==neighborsNaive(i));
+      REQUIRE(distancesSPTree(i) == Approx(distancesNaive(i)).epsilon(1e-7));
     }
   }
 }
@@ -938,7 +936,7 @@ BOOST_AUTO_TEST_CASE(HybridSpillSearchTest)
  * Test hybrid sp-tree search doesn't repeat points.
  * This uses only a random reference dataset.
  */
-BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
+TEST_CASE("KNNDuplicatedSpillSearchTest", "[KNNTest]")
 {
   arma::mat dataset;
   dataset.randu(50, 300); // 50 dimensional, 300 points.
@@ -965,7 +963,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
       for (size_t i = 0; i < neighborsSPTree.n_cols; ++i)
       {
         // Test that at least one point was found.
-        BOOST_REQUIRE(distancesSPTree(0, i) != DBL_MAX);
+        REQUIRE(distancesSPTree(0, i) != DBL_MAX);
 
         for (size_t j = 0; j < neighborsSPTree.n_rows; ++j)
         {
@@ -974,7 +972,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
           // All candidates with same distances must be different points.
           for (size_t k = j + 1; k < neighborsSPTree.n_rows &&
               distancesSPTree(k, i) == distancesSPTree(j, i); ++k)
-            BOOST_REQUIRE(neighborsSPTree(k, i) != neighborsSPTree(j, i));
+            REQUIRE(neighborsSPTree(k, i) != neighborsSPTree(j, i));
         }
       }
     }
@@ -984,7 +982,7 @@ BOOST_AUTO_TEST_CASE(DuplicatedSpillSearchTest)
 /**
  * Make sure sparse nearest neighbors works with kd trees.
  */
-BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
+TEST_CASE("SparseKNNKDTreeTest", "[KNNTest]")
 {
   // The dimensionality of these datasets must be high so that the probability
   // of a completely empty point is very low.  In this case, with dimensionality
@@ -1015,14 +1013,15 @@ BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
   {
     for (size_t j = 0; j < naiveNeighbors.n_rows; ++j)
     {
-      BOOST_REQUIRE_EQUAL(naiveNeighbors(j, i), sparseNeighbors(j, i));
-      BOOST_REQUIRE_CLOSE(naiveDistances(j, i), sparseDistances(j, i), 1e-5);
+      REQUIRE(naiveNeighbors(j, i) == sparseNeighbors(j, i));
+      REQUIRE(naiveDistances(j, i) ==
+              Approx(sparseDistances(j, i)).epsilon(1e-7));
     }
   }
 }
 
 /*
-BOOST_AUTO_TEST_CASE(SparseKNNCoverTreeTest)
+TEST_CASE("SparseKNNCoverTreeTest", "[KNNTest]")
 {
   typedef CoverTree<LMetric<2, true>, FirstPointIsRoot,
       NeighborSearchStat<NearestNeighborSort>, arma::sp_mat> SparseCoverTree;
@@ -1053,14 +1052,14 @@ BOOST_AUTO_TEST_CASE(SparseKNNCoverTreeTest)
   {
     for (size_t j = 0; j < naiveNeighbors.n_rows; ++j)
     {
-      BOOST_REQUIRE_EQUAL(naiveNeighbors(j, i), sparseNeighbors(j, i));
-      BOOST_REQUIRE_CLOSE(naiveDistances(j, i), sparseDistances(j, i), 1e-5);
+      REQUIRE(naiveNeighbors(j, i) == sparseNeighbors(j, i));
+      REQUIRE(naiveDistances(j, i) == Approx(sparseDistances(j, i)).epsilon(1e-7));
     }
   }
 }
 */
 
-BOOST_AUTO_TEST_CASE(KNNModelTest)
+TEST_CASE("KNNModelTest", "[KNNTest]")
 {
   // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
   // results.
@@ -1126,25 +1125,25 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
 
       models[i].Search(std::move(queryCopy), 3, neighbors, distances);
 
-      BOOST_REQUIRE_EQUAL(neighbors.n_rows, baselineNeighbors.n_rows);
-      BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
-      BOOST_REQUIRE_EQUAL(neighbors.n_elem, baselineNeighbors.n_elem);
-      BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
-      BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
-      BOOST_REQUIRE_EQUAL(distances.n_elem, baselineDistances.n_elem);
+      REQUIRE(neighbors.n_rows ==baselineNeighbors.n_rows);
+      REQUIRE(neighbors.n_cols ==baselineNeighbors.n_cols);
+      REQUIRE(neighbors.n_elem ==baselineNeighbors.n_elem);
+      REQUIRE(distances.n_rows ==baselineDistances.n_rows);
+      REQUIRE(distances.n_cols ==baselineDistances.n_cols);
+      REQUIRE(distances.n_elem ==baselineDistances.n_elem);
       for (size_t k = 0; k < distances.n_elem; ++k)
       {
-        BOOST_REQUIRE_EQUAL(neighbors[k], baselineNeighbors[k]);
+        REQUIRE(neighbors[k] ==baselineNeighbors[k]);
         if (std::abs(baselineDistances[k]) < 1e-5)
-          BOOST_REQUIRE_SMALL(distances[k], 1e-5);
+          REQUIRE(distances[k] == Approx(0.0).margin(1e-7));
         else
-          BOOST_REQUIRE_CLOSE(distances[k], baselineDistances[k], 1e-5);
+          REQUIRE(distances[k] == Approx(baselineDistances[k]).epsilon(1e-7));
       }
     }
   }
 }
 
-BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
+TEST_CASE("KNNModelMonochromaticTest", "[KNNTest]")
 {
   // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
   // results, in the case where the reference set is the same as the query set.
@@ -1208,19 +1207,19 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
 
       models[i].Search(3, neighbors, distances);
 
-      BOOST_REQUIRE_EQUAL(neighbors.n_rows, baselineNeighbors.n_rows);
-      BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
-      BOOST_REQUIRE_EQUAL(neighbors.n_elem, baselineNeighbors.n_elem);
-      BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
-      BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
-      BOOST_REQUIRE_EQUAL(distances.n_elem, baselineDistances.n_elem);
+      REQUIRE(neighbors.n_rows ==baselineNeighbors.n_rows);
+      REQUIRE(neighbors.n_cols ==baselineNeighbors.n_cols);
+      REQUIRE(neighbors.n_elem ==baselineNeighbors.n_elem);
+      REQUIRE(distances.n_rows ==baselineDistances.n_rows);
+      REQUIRE(distances.n_cols ==baselineDistances.n_cols);
+      REQUIRE(distances.n_elem ==baselineDistances.n_elem);
       for (size_t k = 0; k < distances.n_elem; ++k)
       {
-        BOOST_REQUIRE_EQUAL(neighbors[k], baselineNeighbors[k]);
+        REQUIRE(neighbors[k] ==baselineNeighbors[k]);
         if (std::abs(baselineDistances[k]) < 1e-5)
-          BOOST_REQUIRE_SMALL(distances[k], 1e-5);
+          REQUIRE(distances[k] == Approx(0.0).margin(1e-7));
         else
-          BOOST_REQUIRE_CLOSE(distances[k], baselineDistances[k], 1e-5);
+          REQUIRE(distances[k] == Approx(baselineDistances[k]).epsilon(1e-7));
       }
     }
   }
@@ -1231,7 +1230,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
  * before the second search.  This test ensures that that happens, by making
  * sure the number of scores and base cases are equivalent for each search.
  */
-BOOST_AUTO_TEST_CASE(DoubleReferenceSearchTest)
+TEST_CASE("KNNDoubleReferenceSearchTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   KNN knn(std::move(dataset));
@@ -1244,15 +1243,15 @@ BOOST_AUTO_TEST_CASE(DoubleReferenceSearchTest)
 
   knn.Search(3, secondNeighbors, secondDistances);
 
-  BOOST_REQUIRE_EQUAL(knn.BaseCases(), baseCases);
-  BOOST_REQUIRE_EQUAL(knn.Scores(), scores);
+  REQUIRE(knn.BaseCases() ==baseCases);
+  REQUIRE(knn.Scores() ==scores);
 }
 
 /**
  * Make sure that the neighborPtr matrix isn't accidentally deleted.
  * See issue #478.
  */
-BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
+TEST_CASE("KNNNeighborPtrDeleteTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
 
@@ -1269,16 +1268,16 @@ BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
 
   // These will (hopefully) fail is either the neighbors or the distances matrix
   // has been accidentally deleted.
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 50);
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 50);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
+  REQUIRE(neighbors.n_cols ==50);
+  REQUIRE(neighbors.n_rows ==3);
+  REQUIRE(distances.n_cols ==50);
+  REQUIRE(distances.n_rows ==3);
 }
 
 /**
  * Test the copy constructor and copy operator.
  */
-BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
+TEST_CASE("KNNCopyConstructorAndOperatorTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   KNN knn(std::move(dataset));
@@ -1304,7 +1303,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
 /**
  * Test the copy constructor and copy operator using the RectangleTree.
  */
-BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorRTreeTest)
+TEST_CASE("KNNCopyConstructorAndOperatorRTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
@@ -1332,7 +1331,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorRTreeTest)
 /**
  * Test the copy constructor and copy operator using the Cover Tree.
  */
-BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCoverTreeTest)
+TEST_CASE("KNNCopyConstructorAndOperatorCoverTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
@@ -1360,7 +1359,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorCoverTreeTest)
 /**
  * Test the copy constructor and copy operator using the BinarySpaceTree.
  */
-BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorBinarySpaceTreeTest)
+TEST_CASE("KNNCopyConstructorAndOperatorBinarySpaceTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
@@ -1388,7 +1387,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorBinarySpaceTreeTest)
 /**
  * Test the copy constructor and copy operator using the Spill Tree.
  */
-BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorSpillTreeTest)
+TEST_CASE("KNNCopyConstructorAndOperatorSpillTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
@@ -1416,7 +1415,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorSpillTreeTest)
 /**
  * Test the copy constructor and copy operator using the Octree.
  */
-BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorOctreeTest)
+TEST_CASE("KNNCopyConstructorAndOperatorOctreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
@@ -1444,7 +1443,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorOctreeTest)
 /**
  * Test the move constructor.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+TEST_CASE("KNNMoveConstructorTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   KNN* knn = new KNN(std::move(dataset));
@@ -1469,7 +1468,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
 /**
  * Test the move constructor & move assignment using R trees.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorRTreeTest)
+TEST_CASE("KNNMoveConstructorRTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
@@ -1503,7 +1502,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorRTreeTest)
 /**
  * Test the move constructor & move assignment using Binary Space trees.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorBinarySpaceTreeTest)
+TEST_CASE("KNNMoveConstructorBinarySpaceTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
@@ -1536,7 +1535,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorBinarySpaceTreeTest)
 /**
  * Test the move constructor & move assignment using Octree.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorOctreeTest)
+TEST_CASE("KNNMoveConstructorOctreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
@@ -1569,7 +1568,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorOctreeTest)
 /**
  * Test the move constructor & move assignment using Cover Tree.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorCoverTreeTest)
+TEST_CASE("KNNMoveConstructorCoverTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
@@ -1602,7 +1601,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorCoverTreeTest)
 /**
  * Test the move constructor & move assignment using Spill Tree.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorSpillTreeTest)
+TEST_CASE("KNNMoveConstructorSpillTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
@@ -1635,7 +1634,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorSpillTreeTest)
 /**
  * Test the move operator.
  */
-BOOST_AUTO_TEST_CASE(MoveOperatorTest)
+TEST_CASE("KNNMoveOperatorTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   KNN* knn = new KNN(std::move(dataset));
@@ -1661,7 +1660,7 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
  * Test the copy constructor and copy operator in naive mode (so there is no
  * tree).
  */
-BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorNaiveTest)
+TEST_CASE("KNNCopyConstructorAndOperatorNaiveTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 50);
   KNN knn(std::move(dataset), NAIVE_MODE);
@@ -1670,8 +1669,8 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorNaiveTest)
   KNN knn2(knn);
   KNN knn3 = knn;
 
-  BOOST_REQUIRE_EQUAL(knn2.SearchMode(), NAIVE_MODE);
-  BOOST_REQUIRE_EQUAL(knn3.SearchMode(), NAIVE_MODE);
+  REQUIRE(knn2.SearchMode() ==NAIVE_MODE);
+  REQUIRE(knn3.SearchMode() ==NAIVE_MODE);
 
   // Get results.
   arma::mat distances, distances2, distances3;
@@ -1690,7 +1689,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorNaiveTest)
 /**
  * Test the move constructor in naive mode (so there is no tree).
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorNaiveTest)
+TEST_CASE("KNNMoveConstructorNaiveTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 50);
   KNN* knn = new KNN(std::move(dataset), NAIVE_MODE);
@@ -1706,7 +1705,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorNaiveTest)
 
   delete knn;
 
-  BOOST_REQUIRE_EQUAL(knn2.SearchMode(), NAIVE_MODE);
+  REQUIRE(knn2.SearchMode() ==NAIVE_MODE);
 
   knn2.Search(3, neighbors2, distances2);
 
@@ -1717,7 +1716,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorNaiveTest)
 /**
  * Test the move operator in naive mode (so there is no tree).
  */
-BOOST_AUTO_TEST_CASE(MoveOperatorNaiveTest)
+TEST_CASE("KNNMoveOperatorNaiveTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   KNN* knn = new KNN(std::move(dataset), NAIVE_MODE);
@@ -1733,7 +1732,7 @@ BOOST_AUTO_TEST_CASE(MoveOperatorNaiveTest)
 
   delete knn;
 
-  BOOST_REQUIRE_EQUAL(knn2.SearchMode(), NAIVE_MODE);
+  REQUIRE(knn2.SearchMode() ==NAIVE_MODE);
 
   knn2.Search(3, neighbors2, distances2);
 
@@ -1745,7 +1744,7 @@ BOOST_AUTO_TEST_CASE(MoveOperatorNaiveTest)
  * Check that no garbage value is returned when greedy tree traversal
  * is performed over kd-tree.
  */
-BOOST_AUTO_TEST_CASE(GreedyTreeSearch)
+TEST_CASE("KNNGreedyTreeSearch", "[KNNTest]")
 {
   // Initalize dataset.
   arma::mat dataset = arma::randu<arma::mat>(3, 100);
@@ -1765,12 +1764,9 @@ BOOST_AUTO_TEST_CASE(GreedyTreeSearch)
 
   // Check that all neighbour values are between 0 and 100, as only 100 points
   // are present in dataset.
-  BOOST_REQUIRE_EQUAL(arma::accu(neighbors < 0 || neighbors >= 100), 0);
+  REQUIRE(arma::accu(neighbors < 0 || neighbors >= 100) ==0);
 
   // Check that all distances values are between 0.0 and 1.0 as arma::randu
   // generates a uniform distribution in [0, 1].
-  BOOST_REQUIRE_EQUAL(arma::accu(distances < 0.0 || distances > std::sqrt(3.0)),
-      0);
+  REQUIRE(arma::accu(distances < 0.0 || distances > std::sqrt(3.0)) == 0);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

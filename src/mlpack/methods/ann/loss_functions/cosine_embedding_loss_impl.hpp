@@ -1,5 +1,5 @@
 /**
- * @file cosine_embedding_loss_impl.hpp
+ * @file methods/ann/loss_functions/cosine_embedding_loss_impl.hpp
  * @author Kartik Dutt
  *
  * Implementation of the Cosine Embedding loss function.
@@ -74,7 +74,6 @@ void CosineEmbeddingLoss<InputDataType, OutputDataType>::Backward(
   typedef typename InputType::elem_type ElemType;
 
   const size_t cols = input.n_cols;
-  const size_t batchSize = input.n_elem / cols;
   if (arma::size(input) != arma::size(target))
     Log::Fatal << "Input Tensors must have same dimensions." << std::endl;
 

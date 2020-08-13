@@ -1,5 +1,5 @@
 /**
- * @file clamp.hpp
+ * @file core/math/clamp.hpp
  *
  * Miscellaneous math clamping routines.
  *
@@ -35,7 +35,7 @@ inline double ClampNonNegative(const double d)
  * Avoids branching costs (this is a measurable improvement).
  *
  * @param d Double to clamp.
- * @param 0 if d > 0, d otherwise.
+ * @return 0 if d > 0, d otherwise.
  */
 inline double ClampNonPositive(const double d)
 {

@@ -1,5 +1,5 @@
 /**
- * @file get_param.hpp
+ * @file bindings/cli/set_param.hpp
  * @author Ryan Curtin
  *
  * Use template metaprogramming to get the right type of parameter.
@@ -91,10 +91,10 @@ void SetParam(
  *
  * @param d Parameter information.
  * @param input Unused parameter.
- * @param output Place to store pointer to value.
+ * @param * (output) Place to store pointer to value.
  */
 template<typename T>
-void SetParam(const util::ParamData& d, const void* input, void* /* output */)
+void SetParam(util::ParamData& d, const void* input, void* /* output */)
 {
   SetParam<typename std::remove_pointer<T>::type>(
       const_cast<util::ParamData&>(d), *((boost::any*) input));

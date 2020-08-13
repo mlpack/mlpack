@@ -1,5 +1,5 @@
 /**
- * @file vr_class_reward_impl.hpp
+ * @file methods/ann/layer/vr_class_reward_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the VRClassReward class, which implements the variance
@@ -26,7 +26,8 @@ VRClassReward<InputDataType, OutputDataType>::VRClassReward(
     const double scale,
     const bool sizeAverage) :
     scale(scale),
-    sizeAverage(sizeAverage)
+    sizeAverage(sizeAverage),
+    reward(0)
 {
   // Nothing to do here.
 }
@@ -40,7 +41,7 @@ double VRClassReward<InputDataType, OutputDataType>::Forward(
   for (size_t i = 0; i < input.n_cols - 1; ++i)
   {
     size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+    Log::Assert(currentTarget < input.n_rows,
         "Target class out of range.");
 
     output -= input(currentTarget, i);
@@ -49,7 +50,7 @@ double VRClassReward<InputDataType, OutputDataType>::Forward(
   reward = 0;
   arma::uword index = 0;
 
-  for (size_t i = 0; i < input.n_cols - 1; i++)
+  for (size_t i = 0; i < input.n_cols - 1; ++i)
   {
     input.unsafe_col(i).max(index);
     reward = ((index + 1) == target(i)) * scale;
@@ -74,7 +75,7 @@ void VRClassReward<InputDataType, OutputDataType>::Backward(
   for (size_t i = 0; i < (input.n_cols - 1); ++i)
   {
     size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
+    Log::Assert(currentTarget < input.n_rows,
         "Target class out of range.");
 
     output(currentTarget, i) = -1;

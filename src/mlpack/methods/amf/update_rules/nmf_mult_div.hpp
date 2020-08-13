@@ -1,5 +1,5 @@
 /**
- * @file mult_div_update_rules.hpp
+ * @file methods/amf/update_rules/nmf_mult_div.hpp
  * @author Mohan Rajendran
  *
  * Update rules for the Non-negative Matrix Factorization.
@@ -130,9 +130,9 @@ class NMFMultiplicativeDivergenceUpdate
     arma::colvec t2;
 
     t1 = W * H;
-    for (size_t i = 0; i < H.n_rows; i++)
+    for (size_t i = 0; i < H.n_rows; ++i)
     {
-      for (size_t j = 0; j < H.n_cols; j++)
+      for (size_t j = 0; j < H.n_cols; ++j)
       {
         // Writing this as a single expression does not work as of Armadillo
         // 3.920.  This should be fixed in a future release, and then the code

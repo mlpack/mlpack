@@ -1,5 +1,5 @@
 /**
- * @file concatenate_impl.hpp
+ * @file methods/ann/layer/concatenate_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the Concatenate class that concatenates a constant matrix to

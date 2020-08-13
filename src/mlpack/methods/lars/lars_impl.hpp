@@ -1,5 +1,5 @@
 /**
- * @file lars_impl.hpp
+ * @file methods/lars/lars_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of templated LARS functions.

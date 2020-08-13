@@ -1,5 +1,5 @@
 /**
- * @file is_serializable.hpp
+ * @file bindings/markdown/is_serializable.hpp
  * @author Ryan Curtin
  *
  * Return a bool noting whether or not a parameter is serializable.
@@ -54,7 +54,7 @@ bool IsSerializable(
  * Return whether or not the type is serializable.
  */
 template<typename T>
-void IsSerializable(const util::ParamData& /* data */,
+void IsSerializable(util::ParamData& /* data */,
                     const void* /* input */,
                     void* output)
 {

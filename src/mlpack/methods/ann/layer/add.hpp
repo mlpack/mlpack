@@ -1,5 +1,5 @@
 /**
- * @file add.hpp
+ * @file methods/ann/layer/add.hpp
  * @author Marcus Edel
  *
  * Definition of the Add class that applies a bias term to the incoming data.
@@ -56,7 +56,7 @@ class Add
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -68,7 +68,7 @@ class Add
   /**
    * Calculate the gradient using the output delta and the input activation.
    *
-   * @param input The propagated input.
+   * @param * (input) The propagated input.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
@@ -96,6 +96,9 @@ class Add
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+
+  //! Get the output size.
+  size_t OutputSize() const { return outSize; }
 
   /**
    * Serialize the layer

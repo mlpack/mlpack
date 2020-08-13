@@ -1,5 +1,5 @@
 /**
- * @file dual_tree_traverser_impl.hpp
+ * @file core/tree/binary_space_tree/dual_tree_traverser_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the DualTreeTraverser for BinarySpaceTree.  This is a way

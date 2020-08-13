@@ -1,5 +1,5 @@
 /**
- * @file hmm_viterbi_main.cpp
+ * @file methods/hmm/hmm_viterbi_main.cpp
  * @author Ryan Curtin
  *
  * Compute the most probably hidden state sequence of a given observation
@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
@@ -69,7 +69,7 @@ struct Viterbi
   static void Apply(HMMType& hmm, void* /* extraInfo */)
   {
     // Load observations.
-    mat dataSeq = std::move(CLI::GetParam<arma::mat>("input"));
+    mat dataSeq = std::move(IO::GetParam<arma::mat>("input"));
 
     // See if transposing the data could make it the right dimensionality.
     if ((dataSeq.n_cols == 1) && (hmm.Emission()[0].Dimensionality() == 1))
@@ -91,7 +91,7 @@ struct Viterbi
     hmm.Predict(dataSeq, sequence);
 
     // Save output.
-    CLI::GetParam<arma::Mat<size_t>>("output") = std::move(sequence);
+    IO::GetParam<arma::Mat<size_t>>("output") = std::move(sequence);
   }
 };
 
@@ -99,5 +99,5 @@ static void mlpackMain()
 {
   RequireAtLeastOnePassed({ "output" }, false, "no results will be saved");
 
-  CLI::GetParam<HMMModel*>("input_model")->PerformAction<Viterbi>((void*) NULL);
+  IO::GetParam<HMMModel*>("input_model")->PerformAction<Viterbi>((void*) NULL);
 }

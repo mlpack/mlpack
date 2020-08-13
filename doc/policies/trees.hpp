@@ -47,11 +47,13 @@ are nearby should lie in similar nodes.
 We can rigorously define what a tree is, using the definition of **space tree**
 introduced in the following paper:
 
+@code
 @quote
 R.R. Curtin, W.B. March, P. Ram, D.V. Anderson, A.G. Gray, and C.L. Isbell Jr.,
 "Tree-independent dual-tree algorithms," in Proceedings of the 30th
 International Conference on Machine Learning (ICML '13), pp. 1435--1443, 2013.
 @endquote
+@endcode
 
 The definition is:
 
@@ -398,7 +400,7 @@ This section is divided into five parts:
 
 @subsection treetype_rigorous_template Template parameters
 
-\ref treetype_template_param "An earlier section" discussed the three different
+\ref treetype_template_params "An earlier section" discussed the three different
 template parameters that are required by the \c TreeType policy.
 
 The \ref metrics "MetricType policy" provides one method that will be useful for

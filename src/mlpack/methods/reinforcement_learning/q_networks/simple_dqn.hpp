@@ -1,5 +1,5 @@
 /**
- * @file simple_dqn.hpp
+ * @file methods/reinforcement_learning/q_networks/simple_dqn.hpp
  * @author Nishant Kumar
  *
  * This file contains the implementation of the simple deep q network.
@@ -24,17 +24,22 @@ namespace rl {
 using namespace mlpack::ann;
 
 /**
+ * @tparam OutputLayerType The output layer type of the network.
+ * @tparam InitType The initialization type used for the network.
  * @tparam NetworkType The type of network used for simple dqn.
  */
-template <typename NetworkType = FFN<MeanSquaredError<>,
-                                    GaussianInitialization>>
+template<
+  typename OutputLayerType = MeanSquaredError<>,
+  typename InitType = GaussianInitialization,
+  typename NetworkType = FFN<OutputLayerType, InitType>
+>
 class SimpleDQN
 {
  public:
   /**
    * Default constructor.
    */
-  SimpleDQN() : network()
+  SimpleDQN() : network(), isNoisy(false)
   { /* Nothing to do here. */ }
 
   /**
@@ -44,23 +49,47 @@ class SimpleDQN
    * @param h1 Number of neurons in hiddenlayer-1.
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
+   * @param isNoisy Specifies whether the network needs to be of type noisy.
+   * @param init Specifies the initialization rule for the network.
+   * @param outputLayer Specifies the output layer type for network.
    */
   SimpleDQN(const int inputDim,
             const int h1,
             const int h2,
-            const int outputDim) : network()
+            const int outputDim,
+            const bool isNoisy = false,
+            InitType init = InitType(),
+            OutputLayerType outputLayer = OutputLayerType()):
+      network(outputLayer, init),
+      isNoisy(isNoisy)
   {
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-        GaussianInitialization(0, 0.001));
-    model.Add<Linear<>>(inputDim, h1);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(h1, h2);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(h2, outputDim);
-    network = model;
+    network.Add(new Linear<>(inputDim, h1));
+    network.Add(new ReLULayer<>());
+    if (isNoisy)
+    {
+      noisyLayerIndex.push_back(network.Model().size());
+      network.Add(new NoisyLinear<>(h1, h2));
+      network.Add(new ReLULayer<>());
+      noisyLayerIndex.push_back(network.Model().size());
+      network.Add(new NoisyLinear<>(h2, outputDim));
+    }
+    else
+    {
+      network.Add(new Linear<>(h1, h2));
+      network.Add(new ReLULayer<>());
+      network.Add(new Linear<>(h2, outputDim));
+    }
   }
 
-  SimpleDQN(NetworkType network) : network(std::move(network))
+  /**
+   * Construct an instance of SimpleDQN class from a pre-constructed network.
+   *
+   * @param network The network to be used by SimpleDQN class.
+   * @param isNoisy Specifies whether the network needs to be of type noisy.
+   */
+  SimpleDQN(NetworkType& network, const bool isNoisy = false):
+      network(network),
+      isNoisy(isNoisy)
   { /* Nothing to do here. */ }
 
   /**
@@ -98,6 +127,18 @@ class SimpleDQN
     network.ResetParameters();
   }
 
+  /**
+   * Resets noise of the network, if the network is of type noisy.
+   */
+  void ResetNoise()
+  {
+    for (size_t i = 0; i < noisyLayerIndex.size(); i++)
+    {
+      boost::get<NoisyLinear<>*>
+          (network.Model()[noisyLayerIndex[i]])->ResetNoise();
+    }
+  }
+
   //! Return the Parameters.
   const arma::mat& Parameters() const { return network.Parameters(); }
   //! Modify the Parameters.
@@ -108,10 +149,9 @@ class SimpleDQN
    *
    * @param state The input state.
    * @param target The training target.
-   * @return gradient The gradient.
+   * @param gradient The gradient.
    */
-  void Backward(const arma::mat state, arma::mat& target,
-arma::mat& gradient)
+  void Backward(const arma::mat state, arma::mat& target, arma::mat& gradient)
   {
     network.Backward(state, target, gradient);
   }
@@ -119,6 +159,12 @@ arma::mat& gradient)
  private:
   //! Locally-stored network.
   NetworkType network;
+
+  //! Locally-stored check for noisy network.
+  bool isNoisy;
+
+  //! Locally-stored indexes of noisy layers in the network.
+  std::vector<size_t> noisyLayerIndex;
 };
 
 } // namespace rl

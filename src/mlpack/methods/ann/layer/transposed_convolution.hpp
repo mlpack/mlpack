@@ -1,5 +1,5 @@
 /**
- * @file transposed_convolution.hpp
+ * @file methods/ann/layer/transposed_convolution.hpp
  * @author Shikhar Jaiswal
  * @author Marcus Edel
  *
@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
+#include <mlpack/core/util/to_lower.hpp>
 
 #include "layer_types.hpp"
 #include "padding.hpp"
@@ -151,7 +152,7 @@ class TransposedConvolution
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -163,7 +164,7 @@ class TransposedConvolution
   /*
    * Calculate the gradient using the output delta and the input activation.
    *
-   * @param input The input parameter used for calculating the gradient.
+   * @param * (input) The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
@@ -176,6 +177,16 @@ class TransposedConvolution
   OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
+
+  //! Get the weight of the layer.
+  arma::cube const& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  arma::cube& Weight() { return weight; }
+
+  //! Get the bias of the layer.
+  arma::mat const& Bias() const { return bias; }
+  //! Modify the bias of the layer.
+  arma::mat& Bias() { return bias; }
 
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
@@ -198,22 +209,22 @@ class TransposedConvolution
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the input width.
-  size_t const& InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  size_t const& InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  size_t const& OutputWidth() const { return outputWidth; }
+  size_t OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  size_t const& OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
@@ -262,9 +273,6 @@ class TransposedConvolution
   size_t PadWRight() const { return padWRight; }
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
-
-  //! Modify the bias weights of the layer.
-  arma::mat& Bias() { return bias; }
 
   /**
    * Serialize the layer.

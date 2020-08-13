@@ -1,5 +1,5 @@
 /**
- * @file range_search_impl.hpp
+ * @file methods/range_search/range_search_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the RangeSearch class.
@@ -390,7 +390,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
       distances.clear();
       distances.resize(querySet.n_cols);
 
-      for (size_t i = 0; i < distances.size(); i++)
+      for (size_t i = 0; i < distances.size(); ++i)
       {
         // Map distances (copy a column).
         const size_t queryMapping = oldFromNewQueries[i];
@@ -398,7 +398,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
         // Copy each neighbor individually, because we need to map it.
         neighbors[queryMapping].resize(distances[queryMapping].size());
-        for (size_t j = 0; j < distances[queryMapping].size(); j++)
+        for (size_t j = 0; j < distances[queryMapping].size(); ++j)
           neighbors[queryMapping][j] =
               oldFromNewReferences[(*neighborPtr)[i][j]];
       }
@@ -433,10 +433,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
       neighbors.clear();
       neighbors.resize(querySet.n_cols);
 
-      for (size_t i = 0; i < neighbors.size(); i++)
+      for (size_t i = 0; i < neighbors.size(); ++i)
       {
         neighbors[i].resize((*neighborPtr)[i].size());
-        for (size_t j = 0; j < neighbors[i].size(); j++)
+        for (size_t j = 0; j < neighbors[i].size(); ++j)
           neighbors[i][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
       }
 
@@ -505,10 +505,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     neighbors.clear();
     neighbors.resize(querySet.n_cols);
 
-    for (size_t i = 0; i < neighbors.size(); i++)
+    for (size_t i = 0; i < neighbors.size(); ++i)
     {
       neighbors[i].resize((*neighborPtr)[i].size());
-      for (size_t j = 0; j < neighbors[i].size(); j++)
+      for (size_t j = 0; j < neighbors[i].size(); ++j)
         neighbors[i][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
     }
 
@@ -598,7 +598,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     distances.clear();
     distances.resize(referenceSet->n_cols);
 
-    for (size_t i = 0; i < distances.size(); i++)
+    for (size_t i = 0; i < distances.size(); ++i)
     {
       // Map distances (copy a column).
       const size_t refMapping = oldFromNewReferences[i];
@@ -606,7 +606,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
       // Copy each neighbor individually, because we need to map it.
       neighbors[refMapping].resize(distances[refMapping].size());
-      for (size_t j = 0; j < distances[refMapping].size(); j++)
+      for (size_t j = 0; j < distances[refMapping].size(); ++j)
       {
         neighbors[refMapping][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
       }

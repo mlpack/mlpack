@@ -1,5 +1,5 @@
 /**
- * @file dtnn_rules_impl.hpp
+ * @file methods/kmeans/dual_tree_kmeans_rules_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of DualTreeKMeansRules.

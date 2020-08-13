@@ -30,7 +30,7 @@ to build mlpack on Windows, see \ref build_windows (alternatively, you can read
 is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="https://www.mlpack.org/files/mlpack-3.3.0.tar.gz">mlpack-3.3.0</a>
+<a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">mlpack-3.2.2</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -38,9 +38,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget https://www.mlpack.org/files/mlpack-3.3.0.tar.gz
-$ tar -xvzpf mlpack-3.3.0.tar.gz
-$ mkdir mlpack-3.3.0/build && cd mlpack-3.3.0/build
+$ wget https://www.mlpack.org/files/mlpack-3.2.2.tar.gz
+$ tar -xvzpf mlpack-3.2.2.tar.gz
+$ mkdir mlpack-3.2.2/build && cd mlpack-3.2.2/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -65,8 +65,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.3.0.tar.gz
-$ cd mlpack-3.3.0
+$ tar -xvzpf mlpack-3.2.2.tar.gz
+$ cd mlpack-3.2.2
 $ mkdir build
 @endcode
 
@@ -78,7 +78,7 @@ mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
  - Armadillo >= 8.400.0 (with LAPACK support)
- - Boost (math_c99, program_options, serialization, unit_test_framework, heap,
+ - Boost (math_c99, serialization, unit_test_framework, heap,
           spirit) >= 1.58
  - ensmallen >= 2.10.0 (will be downloaded if not found)
 
@@ -99,9 +99,9 @@ In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be
 installed through apt:
 
 @code
-# apt-get install libboost-math-dev libboost-program-options-dev
-  libboost-test-dev libboost-serialization-dev libarmadillo-dev binutils-dev
-  python-pandas python-numpy cython python-setuptools
+# apt-get install libboost-math-dev libboost-test-dev libboost-serialization-dev
+  libarmadillo-dev binutils-dev python-pandas python-numpy cython
+  python-setuptools
 @endcode
 
 If you are using Ubuntu 19.10 or newer, you can also install @c libensmallen-dev
@@ -122,9 +122,9 @@ source as apt installs an older version. So you need to omit
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
-# dnf install boost-devel boost-test boost-program-options boost-math
-  armadillo-devel binutils-devel python2-Cython python2-setuptools
-  python2-numpy python2-pandas ensmallen-devel stbi-devel
+# dnf install boost-devel boost-test boost-math armadillo-devel binutils-devel 
+  python2-Cython python2-setuptools python2-numpy python2-pandas ensmallen-devel 
+  stbi-devel
 @endcode
 
 (It's also possible to use python3 packages from the package manager---mlpack

@@ -1,5 +1,5 @@
 /**
- * @file numeric_split_info.hpp
+ * @file methods/hoeffding_trees/numeric_split_info.hpp
  * @author Ryan Curtin
  *
  * After a numeric split has been made, this holds information on the split.

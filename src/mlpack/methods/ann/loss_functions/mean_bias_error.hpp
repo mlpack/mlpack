@@ -1,5 +1,5 @@
 /**
- * @file mean_bias_error.hpp
+ * @file methods/ann/loss_functions/mean_bias_error.hpp
  * @author Saksham Rastogi
  *
  * Definition of the mean bias error performance function.

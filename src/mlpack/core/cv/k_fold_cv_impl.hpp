@@ -1,5 +1,5 @@
 /**
- * @file simple_cv_impl.hpp
+ * @file core/cv/k_fold_cv_impl.hpp
  * @author Kirill Mishchenko
  *
  * The implementation of k-fold cross-validation.

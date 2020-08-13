@@ -87,7 +87,7 @@ In order to solve this problem, \b mlpack provides a number of interfaces.
    approximate furthest neighbors
  - a simple \ref cpp_qdafn_akfntut "C++ class for QDAFN"
  - a simple \ref cpp_ds_akfntut "C++ class for DrusillaSelect"
- - a simple \ref cpp_kfn_akfntut "C++ class for tree-based and brute-force"
+ - a simple \ref cpp_ns_akfntut "C++ class for tree-based and brute-force"
    search
 
 @section toc_akfntut Table of Contents

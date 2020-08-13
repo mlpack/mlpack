@@ -1,5 +1,5 @@
 /**
- * @file tanh_function.hpp
+ * @file methods/ann/activation_functions/tanh_function.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the Tangens Hyperbolic function.

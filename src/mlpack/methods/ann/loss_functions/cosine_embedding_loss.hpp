@@ -1,5 +1,5 @@
 /**
- * @file cosine_embedding_loss.hpp
+ * @file methods/ann/loss_functions/cosine_embedding_loss.hpp
  * @author Kartik Dutt
  *
  * Definition of the Cosine Embedding loss function.
@@ -122,11 +122,11 @@ class CosineEmbeddingLoss
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Locally-stored value of similarity hyper-parameter.
-  bool similarity;
-
   //! Locally-stored value of margin hyper-parameter.
   double margin;
+
+  //! Locally-stored value of similarity hyper-parameter.
+  bool similarity;
 
   //! Locally-stored value of takeMean hyper-parameter.
   bool takeMean;

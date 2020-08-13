@@ -1,5 +1,5 @@
 /**
- * @file lcc.cpp
+ * @file methods/local_coordinate_coding/lcc.cpp
  * @author Nishant Mehta
  *
  * Implementation of Local Coordinate Coding.
@@ -38,7 +38,7 @@ void LocalCoordinateCoding::Encode(const arma::mat& data, arma::mat& codes)
   arma::mat dictGramTD(dictGram.n_rows, dictGram.n_cols);
 
   codes.set_size(atoms, data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
     // Report progress.
     if ((i % 100) == 0)
@@ -98,7 +98,7 @@ void LocalCoordinateCoding::OptimizeDictionary(const arma::mat& data,
   dataPrime(arma::span::all, arma::span(0, data.n_cols - 1)) = data;
 
   size_t curCol = data.n_cols;
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
     if (neighborCounts(i) > 0)
     {

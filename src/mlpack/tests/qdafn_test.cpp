@@ -1,5 +1,5 @@
 /**
- * @file qdafn_test.cpp
+ * @file tests/qdafn_test.cpp
  * @author Ryan Curtin
  *
  * Test the QDAFN functionality.
@@ -105,6 +105,43 @@ BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
   }
 
   BOOST_REQUIRE_GE(successes, 695);
+}
+
+/**
+ * Make sure that more than one valid neighbor is returned when k > 1.
+ */
+BOOST_AUTO_TEST_CASE(QDAFNMultipleNeighbors)
+{
+  arma::mat uniformSet = arma::randu<arma::mat>(25, 1000);
+
+  QDAFN<> qdafn(uniformSet, 10, 30);
+
+  // Get the actual neighbors.
+  KFN kfn(uniformSet);
+  arma::Mat<size_t> trueNeighbors;
+  arma::mat trueDistances;
+
+  kfn.Search(999, trueNeighbors, trueDistances);
+
+  arma::Mat<size_t> qdafnNeighbors;
+  arma::mat qdafnDistances;
+
+  qdafn.Search(uniformSet, 3, qdafnNeighbors, qdafnDistances);
+
+  BOOST_REQUIRE_EQUAL(qdafnNeighbors.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(qdafnNeighbors.n_cols, 1000);
+  BOOST_REQUIRE_EQUAL(qdafnDistances.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(qdafnDistances.n_cols, 1000);
+
+  // We expect to find a neighbor for each point.
+  for (size_t i = 0; i < 999; ++i)
+  {
+    BOOST_REQUIRE_LT(qdafnNeighbors(0, i), 1000);
+    BOOST_REQUIRE_LT(qdafnNeighbors(1, i), 1000);
+    BOOST_REQUIRE_LT(qdafnNeighbors(2, i), 1000);
+    BOOST_REQUIRE_NE(qdafnNeighbors(0, i), qdafnNeighbors(1, i));
+    BOOST_REQUIRE_NE(qdafnNeighbors(0, i), qdafnNeighbors(2, i));
+  }
 }
 
 /**

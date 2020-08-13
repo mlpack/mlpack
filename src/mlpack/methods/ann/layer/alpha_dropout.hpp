@@ -1,5 +1,5 @@
 /**
- * @file alpha_dropout.hpp
+ * @file methods/ann/layer/alpha_dropout.hpp
  * @author Dakshit Agrawal
  *
  * Definition of the Alpha-Dropout class, which implements a regularizer that
@@ -71,7 +71,7 @@ class AlphaDropout
   /**
    * Ordinary feed backward pass of the alpha_dropout layer.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

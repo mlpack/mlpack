@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_test.cpp
+ * @file tests/callback_test.cpp
  *
  * Test the Linear SVM class.
  *
@@ -211,12 +211,12 @@ BOOST_AUTO_TEST_CASE(SRWithOptimizerCallback)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points / 2; i++)
+  for (size_t i = 0; i < points / 2; ++i)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points / 2; i < points; i++)
+  for (size_t i = points / 2; i < points; ++i)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;

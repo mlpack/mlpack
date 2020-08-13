@@ -1,5 +1,5 @@
 /**
- * @file kmeans_test.cpp
+ * @file tests/kmeans_test.cpp
  * @author Ryan Curtin
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(KMeansSimpleTest)
   // clusters are ordered, so we have to be careful about that.
   size_t firstClass = assignments(0);
 
-  for (size_t i = 1; i < 13; i++)
+  for (size_t i = 1; i < 13; ++i)
     BOOST_REQUIRE_EQUAL(assignments(i), firstClass);
 
   size_t secondClass = assignments(13);
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(KMeansSimpleTest)
   // To ensure that class 1 != class 2.
   BOOST_REQUIRE_NE(firstClass, secondClass);
 
-  for (size_t i = 13; i < 20; i++)
+  for (size_t i = 13; i < 20; ++i)
     BOOST_REQUIRE_EQUAL(assignments(i), secondClass);
 
   size_t thirdClass = assignments(20);
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(KMeansSimpleTest)
   BOOST_REQUIRE_NE(firstClass, thirdClass);
   BOOST_REQUIRE_NE(secondClass, thirdClass);
 
-  for (size_t i = 20; i < 30; i++)
+  for (size_t i = 20; i < 30; ++i)
     BOOST_REQUIRE_EQUAL(assignments(i), thirdClass);
 }
 
@@ -128,11 +128,11 @@ BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
       metric, 0);
 
   // Make sure no assignments were changed.
-  for (size_t i = 0; i < assignments.n_elem; i++)
+  for (size_t i = 0; i < assignments.n_elem; ++i)
     BOOST_REQUIRE_EQUAL(assignments[i], assignmentsOld[i]);
 
   // Make sure no counts were changed.
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_EQUAL(counts[i], countsOld[i]);
 }
 
@@ -161,11 +161,11 @@ BOOST_AUTO_TEST_CASE(KillEmptyClusterTest)
       metric, 0);
 
   // Make sure no assignments were changed.
-  for (size_t i = 0; i < assignments.n_elem; i++)
+  for (size_t i = 0; i < assignments.n_elem; ++i)
     BOOST_REQUIRE_EQUAL(assignments[i], assignmentsOld[i]);
 
   // Make sure no counts were changed for clusters that are not empty.
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < 2; ++i)
     BOOST_REQUIRE_EQUAL(counts[i], countsOld[i]);
 
   // Make sure that counts contain one less element than old counts.
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(MaxVarianceNewClusterTest)
     double minDistance = std::numeric_limits<double>::infinity();
     size_t closestCluster = centroids.n_cols; // Invalid value.
 
-    for (size_t j = 0; j < centroids.n_cols; j++)
+    for (size_t j = 0; j < centroids.n_cols; ++j)
     {
       const double distance = metric.Evaluate(data.col(i), centroids.col(j));
 
@@ -249,7 +249,7 @@ BOOST_AUTO_TEST_CASE(RandomPartitionTest)
   BOOST_REQUIRE_EQUAL(assignments.n_elem, 1000);
 
   // Ensure that no value is greater than 17 (the maximum valid cluster).
-  for (size_t i = 0; i < 1000; i++)
+  for (size_t i = 0; i < 1000; ++i)
     BOOST_REQUIRE_LT(assignments[i], 18);
 }
 

@@ -1,5 +1,5 @@
 /**
- * @file save_impl.hpp
+ * @file core/data/save_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of save functionality.
@@ -158,10 +158,14 @@ bool Save(const std::string& filename,
   {
     arma::Mat<eT> tmp = trans(matrix);
 
+#ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
     const bool success = (saveType == arma::hdf5_binary) ?
         tmp.quiet_save(filename, saveType) :
         tmp.quiet_save(stream, saveType);
+#else
+    const bool success = tmp.quiet_save(stream, saveType);
+#endif
     if (!success)
     {
       Timer::Stop("saving_data");
@@ -175,10 +179,14 @@ bool Save(const std::string& filename,
   }
   else
   {
+#ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
     const bool success = (saveType == arma::hdf5_binary) ?
         matrix.quiet_save(filename, saveType) :
         matrix.quiet_save(stream, saveType);
+#else
+    const bool success = matrix.quiet_save(stream, saveType);
+#endif
     if (!success)
     {
       Timer::Stop("saving_data");
@@ -189,6 +197,115 @@ bool Save(const std::string& filename,
 
       return false;
     }
+  }
+
+  Timer::Stop("saving_data");
+
+  // Finally return success.
+  return true;
+}
+
+// Save a Sparse Matrix
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::SpMat<eT>& matrix,
+          const bool fatal,
+          bool transpose)
+{
+  Timer::Start("saving_data");
+
+  // First we will try to discriminate by file extension.
+  std::string extension = Extension(filename);
+  if (extension == "")
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "No extension given with filename '" << filename << "'; "
+          << "type unknown.  Save failed." << std::endl;
+    else
+      Log::Warn << "No extension given with filename '" << filename << "'; "
+          << "type unknown.  Save failed." << std::endl;
+
+    return false;
+  }
+
+  // Catch errors opening the file.
+  std::fstream stream;
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+  stream.open(filename.c_str(), std::fstream::out | std::fstream::binary);
+#else
+  stream.open(filename.c_str(), std::fstream::out);
+#endif
+  if (!stream.is_open())
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Cannot open file '" << filename << "' for writing. "
+          << "Save failed." << std::endl;
+    else
+      Log::Warn << "Cannot open file '" << filename << "' for writing; save "
+          << "failed." << std::endl;
+
+    return false;
+  }
+
+  bool unknownType = false;
+  arma::file_type saveType;
+  std::string stringType;
+
+  if (extension == "txt" || extension == "tsv")
+  {
+    saveType = arma::coord_ascii;
+    stringType = "raw ASCII formatted data";
+  }
+  else if (extension == "bin")
+  {
+    saveType = arma::arma_binary;
+    stringType = "Armadillo binary formatted data";
+  }
+  else
+  {
+    unknownType = true;
+    saveType = arma::raw_binary; // Won't be used; prevent a warning.
+    stringType = "";
+  }
+
+  // Provide error if we don't know the type.
+  if (unknownType)
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Unable to determine format to save to from filename '"
+          << filename << "'.  Save failed." << std::endl;
+    else
+      Log::Warn << "Unable to determine format to save to from filename '"
+          << filename << "'.  Save failed." << std::endl;
+
+    return false;
+  }
+
+  // Try to save the file.
+  Log::Info << "Saving " << stringType << " to '" << filename << "'."
+      << std::endl;
+
+  arma::SpMat<eT> tmp = matrix;
+
+  // Transpose the matrix.
+  if (transpose)
+  {
+    tmp = trans(matrix);
+  }
+
+  const bool success = tmp.quiet_save(stream, saveType);
+  if (!success)
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
+    else
+      Log::Warn << "Save to '" << filename << "' failed." << std::endl;
+
+    return false;
   }
 
   Timer::Stop("saving_data");
@@ -330,7 +447,7 @@ bool Save(const std::vector<std::string>& files,
   arma::Mat<unsigned char> img;
   bool status = true;
 
-  for (size_t i = 0; i < files.size() ; i++)
+  for (size_t i = 0; i < files.size() ; ++i)
   {
     arma::Mat<eT> colImg(matrix.colptr(i), matrix.n_rows, 1,
         false, true);

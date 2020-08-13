@@ -1,5 +1,5 @@
 /**
- * @file gradient_zero_visitor_impl.hpp
+ * @file methods/ann/visitor/gradient_zero_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Gradient() function layer abstraction.

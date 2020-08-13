@@ -1,5 +1,5 @@
 /**
- * @file arma_util.hpp
+ * @file bindings/python/mlpack/arma_util.hpp
  * @author Ryan Curtin
  *
  * Utility function for Cython to set the memory state of an Armadillo object.

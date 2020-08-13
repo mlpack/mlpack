@@ -1,5 +1,5 @@
 /**
- * @file r_tree_descent_heuristic_impl.hpp
+ * @file core/tree/rectangle_tree/r_tree_descent_heuristic_impl.hpp
  * @author Andrew Wells
  *
  * Implementation of RTreeDescentHeuristic, a class that chooses the best child
@@ -29,11 +29,11 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
   int bestIndex = 0;
   ElemType bestVol = 0.0;
 
-  for (size_t i = 0; i < node->NumChildren(); i++)
+  for (size_t i = 0; i < node->NumChildren(); ++i)
   {
     ElemType v1 = 1.0;
     ElemType v2 = 1.0;
-    for (size_t j = 0; j < node->Child(i).Bound().Dim(); j++)
+    for (size_t j = 0; j < node->Child(i).Bound().Dim(); ++j)
     {
       v1 *= node->Child(i).Bound()[j].Width();
       v2 *= node->Child(i).Bound()[j].Contains(node->Dataset().col(point)[j]) ?
@@ -73,11 +73,11 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(
   int bestIndex = 0;
   ElemType bestVol = 0.0;
 
-  for (size_t i = 0; i < node->NumChildren(); i++)
+  for (size_t i = 0; i < node->NumChildren(); ++i)
   {
     ElemType v1 = 1.0;
     ElemType v2 = 1.0;
-    for (size_t j = 0; j < node->Child(i).Bound().Dim(); j++)
+    for (size_t j = 0; j < node->Child(i).Bound().Dim(); ++j)
     {
       v1 *= node->Child(i).Bound()[j].Width();
       v2 *= node->Child(i).Bound()[j].Contains(insertedNode->Bound()[j]) ?

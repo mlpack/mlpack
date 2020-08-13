@@ -1,5 +1,5 @@
 /**
- * @file reparametrization_impl.hpp
+ * @file methods/ann/layer/reparametrization_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the Reparametrization layer class which samples from a

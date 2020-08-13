@@ -1,5 +1,5 @@
 /**
- * @file discrete_distribution.cpp
+ * @file core/dists/discrete_distribution.cpp
  * @author Ryan Curtin
  * @author Rohan Raj
  *
@@ -66,7 +66,7 @@ void DiscreteDistribution::Train(const arma::mat& observations)
   const size_t dimensions = probabilities.size();
 
   // Clear the old probabilities.
-  for (size_t i = 0; i < dimensions; i++)
+  for (size_t i = 0; i < dimensions; ++i)
     probabilities[i].zeros();
 
   // Iterate over all the probabilities in each dimension.
@@ -121,13 +121,13 @@ void DiscreteDistribution::Train(const arma::mat& observations,
   size_t dimensions = probabilities.size();
 
   // Clear the old probabilities.
-  for (size_t i = 0; i < dimensions; i++)
+  for (size_t i = 0; i < dimensions; ++i)
     probabilities[i].zeros();
 
   // Ensure that the observation is within the bounds.
   for (size_t r = 0; r < observations.n_cols; r++)
   {
-    for (size_t i = 0; i < dimensions; i++)
+    for (size_t i = 0; i < dimensions; ++i)
     {
       // Add the probability of each observation. The addition of 0.5
       // to the observation is to turn the default flooring operation

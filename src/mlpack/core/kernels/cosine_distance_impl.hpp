@@ -1,5 +1,5 @@
 /**
- * @file cosine_distance_impl.hpp
+ * @file core/kernels/cosine_distance_impl.hpp
  * @author Ryan Curtin
  *
  * This implements the cosine distance.

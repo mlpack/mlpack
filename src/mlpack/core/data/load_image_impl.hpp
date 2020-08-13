@@ -1,5 +1,5 @@
 /**
- * @file load_image_impl.hpp
+ * @file core/data/load_image_impl.hpp
  * @author Mehul Kumar Nirala
  *
  * An image loading utility implementation.
@@ -76,7 +76,7 @@ bool Load(const std::vector<std::string>& files,
       info.Width() * info.Height() * info.Channels(), files.size());
   tmpMatrix.col(0) = img;
 
-  for (size_t i = 1; i < files.size() ; i++)
+  for (size_t i = 1; i < files.size() ; ++i)
   {
     arma::Mat<unsigned char> colImg(tmpMatrix.colptr(i), tmpMatrix.n_rows, 1,
         false, true);

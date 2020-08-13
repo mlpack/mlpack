@@ -1,5 +1,5 @@
 /**
- * @file reinforce_normal.hpp
+ * @file methods/ann/layer/reinforce_normal.hpp
  * @author Marcus Edel
  *
  * Definition of the ReinforceNormalLayer class, which implements the REINFORCE
@@ -57,7 +57,7 @@ class ReinforceNormal
    * forward pass.
    *
    * @param input The propagated input activation.
-   * @param gy The backpropagated error.
+   * @param * (gy) The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename DataType>
@@ -82,6 +82,9 @@ class ReinforceNormal
   double Reward() const { return reward; }
   //! Modify the value of the deterministic parameter.
   double& Reward() { return reward; }
+
+  //! Get the standard deviation used during forward and backward pass.
+  double StandardDeviation() const { return stdev; }
 
   /**
    * Serialize the layer

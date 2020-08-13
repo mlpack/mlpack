@@ -1,5 +1,5 @@
 /**
- * @file prefixedoutstream_test.cpp
+ * @file tests/prefixedoutstream_test.cpp
  * @author Matthew Amidon, Ryan Curtin
  *
  * Tests for the PrefixedOutStream class
@@ -29,7 +29,7 @@ using namespace mlpack::util;
 BOOST_AUTO_TEST_SUITE(PrefixedOutStreamTest);
 
 /**
- * Test the output of CLI using PrefixedOutStream.  We will pass bogus
+ * Test the output of IO using PrefixedOutStream.  We will pass bogus
  * input to a stringstream so that none of it gets to the screen.
  */
 BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic)

@@ -1,5 +1,5 @@
 /**
- * @file spill_single_tree_traverser_impl.hpp
+ * @file core/tree/spill_tree/spill_single_tree_traverser_impl.hpp
  * @author Ryan Curtin
  * @author Marcos Pividori
  *

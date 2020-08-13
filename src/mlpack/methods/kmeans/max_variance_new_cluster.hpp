@@ -1,5 +1,5 @@
 /**
- * @file max_variance_new_cluster.hpp
+ * @file methods/kmeans/max_variance_new_cluster.hpp
  * @author Ryan Curtin
  *
  * An implementation of the EmptyClusterPolicy policy class for K-Means.  When
@@ -33,17 +33,17 @@ class MaxVarianceNewCluster
    * Take the point furthest from the centroid of the cluster with maximum
    * variance to be a new cluster.
    *
-   * @tparam MatType Type of data (arma::mat or arma::sp_mat).
+   * @tparam MatType Type of data (arma::mat or arma::spmat).
    * @param data Dataset on which clustering is being performed.
    * @param emptyCluster Index of cluster which is empty.
-   * @param oldCentroids Centroids of each cluster (one per column), at the
-   *      start of the iteration.
-   * @param newCentroids Centroids of each cluster (one per column), at the end
-   *      of the iteration.  This will be modified!
+   * @param oldCentroids Centroids of each cluster (one per column) at the start
+   *      of the iteration.
+   * @param newCentroids Centroids of each cluster (one per column) at the end
+   *      of the iteration.
    * @param clusterCounts Number of points in each cluster.
-   * @param assignments Cluster assignments of each point.
+   * @param metric The Metric to use.
+   * @param iteration Number of iteration.
    *
-   * @return Number of points changed.
    */
   template<typename MetricType, typename MatType>
   void EmptyCluster(const MatType& data,

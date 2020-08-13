@@ -1,5 +1,5 @@
 /**
- * @file serialization_test.cpp
+ * @file tests/serialization_test.cpp
  * @author Ryan Curtin
  *
  * Test serialization of mlpack objects.
@@ -39,6 +39,7 @@
 #include <mlpack/methods/lsh/lsh_search.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
 #include <mlpack/methods/lars/lars.hpp>
+#include <mlpack/methods/bayesian_linear_regression/bayesian_linear_regression.hpp>
 #include <mlpack/methods/ann/rbm/rbm.hpp>
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 
@@ -1559,7 +1560,7 @@ BOOST_AUTO_TEST_CASE(ssRBMTest)
   data.randu(3, 100);
   double slabPenalty = 1;
   double tempRadius, radius = arma::norm(data.col(0));
-  for (size_t i = 1; i < data.n_cols; i++)
+  for (size_t i = 1; i < data.n_cols; ++i)
   {
     tempRadius = arma::norm(data.col(i));
     if (radius < tempRadius)
@@ -1600,6 +1601,36 @@ BOOST_AUTO_TEST_CASE(ssRBMTest)
   CheckMatrices(Rbm.Weight(), RbmXml.Weight());
   CheckMatrices(Rbm.Weight(), RbmText.Weight());
   CheckMatrices(Rbm.Weight(), RbmBinary.Weight());
+}
+
+// Make sure serialization works for BayesianLinearRegression.
+BOOST_AUTO_TEST_CASE(BayesianLinearRegressionTest)
+{
+  using namespace mlpack::regression;
+
+  // Create a dataset.
+  arma::mat matX = arma::randn(75, 250);
+  arma::vec omega = arma::randn(75, 1);
+  arma::rowvec y = omega.t() * matX;
+
+  BayesianLinearRegression blr(false, false);
+  blr.Train(matX, y);
+  arma::vec omegaOpt = blr.Omega();
+
+  // Now, serialize.
+  BayesianLinearRegression xmlBlr(false, false), binaryBlr(false, false),
+    textBlr(false, false);
+
+  SerializeObjectAll(blr, xmlBlr, binaryBlr, textBlr);
+
+  // Now, check that predictions are the same.
+  arma::rowvec pred, xmlPred, textPred, binaryPred;
+  blr.Predict(matX, pred);
+  xmlBlr.Predict(matX, xmlPred);
+  textBlr.Predict(matX, textPred);
+  binaryBlr.Predict(matX, binaryPred);
+
+  CheckMatrices(pred, xmlPred, textPred, binaryPred);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

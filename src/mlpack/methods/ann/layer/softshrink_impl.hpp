@@ -1,5 +1,5 @@
 /**
- * @file softshrink.hpp
+ * @file methods/ann/layer/softshrink_impl.hpp
  * @author Lakshya Ojha
  *
  * Implementation of Soft Shrink activation function.

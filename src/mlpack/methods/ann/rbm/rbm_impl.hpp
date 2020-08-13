@@ -1,5 +1,5 @@
 /**
- * @file rbm_impl.hpp
+ * @file methods/ann/rbm/rbm_impl.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -169,7 +169,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleHidden(
 {
   HiddenMean(std::move(input), std::move(output));
 
-  for (size_t i = 0; i < output.n_elem; i++)
+  for (size_t i = 0; i < output.n_elem; ++i)
   {
     output(i) = math::RandBernoulli(output(i));
   }
@@ -188,7 +188,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
 {
   VisibleMean(std::move(input), std::move(output));
 
-  for (size_t i = 0; i < output.n_elem; i++)
+  for (size_t i = 0; i < output.n_elem; ++i)
   {
     output(i) = math::RandBernoulli(output(i));
   }
@@ -247,7 +247,7 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Gibbs(
     SampleVisible(std::move(gibbsTemporary), std::move(output));
   }
 
-  for (size_t j = 1; j < this->steps; j++)
+  for (size_t j = 1; j < this->steps; ++j)
   {
     SampleHidden(std::move(output), std::move(gibbsTemporary));
     SampleVisible(std::move(gibbsTemporary), std::move(output));
@@ -275,7 +275,7 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Gradient(
   Phase(std::move(predictors.cols(i, i + batchSize - 1)),
       std::move(positiveGradient));
 
-  for (size_t i = 0; i < negSteps; i++)
+  for (size_t i = 0; i < negSteps; ++i)
   {
     Gibbs(std::move(predictors.cols(i, i + batchSize - 1)),
         std::move(negativeSamples));
