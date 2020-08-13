@@ -21,11 +21,11 @@ steps:
     unset BOOST_ROOT
     echo "##vso[task.setvariable variable=BOOST_ROOT]"$BOOST_ROOT
 
-    sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost1.70-dev libarmadillo-dev xz-utils ccache
+    sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost1.70-dev libarmadillo-dev xz-utils
 
     if [ "$(python.version)" == "3.7" ]; then
-      sudo apt-get install -y --allow-unauthenticated python3-pip cython3 python3-numpy
-      sudo pip3 install --upgrade --ignore-installed setuptools cython pandas
+      python3.5 -m pip install --upgrade pip
+      python3.5 -m pip install --upgrade --ignore-installed setuptools cython pandas
     fi
 
     if [ "a$(julia.version)" != "a" ]; then
