@@ -980,9 +980,7 @@ inline ElemType CellBound<MetricType, ElemType>::Diameter() const
 //! Serialize the bound object.
 template<typename MetricType, typename ElemType>
 template<typename Archive>
-void CellBound<MetricType, ElemType>::serialize(
-    Archive& ar
-)
+void CellBound<MetricType, ElemType>::serialize(Archive& ar)
 {
   // Allocate memory for the bounds, if necessary.
   if (Archive::is_loading::value)
@@ -992,8 +990,8 @@ void CellBound<MetricType, ElemType>::serialize(
     bounds = new math::RangeType<ElemType>[dim];
   }
 
-//  auto boundsArray = cereal::make_array(bounds, dim);
-//  ar & CEREAL_NVP(boundsArray);
+  auto boundsArray = cereal::make_array(bounds, dim);
+  ar & CEREAL_NVP(boundsArray);
   ar & CEREAL_NVP(minWidth);
   ar & CEREAL_NVP(loBound);
   ar & CEREAL_NVP(hiBound);
