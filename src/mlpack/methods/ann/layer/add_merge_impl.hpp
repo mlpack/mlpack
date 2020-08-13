@@ -159,7 +159,6 @@ void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
   ar & CEREAL_VECTOR_VARIANT_POINTER(network);
   ar & CEREAL_NVP(model);
   ar & CEREAL_NVP(run);
-  ar & CEREAL_NVP(ownsLayers);
   if (Archive::is_loading::value)
     ownsLayers = !model;
 }
