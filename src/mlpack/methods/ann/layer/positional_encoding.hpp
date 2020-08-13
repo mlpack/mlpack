@@ -81,7 +81,7 @@ class PositionalEncoding
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the positional encoding matrix.
+  //! Get the positional encoding vector.
   InputDataType const& Encoding() const { return positionalEncoding; }
 
   /**
@@ -91,10 +91,10 @@ class PositionalEncoding
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally-stored number of input units.
+  //! Locally-stored embedding dimension.
   size_t embedDim;
 
-  //! Locally-stored number of output units.
+  //! Locally-stored maximum sequence length that has to be encoded.
   size_t maxSequenceLength;
 
   //! Locally-stored positional encodings.
