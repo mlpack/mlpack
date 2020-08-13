@@ -122,18 +122,19 @@ class pointer_variant_wrapper
     using LoadFuncType = void(*)(Archive&, boost::variant<VariantTypes...>&);
     LoadFuncType loadFuncArray[] = { &load_visitor<VariantTypes>::load... };
 
-    if(which >= int(sizeof(loadFuncArray)/sizeof(loadFuncArray[0])))
-      throw std::runtime_error("Invalid 'which' selector when deserializing boost::variant");
+    if (which >= int(sizeof(loadFuncArray)/sizeof(loadFuncArray[0])))
+      throw std::runtime_error("Invalid 'which' selector when"
+          "deserializing boost::variant");
 
     loadFuncArray[which](ar, pointerVariant);
   }
 
  private:
-   boost::variant<VariantTypes...>& pointerVariant;
+  boost::variant<VariantTypes...>& pointerVariant;
 };
 
 #define CEREAL_VARIANT_POINTER(T) cereal::make_pointer_variant(T)
 
-} // namespace cereal;
+} // namespace cereal
 
 #endif // CEREAL_POINTER_VARIANT_WRAPPER_HPP

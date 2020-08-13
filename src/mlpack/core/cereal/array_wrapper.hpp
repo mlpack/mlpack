@@ -81,4 +81,4 @@ ArrayWrapper< T > make_array(T* t, S s)
 
 } // namespace cereal
 
-#endif //CEREAL_ARRAY_WRAPPER_HPP
+#endif // CEREAL_ARRAY_WRAPPER_HPP
