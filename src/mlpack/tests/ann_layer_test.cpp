@@ -4302,11 +4302,11 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleMultiheadAttentionTest", "[AttentionTest]")
 {
-  size_t tLen = 10;
+  size_t tLen = 5;
   size_t sLen = tLen;
   size_t embedDim = 4;
   size_t numHeads = 2;
-  size_t bsz = 4;
+  size_t bsz = 3;
 
   arma::mat query = 0.1 * arma::randu(embedDim * tLen, bsz);
   arma::mat output;
@@ -4324,28 +4324,31 @@ TEST_CASE("SimpleMultiheadAttentionTest", "[AttentionTest]")
   arma::mat keyPaddingMask = arma::zeros(1, sLen);
   keyPaddingMask(sLen - 1) = std::numeric_limits<double>::lowest();
 
-  MultiheadAttention<> module(embedDim, numHeads);
+  MultiheadAttention<> module(tLen, sLen, embedDim, numHeads);
   module.AttentionMask() = attnMask;
   module.KeyPaddingMask() = keyPaddingMask;
   module.Reset();
   module.Parameters().randu();
 
-  //! Forward test.
-  module.Forward(query, output);
+  // Forward test.
+  arma::mat input = arma::join_cols(query, query);
+  input = arma::join_cols(input, query);
+
+  module.Forward(input, output);
   REQUIRE(output.n_rows == embedDim * tLen);
   REQUIRE(output.n_cols == bsz);
 
-  //! Backward test.
+  // Backward test.
   arma::mat gy = 0.01 * arma::randu(embedDim * tLen, bsz);
   arma::mat g;
-  module.Backward(query, gy, g);
-  REQUIRE(g.n_rows == query.n_rows);
-  REQUIRE(g.n_cols == query.n_cols);
+  module.Backward(input, gy, g);
+  REQUIRE(g.n_rows == input.n_rows);
+  REQUIRE(g.n_cols == input.n_cols);
 
-  //! Gradient test.
-  arma::mat error = 0.05 * arma::randu(embedDim * tLen, bsz);
+  // Gradient test.
+  arma::mat error = 0.05 * arma::randu(embedDim * (tLen + 2 * sLen), bsz);
   arma::mat gradient;
-  module.Gradient(query, error, gradient);
+  module.Gradient(input, error, gradient);
   REQUIRE(gradient.n_rows == module.Parameters().n_rows);
   REQUIRE(gradient.n_cols == module.Parameters().n_cols);
 }
@@ -4363,11 +4366,11 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[AttentionTest]")
     const size_t nHeads = 2;
     const size_t batchSize = 1;
 
-    arma::mat input = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat input = arma::join_cols(query, query);
+    input = arma::join_cols(input, query);
 
-    MultiheadAttention<> module(embedDim, nHeads);
-    module.Key() = input;
-    module.Value() = input;
+    MultiheadAttention<> module(tgtSeqLen, tgtSeqLen, embedDim, nHeads);
     module.Parameters().randu();
 
     double error = CustomJacobianTest(module, input);
@@ -4378,19 +4381,20 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[AttentionTest]")
   for (size_t i = 0; i < 5; ++i)
   {
     const size_t tgtSeqLen = 2;
-    const size_t srcSeqLen = math::RandInt(2, 10);
+    const size_t srcSeqLen = math::RandInt(2, 5);
     const size_t embedDim = 4;
     const size_t nHeads = 2;
     const size_t batchSize = 1;
 
-    arma::mat input;
-    input.set_size(embedDim * tgtSeqLen, batchSize);
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat input = arma::join_cols(query, key);
+    input = arma::join_cols(input, key);
 
-    MultiheadAttention<> module(embedDim, nHeads);
-    module.Key() = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
+    MultiheadAttention<> module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
     module.Parameters().randu();
 
-    double error = JacobianTest(module, input);
+    double error = CustomJacobianTest(module, input);
     REQUIRE(error <= 1e-5);
   }
 
@@ -4398,17 +4402,18 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[AttentionTest]")
   for (size_t i = 0; i < 5; ++i)
   {
     const size_t tgtSeqLen = 2;
-    const size_t srcSeqLen = math::RandInt(2, 10);
+    const size_t srcSeqLen = math::RandInt(2, 5);
     const size_t embedDim = 4;
     const size_t nHeads = 2;
     const size_t batchSize = 1;
 
-    arma::mat input;
-    input.set_size(embedDim * tgtSeqLen, batchSize);
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat value = 0.045 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat input = arma::join_cols(query, key);
+    input = arma::join_cols(input, value);
 
-    MultiheadAttention<> module(embedDim, nHeads);
-    module.Key() = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
-    module.Value() = 0.045 * arma::randu(embedDim * srcSeqLen, batchSize);
+    MultiheadAttention<> module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
     module.Parameters().randu();
 
     double error = JacobianTest(module, input);
@@ -4425,7 +4430,7 @@ TEST_CASE("GradientMultiheadAttentionTest", "[AttentionTest]")
   {
     GradientFunction()
     {
-      input = arma::randu(embedDim * tgtSeqLen, batchSize);
+      input = arma::randu(embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
       target = arma::zeros(vocabSize, batchSize);
       for (size_t i = 0; i < target.n_elem; ++i)
       {
@@ -4449,7 +4454,8 @@ TEST_CASE("GradientMultiheadAttentionTest", "[AttentionTest]")
       model = new FFN<NegativeLogLikelihood<>, XavierInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
-      attnModule = new MultiheadAttention<>(embedDim, nHeads);
+      attnModule = new MultiheadAttention<>(tgtSeqLen, srcSeqLen,
+          embedDim, nHeads);
       attnModule->AttentionMask() = attnMask;
       attnModule->KeyPaddingMask() = keyPaddingMask;
       model->Add(attnModule);
@@ -4479,7 +4485,7 @@ TEST_CASE("GradientMultiheadAttentionTest", "[AttentionTest]")
     const size_t srcSeqLen = 2;
     const size_t embedDim = 4;
     const size_t nHeads = 2;
-    const size_t vocabSize = 10;
+    const size_t vocabSize = 5;
     const size_t batchSize = 2;
   } function;
 
