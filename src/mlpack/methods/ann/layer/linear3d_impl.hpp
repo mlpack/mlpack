@@ -68,17 +68,17 @@ void Linear3D<InputDataType, OutputDataType, RegularizerType>::Forward(
   const size_t nPoints = input.n_rows / inSize;
   const size_t batchSize = input.n_cols;
 
-  output.set_size(nPoints * outSize, batchSize);
+  output.set_size(outSize * nPoints, batchSize);
 
-  CubeType inputTemp(const_cast<MatType&>(input).memptr(), nPoints, inSize,
+  CubeType inputTemp(const_cast<MatType&>(input).memptr(), inSize, nPoints,
       batchSize, false, false);
 
   for (size_t i = 0; i < batchSize; ++i)
   {
     // Shape of weight : (outSize, inSize).
-    // Shape of inputTemp : (nPoints, inSize, batchSize).
-    MatType z = inputTemp.slice(i) * weight.t();
-    z.each_row() += bias.t();
+    // Shape of inputTemp : (inSize, nPoints, batchSize).
+    MatType z = weight * inputTemp.slice(i);
+    z.each_col() += bias;
     output.col(i) = arma::vectorise(z);
   }
 }
@@ -103,16 +103,16 @@ void Linear3D<InputDataType, OutputDataType, RegularizerType>::Backward(
   const size_t nPoints = gy.n_rows / outSize;
   const size_t batchSize = gy.n_cols;
 
-  CubeType gyTemp(const_cast<MatType&>(gy).memptr(), nPoints, outSize,
+  CubeType gyTemp(const_cast<MatType&>(gy).memptr(), outSize, nPoints,
       batchSize, false, false);
 
-  g.set_size(nPoints * inSize, batchSize);
+  g.set_size(inSize * nPoints, batchSize);
 
   for (size_t i = 0; i < gyTemp.n_slices; ++i)
   {
-    //! Shape of weight : (outSize, inSize).
-    //! Shape of gyTemp : (nPoints, outSize, batchSize).
-    g.col(i) = arma::vectorise(gyTemp.slice(i) * weight);
+    // Shape of weight : (outSize, inSize).
+    // Shape of gyTemp : (outSize, nPoints, batchSize).
+    g.col(i) = arma::vectorise(weight.t() * gyTemp.slice(i));
   }
 }
 
@@ -133,17 +133,17 @@ void Linear3D<InputDataType, OutputDataType, RegularizerType>::Gradient(
   const size_t nPoints = input.n_rows / inSize;
   const size_t batchSize = input.n_cols;
 
-  CubeType inputTemp(const_cast<MatType&>(input).memptr(), nPoints, inSize,
+  CubeType inputTemp(const_cast<MatType&>(input).memptr(), inSize, nPoints,
       batchSize, false, false);
-  CubeType errorTemp(const_cast<MatType&>(error).memptr(), nPoints, outSize,
+  CubeType errorTemp(const_cast<MatType&>(error).memptr(), outSize, nPoints,
       batchSize, false, false);
 
   CubeType dW(outSize, inSize, batchSize);
   for (size_t i = 0; i < batchSize; ++i)
   {
-    //! Shape of errorTemp : (nPoints, outSize, batchSize).
-    //! Shape of inputTemp : (nPoints, inSize, batchSize).
-    dW.slice(i) = errorTemp.slice(i).t() * inputTemp.slice(i);
+    // Shape of errorTemp : (outSize, nPoints, batchSize).
+    // Shape of inputTemp : (inSize, nPoints, batchSize).
+    dW.slice(i) = errorTemp.slice(i) * inputTemp.slice(i).t();
   }
 
   gradient.set_size(arma::size(weights));
@@ -152,7 +152,7 @@ void Linear3D<InputDataType, OutputDataType, RegularizerType>::Gradient(
       = arma::vectorise(arma::sum(dW, 2));
 
   gradient.submat(weight.n_elem, 0, weights.n_elem - 1, 0)
-      = arma::vectorise(arma::sum(arma::sum(errorTemp, 2), 0));
+      = arma::vectorise(arma::sum(arma::sum(errorTemp, 2), 1));
 
   regularizer.Evaluate(weights, gradient);
 }

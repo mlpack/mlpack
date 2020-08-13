@@ -24,6 +24,9 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Linear3D layer class. The Linear class represents a
  * single layer of a neural network.
  *
+ * Shape of input : (inSize * nPoints, batchSize)
+ * Shape of output : (outSize * nPoints, batchSize)
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,

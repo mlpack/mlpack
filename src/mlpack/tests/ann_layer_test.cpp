@@ -467,7 +467,7 @@ TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
   module.Parameters().randu();
 
   // Test the Forward function.
-  input = arma::zeros(nPoints * inSize, batchSize);
+  input = arma::zeros(inSize * nPoints, batchSize);
   module.Forward(input, output);
   REQUIRE(arma::accu(module.Bias())
       == Approx(arma::accu(output) / (nPoints * batchSize)).epsilon(1e-3));
@@ -490,7 +490,7 @@ TEST_CASE("JacobianLinear3DLayerTest", "[ANNLayerTest]")
     const size_t batchSize = 1;
 
     arma::mat input;
-    input.set_size(nPoints * inSize, batchSize);
+    input.set_size(inSize * nPoints, batchSize);
 
     Linear3D<> module(inSize, outSize);
     module.Parameters().randu();
@@ -515,8 +515,8 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
       const size_t nPoints = 2;
       const size_t batchSize = 4;
 
-      input = arma::randu(nPoints * inSize, batchSize);
-      target = arma::zeros(nPoints * outSize, batchSize);
+      input = arma::randu(inSize * nPoints, batchSize);
+      target = arma::zeros(outSize * nPoints, batchSize);
       target(0, 0) = 1;
       target(0, 3) = 1;
       target(1, 1) = 1;
@@ -624,96 +624,6 @@ TEST_CASE("GradientNoisyLinearLayerTest", "[ANNLayerTest]")
   } function;
 
   REQUIRE(CheckGradient(function) <= 1e-4);
-}
-
-/**
- * Simple Linear3D module test.
- */
-BOOST_AUTO_TEST_CASE(SimpleLinear3DLayerTest)
-{
-  const size_t inSize = 10, outSize = 10;
-  const size_t additionalDim = 4;
-  arma::mat output, input, delta;
-  Linear3D<> module(inSize, outSize);
-  module.Parameters().randu();
-  module.Reset();
-
-  // Test the Forward function.
-  input = arma::zeros(inSize * additionalDim, 1);
-  module.Forward(input, output);
-  BOOST_REQUIRE_CLOSE(arma::accu(
-      module.Parameters().submat(inSize * outSize, 0, module.Parameters().n_elem - 1, 0)),
-      arma::accu(output), 1e-3);
-
-  // Test the Backward function.
-  module.Backward(input, input, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
-}
-
-/**
- * Jacobian Linear3D module test.
- */
-BOOST_AUTO_TEST_CASE(JacobianLinear3DLayerTest)
-{
-  for (size_t i = 0; i < 5; i++)
-  {
-    const size_t inSize = math::RandInt(2, 1000);
-    const size_t outSize = math::RandInt(2, 1000);
-    const size_t additionalDim = math::RandInt(2, 1000);
-
-    arma::mat input;
-    input.set_size(inSize * additionalDim, 1);
-
-    Linear3D<> module(inSize, outSize);
-    module.Parameters().randu();
-
-    double error = JacobianTest(module, input);
-    BOOST_REQUIRE_LE(error, 1e-5);
-  }
-}
-
-/**
- * Linear3D layer numerical gradient test.
- */
-BOOST_AUTO_TEST_CASE(GradientLinear3DLayerTest)
-{
-  // Linear3D function gradient instantiation.
-  struct GradientFunction
-  {
-    GradientFunction()
-    {
-      size_t nSeq = 10, nF = 16;
-      size_t inSize = nF, outSize = 8;
-      input = arma::randu(nSeq * nF, 1);
-      target = arma::ones(1, 1);
-
-      model = new FFN<MeanSquaredError<>, RandomInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
-      model->Add<IdentityLayer<> >();
-      model->Add<Linear3D<> >(inSize, outSize);
-      model->Add<Softmax<> >();
-    }
-
-    ~GradientFunction()
-    {
-      delete model;
-    }
-
-    double Gradient(arma::mat& gradient) const
-    {
-      double error = model->Evaluate(model->Parameters(), 0, 1);
-      model->Gradient(model->Parameters(), 0, gradient, 1);
-      return error;
-    }
-
-    arma::mat& Parameters() { return model->Parameters(); }
-
-    FFN<MeanSquaredError<>, RandomInitialization>* model;
-    arma::mat input, target;
-  } function;
-
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
 }
 
 /**
@@ -4485,5 +4395,3 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
   REQUIRE(module.Parameters().n_rows
       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
