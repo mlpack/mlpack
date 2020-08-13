@@ -39,7 +39,8 @@ class pointer_vector_wrapper
   template<class Archive>
   void save(Archive& ar) const
   {
-    ar & CEREAL_NVP(pointerVector.size());
+    size_t vecSize = pointerVector.size();
+    ar & CEREAL_NVP(vecSize);
     for (size_t i = 0; i < pointerVector.size(); ++i)
     {
       ar & CEREAL_POINTER(pointerVector.at(i));
@@ -49,7 +50,9 @@ class pointer_vector_wrapper
   template<class Archive>
   void load(Archive& ar)
   {
-    ar & CEREAL_NVP(pointerVector.size());
+    size_t vecSize = 0;
+    ar & CEREAL_NVP(vecSize);
+    pointerVector.resize(vecSize);
     for (size_t i = 0; i < pointerVector.size(); ++i)
     {
       ar & CEREAL_POINTER(pointerVector.at(i));
