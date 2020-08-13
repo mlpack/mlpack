@@ -549,7 +549,7 @@ void KDEModel::serialize(Archive& ar)
   ar & CEREAL_NVP(initialSampleSize);
   ar & CEREAL_NVP(mcEntryCoef);
   ar & CEREAL_NVP(mcBreakCoef);
-  
+
   if (Archive::is_loading::value)
   {
     monteCarlo = KDEDefaultParams::monteCarlo;

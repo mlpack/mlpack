@@ -40,21 +40,21 @@ make_pointer_variant(boost::variant<VariantTypes...>& t)
 template<class Archive>
 struct save_visitor : public boost::static_visitor<void>
 {
-  save_visitor(Archive& ar) : ar_(ar) {}
+  save_visitor(Archive& ar) : ar(ar) {}
   
   template<class T>
   void operator()(const T* value) const 
   {
-    ar_ & CEREAL_POINTER(value);
+    ar & CEREAL_POINTER(value);
   }
   
   template<typename... Types>
   void operator()(boost::variant<Types*...>& value) const
   {
-    ar_ & make_pointer_variant(value);
+    ar & make_pointer_variant(value);
   }
 
-  Archive& ar_;
+  Archive& ar;
 };
 
 template<typename T>
@@ -96,18 +96,18 @@ class pointer_variant_wrapper
  * we need to serialize it if it holds a raw pointers.
  */
  public:
-   pointer_variant_wrapper(boost::variant<VariantTypes...>& PointerVar)
-    : PointerVariant(PointerVar)
+   pointer_variant_wrapper(boost::variant<VariantTypes...>& pointerVar)
+    : pointerVariant(pointerVar)
   {}
 
   template<class Archive>
   void save(Archive& ar) const
   {
     // which represent the index in std::variant.
-    int which = PointerVariant.which();
+    int which = pointerVariant.which();
     ar & CEREAL_NVP(which);
     save_visitor<Archive> s(ar);
-    boost::apply_visitor(s, PointerVariant);
+    boost::apply_visitor(s, pointerVariant);
   }
 
   template<class Archive>
@@ -125,11 +125,11 @@ class pointer_variant_wrapper
     if(which >= int(sizeof(loadFuncArray)/sizeof(loadFuncArray[0])))
       throw std::runtime_error("Invalid 'which' selector when deserializing boost::variant");
 
-    loadFuncArray[which](ar, PointerVariant);
+    loadFuncArray[which](ar, pointerVariant);
   }
 
-private:
-   boost::variant<VariantTypes...>& PointerVariant;
+ private:
+   boost::variant<VariantTypes...>& pointerVariant;
 };
 
 #define CEREAL_VARIANT_POINTER(T) cereal::make_pointer_variant(T)

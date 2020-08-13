@@ -31,8 +31,8 @@ class ArrayWrapper
 public:
 
   ArrayWrapper(T* t, std::size_t s) :
-      ArrayAddress(t),
-      ArraySize(s)
+      arrayAddress(t),
+      arraySize(s)
   {}
 
   /* default implementation
@@ -54,12 +54,12 @@ public:
 
   T* address() const
   {
-    return ArrayAddress;
+    return arrayAddress;
   }
 
   size_t count() const
   {
-    return ArraySize;
+    return arraySize;
   }
 
 private:
@@ -69,8 +69,8 @@ private:
   template<class Tx, class S>
   friend const cereal::ArrayWrapper<Tx> make_array(Tx* t, S s);
 
-  T* ArrayAddress;
-  const size_t ArraySize;
+  T* arrayAddress;
+  const size_t arraySize;
 };
 
 template<class T, class S>

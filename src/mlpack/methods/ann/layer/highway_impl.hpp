@@ -230,7 +230,6 @@ void Highway<InputDataType, OutputDataType, CustomLayers...>::serialize(
 
   ar & CEREAL_NVP(model);
   ar & CEREAL_VECTOR_VARIANT_POINTER(network);
-
 }
 
 } // namespace ann

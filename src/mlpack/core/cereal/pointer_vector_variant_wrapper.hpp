@@ -39,35 +39,34 @@ class pointer_vector_variant_wrapper
  * we need to serialize it if it holds a vector of boost::variant that holds a
  * pointers.
  */
-public:
+ public:
   pointer_vector_variant_wrapper(
-      std::vector<boost::variant<VariantTypes...>>& VecPointerVar)
-      : VectorPointerVariant(VecPointerVar)
+      std::vector<boost::variant<VariantTypes...>>& vecPointerVar)
+      : vectorPointerVariant(vecPointerVar)
   {}
 
   template<class Archive>
   void save(Archive& ar) const
-  { 
-    ar & CEREAL_NVP(VectorPointerVariant.size()); 
-    for (size_t i = 0; i < VectorPointerVariant.size(); ++i) 
+  {
+    ar & CEREAL_NVP(vectorPointerVariant.size());
+    for (size_t i = 0; i < vectorPointerVariant.size(); ++i)
     {
-      ar & CEREAL_VARIANT_POINTER(VectorPointerVariant.at(i));
+      ar & CEREAL_VARIANT_POINTER(vectorPointerVariant.at(i));
     }
   }
 
   template<class Archive>
   void load(Archive& ar)
   {
-    ar & CEREAL_NVP(VectorPointerVariant.size()); 
-    for (size_t i = 0; i < VectorPointerVariant.size(); ++i) 
+    ar & CEREAL_NVP(vectorPointerVariant.size());
+    for (size_t i = 0; i < vectorPointerVariant.size(); ++i)
     {
-      ar & CEREAL_VARIANT_POINTER(VectorPointerVariant.at(i));
+      ar & CEREAL_VARIANT_POINTER(vectorPointerVariant.at(i));
     }
   }
 
-private:
-   std::vector<boost::variant<VariantTypes...>>& VectorPointerVariant;  
-
+ private:
+  std::vector<boost::variant<VariantTypes...>>& vectorPointerVariant;
 };
 
 #define CEREAL_VECTOR_VARIANT_POINTER(T) cereal::make_vector_pointer_variant(T)

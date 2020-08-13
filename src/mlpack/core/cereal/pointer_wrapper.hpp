@@ -66,7 +66,7 @@ class pointer_wrapper
 
   T*& release() { return localPointer; }
 
-private:
+ private:
   T*& localPointer;
 };
 

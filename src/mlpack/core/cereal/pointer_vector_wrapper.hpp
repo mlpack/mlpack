@@ -32,32 +32,32 @@ class pointer_vector_wrapper
  * we need to add the size of the vector if it holds a raw pointers.
  */
  public:
-   pointer_vector_wrapper(std::vector<T*>& PointerVec)
-    : PointerVector(PointerVec)
+   pointer_vector_wrapper(std::vector<T*>& pointerVec)
+    : pointerVector(pointerVec)
   {}
 
   template<class Archive>
   void save(Archive& ar) const
   { 
-    ar & CEREAL_NVP(PointerVector.size()); 
-    for (size_t i = 0; i < PointerVector.size(); ++i) 
+    ar & CEREAL_NVP(pointerVector.size()); 
+    for (size_t i = 0; i < pointerVector.size(); ++i) 
     {
-      ar & CEREAL_POINTER(PointerVector.at(i));
+      ar & CEREAL_POINTER(pointerVector.at(i));
     }
   }
 
   template<class Archive>
   void load(Archive& ar)
   {
-    ar & CEREAL_NVP(PointerVector.size()); 
-    for (size_t i = 0; i < PointerVector.size(); ++i) 
+    ar & CEREAL_NVP(pointerVector.size()); 
+    for (size_t i = 0; i < pointerVector.size(); ++i) 
     {
-      ar & CEREAL_POINTER(PointerVector.at(i));
+      ar & CEREAL_POINTER(pointerVector.at(i));
     }
   }
 
-private:
-  std::vector<T*>& PointerVector;
+ private:
+  std::vector<T*>& pointerVector;
 };
 
 template<class T>

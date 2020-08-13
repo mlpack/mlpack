@@ -378,7 +378,7 @@ bool Save(const std::string& filename,
     else if (f == format::json)
     {
       cereal::JSONOutputArchive ar(ofs);
-      ar(cereal::make_nvp(name.c_str(), t));    
+      ar(cereal::make_nvp(name.c_str(), t));
     }
     else if (f == format::binary)
     {

@@ -880,7 +880,7 @@ void HoeffdingTree<
 
     // Serialize the children, because we have split.
       ar & CEREAL_VECTOR_POINTER(children);
-    
+
     if (Archive::is_loading::value)
     {
       for (size_t i = 0; i < children.size(); ++i)
