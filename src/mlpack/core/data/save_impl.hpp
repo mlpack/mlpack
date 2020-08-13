@@ -92,7 +92,7 @@ bool Save(const std::string& filename,
     saveType = arma::csv_ascii;
     stringType = "CSV data";
   }
-  else if (extension == "txt")
+  else if (extension == "json")
   {
     saveType = arma::raw_ascii;
     stringType = "raw ASCII formatted data";
@@ -252,7 +252,7 @@ bool Save(const std::string& filename,
   arma::file_type saveType;
   std::string stringType;
 
-  if (extension == "txt" || extension == "tsv")
+  if (extension == "json" || extension == "tsv")
   {
     saveType = arma::coord_ascii;
     stringType = "raw ASCII formatted data";
@@ -335,10 +335,10 @@ bool Save(const std::string& filename,
     {
       if (fatal)
         Log::Fatal << "Unable to detect type of '" << filename << "'; incorrect"
-            << " extension? (allowed: xml/bin/txt)" << std::endl;
+            << " extension? (allowed: xml/bin/json)" << std::endl;
       else
         Log::Warn << "Unable to detect type of '" << filename << "'; save "
-            << "failed.  Incorrect extension? (allowed: xml/bin/txt)"
+            << "failed.  Incorrect extension? (allowed: xml/bin/json)"
             << std::endl;
 
       return false;

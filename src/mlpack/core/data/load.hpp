@@ -34,7 +34,7 @@ namespace data /** Functions to load and save matrices and models. */ {
  *
  *  - CSV (csv_ascii), denoted by .csv, or optionally .txt
  *  - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
- *  - ASCII (raw_ascii), denoted by .txt
+ *  - ASCII (raw_ascii), denoted by .json
  *  - Armadillo ASCII (arma_ascii), also denoted by .txt
  *  - PGM (pgm_binary), denoted by .pgm
  *  - PPM (ppm_binary), denoted by .ppm
