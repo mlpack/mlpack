@@ -451,7 +451,7 @@ Using \c cereal, mlpack is able to load and save machine learning
 models with ease.  These models can currently be saved in three formats:
 
  - binary (.bin); this is not human-readable, but it is small
- - text (.txt); this is sort of human-readable and relatively small
+ - json (.json); this is sort of human-readable and relatively small
  - xml (.xml); this is human-readable but very verbose and large
 
 The type of file to save is determined by the given file extension, as with the
@@ -479,13 +479,13 @@ To be serializable, a class must implement the method
 
 \code
 template<typename Archive>
-void serialize(Archive& ar, const unsigned int version);
+void serialize(Archive& ar);
 \endcode
 
 \note
 For more information on this method and how it works, see the
 cereal documentation at
-http://www.boost.org/libs/serialization/doc/.
+https://uscilab.github.io/cereal/index.html
 
 \note
 Examples of serialize() methods can be found in most classes; one fairly
@@ -503,11 +503,11 @@ mlpack::math::Range object.
 \code
 // Create range and save it.
 mlpack::math::Range r(0.0, 5.0);
-mlpack::data::Save("range.txt", "range", r);
+mlpack::data::Save("range.json", "range", r);
 
 // Load into new range.
 mlpack::math::Range newRange;
-mlpack::data::Load("range.txt", "range", newRange);
+mlpack::data::Load("range.json", "range", newRange);
 \endcode
 
 It is important to be sure that you load the appropriate type; if you save, for
