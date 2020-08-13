@@ -29,9 +29,9 @@ class ArrayWrapper
  * Most part of this code are copied from ArrayWrapper in boost::serialization
  */
  public:
-  ArrayWrapper(T* t, std::size_t s) :
-      arrayAddress(t),
-      arraySize(s)
+  ArrayWrapper(T*& addr, std::size_t size) :
+      arrayAddress(addr),
+      arraySize(size)
   {}
 
   /* default implementation
@@ -42,12 +42,24 @@ class ArrayWrapper
   * default implementation
   */
   template<class Archive>
-  void serialize(Archive& ar)
+  void save(Archive& ar) const
   {
-    size_t c = count();
-    T* t = address();
-    while (0 < c--)
-          ar & cereal::make_nvp("item", *t++);
+    size_t size = count();
+    ar & CEREAL_NVP(size);
+    T* addr = address();
+    while (0 < size--)
+      ar & cereal::make_nvp("item", *addr++);
+  }
+
+  template<class Archive>
+  void load(Archive& ar)
+  {
+    size_t size = 0;
+    ar & CEREAL_NVP(size);
+    T* addr = new T[size];
+    while (0 < size--)
+      ar & cereal::make_nvp("item", *addr++);
+    arrayAddress = addr;
   }
 
   T* address() const
@@ -65,15 +77,15 @@ class ArrayWrapper
   // note: I would like to make the copy constructor private but this breaks
   // make_array.  So I make make_array a friend
   template<class Tx, class S>
-  friend const cereal::ArrayWrapper<Tx> make_array(Tx* t, S s);
+  friend const cereal::ArrayWrapper<Tx> make_array(Tx*& t, S s);
 
-  T* arrayAddress;
+  T*& arrayAddress;
   const size_t arraySize;
 };
 
 template<class T, class S>
 inline
-ArrayWrapper< T > make_array(T* t, S s)
+ArrayWrapper< T > make_array(T*& t, S s)
 {
   ArrayWrapper< T > a(t, s);
   return a;
