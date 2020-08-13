@@ -1101,7 +1101,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     ar & CEREAL_POINTER(left);
   if (hasRight)
     ar & CEREAL_POINTER(right);
-  if (hasParent)
+  if (!hasParent)
     ar & CEREAL_POINTER(dataset);
 
   if (Archive::is_loading::value)
