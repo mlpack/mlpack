@@ -45,7 +45,7 @@ namespace mlpack {
  */
 class Timer
 {
-public:
+ public:
   /**
    * Start the given timer.  If a timer is started, then stopped, then
    * re-started, then re-stopped, the final value of the timer is the length of
@@ -97,11 +97,9 @@ public:
 
 class Timers
 {
-public:
+ public:
   //! Default to disabled.
-  Timers()
-    : enabled(false)
-  {}
+  Timers() : enabled(false) {  }
 
   /**
    * Returns a copy of all the timers used via this interface.
@@ -170,16 +168,14 @@ public:
   //! Get whether or not timing is enabled.
   bool Enabled() const { return enabled; }
 
-private:
+ private:
   //! A map of all the timers that are being tracked.
   std::map<std::string, std::chrono::microseconds> timers;
   //! A mutex for modifying the timers.
   std::mutex timersMutex;
   //! A map for the starting values of the timers.
-  std::map<
-    std::thread::id,
-    std::map<std::string, std::chrono::high_resolution_clock::time_point>>
-    timerStartTime;
+  std::map<std::thread::id,std::map<std::string, 
+      std::chrono::high_resolution_clock::time_point>> timerStartTime;
 
   //! Whether or not timing is enabled.
   std::atomic<bool> enabled;
