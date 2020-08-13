@@ -46,11 +46,11 @@ void LoadHMMAndPerformAction(const std::string& modelFile,
     LoadHMMAndPerformActionHelper<ActionType, xml_iarchive>(modelFile, x);
   else if (extension == "bin")
     LoadHMMAndPerformActionHelper<ActionType, binary_iarchive>(modelFile, x);
-  else if (extension == "txt")
+  else if (extension == "json")
     LoadHMMAndPerformActionHelper<ActionType, text_iarchive>(modelFile, x);
   else
     Log::Fatal << "Unknown extension '" << extension << "' for HMM model file "
-        << "(known: 'xml', 'txt', 'bin')." << std::endl;
+        << "(known: 'xml', 'json', 'bin')." << std::endl;
 }
 
 template<typename ActionType,
@@ -127,7 +127,7 @@ void SaveHMM(HMMType& hmm, const std::string& modelFile)
     SaveHMMHelper<xml_oarchive>(hmm, modelFile);
   else if (extension == "bin")
     SaveHMMHelper<binary_oarchive>(hmm, modelFile);
-  else if (extension == "txt")
+  else if (extension == "json")
     SaveHMMHelper<text_oarchive>(hmm, modelFile);
   else
     Log::Fatal << "Unknown extension '" << extension << "' for HMM model file."
