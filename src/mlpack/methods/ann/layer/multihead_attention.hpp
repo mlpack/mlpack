@@ -38,25 +38,9 @@ namespace ann /** Artificial Neural Network. */ {
  * different representation subspaces at different positions. With a single
  * attention head, averaging inhibits this. [arxiv.org:1706.03762v5]
  *
- * The MultiheadAttention class takes three matrices as inputs, namely: query,
- * key and value. For Self-Attention, you should not specify either 'key' or
- * 'value'. For Encoder-Decoder Attention, you need to specify 'key' but you can
- * skip 'value'. And for General Attention, you should specify 'key' and 'value'
- * both using their respective mutator methods. The 'query' matrix has to be
- * fed to the Forward function as an input.
- *
- * The 'query' is a matrix of shape (tgtSeqLen * embedDim, batchSize) where
- * tgtSeqLen is the target sequence length. embedDim is the dimensionality of
- * the embedding vector of the sequences in the query. The batchSize represents
- * the number of sequences in a single batch that has to be trained.
- *
- * The 'key' is a matrix of shape (srcSeqLen * embedDim, batchSize) where
- * srcSeqLen is the source sequence length. The key matrix in mlpack can be
- * specified by the mutator method Key().
- *
- * On the other hand, the 'value' is a matrix of shape
- * (srcSeqLen * embedDim, batchSize). The value matrix in mlpack can be
- * specified using the mutator method Value().
+ * The MultiheadAttention class takes concatenated form of query, key and value.
+ * The query, key and value are concatenated into single matrix and fed to the
+ * Forward function as input.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -80,10 +64,14 @@ class MultiheadAttention
   /**
    * Create the MultiheadAttention object using the specified modules.
    *
+   * @param tgtSeqLen Target sequence length.
+   * @param srcSeqLen Source sequence length.
    * @param embedDim Total dimension of the model.
    * @param numHeads Number of parallel attention heads.
    */
-  MultiheadAttention(const size_t embedDim,
+  MultiheadAttention(const size_t tgtSeqLen,
+                     const size_t srcSeqLen,
+                     const size_t embedDim,
                      const size_t numHeads);
 
   /**
@@ -132,6 +120,16 @@ class MultiheadAttention
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
 
+  //! Get the target sequence length.
+  size_t TgtSeqLen() const { return tgtSeqLen; }
+  //! Modify the target sequence length.
+  size_t& TgtSeqLen() { return tgtSeqLen; }
+
+  //! Get the source sequence length.
+  size_t SrcSeqLen() const { return srcSeqLen; }
+  //! Modify the source sequence length.
+  size_t& SrcSeqLen() { return srcSeqLen; }
+
   //! Get the embedding dimension.
   size_t EmbedDim() const { return embedDim; }
   //! Modify the embedding dimension.
@@ -141,16 +139,6 @@ class MultiheadAttention
   size_t NumHeads() const { return numHeads; }
   //! Modify the number of attention heads.
   size_t& NumHeads() { return numHeads; }
-
-  //! Get the key matrix.
-  InputDataType const& Key() const { return key; }
-  //! Modify the key matrix.
-  InputDataType& Key() { return key; }
-
-  //! Get the value matrix.
-  InputDataType const& Value() const { return value; }
-  //! Modify the value matrix.
-  InputDataType& Value() { return value; }
 
   //! Get the two dimensional Attention Mask.
   InputDataType const& AttentionMask() const { return attnMask; }
@@ -187,50 +175,11 @@ class MultiheadAttention
   //! Element Type of the input.
   typedef typename InputDataType::elem_type ElemType;
 
-  template <typename eT>
-  void Expand(const arma::Mat<eT>& query,
-              arma::Mat<eT>& key,
-              arma::Mat<eT>& value,
-              arma::Cube<eT>& q,
-              arma::Cube<eT>& k,
-              arma::Cube<eT>& v)
-  {
-    typedef typename arma::Cube<eT> CubeType;
+  //! Target sequence length.
+  size_t tgtSeqLen;
 
-    Log::Assert(query.n_rows % embedDim == 0, "Number of rows in 'query' \
-        must be divisible by embedding dimension");
-    Log::Assert(key.n_rows % embedDim == 0, "Number of rows in 'key' \
-        must be divisible by embedding dimension");
-
-    q = CubeType(const_cast<arma::Mat<eT>&>(query).memptr(),
-        query.n_rows / embedDim, embedDim, query.n_cols, true, false);
-
-    if (key.is_empty())
-      k = CubeType(q.memptr(), q.n_rows, q.n_cols, q.n_slices, false, false);
-    else
-    {
-      if (key.n_cols != query.n_cols || key.n_rows % embedDim != 0)
-      {
-        Log::Fatal << "The dimensions of the 'key' matrix is not valid."
-                   << std::endl;
-      }
-      k = CubeType(key.memptr(), key.n_rows / embedDim, embedDim, key.n_cols,
-          false, false);
-    }
-
-    if (value.is_empty())
-      v = CubeType(k.memptr(), k.n_rows, k.n_cols, k.n_slices, false, false);
-    else
-    {
-      if (arma::size(value) != arma::size(key))
-      {
-        Log::Fatal << "The 'key' and 'value' matrices must have same \
-            dimensions." << std::endl;
-      }
-      v = CubeType(value.memptr(), value.n_rows / embedDim, embedDim,
-          value.n_cols, false, false);
-    }
-  }
+  //! Source sequence lenght.
+  size_t srcSeqLen;
 
   //! Locally-stored module output size.
   size_t embedDim;
