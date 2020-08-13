@@ -1769,7 +1769,7 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
   for (size_t i = 0; i < batchSize; ++i)
   {
     // The Lookup module uses index - 1 for the cols.
-    const double outputSum = arma::accu(module.Parameters().rows(
+    const double outputSum = arma::accu(module.Parameters().cols(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
     REQUIRE(std::fabs(outputSum - arma::accu(output.col(i))) <= 1e-5);

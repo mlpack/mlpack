@@ -27,7 +27,7 @@ namespace ann /* Artificial Neural Network. */ {
  * the embeddings of those tokens.
  *
  * The input shape : (sequenceLength, batchSize).
- * The output shape : (sequenceLength * embeddingSize, batchSize).
+ * The output shape : (embeddingSize, sequenceLength, batchSize).
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).

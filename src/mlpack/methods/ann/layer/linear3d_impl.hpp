@@ -70,8 +70,8 @@ void Linear3D<InputDataType, OutputDataType, RegularizerType>::Forward(
 
   output.set_size(outSize * nPoints, batchSize);
 
-  CubeType inputTemp(const_cast<MatType&>(input).memptr(), inSize, nPoints,
-      batchSize, false, false);
+  const CubeType inputTemp(const_cast<MatType&>(input).memptr(), inSize,
+      nPoints, batchSize, false, false);
 
   for (size_t i = 0; i < batchSize; ++i)
   {
@@ -103,8 +103,8 @@ void Linear3D<InputDataType, OutputDataType, RegularizerType>::Backward(
   const size_t nPoints = gy.n_rows / outSize;
   const size_t batchSize = gy.n_cols;
 
-  CubeType gyTemp(const_cast<MatType&>(gy).memptr(), outSize, nPoints,
-      batchSize, false, false);
+  const CubeType gyTemp(const_cast<MatType&>(gy).memptr(), outSize,
+      nPoints, batchSize, false, false);
 
   g.set_size(inSize * nPoints, batchSize);
 
@@ -133,10 +133,10 @@ void Linear3D<InputDataType, OutputDataType, RegularizerType>::Gradient(
   const size_t nPoints = input.n_rows / inSize;
   const size_t batchSize = input.n_cols;
 
-  CubeType inputTemp(const_cast<MatType&>(input).memptr(), inSize, nPoints,
-      batchSize, false, false);
-  CubeType errorTemp(const_cast<MatType&>(error).memptr(), outSize, nPoints,
-      batchSize, false, false);
+  const CubeType inputTemp(const_cast<MatType&>(input).memptr(), inSize,
+      nPoints, batchSize, false, false);
+  const CubeType errorTemp(const_cast<MatType&>(error).memptr(), outSize,
+      nPoints, batchSize, false, false);
 
   CubeType dW(outSize, inSize, batchSize);
   for (size_t i = 0; i < batchSize; ++i)
