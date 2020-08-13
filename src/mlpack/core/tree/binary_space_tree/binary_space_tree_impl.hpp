@@ -1089,11 +1089,11 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 
   ar & CEREAL_NVP(parentDistance);
   ar & CEREAL_NVP(furthestDescendantDistance);
-  ar & CEREAL_POINTER(dataset);
 
   // Save children last; otherwise cereal gets confused.
   bool hasLeft = (left != NULL);
   bool hasRight = (right != NULL);
+  bool hasParent = (parent != NULL);
 
   ar & CEREAL_NVP(hasLeft);
   ar & CEREAL_NVP(hasRight);
@@ -1101,6 +1101,8 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     ar & CEREAL_POINTER(left);
   if (hasRight)
     ar & CEREAL_POINTER(right);
+  if (hasParent)
+    ar & CEREAL_POINTER(dataset);
 
   if (Archive::is_loading::value)
   {
