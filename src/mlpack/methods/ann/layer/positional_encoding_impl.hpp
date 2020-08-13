@@ -47,9 +47,7 @@ void PositionalEncoding<InputDataType, OutputDataType>::Forward(
   if (input.n_rows != maxSequenceLength * embedDim)
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
 
-  output.set_size(input.n_rows, input.n_cols);
-  output.each_col() = positionalEncoding;
-  output += input;
+  output = input.each_col() + positionalEncoding;
 }
 
 template<typename InputDataType, typename OutputDataType>
