@@ -26,7 +26,7 @@ namespace bound {
 template<typename MetricType, typename ElemType>
 inline HRectBound<MetricType, ElemType>::HRectBound() :
     dim(0),
-    bounds(dim),
+    bounds(NULL),
     minWidth(0)
 { /* Nothing to do. */ }
 
@@ -37,7 +37,7 @@ inline HRectBound<MetricType, ElemType>::HRectBound() :
 template<typename MetricType, typename ElemType>
 inline HRectBound<MetricType, ElemType>::HRectBound(const size_t dimension) :
     dim(dimension),
-    bounds(dim),
+    bounds(new math::RangeType<ElemType>[dim]),
     minWidth(0)
 { /* Nothing to do. */ }
 
@@ -48,7 +48,7 @@ template<typename MetricType, typename ElemType>
 inline HRectBound<MetricType, ElemType>::HRectBound(
     const HRectBound<MetricType, ElemType>& other) :
     dim(other.Dim()),
-    bounds(dim),
+    bounds(new math::RangeType<ElemType>[dim]),
     minWidth(other.MinWidth())
 {
   // Copy other bounds over.
@@ -71,8 +71,11 @@ inline HRectBound<
   if (dim != other.Dim())
   {
     // Reallocation is necessary.
+    if (bounds)
+      delete[] bounds;
+
     dim = other.Dim();
-    bounds.resize(dim);
+    bounds = new math::RangeType<ElemType>[dim];
   }
 
   // Now copy each of the bound values.
@@ -96,7 +99,18 @@ inline HRectBound<MetricType, ElemType>::HRectBound(
 {
   // Fix the other bound.
   other.dim = 0;
+  other.bounds = NULL;
   other.minWidth = 0.0;
+}
+
+/**
+ * Destructor: clean up memory.
+ */
+template<typename MetricType, typename ElemType>
+inline HRectBound<MetricType, ElemType>::~HRectBound()
+{
+  if (bounds)
+    delete[] bounds;
 }
 
 /**
@@ -216,14 +230,14 @@ ElemType HRectBound<MetricType, ElemType>::MinDistance(const HRectBound& other)
   Log::Assert(dim == other.dim);
 
   ElemType sum = 0;
-  std::vector<math::RangeType<ElemType>> mbound = bounds;
-  std::vector<math::RangeType<ElemType>> obound = other.bounds;
+  const math::RangeType<ElemType>* mbound = bounds;
+  const math::RangeType<ElemType>* obound = other.bounds;
 
   ElemType lower, higher;
   for (size_t d = 0; d < dim; d++)
   {
-    lower = obound.at(d).Lo() - mbound.at(d).Hi();
-    higher = mbound.at(d).Lo() - obound.at(d).Hi();
+    lower = obound->Lo() - mbound->Hi();
+    higher = mbound->Lo() - obound->Hi();
     // We invoke the following:
     //   x + fabs(x) = max(x * 2, 0)
     //   (x * 2)^2 / 4 = x^2
@@ -243,8 +257,8 @@ ElemType HRectBound<MetricType, ElemType>::MinDistance(const HRectBound& other)
     }
 
     // Move bound pointers.
-    mbound[++d];
-    obound[++d];
+    mbound++;
+    obound++;
   }
 
   // The compiler should optimize out this if statement entirely.
@@ -649,11 +663,24 @@ inline ElemType HRectBound<MetricType, ElemType>::Diameter() const
 template<typename MetricType, typename ElemType>
 template<typename Archive>
 void HRectBound<MetricType, ElemType>::serialize(
-    Archive& ar)
+    Archive& ar,
+    const unsigned int /* version */)
 {
-  ar & CEREAL_NVP(bounds);
-  ar & CEREAL_NVP(minWidth);
-  ar & CEREAL_NVP(metric);
+  ar & BOOST_SERIALIZATION_NVP(dim);
+
+  // Allocate memory for the bounds, if necessary.
+  if (Archive::is_loading::value)
+  {
+    if (bounds)
+      delete[] bounds;
+    bounds = new math::RangeType<ElemType>[dim];
+  }
+
+  // We can't serialize a raw array directly, so wrap it.
+  auto boundsArray = boost::serialization::make_array(bounds, dim);
+  ar & BOOST_SERIALIZATION_NVP(boundsArray);
+  ar & BOOST_SERIALIZATION_NVP(minWidth);
+  ar & BOOST_SERIALIZATION_NVP(metric);
 }
 
 } // namespace bound
