@@ -1097,6 +1097,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 
   ar & CEREAL_NVP(hasLeft);
   ar & CEREAL_NVP(hasRight);
+  ar & CEREAL_NVP(hasParent);
   if (hasLeft)
     ar & CEREAL_POINTER(left);
   if (hasRight)
