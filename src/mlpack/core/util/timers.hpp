@@ -174,7 +174,7 @@ class Timers
   //! A mutex for modifying the timers.
   std::mutex timersMutex;
   //! A map for the starting values of the timers.
-  std::map<std::thread::id,std::map<std::string, 
+  std::map<std::thread::id,std::map<std::string,
       std::chrono::high_resolution_clock::time_point>> timerStartTime;
 
   //! Whether or not timing is enabled.

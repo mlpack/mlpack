@@ -71,7 +71,7 @@ class pointer_vector_variant_wrapper
 
 #define CEREAL_VECTOR_VARIANT_POINTER(T) cereal::make_vector_pointer_variant(T)
 
-} // end namespace cereal;
+} // namespace cereal
 
 #endif // CEREAL_POINTER_VECTOR_VARIANT_WRAPPER_HPP
 

@@ -27,7 +27,7 @@ std::unique_ptr<T> make_unique(Args&&... args)
 {
       return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
-} //end of std namepace
+} // namepace std
 #endif
 
 namespace cereal {
@@ -79,6 +79,6 @@ make_pointer(T*& t)
 
 #define CEREAL_POINTER(T) cereal::make_pointer(T)
 
-} // end namespace cereal
+} // namespace cereal
 
 #endif // CEREAL_POINTER_WRAPPER_HPP

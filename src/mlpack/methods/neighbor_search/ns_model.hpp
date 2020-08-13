@@ -329,7 +329,7 @@ class NSModel
    *
    * @param other Model to take ownership of.
    */
- NSModel(NSModel&& other);
+  NSModel(NSModel&& other);
 
   /**
    * Copy the given NSModel.

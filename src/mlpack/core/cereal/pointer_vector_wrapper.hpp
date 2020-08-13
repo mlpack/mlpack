@@ -32,15 +32,15 @@ class pointer_vector_wrapper
  * we need to add the size of the vector if it holds a raw pointers.
  */
  public:
-   pointer_vector_wrapper(std::vector<T*>& pointerVec)
+  pointer_vector_wrapper(std::vector<T*>& pointerVec)
     : pointerVector(pointerVec)
   {}
 
   template<class Archive>
   void save(Archive& ar) const
-  { 
-    ar & CEREAL_NVP(pointerVector.size()); 
-    for (size_t i = 0; i < pointerVector.size(); ++i) 
+  {
+    ar & CEREAL_NVP(pointerVector.size());
+    for (size_t i = 0; i < pointerVector.size(); ++i)
     {
       ar & CEREAL_POINTER(pointerVector.at(i));
     }
@@ -49,8 +49,8 @@ class pointer_vector_wrapper
   template<class Archive>
   void load(Archive& ar)
   {
-    ar & CEREAL_NVP(pointerVector.size()); 
-    for (size_t i = 0; i < pointerVector.size(); ++i) 
+    ar & CEREAL_NVP(pointerVector.size());
+    for (size_t i = 0; i < pointerVector.size(); ++i)
     {
       ar & CEREAL_POINTER(pointerVector.at(i));
     }
@@ -69,6 +69,6 @@ make_pointer_vector(std::vector<T*>& t)
 
 #define CEREAL_VECTOR_POINTER(T) cereal::make_pointer_vector(T)
 
-} // end namespace cereal
+} // namespace cereal
 
 #endif // CEREAL_POINTER_VECTOR_WRAPPER_HPP

@@ -468,7 +468,7 @@ void TransposedConvolution<
   ar & CEREAL_NVP(outputHeight);
   ar & CEREAL_NVP(paddingForward);
   ar & CEREAL_NVP(paddingBackward);
-  
+
   if (Archive::is_loading::value)
   {
     weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,

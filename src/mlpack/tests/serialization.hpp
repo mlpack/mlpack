@@ -220,7 +220,7 @@ void SerializeObject(T& t, T& newT)
     IArchiveType i(ifs);
 
     try
-    { 
+    {
       T& x(newT);
       i >> CEREAL_NVP(x);
     }

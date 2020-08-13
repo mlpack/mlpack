@@ -41,13 +41,13 @@ template<class Archive>
 struct save_visitor : public boost::static_visitor<void>
 {
   save_visitor(Archive& ar) : ar(ar) {}
-  
+
   template<class T>
-  void operator()(const T* value) const 
+  void operator()(const T* value) const
   {
     ar & CEREAL_POINTER(value);
   }
-  
+
   template<typename... Types>
   void operator()(boost::variant<Types*...>& value) const
   {
@@ -96,7 +96,7 @@ class pointer_variant_wrapper
  * we need to serialize it if it holds a raw pointers.
  */
  public:
-   pointer_variant_wrapper(boost::variant<VariantTypes...>& pointerVar)
+  pointer_variant_wrapper(boost::variant<VariantTypes...>& pointerVar)
     : pointerVariant(pointerVar)
   {}
 
@@ -116,7 +116,7 @@ class pointer_variant_wrapper
     // Load the size of the serialized type.
     int which;
     ar & CEREAL_NVP(which);
-    
+
     // Create function pointers to each overload of load_visitor<T>::load, for
     // all T in VariantTypes.
     using LoadFuncType = void(*)(Archive&, boost::variant<VariantTypes...>&);
@@ -134,6 +134,6 @@ class pointer_variant_wrapper
 
 #define CEREAL_VARIANT_POINTER(T) cereal::make_pointer_variant(T)
 
-} // end namespace cereal;
+} // namespace cereal;
 
 #endif // CEREAL_POINTER_VARIANT_WRAPPER_HPP

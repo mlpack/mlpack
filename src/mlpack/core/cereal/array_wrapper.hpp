@@ -28,8 +28,7 @@ class ArrayWrapper
  * This functionality exist only in boost::serialization.
  * Most part of this code are copied from ArrayWrapper in boost::serialization
  */
-public:
-
+ public:
   ArrayWrapper(T* t, std::size_t s) :
       arrayAddress(t),
       arraySize(s)
@@ -45,10 +44,9 @@ public:
   template<class Archive>
   void serialize(Archive& ar)
   {
-   // default implemention does the loop
     size_t c = count();
     T* t = address();
-    while(0 < c--)
+    while (0 < c--)
           ar & cereal::make_nvp("item", *t++);
   }
 
@@ -62,7 +60,7 @@ public:
     return arraySize;
   }
 
-private:
+ private:
   ArrayWrapper& operator=(ArrayWrapper rhs);
   // note: I would like to make the copy constructor private but this breaks
   // make_array.  So I make make_array a friend
@@ -81,6 +79,6 @@ ArrayWrapper< T > make_array(T* t, S s)
   return a;
 }
 
-} // end namespace cereal
+} // namespace cereal
 
 #endif //CEREAL_ARRAY_WRAPPER_HPP
