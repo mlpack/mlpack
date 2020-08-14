@@ -162,7 +162,7 @@ class InstanceNorm
   void serialize(Archive& ar, const unsigned int version);
 
  private:
-   //! Locally stored BatchNorm Object.
+  //! Locally stored BatchNorm Object.
   BatchNorm<InputDataType, OutputDataType> batchNorm;
 
   //! Locally-stored reset parameter used to initialize the layer once.

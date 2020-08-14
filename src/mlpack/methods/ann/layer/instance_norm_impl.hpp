@@ -56,7 +56,7 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
   // Instance Norm with (N, C, H, W) is same as Batch Norm with (1, N*C, H, W),
   // where N is the batchSize, C is the number of channels, H and W are the
   // height and width of each image respectively.
-  if(!reset)
+  if (!reset)
   {
     shapeA = input.n_rows;
     shapeB = input.n_cols;
