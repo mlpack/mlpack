@@ -18,7 +18,8 @@
 # data.frame), convert it into a matrix.
 to_matrix <- function(x) {
   if (!is.matrix(x) && !is.data.frame(x)) {
-    stop("Input must be either a `matrix` or `data.frame` not `", class(x)[1], "`.", call. = FALSE)
+    stop("Input must be either a `matrix` or `data.frame` not `",
+        class(x)[1], "`.", call. = FALSE)
   }
   if (is.matrix(x)) {
     return(x)
