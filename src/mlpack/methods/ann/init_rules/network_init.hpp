@@ -53,8 +53,9 @@ class NetworkInitialization
    * @param parameter The network parameter.
    * @param parameterOffset Offset for network paramater, default 0.
    */
+  template <typename eT>
   void Initialize(const std::vector<LayerTypes<CustomLayers...> >& network,
-                  arma::mat& parameter, size_t parameterOffset = 0)
+                  arma::Mat<eT>& parameter, size_t parameterOffset = 0)
   {
     // Determine the number of parameter/weights of the given network.
     if (parameter.is_empty())
@@ -74,7 +75,7 @@ class NetworkInitialization
         // initialization rule.
         const size_t weight = boost::apply_visitor(weightSizeVisitor,
             network[i]);
-        arma::mat tmp = arma::mat(parameter.memptr() + offset,
+        arma::Mat<eT> tmp = arma::mat(parameter.memptr() + offset,
             weight, 1, false, false);
         initializeRule.Initialize(tmp, tmp.n_elem, 1);
 

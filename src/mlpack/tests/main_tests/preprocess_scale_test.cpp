@@ -18,14 +18,15 @@ static const std::string testName = "PreprocessScale";
 #include <mlpack/methods/preprocess/preprocess_scale_main.cpp>
 
 #include "test_helper.hpp"
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
 struct PreprocessScaleTestFixture
 {
  public:
+  static arma::mat dataset;
   PreprocessScaleTestFixture()
   {
     // Cache in the options for this program.
@@ -40,16 +41,14 @@ struct PreprocessScaleTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(PreprocessScaleMainTest,
-                         PreprocessScaleTestFixture);
-
-arma::mat dataset = "-1 -0.5 0 1;"
-                    "2 6 10 18;";
+arma::mat PreprocessScaleTestFixture::dataset = "-1 -0.5 0 1;"
+                                                "2 6 10 18;";
 
 /**
  * Check that two different scalers give two different output.
  */
-BOOST_AUTO_TEST_CASE(TwoScalerTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "TwoScalerTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   // Input custom data points.
   std::string method = "max_abs_scaler";
@@ -75,7 +74,8 @@ BOOST_AUTO_TEST_CASE(TwoScalerTest)
  * Check that two different option for a particular scaler give two
  * different output.
  */
-BOOST_AUTO_TEST_CASE(TwoOptionTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "TwoOptionTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "min_max_scaler";
   // Input custom data points.
@@ -101,7 +101,8 @@ BOOST_AUTO_TEST_CASE(TwoOptionTest)
 /**
  * Check that passing unrelated option don't change anything.
  */
-BOOST_AUTO_TEST_CASE(UnrelatedOptionTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "UnrelatedOptionTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "standard_scaler";
   // Input custom data points.
@@ -128,7 +129,8 @@ BOOST_AUTO_TEST_CASE(UnrelatedOptionTest)
 /**
  * Check Inverse Scaling is working.
  */
-BOOST_AUTO_TEST_CASE(InverseScalingTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "InverseScalingTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "zca_whitening";
   // Input custom data points.
@@ -151,7 +153,8 @@ BOOST_AUTO_TEST_CASE(InverseScalingTest)
 /**
  * Check Saved model is working.
  */
-BOOST_AUTO_TEST_CASE(SavedModelTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "SavedModelTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "pca_whitening";
   // Input custom data points.
@@ -173,7 +176,8 @@ BOOST_AUTO_TEST_CASE(SavedModelTest)
 /**
  * Check different epsilon for PCA give two different output.
  */
-BOOST_AUTO_TEST_CASE(EpsilonTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "EpsilonTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "pca_whitening";
   // Input custom data points.
@@ -198,7 +202,8 @@ BOOST_AUTO_TEST_CASE(EpsilonTest)
 /**
  * Check for invalid epsilon.
  */
-BOOST_AUTO_TEST_CASE(InvalidEpsilonTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidEpsilonTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "pca_whitening";
   // Input custom data points.
@@ -206,13 +211,14 @@ BOOST_AUTO_TEST_CASE(InvalidEpsilonTest)
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("epsilon", -1.0);
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 }
 
 /**
  * Check for invalid range in min_max_scaler.
  */
-BOOST_AUTO_TEST_CASE(InvalidRangeTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidRangeTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "min_max_scaler";
   // Input custom data points.
@@ -221,13 +227,14 @@ BOOST_AUTO_TEST_CASE(InvalidRangeTest)
   SetInputParam("min_value", 4);
   SetInputParam("max_value", 2);
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 }
 
 /**
  * Check for invalid scaler type.
  */
-BOOST_AUTO_TEST_CASE(InvalidScalerTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidScalerTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "invalid_scaler";
   // Input custom data points.
@@ -237,50 +244,53 @@ BOOST_AUTO_TEST_CASE(InvalidScalerTest)
   SetInputParam("max_value", 2);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check for Standard scaler type.
  */
-BOOST_AUTO_TEST_CASE(StandardScalerTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "StandardScalerBindingTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "standard_scaler";
   // Input custom data points.
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", method);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
                 IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
 }
 
 /**
  * Check for MaxAbs scaler type.
  */
-BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "MaxAbsScalerBindingTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "max_abs_scaler";
   // Input custom data points.
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", method);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
                 IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
 }
 
 /**
  * Check for MinMax scaler type.
  */
-BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "MinMaxScalerBindingTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "min_max_scaler";
   // Input custom data points.
@@ -288,69 +298,70 @@ BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
   SetInputParam("scaler_method", method);
   SetInputParam("min_value", 2);
   SetInputParam("max_value", 4);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
                 IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
 }
 
 /**
  * Check for PCA scaler type.
  */
-BOOST_AUTO_TEST_CASE(PCAScalerTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "PCAScalerBindingTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "pca_whitening";
   // Input custom data points.
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", method);
   SetInputParam("epsilon", 1.0);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
                 IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
 }
 
 /**
  * Check for ZCA scaler type.
  */
-BOOST_AUTO_TEST_CASE(ZCAScalerTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "ZCAScalerBindingTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "zca_whitening";
   // Input custom data points.
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", method);
   SetInputParam("epsilon", 1.0);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
                 IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
 }
 
 /**
  * Check for Mean Normalization scaler type.
  */
-BOOST_AUTO_TEST_CASE(MeanNormalizationTest)
+TEST_CASE_METHOD(PreprocessScaleTestFixture, "MeanNormalizationBindingTest",
+                 "[PreprocessScaleMainTest][BindingTests]")
 {
   std::string method = "mean_normalization";
   // Input custom data points.
   SetInputParam("input", dataset);
   SetInputParam("scaler_method", method);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("input", dataset);
   SetInputParam("input_model",
                 IO::GetParam<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
 }
-
-BOOST_AUTO_TEST_SUITE_END();
