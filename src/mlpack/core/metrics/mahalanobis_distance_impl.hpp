@@ -52,10 +52,9 @@ template<bool TakeRoot>
 template<typename Archive>
 void MahalanobisDistance<TakeRoot>::serialize(Archive& ar)
 {
-  ar & CEREAL_NVP(covariance);
   uint8_t version = 1;
   ar & CEREAL_NVP(version);
-
+  ar & CEREAL_NVP(covariance);
 }
 
 } // namespace metric
