@@ -31,10 +31,10 @@ PixelShuffle<InputDataType, OutputDataType>::PixelShuffle() :
 
 template<typename InputDataType, typename OutputDataType>
 PixelShuffle<InputDataType, OutputDataType>::PixelShuffle(
-    size_t upscaleFactor,
-    size_t height,
-    size_t width,
-    size_t size) :
+    const size_t upscaleFactor,
+    const size_t height,
+    const size_t width,
+    const size_t size) :
     upscaleFactor(upscaleFactor),
     height(height),
     width(width),

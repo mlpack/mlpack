@@ -60,10 +60,10 @@ class PixelShuffle
    * @param width The width of each input image.
    * @param size The number of channels of each input image.
    */
-  PixelShuffle(size_t upscaleFactor,
-               size_t height,
-               size_t width,
-               size_t size);
+  PixelShuffle(const size_t upscaleFactor,
+               const size_t height,
+               const size_t width,
+               const size_t size);
 
   /**
    * Ordinary feed forward pass of the PixelShuffle layer.
