@@ -4346,7 +4346,7 @@ TEST_CASE("SimpleMultiheadAttentionTest", "[AttentionTest]")
   REQUIRE(g.n_cols == input.n_cols);
 
   // Gradient test.
-  arma::mat error = 0.05 * arma::randu(embedDim * (tLen + 2 * sLen), bsz);
+  arma::mat error = 0.05 * arma::randu(embedDim * tLen, bsz);
   arma::mat gradient;
   module.Gradient(input, error, gradient);
   REQUIRE(gradient.n_rows == module.Parameters().n_rows);
