@@ -23,8 +23,10 @@ SpatialDropout<InputDataType, OutputDataType>::SpatialDropout() :
     size(0),
     ratio(0.5),
     scale(1.0 / (1.0 - ratio)),
-    deterministic(false),
-    reset(false)
+    reset(false),
+    batchSize(0),
+    inputSize(0),
+    deterministic(false)
 {
   // Nothing to do here.
 }
@@ -36,8 +38,10 @@ SpatialDropout<InputDataType, OutputDataType>::SpatialDropout(
     size(size),
     ratio(ratio),
     scale(1.0 / (1.0 - ratio)),
-    deterministic(false),
-    reset(false)
+    reset(false),
+    batchSize(0),
+    inputSize(0),
+    deterministic(false)
 {
   // Nothing to do here.
 }
@@ -47,7 +51,7 @@ template<typename eT>
 void SpatialDropout<InputDataType, OutputDataType>::Forward(
   const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  if(!reset)
+  if (!reset)
   {
     batchSize = input.n_cols;
     inputSize = input.n_rows / size;
@@ -61,7 +65,7 @@ void SpatialDropout<InputDataType, OutputDataType>::Forward(
   {
     output.zeros(arma::size(input));
     arma::cube inputTemp(const_cast<arma::mat&>(input).memptr(), inputSize,
-        size,batchSize, false, false);
+        size, batchSize, false, false);
     arma::cube outputTemp(const_cast<arma::mat&>(output).memptr(), inputSize,
         size, batchSize, false, false);
     arma::mat probabilities(1, size);
@@ -71,7 +75,7 @@ void SpatialDropout<InputDataType, OutputDataType>::Forward(
     maskRow = bernoulli_dist.Sample();
     mask = arma::repmat(maskRow, inputSize, 1);
 
-    for(size_t n = 0; n < batchSize; n++)
+    for (size_t n = 0; n < batchSize; n++)
     {
       arma::mat& inputImage = inputTemp.slice(n);
       arma::mat& outputImage = outputTemp.slice(n);
@@ -91,7 +95,7 @@ void SpatialDropout<InputDataType, OutputDataType>::Backward(
   arma::cube gTemp(const_cast<arma::mat&>(g).memptr(), inputSize, size,
       batchSize, false, false);
 
-  for(size_t n = 0; n < batchSize; n++)
+  for (size_t n = 0; n < batchSize; n++)
   {
     arma::mat& gyImage = gyTemp.slice(n);
     arma::mat& gImage = gTemp.slice(n);

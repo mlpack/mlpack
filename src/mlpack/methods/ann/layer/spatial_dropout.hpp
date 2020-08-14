@@ -56,7 +56,7 @@ class SpatialDropout
    * @param size The number of channels of each input image.
    * @param ratio The probability of each channel getting dropped.
    */
-  SpatialDropout(size_t size, double ratio=0.5);
+  SpatialDropout(size_t size, double ratio = 0.5);
 
   /**
    * Ordinary feed forward pass of the SpatialDropout layer.
@@ -70,7 +70,7 @@ class SpatialDropout
   /**
    * Ordinary feed backward pass of the SpatialDropout layer.
    *
-   * @param * (input) The propagated input activation.
+   * @param input The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
