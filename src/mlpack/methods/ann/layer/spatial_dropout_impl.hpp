@@ -33,8 +33,8 @@ SpatialDropout<InputDataType, OutputDataType>::SpatialDropout() :
 
 template<typename InputDataType, typename OutputDataType>
 SpatialDropout<InputDataType, OutputDataType>::SpatialDropout(
-    size_t size,
-    double ratio) :
+    const size_t size,
+    const double ratio) :
     size(size),
     ratio(ratio),
     scale(1.0 / (1.0 - ratio)),
@@ -60,7 +60,6 @@ void SpatialDropout<InputDataType, OutputDataType>::Forward(
 
   if (deterministic)
     output = input;
-
   else
   {
     output.zeros(arma::size(input));
@@ -76,11 +75,7 @@ void SpatialDropout<InputDataType, OutputDataType>::Forward(
     mask = arma::repmat(maskRow, inputSize, 1);
 
     for (size_t n = 0; n < batchSize; n++)
-    {
-      arma::mat& inputImage = inputTemp.slice(n);
-      arma::mat& outputImage = outputTemp.slice(n);
-      outputImage = inputImage % mask * scale;
-    }
+      outputTemp.slice(n) = inputTemp.slice(n) % mask * scale;
   }
 }
 
@@ -96,12 +91,7 @@ void SpatialDropout<InputDataType, OutputDataType>::Backward(
       batchSize, false, false);
 
   for (size_t n = 0; n < batchSize; n++)
-  {
-    arma::mat& gyImage = gyTemp.slice(n);
-    arma::mat& gImage = gTemp.slice(n);
-
-    gImage = gyImage % mask * scale;
-  }
+    gTemp.slice(n) = gyTemp.slice(n) % mask * scale;
 }
 
 template<typename InputDataType, typename OutputDataType>

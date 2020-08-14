@@ -56,7 +56,7 @@ class SpatialDropout
    * @param size The number of channels of each input image.
    * @param ratio The probability of each channel getting dropped.
    */
-  SpatialDropout(size_t size, double ratio = 0.5);
+  SpatialDropout(const size_t size, const double ratio = 0.5);
 
   /**
    * Ordinary feed forward pass of the SpatialDropout layer.
