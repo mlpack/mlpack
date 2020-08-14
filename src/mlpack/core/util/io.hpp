@@ -33,12 +33,7 @@
 #include <mlpack/core/data/save.hpp>
 
 namespace mlpack {
-namespace util {
 
-// This class holds information about the program being run.
-struct BindingDetials;
-
-} // namespace util
 /**
  * @brief Parses the command line for parameters and holds user-specified
  *     parameters.
@@ -53,7 +48,7 @@ struct BindingDetials;
  * @section addparam Adding parameters to a program
  *
  * @code
- * $ ./binding --bar=5
+ * $ ./executable --bar=5
  * @endcode
  *
  * @note The = is optional; a space can also be used.

@@ -31,7 +31,7 @@ struct BindingDetails
   //! Long string containing documentation on what it is.  No newline characters
   //! are necessary; this is taken care of by IO later.
   std::function<std::string()> longDescription;
-  //! Documentation on how to use the program.
+  //! Documentation on how to use the binding.
   std::vector<std::function<std::string()>> example;
   //! A  set of pairs of strings with useful "see also" information; each pair
   //! is <description, url>.
