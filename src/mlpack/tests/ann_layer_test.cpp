@@ -4188,6 +4188,116 @@ TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
 }
 
 /**
+ * Linear module weight initialization test.
+ */
+TEST_CASE("LinearLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 10, outSize = 4;
+  Linear<> linear = Linear<>(inSize, outSize);
+  linear.Reset();
+  RandomInitialization().Initialize(linear.Weight());
+  linear.Bias().ones();
+
+  REQUIRE(std::equal(linear.Weight().begin(),
+      linear.Weight().end(), linear.Parameters().begin()));
+
+  REQUIRE(std::equal(linear.Bias().begin(),
+      linear.Bias().end(), linear.Parameters().begin() + inSize * outSize));
+
+  REQUIRE(linear.Weight().n_rows == outSize);
+  REQUIRE(linear.Weight().n_cols == inSize);
+  REQUIRE(linear.Bias().n_rows == outSize);
+  REQUIRE(linear.Bias().n_cols == 1);
+  REQUIRE(linear.Parameters().n_rows == inSize * outSize + outSize);
+}
+
+/**
+ * Atrous Convolution module weight initialization test.
+ */
+TEST_CASE("AtrousConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
+  AtrousConvolution<> module = AtrousConvolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 6, 7, std::make_tuple(8, 9),
+      std::make_tuple(10, 11), 12, 13, 14, 15);
+  module.Reset();
+  RandomInitialization().Initialize(module.Weight());
+  module.Bias().ones();
+
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
+
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - outSize));
+
+  REQUIRE(module.Weight().n_rows == kernelWidth);
+  REQUIRE(module.Weight().n_cols == kernelHeight);
+  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Bias().n_rows == outSize);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Convolution module weight initialization test.
+ */
+TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
+  Convolution<> module = Convolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 6, 7, std::tuple<size_t, size_t>(8, 9),
+      std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
+  module.Reset();
+  RandomInitialization().Initialize(module.Weight());
+  module.Bias().ones();
+
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
+
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - outSize));
+
+  REQUIRE(module.Weight().n_rows == kernelWidth);
+  REQUIRE(module.Weight().n_cols == kernelHeight);
+  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Bias().n_rows == outSize);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Transposed Convolution module weight initialization test.
+ */
+TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 3, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 4;
+  TransposedConvolution<> module = TransposedConvolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 1, 1, 1, 1, 5, 5, 6, 6);
+  module.Reset();
+  RandomInitialization().Initialize(module.Weight());
+  module.Bias().ones();
+
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
+
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - outSize));
+
+  REQUIRE(module.Weight().n_rows == kernelWidth);
+  REQUIRE(module.Weight().n_cols == kernelHeight);
+  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Bias().n_rows == outSize);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
  * Simple Test for SpatialDropout layer.
  */
 TEST_CASE("SpatialDropoutLayerTest", "[ANNLayerTest]")

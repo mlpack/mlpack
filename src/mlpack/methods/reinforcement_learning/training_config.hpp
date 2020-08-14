@@ -33,7 +33,8 @@ class TrainingConfig
       isCategorical(false),
       atomSize(51),
       vMin(0),
-      vMax(200)
+      vMax(200),
+      rho(0.005)
   { /* Nothing to do here. */ }
 
   TrainingConfig(
@@ -50,7 +51,8 @@ class TrainingConfig
       bool isCategorical,
       size_t atomSize,
       double vMin,
-      double vMax) :
+      double vMax,
+      double rho) :
       numWorkers(numWorkers),
       updateInterval(updateInterval),
       targetNetworkSyncInterval(targetNetworkSyncInterval),
@@ -64,7 +66,8 @@ class TrainingConfig
       isCategorical(isCategorical),
       atomSize(atomSize),
       vMin(vMin),
-      vMax(vMax)
+      vMax(vMax),
+      rho(rho)
   { /* Nothing to do here. */ }
 
   //! Get the amount of workers.
@@ -140,6 +143,11 @@ class TrainingConfig
   double VMax() const { return vMax; }
   //! Modify the maximum value for support.
   double& VMax() { return vMax; }
+
+  //! Get the rho value for sac.
+  double Rho() const { return rho; }
+  //! Modify the rho value for sac.
+  double& Rho() { return rho; }
 
  private:
   /**
@@ -228,6 +236,12 @@ class TrainingConfig
    * This is valid only for categorical q-network.
    */
   double vMax;
+
+  /**
+   * Locally-stored parameter for softly updating q networks.
+   * This is valid only for Soft Actor-Critic.
+   */
+  double rho;
 };
 
 } // namespace rl
