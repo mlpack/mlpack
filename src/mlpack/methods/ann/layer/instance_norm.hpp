@@ -67,9 +67,9 @@ class InstanceNorm
    * @param momentum Parameter used to to update the running mean and variance.
    */
   InstanceNorm(const size_t size,
-              const double eps = 1e-5,
-              const bool average = true,
-              const double momentum = 0.1);
+               const double eps = 1e-5,
+               const bool average = true,
+               const double momentum = 0.1);
 
   /**
    * Forward pass of the Instance Normalization layer. Transforms the input data

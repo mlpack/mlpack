@@ -68,7 +68,7 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
     reset = true;
   }
 
-  if(deterministic)
+  if (deterministic)
     batchNorm.Deterministic() = true;
 
   arma::mat inputCopy(const_cast<arma::Mat<eT>&>(input).memptr(), shapeA*shapeB,
