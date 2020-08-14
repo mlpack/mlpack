@@ -24,6 +24,9 @@ namespace regression {
 template<typename Archive>
 void LARS::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // If we're loading, we have to use the internal storage.
   if (Archive::is_loading::value)
   {

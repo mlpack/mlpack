@@ -207,6 +207,9 @@ const CFType<DecompositionPolicy, NormalizationType>* CFModel::CFPtr() const
 template<typename Archive>
 void CFModel::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // This should never happen, but just in case, be clean with memory.
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), cf);

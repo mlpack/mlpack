@@ -539,6 +539,9 @@ KDEMode& KDEModel::Mode()
 template<typename Archive>
 void KDEModel::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(bandwidth);
   ar & CEREAL_NVP(relError);
   ar & CEREAL_NVP(absError);

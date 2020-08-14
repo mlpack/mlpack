@@ -358,6 +358,9 @@ template<typename SortPolicy>
 template<typename Archive>
 void NSModel<SortPolicy>::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar(CEREAL_NVP(treeType));
   ar(CEREAL_NVP(leafSize));
   ar(CEREAL_NVP(tau));

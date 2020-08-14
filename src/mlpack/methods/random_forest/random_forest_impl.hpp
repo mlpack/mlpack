@@ -423,6 +423,9 @@ void RandomForest<
     ElemType
 >::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   size_t numTrees;
   if (Archive::is_loading::value)
     trees.clear();

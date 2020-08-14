@@ -67,6 +67,9 @@ template<typename DataType>
 template<typename Archive>
 void NormalDistribution<DataType>::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(mean);
   ar & CEREAL_NVP(sigma);
 }

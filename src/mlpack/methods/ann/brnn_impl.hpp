@@ -718,9 +718,10 @@ template<typename OutputLayerType, typename MergeLayerType,
          typename... CustomLayers>
 template<typename Archive>
 void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
-    InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar)
+    InitializationRuleType, CustomLayers...>::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
   ar & CEREAL_NVP(parameter);
   ar & CEREAL_NVP(backwardRNN);
   ar & CEREAL_NVP(forwardRNN);

@@ -183,6 +183,9 @@ template<typename MatType>
 template<typename Archive>
 void QDAFN<MatType>::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(l);
   ar & CEREAL_NVP(m);
   ar & CEREAL_NVP(lines);
