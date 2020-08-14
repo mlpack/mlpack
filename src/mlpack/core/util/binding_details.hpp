@@ -23,9 +23,9 @@ namespace util {
  */
 struct BindingDetails
 {
-  //! Name of the default module.
+  //! Name of the binding.
   std::string programName;
-  //! A short two-sentence description of the program, what it does, and what
+  //! A short two-sentence description of the binding, what it does, and what
   //! it is useful for.
   std::string shortDescription;
   //! Long string containing documentation on what it is.  No newline characters
