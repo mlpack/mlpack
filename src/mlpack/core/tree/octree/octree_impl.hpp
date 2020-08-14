@@ -708,10 +708,11 @@ Octree<MetricType, StatisticType, MatType>::RangeDistance(
 //! Serialize the tree.
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
-void Octree<MetricType, StatisticType, MatType>::serialize(
-    Archive& ar
-)
+void Octree<MetricType, StatisticType, MatType>::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // If we're loading and we have children, they need to be deleted.
   if (Archive::is_loading::value)
   {

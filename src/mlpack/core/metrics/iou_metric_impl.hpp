@@ -69,6 +69,9 @@ template<typename Archive>
 void IoU<UseCoordinates>::serialize(Archive& ar)
 {
   // Nothing to do here.
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
 }
 
 } // namespace metric

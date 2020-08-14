@@ -983,6 +983,9 @@ template<typename Archive>
 void CellBound<MetricType, ElemType>::serialize(Archive& ar)
 {
   // Allocate memory for the bounds, if necessary.
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   if (Archive::is_loading::value)
   {
     if (bounds)

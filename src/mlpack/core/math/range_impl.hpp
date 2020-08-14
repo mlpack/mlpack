@@ -204,6 +204,9 @@ template<typename Archive>
 void RangeType<T>::serialize(Archive& ar)
 {
   ar & CEREAL_NVP(hi);
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(lo);
 }
 

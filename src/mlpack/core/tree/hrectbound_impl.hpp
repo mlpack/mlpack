@@ -662,10 +662,10 @@ inline ElemType HRectBound<MetricType, ElemType>::Diameter() const
 //! Serialize the bound object.
 template<typename MetricType, typename ElemType>
 template<typename Archive>
-void HRectBound<MetricType, ElemType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+void HRectBound<MetricType, ElemType>::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
   ar & CEREAL_NVP(dim);
 
   // Allocate memory for the bounds, if necessary.

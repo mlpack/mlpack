@@ -1392,10 +1392,11 @@ template<typename MetricType,
          template<typename> class AuxiliaryInformationType>
 template<typename Archive>
 void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
-                   AuxiliaryInformationType>::serialize(
-    Archive& ar
-)
+                   AuxiliaryInformationType>::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // Clean up memory, if necessary.
   if (Archive::is_loading::value)
   {

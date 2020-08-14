@@ -1729,6 +1729,9 @@ template<typename Archive>
 void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
     Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // If we're loading, and we have children, they need to be deleted.  We may
   // also need to delete the local metric and dataset.
   if (Archive::is_loading::value)

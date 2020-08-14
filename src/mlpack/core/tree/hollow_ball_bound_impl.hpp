@@ -425,10 +425,10 @@ HollowBallBound<TMetricType, ElemType>::operator|=(const HollowBallBound& other)
 //! Serialize the BallBound.
 template<typename TMetricType, typename ElemType>
 template<typename Archive>
-void HollowBallBound<TMetricType, ElemType>::serialize(
-    Archive& ar
-)
+void HollowBallBound<TMetricType, ElemType>::serialize(Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
   ar & CEREAL_NVP(radii);
   ar & CEREAL_NVP(center);
   ar & CEREAL_NVP(hollowCenter);

@@ -81,6 +81,9 @@ template<typename Archive>
 void EpanechnikovKernel::serialize(Archive& ar)
 {
   ar & CEREAL_NVP(bandwidth);
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(inverseBandwidthSquared);
 }
 
