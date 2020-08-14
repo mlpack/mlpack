@@ -108,6 +108,9 @@ template<typename Archive>
 void DropConnect<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // Delete the old network first, if needed.
   if (Archive::is_loading::value)
   {

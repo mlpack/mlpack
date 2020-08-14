@@ -202,6 +202,9 @@ template<typename Archive>
 void DecisionStump<MatType>::serialize(Archive& ar
                                    )
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // This is straightforward; just serialize all of the members of the class.
   // None need special handling.
   ar & CEREAL_NVP(numClasses);

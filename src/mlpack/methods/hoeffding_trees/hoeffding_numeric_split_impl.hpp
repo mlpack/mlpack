@@ -191,6 +191,9 @@ template<typename Archive>
 void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
     Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(samplesSeen);
   ar & CEREAL_NVP(observationsBeforeBinning);
   ar & CEREAL_NVP(bins);

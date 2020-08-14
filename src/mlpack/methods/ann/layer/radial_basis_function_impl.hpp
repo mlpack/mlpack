@@ -93,6 +93,9 @@ template<typename Archive>
 void RBF<InputDataType, OutputDataType, Activation>::serialize(
     Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(distances);
   ar & CEREAL_NVP(centres);
 }

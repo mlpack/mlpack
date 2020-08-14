@@ -85,6 +85,9 @@ template<typename Archive>
 void ELU<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(alpha);
   ar & CEREAL_NVP(lambda);
 }

@@ -270,6 +270,9 @@ template<typename Archive>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(model);
   ar & CEREAL_NVP(run);
 

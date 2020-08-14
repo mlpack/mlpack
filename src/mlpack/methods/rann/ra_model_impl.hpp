@@ -335,6 +335,9 @@ template<typename Archive>
 void RAModel<SortPolicy>::serialize(Archive& ar
                                 )
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(treeType);
   ar & CEREAL_NVP(randomBasis);
   ar & CEREAL_NVP(q);

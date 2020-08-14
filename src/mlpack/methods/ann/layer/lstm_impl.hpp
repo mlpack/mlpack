@@ -469,6 +469,9 @@ template<typename Archive>
 void LSTM<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(weights);
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);

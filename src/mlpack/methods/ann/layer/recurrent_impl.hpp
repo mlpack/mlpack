@@ -258,6 +258,9 @@ template<typename Archive>
 void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // Clean up memory, if we are loading.
   if (Archive::is_loading::value)
   {

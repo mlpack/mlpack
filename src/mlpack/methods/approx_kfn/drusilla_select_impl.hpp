@@ -204,6 +204,9 @@ template<typename Archive>
 void DrusillaSelect<MatType>::serialize(Archive& ar
                                     )
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(candidateSet);
   ar & CEREAL_NVP(candidateIndices);
   ar & CEREAL_NVP(l);

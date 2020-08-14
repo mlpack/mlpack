@@ -114,6 +114,9 @@ template<typename Archive>
 void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // Be sure to clear other layers before loading.
   if (Archive::is_loading::value)
     network.clear();

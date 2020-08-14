@@ -65,6 +65,9 @@ template<typename Archive>
 void Select<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(index);
   ar & CEREAL_NVP(elements);
 }

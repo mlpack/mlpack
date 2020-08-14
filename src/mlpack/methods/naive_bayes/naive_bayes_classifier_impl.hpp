@@ -352,6 +352,9 @@ template<typename Archive>
 void NaiveBayesClassifier<ModelMatType>::serialize(
     Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(means);
   ar & CEREAL_NVP(variances);
   ar & CEREAL_NVP(probabilities);
