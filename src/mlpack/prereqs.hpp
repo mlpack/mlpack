@@ -84,7 +84,6 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <mlpack/core/arma_extend/serialize_armadillo.hpp>
 
 #include <mlpack/core/data/has_serialize.hpp>
-#include <mlpack/core/data/serialization_template_version.hpp>
 
 // If we have Boost 1.58 or older and are using C++14, the compilation is likely
 // to fail due to boost::visitor issues.  We will pre-emptively fail.
