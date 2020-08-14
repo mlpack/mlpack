@@ -34,7 +34,7 @@ template<typename T>
 void SerializeIn(T* t, const std::string& str, const std::string& name)
 {
   std::istringstream iss(str);
-  cereal::BinaryOutputArchive b(oss);
+  cereal::BinaryInputArchive b(iss);
   b & cereal::make_nvp(name.c_str(), *t);
 }
 

@@ -39,15 +39,13 @@ template<typename ActionType, typename ExtraInfoType>
 void LoadHMMAndPerformAction(const std::string& modelFile,
                              ExtraInfoType* x)
 {
-  using namespace boost::archive;
-
   const std::string extension = data::Extension(modelFile);
-  if (extension == "xml")
-    LoadHMMAndPerformActionHelper<ActionType, xml_iarchive>(modelFile, x);
+  if (extension == "xml")[B]
+    LoadHMMAndPerformActionHelper<ActionType, cereal::XMLInputArchive>(modelFile, x);
   else if (extension == "bin")
-    LoadHMMAndPerformActionHelper<ActionType, binary_iarchive>(modelFile, x);
+    LoadHMMAndPerformActionHelper<ActionType, cereal::BinaryInputArchive>(modelFile, x);
   else if (extension == "json")
-    LoadHMMAndPerformActionHelper<ActionType, text_iarchive>(modelFile, x);
+    LoadHMMAndPerformActionHelper<ActionType, cereal::JSONInputArchive>(modelFile, x);
   else
     Log::Fatal << "Unknown extension '" << extension << "' for HMM model file "
         << "(known: 'xml', 'json', 'bin')." << std::endl;
@@ -120,15 +118,13 @@ char GetHMMType();
 template<typename HMMType>
 void SaveHMM(HMMType& hmm, const std::string& modelFile)
 {
-  using namespace boost::archive;
-
   const std::string extension = data::Extension(modelFile);
   if (extension == "xml")
-    SaveHMMHelper<xml_oarchive>(hmm, modelFile);
+    SaveHMMHelper<cereal::XMLOutputArchive>(hmm, modelFile);
   else if (extension == "bin")
-    SaveHMMHelper<binary_oarchive>(hmm, modelFile);
+    SaveHMMHelper<cereal::BinaryOutputArchive>(hmm, modelFile);
   else if (extension == "json")
-    SaveHMMHelper<text_oarchive>(hmm, modelFile);
+    SaveHMMHelper<cereal::JSONOutputArchive>(hmm, modelFile);
   else
     Log::Fatal << "Unknown extension '" << extension << "' for HMM model file."
         << std::endl;
