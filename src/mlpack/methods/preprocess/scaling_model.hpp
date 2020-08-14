@@ -117,17 +117,17 @@ class ScalingModel
     ar & CEREAL_NVP(minValue);
     ar & CEREAL_NVP(maxValue);
     if (scalerType == ScalerTypes::MIN_MAX_SCALER)
-      ar & CEREAL_NVP(minmaxscale);
+      ar & CEREAL_POINTER(minmaxscale);
     else if (scalerType == ScalerTypes::MEAN_NORMALIZATION)
-      ar & CEREAL_NVP(meanscale);
+      ar & CEREAL_POINTER(meanscale);
     else if (scalerType == ScalerTypes::MAX_ABS_SCALER)
-      ar & CEREAL_NVP(maxabsscale);
+      ar & CEREAL_POINTER(maxabsscale);
     else if (scalerType == ScalerTypes::STANDARD_SCALER)
-      ar & CEREAL_NVP(standardscale);
+      ar & CEREAL_POINTER(standardscale);
     else if (scalerType == ScalerTypes::PCA_WHITENING)
-      ar & CEREAL_NVP(pcascale);
+      ar & CEREAL_POINTER(pcascale);
     else if (scalerType == ScalerTypes::ZCA_WHITENING)
-      ar & CEREAL_NVP(zcascale);
+      ar & CEREAL_POINTER(zcascale);
   }
 };
 
