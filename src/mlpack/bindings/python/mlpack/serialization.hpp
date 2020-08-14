@@ -23,9 +23,9 @@ std::string SerializeOut(T* t, const std::string& name)
 {
   std::ostringstream oss;
   {
-    boost::archive::binary_oarchive b(oss);
+    cereal::BinaryOutputArchive b(oss);
 
-    b << cereal::make_nvp(name.c_str(), *t);
+    b & cereal::make_nvp(name.c_str(), *t);
   }
   return oss.str();
 }
@@ -34,9 +34,8 @@ template<typename T>
 void SerializeIn(T* t, const std::string& str, const std::string& name)
 {
   std::istringstream iss(str);
-  boost::archive::binary_iarchive b(iss);
-
-  b >> cereal::make_nvp(name.c_str(), *t);
+  cereal::BinaryOutputArchive b(oss);
+  b & cereal::make_nvp(name.c_str(), *t);
 }
 
 } // namespace python
