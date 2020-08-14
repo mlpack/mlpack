@@ -36,7 +36,7 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 
     try
     {
-      o << CEREAL_NVP(x);
+      o & CEREAL_NVP(x);
     }
     catch (cereal::Exception& e)
     {
@@ -57,7 +57,7 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 
     try
     {
-      i >> CEREAL_NVP(x);
+      i & CEREAL_NVP(x);
     }
     catch (cereal::Exception& e)
     {
@@ -122,7 +122,7 @@ void TestArmadilloSerialization(MatType& x)
 
     try
     {
-      o << CEREAL_NVP(x);
+      o & CEREAL_NVP(x);
     }
     catch (cereal::Exception& e)
     {
@@ -143,7 +143,7 @@ void TestArmadilloSerialization(MatType& x)
 
     try
     {
-      i >> CEREAL_NVP(x);
+      i & CEREAL_NVP(x);
     }
     catch (cereal::Exception& e)
     {
@@ -195,7 +195,8 @@ void SerializeObject(T& t, T& newT)
 
     try
     {
-      o << CEREAL_NVP(t);
+      T& x(t);
+      o & CEREAL_NVP(x);
     }
     catch (cereal::Exception& e)
     {
@@ -214,7 +215,8 @@ void SerializeObject(T& t, T& newT)
 
     try
     {
-      i >> CEREAL_NVP(newT);
+      T& x(newT);
+      i & CEREAL_NVP(x);
     }
     catch (cereal::Exception& e)
     {
@@ -253,7 +255,7 @@ void SerializePointerObject(T* t, T*& newT)
     OArchiveType o(ofs);
     try
     {
-      o << CEREAL_NVP(t);
+      o & CEREAL_NVP(t);
     }
     catch (cereal::Exception& e)
     {
@@ -272,7 +274,7 @@ void SerializePointerObject(T* t, T*& newT)
 
     try
     {
-      i >> CEREAL_NVP(newT);
+      i & CEREAL_NVP(newT);
     }
     catch (std::exception& e)
     {
