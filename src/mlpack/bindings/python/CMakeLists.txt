@@ -14,28 +14,47 @@ if (NOT BUILD_PYTHON_BINDINGS)
 endif ()
 
 # Generate Python setuptools file.
-find_package(PythonInterp)
-if (NOT PYTHON_EXECUTABLE)
-  not_found_return("Python not found; not building Python bindings.")
-else ()
-  message(STATUS "Found Python: ${PYTHON_EXECUTABLE}")
-endif ()
-
 # Import find_python_module.
 include(${CMAKE_SOURCE_DIR}/CMake/FindPythonModule.cmake)
-find_python_module(distutils)
+
+## We need to check here if Python is even available.  Although actually
+## technically, I'm not sure if we even need to know!  For the tests though we
+## do.  So it's probably a good idea to check.
+if (FORCE_BUILD_PYTHON_BINDINGS)
+  find_package(PythonInterp)
+  find_python_module(distutils)
+  find_python_module(Cython 0.24)
+  find_python_module(numpy)
+  find_python_module(pandas 0.15.0)
+  if (NOT PYTHON_EXECUTABLE OR NOT PY_DISTUTILS OR NOT PY_CYTHON OR NOT PY_NUMPY
+      OR NOT PY_PANDAS)
+    unset(BUILD_PYTHON_BINDINGS CACHE)
+    message(FATAL_ERROR "Could not Build Python Bindings")
+  endif()
+else()
+  find_package(PythonInterp)
+  find_python_module(distutils)
+  find_python_module(Cython 0.24)
+  find_python_module(numpy)
+  find_python_module(pandas 0.15.0)
+  if (NOT PYTHON_EXECUTABLE OR NOT PY_DISTUTILS OR NOT PY_CYTHON OR NOT PY_NUMPY
+      OR NOT PY_PANDAS)
+    unset(BUILD_PYTHON_BINDINGS CACHE)
+  endif()
+endif()
+
+if (NOT PYTHON_EXECUTABLE)
+  not_found_return("Python not found; not building Python bindings.")
+endif()
 if (NOT PY_DISTUTILS)
   not_found_return("distutils not found; not building Python bindings.")
 endif ()
-find_python_module(Cython 0.24)
 if (NOT PY_CYTHON)
   not_found_return("Cython not found; not building Python bindings.")
 endif ()
-find_python_module(numpy)
 if (NOT PY_NUMPY)
   not_found_return("numpy not found; not building Python bindings.")
 endif ()
-find_python_module(pandas 0.15.0)
 if (NOT PY_PANDAS)
   not_found_return("pandas not found; not building Python bindings.")
 endif ()
