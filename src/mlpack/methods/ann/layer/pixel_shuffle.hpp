@@ -60,10 +60,10 @@ class PixelShuffle
    * @param width The width of each input image.
    * @param size The number of channels of each input image.
    */
-  PixelShuffle( size_t upscaleFactor,
-                size_t height,
-                size_t width,
-                size_t size);
+  PixelShuffle(size_t upscaleFactor,
+               size_t height,
+               size_t width,
+               size_t size);
 
   /**
    * Ordinary feed forward pass of the PixelShuffle layer.
@@ -77,7 +77,7 @@ class PixelShuffle
   /**
    * Ordinary feed backward pass of the PixelShuffle layer.
    *
-   * @param * (input) The propagated input activation.
+   * @param input The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */

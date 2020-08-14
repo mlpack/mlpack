@@ -49,7 +49,7 @@ template<typename eT>
 void PixelShuffle<InputDataType, OutputDataType>::Forward(
   const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  if(!reset)
+  if (!reset)
   {
     batchSize = input.n_cols;
     sizeOut = size / std::pow(upscaleFactor, 2);
@@ -58,7 +58,7 @@ void PixelShuffle<InputDataType, OutputDataType>::Forward(
     reset = true;
   }
   output.zeros(outputHeight * outputWidth * sizeOut, batchSize);
-  for(size_t n = 0; n < batchSize; n++)
+  for (size_t n = 0; n < batchSize; n++)
   {
     arma::mat inputImage = input.col(n);
     arma::mat outputImage = output.col(n);
@@ -92,7 +92,7 @@ void PixelShuffle<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   g.zeros(arma::size(input));
-  for(size_t n = 0; n < batchSize; n++)
+  for (size_t n = 0; n < batchSize; n++)
   {
     arma::mat gyImage = gy.col(n);
     arma::mat gImage = g.col(n);
