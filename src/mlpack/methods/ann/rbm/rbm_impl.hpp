@@ -300,34 +300,19 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Shuffle()
       predictors.n_cols - 1, predictors.n_cols)));
 }
 
-template<typename OutputLayerType, typename InitializationRuleType,
-         typename... CustomLayers>
-template<typename eT>
-void RBM<OutputLayerType, InitializationRuleType,CustomLayers...>::
+template<
+  typename InitializationRuleType,
+  typename DataType,
+  typename PolicyType
+>
+template<typename Policy>
+typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
+double RBM<InitializationRuleType, DataType, PolicyType>::
 Forward(
-    const arma::Mat<eT>& input,
-    arma::Mat<eT>& output)
+    const DataType& input,
+    DataType& output)
 {
   HiddenMean(std::move(input), std::move(output));
-}
-
-template<typename OutputLayerType, typename InitializationRuleType,
-         typename... CustomLayers>
-template<typename eT>
-void FFN<OutputLayerType, InitializationRuleType,
-    CustomLayers...>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
-{
-}
-
-template<typename OutputLayerType, typename InitializationRuleType,
-         typename... CustomLayers>
-template<typename eT>
-void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
-{
 }
 
 template<
