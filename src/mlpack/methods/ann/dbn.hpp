@@ -14,22 +14,8 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "visitor/delete_visitor.hpp"
-#include "visitor/delta_visitor.hpp"
-#include "visitor/output_height_visitor.hpp"
-#include "visitor/output_parameter_visitor.hpp"
-#include "visitor/output_width_visitor.hpp"
-#include "visitor/reset_visitor.hpp"
-#include "visitor/weight_size_visitor.hpp"
-#include "visitor/copy_visitor.hpp"
-#include "visitor/loss_visitor.hpp"
-
 #include "init_rules/network_init.hpp"
 
-#include <mlpack/methods/ann/layer/layer_types.hpp>
-#include <mlpack/methods/ann/layer/layer.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
-#include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <ensmallen.hpp>
 
 namespace mlpack {
@@ -67,8 +53,11 @@ class DBN
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
-  DBN(OutputLayerType outputLayer = OutputLayerType(),
-      InitializationRuleType initializeRule = InitializationRuleType());
+  DBN(trainData,
+      learninRate = 1e-5,
+      learninRateDecay = false,
+      increaseToCDK = false,
+      xavierInit = false);
 
   //! Copy constructor.
   DBN(const DBN&);
@@ -81,4 +70,189 @@ class DBN
 
   //! Destructor to release allocated memory.
   ~DBN();
-}
+
+  /**
+   * Train the deep belief network on the given input data using the given
+   * optimizer.
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization. If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @param optimizer Instantiated optimizer used to train the model.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
+  template<typename OptimizerType, typename... CallbackTypes>
+  double Train(OptimizerType& optimizer,
+               CallbackTypes&&... callbacks);
+
+  /**
+   * Predict the responses to a given set of predictors. The responses will
+   * reflect the output of the given output layer as returned by the
+   * output layer function.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
+   * @param predictors Input predictors.
+   * @param results Matrix to put output predictions of responses into.
+   */
+  void Predict(arma::mat predictors, arma::mat& results);
+
+  /**
+   * Shuffle the order of function visitation. This may be called by the
+   * optimizer.
+   */
+  void Shuffle();
+
+  /*
+   * Add a new module to the model.
+   *
+   * @param args The layer parameter.
+   */
+  template <class RBM, class... Args>
+  void Add(Args... args) { network.push_back(new RBM(args...)); }
+
+  /*
+   * Add a new module to the model.
+   *
+   * @param layer The Layer to be added to the model.
+   */
+  void Add(RBM<GaussianInitialization> layer) { network.push_back(layer); }
+
+  //! Get the network model.
+  const std::vector<RBM<GaussianInitialization>>& Model() const
+  {
+    return network;
+  }
+  //! Modify the network model.  Be careful!  If you change the structure of the
+  //! network or parameters for layers, its state may become invalid, so be sure
+  //! to call ResetParameters() afterwards.
+  std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
+
+  //! Return the number of separable functions (the number of predictor points).
+  size_t NumFunctions() const { return numFunctions; }
+
+  //! Return the initial point for the optimization.
+  const arma::mat& Parameters() const { return parameter; }
+  //! Modify the initial point for the optimization.
+  arma::mat& Parameters() { return parameter; }
+
+  //! Get the matrix of responses to the input data points.
+  const arma::mat& Responses() const { return responses; }
+  //! Modify the matrix of responses to the input data points.
+  arma::mat& Responses() { return responses; }
+
+  //! Get the matrix of data points (predictors).
+  const arma::mat& Predictors() const { return predictors; }
+  //! Modify the matrix of data points (predictors).
+  arma::mat& Predictors() { return predictors; }
+
+  /**
+   * Reset the module infomration (weights/parameters).
+   */
+  void ResetParameters();
+
+  //! Serialize the model.
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
+
+  /**
+   * Perform the forward pass of the data in real batch mode.
+   *
+   * Forward and Backward should be used as a pair, and they are designed mainly
+   * for advanced users. User should try to use Predict and Train unless those
+   * two functions can't satisfy some special requirements.
+   *
+   * @param inputs The input data.
+   * @param results The predicted results.
+   */
+  template<typename PredictorsType, typename ResponsesType>
+  void Forward(const PredictorsType& inputs, ResponsesType& results);
+
+ private:
+
+  /**
+   * Swap the content of this network with given network.
+   *
+   * @param network Desired source network.
+   */
+  void Swap(FFN& network);
+
+
+  //! The input width.
+  size_t width;
+
+  //! The input height.
+  size_t height;
+
+  //! Indicator if we already trained the model.
+  bool reset;
+
+  //! Locally-stored model modules.
+  std::vector<RBM<GaussianInitialization> > network;
+
+  //! The matrix of data points (predictors).
+  arma::mat predictors;
+
+  //! The matrix of responses to the input data points.
+  arma::mat responses;
+
+  //! Matrix of (trained) parameters.
+  arma::mat parameter;
+
+  //! The number of separable functions (the number of predictor points).
+  size_t numFunctions;
+
+  //! The current error for the backward pass.
+  arma::mat error;
+
+  //! The current evaluation mode (training or testing).
+  bool deterministic;
+
+  //! Locally-stored delta object.
+  arma::mat delta;
+
+  //! Locally-stored input parameter object.
+  arma::mat inputParameter;
+
+  //! Locally-stored output parameter object.
+  arma::mat outputParameter;
+
+  //! Locally-stored gradient parameter.
+  arma::mat gradient;
+}; // class DBN
+
+} // namespace ann
+} // namespace mlpack
+
+//! Set the serialization version of the FFN class.  Multiple template arguments
+//! makes this ugly...
+namespace boost {
+namespace serialization {
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename... CustomLayer>
+struct version<
+    mlpack::ann::DBN<OutputLayerType, InitializationRuleType, CustomLayer...>>
+{
+  BOOST_STATIC_CONSTANT(int, value = 2);
+};
+
+} // namespace serialization
+} // namespace boost
+
+// Include implementation.
+#include "dbn_impl.hpp"
+
+#endif
