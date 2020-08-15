@@ -726,6 +726,8 @@ void Octree<MetricType, StatisticType, MatType>::serialize(Archive& ar)
     parent = NULL;
   }
 
+  bool hasParent = (parent != NULL);
+
   ar & CEREAL_NVP(begin);
   ar & CEREAL_NVP(count);
   ar & CEREAL_NVP(bound);
@@ -733,7 +735,9 @@ void Octree<MetricType, StatisticType, MatType>::serialize(Archive& ar)
   ar & CEREAL_NVP(parentDistance);
   ar & CEREAL_NVP(furthestDescendantDistance);
   ar & CEREAL_NVP(metric);
-  ar & CEREAL_POINTER(dataset);
+  ar & CEREAL_NVP(hasParent);
+  if (!hasParent)
+    ar & CEREAL_POINTER(dataset);
 
   ar & CEREAL_VECTOR_POINTER(children);
 

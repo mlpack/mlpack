@@ -1410,6 +1410,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     parent = NULL;
   }
 
+  bool hasParent = (parent != NULL);
+
   ar & CEREAL_NVP(maxNumChildren);
   ar & CEREAL_NVP(minNumChildren);
   ar & CEREAL_NVP(numChildren);
@@ -1424,8 +1426,10 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   ar & CEREAL_NVP(bound);
   ar & CEREAL_NVP(stat);
   ar & CEREAL_NVP(parentDistance);
-  ar & CEREAL_POINTER(dataset);
-  ar & CEREAL_NVP(ownsDataset);
+  ar & CEREAL_NVP(hasParent);
+
+  if (!hasParent)
+    ar & CEREAL_POINTER(dataset);
 
   ar & CEREAL_NVP(points);
   ar & CEREAL_NVP(auxiliaryInfo);

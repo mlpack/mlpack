@@ -1747,15 +1747,15 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
     parent = NULL;
   }
 
-  ar & CEREAL_POINTER(dataset);
+  bool hasParent = (parent != NULL);
+  ar & CEREAL_NVP(hasParent);
+  if (!hasParent)
+    ar & CEREAL_POINTER(dataset);
   ar & CEREAL_NVP(point);
   ar & CEREAL_NVP(scale);
   ar & CEREAL_NVP(base);
   ar & CEREAL_NVP(stat);
   ar & CEREAL_NVP(numDescendants);
-
-  bool hasParent = (parent != NULL);
-  ar & CEREAL_NVP(hasParent);
   ar & CEREAL_NVP(parentDistance);
   ar & CEREAL_NVP(furthestDescendantDistance);
   ar & CEREAL_POINTER(metric);
