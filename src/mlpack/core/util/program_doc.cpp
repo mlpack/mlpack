@@ -24,7 +24,7 @@ using namespace std;
  * Construct a ProgramName object.  When constructed, it will register itself
  * with IO.  A fatal error will be thrown if more than one is constructed.
  *
- * @param defaultModule Name of the default module.
+ * @param programName Name of the binding.
  */
 ProgramName::ProgramName(const std::string& programName)
 {
@@ -37,7 +37,7 @@ ProgramName::ProgramName(const std::string& programName)
  * itself with IO.  A fatal error will be thrown if more than one is
  * constructed.
  *
- * @param shortDescription A short two-sentence description of the program,
+ * @param shortDescription A short two-sentence description of the binding,
  *     what it does, and what it is useful for.
  */
 ShortDescription::ShortDescription(const std::string& shortDescription)
@@ -63,9 +63,9 @@ LongDescription::LongDescription(
 
 /**
  * Construct a Example object.  When constructed, it will register itself
- * with IO.  A fatal error will be thrown if more than one is constructed.
+ * with IO.
  *
- * @param example Documentation on how to use the program.
+ * @param example Documentation on how to use the binding.
  */
 Example::Example(
     const std::function<std::string()>& example)
@@ -76,10 +76,10 @@ Example::Example(
 
 /**
  * Construct a SeeAlso object.  When constructed, it will register itself
- * with IO.  A fatal error will be thrown if more than one is constructed.
+ * with IO.
  *
- * @param seeAlso A set of pairs of strings with useful "see also"
- *     information; each pair is <description, url>.
+ * @param description Description of SeeAlso.
+ * @param link Link of SeeAlso.
  */
 SeeAlso::SeeAlso(
     const std::string& description, const std::string& link)

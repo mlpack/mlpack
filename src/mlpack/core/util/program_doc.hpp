@@ -3,8 +3,8 @@
  * @author Yashwant Singh Parihar
  * @author Matthew Amidon
  *
- * The structure used to store a program's name, documentation, example and
- * see also.
+ * Implementation of mutiple classes that store information related to a binding.
+ * The classes register themselves with IO when constructed.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -17,15 +17,6 @@
 namespace mlpack {
 namespace util {
 
-/**
- * A static object whose constructor registers program documentation with the
- * IO class.  This should not be used outside of IO itself, and you should use
- * these BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
- * BINDING_EXAMPLE() and BINDING_SEE_ALSO() macros to declare these objects.
- * Only correspond object should ever exist.
- *
- * @see core/util/io.hpp, mlpack::IO
- */
 class ProgramName
 {
  public:
@@ -33,7 +24,7 @@ class ProgramName
    * Construct a ProgramName object.  When constructed, it will register itself
    * with IO.  A fatal error will be thrown if more than one is constructed.
    *
-   * @param programName Name of the default module.
+   * @param programName Name of the binding.
    */
   ProgramName(const std::string& programName);
 };
@@ -46,7 +37,7 @@ class ShortDescription
    * itself with IO.  A fatal error will be thrown if more than one is
    * constructed.
    *
-   * @param shortDescription A short two-sentence description of the program,
+   * @param shortDescription A short two-sentence description of the binding,
    *     what it does, and what it is useful for.
    */
   ShortDescription(const std::string& shortDescription);
@@ -71,9 +62,9 @@ class Example
  public:
   /**
    * Construct a Example object.  When constructed, it will register itself
-   * with IO.  A fatal error will be thrown if more than one is constructed.
+   * with IO.
    *
-   * @param example Documentation on how to use the program.
+   * @param example Documentation on how to use the binding.
    */
   Example(const std::function<std::string()>& example);
 };
@@ -83,7 +74,7 @@ class SeeAlso
  public:
   /**
    * Construct a SeeAlso object.  When constructed, it will register itself
-   * with IO.  A fatal error will be thrown if more than one is constructed.
+   * with IO.
    *
    * @param description Description of SeeAlso.
    * @param link Link of SeeAlso.

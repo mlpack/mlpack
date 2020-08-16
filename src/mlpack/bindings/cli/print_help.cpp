@@ -67,11 +67,11 @@ void PrintHelp(const std::string& param)
   {
     std::cout << bindingDetails.programName << std::endl << std::endl;
     std::cout << "  " << util::HyphenateString(bindingDetails.longDescription(),
-               2) << std::endl << std::endl;
+        2) << std::endl << std::endl;
     for (size_t j = 0; j < bindingDetails.example.size(); ++j)
     {
       std::cout << "  " << util::HyphenateString(bindingDetails.example[j](), 2)
-                << std::endl << std::endl;
+          << std::endl << std::endl;
     }
   }
   else
