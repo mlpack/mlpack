@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Force CMake to show error when it didn't find Python/odules (#2568).
+
   * Added Soft Actor-Critic to RL methods (#2487).
 
   * Added Categorical DQN to q_networks (#2454).
