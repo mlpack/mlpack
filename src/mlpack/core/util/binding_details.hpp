@@ -33,7 +33,7 @@ struct BindingDetails
   std::function<std::string()> longDescription;
   //! Documentation on how to use the binding.
   std::vector<std::function<std::string()>> example;
-  //! A  set of pairs of strings with useful "see also" information; each pair
+  //! A set of pairs of strings with useful "see also" information; each pair
   //! is <description, url>.
   std::vector<std::pair<std::string, std::string>> seeAlso;
 };

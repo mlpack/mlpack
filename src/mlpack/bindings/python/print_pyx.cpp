@@ -145,7 +145,7 @@ void PrintPYX(const util::BindingDetails& doc,
   cout << "  " << doc.programName << endl;
   cout << endl;
 
-  // print the description.
+  // Print the description.
   cout << "  " << HyphenateString(doc.longDescription(), 2) << endl << endl;
 
   // Next print the examples.
