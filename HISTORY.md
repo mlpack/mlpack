@@ -20,6 +20,8 @@
     version of linear regression where the regularization parameter is
     automatically tuned (#2030).
 
+  * Fix incremental training of logistic regression models (#2560).
+
 ### mlpack 3.3.2
 ###### 2020-06-18
   * Added Noisy DQN to q_networks (#2446).
