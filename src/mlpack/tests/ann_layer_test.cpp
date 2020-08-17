@@ -4379,7 +4379,7 @@ TEST_CASE("SpatialDropoutLayerTest", "[ANNLayerTest]")
   // Check through all possible cases, to find a match and then compare results.
   for (size_t i = 0; i < outputsExpected.n_cols; ++i)
   {
-    if(arma::approx_equal(outputsExpected.col(i), output, "absdiff", 1e-1))
+    if (arma::approx_equal(outputsExpected.col(i), output, "absdiff", 1e-1))
     {
       // Check the correctness of the Forward pass of the layer.
       CheckMatrices(output, outputsExpected.col(i), 1e-1);
