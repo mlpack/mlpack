@@ -4331,7 +4331,7 @@ TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
   module.Parameters().randu();
 
   // Forward test.
-  arma::mat input = arma::join_cols(query, query, query);
+  arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
 
   module.Forward(input, output);
   REQUIRE(output.n_rows == embedDim * tLen);
@@ -4366,7 +4366,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
     const size_t batchSize = 1;
 
     arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
-    arma::mat input = arma::join_cols(query, query, query);
+    arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
 
     MultiheadAttention<> module(tgtSeqLen, tgtSeqLen, embedDim, nHeads);
     module.Parameters().randu();
@@ -4386,7 +4386,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
 
     arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
     arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
-    arma::mat input = arma::join_cols(query, key, key);
+    arma::mat input = arma::join_cols(arma::join_cols(query, key), key);
 
     MultiheadAttention<> module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
     module.Parameters().randu();
@@ -4407,7 +4407,7 @@ TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
     arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
     arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
     arma::mat value = 0.045 * arma::randu(embedDim * srcSeqLen, batchSize);
-    arma::mat input = arma::join_cols(query, key, value);
+    arma::mat input = arma::join_cols(arma::join_cols(query, key), value);
 
     MultiheadAttention<> module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
     module.Parameters().randu();
