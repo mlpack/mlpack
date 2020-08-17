@@ -69,6 +69,34 @@ class RBM
       const ElemType radius = 1,
       const bool persistence = false);
 
+  /**
+   * Initialize all the parameters of the network using initializeRule
+   * when traindata is not passed.
+   *
+   * @param predictors Training data to be used.
+   * @param initializeRule InitializationRule object for initializing the
+   *        network parameter.
+   * @param visibleSize Number of visible neurons.
+   * @param hiddenSize Number of hidden neurons.
+   * @param batchSize Batch size to be used for training.
+   * @param numSteps Number of Gibbs Sampling steps.
+   * @param negSteps Number of negative samples to average negative gradient.
+   * @param poolSize Number of hidden neurons to pool together.
+   * @param slabPenalty Regulariser of slab variables.
+   * @param radius Feasible regions for visible layer samples.
+   * @param persistence Indicates whether to use Persistent CD or not.
+   */
+  RBM(InitializationRuleType initializeRule,
+      const size_t visibleSize,
+      const size_t hiddenSize,
+      const size_t batchSize = 1,
+      const size_t numSteps = 1,
+      const size_t negSteps = 1,
+      const size_t poolSize = 2,
+      const ElemType slabPenalty = 8,
+      const ElemType radius = 1,
+      const bool persistence = false);
+
   // Reset the network.
   template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
@@ -96,6 +124,26 @@ class RBM
    */
   template<typename OptimizerType, typename... CallbackType>
   double Train(OptimizerType& optimizer, CallbackType&&... callbacks);
+
+  /**
+   * Train the RBM on the given input data.
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization. If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback functions.
+   * @param optimizer Optimizer type.
+   * @param callbacks Callback Functions for ensmallen optimizer
+   *      `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
+  template<typename OptimizerType, typename... CallbackType>
+  double Train(arma::Mat<ElemType>& predictors,
+               OptimizerType& optimizer,
+               CallbackType&&... callbacks);
 
   /**
    * Evaluate the RBM network with the given parameters.

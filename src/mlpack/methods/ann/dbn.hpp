@@ -14,6 +14,9 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
+#include <mlpack/methods/ann/rbm/rbm.hpp>
+#include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include "init_rules/network_init.hpp"
 
 #include <ensmallen.hpp>
@@ -188,48 +191,15 @@ class DBN
    */
   void Swap(FFN& network);
 
+  arma::mat trainData;
 
-  //! The input width.
-  size_t width;
+  double learninRate;
 
-  //! The input height.
-  size_t height;
+  bool learninRateDecay;
 
-  //! Indicator if we already trained the model.
-  bool reset;
+  bool increaseToCDK;
 
-  //! Locally-stored model modules.
-  std::vector<RBM<GaussianInitialization> > network;
-
-  //! The matrix of data points (predictors).
-  arma::mat predictors;
-
-  //! The matrix of responses to the input data points.
-  arma::mat responses;
-
-  //! Matrix of (trained) parameters.
-  arma::mat parameter;
-
-  //! The number of separable functions (the number of predictor points).
-  size_t numFunctions;
-
-  //! The current error for the backward pass.
-  arma::mat error;
-
-  //! The current evaluation mode (training or testing).
-  bool deterministic;
-
-  //! Locally-stored delta object.
-  arma::mat delta;
-
-  //! Locally-stored input parameter object.
-  arma::mat inputParameter;
-
-  //! Locally-stored output parameter object.
-  arma::mat outputParameter;
-
-  //! Locally-stored gradient parameter.
-  arma::mat gradient;
+  bool xavierInit
 }; // class DBN
 
 } // namespace ann

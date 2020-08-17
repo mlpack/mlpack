@@ -58,6 +58,38 @@ template<
   typename DataType,
   typename PolicyType
 >
+RBM<InitializationRuleType, DataType, PolicyType>::RBM(
+    InitializationRuleType initializeRule,
+    const size_t visibleSize,
+    const size_t hiddenSize,
+    const size_t batchSize,
+    const size_t numSteps,
+    const size_t negSteps,
+    const size_t poolSize,
+    const ElemType slabPenalty,
+    const ElemType radius,
+    const bool persistence) :
+    initializeRule(initializeRule),
+    visibleSize(visibleSize),
+    hiddenSize(hiddenSize),
+    batchSize(batchSize),
+    numSteps(numSteps),
+    negSteps(negSteps),
+    poolSize(poolSize),
+    steps(0),
+    slabPenalty(slabPenalty),
+    radius(2 * radius),
+    persistence(persistence),
+    reset(false)
+{
+  // Nothing to do here.
+}
+
+template<
+  typename InitializationRuleType,
+  typename DataType,
+  typename PolicyType
+>
 template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::Reset()
@@ -101,6 +133,22 @@ double RBM<InitializationRuleType, DataType, PolicyType>::Train(
   }
 
   return optimizer.Optimize(*this, parameter, callbacks...);
+}
+
+template<
+  typename InitializationRuleType,
+  typename DataType,
+  typename PolicyType
+>
+template<typename OptimizerType, typename... CallbackType>
+double RBM<InitializationRuleType, DataType, PolicyType>::Train(
+    arma::Mat<ElemType> predictors,
+    OptimizerType& optimizer,
+    CallbackType&&... callbacks)
+{
+  predictors = predictors;
+  numFunctions = predictors.n_cols;
+  return Train(optimizer, callbacks...);
 }
 
 template<
