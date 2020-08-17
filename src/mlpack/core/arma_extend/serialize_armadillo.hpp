@@ -52,10 +52,13 @@ void serialize(Archive& ar, arma::SpMat<eT>& mat)
     // column pointers, if necessary, so we don't need to worry about them.
   }
 
-  // Manually set the values in the sparse matrix by assigning what we deserialized.
-  ar(cereal::make_array(arma::access::rwp(mat.values), mat.n_nonzero));
-  ar(cereal::make_array(arma::access::rwp(mat.row_indices), mat.n_nonzero));
-  ar(cereal::make_array(arma::access::rwp(mat.col_ptrs), mat.n_cols + 1));
+  // Serialize the values held in the sparse matrix.
+  for (size_t i = 0; i < mat.n_nonzero; ++i)
+    ar(cereal::make_nvp("value", arma::access::rw(mat.values[i])));
+  for (size_t i = 0; i < mat.n_nonzero; ++i)
+    ar(cereal::make_nvp("row_index", arma::access::rw(mat.row_indices[i])));
+  for (size_t i = 0; i < mat.n_cols + 1; ++i)
+    ar(cereal::make_nvp("col_ptr", arma::access::rw(mat.col_ptrs[i])));
 }
 
 // Add an external serialization function for Mat.
@@ -77,8 +80,9 @@ void serialize(Archive& ar, arma::Mat<eT>& mat)
     arma::access::rw(mat.vec_state) = vec_state;
   }
 
- // Directly serialize the contents of the matrix's memory.
-  ar & cereal::make_array(arma::access::rwp(mat.mem), mat.n_elem);
+  // Directly serialize the contents of the matrix's memory.
+  for (size_t i = 0; i < mat.n_elem; ++i)
+    ar(cereal::make_nvp("elem", arma::access::rw(mat.mem[i])));
 }
 
 // Add a serialization function for armadillo Cube
@@ -95,14 +99,13 @@ void serialize(Archive& ar, arma::Cube<eT>& cube)
   ar(CEREAL_NVP(n_slices));
 
   if (Archive::is_loading::value)
-  {
     cube.set_size(n_rows, n_cols, n_slices);
-  }
 
- // Directly serialize the contents of the matrix's memory.
-  ar & cereal::make_array(arma::access::rwp(cube.mem), cube.n_elem);
+  // Directly serialize the contents of the cube's memory.
+  for (size_t i = 0; i < cube.n_elem; ++i)
+    ar(cereal::make_nvp("elem", arma::access::rw(cube.mem[i])));
 }
 
 } // end namespace cereal
 
-#endif //MLPACK_CORE_ARMA_EXTEND_SERIALIZE_ARMADILLO_HPP
+#endif // MLPACK_CORE_ARMA_EXTEND_SERIALIZE_ARMADILLO_HPP
