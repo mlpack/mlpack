@@ -42,6 +42,12 @@ namespace ann /** Artificial Neural Network. */ {
  * The query, key and value are concatenated into single matrix and fed to the
  * Forward function as input.
  *
+ * The query, key and value are matrices of shapes
+ * `(embedDim * tgtSeqLen, batchSize)`, `(embedDim * srcSeqLen, batchSize)`
+ * and `(embedDim * srcSeqLen, batchSize)` respectively. The output is a matrix
+ * of shape `(embedDim * tgtSeqLen, batchSize)`. The embeddings are stored
+ * consequently.
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
