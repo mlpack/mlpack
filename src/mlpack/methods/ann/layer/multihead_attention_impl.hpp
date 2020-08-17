@@ -73,11 +73,11 @@ Reset()
       embedDim, embedDim, false, false);
 
   qBias = MatType(weights.memptr()
-      + 4 * embedDim * embedDim, 1, embedDim, false, false);
+      + 4 * embedDim * embedDim, embedDim, 1, false, false);
   kBias = MatType(weights.memptr()
-      + (4 * embedDim + 1) * embedDim, 1, embedDim, false, false);
+      + (4 * embedDim + 1) * embedDim, embedDim, 1, false, false);
   vBias = MatType(weights.memptr()
-      + (4 * embedDim + 2) * embedDim, 1, embedDim, false, false);
+      + (4 * embedDim + 2) * embedDim, embedDim, 1, false, false);
   outBias = MatType(weights.memptr()
       + (4 * embedDim + 3) * embedDim, 1, embedDim, false, false);
 }
@@ -90,28 +90,28 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   typedef typename arma::Cube<eT> CubeType;
 
-  if (input.n_rows != (tgtSeqLen + 2 * srcSeqLen) * embedDim)
+  if (input.n_rows != embedDim * (tgtSeqLen + 2 * srcSeqLen))
   {
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
   }
 
-  // shape of output : (tgtSeqLen * embedDim, batchSize).
-  output.set_size(tgtSeqLen * embedDim, input.n_cols);
+  const size_t batchSize = input.n_cols;
+
+  // shape of output : (embedDim * tgtSeqLen, batchSize).
+  output.set_size(embedDim * tgtSeqLen, batchSize);
 
   // Reshape the input, the query, and the key into a cube from a matrix.
-  // The shape of q : (tgtSeqLen, embedDim, batchSize).
-  // The shape of k : (srcSeqLen, embedDim, batchSize).
-  // The shape of v : (srcSeqLen, embedDim, batchSize).
-  CubeType q(const_cast<arma::Mat<eT>&>(input).memptr(),
-      tgtSeqLen, embedDim, input.n_cols, false, false);
-  CubeType k(const_cast<arma::Mat<eT>&>(input).memptr() +
-      tgtSeqLen * embedDim * input.n_cols,
-      srcSeqLen, embedDim, input.n_cols, false, false);
-  CubeType v(const_cast<arma::Mat<eT>&>(input).memptr() +
-      (tgtSeqLen + srcSeqLen) * embedDim * input.n_cols,
-      srcSeqLen, embedDim, input.n_cols, false, false);
-
-  const size_t batchSize = q.n_slices;
+  // The shape of q : (embedDim, tgtSeqLen, batchSize).
+  // The shape of k : (embedDim, srcSeqLen, batchSize).
+  // The shape of v : (embedDim, srcSeqLen, batchSize).
+  const CubeType q(const_cast<arma::Mat<eT>&>(input).memptr(),
+      embedDim, tgtSeqLen, batchSize, false, false);
+  const CubeType k(const_cast<arma::Mat<eT>&>(input).memptr() +
+      embedDim * tgtSeqLen * batchSize,
+      embedDim, srcSeqLen, batchSize, false, false);
+  const CubeType v(const_cast<arma::Mat<eT>&>(input).memptr() +
+      embedDim * (tgtSeqLen + srcSeqLen) * batchSize,
+      embedDim, srcSeqLen, batchSize, false, false);
 
   // qProj, kProj, and vProj are the linearly projected query, key and value
   // respectively.
@@ -121,9 +121,12 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-    qProj.slice(i) = q.slice(i) * queryWt + arma::repmat(qBias, tgtSeqLen, 1);
-    kProj.slice(i) = k.slice(i) * keyWt + arma::repmat(kBias, srcSeqLen, 1);
-    vProj.slice(i) = v.slice(i) * valueWt + arma::repmat(vBias, srcSeqLen, 1);
+    qProj.slice(i) = arma::trans(
+        queryWt * q.slice(i) + arma::repmat(qBias, 1, tgtSeqLen));
+    kProj.slice(i) = arma::trans(
+        keyWt * k.slice(i) + arma::repmat(kBias, 1, srcSeqLen));
+    vProj.slice(i) = arma::trans(
+        valueWt * v.slice(i) + arma::repmat(vBias, 1, srcSeqLen));
   }
 
   // The scaling factor sqrt(headDim) is used to prevent exploding values
@@ -180,8 +183,8 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   // The final output is the linear projection of attention output.
   for (size_t i = 0; i < batchSize; ++i)
   {
-    output.col(i) = arma::vectorise(attnOut.slice(i) * outWt
-        + arma::repmat(outBias, tgtSeqLen, 1));
+    output.col(i) = arma::vectorise(arma::trans(attnOut.slice(i) * outWt
+        + arma::repmat(outBias, tgtSeqLen, 1)));
   }
 }
 
@@ -201,18 +204,19 @@ Backward(const arma::Mat<eT>& /* input */,
   }
 
   const size_t batchSize = gy.n_cols;
-  g.set_size((tgtSeqLen + 2 * srcSeqLen) * embedDim, batchSize);
+  g.set_size(embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
 
   // Reshape the propagated gradient into a cube.
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
   // We need not split it into n heads now because this is the part when
   // output were concatenated from n heads.
-  CubeType gyTemp(const_cast<arma::Mat<eT>&>(gy).memptr(), tgtSeqLen, embedDim,
-      batchSize, true, false);
+  CubeType gyTemp(const_cast<arma::Mat<eT>&>(gy).memptr(), embedDim,
+      tgtSeqLen, batchSize, true, false);
 
-  // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
+  // The shape of gyTemp : (embedDim, tgtSeqLen, batchSize).
   // The shape of outWt : (embedDim, embedDim).
-  gyTemp = math::MultiplyCube2Mat(gyTemp, outWt, false, true);
+  // The shape of the result : (tgtSeqLen, embedDim, batchSize).
+  gyTemp = math::MultiplyCube2Mat(gyTemp, outWt, true, true);
 
   // Now since the shape of gyTemp is (tgtSeqLen, embedDim, batchSize). We will
   // split it into n heads.
@@ -231,7 +235,7 @@ Backward(const arma::Mat<eT>& /* input */,
   for (size_t i = 0; i < batchSize; ++i)
   {
     g.submat((tgtSeqLen + srcSeqLen) * embedDim, i, g.n_rows - 1, i)
-        = arma::vectorise(tmp.slice(i) * valueWt.t());
+        = arma::vectorise(arma::trans(tmp.slice(i) * valueWt));
   }
 
   // The shape of gyTemp : (tgtSeqLen, headDim, numHeads * batchSize).
@@ -257,7 +261,7 @@ Backward(const arma::Mat<eT>& /* input */,
   for (size_t i = 0; i < batchSize; ++i)
   {
     g.submat(tgtSeqLen * embedDim, i, (tgtSeqLen + srcSeqLen) * embedDim - 1, i)
-        = arma::vectorise(tmp.slice(i) * keyWt.t());
+        = arma::vectorise(arma::trans(tmp.slice(i) * keyWt));
   }
 
   // Obtain backpropagated error of the query.
@@ -272,7 +276,7 @@ Backward(const arma::Mat<eT>& /* input */,
   for (size_t i = 0; i < batchSize; ++i)
   {
     g.submat(0, i, tgtSeqLen * embedDim - 1, i)
-        = arma::vectorise(tmp.slice(i) * queryWt.t());
+        = arma::vectorise(arma::trans(tmp.slice(i) * queryWt));
   }
 }
 
@@ -287,7 +291,7 @@ Gradient(const arma::Mat<eT>& input,
   typedef typename arma::Cube<eT> CubeType;
   typedef typename arma::Mat<eT> MatType;
 
-  if (input.n_rows != (tgtSeqLen + 2 * srcSeqLen) * embedDim)
+  if (input.n_rows != embedDim * (tgtSeqLen + 2 * srcSeqLen))
   {
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
   }
@@ -297,32 +301,32 @@ Gradient(const arma::Mat<eT>& input,
     Log::Fatal << "Backpropagated error has incorrect dimensions." << std::endl;
   }
 
+  const size_t batchSize = input.n_cols;
+  const size_t wtSize = embedDim * embedDim;
+
   // The shape of gradient : (4 * embedDim * embedDim + 4 * embedDim, 1).
   gradient.set_size(arma::size(weights));
 
-  CubeType q(const_cast<MatType&>(input).memptr(),
-      tgtSeqLen, embedDim, input.n_cols, false, false);
-  CubeType k(const_cast<MatType&>(input).memptr() + q.n_elem,
-      srcSeqLen, embedDim, input.n_cols, false, false);
-  CubeType v(const_cast<MatType&>(input).memptr() + q.n_elem + k.n_elem,
-      srcSeqLen, embedDim, input.n_cols, false, false);
-
-  const size_t batchSize = q.n_slices;
-  const size_t wtSize = embedDim * embedDim;
+  const CubeType q(const_cast<MatType&>(input).memptr(),
+      embedDim, tgtSeqLen, batchSize, false, false);
+  const CubeType k(const_cast<MatType&>(input).memptr() + q.n_elem,
+      embedDim, srcSeqLen, batchSize, false, false);
+  const CubeType v(const_cast<MatType&>(input).memptr() + q.n_elem + k.n_elem,
+      embedDim, srcSeqLen, batchSize, false, false);
 
   // Reshape the propagated error into a cube.
-  // The shape of errorTemp : (tgtSeqLen, embedDim, batchSize).
-  CubeType errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(), tgtSeqLen,
-      embedDim, batchSize, true, false);
+  // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
+  CubeType errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(), embedDim,
+      tgtSeqLen, batchSize, true, false);
 
   // Gradient wrt. outBias, i.e. dL/d(outBias).
   gradient.rows(4 * wtSize + 3 * embedDim, 4 * wtSize + 4 * embedDim - 1)
-      = arma::vectorise(arma::sum(arma::sum(errorTemp, 2), 0));
+      = arma::vectorise(arma::sum(arma::sum(errorTemp, 2), 1));
 
   // The shape of attnOut : (tgtSeqLen, embedDim, batchSize).
-  // The shape of errorTemp : (tgtSeqLen, embedDim, batchSize).
+  // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
   // The shape of gyTemp : (embedDim, embedDim, batchSize).
-  CubeType gyTemp = math::MultiplyCube2Cube(attnOut, errorTemp, true, false);
+  CubeType gyTemp = math::MultiplyCube2Cube(attnOut, errorTemp, true, true);
 
   // Gradient wrt. outWt, i.e. dL/d(outWt). We will take sum of gyTemp along
   // the slices and vectorise the output.
@@ -331,9 +335,9 @@ Gradient(const arma::Mat<eT>& input,
 
   // Partial derivative wrt. attnOut.
   // The shape of outWt : (embedDim, embedDim).
-  // The shape of errorTemp : (tgtSeqLen, embedDim, batchSize).
+  // The shape of errorTemp : (embedDim, tgtSeqLen, batchSize).
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
-  gyTemp = math::MultiplyCube2Mat(errorTemp, outWt, false, true);
+  gyTemp = math::MultiplyCube2Mat(errorTemp, outWt, true, true);
 
   // Now we will split it into n heads i.e. reshape it into a cube of shape
   // (tgtSeqLen, headDim, numHeads * batchSize).
@@ -356,7 +360,7 @@ Gradient(const arma::Mat<eT>& input,
   // Shape of v : (srcSeqLen, embedDim, batchSize).
   // Shape of errorTemp : (srcSeqLen, embedDim, bathSize).
   // The new shape of errorTemp : (embedDim, embedDim, batchSize).
-  errorTemp = math::MultiplyCube2Cube(v, errorTemp, true, false);
+  errorTemp = math::MultiplyCube2Cube(errorTemp, v, true, true);
 
   // Gradient wrt. valueWt, i.e. dL/d(valueWt). We will take summation over all
   // batches of errorTemp.
@@ -390,10 +394,10 @@ Gradient(const arma::Mat<eT>& input,
   gradient.rows(4 * wtSize + embedDim, 4 * wtSize + 2 * embedDim - 1)
       = arma::vectorise(arma::sum(arma::sum(gyTemp, 2), 0));
 
-  // The shape of k : (srcSeqLen, embedDim, batchSize).
+  // The shape of k : (embedDim, srcSeqLen, batchSize).
   // The shape of gyTemp : (srcSeqLen, embedDim, batchSize).
   // The shape of dkeyWt : (embedDim, embedDim, batchSize).
-  gyTemp = math::MultiplyCube2Cube(k, gyTemp, true, false);
+  gyTemp = math::MultiplyCube2Cube(gyTemp, k, true, true);
 
   // Gradient wrt. keyWt, i.e. dL/d(keyWt). We will take summation over all the
   // batches of dkeyWt.
@@ -414,9 +418,9 @@ Gradient(const arma::Mat<eT>& input,
       = arma::vectorise(arma::sum(arma::sum(gyTemp, 2), 0));
 
   // The shape of gyTemp : (tgtSeqLen, embedDim, batchSize).
-  // The shape of q : (tgtSeqLen, embedDim, batchSize).
+  // The shape of q : (embedDim, tgtSeqLen, batchSize).
   // The shape of gyTemp : (embedDim, embedDim, batchSize).
-  gyTemp = math::MultiplyCube2Cube(q, gyTemp, true, false);
+  gyTemp = math::MultiplyCube2Cube(gyTemp, q, true, true);
 
   // Gradient wrt. queryWt, i.e. dL/d(queryBias). We will take summation over
   // all the batches of gyTemp.
