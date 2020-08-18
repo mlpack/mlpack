@@ -666,19 +666,9 @@ void HRectBound<MetricType, ElemType>::serialize(Archive& ar)
 {
   uint8_t version = 1;
   ar & CEREAL_NVP(version);
-  ar & CEREAL_NVP(dim);
-
-  // Allocate memory for the bounds, if necessary.
-  if (Archive::is_loading::value)
-  {
-    if (bounds)
-      delete[] bounds;
-    bounds = new math::RangeType<ElemType>[dim];
-  }
 
   // We can't serialize a raw array directly, so wrap it.
-  auto boundsArray = cereal::make_array(bounds, dim);
-  ar & CEREAL_NVP(boundsArray);
+  ar & cereal::make_array(bounds, dim);
   ar & CEREAL_NVP(minWidth);
   ar & CEREAL_NVP(metric);
 }
