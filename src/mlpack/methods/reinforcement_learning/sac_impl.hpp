@@ -294,7 +294,7 @@ void SAC<
     noise = arma::clamp(noise, -0.25, 0.25);
     outputAction = outputAction + noise;
   }
-  action.action = arma::conv_to<std::vector<double>>::from(outputAction); 
+  action.action = arma::conv_to<std::vector<double>>::from(outputAction);
 }
 
 template <
