@@ -20,11 +20,25 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
+PositionalEncoding<InputDataType, OutputDataType>::PositionalEncoding() :
+    embedDim(0),
+    maxSequenceLength(0)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
 PositionalEncoding<InputDataType, OutputDataType>::PositionalEncoding(
     const size_t embedDim,
     const size_t maxSequenceLength) :
     embedDim(embedDim),
     maxSequenceLength(maxSequenceLength)
+{
+  InitPositionalEncoding();
+}
+
+template<typename InputDataType, typename OutputDataType>
+void PositionalEncoding<InputDataType, OutputDataType>::InitPositionalEncoding()
 {
   positionalEncoding.set_size(maxSequenceLength, embedDim);
   const InputDataType position = arma::regspace(0, 1, maxSequenceLength - 1);
@@ -36,7 +50,7 @@ PositionalEncoding<InputDataType, OutputDataType>::PositionalEncoding(
     positionalEncoding.col(2 * i) = arma::sin(theta.col(i));
     positionalEncoding.col(2 * i + 1) = arma::cos(theta.col(i));
   }
-  positionalEncoding = arma::vectorise(positionalEncoding);
+  positionalEncoding = arma::vectorise(positionalEncoding.t());
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -44,7 +58,7 @@ template<typename eT>
 void PositionalEncoding<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  if (input.n_rows != maxSequenceLength * embedDim)
+  if (input.n_rows != embedDim * maxSequenceLength)
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
 
   output = input.each_col() + positionalEncoding;
@@ -65,6 +79,9 @@ void PositionalEncoding<InputDataType, OutputDataType>::serialize(
 {
   ar & BOOST_SERIALIZATION_NVP(embedDim);
   ar & BOOST_SERIALIZATION_NVP(maxSequenceLength);
+
+  if (Archive::is_loading::value)
+    InitPositionalEncoding();
 }
 
 } // namespace ann

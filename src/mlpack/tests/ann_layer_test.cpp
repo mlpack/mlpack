@@ -4306,8 +4306,8 @@ TEST_CASE("SimplePositionalEncodingTest", "[ANNLayerTest]")
   const size_t embedDim = 4;
   const size_t batchSize = 2;
 
-  arma::mat input = arma::randu(seqLength * embedDim, batchSize);
-  arma::mat gy = 0.01 * arma::randu(seqLength * embedDim, batchSize);
+  arma::mat input = arma::randu(embedDim * seqLength, batchSize);
+  arma::mat gy = 0.01 * arma::randu(embedDim * seqLength, batchSize);
   arma::mat output, g;
 
   PositionalEncoding<> module(embedDim, seqLength);
@@ -4332,7 +4332,7 @@ TEST_CASE("JacobianPositionalEncodingTest", "[ANNLayerTest]")
     const size_t embedDim = 4;
     const size_t seqLength = math::RandInt(5, 10);
     arma::mat input;
-    input.set_size(seqLength * embedDim, 1);
+    input.set_size(embedDim * seqLength, 1);
 
     PositionalEncoding<> module(embedDim, seqLength);
 

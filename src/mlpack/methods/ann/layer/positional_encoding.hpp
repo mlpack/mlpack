@@ -21,6 +21,10 @@ namespace ann /** Artificial Neural Network. */ {
  * Positional Encoding injects some information about the relative or absolute
  * position of the tokens in the sequence.
  *
+ * The input and the output have the same shape:
+ * `(embedDim * maxSequenceLength, batchSize)`. The embeddings are stored
+ * consequently.
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
@@ -34,13 +38,18 @@ class PositionalEncoding
 {
  public:
   /**
+   * Create PositionalEncoding object.
+   */
+  PositionalEncoding();
+
+  /**
    * Create the PositionalEncoding layer object using the specified parameters.
    *
    * @param embedDim The length of the embedding vector.
    * @param maxSequenceLength Number of tokens in each sequence.
    */
-  PositionalEncoding(const size_t embedDim = 64,
-                     const size_t maxSequenceLength = 5000);
+  PositionalEncoding(const size_t embedDim,
+                     const size_t maxSequenceLength);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -91,6 +100,11 @@ class PositionalEncoding
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
+  /**
+   * Initialize positional encodings for further use.
+   */
+  void InitPositionalEncoding();
+
   //! Locally-stored embedding dimension.
   size_t embedDim;
 
