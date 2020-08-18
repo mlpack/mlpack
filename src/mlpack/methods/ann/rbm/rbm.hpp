@@ -386,32 +386,7 @@ class RBM
    */
   template<typename Policy = PolicyType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-  void Forward(const DataType&& input, DataType&& output);
-
-  //! The value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
-  //! Get the input parameter.
-  arma::mat const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  arma::mat& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  arma::mat const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  arma::mat& OutputParameter() { return outputParameter; }
-
-  //! Get the gradient.
-  arma::mat const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  arma::mat& Gradient() { return gradient; }
-
-  //! Get the delta.
-  arma::mat const& Delta() const { return delta; }
-  //! Modify the delta.
-  arma::mat& Delta() { return delta; }
+  void Forward(const DataType& input, DataType& output);
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }

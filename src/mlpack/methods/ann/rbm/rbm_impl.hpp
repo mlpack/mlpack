@@ -360,7 +360,13 @@ Forward(
     const DataType& input,
     DataType& output)
 {
-  HiddenMean(std::move(input), std::move(output));
+  output = arma::zeros(hiddenSize + poolSize * hiddenSize,
+                        input.n_cols);
+  for (size_t i = 0; i < trainData.n_cols; ++i)
+  { arma::mat temp;
+    HiddenMean(output.col(i), temp);
+    output.col(i) = temp;
+  }
 }
 
 template<
