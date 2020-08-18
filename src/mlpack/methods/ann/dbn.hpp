@@ -189,6 +189,9 @@ class DBN
    *
    * @param network Desired source network.
    */
+  //! Locally-stored model modules.
+  std::vector<RBM<GaussianInitialization> > network;
+
   void Swap(FFN& network);
 
   arma::mat trainData;
