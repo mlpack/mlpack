@@ -140,20 +140,7 @@ class DBN
   //! Modify the network model.  Be careful!  If you change the structure of the
   //! network or parameters for layers, its state may become invalid, so be sure
   //! to call ResetParameters() afterwards.
-  std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
-
-  //! Return the number of separable functions (the number of predictor points).
-  size_t NumFunctions() const { return numFunctions; }
-
-  //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return parameter; }
-  //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return parameter; }
-
-  //! Get the matrix of responses to the input data points.
-  const arma::mat& Responses() const { return responses; }
-  //! Modify the matrix of responses to the input data points.
-  arma::mat& Responses() { return responses; }
+  std::vector<RBM<GaussianInitialization> >& Model() { return network; }
 
   //! Get the matrix of data points (predictors).
   const arma::mat& Predictors() const { return predictors; }
@@ -202,7 +189,8 @@ class DBN
 
   bool increaseToCDK;
 
-  bool xavierInit
+  bool xavierInit;
+  arma::mat prdictors;
 }; // class DBN
 
 } // namespace ann

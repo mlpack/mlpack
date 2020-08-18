@@ -41,14 +41,6 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void DBN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
     arma::mat predictors, arma::mat responses)
 {
-  numFunctions = responses.n_cols;
-  this->predictors = std::move(predictors);
-  this->responses = std::move(responses);
-  this->deterministic = false;
-  ResetDeterministic();
-
-  if (!reset)
-    ResetParameters();
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -56,7 +48,6 @@ template<typename OutputLayerType, typename InitializationRuleType,
 template<typename OptimizerType, typename... CallbackTypes>
 double DBN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       arma::mat predictors,
-      arma::mat responses,
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks)
 {
@@ -76,7 +67,6 @@ template<typename OutputLayerType, typename InitializationRuleType,
 template<typename OptimizerType, typename... CallbackTypes>
 double DBN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::mat predictors,
-    arma::mat responses,
     CallbackTypes&&... callbacks)
 {
 }
