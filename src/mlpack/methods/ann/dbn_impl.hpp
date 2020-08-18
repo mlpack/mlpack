@@ -60,6 +60,15 @@ double DBN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks)
 {
+  arma::mat temp = predictors;
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    OptimizerType opt = optimizer;
+    network[i].train(temp, opt);
+    arma::mat out;
+    network.HiddenMean(temp, out);
+    temp = out;
+  }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
