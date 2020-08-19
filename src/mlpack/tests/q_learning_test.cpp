@@ -22,8 +22,9 @@
 #include <mlpack/methods/reinforcement_learning/sac.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/env_type.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
@@ -515,7 +516,7 @@ BOOST_AUTO_TEST_CASE(PendulumWithSAC)
   for (size_t trial = 0; trial < 3; ++trial)
   {
     Log::Debug << "Trial number: " << trial << std::endl;
-    // Set up the policy and replay method.
+    // Set up the replay method.
     RandomReplay<Pendulum> replayMethod(32, 10000);
 
     TrainingConfig config;
@@ -545,6 +546,54 @@ BOOST_AUTO_TEST_CASE(PendulumWithSAC)
       break;
   }
   BOOST_REQUIRE(converged);
+}
+
+//! A test to ensure SAC works with multiple actions in action space.
+BOOST_AUTO_TEST_CASE(SACForMultipleActions)
+{
+  ContinuousActionEnv::State::dimension = 3;
+  ContinuousActionEnv::Action::size = 4;
+
+  FFN<EmptyLoss<>, GaussianInitialization>
+      policyNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
+  policyNetwork.Add(new Linear<>(ContinuousActionEnv::State::dimension, 128));
+  policyNetwork.Add(new ReLULayer<>());
+  policyNetwork.Add(new Linear<>(128, ContinuousActionEnv::Action::size));
+  policyNetwork.Add(new TanHLayer<>());
+
+  FFN<EmptyLoss<>, GaussianInitialization>
+      qNetwork(EmptyLoss<>(), GaussianInitialization(0, 0.1));
+  qNetwork.Add(new Linear<>(ContinuousActionEnv::State::dimension +
+                            ContinuousActionEnv::Action::size, 128));
+  qNetwork.Add(new ReLULayer<>());
+  qNetwork.Add(new Linear<>(128, 1));
+
+  // Set up the replay method.
+  RandomReplay<ContinuousActionEnv> replayMethod(32, 10000);
+
+  TrainingConfig config;
+  config.StepSize() = 0.001;
+  config.TargetNetworkSyncInterval() = 1;
+  config.UpdateInterval() = 3;
+
+  // Set up Soft actor-critic agent.
+  SAC<ContinuousActionEnv, decltype(qNetwork), decltype(policyNetwork),
+      AdamUpdate>
+      agent(config, qNetwork, policyNetwork, replayMethod);
+
+  agent.State().Data() = arma::randu<arma::colvec>
+      (ContinuousActionEnv::State::dimension, 1);
+  agent.SelectAction();
+
+  // Test to check if the action dimension given by the agent is correct.
+  BOOST_REQUIRE_EQUAL(agent.Action().action.size(),
+                      ContinuousActionEnv::Action::size);
+
+  replayMethod.Store(agent.State(), agent.Action(), 1, agent.State(), 1, 0.99);
+  agent.TotalSteps()++;
+  agent.Update();
+  // If the agent is able to reach till this point of the test, it is assured
+  // that the agent can handle multiple actions in continuous space.
 }
 
 BOOST_AUTO_TEST_SUITE_END();
