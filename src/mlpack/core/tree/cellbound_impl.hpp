@@ -985,16 +985,7 @@ void CellBound<MetricType, ElemType>::serialize(Archive& ar)
   // Allocate memory for the bounds, if necessary.
   uint8_t version = 1;
   ar & CEREAL_NVP(version);
-
-  if (Archive::is_loading::value)
-  {
-    if (bounds)
-      delete[] bounds;
-    bounds = new math::RangeType<ElemType>[dim];
-  }
-
-  auto boundsArray = cereal::make_array(bounds, dim);
-  ar & CEREAL_NVP(boundsArray);
+  ar & cereal::make_array(bounds, dim);
   ar & CEREAL_NVP(minWidth);
   ar & CEREAL_NVP(loBound);
   ar & CEREAL_NVP(hiBound);
