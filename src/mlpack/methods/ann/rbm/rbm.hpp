@@ -70,10 +70,8 @@ class RBM
       const bool persistence = false);
 
   /**
-   * Initialize all the parameters of the network using initializeRule
-   * when traindata is not passed.
+   * Initialize all the parameters of the network using initializeRule.
    *
-   * @param predictors Training data to be used.
    * @param initializeRule InitializationRule object for initializing the
    *        network parameter.
    * @param visibleSize Number of visible neurons.
@@ -132,6 +130,7 @@ class RBM
    * optimization. If this is not what you want, then you should access the
    * parameters vector directly with Parameters() and modify it as desired.
    *
+   * @param trainData Training data to be used.
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback functions.
    * @param optimizer Optimizer type.
@@ -141,10 +140,9 @@ class RBM
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackType>
-  double Train(arma::Mat<ElemType>& predictors,
+  double Train(arma::Mat<ElemType>& trainData,
                OptimizerType& optimizer,
                CallbackType&&... callbacks);
-
   /**
    * Evaluate the RBM network with the given parameters.
    * The function is needed for monitoring the progress of the network.
@@ -299,6 +297,9 @@ class RBM
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
   HiddenMean(const InputType& input, DataType& output);
 
+  template<typename Policy = PolicyType, typename InputType = DataType>
+  typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
+  Forward(const InputType& input, DataType& output);
   /**
    * The function calculates the mean of the distribution P(h|v),
    * where mean is given by:
@@ -376,17 +377,6 @@ class RBM
    * optimizer.
    */
   void Shuffle();
-
-  /**
-   * Ordinary feed forward pass of a neural network, evaluating the function
-   * f(x) by propagating the activity forward through f.
-   *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
-   */
-  template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-  void Forward(const DataType& input, DataType& output);
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }

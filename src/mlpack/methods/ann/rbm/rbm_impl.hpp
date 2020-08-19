@@ -69,6 +69,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::RBM(
     const ElemType slabPenalty,
     const ElemType radius,
     const bool persistence) :
+    predictors(std::move(predictors)),
     initializeRule(initializeRule),
     visibleSize(visibleSize),
     hiddenSize(hiddenSize),
@@ -142,13 +143,19 @@ template<
 >
 template<typename OptimizerType, typename... CallbackType>
 double RBM<InitializationRuleType, DataType, PolicyType>::Train(
-    arma::Mat<ElemType> predictors,
+    arma::Mat<ElemType>& trainData,
     OptimizerType& optimizer,
     CallbackType&&... callbacks)
 {
-  predictors = predictors;
-  numFunctions = predictors.n_cols;
-  return Train(optimizer, callbacks...);
+  predictors = trainData;
+  numFunctions = this->predictors.n_cols;
+
+  if (!reset)
+  {
+    Reset();
+  }
+
+  return optimizer.Optimize(*this, parameter, callbacks...);
 }
 
 template<
@@ -279,6 +286,26 @@ template<
   typename DataType,
   typename PolicyType
 >
+template<typename Policy, typename InputType>
+typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
+RBM<InitializationRuleType, DataType, PolicyType>::Forward(
+    const InputType& input,
+    DataType& output)
+{  
+  output = arma::zeros(hiddenSize + poolSize * hiddenSize,
+                        input.n_cols);
+  for (size_t i = 0; i < input.n_cols; ++i)
+  { arma::mat temp;
+    HiddenMean(output.col(i), temp);
+    output.col(i) = temp;
+  }
+}
+
+template<
+  typename InitializationRuleType,
+  typename DataType,
+  typename PolicyType
+>
 void RBM<InitializationRuleType, DataType, PolicyType>::Gibbs(
     const arma::Mat<ElemType>& input,
     arma::Mat<ElemType>& output,
@@ -346,27 +373,6 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Shuffle()
 {
   predictors = predictors.cols(arma::shuffle(arma::linspace<arma::uvec>(0,
       predictors.n_cols - 1, predictors.n_cols)));
-}
-
-template<
-  typename InitializationRuleType,
-  typename DataType,
-  typename PolicyType
->
-template<typename Policy>
-typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-double RBM<InitializationRuleType, DataType, PolicyType>::
-Forward(
-    const DataType& input,
-    DataType& output)
-{
-  output = arma::zeros(hiddenSize + poolSize * hiddenSize,
-                        input.n_cols);
-  for (size_t i = 0; i < trainData.n_cols; ++i)
-  { arma::mat temp;
-    HiddenMean(output.col(i), temp);
-    output.col(i) = temp;
-  }
 }
 
 template<

@@ -57,7 +57,7 @@ double DBN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     OptimizerType opt = optimizer;
     network[i].train(temp, opt);
     arma::mat out;
-    network.HiddenMean(temp, out);
+    network[i].forward(temp, out);
     temp = out;
   }
 }
