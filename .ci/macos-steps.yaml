@@ -14,12 +14,13 @@ steps:
     set -e
     sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
     unset BOOST_ROOT
-    if [ "$(binding)" == "python" ]; then
-      pip install --upgrade pip'
-      pip install cython numpy pandas zipp configparser
-    fi
     brew install openblas armadillo boost
 
+    if [ "$(binding)" == "python" ]; then
+      pip install --upgrade pip
+      pip install cython numpy pandas zipp configparser
+    fi
+ 
     if [ "a$(julia.version)" != "a" ]; then
       brew cask install julia
     fi
