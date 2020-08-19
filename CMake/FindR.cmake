@@ -4,17 +4,9 @@ if (R_FOUND)
 endif()
 
 # Find the R and Rscript program.
-find_program ( 
-    RSCRIPT_EXECUTABLE
-    NAMES Rscript Rscript.exe
-    DOC "Path to the Rscript command interpreter"
-)
+find_program (RSCRIPT_EXECUTABLE NAMES Rscript Rscript.exe)
 
-find_program (
-    R_EXECUTABLE
-    NAMES R R.exe
-    DOC "Path to the R command interpreter"
-)
+find_program (R_EXECUTABLE NAMES R R.exe)
 
 # Get the R version.
 if (R_EXECUTABLE AND RSCRIPT_EXECUTABLE)
@@ -36,3 +28,5 @@ find_package_handle_standard_args(
     VERSION_VAR R_VERSION_STRING
     FAIL_MESSAGE "R not found"
 )
+
+mark_as_advanced(RSCRIPT_EXECUTABLE R_EXECUTABLE)
