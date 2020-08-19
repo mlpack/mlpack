@@ -34,7 +34,7 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  "\<param_name\>" = IO_GetParam\<Type\>("paramName")
+   *     "<param_name>" = IO_GetParam<Type>("param_name")
    *
    */
 
@@ -55,7 +55,7 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  "\<param_name\>" = IO_GetParam\<Type\>("paramName")
+   *     "<param_name>" = IO_GetParam<Type>("param_name")
    *
    */
 
@@ -75,7 +75,7 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  "\<param_name\>" = IO_GetParam\<Type\>("paramName")
+   *     "<param_name>" = IO_GetParam<Type>("param_name")
    *
    */
 
@@ -95,7 +95,7 @@ void PrintOutputProcessing(
   /**
    * This gives us code like:
    *
-   *  "\<param_name\>" = \<param_name\>
+   *     "<param_name>" = <param_name>
    *
    */
 

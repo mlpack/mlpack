@@ -268,7 +268,6 @@ if (BUILD_R_BINDINGS)
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}"
   )
 
-  add_dependencies(r_build r_copy)
   add_dependencies(R r_build)
 endif ()
 
@@ -332,6 +331,7 @@ if (BUILD_R_BINDINGS)
           -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/bin/generate_r_${name}
           -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}.R
           -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
+  add_dependencies(generate_r_${name} r_copy)
   add_dependencies(r_build generate_r_${name})
 endif()
 endmacro()

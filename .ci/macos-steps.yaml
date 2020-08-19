@@ -21,8 +21,10 @@ steps:
       brew cask install julia
     fi
 
-    if [ "a$(R.version)" != "a" ]; then
-      brew install r
+    if [ "$(binding)" == "R" ]; then
+      if [ "a$(R.version)" != "a" ]; then
+        brew install r
+      fi
       Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'), repos = 'http://cran.us.r-project.org')"
     fi
 

@@ -36,9 +36,9 @@ void PrintInputProcessing(
     /**
      * This gives us code like:
      *
-     *  if (!identical(\<param_name\>, NA)) {
-     *     IO_SetParam\<type\>("\<param_name\>", \<param_name\>)
-     *  }
+     *     if (!identical(<param_name>, NA)) {
+     *        IO_SetParam<type>("<param_name>", <param_name>)
+     *     }
      */
     MLPACK_COUT_STREAM << "  if (!identical(" << d.name;
     if (d.cppType == "bool")
@@ -58,7 +58,7 @@ void PrintInputProcessing(
     /**
      * This gives us code like:
      *
-     *     IO_SetParam\<type\>("\<param_name\>", \<param_name\>)
+     *     IO_SetParam<type>("<param_name>", <param_name>)
      */
     MLPACK_COUT_STREAM << "  IO_SetParam" << GetType<T>(d) << "(\""
               << d.name << "\", " << d.name << ")" << std::endl;
@@ -79,9 +79,9 @@ void PrintInputProcessing(
     /**
      * This gives us code like:
      *
-     *  if (!identical(\<param_name\>, NA)) {
-     *     IO_SetParam\<type\>("\<param_name\>", to_matrix(\<param_name\>))
-     *  }
+     *     if (!identical(<param_name>, NA)) {
+     *        IO_SetParam<type>("<param_name>", to_matrix(<param_name>))
+     *     }
      */
     MLPACK_COUT_STREAM << "  if (!identical(" << d.name << ", NA)) {"
         << std::endl;
@@ -94,7 +94,7 @@ void PrintInputProcessing(
     /**
      * This gives us code like:
      *
-     *     IO_SetParam\<type\>("\<param_name\>", to_matrix(\<param_name\>))
+     *     IO_SetParam<type>("<param_name>", to_matrix(<param_name>))
      */
     MLPACK_COUT_STREAM << "  IO_SetParam" << GetType<T>(d) << "(\""
         << d.name << "\", to_matrix(" << d.name << "))" << std::endl;
@@ -116,11 +116,11 @@ void PrintInputProcessing(
     /**
      * This gives us code like:
      *
-     *  if (!identical(\<param_name\>, NA)) {
-     *     \<param_name\> = to_matrix_with_info(\<param_name\>)
-     *     IO_SetParam\<type\>("\<param_name\>", \<param_name\>$info,
-     *                         \<param_name\>$data)
-     *  }
+     *     if (!identical(<param_name>, NA)) {
+     *        <param_name> = to_matrix_with_info(<param_name>)
+     *        IO_SetParam<type>("<param_name>", <param_name>$info,
+     *                            <param_name>$data)
+     *     }
      */
     MLPACK_COUT_STREAM << "  if (!identical(" << d.name << ", NA)) {"
         << std::endl;
@@ -136,9 +136,9 @@ void PrintInputProcessing(
     /**
      * This gives us code like:
      *
-     *     \<param_name\> = to_matrix_with_info(\<param_name\>)
-     *     IO_SetParam\<type\>("\<param_name\>", \<param_name\>$info,
-     *                         \<param_name\>$data)
+     *     <param_name> = to_matrix_with_info(<param_name>)
+     *     IO_SetParam<type>("<param_name>", <param_name>$info,
+     *                         <param_name>$data)
      */
     MLPACK_COUT_STREAM << "  " << d.name << " <- to_matrix_with_info("
         << d.name << ")" << std::endl;
@@ -163,9 +163,9 @@ void PrintInputProcessing(
     /**
      * This gives us code like:
      *
-     *  if (!identical(\<param_name\>, NA)) {
-     *     IO_SetParam\<ModelType\>Ptr("\<param_name\>", \<param_name\>)
-     *  }
+     *     if (!identical(<param_name>, NA)) {
+     *        IO_SetParam<ModelType>Ptr("<param_name>", <param_name>)
+     *     }
      */
     MLPACK_COUT_STREAM << "  if (!identical(" << d.name << ", NA)) {"
         << std::endl;
@@ -178,7 +178,7 @@ void PrintInputProcessing(
     /**
      * This gives us code like:
      *
-     *     IO_SetParam\<ModelType\>Ptr("\<param_name\>", \<param_name\>)
+     *     IO_SetParam<ModelType>Ptr("<param_name>", <param_name>)
      */
     MLPACK_COUT_STREAM << "  IO_SetParam" << util::StripType(d.cppType)
         << "Ptr(\"" << d.name << "\", " << d.name << ")" << std::endl;
