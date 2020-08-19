@@ -1146,7 +1146,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
   {
     std::ofstream ofs("test-hmm-save.xml");
     cereal::XMLOutputArchive ar(ofs);
-    ar << CEREAL_NVP(hmm);
+    ar << cereal::make_nvp("hmm", hmm);
   }
 
   // Load the HMM.
@@ -1154,7 +1154,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
   {
     std::ifstream ifs("test-hmm-save.xml");
     cereal::XMLInputArchive ar(ifs);
-    ar >> CEREAL_NVP(hmm2);
+    ar >> cereal::make_nvp("hmm", hmm2);
   }
 
   // Remove clutter.
