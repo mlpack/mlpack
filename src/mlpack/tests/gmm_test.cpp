@@ -532,7 +532,7 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
   {
     std::ifstream ifs("test-gmm-save.xml");
     cereal::XMLInputArchive ar(ifs);
-    ar >> CEREAL_NVP(gmm2);
+    ar >> cereal::make_nvp("gmm", gmm2);
   }
 
   // Remove clutter.
