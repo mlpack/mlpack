@@ -55,20 +55,12 @@ void OneHotEncoding(const arma::Mat<eT>& input,
  *
  * @param input Input dataset to be encoded.
  * @param output Encoded matrix.
- * @param datasetInfo DatasetInfod object that has information about data.
+ * @param datasetInfo DatasetInfo object that has information about data.
  */
 template<typename eT>
 void OneHotEncoding(const arma::Mat<eT>& input,
                     arma::Mat<eT>& output,
                     const data::DatasetInfo& datasetInfo);
-
-/**
- * Returns the count of unique categorical values in a row.
- * 
- * @param labelsIn Input labels of arbitrary datatype.
- */
-template<typename RowType>
-size_t numofMapping(const RowType& labelsIn);
 
 } // namespace data
 } // namespace mlpack

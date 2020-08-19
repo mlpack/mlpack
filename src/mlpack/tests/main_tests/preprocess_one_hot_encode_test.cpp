@@ -78,7 +78,7 @@ TEST_CASE_METHOD(
 
   SetInputParam("input", dataset);
   SetInputParam<vector<int>>("dimensions", {1, 3});
-  // error since dimesnions are bigger that matrix
+  // This will throw an error since dimensions are bigger than the matrix.
   Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -97,7 +97,6 @@ TEST_CASE_METHOD(
 
   SetInputParam("input", dataset);
   SetInputParam<vector<int>>("dimensions", {});
-  // error since dimesnions are bigger that matrix
   mlpackMain();
 
   arma::mat output = IO::GetParam<arma::mat>("output");
@@ -138,7 +137,6 @@ TEST_CASE_METHOD(
 
   SetInputParam("input", dataset);
   SetInputParam<vector<int>>("dimensions", {-10000});
-  // error since dimesnions are bigger that matrix
   Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
@@ -152,7 +150,6 @@ TEST_CASE_METHOD(
 
   SetInputParam("input", dataset);
   SetInputParam<vector<int>>("dimensions", {});
-  // error since dimesnions are bigger that matrix
   mlpackMain();
 
   arma::mat output = IO::GetParam<arma::mat>("output");

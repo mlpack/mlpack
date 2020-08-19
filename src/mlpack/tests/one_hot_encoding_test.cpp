@@ -206,6 +206,11 @@ TEST_CASE("OneHotEncodingDatasetinfoTest", "[OneHotEncodingTest]")
   REQUIRE(output(0, 6) == 13);
   REQUIRE(output(1, 6) == 14);
   REQUIRE(output(5, 6) == 1);
+  REQUIRE(output(3, 0) == 0);
+  REQUIRE(output(4, 0) == 0);
+  REQUIRE(output(3, 0) == 0);
+  REQUIRE(output(4, 0) == 0);
+  REQUIRE(output(5, 0) == 0);
 
   remove("test.csv");
 }
