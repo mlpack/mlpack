@@ -95,6 +95,11 @@ class QLearning
   void TrainAgent();
 
   /**
+   * Trains the DQN agent of categorical type.
+   */
+  void TrainCategoricalAgent();
+
+  /**
    * Select an action, given an agent.
    */
   void SelectAction();

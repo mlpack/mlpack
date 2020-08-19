@@ -123,7 +123,7 @@ class CartPole
            const double tau = 0.02,
            const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
            const double xThreshold = 2.4,
-           const double doneReward = 0.0) :
+           const double doneReward = 1.0) :
       maxSteps(maxSteps),
       gravity(gravity),
       massCart(massCart),
@@ -177,8 +177,6 @@ class CartPole
     // Do not reward agent if it failed.
     if (done && maxSteps != 0 && stepsPerformed >= maxSteps)
       return doneReward;
-    else if (done)
-      return 0;
 
     /**
      * When done is false, it means that the cartpole has fallen down.
