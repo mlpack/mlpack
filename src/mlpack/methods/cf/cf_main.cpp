@@ -41,13 +41,17 @@ using namespace mlpack::svd;
 using namespace mlpack::util;
 using namespace std;
 
-// Document program.
-PROGRAM_INFO("Collaborative Filtering",
-    // Short description.
+// Program Name.
+BINDING_NAME("Collaborative Filtering");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of several collaborative filtering (CF) techniques for "
     "recommender systems.  This can be used to train a new CF model, or use an"
-    " existing CF model to compute recommendations.",
-    // Long description.
+    " existing CF model to compute recommendations.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs collaborative "
     "filtering (CF) on the given dataset. Given a list of user, item and "
     "preferences (the " + PRINT_PARAM_STRING("training") + " parameter), "
@@ -111,8 +115,10 @@ PROGRAM_INFO("Collaborative Filtering",
     " - 'z_score'  -- Z-Score Normalization\n"
     "\n"
     "A trained model may be saved to with the " +
-    PRINT_PARAM_STRING("output_model") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output_model") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "To train a CF model on a dataset " + PRINT_DATASET("training_set") + " "
     "using NMF for decomposition and saving the trained model to " +
     PRINT_MODEL("model") + ", one could call: "
@@ -126,20 +132,23 @@ PROGRAM_INFO("Collaborative Filtering",
     "call "
     "\n\n" +
     PRINT_CALL("cf", "input_model", "model", "query", "users",
-        "recommendations", 5, "output", "recommendations"),
-    SEE_ALSO("Collaborative filtering tutorial", "@doxygen/cftutorial.html"),
-    SEE_ALSO("Alternating Matrix Factorization tutorial",
-        "@doxygen/amftutorial.html"),
-    SEE_ALSO("Collaborative Filtering on Wikipedia",
-        "https://en.wikipedia.org/wiki/Collaborative_filtering"),
-    SEE_ALSO("Matrix factorization on Wikipedia",
+        "recommendations", 5, "output", "recommendations"));
+
+// See also...
+BINDING_SEE_ALSO("Collaborative filtering tutorial",
+        "@doxygen/cftutorial.html");
+BINDING_SEE_ALSO("Alternating Matrix Factorization tutorial",
+        "@doxygen/amftutorial.html");
+BINDING_SEE_ALSO("Collaborative Filtering on Wikipedia",
+        "https://en.wikipedia.org/wiki/Collaborative_filtering");
+BINDING_SEE_ALSO("Matrix factorization on Wikipedia",
         "https://en.wikipedia.org/wiki/Matrix_factorization_"
-        "(recommender_systems)"),
-    SEE_ALSO("Matrix factorization techniques for recommender systems (pdf)",
-        "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.441.3234"
-        "&rep=rep1&type=pdf"),
-    SEE_ALSO("mlpack::cf::CFType class documentation",
-        "@doxygen/classmlpack_1_1cf_1_1CFType.html"));
+        "(recommender_systems)");
+BINDING_SEE_ALSO("Matrix factorization techniques for recommender systems"
+        " (pdf)", "http://citeseerx.ist.psu.edu/viewdoc/download?doi="
+        "10.1.1.441.3234&rep=rep1&type=pdf");
+BINDING_SEE_ALSO("mlpack::cf::CFType class documentation",
+        "@doxygen/classmlpack_1_1cf_1_1CFType.html");
 
 // Parameters for training a model.
 PARAM_MATRIX_IN("training", "Input dataset to perform CF on.", "t");

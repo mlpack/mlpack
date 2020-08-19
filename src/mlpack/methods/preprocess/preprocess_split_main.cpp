@@ -15,11 +15,16 @@
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/data/split_data.hpp>
 
-PROGRAM_INFO("Split Data",
-    // Short description.
+// Program Name.
+BINDING_NAME("Split Data");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A utility to split data into a training and testing dataset.  This can "
-    "also split labels according to the same split.",
-    // Long description.
+    "also split labels according to the same split.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes a dataset and optionally labels and splits them into a "
     "training set and a test set. Before the split, the points in the dataset "
     "are randomly reordered. The percentage of the dataset to be used as the "
@@ -35,8 +40,10 @@ PROGRAM_INFO("Split Data",
     "labels works the same way as splitting the data. The output training and "
     "test labels may be saved with the " +
     PRINT_PARAM_STRING("training_labels") + " and " +
-    PRINT_PARAM_STRING("test_labels") + " output parameters, respectively."
-    "\n\n"
+    PRINT_PARAM_STRING("test_labels") + " output parameters, respectively.");
+
+// Example.
+BINDING_EXAMPLE(
     "So, a simple example where we want to split the dataset " +
     PRINT_DATASET("X") + " into " + PRINT_DATASET("X_train") + " and " +
     PRINT_DATASET("X_test") + " with 60% of the data in the training set and "
@@ -60,10 +67,12 @@ PROGRAM_INFO("Split Data",
     "\n\n" +
     PRINT_CALL("preprocess_split", "input", "X", "input_labels", "y",
         "test_ratio", 0.3, "training", "X_train", "training_labels", "y_train",
-        "test", "X_test", "test_labels", "y_test"),
-    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
-    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
-    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
+        "test", "X_test", "test_labels", "y_test"));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
+BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");

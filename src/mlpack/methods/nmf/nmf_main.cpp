@@ -27,12 +27,16 @@ using namespace mlpack::amf;
 using namespace mlpack::util;
 using namespace std;
 
-// Document program.
-PROGRAM_INFO("Non-negative Matrix Factorization",
-    // Short description.
+// Program Name.
+BINDING_NAME("Non-negative Matrix Factorization");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of non-negative matrix factorization.  This can be used "
-    "to decompose an input dataset into two low-rank non-negative components.",
-    // Long description.
+    "to decompose an input dataset into two low-rank non-negative components.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs non-negative matrix factorization on the given "
     "dataset, storing the resulting decomposed matrices in the specified "
     "files.  For an input dataset V, NMF decomposes V into two matrices W "
@@ -57,25 +61,29 @@ PROGRAM_INFO("Non-negative Matrix Factorization",
     "The maximum number of iterations is specified with " +
     PRINT_PARAM_STRING("max_iterations") + ", and the minimum residue "
     "required for algorithm termination is specified with the " +
-    PRINT_PARAM_STRING("min_residue") + " parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("min_residue") + " parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to run NMF on the input matrix " + PRINT_DATASET("V") + " "
     "using the 'multdist' update rules with a rank-10 decomposition and "
     "storing the decomposed matrices into " + PRINT_DATASET("W") + " and " +
     PRINT_DATASET("H") + ", the following command could be used: "
     "\n\n" +
     PRINT_CALL("nmf", "input", "V", "w", "W", "h", "H", "rank", 10,
-        "update_rules", "multdist"),
-    SEE_ALSO("@cf", "#cf"),
-    SEE_ALSO("Alternating matrix factorization tutorial",
-        "@doxygen/amftutorial.html"),
-    SEE_ALSO("Non-negative matrix factorization on Wikipedia",
-        "https://en.wikipedia.org/wiki/Non-negative_matrix_factorization"),
-    SEE_ALSO("Algorithms for non-negative matrix factorization (pdf)",
+        "update_rules", "multdist"));
+
+// See also...
+BINDING_SEE_ALSO("@cf", "#cf");
+BINDING_SEE_ALSO("Alternating matrix factorization tutorial",
+        "@doxygen/amftutorial.html");
+BINDING_SEE_ALSO("Non-negative matrix factorization on Wikipedia",
+        "https://en.wikipedia.org/wiki/Non-negative_matrix_factorization");
+BINDING_SEE_ALSO("Algorithms for non-negative matrix factorization (pdf)",
         "http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-"
-        "factorization.pdf"),
-    SEE_ALSO("mlpack::amf::AMF C++ class documentation",
-        "@doxygen/classmlpack_1_1amf_1_1AMF.html"));
+        "factorization.pdf");
+BINDING_SEE_ALSO("mlpack::amf::AMF C++ class documentation",
+        "@doxygen/classmlpack_1_1amf_1_1AMF.html");
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform NMF on.", "i");

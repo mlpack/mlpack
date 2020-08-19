@@ -19,12 +19,17 @@ using namespace mlpack::det;
 using namespace mlpack::util;
 using namespace std;
 
-PROGRAM_INFO("Density Estimation With Density Estimation Trees",
-    // Short description.
+// Program Name.
+BINDING_NAME("Density Estimation With Density Estimation Trees");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of density estimation trees for the density estimation "
     "task.  Density estimation trees can be trained or used to predict the "
-    "density at locations given by query points.",
-    // Long description.
+    "density at locations given by query points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs a number of functions related to Density Estimation "
     "Trees.  The optimal Density Estimation Tree (DET) can be trained on a set "
     "of data (specified by " + PRINT_PARAM_STRING("training") + ") using "
@@ -54,15 +59,17 @@ PROGRAM_INFO("Density Estimation With Density Estimation Trees",
     "trained on the given training points, or a tree given as the parameter " +
     PRINT_PARAM_STRING("input_model") + ".  The density estimates for the test"
     " points may be saved using the " +
-    PRINT_PARAM_STRING("test_set_estimates") + " output parameter.",
-    SEE_ALSO("Density estimation tree (DET) tutorial",
-        "@doxygen/dettutorial.html"),
-    SEE_ALSO("Density estimation on Wikipedia",
-        "https://en.wikipedia.org/wiki/Density_estimation"),
-    SEE_ALSO("Density estimation trees (pdf)",
-        "http://www.mlpack.org/papers/det.pdf"),
-    SEE_ALSO("mlpack::tree::DTree class documentation",
-        "@doxygen/classmlpack_1_1det_1_1DTree.html"));
+    PRINT_PARAM_STRING("test_set_estimates") + " output parameter.");
+
+// See also...
+BINDING_SEE_ALSO("Density estimation tree (DET) tutorial",
+        "@doxygen/dettutorial.html");
+BINDING_SEE_ALSO("Density estimation on Wikipedia",
+        "https://en.wikipedia.org/wiki/Density_estimation");
+BINDING_SEE_ALSO("Density estimation trees (pdf)",
+        "http://www.mlpack.org/papers/det.pdf");
+BINDING_SEE_ALSO("mlpack::tree::DTree class documentation",
+        "@doxygen/classmlpack_1_1det_1_1DTree.html");
 
 // Input data files.
 PARAM_MATRIX_IN("training", "The data set on which to build a density "
