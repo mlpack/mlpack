@@ -1632,4 +1632,43 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionTest)
   CheckMatrices(pred, xmlPred, textPred, binaryPred);
 }
 
+/**
+ * Test the cereal array wrapper on an empty array.
+ */
+class TestStruct
+{
+ public:
+  TestStruct() : mem(NULL), len(0) { }
+
+  template<typename Archive>
+  void serialize(Archive& ar)
+  {
+    ar(cereal::make_array(mem, len));
+  }
+
+  int* mem;
+  size_t len;
+};
+
+BOOST_AUTO_TEST_CASE(CerealEmptyArrayWrapperTest)
+{
+  TestStruct t;
+  // Manually change the values in the other ones.
+  TestStruct xmlT, jsonT, binaryT;
+  xmlT.mem = new int[10];
+  xmlT.len = 10;
+  jsonT.mem = new int[5];
+  jsonT.len = 5;
+
+  SerializeObjectAll(t, xmlT, binaryT, jsonT);
+
+  // Ensure that all the results are correct.
+  BOOST_REQUIRE(xmlT.mem == (int*) NULL);
+  BOOST_REQUIRE_EQUAL(xmlT.len, 0);
+  BOOST_REQUIRE(binaryT.mem == (int*) NULL);
+  BOOST_REQUIRE_EQUAL(binaryT.len, 0);
+  BOOST_REQUIRE(jsonT.mem == (int*) NULL);
+  BOOST_REQUIRE_EQUAL(jsonT.len, 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
