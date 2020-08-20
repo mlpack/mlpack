@@ -152,12 +152,16 @@ double LinearRegression::coef_det(const arma::mat& predictors,
                 const arma::rowvec& responses,
                 const bool adj_r2) const
 {
+  // Get the number of columns and rows of the dataset, useful for calculating Adjusted R^2
   int n = predictors.n_cols;
   int k = predictors.n_rows;
   arma::rowvec predictions;
   Predict(predictors, predictions);
   double responses_mean = arma::mean(responses);
+  
+  // Calculate sum of squared residuals
   double ssr = arma::accu(arma::square(predictions - responses_mean));
+  //Calculate total sum of squares
   double ssto = arma::accu(arma::square(responses - responses_mean));
   if(adj_r2)
   {
