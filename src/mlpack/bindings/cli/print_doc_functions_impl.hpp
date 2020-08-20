@@ -138,8 +138,8 @@ std::string ProcessOptions(const std::string& paramName,
   else
   {
     throw std::runtime_error("Unknown parameter '" + paramName + "' " +
-        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
-        "declaration.");
+        "encountered while assembling documentation!  Check BINDING_LONG_DESC()"
+        + " and BINDING_EXAMPLE() declaration.");
   }
 
   std::string rest = ProcessOptions(args...);
@@ -229,8 +229,9 @@ inline std::string ProgramCall(const std::string& programName)
 /**
  * Print what a user would type to invoke the given option name.  Note that the
  * name *must* exist in the CLI module.  (Note that because of the way
- * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
- * declarataions need to come before the PROGRAM_INFO() declaration.)
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() is structured, this doesn't mean
+ * that all of the PARAM_*() declarataions need to come before
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
 inline std::string ParamString(const std::string& paramName)
 {
@@ -252,7 +253,7 @@ inline std::string ParamString(const std::string& paramName)
   else
   {
     throw std::runtime_error("Parameter '" + paramName + "' not known!  Check "
-        "PROGRAM_INFO() definition.");
+        "BINDING_LONG_DESC() and BINDING_EXAMPLE() definition.");
   }
 }
 

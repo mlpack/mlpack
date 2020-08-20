@@ -6,6 +6,7 @@ set(SOURCES
   arma_config_check.hpp
   backtrace.hpp
   backtrace.cpp
+  binding_details.hpp
   io.hpp
   io.cpp
   io_impl.hpp

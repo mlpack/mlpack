@@ -95,7 +95,12 @@ class Pendulum
   class Action
   {
    public:
-    double action[1];
+    /**
+     * Construct an action instance.
+     */
+    Action() : action(1)
+    { /* Nothing to do here */ }
+    std::vector<double> action;
     // Storing degree of freedom.
     static const size_t size = 1;
   };

@@ -23,6 +23,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include "timers.hpp"
+#include "binding_details.hpp"
 #include "program_doc.hpp"
 #include "version.hpp"
 
@@ -32,13 +33,6 @@
 #include <mlpack/core/data/save.hpp>
 
 namespace mlpack {
-namespace util {
-
-// Externally defined in option.hpp, this class holds information about the
-// program being run.
-class ProgramDoc;
-
-} // namespace util
 
 /**
  * @brief Parses the command line for parameters and holds user-specified
@@ -76,7 +70,7 @@ class ProgramDoc;
  * merely as a flag on the command line (no '=true' is required).
  *
  * Here is an example of a few parameters being defined; this is for the KNN
- * executable (methods/neighbor_search/knn_main.cpp):
+ * binding (methods/neighbor_search/knn_main.cpp):
  *
  * @code
  * PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
@@ -99,14 +93,24 @@ class ProgramDoc;
  * @section programinfo Documenting the program itself
  *
  * In addition to allowing documentation for each individual parameter and
- * module, the PROGRAM_INFO() macro provides support for documenting the program
- * itself.  There should only be one instance of the PROGRAM_INFO() macro.
+ * module, the BINDING_NAME() macro provides support for documenting the
+ * programName, BINDING_SHORT_DESC() macro provides support for documenting the
+ * shortDescription, BINDING_LONG_DESC() macro provides support for documenting
+ * the longDescription, the BINDING_EXAMPLE() macro provides support for
+ * documenting the example and the BINDING_SEE_ALSO() macro provides support for
+ * documenting the seeAlso. There should only be one instance of the
+ * BINDING_NAME(), BINDING_SHORT_DESC() and BINDING_LONG_DESC() macros and there
+ * can be multiple instance of BINDING_EXAMPLE() and BINDING_SEE_ALSO() macro.
  * Below is an example:
  *
  * @code
- * PROGRAM_INFO("Maximum Variance Unfolding", "This program performs maximum "
+ * BINDING_NAME("Maximum Variance Unfolding");
+ * BINDING_SHORT_DESC("An implementation of Maximum Variance Unfolding");
+ * BINDING_LONG_DESC( "This program performs maximum "
  *    "variance unfolding on the given dataset, writing a lower-dimensional "
  *    "unfolded dataset to the given output file.");
+ * BINDING_EXAMPLE("mvu", "input", "dataset", "new_dim", 5, "output", "output");
+ * BINDING_SEE_ALSO("Perceptron", "#perceptron");
  * @endcode
  *
  * This description should be verbose, and explain to a non-expert user what the
@@ -152,10 +156,10 @@ class ProgramDoc;
  *
  * @note
  * Options should only be defined in files which define `main()` (that is, main
- * executables).  If options are defined elsewhere, they may be spuriously
- * included into other executables and confuse users.  Similarly, if your
- * executable has options which you did not define, it is probably because the
- * option is defined somewhere else and included in your executable.
+ * bindings).  If options are defined elsewhere, they may be spuriously
+ * included into other bindings and confuse users.  Similarly, if your
+ * binding has options which you did not define, it is probably because the
+ * option is defined somewhere else and included in your binding.
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -240,21 +244,12 @@ class IO
    */
   static IO& GetSingleton();
 
-  /**
-   * Registers a ProgramDoc object, which contains documentation about the
-   * program.  If this method has been called before (that is, if two
-   * ProgramDocs are instantiated in the program), a fatal error will occur.
-   *
-   * @param doc Pointer to the ProgramDoc object.
-   */
-  static void RegisterProgramDoc(util::ProgramDoc* doc);
-
   //! Return a modifiable list of parameters that IO knows about.
   static std::map<std::string, util::ParamData>& Parameters();
   //! Return a modifiable list of aliases that IO knows about.
   static std::map<char, std::string>& Aliases();
 
-  //! Get the program name as set by the PROGRAM_INFO() macro.
+  //! Get the program name as set by the BINDING_NAME() macro.
   static std::string ProgramName();
 
   /**
@@ -313,7 +308,7 @@ class IO
   bool didParse;
 
   //! Holds the name of the program for --version.  This is the true program
-  //! name (argv[0]) not what is given in ProgramDoc.
+  //! name (argv[0]) not what is given in BindingDetails.
   std::string programName;
 
   //! Holds the timer objects.
@@ -322,9 +317,8 @@ class IO
   //! So that Timer::Start() and Timer::Stop() can access the timer variable.
   friend class Timer;
 
-  //! Pointer to the ProgramDoc object.
-  util::ProgramDoc* doc;
-
+  //! Holds the bindingDetails objects.
+  util::BindingDetails doc;
  private:
   /**
    * Make the constructor private, to preclude unauthorized instances.

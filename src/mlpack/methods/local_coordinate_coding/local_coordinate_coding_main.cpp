@@ -23,13 +23,18 @@ using namespace mlpack::lcc;
 using namespace mlpack::sparse_coding; // For NothingInitializer.
 using namespace mlpack::util;
 
-PROGRAM_INFO("Local Coordinate Coding",
-    // Short description.
+// Program Name.
+BINDING_NAME("Local Coordinate Coding");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of Local Coordinate Coding (LCC), a data transformation "
     "technique.  Given input data, this transforms each point to be expressed "
     "as a linear combination of a few points in the dataset; once an LCC model "
-    "is trained, it can be used to transform points later also.",
-    // Long description.
+    "is trained, it can be used to transform points later also.");
+
+// Long description.
+BINDING_LONG_DESC(
     "An implementation of Local Coordinate Coding (LCC), which "
     "codes data that approximately lives on a manifold using a variation of l1-"
     "norm regularized sparse coding.  Given a dense data matrix X with n points"
@@ -44,8 +49,10 @@ PROGRAM_INFO("Local Coordinate Coding",
     "\n\n"
     "The coding is found with an algorithm which alternates between a "
     "dictionary step, which updates the dictionary D, and a coding step, which "
-    "updates the coding matrix Z."
-    "\n\n"
+    "updates the coding matrix Z.");
+
+// Example.
+BINDING_EXAMPLE(
     "To run this program, the input matrix X must be specified (with -i), along"
     " with the number of atoms in the dictionary (-k).  An initial dictionary "
     "may also be specified with the " +
@@ -75,13 +82,15 @@ PROGRAM_INFO("Local Coordinate Coding",
     "be used:"
     "\n\n" +
     PRINT_CALL("local_coordinate_coding", "input_model", "lcc_model", "test",
-        "points", "codes", "new_codes"),
-    SEE_ALSO("@sparse_coding", "#sparse_coding"),
-    SEE_ALSO("Nonlinear learning using local coordinate coding (pdf)",
+        "points", "codes", "new_codes"));
+
+// See also...
+BINDING_SEE_ALSO("@sparse_coding", "#sparse_coding");
+BINDING_SEE_ALSO("Nonlinear learning using local coordinate coding (pdf)",
         "https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-"
-        "coordinate-coding.pdf"),
-    SEE_ALSO("mlpack::lcc::LocalCoordinateCoding C++ class documentation",
-        "@doxygen/classmlpack_1_1lcc_1_1LocalCoordinateCoding.html"));
+        "coordinate-coding.pdf");
+BINDING_SEE_ALSO("mlpack::lcc::LocalCoordinateCoding C++ class documentation",
+        "@doxygen/classmlpack_1_1lcc_1_1LocalCoordinateCoding.html");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");

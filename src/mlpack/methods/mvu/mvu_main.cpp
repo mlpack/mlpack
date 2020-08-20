@@ -15,7 +15,11 @@
 #include <mlpack/core/util/io.hpp>
 #include "mvu.hpp"
 
-PROGRAM_INFO("Maximum Variance Unfolding (MVU)", "This program implements "
+// Program Name.
+BINDING_NAME("Maximum Variance Unfolding (MVU)");
+
+// Long description.
+BINDING_LONG_DESC("This program implements "
     "Maximum Variance Unfolding, a nonlinear dimensionality reduction "
     "technique.  The method minimizes dimensionality by unfolding a manifold "
     "such that the distances to the nearest neighbors of each point are held "
