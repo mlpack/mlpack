@@ -122,7 +122,26 @@ class LinearRegression
    */
   double ComputeError(const arma::mat& points,
                       const arma::rowvec& responses) const;
-
+ 
+  /**
+   * Calculate the Coefficient of determination - \f$R^2\f$ or Adjusted \f$R^2\f$
+   *
+   * \f[
+   * R^2 = \dfrac{\sum(\hat{y} - \bar{y})^2}{\sum(y - \bar{y})^2}
+   * \f]
+   *
+   * \f[
+   * Adj R^2 = (1 - (1 - R^2))*\dfrac{n - 1}{n - k - 1}
+   * \f]
+   *
+   * @param predictors X, the matrix on which the model was trained.
+   * @param responses y, the reponses to the data points.
+   * @param adj_r2 if true the function will return the Adjusted \f$R^2\f$, otherwise, it will return \f$R^2\f$.
+   */
+  double coef_det(const arma::mat& predictors,
+                  const arma::rowvec& responses,
+                  const bool adj_r2 = false) const;
+ 
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }
   //! Modify the parameters (the b vector).
