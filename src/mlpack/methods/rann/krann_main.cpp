@@ -28,21 +28,27 @@ using namespace mlpack::util;
 // Convenience typedef.
 typedef RAModel<NearestNeighborSort> RANNModel;
 
-// Information about the program itself.
-PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
-    // Short description.
+// Program Name.
+BINDING_NAME("K-Rank-Approximate-Nearest-Neighbors (kRANN)");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of rank-approximate k-nearest-neighbor search (kRANN) "
     " using single-tree and dual-tree algorithms.  Given a set of reference "
     "points and query points, this can find the k nearest neighbors in the "
     "reference set of each query point using trees; trees that are built can "
-    "be saved for future use.",
-    // Long description.
+    "be saved for future use.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program will calculate the k rank-approximate-nearest-neighbors of a "
     "set of points. You may specify a separate set of reference points and "
     "query points, or just a reference set which will be used as both the "
     "reference and query set. You must specify the rank approximation (in %) "
-    "(and optionally the success probability)."
-    "\n\n"
+    "(and optionally the success probability).");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following will return 5 neighbors from the top 0.1% of "
     "the data (with probability 0.95) for each point in " +
     PRINT_DATASET("input") + " and store the distances in " +
@@ -62,15 +68,17 @@ PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "neighbors output file corresponds to the index of the point in the "
     "reference set which is the i'th nearest neighbor from the point in the "
     "query set with index j.  Row i and column j in the distances output file "
-    "corresponds to the distance between those two points.",
-    SEE_ALSO("@knn", "#knn"),
-    SEE_ALSO("@lsh", "#lsh"),
-    SEE_ALSO("Rank-approximate nearest neighbor search: Retaining meaning and "
-        "speed in high dimensions (pdf)", "https://papers.nips.cc/paper/3864-"
-        "rank-approximate-nearest-neighbor-search-retaining-meaning-and-speed-"
-        "in-high-dimensions.pdf"),
-    SEE_ALSO("mlpack::neighbor::RASearch C++ class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1RASearch.html"));
+    "corresponds to the distance between those two points.");
+
+// See also...
+BINDING_SEE_ALSO("@knn", "#knn");
+BINDING_SEE_ALSO("@lsh", "#lsh");
+BINDING_SEE_ALSO("Rank-approximate nearest neighbor search: Retaining meaning"
+        " and speed in high dimensions (pdf)", "https://papers.nips.cc/paper/"
+        "3864-rank-approximate-nearest-neighbor-search-retaining-meaning-and"
+        "-speed-in-high-dimensions.pdf");
+BINDING_SEE_ALSO("mlpack::neighbor::RASearch C++ class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1RASearch.html");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

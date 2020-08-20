@@ -21,13 +21,18 @@ using namespace mlpack::neighbor;
 using namespace mlpack::util;
 using namespace std;
 
-PROGRAM_INFO("Approximate furthest neighbor search",
-    // Short description.
+// Program Name.
+BINDING_NAME("Approximate furthest neighbor search");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of two strategies for furthest neighbor search.  This "
     "can be used to compute the furthest neighbor of query point(s) from a set "
     "of points; furthest neighbor models can be saved and reused with future "
-    "query point(s).",
-    // Long description.
+    "query point(s).");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements two strategies for furthest neighbor search. "
     "These strategies are:"
     "\n\n"
@@ -69,8 +74,10 @@ PROGRAM_INFO("Approximate furthest neighbor search",
     PRINT_PARAM_STRING("neighbors") + " and " +
     PRINT_PARAM_STRING("distances") + " output parameters.  Each row of these "
     "output matrices holds the k distances or neighbor indices for each query "
-    "point."
-    "\n\n"
+    "point.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to find the 5 approximate furthest neighbors with " +
     PRINT_DATASET("reference_set") + " as the reference set and " +
     PRINT_DATASET("query_set") + " as the query set using DrusillaSelect, "
@@ -96,18 +103,20 @@ PROGRAM_INFO("Approximate furthest neighbor search",
     PRINT_DATASET("neighbors") + " by calling"
     "\n\n" +
     PRINT_CALL("approx_kfn", "input_model", "model", "query", "new_query_set",
-        "k", 3, "neighbors", "neighbors"),
-    SEE_ALSO("k-furthest-neighbor search", "#kfn"),
-    SEE_ALSO("k-nearest-neighbor search", "#knn"),
-    SEE_ALSO("Fast approximate furthest neighbors with data-dependent candidate"
-        " selection (pdf)", "http://ratml.org/pub/pdf/2016fast.pdf"),
-    SEE_ALSO("Approximate furthest neighbor in high dimensions (pdf)",
+        "k", 3, "neighbors", "neighbors"));
+
+// See also...
+BINDING_SEE_ALSO("k-furthest-neighbor search", "#kfn");
+BINDING_SEE_ALSO("k-nearest-neighbor search", "#knn");
+BINDING_SEE_ALSO("Fast approximate furthest neighbors with data-dependent"
+        " candidate selection (pdf)", "http://ratml.org/pub/pdf/2016fast.pdf");
+BINDING_SEE_ALSO("Approximate furthest neighbor in high dimensions (pdf)",
         "https://pdfs.semanticscholar.org/a4b5/7b9cbf37201fb1d9a56c0f4eefad0466"
-        "9c20.pdf"),
-    SEE_ALSO("mlpack::neighbor::QDAFN class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1QDAFN.html"),
-    SEE_ALSO("mlpack::neighbor::DrusillaSelect class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1DrusillaSelect.html"));
+        "9c20.pdf");
+BINDING_SEE_ALSO("mlpack::neighbor::QDAFN class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1QDAFN.html");
+BINDING_SEE_ALSO("mlpack::neighbor::DrusillaSelect class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1DrusillaSelect.html");
 
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
 PARAM_MATRIX_IN("query", "Matrix containing query points.", "q");

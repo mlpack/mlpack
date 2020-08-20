@@ -28,34 +28,43 @@ using namespace mlpack::gmm;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Hidden Markov Model (HMM) Viterbi State Prediction",
-    // Short description.
+// Program Name.
+BINDING_NAME("Hidden Markov Model (HMM) Viterbi State Prediction");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A utility for computing the most probable hidden state sequence for Hidden"
     " Markov Models (HMMs).  Given a pre-trained HMM and an observed sequence, "
     "this uses the Viterbi algorithm to compute and return the most probable "
-    "hidden state sequence.",
-    // Long description.
+    "hidden state sequence.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes an already-trained HMM, specified as " +
     PRINT_PARAM_STRING("input_model") + ", and evaluates the most probable "
     "hidden state sequence of a given sequence of observations (specified as "
     "'" + PRINT_PARAM_STRING("input") + ", using the Viterbi algorithm.  The "
     "computed state sequence may be saved using the " +
-    PRINT_PARAM_STRING("output") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to predict the state sequence of the observations " +
     PRINT_DATASET("obs") + " using the HMM " + PRINT_MODEL("hmm") + ", "
     "storing the predicted state sequence to " + PRINT_DATASET("states") +
     ", the following command could be used:"
     "\n\n" +
     PRINT_CALL("hmm_viterbi", "input", "obs", "input_model", "hmm", "output",
-        "states"),
-    SEE_ALSO("@hmm_train", "#hmm_train"),
-    SEE_ALSO("@hmm_generate", "#hmm_generate"),
-    SEE_ALSO("@hmm_loglik", "#hmm_loglik"),
-    SEE_ALSO("Hidden Mixture Models on Wikipedia",
-        "https://en.wikipedia.org/wiki/Hidden_Markov_model"),
-    SEE_ALSO("mlpack::hmm::HMM class documentation",
-        "@doxygen/classmlpack_1_1hmm_1_1HMM.html"));
+        "states"));
+
+// See also...
+BINDING_SEE_ALSO("@hmm_train", "#hmm_train");
+BINDING_SEE_ALSO("@hmm_generate", "#hmm_generate");
+BINDING_SEE_ALSO("@hmm_loglik", "#hmm_loglik");
+BINDING_SEE_ALSO("Hidden Mixture Models on Wikipedia",
+        "https://en.wikipedia.org/wiki/Hidden_Markov_model");
+BINDING_SEE_ALSO("mlpack::hmm::HMM class documentation",
+        "@doxygen/classmlpack_1_1hmm_1_1HMM.html");
 
 PARAM_MATRIX_IN_REQ("input", "Matrix containing observations,", "i");
 PARAM_MODEL_IN_REQ(HMMModel, "input_model", "Trained HMM to use.", "m");
