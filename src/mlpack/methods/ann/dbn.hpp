@@ -34,8 +34,7 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template<
   typename OutputLayerType = NegativeLogLikelihood<>,
-  typename InitializationRuleType = RandomInitialization,
-  typename... CustomLayers
+  typename InitializationRuleType = GaussianInitialization
 >
 class DBN
 {
@@ -62,18 +61,6 @@ class DBN
       increaseToCDK = false,
       xavierInit = false);
 
-  //! Copy constructor.
-  DBN(const DBN&);
-
-  //! Move constructor.
-  DBN(DBN&&);
-
-  //! Copy/move assignment operator.
-  DBN& operator = (DBN);
-
-  //! Destructor to release allocated memory.
-  ~DBN();
-
   /**
    * Train the deep belief network on the given input data using the given
    * optimizer.
@@ -99,19 +86,6 @@ class DBN
                CallbackTypes&&... callbacks);
 
   /**
-   * Predict the responses to a given set of predictors. The responses will
-   * reflect the output of the given output layer as returned by the
-   * output layer function.
-   *
-   * If you want to pass in a parameter and discard the original parameter
-   * object, be sure to use std::move to avoid unnecessary copy.
-   *
-   * @param predictors Input predictors.
-   * @param results Matrix to put output predictions of responses into.
-   */
-  void Predict(arma::mat predictors, arma::mat& results);
-
-  /**
    * Shuffle the order of function visitation. This may be called by the
    * optimizer.
    */
@@ -128,19 +102,19 @@ class DBN
   /*
    * Add a new module to the model.
    *
-   * @param layer The Layer to be added to the model.
+   * @param layer The RBM Layer to be added to the model.
    */
-  void Add(RBM<GaussianInitialization> layer) { network.push_back(layer); }
+  void Add(RBM<InitializationRule> layer) { network.push_back(layer); }
 
   //! Get the network model.
-  const std::vector<RBM<GaussianInitialization>>& Model() const
+  const std::vector<RBM<InitializationRule> >& Model() const
   {
     return network;
   }
   //! Modify the network model.  Be careful!  If you change the structure of the
   //! network or parameters for layers, its state may become invalid, so be sure
   //! to call ResetParameters() afterwards.
-  std::vector<RBM<GaussianInitialization> >& Model() { return network; }
+  std::vector<RBM<InitializationRule> >& Model() { return network; }
 
   //! Get the matrix of data points (predictors).
   const arma::mat& Predictors() const { return predictors; }
@@ -148,7 +122,7 @@ class DBN
   arma::mat& Predictors() { return predictors; }
 
   /**
-   * Reset the module infomration (weights/parameters).
+   * Reset the module information (weights/parameters).
    */
   void ResetParameters();
 
@@ -177,9 +151,7 @@ class DBN
    * @param network Desired source network.
    */
   //! Locally-stored model modules.
-  std::vector<RBM<GaussianInitialization> > network;
-
-  void Swap(FFN& network);
+  std::vector<RBM<InitializationRule> > network;
 
   arma::mat trainData;
 
@@ -190,28 +162,11 @@ class DBN
   bool increaseToCDK;
 
   bool xavierInit;
-  arma::mat prdictors;
+  arma::mat predictors;
 }; // class DBN
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the FFN class.  Multiple template arguments
-//! makes this ugly...
-namespace boost {
-namespace serialization {
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename... CustomLayer>
-struct version<
-    mlpack::ann::DBN<OutputLayerType, InitializationRuleType, CustomLayer...>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 2);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "dbn_impl.hpp"
