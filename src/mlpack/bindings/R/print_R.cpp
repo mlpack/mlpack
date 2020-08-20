@@ -24,12 +24,15 @@ namespace r {
 
 /**
  * Print the code for a .R binding for an mlpack program to stdout.
+ *
+ * @param doc Documentation for the binding.
+ * @param functionName Name of the function (i.e. "pca").
  */
-void PrintR(const util::ProgramDoc& programInfo,
+void PrintR(const util::BindingDetails& doc,
             const string& functionName)
 {
   // Restore parameters.
-  IO::RestoreSettings(programInfo.programName);
+  IO::RestoreSettings(doc.programName);
 
   map<string, util::ParamData>& parameters = IO::Parameters();
   typedef map<string, util::ParamData>::iterator ParamIter;
@@ -65,13 +68,13 @@ void PrintR(const util::ProgramDoc& programInfo,
   // Print the documentation.
   // Print programName as @title.
   cout << "#' @title ";
-  cout << util::HyphenateString(programInfo.programName, "#'   ") << endl;
+  cout << util::HyphenateString(doc.programName, "#'   ") << endl;
   cout << "#'" << endl;
 
   // Next print the short description as @description.
   cout << "#' @description" << endl;
   cout << "#' ";
-  cout << util::HyphenateString(programInfo.shortDocumentation, "#' ") << endl;
+  cout << util::HyphenateString(doc.shortDescription, "#' ") << endl;
 
   // Next, print information on the input options.
   cout << "#'" << endl;
@@ -106,7 +109,7 @@ void PrintR(const util::ProgramDoc& programInfo,
   // Next print the long description as @details.
   cout << "#' @details" << endl;
   cout << "#' ";
-  cout << util::HyphenateString(programInfo.documentation(), "#' ") << endl;
+  cout << util::HyphenateString(doc.longDescription(), "#' ") << endl;
   cout << "#'" << endl;
   cout << "#' @author" << endl;
   cout << "#' mlpack developers" << endl;
@@ -114,36 +117,39 @@ void PrintR(const util::ProgramDoc& programInfo,
 
   // Next print the example as @examples.
   cout << "#' @export" << endl;
-  if (programInfo.example().size() != 0)
+  if (doc.example.size() != 0)
     cout << "#' @examples" << endl;
-
-  const std::string str = programInfo.example();
-  size_t pos = 0;
-  while (pos < str.length())
+  for (size_t j = 0; j < doc.example.size(); ++j)
   {
-    size_t splitpos = 0;
-    // Find where example starts.
-    splitpos = str.find("\n\\donttest{", pos) - 1;
-    // If no example left, then print all the comments that are left.
-    if (splitpos == std::string::npos || splitpos > str.length())
+    const std::string str = doc.example[j]();
+    size_t pos = 0;
+    while (pos < str.length())
     {
-      splitpos = str.length();
-      cout << util::HyphenateString(str.substr(pos, (splitpos - pos)), "#' # ");
-      break;
+      size_t splitpos = 0;
+      // Find where example starts.
+      splitpos = str.find("\n\\donttest{", pos) - 1;
+      // If no example left, then print all the comments that are left.
+      if (splitpos == std::string::npos || splitpos > str.length())
+      {
+        splitpos = str.length();
+        cout << util::HyphenateString(str.substr(pos, (splitpos - pos)),
+            "#' # ");
+        break;
+      }
+      if (splitpos != 0 && pos == 0)
+        cout << "#' # ";
+      // Print comments in the "example", if there is available.
+      cout << util::HyphenateString(str.substr(pos, (splitpos - pos)),
+              "#' # ", true);
+      // Find where example ends.
+      pos = str.find("\n}", pos) + 3;
+      // Here length of example might be less 80, we must handle this carefully.
+      // Print example in the "example".
+      cout << util::HyphenateString(str.substr(splitpos, (pos - splitpos)),
+              "#' ", true);
     }
-    if (splitpos != 0 && pos == 0)
-      cout << "#' # ";
-    // Print comments in the "example", if there is available.
-    cout << util::HyphenateString(str.substr(pos, (splitpos - pos)),
-            "#' # ", true);
-    // Find where example ends.
-    pos = str.find("\n}", pos) + 3;
-    // Here length of example might be less 80, we must handle this carefully.
-    // Print example in the "example".
-    cout << util::HyphenateString(str.substr(splitpos, (pos - splitpos)),
-            "#' ", true);
+    cout << endl;
   }
-  cout << endl;
 
   // Print the definition.
   cout << functionName << " <- function(";

@@ -20,8 +20,11 @@ namespace r {
 
 /**
  * Print the code for a .R binding for an mlpack program to stdout.
+ *
+ * @param doc Documentation for the binding.
+ * @param functionName Name of the function (i.e. "pca").
  */
-void PrintR(const util::ProgramDoc& programInfo,
+void PrintR(const util::BindingDetails& doc,
             const std::string& functionName);
 
 } // namespace r
