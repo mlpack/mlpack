@@ -44,13 +44,13 @@ if (FORCE_BUILD_PYTHON_BINDINGS)
   if (NOT PYTHON_EXECUTABLE OR NOT PY_DISTUTILS OR NOT PY_CYTHON OR NOT PY_NUMPY
       OR NOT PY_PANDAS)
     unset(BUILD_PYTHON_BINDINGS CACHE)
-    message(FATAL_ERROR "\nCould not Build Python Bindings, Following modules are not available:${PY_NOT_FOUND_MSG}")
+    message(FATAL_ERROR "\nCould not Build Python Bindings; the following modules are not available: ${PY_NOT_FOUND_MSG}")
   endif()
 else()
   if (NOT PYTHON_EXECUTABLE OR NOT PY_DISTUTILS OR NOT PY_CYTHON OR NOT PY_NUMPY
       OR NOT PY_PANDAS)
     unset(BUILD_PYTHON_BINDINGS CACHE)
-    not_found_return("Not building Python bindings, Following modules are not available:${PY_NOT_FOUND_MSG}")
+    not_found_return("Not building Python bindings; the following modules are not available: ${PY_NOT_FOUND_MSG}")
   endif()
 endif()
 
