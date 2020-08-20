@@ -25,14 +25,18 @@ using namespace mlpack::pca;
 using namespace mlpack::util;
 using namespace std;
 
-// Document program.
-PROGRAM_INFO("Principal Components Analysis",
-    // Short description.
+// Program Name.
+BINDING_NAME("Principal Components Analysis");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of several strategies for principal components analysis "
     "(PCA), a common preprocessing step.  Given a dataset and a desired new "
     "dimensionality, this can reduce the dimensionality of the data using the "
-    "linear transformation determined by PCA.",
-    // Long description.
+    "linear transformation determined by PCA.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs principal components analysis on the given dataset "
     "using the exact, randomized, randomized block Krylov, or QUIC SVD method. "
     "It will transform the data onto its principal components, optionally "
@@ -50,19 +54,23 @@ PROGRAM_INFO("Principal Components Analysis",
     "Multiple different decomposition techniques can be used.  The method to "
     "use can be specified with the " +
     PRINT_PARAM_STRING("decomposition_method") + " parameter, and it may take "
-    "the values 'exact', 'randomized', or 'quic'."
-    "\n\n"
+    "the values 'exact', 'randomized', or 'quic'.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to reduce the dimensionality of the matrix " +
     PRINT_DATASET("data") + " to 5 dimensions using randomized SVD for the "
     "decomposition, storing the output matrix to " +
     PRINT_DATASET("data_mod") + ", the following command can be used:"
     "\n\n" +
     PRINT_CALL("pca", "input", "data", "new_dimensionality", 5,
-        "decomposition_method", "randomized", "output", "data_mod"),
-    SEE_ALSO("Principal component analysis on Wikipedia",
-        "https://en.wikipedia.org/wiki/Principal_component_analysis"),
-    SEE_ALSO("mlpack::pca::PCA C++ class documentation",
-        "@doxygen/classmlpack_1_1pca_1_1PCA.html"));
+        "decomposition_method", "randomized", "output", "data_mod"));
+
+// See also...
+BINDING_SEE_ALSO("Principal component analysis on Wikipedia",
+        "https://en.wikipedia.org/wiki/Principal_component_analysis");
+BINDING_SEE_ALSO("mlpack::pca::PCA C++ class documentation",
+        "@doxygen/classmlpack_1_1pca_1_1PCA.html");
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform PCA on.", "i");

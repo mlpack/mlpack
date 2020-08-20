@@ -20,13 +20,18 @@ using namespace mlpack::tree;
 using namespace mlpack::data;
 using namespace mlpack::util;
 
-PROGRAM_INFO("Decision tree",
-    // Short description.
+// Program Name.
+BINDING_NAME("Decision tree");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of an ID3-style decision tree for classification, which"
     " supports categorical data.  Given labeled data with numeric or "
     "categorical features, a decision tree can be trained and saved; or, an "
-    "existing decision tree can be used for classification on new points.",
-    // Long description.
+    "existing decision tree can be used for classification on new points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "Train and evaluate using a decision tree.  Given a dataset containing "
     "numeric or categorical features, and associated labels for each point in "
     "the dataset, this program can train a decision tree on that data."
@@ -59,8 +64,10 @@ PROGRAM_INFO("Decision tree",
     " parameter.  Predictions for each test point may be saved via the " +
     PRINT_PARAM_STRING("predictions") + " output parameter.  Class "
     "probabilities for each prediction may be saved with the " +
-    PRINT_PARAM_STRING("probabilities") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("probabilities") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to train a decision tree with a minimum leaf size of 20 on "
     "the dataset contained in " + PRINT_DATASET("data") + " with labels " +
     PRINT_DATASET("labels") + ", saving the output model to " +
@@ -78,15 +85,17 @@ PROGRAM_INFO("Decision tree",
     PRINT_DATASET("predictions") + ", one could call "
     "\n\n" +
     PRINT_CALL("decision_tree", "input_model", "tree", "test", "test_set",
-        "test_labels", "test_labels", "predictions", "predictions"),
-    SEE_ALSO("Decision stump", "#decision_stump"),
-    SEE_ALSO("Random forest", "#random_forest"),
-    SEE_ALSO("Decision trees on Wikipedia",
-        "https://en.wikipedia.org/wiki/Decision_tree_learning"),
-    SEE_ALSO("Induction of Decision Trees (pdf)",
-        "https://link.springer.com/content/pdf/10.1007/BF00116251.pdf"),
-    SEE_ALSO("mlpack::tree::DecisionTree class documentation",
-        "@doxygen/classmlpack_1_1tree_1_1DecisionTree.html"));
+        "test_labels", "test_labels", "predictions", "predictions"));
+
+// See also...
+BINDING_SEE_ALSO("Decision stump", "#decision_stump");
+BINDING_SEE_ALSO("Random forest", "#random_forest");
+BINDING_SEE_ALSO("Decision trees on Wikipedia",
+        "https://en.wikipedia.org/wiki/Decision_tree_learning");
+BINDING_SEE_ALSO("Induction of Decision Trees (pdf)",
+        "https://link.springer.com/content/pdf/10.1007/BF00116251.pdf");
+BINDING_SEE_ALSO("mlpack::tree::DecisionTree class documentation",
+        "@doxygen/classmlpack_1_1tree_1_1DecisionTree.html");
 
 // Datasets.
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",

@@ -116,9 +116,11 @@ TEST_CASE("OptionsMakeModelDifferent", "[BayesianLinearRegressionTest]")
   blrCS.Train(matX, y);
 
   for (size_t i = 0; i < nDims; ++i)
-    REQUIRE(((blr.Omega()(i) != blrC.Omega()(i)) &&
-             (blr.Omega()(i) != blrCS.Omega()(i)) &&
-             (blrC.Omega()(i) != blrCS.Omega()(i))));
+  {
+    REQUIRE(blr.Omega()(i) != blrC.Omega()(i));
+    REQUIRE(blr.Omega()(i) != blrCS.Omega()(i));
+    REQUIRE(blrC.Omega()(i) != blrCS.Omega()(i));
+  }
 }
 
 // Check that Train() does not fail with two colinear vectors.
@@ -189,5 +191,5 @@ TEST_CASE("EqualtoRidge", "[BayesianLinearRegressionTest]")
     break;
   }
 
-  REQUIRE(trial < 3);
+  REQUIRE(trial <= 3);
 }

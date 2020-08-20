@@ -16,13 +16,18 @@
 #include <mlpack/core/math/random.hpp>
 #include "radical.hpp"
 
-PROGRAM_INFO("RADICAL",
-    // Short description.
+// Program Name.
+BINDING_NAME("RADICAL");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of RADICAL, a method for independent component analysis "
     "(ICA).  Given a dataset, this can decompose the dataset into an unmixing "
     "matrix and an independent component matrix; this can be useful for "
-    "preprocessing.",
-    // Long description.
+    "preprocessing.");
+
+// Long description.
+BINDING_LONG_DESC(
     "An implementation of RADICAL, a method for independent component analysis "
     "(ICA).  Assuming that we have an input matrix X, the goal is to find a "
     "square unmixing matrix W such that Y = W * X and the dimensions of Y are "
@@ -33,20 +38,24 @@ PROGRAM_INFO("RADICAL",
     PRINT_PARAM_STRING("input") + " parameter.  The output matrix Y may be "
     "saved with the " + PRINT_PARAM_STRING("output_ic") + " output parameter, "
     "and the output unmixing matrix W may be saved with the " +
-    PRINT_PARAM_STRING("output_unmixing") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output_unmixing") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to perform ICA on the matrix " + PRINT_DATASET("X") + " with "
     "40 replicates, saving the independent components to " +
     PRINT_DATASET("ic") + ", the following command may be used: "
     "\n\n" +
-    PRINT_CALL("radical", "input", "X", "replicates", 40, "output_ic", "ic"),
-    SEE_ALSO("Independent component analysis on Wikipedia",
-        "https://en.wikipedia.org/wiki/Independent_component_analysis"),
-    SEE_ALSO("ICA using spacings estimates of entropy (pdf)",
+    PRINT_CALL("radical", "input", "X", "replicates", 40, "output_ic", "ic"));
+
+// See also...
+BINDING_SEE_ALSO("Independent component analysis on Wikipedia",
+        "https://en.wikipedia.org/wiki/Independent_component_analysis");
+BINDING_SEE_ALSO("ICA using spacings estimates of entropy (pdf)",
         "http://www.jmlr.org/papers/volume4/learned-miller03a/"
-        "learned-miller03a.pdf"),
-    SEE_ALSO("mlpack::radical::Radical C++ class documentation",
-        "@doxygen/classmlpack_1_1radical_1_1Radical.html"));
+        "learned-miller03a.pdf");
+BINDING_SEE_ALSO("mlpack::radical::Radical C++ class documentation",
+        "@doxygen/classmlpack_1_1radical_1_1Radical.html");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset for ICA.", "i");
 

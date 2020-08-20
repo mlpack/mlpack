@@ -45,6 +45,5 @@ int main(int /* argc */, char** /* argv */)
   // programName is defined in mlpack_main.hpp.
   IO::RestoreSettings(programName);
 
-  PrintPYX(*IO::GetSingleton().doc, "${PROGRAM_MAIN_FILE}",
-      "${PROGRAM_NAME}");
+  PrintPYX(IO::GetSingleton().doc, "${PROGRAM_MAIN_FILE}", "${PROGRAM_NAME}");
 }

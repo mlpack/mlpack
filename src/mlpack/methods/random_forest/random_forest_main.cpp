@@ -19,13 +19,18 @@ using namespace mlpack::tree;
 using namespace mlpack::util;
 using namespace std;
 
-PROGRAM_INFO("Random forests",
-    // Short description.
+// Program Name.
+BINDING_NAME("Random forests");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of the standard random forest algorithm by Leo Breiman "
     "for classification.  Given labeled data, a random forest can be trained "
     "and saved for future use; or, a pre-trained random forest can be used for "
-    "classification.",
-    // Long description.
+    "classification.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program is an implementation of the standard random forest "
     "classification algorithm by Leo Breiman.  A random forest can be "
     "trained and saved for later use, or a random forest may be loaded "
@@ -64,8 +69,10 @@ PROGRAM_INFO("Random forests",
     PRINT_PARAM_STRING("test_labels") + " parameter.  Predictions for each "
     "test point may be saved via the " + PRINT_PARAM_STRING("predictions") +
     "output parameter.  Class probabilities for each prediction may be saved "
-    "with the " + PRINT_PARAM_STRING("probabilities") + " output parameter."
-    "\n\n"
+    "with the " + PRINT_PARAM_STRING("probabilities") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to train a random forest with a minimum leaf size of 20 "
     "using 10 trees on the dataset contained in " + PRINT_DATASET("data") +
     "with labels " + PRINT_DATASET("labels") + ", saving the output random "
@@ -83,16 +90,18 @@ PROGRAM_INFO("Random forests",
     "could call "
     "\n\n" +
     PRINT_CALL("random_forest", "input_model", "rf_model", "test", "test_set",
-        "test_labels", "test_labels", "predictions", "predictions"),
-    SEE_ALSO("@decision_tree", "#decision_tree"),
-    SEE_ALSO("@hoeffding_tree", "#hoeffding_tree"),
-    SEE_ALSO("@softmax_regression", "#softmax_regression"),
-    SEE_ALSO("Random forest on Wikipedia",
-        "https://en.wikipedia.org/wiki/Random_forest"),
-    SEE_ALSO("Random forests (pdf)",
-        "https://link.springer.com/content/pdf/10.1023/A:1010933404324.pdf"),
-    SEE_ALSO("mlpack::tree::RandomForest C++ class documentation",
-        "@doxygen/classmlpack_1_1tree_1_1RandomForest.html"));
+        "test_labels", "test_labels", "predictions", "predictions"));
+
+// See also...
+BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
+BINDING_SEE_ALSO("@hoeffding_tree", "#hoeffding_tree");
+BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
+BINDING_SEE_ALSO("Random forest on Wikipedia",
+        "https://en.wikipedia.org/wiki/Random_forest");
+BINDING_SEE_ALSO("Random forests (pdf)",
+        "https://link.springer.com/content/pdf/10.1023/A:1010933404324.pdf");
+BINDING_SEE_ALSO("mlpack::tree::RandomForest C++ class documentation",
+        "@doxygen/classmlpack_1_1tree_1_1RandomForest.html");
 
 PARAM_MATRIX_IN("training", "Training dataset.", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");

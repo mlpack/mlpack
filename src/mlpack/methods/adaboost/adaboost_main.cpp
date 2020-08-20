@@ -46,13 +46,18 @@ using namespace mlpack::tree;
 using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
-PROGRAM_INFO("AdaBoost",
-    // Short description.
+// Program Name.
+BINDING_NAME("AdaBoost");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for "
     "classification.  This can be used to train an AdaBoost model on labeled "
     "data or use an existing AdaBoost model to predict the classes of new "
-    "points.",
-    // Long description.
+    "points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements the AdaBoost (or Adaptive "
     "Boosting) algorithm. The variant of AdaBoost implemented here is "
     "AdaBoost.MH. It uses a weak learner, either decision stumps or "
@@ -86,8 +91,10 @@ PROGRAM_INFO("AdaBoost",
     "."
     "\n"
     "Use " + PRINT_PARAM_STRING("predictions") + " instead of " +
-    PRINT_PARAM_STRING("output") + '.' +
-    "\n\n"
+    PRINT_PARAM_STRING("output") + '.');
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to run AdaBoost on an input dataset " +
     PRINT_DATASET("data") + " with labels " + PRINT_DATASET("labels") +
     "and perceptrons as the weak learner type, storing the trained model in " +
@@ -102,15 +109,17 @@ PROGRAM_INFO("AdaBoost",
     PRINT_DATASET("predictions") + " with the following command: "
     "\n\n" +
     PRINT_CALL("adaboost", "input_model", "model", "test", "test_data",
-        "predictions", "predictions"),
-    // See also...
-    SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/AdaBoost"),
-    SEE_ALSO("Improved boosting algorithms using confidence-rated predictions "
-        "(pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf"),
-    SEE_ALSO("Perceptron", "#perceptron"),
-    SEE_ALSO("Decision Stump", "#decision_stump"),
-    SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",
-        "@doxygen/classmlpack_1_1adaboost_1_1AdaBoost.html"));
+        "predictions", "predictions"));
+
+// See also...
+BINDING_SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/"
+        "AdaBoost");
+BINDING_SEE_ALSO("Improved boosting algorithms using confidence-rated "
+        "predictions (pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf");
+BINDING_SEE_ALSO("Perceptron", "#perceptron");
+BINDING_SEE_ALSO("Decision Stump", "#decision_stump");
+BINDING_SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",
+        "@doxygen/classmlpack_1_1adaboost_1_1AdaBoost.html");
 
 // Input for training.
 PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");
