@@ -79,57 +79,66 @@ void OneHotEncoding(const arma::Mat<eT>& input,
                     const arma::Col<size_t>& indices,
                     arma::Mat<eT>& output)
 {
-  std::vector<arma::Row<size_t>> labels(indices.n_elem);
-  std::unordered_map<size_t, size_t> mapIndices;
-  size_t newRows = input.n_rows - indices.n_elem;
-  for (size_t i = 0; i < indices.n_elem; i++)
+  // Handle the edge case where there is nothing to encode.
+  if (indices.n_elem == 0)
   {
-    std::unordered_map<eT, size_t> labelMap;
-    size_t curLabel = 0;
-    labels[i].set_size(input.n_cols);
-    for (size_t k = 0; k < input.n_cols; ++k)
+    output = input;
+    return;
+  }
+
+  // First, we need to compute the size of the output matrix.
+
+  // This vector will eventually hold the offsets for each dimension in the
+  // one-hot encoded matrix, but first it will just hold the counts of
+  // dimensions for each dimension.
+  arma::Col<size_t> dimensionOffsets(input.n_rows, arma::fill::ones);
+  // This will hold the mappings from a value that should be one-hot encoded to
+  // the index of the dimension it should take.
+  std::unordered_map<size_t, std::unordered_map<eT, size_t>> mappings;
+  for (size_t i = 0; i < indices.n_elem; ++i)
+  {
+    dimensionOffsets[indices[i]] = 0;
+    mappings.insert(
+        std::make_pair(indices[i], std::unordered_map<eT, size_t>()));
+  }
+
+  for (size_t col = 0; col < input.n_cols; ++col)
+  {
+    for (size_t row = 0; row < input.n_rows; ++row)
     {
-      // If element is already in the map, use the existing label.
-      if (labelMap.count(input(indices.at(i), k)) != 0)
+      if (mappings.count(row) != 0)
       {
-        labels[i][k] = labelMap[input(indices.at(i), k)] - 1;
+        // We have to one-hot encode this point.
+        if (mappings[row].count(input(row, col)) == 0)
+          mappings[row][input(row, col)] = dimensionOffsets[row]++;
+      }
+    }
+  }
+
+  // Turn the dimension counts into offsets.  Note that the last element is the
+  // total number of dimensions, and the first element is the offset for~
+  // dimension *2* (not 1).
+  for (size_t i = 1; i < dimensionOffsets.n_elem; ++i)
+    dimensionOffsets[i] += dimensionOffsets[i - 1];
+
+  // Now, initialize the output matrix to the right size.
+  output.zeros(dimensionOffsets[dimensionOffsets.n_elem - 1], input.n_cols);
+
+  // Finally, one-hot encode the matrix.
+  for (size_t col = 0; col < input.n_cols; ++col)
+  {
+    for (size_t row = 0; row < input.n_rows; ++row)
+    {
+      const size_t dimOffset = (row == 0) ? 0 : dimensionOffsets[row - 1];
+      if (mappings.count(row) != 0)
+      {
+        output(dimOffset + mappings[row][input(row, col)], col) = eT(1);
       }
       else
       {
-        // If element not there then add it to the map.
-        labelMap[input(indices.at(i), k)] = curLabel + 1;
-        labels[i][k] = curLabel;
-        ++curLabel;
+        // No need for one-hot encoding.
+        output(dimOffset, col) = input(row, col);
       }
-    }
-    mapIndices[indices.at(i)] = labelMap.size();
-    labelMap.clear();
-    newRows += mapIndices[indices.at(i)];
-  }
-
-  // find the size of output mat.
-  output.zeros(newRows, input.n_cols);
-  size_t row = 0;
-  size_t labelRow = 0;
-  for (size_t i = 0; i < input.n_rows; i++)
-  {
-    if (mapIndices.count(i) == 0)
-    {
-      // Copy exactly as required.
-      for (size_t j = 0; j < input.n_cols; j++)
-      {
-        output(row, j) = input(i, j);
-      }
-      row++;
-    }
-    else
-    {
-      for (size_t l = 0; l < input.n_cols; ++l)
-      {
-        output(row + labels[labelRow][l], l) = 1;
-      }
-      labelRow++;
-      row +=  mapIndices[i];
     }
   }
 }
