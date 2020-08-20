@@ -148,7 +148,7 @@ double LinearRegression::ComputeError(const arma::mat& predictors,
   return cost;
 }
 
-double LinearRegression::coef_det(const arma::mat& predictors,
+double LinearRegression::Coef_Det(const arma::mat& predictors,
                                   const arma::rowvec& responses,
                                   const bool adj_r2) const
 {
@@ -157,16 +157,17 @@ double LinearRegression::coef_det(const arma::mat& predictors,
   double k = predictors.n_rows;// number of independent variables
   arma::rowvec predictions;// creating a vector to store y_hat values
   Predict(predictors, predictions);// predicting y values == y_hat
-  double responses_mean = arma::mean(responses);// calculating the mean of actual y values
+  // calculating the mean of actual y values
+  double responses_mean = arma::mean(responses);
   // Calculating Sum of squared residuals  - sum((y_hat - y_mean)^2)
   double ssr = arma::accu(arma::square(predictions - responses_mean));
   // Calculating Total sum of squares - sum((y_actual - y_mean)^2)
   double ssto = arma::accu(arma::square(responses - responses_mean));
   // Calculating R-squared
   double rsq = ssr/ssto;
-  if(adj_r2){
+  if (adj_r2){
     // Returning Adjusted R-squared
-    return (1-((1 - rsq)*((n-1)/(n-k-1))));
+    return (1 - ((1 - rsq) * ((n - 1) / (n - k - 1))));
   } else {
     // Returning R-squared
     return rsq;
