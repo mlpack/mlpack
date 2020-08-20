@@ -45,5 +45,5 @@ int main(int /* argc */, char** /* argv */)
   // programName is defined in mlpack_main.hpp.
   IO::RestoreSettings(programName);
 
-  PrintGo(*IO::GetSingleton().doc, "${PROGRAM_NAME}");
+  PrintGo(IO::GetSingleton().doc, "${PROGRAM_NAME}");
 }

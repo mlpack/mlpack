@@ -23,15 +23,19 @@ using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::util;
 
-// Define parameters for the executable.
-PROGRAM_INFO("Softmax Regression",
-    // Short description.
+// Program Name.
+BINDING_NAME("Softmax Regression");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of softmax regression for classification, which is a "
     "multiclass generalization of logistic regression.  Given labeled data, a "
     "softmax regression model can be trained and saved for future use, or, a "
     "pre-trained softmax regression model can be used for classification of "
-    "new points.",
-    // Long description.
+    "new points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs softmax regression, a generalization of logistic "
     "regression to the multiclass case, and has support for L2 regularization. "
     " The program is able to train a model, load  an existing model, and give "
@@ -63,8 +67,10 @@ PROGRAM_INFO("Softmax Regression",
     "specified for the test data with the " +
     PRINT_PARAM_STRING("test_labels") + " parameter, then the program will "
     "print the accuracy of the predictions on the given test set and its "
-    "corresponding labels."
-    "\n\n"
+    "corresponding labels.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to train a softmax regression model on the data " +
     PRINT_DATASET("dataset") + " with labels " + PRINT_DATASET("labels") +
     " with a maximum of 1000 iterations for training, saving the trained model "
@@ -78,14 +84,17 @@ PROGRAM_INFO("Softmax Regression",
     " " + PRINT_DATASET("predictions") + ", the following command can be used:"
     "\n\n" +
     PRINT_CALL("softmax_regression", "input_model", "sr_model", "test",
-        "test_points", "predictions", "predictions"),
-    SEE_ALSO("@logistic_regression", "#logistic_regression"),
-    SEE_ALSO("@random_forest", "#random_forest"),
-    SEE_ALSO("Multinomial logistic regression (softmax regression) on "
+        "test_points", "predictions", "predictions"));
+
+// See also...
+BINDING_SEE_ALSO("@logistic_regression", "#logistic_regression");
+BINDING_SEE_ALSO("@random_forest", "#random_forest");
+BINDING_SEE_ALSO("Multinomial logistic regression (softmax regression) on "
         "Wikipedia",
-        "https://en.wikipedia.org/wiki/Multinomial_logistic_regression"),
-    SEE_ALSO("mlpack::regression::SoftmaxRegression C++ class documentation",
-        "@doxygen/classmlpack_1_1regression_1_1SoftmaxRegression.html"));
+        "https://en.wikipedia.org/wiki/Multinomial_logistic_regression");
+BINDING_SEE_ALSO("mlpack::regression::SoftmaxRegression C++ class "
+        "documentation",
+        "@doxygen/classmlpack_1_1regression_1_1SoftmaxRegression.html");
 
 // Required options.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "

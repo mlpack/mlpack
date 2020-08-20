@@ -19,7 +19,7 @@ The document is split into several sections:
  - @ref bindings_intro
  - @ref bindings_code
  - @ref bindings_general
-    - @ref bindings_general_program_info
+    - @ref bindings_general_program_doc
     - @ref bindings_general_define_params
     - @ref bindings_general_functions
     - @ref bindings_general_more
@@ -128,12 +128,18 @@ using namespace std;
 // being used.  Note that the macros must have + on either side of them.  We
 // provide some extra references with the "SEE_ALSO()" macro, which is used to
 // generate documentation for the website.
-PROGRAM_INFO("Mean Shift Clustering",
-    // Short description.
+
+// Program Name.
+BINDING_NAME("Mean Shift Clustering");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A fast implementation of mean-shift clustering using dual-tree range "
     "search.  Given a dataset, this uses the mean shift algorithm to produce "
-    "and return a clustering of the data.",
-    // Long description.
+    "and return a clustering of the data.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs mean shift clustering on the given dataset, storing "
     "the learned cluster assignments either as a column of labels in the input "
     "dataset or separately."
@@ -147,22 +153,26 @@ PROGRAM_INFO("Mean Shift Clustering",
     "\n\n"
     "The output labels may be saved with the " + PRINT_PARAM_STRING("output") +
     " output parameter and the centroids of each cluster may be saved with the"
-    " " + PRINT_PARAM_STRING("centroid") + " output parameter."
-    "\n\n"
+    " " + PRINT_PARAM_STRING("centroid") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to run mean shift clustering on the dataset " +
     PRINT_DATASET("data") + " and store the centroids to " +
     PRINT_DATASET("centroids") + ", the following command may be used: "
     "\n\n" +
-    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"),
-    SEE_ALSO("@kmeans", "#kmeans"),
-    SEE_ALSO("@dbscan", "#dbscan"),
-    SEE_ALSO("Mean shift on Wikipedia",
-        "https://en.wikipedia.org/wiki/Mean_shift"),
-    SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
+    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"));
+
+// See also...
+BINDING_SEE_ALSO("@kmeans", "#kmeans");
+BINDING_SEE_ALSO("@dbscan", "#dbscan");
+BINDING_SEE_ALSO("Mean shift on Wikipedia",
+        "https://en.wikipedia.org/wiki/Mean_shift");
+BINDING_SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
         "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.510.1222"
-        "&rep=rep1&type=pdf"),
-    SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
-        "@doxygen/classmlpack_1_1meanshift_1_1MeanShift.html"));
+        "&rep=rep1&type=pdf");
+BINDING_SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
+        "@doxygen/classmlpack_1_1meanshift_1_1MeanShift.html");
 
 // Define parameters for the executable.
 
@@ -228,9 +238,10 @@ void mlpackMain()
 @endcode
 
 We can see that we have defined the basic program information in the
-@c PROGRAM_INFO() macro.  This is, for instance, what is displayed to describe
-the binding if the user passed the <tt>\--help</tt> option for a
-command-line program.
+@c BINDING_NAME(), @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(),
+@c BINDING_EXAMPLE() and @c BINDING_SEE_ALSO() macros.  This is, for instance,
+what is displayed to describe the binding if the user passed the
+<tt>\--help</tt> option for a command-line program.
 
 Then, we define five parameters, three input and two output, that define the
 data and options that the mean shift clustering will function on.  These
@@ -247,10 +258,12 @@ whether the parameter is input or output.  Some examples:
 Note that each of these macros may have slightly different syntax.  See the
 links above for further documentation.
 
-In order to write a new binding, then, you simply must write a @c PROGRAM_INFO()
-definition of the program with some docuentation, define the input and output
-parameters as @c PARAM macros, and then write an @c mlpackMain() function that
-actually performs the functionality of the binding.  Inside of @c mlpackMain():
+In order to write a new binding, then, you simply must write @c BINDING_NAME(),
+@c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(), @c BINDING_EXAMPLE() and
+@c BINDING_SEE_ALSO() definitions of the program with some docuentation, define
+the input and output parameters as @c PARAM macros, and then write an
+@c mlpackMain() function that actually performs the functionality of the binding.
+Inside of @c mlpackMain():
 
  - All input parameters are accessible through @c IO::GetParam<type>("name").
  - All output parameters should be set by the end of the function with the
@@ -278,15 +291,27 @@ relatively clear how one could use the @c IO functionality along with CMake to
 add a binding for a new mlpack machine learning method.  If it is not clear,
 then the examples in the following sections should clarify.
 
-@subsection bindings_general_program_info Documenting a program with PROGRAM_INFO()
+@subsection bindings_general_program_doc Documenting a program with
+@c BINDING_NAME(), @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(),
+@c BINDING_EXAMPLE() and @c BINDING_SEE_ALSO().
 
-Any mlpack program should be documented with the @c PROGRAM_INFO() macro, which
-is available from the @c <mlpack/core/util/mlpack_main.hpp> header.  The macro
-is of the form
+Any mlpack program should be documented with the @c BINDING_NAME(),
+@c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC() , @c BINDING_EXAMPLE() and
+@c BINDING_SEE_ALSO() macros, which is available from the
+@c <mlpack/core/util/mlpack_main.hpp> header.  The macros
+are of the form
 
 @code
-PROGRAM_INFO("program name", "short documentation", "long documentation",
-    SEE_ALSO("link", "description"), ...)
+BINDING_NAME("program name");
+BINDING_SHORT_DESC("This is a short, two-sentence description of what the program does.");
+BINDING_LONG_DESC("This is a long description of what the program does."
+    " It might be many lines long and have lots of details about different options.");
+BINDING_EXAMPLE("This contains one example for this particular binding.\n" +
+    PROGRAM_CALL(...));
+BINDING_EXAMPLE("This contains another example for this particular binding.\n" +
+    PROGRAM_CALL(...));
+// There could be many of these "see alsos".
+BINDING_SEE_ALSO("https://en.wikipedia.org/wiki/Machine_learning");
 @endcode
 
 The short documentation should be two sentences indicating what the program
@@ -368,6 +393,14 @@ Command-line program output (snippet):
 Python binding output (snippet):
 
   The parameter 'shuffle', if set, will shuffle the data before learning.
+
+Julia binding output (snippet):
+
+  The parameter `shuffle`, if set, will shuffle the data before learning.
+
+Go binding output (snippet):
+
+  The parameter "Shuffle", if set, will shuffle the data before learning.
 @endcode
 
 @code
@@ -383,6 +416,14 @@ Command-line program output (snippet):
 Python binding output (snippet):
 
   The output matrix can be saved with the 'output' output parameter.
+
+Julia binding output (snippet):
+
+  The output matrix can be saved with the `output` output parameter.
+
+Go binding output (snippet):
+
+  The output matrix can be saved with the "output" output parameter.
 @endcode
 
 @code
@@ -408,12 +449,38 @@ Python binding output (snippet):
 
   >>> output = program(input=x)
   >>> model = output['output_model']
+
+Julia binding output (snippet):
+
+  For example, to train a model on the dataset `x` and save the output model to
+  `model`, the following command can be used:
+
+  julia> model = program(input=x)
+
+Go binding output (snippet):
+
+  For example, to train a model on the dataset "x" and save the output model to
+  "model", the following command can be used:
+
+    // Initialize optional parameters for Program().
+    param := mlpack.ProgramOptions()
+    param.Input = x
+
+    model := mlpack.Program(param)
 @endcode
 
 @code
 Input C++ (full program, 'random_numbers_main.cpp'):
 
-  PROGRAM_INFO("Random Numbers", "This program generates random numbers with a "
+  // Program Name.
+  BINDING_NAME("Random Numbers");
+
+  // Short description.
+  BINDING_SHORT_DESC("An implementation of Random Numbers");
+
+  // Long description.
+  BINDING_LONG_DESC(
+      "This program generates random numbers with a "
       "variety of nonsensical techniques and example parameters.  The input "
       "dataset, which will be ignored, can be specified with the " +
       PRINT_PARAM_STRING("input") + " parameter.  If you would like to subtract"
@@ -425,8 +492,10 @@ Input C++ (full program, 'random_numbers_main.cpp'):
       "The output random numbers can be saved with the " +
       PRINT_PARAM_STRING("output") + " output parameter.  In addition, a "
       "randomly generated linear regression model can be saved with the " +
-      PRINT_PARAM_STRING("output_model") + " output parameter."
-      "\n\n"
+      PRINT_PARAM_STRING("output_model") + " output parameter.");
+
+  // Example.
+  BINDING_EXAMPLE(
       "For example, to generate 100 random numbers with 3 subtracted from them "
       "and save the output to " + PRINT_DATASET("rand") + " and the random "
       "model to " + PRINT_MODEL("rand_lr") + ", use the following "
@@ -479,17 +548,66 @@ Python binding output:
     >>> output = random_numbers(num_values=100, subtract=3)
     >>> rand = output['output']
     >>> rand_lr = output['output_model']
+
+Julia binding output:
+
+    Random Numbers
+
+    This program generates random numbers with a variety of nonsensical
+    techniques and example parameters.  The input dataset, which will be
+    ignored, can be specified with the `input` parameter.  If you would like to
+    subtract values from each number, specify the `subtract` parameter.  The
+    number of random numbers to generate is specified with the `num_values`
+    parameter.
+
+    The output random numbers can be saved with the `output` output parameter.
+    In addition, a randomly generated linear regression model can be saved with
+    the `output_model` output parameter.
+
+    For example, to generate 100 random numbers with 3 subtracted from them and
+    save the output to `rand` and the random model to `rand_lr`, use the
+    following command:
+
+    ```julia
+    julia> rand, rand_lr = random_numbers(num_values=100, subtract=3)
+    ```
+
+Go binding output:
+
+    Random Numbers
+
+    This program generates random numbers with a variety of nonsensical
+    techniques and example parameters.  The input dataset, which will be
+    ignored, can be specified with the "Input" parameter.  If you would like to
+    subtract values from each number, specify the "Subtract" parameter.  The
+    number of random numbers to generate is specified with the "NumValues"
+    parameter.
+
+    The output random numbers can be saved with the "output" output parameter.
+    In addition, a randomly generated linear regression model can be saved with
+    the "outputModel" output parameter.
+
+    For example, to generate 100 random numbers with 3 subtracted from them and
+    save the output to "rand" and the random model to "randLr", use the
+    following command:
+
+    // Initialize optional parameters for RandomNumbers().
+    param := mlpack.RandomNumbersOptions()
+    param.NumValues = 100
+    param.Subtract=3
+
+    rand, randLr := mlpack.RandomNumbers(param)
 @endcode
 
 @subsection bindings_general_define_params Defining parameters for a program
 
-There exist several macros that can be used after a @c PROGRAM_INFO() definition
-to define the parameters that can be specified for a given mlpack program.
-These macros all have the same general definition: the name of the macro
-specifies the type of the parameter, whether or not the parameter is required,
-and whether the parameter is an input or output parameter.  Then as arguments to
-the macro, the name, description, and sometimes the single-character alias and
-the default value of the parameter.
+There exist several macros that can be used after a @c BINDING_LONG_DESC() and
+@c BINDING_EXAMPLE() definition to define the parameters that can be specified
+for a given mlpack program. These macros all have the same general definition:
+the name of the macro specifies the type of the parameter, whether or not the
+parameter is required, and whether the parameter is an input or output parameter.
+Then as arguments to the macros, the name, description, and sometimes the
+single-character alias and the default value of the parameter.
 
 To give a flavor of how these definitions look, the definition
 
@@ -620,10 +738,10 @@ Python interface to the user.
 mlpack's @c IO module provides a unified abstract interface for getting input
 from and providing output to users without needing to consider the language
 (command-line, Python, MATLAB, etc.) that the user is running the program from.
-This means that after the @c PROGRAM_INFO() macro and the @c PARAM_*() macros
-have been defined, a language-agnostic @c mlpackMain() function can be written.
-This function then can perform the actual computation that the entire program is
-meant to.
+This means that after the @c BINDING_LONG_DESC() and @c BINDING_EXAMPLE() macros
+and the @c PARAM_*() macros have been defined, a language-agnostic
+@c mlpackMain() function can be written. This function then can perform the
+actual computation that the entire program is meant to.
 
 Inside of an @c mlpackMain() function, the @c mlpack::IO module can be used to
 access input parameters and set output parameters.  There are two main functions
@@ -703,7 +821,8 @@ could be created for the "random_numbers" program from earlier sections.
 @code
 #include <mlpack/core/util/mlpack_main.hpp>
 
-// The PROGRAM_INFO() and PARAM_*() definitions should go here:
+// BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC() , BINDING_EXAMPLE(),
+// BINDING_SEE_ALSO() and PARAM_*() definitions should go here:
 // ...
 
 using namespace mlpack;
@@ -759,23 +878,43 @@ This section describes the internal functionality of the IO module and the
 associated macros.  If you are only interested in writing mlpack programs, this
 section is probably not worth reading.
 
-There are four main components involved with mlpack bindings:
+There are eight main components involved with mlpack bindings:
 
  - the IO module, a singleton class that stores parameter information
  - the mlpackMain() function that defines the functionality of the binding
- - the PROGRAM_INFO() macro that defines the binding name and documentation
+ - the BINDING_NAME() macro that defines the binding name
+ - the BINDING_SHORT_DESC() macro that defines the short description
+ - the BINDING_LONG_DESC() macro that defines the long description
+ - (optional) the BINDING_EXAMPLE() macro that defines example usages
+ - (optional) the BINDING_SEE_ALSO() macro that defines "see also" links
  - the PARAM_*() macros that define parameters for the binding
 
 The mlpack::IO module is a singleton class that stores, at runtime, the binding
 name, the documentation, and the parameter information and values.  In order to
 do this, each parameter and the program documentation must make themselves known
-to the IO singleton.  This is accomplished by having the @c PROGRAM_INFO() and
-@c PARAM_*() macros declare global variables that, in their constructors,
-register themselves with the IO singleton.
+to the IO singleton.  This is accomplished by having the @c BINDING_NAME(),
+@c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(), @c BINDING_EXAMPLE(),
+@c BINDING_SEE_ALSO() and @c PARAM_*() macros declare global variables that,
+in their constructors, register themselves with the IO singleton.
 
-The @c PROGRAM_INFO() macro declares an object of type mlpack::util::ProgramDoc.
-The @c ProgramDoc class constructor calls IO::RegisterProgramDoc() in order to
-register the given program name and documentation.
+The @c BINDING_NAME() macro declares an object of type mlpack::util::ProgramName.
+The @c BINDING_SHORT_DESC() macro declares an object of type
+mlpack::util::ShortDescription.
+The @c BINDING_LONG_DESC() macro declares an object of type
+mlpack::util::LongDescription.
+The @c BINDING_EXAMPLE() macro declares an object of type mlpack::util::Example.
+The @c BINDING_SEE_ALSO() macro declares an object of type
+mlpack::util::SeeAlso.
+The @c ProgramName class constructor calls IO::RegisterProgramName() in order to
+register the given program name.
+The @c ShortDescription class constructor calls IO::RegisterShortDescription() in order to
+register the given short description.
+The @c LongDescription class constructor calls IO::RegisterLongDescription() in order to
+register the given long description.
+The @c Example class constructor calls IO::RegisterExample() in order to
+register the given example.
+The @c SeeAlso class constructor calls IO::RegisterSeeAlso() in order to
+register the given see-also link.
 
 The @c PARAM_*() macros declare an object that will, in its constructor, call
 IO::Add() to register that parameter with the IO singleton.  The specific type
@@ -875,7 +1014,8 @@ binding:
  - The options defined by @c PARAM_*() macros are of type
    mlpack::bindings::cli::CLIOption.
 
- - The parameter and value printing macros for @c PROGRAM_INFO() are set:
+ - The parameter and value printing macros for @c BINDING_LONG_DESC()
+   and BINDING_EXAMPLE() are set:
    * The @c PRINT_PARAM_STRING() macro is defined as
      mlpack::bindings::cli::ParamString().
    * The @c PRINT_DATASET() macro is defined as
@@ -1047,9 +1187,10 @@ individually if you like).  The file
 the name of the program and the @c *_main.cpp file to include correctly, then
 the @c mlpack::bindings::python::PrintPYX() function is called by the program.
 The @c PrintPYX() function uses the parameters that have been set in the IO
-singleton by the @c PROGRAM_INFO() and @c PARAM_*() macros in order to actually
-print a fully-working .pyx file that can be compiled.  The file has several
-sections:
+singleton by the @c BINDING_NAME(), @c BINDING_SHORT_DESC(),
+@c BINDING_LONG_DESC(), @c BINDING_EXAMPLE(), @c BINDING_SEE_ALSO() and
+@c PARAM_*() macros in order to actually print a fully-working .pyx file that
+can be compiled.  The file has several sections:
 
  - Python imports (numpy/pandas/cython/etc.)
  - Cython imports of C++ utility functions and Armadillo functionality

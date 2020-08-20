@@ -4,8 +4,8 @@
  * @author Ryan Curtin
  *
  * Definition of PARAM_*_IN() and PARAM_*_OUT() macros, as well as the
- * PROGRAM_INFO() macro, which are used to define input and output parameters of
- * command-line programs and bindings to other languages.
+ * Documentation related macro, which are used to define input and output
+ * parameters of command-line programs and bindings to other languages.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -30,6 +30,118 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 } // namespace mlpack
 
 /**
+ * @cond
+ * Don't document internal macros.
+ */
+
+// These are ugly, but necessary utility functions we must use to generate a
+// unique identifier inside of the PARAM() module.
+#define JOIN(x, y) JOIN_AGAIN(x, y)
+#define JOIN_AGAIN(x, y) x ## y
+
+/** @endcond */
+
+/**
+ * Specify the program name of a binding.  Only one instance of this macro
+ * should be present in your program!  Therefore, use it in the main.cpp
+ * (or corresponding binding) in your program.
+ *
+ * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
+ * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
+ * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
+ * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
+ * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
+ *
+ * @param NAME Short string representing the name of the program.
+ */
+#define BINDING_NAME(NAME) static \
+    mlpack::util::ProgramName \
+    io_programname_dummy_object = mlpack::util::ProgramName(NAME);
+
+/**
+ * Specify the short description of a binding.  Only one instance of this macro
+ * should be present in your program!  Therefore, use it in the main.cpp
+ * (or corresponding binding) in your program.
+ *
+ * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
+ * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
+ * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
+ * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
+ * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
+ *
+ * @param SHORT_DESC Short two-sentence description of the program; it should
+ *     describe what the program implements and does, and a quick overview of
+ *     how it can be used and what it should be used for.
+ */
+#define BINDING_SHORT_DESC(SHORT_DESC) static \
+    mlpack::util::ShortDescription \
+    io_programshort_desc_dummy_object = mlpack::util::ShortDescription( \
+    SHORT_DESC);
+
+/**
+ * Specify the long description of a binding.  Only one instance of this macro
+ * present in your program!  Therefore, use it in the main.cpp
+ * (or corresponding binding) in your program.
+ *
+ * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
+ * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
+ * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
+ * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
+ * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
+ *
+ * @param LONG_DESC Long string describing what the program does. Newlines
+ *     should not be used here; this is taken care of by IO (however, you
+ *     can explicitly specify newlines to denote new paragraphs).  You can
+ *     also use printing macros like PRINT_PARAM_STRING(), PRINT_DATASET(),
+ *     and others.
+ */
+#define BINDING_LONG_DESC(LONG_DESC) static \
+    mlpack::util::LongDescription \
+    io_programlong_desc_dummy_object = mlpack::util::LongDescription( \
+    []() { return std::string(LONG_DESC); });
+
+/**
+ * Specify the example of a binding.  Mutiple instance of this macro can be
+ * present in your program!  Therefore, use it in the main.cpp
+ * (or corresponding binding) in your program.
+ *
+ * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
+ * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
+ * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
+ * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
+ * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
+ *
+ * @param EXAMPLE Long string describing a simple usage example.. Newlines
+ *     should not be used here; this is taken care of by IO (however, you
+ *     can explicitly specify newlines to denote new paragraphs).  You can
+ *     also use printing macros like PRINT_CALL(), PRINT_DATASET(),
+ *     and others.
+ */
+#ifdef __COUNTER__
+  #define BINDING_EXAMPLE(EXAMPLE) static \
+      mlpack::util::Example \
+      JOIN(io_programexample_dummy_object_, __COUNTER__) = \
+      mlpack::util::Example( \
+      []() { return(std::string(EXAMPLE)); });
+#else
+  #define BINDING_EXAMPLE(EXAMPLE) static \
+      mlpack::util::Example \
+      JOIN(JOIN(io_programexample_dummy_object_, __LINE__), opt) = \
+      mlpack::util::Example( \
+      []() { return(std::string(EXAMPLE)); });
+#endif
+
+/**
+ * Specify the see-also of a binding.  Mutiple instance of this macro can be
+ * present in your program!  Therefore, use it in the main.cpp
+ * (or corresponding binding) in your program.
+ *
+ * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
+ * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
+ * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
+ * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
+ * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
+ *
  * Provide a link for a binding's "see also" documentation section, which is
  * primarily (but not necessarily exclusively) used by the Markdown bindings
  * This link can be specified by calling SEE_ALSO("description", "link"), where
@@ -42,36 +154,17 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * - A link to a Doxygen page, using the mangled Doxygen name after a
  *      '\@doxygen/', i.e., "@doxygen/mlpack1_1_adaboost1_1_AdaBoost".
  */
-#define SEE_ALSO(DESCRIPTION, LINK) {DESCRIPTION, LINK}
-
-/**
- * Document an executable.  Only one instance of this macro should be
- * present in your program!  Therefore, use it in the main.cpp
- * (or corresponding executable) in your program.
- *
- * @see mlpack::IO, PARAM_FLAG(), PARAM_INT_IN(), PARAM_DOUBLE_IN(),
- * PARAM_STRING_IN(), PARAM_VECTOR_IN(), PARAM_INT_OUT(), PARAM_DOUBLE_OUT(),
- * PARAM_VECTOR_OUT(), PARAM_INT_IN_REQ(), PARAM_DOUBLE_IN_REQ(),
- * PARAM_STRING_IN_REQ(), PARAM_VECTOR_IN_REQ(), PARAM_INT_OUT_REQ(),
- * PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().
- *
- * @param NAME Short string representing the name of the program.
- * @param SHORT_DESC Short two-sentence description of the program; it should
- *     describe what the program implements and does, and a quick overview of
- *     how it can be used and what it should be used for.
- * @param DESC Long string describing what the program does and possibly a
- *     simple usage example.  Newlines should not be used here; this is taken
- *     care of by IO (however, you can explicitly specify newlines to denote
- *     new paragraphs).  You can also use printing macros like
- *     PRINT_PARAM_STRING(), PRINT_DATASET(), and others.
- * @param ... A set of SEE_ALSO() macros that are used for generating
- *     documentation.  See the SEE_ALSO() macro.  This is a varargs argument, so
- *     you can add as many SEE_ALSO()s as you like.
- */
-#define PROGRAM_INFO(NAME, SHORT_DESC, DESC, ...) \
-    static mlpack::util::ProgramDoc \
-    io_programdoc_dummy_object = mlpack::util::ProgramDoc(NAME, SHORT_DESC, \
-    []() { return DESC; }, { __VA_ARGS__ } )
+#ifdef __COUNTER__
+  #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
+      mlpack::util::SeeAlso \
+      JOIN(io_programsee_also_dummy_object_, __COUNTER__) = \
+      mlpack::util::SeeAlso(DESCRIPTION, LINK);
+#else
+  #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
+      mlpack::util::SeeAlso \
+      JOIN(JOIN(io_programsee_also_dummy_object_, __LINE__), opt) = \
+      mlpack::util::SeeAlso(DESCRIPTION, LINK);
+#endif
 
 /**
  * Define a flag parameter.
@@ -82,7 +175,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -108,7 +202,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
 // Use a forward declaration of the class.
@@ -139,7 +234,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -165,7 +261,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -195,7 +292,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
  *      here---it will cause problems.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -213,7 +311,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * The parameter can then be specified on the command line with
  * --ID=value. If ALIAS is equal to DEF_MOD (which is set using the
- * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
+ * BINDING_LONG_DESC() macro), the parameter can be specified with just
+ * --ID=value.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).  Don't use
@@ -222,7 +321,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -253,7 +353,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -827,7 +928,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -860,7 +962,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -899,7 +1002,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS One-character string representing the alias of the parameter.
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1011,7 +1115,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1035,7 +1140,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1059,7 +1165,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1085,7 +1192,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *      here---it will cause problems.
  * @param ALIAS An alias for the parameter (one letter).
  *
- * @see mlpack::IO, PROGRAM_INFO()
+ * @see mlpack::IO, BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC(),
+ * BINDING_EXAMPLE() and BINDING_SEE_ALSO().
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -1097,18 +1205,6 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  */
 #define PARAM_VECTOR_IN_REQ(T, ID, DESC, ALIAS) \
     PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), true);
-
-/**
- * @cond
- * Don't document internal macros.
- */
-
-// These are ugly, but necessary utility functions we must use to generate a
-// unique identifier inside of the PARAM() module.
-#define JOIN(x, y) JOIN_AGAIN(x, y)
-#define JOIN_AGAIN(x, y) x ## y
-
-/** @endcond */
 
 /**
  * Define an input parameter.  Don't use this function; use the other ones above
