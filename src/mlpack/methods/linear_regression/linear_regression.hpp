@@ -140,7 +140,7 @@ class LinearRegression
    */
   double coef_det(const arma::mat& predictors,
                   const arma::rowvec& responses,
-                  bool adj_r2 = false) const;
+                  const bool adj_r2 = false) const;
 
  
   //! Return the parameters (the b vector).
