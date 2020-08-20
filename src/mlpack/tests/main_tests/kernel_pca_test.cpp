@@ -18,8 +18,8 @@ static const std::string testName = "KernelPrincipalComponentsAnalysis";
 #include "test_helper.hpp"
 #include <mlpack/methods/kernel_pca/kernel_pca_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -47,12 +47,11 @@ static void ResetSettings()
   IO::RestoreSettings(testName);
 }
 
-BOOST_FIXTURE_TEST_SUITE(KernelPCAMainTest, KernelPCATestFixture);
-
 /**
  * Make sure that all valid kernels return correct output dimension.
  */
-BOOST_AUTO_TEST_CASE(KernelPCADimensionTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCADimensionTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   std::string kernels[] = {
       "linear", "gaussian", "polynomial",
@@ -70,15 +69,16 @@ BOOST_AUTO_TEST_CASE(KernelPCADimensionTest)
     mlpackMain();
 
     // Now check that the output has 3 dimensions.
-    BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 3);
-    BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 5);
+    REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 3);
+    REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 5);
   }
 }
 
 /**
  * Check that error is thrown when no kernel is specified.
  */
-BOOST_AUTO_TEST_CASE(KernelPCANoKernelTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCANoKernelTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -86,14 +86,15 @@ BOOST_AUTO_TEST_CASE(KernelPCANoKernelTest)
   SetInputParam("new_dimensionality", (int) 3);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that error is thrown when an invalid kernel is specified.
  */
-BOOST_AUTO_TEST_CASE(KernelPCAInvalidKernelTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCAInvalidKernelTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -102,7 +103,7 @@ BOOST_AUTO_TEST_CASE(KernelPCAInvalidKernelTest)
   SetInputParam("kernel", (std::string) "badName");
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -110,7 +111,8 @@ BOOST_AUTO_TEST_CASE(KernelPCAInvalidKernelTest)
  * Ensure for zero dimensionality, we get a dataset with the same dimensionality
  * as the input dataset.
  */
-BOOST_AUTO_TEST_CASE(KernelPCA0DimensionalityTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCA0DimensionalityTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -120,14 +122,15 @@ BOOST_AUTO_TEST_CASE(KernelPCA0DimensionalityTest)
   mlpackMain();
 
   // Now check that the output has same dimensions as input.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 5);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 5);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 5);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 5);
 }
 
 /**
  * Make sure that centering the dataset makes a difference.
  */
-BOOST_AUTO_TEST_CASE(KernelPCACenterTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCACenterTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -145,13 +148,14 @@ BOOST_AUTO_TEST_CASE(KernelPCACenterTest)
   arma::mat output2 = IO::GetParam<arma::mat>("output");
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
 }
 
 /**
  * Check that we can't specify an invalid new dimensionality.
  */
-BOOST_AUTO_TEST_CASE(KernelPCATooHighNewDimensionalityTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCATooHighNewDimensionalityTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -160,14 +164,15 @@ BOOST_AUTO_TEST_CASE(KernelPCATooHighNewDimensionalityTest)
   SetInputParam("kernel", (std::string) "linear");
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that error is thrown when no input is specified.
  */
-BOOST_AUTO_TEST_CASE(KernelPCANoInputTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCANoInputTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -175,14 +180,15 @@ BOOST_AUTO_TEST_CASE(KernelPCANoInputTest)
   SetInputParam("kernel", (std::string) "linear");
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that error is thrown if invalid sampling scheme is specified.
  */
-BOOST_AUTO_TEST_CASE(KernelPCABadSamplingTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCABadSamplingTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -193,7 +199,7 @@ BOOST_AUTO_TEST_CASE(KernelPCABadSamplingTest)
   SetInputParam("sampling", (std::string) "badName");
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -201,7 +207,8 @@ BOOST_AUTO_TEST_CASE(KernelPCABadSamplingTest)
  * Test that bandwidth effects the result for gaussian, epanechnikov
  * and laplacian kernels.
  */
-BOOST_AUTO_TEST_CASE(KernelPCABandWidthTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCABandWidthTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   std::string kernels[] = {
       "gaussian", "epanechnikov", "laplacian"
@@ -229,14 +236,15 @@ BOOST_AUTO_TEST_CASE(KernelPCABandWidthTest)
     arma::mat output2 = IO::GetParam<arma::mat>("output");
 
     // The resulting matrices should be different.
-    BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+    REQUIRE(arma::any(arma::vectorise(output1 != output2)));
   }
 }
 
 /**
  * Test that offset effects the result for polynomial and hyptan kernels.
  */
-BOOST_AUTO_TEST_CASE(KernelPCAOffsetTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCAOffsetTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   std::string kernels[] = {
       "polynomial", "hyptan"
@@ -262,14 +270,15 @@ BOOST_AUTO_TEST_CASE(KernelPCAOffsetTest)
     arma::mat output2 = IO::GetParam<arma::mat>("output");
 
     // The resulting matrices should be different.
-    BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+    REQUIRE(arma::any(arma::vectorise(output1 != output2)));
   }
 }
 
 /**
  * Test that degree effects the result for polynomial kernel.
  */
-BOOST_AUTO_TEST_CASE(KernelPCADegreeTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCADegreeTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -288,13 +297,14 @@ BOOST_AUTO_TEST_CASE(KernelPCADegreeTest)
   arma::mat output2 = IO::GetParam<arma::mat>("output");
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
 }
 
 /**
  * Test that kernel scale effects the result for hyptan kernel.
  */
-BOOST_AUTO_TEST_CASE(KernelPCAKernelScaleTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCAKernelScaleTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -313,13 +323,14 @@ BOOST_AUTO_TEST_CASE(KernelPCAKernelScaleTest)
   arma::mat output2 = IO::GetParam<arma::mat>("output");
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
 }
 
 /**
  * Test that using a sampling scheme with nystroem method makes a difference.
  */
-BOOST_AUTO_TEST_CASE(KernelPCASamplingSchemeTest)
+TEST_CASE_METHOD(KernelPCATestFixture, "KernelPCASamplingSchemeTest",
+                 "[KernelPCAMainTest][BindingTests]")
 {
   ResetSettings();
 
@@ -348,9 +359,7 @@ BOOST_AUTO_TEST_CASE(KernelPCASamplingSchemeTest)
   arma::mat output3 = IO::GetParam<arma::mat>("output");
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
-  BOOST_REQUIRE(arma::any(arma::vectorise(output2 != output3)));
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(arma::vectorise(output2 != output3)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output3)));
 }
-
-BOOST_AUTO_TEST_SUITE_END();
