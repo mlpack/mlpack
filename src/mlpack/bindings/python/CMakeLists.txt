@@ -37,9 +37,8 @@ if (NOT PY_PANDAS)
   set(PY_NOT_FOUND_MSG "${PY_NOT_FOUND_MSG}\n    - pandas")
 endif ()
 
-## We need to check here if Python is even available.  Although actually
-## technically, I'm not sure if we even need to know!  For the tests though we
-## do.  So it's probably a good idea to check.
+## We need to check here if Python and other dependencies is even available, as
+## it is require to build python-bindings.
 if (FORCE_BUILD_PYTHON_BINDINGS)
   if (NOT PYTHON_EXECUTABLE OR NOT PY_DISTUTILS OR NOT PY_CYTHON OR NOT PY_NUMPY
       OR NOT PY_PANDAS)
