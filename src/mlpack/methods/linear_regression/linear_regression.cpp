@@ -147,3 +147,21 @@ double LinearRegression::ComputeError(const arma::mat& predictors,
 
   return cost;
 }
+
+double LinearRegression::coef_det(const arma::mat& predictors,
+                const arma::rowvec& responses,
+                const bool adj_r2) const
+{
+  int n = predictors.n_cols;
+  int k = predictors.n_rows;
+  arma::rowvec predictions;
+  Predict(predictors, predictions);
+  double responses_mean = arma::mean(responses);
+  double ssr = arma::accu(arma::square(predictions - responses_mean));
+  double ssto = arma::accu(arma::square(responses - responses_mean));
+  if(adj_r2)
+  {
+    return (1 - (1-(ssr/ssto)))*(n-1)/(n-k-1);
+  }
+  return ssr/ssto;
+}
