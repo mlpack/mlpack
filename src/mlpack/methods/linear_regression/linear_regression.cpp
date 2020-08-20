@@ -149,23 +149,26 @@ double LinearRegression::ComputeError(const arma::mat& predictors,
 }
 
 double LinearRegression::coef_det(const arma::mat& predictors,
-                const arma::rowvec& responses,
-                const bool adj_r2) const
+                                  const arma::rowvec& responses,
+                                  const bool adj_r2) const
 {
-  // Get the number of columns and rows of the dataset, useful for calculating Adjusted R^2
-  int n = predictors.n_cols;
-  int k = predictors.n_rows;
-  arma::rowvec predictions;
-  Predict(predictors, predictions);
-  double responses_mean = arma::mean(responses);
-  
-  // Calculate sum of squared residuals
+  // Getting the number of observations and independent variables
+  double n = predictors.n_cols; // number of observations
+  double k = predictors.n_rows;// number of independent variables
+  arma::rowvec predictions;// creating a vector to store y_hat values
+  Predict(predictors, predictions);// predicting y values == y_hat
+  double responses_mean = arma::mean(responses);// calculating the mean of actual y values
+  // Calculating Sum of squared residuals  - sum((y_hat - y_mean)^2)
   double ssr = arma::accu(arma::square(predictions - responses_mean));
-  //Calculate total sum of squares
+  // Calculating Total sum of squares - sum((y_actual - y_mean)^2)
   double ssto = arma::accu(arma::square(responses - responses_mean));
-  if(adj_r2)
-  {
-    return (1 - (1-(ssr/ssto)))*(n-1)/(n-k-1);
+  // Calculating R-squared
+  double rsq = ssr/ssto;
+  if(adj_r2){
+    // Returning Adjusted R-squared
+    return (1-((1 - rsq)*((n-1)/(n-k-1))));
+  } else {
+    // Returning R-squared
+    return rsq;
   }
-  return ssr/ssto;
 }
