@@ -28,13 +28,6 @@ DBN<OutputLayerType, InitializationRuleType>::DBN(
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
-DBN<OutputLayerType, InitializationRuleType>::~DBN()
-{
-  std::for_each(network.begin(), network.end(),
-      boost::apply_visitor(deleteVisitor));
-}
-
-template<typename OutputLayerType, typename InitializationRuleType>
 void DBN<OutputLayerType, InitializationRuleType>::ResetData(
     arma::mat predictors, arma::mat responses)
 {
@@ -47,23 +40,40 @@ double DBN<OutputLayerType, InitializationRuleType>::Train(
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks)
 {
+  double var;
   arma::mat temp = predictors;
   for (size_t i = 0; i < network.size(); ++i)
   {
     OptimizerType opt = optimizer;
-    network[i].train(temp, opt);
+    var = network[i].train(temp, opt);
     arma::mat out;
     network[i].forward(temp, out);
     temp = out;
   }
+  return var;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
 template<typename OptimizerType, typename... CallbackTypes>
 double DBN<OutputLayerType, InitializationRuleType>::Train(
     arma::mat predictors,
+    const double layerNumber,
+    OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
+  double var;
+  if(layerNumber > network.size())
+  {}
+  arma::mat temp = input;
+  for (size_t i = 0; i < layerNumber - 1; ++i)
+  {
+    arma::mat out;
+    network[i].forward(temp, out);
+    temp = out;
+  }
+  var = network[layerNumber].train(temp, optimizer);
+  return var;
+
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
@@ -71,6 +81,14 @@ template<typename PredictorsType, typename ResponsesType>
 void DBN<OutputLayerType, InitializationRuleType>::Forward(
     const PredictorsType& inputs, ResponsesType& results)
 {
+  arma::mat temp = input;
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    arma::mat out;
+    network[i].forward(temp, out);
+    temp = out;
+  }
+  results = temp;
 }
 
 template<typename OutputLayerType, typename InitializationRuleType>
