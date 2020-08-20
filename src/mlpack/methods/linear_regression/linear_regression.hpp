@@ -122,7 +122,7 @@ class LinearRegression
    */
   double ComputeError(const arma::mat& points,
                       const arma::rowvec& responses) const;
- 
+
   /**
    * Calculate the Coefficient of determination - \f$R^2\f$ or
    * Adjusted \f$R^2\f$
@@ -143,7 +143,7 @@ class LinearRegression
   double Coef_Det(const arma::mat& predictors,
                   const arma::rowvec& responses,
                   const bool adj_r2 = false) const;
- 
+
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }
   //! Modify the parameters (the b vector).

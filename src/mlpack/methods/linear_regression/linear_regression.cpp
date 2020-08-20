@@ -154,9 +154,9 @@ double LinearRegression::Coef_Det(const arma::mat& predictors,
 {
   // Getting the number of observations and independent variables
   double n = predictors.n_cols; // number of observations
-  double k = predictors.n_rows;// number of independent variables
-  arma::rowvec predictions;// creating a vector to store y_hat values
-  Predict(predictors, predictions);// predicting y values == y_hat
+  double k = predictors.n_rows; // number of independent variables
+  arma::rowvec predictions; // creating a vector to store y_hat values
+  Predict(predictors, predictions); // predicting y values == y_hat
   // calculating the mean of actual y values
   double responses_mean = arma::mean(responses);
   // Calculating Sum of squared residuals  - sum((y_hat - y_mean)^2)
