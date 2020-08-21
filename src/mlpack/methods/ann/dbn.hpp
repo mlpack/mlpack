@@ -17,7 +17,6 @@
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/ann/rbm/rbm.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include "init_rules/network_init.hpp"
 
 #include <ensmallen.hpp>
 
@@ -33,14 +32,14 @@ namespace ann /** Artificial Neural Network. */ {
  *         feed forward network.
  */
 template<
-  typename OutputLayerType = NegativeLogLikelihood<>,
+  typename OutputType = arma::mat,
   typename InitializationRuleType = GaussianInitialization
 >
 class DBN
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = DBN<OutputLayerType, InitializationRuleType>;
+  using NetworkType = DBN<OutputType, InitializationRuleType>;
 
   /**
    * Create the DBN object.
@@ -51,8 +50,9 @@ class DBN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
+   * @tparam predictors Input training data.
    */
-  DBN();
+  DBN(arma::mat predictors);
 
   /**
    * Train the deep belief network on the given input data using the given
@@ -67,19 +67,17 @@ class DBN
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback Functions.
-   * @param predictors Input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  double Train(arma::mat predictors,
-               OptimizerType& optimizer,
+  double Train(OptimizerType& optimizer,
                CallbackTypes&&... callbacks);
   /**
-   * Train the deep belief network on the given input data using the given
-   * optimizer.
+   * Train single layer of the deep belief network on the given input
+   * data using the given optimizer.
    *
    * This will use the existing model parameters as a starting point for the
    * optimization. If this is not what you want, then you should access the
@@ -90,7 +88,6 @@ class DBN
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback Functions.
-   * @param predictors Input training variables.
    * @param layerNumber The number of layer which you want to train.
    * @param optimizer Instantiated optimizer used to train the model.
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
@@ -98,8 +95,7 @@ class DBN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  double Train(arma::mat predictors,
-               const double layerNumber,
+  double Train(const double layerNumber,
                OptimizerType& optimizer,
                CallbackTypes&&... callbacks);
 
@@ -123,17 +119,17 @@ class DBN
    *
    * @param layer The RBM Layer to be added to the model.
    */
-  void Add(RBM<InitializationRule> layer) { network.push_back(layer); }
+  void Add(RBM<InitializationRuleType> layer) { network.push_back(layer); }
 
   //! Get the network model.
-  const std::vector<RBM<InitializationRule> >& Model() const
+  const std::vector<RBM<InitializationRuleType> >& Model() const
   {
     return network;
   }
   //! Modify the network model.  Be careful!  If you change the structure of the
   //! network or parameters for layers, its state may become invalid, so be sure
   //! to call ResetParameters() afterwards.
-  std::vector<RBM<InitializationRule> >& Model() { return network; }
+  std::vector<RBM<InitializationRuleType> >& Model() { return network; }
 
   //! Get the matrix of data points (predictors).
   const arma::mat& Predictors() const { return predictors; }
@@ -170,7 +166,7 @@ class DBN
    * @param network Desired source network.
    */
   //! Locally-stored model modules.
-  std::vector<RBM<InitializationRule> > network;
+  std::vector<RBM<InitializationRuleType> > network;
 
   arma::mat trainData;
 

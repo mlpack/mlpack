@@ -19,24 +19,22 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 
-template<typename OutputLayerType, typename InitializationRuleType>
-DBN<OutputLayerType, InitializationRuleType>::DBN(
-    OutputLayerType outputLayer,
-    InitializationRuleType initializeRule) :
+template<typename OutputType, typename InitializationRuleType>
+DBN<OutputType, InitializationRuleType>::DBN(arma::mat predictors) :
+  predictors(std::move(predictors))
 {
   /* Nothing to do here. */
 }
 
-template<typename OutputLayerType, typename InitializationRuleType>
-void DBN<OutputLayerType, InitializationRuleType>::ResetData(
+template<typename OutputType, typename InitializationRuleType>
+void DBN<OutputType, InitializationRuleType>::ResetData(
     arma::mat predictors, arma::mat responses)
 {
 }
 
-template<typename OutputLayerType, typename InitializationRuleType>
+template<typename OutputType, typename InitializationRuleType>
 template<typename OptimizerType, typename... CallbackTypes>
-double DBN<OutputLayerType, InitializationRuleType>::Train(
-      arma::mat predictors,
+double DBN<OutputType, InitializationRuleType>::Train(
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks)
 {
@@ -45,61 +43,63 @@ double DBN<OutputLayerType, InitializationRuleType>::Train(
   for (size_t i = 0; i < network.size(); ++i)
   {
     OptimizerType opt = optimizer;
-    var = network[i].train(temp, opt);
+    var = network[i].Train(temp, opt);
     arma::mat out;
-    network[i].forward(temp, out);
+    network[i].Forward(temp, out);
     temp = out;
   }
   return var;
 }
 
-template<typename OutputLayerType, typename InitializationRuleType>
+template<typename OutputType, typename InitializationRuleType>
 template<typename OptimizerType, typename... CallbackTypes>
-double DBN<OutputLayerType, InitializationRuleType>::Train(
-    arma::mat predictors,
+double DBN<OutputType, InitializationRuleType>::Train(
     const double layerNumber,
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
   double var;
   if(layerNumber > network.size())
-  {}
-  arma::mat temp = input;
+  {
+    Log::Warn(" Entered value is greater than numder of layers");
+  }
+  arma::mat temp = predictors;
   for (size_t i = 0; i < layerNumber - 1; ++i)
   {
     arma::mat out;
-    network[i].forward(temp, out);
+    network[i].Forward(temp, out);
     temp = out;
   }
-  var = network[layerNumber].train(temp, optimizer);
+  var = network[layerNumber].Train(temp, optimizer);
   return var;
 
 }
 
-template<typename OutputLayerType, typename InitializationRuleType>
+template<typename OutputType, typename InitializationRuleType>
 template<typename PredictorsType, typename ResponsesType>
-void DBN<OutputLayerType, InitializationRuleType>::Forward(
+void DBN<OutputType, InitializationRuleType>::Forward(
     const PredictorsType& inputs, ResponsesType& results)
 {
-  arma::mat temp = input;
+  arma::mat temp = inputs;
   for (size_t i = 0; i < network.size(); ++i)
   {
     arma::mat out;
-    network[i].forward(temp, out);
+    network[i].Forward(temp, out);
     temp = out;
   }
   results = temp;
 }
 
-template<typename OutputLayerType, typename InitializationRuleType>
-void DBN<OutputLayerType, InitializationRuleType>::Shuffle()
+template<typename OutputType, typename InitializationRuleType>
+void DBN<OutputType, InitializationRuleType>::Shuffle()
 {
-  math::ShuffleData(predictors, responses, predictors, responses);
+  predictors = predictors.cols(arma::shuffle(arma::linspace<arma::uvec>(0,
+      predictors.n_cols - 1, predictors.n_cols)));
 }
 
-template<typename OutputLayerType, typename InitializationRuleType>
+template<typename OutputType, typename InitializationRuleType>
 template<typename Archive>
-void DBN<OutputLayerType, InitializationRuleType>::serialize(
+void DBN<OutputType, InitializationRuleType>::serialize(
     Archive& ar, const unsigned int version)
 {
 }
