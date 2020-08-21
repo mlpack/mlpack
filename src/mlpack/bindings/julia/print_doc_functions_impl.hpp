@@ -68,6 +68,26 @@ inline std::string PrintValue(const T& value, bool quotes)
   return oss.str();
 }
 
+/**
+ * Given a vector parameter type, print the corresponding value.
+ */
+template<typename T>
+inline std::string PrintValue(const std::vector<T>& value, bool quotes)
+{
+  std::ostringstream oss;
+  if (quotes)
+    oss << "'";
+  if (value.size() > 0)
+  {
+    oss << value[0];
+    for (size_t i = 1; i < value.size(); ++i)
+      oss << ", " << value[i];
+  }
+  if (quotes)
+    oss << "'";
+  return oss.str();
+}
+
 // Special overload for booleans.
 template<>
 inline std::string PrintValue(const bool& value, bool quotes)

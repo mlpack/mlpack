@@ -61,8 +61,7 @@ static void mlpackMain()
 {
   // Load the data.
   const arma::mat& data = IO::GetParam<arma::mat>("input");
-  vector<int>& indices =
-    IO::GetParam<vector<int> >("dimensions");
+  vector<int>& indices = IO::GetParam<vector<int> >("dimensions");
   vector<size_t>copyIndices(indices.size());
   RequireParamValue<std::vector<int>>("dimensions", [data](std::vector<int> x)
       {
