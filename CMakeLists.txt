@@ -16,7 +16,7 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
-option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 
 if (WIN32)
