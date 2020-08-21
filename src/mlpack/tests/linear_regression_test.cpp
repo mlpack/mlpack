@@ -266,3 +266,26 @@ TEST_CASE("LinearRegressionTrainReturnObjective", "[LinearRegressionTest]")
 
   REQUIRE(std::isfinite(error) == true);
 }
+
+/**
+ * Test whether Coefficient of Determination gives correct answers
+ */
+TEST_CASE("LinearRegressionCoefDetCorr", "[LinearRegressionTest]")
+{
+  // Make a matrix
+  arma::mat predictors;
+  predictors << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << arma::endr // a
+             << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9 << arma::endr; // b
+  arma::rowvec responses;
+  responses << 3 << 5 << 7 << 9 << 11  << 13 << 15 << 17; // y
+  // Theoretically, the above matrices will for the following linear regression
+  // equation (1*a) + (1*b) = y, with no errors
+  // since there is not stochastic or noise term.
+  // Hence theoretically, R-squared should be equal to 1.0
+  LinearRegression lr;
+  lr.Train(predictors, responses);
+  double act_rsq = 1.0;
+  double calc_rsq = lr.Coef_Det(predictors, responses);
+  double err = std::abs(act_rsq - calc_rsq);
+  REQUIRE(err <= 1e-8);
+}
