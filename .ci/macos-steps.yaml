@@ -27,7 +27,7 @@ steps:
 
     if [ "$(binding)" == "R" ]; then
       if [ "a$(R.version)" != "a" ]; then
-        brew install r
+        brew cask install r
       fi
       brew cask install gfortran
       Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'), repos = 'http://cran.us.r-project.org')"

@@ -51,9 +51,8 @@ if (BUILD_R_BINDINGS)
     set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - testthat")
   endif ()
 
-  ## We need to check here if R is even available.  Although actually
-  ## technically, I'm not sure if we even need to know!  For the tests though we
-  ## do.  So it's probably a good idea to check.
+  ## We need to check here if R and other dependencies is even available, as
+  ## it is require to build R-bindings.
   if (FORCE_BUILD_R_BINDINGS)
     if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN
         OR NOT R_BH OR NOT R_ROXYGEN2 OR NOT R_TESTTHAT)
