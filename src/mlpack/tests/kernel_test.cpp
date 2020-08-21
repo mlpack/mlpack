@@ -57,8 +57,10 @@ TEST_CASE("SquaredEuclideanDistanceTest", "[KernelTest]")
   arma::vec a = "1.0  2.0";
   arma::vec b = "0.0 -2.0";
 
-  REQUIRE(SquaredEuclideanDistance::Evaluate(a, b) == Approx(17.0).epsilon(1e-7));
-  REQUIRE(SquaredEuclideanDistance::Evaluate(b, a) == Approx(17.0).epsilon(1e-7));
+  REQUIRE(SquaredEuclideanDistance::Evaluate(a, b) ==
+      Approx(17.0).epsilon(1e-7));
+  REQUIRE(SquaredEuclideanDistance::Evaluate(b, a) ==
+      Approx(17.0).epsilon(1e-7));
 }
 
 /**
@@ -69,8 +71,10 @@ TEST_CASE("EuclideanDistanceTest", "[KernelTest]")
   arma::vec a = "1.0 3.0 5.0 7.0";
   arma::vec b = "4.0 0.0 2.0 0.0";
 
-  REQUIRE(EuclideanDistance::Evaluate(a, b) == Approx(sqrt(76.0)).epsilon(1e-7));
-  REQUIRE(EuclideanDistance::Evaluate(b, a) == Approx(sqrt(76.0)).epsilon(1e-7));
+  REQUIRE(EuclideanDistance::Evaluate(a, b) ==
+      Approx(sqrt(76.0)).epsilon(1e-7));
+  REQUIRE(EuclideanDistance::Evaluate(b, a) ==
+      Approx(sqrt(76.0)).epsilon(1e-7));
 }
 
 /**
@@ -84,8 +88,10 @@ TEST_CASE("ArbitraryCaseTest", "[KernelTest]")
   REQUIRE((LMetric<3, false>::Evaluate(a, b)) == Approx(503.0).epsilon(1e-7));
   REQUIRE((LMetric<3, false>::Evaluate(b, a)) == Approx(503.0).epsilon(1e-7));
 
-  REQUIRE((LMetric<3, true>::Evaluate(a, b)) == Approx(7.95284762).epsilon(1e-7));
-  REQUIRE((LMetric<3, true>::Evaluate(b, a)) == Approx(7.95284762).epsilon(1e-7));
+  REQUIRE((LMetric<3, true>::Evaluate(a, b)) ==
+      Approx(7.95284762).epsilon(1e-7));
+  REQUIRE((LMetric<3, true>::Evaluate(b, a)) ==
+      Approx(7.95284762).epsilon(1e-7));
 }
 
 /**
@@ -239,8 +245,10 @@ TEST_CASE("CosineDistanceRandomTest", "[KernelTest]")
   arma::vec a = "0.1 0.2 0.3 0.4 0.5";
   arma::vec b = "1.2 1.0 0.8 -0.3 -0.5";
 
-  REQUIRE(CosineDistance::Evaluate(a, b) == Approx(0.1385349024).epsilon(1e-7));
-  REQUIRE(CosineDistance::Evaluate(b, a) == Approx(0.1385349024).epsilon(1e-7));
+  REQUIRE(CosineDistance::Evaluate(a, b) ==
+      Approx(0.1385349024).epsilon(1e-7));
+  REQUIRE(CosineDistance::Evaluate(b, a) ==
+      Approx(0.1385349024).epsilon(1e-7));
 }
 
 /**
@@ -292,9 +300,12 @@ TEST_CASE("GaussianKernelTest", "[KernelTest]")
   REQUIRE(gk.Normalizer(3) == Approx(1.9687012432153019).epsilon(1e-7));
   REQUIRE(gk.Normalizer(4) == Approx(2.4674011002723386).epsilon(1e-7));
   /* check the convolution integral */
-  REQUIRE(gk.ConvolutionIntegral(a, b) == Approx(0.024304474038457577).epsilon(1e-7));
-  REQUIRE(gk.ConvolutionIntegral(a, c) == Approx(0.024304474038457577).epsilon(1e-7));
-  REQUIRE(gk.ConvolutionIntegral(b, c) == Approx(0.024304474038457577).epsilon(1e-7));
+  REQUIRE(gk.ConvolutionIntegral(a, b) ==
+      Approx(0.024304474038457577).epsilon(1e-7));
+  REQUIRE(gk.ConvolutionIntegral(a, c) ==
+      Approx(0.024304474038457577).epsilon(1e-7));
+  REQUIRE(gk.ConvolutionIntegral(b, c) ==
+      Approx(0.024304474038457577).epsilon(1e-7));
 }
 
 TEST_CASE("GaussianKernelSerializationTest", "[KernelTest]")
@@ -334,7 +345,8 @@ TEST_CASE("SphericalKernelTest", "[KernelTest]")
   /* check the convolution integral */
   REQUIRE(sk.ConvolutionIntegral(a, b) == Approx(0.0).epsilon(1e-7));
   REQUIRE(sk.ConvolutionIntegral(a, c) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(sk.ConvolutionIntegral(b, c) == Approx(1.0021155029652784).epsilon(1e-7));
+  REQUIRE(sk.ConvolutionIntegral(b, c) ==
+      Approx(1.0021155029652784).epsilon(1e-7));
 }
 
 TEST_CASE("EpanechnikovKernelTest", "[KernelTest]")
@@ -360,7 +372,8 @@ TEST_CASE("EpanechnikovKernelTest", "[KernelTest]")
   /* check the convolution integral */
   REQUIRE(ek.ConvolutionIntegral(a, b) == Approx(0.0).epsilon(1e-7));
   REQUIRE(ek.ConvolutionIntegral(a, c) == Approx(0.0).epsilon(1e-7));
-  REQUIRE(ek.ConvolutionIntegral(b, c) == Approx(1.5263455690698258).epsilon(1e-7));
+  REQUIRE(ek.ConvolutionIntegral(b, c) ==
+      Approx(1.5263455690698258).epsilon(1e-7));
 }
 
 TEST_CASE("PolynomialKernelTest", "[KernelTest]")
