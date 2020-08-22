@@ -4395,3 +4395,47 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
   REQUIRE(module.Parameters().n_rows
       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
 }
+
+/**
+ * Simple Positional Encoding layer test.
+ */
+TEST_CASE("SimplePositionalEncodingTest", "[ANNLayerTest]")
+{
+  const size_t seqLength = 5;
+  const size_t embedDim = 4;
+  const size_t batchSize = 2;
+
+  arma::mat input = arma::randu(embedDim * seqLength, batchSize);
+  arma::mat gy = 0.01 * arma::randu(embedDim * seqLength, batchSize);
+  arma::mat output, g;
+
+  PositionalEncoding<> module(embedDim, seqLength);
+
+  // Check Forward function.
+  module.Forward(input, output);
+  arma::mat pe = output - input;
+  CheckMatrices(arma::mean(pe, 1), module.Encoding());
+
+  // Check Backward function.
+  module.Backward(input, gy, g);
+  REQUIRE(std::equal(gy.begin(), gy.end(), g.begin()));
+}
+
+/**
+ * Jacobian test for Positional Encoding layer.
+ */
+TEST_CASE("JacobianPositionalEncodingTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t embedDim = 4;
+    const size_t seqLength = math::RandInt(5, 10);
+    arma::mat input;
+    input.set_size(embedDim * seqLength, 1);
+
+    PositionalEncoding<> module(embedDim, seqLength);
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
