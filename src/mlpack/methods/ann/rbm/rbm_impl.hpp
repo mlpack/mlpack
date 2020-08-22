@@ -292,11 +292,11 @@ RBM<InitializationRuleType, DataType, PolicyType>::Forward(
     const InputType& input,
     DataType& output)
 {  
-  output = arma::zeros(hiddenSize + poolSize * hiddenSize,
-                        input.n_cols);
+  output = arma::zeros(hiddenSize, input.n_cols);
   for (size_t i = 0; i < input.n_cols; ++i)
-  { arma::mat temp;
-    HiddenMean(output.col(i), temp);
+  {
+    arma::mat temp;
+    HiddenMean(input.col(i), temp);
     output.col(i) = temp;
   }
 }

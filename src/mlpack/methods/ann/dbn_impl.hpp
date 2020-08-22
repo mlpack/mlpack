@@ -27,12 +27,6 @@ DBN<OutputType, InitializationRuleType>::DBN(arma::mat predictors) :
 }
 
 template<typename OutputType, typename InitializationRuleType>
-void DBN<OutputType, InitializationRuleType>::ResetData(
-    arma::mat predictors, arma::mat responses)
-{
-}
-
-template<typename OutputType, typename InitializationRuleType>
 template<typename OptimizerType, typename... CallbackTypes>
 double DBN<OutputType, InitializationRuleType>::Train(
       OptimizerType& optimizer,
@@ -42,8 +36,10 @@ double DBN<OutputType, InitializationRuleType>::Train(
   arma::mat temp = predictors;
   for (size_t i = 0; i < network.size(); ++i)
   {
-    OptimizerType opt = optimizer;
-    var = network[i].Train(temp, opt);
+    network[i].Reset();
+    network[i].VisibleBias().ones();
+    network[i].HiddenBias().ones();
+    var = network[i].Train(temp, optimizer);
     arma::mat out;
     network[i].Forward(temp, out);
     temp = out;
@@ -61,7 +57,6 @@ double DBN<OutputType, InitializationRuleType>::Train(
   double var;
   if(layerNumber > network.size())
   {
-    Log::Warn(" Entered value is greater than numder of layers");
   }
   arma::mat temp = predictors;
   for (size_t i = 0; i < layerNumber - 1; ++i)
@@ -72,7 +67,6 @@ double DBN<OutputType, InitializationRuleType>::Train(
   }
   var = network[layerNumber].Train(temp, optimizer);
   return var;
-
 }
 
 template<typename OutputType, typename InitializationRuleType>
