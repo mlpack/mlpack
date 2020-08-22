@@ -31,6 +31,7 @@
 #include <mlpack/methods/ann/layer/c_relu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/linear_no_bias.hpp>
+#include <mlpack/methods/ann/layer/linear3d.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
@@ -94,6 +95,11 @@ class LinearNoBias;
 template<typename InputDataType,
          typename OutputDataType>
 class NoisyLinear;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename RegularizerType>
+class Linear3D;
 
 template<typename InputDataType,
          typename OutputDataType
@@ -204,6 +210,7 @@ template <typename InputDataType,
 class AdaptiveMeanPooling;
 
 using MoreTypes = boost::variant<
+        Linear3D<arma::mat, arma::mat, NoRegularizer>*,
         Glimpse<arma::mat, arma::mat>*,
         Highway<arma::mat, arma::mat>*,
         Recurrent<arma::mat, arma::mat>*,

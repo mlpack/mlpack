@@ -452,6 +452,105 @@ TEST_CASE("GradientLinearLayerTest", "[ANNLayerTest]")
 }
 
 /**
+ * Simple Linear3D layer test.
+ */
+TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
+{
+  const size_t inSize = 4;
+  const size_t outSize = 1;
+  const size_t nPoints = 2;
+  const size_t batchSize = 1;
+  arma::mat input, output, delta;
+
+  Linear3D<> module(inSize, outSize);
+  module.Reset();
+  module.Parameters().randu();
+
+  // Test the Forward function.
+  input = arma::zeros(inSize * nPoints, batchSize);
+  module.Forward(input, output);
+  REQUIRE(arma::accu(module.Bias())
+      == Approx(arma::accu(output) / (nPoints * batchSize)).epsilon(1e-3));
+
+  // Test the Backward function.
+  module.Backward(input, input, delta);
+  REQUIRE(arma::accu(delta) == 0);
+}
+
+/**
+ * Jacobian Linear3D module test.
+ */
+TEST_CASE("JacobianLinear3DLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inSize = math::RandInt(2, 10);
+    const size_t outSize = math::RandInt(2, 10);
+    const size_t nPoints = math::RandInt(2, 10);
+    const size_t batchSize = 1;
+
+    arma::mat input;
+    input.set_size(inSize * nPoints, batchSize);
+
+    Linear3D<> module(inSize, outSize);
+    module.Parameters().randu();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Simple Gradient test for Linear3D layer.
+ */
+TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      const size_t inSize = 4;
+      const size_t outSize = 1;
+      const size_t nPoints = 2;
+      const size_t batchSize = 4;
+
+      input = arma::randu(inSize * nPoints, batchSize);
+      target = arma::zeros(outSize * nPoints, batchSize);
+      target(0, 0) = 1;
+      target(0, 3) = 1;
+      target(1, 1) = 1;
+      target(1, 2) = 1;
+
+      model = new FFN<MeanSquaredError<>, RandomInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<>>();
+      model->Add<Linear3D<>>(inSize, outSize);
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<MeanSquaredError<>, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-7);
+}
+
+/**
  * Simple noisy linear module test.
  */
 TEST_CASE("SimpleNoisyLinearLayerTest", "[ANNLayerTest]")
@@ -1670,7 +1769,7 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
   for (size_t i = 0; i < batchSize; ++i)
   {
     // The Lookup module uses index - 1 for the cols.
-    const double outputSum = arma::accu(module.Parameters().rows(
+    const double outputSum = arma::accu(module.Parameters().cols(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
     REQUIRE(std::fabs(outputSum - arma::accu(output.col(i))) <= 1e-5);
