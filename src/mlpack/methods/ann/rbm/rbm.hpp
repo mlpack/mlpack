@@ -300,6 +300,7 @@ class RBM
   template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
   Forward(const InputType& input, DataType& output);
+
   /**
    * The function calculates the mean of the distribution P(h|v),
    * where mean is given by:
