@@ -9,7 +9,6 @@ add_executable(mlpack_test
   cli_binding_test.cpp
   io_test.cpp
   cosine_tree_test.cpp
-  cv_test.cpp
   dbscan_test.cpp
   dcgan_test.cpp
   det_test.cpp
@@ -143,6 +142,7 @@ add_executable(mlpack_catch_test
   block_krylov_svd_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
+  cv_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
   image_load_test.cpp
