@@ -38,6 +38,7 @@
 #include "hard_tanh.hpp"
 #include "hardshrink.hpp"
 #include "highway.hpp"
+#include "instance_norm.hpp"
 #include "join.hpp"
 #include "layer_norm.hpp"
 #include "layer_types.hpp"

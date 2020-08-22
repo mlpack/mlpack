@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/layer/alpha_dropout.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/batch_norm.hpp>
+#include <mlpack/methods/ann/layer/instance_norm.hpp>
 #include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
 #include <mlpack/methods/ann/layer/constant.hpp>
 #include <mlpack/methods/ann/layer/concatenate.hpp>
@@ -65,6 +66,7 @@
 namespace mlpack {
 namespace ann {
 
+template<typename InputDataType, typename OutputDataType> class InstanceNorm;
 template<typename InputDataType, typename OutputDataType> class BatchNorm;
 template<typename InputDataType, typename OutputDataType> class DropConnect;
 template<typename InputDataType, typename OutputDataType> class Glimpse;
@@ -237,6 +239,7 @@ using LayerTypes = boost::variant<
     BaseLayer<SoftplusFunction, arma::mat, arma::mat>*,
     BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
     BatchNorm<arma::mat, arma::mat>*,
+    InstanceNorm<arma::mat, arma::mat>*,
     BilinearInterpolation<arma::mat, arma::mat>*,
     CELU<arma::mat, arma::mat>*,
     Concat<arma::mat, arma::mat>*,
