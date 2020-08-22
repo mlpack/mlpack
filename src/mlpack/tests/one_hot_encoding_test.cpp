@@ -94,6 +94,9 @@ TEST_CASE("OneHotEncodingInputTest", "[OneHotEncodingTest]")
     REQUIRE(matrix.at(i) == output.at(i));
 }
 
+/**
+ * Test one hot encoding for big input.
+ */
 TEST_CASE("OneHotEncodingBigInputTest", "[OneHotEncodingTest]")
 {
   arma::Mat<int> matrix;
@@ -124,7 +127,7 @@ TEST_CASE("OneHotEncodingBigInputTest", "[OneHotEncodingTest]")
 }
 
 /**
- * Test one hot encoding for big input.
+ * Test one hot encoding for very big input.
  */
 TEST_CASE("OneHotEncodingVeryBigInputTest", "[OneHotEncodingTest]")
 {

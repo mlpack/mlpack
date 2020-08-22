@@ -64,11 +64,11 @@ static void mlpackMain()
   // Load the data.
   const arma::mat& data = IO::GetParam<arma::mat>("input");
   vector<int>& indices = IO::GetParam<vector<int> >("dimensions");
-  vector<size_t>copyIndices(indices.size());
+  vector<size_t> copyIndices(indices.size());
   RequireParamValue<std::vector<int>>("dimensions", [data](std::vector<int> x)
       {
         for (int dim : x)
-          if (dim < 0 || dim > data.n_rows)
+          if (dim < 0 || (size_t)dim > data.n_rows)
             return false;
         return true;
       }, true, "dimensions must be greater than 0 "
