@@ -19,7 +19,7 @@ using namespace mlpack::data;
 using namespace std;
 
 /**
- * Test one hot encoding.
+ * Test one hot encoding for small input.
  */
 TEST_CASE("OneHotEncodingTest01", "[OneHotEncodingTest]")
 {
@@ -43,6 +43,9 @@ TEST_CASE("OneHotEncodingTest01", "[OneHotEncodingTest]")
   CheckMatrices(output, matrix);
 }
 
+/**
+ * Test one hot encoding for sparse matrix.
+ */
 TEST_CASE("OneHotEncodingSparseMatTest", "[OneHotEncodingTest]")
 {
   arma::SpMat<size_t> matrix;
@@ -67,6 +70,9 @@ TEST_CASE("OneHotEncodingSparseMatTest", "[OneHotEncodingTest]")
     REQUIRE(matrix.at(i) == output.at(i));
 }
 
+/**
+ * Test one hot encoding for a particular row.
+ */
 TEST_CASE("OneHotEncodingInputTest", "[OneHotEncodingTest]")
 {
   arma::Mat<int> matrix;
@@ -117,6 +123,9 @@ TEST_CASE("OneHotEncodingBigInputTest", "[OneHotEncodingTest]")
     REQUIRE(matrix.at(i) == output.at(i));
 }
 
+/**
+ * Test one hot encoding for big input.
+ */
 TEST_CASE("OneHotEncodingVeryBigInputTest", "[OneHotEncodingTest]")
 {
   arma::Mat<int> matrix;
@@ -160,6 +169,9 @@ TEST_CASE("OneHotEncodingVeryBigInputTest", "[OneHotEncodingTest]")
     REQUIRE(matrix.at(i) == output.at(i));
 }
 
+/**
+ * Test one hot encoding using DatasetInfo object.
+ */
 TEST_CASE("OneHotEncodingDatasetinfoTest", "[OneHotEncodingTest]")
 {
   fstream f;

@@ -40,6 +40,9 @@ struct PreprocessOneHotEncodingTestFixture
   }
 };
 
+/**
+ * Test one hot encoding binding.
+ */
 TEST_CASE_METHOD(
     PreprocessOneHotEncodingTestFixture, "PreprocessOneHotEncodingTest",
     "[PreprocessOneHotEncodingMainTest][BindingTests]")
@@ -70,6 +73,9 @@ TEST_CASE_METHOD(
   CheckMatrices(output, matrix);
 }
 
+/**
+ * Test for empty matrix.
+ */
 TEST_CASE_METHOD(
     PreprocessOneHotEncodingTestFixture, "EmptyMatrixTest",
     "[PreprocessOneHotEncodingMainTest][BindingTests]")
@@ -84,6 +90,9 @@ TEST_CASE_METHOD(
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+ * Test empty vector as input for dimesions.
+ */
 TEST_CASE_METHOD(
     PreprocessOneHotEncodingTestFixture, "EmptyIndicesTest",
     "[PreprocessOneHotEncodingMainTest][BindingTests]")
@@ -105,6 +114,9 @@ TEST_CASE_METHOD(
   CheckMatrices(output, dataset);
 }
 
+/**
+ * Test for invalide dimension, larger than count of rows.
+ */
 TEST_CASE_METHOD(
     PreprocessOneHotEncodingTestFixture, "InvalidDimensionTest",
     "[PreprocessOneHotEncodingMainTest][BindingTests]")
@@ -124,6 +136,9 @@ TEST_CASE_METHOD(
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+ * Test for negative dimensions.
+ */
 TEST_CASE_METHOD(
     PreprocessOneHotEncodingTestFixture, "NegativeDimensionTest",
     "[PreprocessOneHotEncodingMainTest][BindingTests]")
@@ -142,6 +157,9 @@ TEST_CASE_METHOD(
   Log::Fatal.ignoreInput = false;
 }
 
+/**
+ * Test for empty matrix and empty dimensions vector.
+ */
 TEST_CASE_METHOD(
     PreprocessOneHotEncodingTestFixture, "EmptyMatrixEmptyIndicesTest",
     "[PreprocessOneHotEncodingMainTest][BindingTests]")

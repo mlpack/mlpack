@@ -2,7 +2,7 @@
  * @file methods/preprocess/preprocess_one_hot_encoding_main.cpp
  * @author Jeffin Sam
  *
- * A IO executable to do One-Hot Encoding on features from a dataset.
+ * A binding to do one-hot encoding on features from a dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -43,6 +43,8 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
 BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
 BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
+BINDING_SEE_ALSO("One-hot encoding on Wikipedia",
+        "https://en.m.wikipedia.org/wiki/One-hot");
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");
