@@ -115,18 +115,14 @@ double CustomJacobianTest(ModuleType& module,
   module.Forward(input, output);
   jacobianA = arma::zeros(input.n_elem, output.n_elem);
 
-  // Share the input paramter matrix.
-  arma::mat sin = arma::mat(input.memptr(), input.n_rows, input.n_cols,
-      false, false);
-
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    double original = sin(i);
-    sin(i) = original - perturbation;
+    double original = input(i);
+    input(i) = original - perturbation;
     module.Forward(input, outputA);
-    sin(i) = original + perturbation;
+    input(i) = original + perturbation;
     module.Forward(input, outputB);
-    sin(i) = original;
+    input(i) = original;
 
     outputB -= outputA;
     outputB /= 2 * perturbation;
@@ -136,17 +132,13 @@ double CustomJacobianTest(ModuleType& module,
   // Initialize the derivative parameter.
   arma::mat deriv = arma::zeros(output.n_rows, output.n_cols);
 
-  // Share the derivative parameter.
-  arma::mat derivTemp = arma::mat(deriv.memptr(), deriv.n_rows, deriv.n_cols,
-      false, false);
-
   // Initialize the jacobian matrix.
   jacobianB = arma::zeros(input.n_elem, output.n_elem);
 
-  for (size_t i = 0; i < derivTemp.n_elem; ++i)
+  for (size_t i = 0; i < deriv.n_elem; ++i)
   {
     deriv.zeros();
-    derivTemp(i) = 1;
+    deriv(i) = 1;
 
     arma::mat delta;
     module.Backward(input, deriv, delta);

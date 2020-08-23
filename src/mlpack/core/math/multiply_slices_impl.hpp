@@ -1,5 +1,5 @@
 /**
- * @file core/math/multiply_slices.hpp
+ * @file core/math/multiply_slices_impl.hpp
  * @author Mrityunjay Tripathi
  *
  * Implementation of matrix multiplication over slices.

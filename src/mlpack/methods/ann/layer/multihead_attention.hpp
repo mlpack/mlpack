@@ -151,7 +151,6 @@ class MultiheadAttention
   //! Modify the two dimensional Attention Mask.
   OutputDataType& AttentionMask() { return attnMask; }
 
-
   //! Get Key Padding Mask.
   OutputDataType const& KeyPaddingMask() const { return keyPaddingMask; }
   //! Modify the Key Padding Mask.
@@ -176,7 +175,6 @@ class MultiheadAttention
   OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
-
 
  private:
   //! Element Type of the input.
