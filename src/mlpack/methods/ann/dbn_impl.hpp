@@ -19,8 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 
-template<typename InputType, 
-         typename OutputType, 
+template<typename InputType,
+         typename OutputType,
          typename InitializationRuleType>
 DBN<InputType, OutputType, InitializationRuleType>::DBN(InputType predictors) :
   predictors(std::move(predictors))
@@ -28,8 +28,8 @@ DBN<InputType, OutputType, InitializationRuleType>::DBN(InputType predictors) :
   /* Nothing to do here. */
 }
 
-template<typename InputType, 
-         typename OutputType, 
+template<typename InputType,
+         typename OutputType,
          typename InitializationRuleType>
 void DBN<InputType, OutputType, InitializationRuleType>::Shuffle()
 {
@@ -37,8 +37,8 @@ void DBN<InputType, OutputType, InitializationRuleType>::Shuffle()
       predictors.n_cols - 1, predictors.n_cols)));
 }
 
-template<typename InputType, 
-         typename OutputType, 
+template<typename InputType,
+         typename OutputType,
          typename InitializationRuleType>
 void DBN<InputType, OutputType, InitializationRuleType>::Reset()
 {
@@ -49,8 +49,8 @@ void DBN<InputType, OutputType, InitializationRuleType>::Reset()
   }
 }
 
-template<typename InputType, 
-         typename OutputType, 
+template<typename InputType,
+         typename OutputType,
          typename InitializationRuleType>
 void DBN<InputType, OutputType, InitializationRuleType>::SetBias()
 {
@@ -62,8 +62,8 @@ void DBN<InputType, OutputType, InitializationRuleType>::SetBias()
   }
 }
 
-template<typename InputType, 
-         typename OutputType, 
+template<typename InputType,
+         typename OutputType,
          typename InitializationRuleType>
 template<typename OptimizerType, typename... CallbackTypes>
 double DBN<InputType, OutputType, InitializationRuleType>::Train(
@@ -84,8 +84,8 @@ double DBN<InputType, OutputType, InitializationRuleType>::Train(
   return var;
 }
 
-template<typename InputType, 
-         typename OutputType, 
+template<typename InputType,
+         typename OutputType,
          typename InitializationRuleType>
 template<typename OptimizerType, typename... CallbackTypes>
 double DBN<InputType, OutputType, InitializationRuleType>::Train(
@@ -94,8 +94,10 @@ double DBN<InputType, OutputType, InitializationRuleType>::Train(
     CallbackTypes&&... callbacks)
 {
   double var;
-  if(layerNumber > network.size())
+  if (layerNumber > network.size())
   {
+    Log::Warn << " LayerNumber is greater than network size";
+    return 0;
   }
   arma::mat temp = predictors;
   // Getting output from previous layers to train a single layer.
@@ -110,8 +112,8 @@ double DBN<InputType, OutputType, InitializationRuleType>::Train(
   return var;
 }
 
-template<typename InputType, 
-         typename OutputType, 
+template<typename InputType,
+         typename OutputType,
          typename InitializationRuleType>
 void DBN<InputType, OutputType, InitializationRuleType>::Forward(
     const InputType& inputs, OutputType& results)
@@ -126,7 +128,9 @@ void DBN<InputType, OutputType, InitializationRuleType>::Forward(
   results = temp;
 }
 
-template<typename InputType, typename OutputType, typename InitializationRuleType>
+template<typename InputType,
+         typename OutputType,
+         typename InitializationRuleType>
 template<typename Archive>
 void DBN<InputType, OutputType, InitializationRuleType>::serialize(
     Archive& ar, const unsigned int version)

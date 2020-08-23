@@ -291,7 +291,7 @@ typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::Forward(
     const InputType& input,
     DataType& output)
-{  
+{
   output = arma::zeros(hiddenSize, input.n_cols);
   for (size_t i = 0; i < input.n_cols; ++i)
   {
