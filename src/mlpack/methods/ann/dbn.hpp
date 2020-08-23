@@ -163,7 +163,6 @@ class DBN
   void Forward(const InputType& inputs, OutputType& results);
 
  private:
-
   /**
    * Swap the content of this network with given network.
    *

@@ -304,7 +304,7 @@ class RBM
    * for advanced users. User should try to use Predict and Train unless those
    * two functions can't satisfy some special requirements.
    *
-   * @param inputs The input data.
+   * @param input The input data.
    * @param output The predicted results.
    */
   template<typename Policy = PolicyType, typename InputType = DataType>
