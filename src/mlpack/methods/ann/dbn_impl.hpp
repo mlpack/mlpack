@@ -19,27 +19,64 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 
-template<typename OutputType, typename InitializationRuleType>
-DBN<OutputType, InitializationRuleType>::DBN(arma::mat predictors) :
+template<typename InputType, 
+         typename OutputType, 
+         typename InitializationRuleType>
+DBN<InputType, OutputType, InitializationRuleType>::DBN(InputType predictors) :
   predictors(std::move(predictors))
 {
   /* Nothing to do here. */
 }
 
-template<typename OutputType, typename InitializationRuleType>
+template<typename InputType, 
+         typename OutputType, 
+         typename InitializationRuleType>
+void DBN<InputType, OutputType, InitializationRuleType>::Shuffle()
+{
+  predictors = predictors.cols(arma::shuffle(arma::linspace<arma::uvec>(0,
+      predictors.n_cols - 1, predictors.n_cols)));
+}
+
+template<typename InputType, 
+         typename OutputType, 
+         typename InitializationRuleType>
+void DBN<InputType, OutputType, InitializationRuleType>::Reset()
+{
+  // Reset all the RBM present in the network.
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    network[i].Reset();
+  }
+}
+
+template<typename InputType, 
+         typename OutputType, 
+         typename InitializationRuleType>
+void DBN<InputType, OutputType, InitializationRuleType>::SetBias()
+{
+  // Setting hidden and visible bias of all RBM layers.
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    network[i].VisibleBias().ones();
+    network[i].HiddenBias().ones();
+  }
+}
+
+template<typename InputType, 
+         typename OutputType, 
+         typename InitializationRuleType>
 template<typename OptimizerType, typename... CallbackTypes>
-double DBN<OutputType, InitializationRuleType>::Train(
+double DBN<InputType, OutputType, InitializationRuleType>::Train(
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks)
 {
   double var;
   arma::mat temp = predictors;
+  // Training all the layers by greedy approach.
   for (size_t i = 0; i < network.size(); ++i)
   {
-    network[i].Reset();
-    network[i].VisibleBias().ones();
-    network[i].HiddenBias().ones();
-    var = network[i].Train(temp, optimizer);
+    OptimizerType opt = optimizer;
+    var = network[i].Train(temp, opt);
     arma::mat out;
     network[i].Forward(temp, out);
     temp = out;
@@ -47,9 +84,11 @@ double DBN<OutputType, InitializationRuleType>::Train(
   return var;
 }
 
-template<typename OutputType, typename InitializationRuleType>
+template<typename InputType, 
+         typename OutputType, 
+         typename InitializationRuleType>
 template<typename OptimizerType, typename... CallbackTypes>
-double DBN<OutputType, InitializationRuleType>::Train(
+double DBN<InputType, OutputType, InitializationRuleType>::Train(
     const double layerNumber,
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
@@ -59,20 +98,23 @@ double DBN<OutputType, InitializationRuleType>::Train(
   {
   }
   arma::mat temp = predictors;
+  // Getting output from previous layers to train a single layer.
   for (size_t i = 0; i < layerNumber - 1; ++i)
   {
     arma::mat out;
     network[i].Forward(temp, out);
     temp = out;
   }
+  // Training a single layer.
   var = network[layerNumber].Train(temp, optimizer);
   return var;
 }
 
-template<typename OutputType, typename InitializationRuleType>
-template<typename PredictorsType, typename ResponsesType>
-void DBN<OutputType, InitializationRuleType>::Forward(
-    const PredictorsType& inputs, ResponsesType& results)
+template<typename InputType, 
+         typename OutputType, 
+         typename InitializationRuleType>
+void DBN<InputType, OutputType, InitializationRuleType>::Forward(
+    const InputType& inputs, OutputType& results)
 {
   arma::mat temp = inputs;
   for (size_t i = 0; i < network.size(); ++i)
@@ -84,16 +126,9 @@ void DBN<OutputType, InitializationRuleType>::Forward(
   results = temp;
 }
 
-template<typename OutputType, typename InitializationRuleType>
-void DBN<OutputType, InitializationRuleType>::Shuffle()
-{
-  predictors = predictors.cols(arma::shuffle(arma::linspace<arma::uvec>(0,
-      predictors.n_cols - 1, predictors.n_cols)));
-}
-
-template<typename OutputType, typename InitializationRuleType>
+template<typename InputType, typename OutputType, typename InitializationRuleType>
 template<typename Archive>
-void DBN<OutputType, InitializationRuleType>::serialize(
+void DBN<InputType, OutputType, InitializationRuleType>::serialize(
     Archive& ar, const unsigned int version)
 {
 }
