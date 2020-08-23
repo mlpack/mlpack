@@ -220,6 +220,10 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
           ${LICENSE_SOURCES}
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack)
+  add_custom_command(TARGET r_copy PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} ARGS -E rename
+          "${CMAKE_CURRENT_BINARY_DIR}/mlpack/LICENSE.txt"
+          "${CMAKE_CURRENT_BINARY_DIR}/mlpack/LICENSE")
   # This file will take care of multiple definition of functions in .cpp files.
   add_custom_command(TARGET r_copy PRE_BUILD
       COMMAND ${CMAKE_COMMAND} ARGS -E touch
