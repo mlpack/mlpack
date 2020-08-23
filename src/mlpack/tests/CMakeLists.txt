@@ -8,6 +8,8 @@ add_executable(mlpack_test
   cli_binding_test.cpp
   io_test.cpp
   cosine_tree_test.cpp
+  cv_test.cpp
+  dbn_test.cpp
   dbscan_test.cpp
   dcgan_test.cpp
   det_test.cpp
