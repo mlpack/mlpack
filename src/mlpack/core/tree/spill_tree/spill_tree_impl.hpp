@@ -680,24 +680,16 @@ template<typename MetricType,
 inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
     SplitType>::Descendant(const size_t index) const
 {
-  if (IsLeaf())
+  if (IsLeaf() || overlappingNode)
     return (*pointsIndex)[index];
 
-  // Compute the number of points that are in both the left and right children.
-  const size_t overlap = (left->NumDescendants() + right->NumDescendants()) -
-      count;
-
+  // If this is not a leaf and not an overlapping node, then determine whether
+  // we should get the descendant from the left or the right node.
   const size_t num = left->NumDescendants();
   if (index < num)
     return left->Descendant(index);
-
-  // Since points on the right may overlap, we have to start our count on the
-  // right ignoring any overlapped points.
-  if (right)
-    return right->Descendant(index - num + overlap);
-
-  // This should never happen.
-  return (size_t() - 1);
+  else
+    return right->Descendant(index - num);
 }
 
 /**
@@ -760,8 +752,18 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   // Split the node.
   overlappingNode = SplitPoints(tau, rho, points, leftPoints, rightPoints);
 
-  // We don't need the information in points, so lets clean it.
-  arma::Col<size_t>().swap(points);
+  if (overlappingNode)
+  {
+    // If the node is overlapping, we have to keep track of which points are
+    // held in the node.
+    pointsIndex = new arma::Col<size_t>();
+    pointsIndex->swap(points);
+  }
+  else
+  {
+    // Otherwise, we don't need the information in points, so let's clean it.
+    arma::Col<size_t>().swap(points);
+  }
 
   // Now we will recursively split the children by calling their constructors
   // (which perform this splitting process).
@@ -834,8 +836,8 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     for (size_t i = 0, rc = overlap, lc = 0, rf = 0, lf = leftUnique;
          i < points.n_elem; ++i)
     {
-      // We need to carefully consider ordering---any points in the frontier
-      // should come last in the left node, and first in the right node.
+      // We put any points in the frontier should come last in the left node,
+      // and first in the right node.  (This ordering is not required.)
       if (projections[i] < -tau)
         leftPoints[lc++] = points[i];
       else if (projections[i] < tau)
