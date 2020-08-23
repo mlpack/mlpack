@@ -1,0 +1,102 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  release:
+    types: [published, created, edited]
+
+jobs:
+  jobR:
+    name: mlpack-R
+    runs-on: ubuntu-16.04
+    outputs:
+      r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
+    steps:
+        - uses: actions/checkout@v2
+
+        - name: Extract mlpack version
+          id: mlpack_version
+          run: |
+            MLPACK_VERSION_MAJOR=$(grep -i ".*#define MLPACK_VERSION_MAJOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+            MLPACK_VERSION_MINOR=$(grep -i ".*#define MLPACK_VERSION_MINOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+            MLPACK_VERSION_PATCH=$(grep -i ".*#define MLPACK_VERSION_PATCH.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+            MLPACK_VERSION_VALUE=${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}
+            echo ::set-output name=mlpack_r_package::$(echo mlpack_"$MLPACK_VERSION_VALUE".tar.gz)
+
+        - name: Install Build Dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev
+            curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
+            cmake . && make && sudo make install && cd ..
+            sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/'
+            sudo apt-get -y update
+            sudo apt-get install -y r-base-core
+            sudo Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'))"
+
+        - name: CMake
+          run: |
+            mkdir build
+            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_R_BINDINGS=ON ..
+
+        - name: Build
+          run: |
+            cd build && make R -j2
+
+        - name: Upload R packages
+          uses: actions/upload-artifact@v2
+          with:
+              name: mlpack_r_tarball
+              path: build/src/mlpack/bindings/R/${{ steps.mlpack_version.outputs.mlpack_r_package }}
+
+  R-CMD-check:
+    needs: jobR
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        #- { os: windows-latest, r: '4.0'}
+        - {os: macOS-latest, r: 'release'}
+        - {os: ubuntu-16.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+
+
+    env:
+      MAKEFLAGS: "-j 2"
+      R_BUILD_ARGS: "--no-build-vignettes"
+      R_CHECK_ARGS: "--no-build-vignettes"
+      _R_CHECK_FORCE_SUGGESTS: 0
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      _R_CHECK_DONTTEST_EXAMPLES_: false
+
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: mlpack_r_tarball
+
+      - uses: r-lib/actions/setup-r@master
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      - uses: r-lib/actions/setup-pandoc@master
+
+      - name: Install dependencies
+        run: |
+          Rscript -e "install.packages('remotes')" -e "remotes::install_cran('rcmdcheck')"
+          Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'))"
+
+      - name: Check
+        run: Rscript -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'warning', check_dir = 'check')"
+
+      - name: Upload check results
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+          path: check
