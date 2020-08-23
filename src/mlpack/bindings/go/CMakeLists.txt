@@ -16,32 +16,31 @@ if (NOT BUILD_GO_BINDINGS)
 endif ()
 
 if (BUILD_GO_BINDINGS)
+
+  find_package(Go 1.11.0)
+  if (NOT GO_FOUND)
+    set(GO_NOT_FOUND_MSG "${GO_NOT_FOUND_MSG}\n    - Go")
+  endif ()
+  find_package(Gonum)
+  if (NOT GONUM_FOUND)
+    set(GO_NOT_FOUND_MSG "${GO_NOT_FOUND_MSG}\n    - Gonum")
+  endif ()
+
   ## We need to check here if Golang is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
   if (FORCE_BUILD_GO_BINDINGS)
-    find_package(Go 1.11.0)
-    find_package(Gonum)
     if (NOT GO_FOUND OR NOT GONUM_FOUND)
       unset(BUILD_GO_BINDINGS CACHE)
       set(BUILD_GO_SHLIB OFF)
-      message(FATAL_ERROR "Go or Gonum not found; unable to build Go bindings!")
+      message(FATAL_ERROR "\nCould not Build Go Bindings; the following modules are not available: ${GO_NOT_FOUND_MSG}")
     endif()
   else ()
-    find_package(Go 1.11.0)
-    find_package(Gonum)
     if (NOT GO_FOUND OR NOT GONUM_FOUND)
       unset(BUILD_GO_BINDINGS CACHE)
       set(BUILD_GO_SHLIB OFF)
+      not_found_return("Not building Go bindings; the following modules are not available: ${GO_NOT_FOUND_MSG}")
     endif()
-  endif ()
-
-  if (NOT GO_FOUND)
-    not_found_return("Go not found; not building Go bindings.")
-  endif ()
-
-  if (NOT GONUM_FOUND)
-    not_found_return("Gonum not found; not building Go bindings.")
   endif ()
 
   add_custom_target(go)
