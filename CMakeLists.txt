@@ -36,7 +36,7 @@ if (BUILD_PYTHON_BINDINGS)
 else()
   set(FORCE_BUILD_PYTHON_BINDINGS OFF)
 endif()
-option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
 
 # Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
 # we should fail if Julia isn't found.
