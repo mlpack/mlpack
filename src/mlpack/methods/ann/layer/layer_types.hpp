@@ -31,6 +31,7 @@
 #include <mlpack/methods/ann/layer/c_relu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/linear_no_bias.hpp>
+#include <mlpack/methods/ann/layer/linear3d.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
 #include <mlpack/methods/ann/layer/multihead_attention.hpp>
@@ -41,6 +42,7 @@
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
+#include <mlpack/methods/ann/layer/positional_encoding.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
@@ -95,6 +97,11 @@ class LinearNoBias;
 template<typename InputDataType,
          typename OutputDataType>
 class NoisyLinear;
+
+template<typename InputDataType,
+         typename OutputDataType,
+         typename RegularizerType>
+class Linear3D;
 
 template<typename InputDataType,
          typename OutputDataType
@@ -210,6 +217,7 @@ template <typename InputDataType,
 class AdaptiveMeanPooling;
 
 using MoreTypes = boost::variant<
+        Linear3D<arma::mat, arma::mat, NoRegularizer>*,
         Glimpse<arma::mat, arma::mat>*,
         Highway<arma::mat, arma::mat>*,
         MultiheadAttention<arma::mat, arma::mat, NoRegularizer>*,
@@ -224,7 +232,8 @@ using MoreTypes = boost::variant<
         VRClassReward<arma::mat, arma::mat>*,
         VirtualBatchNorm<arma::mat, arma::mat>*,
         RBF<arma::mat, arma::mat, GaussianFunction>*,
-        BaseLayer<GaussianFunction, arma::mat, arma::mat>*
+        BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
+        PositionalEncoding<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>

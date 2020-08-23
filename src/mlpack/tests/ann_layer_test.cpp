@@ -452,6 +452,105 @@ TEST_CASE("GradientLinearLayerTest", "[ANNLayerTest]")
 }
 
 /**
+ * Simple Linear3D layer test.
+ */
+TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
+{
+  const size_t inSize = 4;
+  const size_t outSize = 1;
+  const size_t nPoints = 2;
+  const size_t batchSize = 1;
+  arma::mat input, output, delta;
+
+  Linear3D<> module(inSize, outSize);
+  module.Reset();
+  module.Parameters().randu();
+
+  // Test the Forward function.
+  input = arma::zeros(inSize * nPoints, batchSize);
+  module.Forward(input, output);
+  REQUIRE(arma::accu(module.Bias())
+      == Approx(arma::accu(output) / (nPoints * batchSize)).epsilon(1e-3));
+
+  // Test the Backward function.
+  module.Backward(input, input, delta);
+  REQUIRE(arma::accu(delta) == 0);
+}
+
+/**
+ * Jacobian Linear3D module test.
+ */
+TEST_CASE("JacobianLinear3DLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inSize = math::RandInt(2, 10);
+    const size_t outSize = math::RandInt(2, 10);
+    const size_t nPoints = math::RandInt(2, 10);
+    const size_t batchSize = 1;
+
+    arma::mat input;
+    input.set_size(inSize * nPoints, batchSize);
+
+    Linear3D<> module(inSize, outSize);
+    module.Parameters().randu();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Simple Gradient test for Linear3D layer.
+ */
+TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      const size_t inSize = 4;
+      const size_t outSize = 1;
+      const size_t nPoints = 2;
+      const size_t batchSize = 4;
+
+      input = arma::randu(inSize * nPoints, batchSize);
+      target = arma::zeros(outSize * nPoints, batchSize);
+      target(0, 0) = 1;
+      target(0, 3) = 1;
+      target(1, 1) = 1;
+      target(1, 2) = 1;
+
+      model = new FFN<MeanSquaredError<>, RandomInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<>>();
+      model->Add<Linear3D<>>(inSize, outSize);
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<MeanSquaredError<>, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-7);
+}
+
+/**
  * Simple noisy linear module test.
  */
 TEST_CASE("SimpleNoisyLinearLayerTest", "[ANNLayerTest]")
@@ -1670,7 +1769,7 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
   for (size_t i = 0; i < batchSize; ++i)
   {
     // The Lookup module uses index - 1 for the cols.
-    const double outputSum = arma::accu(module.Parameters().rows(
+    const double outputSum = arma::accu(module.Parameters().cols(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
     REQUIRE(std::fabs(outputSum - arma::accu(output.col(i))) <= 1e-5);
@@ -4295,6 +4394,50 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
   REQUIRE(module.Bias().n_cols == 1);
   REQUIRE(module.Parameters().n_rows
       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Simple Positional Encoding layer test.
+ */
+TEST_CASE("SimplePositionalEncodingTest", "[ANNLayerTest]")
+{
+  const size_t seqLength = 5;
+  const size_t embedDim = 4;
+  const size_t batchSize = 2;
+
+  arma::mat input = arma::randu(embedDim * seqLength, batchSize);
+  arma::mat gy = 0.01 * arma::randu(embedDim * seqLength, batchSize);
+  arma::mat output, g;
+
+  PositionalEncoding<> module(embedDim, seqLength);
+
+  // Check Forward function.
+  module.Forward(input, output);
+  arma::mat pe = output - input;
+  CheckMatrices(arma::mean(pe, 1), module.Encoding());
+
+  // Check Backward function.
+  module.Backward(input, gy, g);
+  REQUIRE(std::equal(gy.begin(), gy.end(), g.begin()));
+}
+
+/**
+ * Jacobian test for Positional Encoding layer.
+ */
+TEST_CASE("JacobianPositionalEncodingTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t embedDim = 4;
+    const size_t seqLength = math::RandInt(5, 10);
+    arma::mat input;
+    input.set_size(embedDim * seqLength, 1);
+
+    PositionalEncoding<> module(embedDim, seqLength);
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
 }
 
 /**
