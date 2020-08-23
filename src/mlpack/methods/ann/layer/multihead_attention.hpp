@@ -121,7 +121,7 @@ class MultiheadAttention
                 arma::Mat<eT>& gradient);
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -147,14 +147,15 @@ class MultiheadAttention
   size_t& NumHeads() { return numHeads; }
 
   //! Get the two dimensional Attention Mask.
-  InputDataType const& AttentionMask() const { return attnMask; }
+  OutputDataType const& AttentionMask() const { return attnMask; }
   //! Modify the two dimensional Attention Mask.
-  InputDataType& AttentionMask() { return attnMask; }
+  OutputDataType& AttentionMask() { return attnMask; }
+    
 
   //! Get Key Padding Mask.
-  InputDataType const& KeyPaddingMask() const { return keyPaddingMask; }
+  OutputDataType const& KeyPaddingMask() const { return keyPaddingMask; }
   //! Modify the Key Padding Mask.
-  InputDataType& KeyPaddingMask() { return keyPaddingMask; }
+  OutputDataType& KeyPaddingMask() { return keyPaddingMask; }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -179,7 +180,7 @@ class MultiheadAttention
 
  private:
   //! Element Type of the input.
-  typedef typename InputDataType::elem_type ElemType;
+  typedef typename OutputDataType::elem_type ElemType;
 
   //! Target sequence length.
   size_t tgtSeqLen;
@@ -196,17 +197,11 @@ class MultiheadAttention
   //! Dimensionality of each head.
   size_t headDim;
 
-  //! Locally-stored key matrix.
-  InputDataType key;
-
-  //! Locally-stored value matrix.
-  InputDataType value;
-
-  //! Two dimensional Attention Mask of shape (srcSeqLen, tgtSeqLen).
-  InputDataType attnMask;
+  //! Two dimensional Attention Mask of shape (tgtSeqLen, srcSeqLen).
+  OutputDataType attnMask;
 
   //! Key Padding Mask.
-  InputDataType keyPaddingMask;
+  OutputDataType keyPaddingMask;
 
   //! Locally-stored weight matrix associated with query.
   OutputDataType queryWt;

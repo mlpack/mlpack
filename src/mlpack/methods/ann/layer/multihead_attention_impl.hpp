@@ -62,7 +62,7 @@ template <typename InputDataType, typename OutputDataType,
 void MultiheadAttention<InputDataType, OutputDataType, RegularizerType>::
 Reset()
 {
-  typedef typename arma::Mat<typename InputDataType::elem_type> MatType;
+  typedef typename arma::Mat<typename OutputDataType::elem_type> MatType;
 
   queryWt = MatType(weights.memptr(), embedDim, embedDim, false, false);
   keyWt = MatType(weights.memptr() + embedDim * embedDim,
