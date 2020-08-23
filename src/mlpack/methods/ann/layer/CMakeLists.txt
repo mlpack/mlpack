@@ -79,6 +79,8 @@ set(SOURCES
   noisylinear_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
+  positional_encoding.hpp
+  positional_encoding_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp

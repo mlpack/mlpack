@@ -16,7 +16,6 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
-option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 
 # Set minimum library version required by mlpack.
@@ -34,6 +33,15 @@ else ()
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
+
+# Detect whether the user passed BUILD_PYTHON_BINDINGS in order to determine if
+# we should fail if Python isn't found.
+if (BUILD_PYTHON_BINDINGS)
+  set(FORCE_BUILD_PYTHON_BINDINGS ON)
+else()
+  set(FORCE_BUILD_PYTHON_BINDINGS OFF)
+endif()
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 
 # Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
 # we should fail if Julia isn't found.

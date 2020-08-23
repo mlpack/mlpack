@@ -1,33 +1,31 @@
 /**
- * @file methods/ann/layer/lookup.hpp
- * @author Marcus Edel
+ * @file methods/ann/layer/linear3d.hpp
+ * @author Mrityunjay Tripathi
  *
- * Definition of the Lookup class a particular convolution, where the width of
- * the convolution is 1.
+ * Definition of the Linear layer class which accepts 3D input.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_LOOKUP_HPP
-#define MLPACK_METHODS_ANN_LAYER_LOOKUP_HPP
+
+#ifndef MLPACK_METHODS_ANN_LAYER_LINEAR3D_HPP
+#define MLPACK_METHODS_ANN_LAYER_LINEAR3D_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/layer/layer_traits.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
+#include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
 namespace mlpack {
-namespace ann /* Artificial Neural Network. */ {
+namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The Lookup class stores word embeddings and retrieves them using tokens. The
- * Lookup layer is always the first layer of the network. The input to the
- * Lookup class is a matrix of shape (sequenceLength, batchSize). The matrix
- * consists of tokens which are used to lookup the table (i.e. weights) to find
- * the embeddings of those tokens.
+ * Implementation of the Linear3D layer class. The Linear class represents a
+ * single layer of a neural network.
  *
- * The input shape : (sequenceLength, batchSize).
- * The output shape : (embeddingSize, sequenceLength, batchSize).
+ * Shape of input : (inSize * nPoints, batchSize)
+ * Shape of output : (outSize * nPoints, batchSize)
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -36,18 +34,30 @@ namespace ann /* Artificial Neural Network. */ {
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename RegularizerType = NoRegularizer
 >
-class Lookup
+class Linear3D
 {
  public:
+  //! Create the Linear3D object.
+  Linear3D();
+
   /**
-   * Create the Lookup object using the specified vocabulary and embedding size.
+   * Create the Linear3D layer object using the specified number of units.
    *
-   * @param vocabSize The size of the vocabulary.
-   * @param embeddingSize The length of each embedding vector.
+   * @param inSize The number of input units.
+   * @param outSize The number of output units.
+   * @param regularizer The regularizer to use, optional.
    */
-  Lookup(const size_t vocabSize = 0, const size_t embeddingSize = 0);
+  Linear3D(const size_t inSize,
+           const size_t outSize,
+           RegularizerType regularizer = RegularizerType());
+
+  /*
+   * Reset the layer parameter.
+   */
+  void Reset();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -73,7 +83,7 @@ class Lookup
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
-  /**
+  /*
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
@@ -90,6 +100,11 @@ class Lookup
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
+  //! Get the input parameter.
+  InputDataType const& InputParameter() const { return inputParameter; }
+  //! Modify the input parameter.
+  InputDataType& InputParameter() { return inputParameter; }
+
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -100,16 +115,26 @@ class Lookup
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
+  //! Get the output size.
+  size_t OutputSize() const { return outSize; }
+
   //! Get the gradient.
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
-  //! Get the size of the vocabulary.
-  size_t VocabSize() const { return vocabSize; }
+  //! Get the weight of the layer.
+  OutputDataType const& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  OutputDataType& Weight() { return weight; }
 
-  //! Get the length of each embedding vector.
-  size_t EmbeddingSize() const { return embeddingSize; }
+  //! Get the bias of the layer.
+  OutputDataType const& Bias() const { return bias; }
+  //! Modify the bias weights of the layer.
+  OutputDataType& Bias() { return bias; }
 
   /**
    * Serialize the layer
@@ -118,14 +143,20 @@ class Lookup
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  //! Locally-stored size of the vocabulary.
-  size_t vocabSize;
+  //! Locally-stored number of input units.
+  size_t inSize;
 
-  //! Locally-stored length of each embedding vector.
-  size_t embeddingSize;
+  //! Locally-stored number of output units.
+  size_t outSize;
 
   //! Locally-stored weight object.
   OutputDataType weights;
+
+  //! Locally-stored weight parameters.
+  OutputDataType weight;
+
+  //! Locally-stored bias term parameters.
+  OutputDataType bias;
 
   //! Locally-stored delta object.
   OutputDataType delta;
@@ -133,18 +164,20 @@ class Lookup
   //! Locally-stored gradient object.
   OutputDataType gradient;
 
+  //! Locally-stored input parameter object.
+  InputDataType inputParameter;
+
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class Lookup
 
-// Alias for using as embedding layer.
-template<typename MatType = arma::mat>
-using Embedding = Lookup<MatType, MatType>;
+  //! Locally-stored regularizer object.
+  RegularizerType regularizer;
+}; // class Linear
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "lookup_impl.hpp"
+#include "linear3d_impl.hpp"
 
 #endif

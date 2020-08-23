@@ -24,9 +24,8 @@ steps:
     sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost1.70-dev libarmadillo-dev xz-utils
 
     if [ "$(binding)" == "python" ]; then
-      sudo /opt/hostedtoolcache/Python/3.7.8/x64/bin/python3 -m pip install "Cython>0.24"
-      sudo /opt/hostedtoolcache/Python/3.7.8/x64/bin/python3 -m pip install --upgrade --ignore-installed setuptools
-      sudo /opt/hostedtoolcache/Python/3.7.8/x64/bin/python3 -m pip install pandas
+      /usr/bin/python3 -m pip install --upgrade pip
+      /usr/bin/python3 -m pip install --upgrade --ignore-installed setuptools cython pandas
     fi
 
     if [ "a$(julia.version)" != "a" ]; then

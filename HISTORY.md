@@ -11,6 +11,8 @@
 
   * Added macro for changing stream of printing and warnings/errors (#2556).
 
+  * Force CMake to show error when it didn't find Python/modules (#2568).
+
   * Refactor `ProgramInfo()` to separate out all the different
     information (#2558).
 
