@@ -69,7 +69,6 @@ RBM<InitializationRuleType, DataType, PolicyType>::RBM(
     const ElemType slabPenalty,
     const ElemType radius,
     const bool persistence) :
-    predictors(std::move(predictors)),
     initializeRule(initializeRule),
     visibleSize(visibleSize),
     hiddenSize(hiddenSize),
@@ -83,7 +82,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::RBM(
     persistence(persistence),
     reset(false)
 {
-  // Nothing to do here.
+  numFunctions = 0;
 }
 
 template<
