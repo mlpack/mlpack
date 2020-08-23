@@ -297,6 +297,16 @@ class RBM
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
   HiddenMean(const InputType& input, DataType& output);
 
+  /**
+   * Perform the forward pass of the data in real batch mode.
+   *
+   * Forward and Backward should be used as a pair, and they are designed mainly
+   * for advanced users. User should try to use Predict and Train unless those
+   * two functions can't satisfy some special requirements.
+   *
+   * @param inputs The input data.
+   * @param output The predicted results.
+   */
   template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
   Forward(const InputType& input, DataType& output);

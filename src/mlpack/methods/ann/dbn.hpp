@@ -26,12 +26,12 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of a deep belief network.
  *
- * @tparam OutputLayerType The output layer type used to evaluate the network.
+ * @tparam InputType The input data type used in the network.
+ * @tparam OutputType The output layer type used in the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
- * @tparam CustomLayers Any set of custom layers that could be a part of the
- *         feed forward network.
  */
 template<
+  typename InputType = arma::mat,
   typename OutputType = arma::mat,
   typename InitializationRuleType = GaussianInitialization
 >
@@ -39,7 +39,7 @@ class DBN
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = DBN<OutputType, InitializationRuleType>;
+  using NetworkType = DBN<InputType, OutputType, InitializationRuleType>;
 
   /**
    * Create the DBN object.
@@ -50,9 +50,9 @@ class DBN
    * If you want to pass in a parameter and discard the original parameter
    * object, be sure to use std::move to avoid unnecessary copy.
    *
-   * @tparam predictors Input training data.
+   * @param predictors Input training data.
    */
-  DBN(arma::mat predictors);
+  DBN(InputType predictors);
 
   /**
    * Train the deep belief network on the given input data using the given
@@ -137,9 +137,14 @@ class DBN
   arma::mat& Predictors() { return predictors; }
 
   /**
-   * Reset the module information (weights/parameters).
+   * Reset Every RBM use as layer.
    */
-  void ResetParameters();
+  void Reset();
+
+  /**
+   * Setting Bias of the RBM layers.
+   */
+  void SetBias();
 
   //! Serialize the model.
   template<typename Archive>
@@ -155,8 +160,7 @@ class DBN
    * @param inputs The input data.
    * @param results The predicted results.
    */
-  template<typename PredictorsType, typename ResponsesType>
-  void Forward(const PredictorsType& inputs, ResponsesType& results);
+  void Forward(const InputType& inputs, OutputType& results);
 
  private:
 
@@ -168,16 +172,11 @@ class DBN
   //! Locally-stored model modules.
   std::vector<RBM<InitializationRuleType> > network;
 
-  arma::mat trainData;
+  //! Locally stored train data.
+  InputType predictors;
 
-  double learninRate;
-
-  bool learninRateDecay;
-
-  bool increaseToCDK;
-
-  bool xavierInit;
-  arma::mat predictors;
+  //! Locally stored output by Forward function.
+  OutputType results;
 }; // class DBN
 
 } // namespace ann
