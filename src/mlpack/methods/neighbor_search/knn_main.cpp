@@ -34,20 +34,26 @@ using namespace mlpack::util;
 // Convenience typedef.
 typedef NSModel<NearestNeighborSort> KNNModel;
 
-// Information about the program itself.
-PROGRAM_INFO("k-Nearest-Neighbors Search",
-    // Short description.
+// Program Name.
+BINDING_NAME("k-Nearest-Neighbors Search");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of k-nearest-neighbor search using single-tree and "
     "dual-tree algorithms.  Given a set of reference points and query points, "
     "this can find the k nearest neighbors in the reference set of each query "
-    "point using trees; trees that are built can be saved for future use.",
-    // Long description.
+    "point using trees; trees that are built can be saved for future use.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program will calculate the k-nearest-neighbors of a set of "
     "points using kd-trees or cover trees (cover tree support is experimental "
     "and may be slow). You may specify a separate set of "
     "reference points and query points, or just a reference set which will be "
-    "used as both the reference and query set."
-    "\n\n"
+    "used as both the reference and query set.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following command will calculate the 5 nearest neighbors "
     "of each point in " + PRINT_DATASET("input") + " and store the distances "
     "in " + PRINT_DATASET("distances") + " and the neighbors in " +
@@ -60,16 +66,18 @@ PROGRAM_INFO("k-Nearest-Neighbors Search",
     "output matrix corresponds to the index of the point in the reference set "
     "which is the j'th nearest neighbor from the point in the query set with "
     "index i.  Row j and column i in the distances output matrix corresponds to"
-    " the distance between those two points.",
-    SEE_ALSO("@lsh", "#lsh"),
-    SEE_ALSO("@krann", "#krann"),
-    SEE_ALSO("@kfn", "#kfn"),
-    SEE_ALSO("NeighborSearch tutorial (k-nearest-neighbors)",
-        "@doxygen/nstutorial.html"),
-    SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
-        "http://proceedings.mlr.press/v28/curtin13.pdf"),
-    SEE_ALSO("mlpack::neighbor::NeighborSearch C++ class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1NeighborSearch.html"));
+    " the distance between those two points.");
+
+// See also...
+BINDING_SEE_ALSO("@lsh", "#lsh");
+BINDING_SEE_ALSO("@krann", "#krann");
+BINDING_SEE_ALSO("@kfn", "#kfn");
+BINDING_SEE_ALSO("NeighborSearch tutorial (k-nearest-neighbors)",
+        "@doxygen/nstutorial.html");
+BINDING_SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
+        "http://proceedings.mlr.press/v28/curtin13.pdf");
+BINDING_SEE_ALSO("mlpack::neighbor::NeighborSearch C++ class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1NeighborSearch.html");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

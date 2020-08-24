@@ -16,32 +16,31 @@ if (NOT BUILD_GO_BINDINGS)
 endif ()
 
 if (BUILD_GO_BINDINGS)
+
+  find_package(Go 1.11.0)
+  if (NOT GO_FOUND)
+    set(GO_NOT_FOUND_MSG "${GO_NOT_FOUND_MSG}\n    - Go")
+  endif ()
+  find_package(Gonum)
+  if (NOT GONUM_FOUND)
+    set(GO_NOT_FOUND_MSG "${GO_NOT_FOUND_MSG}\n    - Gonum")
+  endif ()
+
   ## We need to check here if Golang is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
   if (FORCE_BUILD_GO_BINDINGS)
-    find_package(Go 1.11.0)
-    find_package(Gonum)
     if (NOT GO_FOUND OR NOT GONUM_FOUND)
       unset(BUILD_GO_BINDINGS CACHE)
       set(BUILD_GO_SHLIB OFF)
-      message(FATAL_ERROR "Go or Gonum not found; unable to build Go bindings!")
+      message(FATAL_ERROR "\nCould not Build Go Bindings; the following modules are not available: ${GO_NOT_FOUND_MSG}")
     endif()
   else ()
-    find_package(Go 1.11.0)
-    find_package(Gonum)
     if (NOT GO_FOUND OR NOT GONUM_FOUND)
       unset(BUILD_GO_BINDINGS CACHE)
       set(BUILD_GO_SHLIB OFF)
+      not_found_return("Not building Go bindings; the following modules are not available: ${GO_NOT_FOUND_MSG}")
     endif()
-  endif ()
-
-  if (NOT GO_FOUND)
-    not_found_return("Go not found; not building Go bindings.")
-  endif ()
-
-  if (NOT GONUM_FOUND)
-    not_found_return("Gonum not found; not building Go bindings.")
   endif ()
 
   add_custom_target(go)
@@ -146,12 +145,12 @@ if (BUILD_GO_SHLIB)
     endforeach ()
   endif ()
 
-  add_library(go_util SHARED
+  add_library(mlpack_go_util SHARED
           ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/arma_util.cpp
           ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/mlpack/capi/io_util.cpp)
-  target_link_libraries(go_util mlpack ${MLPACK_LIBRARIES})
-  target_compile_definitions(go_util PUBLIC "BINDING_TYPE=BINDING_TYPE_GO")
-  set_target_properties(go_util PROPERTIES
+  target_link_libraries(mlpack_go_util mlpack ${MLPACK_LIBRARIES})
+  target_compile_definitions(mlpack_go_util PUBLIC "BINDING_TYPE=BINDING_TYPE_GO")
+  set_target_properties(mlpack_go_util PROPERTIES
      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/)
 
   # Set the include directories correctly.
@@ -159,7 +158,7 @@ if (BUILD_GO_SHLIB)
      PROPERTY INCLUDE_DIRECTORIES)
   set (GO_INCLDIRS "${GO_INCLUDE_DIRECTORIES}")
 
-  install(TARGETS go_util
+  install(TARGETS mlpack_go_util
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
       LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
@@ -245,7 +244,7 @@ if(BUILD_GO_SHLIB)
   # Build libmlpack_go_${name}.so.
   add_library(mlpack_go_${name} SHARED
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp)
-  target_link_libraries(mlpack_go_${name} mlpack go_util)
+  target_link_libraries(mlpack_go_${name} mlpack mlpack_go_util)
   set_target_properties(mlpack_go_${name} PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/")
 
@@ -256,7 +255,7 @@ if(BUILD_GO_SHLIB)
       ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
   add_dependencies(mlpack_go_${name} go_copy)
-  add_dependencies(mlpack_go_${name} go_util)
+  add_dependencies(mlpack_go_${name} mlpack_go_util)
   add_dependencies(go_shlib mlpack_go_${name})
 
   if (BUILD_GO_BINDINGS)

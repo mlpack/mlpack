@@ -182,9 +182,9 @@ class RandomReplay
    */
   void Sample(arma::mat& sampledStates,
               std::vector<ActionType>& sampledActions,
-              arma::colvec& sampledRewards,
+              arma::rowvec& sampledRewards,
               arma::mat& sampledNextStates,
-              arma::icolvec& isTerminal)
+              arma::irowvec& isTerminal)
   {
     size_t upperBound = full ? capacity : position;
     arma::uvec sampledIndices = arma::randi<arma::uvec>(
@@ -193,9 +193,9 @@ class RandomReplay
     sampledStates = states.cols(sampledIndices);
     for (size_t t = 0; t < sampledIndices.n_rows; t ++)
       sampledActions.push_back(actions[sampledIndices[t]]);
-    sampledRewards = rewards.elem(sampledIndices);
+    sampledRewards = rewards.elem(sampledIndices).t();
     sampledNextStates = nextStates.cols(sampledIndices);
-    isTerminal = this->isTerminal.elem(sampledIndices);
+    isTerminal = this->isTerminal.elem(sampledIndices).t();
   }
 
   /**
@@ -253,13 +253,13 @@ class RandomReplay
   std::vector<ActionType> actions;
 
   //! Locally-stored previous rewards.
-  arma::colvec rewards;
+  arma::rowvec rewards;
 
   //! Locally-stored encoded previous next states.
   arma::mat nextStates;
 
   //! Locally-stored termination information of previous experience.
-  arma::icolvec isTerminal;
+  arma::irowvec isTerminal;
 };
 
 } // namespace rl

@@ -55,8 +55,28 @@ class RandomInitialization
   template<typename eT>
   void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    W = lowerBound + arma::randu<arma::Mat<eT>>(rows, cols) *
-        (upperBound - lowerBound);
+    if (W.is_empty())
+      W.set_size(rows, cols);
+
+    W.randu();
+    W *= (upperBound - lowerBound);
+    W += lowerBound;
+  }
+
+  /**
+   * Initialize randomly the elements of the specified weight matrix.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W)
+  {
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty matrix." << std::endl;
+
+    W.randu();
+    W *= (upperBound - lowerBound);
+    W += lowerBound;
   }
 
   /**
@@ -73,10 +93,26 @@ class RandomInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    W = arma::Cube<eT>(rows, cols, slices);
+    if (W.is_empty())
+      W.set_size(rows, cols, slices);
 
     for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
+  }
+
+  /**
+   * Initialize randomly the elements of the specified weight 3rd order tensor.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT>& W)
+  {
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty cube." << std::endl;
+
+    for (size_t i = 0; i < W.n_slices; ++i)
+      Initialize(W.slice(i));
   }
 
  private:

@@ -1,5 +1,14 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Force CMake to show error when it didn't find Python/modules (#2568).
+
+  * Refactor `ProgramInfo()` to separate out all the different
+    information (#2558).
+
+  * Added Soft Actor-Critic to RL methods (#2487).
+
+  * Added Categorical DQN to q_networks (#2454).
+
   * Added N-step DQN to q_networks (#2461).
 
   * Add Silhoutte Score metric and Pairwise Distances (#2406).
@@ -17,6 +26,10 @@
     automatically tuned (#2030).
 
   * Fix defeatist search for spill tree traversals (#2566, #1269).
+
+  * Fix incremental training of logistic regression models (#2560).
+
+  * Change default configuration of `BUILD_PYTHON_BINDINGS` to `OFF` (#2575).
 
 ### mlpack 3.3.2
 ###### 2020-06-18

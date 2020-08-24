@@ -25,13 +25,18 @@ using namespace mlpack::tree;
 using namespace mlpack::data;
 using namespace mlpack::util;
 
-PROGRAM_INFO("Hoeffding trees",
-    // Short description.
+// Program Name.
+BINDING_NAME("Hoeffding trees");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of Hoeffding trees, a form of streaming decision tree "
     "for classification.  Given labeled data, a Hoeffding tree can be trained "
     "and saved for later use, or a pre-trained Hoeffding tree can be used for "
-    "predicting the classifications of new points.",
-    // Long description.
+    "predicting the classifications of new points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements Hoeffding trees, a form of streaming decision tree"
     " suited best for large (or streaming) datasets.  This program supports "
     "both categorical and numeric data.  Given an input dataset, this program "
@@ -61,8 +66,10 @@ PROGRAM_INFO("Hoeffding trees",
     " parameter.  Predictions for each test point may be saved with the " +
     PRINT_PARAM_STRING("predictions") + " output parameter, and class "
     "probabilities for each prediction may be saved with the " +
-    PRINT_PARAM_STRING("probabilities") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("probabilities") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to train a Hoeffding tree with confidence 0.99 with data " +
     PRINT_DATASET("dataset") + ", saving the trained tree to " +
     PRINT_MODEL("tree") + ", the following command may be used:"
@@ -76,13 +83,15 @@ PROGRAM_INFO("Hoeffding trees",
     PRINT_DATASET("class_probs") + " with the following command: "
     "\n\n" +
     PRINT_CALL("hoeffding_tree", "input_model", "tree", "test", "test_set",
-        "predictions", "predictions", "probabilities", "class_probs"),
-    SEE_ALSO("@decision_tree", "#decision_tree"),
-    SEE_ALSO("@random_forest", "#random_forest"),
-    SEE_ALSO("Mining High-Speed Data Streams (pdf)",
-        "http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf"),
-    SEE_ALSO("mlpack::tree::HoeffdingTree class documentation",
-        "@doxygen/classmlpack_1_1tree_1_1HoeffdingTree.html"));
+        "predictions", "predictions", "probabilities", "class_probs"));
+
+// See also...
+BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
+BINDING_SEE_ALSO("@random_forest", "#random_forest");
+BINDING_SEE_ALSO("Mining High-Speed Data Streams (pdf)",
+        "http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf");
+BINDING_SEE_ALSO("mlpack::tree::HoeffdingTree class documentation",
+        "@doxygen/classmlpack_1_1tree_1_1HoeffdingTree.html");
 
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
     "t");
