@@ -33,7 +33,7 @@ std::string PrintTypeDoc(
   // A flag type.
   if (std::is_same<T, bool>::value)
   {
-    return "A boolean flag option (`TRUE` or `FALSE`).";
+    return "A boolean flag option (i.e. `TRUE` or `FALSE`).";
   }
   // An integer.
   else if (std::is_same<T, int>::value)
@@ -93,13 +93,13 @@ std::string PrintTypeDoc(
     if (T::is_col || T::is_row)
     {
       return "A 1-d matrix-like containing `numeric` data (could be an "
-          "`matrix` or `data.frame` with one dimension of size 1).";
+          "`matrix` or a `data.frame` with one dimension of size 1).";
     }
     else
     {
       return "A 2-d matrix-like containing `numeric` data (could be an "
           "`matrix` or a `data.frame` or anything convertible to an "
-          "2-d `matrix`.";
+          "2-d `matrix`).";
     }
   }
   else if (std::is_same<typename T::elem_type, size_t>::value)
@@ -107,13 +107,13 @@ std::string PrintTypeDoc(
     if (T::is_col || T::is_row)
     {
       return "A 1-d matrix-like containing `integer` data (could be an "
-          "`matrix` or `data.frame` with one dimension of size 1).";
+          "`matrix` or a `data.frame` with one dimension of size 1).";
     }
     else
     {
       return "A 2-d matrix-like containing `integer` data (could be an "
           "`matrix` or a `data.frame` or anything convertible to an "
-          "2-d `matrix`.";
+          "2-d `matrix`).";
     }
   }
   else
