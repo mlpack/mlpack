@@ -1131,7 +1131,6 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
        stack.push(node->right); 
     }
   }
-
 }
 
 } // namespace tree
