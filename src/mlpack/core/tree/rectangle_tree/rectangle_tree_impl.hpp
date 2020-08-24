@@ -1449,6 +1449,26 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   {
     children[i] = NULL;
   }
+
+  // If we are the root, we need to restore the dataset pointer throughout
+  if (!hasParent)
+  {
+    std::stack<RectangleTree*> stack;
+    for (size_t i = 0; i < numChildren; ++i)
+    {
+      stack.push(children[i]);
+    }
+    while (!stack.empty())
+    {
+      RectangleTree* node = stack.top();
+      stack.pop();
+      node->dataset = dataset;
+      for (size_t i = 0; i < numChildren; ++i)
+      {
+        stack.push(children[i]);
+      }
+    }
+  }
 }
 
 } // namespace tree
