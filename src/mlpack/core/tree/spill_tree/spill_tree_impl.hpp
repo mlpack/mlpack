@@ -950,6 +950,26 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
       right->localDataset = false;
     }
   }
+
+  // If we are the root, we need to restore the dataset pointer throughout
+  if (!hasParent)
+  {
+    std::stack<SpillTree*> stack;
+    if (left)
+      stack.push(left);
+    if (right)
+      stack.push(right);
+    while (!stack.empty())
+    {
+      SpillTree* node = stack.top();
+      stack.pop();
+      node->dataset = dataset;
+      if (node->left)
+        stack.push(node->left);
+      if (node->right)
+       stack.push(node->right); 
+    }
+  }
 }
 
 } // namespace tree
