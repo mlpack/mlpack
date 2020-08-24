@@ -1465,7 +1465,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       node->dataset = dataset;
       for (size_t i = 0; i < numChildren; ++i)
       {
-        stack.push(children[i]);
+        stack.push(node->children[i]);
       }
     }
   }
