@@ -34,6 +34,7 @@
 #include <mlpack/methods/ann/layer/linear3d.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
+#include <mlpack/methods/ann/layer/multihead_attention.hpp>
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
@@ -111,6 +112,11 @@ template<typename InputDataType,
          typename OutputDataType
 >
 class MiniBatchDiscrimination;
+
+template <typename InputDataType,
+          typename OutputDataType,
+          typename RegularizerType>
+class MultiheadAttention;
 
 template<typename InputDataType,
          typename OutputDataType
@@ -214,6 +220,7 @@ using MoreTypes = boost::variant<
         Linear3D<arma::mat, arma::mat, NoRegularizer>*,
         Glimpse<arma::mat, arma::mat>*,
         Highway<arma::mat, arma::mat>*,
+        MultiheadAttention<arma::mat, arma::mat, NoRegularizer>*,
         Recurrent<arma::mat, arma::mat>*,
         RecurrentAttention<arma::mat, arma::mat>*,
         ReinforceNormal<arma::mat, arma::mat>*,
