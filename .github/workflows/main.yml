@@ -1,17 +1,9 @@
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-  release:
-    types: [published, created, edited]
+on: [push, pull_request]
 
 jobs:
   jobR:
     name: mlpack-R
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     outputs:
       r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
     steps:
@@ -64,7 +56,7 @@ jobs:
         config:
         #- { os: windows-latest, r: '4.0'}
         - {os: macOS-latest, r: 'release'}
-        - {os: ubuntu-16.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+        - {os: ubuntu-latest, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
 
     env:
