@@ -139,7 +139,7 @@ void CheckBound(TreeType& tree)
   if (tree.IsLeaf())
   {
     // Ensure that the bound contains all descendant points.
-    for (size_t i = 0; i < tree.NumPoints(); i++)
+    for (size_t i = 0; i < tree.NumPoints(); ++i)
     {
       ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
           tree.Dataset().col(tree.Point(i)));
@@ -157,7 +157,7 @@ void CheckBound(TreeType& tree)
   else
   {
     // Ensure that the bound contains all descendant points.
-    for (size_t i = 0; i < tree.NumDescendants(); i++)
+    for (size_t i = 0; i < tree.NumDescendants(); ++i)
     {
       ElemType dist = tree.Bound().Metric().Evaluate(tree.Bound().Center(),
           tree.Dataset().col(tree.Descendant(i)));
@@ -220,9 +220,9 @@ BOOST_AUTO_TEST_CASE(VPTreeTest)
     BOOST_REQUIRE_EQUAL(root.NumDescendants(), size);
 
     // Check the forward and backward mappings for correctness.
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; ++i)
     {
-      for (size_t j = 0; j < dimensions; j++)
+      for (size_t j = 0; j < dimensions; ++j)
       {
         BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
         BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));
@@ -251,7 +251,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
@@ -278,7 +278,7 @@ BOOST_AUTO_TEST_CASE(DualTreeTraverserTest)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);

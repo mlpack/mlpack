@@ -171,7 +171,7 @@ typename std::enable_if<
       ::value, void>::type
 BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::WarnMessageMaxIterations
-(OptimizerType& optimizer, size_t samples) const
+(OptimizerType& /* optimizer */, size_t /* samples */) const
 {
   return;
 }
@@ -782,7 +782,7 @@ template<typename OutputLayerType, typename MergeLayerType,
 template<typename Archive>
 void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int version)
+    Archive& ar, const unsigned int /* version */)
 {
   ar & BOOST_SERIALIZATION_NVP(parameter);
   ar & BOOST_SERIALIZATION_NVP(backwardRNN);

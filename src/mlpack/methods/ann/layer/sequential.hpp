@@ -18,6 +18,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "../visitor/delete_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_height_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
@@ -88,7 +89,10 @@ class Sequential
   Sequential(const bool model, const bool ownsLayers);
 
   //! Copy constructor.
-  Sequential(const Sequential&);
+  Sequential(const Sequential& layer);
+
+  //! Copy assignment operator.
+  Sequential& operator = (const Sequential& layer);
 
   //! Destroy the Sequential object.
   ~Sequential();
@@ -228,6 +232,9 @@ class Sequential
 
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
+
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
 
   //! The input width.
   size_t width;

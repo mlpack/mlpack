@@ -1,5 +1,5 @@
 /**
- * @file iou_metric_impl.hpp
+ * @file core/metrics/iou_metric_impl.hpp
  * @author Kartik Dutt
  *
  * Implementation of Intersection Over Union metric.
@@ -67,10 +67,10 @@ typename VecTypeA::elem_type IoU<UseCoordinates>::Evaluate(
 template<bool UseCoordinates>
 template<typename Archive>
 void IoU<UseCoordinates>::serialize(
-    Archive& ar,
+    Archive& /* ar */,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(useCoordinates);
+  // Nothing to do here.
 }
 
 } // namespace metric

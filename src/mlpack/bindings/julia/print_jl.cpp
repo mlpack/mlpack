@@ -13,7 +13,9 @@
 #include "strip_type.hpp"
 #include <mlpack/core/util/hyphenate_string.hpp>
 
-using namespace mlpack;
+#include <set>
+
+using namespace mlpack::util;
 using namespace std;
 
 namespace mlpack {
@@ -25,22 +27,22 @@ extern std::string programName;
 /**
  * Print the code for a .jl binding for an mlpack program to stdout.
  */
-void PrintJL(const util::ProgramDoc& programInfo,
+void PrintJL(const util::BindingDetails& doc,
              const string& functionName,
              const std::string& mlpackJuliaLibSuffix)
 {
   // Restore parameters.
-  CLI::RestoreSettings(programInfo.programName);
+  IO::RestoreSettings(doc.programName);
 
-  const map<string, util::ParamData>& parameters = CLI::Parameters();
-  typedef map<string, util::ParamData>::const_iterator ParamIter;
+  map<string, util::ParamData>& parameters = IO::Parameters();
+  typedef map<string, util::ParamData>::iterator ParamIter;
 
   // First, let's get a list of input and output options.  We'll take two passes
   // so that the required input options are the first in the list.
   vector<string> inputOptions, outputOptions;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && d.required)
     {
       // Ignore some parameters.
@@ -56,7 +58,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
 
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && !d.required &&
         d.name != "help" && d.name != "info" &&
         d.name != "version")
@@ -71,10 +73,10 @@ void PrintJL(const util::ProgramDoc& programInfo,
   set<string> classNames;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (classNames.count(d.cppType) == 0)
     {
-      CLI::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d, NULL,
+      IO::GetSingleton().functionMap[d.tname]["PrintModelTypeImport"](d, NULL,
           NULL);
 
       // Avoid adding this import again.
@@ -84,7 +86,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // We need to include utility functions.
-  cout << "using mlpack._Internal.cli" << endl;
+  cout << "using mlpack._Internal.io" << endl;
   cout << endl;
 
   // Make sure the libraries we need are accessible.
@@ -109,7 +111,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // If we have any model types, we need to define functions to set and get
-  // their values from the CLI object.  We do this with the PrintParamDefn()
+  // their values from the IO object.  We do this with the PrintParamDefn()
   // function.  We'll gather all names of classes we've done this with, so that
   // we don't print any duplicates.  This should all be done inside of an
   // internal module.
@@ -121,10 +123,10 @@ void PrintJL(const util::ProgramDoc& programInfo,
   classNames.clear();
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (classNames.count(d.cppType) == 0)
     {
-      CLI::GetSingleton().functionMap[d.tname]["PrintParamDefn"](d, (void*)
+      IO::GetSingleton().functionMap[d.tname]["PrintParamDefn"](d, (void*)
           &functionName, NULL);
 
       // Avoid adding this definition again.
@@ -145,7 +147,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
     const string& opt = inputOptions[i];
-    const util::ParamData& d = parameters.at(opt);
+    util::ParamData& d = parameters.at(opt);
 
     if (!defaults && !d.required)
     {
@@ -166,22 +168,27 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // Next print the description.
-  cout << util::HyphenateString(programInfo.documentation(), 0) << endl;
+  cout << HyphenateString(doc.longDescription(), 0) << endl << endl;
+
+  // Next print the examples.
+  for (size_t j = 0; j < doc.example.size(); ++j)
+  {
+    cout << util::HyphenateString(doc.example[j](), 0) << endl << endl;
+  }
 
   // Next, print information on the input options.
-  cout << endl;
   cout << "# Arguments" << endl;
   cout << endl;
 
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
     const string& opt = inputOptions[i];
-    const util::ParamData& d = parameters.at(opt);
+    util::ParamData& d = parameters.at(opt);
 
     std::ostringstream oss;
     oss << " - ";
 
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
+    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
 
     cout << util::HyphenateString(oss.str(), 6) << endl;
   }
@@ -193,12 +200,12 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     const string& opt = outputOptions[i];
-    const util::ParamData& d = parameters.at(opt);
+    util::ParamData& d = parameters.at(opt);
 
     std::ostringstream oss;
     oss << " - ";
 
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
+    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, NULL, (void*) &oss);
 
     cout << util::HyphenateString(oss.str(), 6) << endl;
   }
@@ -216,7 +223,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
     const string& opt = inputOptions[i];
-    const util::ParamData& d = parameters.at(opt);
+    util::ParamData& d = parameters.at(opt);
 
     if (!defaults && !d.required)
     {
@@ -228,7 +235,7 @@ void PrintJL(const util::ProgramDoc& programInfo,
       cout << "," << endl << string(indent, ' ');
     }
 
-    CLI::GetSingleton().functionMap[d.tname]["PrintInputParam"](d, NULL,
+    IO::GetSingleton().functionMap[d.tname]["PrintInputParam"](d, NULL,
         NULL);
   }
 
@@ -245,8 +252,8 @@ void PrintJL(const util::ProgramDoc& programInfo,
       << endl;
   cout << endl;
 
-  // Restore CLI settings.
-  cout << "  CLIRestoreSettings(\"" << programName << "\")" << endl;
+  // Restore IO settings.
+  cout << "  IORestoreSettings(\"" << programName << "\")" << endl;
   cout << endl;
 
   // Handle each input argument's processing before calling mlpackMain().
@@ -256,25 +263,25 @@ void PrintJL(const util::ProgramDoc& programInfo,
   {
     if (opt != "verbose")
     {
-      const util::ParamData& d = parameters.at(opt);
-      CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
+      util::ParamData& d = parameters.at(opt);
+      IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
           &functionName, NULL);
     }
   }
 
   // Special handling for verbose output.
   cout << "  if verbose !== nothing && verbose === true" << endl;
-  cout << "    CLIEnableVerbose()" << endl;
+  cout << "    IOEnableVerbose()" << endl;
   cout << "  else" << endl;
-  cout << "    CLIDisableVerbose()" << endl;
+  cout << "    IODisableVerbose()" << endl;
   cout << "  end" << endl;
   cout << endl;
 
   // Mark output parameters as passed.
   for (const string& opt : outputOptions)
   {
-    const util::ParamData& d = parameters.at(opt);
-    cout << "  CLISetPassed(\"" << d.name << "\")" << endl;
+    util::ParamData& d = parameters.at(opt);
+    cout << "  IOSetPassed(\"" << d.name << "\")" << endl;
   }
 
   // Call the program.
@@ -287,8 +294,8 @@ void PrintJL(const util::ProgramDoc& programInfo,
   string indentStr(9, ' ');
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
-    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
+    util::ParamData& d = parameters.at(outputOptions[i]);
+    IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
         &functionName, NULL);
 
     // Print newlines if we are returning multiple output options.

@@ -15,21 +15,18 @@ jobs:
   strategy:
     matrix:
       Plain:
-        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
-        python.version: '2.7'
-      Python27:
-        python.version: '2.7'
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DPYTHON_EXECUTABLE=/usr/bin/python'
-      Python37:
+        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF'
+      Python:
         python.version: '3.7'
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DPYTHON_EXECUTABLE=/usr/bin/python3'
+        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 -DBUILD_GO_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF'
       Julia:
-        python.version: '2.7'
         julia.version: '1.3.0'
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=ON -DJULIA_EXECUTABLE=/opt/julia-1.3.0/bin/julia'
+        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=ON -DBUILD_GO_BINDINGS=OFF -DJULIA_EXECUTABLE=/opt/julia-1.3.0/bin/julia'
+      Go:
+        go.version: '1.11.0'
+        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=ON'
       Markdown:
-        python.version: '2.7'
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_MARKDOWN_BINDINGS=ON -DBUILD_PYTHON_BINDINGS=OFF'
+        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_MARKDOWN_BINDINGS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF'
 
   steps:
   - template: linux-steps.yaml
@@ -41,15 +38,20 @@ jobs:
   strategy:
     matrix:
       Plain:
-        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
+        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF'
         python.version: '2.7'
-      Python37:
+      Python:
         python.version: '3.7'
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF'
+        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=ON -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF'
       Julia:
         python.version: '2.7'
         julia.version: '1.3.0'
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_JULIA_BINDINGS=ON -DBUILD_PYTHON_BINDINGS=OFF'
+        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_JULIA_BINDINGS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF'
+      Go:
+        python.version: '2.7'
+        go.version: '1.11.0'
+        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=ON'
+
 
   steps:
   - template: macos-steps.yaml
@@ -62,7 +64,7 @@ jobs:
   strategy:
     matrix:
       Plain:
-        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
+        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF'
         python.version: '2.7'
         CMakeGenerator: '-G "Visual Studio 15 2017 Win64"'
         MSBuildVersion: '15.0'
@@ -81,7 +83,7 @@ jobs:
   strategy:
     matrix:
       Plain:
-        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF'
+        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF'
         python.version: '2.7'
         CMakeGenerator: '-G "Visual Studio 16 2019"'
         MSBuildVersion: '16.0'

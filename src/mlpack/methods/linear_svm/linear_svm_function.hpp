@@ -58,7 +58,6 @@ class LinearSVMFunction
    * @param featureSize The number of features in the training set.
    * @param numClasses Number of classes for classification.
    * @param fitIntercept If true, an intercept is fitted.
-   * @return Initialized model weights.
    */
   static void InitializeWeights(arma::mat& weights,
                                 const size_t featureSize,

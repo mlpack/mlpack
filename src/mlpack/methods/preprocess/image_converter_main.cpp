@@ -2,7 +2,7 @@
  * @file methods/preprocess/image_converter_main.cpp
  * @author Jeffin Sam
  *
- * A CLI executable to load and save a image dataset.
+ * A binding to load and save a image dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core.hpp>
 
@@ -20,13 +20,18 @@ using namespace arma;
 using namespace std;
 using namespace mlpack::data;
 
-PROGRAM_INFO("Image Converter",
-    // Short description.
+// Program Name.
+BINDING_NAME("Image Converter");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A utility to load an image or set of images into a single dataset that"
     " can then be used by other mlpack methods and utilities. This can also"
     " unpack an image dataset into individual files, for instance after mlpack"
-    " methods have been used.",
-    // Long description.
+    " methods have been used.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes an image or an array of images and loads them to a"
     " matrix. You can optionally specify the height " +
     PRINT_PARAM_STRING("height") + " width " + PRINT_PARAM_STRING("width")
@@ -39,18 +44,24 @@ PROGRAM_INFO("Image Converter",
     + ".\n\n" +
     "You can also provide a dataset and save them as images using " +
     PRINT_PARAM_STRING("dataset") + " and " + PRINT_PARAM_STRING("save") +
-    " as an parameter. An example to load an image : "  +
+    " as an parameter.");
+
+// Example.
+BINDING_EXAMPLE(
+    " An example to load an image : "
     "\n\n" +
     PRINT_CALL("image_converter", "input", "X", "height", 256, "width", 256,
         "channels", 3, "output", "Y") +
     "\n\n" +
-    " An example to save an image is :" +
+    " An example to save an image is :"
     "\n\n" +
     PRINT_CALL("image_converter", "input", "X", "height", 256, "width", 256,
-        "channels", 3, "dataset", "Y", "save", true),
-    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
-    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
-    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
+        "channels", 3, "dataset", "Y", "save", true));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
+BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
 
 // DEFINE PARAM
 PARAM_VECTOR_IN_REQ(string, "input", "Image filenames which have to "
@@ -73,18 +84,18 @@ static void mlpackMain()
 {
   Timer::Start("Loading/Saving Image");
   // Parse command line options.
-  const vector<string> fileNames = CLI::GetParam<vector<string> >("input");
+  const vector<string> fileNames = IO::GetParam<vector<string> >("input");
   arma::mat out;
 
-  if (!CLI::HasParam("save"))
+  if (!IO::HasParam("save"))
   {
     ReportIgnoredParam("width", "Width of image is determined from file.");
     ReportIgnoredParam("height", "Height of image is determined from file.");
     ReportIgnoredParam("channels", "Number of channels determined from file.");
     data::ImageInfo info;
     Load(fileNames, out, info, true);
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::mat>("output") = std::move(out);
+    if (IO::HasParam("output"))
+      IO::GetParam<arma::mat>("output") = std::move(out);
   }
   else
   {
@@ -103,12 +114,11 @@ static void mlpackMain()
     RequireParamValue<int>("quality", [](int x) { return x >= 0;}, true,
         "quality must be positive");
 
-    const size_t height = CLI::GetParam<int>("height");
-    const size_t width = CLI::GetParam<int>("width");
-    const size_t channels = CLI::GetParam<int>("channels");
-    const size_t quality = CLI::GetParam<int>("quality");
+    const size_t height = IO::GetParam<int>("height");
+    const size_t width = IO::GetParam<int>("width");
+    const size_t channels = IO::GetParam<int>("channels");
+    const size_t quality = IO::GetParam<int>("quality");
     data::ImageInfo info(width, height, channels, quality);
-    Save(fileNames, CLI::GetParam<arma::mat>("dataset"), info, true);
+    Save(fileNames, IO::GetParam<arma::mat>("dataset"), info, true);
   }
 }
-

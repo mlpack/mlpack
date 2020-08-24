@@ -1,16 +1,37 @@
+macro (not_found_return message)
+  message(STATUS "${message}")
+  macro (add_julia_binding name)
+    # Do nothing.
+  endmacro ()
+
+  return()
+endmacro ()
+
+# If we are not supposed to make Julia bindings, define the macro so it does
+# nothing and leave this file.
+if (NOT BUILD_JULIA_BINDINGS)
+  not_found_return("Not building Julia bindings.")
+endif ()
+
 if (BUILD_JULIA_BINDINGS)
   ## We need to check here if Julia is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
-  find_package(Julia 1.3.0)
+  if (FORCE_BUILD_JULIA_BINDINGS)
+    find_package(Julia 0.7.0)
+    if (NOT JULIA_FOUND)
+      unset(BUILD_JULIA_BINDINGS CACHE)
+      message(FATAL_ERROR "Julia not found; cannot build Julia bindings!")
+    endif()
+  else ()
+    find_package(Julia 0.7.0)
+    if (NOT JULIA_FOUND)
+      unset(BUILD_JULIA_BINDINGS CACHE)
+    endif()
+  endif ()
 
   if (NOT JULIA_FOUND)
-    # We can't build anything, so define the macro to do nothing.
-    macro (add_julia_binding name)
-      # Do nothing.
-    endmacro ()
-
-    return ()
+      not_found_return("Julia not found; not building Julia bindings.")
   endif ()
 
   add_custom_target(julia ALL)
@@ -44,9 +65,9 @@ if (BUILD_JULIA_BINDINGS)
       PROPERTY INCLUDE_DIRECTORIES)
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml.in
                  ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/Project.toml)
-  # Configure cli.jl.in with the right suffix for libraries.
-  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/cli.jl.in
-                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/cli.jl)
+  # Configure io.jl.in with the right suffix for libraries.
+  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack/io.jl.in
+                 ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/io.jl)
 
   # Create the empty mlpack.jl file that we will fill with includes using the
   # exsiting template.  Unfortunately COPY doesn't let us change the extension
@@ -127,12 +148,12 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp
       COMMAND ${CMAKE_COMMAND}
-          -DPROGRAM_NAME="${name}"
-          -DPROGRAM_MAIN_FILE="${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp"
-          -DJULIA_H_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in"
-          -DJULIA_H_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h"
-          -DJULIA_CPP_IN="${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.cpp.in"
-          -DJULIA_CPP_OUT="${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp"
+          -DPROGRAM_NAME=${name}
+          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DJULIA_H_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in
+          -DJULIA_H_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
+          -DJULIA_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.cpp.in
+          -DJULIA_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.cpp
           -P ${CMAKE_SOURCE_DIR}/CMake/julia/ConfigureJuliaHCPP.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in
               ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.cpp.in
@@ -197,7 +218,7 @@ if (BUILD_JULIA_BINDINGS)
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/")
   add_custom_command(TARGET generate_jl_${name} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
-          -DGENERATE_BINDING_PROGRAM="${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/generate_jl_${name}"
+          -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/generate_jl_${name}
           -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/${name}.jl
           -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
 

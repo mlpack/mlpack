@@ -19,6 +19,7 @@
 #include <mlpack/bindings/cli/default_param.hpp>
 #include <mlpack/bindings/python/default_param.hpp>
 #include <mlpack/bindings/julia/default_param.hpp>
+#include <mlpack/bindings/go/default_param.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -29,7 +30,7 @@ namespace markdown {
  * printed depends on the current setting of BindingInfo::Language().
  */
 template<typename T>
-void DefaultParam(const util::ParamData& data,
+void DefaultParam(util::ParamData& data,
                   const void* /* input */,
                   void* output)
 {
@@ -47,6 +48,11 @@ void DefaultParam(const util::ParamData& data,
   {
     *((std::string*) output) =
         julia::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
+  }
+  else if (BindingInfo::Language() == "go")
+  {
+    *((std::string*) output) =
+        go::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
   }
   else
   {

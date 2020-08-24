@@ -25,7 +25,7 @@ namespace markdown {
  */
 template<typename T>
 std::string GetPrintableParamName(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::disable_if<data::HasSerialize<T>>::type*,
     const typename boost::disable_if<std::is_same<T,
@@ -40,7 +40,7 @@ std::string GetPrintableParamName(
  */
 template<typename T>
 std::string GetPrintableParamName(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<arma::is_arma_type<T>>::type*)
 {
   return "--" + data.name + "_file";
@@ -52,7 +52,7 @@ std::string GetPrintableParamName(
  */
 template<typename T>
 std::string GetPrintableParamName(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
@@ -65,7 +65,7 @@ std::string GetPrintableParamName(
  */
 template<typename T>
 std::string GetPrintableParamName(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type*)
 {

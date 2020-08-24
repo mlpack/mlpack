@@ -57,7 +57,7 @@ class VirtualBatchNorm
    *
    * @param referenceBatch The data from which the normalization
    *        statistics are computed.
-   * @param size The number of input units.
+   * @param size The number of input units / channels.
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
   template<typename eT>

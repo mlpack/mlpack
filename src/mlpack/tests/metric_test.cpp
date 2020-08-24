@@ -12,12 +12,14 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <boost/test/unit_test.hpp>
 #include <mlpack/core/metrics/iou_metric.hpp>
+#include <mlpack/core/metrics/non_maximal_supression.hpp>
+#include <mlpack/core/metrics/bleu.hpp>
 #include "test_tools.hpp"
 
 using namespace std;
 using namespace mlpack::metric;
 
-BOOST_AUTO_TEST_SUITE(LMetricTest);
+BOOST_AUTO_TEST_SUITE(MetricTest);
 
 /**
  * Simple test for L-1 metric.
@@ -131,6 +133,231 @@ BOOST_AUTO_TEST_CASE(IoUMetricTest)
   bbox2 << 36 << 60 << 144 << 48;
   // Value calculated using Python interpreter.
   BOOST_REQUIRE_CLOSE(IoU<>::Evaluate(bbox1, bbox2), 0.7309670, 1e-4);
+}
+
+BOOST_AUTO_TEST_CASE(NMSMetricTest)
+{
+  arma::mat bbox, selectedBoundingBox, desiredBoundingBox;
+  arma::vec bbox1(4), bbox2(4), bbox3(4);
+  arma::uvec selectedIndices, desiredIndices;
+
+  // Set values of each bounding box.
+  // Use coordinate system to represent bounding boxes.
+  // Bounding boxes represent {x0, y0, x1, y1}.
+  bbox1 << 0.5 << 0.5 << 41.0 << 31.0;
+  bbox2 << 1.0 << 1.0 << 42.0 << 22.0;
+  bbox3 << 10.0 << 13.0 << 90.0 << 100.0;
+
+  // Fill bounding box.
+  bbox.insert_cols(0, bbox3);
+  bbox.insert_cols(0, bbox2);
+  bbox.insert_cols(0, bbox1);
+
+  // Fill confidence scores for each bounding box.
+  arma::vec confidenceScores(3);
+  confidenceScores << 0.7 << 0.6 << 0.4;
+
+  // Selected bounding box using torchvision.ops.nms().
+  desiredBoundingBox.insert_cols(0, bbox3);
+  desiredBoundingBox.insert_cols(0, bbox1);
+
+  // Selected indices of bounding boxes using
+  // torchvision.ops.nms().
+  desiredIndices = arma::ucolvec(2);
+  desiredIndices << 0 << 2;
+
+  // Evaluate the bounding box.
+  NMS<true>::Evaluate(bbox, confidenceScores,
+      selectedIndices);
+
+  selectedBoundingBox = bbox.cols(selectedIndices);
+
+  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_rows, 4);
+  CheckMatrices(desiredBoundingBox, selectedBoundingBox);
+
+  for (size_t i = 0; i < desiredIndices.n_elem; i++)
+  {
+    BOOST_REQUIRE_EQUAL(desiredIndices[i], selectedIndices[i]);
+  }
+
+  // Clean up.
+  bbox.clear();
+  desiredBoundingBox.clear();
+  selectedBoundingBox.clear();
+
+  // Fill new bounding boxes.
+  bbox.insert_cols(0, bbox1);
+  bbox.insert_cols(0, bbox2);
+  bbox.insert_cols(0, bbox1);
+  confidenceScores << 1.0 << 0.6 << 0.9;
+
+  // Output calculated using using torchvision.ops.nms().
+  desiredBoundingBox.insert_cols(0, bbox2);
+  desiredBoundingBox.insert_cols(0, bbox1);
+
+  NMS<true>::Evaluate(bbox, confidenceScores,
+      selectedIndices, 0.9);
+
+  selectedBoundingBox = bbox.cols(selectedIndices);
+
+  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_rows, 4);
+  CheckMatrices(desiredBoundingBox, selectedBoundingBox);
+
+  // Clean up.
+  bbox.clear();
+  desiredBoundingBox.clear();
+  selectedBoundingBox.clear();
+
+  // Use coordinate system to represent bounding boxes.
+  // Bounding boxes represent {x0, y0, x1, y1}.
+  bbox1 << 39 << 63 << 203 << 112;
+  bbox2 << 31 << 69 << 201 << 125;
+  bbox3 << 54 << 66 << 198 << 114;
+
+  // Fill bounding box.
+  bbox.insert_cols(0, bbox3);
+  bbox.insert_cols(0, bbox2);
+  bbox.insert_cols(0, bbox1);
+
+  // Fill confidence scores of bounding boxes.
+  confidenceScores << 1.0 << 0.6 << 0.9;
+
+  // Selected bounding box using torchvision.ops.nms().
+  desiredBoundingBox.insert_cols(0, bbox2);
+  desiredBoundingBox.insert_cols(0, bbox1);
+
+  NMS<true>::Evaluate(bbox, confidenceScores,
+      selectedIndices, 0.7);
+
+  selectedBoundingBox = bbox.cols(selectedIndices);
+
+  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_rows, 4);
+  CheckMatrices(desiredBoundingBox, selectedBoundingBox);
+
+  // Clean up.
+  bbox.clear();
+  desiredBoundingBox.clear();
+  selectedBoundingBox.clear();
+
+  // Set values of each bounding box.
+  // Use coordinate system to represent bounding boxes.
+  // Bounding boxes represent {x0, y0, h, w}.
+  bbox1 << 0.0 << 0.0 << 41.0 << 31.0;
+  bbox2 << 1.0 << 1.0 << 41.0 << 21.0;
+  bbox3 << 10.0 << 13.0 << 80.0 << 87.0;
+
+  // Fill bounding box.
+  bbox.insert_cols(0, bbox3);
+  bbox.insert_cols(0, bbox2);
+  bbox.insert_cols(0, bbox1);
+
+  // Fill confidence scores for each bounding box.
+  confidenceScores << 0.7 << 0.6 << 0.4;
+
+  // Selected bounding box using torchvision.ops.nms().
+  desiredBoundingBox.insert_cols(0, bbox3);
+  desiredBoundingBox.insert_cols(0, bbox1);
+
+  // Evaluate the bounding box.
+  NMS<>::Evaluate(bbox, confidenceScores,
+    selectedIndices);
+
+  selectedBoundingBox = bbox.cols(selectedIndices);
+  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_rows, 4);
+  CheckMatrices(desiredBoundingBox, selectedBoundingBox);
+
+  // Clean up.
+  bbox.clear();
+  desiredBoundingBox.clear();
+  selectedBoundingBox.clear();
+
+  // Use coordinate system to represent bounding boxes.
+  // Bounding boxes represent {x0, y0, h, w}.
+  bbox1 << 39 << 63 << 164 << 49;
+  bbox2 << 31 << 69 << 170 << 56;
+  bbox3 << 54 << 66 << 144 << 48;
+
+  // Fill bounding box.
+  bbox.insert_cols(0, bbox3);
+  bbox.insert_cols(0, bbox2);
+  bbox.insert_cols(0, bbox1);
+
+  // Fill confidence scores of bounding boxes.
+  confidenceScores << 1.0 << 0.6 << 0.4;
+
+  // Selected bounding box using torchvision.ops.nms().
+  desiredBoundingBox.insert_cols(0, bbox2);
+  desiredBoundingBox.insert_cols(0, bbox1);
+
+  NMS<false>::Evaluate(bbox, confidenceScores,
+    selectedIndices, 0.7);
+
+  selectedBoundingBox = bbox.cols(selectedIndices);
+  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_rows, 4);
+  CheckMatrices(desiredBoundingBox, selectedBoundingBox);
+}
+
+/**
+ *
+ */
+BOOST_AUTO_TEST_CASE(BLEUScoreTest)
+{
+  typedef typename std::vector<std::string> WordVector;
+  std::vector<std::vector<WordVector>> referenceCorpus
+      = {{{"this", "is", "my", "house"},
+          {"this", "is", "my", "car"},
+          {"this", "is", "my", "bike"}},
+
+         {{"this", "is", "my", "table"},
+          {"this", "is", "my", "chair"},
+          {"this", "is", "my", "laptop"}},
+
+         {{"this", "is", "my", "table"},
+          {"this", "is", "your", "car"},
+          {"this", "is", "my", "notebook"}}};
+
+  std::vector<WordVector> translationCorpus
+      = {{"this", "is", "my", "book"},
+         {"this", "is", "your", "car"},
+         {"this", "is", "my", "watch"}};
+
+  BLEU<> bleu(4);
+
+  //! We are not using smoothing function here.
+  bleu.Evaluate(referenceCorpus, translationCorpus);
+  BOOST_REQUIRE_CLOSE_FRACTION(bleu.BLEUScore(), 0.0, 1e-05);
+  BOOST_REQUIRE_EQUAL(bleu.BrevityPenalty(), 1.0);
+  BOOST_REQUIRE_EQUAL(bleu.Ratio(), 1.0);
+  BOOST_REQUIRE_EQUAL(bleu.TranslationLength(), 12);
+  BOOST_REQUIRE_EQUAL(bleu.ReferenceLength(), 12);
+
+  std::vector<float> expectedPrecision = {0.666666f, 0.5555555f,
+      0.3333333f, 0.0f};
+  for (size_t i = 0; i < bleu.Precisions().size(); ++i)
+  {
+    BOOST_REQUIRE_CLOSE_FRACTION(bleu.Precisions()[i],
+        expectedPrecision[i], 1e-04);
+  }
+
+  //! We will use smoothing function here by setting smooth to true.
+  bleu.Evaluate(referenceCorpus, translationCorpus, true);
+  BOOST_REQUIRE_CLOSE_FRACTION(bleu.BLEUScore(), 0.459307, 1e-05);
+  BOOST_REQUIRE_EQUAL(bleu.BrevityPenalty(), 1.0);
+  BOOST_REQUIRE_EQUAL(bleu.Ratio(), 1.0);
+  BOOST_REQUIRE_EQUAL(bleu.TranslationLength(), 12);
+  BOOST_REQUIRE_EQUAL(bleu.ReferenceLength(), 12);
+
+  expectedPrecision = {0.692308f, 0.6f, 0.428571f, 0.25f};
+  for (size_t i = 0; i < bleu.Precisions().size(); ++i)
+  {
+    BOOST_REQUIRE_CLOSE_FRACTION(bleu.Precisions()[i],
+        expectedPrecision[i], 1e-04);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

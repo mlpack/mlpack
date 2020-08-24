@@ -2,7 +2,7 @@
  * @file methods/preprocess/preprocess_scale_main.cpp
  * @author jeffin sam
  *
- * A CLI executable to scale a dataset.
+ * A binding to scale a dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/math/ccov.hpp>
@@ -28,12 +28,17 @@ using namespace mlpack::data;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Scale Data",
-    // Short description.
+// Program Name.
+BINDING_NAME("Scale Data");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A utility to perform feature scaling on datasets using one of six"
     "techniques.  Both scaling and inverse scaling are supported, and"
-    "scalers can be saved and then applied to other datasets.",
-    // Long description.
+    "scalers can be saved and then applied to other datasets.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes a dataset and performs feature scaling using one of "
     "the six scaler methods namely: 'max_abs_scaler', 'mean_normalization', "
     "'min_max_scaler' ,'standard_scaler', 'pca_whitening' and 'zca_whitening'."
@@ -47,8 +52,10 @@ PROGRAM_INFO("Scale Data",
     "\n\n"
     "The model to scale features can be saved using " +
     PRINT_PARAM_STRING("output_model") + " and later can be loaded back using"
-    + PRINT_PARAM_STRING("input_model") + "."
-    "\n\n"
+    + PRINT_PARAM_STRING("input_model") + ".");
+
+// Example.
+BINDING_EXAMPLE(
     "So, a simple example where we want to scale the dataset " +
     PRINT_DATASET("X") + " into " + PRINT_DATASET("X_scaled")+ " with "
     " standard_scaler as scaler_method, we could run "
@@ -78,10 +85,12 @@ PROGRAM_INFO("Scale Data",
     " of default 0 to 1. We could run "
     "\n\n" +
     PRINT_CALL("preprocess_scale", "input", "X", "output", "X_scaled",
-    "scaler_method", "min_max_scaler", "min_value", 1, "max_value", 3),
-    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
-    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
-    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
+    "scaler_method", "min_max_scaler", "min_value", 1, "max_value", 3));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
+BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");
@@ -104,12 +113,12 @@ PARAM_MODEL_OUT(ScalingModel, "output_model", "Output scaling model.", "M");
 static void mlpackMain()
 {
   // Parse command line options.
-  const std::string scalerMethod = CLI::GetParam<string>("scaler_method");
+  const std::string scalerMethod = IO::GetParam<string>("scaler_method");
 
-  if (CLI::GetParam<int>("seed") == 0)
+  if (IO::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(std::time(NULL));
   else
-    mlpack::math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+    mlpack::math::RandomSeed((size_t) IO::GetParam<int>("seed"));
 
   // Make sure the user specified output filenames.
   RequireAtLeastOnePassed({ "output", "output_model"}, false,
@@ -120,18 +129,18 @@ static void mlpackMain()
     "zca_whitening" }, true, "unknown scaler type");
 
   // Load the data.
-  arma::mat& input = CLI::GetParam<arma::mat>("input");
+  arma::mat& input = IO::GetParam<arma::mat>("input");
   arma::mat output;
   ScalingModel* m;
   Timer::Start("feature_scaling");
-  if (CLI::HasParam("input_model"))
+  if (IO::HasParam("input_model"))
   {
-    m = CLI::GetParam<ScalingModel*>("input_model");
+    m = IO::GetParam<ScalingModel*>("input_model");
   }
   else
   {
-    m = new ScalingModel(CLI::GetParam<int>("min_value"),
-        CLI::GetParam<int>("max_value"), CLI::GetParam<double>("epsilon"));
+    m = new ScalingModel(IO::GetParam<int>("min_value"),
+        IO::GetParam<int>("max_value"), IO::GetParam<double>("epsilon"));
 
     if (scalerMethod == "standard_scaler")
     {
@@ -171,13 +180,13 @@ static void mlpackMain()
     }
   }
 
-  if (!CLI::HasParam("inverse_scaling"))
+  if (!IO::HasParam("inverse_scaling"))
   {
     m->Transform(input, output);
   }
   else
   {
-    if (!CLI::HasParam("input_model"))
+    if (!IO::HasParam("input_model"))
     {
       delete m;
       throw std::runtime_error("Please provide a saved model.");
@@ -186,9 +195,9 @@ static void mlpackMain()
   }
 
   // Save the output.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(output);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(output);
   Timer::Stop("feature_scaling");
 
-  CLI::GetParam<ScalingModel*>("output_model") = m;
+  IO::GetParam<ScalingModel*>("output_model") = m;
 }

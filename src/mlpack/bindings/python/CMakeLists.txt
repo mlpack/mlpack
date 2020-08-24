@@ -14,31 +14,44 @@ if (NOT BUILD_PYTHON_BINDINGS)
 endif ()
 
 # Generate Python setuptools file.
-find_package(PythonInterp)
-if (NOT PYTHON_EXECUTABLE)
-  not_found_return("Python not found; not building Python bindings.")
-else ()
-  message(STATUS "Found Python: ${PYTHON_EXECUTABLE}")
-endif ()
-
 # Import find_python_module.
 include(${CMAKE_SOURCE_DIR}/CMake/FindPythonModule.cmake)
+find_package(PythonInterp)
+if (NOT PYTHON_EXECUTABLE)
+  set(PY_NOT_FOUND_MSG "${PY_NOT_FOUND_MSG}\n    - Python")
+endif()
 find_python_module(distutils)
 if (NOT PY_DISTUTILS)
-  not_found_return("distutils not found; not building Python bindings.")
+  set(PY_NOT_FOUND_MSG "${PY_NOT_FOUND_MSG}\n    - distutils")
 endif ()
 find_python_module(Cython 0.24)
 if (NOT PY_CYTHON)
-  not_found_return("Cython not found; not building Python bindings.")
+  set(PY_NOT_FOUND_MSG "${PY_NOT_FOUND_MSG}\n    - Cython")
 endif ()
 find_python_module(numpy)
 if (NOT PY_NUMPY)
-  not_found_return("numpy not found; not building Python bindings.")
+  set(PY_NOT_FOUND_MSG "${PY_NOT_FOUND_MSG}\n    - numpy")
 endif ()
 find_python_module(pandas 0.15.0)
 if (NOT PY_PANDAS)
-  not_found_return("pandas not found; not building Python bindings.")
+  set(PY_NOT_FOUND_MSG "${PY_NOT_FOUND_MSG}\n    - pandas")
 endif ()
+
+## We need to check here if Python and other dependencies is even available, as
+## it is require to build python-bindings.
+if (FORCE_BUILD_PYTHON_BINDINGS)
+  if (NOT PYTHON_EXECUTABLE OR NOT PY_DISTUTILS OR NOT PY_CYTHON OR NOT PY_NUMPY
+      OR NOT PY_PANDAS)
+    unset(BUILD_PYTHON_BINDINGS CACHE)
+    message(FATAL_ERROR "\nCould not Build Python Bindings; the following modules are not available: ${PY_NOT_FOUND_MSG}")
+  endif()
+else()
+  if (NOT PYTHON_EXECUTABLE OR NOT PY_DISTUTILS OR NOT PY_CYTHON OR NOT PY_NUMPY
+      OR NOT PY_PANDAS)
+    unset(BUILD_PYTHON_BINDINGS CACHE)
+    not_found_return("Not building Python bindings; the following modules are not available: ${PY_NOT_FOUND_MSG}")
+  endif()
+endif()
 
 set(BUILDING_PYTHON_BINDINGS ON PARENT_SCOPE)
 
@@ -82,8 +95,8 @@ set(CYTHON_SOURCES
   mlpack/arma_numpy.pyx
   mlpack/arma.pxd
   mlpack/arma_util.hpp
-  mlpack/cli.pxd
-  mlpack/cli_util.hpp
+  mlpack/io.pxd
+  mlpack/io_util.hpp
   mlpack/matrix_utils.py
   mlpack/serialization.hpp
   mlpack/serialization.pxd
@@ -154,8 +167,8 @@ add_custom_command(TARGET python POST_BUILD
             mlpack/arma_numpy.pyx
             mlpack/arma.pxd
             mlpack/arma_util.hpp
-            mlpack/cli.pxd
-            mlpack/cli_util.hpp
+            mlpack/io.pxd
+            mlpack/io_util.hpp
             mlpack/matrix_utils.py
             mlpack
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)

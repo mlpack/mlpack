@@ -15,15 +15,12 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::svd;
 
-BOOST_AUTO_TEST_SUITE(SVDPlusPlusTest);
-
-BOOST_AUTO_TEST_CASE(SVDPlusPlusEvaluate)
+TEST_CASE("SVDPlusPlusEvaluate", "[SVDPlusPlusTest]")
 {
   // Define useful constants.
   const size_t numUsers = 100;
@@ -49,13 +46,13 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusEvaluate)
   // Make a SVDPlusPlusFunction with zero regularization.
   SVDPlusPlusFunction<arma::mat> svdPPFunc(data, implicitData, rank, 0);
 
-  for (size_t i = 0; i < numTrials; i++)
+  for (size_t i = 0; i < numTrials; ++i)
   {
     arma::mat parameters = arma::randu(rank + 1, numUsers + 2 * numItems);
 
     // Calculate cost by summing up cost of each example.
     double cost = 0;
-    for (size_t j = 0; j < data.n_cols; j++)
+    for (size_t j = 0; j < data.n_cols; ++j)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
@@ -89,11 +86,11 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusEvaluate)
     }
 
     // Compare calculated cost and value obtained using Evaluate().
-    BOOST_REQUIRE_CLOSE(cost, svdPPFunc.Evaluate(parameters), 1e-5);
+    REQUIRE(cost == Approx(svdPPFunc.Evaluate(parameters)).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
+TEST_CASE("SVDPlusPlusFunctionRegularizationEvaluate", "[SVDPlusPlusTest]")
 {
   // Define useful constants.
   const size_t numUsers = 100;
@@ -123,7 +120,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
       0.5);
   SVDPlusPlusFunction<arma::mat> svdPPFuncBigReg(data, implicitData, rank, 20);
 
-  for (size_t i = 0; i < numTrials; i++)
+  for (size_t i = 0; i < numTrials; ++i)
   {
     arma::mat parameters = arma::randu(rank + 1, numUsers + 2 * numItems);
 
@@ -136,7 +133,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
     // each rating and sum them up.
     double smallRegTerm = 0;
     double bigRegTerm = 0;
-    for (size_t j = 0; j < data.n_cols; j++)
+    for (size_t j = 0; j < data.n_cols; ++j)
     {
       const size_t user = data(0, j);
       const size_t item = data(1, j) + numUsers;
@@ -173,14 +170,14 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionRegularizationEvaluate)
 
     // Cost with regularization should be close to the sum of cost without
     // regularization and the regularization terms.
-    BOOST_REQUIRE_CLOSE(svdPPFuncNoReg.Evaluate(parameters) + smallRegTerm,
-        svdPPFuncSmallReg.Evaluate(parameters), 1e-5);
-    BOOST_REQUIRE_CLOSE(svdPPFuncNoReg.Evaluate(parameters) + bigRegTerm,
-        svdPPFuncBigReg.Evaluate(parameters), 1e-5);
+    REQUIRE(svdPPFuncNoReg.Evaluate(parameters) + smallRegTerm ==
+        Approx(svdPPFuncSmallReg.Evaluate(parameters)).epsilon(1e-7));
+    REQUIRE(svdPPFuncNoReg.Evaluate(parameters) + bigRegTerm ==
+        Approx(svdPPFuncBigReg.Evaluate(parameters)).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionGradient)
+TEST_CASE("SVDPlusPlusFunctionGradient", "[SVDPlusPlusTest]")
 {
   // Define useful constants.
   const size_t numUsers = 100;
@@ -219,9 +216,9 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionGradient)
   double costPlus1, costMinus1, numGradient1;
   double costPlus2, costMinus2, numGradient2;
 
-  for (size_t i = 0; i < rank; i++)
+  for (size_t i = 0; i < rank; ++i)
   {
-    for (size_t j = 0; j < numUsers + numItems; j++)
+    for (size_t j = 0; j < numUsers + numItems; ++j)
     {
       // Perturb parameter with a positive constant and get costs.
       parameters(i, j) += epsilon;
@@ -242,19 +239,19 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionGradient)
 
       // Compare numerical and backpropagation gradient values.
       if (std::abs(gradient1(i, j)) <= 1e-6)
-        BOOST_REQUIRE_SMALL(numGradient1, 1e-5);
+        REQUIRE(numGradient1 == Approx(0.0).margin(1e-5));
       else
-        BOOST_REQUIRE_CLOSE(numGradient1, gradient1(i, j), 0.02);
+      REQUIRE(numGradient1 == Approx(gradient1(i, j)).epsilon(0.0002));
 
       if (std::abs(gradient2(i, j)) <= 1e-6)
-        BOOST_REQUIRE_SMALL(numGradient2, 1e-5);
+        REQUIRE(numGradient2 == Approx(0.0).margin(1e-5));
       else
-        BOOST_REQUIRE_CLOSE(numGradient2, gradient2(i, j), 0.02);
+        REQUIRE(numGradient2 == Approx(gradient2(i, j)).epsilon(0.0002));
     }
   }
 }
 
-BOOST_AUTO_TEST_CASE(SVDplusPlusOutputSizeTest)
+TEST_CASE("SVDplusPlusOutputSizeTest", "[SVDPlusPlusTest]")
 {
   // Load small GroupLens dataset.
   arma::mat data;
@@ -277,17 +274,17 @@ BOOST_AUTO_TEST_CASE(SVDplusPlusOutputSizeTest)
       itemImplicit);
 
   // Check the size of outputs.
-  BOOST_REQUIRE_EQUAL(itemLatent.n_rows, numItems);
-  BOOST_REQUIRE_EQUAL(itemLatent.n_cols, rank);
-  BOOST_REQUIRE_EQUAL(userLatent.n_rows, rank);
-  BOOST_REQUIRE_EQUAL(userLatent.n_cols, numUsers);
-  BOOST_REQUIRE_EQUAL(itemBias.n_elem, numItems);
-  BOOST_REQUIRE_EQUAL(userBias.n_elem, numUsers);
-  BOOST_REQUIRE_EQUAL(itemImplicit.n_rows, rank);
-  BOOST_REQUIRE_EQUAL(itemImplicit.n_cols, numItems);
+  REQUIRE(itemLatent.n_rows == numItems);
+  REQUIRE(itemLatent.n_cols == rank);
+  REQUIRE(userLatent.n_rows == rank);
+  REQUIRE(userLatent.n_cols == numUsers);
+  REQUIRE(itemBias.n_elem == numItems);
+  REQUIRE(userBias.n_elem == numUsers);
+  REQUIRE(itemImplicit.n_rows == rank);
+  REQUIRE(itemImplicit.n_cols == numItems);
 }
 
-BOOST_AUTO_TEST_CASE(SVDPlusPlusCleanDataTest)
+TEST_CASE("SVDPlusPlusCleanDataTest", "[SVDPlusPlusTest]")
 {
   // Load small GroupLens dataset.
   arma::mat data;
@@ -311,7 +308,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusCleanDataTest)
     }
     else
     {
-      i++;
+      ++i;
     }
   }
 
@@ -320,21 +317,21 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusCleanDataTest)
   SVDPlusPlus<>::CleanData(implicitData, cleanedData, data);
 
   // Make sure cleanedData has correct size.
-  BOOST_REQUIRE_EQUAL(cleanedData.n_rows, numItems);
-  BOOST_REQUIRE_EQUAL(cleanedData.n_cols, numUsers);
+  REQUIRE(cleanedData.n_rows == numItems);
+  REQUIRE(cleanedData.n_cols == numUsers);
 
   // Make sure cleanedData has correct number of implicit data.
-  BOOST_REQUIRE_EQUAL(cleanedData.n_nonzero, implicitData.n_cols);
+  REQUIRE(cleanedData.n_nonzero == implicitData.n_cols);
 
   // Make sure all implicitData are in cleanedData.
-  for (size_t i = 0; i < implicitData.n_cols; i++)
+  for (size_t i = 0; i < implicitData.n_cols; ++i)
   {
     double value = cleanedData(implicitData(1, i), implicitData(0, i));
-    BOOST_REQUIRE_GT(std::fabs(value), 0);
+    REQUIRE(std::fabs(value) > 0);
   }
 }
 
-BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
+TEST_CASE("SVDPlusPlusFunctionOptimize", "[SVDPlusPlusTest]")
 {
   // Define useful constants.
   const size_t numUsers = 100;
@@ -361,7 +358,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
   arma::sp_mat implicitData = arma::sprandu(numItems, numUsers, 0.05);
 
   // Make rating entries based on the parameters.
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -399,7 +396,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
 
   // Get predicted ratings from optimized parameters.
   arma::mat predictedData(1, numRatings);
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -433,7 +430,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
                                arma::norm(data, "frob");
 
   // Relative error should be small.
-  BOOST_REQUIRE_SMALL(relativeError, 1e-2);
+  REQUIRE(relativeError == Approx(0.0).margin(1e-2));
 }
 
 // The test is only compiled if the user has specified OpenMP to be
@@ -441,7 +438,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionOptimize)
 #ifdef HAS_OPENMP
 
 // Test SVDPlusPlus with parallel SGD.
-BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionParallelOptimize)
+TEST_CASE("SVDPlusPlusFunctionParallelOptimize", "[SVDPlusPlusTest]")
 {
   // Define useful constants.
   const size_t numUsers = 100;
@@ -468,7 +465,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionParallelOptimize)
   arma::sp_mat implicitData = arma::sprandu(numItems, numUsers, 0.05);
 
   // Make rating entries based on the parameters.
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -513,7 +510,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionParallelOptimize)
 
   // Get predicted ratings from optimized parameters.
   arma::mat predictedData(1, numRatings);
-  for (size_t i = 0; i < numRatings; i++)
+  for (size_t i = 0; i < numRatings; ++i)
   {
     const size_t user = data(0, i);
     const size_t item = data(1, i) + numUsers;
@@ -547,9 +544,7 @@ BOOST_AUTO_TEST_CASE(SVDPlusPlusFunctionParallelOptimize)
                                arma::norm(data, "frob");
 
   // Relative error should be small.
-  BOOST_REQUIRE_SMALL(relativeError, 1e-2);
+  REQUIRE(relativeError == Approx(0.0).margin(1e-2));
 }
 
 #endif
-
-BOOST_AUTO_TEST_SUITE_END();

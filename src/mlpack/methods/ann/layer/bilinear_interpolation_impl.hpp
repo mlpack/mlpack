@@ -89,7 +89,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
   double scaleCol = (double) inColSize / (double) outColSize;
 
   arma::mat22 coeffs;
-  for (size_t i = 0; i < outRowSize; i++)
+  for (size_t i = 0; i < outRowSize; ++i)
   {
     size_t rOrigin = (size_t) std::floor(i * scaleRow);
     if (rOrigin > inRowSize - 2)
@@ -99,7 +99,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
     double deltaR = i * scaleRow - rOrigin;
     if (deltaR > 1)
       deltaR = 1.0;
-    for (size_t j = 0; j < outColSize; j++)
+    for (size_t j = 0; j < outColSize; ++j)
     {
       // Scaled distance of the interpolated point from the leftmost column.
       size_t cOrigin = (size_t) std::floor(j * scaleCol);
@@ -114,7 +114,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
       coeffs[2] = (1 - deltaR) * deltaC;
       coeffs[3] = deltaR * deltaC;
 
-      for (size_t k = 0; k < depth * batchSize; k++)
+      for (size_t k = 0; k < depth * batchSize; ++k)
       {
         outputAsCube(i, j, k) = arma::accu(inputAsCube.slice(k).submat(
             rOrigin, cOrigin, rOrigin + 1, cOrigin + 1) % coeffs);
@@ -156,13 +156,13 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
     double scaleCol = (double)(outColSize) / inColSize;
 
     arma::mat22 coeffs;
-    for (size_t i = 0; i < inRowSize; i++)
+    for (size_t i = 0; i < inRowSize; ++i)
     {
       size_t rOrigin = (size_t) std::floor(i * scaleRow);
       if (rOrigin > outRowSize - 2)
         rOrigin = outRowSize - 2;
       double deltaR = i * scaleRow - rOrigin;
-      for (size_t j = 0; j < inColSize; j++)
+      for (size_t j = 0; j < inColSize; ++j)
       {
         size_t cOrigin = (size_t) std::floor(j * scaleCol);
 
@@ -175,7 +175,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
         coeffs[2] = (1 - deltaR) * deltaC;
         coeffs[3] = deltaR * deltaC;
 
-        for (size_t k = 0; k < depth * batchSize; k++)
+        for (size_t k = 0; k < depth * batchSize; ++k)
         {
           outputAsCube(i, j, k) = arma::accu(gradientAsCube.slice(k).submat(
               rOrigin, cOrigin, rOrigin + 1, cOrigin + 1) % coeffs);

@@ -21,6 +21,7 @@
 #include <mlpack/bindings/cli/print_doc_functions.hpp>
 #include <mlpack/bindings/python/print_doc_functions.hpp>
 #include <mlpack/bindings/julia/print_doc_functions.hpp>
+#include <mlpack/bindings/go/print_doc_functions.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -43,6 +44,10 @@ inline std::string GetBindingName(const std::string& bindingName)
   else if (BindingInfo::Language() == "julia")
   {
     return julia::GetBindingName(bindingName);
+  }
+  else if (BindingInfo::Language() == "go")
+  {
+    return go::GetBindingName(bindingName);
   }
   else
   {
@@ -68,6 +73,10 @@ inline std::string PrintLanguage(const std::string& language)
   {
     return "Julia";
   }
+  else if (language == "go")
+  {
+    return "Go";
+  }
   else
   {
     throw std::invalid_argument("PrintLanguage(): unknown "
@@ -92,9 +101,41 @@ inline std::string PrintImport(const std::string& bindingName)
   {
     return julia::PrintImport(bindingName);
   }
+  else if (BindingInfo::Language() == "go")
+  {
+    return go::PrintImport();
+  }
   else
   {
     throw std::invalid_argument("PrintImport(): unknown "
+        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
+  }
+}
+
+/**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo()
+{
+  if (BindingInfo::Language() == "cli")
+  {
+    return cli::PrintInputOptionInfo();
+  }
+  else if (BindingInfo::Language() == "python")
+  {
+    return python::PrintInputOptionInfo();
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    return julia::PrintInputOptionInfo();
+  }
+  else if (BindingInfo::Language() == "go")
+  {
+    return go::PrintInputOptionInfo();
+  }
+  else
+  {
+    throw std::invalid_argument("PrintInputOptionInfo(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 }
@@ -115,6 +156,10 @@ inline std::string PrintOutputOptionInfo()
   else if (BindingInfo::Language() == "julia")
   {
     return julia::PrintOutputOptionInfo();
+  }
+  else if (BindingInfo::Language() == "go")
+  {
+    return go::PrintOutputOptionInfo();
   }
   else
   {
@@ -341,6 +386,10 @@ inline std::string PrintValue(const T& value, bool quotes)
   {
     result = julia::PrintValue(value, quotes);
   }
+  else if (BindingInfo::Language() == "go")
+  {
+    result = go::PrintValue(value, quotes);
+  }
   else
   {
     throw std::invalid_argument("PrintValue(): unknown "
@@ -355,10 +404,10 @@ inline std::string PrintValue(const T& value, bool quotes)
  */
 inline std::string PrintDefault(const std::string& paramName)
 {
-  if (CLI::Parameters().count(paramName) == 0)
+  if (IO::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter" + paramName + "!");
 
-  const util::ParamData& d = CLI::Parameters()[paramName];
+  util::ParamData& d = IO::Parameters()[paramName];
 
   std::ostringstream oss;
 
@@ -379,6 +428,10 @@ inline std::string PrintDefault(const std::string& paramName)
     else if (BindingInfo::Language() == "julia")
     {
       oss << julia::PrintDefault(paramName);
+    }
+    else if (BindingInfo::Language() == "go")
+    {
+      oss << go::PrintDefault(paramName);
     }
     else
     {
@@ -408,6 +461,10 @@ inline std::string PrintDataset(const std::string& dataset)
   {
     result = julia::PrintDataset(dataset);
   }
+  else if (BindingInfo::Language() == "go")
+  {
+    result = go::PrintDataset(dataset);
+  }
   else
   {
     throw std::invalid_argument("PrintDataset(): unknown "
@@ -434,6 +491,10 @@ inline std::string PrintModel(const std::string& model)
   else if (BindingInfo::Language() == "julia")
   {
     result = julia::PrintModel(model);
+  }
+  else if (BindingInfo::Language() == "go")
+  {
+    result = go::PrintModel(model);
   }
   else
   {
@@ -467,6 +528,11 @@ std::string ProgramCall(const std::string& programName, Args... args)
     // Julia's ProgramCall() with a set of arguments will automatically enclose
     // the text in Markdown code, so we don't need to.
     s += julia::ProgramCall(programName, args...);
+  }
+  else if (BindingInfo::Language() == "go")
+  {
+    s += "```go\n";
+    s += go::ProgramCall(programName, args...);
   }
   else
   {
@@ -510,6 +576,14 @@ inline std::string ProgramCall(const std::string& programName)
       s += "julia> " + import + "\n";
     s += julia::ProgramCall(programName);
   }
+  else if (BindingInfo::Language() == "go")
+  {
+    s += "go\n";
+    std::string import = PrintImport(GetBindingName(programName));
+    if (import.size() > 0)
+      s += import + "\n";
+    s += go::ProgramCall(programName);
+  }
   else
   {
     throw std::invalid_argument("ProgramCall(): unknown "
@@ -522,8 +596,9 @@ inline std::string ProgramCall(const std::string& programName)
 /**
  * Print what a user would type to invoke the given option name.  Note that the
  * name *must* exist in the CLI module.  (Note that because of the way
- * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
- * declarataions need to come before the PROGRAM_INFO() declaration.)
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() is structured, this doesn't mean
+ * that all of the PARAM_*() declarataions need to come before
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
 inline std::string ParamString(const std::string& paramName)
 {
@@ -543,6 +618,10 @@ inline std::string ParamString(const std::string& paramName)
   {
     s = julia::ParamString(paramName);
   }
+  else if (BindingInfo::Language() == "go")
+  {
+    s = go::ParamString(paramName);
+  }
   else
   {
     throw std::invalid_argument("ParamString(): unknown "
@@ -555,15 +634,15 @@ inline std::string ParamString(const std::string& paramName)
 /**
  * Print the user-encountered type of an option.
  */
-inline std::string ParamType(const util::ParamData& d)
+inline std::string ParamType(util::ParamData& d)
 {
   std::string output;
-  CLI::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
+  IO::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
       &output);
   // We want to make this a link to the type documentation.
   std::string anchorType = output;
   bool result;
-  CLI::GetSingleton().functionMap[d.tname]["IsSerializable"](d, NULL, &result);
+  IO::GetSingleton().functionMap[d.tname]["IsSerializable"](d, NULL, &result);
   if (result)
     anchorType = "model";
 
@@ -585,6 +664,10 @@ inline bool IgnoreCheck(const T& t)
   else if (BindingInfo::Language() == "julia")
   {
     return julia::IgnoreCheck(t);
+  }
+  else if (BindingInfo::Language() == "go")
+  {
+    return go::IgnoreCheck(t);
   }
   else
   {
