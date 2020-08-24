@@ -105,16 +105,16 @@ TEST_CASE("LMetricZerosTest", "[KernelTest]")
 
   // We cannot use a loop because compilers seem to be unable to unroll the loop
   // and realize the variable actually is knowable at compile-time.
-  REQUIRE((LMetric<1, false>::Evaluate(a, a)) == 0);
-  REQUIRE((LMetric<1, true>::Evaluate(a, a)) == 0);
-  REQUIRE((LMetric<2, false>::Evaluate(a, a)) == 0);
-  REQUIRE((LMetric<2, true>::Evaluate(a, a)) == 0);
-  REQUIRE((LMetric<3, false>::Evaluate(a, a)) == 0);
-  REQUIRE((LMetric<3, true>::Evaluate(a, a)) == 0);
-  REQUIRE((LMetric<4, false>::Evaluate(a, a)) == 0);
-  REQUIRE((LMetric<4, true>::Evaluate(a, a)) == 0);
-  REQUIRE((LMetric<5, false>::Evaluate(a, a)) == 0);
-  REQUIRE((LMetric<5, true>::Evaluate(a, a)) == 0);
+  REQUIRE(LMetric<1, false>::Evaluate(a, a) == 0);
+  REQUIRE(LMetric<1, true>::Evaluate(a, a) == 0);
+  REQUIRE(LMetric<2, false>::Evaluate(a, a) == 0);
+  REQUIRE(LMetric<2, true>::Evaluate(a, a) == 0);
+  REQUIRE(LMetric<3, false>::Evaluate(a, a) == 0);
+  REQUIRE(LMetric<3, true>::Evaluate(a, a) == 0);
+  REQUIRE(LMetric<4, false>::Evaluate(a, a) == 0);
+  REQUIRE(LMetric<4, true>::Evaluate(a, a) == 0);
+  REQUIRE(LMetric<5, false>::Evaluate(a, a) == 0);
+  REQUIRE(LMetric<5, true>::Evaluate(a, a) == 0);
 }
 
 /**
