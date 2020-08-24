@@ -1112,6 +1112,26 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     if (right)
       right->parent = this;
   }
+  // If we are the root, we need to restore the dataset pointer throughout
+  if (!hasParent)
+  {
+    std::stack<BinarySpaceTree*> stack;
+    if (left)
+      stack.push(left);
+    if (right)
+      stack.push(right);
+    while (!stack.empty())
+    {
+      BinarySpaceTree* node = stack.top();
+      stack.pop();
+      node->dataset = dataset;
+      if (node->left)
+        stack.push(node->left);
+      if (node->right)
+       stack.push(node->right); 
+    }
+  }
+
 }
 
 } // namespace tree

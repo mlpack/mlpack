@@ -50,7 +50,7 @@ class pointer_wrapper
   {
     std::unique_ptr<T> smartPointer;
     if (this->localPointer != NULL)
-      smartPointer = std::make_unique<T>(localPointer);
+      smartPointer = std::unique_ptr<T>(localPointer);
     ar(CEREAL_NVP(smartPointer));
     localPointer = smartPointer.release();
   }
