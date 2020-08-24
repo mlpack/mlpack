@@ -70,12 +70,12 @@ class RBM
       const bool persistence = false);
 
   // Reset the network.
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
   Reset();
 
   // Reset the network.
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
   Reset();
 
@@ -116,9 +116,9 @@ class RBM
    *
    * @param input The visible neurons.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, double>::type
-  FreeEnergy(arma::Mat<ElemType>&& input);
+  FreeEnergy(const arma::Mat<ElemType>& input);
 
   /**
    * This function calculates the free energy of the SpikeSlabRBM.
@@ -130,10 +130,10 @@ class RBM
    *
    * @param input The visible layer neurons.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value,
       double>::type
-  FreeEnergy(arma::Mat<ElemType>&& input);
+  FreeEnergy(const arma::Mat<ElemType>& input);
 
   /**
    * Calculates the gradient of the RBM network on the provided input.
@@ -141,9 +141,9 @@ class RBM
    * @param input The provided input data.
    * @param gradient Stores the gradient of the RBM network.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-  Phase(DataType&& input, DataType&& gradient);
+  Phase(const InputType& input, DataType& gradient);
 
   /**
    * Calculates the gradient of the RBM network on the provided input.
@@ -151,9 +151,9 @@ class RBM
    * @param input The provided input data.
    * @param gradient Stores the gradient of the RBM network.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-  Phase(DataType&& input, DataType&& gradient);
+  Phase(const InputType& input, DataType& gradient);
 
   /**
    * This function samples the hidden layer given the visible layer using
@@ -162,9 +162,9 @@ class RBM
    * @param input Visible layer input.
    * @param output The sampled hidden layer.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-  SampleHidden(arma::Mat<ElemType>&& input, arma::Mat<ElemType>&& output);
+  SampleHidden(const arma::Mat<ElemType>& input, arma::Mat<ElemType>& output);
 
   /**
    * This function samples the slab outputs from the Normal distribution with
@@ -176,9 +176,9 @@ class RBM
    * @param input Consists of both visible and spike variables.
    * @param output Sampled slab neurons.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-  SampleHidden(arma::Mat<ElemType>&& input, arma::Mat<ElemType>&& output);
+  SampleHidden(const arma::Mat<ElemType>& input, arma::Mat<ElemType>& output);
 
   /**
    * This function samples the visible layer given the hidden layer using
@@ -187,9 +187,9 @@ class RBM
    * @param input Hidden layer of the network.
    * @param output The sampled visible layer.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-  SampleVisible(arma::Mat<ElemType>&& input, arma::Mat<ElemType>&& output);
+  SampleVisible(arma::Mat<ElemType>& input, arma::Mat<ElemType>& output);
 
   /**
    * Sample Hidden function samples the slab outputs from the Normal
@@ -201,9 +201,9 @@ class RBM
    * @param input Hidden layer of the network.
    * @param output The sampled visible layer.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-  SampleVisible(arma::Mat<ElemType>&& input, arma::Mat<ElemType>&& output);
+  SampleVisible(arma::Mat<ElemType>& input, arma::Mat<ElemType>& output);
 
   /**
    * The function calculates the mean for the visible layer.
@@ -211,9 +211,9 @@ class RBM
    * @param input Hidden neurons from the hidden layer of the network.
    * @param output Visible neuron activations.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-  VisibleMean(DataType&& input, DataType&& output);
+  VisibleMean(InputType& input, DataType& output);
 
   /**
    * The function calculates the mean of the Normal distribution of P(v|s, h).
@@ -223,9 +223,9 @@ class RBM
    * @param input Consists of both the spike and slab variables.
    * @param output Mean of the of the Normal distribution.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-  VisibleMean(DataType&& input, DataType&& output);
+  VisibleMean(InputType& input, DataType& output);
 
   /**
    * The function calculates the mean for the hidden layer.
@@ -233,9 +233,9 @@ class RBM
    * @param input Visible neurons.
    * @param output Hidden neuron activations.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-  HiddenMean(DataType&& input, DataType&& output);
+  HiddenMean(const InputType& input, DataType& output);
 
   /**
    * The function calculates the mean of the Normal distribution of P(s|v, h).
@@ -247,9 +247,9 @@ class RBM
    * @param input Visible layer neurons.
    * @param output Consists of both the spike samples and slab samples.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-  HiddenMean(DataType&& input, DataType&& output);
+  HiddenMean(const InputType& input, DataType& output);
 
   /**
    * The function calculates the mean of the distribution P(h|v),
@@ -259,18 +259,18 @@ class RBM
    * @param visible The visible layer neurons.
    * @param spikeMean Indicates P(h|v).
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-  SpikeMean(DataType&& visible, DataType&& spikeMean);
+  SpikeMean(const InputType& visible, DataType& spikeMean);
 
   /**
    * The function samples the spike function using Bernoulli distribution.
    * @param spikeMean Indicates P(h|v).
    * @param spike Sampled binary spike variables.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-  SampleSpike(DataType&& spikeMean, DataType&& spike);
+  SampleSpike(InputType& spikeMean, DataType& spike);
 
   /**
    * The function calculates the mean of Normal distribution of P(s|v, h),
@@ -281,9 +281,9 @@ class RBM
    * @param spike The spike variables from hidden layer.
    * @param slabMean The mean of the Normal distribution of slab neurons.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-  SlabMean(DataType&& visible, DataType&& spike, DataType&& slabMean);
+  SlabMean(const DataType& visible, DataType& spike, DataType& slabMean);
 
   /**
    * The function samples from the Normal distribution of P(s|v, h),
@@ -295,9 +295,9 @@ class RBM
    * @param slabMean Mean of the Normal distribution of the slab neurons.
    * @param slab Sampled slab variable from the Normal distribution.
    */
-  template<typename Policy = PolicyType>
+  template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
-  SampleSlab(DataType&& slabMean, DataType&& slab);
+  SampleSlab(InputType& slabMean, DataType& slab);
 
   /**
    * This function does the k-step Gibbs Sampling.
@@ -306,8 +306,8 @@ class RBM
    * @param output Used for storing the negative sample.
    * @param steps Number of Gibbs Sampling steps taken.
    */
-  void Gibbs(arma::Mat<ElemType>&& input,
-             arma::Mat<ElemType>&& output,
+  void Gibbs(const arma::Mat<ElemType>& input,
+             arma::Mat<ElemType>& output,
              const size_t steps = SIZE_MAX);
 
   /**

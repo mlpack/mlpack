@@ -140,12 +140,9 @@ class LogisticRegression
    * Using this overload allows configuring the instantiated optimizer before
    * training is performed.
    *
-   * Note that the initial point of the optimizer
-   * (optimizer.Function().GetInitialPoint()) will be used as the initial point
-   * of the optimization, overwriting any existing trained model.  If you don't
-   * want to overwrite the existing model, set
-   * optimizer.Function().GetInitialPoint() to the current parameters vector,
-   * accessible via Parameters().
+   * This will use the existing model parameters as a starting point for the
+   * optimization.  If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback Functions.

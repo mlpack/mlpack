@@ -23,12 +23,17 @@ using namespace mlpack;
 using namespace mlpack::svm;
 using namespace mlpack::util;
 
-PROGRAM_INFO("Linear SVM is an L2-regularized support vector machine.",
-    // Short description.
+// Program Name.
+BINDING_NAME("Linear SVM is an L2-regularized support vector machine.");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of linear SVM for multiclass classification. "
     "Given labeled data, a model can be trained and saved for "
-    "future use; or, a pre-trained model can be used to classify new points.",
-    // Long description.
+    "future use; or, a pre-trained model can be used to classify new points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "An implementation of linear SVMs that uses either L-BFGS or parallel SGD"
     " (stochastic gradient descent) to train the model."
     "\n\n"
@@ -77,8 +82,10 @@ PROGRAM_INFO("Linear SVM is an L2-regularized support vector machine.",
     "so long as an existing linear SVM model is given with the " +
     PRINT_PARAM_STRING("input_model") + " parameter.  The output predictions "
     "from the linear SVM model may be saved with the " +
-    PRINT_PARAM_STRING("predictions") + " parameter." +
-    "\n\n"
+    PRINT_PARAM_STRING("predictions") + " parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "As an example, to train a LinaerSVM on the data '" +
     PRINT_DATASET("data") + "' with labels '" + PRINT_DATASET("labels") + "' "
     "with L2 regularization of 0.1, saving the model to '" +
@@ -93,13 +100,15 @@ PROGRAM_INFO("Linear SVM is an L2-regularized support vector machine.",
     PRINT_DATASET("predictions") + "', the following command may be used: "
     "\n\n" +
     PRINT_CALL("linear_svm", "input_model", "lsvm_model", "test", "test",
-        "predictions", "predictions"),
-    SEE_ALSO("@random_forest", "#random_forest"),
-    SEE_ALSO("@logistic_regression", "#logistic_regression"),
-    SEE_ALSO("LinearSVM on Wikipedia",
-        "https://en.wikipedia.org/wiki/Support-vector_machine"),
-    SEE_ALSO("mlpack::svm::LinearSVM C++ class documentation",
-        "@doxygen/classmlpack_1_1svm_1_1LinearSVM.html"));
+        "predictions", "predictions"));
+
+// See also...
+BINDING_SEE_ALSO("@random_forest", "#random_forest");
+BINDING_SEE_ALSO("@logistic_regression", "#logistic_regression");
+BINDING_SEE_ALSO("LinearSVM on Wikipedia",
+        "https://en.wikipedia.org/wiki/Support-vector_machine");
+BINDING_SEE_ALSO("mlpack::svm::LinearSVM C++ class documentation",
+        "@doxygen/classmlpack_1_1svm_1_1LinearSVM.html");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "

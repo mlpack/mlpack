@@ -25,12 +25,17 @@ using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
-PROGRAM_INFO("Parametric Naive Bayes Classifier",
-    // Short description.
+// Program Name.
+BINDING_NAME("Parametric Naive Bayes Classifier");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of the Naive Bayes Classifier, used for classification. "
     "Given labeled data, an NBC model can be trained and saved, or, a "
-    "pre-trained model can be used for classification.",
-    // Long description.
+    "pre-trained model can be used for classification.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program trains the Naive Bayes classifier on the given labeled "
     "training set, or loads a model from the given model file, and then may use"
     " that trained model to classify the points in a given test set."
@@ -60,8 +65,10 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "Note: the " + PRINT_PARAM_STRING("output") + " and " +
     PRINT_PARAM_STRING("output_probs") + " parameters are deprecated and will "
     "be removed in mlpack 4.0.0.  Use " + PRINT_PARAM_STRING("predictions") +
-    " and " + PRINT_PARAM_STRING("probabilities") + " instead."
-    "\n\n"
+    " and " + PRINT_PARAM_STRING("probabilities") + " instead.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to train a Naive Bayes classifier on the dataset " +
     PRINT_DATASET("data") + " with labels " + PRINT_DATASET("labels") + " "
     "and save the model to " + PRINT_MODEL("nbc_model") + ", the following "
@@ -76,14 +83,16 @@ PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "may be used:"
     "\n\n" +
     PRINT_CALL("nbc", "input_model", "nbc_model", "test", "test_set", "output",
-        "predictions"),
-    SEE_ALSO("@softmax_regression", "#softmax_regression"),
-    SEE_ALSO("@random_forest", "#random_forest"),
-    SEE_ALSO("Naive Bayes classifier on Wikipedia",
-        "https://en.wikipedia.org/wiki/Naive_Bayes_classifier"),
-    SEE_ALSO("mlpack::naive_bayes::NaiveBayesClassifier C++ class "
+        "predictions"));
+
+// See also...
+BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
+BINDING_SEE_ALSO("@random_forest", "#random_forest");
+BINDING_SEE_ALSO("Naive Bayes classifier on Wikipedia",
+        "https://en.wikipedia.org/wiki/Naive_Bayes_classifier");
+BINDING_SEE_ALSO("mlpack::naive_bayes::NaiveBayesClassifier C++ class "
         "documentation", "@doxygen/classmlpack_1_1naive__bayes_1_1"
-        "NaiveBayesClassifier.html"));
+        "NaiveBayesClassifier.html");
 
 // A struct for saving the model with mappings.
 struct NBCModel

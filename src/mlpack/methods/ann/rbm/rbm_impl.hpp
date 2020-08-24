@@ -58,7 +58,7 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::Reset()
 {
@@ -108,10 +108,10 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, double>::type
 RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
-    arma::Mat<ElemType>&& input)
+    const arma::Mat<ElemType>& input)
 {
   preActivation = (weight.slice(0) * input);
   preActivation.each_col() += hiddenBias;
@@ -124,11 +124,11 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::Phase(
-    DataType&& input,
-    DataType&& gradient)
+    const InputType& input,
+    DataType& gradient)
 {
   arma::Cube<ElemType> weightGrad = arma::Cube<ElemType>(gradient.memptr(),
       hiddenSize, visibleSize, 1, false, false);
@@ -136,7 +136,7 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
   DataType hiddenBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem,
       hiddenSize, 1, false, false);
 
-  HiddenMean(std::move(input), std::move(hiddenBiasGrad));
+  HiddenMean(input, hiddenBiasGrad);
   weightGrad.slice(0) = hiddenBiasGrad * input.t();
 }
 
@@ -150,10 +150,10 @@ double RBM<InitializationRuleType, DataType, PolicyType>::Evaluate(
     const size_t i,
     const size_t batchSize)
 {
-  Gibbs(std::move(predictors.cols(i, i + batchSize - 1)),
-      std::move(negativeSamples));
-  return std::fabs(FreeEnergy(std::move(predictors.cols(i,
-      i + batchSize - 1))) - FreeEnergy(std::move(negativeSamples)));
+  Gibbs(predictors.cols(i, i + batchSize - 1),
+      negativeSamples);
+  return std::fabs(FreeEnergy(predictors.cols(i,
+      i + batchSize - 1)) - FreeEnergy(negativeSamples));
 }
 
 template<
@@ -161,13 +161,13 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::SampleHidden(
-    arma::Mat<ElemType>&& input,
-    arma::Mat<ElemType>&& output)
+    const arma::Mat<ElemType>& input,
+    arma::Mat<ElemType>& output)
 {
-  HiddenMean(std::move(input), std::move(output));
+  HiddenMean(input, output);
 
   for (size_t i = 0; i < output.n_elem; ++i)
   {
@@ -180,13 +180,13 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
-    arma::Mat<ElemType>&& input,
-    arma::Mat<ElemType>&& output)
+    arma::Mat<ElemType>& input,
+    arma::Mat<ElemType>& output)
 {
-  VisibleMean(std::move(input), std::move(output));
+  VisibleMean(input, output);
 
   for (size_t i = 0; i < output.n_elem; ++i)
   {
@@ -199,10 +199,11 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(DataType&& input,
-    DataType&& output)
+RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(
+    InputType& input,
+    DataType& output)
 {
   output = weight.slice(0).t() * input;
   output.each_col() += visibleBias;
@@ -214,10 +215,11 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
-RBM<InitializationRuleType, DataType, PolicyType>::HiddenMean(DataType&& input,
-    DataType&& output)
+RBM<InitializationRuleType, DataType, PolicyType>::HiddenMean(
+    const InputType& input,
+    DataType& output)
 {
   output = weight.slice(0) * input;
   output.each_col() += hiddenBias;
@@ -230,27 +232,27 @@ template<
   typename PolicyType
 >
 void RBM<InitializationRuleType, DataType, PolicyType>::Gibbs(
-    arma::Mat<ElemType>&& input,
-    arma::Mat<ElemType>&& output,
+    const arma::Mat<ElemType>& input,
+    arma::Mat<ElemType>& output,
     const size_t steps)
 {
   this->steps = (steps == SIZE_MAX) ? this->numSteps : steps;
 
   if (persistence && !state.is_empty())
   {
-    SampleHidden(std::move(state), std::move(gibbsTemporary));
-    SampleVisible(std::move(gibbsTemporary), std::move(output));
+    SampleHidden(state, gibbsTemporary);
+    SampleVisible(gibbsTemporary, output);
   }
   else
   {
-    SampleHidden(std::move(input), std::move(gibbsTemporary));
-    SampleVisible(std::move(gibbsTemporary), std::move(output));
+    SampleHidden(input, gibbsTemporary);
+    SampleVisible(gibbsTemporary, output);
   }
 
   for (size_t j = 1; j < this->steps; ++j)
   {
-    SampleHidden(std::move(output), std::move(gibbsTemporary));
-    SampleVisible(std::move(gibbsTemporary), std::move(output));
+    SampleHidden(output, gibbsTemporary);
+    SampleVisible(gibbsTemporary, output);
   }
   if (persistence)
   {
@@ -272,14 +274,14 @@ void RBM<InitializationRuleType, DataType, PolicyType>::Gradient(
   positiveGradient.zeros();
   negativeGradient.zeros();
 
-  Phase(std::move(predictors.cols(i, i + batchSize - 1)),
-      std::move(positiveGradient));
+  Phase(predictors.cols(i, i + batchSize - 1),
+      positiveGradient);
 
   for (size_t i = 0; i < negSteps; ++i)
   {
-    Gibbs(std::move(predictors.cols(i, i + batchSize - 1)),
-        std::move(negativeSamples));
-    Phase(std::move(negativeSamples), std::move(tempNegativeGradient));
+    Gibbs(predictors.cols(i, i + batchSize - 1),
+        negativeSamples);
+    Phase(negativeSamples, tempNegativeGradient);
 
     negativeGradient += tempNegativeGradient;
   }
