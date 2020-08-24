@@ -1,9 +1,10 @@
 on: [push, pull_request]
-
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   jobR:
     name: mlpack-R
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.4
     outputs:
       r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
     steps:
@@ -32,7 +33,7 @@ jobs:
         - name: CMake
           run: |
             mkdir build
-            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_R_BINDINGS=ON ..
+            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=ON ..
 
         - name: Build
           run: |
@@ -56,7 +57,7 @@ jobs:
         config:
         #- { os: windows-latest, r: '4.0'}
         - {os: macOS-latest, r: 'release'}
-        - {os: ubuntu-latest, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+        - {os: ubuntu-20.4, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
 
     env:
