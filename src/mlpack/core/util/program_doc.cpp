@@ -85,6 +85,5 @@ SeeAlso::SeeAlso(
     const std::string& description, const std::string& link)
 {
   // Register this with IO.
-  IO::GetSingleton().doc.seeAlso.push_back(std::move(
-      make_pair(description, link)));
+  IO::GetSingleton().doc.seeAlso.push_back(make_pair(description, link));
 }

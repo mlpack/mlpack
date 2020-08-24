@@ -1,6 +1,13 @@
-on: [push, pull_request]
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  release:
+    types: [published, created, edited]
+
 jobs:
   jobR:
     name: mlpack-R
