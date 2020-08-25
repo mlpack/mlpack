@@ -16,13 +16,13 @@
 #include <cmath>
 
 // Next, standard includes.
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <cctype>
-#include <climits>
 #include <cfloat>
+#include <climits>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <stdexcept>
 #include <tuple>
 #include <utility>
@@ -65,24 +65,24 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <mlpack/core/util/arma_traits.hpp>
 
 #include <cereal/archives/binary.hpp>
+#include <cereal/archives/json.hpp>
 #include <cereal/archives/portable_binary.hpp>
 #include <cereal/archives/xml.hpp>
-#include <cereal/archives/json.hpp>
 #include <cereal/types/array.hpp>
 #include <cereal/types/boost_variant.hpp>
 #include <cereal/types/string.hpp>
-#include <cereal/types/vector.hpp>
-#include <cereal/types/unordered_map.hpp>
 #include <cereal/types/tuple.hpp>
+#include <cereal/types/unordered_map.hpp>
 #include <cereal/types/utility.hpp>
+#include <cereal/types/vector.hpp>
 
+#include <mlpack/core/arma_extend/serialize_armadillo.hpp>
 #include <mlpack/core/cereal/array_wrapper.hpp>
-#include <mlpack/core/cereal/pointer_wrapper.hpp>
-#include <mlpack/core/cereal/pointer_vector_wrapper.hpp>
+#include <mlpack/core/cereal/is_loading.hpp>
 #include <mlpack/core/cereal/pointer_variant_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_vector_variant_wrapper.hpp>
-#include <mlpack/core/arma_extend/serialize_armadillo.hpp>
-
+#include <mlpack/core/cereal/pointer_vector_wrapper.hpp>
+#include <mlpack/core/cereal/pointer_wrapper.hpp>
 #include <mlpack/core/data/has_serialize.hpp>
 
 // If we have Boost 1.58 or older and are using C++14, the compilation is likely
