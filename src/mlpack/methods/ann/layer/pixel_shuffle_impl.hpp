@@ -24,6 +24,10 @@ PixelShuffle<InputDataType, OutputDataType>::PixelShuffle() :
     height(0),
     width(0),
     size(0),
+    batchSize(0),
+    outputHeight(0),
+    outputWidth(0),
+    sizeOut(0),
     reset(false)
 {
   // Nothing to do here.
@@ -39,6 +43,10 @@ PixelShuffle<InputDataType, OutputDataType>::PixelShuffle(
     height(height),
     width(width),
     size(size),
+    batchSize(0),
+    outputHeight(0),
+    outputWidth(0),
+    sizeOut(0),
     reset(false)
 {
   // Nothing to do here.
