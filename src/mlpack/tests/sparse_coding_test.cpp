@@ -164,29 +164,29 @@ TEST_CASE("SerializationTest", "[SparseCodingTest]")
 
   // Check the parameters, too.
   REQUIRE(sc.Atoms() == scXml.Atoms());
-  REQUIRE(sc.Atoms() == scText.Atoms());
+  REQUIRE(sc.Atoms() == scJson.Atoms());
   REQUIRE(sc.Atoms() == scBinary.Atoms());
 
   REQUIRE(sc.Lambda1() == Approx(scXml.Lambda1()).epsilon(1e-7));
-  REQUIRE(sc.Lambda1() == Approx(scText.Lambda1()).epsilon(1e-7));
+  REQUIRE(sc.Lambda1() == Approx(scJson.Lambda1()).epsilon(1e-7));
   REQUIRE(sc.Lambda1() == Approx(scBinary.Lambda1()).epsilon(1e-7));
 
   REQUIRE(sc.Lambda2() == Approx(scXml.Lambda2()).epsilon(1e-7));
-  REQUIRE(sc.Lambda2() == Approx(scText.Lambda2()).epsilon(1e-7));
+  REQUIRE(sc.Lambda2() == Approx(scJson.Lambda2()).epsilon(1e-7));
   REQUIRE(sc.Lambda2() == Approx(scBinary.Lambda2()).epsilon(1e-7));
 
   REQUIRE(sc.MaxIterations() == scXml.MaxIterations());
-  REQUIRE(sc.MaxIterations() == scText.MaxIterations());
+  REQUIRE(sc.MaxIterations() == scJson.MaxIterations());
   REQUIRE(sc.MaxIterations() == scBinary.MaxIterations());
 
   REQUIRE(sc.ObjTolerance() == Approx(scXml.ObjTolerance()).epsilon(1e-7));
-  REQUIRE(sc.ObjTolerance() == Approx(scText.ObjTolerance()).epsilon(1e-7));
+  REQUIRE(sc.ObjTolerance() == Approx(scJson.ObjTolerance()).epsilon(1e-7));
   REQUIRE(sc.ObjTolerance() == Approx(scBinary.ObjTolerance()).epsilon(1e-7));
 
   REQUIRE(sc.NewtonTolerance() ==
       Approx(scXml.NewtonTolerance()).epsilon(1e-7));
   REQUIRE(sc.NewtonTolerance() ==
-      Approx(scText.NewtonTolerance()).epsilon(1e-7));
+      Approx(scJson.NewtonTolerance()).epsilon(1e-7));
   REQUIRE(sc.NewtonTolerance() ==
       Approx(scBinary.NewtonTolerance()).epsilon(1e-7));
 }
