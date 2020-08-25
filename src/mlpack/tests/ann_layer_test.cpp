@@ -452,6 +452,105 @@ TEST_CASE("GradientLinearLayerTest", "[ANNLayerTest]")
 }
 
 /**
+ * Simple Linear3D layer test.
+ */
+TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
+{
+  const size_t inSize = 4;
+  const size_t outSize = 1;
+  const size_t nPoints = 2;
+  const size_t batchSize = 1;
+  arma::mat input, output, delta;
+
+  Linear3D<> module(inSize, outSize);
+  module.Reset();
+  module.Parameters().randu();
+
+  // Test the Forward function.
+  input = arma::zeros(inSize * nPoints, batchSize);
+  module.Forward(input, output);
+  REQUIRE(arma::accu(module.Bias())
+      == Approx(arma::accu(output) / (nPoints * batchSize)).epsilon(1e-3));
+
+  // Test the Backward function.
+  module.Backward(input, input, delta);
+  REQUIRE(arma::accu(delta) == 0);
+}
+
+/**
+ * Jacobian Linear3D module test.
+ */
+TEST_CASE("JacobianLinear3DLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inSize = math::RandInt(2, 10);
+    const size_t outSize = math::RandInt(2, 10);
+    const size_t nPoints = math::RandInt(2, 10);
+    const size_t batchSize = 1;
+
+    arma::mat input;
+    input.set_size(inSize * nPoints, batchSize);
+
+    Linear3D<> module(inSize, outSize);
+    module.Parameters().randu();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Simple Gradient test for Linear3D layer.
+ */
+TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      const size_t inSize = 4;
+      const size_t outSize = 1;
+      const size_t nPoints = 2;
+      const size_t batchSize = 4;
+
+      input = arma::randu(inSize * nPoints, batchSize);
+      target = arma::zeros(outSize * nPoints, batchSize);
+      target(0, 0) = 1;
+      target(0, 3) = 1;
+      target(1, 1) = 1;
+      target(1, 2) = 1;
+
+      model = new FFN<MeanSquaredError<>, RandomInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<>>();
+      model->Add<Linear3D<>>(inSize, outSize);
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<MeanSquaredError<>, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-7);
+}
+
+/**
  * Simple noisy linear module test.
  */
 TEST_CASE("SimpleNoisyLinearLayerTest", "[ANNLayerTest]")
@@ -1670,7 +1769,7 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
   for (size_t i = 0; i < batchSize; ++i)
   {
     // The Lookup module uses index - 1 for the cols.
-    const double outputSum = arma::accu(module.Parameters().rows(
+    const double outputSum = arma::accu(module.Parameters().cols(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
     REQUIRE(std::fabs(outputSum - arma::accu(output.col(i))) <= 1e-5);
@@ -4411,4 +4510,239 @@ TEST_CASE("SpatialDropoutLayerParametersTest", "[ANNLayerTest]")
   // Check whether the input parameters have been set correctly.
   REQUIRE(layer.Size() == 3);
   REQUIRE(layer.Ratio() == 0.2);
+}
+
+/**
+ * Simple Positional Encoding layer test.
+ */
+TEST_CASE("SimplePositionalEncodingTest", "[ANNLayerTest]")
+{
+  const size_t seqLength = 5;
+  const size_t embedDim = 4;
+  const size_t batchSize = 2;
+
+  arma::mat input = arma::randu(embedDim * seqLength, batchSize);
+  arma::mat gy = 0.01 * arma::randu(embedDim * seqLength, batchSize);
+  arma::mat output, g;
+
+  PositionalEncoding<> module(embedDim, seqLength);
+
+  // Check Forward function.
+  module.Forward(input, output);
+  arma::mat pe = output - input;
+  CheckMatrices(arma::mean(pe, 1), module.Encoding());
+
+  // Check Backward function.
+  module.Backward(input, gy, g);
+  REQUIRE(std::equal(gy.begin(), gy.end(), g.begin()));
+}
+
+/**
+ * Jacobian test for Positional Encoding layer.
+ */
+TEST_CASE("JacobianPositionalEncodingTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t embedDim = 4;
+    const size_t seqLength = math::RandInt(5, 10);
+    arma::mat input;
+    input.set_size(embedDim * seqLength, 1);
+
+    PositionalEncoding<> module(embedDim, seqLength);
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Simple Multihead Attention test.
+ */
+TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
+{
+  size_t tLen = 5;
+  size_t sLen = tLen;
+  size_t embedDim = 4;
+  size_t numHeads = 2;
+  size_t bsz = 3;
+
+  arma::mat query = 0.1 * arma::randu(embedDim * tLen, bsz);
+  arma::mat output;
+
+  arma::mat attnMask = arma::zeros(tLen, sLen);
+  for (size_t i = 0; i < tLen; ++i)
+  {
+    for (size_t j = 0; j < sLen; ++j)
+    {
+      if (i < j)
+        attnMask(i, j) = std::numeric_limits<double>::lowest();
+    }
+  }
+
+  arma::mat keyPaddingMask = arma::zeros(1, sLen);
+  keyPaddingMask(sLen - 1) = std::numeric_limits<double>::lowest();
+
+  MultiheadAttention<> module(tLen, sLen, embedDim, numHeads);
+  module.AttentionMask() = attnMask;
+  module.KeyPaddingMask() = keyPaddingMask;
+  module.Reset();
+  module.Parameters().randu();
+
+  // Forward test.
+  arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
+
+  module.Forward(input, output);
+  REQUIRE(output.n_rows == embedDim * tLen);
+  REQUIRE(output.n_cols == bsz);
+
+  // Backward test.
+  arma::mat gy = 0.01 * arma::randu(embedDim * tLen, bsz);
+  arma::mat g;
+  module.Backward(input, gy, g);
+  REQUIRE(g.n_rows == input.n_rows);
+  REQUIRE(g.n_cols == input.n_cols);
+
+  // Gradient test.
+  arma::mat error = 0.05 * arma::randu(embedDim * tLen, bsz);
+  arma::mat gradient;
+  module.Gradient(input, error, gradient);
+  REQUIRE(gradient.n_rows == module.Parameters().n_rows);
+  REQUIRE(gradient.n_cols == module.Parameters().n_cols);
+}
+
+/**
+ * Jacobian MultiheadAttention module test.
+ */
+TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
+{
+  // Check when query = key = value.
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
+
+    MultiheadAttention<> module(tgtSeqLen, tgtSeqLen, embedDim, nHeads);
+    module.Parameters().randu();
+
+    double error = CustomJacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+
+  // Check when key = value.
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t srcSeqLen = math::RandInt(2, 5);
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat input = arma::join_cols(arma::join_cols(query, key), key);
+
+    MultiheadAttention<> module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
+    module.Parameters().randu();
+
+    double error = CustomJacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+
+  // Check when query, key and value are not same.
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t srcSeqLen = math::RandInt(2, 5);
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat value = 0.045 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat input = arma::join_cols(arma::join_cols(query, key), value);
+
+    MultiheadAttention<> module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
+    module.Parameters().randu();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Numerical gradient test for MultiheadAttention layer.
+ */
+TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
+{
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input = arma::randu(embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
+      target = arma::zeros(vocabSize, batchSize);
+      for (size_t i = 0; i < target.n_elem; ++i)
+      {
+        const size_t label = mlpack::math::RandInt(1, vocabSize);
+        target(i) = label;
+      }
+
+      attnMask = arma::zeros(tgtSeqLen, srcSeqLen);
+      for (size_t i = 0; i < tgtSeqLen; ++i)
+      {
+        for (size_t j = 0; j < srcSeqLen; ++j)
+        {
+          if (i < j)
+            attnMask(i, j) = std::numeric_limits<double>::lowest();
+        }
+      }
+
+      keyPaddingMask = arma::zeros(1, srcSeqLen);
+      keyPaddingMask(srcSeqLen - 1) = std::numeric_limits<double>::lowest();
+
+      model = new FFN<NegativeLogLikelihood<>, XavierInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      attnModule = new MultiheadAttention<>(tgtSeqLen, srcSeqLen,
+          embedDim, nHeads);
+      attnModule->AttentionMask() = attnMask;
+      attnModule->KeyPaddingMask() = keyPaddingMask;
+      model->Add(attnModule);
+      model->Add<Linear<>>(embedDim * tgtSeqLen, vocabSize);
+      model->Add<LogSoftMax<>>();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, batchSize);
+      model->Gradient(model->Parameters(), 0, gradient, batchSize);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, XavierInitialization>* model;
+    MultiheadAttention<>* attnModule;
+
+    arma::mat input, target, attnMask, keyPaddingMask;
+    const size_t tgtSeqLen = 2;
+    const size_t srcSeqLen = 2;
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t vocabSize = 5;
+    const size_t batchSize = 2;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-06);
 }

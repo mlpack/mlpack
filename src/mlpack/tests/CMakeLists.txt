@@ -9,7 +9,6 @@ add_executable(mlpack_test
   cli_binding_test.cpp
   io_test.cpp
   cosine_tree_test.cpp
-  cv_test.cpp
   dbscan_test.cpp
   dcgan_test.cpp
   det_test.cpp
@@ -75,8 +74,6 @@ add_executable(mlpack_test
   serialization_test.cpp
   sfinae_test.cpp
   sort_policy_test.cpp
-  sparse_autoencoder_test.cpp
-  sparse_coding_test.cpp
   spill_tree_test.cpp
   string_encoding_test.cpp
   sumtree_test.cpp
@@ -123,7 +120,6 @@ add_executable(mlpack_test
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
   main_tests/range_search_test.cpp
-  main_tests/sparse_coding_test.cpp
   main_tests/test_helper.hpp
 )
 
@@ -143,6 +139,7 @@ add_executable(mlpack_catch_test
   block_krylov_svd_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
+  cv_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
   image_load_test.cpp
@@ -159,6 +156,8 @@ add_executable(mlpack_catch_test
   serialization_catch.cpp
   serialization_catch.hpp
   softmax_regression_test.cpp
+  sparse_autoencoder_test.cpp
+  sparse_coding_test.cpp
   split_data_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
@@ -177,6 +176,7 @@ add_executable(mlpack_catch_test
   main_tests/preprocess_split_test.cpp
   main_tests/preprocess_imputer_test.cpp
   main_tests/softmax_regression_test.cpp
+  main_tests/sparse_coding_test.cpp
   main_tests/test_helper.hpp
 )
 
@@ -229,7 +229,6 @@ set(parallel_tests
   "LocalCoordinateCodingTest;"
   "FeedForwardNetworkTest;"
   "RecurrentNetworkTest;"
-  "SparseAutoencoderTest;"
   "GMMTest;"
   "CFTest;"
   "HMMTest;"

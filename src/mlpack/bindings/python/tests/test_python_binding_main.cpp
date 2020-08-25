@@ -18,8 +18,15 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::kernel;
 
-PROGRAM_INFO("Python binding test",
-    "A simple program to test Python binding functionality.",
+// Program Name.
+BINDING_NAME("Python binding test");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "A simple program to test Python binding functionality.");
+
+// Long description.
+BINDING_LONG_DESC(
     "A simple program to test Python binding functionality.  You can build "
     "mlpack with the BUILD_TESTS option set to off, and this binding will "
     "no longer be built.");

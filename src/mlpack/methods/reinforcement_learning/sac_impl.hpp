@@ -62,10 +62,17 @@ SAC<
   targetQ2Network = learningQ2Network;
 
   // Reset all the networks.
-  learningQ1Network.ResetParameters();
+  // Note: the q and policy networks have an if condition before reset.
+  // This is because we don't want to reset a loaded(possibly pretrained) model
+  // passed using this constructor.
+  if (learningQ1Network.Parameters().is_empty())
+  {
+    learningQ1Network.ResetParameters();
+    learningQ2Network.ResetParameters();
+  }
+  if (policyNetwork.Parameters().is_empty())
+    policyNetwork.ResetParameters();
   targetQ1Network.ResetParameters();
-  policyNetwork.ResetParameters();
-  learningQ2Network.ResetParameters();
   targetQ2Network.ResetParameters();
 
   #if ENS_VERSION_MAJOR == 1
@@ -176,7 +183,8 @@ void SAC<
 
   arma::mat sampledActionValues(action.size, sampledActions.size());
   for (size_t i = 0; i < sampledActions.size(); i++)
-    sampledActionValues.col(i) = sampledActions[i].action[0];
+    sampledActionValues.col(i) = arma::conv_to<arma::colvec>::from
+                                 (sampledActions[i].action);
   arma::mat learningQInput = arma::join_vert(sampledActionValues,
       sampledStates);
   learningQ1Network.Forward(learningQInput, Q1);
@@ -207,7 +215,7 @@ void SAC<
 
   // Actor network update.
 
-  arma::rowvec pi;
+  arma::mat pi;
   policyNetwork.Predict(sampledStates, pi);
 
   arma::mat qInput = arma::join_vert(pi, sampledStates);
@@ -226,26 +234,26 @@ void SAC<
     arma::colvec singlePi;
     policyNetwork.Forward(singleState, singlePi);
     arma::colvec input = arma::join_vert(singlePi, singleState);
-    arma::rowvec weightLastLayer;
+    arma::mat weightLastLayer;
 
     if (Q1(i) < Q2(i))
     {
       learningQ1Network.Forward(input, q);
       learningQ1Network.Backward(input, -1, gradQ);
-      weightLastLayer = learningQ1Network.Parameters().
-          rows(0, hidden1 - 1).t();
+      weightLastLayer = arma::reshape(learningQ1Network.Parameters().
+          rows(0, hidden1 * singlePi.n_rows - 1), hidden1, singlePi.n_rows);
     }
     else
     {
       learningQ2Network.Forward(input, q);
       learningQ2Network.Backward(input, -1, gradQ);
-      weightLastLayer = learningQ2Network.Parameters().
-          rows(0, hidden1 - 1).t();
+      weightLastLayer = arma::reshape(learningQ2Network.Parameters().
+          rows(0, hidden1 * singlePi.n_rows - 1), hidden1, singlePi.n_rows);
     }
 
     arma::colvec gradQBias = gradQ(input.n_rows * hidden1, 0,
         arma::size(hidden1, 1));
-    arma::mat gradPolicy = weightLastLayer * gradQBias;
+    arma::mat gradPolicy = weightLastLayer.t() * gradQBias;
     policyNetwork.Backward(singleState, gradPolicy, grad);
     if (i == 0)
     {
@@ -284,16 +292,16 @@ void SAC<
 >::SelectAction()
 {
   // Get the action at current state, from policy.
-  arma::rowvec outputAction;
+  arma::colvec outputAction;
   policyNetwork.Predict(state.Encode(), outputAction);
 
   if (!deterministic)
   {
-    arma::rowvec noise = arma::randn<arma::rowvec>(outputAction.n_rows) * 0.1;
+    arma::colvec noise = arma::randn<arma::colvec>(outputAction.n_rows) * 0.1;
     noise = arma::clamp(noise, -0.25, 0.25);
     outputAction = outputAction + noise;
   }
-  action.action[0] = outputAction[0];
+  action.action = arma::conv_to<std::vector<double>>::from(outputAction);
 }
 
 template <

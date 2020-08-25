@@ -163,9 +163,15 @@ class ContinuousActionEnv
   class Action
   {
    public:
-    double action[1];
+    std::vector<double> action;
     // Storing degree of freedom.
     static size_t size;
+
+    /**
+     * Construct an action instance.
+     */
+    Action() : action(ContinuousActionEnv::Action::size)
+    { /* Nothing to do here */ }
   };
 
   /**
