@@ -554,7 +554,7 @@ template<typename Archive>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 BinarySpaceTree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
     BinarySpaceTree() // Create an empty BinarySpaceTree.
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
@@ -1068,7 +1068,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     serialize(Archive& ar)
 {
   // If we're loading, and we have children, they need to be deleted.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
       delete left;
@@ -1105,7 +1105,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   if (!hasParent)
     ar & CEREAL_POINTER(dataset);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
       left->parent = this;

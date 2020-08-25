@@ -292,7 +292,7 @@ void BallBound<MetricType, VecType>::serialize(
   ar & CEREAL_NVP(radius);
   ar & CEREAL_NVP(center);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // If we're loading, delete the local metric since we'll have a new one.
     if (ownsMetric)

@@ -433,7 +433,7 @@ void HollowBallBound<TMetricType, ElemType>::serialize(Archive& ar)
   ar & CEREAL_NVP(center);
   ar & CEREAL_NVP(hollowCenter);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // If we're loading, delete the local metric since we'll have a new one.
     if (ownsMetric)
@@ -441,7 +441,7 @@ void HollowBallBound<TMetricType, ElemType>::serialize(Archive& ar)
   }
 
   ar & CEREAL_POINTER(metric);
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     ownsMetric = true;
 }
 

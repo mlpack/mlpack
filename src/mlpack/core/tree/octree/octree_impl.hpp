@@ -485,7 +485,7 @@ template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
 Octree<MetricType, StatisticType, MatType>::Octree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
     Octree() // Create an empty tree.
 {
   // De-serialize the tree into this object.
@@ -714,7 +714,7 @@ void Octree<MetricType, StatisticType, MatType>::serialize(Archive& ar)
   ar & CEREAL_NVP(version);
 
   // If we're loading and we have children, they need to be deleted.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < children.size(); ++i)
       delete children[i];
@@ -741,7 +741,7 @@ void Octree<MetricType, StatisticType, MatType>::serialize(Archive& ar)
 
   ar & CEREAL_VECTOR_POINTER(children);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < children.size(); ++i)
       children[i]->parent = this;

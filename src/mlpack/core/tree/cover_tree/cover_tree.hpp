@@ -260,7 +260,7 @@ class CoverTree
   template<typename Archive>
   CoverTree(
       Archive& ar,
-      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
+      const typename std::enable_if_t<cereal::is_loading<Archive>()>* = 0);
 
   /**
    * Delete this cover tree node and its children.

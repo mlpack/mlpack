@@ -391,7 +391,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 RectangleTree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
     RectangleTree() // Use default constructor.
 {
   // Now serialize.
@@ -1398,7 +1398,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   ar & CEREAL_NVP(version);
 
   // Clean up memory, if necessary.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < numChildren; ++i)
       delete children[i];
@@ -1415,7 +1415,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   ar & CEREAL_NVP(maxNumChildren);
   ar & CEREAL_NVP(minNumChildren);
   ar & CEREAL_NVP(numChildren);
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     children.resize(maxNumChildren + 1);
 
   ar & CEREAL_NVP(begin);
@@ -1442,7 +1442,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     oss << "children" << i;
     ar & CEREAL_POINTER(children[i]);
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
       children[i]->parent = this;
   }
   for (size_t i = numChildren; i < maxNumChildren + 1; ++i)

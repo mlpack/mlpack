@@ -392,7 +392,7 @@ template<typename Archive>
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillTree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
     SpillTree() // Create an empty SpillTree.
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
@@ -890,7 +890,7 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     serialize(Archive& ar)
 {
   // If we're loading, and we have children, they need to be deleted.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
       delete left;
@@ -915,7 +915,7 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   // Force a non-const pointer.
   MatType* datasetPtr = const_cast<MatType*>(dataset);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     dataset = datasetPtr;
     localDataset = true;
@@ -937,7 +937,7 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   if (!hasParent)
     ar & CEREAL_POINTER(datasetPtr);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
     {

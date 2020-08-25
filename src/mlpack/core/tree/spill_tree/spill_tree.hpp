@@ -231,7 +231,7 @@ class SpillTree
   template<typename Archive>
   SpillTree(
       Archive& ar,
-      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
+      const typename std::enable_if_t<cereal::is_loading<Archive>()>* = 0);
 
   /**
    * Deletes this node, deallocating the memory for the children and calling

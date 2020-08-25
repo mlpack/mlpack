@@ -726,7 +726,7 @@ template<
 template<typename Archive>
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
     CoverTree() // Create an empty CoverTree.
 {
   // Now, serialize to our empty tree.
@@ -1734,7 +1734,7 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
 
   // If we're loading, and we have children, they need to be deleted.  We may
   // also need to delete the local metric and dataset.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < children.size(); ++i)
       delete children[i];
@@ -1760,7 +1760,7 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
   ar & CEREAL_NVP(furthestDescendantDistance);
   ar & CEREAL_POINTER(metric);
 
-  if (Archive::is_loading::value && !hasParent)
+  if (cereal::is_loading<Archive>() && !hasParent)
   {
     localMetric = true;
     localDataset = true;
@@ -1769,7 +1769,7 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
   // Lastly, serialize the children.
   ar & CEREAL_VECTOR_POINTER(children);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // Look through each child individually.
     for (size_t i = 0; i < children.size(); ++i)
