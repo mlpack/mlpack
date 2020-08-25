@@ -65,10 +65,10 @@ TEST_CASE("FindPrefixSum", "[SumTreeTest]")
   sumtree.Set(2, 0.6);
   sumtree.Set(3, 0.4);
 
-  CHECK(sumtree.FindPrefixSum(0) <= 0);
-  CHECK(sumtree.FindPrefixSum(1) <= 1);
-  CHECK(sumtree.FindPrefixSum(2.8) <= 3);
-  CHECK(sumtree.FindPrefixSum(3.0) <= 3);
+  CHECK(sumtree.FindPrefixSum(0) <= 0.0);
+  CHECK(sumtree.FindPrefixSum(1) <= 1.0);
+  CHECK(sumtree.FindPrefixSum(2.8) <= 3.0);
+  CHECK(sumtree.FindPrefixSum(3.0) <= 3.0);
 }
 
 /**
