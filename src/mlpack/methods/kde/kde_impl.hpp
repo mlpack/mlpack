@@ -725,15 +725,6 @@ serialize(Archive& ar)
   ar & CEREAL_NVP(mcEntryCoef);
   ar & CEREAL_NVP(mcBreakCoef);
 
-  if (Archive::is_loading::value)
-  {
-    monteCarlo = KDEDefaultParams::monteCarlo;
-    mcProb = KDEDefaultParams::mcProb;
-    initialSampleSize = KDEDefaultParams::initialSampleSize;
-    mcEntryCoef = KDEDefaultParams::mcEntryCoef;
-    mcBreakCoef = KDEDefaultParams::mcBreakCoef;
-  }
-
   // If we are loading, clean up memory if necessary.
   if (Archive::is_loading::value)
   {
