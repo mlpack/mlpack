@@ -43,6 +43,34 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
+Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
+	const Linear& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    weights(layer.weights),
+    regularizer(layer.regularizer)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear<InputDataType, OutputDataType, RegularizerType>&
+Linear<InputDataType, OutputDataType, RegularizerType>::
+operator = (const Linear& layer)
+{ 
+  if (this != &layer)
+  {
+  	inSize = layer.inSize;
+  	outSize = layer.outSize;
+  	weights = layer.weights;
+  	regularizer = layer.regularizer;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 void Linear<InputDataType, OutputDataType, RegularizerType>::Reset()
 {
   weight = arma::mat(weights.memptr(), outSize, inSize, false, false);

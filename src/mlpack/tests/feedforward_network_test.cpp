@@ -57,6 +57,93 @@ void TestNetwork(ModelType& model,
   REQUIRE(classificationError <= classificationErrorThreshold);
 }
 
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::mat, typename ModelType>
+void CheckCopyFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       MatType& testData,
+                       MatType& testLabels,
+                       const size_t maxEpochs,
+                       const double classificationErrorThreshold)
+{
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  network1->Train(trainData, trainLabels, opt);
+
+  MatType predictionTemp;
+  network1->Predict(testData, predictionTemp);
+  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
+
+  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  {
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+  }
+
+  FFN<> network2(*network1);
+  arma::mat predictions1;
+  network1->Predict(trainData, predictions1);
+  delete network1;
+
+  // Deallocating all of network1's memory, so that
+  // if network2 is trying to use any of that memory.
+  arma::mat predictions2;
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
+
+
+/**
+ * Check whether copying Vanila network is working or not.
+ */
+BOOST_AUTO_TEST_CASE(CheckCopyVanillaNetworkTest)
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Output
+   *  Layer         Layer         Layer
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |     +>|     |     +>|     |
+   * +-----+     | +--+--+     | +-----+
+   *             |             |
+   *  Bias       |  Bias       |
+   *  Layer      |  Layer      |
+   * +-----+     | +-----+     |
+   * |     |     | |     |     |
+   * |     +-----+ |     +-----+
+   * |     |       |     |
+   * +-----+       +-----+
+   */
+
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<Linear<> >(trainData.n_rows, 8);
+  model->Add<SigmoidLayer<> >();
+  model->Add<Linear<> >(8, 3);
+  model->Add<LogSoftMax<> >();
+
+  // Check whether copy is working or not.
+  CheckCopyFunction<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+}
+
 /**
  * Train the vanilla network on a larger dataset.
  */
@@ -102,6 +189,7 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   model.Add<SigmoidLayer<> >();
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
+
 
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural

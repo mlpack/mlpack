@@ -642,6 +642,11 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     this->network.push_back(boost::apply_visitor(copyVisitor,
         network.network[i]));
   }
+
+  for (size_t i = 0; i < this->network.size(); ++i)
+  {
+    boost::apply_visitor(resetVisitor, this->network[i]);
+  }
 };
 
 template<typename OutputLayerType, typename InitializationRuleType,
