@@ -62,10 +62,17 @@ SAC<
   targetQ2Network = learningQ2Network;
 
   // Reset all the networks.
-  learningQ1Network.ResetParameters();
+  // Note: the q and policy networks have an if condition before reset.
+  // This is because we don't want to reset a loaded(possibly pretrained) model
+  // passed using this constructor.
+  if (learningQ1Network.Parameters().is_empty())
+  {
+    learningQ1Network.ResetParameters();
+    learningQ2Network.ResetParameters();
+  }
+  if (policyNetwork.Parameters().is_empty())
+    policyNetwork.ResetParameters();
   targetQ1Network.ResetParameters();
-  policyNetwork.ResetParameters();
-  learningQ2Network.ResetParameters();
   targetQ2Network.ResetParameters();
 
   #if ENS_VERSION_MAJOR == 1
