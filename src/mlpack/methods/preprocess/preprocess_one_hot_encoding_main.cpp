@@ -27,7 +27,7 @@ BINDING_LONG_DESC(
     "encoding of the respective features at those indices. Indices represent "
     "the IDs of the dimensions to be one-hot encoded."
     "\n\n"
-    "The output matrices with encoded features may be saved with the " +
+    "The output matrix with encoded features may be saved with the " +
     PRINT_PARAM_STRING("output") + " parameters.");
 
 // Example.
@@ -68,8 +68,12 @@ static void mlpackMain()
   RequireParamValue<std::vector<int>>("dimensions", [data](std::vector<int> x)
       {
         for (int dim : x)
+        {
           if (dim < 0 || (size_t)dim > data.n_rows)
+          {
             return false;
+          }
+        }
         return true;
       }, true, "dimensions must be greater than 0 "
       "and less than the number of dimensions");

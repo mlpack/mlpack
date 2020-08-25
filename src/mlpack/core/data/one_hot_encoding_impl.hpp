@@ -116,7 +116,7 @@ void OneHotEncoding(const arma::Mat<eT>& input,
   }
 
   // Turn the dimension counts into offsets.  Note that the last element is the
-  // total number of dimensions, and the first element is the offset for~
+  // total number of dimensions, and the first element is the offset for
   // dimension *2* (not 1).
   for (size_t i = 1; i < dimensionOffsets.n_elem; ++i)
     dimensionOffsets[i] += dimensionOffsets[i - 1];
