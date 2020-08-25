@@ -15,16 +15,14 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/sparse_coding/sparse_coding.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
+#include "serialization_catch.hpp"
 
 using namespace arma;
 using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::sparse_coding;
-
-BOOST_AUTO_TEST_SUITE(SparseCodingTest);
 
 void SCVerifyCorrectness(vec beta, vec errCorr, double lambda)
 {
@@ -35,22 +33,23 @@ void SCVerifyCorrectness(vec beta, vec errCorr, double lambda)
     if (beta(j) == 0)
     {
       // Make sure that errCorr(j) <= lambda.
-      BOOST_REQUIRE_SMALL(std::max(fabs(errCorr(j)) - lambda, 0.0), tol);
+      REQUIRE(std::max(fabs(errCorr(j)) - lambda, 0.0) ==
+          Approx(0.0).margin(tol));
     }
     else if (beta(j) < 0)
     {
       // Make sure that errCorr(j) == lambda.
-      BOOST_REQUIRE_SMALL(errCorr(j) - lambda, tol);
+      REQUIRE(errCorr(j) - lambda == Approx(0.0).margin(tol));
     }
     else // beta(j) > 0.
     {
       // Make sure that errCorr(j) == -lambda.
-      BOOST_REQUIRE_SMALL(errCorr(j) + lambda, tol);
+      REQUIRE(errCorr(j) + lambda == Approx(0.0).margin(tol));
     }
   }
 }
 
-BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
+TEST_CASE("SparseCodingTestCodingStepLasso", "[SparseCodingTest]")
 {
   double lambda1 = 0.1;
   uword nAtoms = 25;
@@ -79,7 +78,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
   }
 }
 
-BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
+TEST_CASE("SparseCodingTestCodingStepElasticNet", "[SparseCodingTest]")
 {
   double lambda1 = 0.1;
   double lambda2 = 0.2;
@@ -110,7 +109,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
   }
 }
 
-BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
+TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]")
 {
   const double tol = 1e-6;
 
@@ -135,10 +134,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   uvec adjacencies = find(Z);
   double normGradient = sc.OptimizeDictionary(X, Z, adjacencies);
 
-  BOOST_REQUIRE_SMALL(normGradient, tol);
+  REQUIRE(normGradient == Approx(0.0).margin(tol));
 }
 
-BOOST_AUTO_TEST_CASE(SerializationTest)
+TEST_CASE("SerializationTest", "[SparseCodingTest]")
 {
   mat X = randu<mat>(100, 100);
   size_t nAtoms = 25;
@@ -164,35 +163,38 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   CheckMatrices(codes, xmlCodes, textCodes, binaryCodes);
 
   // Check the parameters, too.
-  BOOST_REQUIRE_EQUAL(sc.Atoms(), scXml.Atoms());
-  BOOST_REQUIRE_EQUAL(sc.Atoms(), scText.Atoms());
-  BOOST_REQUIRE_EQUAL(sc.Atoms(), scBinary.Atoms());
+  REQUIRE(sc.Atoms() == scXml.Atoms());
+  REQUIRE(sc.Atoms() == scText.Atoms());
+  REQUIRE(sc.Atoms() == scBinary.Atoms());
 
-  BOOST_REQUIRE_CLOSE(sc.Lambda1(), scXml.Lambda1(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.Lambda1(), scText.Lambda1(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.Lambda1(), scBinary.Lambda1(), 1e-5);
+  REQUIRE(sc.Lambda1() == Approx(scXml.Lambda1()).epsilon(1e-7));
+  REQUIRE(sc.Lambda1() == Approx(scText.Lambda1()).epsilon(1e-7));
+  REQUIRE(sc.Lambda1() == Approx(scBinary.Lambda1()).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(sc.Lambda2(), scXml.Lambda2(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.Lambda2(), scText.Lambda2(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.Lambda2(), scBinary.Lambda2(), 1e-5);
+  REQUIRE(sc.Lambda2() == Approx(scXml.Lambda2()).epsilon(1e-7));
+  REQUIRE(sc.Lambda2() == Approx(scText.Lambda2()).epsilon(1e-7));
+  REQUIRE(sc.Lambda2() == Approx(scBinary.Lambda2()).epsilon(1e-7));
 
-  BOOST_REQUIRE_EQUAL(sc.MaxIterations(), scXml.MaxIterations());
-  BOOST_REQUIRE_EQUAL(sc.MaxIterations(), scText.MaxIterations());
-  BOOST_REQUIRE_EQUAL(sc.MaxIterations(), scBinary.MaxIterations());
+  REQUIRE(sc.MaxIterations() == scXml.MaxIterations());
+  REQUIRE(sc.MaxIterations() == scText.MaxIterations());
+  REQUIRE(sc.MaxIterations() == scBinary.MaxIterations());
 
-  BOOST_REQUIRE_CLOSE(sc.ObjTolerance(), scXml.ObjTolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.ObjTolerance(), scText.ObjTolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.ObjTolerance(), scBinary.ObjTolerance(), 1e-5);
+  REQUIRE(sc.ObjTolerance() == Approx(scXml.ObjTolerance()).epsilon(1e-7));
+  REQUIRE(sc.ObjTolerance() == Approx(scText.ObjTolerance()).epsilon(1e-7));
+  REQUIRE(sc.ObjTolerance() == Approx(scBinary.ObjTolerance()).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scXml.NewtonTolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scText.NewtonTolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(sc.NewtonTolerance(), scBinary.NewtonTolerance(), 1e-5);
+  REQUIRE(sc.NewtonTolerance() ==
+      Approx(scXml.NewtonTolerance()).epsilon(1e-7));
+  REQUIRE(sc.NewtonTolerance() ==
+      Approx(scText.NewtonTolerance()).epsilon(1e-7));
+  REQUIRE(sc.NewtonTolerance() ==
+      Approx(scBinary.NewtonTolerance()).epsilon(1e-7));
 }
 
 /**
  * Test that SparseCoding::Train() returns finite final objective value.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingTrainReturnObjective)
+TEST_CASE("SparseCodingTrainReturnObjective", "[SparseCodingTest]")
 {
   const double tol = 1e-6;
 
@@ -210,7 +212,5 @@ BOOST_AUTO_TEST_CASE(SparseCodingTrainReturnObjective)
   SparseCoding sc(nAtoms, lambda1, 0.0, 0, 0.01, tol);
   double objVal = sc.Train(X);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
