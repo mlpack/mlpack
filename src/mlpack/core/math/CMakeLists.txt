@@ -10,6 +10,8 @@ set(SOURCES
   log_add.hpp
   log_add_impl.hpp
   make_alias.hpp
+  multiply_slices_impl.hpp
+  multiply_slices.hpp
   random.hpp
   random.cpp
   random_basis.hpp

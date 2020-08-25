@@ -909,7 +909,7 @@ TEST_CASE("ElishFunctionTest", "[ActivationFunctionsTest]")
                                         desiredDerivatives);
 }
 
-/** 
+/**
  * Basic test of the Soft Shrink function.
  */
 TEST_CASE("SoftShrinkFunctionTest", "[ActivationFunctionsTest]")

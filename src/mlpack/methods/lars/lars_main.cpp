@@ -21,13 +21,18 @@ using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::util;
 
-PROGRAM_INFO("LARS",
-    // Short description.
+// Program Name.
+BINDING_NAME("LARS");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of Least Angle Regression (Stagewise/laSso), also known"
     " as LARS.  This can train a LARS/LASSO/Elastic Net model and use that "
     "model or a pre-trained model to output regression predictions for a test "
-    "set.",
-    // Long description.
+    "set.");
+
+// Long description.
+BINDING_LONG_DESC(
     "An implementation of LARS: Least Angle Regression (Stagewise/laSso).  "
     "This is a stage-wise homotopy-based algorithm for L1-regularized linear "
     "regression (LASSO) and L1+L2-regularized linear regression (Elastic Net)."
@@ -70,8 +75,10 @@ PROGRAM_INFO("LARS",
     "trained model or the given input model.  Test points can be specified with"
     " the " + PRINT_PARAM_STRING("test") + " parameter.  Predicted responses "
     "to the test points can be saved with the " +
-    PRINT_PARAM_STRING("output_predictions") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output_predictions") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following command trains a model on the data " +
     PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
     " with lambda1 set to 0.4 and lambda2 set to 0 (so, LASSO is being "
@@ -86,12 +93,14 @@ PROGRAM_INFO("LARS",
     "and save those responses to " + PRINT_DATASET("test_predictions") + ": "
     "\n\n" +
     PRINT_CALL("lars", "input_model", "lasso_model", "test", "test",
-        "output_predictions", "test_predictions"),
-    SEE_ALSO("@linear_regression", "#linear_regression"),
-    SEE_ALSO("Least angle regression (pdf)",
-        "http://mlpack.org/papers/lars.pdf"),
-    SEE_ALSO("mlpack::regression::LARS C++ class documentation",
-        "@doxygen/classmlpack_1_1regression_1_1LARS.html"));
+        "output_predictions", "test_predictions"));
+
+// See also...
+BINDING_SEE_ALSO("@linear_regression", "#linear_regression");
+BINDING_SEE_ALSO("Least angle regression (pdf)",
+        "http://mlpack.org/papers/lars.pdf");
+BINDING_SEE_ALSO("mlpack::regression::LARS C++ class documentation",
+        "@doxygen/classmlpack_1_1regression_1_1LARS.html");
 
 PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_MATRIX_IN("responses", "Matrix of responses/observations (y).", "r");

@@ -71,6 +71,8 @@ set(SOURCES
   mean_pooling_impl.hpp
   minibatch_discrimination.hpp
   minibatch_discrimination_impl.hpp
+  multihead_attention_impl.hpp
+  multihead_attention.hpp
   multiply_constant.hpp
   multiply_constant_impl.hpp
   multiply_merge.hpp
@@ -81,6 +83,8 @@ set(SOURCES
   parametric_relu_impl.hpp
   pixel_shuffle.hpp
   pixel_shuffle_impl.hpp
+  positional_encoding.hpp
+  positional_encoding_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp
