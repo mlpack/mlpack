@@ -144,7 +144,7 @@ class SpatialDropout
   //! The number of pixels in each feature map.
   size_t inputSize;
 
-  //! If true dropout and scaling is disabled, see notes above.
+  //! If true dropout and scaling are disabled.
   bool deterministic;
 }; // class SpatialDropout
 
