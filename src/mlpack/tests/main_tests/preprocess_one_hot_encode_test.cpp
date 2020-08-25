@@ -91,7 +91,7 @@ TEST_CASE_METHOD(
 }
 
 /**
- * Test empty vector as input for dimesions.
+ * Test empty vector as input for dimensions.
  */
 TEST_CASE_METHOD(
     PreprocessOneHotEncodingTestFixture, "EmptyIndicesTest",
@@ -115,7 +115,7 @@ TEST_CASE_METHOD(
 }
 
 /**
- * Test for invalide dimension, larger than count of rows.
+ * Test for invalid dimension, larger than count of rows.
  */
 TEST_CASE_METHOD(
     PreprocessOneHotEncodingTestFixture, "InvalidDimensionTest",
@@ -130,7 +130,7 @@ TEST_CASE_METHOD(
 
   SetInputParam("input", dataset);
   SetInputParam<vector<int>>("dimensions", {10000});
-  // error since dimesnions are bigger that matrix
+  // Error since dimensions are bigger than matrix.
   Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;

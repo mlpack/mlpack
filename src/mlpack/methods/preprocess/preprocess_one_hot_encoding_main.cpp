@@ -19,11 +19,11 @@
 BINDING_NAME("One Hot Encoding");
 
 // Short description.
-BINDING_SHORT_DESC("A utility to do one hot encoding on features of dataset.");
+BINDING_SHORT_DESC("A utility to do one-hot encoding on features of dataset.");
 
 // Long description.
 BINDING_LONG_DESC(
-    "This utility takes a dataset and a vector of indices and does one hot "
+    "This utility takes a dataset and a vector of indices and does one-hot "
     "encoding of the respective features at those indices. Indices represent "
     "the IDs of the dimensions to be one-hot encoded."
     "\n\n"
@@ -48,11 +48,11 @@ BINDING_SEE_ALSO("One-hot encoding on Wikipedia",
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");
-PARAM_MATRIX_OUT("output", "Matrix to save one hot encoded features "
+PARAM_MATRIX_OUT("output", "Matrix to save one-hot encoded features "
     "data to.", "o");
 
 PARAM_VECTOR_IN_REQ(int, "dimensions", "Index of dimensions that"
-    "need to be one hot encoded.", "d");
+    "need to be one-hot encoded.", "d");
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -73,7 +73,7 @@ static void mlpackMain()
         return true;
       }, true, "dimensions must be greater than 0 "
       "and less than the number of dimensions");
-  for (size_t i = 0; i < indices.size(); i++)
+  for (size_t i = 0; i < indices.size(); ++i)
   {
     copyIndices[i] = (size_t)indices[i];
   }

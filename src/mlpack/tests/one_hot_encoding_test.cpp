@@ -59,7 +59,7 @@ TEST_CASE("OneHotEncodingSparseMatTest", "[OneHotEncodingTest]")
            "1 0;";
 
   matrix = matrix.t();
-  // Output matrix to save onehotencoding results.
+  // Output matrix to save one-hot encoding  results.
   arma::SpMat<size_t> output;
   arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
   data::OneHotEncoding(labels, output);
@@ -83,7 +83,7 @@ TEST_CASE("OneHotEncodingInputTest", "[OneHotEncodingTest]")
            "1 0 1 1 1 1 0 1;"
            "0 1 0 0 0 0 1 0;";
 
-  // Output matrix to save onehotencoding results.
+  // Output matrix to save one-hot encoding results.
   arma::Mat<int> output;
   arma::Col<size_t> indices("1");
   data::OneHotEncoding(input, indices, output);
