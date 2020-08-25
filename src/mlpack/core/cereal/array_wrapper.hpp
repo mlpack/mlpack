@@ -24,9 +24,8 @@ namespace cereal {
 template<class T>
 class ArrayWrapper
 {
-/* This file add make_array functionality to cereal
- * This functionality exist only in boost::serialization.
- * Most part of this code are copied from ArrayWrapper in boost::serialization
+/* 
+ * This file add make_array functionality to cereal
  */
  public:
   ArrayWrapper(T*& addr, std::size_t& size) :
@@ -34,7 +33,7 @@ class ArrayWrapper
       arraySize(size)
   {}
 
-  /* default implementation
+  /*
   * Cereal does not require to split member, it can do that internally
   * If this is the case we can not implement optimized version, since
   * the only possible one is optimized.
@@ -87,10 +86,9 @@ class ArrayWrapper
 
 template<class T, class S>
 inline
-ArrayWrapper< T > make_array(T*& t, S& s)
+ArrayWrapper<T> make_array(T*& t, S& s)
 {
-  ArrayWrapper< T > a(t, s);
-  return a;
+  return ArrayWrapper<T>(t, s);
 }
 
 } // namespace cereal
