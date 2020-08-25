@@ -115,7 +115,6 @@ void PixelShuffle<InputDataType, OutputDataType>::Backward(
         }
       }
     }
-
     g.col(n) = gImage;
   }
 }
