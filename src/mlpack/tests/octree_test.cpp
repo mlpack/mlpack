@@ -326,7 +326,7 @@ TEST_CASE("MoveConstructorTest", "[OctreeTest]")
 /**
  * Test serialization.
  */
-TEST_CASE("SerializationTest", "[OctreeTest]")
+TEST_CASE("OctreeSerializationTest", "[OctreeTest]")
 {
   // Use a small random dataset.
   arma::mat dataset(3, 500, arma::fill::randu);
