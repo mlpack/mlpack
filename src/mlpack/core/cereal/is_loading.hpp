@@ -28,29 +28,60 @@ namespace cereal {
 
 template<typename Archive>
 bool is_loading(
-    const typename boost::enable_if<std::is_same<Archive,
-        cereal::XMLInputArchive>>::type = 0,
-    const typename boost::enable_if<std::is_same<Archive,
-        cereal::JSONInputArchive>>::type = 0,
-    const typename boost::enable_if<std::is_same<Archive,
-        cereal::BinaryInputArchive>>::type = 0)
-    // const typename boost::enable_if<std::is_same<Archive,
-    //     cereal::XMLOutputArchive>>::type* = 0,
-    // const typename boost::enable_if<std::is_same<Archive,
-    //     cereal::JSONOutputArchive>>::type* = 0,
-    // const typename boost::enable_if<std::is_same<Archive,
-    //     cereal::BinaryOutputArchive>>::type* = 0)
+    const typename boost::enable_if<
+        std::is_same<Archive, cereal::XMLInputArchive>>::type* = 0)
 {
-  #if (CEREAL_VERSION_MAJOR > 1 || ( CEREAL_VERSION_MAJOR == 1 && CEREAL_VERSION_MINOR > 2) || (CEREAL_VERSION_MAJOR == 1 &&(CEREAL_VERSION_MINOR == 2 && CEREAL_VERSION_PATCH >= 2)))
+  // #if (CEREAL_VERSION_MAJOR > 1 || ( CEREAL_VERSION_MAJOR == 1 && CEREAL_VERSION_MINOR > 2) || (CEREAL_VERSION_MAJOR == 1 &&(CEREAL_VERSION_MINOR == 2 && CEREAL_VERSION_PATCH >= 2)))
 
-    return Archive::is_loading::value;
-  #else  
-    // Archive::is_loading is not implemented yet, so we can use std::is_same<>
-    // to check if it is a loading archive.
-    return std::is_same<Archive, cereal::BinaryInputArchive>::value ||
-        std::is_same<Archive, cereal::JSONInputArchive>::value ||
-        std::is_same<Archive, cereal::XMLInputArchive>::value;
-  #endif 
+  //   return Archive::is_loading::value;
+  // #else  
+  //   // Archive::is_loading is not implemented yet, so we can use std::is_same<>
+  //   // to check if it is a loading archive.
+  //   return std::is_same<Archive, cereal::BinaryInputArchive>::value ||
+  //       std::is_same<Archive, cereal::JSONInputArchive>::value ||
+  //       std::is_same<Archive, cereal::XMLInputArchive>::value;
+  // #endif
+  return true; 
+}
+
+template<typename Archive>
+bool is_loading(
+    const typename boost::enable_if<
+        std::is_same<Archive, cereal::JSONInputArchive>>::type* = 0)
+{
+  return true;
+}
+
+template<typename Archive>
+bool is_loading(
+    const typename boost::enable_if<
+        std::is_same<Archive, cereal::BinaryInputArchive>>::type* = 0)
+{
+  return true;
+}
+
+template<typename Archive>
+bool is_loading(
+    const typename boost::disable_if<std::is_same<Archive,
+        cereal::XMLOutputArchive>>::type* = 0)
+{
+  return false;
+}
+
+template<typename Archive>
+bool is_loading(
+  const typename boost::disable_if<std::is_same<Archive,
+        cereal::JSONOutputArchive>>::type* = 0)
+{
+  return true;
+}
+
+template<typename Archive>
+bool is_loading(
+   const typename boost::disable_if<std::is_same<Archive,
+        cereal::BinaryOutputArchive>>::type* = 0)
+{
+  return false;
 }
 
 } // namespace cereal
