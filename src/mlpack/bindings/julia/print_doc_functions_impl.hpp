@@ -76,13 +76,15 @@ inline std::string PrintValue(const std::vector<T>& value, bool quotes)
 {
   std::ostringstream oss;
   if (quotes)
-    oss << "'";
+    oss << "`";
+  oss << "[";
   if (value.size() > 0)
   {
     oss << value[0];
     for (size_t i = 1; i < value.size(); ++i)
       oss << ", " << value[i];
   }
+  oss << "]";
   if (quotes)
     oss << "'";
   return oss.str();
