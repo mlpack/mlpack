@@ -22,10 +22,24 @@
 #include <cereal/archives/json.hpp>
 #include <cereal/version.hpp>
 
+#include <boost/core/enable_if.hpp>
+
 namespace cereal {
 
 template<typename Archive>
-bool is_loading()
+bool is_loading(
+    const typename boost::enable_if<std::is_same<Archive,
+        cereal::XMLInputArchive>>::type = 0,
+    const typename boost::enable_if<std::is_same<Archive,
+        cereal::JSONInputArchive>>::type = 0,
+    const typename boost::enable_if<std::is_same<Archive,
+        cereal::BinaryInputArchive>>::type = 0)
+    // const typename boost::enable_if<std::is_same<Archive,
+    //     cereal::XMLOutputArchive>>::type* = 0,
+    // const typename boost::enable_if<std::is_same<Archive,
+    //     cereal::JSONOutputArchive>>::type* = 0,
+    // const typename boost::enable_if<std::is_same<Archive,
+    //     cereal::BinaryOutputArchive>>::type* = 0)
 {
   #if (CEREAL_VERSION_MAJOR > 1 || ( CEREAL_VERSION_MAJOR == 1 && CEREAL_VERSION_MINOR > 2) || (CEREAL_VERSION_MAJOR == 1 &&(CEREAL_VERSION_MINOR == 2 && CEREAL_VERSION_PATCH >= 2)))
 
