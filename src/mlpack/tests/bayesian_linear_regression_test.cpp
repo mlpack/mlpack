@@ -14,12 +14,10 @@
 #include <mlpack/methods/bayesian_linear_regression/bayesian_linear_regression.hpp>
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include "catch.hpp"
 
 using namespace mlpack::regression;
 using namespace mlpack::data;
-
-BOOST_AUTO_TEST_SUITE(BayesianLinearRegressionTest);
 
 void GenerateProblem(arma::mat& matX,
                      arma::rowvec& y,
@@ -35,7 +33,8 @@ void GenerateProblem(arma::mat& matX,
 
 // Ensure that predictions are close enough to the target
 // for a free noise dataset.
-BOOST_AUTO_TEST_CASE(BayesianLinearRegressionRegressionTest)
+TEST_CASE("BayesianLinearRegressionRegressionTest",
+          "[BayesianLinearRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y, predictions;
@@ -49,14 +48,14 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionRegressionTest)
 
   // Check the predictions are close enough to the targets in a free noise case.
   for (size_t i = 0; i < y.size(); i++)
-    BOOST_REQUIRE_CLOSE(predictions[i], y[i], 1e-6);
+    REQUIRE(predictions[i] == Approx(y[i]).epsilon(1e-8));
 
   // Check that the estimated variance is zero.
-  BOOST_REQUIRE_SMALL(estimator.Variance(), 1e-6);
+  REQUIRE(estimator.Variance() == Approx(0.0).margin(1e-5));
 }
 
 // Verify centerData and scaleData equal false do not affect the solution.
-BOOST_AUTO_TEST_CASE(TestCenter0ScaleData0)
+TEST_CASE("TestCenter0ScaleData0", "[BayesianLinearRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y;
@@ -69,17 +68,17 @@ BOOST_AUTO_TEST_CASE(TestCenter0ScaleData0)
   estimator.Train(matX, y);
 
   // Check dataOffset is empty.
-  BOOST_REQUIRE(estimator.DataOffset().n_elem == 0);
+  REQUIRE(estimator.DataOffset().n_elem == 0);
 
   // To be neutral responseOffset must be 0.
-  BOOST_REQUIRE(estimator.ResponsesOffset() == 0);
+  REQUIRE(estimator.ResponsesOffset() == 0);
 
   // Check dataScale is empty.
-  BOOST_REQUIRE(estimator.DataScale().n_elem == 0);
+  REQUIRE(estimator.DataScale().n_elem == 0);
 }
 
 // Verify that centering and normalization are correct.
-BOOST_AUTO_TEST_CASE(TestCenterDataTrueScaleDataTrue)
+TEST_CASE("TestCenterDataTrueScaleDataTrue", "[BayesianLinearRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y;
@@ -93,14 +92,16 @@ BOOST_AUTO_TEST_CASE(TestCenterDataTrueScaleDataTrue)
   arma::colvec xStd = arma::stddev(matX, 0, 1);
   double yMean = arma::mean(y);
 
-  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataOffset() - xMean)), 1e-6);
-  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataScale() - xStd)), 1e-6);
-  BOOST_REQUIRE_CLOSE(estimator.ResponsesOffset(), yMean, 1e-6);
+  REQUIRE((double) abs(sum(estimator.DataOffset() - xMean)) ==
+      Approx(0.0).margin(1e-6));
+  REQUIRE((double) abs(sum(estimator.DataScale() - xStd)) ==
+      Approx(0.0).margin(1e-6));
+  REQUIRE(estimator.ResponsesOffset() == Approx(yMean).epsilon(1e-8));
 }
 
 // Make sure a model with center ans scale option set is different than a model
 // without it set.
-BOOST_AUTO_TEST_CASE(OptionsMakeModelDifferent)
+TEST_CASE("OptionsMakeModelDifferent", "[BayesianLinearRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y;
@@ -115,13 +116,15 @@ BOOST_AUTO_TEST_CASE(OptionsMakeModelDifferent)
   blrCS.Train(matX, y);
 
   for (size_t i = 0; i < nDims; ++i)
-    BOOST_REQUIRE((blr.Omega()(i) != blrC.Omega()(i)) &&
-                  (blr.Omega()(i) != blrCS.Omega()(i)) &&
-                  (blrC.Omega()(i) != blrCS.Omega()(i)));
+  {
+    REQUIRE(blr.Omega()(i) != blrC.Omega()(i));
+    REQUIRE(blr.Omega()(i) != blrCS.Omega()(i));
+    REQUIRE(blrC.Omega()(i) != blrCS.Omega()(i));
+  }
 }
 
 // Check that Train() does not fail with two colinear vectors.
-BOOST_AUTO_TEST_CASE(SingularMatix)
+TEST_CASE("SingularMatix", "[BayesianLinearRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y;
@@ -136,7 +139,7 @@ BOOST_AUTO_TEST_CASE(SingularMatix)
 
 // Check that std are well computed/coherent. At least higher than the
 // estimated predictive variance.
-BOOST_AUTO_TEST_CASE(PredictiveUncertainties)
+TEST_CASE("PredictiveUncertainties", "[BayesianLinearRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y;
@@ -151,14 +154,14 @@ BOOST_AUTO_TEST_CASE(PredictiveUncertainties)
   const double estStd = sqrt(estimator.Variance());
 
   for (size_t i = 0; i < matX.n_cols; i++)
-    BOOST_REQUIRE_GT(std[i], estStd);
+    REQUIRE(std[i] > estStd);
 
   // Check that the estimated variance is close to 1.
-  BOOST_REQUIRE_CLOSE(estStd, 1, 30);
+  REQUIRE(estStd == Approx(1).epsilon(0.3));
 }
 
 // Check the solution is equal to the classical ridge.
-BOOST_AUTO_TEST_CASE(EqualtoRidge)
+TEST_CASE("EqualtoRidge", "[BayesianLinearRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y, blrPred, ridgePred;
@@ -182,13 +185,11 @@ BOOST_AUTO_TEST_CASE(EqualtoRidge)
 
     // Check the predictions are close enough between ridge and our blr.
     for (size_t i = 0; i < y.size(); ++i)
-      BOOST_REQUIRE_CLOSE(blrPred[i], ridgePred[i], 1);
+      REQUIRE(blrPred[i] == Approx(ridgePred[i]).epsilon(1));
 
     // Exit once a test case has completed.
     break;
   }
 
-  BOOST_REQUIRE_LT(trial, 3);
+  REQUIRE(trial <= 3);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

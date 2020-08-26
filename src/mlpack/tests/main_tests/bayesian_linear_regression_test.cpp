@@ -19,8 +19,8 @@ static const std::string testName = "BayesianLinearRegression";
 #include "test_helper.hpp"
 #include <mlpack/methods/bayesian_linear_regression/bayesian_linear_regression_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -41,12 +41,12 @@ struct BRTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(BayesianLinearRegressionMainTest, BRTestFixture);
-
 /**
  * Check the center and scale options.
  */
-BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
+TEST_CASE_METHOD(BRTestFixture,
+                 "BRCenter0Scale0",
+                 "[BayesianLinearRegressionMainTest][BindingTests]")
 {
   int n = 50, m = 4;
   arma::mat matX = arma::randu<arma::mat>(m, n);
@@ -62,14 +62,16 @@ BOOST_AUTO_TEST_CASE(BRCenter0Scale0)
   BayesianLinearRegression* estimator =
       IO::GetParam<BayesianLinearRegression*>("output_model");
 
-  BOOST_REQUIRE(estimator->DataOffset().n_elem == 0);
-  BOOST_REQUIRE(estimator->DataScale().n_elem == 0);
+  REQUIRE(estimator->DataOffset().n_elem == 0);
+  REQUIRE(estimator->DataScale().n_elem == 0);
 }
 
 /**
  * Check predictions of saved model and in code model are equal.
  */
-BOOST_AUTO_TEST_CASE(BayesianLinearRegressionSavedEqualCode)
+TEST_CASE_METHOD(BRTestFixture,
+                 "BayesianLinearRegressionSavedEqualCode",
+                 "[BayesianLinearRegressionMainTest][BindingTests]")
 {
   int n = 10, m = 4;
   arma::mat matX = arma::randu<arma::mat>(m, n);
@@ -106,7 +108,9 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionSavedEqualCode)
  * Check a crash happens if neither input or input_model are specified.
  * Check a crash happens if both input and input_model are specified.
  */
-BOOST_AUTO_TEST_CASE(CheckParamsPassed)
+TEST_CASE_METHOD(BRTestFixture,
+                 "CheckParamsPassed",
+                 "[BayesianLinearRegressionMainTest][BindingTests]")
 {
   int n = 10, m = 4;
   arma::mat matX = arma::randu<arma::mat>(m, n);
@@ -124,7 +128,9 @@ BOOST_AUTO_TEST_CASE(CheckParamsPassed)
   // is specified.
   SetInputParam("responses", std::move(y));
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 
   // Continue only with input passed.
   SetInputParam("input", std::move(matX));
@@ -137,7 +143,7 @@ BOOST_AUTO_TEST_CASE(CheckParamsPassed)
                 IO::GetParam<BayesianLinearRegression*>("output_model"));
   SetInputParam("test", std::move(matXtest));
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 }
-
-BOOST_AUTO_TEST_SUITE_END();
