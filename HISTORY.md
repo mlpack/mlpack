@@ -1,6 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Added Spatial Dropout layer. (#2564)
+  * Added Spatial Dropout layer (#2564).
 
   * Force CMake to show error when it didn't find Python/modules (#2568).
 

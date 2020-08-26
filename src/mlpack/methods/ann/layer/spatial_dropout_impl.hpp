@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_SPATIAL_DROPOUT_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_SPATIAL_DROPOUT_IMPL_HPP
 
-// In case it hasn't yet been included.
+// In case it hasn't been included yet.
 #include "spatial_dropout.hpp"
 
 namespace mlpack {
