@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Pixel Shuffle layer (#2563).
+
   * Force CMake to show error when it didn't find Python/modules (#2568).
 
   * Refactor `ProgramInfo()` to separate out all the different
