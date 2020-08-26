@@ -7,6 +7,17 @@ macro (not_found_return message)
   return()
 endmacro ()
 
+macro (post_python_setup)
+  # Detect whether the user passed BUILD_PYTHON_BINDINGS in order to determine if
+  # we should fail if Python isn't found.
+  if (BUILD_PYTHON_BINDINGS)
+    set(FORCE_BUILD_PYTHON_BINDINGS ON)
+  else()
+    set(FORCE_BUILD_PYTHON_BINDINGS OFF)
+  endif()
+  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
+endmacro ()
+
 # If we are not supposed to make Python bindings, define the macro so it does
 # nothing and leave this file.
 if (NOT BUILD_PYTHON_BINDINGS)

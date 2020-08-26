@@ -29,38 +29,6 @@ else ()
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
 
-# Detect whether the user passed BUILD_PYTHON_BINDINGS in order to determine if
-# we should fail if Python isn't found.
-if (BUILD_PYTHON_BINDINGS)
-  set(FORCE_BUILD_PYTHON_BINDINGS ON)
-else()
-  set(FORCE_BUILD_PYTHON_BINDINGS OFF)
-endif()
-option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
-
-# Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
-# we should fail if Julia isn't found.
-if (BUILD_JULIA_BINDINGS)
-  set(FORCE_BUILD_JULIA_BINDINGS ON)
-else()
-  set(FORCE_BUILD_JULIA_BINDINGS OFF)
-endif()
-option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
-
-# Detect whether the user passed BUILD_GO_BINDINGS in order to determine if
-# we should fail if Go isn't found.
-if (BUILD_GO_BINDINGS)
-  set(FORCE_BUILD_GO_BINDINGS ON)
-else()
-  set(FORCE_BUILD_GO_BINDINGS OFF)
-endif()
-option(BUILD_GO_BINDINGS "Build Go bindings." ON)
-
-# If building Go bindings then build go shared libraries.    
-if (BUILD_GO_BINDINGS)
-  set(BUILD_GO_SHLIB ON)
-endif()
-
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
@@ -586,6 +554,10 @@ endif ()
 
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)
+
+post_python_setup()
+post_julia_setup()
+post_go_setup()
 
 # If we need to keep gitversion.hpp up to date, then make sure the mlpack target
 # depends on it.

@@ -7,6 +7,17 @@ macro (not_found_return message)
   return()
 endmacro ()
 
+macro (post_julia_setup)
+  # Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
+  # we should fail if Julia isn't found.
+  if (BUILD_JULIA_BINDINGS)
+    set(FORCE_BUILD_JULIA_BINDINGS ON)
+  else()
+    set(FORCE_BUILD_JULIA_BINDINGS OFF)
+  endif()
+  option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
+endmacro ()
+
 # If we are not supposed to make Julia bindings, define the macro so it does
 # nothing and leave this file.
 if (NOT BUILD_JULIA_BINDINGS)

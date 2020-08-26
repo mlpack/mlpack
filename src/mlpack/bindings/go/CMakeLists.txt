@@ -9,6 +9,22 @@ macro (not_found_return message)
   endif()
 endmacro ()
 
+macro (post_go_setup)
+  # Detect whether the user passed BUILD_GO_BINDINGS in order to determine if
+  # we should fail if Go isn't found.
+  if (BUILD_GO_BINDINGS)
+    set(FORCE_BUILD_GO_BINDINGS ON)
+  else()
+    set(FORCE_BUILD_GO_BINDINGS OFF)
+  endif()
+  option(BUILD_GO_BINDINGS "Build Go bindings." ON)
+
+  # If building Go bindings then build go shared libraries.
+  if (BUILD_GO_BINDINGS)
+    set(BUILD_GO_SHLIB ON)
+  endif()
+endmacro ()
+
 # If we are not supposed to make Go bindings, define the macro so it does
 # nothing and leave this file.
 if (NOT BUILD_GO_BINDINGS)
@@ -177,7 +193,7 @@ set_property(GLOBAL PROPERTY GO_MODELS "")
 macro (add_go_binding name)
 if (BUILD_GO_BINDINGS)
 
-  # Include all .h that define model to models.go. 
+  # Include all .h that define model to models.go.
   file(READ "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp" MAIN_FILE)
   if (MAIN_FILE MATCHES "PARAM_MODEL")
     file(APPEND
