@@ -25,12 +25,14 @@ BOOST_AUTO_TEST_CASE(SingleLayerDBNClassificationTest)
   int hiddenLayerSize = 256;
   size_t batchSize = 10;
   size_t numEpoches = 30;
+
   arma::mat trainData, testData, dataset;
   arma::mat trainLabelsTemp, testLabelsTemp;
   trainData.load("digits_train.arm");
   testData.load("digits_test.arm");
   trainLabelsTemp.load("digits_train_label.arm");
   testLabelsTemp.load("digits_test_label.arm");
+
   arma::Row<size_t> trainLabels = arma::zeros<arma::Row<size_t>>(1,
       trainLabelsTemp.n_cols);
   arma::Row<size_t> testLabels = arma::zeros<arma::Row<size_t>>(1,
@@ -60,11 +62,13 @@ BOOST_AUTO_TEST_CASE(SingleLayerDBNClassificationTest)
   size_t numRBMIterations = trainData.n_cols * numEpoches;
   numRBMIterations /= batchSize;
   ens::StandardSGD msgd(0.03, batchSize, numRBMIterations, 0, true);
+
   // Test the reset function.
   double objVal = model.Train(msgd);
 
   // Test that objective value returned by DBN::Train() is finite.
   BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+
   model.Forward(trainData, output);
   XRbm = output;
 
@@ -77,6 +81,7 @@ BOOST_AUTO_TEST_CASE(SingleLayerDBNClassificationTest)
 
   // Use an instantiated optimizer for the training.
   L_BFGS optimizer(numBasis, numIterations);
+
   SoftmaxRegression regressor(trainData, trainLabels,
       numClasses, 0.001, false, optimizer);
 
@@ -84,6 +89,7 @@ BOOST_AUTO_TEST_CASE(SingleLayerDBNClassificationTest)
     testLabels);
 
   L_BFGS rbmOptimizer(numBasis, numIterations);
+
   SoftmaxRegression rbmRegressor(XRbm, trainLabels, numClasses,
         0.001, false, rbmOptimizer);
   double rbmClassificationAccuracy = rbmRegressor.ComputeAccuracy(YRbm,
