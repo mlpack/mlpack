@@ -46,7 +46,6 @@ add_executable(mlpack_test
   mlpack_test.cpp
   mock_categorical_data.hpp
   nbc_test.cpp
-  nca_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
   octree_test.cpp
@@ -107,7 +106,6 @@ add_executable(mlpack_test
   main_tests/lsh_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
-  main_tests/nca_test.cpp
   main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
@@ -147,6 +145,7 @@ add_executable(mlpack_catch_test
   linear_regression_test.cpp
   load_save_test.cpp
   main.cpp
+  nca_test.cpp
   quic_svd_test.cpp
   randomized_svd_test.cpp
   regularized_svd_test.cpp
@@ -171,6 +170,7 @@ add_executable(mlpack_catch_test
   main_tests/kfn_test.cpp
   main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/nca_test.cpp
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_scale_test.cpp
   main_tests/preprocess_split_test.cpp
