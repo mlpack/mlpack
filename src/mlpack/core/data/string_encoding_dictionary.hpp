@@ -219,7 +219,7 @@ class StringEncodingDictionary<boost::string_view>
 
     ar & CEREAL_NVP(numTokens);
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       tokens.resize(numTokens);
 
