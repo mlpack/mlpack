@@ -100,7 +100,8 @@ TEST_CASE_METHOD(PCATestFixture, "PCANoVarRetainTest", "[PCAMainTest]")
 /**
  * Check that we can't specify an invalid new dimensionality.
  */
-TEST_CASE_METHOD(PCATestFixture, "PCATooHighNewDimensionalityTest", "[PCAMainTest]")
+TEST_CASE_METHOD(PCATestFixture, "PCATooHighNewDimensionalityTest",
+        "[PCAMainTest]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 

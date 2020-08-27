@@ -325,11 +325,11 @@ TEST_CASE("PCAScalingTest", "[PCATest]")
   REQUIRE(std::abs(eigvec(2, 1)) == Approx(1.0).epsilon(0.0035));
 
   // The third component should have the same absolute value characteristics as
-  // the first (plus 20% tolerance).
+  // the first (plus tolerance).
   REQUIRE(std::abs(eigvec(0, 0)) == Approx(sqrt(2) / 2).epsilon(0.0035));
   REQUIRE(std::abs(eigvec(1, 0)) == Approx(sqrt(2) / 2).epsilon(0.0035));
   REQUIRE(eigvec(2, 0) == Approx(0.0).margin(0.1)); // Large tolerance for noise.
 
   // The eigenvalues should sum to three.
-  REQUIRE(accu(eigval) == Approx(3.0).epsilon(0.1)); // 10% tolerance.
+  REQUIRE(accu(eigval) == Approx(3.0).epsilon(0.001));
 }
