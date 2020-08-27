@@ -20,9 +20,6 @@
 #include <cereal/archives/portable_binary.hpp>
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/json.hpp>
-#include <cereal/version.hpp>
-
-#include <boost/core/enable_if.hpp>
 
 namespace cereal {
 
