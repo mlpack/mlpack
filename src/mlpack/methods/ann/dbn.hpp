@@ -26,6 +26,22 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of a deep belief network.
  *
+ * This class can be used to stack multiple RBM and train them layer by using
+ * greedy approach.
+ *
+ * For more information, refer the following paper.
+ *
+ * @code
+ * @article{He15,
+ *   author    = {Geoffrey E. Hinton, Simon Osindero},
+ *   title     = {A fast learning algorithm for deep belief nets},
+ *   year      = {2006},
+ *   url       = {http://www.cs.toronto.edu/~hinton/absps/fastnc.pdf},
+ *   PMID    = {16764513},
+ * }
+ * @endcode
+ *
+ *
  * @tparam InputType The input data type used in the network.
  * @tparam OutputType The output layer type used in the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
@@ -88,7 +104,8 @@ class DBN
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback Functions.
-   * @param layerNumber The number of layer which you want to train.
+   * @param layerNumber The number of layer which you want to train range from 0 
+   *      to network.size() - 1.
    * @param optimizer Instantiated optimizer used to train the model.
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
