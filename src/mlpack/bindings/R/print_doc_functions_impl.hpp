@@ -228,9 +228,9 @@ std::string ProgramCall(const bool markdown,
   }
 
   if (oss.str() == "")
-    return "\\donttest{\n" + util::HyphenateString(call, 2) + "\n}";
+    return "\\dontrun{\n" + util::HyphenateString(call, 2) + "\n}";
   else
-    return "\\donttest{\n" + util::HyphenateString(call, 2) + "\n" + oss.str() +
+    return "\\dontrun{\n" + util::HyphenateString(call, 2) + "\n" + oss.str() +
            "\n}";
 }
 

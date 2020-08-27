@@ -74,7 +74,6 @@ jobs:
       R_CHECK_ARGS: "--no-build-vignettes"
       _R_CHECK_FORCE_SUGGESTS: 0
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      _R_CHECK_DONTTEST_EXAMPLES_: false
 
     steps:
       - uses: actions/download-artifact@v2

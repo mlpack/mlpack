@@ -127,7 +127,7 @@ void PrintR(const util::BindingDetails& doc,
     {
       size_t splitpos = 0;
       // Find where example starts.
-      splitpos = str.find("\n\\donttest{", pos) - 1;
+      splitpos = str.find("\n\\dontrun{", pos) - 1;
       // If no example left, then print all the comments that are left.
       if (splitpos == std::string::npos || splitpos > str.length())
       {
