@@ -265,7 +265,6 @@ class LSHSearch
    * Serialize the LSH model.
    *
    * @param ar Archive to serialize to.
-   * @param version Version number.
    */
   template<typename Archive>
   void serialize(Archive& ar);
