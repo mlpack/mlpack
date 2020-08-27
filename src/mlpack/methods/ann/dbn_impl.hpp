@@ -94,7 +94,7 @@ double DBN<InputType, OutputType, InitializationRuleType>::Train(
     CallbackTypes&&... callbacks)
 {
   double var;
-  if (layerNumber > network.size())
+  if (layerNumber >= network.size())
   {
     Log::Warn << " LayerNumber is greater than network size";
     return 0;
