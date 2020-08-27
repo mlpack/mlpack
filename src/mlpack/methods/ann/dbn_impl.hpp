@@ -135,6 +135,9 @@ template<typename Archive>
 void DBN<InputType, OutputType, InitializationRuleType>::serialize(
     Archive& ar, const unsigned int version)
 {
+  ar & BOOST_SERIALIZATION_NVP(predictors);
+  ar & BOOST_SERIALIZATION_NVP(results);
+  ar & BOOST_SERIALIZATION_NVP(network);
 }
 
 } // namespace ann
