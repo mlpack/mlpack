@@ -211,7 +211,7 @@ void CFModel::serialize(Archive& ar)
   ar & CEREAL_NVP(version);
 
   // This should never happen, but just in case, be clean with memory.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     boost::apply_visitor(DeleteVisitor(), cf);
 
   ar & CEREAL_VARIANT_POINTER(cf);

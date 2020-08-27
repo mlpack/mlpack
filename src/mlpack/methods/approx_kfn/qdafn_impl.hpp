@@ -192,7 +192,7 @@ void QDAFN<MatType>::serialize(Archive& ar)
   ar & CEREAL_NVP(projections);
   ar & CEREAL_NVP(sIndices);
   ar & CEREAL_NVP(sValues);
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     candidateSet.clear();
   ar & CEREAL_NVP(candidateSet);
 }

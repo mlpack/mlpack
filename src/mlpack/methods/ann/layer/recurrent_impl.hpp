@@ -262,7 +262,7 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
   ar & CEREAL_NVP(version);
 
   // Clean up memory, if we are loading.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // Clear old things, if needed.
     boost::apply_visitor(DeleteVisitor(), recurrentModule);
@@ -279,7 +279,7 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
   ar & CEREAL_NVP(ownsLayer);
 
   // Set up the network.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     initialModule = new Sequential<>();
     mergeModule = new AddMerge<>(false, false, false);

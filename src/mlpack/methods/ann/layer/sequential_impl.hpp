@@ -234,7 +234,7 @@ void Sequential<
   ar & CEREAL_NVP(version);
 
   // If loading, delete the old layers.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (LayerTypes<CustomLayers...>& layer : network)
     {
@@ -246,7 +246,7 @@ void Sequential<
   ar & CEREAL_VECTOR_VARIANT_POINTER(network);
 
   ar & CEREAL_NVP(ownsLayers);
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     ownsLayers = !model;
 }
 

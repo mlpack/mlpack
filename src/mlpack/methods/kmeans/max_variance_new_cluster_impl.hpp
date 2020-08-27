@@ -106,7 +106,7 @@ void MaxVarianceNewCluster::serialize(Archive& /* ar */)
   // a different clustering, probably).  So there is no need to store anything,
   // and if we are loading, we just reset the assignments array so
   // precalculation will happen next time EmptyCluster() is called.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     assignments.set_size(0);
 }
 

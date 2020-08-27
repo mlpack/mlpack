@@ -28,7 +28,7 @@ void LARS::serialize(Archive& ar)
   ar & CEREAL_NVP(version);
 
   // If we're loading, we have to use the internal storage.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     matGram = &matGramInternal;
     ar(CEREAL_NVP(matGramInternal));

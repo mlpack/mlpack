@@ -558,7 +558,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
   ar & CEREAL_NVP(targetSize);
   ar & CEREAL_NVP(reset);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     std::for_each(network.begin(), network.end(),
         boost::apply_visitor(deleteVisitor));
@@ -568,7 +568,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
   ar & CEREAL_VECTOR_VARIANT_POINTER(network);
 
   // If we are loading, we need to initialize the weights.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     size_t offset = 0;
     for (LayerTypes<CustomLayers...>& layer : network)

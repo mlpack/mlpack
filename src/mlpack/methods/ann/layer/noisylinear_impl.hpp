@@ -139,7 +139,7 @@ void NoisyLinear<InputDataType, OutputDataType>::serialize(
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     weights.set_size((outSize * inSize + outSize) * 2, 1);
 }
 

@@ -265,7 +265,7 @@ void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar)
   ar & CEREAL_NVP(alpha);
 
   // Now serialize each weak learner.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     wl.clear();
     wl.resize(alpha.size());

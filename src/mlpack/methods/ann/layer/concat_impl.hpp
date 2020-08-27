@@ -280,7 +280,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::serialize(
   if (model)
   {
     // Clear memory first, if needed.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       std::for_each(network.begin(), network.end(),
           boost::apply_visitor(deleteVisitor));

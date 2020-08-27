@@ -430,7 +430,7 @@ void AtrousConvolution<
   ar & CEREAL_NVP(strideHeight);
 
   // These are now stored in the padding layer.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     size_t padWLeft, padWRight, padHBottom, padHTop;
     ar & CEREAL_NVP(padWLeft);
@@ -447,7 +447,7 @@ void AtrousConvolution<
   ar & CEREAL_NVP(dilationHeight);
   ar & CEREAL_NVP(padding);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
         1);

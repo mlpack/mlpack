@@ -553,7 +553,7 @@ void KDEModel::serialize(Archive& ar)
   ar & CEREAL_NVP(mcEntryCoef);
   ar & CEREAL_NVP(mcBreakCoef);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     monteCarlo = KDEDefaultParams::monteCarlo;
     mcProb = KDEDefaultParams::mcProb;
@@ -562,7 +562,7 @@ void KDEModel::serialize(Archive& ar)
     mcBreakCoef = KDEDefaultParams::mcBreakCoef;
   }
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     boost::apply_visitor(DeleteVisitor(), kdeModel);
 
   ar & CEREAL_VARIANT_POINTER(kdeModel);

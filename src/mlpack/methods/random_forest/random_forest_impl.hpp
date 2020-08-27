@@ -427,7 +427,7 @@ void RandomForest<
   ar & CEREAL_NVP(version);
 
   size_t numTrees;
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     trees.clear();
   else
     numTrees = trees.size();
@@ -435,7 +435,7 @@ void RandomForest<
   ar & CEREAL_NVP(numTrees);
 
   // Allocate space if needed.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     trees.resize(numTrees);
 
   ar & CEREAL_NVP(trees);

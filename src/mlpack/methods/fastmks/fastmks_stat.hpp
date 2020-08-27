@@ -106,7 +106,7 @@ class FastMKSStat
     ar & CEREAL_NVP(selfKernel);
 
     // Void out last kernel information on load.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       lastKernel = 0.0;
       lastKernelNode = NULL;

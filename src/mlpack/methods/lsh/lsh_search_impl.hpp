@@ -1049,7 +1049,7 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar)
   ar & CEREAL_NVP(numTables);
 
   // Delete existing projections, if necessary.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     projections.reset();
 
   ar & CEREAL_NVP(projections);
@@ -1065,7 +1065,7 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar)
   ar & CEREAL_NVP(tables);
 
   // Set size of second hash table if needed.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     secondHashTable.clear();
     secondHashTable.resize(tables);

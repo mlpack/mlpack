@@ -99,7 +99,7 @@ class AdaBoostModel
   template<typename Archive>
   void serialize(Archive& ar)
   {
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (dsBoost)
         delete dsBoost;

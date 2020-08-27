@@ -139,7 +139,7 @@ void FastMKSModel::serialize(Archive& ar)
 
   ar & CEREAL_NVP(kernelType);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // Clean memory.
     if (linear)

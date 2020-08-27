@@ -1011,7 +1011,7 @@ void DTree<MatType, TagType>::serialize(Archive& ar)
   ar & CEREAL_NVP(bucketTag);
   ar & CEREAL_NVP(alphaUpper);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
       delete left;
@@ -1039,7 +1039,7 @@ void DTree<MatType, TagType>::serialize(Archive& ar)
     ar & CEREAL_NVP(minVals);
 
     // This is added in order to reduce (dramatically!) the model file size.
-    if (Archive::is_loading::value && left && right)
+    if (cereal::is_loading<Archive>() && left && right)
       FillMinMax(minVals, maxVals);
   }
 }

@@ -169,7 +169,7 @@ class HoeffdingTreeModel
   void serialize(Archive& ar)
   {
     // Clear memory if needed.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       delete giniHoeffdingTree;
       delete giniBinaryTree;

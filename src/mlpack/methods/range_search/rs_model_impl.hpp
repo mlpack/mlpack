@@ -459,7 +459,7 @@ void RSModel::serialize(Archive& ar)
   ar(CEREAL_NVP(q));
 
   // This should never happen, but just in case...
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     boost::apply_visitor(DeleteVisitor(), rSearch);
 
   // We'll only need to serialize one of the model objects, based on the type.

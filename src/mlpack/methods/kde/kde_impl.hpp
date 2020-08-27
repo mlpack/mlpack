@@ -728,7 +728,7 @@ serialize(Archive& ar)
   ar & CEREAL_NVP(mcBreakCoef);
 
   // If we are loading, clean up memory if necessary.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (ownsReferenceTree && referenceTree)
     {

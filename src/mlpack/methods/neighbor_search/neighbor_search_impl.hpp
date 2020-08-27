@@ -960,7 +960,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
   if (searchMode == NAIVE_MODE)
   {
     // Delete the current reference set, if necessary and if we are loading.
-    if (Archive::is_loading::value && referenceSet)
+    if (cereal::is_loading<Archive>() && referenceSet)
     {
       delete referenceSet;
     }
@@ -969,7 +969,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
     ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (referenceTree)
         delete referenceTree;
@@ -981,7 +981,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
   else
   {
     // Delete the current reference tree, if necessary and if we are loading.
-    if (Archive::is_loading::value && referenceTree)
+    if (cereal::is_loading<Archive>() && referenceTree)
     {
       delete referenceTree;
     }
@@ -991,7 +991,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       referenceSet = &referenceTree->Dataset();
       metric = referenceTree->Metric(); // Get the metric from the tree.
@@ -999,7 +999,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
   }
 
   // Reset base cases and scores.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     baseCases = 0;
     scores = 0;

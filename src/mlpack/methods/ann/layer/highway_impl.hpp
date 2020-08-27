@@ -222,7 +222,7 @@ void Highway<InputDataType, OutputDataType, CustomLayers...>::serialize(
   ar & CEREAL_NVP(version);
 
   // If loading, delete the old layers and set size for weights.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (LayerTypes<CustomLayers...>& layer : network)
     {

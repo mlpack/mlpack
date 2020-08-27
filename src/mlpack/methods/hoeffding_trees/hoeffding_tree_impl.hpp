@@ -801,7 +801,7 @@ void HoeffdingTree<
   ar & CEREAL_NVP(splitDimension);
 
   // Clear memory for the mappings if necessary.
-  if (Archive::is_loading::value && ownsMappings && dimensionMappings)
+  if (cereal::is_loading<Archive>() && ownsMappings && dimensionMappings)
     delete dimensionMappings;
 
   ar & CEREAL_POINTER(dimensionMappings);
@@ -811,7 +811,7 @@ void HoeffdingTree<
   if (Archive::is_saving::value)
     d = const_cast<data::DatasetInfo*>(datasetInfo);
   ar & CEREAL_POINTER(d);
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (datasetInfo && ownsInfo)
       delete datasetInfo;
@@ -841,7 +841,7 @@ void HoeffdingTree<
 
     // Serialize the splits, but not if we haven't seen any samples yet (in
     // which case we can just reinitialize).
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       // Re-initialize all of the splits.
       numericSplits.clear();
@@ -884,7 +884,7 @@ void HoeffdingTree<
     // Serialize the children, because we have split.
       ar & CEREAL_VECTOR_POINTER(children);
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       for (size_t i = 0; i < children.size(); ++i)
       {

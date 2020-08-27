@@ -163,7 +163,7 @@ class HMMModel
     ar & CEREAL_NVP(type);
 
     // If necessary, clean memory.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       delete discreteHMM;
       delete gaussianHMM;

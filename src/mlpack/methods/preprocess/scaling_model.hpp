@@ -89,7 +89,7 @@ class ScalingModel
   template<typename Archive>
   void serialize(Archive& ar)
   {
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (minmaxscale)
         delete minmaxscale;

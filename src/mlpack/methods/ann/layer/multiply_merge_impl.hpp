@@ -118,7 +118,7 @@ void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
   ar & CEREAL_NVP(version);
 
   // Be sure to clear other layers before loading.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     network.clear();
 
   ar & CEREAL_VECTOR_VARIANT_POINTER(network);

@@ -202,7 +202,7 @@ void GMM::serialize(Archive& ar)
   // Load (or save) the gaussians.  Not going to use the default std::vector
   // serialize here because it won't call out correctly to serialize() for each
   // Gaussian distribution.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     dists.resize(gaussians);
 
   ar & CEREAL_NVP(dists);

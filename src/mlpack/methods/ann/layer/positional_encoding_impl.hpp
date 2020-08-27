@@ -79,7 +79,7 @@ void PositionalEncoding<InputDataType, OutputDataType>::serialize(Archive& ar)
   ar & CEREAL_NVP(embedDim);
   ar & CEREAL_NVP(maxSequenceLength);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     InitPositionalEncoding();
 }
 

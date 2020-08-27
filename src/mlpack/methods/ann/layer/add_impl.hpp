@@ -65,7 +65,7 @@ void Add<InputDataType, OutputDataType>::serialize(
 
   ar & CEREAL_NVP(outSize);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     weights.set_size(outSize, 1);
 }
 
