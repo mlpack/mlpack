@@ -5,6 +5,8 @@
   * Refactor `ProgramInfo()` to separate out all the different
     information (#2558).
 
+  * Add bindings for one-hot encoding (#2325).
+
   * Added Soft Actor-Critic to RL methods (#2487).
 
   * Added Categorical DQN to q_networks (#2454).

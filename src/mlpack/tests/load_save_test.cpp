@@ -1088,30 +1088,6 @@ TEST_CASE("SaveHDF5Test", "[LoadSaveTest]")
 #endif
 
 /**
- * Test one hot encoding.
- */
-TEST_CASE("OneHotEncodingTest", "[LoadSaveTest]")
-{
-  arma::Mat<size_t> matrix;
-  matrix = "1 0;"
-           "0 1;"
-           "1 0;"
-           "1 0;"
-           "1 0;"
-           "1 0;"
-           "0 1;"
-           "1 0;";
-// Output matrix to save onehotencoding results.
-  arma::Mat<size_t> output;
-  arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
-  data::OneHotEncoding(labels, output);
-
-  REQUIRE(matrix.n_cols == output.n_cols);
-  REQUIRE(matrix.n_rows == output.n_rows);
-  CheckMatrices(output, matrix);
-}
-
-/**
  * Test normalization of labels.
  */
 TEST_CASE("NormalizeLabelSmallDatasetTest", "[LoadSaveTest]")
