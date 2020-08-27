@@ -43,7 +43,7 @@ void serialize(Archive& ar, arma::SpMat<eT>& mat)
 
   // Now we have to serialize the values, row indices, and column pointers.
   // If we are loading, we need to initialize space for these things.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     mat.zeros(n_rows, n_cols);
     arma::access::rw(mat.vec_state) = vec_state;
@@ -74,7 +74,7 @@ void serialize(Archive& ar, arma::Mat<eT>& mat)
   ar(CEREAL_NVP(n_cols));
   ar(CEREAL_NVP(vec_state));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     mat.set_size(n_rows, n_cols);
     arma::access::rw(mat.vec_state) = vec_state;
@@ -98,7 +98,7 @@ void serialize(Archive& ar, arma::Cube<eT>& cube)
   ar(CEREAL_NVP(n_cols));
   ar(CEREAL_NVP(n_slices));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     cube.set_size(n_rows, n_cols, n_slices);
 
   // Directly serialize the contents of the cube's memory.
