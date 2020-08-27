@@ -91,7 +91,7 @@ void IPMetric<KernelType>::serialize(Archive& ar)
   ar & CEREAL_NVP(version);
 
   // the kernel.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (kernelOwner)
       delete kernel;
