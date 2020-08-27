@@ -9,7 +9,7 @@
 This page describes how you can quickly get started using mlpack from R and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for @ref python_quickstart "Python"
+This quickstart guide is also available for @ref python_quickstart "Python",
 @ref cli_quickstart "the command-line", @ref julia_quickstart "Julia" and
 @ref go_quickstart "Go".
 
