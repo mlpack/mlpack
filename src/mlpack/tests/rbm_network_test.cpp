@@ -45,7 +45,6 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
   int hiddenLayerSize = 100;
   size_t batchSize = 10;
   size_t numEpoches = 30;
-
   arma::mat trainData, testData, dataset;
   arma::mat trainLabelsTemp, testLabelsTemp;
   trainData.load("digits_train.arm");
@@ -98,14 +97,12 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
     model.HiddenMean(testData.col(i), output);
     YRbm.col(i) = output;
   }
-
   const size_t numClasses = 10; // Number of classes.
   const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
   const size_t numIterations = 100; // Maximum number of iterations.
 
   // Use an instantiated optimizer for the training.
   L_BFGS optimizer(numBasis, numIterations);
-
   SoftmaxRegression regressor(trainData, trainLabels,
       numClasses, 0.001, false, optimizer);
 
@@ -113,10 +110,8 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
     testLabels);
 
   L_BFGS rbmOptimizer(numBasis, numIterations);
-
   SoftmaxRegression rbmRegressor(XRbm, trainLabels, numClasses,
         0.001, false, rbmOptimizer);
-
   double rbmClassificationAccuracy = rbmRegressor.ComputeAccuracy(YRbm,
       testLabels);
 
