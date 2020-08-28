@@ -3,7 +3,6 @@ add_executable(mlpack_test
   arma_extend_test.cpp
   async_learning_test.cpp
   augmented_rnns_tasks_test.cpp
-  bayesian_linear_regression_test.cpp
   callback_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
@@ -26,9 +25,6 @@ add_executable(mlpack_test
   hyperplane_test.cpp
   init_rules_test.cpp
   kde_test.cpp
-  kernel_pca_test.cpp
-  kernel_test.cpp
-  kernel_traits_test.cpp
   kmeans_test.cpp
   krann_search_test.cpp
   ksinit_test.cpp
@@ -87,7 +83,6 @@ add_executable(mlpack_test
   union_find_test.cpp
   vantage_point_tree_test.cpp
   wgan_test.cpp
-  main_tests/bayesian_linear_regression_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/det_test.cpp
@@ -103,7 +98,6 @@ add_executable(mlpack_test
   main_tests/hmm_viterbi_test.cpp
   main_tests/hoeffding_tree_test.cpp
   main_tests/kde_test.cpp
-  main_tests/kernel_pca_test.cpp
   main_tests/kmeans_test.cpp
   main_tests/krann_test.cpp
   main_tests/linear_svm_test.cpp
@@ -134,6 +128,7 @@ add_executable(mlpack_catch_test
   ann_test_tools.hpp
   ann_visitor_test.cpp
   armadillo_svd_test.cpp
+  bayesian_linear_regression_test.cpp
   bias_svd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
@@ -144,11 +139,15 @@ add_executable(mlpack_catch_test
   decision_tree_test.cpp
   image_load_test.cpp
   imputation_test.cpp
+  kernel_pca_test.cpp
+  kernel_test.cpp
+  kernel_traits_test.cpp
   kfn_test.cpp
   knn_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
   main.cpp
+  one_hot_encoding_test.cpp
   quic_svd_test.cpp
   randomized_svd_test.cpp
   regularized_svd_test.cpp
@@ -165,16 +164,19 @@ add_executable(mlpack_catch_test
   test_catch_tools.hpp
   main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
+  main_tests/bayesian_linear_regression_test.cpp
   main_tests/decision_stump_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/image_converter_test.cpp
+  main_tests/kernel_pca_test.cpp
   main_tests/kfn_test.cpp
   main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/preprocess_binarize_test.cpp
+  main_tests/preprocess_imputer_test.cpp
+  main_tests/preprocess_one_hot_encode_test.cpp
   main_tests/preprocess_scale_test.cpp
   main_tests/preprocess_split_test.cpp
-  main_tests/preprocess_imputer_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/test_helper.hpp

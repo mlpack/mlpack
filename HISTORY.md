@@ -2,10 +2,14 @@
 ###### ????-??-??
   * Added Pixel Shuffle layer (#2563).
 
+  * Added Spatial Dropout layer (#2564).
+
   * Force CMake to show error when it didn't find Python/modules (#2568).
 
   * Refactor `ProgramInfo()` to separate out all the different
     information (#2558).
+
+  * Add bindings for one-hot encoding (#2325).
 
   * Added Soft Actor-Critic to RL methods (#2487).
 
