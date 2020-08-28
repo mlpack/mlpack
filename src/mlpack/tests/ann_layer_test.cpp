@@ -4397,6 +4397,122 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
 }
 
 /**
+ * Simple Test for SpatialDropout layer.
+ */
+TEST_CASE("SpatialDropoutLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, gy, g, temp;
+  arma::mat outputsExpected = arma::zeros(8, 12);
+  arma::mat gsExpected = arma::zeros(8, 12);
+
+  // Set the seed to a random value.
+  arma::arma_rng::set_seed_random();
+  SpatialDropout<> module(3, 0.2);
+
+  // Input is a batch of 2 images, each of size (2,2) and having 4 channels.
+  input << 0.4963 << 0.0885 << 0.7682 << 0.1320 << 0.3074 << 0.4901 << 0.6341
+      << 0.8964 << 0.4556 << 0.3489 << 0.6323 << 0.4017 << arma::endr;
+
+  gy << 1 << 3 << 2 << 4 << 5 << 7 << 6 << 8
+      << 9 << 11 << 10 << 12 << arma::endr;
+
+  // Following values have been calculated using torch.nn.Dropout2d(p=0.2).
+  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << arma::endr;
+  outputsExpected.row(0) = temp;
+  temp << 0 << 0 << 0 << 0 << 0.3842 << 0.6126 << 0.7926 << 1.1205
+      << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  outputsExpected.row(1) = temp;
+  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0 << 0 << 0 << 0
+      << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  outputsExpected.row(2) = temp;
+  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0.3842 << 0.6126
+      << 0.7926 << 1.1205 << 0 << 0 << 0 << 0 << arma::endr;
+  outputsExpected.row(3) = temp;
+  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  outputsExpected.row(4) = temp;
+  temp << 0 << 0 << 0 << 0 << 0.3842 << 0.6126 << 0.7926 << 1.1205
+      << 0 << 0 << 0 << 0 << arma::endr;
+  outputsExpected.row(5) = temp;
+  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0  << arma::endr;
+  outputsExpected.row(6) = temp;
+  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0.3842 << 0.6126 << 0.7926
+      << 1.1205 << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  outputsExpected.row(7) = temp;
+  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << arma::endr;
+  gsExpected.row(0) = temp;
+  temp << 0 << 0 << 0 << 0 << 6.2500 << 8.7500 << 7.5000 << 10.0000
+      << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  gsExpected.row(1) = temp;
+  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 0 << 0 << 0 << 0
+      << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  gsExpected.row(2) = temp;
+  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 6.2500 << 8.7500
+      << 7.5000 << 10.0000 << 0 << 0 << 0 << 0 << arma::endr;
+  gsExpected.row(3) = temp;
+  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  gsExpected.row(4) = temp;
+  temp << 0 << 0 << 0 << 0 << 6.2500 << 8.7500 << 7.5000 << 10.0000
+      << 0 << 0 << 0 << 0 << arma::endr;
+  gsExpected.row(5) = temp;
+  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << arma::endr;
+  gsExpected.row(6) = temp;
+  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 6.2500 << 8.7500 << 7.5000
+      << 10.0000 << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  gsExpected.row(7) = temp;
+
+  input = input.t();
+  gy = gy.t();
+  outputsExpected = outputsExpected.t();
+  gsExpected = gsExpected.t();
+
+  // Compute the Forward and Backward passes and store the results.
+  module.Forward(input, output);
+  module.Backward(input, gy, g);
+
+  // Check through all possible cases, to find a match and then compare results.
+  for (size_t i = 0; i < outputsExpected.n_cols; ++i)
+  {
+    if (arma::approx_equal(outputsExpected.col(i), output, "absdiff", 1e-1))
+    {
+      // Check the correctness of the Forward pass of the layer.
+      CheckMatrices(output, outputsExpected.col(i), 1e-1);
+      // Check the correctness of the Backward pass of the layer.
+      CheckMatrices(g, gsExpected.col(i), 1e-1);
+    }
+  }
+
+  // Check if the output is same as input when using deterministic mode.
+  module.Deterministic() = true;
+  output.clear();
+  module.Forward(input, output);
+  CheckMatrices(output, input, 1e-1);
+}
+
+/**
+ * Test that the function that can access the parameters of the
+ * SpatialDropout layer works.
+ */
+TEST_CASE("SpatialDropoutLayerParametersTest", "[ANNLayerTest]")
+{
+  // Create the layer using the empty constructor.
+  SpatialDropout<> layer;
+
+  // Set the input parameters.
+  layer.Size() = 3;
+  layer.Ratio(0.2);
+
+  // Check whether the input parameters have been set correctly.
+  REQUIRE(layer.Size() == 3);
+  REQUIRE(layer.Ratio() == 0.2);
+}
+
+/**
  * Simple Positional Encoding layer test.
  */
 TEST_CASE("SimplePositionalEncodingTest", "[ANNLayerTest]")
