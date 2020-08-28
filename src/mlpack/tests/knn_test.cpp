@@ -1749,7 +1749,7 @@ TEST_CASE("KNNGreedyTreeSearch", "[KNNTest]")
   // Initalize dataset.
   arma::mat dataset = arma::randu<arma::mat>(3, 100);
 
-  // Build tree with a leaf_size of 1.
+  // Build tree with a leaf size of 1.
   KDTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> tree(dataset, 1);
 
