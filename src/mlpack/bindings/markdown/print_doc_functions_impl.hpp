@@ -56,7 +56,7 @@ inline std::string GetBindingName(const std::string& bindingName)
   }
   else
   {
-    throw std::invalid_argument("PrintValue(): unknown "
+    throw std::invalid_argument("GetBindingName(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 }

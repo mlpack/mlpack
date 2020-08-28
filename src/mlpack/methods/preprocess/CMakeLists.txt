@@ -53,6 +53,14 @@ add_julia_binding(preprocess_scale)
 add_r_binding(preprocess_scale)
 add_markdown_docs(preprocess_scale "cli;python;julia;go;r" "preprocessing")
 
+add_cli_executable(preprocess_one_hot_encoding)
+add_python_binding(preprocess_one_hot_encoding)
+add_go_binding(preprocess_one_hot_encoding)
+add_julia_binding(preprocess_one_hot_encoding)
+add_r_binding(preprocess_one_hot_encoding)
+add_markdown_docs(preprocess_one_hot_encoding "cli;python;julia;go;r"
+    "preprocessing")
+
 if (STB_AVAILABLE)
   add_cli_executable(image_converter)
   add_python_binding(image_converter)

@@ -68,6 +68,26 @@ inline std::string PrintValue(const T& value, bool quotes)
 }
 
 /**
+ * Given a vector parameter type, print the corresponding value.
+ */
+template<typename T>
+inline std::string PrintValue(const std::vector<T>& value, bool quotes)
+{
+  std::ostringstream oss;
+  if (quotes)
+    oss << "'";
+  if (value.size() > 0)
+  {
+    oss << value[0];
+    for (size_t i = 1; i < value.size(); ++i)
+      oss << ", " << value[i];
+  }
+  if (quotes)
+    oss << "'";
+  return oss.str();
+}
+
+/**
  * Given a parameter name, print its corresponding default value.
  */
 inline std::string PrintDefault(const std::string& paramName)
