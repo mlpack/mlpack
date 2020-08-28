@@ -22,8 +22,8 @@ int main(int argc, char** argv)
    * each run.  This is good for ensuring that a test's tolerance is sufficient
    * across many different runs.
    */
-   // size_t seed = std::time(NULL);
-   // mlpack::math::RandomSeed(seed);
+  // size_t seed = std::time(NULL);
+  // mlpack::math::RandomSeed(seed);
   #ifndef TEST_VERBOSE
     #ifdef DEBUG
     mlpack::Log::Debug.ignoreInput = true;
