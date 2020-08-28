@@ -1750,7 +1750,7 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
   bool hasParent = (parent != NULL);
   ar & CEREAL_NVP(hasParent);
   if (!hasParent)
-    ar & CEREAL_POINTER(dataset);
+    ar & CEREAL_POINTER(const_cast<MatType*>dataset);
   ar & CEREAL_NVP(point);
   ar & CEREAL_NVP(scale);
   ar & CEREAL_NVP(base);
