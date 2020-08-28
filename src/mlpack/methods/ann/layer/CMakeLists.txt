@@ -71,6 +71,8 @@ set(SOURCES
   mean_pooling_impl.hpp
   minibatch_discrimination.hpp
   minibatch_discrimination_impl.hpp
+  multihead_attention_impl.hpp
+  multihead_attention.hpp
   multiply_constant.hpp
   multiply_constant_impl.hpp
   multiply_merge.hpp
@@ -97,6 +99,8 @@ set(SOURCES
   sequential_impl.hpp
   softmax_impl.hpp
   softmax.hpp
+  spatial_dropout.hpp
+  spatial_dropout_impl.hpp
   subview.hpp
   transposed_convolution.hpp
   transposed_convolution_impl.hpp
