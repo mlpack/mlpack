@@ -140,9 +140,9 @@ class LinearRegression
    * @param adj_r2 if true the function will return the Adjusted \f$R^2\f$,
    * otherwise, it will return \f$R^2\f$.
    */
-  double Coef_Det(const arma::mat& predictors,
-                  const arma::rowvec& responses,
-                  const bool adj_r2 = false) const;
+  double CoefDet(const arma::mat& predictors,
+                 const arma::rowvec& responses,
+                 const bool adj_r2 = false) const;
 
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }

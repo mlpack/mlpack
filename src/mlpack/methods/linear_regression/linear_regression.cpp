@@ -148,7 +148,7 @@ double LinearRegression::ComputeError(const arma::mat& predictors,
   return cost;
 }
 
-double LinearRegression::Coef_Det(const arma::mat& predictors,
+double LinearRegression::CoefDet(const arma::mat& predictors,
                                   const arma::rowvec& responses,
                                   const bool adj_r2) const
 {

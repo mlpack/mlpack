@@ -285,7 +285,7 @@ TEST_CASE("LinearRegressionCoefDetCorr", "[LinearRegressionTest]")
   LinearRegression lr;
   lr.Train(predictors, responses);
   double act_rsq = 1.0;
-  double calc_rsq = lr.Coef_Det(predictors, responses);
+  double calc_rsq = lr.CoefDet(predictors, responses);
   double err = std::abs(act_rsq - calc_rsq);
   REQUIRE(err <= 1e-8);
 }
