@@ -66,6 +66,7 @@
 #include "sequential.hpp"
 #include "softshrink.hpp"
 #include "softmax.hpp"
+#include "spatial_dropout.hpp"
 #include "subview.hpp"
 #include "transposed_convolution.hpp"
 #include "virtual_batch_norm.hpp"

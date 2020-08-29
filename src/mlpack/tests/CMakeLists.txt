@@ -139,6 +139,7 @@ add_executable(mlpack_catch_test
   load_save_test.cpp
   main.cpp
   octree_test.cpp
+  one_hot_encoding_test.cpp
   quic_svd_test.cpp
   randomized_svd_test.cpp
   rectangle_tree_test.cpp
@@ -172,9 +173,10 @@ add_executable(mlpack_catch_test
   main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/preprocess_binarize_test.cpp
+  main_tests/preprocess_imputer_test.cpp
+  main_tests/preprocess_one_hot_encode_test.cpp
   main_tests/preprocess_scale_test.cpp
   main_tests/preprocess_split_test.cpp
-  main_tests/preprocess_imputer_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/test_helper.hpp
