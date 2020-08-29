@@ -4744,5 +4744,5 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
     const size_t batchSize = 2;
   } function;
 
-  REQUIRE(CheckGradient(function) <= 1e-06);
+  REQUIRE(CheckGradient(function) <= 2e-06);
 }
