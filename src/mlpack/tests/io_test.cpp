@@ -30,7 +30,6 @@ static const std::string testName = "";
 #include <mlpack/bindings/cli/end_program.hpp>
 
 #include "catch.hpp"
-#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -70,8 +69,7 @@ void AddRequiredCLIOptions()
  * Tests that CLI works as intended, namely that IO::Add propagates
  * successfully.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "TestCLIAdd",
-                "[IOTest]")
+TEST_CASE_METHOD(IOTestDestroyer, "TestCLIAdd", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -90,8 +88,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "TestCLIAdd",
 /**
  * Tests that the various PARAM_* macros work properly.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "TestOption",
-                "[IOTest]")
+TEST_CASE_METHOD(IOTestDestroyer, "TestOption", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -105,8 +102,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "TestOption",
 /**
  * Test that duplicate flags are filtered out correctly.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "TestDuplicateFlag",
-                "[IOTest]")
+TEST_CASE_METHOD(IOTestDestroyer, "TestDuplicateFlag", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -523,8 +519,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputRowParamTest",
   remove("test.csv");
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedRowParamTest",
-                "[IOTest]")
+TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedRowParamTest", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -698,8 +693,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixParamTest",
   remove("test.csv");
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixNoTransposeParamTest",
-                "[IOTest]")
+TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixNoTransposeParamTest", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -807,8 +801,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "DoubleParamTest",
   REQUIRE(IO::GetParam<double>("double") == Approx(3.12).epsilon(1e-12));
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "RequiredOptionTest",
-                "[IOTest]")
+TEST_CASE_METHOD(IOTestDestroyer, "RequiredOptionTest", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -889,8 +882,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "UnmappedParamTest",
  * Test that we can serialize a model and then deserialize it through the CLI
  * interface.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "IOSerializationTest",
-                "[IOTest]")
+TEST_CASE_METHOD(IOTestDestroyer, "IOSerializationTest", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -1032,8 +1024,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "MatrixAndDatasetInfoTest",
 /**
  * Test that we can access a parameter before we load it.
  */
-TEST_CASE_METHOD(IOTestDestroyer, "RawIntegralParameter",
-                "[IOTest]")
+TEST_CASE_METHOD(IOTestDestroyer, "RawIntegralParameter", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -1056,8 +1047,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "RawIntegralParameter",
  * Test that we can load a dataset with a pre-set mapping through
  * IO::GetRawParam().
  */
-TEST_CASE_METHOD(IOTestDestroyer, "RawDatasetInfoLoadParameter",
-                "[IOTest]")
+TEST_CASE_METHOD(IOTestDestroyer, "RawDatasetInfoLoadParameter", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
