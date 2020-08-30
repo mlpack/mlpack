@@ -29,6 +29,8 @@
     version of linear regression where the regularization parameter is
     automatically tuned (#2030).
 
+  * Fix defeatist search for spill tree traversals (#2566, #1269).
+
   * Fix incremental training of logistic regression models (#2560).
 
   * Change default configuration of `BUILD_PYTHON_BINDINGS` to `OFF` (#2575).
