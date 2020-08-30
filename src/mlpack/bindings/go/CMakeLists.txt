@@ -80,7 +80,6 @@ if (BUILD_GO_SHLIB)
     print_method_config.hpp
     print_method_init.hpp
     print_output_processing.hpp
-    camel_case.hpp
     strip_type.hpp
   )
 
@@ -194,6 +193,7 @@ if (BUILD_GO_BINDINGS)
       COMMAND ${CMAKE_COMMAND}
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DGO_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.h.in
           -DGO_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h
           -P ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake
@@ -223,7 +223,7 @@ if (BUILD_GO_BINDINGS)
       COMMAND ${CMAKE_COMMAND}
           -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_go_${name}
           -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/${name}.go
-          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateGoBinding.cmake)
+          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
 
   add_dependencies(go generate_go_${name})
 endif ()
@@ -235,6 +235,7 @@ if(BUILD_GO_SHLIB)
       COMMAND ${CMAKE_COMMAND}
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DGO_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.cpp.in
           -DGO_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp
           -P ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake

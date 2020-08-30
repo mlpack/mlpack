@@ -1,5 +1,16 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added bindings for _R_ during Google Summer of Code (#2556).
+
+  * Added common striptype function for all bindings (#2556).
+
+  * Refactored common utility function of bindings to bindings/util (#2556).
+
+  * Renamed InformationGain to HoeffdingInformationGain in
+    methods/hoeffding_trees/information_gain.hpp (#2556).
+
+  * Added macro for changing stream of printing and warnings/errors (#2556).
+
   * Added Spatial Dropout layer (#2564).
 
   * Force CMake to show error when it didn't find Python/modules (#2568).

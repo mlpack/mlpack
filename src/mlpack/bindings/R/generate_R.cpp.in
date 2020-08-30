@@ -1,0 +1,39 @@
+/**
+ * @file R/generate_R.cpp.in
+ * @author Yashwant Singh Parihar
+ *
+ * This is a template file to call the PrintR() function for a given binding.
+ */
+#define BINDING_TYPE BINDING_TYPE_R
+// Disable debug output.
+#ifdef DEBUG
+  #define HAD_DEBUG
+  #undef DEBUG
+#endif
+#include <mlpack/core/util/log.hpp>
+#ifdef HAD_DEBUG
+  #undef HAD_DEBUG
+  #define DEBUG
+#endif
+
+#include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/bindings/R/print_R.hpp>
+
+// This will include the ParamData options that are part of the program.
+#include <${PROGRAM_MAIN_FILE}>
+
+using namespace mlpack;
+using namespace mlpack::bindings;
+using namespace mlpack::bindings::r;
+using namespace std;
+using namespace mlpack::util;
+
+int main(int /* argc */, char** /* argv */)
+{
+  // All the parameters are registered, but stored, so restore them.
+  // programName is defined in mlpack_main.hpp.
+  IO::RestoreSettings(IO::ProgramName());
+
+  PrintR(IO::GetSingleton().doc, "${NAME}");
+}

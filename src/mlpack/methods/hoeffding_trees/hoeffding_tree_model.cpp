@@ -166,13 +166,13 @@ void HoeffdingTreeModel::BuildModel(
     case INFO_HOEFFDING:
       // Create instantiated numeric split.
       {
-        HoeffdingDoubleNumericSplit<InformationGain> ns(0, bins,
+        HoeffdingDoubleNumericSplit<HoeffdingInformationGain> ns(0, bins,
             observationsBeforeBinning);
 
         infoHoeffdingTree = new InfoHoeffdingTreeType(dataset, datasetInfo,
             labels, numClasses, batchTraining, successProbability, maxSamples,
             checkInterval, minSamples,
-            HoeffdingCategoricalSplit<InformationGain>(0, 0), ns);
+            HoeffdingCategoricalSplit<HoeffdingInformationGain>(0, 0), ns);
       }
       break;
 

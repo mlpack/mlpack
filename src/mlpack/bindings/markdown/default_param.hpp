@@ -20,6 +20,7 @@
 #include <mlpack/bindings/python/default_param.hpp>
 #include <mlpack/bindings/julia/default_param.hpp>
 #include <mlpack/bindings/go/default_param.hpp>
+#include <mlpack/bindings/R/default_param.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -53,6 +54,11 @@ void DefaultParam(util::ParamData& data,
   {
     *((std::string*) output) =
         go::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    *((std::string*) output) =
+        r::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
   }
   else
   {

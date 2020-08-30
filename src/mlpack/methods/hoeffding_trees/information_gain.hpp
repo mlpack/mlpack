@@ -16,7 +16,7 @@
 namespace mlpack {
 namespace tree {
 
-class InformationGain
+class HoeffdingInformationGain
 {
  public:
   /**
