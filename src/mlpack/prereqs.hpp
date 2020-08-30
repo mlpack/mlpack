@@ -77,7 +77,7 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <cereal/types/vector.hpp>
 
 #include <mlpack/core/cereal/is_loading.hpp>
-
+#include <mlpack/core/cereal/is_saving.hpp>
 #include <mlpack/core/arma_extend/serialize_armadillo.hpp>
 #include <mlpack/core/cereal/array_wrapper.hpp>
 #include <mlpack/core/cereal/pointer_variant_wrapper.hpp>

@@ -2,6 +2,8 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   array_wrapper.hpp
+  is_loading.hpp
+  is_saving.hpp
   pointer_wrapper.hpp
   pointer_vector_wrapper.hpp
   pointer_variant_wrapper.hpp
