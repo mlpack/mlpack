@@ -63,7 +63,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        #- { os: windows-latest, r: '4.0'}
+        - {os: windows-latest, r: '4.0'}
         - {os: macOS-latest, r: 'release'}
         - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
