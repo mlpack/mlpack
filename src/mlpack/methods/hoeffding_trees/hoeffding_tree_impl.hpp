@@ -808,7 +808,7 @@ void HoeffdingTree<
 
   // Special handling for const object.
   data::DatasetInfo* d = NULL;
-  if (Archive::is_saving::value)
+  if (cereal::is_saving<Archive>())
     d = const_cast<data::DatasetInfo*>(datasetInfo);
   ar & CEREAL_POINTER(d);
   if (cereal::is_loading<Archive>())

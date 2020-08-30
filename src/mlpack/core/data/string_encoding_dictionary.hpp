@@ -232,7 +232,7 @@ class StringEncodingDictionary<boost::string_view>
         mapping[token] = tokenValue;
       }
     }
-    if (Archive::is_saving::value)
+    if (cereal::is_saving<Archive>())
     {
       for (std::string& token : tokens)
       {
