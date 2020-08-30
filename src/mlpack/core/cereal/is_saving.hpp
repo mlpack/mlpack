@@ -25,7 +25,7 @@
 namespace cereal {
 
 template<typename Archive>
-struct is_cereal_archive
+struct is_cereal_archive_saving
 {
   // Archive::is_saving is not implemented yet, so we can use std::is_same<>
     // to check if it is a loading archive.
@@ -37,7 +37,7 @@ struct is_cereal_archive
 template<typename Archive>
 bool is_saving(
     const typename std::enable_if<
-        is_cereal_archive<Archive>::value, Archive>::type* = 0)
+        is_cereal_archive_saving<Archive>::value, Archive>::type* = 0)
 {
   return true; 
 }
@@ -45,7 +45,7 @@ bool is_saving(
 template<typename Archive>
 bool is_saving(
     const typename std::enable_if<
-      !is_cereal_archive<Archive>::value, Archive>::type* = 0)
+      !is_cereal_archive_saving<Archive>::value, Archive>::type* = 0)
 {
   return false;
 }
