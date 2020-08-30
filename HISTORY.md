@@ -11,6 +11,8 @@
 
   * Added macro for changing stream of printing and warnings/errors (#2556).
 
+  * Added Spatial Dropout layer (#2564).
+
   * Force CMake to show error when it didn't find Python/modules (#2568).
 
   * Refactor `ProgramInfo()` to separate out all the different
@@ -37,6 +39,8 @@
     Julia, and Go.  Also called "Bayesian Ridge", this is equivalent to a
     version of linear regression where the regularization parameter is
     automatically tuned (#2030).
+
+  * Fix defeatist search for spill tree traversals (#2566, #1269).
 
   * Fix incremental training of logistic regression models (#2560).
 

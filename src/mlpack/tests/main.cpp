@@ -23,7 +23,7 @@ int main(int argc, char** argv)
    * across many different runs.
    */
   // size_t seed = std::time(NULL);
-  // math::RandomSeed(seed);
+  // mlpack::math::RandomSeed(seed);
   #ifndef TEST_VERBOSE
     #ifdef DEBUG
     mlpack::Log::Debug.ignoreInput = true;
