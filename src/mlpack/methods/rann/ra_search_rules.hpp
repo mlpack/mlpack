@@ -241,6 +241,11 @@ class RASearchRules
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
 
+  //! Get the minimum number of base cases that must be performed for each query
+  //! point for an acceptable result.  This is only needed in defeatist search
+  //! mode.
+  size_t MinimumBaseCases() const { return k; }
+
  private:
   //! The reference set.
   const arma::mat& referenceSet;

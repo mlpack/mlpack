@@ -1,6 +1,19 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+
   * Issue warnings when metrics produce NaNs in KFoldCV (#2595).
+
+  * Added bindings for _R_ during Google Summer of Code (#2556).
+
+  * Added common striptype function for all bindings (#2556).
+
+  * Refactored common utility function of bindings to bindings/util (#2556).
+
+  * Renamed InformationGain to HoeffdingInformationGain in
+    methods/hoeffding_trees/information_gain.hpp (#2556).
+
+  * Added macro for changing stream of printing and warnings/errors (#2556).
+>>>>>>> origin/master
 
   * Added Spatial Dropout layer (#2564).
 
@@ -30,6 +43,8 @@
     Julia, and Go.  Also called "Bayesian Ridge", this is equivalent to a
     version of linear regression where the regularization parameter is
     automatically tuned (#2030).
+
+  * Fix defeatist search for spill tree traversals (#2566, #1269).
 
   * Fix incremental training of logistic regression models (#2560).
 
