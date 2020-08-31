@@ -529,22 +529,19 @@ double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq) const
  */
 template<typename Distribution>
 double HMM<Distribution>::LogScaleEmissionProb(const arma::vec& emissionLogProb,
-                                        arma::vec& prevForwardLogProb,
                                         arma::vec& forwardLogProb) const
 {
     double curLogScale;
-    if (prevForwardLogProb.empty())
+    if (forwardLogProb.empty())
     {
       // start of sequence or time t=0
-      ForwardAtT0(emissionLogProb, curLogScale, forwardLogProb);
+      forwardLogProb = ForwardAtT0(emissionLogProb, curLogScale);
     }
     else
     {
-      ForwardAtTn(emissionLogProb, curLogScale,
-          prevForwardLogProb, forwardLogProb);
+      forwardLogProb = ForwardAtTn(emissionLogProb, curLogScale,
+          forwardLogProb);
     }
-
-    prevForwardLogProb = forwardLogProb;
 
     return curLogScale;
 }
@@ -556,12 +553,10 @@ template<typename Distribution>
 double HMM<Distribution>::LogLikelihoodEmissionProb(
                                         const arma::vec& emissionLogProb,
                                         double &logLikelihood,
-                                        arma::vec& prevForwardLogProb,
                                         arma::vec& forwardLogProb) const
 {
-    bool isStartOfSeq = prevForwardLogProb.empty();
-    double curLogScale = LogScaleEmissionProb(emissionLogProb,
-                                            prevForwardLogProb, forwardLogProb);
+    bool isStartOfSeq = forwardLogProb.empty();
+    double curLogScale = LogScaleEmissionProb(emissionLogProb, forwardLogProb);
     logLikelihood = isStartOfSeq ? curLogScale : curLogScale + logLikelihood;
     return logLikelihood;
 }
@@ -573,7 +568,6 @@ double HMM<Distribution>::LogLikelihoodEmissionProb(
  */
 template<typename Distribution>
 double HMM<Distribution>::LogScale(const arma::vec &data,
-                                        arma::vec& prevForwardLogProb,
                                         arma::vec& forwardLogProb) const
 {
     arma::vec emissionLogProb(logTransition.n_rows);
@@ -583,8 +577,7 @@ double HMM<Distribution>::LogScale(const arma::vec &data,
           emissionLogProb(state) = emission[state].LogProbability(data);
     }
 
-    return LogScaleEmissionProb(emissionLogProb,
-                                     prevForwardLogProb, forwardLogProb);
+    return LogScaleEmissionProb(emissionLogProb, forwardLogProb);
 }
 
 /**
@@ -593,11 +586,10 @@ double HMM<Distribution>::LogScale(const arma::vec &data,
 template<typename Distribution>
 double HMM<Distribution>::LogLikelihood(const arma::vec &data,
                                         double &logLikelihood,
-                                        arma::vec& prevForwardLogProb,
                                         arma::vec& forwardLogProb) const
 {
-    auto isStartOfSeq = prevForwardLogProb.empty();
-    auto curLogScale = LogScale(data, prevForwardLogProb, forwardLogProb);
+    auto isStartOfSeq = forwardLogProb.empty();
+    auto curLogScale = LogScale(data, forwardLogProb);
     logLikelihood = isStartOfSeq ? curLogScale : curLogScale + logLikelihood;
     return logLikelihood;
 }
@@ -654,9 +646,8 @@ void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
  * The Forward procedure (part of the Forward-Backward algorithm).
  */
 template<typename Distribution>
-void HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
-                                double& logScales,
-                                arma::vec& forwardLogProb) const
+arma::vec HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
+                                double& logScales) const
 {
   // Our goal is to calculate the forward probabilities:
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
@@ -664,7 +655,7 @@ void HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
 
     ConvertToLogSpace();
 
-    forwardLogProb.resize(logTransition.n_rows);
+    arma::vec forwardLogProb(logTransition.n_rows);
     forwardLogProb.fill(-std::numeric_limits<double>::infinity());
     // The first entry in the forward algorithm uses the initial state
     // probabilities.  Note that MATLAB assumes that the starting state (at
@@ -680,21 +671,24 @@ void HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
     if (std::isfinite(logScales)){
         forwardLogProb -= logScales;
     }
+
+    return forwardLogProb;
 }
 
 /**
  * The Forward procedure (part of the Forward-Backward algorithm).
  */
 template<typename Distribution>
-void HMM<Distribution>::ForwardAtTn(const arma::vec& emissionLogProb,
+arma::vec HMM<Distribution>::ForwardAtTn(const arma::vec& emissionLogProb,
                                 double& logScales,
-                                const arma::vec& prevForwardLogProb,
-                                arma::vec& forwardLogProb) const
+                                const arma::vec& prevForwardLogProb) const
 {
   // Our goal is to calculate the forward probabilities:
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
 
 
+    arma::vec forwardLogProb(logTransition.n_rows);
+    forwardLogProb.fill(-std::numeric_limits<double>::infinity());
     // Now compute the probabilities for each successive observation.
     for (size_t state = 0; state < logTransition.n_rows; state++) {
         // The forward probability of state j at time t is the sum over all
@@ -708,6 +702,8 @@ void HMM<Distribution>::ForwardAtTn(const arma::vec& emissionLogProb,
     if (std::isfinite(logScales)){
         forwardLogProb -= logScales;
     }
+
+    return forwardLogProb;
 }
 
 /**
@@ -738,8 +734,7 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
                 emission[state].LogProbability(dataSeq.unsafe_col(0));
   }
 
-  arma::vec col0(forwardLogProb.colptr(0), logTransition.n_rows, false);
-  ForwardAtT0(emissionLogProb, logScales(0), col0);
+  forwardLogProb.col(0) = ForwardAtT0(emissionLogProb, logScales(0));
 
   // Now compute the probabilities for each successive observation.
   for (size_t t = 1; t < dataSeq.n_cols; t++)
@@ -750,8 +745,8 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
                   emission[state].LogProbability(dataSeq.unsafe_col(t));
     }
 
-    arma::vec colt(forwardLogProb.colptr(t), logTransition.n_rows, false);
-    ForwardAtTn(emissionLogProb, logScales(t), forwardLogProb.col(t-1), colt);
+    forwardLogProb.col(t) =
+      ForwardAtTn(emissionLogProb, logScales(t), forwardLogProb.col(t-1));
   }
 }
 

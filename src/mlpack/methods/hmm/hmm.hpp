@@ -294,68 +294,68 @@ class HMM
    * Compute the log of the scaling factor of the given emission probability
    * at time t. To calculate the log-likelihood for the whole sequence,
    * accumulate log scale over the entire sequence
+   * This is meant for incremental or streaming computation of the
+   * log-likelihood of a sequence. For the first data point, provide an empty
+   * forwardLogProb vector.
    *
    * @param emissionLogProb emission probability at time t.
    * probability up to time t-1
-   * @param prevForwardLogProb Vector in which forward probabilities for time
-   * t-1 will be saved. Passing prevForwardProb as an empty vector indicates the
-   * start of sequence or time t=0
-   * @param forwardLogProb Vector in which forward probabilities for time t
-   * will be saved.
+   * @param forwardLogProb Vector in which forward probabilities will be saved.
+   * Passing forwardLogProb as an empty vector indicates the start of sequence
+   * or time t=0
    * @return Log scale factor of the given sequence of emission at time t.
    */
   double LogScaleEmissionProb(const arma::vec& emissionLogProb,
-                       arma::vec& prevForwardLogProb,
                        arma::vec& forwardLogProb) const;
   /**
    * Compute the log-likelihood of the given emission probability up to time t
+   * This is meant for incremental or streaming computation of the
+   * log-likelihood of a sequence. For the first data point, provide an empty
+   * forwardLogProb vector.
    *
    * @param emissionLogProb emission probability at time t.
    * @param logLikelihood Log-likelihood of the given sequence of emission
    * probability up to time t-1
-   * @param prevForwardLogProb Vector in which forward probabilities for time
-   * t-1 will be saved. Passing prevForwardProb as an empty vector indicates the
-   * start of sequence or time t=0
-   * @param forwardLogProb Vector in which forward probabilities for time t
-   * will be saved.
+   * @param forwardLogProb Vector in which forward probabilities will be saved.
+   * Passing forwardLogProb as an empty vector indicates the start of sequence
+   * or time t=0
    * @return Log-likelihood of the given sequence of emission up to time t.
    */
   double LogLikelihoodEmissionProb(const arma::vec& emissionLogProb,
                        double &logLikelihood,
-                       arma::vec& prevForwardLogProb,
                        arma::vec& forwardLogProb) const;
   /**
    * Compute the log of the scaling factor of the given data at time t.
    * To calculate the log-likelihood for the whole sequence, accumulate log
-   * scale over the entire sequence
+   * scale over the entire sequence.
+   * This is meant for incremental or streaming computation of the
+   * log-likelihood of a sequence. For the first data point, provide an empty
+   * forwardLogProb vector.
    *
    * @param data observation at time t.
-   * @param prevForwardLogProb Vector in which forward probabilities for time
-   * t-1 will be saved. Passing prevForwardProb as an empty vector indicates the
-   * start of sequence or time t=0
-   * @param forwardLogProb Vector in which forward probabilities for time t
-   * will be saved.
+   * @param forwardLogProb Vector in which forward probabilities will be saved.
+   * Passing forwardLogProb as an empty vector indicates the start of sequence
+   * or time t=0
    * @return Log scale factor of the given sequence of data up at time t.
    */
   double LogScale(const arma::vec &data,
-                       arma::vec& prevForwardLogProb,
                        arma::vec& forwardLogProb) const;
   /**
    * Compute the log-likelihood of the given data up to time t
+   * This is meant for incremental or streaming computation of the
+   * log-likelihood of a sequence. For the first data point, provide an empty
+   * forwardLogProb vector.
    *
    * @param data observation at time t.
    * @param logLikelihood Log-likelihood of the given sequence of data
    * up to time t-1
-   * @param prevForwardLogProb Vector in which forward probabilities for time
-   * t-1 will be saved. Passing prevForwardProb as an empty vector indicates the
-   * start of sequence or time t=0
-   * @param forwardLogProb Vector in which forward probabilities for time t
-   * will be saved.
+   * @param forwardLogProb Vector in which forward probabilities will be saved.
+   * Passing forwardLogProb as an empty vector indicates the start of sequence
+   * or time t=0
    * @return Log-likelihood of the given sequence of data up to time t.
    */
   double LogLikelihood(const arma::vec &data,
                        double &logLikelihood,
-                       arma::vec& prevForwardLogProb,
                        arma::vec& forwardLogProb) const;
   /**
    * HMM filtering. Computes the k-step-ahead expected emission at each time
@@ -438,34 +438,27 @@ class HMM
  protected:
   /**
    * Given emission probabilities, computes forward probabilities at time t=0.
-   * The returned matrix has rows equal to the number of hidden
-   * states and columns equal to the number of observations.
    *
-   * @param emissionLogProb emission probability at time t=0.
+   * @param emissionLogProb Emission probability at time t=0.
    * @param logScales Vector in which the log of scaling factors will be saved.
-   * @param forwardLogProb Matrix in which forward probabilities will be saved.
+   * @return Forward probabilities
    */
-  void ForwardAtT0(
+  arma::vec ForwardAtT0(
     const arma::vec& emissionLogProb,
-    double& logScales,
-    arma::vec& forwardLogProb) const;
+    double& logScales) const;
 
   /**
    * Given emission probabilities, computes forward probabilities for time t>0.
-   * The returned matrix has rows equal to the number of hidden
-   * states and columns equal to the number of observations.
    *
-   * @param emissionLogProb emission probability at time t>0.
+   * @param emissionLogProb Emission probability at time t>0.
    * @param logScales Vector in which the log of scaling factors will be saved.
-   * @param prevForwardLogProb Vector in which forward probabilities for time
-   * t-1 will be saved.
-   * @param forwardLogProb Matrix in which forward probabilities will be saved.
+   * @param prevForwardLogProb Previous forward probabilities.
+   * @return Forward probabilities
    */
-  void ForwardAtTn(
+  arma::vec ForwardAtTn(
     const arma::vec& emissionLogProb,
     double& logScales,
-    const arma::vec& prevForwardLogProb,
-    arma::vec& forwardLogProb) const;
+    const arma::vec& prevForwardLogProb) const;
 
   // Helper functions.
   /**
