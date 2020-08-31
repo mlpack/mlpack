@@ -1103,7 +1103,14 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   if (hasRight)
     ar & CEREAL_POINTER(right);
   if (!hasParent)
+  {
+    MatType* datasetTemp = const_cast<MatType*>(dataset);
     ar & CEREAL_POINTER(dataset);
+    if (cereal::is_loading<Archive>())
+    {
+      dataset = datasetTemp; 
+    }
+  }
 
   if (cereal::is_loading<Archive>())
   {
