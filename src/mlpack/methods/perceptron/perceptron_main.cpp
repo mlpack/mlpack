@@ -25,13 +25,18 @@ using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
-PROGRAM_INFO("Perceptron",
-    // Short description.
+// Program Name.
+BINDING_NAME("Perceptron");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of a perceptron---a single level neural network--=for "
     "classification.  Given labeled data, a perceptron can be trained and saved"
     " for future use; or, a pre-trained perceptron can be used for "
-    "classification on new points.",
-    // Long description.
+    "classification on new points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements a perceptron, which is a single level neural "
     "network. The perceptron makes its predictions based on a linear predictor "
     "function combining a set of weights with the feature vector.  The "
@@ -57,8 +62,10 @@ PROGRAM_INFO("Perceptron",
     "."
     "\n"
     "Use " + PRINT_PARAM_STRING("predictions") + " instead of " +
-    PRINT_PARAM_STRING("output") + '.' +
-    "\n\n"
+    PRINT_PARAM_STRING("output") + '.');
+
+// Example.
+BINDING_EXAMPLE(
     "The training data given with the " + PRINT_PARAM_STRING("training") +
     " option may have class labels as its last dimension (so, if the training "
     "data is in CSV format, labels should be the last column).  Alternately, "
@@ -89,12 +96,14 @@ PROGRAM_INFO("Perceptron",
     "cannot pass a perceptron model trained on 2 classes and then re-train with"
     " a 4-class dataset.  Similarly, attempting classification on a "
     "3-dimensional dataset with a perceptron that has been trained on 8 "
-    "dimensions will cause an error.",
-    SEE_ALSO("@adaboost", "#adaboost"),
-    SEE_ALSO("Perceptron on Wikipedia",
-        "https://en.wikipedia.org/wiki/Perceptron"),
-    SEE_ALSO("mlpack::perceptron::Perceptron C++ class documentation",
-        "@doxygen/classmlpack_1_1perceptron_1_1Perceptron.html"));
+    "dimensions will cause an error.");
+
+// See also...
+BINDING_SEE_ALSO("@adaboost", "#adaboost");
+BINDING_SEE_ALSO("Perceptron on Wikipedia",
+        "https://en.wikipedia.org/wiki/Perceptron");
+BINDING_SEE_ALSO("mlpack::perceptron::Perceptron C++ class documentation",
+        "@doxygen/classmlpack_1_1perceptron_1_1Perceptron.html");
 
 // When we save a model, we must also save the class mappings.  So we use this
 // auxiliary structure to store both the perceptron and the mapping, and we'll

@@ -21,12 +21,17 @@ using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
-PROGRAM_INFO("Decision Stump",
-    // Short description.
+// Program Name.
+BINDING_NAME("Decision Stump");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of a decision stump, which is a single-level decision "
     "tree.  Given labeled data, a new decision stump can be trained; or, an "
-    "existing decision stump can be used to classify points.",
-    // Long description.
+    "existing decision stump can be used to classify points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements a decision stump, which is a single-level decision"
     " tree.  The decision stump will split on one dimension of the input data, "
     "and will split into multiple buckets.  The dimension and bins are selected"
@@ -66,12 +71,14 @@ PROGRAM_INFO("Decision Stump",
     "\n\n"
     "After training, a decision stump can be saved with the " +
     PRINT_PARAM_STRING("output_model") + " output parameter.  That stump may "
-    "later be re-used in subsequent calls to this program (or others).",
-    SEE_ALSO("Decision tree", "#decision_tree"),
-    SEE_ALSO("Decision stumps on Wikipedia",
-        "https://en.wikipedia.org/wiki/Decision_stump"),
-    SEE_ALSO("mlpack::decision_stump::DecisionStump class documentation",
-        "@doxygen/classmlpack_1_1decision__stump_1_1DecisionStump.html"));
+    "later be re-used in subsequent calls to this program (or others).");
+
+// See also...
+BINDING_SEE_ALSO("Decision tree", "#decision_tree");
+BINDING_SEE_ALSO("Decision stumps on Wikipedia",
+        "https://en.wikipedia.org/wiki/Decision_stump");
+BINDING_SEE_ALSO("mlpack::decision_stump::DecisionStump class documentation",
+        "@doxygen/classmlpack_1_1decision__stump_1_1DecisionStump.html");
 
 // Datasets we might load.
 PARAM_MATRIX_IN("training", "The dataset to train on.", "t");

@@ -13,7 +13,7 @@
 #ifndef MLPACK_BINDINGS_JULIA_PRINT_MODEL_TYPE_IMPORT_HPP
 #define MLPACK_BINDINGS_JULIA_PRINT_MODEL_TYPE_IMPORT_HPP
 
-#include "strip_type.hpp"
+#include <mlpack/bindings/util/strip_type.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -55,7 +55,7 @@ void PrintModelTypeImport(
   // import ..<type>
 
   // First, print the struct definition.
-  std::cout << "import .." << StripType(d.cppType) << std::endl;
+  std::cout << "import .." << util::StripType(d.cppType) << std::endl;
 }
 
 /**

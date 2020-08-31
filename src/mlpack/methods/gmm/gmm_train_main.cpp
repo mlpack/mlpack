@@ -26,12 +26,17 @@ using namespace mlpack::util;
 using namespace mlpack::kmeans;
 using namespace std;
 
-PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
-    // Short description.
+// Program Name.
+BINDING_NAME("Gaussian Mixture Model (GMM) Training");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of the EM algorithm for training Gaussian mixture "
     "models (GMMs).  Given a dataset, this can train a GMM for future use "
-    "with other tools.",
-    // Long description.
+    "with other tools.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program takes a parametric estimate of a Gaussian mixture model (GMM)"
     " using the EM algorithm to find the maximum likelihood estimate.  The "
     "model may be saved and reused by other mlpack GMM tools."
@@ -77,8 +82,10 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     "will avoid the checks after each iteration of the EM algorithm which "
     "ensure that the covariance matrices are positive definite.  Specifying "
     "the flag can cause faster runtime, but may also cause non-positive "
-    "definite covariance matrices, which will cause the program to crash."
-    "\n\n"
+    "definite covariance matrices, which will cause the program to crash.");
+
+// Example.
+BINDING_EXAMPLE(
     "As an example, to train a 6-Gaussian GMM on the data in " +
     PRINT_DATASET("data") + " with a maximum of 100 iterations of EM and 3 "
     "trials, saving the trained GMM to " + PRINT_MODEL("gmm") + ", the "
@@ -91,13 +98,15 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     ", the following command may be used: "
     "\n\n" +
     PRINT_CALL("gmm_train", "input_model", "gmm", "input", "data2",
-        "gaussians", 6, "output_model", "new_gmm"),
-    SEE_ALSO("@gmm_generate", "#gmm_generate"),
-    SEE_ALSO("@gmm_probability", "#gmm_probability"),
-    SEE_ALSO("Gaussian Mixture Models on Wikipedia",
-        "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model"),
-    SEE_ALSO("mlpack::gmm::GMM class documentation",
-        "@doxygen/classmlpack_1_1gmm_1_1GMM.html"));
+        "gaussians", 6, "output_model", "new_gmm"));
+
+// See also...
+BINDING_SEE_ALSO("@gmm_generate", "#gmm_generate");
+BINDING_SEE_ALSO("@gmm_probability", "#gmm_probability");
+BINDING_SEE_ALSO("Gaussian Mixture Models on Wikipedia",
+        "https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model");
+BINDING_SEE_ALSO("mlpack::gmm::GMM class documentation",
+        "@doxygen/classmlpack_1_1gmm_1_1GMM.html");
 
 // Parameters for training.
 PARAM_MATRIX_IN_REQ("input", "The training data on which the model will be "
@@ -176,7 +185,7 @@ static void mlpackMain()
   }
 
   // Initialize GMM.
-  GMM* gmm;
+  GMM* gmm = NULL;
 
   if (IO::HasParam("input_model"))
   {

@@ -22,14 +22,19 @@ using namespace mlpack::math;
 using namespace mlpack::sparse_coding;
 using namespace mlpack::util;
 
-PROGRAM_INFO("Sparse Coding",
-    // Short description.
+// Program Name.
+BINDING_NAME("Sparse Coding");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of Sparse Coding with Dictionary Learning.  Given a "
     "dataset, this will decompose the dataset into a sparse combination of a "
     "few dictionary elements, where the dictionary is learned during "
     "computation; a dictionary can be reused for future sparse coding of new "
-    "points.",
-    // Long description.
+    "points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "An implementation of Sparse Coding with Dictionary Learning, which "
     "achieves sparsity via an l1-norm regularizer on the codes (LASSO) or an "
     "(l1+l2)-norm regularizer on the codes (the Elastic Net).  Given a dense "
@@ -56,8 +61,10 @@ PROGRAM_INFO("Sparse Coding",
     " an initial dictionary for the optimization, with the " +
     PRINT_PARAM_STRING("initial_dictionary") + " parameter.  An input model may"
     " be specified with the " + PRINT_PARAM_STRING("input_model") +
-    " parameter."
-    "\n\n"
+    " parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "As an example, to build a sparse coding model on the dataset " +
     PRINT_DATASET("data") + " using 200 atoms and an l1-regularization "
     "parameter of 0.1, saving the model into " + PRINT_MODEL("model") + ", use "
@@ -70,18 +77,20 @@ PROGRAM_INFO("Sparse Coding",
     PRINT_DATASET("codes") + ": "
     "\n\n" +
     PRINT_CALL("sparse_coding", "input_model", "model", "test", "otherdata",
-        "codes", "codes"),
-    SEE_ALSO("@local_coordinate_coding", "#local_coordinate_coding"),
-    SEE_ALSO("Sparse dictionary learning on Wikipedia",
-        "https://en.wikipedia.org/wiki/Sparse_dictionary_learning"),
-    SEE_ALSO("Efficient sparse coding algorithms (pdf)",
+        "codes", "codes"));
+
+// See also...
+BINDING_SEE_ALSO("@local_coordinate_coding", "#local_coordinate_coding");
+BINDING_SEE_ALSO("Sparse dictionary learning on Wikipedia",
+        "https://en.wikipedia.org/wiki/Sparse_dictionary_learning");
+BINDING_SEE_ALSO("Efficient sparse coding algorithms (pdf)",
         "http://papers.nips.cc/paper/2979-efficient-sparse-coding-"
-        "algorithms.pdf"),
-    SEE_ALSO("Regularization and variable selection via the elastic net",
+        "algorithms.pdf");
+BINDING_SEE_ALSO("Regularization and variable selection via the elastic net",
         "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.124.4696&"
-        "rep=rep1&type=pdf"),
-    SEE_ALSO("mlpack::sparse_coding::SparseCoding C++ class documentation",
-        "@doxygen/classmlpack_1_1sparse__coding_1_1SparseCoding.html"));
+        "rep=rep1&type=pdf");
+BINDING_SEE_ALSO("mlpack::sparse_coding::SparseCoding C++ class documentation",
+        "@doxygen/classmlpack_1_1sparse__coding_1_1SparseCoding.html");
 
 // Train the model.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");

@@ -27,13 +27,17 @@ using namespace mlpack::kmeans;
 using namespace mlpack::util;
 using namespace std;
 
-// Define parameters for the executable.
-PROGRAM_INFO("K-Means Clustering",
-    // Short description.
+// Program Name.
+BINDING_NAME("K-Means Clustering");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of several strategies for efficient k-means clustering. "
     "Given a dataset and a value of k, this computes and returns a k-means "
-    "clustering on that data.",
-    // Long description.
+    "clustering on that data.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs K-Means clustering on the given dataset.  It can "
     "return the learned cluster assignments, and the centroids of the clusters."
     "  Empty clusters are not allowed by default; when a cluster becomes empty,"
@@ -74,8 +78,10 @@ PROGRAM_INFO("K-Means Clustering",
     "Initial clustering assignments may be specified using the " +
     PRINT_PARAM_STRING("initial_centroids") + " parameter, and the maximum "
     "number of iterations may be specified with the " +
-    PRINT_PARAM_STRING("max_iterations") + " parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("max_iterations") + " parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "As an example, to use Hamerly's algorithm to perform k-means clustering "
     "with k=10 on the dataset " + PRINT_DATASET("data") + ", saving the "
     "centroids to " + PRINT_DATASET("centroids") + " and the assignments for "
@@ -91,21 +97,23 @@ PROGRAM_INFO("K-Means Clustering",
     "following command may be used:"
     "\n\n" +
     PRINT_CALL("kmeans", "input", "data", "initial_centroids", "initial",
-        "clusters", 10, "max_iterations", 500, "centroid", "final"),
-    SEE_ALSO("K-Means tutorial", "@doxygen/kmtutorial.html"),
-    SEE_ALSO("@dbscan", "#dbscan"),
-    SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
-        "http://www.aaai.org/Papers/ICML/2003/ICML03-022.pdf"),
-    SEE_ALSO("Making k-means even faster (pdf)",
+        "clusters", 10, "max_iterations", 500, "centroid", "final"));
+
+// See also...
+BINDING_SEE_ALSO("K-Means tutorial", "@doxygen/kmtutorial.html");
+BINDING_SEE_ALSO("@dbscan", "#dbscan");
+BINDING_SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
+        "http://www.aaai.org/Papers/ICML/2003/ICML03-022.pdf");
+BINDING_SEE_ALSO("Making k-means even faster (pdf)",
         "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.586.2554"
-        "&rep=rep1&type=pdf"),
-    SEE_ALSO("Accelerating exact k-means algorithms with geometric reasoning "
-        "(pdf)", "http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/"
-        "usr0/ftp/2000/CMU-CS-00-105.pdf"),
-    SEE_ALSO("A dual-tree algorithm for fast k-means clustering with large k "
-        "(pdf)", "http://www.ratml.org/pub/pdf/2017dual.pdf"),
-    SEE_ALSO("mlpack::kmeans::KMeans class documentation",
-        "@doxygen/classmlpack_1_1kmeans_1_1KMeans.html"));
+        "&rep=rep1&type=pdf");
+BINDING_SEE_ALSO("Accelerating exact k-means algorithms with geometric"
+        " reasoning (pdf)", "http://reports-archive.adm.cs.cmu.edu/anon/anon"
+        "/usr/ftp/usr0/ftp/2000/CMU-CS-00-105.pdf");
+BINDING_SEE_ALSO("A dual-tree algorithm for fast k-means clustering with large "
+        "k (pdf)", "http://www.ratml.org/pub/pdf/2017dual.pdf");
+BINDING_SEE_ALSO("mlpack::kmeans::KMeans class documentation",
+        "@doxygen/classmlpack_1_1kmeans_1_1KMeans.html");
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");

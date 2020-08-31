@@ -26,7 +26,7 @@ Lookup<InputDataType, OutputDataType>::Lookup(
     vocabSize(vocabSize),
     embeddingSize(embeddingSize)
 {
-  weights.set_size(vocabSize, embeddingSize);
+  weights.set_size(embeddingSize, vocabSize);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -37,15 +37,14 @@ void Lookup<InputDataType, OutputDataType>::Forward(
   const size_t seqLength = input.n_rows;
   const size_t batchSize = input.n_cols;
 
-  output.set_size(seqLength * embeddingSize, batchSize);
+  output.set_size(embeddingSize * seqLength, batchSize);
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-    //! ith column of output is a vectorized form of a matrix of shape
-    //! (seqLength, embeddingSize) selected as a combination of rows from the
-    //! weights. The MultiheadAttention class requires this particular ordering
-    //! of matrix dimensions.
-    output.col(i) = arma::vectorise(weights.rows(
+    // ith column of output is a vectorized form of a matrix of shape
+    // (embeddingSize, seqLength) selected as a combination of columns from the
+    // weights.
+    output.col(i) = arma::vectorise(weights.cols(
         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
   }
 }
@@ -71,14 +70,14 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
   const size_t batchSize = input.n_cols;
 
   arma::Cube<eT> errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(),
-      seqLength, embeddingSize, batchSize, false, false);
+      embeddingSize, seqLength, batchSize, false, false);
 
   gradient.set_size(arma::size(weights));
   gradient.zeros();
 
   for (size_t i = 0; i < batchSize; ++i)
   {
-    gradient.rows(arma::conv_to<arma::uvec>::from(input.col(i)) - 1)
+    gradient.cols(arma::conv_to<arma::uvec>::from(input.col(i)) - 1)
         += errorTemp.slice(i);
   }
 }
@@ -94,7 +93,7 @@ void Lookup<InputDataType, OutputDataType>::serialize(
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
   if (Archive::is_loading::value)
-    weights.set_size(vocabSize, embeddingSize);
+    weights.set_size(embeddingSize, vocabSize);
 }
 
 } // namespace ann

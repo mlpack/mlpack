@@ -14,12 +14,17 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/binarize.hpp>
 
-PROGRAM_INFO("Binarize Data",
-    // Short description.
+// Program Name.
+BINDING_NAME("Binarize Data");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A utility to binarize a dataset.  Given a dataset, this utility converts "
     "each value in the desired dimension(s) to 0 or 1; this can be a useful "
-    "preprocessing step.",
-    // Long description.
+    "preprocessing step.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes a dataset and binarizes the "
     "variables into either 0 or 1 given threshold. User can apply binarization "
     "on a dimension or the whole dataset.  The dimension to apply binarization "
@@ -30,8 +35,10 @@ PROGRAM_INFO("Binarize Data",
     "0.0."
     "\n\n"
     "The binarized matrix may be saved with the " +
-    PRINT_PARAM_STRING("output") + " output parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("output") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, if we want to set all variables greater than 5 in the "
     "dataset " + PRINT_DATASET("X") + " to 1 and variables less than or equal "
     "to 5.0 to 0, and save the result to " + PRINT_DATASET("Y") + ", we could "
@@ -44,10 +51,12 @@ PROGRAM_INFO("Binarize Data",
     PRINT_DATASET("X") + ",  we could instead run"
     "\n\n" +
     PRINT_CALL("preprocess_binarize", "input", "X", "threshold", 5.0,
-        "dimension", 0, "output", "Y"),
-    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
-    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"),
-    SEE_ALSO("@preprocess_split", "#preprocess_split"));
+        "dimension", 0, "output", "Y"));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
+BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
+BINDING_SEE_ALSO("@preprocess_split", "#preprocess_split");
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");

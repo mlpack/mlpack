@@ -43,10 +43,10 @@ namespace tree {
  * The class is modular, and takes three template parameters.  The first,
  * FitnessFunction, is the fitness function that should be used to determine
  * whether a split is beneficial; examples might be GiniImpurity or
- * InformationGain.  The NumericSplitType determines how numeric attributes are
- * handled, and the CategoricalSplitType determines how categorical attributes
- * are handled.  As far as the actual splitting goes, the meat of the splitting
- * procedure will be contained in those two classes.
+ * HoeffdingInformationGain.  The NumericSplitType determines how numeric
+ * attributes are handled, and the CategoricalSplitType determines how
+ * categorical attributes are handled.  As far as the actual splitting goes,
+ * the meat of the splitting procedure will be contained in those two classes.
  *
  * @tparam FitnessFunction Fitness function to use.
  * @tparam NumericSplitType Technique for splitting numeric features.

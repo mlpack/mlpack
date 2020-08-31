@@ -35,8 +35,8 @@ struct TestsVisitor : boost::unit_test::test_tree_visitor
    */
   void visit(boost::unit_test::test_case const& test)
   {
-    std::cout << std::string(indentations, ' ') << std::string(test.p_name)
-        << "*" << std::endl;
+    MLPACK_COUT_STREAM << std::string(indentations, ' ')
+        << std::string(test.p_name) << "*" << std::endl;
   }
 
   /*
@@ -53,8 +53,8 @@ struct TestsVisitor : boost::unit_test::test_tree_visitor
       return true;
     }
 
-    std::cout << std::string(indentations, ' ') << std::string(suite.p_name)
-        << "*" << std::endl;
+    MLPACK_COUT_STREAM << std::string(indentations, ' ')
+        << std::string(suite.p_name) << "*" << std::endl;
 
     // Increase tab width (4 spaces).
     indentations += 4;

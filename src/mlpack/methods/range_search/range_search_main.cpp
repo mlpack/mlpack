@@ -27,15 +27,19 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::util;
 
-// Information about the program itself.
-PROGRAM_INFO("Range Search",
-    // Short description.
+// Program Name.
+BINDING_NAME("Range Search");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of range search with single-tree and dual-tree "
     "algorithms.  Given a set of reference points and a set of query points and"
     " a range, this can find the set of reference points within the desired "
     "range for each query point, and any trees built during the computation can"
-    " be saved for reuse with future range searches.",
-    // Long description.
+    " be saved for reuse with future range searches.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements range search with a Euclidean distance metric. "
     "For a given query point, a given range, and a given set of reference "
     "points, the program will return all of the reference points with distance "
@@ -44,14 +48,17 @@ PROGRAM_INFO("Range Search",
     " points, or only a reference set -- which is then used as both the "
     "reference and query set.  The given range is taken to be inclusive (that "
     "is, points with a distance exactly equal to the minimum and maximum of the"
-    " range are included in the results)."
-    "\n\n"
+    " range are included in the results).");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following will calculate the points within the range [2, "
-    "5] of each point in 'input.csv' and store the distances in 'distances.csv'"
-    " and the neighbors in 'neighbors.csv':"
-    "\n\n"
-    "$ range_search --min=2 --max=5 --reference_file=input.csv\n"
-    "  --distances_file=distances.csv --neighbors_file=neighbors.csv"
+    "5] of each point in "+ PRINT_DATASET("input") + " and store the"
+    " distances in" + PRINT_DATASET("distances") + " and the neighbors in "
+    + PRINT_DATASET("neighbors") +
+    "\n\n" +
+    PRINT_CALL("range_search", "min", 2, "max", 5, "distances_file", "input",
+    "distances_file", "distances", "neighbors_file", "neighbors") +
     "\n\n"
     "The output files are organized such that line i corresponds to the points "
     "found for query point i.  Because sometimes 0 points may be found in the "
@@ -62,14 +69,16 @@ PROGRAM_INFO("Range Search",
     " resultant CSV-like files may not be loadable by many programs.  However, "
     "at this time a better way to store this non-square result is not known.  "
     "As a result, any output files will be written as CSVs in this manner, "
-    "regardless of the given extension.",
-    SEE_ALSO("@knn", "#knn"),
-    SEE_ALSO("Range searching on Wikipedia",
-        "https://en.wikipedia.org/wiki/Range_searching"),
-    SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
-        "http://proceedings.mlr.press/v28/curtin13.pdf"),
-    SEE_ALSO("mlpack::range::RangeSearch C++ class documentation",
-        "@doxygen/classmlpack_1_1range_1_1RangeSearch.html"));
+    "regardless of the given extension.");
+
+// See also...
+BINDING_SEE_ALSO("@knn", "#knn");
+BINDING_SEE_ALSO("Range searching on Wikipedia",
+        "https://en.wikipedia.org/wiki/Range_searching");
+BINDING_SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
+        "http://proceedings.mlr.press/v28/curtin13.pdf");
+BINDING_SEE_ALSO("mlpack::range::RangeSearch C++ class documentation",
+        "@doxygen/classmlpack_1_1range_1_1RangeSearch.html");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");

@@ -17,19 +17,15 @@
 using namespace mlpack;
 using namespace mlpack::util;
 
-// Fake ProgramDoc in case none is supplied.
-static ProgramDoc emptyProgramDoc = ProgramDoc("", "", []() { return ""; },
-    {});
-
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-IO::IO() : didParse(false), doc(&emptyProgramDoc)
+IO::IO() : didParse(false)
 {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
-IO::IO(const IO& /* other */) : didParse(false), doc(&emptyProgramDoc)
+IO::IO(const IO& /* other */) : didParse(false)
 {
   return;
 }
@@ -49,7 +45,7 @@ void IO::Add(ParamData&& data)
   #endif
 
   // Temporary outstream object for detecting duplicate identifiers.
-  util::PrefixedOutStream outstr(std::cerr,
+  util::PrefixedOutStream outstr(MLPACK_CERR_STREAM,
         BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
 
   #undef BASH_RED
@@ -154,20 +150,6 @@ IO& IO::GetSingleton()
   return singleton;
 }
 
-/**
- * Registers a ProgramDoc object, which contains documentation about the
- * program.
- *
- * @param doc Pointer to the ProgramDoc object.
- */
-void IO::RegisterProgramDoc(ProgramDoc* doc)
-{
-  // Only register the doc if it is not the dummy object we created at the
-  // beginning of the file (as a default value in case this is never called).
-  if (doc != &emptyProgramDoc)
-    GetSingleton().doc = doc;
-}
-
 // Get the parameters that the IO object knows about.
 std::map<std::string, ParamData>& IO::Parameters()
 {
@@ -180,10 +162,10 @@ std::map<char, std::string>& IO::Aliases()
   return GetSingleton().aliases;
 }
 
-// Get the program name as set by PROGRAM_INFO().
+// Get the program name as set by BINDING_NAME().
 std::string IO::ProgramName()
 {
-  return GetSingleton().doc->programName;
+  return GetSingleton().doc.programName;
 }
 
 // Set a particular parameter as passed.

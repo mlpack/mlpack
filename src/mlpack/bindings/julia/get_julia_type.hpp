@@ -142,7 +142,7 @@ inline std::string GetJuliaType(
 {
   // Serializable types are just held as a pointer to nothing, but they're
   // wrapped in a struct.
-  std::string type = StripType(d.cppType);
+  std::string type = util::StripType(d.cppType);
   std::ostringstream oss;
   oss << type;
   return oss.str();
