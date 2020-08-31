@@ -436,11 +436,31 @@ class HMM
 
 
  protected:
+  /**
+   * Given emission probabilities, computes forward probabilities at time t=0.
+   * The returned matrix has rows equal to the number of hidden
+   * states and columns equal to the number of observations.
+   *
+   * @param emissionLogProb emission probability at time t=0.
+   * @param logScales Vector in which the log of scaling factors will be saved.
+   * @param forwardLogProb Matrix in which forward probabilities will be saved.
+   */
   void ForwardAtT0(
     const arma::vec& emissionLogProb,
     double& logScales,
     arma::vec& forwardLogProb) const;
 
+  /**
+   * Given emission probabilities, computes forward probabilities for time t>0.
+   * The returned matrix has rows equal to the number of hidden
+   * states and columns equal to the number of observations.
+   *
+   * @param emissionLogProb emission probability at time t>0.
+   * @param logScales Vector in which the log of scaling factors will be saved.
+   * @param prevForwardLogProb Vector in which forward probabilities for time
+   * t-1 will be saved.
+   * @param forwardLogProb Matrix in which forward probabilities will be saved.
+   */
   void ForwardAtTn(
     const arma::vec& emissionLogProb,
     double& logScales,
