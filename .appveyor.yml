@@ -95,6 +95,7 @@ build_script:
     -DPROFILE=OFF
     -DBUILD_PYTHON_BINDINGS=OFF
     -DBUILD_GO_BINDINGS=OFF
+    -DBUILD_R_BINDINGS=OFF
     -DCMAKE_BUILD_TYPE=Release ..
   - >
     "%MSBUILD%" "C:\projects\mlpack\build\mlpack.sln"

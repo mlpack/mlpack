@@ -18,6 +18,11 @@ option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 
+# Set minimum library version required by mlpack.
+set(ARMADILLO_VERSION "8.400.0")
+set(ENSMALLEN_VERSION "2.10.0")
+set(BOOST_VERSION "1.58")
+
 if (WIN32)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
@@ -56,11 +61,19 @@ else()
 endif()
 option(BUILD_GO_BINDINGS "Build Go bindings." ON)
 
-# If building Go bindings then build go shared libraries.    
+# If building Go bindings then build go shared libraries.
 if (BUILD_GO_BINDINGS)
   set(BUILD_GO_SHLIB ON)
 endif()
 
+# Detect whether the user passed BUILD_R_BINDINGS in order to determine if
+# we should fail if R isn't found.
+if (BUILD_R_BINDINGS)
+  set(FORCE_BUILD_R_BINDINGS ON)
+else()
+  set(FORCE_BUILD_R_BINDINGS OFF)
+endif()
+option(BUILD_R_BINDINGS "Build R bindings." ON)
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
@@ -278,7 +291,7 @@ endif()
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
-find_package(Armadillo 8.400.0 REQUIRED)
+find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIRS})
@@ -343,7 +356,7 @@ endif ()
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
-find_package(Ensmallen 2.10.0)
+find_package(Ensmallen "${ENSMALLEN_VERSION}")
 if (NOT ENSMALLEN_FOUND)
   if (DOWNLOAD_ENSMALLEN)
     file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
@@ -425,7 +438,7 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost 1.58
+find_package(Boost "${BOOST_VERSION}"
     COMPONENTS
       unit_test_framework
     REQUIRED

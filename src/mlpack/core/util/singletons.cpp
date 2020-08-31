@@ -32,15 +32,15 @@ using namespace mlpack::util;
 #endif
 
 #ifdef DEBUG
-PrefixedOutStream Log::Debug = PrefixedOutStream(std::cout,
+PrefixedOutStream Log::Debug = PrefixedOutStream(MLPACK_COUT_STREAM,
     BASH_CYAN "[DEBUG] " BASH_CLEAR);
 #else
 NullOutStream Log::Debug = NullOutStream();
 #endif
 
-PrefixedOutStream Log::Info = PrefixedOutStream(std::cout,
+PrefixedOutStream Log::Info = PrefixedOutStream(MLPACK_COUT_STREAM,
     BASH_GREEN "[INFO ] " BASH_CLEAR, true /* unless --verbose */, false);
-PrefixedOutStream Log::Warn = PrefixedOutStream(std::cout,
+PrefixedOutStream Log::Warn = PrefixedOutStream(MLPACK_COUT_STREAM,
     BASH_YELLOW "[WARN ] " BASH_CLEAR, false, false);
-PrefixedOutStream Log::Fatal = PrefixedOutStream(std::cerr,
+PrefixedOutStream Log::Fatal = PrefixedOutStream(MLPACK_CERR_STREAM,
     BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);

@@ -90,8 +90,8 @@ class SpillTree
   //! The number of points of the dataset contained in this node (and its
   //! children).
   size_t count;
-  //! The list of indexes of points contained in this node (non-null for
-  //! leaf nodes).
+  //! The list of indexes of points contained in this node (non-NULL if the node
+  //! is a leaf or if overlappingNode is true).
   arma::Col<size_t>* pointsIndex;
   //! Flag to distinguish overlapping nodes from non-overlapping nodes.
   bool overlappingNode;

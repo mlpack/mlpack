@@ -50,7 +50,7 @@ ShortDescription::ShortDescription(const std::string& shortDescription)
  * Construct a LongDescription object. When constructed, it will register itself
  * with IO.  A fatal error will be thrown if more than one is constructed.
  *
- * @param longDescription Long string containing documentation on 
+ * @param longDescription Long string containing documentation on
  *     what it is.  No newline characters are necessary; this is
  *     taken care of by IO later.
  */
@@ -85,6 +85,5 @@ SeeAlso::SeeAlso(
     const std::string& description, const std::string& link)
 {
   // Register this with IO.
-  IO::GetSingleton().doc.seeAlso.push_back(std::move(
-      make_pair(description, link)));
+  IO::GetSingleton().doc.seeAlso.push_back(make_pair(description, link));
 }
