@@ -804,7 +804,7 @@ void HoeffdingTree<
   if (cereal::is_loading<Archive>() && ownsMappings && dimensionMappings)
     delete dimensionMappings;
 
-  ar & CEREAL_POINTER(dimensionMappings);
+ // ar & CEREAL_POINTER(dimensionMappings);
 
   // Special handling for const object.
   data::DatasetInfo* d = NULL;

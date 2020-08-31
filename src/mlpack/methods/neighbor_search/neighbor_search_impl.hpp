@@ -964,8 +964,12 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
     {
       delete referenceSet;
     }
-
-    ar(CEREAL_POINTER(referenceSet));
+    MatType* referenceSetTemp = const_cast<MatType*>(referenceSet);
+    ar(CEREAL_POINTER(referenceSetTemp));
+    if (cereal::is_loading<Archive>())
+    {
+      referenceSet = referenceSetTemp;
+    }
     ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
