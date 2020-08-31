@@ -13,7 +13,6 @@
     methods/hoeffding_trees/information_gain.hpp (#2556).
 
   * Added macro for changing stream of printing and warnings/errors (#2556).
->>>>>>> origin/master
 
   * Added Spatial Dropout layer (#2564).
 
