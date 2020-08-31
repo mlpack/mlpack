@@ -72,7 +72,7 @@ using enable_if_t = typename enable_if<B, T>::type;
 #include <cereal/types/boost_variant.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/tuple.hpp>
-#include <cereal/types/unordered_map.hpp>
+#include <mlpack/core/cereal/unordered_map.hpp>
 #include <cereal/types/utility.hpp>
 #include <cereal/types/vector.hpp>
 
