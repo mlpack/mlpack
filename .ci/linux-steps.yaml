@@ -61,7 +61,7 @@ steps:
       cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=$PYBIN ..
     else
       cmake $(CMakeArgs) ..
-    fi
+cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=`which python` ..
   displayName: 'CMake'
 
 # Build mlpack
