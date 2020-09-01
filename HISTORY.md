@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+
+  * Issue warnings when metrics produce NaNs in KFoldCV (#2595).
+
   * Added bindings for _R_ during Google Summer of Code (#2556).
 
   * Added common striptype function for all bindings (#2556).
