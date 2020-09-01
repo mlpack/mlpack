@@ -1147,7 +1147,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMLoadSaveTest)
   {
     std::ofstream ofs("test-diagonal-gmm-save.xml");
     cereal::XMLOutputArchive ar(ofs);
-    ar << CEREAL_NVP(gmm);
+    ar << cereal::make_nvp("gmm", gmm);
   }
 
   // Load the gmm into gmm2.
@@ -1155,7 +1155,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMLoadSaveTest)
   {
     std::ifstream ifs("test-diagonal-gmm-save.xml");
     cereal::XMLInputArchive ar(ifs);
-    ar >> CEREAL_NVP(gmm2);
+    ar >> cereal::make_nvp("gmm", gmm2);
   }
 
   // Remove clutter.
