@@ -56,12 +56,7 @@ steps:
       export GOPATH=$PWD/src/mlpack/bindings/go
       go get -u -t gonum.org/v1/gonum/...
     fi
-    if [ "$(binding)" == "python" ]; then
-      export PYBIN=$(which python)
-      cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=$PYBIN ..
-    else
-      cmake $(CMakeArgs) ..
-cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=`which python` ..
+    cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=`which python` ..
   displayName: 'CMake'
 
 # Build mlpack
