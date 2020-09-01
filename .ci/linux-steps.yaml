@@ -24,10 +24,12 @@ steps:
     sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost1.70-dev libarmadillo-dev xz-utils
 
     ls -l /usr/bin/
+    which python
 
     if [ "$(binding)" == "python" ]; then
-      /usr/bin/python3 -m pip install --upgrade pip
-      /usr/bin/python3 -m pip install --upgrade --ignore-installed setuptools cython pandas
+      export PYBIN=$(which python)
+      $PYBIN -m pip install --upgrade pip
+      $PYBIN -m pip install --upgrade --ignore-installed setuptools cython pandas
     fi
 
     if [ "a$(julia.version)" != "a" ]; then
@@ -57,7 +59,11 @@ steps:
       export GOPATH=$PWD/src/mlpack/bindings/go
       go get -u -t gonum.org/v1/gonum/...
     fi
-    cmake $(CMakeArgs) ..
+    if [ "$(binding)" == "python" ]; then
+      cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=$PYBIN ..
+    else
+      cmake $(CMakeArgs) ..
+    fi
   displayName: 'CMake'
 
 # Build mlpack
