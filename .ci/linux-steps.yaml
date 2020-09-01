@@ -23,9 +23,6 @@ steps:
 
     sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost1.70-dev libarmadillo-dev xz-utils
 
-    ls -l /usr/bin/
-    which python
-
     if [ "$(binding)" == "python" ]; then
       export PYBIN=$(which python)
       $PYBIN -m pip install --upgrade pip
@@ -60,6 +57,7 @@ steps:
       go get -u -t gonum.org/v1/gonum/...
     fi
     if [ "$(binding)" == "python" ]; then
+      export PYBIN=$(which python)
       cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=$PYBIN ..
     else
       cmake $(CMakeArgs) ..
