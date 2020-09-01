@@ -1,5 +1,5 @@
 /**
- * @file atrous_convolution.hpp
+ * @file methods/ann/layer/atrous_convolution.hpp
  * @author Aarush Gupta
  * @author Shikhar Jaiswal
  *
@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
+#include <mlpack/core/util/to_lower.hpp>
 
 #include "layer_types.hpp"
 #include "padding.hpp"
@@ -85,7 +86,7 @@ class AtrousConvolution
                     const size_t inputHeight = 0,
                     const size_t dilationWidth = 1,
                     const size_t dilationHeight = 1,
-                    const std::string paddingType = "None");
+                    const std::string& paddingType = "None");
 
   /**
    * Create the AtrousConvolution object using the specified number of
@@ -116,13 +117,13 @@ class AtrousConvolution
                     const size_t kernelHeight,
                     const size_t strideWidth,
                     const size_t strideHeight,
-                    const std::tuple<size_t, size_t> padW,
-                    const std::tuple<size_t, size_t> padH,
+                    const std::tuple<size_t, size_t>& padW,
+                    const std::tuple<size_t, size_t>& padH,
                     const size_t inputWidth = 0,
                     const size_t inputHeight = 0,
                     const size_t dilationWidth = 1,
                     const size_t dilationHeight = 1,
-                    const std::string paddingType = "None");
+                    const std::string& paddingType = "None");
 
   /*
    * Set the weight and bias term.
@@ -137,21 +138,21 @@ class AtrousConvolution
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -161,55 +162,65 @@ class AtrousConvolution
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
-  const OutputDataType& Parameters() const { return weights; }
+  OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
+  //! Get the weight of the layer.
+  arma::cube const& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  arma::cube& Weight() { return weight; }
+
+  //! Get the bias of the layer.
+  arma::mat const& Bias() const { return bias; }
+  //! Modify the bias of the layer.
+  arma::mat& Bias() { return bias; }
+
   //! Get the output parameter.
-  const OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  const OutputDataType& Delta() const { return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  const OutputDataType& Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the input width.
-  const size_t& InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  const size_t& InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  const size_t& OutputWidth() const { return outputWidth; }
+  size_t OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  const size_t& OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
-  const size_t& InputSize() const { return inSize; }
+  size_t InputSize() const { return inSize; }
 
   //! Get the output size.
-  const size_t& OutputSize() const { return outSize; }
+  size_t OutputSize() const { return outSize; }
 
   //! Get the kernel width.
   size_t KernelWidth() const { return kernelWidth; }
@@ -242,12 +253,9 @@ class AtrousConvolution
   size_t& DilationHeight() { return dilationHeight; }
 
   //! Get the internal Padding layer.
-  const ann::Padding<>& Padding() const { return padding; }
+  ann::Padding<> const& Padding() const { return padding; }
   //! Modify the internal Padding layer.
   ann::Padding<>& Padding() { return padding; }
-
-  //! Modify the bias weights of the layer.
-  arma::mat& Bias() { return bias; }
 
   /**
    * Serialize the layer.
@@ -364,9 +372,6 @@ class AtrousConvolution
 
   //! Locally-stored transformed output parameter.
   arma::cube outputTemp;
-
-  //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
 
   //! Locally-stored transformed padded input parameter.
   arma::cube inputPaddedTemp;

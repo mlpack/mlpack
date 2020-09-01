@@ -43,4 +43,4 @@ if (NOT EXISTS "${Boost_SERIALIZATION_LIBRARY}")
   endif ()
 endif ()
 
-configure_file("${SETUP_PY_IN}" "${SETUP_PY_OUT}")
+configure_file(${SETUP_PY_IN} ${SETUP_PY_OUT})

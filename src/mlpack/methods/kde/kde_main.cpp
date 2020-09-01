@@ -1,5 +1,5 @@
 /**
- * @file kde_main.cpp
+ * @file methods/kde/kde_main.cpp
  * @author Roberto Hueso
  *
  * Executable for running Kernel Density Estimation.
@@ -9,8 +9,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core.hpp>
 
 #include "kde.hpp"
 #include "kde_model.hpp"
@@ -20,14 +22,18 @@ using namespace mlpack::kde;
 using namespace mlpack::util;
 using namespace std;
 
-// Define parameters for the executable.
-PROGRAM_INFO("Kernel Density Estimation",
-    // Short description.
+// Program Name.
+BINDING_NAME("Kernel Density Estimation");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of kernel density estimation with dual-tree algorithms. "
     "Given a set of reference points and query points and a kernel function, "
     "this can estimate the density function at the location of each query point"
-    " using trees; trees that are built can be saved for later use.",
-    // Long description.
+    " using trees; trees that are built can be saved for later use.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs a Kernel Density Estimation. KDE is a "
     "non-parametric way of estimating probability density function. "
     "For each query point the program will estimate its probability density "
@@ -66,8 +72,10 @@ PROGRAM_INFO("Kernel Density Estimation",
     "computations an exact approach would take, this program recurses the tree "
     "whenever a fraction of the amount of the node's descendant points have "
     "already been computed. This fraction is set using " +
-    PRINT_PARAM_STRING("mc_break_coef") + "."
-    "\n\n"
+    PRINT_PARAM_STRING("mc_break_coef") + ".");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following will run KDE using the data in " +
     PRINT_DATASET("ref_data") + " for training and the data in " +
     PRINT_DATASET("qu_data") + " as query data. It will apply an Epanechnikov "
@@ -106,19 +114,20 @@ PROGRAM_INFO("Kernel Density Estimation",
         0.2, "kernel", "gaussian", "tree", "kd-tree", "rel_error",
         0.05, "predictions", "out_data", "monte_carlo", "", "mc_probability",
         0.95, "initial_sample_size", 200, "mc_entry_coef", 3.5, "mc_break_coef",
-        0.6) +
-    "\n\n",
-    SEE_ALSO("@knn", "#knn"),
-    SEE_ALSO("Kernel density estimation on Wikipedia",
-        "https://en.wikipedia.org/wiki/Kernel_density_estimation"),
-    SEE_ALSO("Tree-Independent Dual-Tree Algorithms",
-             "https://arxiv.org/pdf/1304.4327.pdf"),
-    SEE_ALSO("Fast High-dimensional Kernel Summations Using the Monte Carlo "
-        "Multipole Method", "http://papers.nips.cc/paper/3539-fast-high-"
+        0.6));
+
+// See also...
+BINDING_SEE_ALSO("@knn", "#knn");
+BINDING_SEE_ALSO("Kernel density estimation on Wikipedia",
+        "https://en.wikipedia.org/wiki/Kernel_density_estimation");
+BINDING_SEE_ALSO("Tree-Independent Dual-Tree Algorithms",
+             "https://arxiv.org/pdf/1304.4327.pdf");
+BINDING_SEE_ALSO("Fast High-dimensional Kernel Summations Using the Monte Carlo"
+        " Multipole Method", "http://papers.nips.cc/paper/3539-fast-high-"
         "dimensional-kernel-summations-using-the-monte-carlo-multipole-method."
-        "pdf"),
-    SEE_ALSO("mlpack::kde::KDE C++ class documentation",
-        "@doxygen/classmlpack_1_1kde_1_1KDE.html"));
+        "pdf");
+BINDING_SEE_ALSO("mlpack::kde::KDE C++ class documentation",
+        "@doxygen/classmlpack_1_1kde_1_1KDE.html");
 
 // Required options.
 PARAM_MATRIX_IN("reference", "Input reference dataset use for KDE.", "r");
@@ -186,17 +195,17 @@ PARAM_COL_OUT("predictions", "Vector to store density predictions.",
 static void mlpackMain()
 {
   // Get some parameters.
-  const double bandwidth = CLI::GetParam<double>("bandwidth");
-  const std::string kernelStr = CLI::GetParam<std::string>("kernel");
-  const std::string treeStr = CLI::GetParam<std::string>("tree");
-  const std::string modeStr = CLI::GetParam<std::string>("algorithm");
-  const double relError = CLI::GetParam<double>("rel_error");
-  const double absError = CLI::GetParam<double>("abs_error");
-  const bool monteCarlo = CLI::GetParam<bool>("monte_carlo");
-  const double mcProb = CLI::GetParam<double>("mc_probability");
-  const int initialSampleSize = CLI::GetParam<int>("initial_sample_size");
-  const double mcEntryCoef = CLI::GetParam<double>("mc_entry_coef");
-  const double mcBreakCoef = CLI::GetParam<double>("mc_break_coef");
+  const double bandwidth = IO::GetParam<double>("bandwidth");
+  const std::string kernelStr = IO::GetParam<std::string>("kernel");
+  const std::string treeStr = IO::GetParam<std::string>("tree");
+  const std::string modeStr = IO::GetParam<std::string>("algorithm");
+  const double relError = IO::GetParam<double>("rel_error");
+  const double absError = IO::GetParam<double>("abs_error");
+  const bool monteCarlo = IO::GetParam<bool>("monte_carlo");
+  const double mcProb = IO::GetParam<double>("mc_probability");
+  const int initialSampleSize = IO::GetParam<int>("initial_sample_size");
+  const double mcEntryCoef = IO::GetParam<double>("mc_entry_coef");
+  const double mcBreakCoef = IO::GetParam<double>("mc_break_coef");
 
   // Initialize results vector.
   arma::vec estimations;
@@ -243,9 +252,9 @@ static void mlpackMain()
 
   KDEModel* kde;
 
-  if (CLI::HasParam("reference"))
+  if (IO::HasParam("reference"))
   {
-    arma::mat reference = std::move(CLI::GetParam<arma::mat>("reference"));
+    arma::mat reference = std::move(IO::GetParam<arma::mat>("reference"));
 
     kde = new KDEModel();
 
@@ -285,7 +294,7 @@ static void mlpackMain()
   else
   {
     // Load model.
-    kde = CLI::GetParam<KDEModel*>("input_model");
+    kde = IO::GetParam<KDEModel*>("input_model");
   }
 
   // Set model parameters.
@@ -299,9 +308,9 @@ static void mlpackMain()
   kde->MCBreakCoefficient(mcBreakCoef);
 
   // Evaluation.
-  if (CLI::HasParam("query"))
+  if (IO::HasParam("query"))
   {
-    arma::mat query = std::move(CLI::GetParam<arma::mat>("query"));
+    arma::mat query = std::move(IO::GetParam<arma::mat>("query"));
     kde->Evaluate(std::move(query), estimations);
   }
   else
@@ -310,10 +319,9 @@ static void mlpackMain()
   }
 
   // Output predictions if needed.
-  if (CLI::HasParam("predictions"))
-    CLI::GetParam<arma::vec>("predictions") = std::move(estimations);
+  if (IO::HasParam("predictions"))
+    IO::GetParam<arma::vec>("predictions") = std::move(estimations);
 
   // Save model.
-  if (CLI::HasParam("output_model"))
-    CLI::GetParam<KDEModel*>("output_model") = kde;
+  IO::GetParam<KDEModel*>("output_model") = kde;
 }

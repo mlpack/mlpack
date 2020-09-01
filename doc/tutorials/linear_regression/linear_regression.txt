@@ -132,7 +132,7 @@ $ cat lr.xml
 @endcode
 
 As you can see, the function for this input is \f$f(y)=0+1x_1\f$.  We can see
-that the model we have trained catches this; in the \c <parameters> section of
+that the model we have trained catches this; in the \c \<parameters\> section of
 \c lr.xml, we can see that there are two elements, which are (approximately) 0
 and 1.  The first element corresponds to the intercept 0, and the second column
 corresponds to the coefficient 1 for the variable \f$x_1\f$.  Note that in this

@@ -1,5 +1,5 @@
 /**
- * @file get_printable_param_impl.hpp
+ * @file bindings/cli/get_printable_param_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of parameter printing functions.
@@ -13,6 +13,7 @@
 #define MLPACK_BINDINGS_CLI_GET_PRINTABLE_PARAM_IMPL_HPP
 
 #include "get_printable_param.hpp"
+#include "get_param.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -21,7 +22,7 @@ namespace cli {
 //! Print an option.
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
@@ -36,7 +37,7 @@ std::string GetPrintableParam(
 //! Print a vector option.
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type*
         /* junk */)
 {
@@ -48,10 +49,31 @@ std::string GetPrintableParam(
   return oss.str();
 }
 
+// Return a printed representation of the size of the matrix.
+template<typename T>
+std::string GetMatrixSize(
+    T& matrix,
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+{
+  std::ostringstream oss;
+  oss << matrix.n_rows << "x" << matrix.n_cols << " matrix";
+  return oss.str();
+}
+
+// Return a printed representation of the size of the matrix.
+template<typename T>
+std::string GetMatrixSize(
+    T& matrixAndInfo,
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+{
+  return GetMatrixSize(std::get<1>(matrixAndInfo));
+}
+
 //! Print a matrix/tuple option (this just prints the filename).
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<arma::is_arma_type<T>::value ||
                                   std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
@@ -61,14 +83,24 @@ std::string GetPrintableParam(
   const TupleType* tuple = boost::any_cast<TupleType>(&data.value);
 
   std::ostringstream oss;
-  oss << std::get<1>(*tuple);
+  oss << "'" << std::get<1>(*tuple) << "'";
+
+  if (std::get<1>(*tuple) != "")
+  {
+    // Make sure the matrix is loaded so that we can print its size.
+    T& mat = GetParam<T>(const_cast<util::ParamData&>(data));
+    std::string matDescription = GetMatrixSize(mat);
+
+    oss << " (" << matDescription << ")";
+  }
+
   return oss.str();
 }
 
 //! Print a model option (this just prints the filename).
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
 {

@@ -1,6 +1,6 @@
 /**
  * @author Kim SangYeon
- * @file diagonal_gmm_impl.hpp
+ * @file methods/gmm/diagonal_gmm_impl.hpp
  *
  * Implementation of template-based DiagonalGMM methods.
  *

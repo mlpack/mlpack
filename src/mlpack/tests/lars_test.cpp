@@ -1,5 +1,5 @@
 /**
- * @file lars_test.cpp
+ * @file tests/lars_test.cpp
  * @author Nishant Mehta
  *
  * Test for LARS.
@@ -35,7 +35,7 @@ void LARSVerifyCorrectness(arma::vec beta, arma::vec errCorr, double lambda)
 {
   size_t nDims = beta.n_elem;
   const double tol = 1e-10;
-  for (size_t j = 0; j < nDims; j++)
+  for (size_t j = 0; j < nDims; ++j)
   {
     if (beta(j) == 0)
     {
@@ -60,7 +60,7 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
   arma::mat X;
   arma::rowvec y;
 
-  for (size_t i = 0; i < 100; i++)
+  for (size_t i = 0; i < 100; ++i)
   {
     GenerateProblem(X, y, nPoints, nDims);
 
@@ -353,7 +353,7 @@ BOOST_AUTO_TEST_CASE(TrainingConstructorWithNonDefaultsTest)
 }
 
 /**
- * Test that LARS::Train() returns finite correlation value.
+ * Test that LARS::Train() returns finite error value.
  */
 BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
 {
@@ -371,30 +371,96 @@ BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
   // Test with Cholesky decomposition and with lasso.
   LARS lars1(true, lambda1, 0.0);
   arma::vec betaOpt1;
-  double maxCorr = lars1.Train(X, y, betaOpt1);
+  double error = lars1.Train(X, y, betaOpt1);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
+  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
 
   // Test without Cholesky decomposition and with lasso.
   LARS lars2(false, lambda1, 0.0);
   arma::vec betaOpt2;
-  maxCorr = lars2.Train(X, y, betaOpt2);
+  error = lars2.Train(X, y, betaOpt2);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
+  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
 
   // Test with Cholesky decomposition and with elasticnet.
   LARS lars3(true, lambda1, lambda2);
   arma::vec betaOpt3;
-  maxCorr = lars3.Train(X, y, betaOpt3);
+  error = lars3.Train(X, y, betaOpt3);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
+  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
 
   // Test without Cholesky decomposition and with elasticnet.
   LARS lars4(false, lambda1, lambda2);
   arma::vec betaOpt4;
-  maxCorr = lars4.Train(X, y, betaOpt4);
+  error = lars4.Train(X, y, betaOpt4);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(maxCorr), true);
+  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
+}
+
+/**
+ * Test that LARS::ComputeError() returns error value less than 1
+ * and greater than 0.
+ */
+BOOST_AUTO_TEST_CASE(LARSTestComputeError)
+{
+  arma::mat X;
+  arma::mat Y;
+
+  data::Load("lars_dependent_x.csv", X);
+  data::Load("lars_dependent_y.csv", Y);
+
+  arma::rowvec y = Y.row(0);
+
+  LARS lars1(true, 0.1, 0.0);
+  arma::vec betaOpt1;
+  double train1 = lars1.Train(X, y, betaOpt1);
+  double cost = lars1.ComputeError(X, y);
+
+  BOOST_REQUIRE_EQUAL(cost <= 1, true);
+  BOOST_REQUIRE_EQUAL(cost >= 0, true);
+  BOOST_REQUIRE_EQUAL(cost == train1, true);
+}
+
+/**
+ * Simple test for LARS copy constructor.
+ */
+BOOST_AUTO_TEST_CASE(LARSCopyConstructorTest)
+{
+  arma::mat features, Y;
+  arma::rowvec targets;
+
+  // Load training input and predictions for testing.
+  data::Load("lars_dependent_x.csv", features);
+  data::Load("lars_dependent_y.csv", Y);
+  targets = Y.row(0);
+
+  // Check if the copy is accessible even after deleting the pointer to the
+  // object.
+  mlpack::regression::LARS* glm1 = new mlpack::regression::LARS(false, .1, .1);
+  arma::rowvec predictions, predictionsFromCopiedModel;
+  std::vector<mlpack::regression::LARS> models;
+  glm1->Train(features, targets);
+  glm1->Predict(features, predictions);
+  models.emplace_back(*glm1); // Call the copy constructor.
+  delete glm1; // Free LARS internal memory.
+  models[0].Predict(features, predictionsFromCopiedModel);
+  // The output of both models should be the same.
+  CheckMatrices(predictions, predictionsFromCopiedModel);
+  // Check if we can train the model again.
+  BOOST_REQUIRE_NO_THROW(models[0].Train(features, targets));
+
+  // Check if we can train the copied model.
+  mlpack::regression::LARS glm2(false, 0.1, 0.1);
+  models.emplace_back(glm2); // Call the copy constructor.
+  BOOST_REQUIRE_NO_THROW(glm2.Train(features, targets));
+  BOOST_REQUIRE_NO_THROW(models[1].Train(features, targets));
+
+  // Create a copy using assignment operator.
+  mlpack::regression::LARS glm3 = glm2;
+  models[1].Predict(features, predictions);
+  glm3.Predict(features, predictionsFromCopiedModel);
+  // The output of both models should be the same.
+  CheckMatrices(predictions, predictionsFromCopiedModel);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

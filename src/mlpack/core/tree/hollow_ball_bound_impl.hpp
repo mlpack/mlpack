@@ -1,5 +1,5 @@
 /**
- * @file hollow_ball_bound_impl.hpp
+ * @file core/tree/hollow_ball_bound_impl.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  * Implementation of HollowBallBound ball bound metric policy class.
@@ -80,6 +80,9 @@ template<typename TMetricType, typename ElemType>
 HollowBallBound<TMetricType, ElemType>& HollowBallBound<TMetricType, ElemType>::
 operator=(const HollowBallBound& other)
 {
+  if (ownsMetric)
+    delete metric;
+
   radii = other.radii;
   center = other.center;
   hollowCenter = other.hollowCenter;

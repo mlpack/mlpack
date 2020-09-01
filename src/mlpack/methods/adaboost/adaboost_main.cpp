@@ -1,5 +1,5 @@
 /**
- * @file adaboost_main.cpp
+ * @file methods/adaboost/adaboost_main.cpp
  * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.
@@ -32,7 +32,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "adaboost.hpp"
@@ -42,17 +42,22 @@ using namespace mlpack;
 using namespace std;
 using namespace arma;
 using namespace mlpack::adaboost;
-using namespace mlpack::decision_stump;
+using namespace mlpack::tree;
 using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
-PROGRAM_INFO("AdaBoost",
-    // Short description.
+// Program Name.
+BINDING_NAME("AdaBoost");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for "
     "classification.  This can be used to train an AdaBoost model on labeled "
     "data or use an existing AdaBoost model to predict the classes of new "
-    "points.",
-    // Long description.
+    "points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements the AdaBoost (or Adaptive "
     "Boosting) algorithm. The variant of AdaBoost implemented here is "
     "AdaBoost.MH. It uses a weak learner, either decision stumps or "
@@ -86,15 +91,17 @@ PROGRAM_INFO("AdaBoost",
     "."
     "\n"
     "Use " + PRINT_PARAM_STRING("predictions") + " instead of " +
-    PRINT_PARAM_STRING("output") + '.' +
-    "\n\n"
+    PRINT_PARAM_STRING("output") + '.');
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to run AdaBoost on an input dataset " +
-    PRINT_DATASET("data") + " with perceptrons as the weak learner type, "
-    "storing the trained model in " + PRINT_MODEL("model") + ", one could "
-    "use the following command: "
+    PRINT_DATASET("data") + " with labels " + PRINT_DATASET("labels") +
+    "and perceptrons as the weak learner type, storing the trained model in " +
+    PRINT_MODEL("model") + ", one could use the following command: "
     "\n\n" +
-    PRINT_CALL("adaboost", "training", "data", "output_model", "model",
-        "weak_learner", "perceptron") +
+    PRINT_CALL("adaboost", "training", "data", "labels", "labels",
+        "output_model", "model", "weak_learner", "perceptron") +
     "\n\n"
     "Similarly, an already-trained model in " + PRINT_MODEL("model") + " can"
     " be used to provide class predictions from test data " +
@@ -102,15 +109,17 @@ PROGRAM_INFO("AdaBoost",
     PRINT_DATASET("predictions") + " with the following command: "
     "\n\n" +
     PRINT_CALL("adaboost", "input_model", "model", "test", "test_data",
-        "predictions", "predictions"),
-    // See also...
-    SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/AdaBoost"),
-    SEE_ALSO("Improved boosting algorithms using confidence-rated predictions "
-        "(pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf"),
-    SEE_ALSO("Perceptron", "#perceptron"),
-    SEE_ALSO("Decision Stump", "#decision_stump"),
-    SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",
-        "@doxygen/classmlpack_1_1adaboost_1_1AdaBoost.html"));
+        "predictions", "predictions"));
+
+// See also...
+BINDING_SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/"
+        "AdaBoost");
+BINDING_SEE_ALSO("Improved boosting algorithms using confidence-rated "
+        "predictions (pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf");
+BINDING_SEE_ALSO("Perceptron", "#perceptron");
+BINDING_SEE_ALSO("Decision Stump", "#decision_stump");
+BINDING_SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",
+        "@doxygen/classmlpack_1_1adaboost_1_1AdaBoost.html");
 
 // Input for training.
 PARAM_MATRIX_IN("training", "Dataset for training AdaBoost.", "t");
@@ -163,7 +172,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "iterations");
 
   // If we gave an input model but no test set, issue a warning.
-  if (CLI::HasParam("input_model"))
+  if (IO::HasParam("input_model"))
     RequireAtLeastOnePassed({ "test" }, false, "no task will be performed");
 
   RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
@@ -173,18 +182,18 @@ static void mlpackMain()
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
   AdaBoostModel* m;
-  if (CLI::HasParam("training"))
+  if (IO::HasParam("training"))
   {
-    mat trainingData = std::move(CLI::GetParam<arma::mat>("training"));
+    mat trainingData = std::move(IO::GetParam<arma::mat>("training"));
     m = new AdaBoostModel();
 
     // Load labels.
     arma::Row<size_t> labelsIn;
 
-    if (CLI::HasParam("labels"))
+    if (IO::HasParam("labels"))
     {
       // Load labels.
-      labelsIn = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+      labelsIn = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
     }
     else
     {
@@ -203,9 +212,9 @@ static void mlpackMain()
     data::NormalizeLabels(labelsIn, labels, m->Mappings());
 
     // Get other training parameters.
-    const double tolerance = CLI::GetParam<double>("tolerance");
-    const size_t iterations = (size_t) CLI::GetParam<int>("iterations");
-    const string weakLearner = CLI::GetParam<string>("weak_learner");
+    const double tolerance = IO::GetParam<double>("tolerance");
+    const size_t iterations = (size_t) IO::GetParam<int>("iterations");
+    const string weakLearner = IO::GetParam<string>("weak_learner");
     if (weakLearner == "decision_stump")
       m->WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::DECISION_STUMP;
     else if (weakLearner == "perceptron")
@@ -221,13 +230,13 @@ static void mlpackMain()
   else
   {
     // We have a specified input model.
-    m = CLI::GetParam<AdaBoostModel*>("input_model");
+    m = IO::GetParam<AdaBoostModel*>("input_model");
   }
 
   // Perform classification, if desired.
-  if (CLI::HasParam("test"))
+  if (IO::HasParam("test"))
   {
-    mat testingData = std::move(CLI::GetParam<arma::mat>("test"));
+    mat testingData = std::move(IO::GetParam<arma::mat>("test"));
 
     if (testingData.n_rows != m->Dimensionality())
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
@@ -237,7 +246,7 @@ static void mlpackMain()
     Row<size_t> predictedLabels(testingData.n_cols);
     mat probabilities;
 
-    if (CLI::HasParam("probabilities"))
+    if (IO::HasParam("probabilities"))
     {
       Timer::Start("adaboost_classification");
       m->Classify(testingData, predictedLabels, probabilities);
@@ -254,13 +263,13 @@ static void mlpackMain()
     data::RevertLabels(predictedLabels, m->Mappings(), results);
 
     // Save the predicted labels.
-    if (CLI::HasParam("output"))
-      CLI::GetParam<arma::Row<size_t>>("output") = results;
-    if (CLI::HasParam("predictions"))
-      CLI::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
-    if (CLI::HasParam("probabilities"))
-      CLI::GetParam<arma::mat>("probabilities") = std::move(probabilities);
+    if (IO::HasParam("output"))
+      IO::GetParam<arma::Row<size_t>>("output") = results;
+    if (IO::HasParam("predictions"))
+      IO::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
+    if (IO::HasParam("probabilities"))
+      IO::GetParam<arma::mat>("probabilities") = std::move(probabilities);
   }
 
-  CLI::GetParam<AdaBoostModel*>("output_model") = m;
+  IO::GetParam<AdaBoostModel*>("output_model") = m;
 }

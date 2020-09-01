@@ -1,5 +1,5 @@
 /**
- * @file lin_alg.cpp
+ * @file core/math/lin_alg.cpp
  * @author Nishant Mehta
  *
  * Linear algebra utilities.
@@ -23,7 +23,7 @@ using namespace math;
  */
 void mlpack::math::VectorPower(arma::vec& vec, const double power)
 {
-  for (size_t i = 0; i < vec.n_elem; i++)
+  for (size_t i = 0; i < vec.n_elem; ++i)
   {
     if (std::abs(vec(i)) > 1e-12)
       vec(i) = (vec(i) > 0) ? std::pow(vec(i), (double) power) :
@@ -70,32 +70,6 @@ void mlpack::math::WhitenUsingSVD(const arma::mat& x,
 
   whiteningMatrix = v * invSMatrix * trans(u);
 
-  xWhitened = whiteningMatrix * x;
-}
-
-/**
- * Whitens a matrix using the eigendecomposition of the covariance matrix.
- * Whitening means the covariance matrix of the result is the identity matrix.
- */
-void mlpack::math::WhitenUsingEig(const arma::mat& x,
-                                  arma::mat& xWhitened,
-                                  arma::mat& whiteningMatrix)
-{
-  arma::mat diag, eigenvectors;
-  arma::vec eigenvalues;
-
-  // Get eigenvectors of covariance of input matrix.
-  eig_sym(eigenvalues, eigenvectors, mlpack::math::ColumnCovariance(x));
-
-  // Generate diagonal matrix using 1 / sqrt(eigenvalues) for each value.
-  VectorPower(eigenvalues, -0.5);
-  diag.zeros(eigenvalues.n_elem, eigenvalues.n_elem);
-  diag.diag() = eigenvalues;
-
-  // Our whitening matrix is diag(1 / sqrt(eigenvectors)) * eigenvalues.
-  whiteningMatrix = diag * trans(eigenvectors);
-
-  // Now apply the whitening matrix.
   xWhitened = whiteningMatrix * x;
 }
 
@@ -223,9 +197,9 @@ void mlpack::math::Svec(const arma::mat& input, arma::vec& output)
   output.zeros(n2bar);
 
   size_t idx = 0;
-  for (size_t i = 0; i < n; i++)
+  for (size_t i = 0; i < n; ++i)
   {
-    for (size_t j = i; j < n; j++)
+    for (size_t j = i; j < n; ++j)
     {
       if (i == j)
         output(idx++) = input(i, j);
@@ -264,9 +238,9 @@ void mlpack::math::Smat(const arma::vec& input, arma::mat& output)
   output.zeros(n, n);
 
   size_t idx = 0;
-  for (size_t i = 0; i < n; i++)
+  for (size_t i = 0; i < n; ++i)
   {
-    for (size_t j = i; j < n; j++)
+    for (size_t j = i; j < n; ++j)
     {
       if (i == j)
         output(i, j) = input(idx++);
@@ -285,11 +259,11 @@ void mlpack::math::SymKronId(const arma::mat& A, arma::mat& op)
   op.zeros(n2bar, n2bar);
 
   size_t idx = 0;
-  for (size_t i = 0; i < n; i++)
+  for (size_t i = 0; i < n; ++i)
   {
-    for (size_t j = i; j < n; j++)
+    for (size_t j = i; j < n; ++j)
     {
-      for (size_t k = 0; k < n; k++)
+      for (size_t k = 0; k < n; ++k)
       {
         op(idx, SvecIndex(k, j, n)) +=
           ((k == j) ? 1. : M_SQRT1_2) * A(i, k);

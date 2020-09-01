@@ -1,5 +1,5 @@
 /**
- * @file lstm_impl.hpp
+ * @file methods/ann/layer/lstm_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the LSTM class, which implements a lstm network layer.
@@ -163,19 +163,19 @@ void LSTM<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void LSTM<InputDataType, OutputDataType>::Forward(
-    InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   //! Locally-stored cellState.
   OutputType cellState;
-  Forward(std::move(input), std::move(output), std::move(cellState), false);
+  Forward(input, output, cellState, false);
 }
 
 // Forward when cellState is needed overloaded LSTM::Forward().
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void LSTM<InputDataType, OutputDataType>::Forward(InputType&& input,
-                                                  OutputType&& output,
-                                                  OutputType&& cellState,
+void LSTM<InputDataType, OutputDataType>::Forward(const InputType& input,
+                                                  OutputType& output,
+                                                  OutputType& cellState,
                                                   bool useCellState)
 {
   // Check if the batch size changed, the number of cols is defines the input
@@ -288,20 +288,27 @@ void LSTM<InputDataType, OutputDataType>::Forward(InputType&& input,
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void LSTM<InputDataType, OutputDataType>::Backward(
-  const InputType&& /* input */, ErrorType&& gy, GradientType&& g)
+  const InputType& /* input */, const ErrorType& gy, GradientType& g)
 {
+  ErrorType gyLocal;
   if (gradientStepIdx > 0)
   {
-    gy += prevError;
+    gyLocal = gy + prevError;
+  }
+  else
+  {
+    // Make an alias.
+    gyLocal = ErrorType(((ErrorType&) gy).memptr(), gy.n_rows, gy.n_cols, false,
+        false);
   }
 
   outputGateError =
-      gy % cellActivation.cols(backwardStep - batchStep, backwardStep) %
+      gyLocal % cellActivation.cols(backwardStep - batchStep, backwardStep) %
       (outputGateActivation.cols(backwardStep - batchStep, backwardStep) %
       (1.0 - outputGateActivation.cols(backwardStep - batchStep,
       backwardStep)));
 
-  OutputDataType cellError = gy %
+  OutputDataType cellError = gyLocal %
       outputGateActivation.cols(backwardStep - batchStep, backwardStep) %
       (1 - arma::pow(cellActivation.cols(backwardStep -
       batchStep, backwardStep), 2)) + outputGateError.each_col() %
@@ -359,7 +366,9 @@ void LSTM<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void LSTM<InputDataType, OutputDataType>::Gradient(
-    InputType&& input, ErrorType&& /* error */, GradientType&& gradient)
+    const InputType& input,
+    const ErrorType& /* error */,
+    GradientType& gradient)
 {
   // Input2GateOutputWeight and input2GateOutputBias gradients.
   gradient.submat(0, 0, input2GateOutputWeight.n_elem - 1, 0) =

@@ -1,5 +1,5 @@
 /**
- * @file negative_log_likelihood.hpp
+ * @file methods/ann/loss_functions/negative_log_likelihood.hpp
  * @author Marcus Edel
  *
  * Definition of the NegativeLogLikelihood class.
@@ -48,7 +48,8 @@ class NegativeLogLikelihood
    *        between 1 and the number of classes.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, TargetType&& target);
+  typename InputType::elem_type Forward(const InputType& input,
+                                        const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log
@@ -62,9 +63,9 @@ class NegativeLogLikelihood
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  void Backward(const InputType& input,
+                const TargetType& target,
+                OutputType& output);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }

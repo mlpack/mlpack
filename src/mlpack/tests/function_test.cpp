@@ -1,5 +1,5 @@
 /**
- * @file function_test.cpp
+ * @file tests/function_test.cpp
  * @author Ryan Curtin
  * @author Shikhar Bhardwaj
  *

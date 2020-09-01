@@ -1,5 +1,5 @@
 /**
- * @file pca_test.cpp
+ * @file tests/main_tests/pca_test.cpp
  * @author Ryan Curtin
  *
  * Test mlpackMain() of pca_main.cpp.
@@ -30,14 +30,14 @@ struct PCATestFixture
   PCATestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~PCATestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -57,8 +57,8 @@ BOOST_AUTO_TEST_CASE(PCADimensionTest)
   mlpackMain();
 
   // Now check that the output has 3 dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 3);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 5);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 3);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 5);
 }
 
 /**
@@ -77,8 +77,8 @@ BOOST_AUTO_TEST_CASE(PCAVarRetainTest)
   mlpackMain();
 
   // Check that the output has 5 dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 4);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 5);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 4);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 5);
 }
 
 /**
@@ -96,8 +96,8 @@ BOOST_AUTO_TEST_CASE(PCANoVarRetainTest)
   mlpackMain();
 
   // Check that the output has 1 dimensions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 5);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 1);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 5);
 }
 
 /**

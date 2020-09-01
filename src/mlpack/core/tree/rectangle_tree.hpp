@@ -1,5 +1,5 @@
 /**
- * @file rectangle_tree.hpp
+ * @file core/tree/rectangle_tree.hpp
  * @author Andrew Wells
  *
  * Include all the necessary files to use the Rectangle Type Trees (RTree,

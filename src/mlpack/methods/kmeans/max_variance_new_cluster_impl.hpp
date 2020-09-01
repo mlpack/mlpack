@@ -1,5 +1,5 @@
 /**
- * @file max_variance_new_cluster_impl.hpp
+ * @file methods/kmeans/max_variance_new_cluster_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of MaxVarianceNewCluster class.
@@ -131,7 +131,7 @@ void MaxVarianceNewCluster::Precalculate(const MatType& data,
     double minDistance = std::numeric_limits<double>::infinity();
     size_t closestCluster = oldCentroids.n_cols; // Invalid value.
 
-    for (size_t j = 0; j < oldCentroids.n_cols; j++)
+    for (size_t j = 0; j < oldCentroids.n_cols; ++j)
     {
       const double distance = metric.Evaluate(data.col(i), oldCentroids.col(j));
 

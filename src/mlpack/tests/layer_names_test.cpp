@@ -1,5 +1,5 @@
 /**
- * @file layer_names_test.cpp
+ * @file tests/layer_names_test.cpp
  * @author Sreenik Seal
  *
  * Tests for testing the string representation of

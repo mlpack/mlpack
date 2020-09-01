@@ -1,5 +1,5 @@
 /**
- * @file wgan_impl.hpp
+ * @file methods/ann/gan/wgan_impl.hpp
  * @author Shikhar Jaiswal
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -50,28 +50,28 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
   currentTarget = arma::mat(responses.memptr() + i, 1, batchSize, false,
       false);
 
-  discriminator.Forward(std::move(currentInput));
+  discriminator.Forward(currentInput);
   double res = discriminator.outputLayer.Forward(
-      std::move(boost::apply_visitor(
+      boost::apply_visitor(
       outputParameterVisitor,
-      discriminator.network.back())), std::move(currentTarget));
+      discriminator.network.back()), currentTarget);
 
   noise.imbue( [&]() { return noiseFunction();} );
-  generator.Forward(std::move(noise));
+  generator.Forward(noise);
 
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
-  discriminator.Forward(std::move(predictors.cols(numFunctions,
-      numFunctions + batchSize - 1)));
+  discriminator.Forward(predictors.cols(numFunctions,
+      numFunctions + batchSize - 1));
   responses.cols(numFunctions, numFunctions + batchSize - 1) =
       -arma::ones(1, batchSize);
 
   currentTarget = arma::mat(responses.memptr() + numFunctions,
       1, batchSize, false, false);
   res += discriminator.outputLayer.Forward(
-      std::move(boost::apply_visitor(
+      boost::apply_visitor(
       outputParameterVisitor,
-      discriminator.network.back())), std::move(currentTarget));
+      discriminator.network.back()), currentTarget);
 
   return res;
 }
@@ -132,7 +132,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
       i, gradientDiscriminator, batchSize);
 
   noise.imbue( [&]() { return noiseFunction();} );
-  generator.Forward(std::move(noise));
+  generator.Forward(noise);
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
   responses.cols(numFunctions, numFunctions + batchSize - 1) =
@@ -151,14 +151,20 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     // Pass the error from Discriminator to Generator.
     responses.cols(numFunctions, numFunctions + batchSize - 1) =
         arma::ones(1, batchSize);
-    discriminator.Gradient(discriminator.parameter, numFunctions,
-        noiseGradientDiscriminator, batchSize);
+
+    discriminator.outputLayer.Backward(
+        boost::apply_visitor(outputParameterVisitor,
+        discriminator.network.back()), discriminator.responses.cols(
+        numFunctions, numFunctions + batchSize - 1), discriminator.error);
+    discriminator.Backward();
+
     generator.error = boost::apply_visitor(deltaVisitor,
         discriminator.network[1]);
 
     generator.Predictors() = noise;
+    generator.Backward();
     generator.ResetGradients(gradientGenerator);
-    generator.Gradient(generator.parameter, 0, gradientGenerator, batchSize);
+    generator.Gradient(generator.Predictors().cols(0, batchSize - 1));
 
     gradientGenerator *= multiplier;
   }

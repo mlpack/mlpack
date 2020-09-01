@@ -1,5 +1,5 @@
 /**
- * @file generate_markdown.binding.cpp.in
+ * @file markdown/generate_markdown.binding.cpp.in
  * @author Ryan Curtin
  *
  * Print Markdown for a specific binding.  This provides two utility
@@ -12,7 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#define BINDING_NAME "${BINDING}"
+#define MARKDOWN_BINDING_NAME "${BINDING}"
 
 #include <mlpack/core.hpp>
 #include "generate_markdown.${BINDING}.hpp"

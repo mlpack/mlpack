@@ -1,5 +1,5 @@
 /**
- * @file lars.cpp
+ * @file methods/lars/lars.cpp
  * @author Nishant Mehta (niche)
  *
  * Implementation of LARS and LASSO.
@@ -66,6 +66,100 @@ LARS::LARS(const arma::mat& data,
     LARS(useCholesky, gramMatrix, lambda1, lambda2, tolerance)
 {
   Train(data, responses, transposeData);
+}
+
+// Copy Constructor.
+LARS::LARS(const LARS& other) :
+    matGramInternal(other.matGramInternal),
+    matGram(other.matGram != &other.matGramInternal ?
+        other.matGram : &matGramInternal),
+    matUtriCholFactor(other.matUtriCholFactor),
+    useCholesky(other.useCholesky),
+    lasso(other.lasso),
+    lambda1(other.lambda1),
+    elasticNet(other.elasticNet),
+    lambda2(other.lambda2),
+    tolerance(other.tolerance),
+    betaPath(other.betaPath),
+    lambdaPath(other.lambdaPath),
+    activeSet(other.activeSet),
+    isActive(other.isActive),
+    ignoreSet(other.ignoreSet),
+    isIgnored(other.isIgnored)
+{
+  // Nothing to do here.
+}
+
+// Move constructor.
+LARS::LARS(LARS&& other) :
+    matGramInternal(std::move(other.matGramInternal)),
+    matGram(other.matGram != &other.matGramInternal ?
+        other.matGram : &matGramInternal),
+    matUtriCholFactor(std::move(other.matUtriCholFactor)),
+    useCholesky(other.useCholesky),
+    lasso(other.lasso),
+    lambda1(other.lambda1),
+    elasticNet(other.elasticNet),
+    lambda2(other.lambda2),
+    tolerance(other.tolerance),
+    betaPath(std::move(other.betaPath)),
+    lambdaPath(std::move(other.lambdaPath)),
+    activeSet(std::move(other.activeSet)),
+    isActive(std::move(other.isActive)),
+    ignoreSet(std::move(other.ignoreSet)),
+    isIgnored(std::move(other.isIgnored))
+{
+  // Nothing to do here.
+}
+
+// Copy operator.
+LARS& LARS::operator=(const LARS& other)
+{
+  if (&other == this)
+    return *this;
+
+  matGramInternal = other.matGramInternal;
+  matGram = other.matGram != &other.matGramInternal ?
+      other.matGram : &matGramInternal;
+  matUtriCholFactor = other.matUtriCholFactor;
+  useCholesky = other.useCholesky;
+  lasso = other.lasso;
+  lambda1 = other.lambda1;
+  elasticNet = other.elasticNet;
+  lambda2 = other.lambda2;
+  tolerance = other.tolerance;
+  betaPath = other.betaPath;
+  lambdaPath = other.lambdaPath;
+  activeSet = other.activeSet;
+  isActive = other.isActive;
+  ignoreSet = other.ignoreSet;
+  isIgnored = other.isIgnored;
+  return *this;
+}
+
+// Move Operator.
+LARS& LARS::operator=(LARS&& other)
+{
+  if (&other == this)
+    return *this;
+
+  matGramInternal = std::move(other.matGramInternal);
+  matGram = other.matGram != &other.matGramInternal ?
+      other.matGram : &matGramInternal;
+  matUtriCholFactor = std::move(other.matUtriCholFactor);
+  useCholesky = other.useCholesky;
+  lasso = other.lasso;
+  lambda1 = other.lambda1;
+  elasticNet = other.elasticNet;
+  lambda2 = other.lambda2;
+  tolerance = other.tolerance;
+  betaPath = std::move(other.betaPath);
+  lambdaPath = std::move(other.lambdaPath);
+  activeSet = std::move(other.activeSet);
+  isActive = std::move(other.isActive);
+  ignoreSet = std::move(other.ignoreSet);
+  isIgnored = std::move(other.isIgnored);
+  return *this;
 }
 
 double LARS::Train(const arma::mat& matX,
@@ -149,7 +243,7 @@ double LARS::Train(const arma::mat& matX,
   {
     // Compute the maximum correlation among inactive dimensions.
     maxCorr = 0;
-    for (size_t i = 0; i < dataRef.n_cols; i++)
+    for (size_t i = 0; i < dataRef.n_cols; ++i)
     {
       if ((!isActive[i]) && (!isIgnored[i]) && (fabs(corr(i)) > maxCorr))
       {
@@ -163,7 +257,7 @@ double LARS::Train(const arma::mat& matX,
       if (useCholesky)
       {
         // vec newGramCol = vec(activeSet.size());
-        // for (size_t i = 0; i < activeSet.size(); i++)
+        // for (size_t i = 0; i < activeSet.size(); ++i)
         // {
         //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
         // }
@@ -180,7 +274,7 @@ double LARS::Train(const arma::mat& matX,
 
     // Compute signs of correlations.
     arma::vec s = arma::vec(activeSet.size());
-    for (size_t i = 0; i < activeSet.size(); i++)
+    for (size_t i = 0; i < activeSet.size(); ++i)
       s(i) = corr(activeSet[i]) / fabs(corr(activeSet[i]));
 
     // Compute the "equiangular" direction in parameter space (betaDirection).
@@ -230,8 +324,8 @@ double LARS::Train(const arma::mat& matX,
     else
     {
       arma::mat matGramActive = arma::mat(activeSet.size(), activeSet.size());
-      for (size_t i = 0; i < activeSet.size(); i++)
-        for (size_t j = 0; j < activeSet.size(); j++)
+      for (size_t i = 0; i < activeSet.size(); ++i)
+        for (size_t j = 0; j < activeSet.size(); ++j)
           matGramActive(i, j) = (*matGram)(activeSet[i], activeSet[j]);
 
       // Check for singularity.
@@ -289,7 +383,7 @@ double LARS::Train(const arma::mat& matX,
       double lassoboundOnGamma = DBL_MAX;
       size_t activeIndToKickOut = -1;
 
-      for (size_t i = 0; i < activeSet.size(); i++)
+      for (size_t i = 0; i < activeSet.size(); ++i)
       {
         double val = -beta(activeSet[i]) / betaDirection(i);
         if ((val > 0) && (val < lassoboundOnGamma))
@@ -311,7 +405,7 @@ double LARS::Train(const arma::mat& matX,
     yHat += gamma * yHatDirection;
 
     // Update the estimator.
-    for (size_t i = 0; i < activeSet.size(); i++)
+    for (size_t i = 0; i < activeSet.size(); ++i)
     {
       beta(activeSet[i]) += gamma * betaDirection(i);
     }
@@ -339,7 +433,7 @@ double LARS::Train(const arma::mat& matX,
       corr -= lambda2 * beta;
 
     double curLambda = 0;
-    for (size_t i = 0; i < activeSet.size(); i++)
+    for (size_t i = 0; i < activeSet.size(); ++i)
       curLambda += fabs(corr(activeSet[i]));
 
     curLambda /= ((double) activeSet.size());
@@ -361,7 +455,7 @@ double LARS::Train(const arma::mat& matX,
   beta = betaPath.back();
 
   Timer::Stop("lars_regression");
-  return maxCorr;
+  return ComputeError(matX, y, !transposeData);
 }
 
 double LARS::Train(const arma::mat& data,
@@ -407,7 +501,7 @@ void LARS::ComputeYHatDirection(const arma::mat& matX,
                                 arma::vec& yHatDirection)
 {
   yHatDirection.fill(0);
-  for (size_t i = 0; i < activeSet.size(); i++)
+  for (size_t i = 0; i < activeSet.size(); ++i)
     yHatDirection += betaDirection(i) * matX.col(activeSet[i]);
 }
 
@@ -520,7 +614,7 @@ void LARS::CholeskyDelete(const size_t colToKill)
     matUtriCholFactor.shed_col(colToKill); // remove column colToKill
     n--;
 
-    for (size_t k = colToKill; k < n; k++)
+    for (size_t k = colToKill; k < n; ++k)
     {
       arma::mat matG;
       arma::vec::fixed<2> rotatedVec;
@@ -536,5 +630,20 @@ void LARS::CholeskyDelete(const size_t colToKill)
     }
 
     matUtriCholFactor.shed_row(n);
+  }
+}
+
+double LARS::ComputeError(const arma::mat& matX,
+                          const arma::rowvec& y,
+                          const bool rowMajor)
+{
+  if (rowMajor)
+  {
+    return arma::accu(arma::pow(y - trans(matX * betaPath.back()), 2.0));
+  }
+
+  else
+  {
+    return arma::accu(arma::pow(y - betaPath.back().t() * matX, 2.0));
   }
 }

@@ -1,9 +1,9 @@
 /**
- * @file elu.hpp
+ * @file methods/ann/layer/elu.hpp
  * @author Vivek Pal
  * @author Dakshit Agrawal
  *
- * Definition of the ELU activation function as descibed by Djork-Arne Clevert,
+ * Definition of the ELU activation function as described by Djork-Arne Clevert,
  * Thomas Unterthiner and Sepp Hochreiter.
  *
  * Definition of the SELU function as introduced by
@@ -56,7 +56,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   title   = {Fast and Accurate Deep Network Learning by Exponential Linear
  *              Units (ELUs)},
  *   journal = {CoRR},
- *   year    = {2015}
+ *   year    = {2015},
+ *   url     = {https://arxiv.org/abs/1511.07289}
  * }
  * @endcode
  *
@@ -86,7 +87,8 @@ namespace ann /** Artificial Neural Network. */ {
  *              Andreas Mayr},
  *   title   = {Self-Normalizing Neural Networks},
  *   journal = {Advances in Neural Information Processing Systems},
- *   year    = {2017}
+ *   year    = {2017},
+ *   url = {https://arxiv.org/abs/1706.02515}
  * }
  * @endcode
  *
@@ -134,7 +136,7 @@ class ELU
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -146,7 +148,7 @@ class ELU
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& gy, DataType&& g);
+  void Backward(const DataType& input, const DataType& gy, DataType& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -163,6 +165,11 @@ class ELU
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
+  //! Get the value of deterministic parameter.
+  bool Deterministic() const { return deterministic; }
+  //! Modify the value of deterministic parameter.
+  bool& Deterministic() { return deterministic; }
+
   //! Get the lambda parameter.
   double const& Lambda() const { return lambda; }
 
@@ -173,69 +180,6 @@ class ELU
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  /**
-   * Computes the value of activation function.
-   *
-   * @param x Input data.
-   * @return f(x).
-   */
-  double Fn(const double x)
-  {
-    if (x < DBL_MAX)
-    {
-      return (x > 0) ? lambda * x : lambda * alpha * (std::exp(x) - 1);
-    }
-
-    return 1.0;
-  }
-
-  /**
-   * Computes the value of activation function using a dense matrix as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
-  {
-    y.set_size(arma::size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      y(i) = Fn(x(i));
-    }
-  }
-
-  /**
-   * Computes the first derivative of the activation function.
-   *
-   * @param x Input data.
-   * @param y Propagated data f(x).
-   * @return f'(x)
-   */
-  double Deriv(const double x, const double y)
-  {
-    return (x > 0) ? lambda : y + lambda * alpha;
-  }
-
-  /**
-   * Computes the first derivative of the activation function.
-   *
-   * @param x Input data.
-   * @param y Output activations f(x).
-   * @param z The resulting derivatives.
-   */
-  template<typename InputType, typename OutputType>
-  void Deriv(const InputType& x, OutputType& y)
-  {
-    derivative.set_size(arma::size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      derivative(i) = Deriv(x(i), y(i));
-    }
-  }
-
   //! Locally-stored delta object.
   OutputDataType delta;
 

@@ -1,5 +1,5 @@
 /**
- * @file octree.hpp
+ * @file core/tree/octree/octree.hpp
  * @author Ryan Curtin
  *
  * Definition of generalized octree (Octree).
@@ -219,6 +219,20 @@ class Octree
    * @param other Tree to move.
    */
   Octree(Octree&& other);
+
+  /**
+   * Copy the given Octree.
+   *
+   * @param other The tree to be copied.
+   */
+  Octree& operator=(const Octree& other);
+
+  /**
+   * Take ownership of the given Octree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  Octree& operator=(Octree&& other);
 
   /**
    * Initialize the tree from a boost::serialization archive.

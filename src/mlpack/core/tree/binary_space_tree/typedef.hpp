@@ -1,5 +1,5 @@
 /**
- * @file typedef.hpp
+ * @file core/tree/binary_space_tree/typedef.hpp
  * @author Ryan Curtin
  *
  * Template typedefs for the BinarySpaceTree class that satisfy the requirements

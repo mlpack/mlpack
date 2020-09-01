@@ -1,5 +1,5 @@
 /**
- * @file concatenate.hpp
+ * @file methods/ann/layer/concatenate.hpp
  * @author Atharva Khandait
  *
  * Definition of the Concatenate class that concatenate a constant matrix to
@@ -49,21 +49,21 @@ class Concatenate
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                const arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }

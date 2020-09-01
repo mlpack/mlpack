@@ -1,5 +1,5 @@
 /**
- * @file vantage_point_split_impl.hpp
+ * @file core/tree/binary_space_tree/vantage_point_split_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of class (VantagePointSplit) to split a vantage point
@@ -55,7 +55,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
 
   arma::uvec samples;
   //  Evaluate each candidate
-  for (size_t i = 0; i < vantagePointCandidates.n_elem; i++)
+  for (size_t i = 0; i < vantagePointCandidates.n_elem; ++i)
   {
     // Get no more than min(MaxNumSamples, count) random samples
     math::ObtainDistinctSamples(begin, begin + count, MaxNumSamples, samples);
@@ -64,7 +64,7 @@ SelectVantagePoint(const MetricType& metric, const MatType& data,
     // candidate using these random samples.
     distances.set_size(samples.n_elem);
 
-    for (size_t j = 0; j < samples.n_elem; j++)
+    for (size_t j = 0; j < samples.n_elem; ++j)
       distances[j] = metric.Evaluate(data.col(vantagePointCandidates[i]),
           data.col(samples[j]));
 

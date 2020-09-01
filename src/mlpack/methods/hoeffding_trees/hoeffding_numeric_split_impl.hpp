@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_numeric_split_impl.hpp
+ * @file methods/hoeffding_trees/hoeffding_numeric_split_impl.hpp
  * @author Ryan Curtin
  *
  * An implementation of the simple HoeffdingNumericSplit class.

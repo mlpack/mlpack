@@ -1,5 +1,5 @@
 /**
- * @file decision_stump_test.cpp
+ * @file tests/main_tests/decision_stump_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of decision_stump_main.cpp.
@@ -18,8 +18,8 @@ static const std::string testName = "DecisionStump";
 #include <mlpack/methods/decision_stump/decision_stump_main.cpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -29,28 +29,27 @@ struct DecisionStumpTestFixture
   DecisionStumpTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~DecisionStumpTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
-
-BOOST_FIXTURE_TEST_SUITE(DecisionStumpMainTest, DecisionStumpTestFixture);
 
 /**
  * Ensure that we get desired dimensions when both training
  * data and labels are passed.
  */
-BOOST_AUTO_TEST_CASE(DecisionStumpOutputDimensionTest)
+TEST_CASE_METHOD(DecisionStumpTestFixture, "DecisionStumpOutputDimensionTest",
+                 "[DecisionStumpMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -62,7 +61,7 @@ BOOST_AUTO_TEST_CASE(DecisionStumpOutputDimensionTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -79,12 +78,10 @@ BOOST_AUTO_TEST_CASE(DecisionStumpOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
 
   // Check prediction have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
-                      1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
 }
 
 /**
@@ -92,12 +89,14 @@ BOOST_AUTO_TEST_CASE(DecisionStumpOutputDimensionTest)
  * when labels are not passed specifically and results
  * are same from both label and labeless models.
  */
-BOOST_AUTO_TEST_CASE(DecisionStumpLabelsLessDimensionTest)
+TEST_CASE_METHOD(DecisionStumpTestFixture,
+                 "DecisionStumpLabelsLessDimensionTest",
+                 "[DecisionStumpMainTest][BindingTests]")
 {
   // Train DS without providing labels.
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -106,7 +105,7 @@ BOOST_AUTO_TEST_CASE(DecisionStumpLabelsLessDimensionTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -122,20 +121,18 @@ BOOST_AUTO_TEST_CASE(DecisionStumpLabelsLessDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
 
   // Check prediction have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
-                      1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
 
   // Reset data passed.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Store outputs.
   arma::Row<size_t> predictions;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
 
   // Delete the previous model.
   bindings::tests::CleanMemory();
@@ -154,30 +151,29 @@ BOOST_AUTO_TEST_CASE(DecisionStumpLabelsLessDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
 
   // Check prediction have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
-                      1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
 
   // Check that initial output and final output matrix
   // from two models are same.
-  CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
 }
 
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(DecisionStumpModelReuseTest)
+TEST_CASE_METHOD(DecisionStumpTestFixture, "DecisionStumpModelReuseTest",
+                 "[DecisionStumpMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -193,58 +189,58 @@ BOOST_AUTO_TEST_CASE(DecisionStumpModelReuseTest)
   mlpackMain();
 
   arma::Row<size_t> predictions;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(CLI::GetParam<DSModel*>("output_model")));
+                std::move(IO::GetParam<DSModel*>("output_model")));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
 
   // Check predictions have only single row.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
-                      1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
 
   // Check that initial predictions and final predicitons matrix
   // using saved model are same.
-  CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
 }
 
 /**
  * Ensure that bucket_size is always positive.
  */
-BOOST_AUTO_TEST_CASE(DecisionStumpBucketSizeTest)
+TEST_CASE_METHOD(DecisionStumpTestFixture, "DecisionStumpBucketSizeTest",
+                 "[DecisionStumpMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
   SetInputParam("bucket_size", (int) 0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Make sure only one of training data or pre-trained model is passed.
  */
-BOOST_AUTO_TEST_CASE(DecisionStumpTrainingVerTest)
+TEST_CASE_METHOD(DecisionStumpTestFixture, "DecisionStumpTrainingVerTest",
+                 "[DecisionStumpMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
@@ -253,11 +249,9 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(CLI::GetParam<DSModel*>("output_model")));
+                std::move(IO::GetParam<DSModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-
-BOOST_AUTO_TEST_SUITE_END();

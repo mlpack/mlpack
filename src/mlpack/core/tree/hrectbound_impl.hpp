@@ -1,5 +1,5 @@
 /**
- * @file hrectbound_impl.hpp
+ * @file core/tree/hrectbound_impl.hpp
  *
  * Implementation of hyper-rectangle bound policy class.
  * Template parameter Power is the metric to use; use 2 for Euclidean (L2).
@@ -52,7 +52,7 @@ inline HRectBound<MetricType, ElemType>::HRectBound(
     minWidth(other.MinWidth())
 {
   // Copy other bounds over.
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
     bounds[i] = other[i];
 }
 
@@ -65,6 +65,9 @@ inline HRectBound<
     ElemType>& HRectBound<MetricType,
     ElemType>::operator=(const HRectBound<MetricType, ElemType>& other)
 {
+  if (this == &other)
+    return *this;
+
   if (dim != other.Dim())
   {
     // Reallocation is necessary.
@@ -76,7 +79,7 @@ inline HRectBound<
   }
 
   // Now copy each of the bound values.
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
     bounds[i] = other[i];
 
   minWidth = other.MinWidth();
@@ -116,7 +119,7 @@ inline HRectBound<MetricType, ElemType>::~HRectBound()
 template<typename MetricType, typename ElemType>
 inline void HRectBound<MetricType, ElemType>::Clear()
 {
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
     bounds[i] = math::RangeType<ElemType>();
   minWidth = 0;
 }
@@ -134,7 +137,7 @@ inline void HRectBound<MetricType, ElemType>::Center(
   if (!(center.n_elem == dim))
     center.set_size(dim);
 
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
     center(i) = bounds[i].Mid();
 }
 
@@ -516,7 +519,7 @@ HRectBound<MetricType, ElemType>::operator|=(const MatType& data)
   arma::Col<ElemType> maxs(max(data, 1));
 
   minWidth = std::numeric_limits<ElemType>::max();
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
   {
     bounds[i] |= math::RangeType<ElemType>(mins[i], maxs[i]);
     const ElemType width = bounds[i].Width();
@@ -537,7 +540,7 @@ HRectBound<MetricType, ElemType>::operator|=(const HRectBound& other)
   assert(other.dim == dim);
 
   minWidth = std::numeric_limits<ElemType>::max();
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
   {
     bounds[i] |= other.bounds[i];
     const ElemType width = bounds[i].Width();
@@ -556,7 +559,7 @@ template<typename VecType>
 inline bool HRectBound<MetricType, ElemType>::Contains(
     const VecType& point) const
 {
-  for (size_t i = 0; i < point.n_elem; i++)
+  for (size_t i = 0; i < point.n_elem; ++i)
   {
     if (!bounds[i].Contains(point(i)))
       return false;
@@ -572,7 +575,7 @@ template<typename MetricType, typename ElemType>
 inline bool HRectBound<MetricType, ElemType>::Contains(
     const HRectBound& bound) const
 {
-  for (size_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; ++i)
   {
     const math::RangeType<ElemType>& r_a = bounds[i];
     const math::RangeType<ElemType>& r_b = bound.bounds[i];
@@ -594,7 +597,7 @@ HRectBound<MetricType, ElemType>::operator&(const HRectBound& bound) const
 {
   HRectBound<MetricType, ElemType> result(dim);
 
-  for (size_t k = 0; k < dim; k++)
+  for (size_t k = 0; k < dim; ++k)
   {
     result[k].Lo() = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
     result[k].Hi() = std::min(bounds[k].Hi(), bound.bounds[k].Hi());
@@ -609,7 +612,7 @@ template<typename MetricType, typename ElemType>
 inline HRectBound<MetricType, ElemType>&
 HRectBound<MetricType, ElemType>::operator&=(const HRectBound& bound)
 {
-  for (size_t k = 0; k < dim; k++)
+  for (size_t k = 0; k < dim; ++k)
   {
     bounds[k].Lo() = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
     bounds[k].Hi() = std::min(bounds[k].Hi(), bound.bounds[k].Hi());
@@ -626,7 +629,7 @@ inline ElemType HRectBound<MetricType, ElemType>::Overlap(
 {
   ElemType volume = 1.0;
 
-  for (size_t k = 0; k < dim; k++)
+  for (size_t k = 0; k < dim; ++k)
   {
     ElemType lo = std::max(bounds[k].Lo(), bound.bounds[k].Lo());
     ElemType hi = std::min(bounds[k].Hi(), bound.bounds[k].Hi());

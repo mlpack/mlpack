@@ -1,5 +1,5 @@
 /**
- * @file bias_set_visitor.hpp
+ * @file methods/ann/visitor/bias_set_visitor.hpp
  * @author Toshal Agrawal
  *
  * This file provides an abstraction for the Bias() function for different
@@ -27,7 +27,7 @@ class BiasSetVisitor : public boost::static_visitor<size_t>
 {
  public:
   //! Update the bias parameters given the parameters' set and offset.
-  BiasSetVisitor(arma::mat&& weight, const size_t offset = 0);
+  BiasSetVisitor(arma::mat& weight, const size_t offset = 0);
 
   //! Update the parameters' set.
   template<typename LayerType>
@@ -37,7 +37,7 @@ class BiasSetVisitor : public boost::static_visitor<size_t>
 
  private:
   //! The parameters' set.
-  arma::mat&& weight;
+  arma::mat& weight;
 
   //! The parameters' offset.
   const size_t offset;

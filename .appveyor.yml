@@ -11,7 +11,7 @@ environment:
   boost_serialization-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
   BOOST_UNIT_TEST : "C:/projects/mlpack/\
   boost_unit_test_framework-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
-  ARMADILLO_DOWNLOAD : "http://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz"
+  ARMADILLO_DOWNLOAD : "https://data.kurg.org/armadillo-8.400.0.tar.xz"
   ARMADILLO_LIBRARY : "C:/projects/mlpack/armadillo-8.400.0/\
   build/Debug/armadillo.lib"
   BLAS_LIBRARY : "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/\
@@ -85,8 +85,8 @@ build_script:
   - cd C:\projects\mlpack && mkdir build && cd build
   - >
     cmake -G "%VSVER%"
-    -DBLAS_LIBRARY:FILEPATH=%BLAS_LIBRARY%
-    -DLAPACK_LIBRARY:FILEPATH=%BLAS_LIBRARY%
+    -DBLAS_LIBRARIES:FILEPATH=%BLAS_LIBRARY%
+    -DLAPACK_LIBRARIES:FILEPATH=%BLAS_LIBRARY%
     -DARMADILLO_INCLUDE_DIR="C:/projects/mlpack/armadillo-8.400.0/include"
     -DARMADILLO_LIBRARY:FILEPATH=%ARMADILLO_LIBRARY%
     -DBOOST_INCLUDEDIR:PATH=%BOOST_INCLUDE%
@@ -94,12 +94,14 @@ build_script:
     -DDEBUG=OFF
     -DPROFILE=OFF
     -DBUILD_PYTHON_BINDINGS=OFF
+    -DBUILD_GO_BINDINGS=OFF
+    -DBUILD_R_BINDINGS=OFF
     -DCMAKE_BUILD_TYPE=Release ..
   - >
     "%MSBUILD%" "C:\projects\mlpack\build\mlpack.sln"
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
     /p:Configuration=Release;Platform=x64
-  
+
   # Zip Artifacts.
   - >
     7z a mlpack-windows-no-libs.zip
@@ -108,7 +110,7 @@ build_script:
     7z a mlpack-windows.zip
     "%APPVEYOR_BUILD_FOLDER%\build\Release\*.*"
     "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/*.*"
-  
+
   # Pulling documentation for the installer.
   - ps: >
       try{(new-object net.webclient).DownloadFile(${env:JENKINS_DOC_DOWNLOAD},
@@ -119,7 +121,7 @@ build_script:
       [System.IO.Compression.ZipFile]::ExtractToDirectory(${env:JENKINS_DOC},
       'C:\projects\mlpack\dist\win-installer\staging\doc')}
       catch{Write-Output "Unable to add doc to installer, skipping!"}
-  
+
   # Preparing installer staging.
   - cd C:\projects\mlpack\dist\win-installer\staging && mkdir lib
   - ps: >
@@ -149,7 +151,7 @@ build_script:
   - ps: >
       cp C:\projects\mlpack\src\mlpack\tests\data\german.csv
       C:\projects\mlpack\dist\win-installer\staging\examples\sample-ml-app\sample-ml-app\data\
-  
+
   # Checking current gitversion or mlpack version.
   - ps: >
       $ver = (Get-Content
@@ -221,7 +223,7 @@ build_script:
 artifacts:
   - path: 'build\*.zip'
     name: mlpack-windows-zip
-  
+
   - path: 'dist\win-installer\mlpack-win-installer\bin\x64\Release\*.msi'
     name: mlpack-windows-installer
 

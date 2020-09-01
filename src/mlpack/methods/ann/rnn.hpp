@@ -1,5 +1,5 @@
 /**
- * @file rnn.hpp
+ * @file methods/ann/rnn.hpp
  * @author Marcus Edel
  *
  * Definition of the RNN class, which implements recurrent neural networks.
@@ -23,6 +23,7 @@
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 #include <ensmallen.hpp>
@@ -71,6 +72,35 @@ class RNN
 
   //! Destructor to release allocated memory.
   ~RNN();
+
+  /**
+   * Check if the optimizer has MaxIterations() parameter, if it does
+   * then check if it's value is less than the number of datapoints
+   * in the dataset.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+
+  /**
+   * Check if the optimizer has MaxIterations() parameter, if it
+   * doesn't then simply return from the function.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
   /**
    * Train the recurrent neural network on the given input data using the given
@@ -295,7 +325,8 @@ class RNN
    *
    * @param input Data sequence to compute probabilities for.
    */
-  void Forward(arma::mat&& input);
+  template<typename InputType>
+  void Forward(const InputType& input);
 
   /**
    * Reset the state of RNN cells in the network for new input sequence.
@@ -313,7 +344,7 @@ class RNN
    * layer defined optimizer.
    */
   template<typename InputType>
-  void Gradient(InputType&& input);
+  void Gradient(const InputType& input);
 
   /**
    * Reset the module status by setting the current deterministic parameter

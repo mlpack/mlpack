@@ -1,5 +1,5 @@
 /**
- * @file load_save_test.cpp
+ * @file tests/load_save_test.cpp
  * @author Ryan Curtin
  *
  * Tests for data::Load() and data::Save().
@@ -14,40 +14,38 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/load_arff.hpp>
 #include <mlpack/core/data/map_policies/missing_policy.hpp>
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::data;
 using namespace std;
 
-BOOST_AUTO_TEST_SUITE(LoadSaveTest);
-
 /**
  * Make sure failure occurs when no extension given.
  */
-BOOST_AUTO_TEST_CASE(NoExtensionLoad)
+TEST_CASE("NoExtensionLoad", "[LoadSaveTest]")
 {
   arma::mat out;
-  BOOST_REQUIRE(data::Load("noextension", out) == false);
+  REQUIRE(data::Load("noextension", out) == false);
 }
 
 /**
  * Make sure failure occurs when no extension given.
  */
-BOOST_AUTO_TEST_CASE(NoExtensionSave)
+TEST_CASE("NoExtensionSave", "[LoadSaveTest]")
 {
   arma::mat out;
-  BOOST_REQUIRE(data::Save("noextension", out) == false);
+  REQUIRE(data::Save("noextension", out) == false);
 }
 
 /**
  * Make sure load fails if the file does not exist.
  */
-BOOST_AUTO_TEST_CASE(NotExistLoad)
+TEST_CASE("NotExistLoad", "[LoadSaveTest]")
 {
   arma::mat out;
-  BOOST_REQUIRE(data::Load("nonexistentfile_______________.csv", out) == false);
+  REQUIRE(data::Load("nonexistentfile_______________.csv", out) == false);
 }
 
 /**
@@ -105,7 +103,7 @@ BOOST_AUTO_TEST_CASE(WrongExtensionCorrectLoad)
 /**
  * Make sure a CSV is loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadCSVTest)
+TEST_CASE("LoadCSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -116,22 +114,101 @@ BOOST_AUTO_TEST_CASE(LoadCSVTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(data::Load("test_file.csv", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.csv");
 }
 
 /**
+ * Make sure a TSV is loaded correctly to a sparse matrix.
+ */
+TEST_CASE("LoadSparseTSVTest", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test_sparse_file.tsv", fstream::out);
+
+  f << "1\t2\t0.1" << endl;
+  f << "2\t3\t0.2" << endl;
+  f << "3\t4\t0.3" << endl;
+  f << "4\t5\t0.4" << endl;
+  f << "5\t6\t0.5" << endl;
+  f << "6\t7\t0.6" << endl;
+  f << "7\t8\t0.7" << endl;
+
+  f.close();
+
+  arma::sp_mat test;
+
+  REQUIRE(data::Load(
+      "test_sparse_file.tsv", test, true, false) == true);
+
+  REQUIRE(test.n_rows == 8);
+  REQUIRE(test.n_cols == 9);
+
+  arma::sp_mat::const_iterator it = test.begin();
+  arma::sp_mat::const_iterator it_end = test.end();
+
+  double temp = 0.1;
+  for (int i = 0; it != it_end; ++it, temp += 0.1, ++i)
+  {
+    REQUIRE((double)(*it) == Approx(temp).epsilon(1e-7));
+    REQUIRE((int)(it.row()) == i + 1);
+    REQUIRE((int)it.col() == i + 2);
+  }
+  // Remove the file.
+  remove("test_sparse_file.tsv");
+}
+
+/**
+ * Make sure a CSV in text format is loaded correctly to a sparse matrix.
+ */
+TEST_CASE("LoadSparseTXTTest", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test_sparse_file.txt", fstream::out);
+
+  f << "1 2 0.1" << endl;
+  f << "2 3 0.2" << endl;
+  f << "3 4 0.3" << endl;
+  f << "4 5 0.4" << endl;
+  f << "5 6 0.5" << endl;
+  f << "6 7 0.6" << endl;
+  f << "7 8 0.7" << endl;
+
+  f.close();
+
+  arma::sp_mat test;
+
+  REQUIRE(data::Load("test_sparse_file.txt", test, true, false) == true);
+
+  REQUIRE(test.n_rows == 8);
+  REQUIRE(test.n_cols == 9);
+
+  arma::sp_mat::const_iterator it = test.begin();
+  arma::sp_mat::const_iterator it_end = test.end();
+
+  double temp = 0.1;
+  for (int i = 0; it != it_end; ++it, temp += 0.1, ++i)
+  {
+    REQUIRE((double)(*it) == Approx(temp).epsilon(1e-7));
+    REQUIRE((int)(it.row()) == i + 1);
+    REQUIRE((int)it.col() == i + 2);
+  }
+  // Remove the file.
+  remove("test_sparse_file.txt");
+}
+
+/**
  * Make sure a TSV is loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadTSVTest)
+TEST_CASE("LoadTSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -142,13 +219,13 @@ BOOST_AUTO_TEST_CASE(LoadTSVTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(data::Load("test_file.csv", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.csv");
@@ -157,7 +234,7 @@ BOOST_AUTO_TEST_CASE(LoadTSVTest)
 /**
  * Test TSV loading with .tsv extension.
  */
-BOOST_AUTO_TEST_CASE(LoadTSVExtensionTest)
+TEST_CASE("LoadTSVExtensionTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.tsv", fstream::out);
@@ -168,13 +245,13 @@ BOOST_AUTO_TEST_CASE(LoadTSVExtensionTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("test_file.tsv", test) == true);
+  REQUIRE(data::Load("test_file.tsv", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.tsv");
@@ -183,33 +260,138 @@ BOOST_AUTO_TEST_CASE(LoadTSVExtensionTest)
 /**
  * Make sure a CSV is saved correctly.
  */
-BOOST_AUTO_TEST_CASE(SaveCSVTest)
+TEST_CASE("SaveCSVTest", "[LoadSaveTest]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
                    "3 7;"
                    "4 8;";
 
-  BOOST_REQUIRE(data::Save("test_file.csv", test) == true);
+  REQUIRE(data::Save("test_file.csv", test) == true);
 
   // Load it in and make sure it is the same.
   arma::mat test2;
-  BOOST_REQUIRE(data::Load("test_file.csv", test2) == true);
+  REQUIRE(data::Load("test_file.csv", test2) == true);
 
-  BOOST_REQUIRE_EQUAL(test2.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test2.n_cols, 2);
+  REQUIRE(test2.n_rows == 4);
+  REQUIRE(test2.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test2[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test2[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.csv");
 }
 
 /**
+ * Make sure a TSV is saved correctly for a sparse matrix
+ */
+TEST_CASE("SaveSparseTSVTest", "[LoadSaveTest]")
+{
+  arma::sp_mat test = "0.1\t0\t0\t0;"
+                      "0\t0.2\t0\t0;"
+                      "0\t0\t0.3\t0;"
+                      "0\t0\t0\t0.4;";
+
+  REQUIRE(data::Save("test_sparse_file.tsv", test, true, false) == true);
+
+  // Load it in and make sure it is the same.
+  arma::sp_mat test2;
+  REQUIRE(data::Load("test_sparse_file.tsv", test2, true, false) == true);
+
+  REQUIRE(test2.n_rows == 4);
+  REQUIRE(test2.n_cols == 4);
+
+  arma::sp_mat::const_iterator it = test2.begin();
+  arma::sp_mat::const_iterator it_end = test2.end();
+
+  double temp = 0.1;
+  for (int i = 0; it != it_end; ++it, temp += 0.1, ++i)
+  {
+    double val = (*it);
+    REQUIRE(val == Approx(temp).epsilon(1e-7));
+    REQUIRE((int)(it.row()) == i);
+    REQUIRE((int)it.col() == i);
+  }
+
+  // Remove the file.
+  remove("test_sparse_file.tsv");
+}
+
+/**
+ * Make sure a TSV is saved correctly for a sparse matrix
+ */
+TEST_CASE("SaveSparseTXTTest", "[LoadSaveTest]")
+{
+  arma::sp_mat test = "0.1 0 0 0;"
+                      "0 0.2 0 0;"
+                      "0 0 0.3 0;"
+                      "0 0 0 0.4;";
+
+  REQUIRE(data::Save("test_sparse_file.txt", test, true, true) == true);
+
+  // Load it in and make sure it is the same.
+  arma::sp_mat test2;
+  REQUIRE(data::Load("test_sparse_file.txt", test2, true, true) == true);
+
+  REQUIRE(test2.n_rows == 4);
+  REQUIRE(test2.n_cols == 4);
+
+  arma::sp_mat::const_iterator it = test2.begin();
+  arma::sp_mat::const_iterator it_end = test2.end();
+
+  double temp = 0.1;
+  for (int i = 0; it != it_end; ++it, temp += 0.1, ++i)
+  {
+    double val = (*it);
+    REQUIRE(val == Approx(temp).epsilon(1e-7));
+    REQUIRE((int)(it.row()) == i);
+    REQUIRE((int)it.col() == i);
+  }
+
+  // Remove the file.
+  remove("test_sparse_file.txt");
+}
+
+/**
+ * Make sure a Sparse Matrix is saved and loaded correctly in binary format
+ */
+TEST_CASE("SaveSparseBinaryTest", "[LoadSaveTest]")
+{
+  arma::sp_mat test = "0.1 0 0 0;"
+                      "0 0.2 0 0;"
+                      "0 0 0.3 0;"
+                      "0 0 0 0.4;";
+
+  REQUIRE(data::Save("test_sparse_file.bin", test, true, false) == true);
+
+  // Load it in and make sure it is the same.
+  arma::sp_mat test2;
+  REQUIRE(data::Load("test_sparse_file.bin", test2, true, false) == true);
+
+  REQUIRE(test2.n_rows == 4);
+  REQUIRE(test2.n_cols == 4);
+
+  arma::sp_mat::const_iterator it = test2.begin();
+  arma::sp_mat::const_iterator it_end = test2.end();
+
+  double temp = 0.1;
+  for (int i = 0; it != it_end; ++it, temp += 0.1, ++i)
+  {
+    double val = (*it);
+    REQUIRE(val == Approx(temp).epsilon(1e-7));
+    REQUIRE((int)(it.row()) == i);
+    REQUIRE((int)it.col() == i);
+  }
+
+  // Remove the file.
+  remove("test_sparse_file.bin");
+}
+
+/**
  * Make sure CSVs can be loaded in transposed form.
  */
-BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
+TEST_CASE("LoadTransposedCSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -220,13 +402,13 @@ BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("test_file.csv", test, false, true) == true);
+  REQUIRE(data::Load("test_file.csv", test, false, true) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  REQUIRE(test.n_cols == 2);
+  REQUIRE(test.n_rows == 4);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.csv");
@@ -235,7 +417,7 @@ BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
 /**
  * Make sure ColVec can be loaded.
  */
-BOOST_AUTO_TEST_CASE(LoadColVecCSVTest)
+TEST_CASE("LoadColVecCSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -246,13 +428,13 @@ BOOST_AUTO_TEST_CASE(LoadColVecCSVTest)
   f.close();
 
   arma::colvec test;
-  BOOST_REQUIRE(data::Load("test_file.csv", test, false) == true);
+  REQUIRE(data::Load("test_file.csv", test, false) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_cols, 1);
-  BOOST_REQUIRE_EQUAL(test.n_rows, 8);
+  REQUIRE(test.n_cols == 1);
+  REQUIRE(test.n_rows == 8);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) i, 1e-5);
+    REQUIRE(test[i] == Approx((double) i).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.csv");
@@ -261,7 +443,7 @@ BOOST_AUTO_TEST_CASE(LoadColVecCSVTest)
 /**
  * Make sure we can load a transposed column vector.
  */
-BOOST_AUTO_TEST_CASE(LoadColVecTransposedCSVTest)
+TEST_CASE("LoadColVecTransposedCSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -272,13 +454,13 @@ BOOST_AUTO_TEST_CASE(LoadColVecTransposedCSVTest)
   f.close();
 
   arma::colvec test;
-  BOOST_REQUIRE(data::Load("test_file.csv", test, false) == true);
+  REQUIRE(data::Load("test_file.csv", test, false) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_cols, 1);
-  BOOST_REQUIRE_EQUAL(test.n_rows, 9);
+  REQUIRE(test.n_cols == 1);
+  REQUIRE(test.n_rows == 9);
 
   for (size_t i = 0; i < 9; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) i, 1e-5);
+    REQUIRE(test[i] == Approx((double) i).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.csv");
@@ -288,7 +470,7 @@ BOOST_AUTO_TEST_CASE(LoadColVecTransposedCSVTest)
  * Make sure besides numeric data "quoted strings" or
  * 'quoted strings' in csv files are loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadQuotedStringInCSVTest)
+TEST_CASE("LoadQuotedStringInCSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -310,21 +492,21 @@ BOOST_AUTO_TEST_CASE(LoadQuotedStringInCSVTest)
 
   arma::mat test;
   data::DatasetInfo info;
-  BOOST_REQUIRE(data::Load("test_file.csv", test, info, false, true) == true);
+  REQUIRE(data::Load("test_file.csv", test, info, false, true) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 5);
-  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+  REQUIRE(test.n_rows == 3);
+  REQUIRE(test.n_cols == 5);
+  REQUIRE(info.Dimensionality() == 3);
 
   // Check each element for equality/ closeness.
   for (size_t i = 0; i < 5; ++i)
-    BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
+    REQUIRE(test.at(0, i) == Approx((double) (i + 1)).epsilon(1e-7));
 
   for (size_t i = 0; i < 5; ++i)
-    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(1, i), 1, 0), elements[i]);
+    REQUIRE(info.UnmapString(test.at(1, i), 1, 0) == elements[i]);
 
   for (size_t i = 0; i < 5; ++i)
-    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field 3");
+    REQUIRE(info.UnmapString(test.at(2, i), 2, 0) == "field 3");
 
   // Clear the vector to free the space.
   elements.clear();
@@ -336,7 +518,7 @@ BOOST_AUTO_TEST_CASE(LoadQuotedStringInCSVTest)
  * Make sure besides numeric data "quoted strings" or
  * 'quoted strings' in txt files are loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadQuotedStringInTXTTest)
+TEST_CASE("LoadQuotedStringInTXTTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.txt", fstream::out);
@@ -352,21 +534,21 @@ BOOST_AUTO_TEST_CASE(LoadQuotedStringInTXTTest)
 
   arma::mat test;
   data::DatasetInfo info;
-  BOOST_REQUIRE(data::Load("test_file.txt", test, info, false, true) == true);
+  REQUIRE(data::Load("test_file.txt", test, info, false, true) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
-  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+  REQUIRE(test.n_rows == 3);
+  REQUIRE(test.n_cols == 2);
+  REQUIRE(info.Dimensionality() == 3);
 
   // Check each element for equality/ closeness.
   for (size_t i = 0; i < 2; ++i)
-    BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
+    REQUIRE(test.at(0, i) == Approx((double) (i + 1)).epsilon(1e-7));
 
   for (size_t i = 0; i < 2; ++i)
-    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(1, i), 1, 0), elements[i]);
+    REQUIRE(info.UnmapString(test.at(1, i), 1, 0) == elements[i]);
 
   for (size_t i = 0; i < 2; ++i)
-    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field3");
+    REQUIRE(info.UnmapString(test.at(2, i), 2, 0) == "field3");
 
   // Clear the vector to free the space.
   elements.clear();
@@ -378,7 +560,7 @@ BOOST_AUTO_TEST_CASE(LoadQuotedStringInTXTTest)
  * Make sure besides numeric data "quoted strings" or
  * 'quoted strings' in tsv files are loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadQuotedStringInTSVTest)
+TEST_CASE("LoadQuotedStringInTSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.tsv", fstream::out);
@@ -400,21 +582,21 @@ BOOST_AUTO_TEST_CASE(LoadQuotedStringInTSVTest)
 
   arma::mat test;
   data::DatasetInfo info;
-  BOOST_REQUIRE(data::Load("test_file.tsv", test, info, false, true) == true);
+  REQUIRE(data::Load("test_file.tsv", test, info, false, true) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 5);
-  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+  REQUIRE(test.n_rows == 3);
+  REQUIRE(test.n_cols == 5);
+  REQUIRE(info.Dimensionality() == 3);
 
   // Check each element for equality/ closeness.
   for (size_t i = 0; i < 5; ++i)
-    BOOST_REQUIRE_CLOSE(test.at(0, i), (double) (i + 1), 1e-5);
+    REQUIRE(test.at(0, i) == Approx((double) (i + 1)).epsilon(1e-7));
 
   for (size_t i = 0; i < 5; ++i)
-    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(1, i), 1, 0), elements[i]);
+    REQUIRE(info.UnmapString(test.at(1, i), 1, 0) == elements[i]);
 
   for (size_t i = 0; i < 5; ++i)
-    BOOST_REQUIRE_EQUAL(info.UnmapString(test.at(2, i), 2, 0), "field 3");
+    REQUIRE(info.UnmapString(test.at(2, i), 2, 0) == "field 3");
 
   // Clear the vector to free the space.
   elements.clear();
@@ -426,7 +608,7 @@ BOOST_AUTO_TEST_CASE(LoadQuotedStringInTSVTest)
  * Make sure Load() throws an exception when trying to load a matrix into a
  * colvec or rowvec.
  */
-BOOST_AUTO_TEST_CASE(LoadMatinVec)
+TEST_CASE("LoadMatinVec", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -441,11 +623,11 @@ BOOST_AUTO_TEST_CASE(LoadMatinVec)
    */
   Log::Fatal.ignoreInput = true;
   arma::vec coltest;
-  BOOST_REQUIRE_THROW(data::Load("test_file.csv", coltest, true),
+  REQUIRE_THROWS_AS(data::Load("test_file.csv", coltest, true),
       std::runtime_error);
 
   arma::rowvec rowtest;
-  BOOST_REQUIRE_THROW(data::Load("test_file.csv", rowtest, true),
+  REQUIRE_THROWS_AS(data::Load("test_file.csv", rowtest, true),
       std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
@@ -455,7 +637,7 @@ BOOST_AUTO_TEST_CASE(LoadMatinVec)
 /**
  * Make sure that rowvecs can be loaded successfully.
  */
-BOOST_AUTO_TEST_CASE(LoadRowVecCSVTest)
+TEST_CASE("LoadRowVecCSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -468,13 +650,13 @@ BOOST_AUTO_TEST_CASE(LoadRowVecCSVTest)
   f.close();
 
   arma::rowvec test;
-  BOOST_REQUIRE(data::Load("test_file.csv", test, false) == true);
+  REQUIRE(data::Load("test_file.csv", test, false) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_cols, 8);
-  BOOST_REQUIRE_EQUAL(test.n_rows, 1);
+  REQUIRE(test.n_cols == 8);
+  REQUIRE(test.n_rows == 1);
 
   for (size_t i = 0; i < 8 ; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) i , 1e-5);
+    REQUIRE(test[i] == Approx((double) i).epsilon(1e-7));
 
   remove("test_file.csv");
 }
@@ -482,7 +664,7 @@ BOOST_AUTO_TEST_CASE(LoadRowVecCSVTest)
 /**
  * Make sure that we can load transposed row vectors.
  */
-BOOST_AUTO_TEST_CASE(LoadRowVecTransposedCSVTest)
+TEST_CASE("LoadRowVecTransposedCSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -493,13 +675,13 @@ BOOST_AUTO_TEST_CASE(LoadRowVecTransposedCSVTest)
   f.close();
 
   arma::rowvec test;
-  BOOST_REQUIRE(data::Load("test_file.csv", test, false) == true);
+  REQUIRE(data::Load("test_file.csv", test, false) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 8);
+  REQUIRE(test.n_rows == 1);
+  REQUIRE(test.n_cols == 8);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) i, 1e-5);
+    REQUIRE(test[i] == Approx((double) i).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.csv");
@@ -508,7 +690,7 @@ BOOST_AUTO_TEST_CASE(LoadRowVecTransposedCSVTest)
 /**
  * Make sure TSVs can be loaded in transposed form.
  */
-BOOST_AUTO_TEST_CASE(LoadTransposedTSVTest)
+TEST_CASE("LoadTransposedTSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -519,13 +701,13 @@ BOOST_AUTO_TEST_CASE(LoadTransposedTSVTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("test_file.csv", test, false, true) == true);
+  REQUIRE(data::Load("test_file.csv", test, false, true) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  REQUIRE(test.n_cols == 2);
+  REQUIRE(test.n_rows == 4);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.csv");
@@ -534,7 +716,7 @@ BOOST_AUTO_TEST_CASE(LoadTransposedTSVTest)
 /**
  * Check TSV loading with .tsv extension.
  */
-BOOST_AUTO_TEST_CASE(LoadTransposedTSVExtensionTest)
+TEST_CASE("LoadTransposedTSVExtensionTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.tsv", fstream::out);
@@ -545,13 +727,13 @@ BOOST_AUTO_TEST_CASE(LoadTransposedTSVExtensionTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("test_file.tsv", test, false, true) == true);
+  REQUIRE(data::Load("test_file.tsv", test, false, true) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  REQUIRE(test.n_cols == 2);
+  REQUIRE(test.n_rows == 4);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.tsv");
@@ -560,7 +742,7 @@ BOOST_AUTO_TEST_CASE(LoadTransposedTSVExtensionTest)
 /**
  * Make sure CSVs can be loaded in non-transposed form.
  */
-BOOST_AUTO_TEST_CASE(LoadNonTransposedCSVTest)
+TEST_CASE("LoadNonTransposedCSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -571,13 +753,13 @@ BOOST_AUTO_TEST_CASE(LoadNonTransposedCSVTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("test_file.csv", test, false, false) == true);
+  REQUIRE(data::Load("test_file.csv", test, false, false) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_cols, 4);
-  BOOST_REQUIRE_EQUAL(test.n_rows, 2);
+  REQUIRE(test.n_cols == 4);
+  REQUIRE(test.n_rows == 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.csv");
@@ -586,24 +768,24 @@ BOOST_AUTO_TEST_CASE(LoadNonTransposedCSVTest)
 /**
  * Make sure CSVs can be saved in non-transposed form.
  */
-BOOST_AUTO_TEST_CASE(SaveNonTransposedCSVTest)
+TEST_CASE("SaveNonTransposedCSVTest", "[LoadSaveTest]")
 {
   arma::mat test = "1 2;"
                    "3 4;"
                    "5 6;"
                    "7 8;";
 
-  BOOST_REQUIRE(data::Save("test_file.csv", test, false, false) == true);
+  REQUIRE(data::Save("test_file.csv", test, false, false) == true);
 
   // Load it in and make sure it is in the same.
   arma::mat test2;
-  BOOST_REQUIRE(data::Load("test_file.csv", test2, false, false) == true);
+  REQUIRE(data::Load("test_file.csv", test2, false, false) == true);
 
-  BOOST_REQUIRE_EQUAL(test2.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test2.n_cols, 2);
+  REQUIRE(test2.n_rows == 4);
+  REQUIRE(test2.n_cols == 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], test2[i], 1e-5);
+    REQUIRE(test[i] == Approx(test2[i]).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.csv");
@@ -612,7 +794,7 @@ BOOST_AUTO_TEST_CASE(SaveNonTransposedCSVTest)
 /**
  * Make sure arma_ascii is loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadArmaASCIITest)
+TEST_CASE("LoadArmaASCIITest", "[LoadSaveTest]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -620,15 +802,15 @@ BOOST_AUTO_TEST_CASE(LoadArmaASCIITest)
                    "4 8;";
 
   arma::mat testTrans = trans(test);
-  BOOST_REQUIRE(testTrans.save("test_file.txt", arma::arma_ascii));
+  REQUIRE(testTrans.save("test_file.txt", arma::arma_ascii));
 
-  BOOST_REQUIRE(data::Load("test_file.txt", test) == true);
+  REQUIRE(data::Load("test_file.txt", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.txt");
@@ -637,23 +819,23 @@ BOOST_AUTO_TEST_CASE(LoadArmaASCIITest)
 /**
  * Make sure a CSV is saved correctly.
  */
-BOOST_AUTO_TEST_CASE(SaveArmaASCIITest)
+TEST_CASE("SaveArmaASCIITest", "[LoadSaveTest]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
                    "3 7;"
                    "4 8;";
 
-  BOOST_REQUIRE(data::Save("test_file.txt", test) == true);
+  REQUIRE(data::Save("test_file.txt", test) == true);
 
   // Load it in and make sure it is the same.
-  BOOST_REQUIRE(data::Load("test_file.txt", test) == true);
+  REQUIRE(data::Load("test_file.txt", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.txt");
@@ -662,7 +844,7 @@ BOOST_AUTO_TEST_CASE(SaveArmaASCIITest)
 /**
  * Make sure raw_ascii is loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadRawASCIITest)
+TEST_CASE("LoadRawASCIITest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.txt", fstream::out);
@@ -673,13 +855,13 @@ BOOST_AUTO_TEST_CASE(LoadRawASCIITest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("test_file.txt", test) == true);
+  REQUIRE(data::Load("test_file.txt", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.txt");
@@ -688,7 +870,7 @@ BOOST_AUTO_TEST_CASE(LoadRawASCIITest)
 /**
  * Make sure CSV is loaded correctly as .txt.
  */
-BOOST_AUTO_TEST_CASE(LoadCSVTxtTest)
+TEST_CASE("LoadCSVTxtTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test_file.txt", fstream::out);
@@ -699,13 +881,13 @@ BOOST_AUTO_TEST_CASE(LoadCSVTxtTest)
   f.close();
 
   arma::mat test;
-  BOOST_REQUIRE(data::Load("test_file.txt", test) == true);
+  REQUIRE(data::Load("test_file.txt", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.txt");
@@ -714,7 +896,7 @@ BOOST_AUTO_TEST_CASE(LoadCSVTxtTest)
 /**
  * Make sure arma_binary is loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadArmaBinaryTest)
+TEST_CASE("LoadArmaBinaryTest", "[LoadSaveTest]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -722,17 +904,17 @@ BOOST_AUTO_TEST_CASE(LoadArmaBinaryTest)
                    "4 8;";
 
   arma::mat testTrans = trans(test);
-  BOOST_REQUIRE(testTrans.quiet_save("test_file.bin", arma::arma_binary)
+  REQUIRE(testTrans.quiet_save("test_file.bin", arma::arma_binary)
       == true);
 
   // Now reload through our interface.
-  BOOST_REQUIRE(data::Load("test_file.bin", test) == true);
+  REQUIRE(data::Load("test_file.bin", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.bin");
@@ -741,22 +923,22 @@ BOOST_AUTO_TEST_CASE(LoadArmaBinaryTest)
 /**
  * Make sure arma_binary is saved correctly.
  */
-BOOST_AUTO_TEST_CASE(SaveArmaBinaryTest)
+TEST_CASE("SaveArmaBinaryTest", "[LoadSaveTest]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
                    "3 7;"
                    "4 8;";
 
-  BOOST_REQUIRE(data::Save("test_file.bin", test) == true);
+  REQUIRE(data::Save("test_file.bin", test) == true);
 
-  BOOST_REQUIRE(data::Load("test_file.bin", test) == true);
+  REQUIRE(data::Load("test_file.bin", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.bin");
@@ -765,7 +947,7 @@ BOOST_AUTO_TEST_CASE(SaveArmaBinaryTest)
 /**
  * Make sure raw_binary is loaded correctly.
  */
-BOOST_AUTO_TEST_CASE(LoadRawBinaryTest)
+TEST_CASE("LoadRawBinaryTest", "[LoadSaveTest]")
 {
   arma::mat test = "1 2;"
                    "3 4;"
@@ -773,17 +955,17 @@ BOOST_AUTO_TEST_CASE(LoadRawBinaryTest)
                    "7 8;";
 
   arma::mat testTrans = trans(test);
-  BOOST_REQUIRE(testTrans.quiet_save("test_file.bin", arma::raw_binary)
+  REQUIRE(testTrans.quiet_save("test_file.bin", arma::raw_binary)
       == true);
 
   // Now reload through our interface.
-  BOOST_REQUIRE(data::Load("test_file.bin", test) == true);
+  REQUIRE(data::Load("test_file.bin", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 8);
+  REQUIRE(test.n_rows == 1);
+  REQUIRE(test.n_cols == 8);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.bin");
@@ -792,7 +974,7 @@ BOOST_AUTO_TEST_CASE(LoadRawBinaryTest)
 /**
  * Make sure load as PGM is successful.
  */
-BOOST_AUTO_TEST_CASE(LoadPGMBinaryTest)
+TEST_CASE("LoadPGMBinaryTest", "[LoadSaveTest]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
@@ -800,17 +982,17 @@ BOOST_AUTO_TEST_CASE(LoadPGMBinaryTest)
                    "4 8;";
 
   arma::mat testTrans = trans(test);
-  BOOST_REQUIRE(testTrans.quiet_save("test_file.pgm", arma::pgm_binary)
+  REQUIRE(testTrans.quiet_save("test_file.pgm", arma::pgm_binary)
       == true);
 
   // Now reload through our interface.
-  BOOST_REQUIRE(data::Load("test_file.pgm", test) == true);
+  REQUIRE(data::Load("test_file.pgm", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.pgm");
@@ -819,23 +1001,23 @@ BOOST_AUTO_TEST_CASE(LoadPGMBinaryTest)
 /**
  * Make sure save as PGM is successful.
  */
-BOOST_AUTO_TEST_CASE(SavePGMBinaryTest)
+TEST_CASE("SavePGMBinaryTest", "[LoadSaveTest]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
                    "3 7;"
                    "4 8;";
 
-  BOOST_REQUIRE(data::Save("test_file.pgm", test) == true);
+  REQUIRE(data::Save("test_file.pgm", test) == true);
 
   // Now reload through our interface.
-  BOOST_REQUIRE(data::Load("test_file.pgm", test) == true);
+  REQUIRE(data::Load("test_file.pgm", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
-  for (size_t i = 0; i < 8; i++)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Remove the file.
   remove("test_file.pgm");
@@ -845,55 +1027,55 @@ BOOST_AUTO_TEST_CASE(SavePGMBinaryTest)
 /**
  * Make sure load as HDF5 is successful.
  */
-BOOST_AUTO_TEST_CASE(LoadHDF5Test)
+TEST_CASE("LoadHDF5Test", "[LoadSaveTest]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
                    "3 7;"
                    "4 8;";
   arma::mat testTrans = trans(test);
-  BOOST_REQUIRE(testTrans.quiet_save("test_file.h5", arma::hdf5_binary)
+  REQUIRE(testTrans.quiet_save("test_file.h5", arma::hdf5_binary)
       == true);
-  BOOST_REQUIRE(testTrans.quiet_save("test_file.hdf5", arma::hdf5_binary)
+  REQUIRE(testTrans.quiet_save("test_file.hdf5", arma::hdf5_binary)
       == true);
-  BOOST_REQUIRE(testTrans.quiet_save("test_file.hdf", arma::hdf5_binary)
+  REQUIRE(testTrans.quiet_save("test_file.hdf", arma::hdf5_binary)
       == true);
-  BOOST_REQUIRE(testTrans.quiet_save("test_file.he5", arma::hdf5_binary)
+  REQUIRE(testTrans.quiet_save("test_file.he5", arma::hdf5_binary)
       == true);
 
   // Now reload through our interface.
-  BOOST_REQUIRE(data::Load("test_file.h5", test) == true);
+  REQUIRE(data::Load("test_file.h5", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Make sure the other extensions work too.
-  BOOST_REQUIRE(data::Load("test_file.hdf5", test) == true);
+  REQUIRE(data::Load("test_file.hdf5", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
-
-  for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
-
-  BOOST_REQUIRE(data::Load("test_file.hdf", test) == true);
-
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
-  BOOST_REQUIRE(data::Load("test_file.he5", test) == true);
+  REQUIRE(data::Load("test_file.hdf", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
+
+  REQUIRE(data::Load("test_file.he5", test) == true);
+
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
+
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   remove("test_file.h5");
   remove("test_file.hdf");
@@ -904,50 +1086,50 @@ BOOST_AUTO_TEST_CASE(LoadHDF5Test)
 /**
  * Make sure save as HDF5 is successful.
  */
-BOOST_AUTO_TEST_CASE(SaveHDF5Test)
+TEST_CASE("SaveHDF5Test", "[LoadSaveTest]")
 {
   arma::mat test = "1 5;"
                    "2 6;"
                    "3 7;"
                    "4 8;";
-  BOOST_REQUIRE(data::Save("test_file.h5", test) == true);
-  BOOST_REQUIRE(data::Save("test_file.hdf5", test) == true);
-  BOOST_REQUIRE(data::Save("test_file.hdf", test) == true);
-  BOOST_REQUIRE(data::Save("test_file.he5", test) == true);
+  REQUIRE(data::Save("test_file.h5", test) == true);
+  REQUIRE(data::Save("test_file.hdf5", test) == true);
+  REQUIRE(data::Save("test_file.hdf", test) == true);
+  REQUIRE(data::Save("test_file.he5", test) == true);
 
   // Now load them all and verify they were saved okay.
-  BOOST_REQUIRE(data::Load("test_file.h5", test) == true);
+  REQUIRE(data::Load("test_file.h5", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Make sure the other extensions work too.
-  BOOST_REQUIRE(data::Load("test_file.hdf5", test) == true);
+  REQUIRE(data::Load("test_file.hdf5", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
-
-  for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
-
-  BOOST_REQUIRE(data::Load("test_file.hdf", test) == true);
-
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
-  BOOST_REQUIRE(data::Load("test_file.he5", test) == true);
+  REQUIRE(data::Load("test_file.hdf", test) == true);
 
-  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
+
+  REQUIRE(data::Load("test_file.he5", test) == true);
+
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
+
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   remove("test_file.h5");
   remove("test_file.hdf");
@@ -958,33 +1140,9 @@ BOOST_AUTO_TEST_CASE(SaveHDF5Test)
 #endif
 
 /**
- * Test one hot encoding.
- */
-BOOST_AUTO_TEST_CASE(OneHotEncodingTest)
-{
-  arma::Mat<size_t> matrix;
-  matrix = "1 0;"
-           "0 1;"
-           "1 0;"
-           "1 0;"
-           "1 0;"
-           "1 0;"
-           "0 1;"
-           "1 0;";
-// Output matrix to save onehotencoding results.
-  arma::Mat<size_t> output;
-  arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
-  data::OneHotEncoding(labels, output);
-
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, output.n_cols);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, output.n_rows);
-  CheckMatrices(output, matrix);
-}
-
-/**
  * Test normalization of labels.
  */
-BOOST_AUTO_TEST_CASE(NormalizeLabelSmallDatasetTest)
+TEST_CASE("NormalizeLabelSmallDatasetTest", "[LoadSaveTest]")
 {
   arma::irowvec labels("-1 1 1 -1 -1 -1 1 1");
   arma::Row<size_t> newLabels;
@@ -992,30 +1150,30 @@ BOOST_AUTO_TEST_CASE(NormalizeLabelSmallDatasetTest)
 
   data::NormalizeLabels(labels, newLabels, mappings);
 
-  BOOST_REQUIRE_EQUAL(mappings[0], -1);
-  BOOST_REQUIRE_EQUAL(mappings[1], 1);
+  REQUIRE(mappings[0] == -1);
+  REQUIRE(mappings[1] == 1);
 
-  BOOST_REQUIRE_EQUAL(newLabels[0], 0);
-  BOOST_REQUIRE_EQUAL(newLabels[1], 1);
-  BOOST_REQUIRE_EQUAL(newLabels[2], 1);
-  BOOST_REQUIRE_EQUAL(newLabels[3], 0);
-  BOOST_REQUIRE_EQUAL(newLabels[4], 0);
-  BOOST_REQUIRE_EQUAL(newLabels[5], 0);
-  BOOST_REQUIRE_EQUAL(newLabels[6], 1);
-  BOOST_REQUIRE_EQUAL(newLabels[7], 1);
+  REQUIRE(newLabels[0] == 0);
+  REQUIRE(newLabels[1] == 1);
+  REQUIRE(newLabels[2] == 1);
+  REQUIRE(newLabels[3] == 0);
+  REQUIRE(newLabels[4] == 0);
+  REQUIRE(newLabels[5] == 0);
+  REQUIRE(newLabels[6] == 1);
+  REQUIRE(newLabels[7] == 1);
 
   arma::irowvec revertedLabels;
 
   data::RevertLabels(newLabels, mappings, revertedLabels);
 
   for (size_t i = 0; i < labels.n_elem; ++i)
-    BOOST_REQUIRE_EQUAL(labels[i], revertedLabels[i]);
+    REQUIRE(labels[i] == revertedLabels[i]);
 }
 
 /**
  * Harder label normalization test.
  */
-BOOST_AUTO_TEST_CASE(NormalizeLabelTest)
+TEST_CASE("NormalizeLabelTest", "[LoadSaveTest]")
 {
   arma::rowvec randLabels(5000);
   for (size_t i = 0; i < 5000; ++i)
@@ -1032,14 +1190,14 @@ BOOST_AUTO_TEST_CASE(NormalizeLabelTest)
   data::RevertLabels(newLabels, mappings, revertedLabels);
 
   for (size_t i = 0; i < 5000; ++i)
-    BOOST_REQUIRE_EQUAL(randLabels[i], revertedLabels[i]);
+    REQUIRE(randLabels[i] == revertedLabels[i]);
 }
 
 // Test structures.
 class TestInner
 {
  public:
-  TestInner(char c, string s) : c(c), s(s) { }
+  TestInner(char c, const string& s) : c(c), s(s) { }
 
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
@@ -1077,81 +1235,81 @@ class Test
 /**
  * Make sure we can load and save.
  */
-BOOST_AUTO_TEST_CASE(LoadBinaryTest)
+TEST_CASE("LoadBinaryTest", "[LoadSaveTest]")
 {
   Test x(10, 12);
 
-  BOOST_REQUIRE_EQUAL(data::Save("test.bin", "x", x, false), true);
+  REQUIRE(data::Save("test.bin", "x", x, false) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  BOOST_REQUIRE_EQUAL(data::Load("test.bin", "x", y, false), true);
+  REQUIRE(data::Load("test.bin", "x", y, false) == true);
 
-  BOOST_REQUIRE_EQUAL(y.x, x.x);
-  BOOST_REQUIRE_EQUAL(y.y, x.y);
-  BOOST_REQUIRE_EQUAL(y.ina.c, x.ina.c);
-  BOOST_REQUIRE_EQUAL(y.ina.s, x.ina.s);
-  BOOST_REQUIRE_EQUAL(y.inb.c, x.inb.c);
-  BOOST_REQUIRE_EQUAL(y.inb.s, x.inb.s);
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
 }
 
 /**
  * Make sure we can load and save.
  */
-BOOST_AUTO_TEST_CASE(LoadXMLTest)
+TEST_CASE("LoadXMLTest", "[LoadSaveTest]")
 {
   Test x(10, 12);
 
-  BOOST_REQUIRE_EQUAL(data::Save("test.xml", "x", x, false), true);
+  REQUIRE(data::Save("test.xml", "x", x, false) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  BOOST_REQUIRE_EQUAL(data::Load("test.xml", "x", y, false), true);
+  REQUIRE(data::Load("test.xml", "x", y, false) == true);
 
-  BOOST_REQUIRE_EQUAL(y.x, x.x);
-  BOOST_REQUIRE_EQUAL(y.y, x.y);
-  BOOST_REQUIRE_EQUAL(y.ina.c, x.ina.c);
-  BOOST_REQUIRE_EQUAL(y.ina.s, x.ina.s);
-  BOOST_REQUIRE_EQUAL(y.inb.c, x.inb.c);
-  BOOST_REQUIRE_EQUAL(y.inb.s, x.inb.s);
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
 }
 
 /**
  * Make sure we can load and save.
  */
-BOOST_AUTO_TEST_CASE(LoadTextTest)
+TEST_CASE("LoadTextTest", "[LoadSaveTest]")
 {
   Test x(10, 12);
 
-  BOOST_REQUIRE_EQUAL(data::Save("test.txt", "x", x, false), true);
+  REQUIRE(data::Save("test.txt", "x", x, false) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  BOOST_REQUIRE_EQUAL(data::Load("test.txt", "x", y, false), true);
+  REQUIRE(data::Load("test.txt", "x", y, false) == true);
 
-  BOOST_REQUIRE_EQUAL(y.x, x.x);
-  BOOST_REQUIRE_EQUAL(y.y, x.y);
-  BOOST_REQUIRE_EQUAL(y.ina.c, x.ina.c);
-  BOOST_REQUIRE_EQUAL(y.ina.s, x.ina.s);
-  BOOST_REQUIRE_EQUAL(y.inb.c, x.inb.c);
-  BOOST_REQUIRE_EQUAL(y.inb.s, x.inb.s);
+  REQUIRE(y.x == x.x);
+  REQUIRE(y.y == x.y);
+  REQUIRE(y.ina.c == x.ina.c);
+  REQUIRE(y.ina.s == x.ina.s);
+  REQUIRE(y.inb.c == x.inb.c);
+  REQUIRE(y.inb.s == x.inb.s);
 }
 
 /**
  * Test DatasetInfo by making a map for a dimension.
  */
-BOOST_AUTO_TEST_CASE(DatasetInfoTest)
+TEST_CASE("DatasetInfoTest", "[LoadSaveTest]")
 {
   DatasetInfo di(100);
 
   // Do all types default to numeric?
   for (size_t i = 0; i < 100; ++i)
   {
-    BOOST_REQUIRE(di.Type(i) == Datatype::numeric);
-    BOOST_REQUIRE_EQUAL(di.NumMappings(i), 0);
+    REQUIRE(di.Type(i) == Datatype::numeric);
+    REQUIRE(di.NumMappings(i) == 0);
   }
 
   // Okay.  Add some mappings for dimension 3.
@@ -1159,22 +1317,22 @@ BOOST_AUTO_TEST_CASE(DatasetInfoTest)
   const size_t second = di.MapString<size_t>("test_mapping_2", 3);
   const size_t third = di.MapString<size_t>("test_mapping_3", 3);
 
-  BOOST_REQUIRE_EQUAL(first, 0);
-  BOOST_REQUIRE_EQUAL(second, 1);
-  BOOST_REQUIRE_EQUAL(third, 2);
+  REQUIRE(first == 0);
+  REQUIRE(second == 1);
+  REQUIRE(third == 2);
 
   // Now dimension 3 should be categorical.
   for (size_t i = 0; i < 100; ++i)
   {
     if (i == 3)
     {
-      BOOST_REQUIRE(di.Type(i) == Datatype::categorical);
-      BOOST_REQUIRE_EQUAL(di.NumMappings(i), 3);
+      REQUIRE(di.Type(i) == Datatype::categorical);
+      REQUIRE(di.NumMappings(i) == 3);
     }
     else
     {
-      BOOST_REQUIRE(di.Type(i) == Datatype::numeric);
-      BOOST_REQUIRE_EQUAL(di.NumMappings(i), 0);
+      REQUIRE(di.Type(i) == Datatype::numeric);
+      REQUIRE(di.NumMappings(i) == 0);
     }
   }
 
@@ -1183,15 +1341,15 @@ BOOST_AUTO_TEST_CASE(DatasetInfoTest)
   const string& strSecond = di.UnmapString(second, 3);
   const string& strThird = di.UnmapString(third, 3);
 
-  BOOST_REQUIRE_EQUAL(strFirst, "test_mapping_1");
-  BOOST_REQUIRE_EQUAL(strSecond, "test_mapping_2");
-  BOOST_REQUIRE_EQUAL(strThird, "test_mapping_3");
+  REQUIRE(strFirst == "test_mapping_1");
+  REQUIRE(strSecond == "test_mapping_2");
+  REQUIRE(strThird == "test_mapping_3");
 }
 
 /**
  * Test loading regular CSV with DatasetInfo.  Everything should be numeric.
  */
-BOOST_AUTO_TEST_CASE(RegularCSVDatasetInfoLoad)
+TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest]")
 {
   vector<string> testFiles;
   testFiles.push_back("fake.csv");
@@ -1210,20 +1368,20 @@ BOOST_AUTO_TEST_CASE(RegularCSVDatasetInfoLoad)
     data::Load(testFiles[i], two, info);
 
     // Check that the matrices contain the same information.
-    BOOST_REQUIRE_EQUAL(one.n_elem, two.n_elem);
-    BOOST_REQUIRE_EQUAL(one.n_rows, two.n_rows);
-    BOOST_REQUIRE_EQUAL(one.n_cols, two.n_cols);
+    REQUIRE(one.n_elem == two.n_elem);
+    REQUIRE(one.n_rows == two.n_rows);
+    REQUIRE(one.n_cols == two.n_cols);
     for (size_t i = 0; i < one.n_elem; ++i)
     {
       if (std::abs(one[i]) < 1e-8)
-        BOOST_REQUIRE_SMALL(two[i], 1e-8);
+        REQUIRE(two[i] == Approx(.0).margin(1e-10));
       else
-        BOOST_REQUIRE_CLOSE(one[i], two[i], 1e-8);
+        REQUIRE(one[i] == Approx(two[i]).epsilon(1e-7));
     }
 
     // Check that all dimensions are numeric.
     for (size_t i = 0; i < two.n_rows; ++i)
-      BOOST_REQUIRE(info.Type(i) == Datatype::numeric);
+      REQUIRE(info.Type(i) == Datatype::numeric);
   }
 }
 
@@ -1231,7 +1389,7 @@ BOOST_AUTO_TEST_CASE(RegularCSVDatasetInfoLoad)
  * Test non-transposed loading of regular CSVs with DatasetInfo.  Everything
  * should be numeric.
  */
-BOOST_AUTO_TEST_CASE(NontransposedCSVDatasetInfoLoad)
+TEST_CASE("NontransposedCSVDatasetInfoLoad", "[LoadSaveTest]")
 {
   vector<string> testFiles;
   testFiles.push_back("fake.csv");
@@ -1250,27 +1408,27 @@ BOOST_AUTO_TEST_CASE(NontransposedCSVDatasetInfoLoad)
     data::Load(testFiles[i], two, info, true, false);
 
     // Check that the matrices contain the same information.
-    BOOST_REQUIRE_EQUAL(one.n_elem, two.n_elem);
-    BOOST_REQUIRE_EQUAL(one.n_rows, two.n_rows);
-    BOOST_REQUIRE_EQUAL(one.n_cols, two.n_cols);
+    REQUIRE(one.n_elem == two.n_elem);
+    REQUIRE(one.n_rows == two.n_rows);
+    REQUIRE(one.n_cols == two.n_cols);
     for (size_t i = 0; i < one.n_elem; ++i)
     {
       if (std::abs(one[i]) < 1e-8)
-        BOOST_REQUIRE_SMALL(two[i], 1e-8);
+        REQUIRE(two[i] == Approx(.0).margin(1e-10));
       else
-        BOOST_REQUIRE_CLOSE(one[i], two[i], 1e-8);
+        REQUIRE(one[i] == Approx(two[i]).epsilon(1e-7));
     }
 
     // Check that all dimensions are numeric.
     for (size_t i = 0; i < two.n_rows; ++i)
-      BOOST_REQUIRE(info.Type(i) == Datatype::numeric);
+      REQUIRE(info.Type(i) == Datatype::numeric);
   }
 }
 
 /**
  * Create a file with a categorical string feature, then load it.
  */
-BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest00)
+TEST_CASE("CategoricalCSVLoadTest00", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1288,49 +1446,49 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest00)
   DatasetInfo info;
   data::Load("test.csv", matrix, info);
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, 7);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
+  REQUIRE(matrix.n_cols == 7);
+  REQUIRE(matrix.n_rows == 3);
 
-  BOOST_REQUIRE_EQUAL(matrix(0, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 0), 2);
-  BOOST_REQUIRE_EQUAL(matrix(2, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(0, 1), 3);
-  BOOST_REQUIRE_EQUAL(matrix(1, 1), 4);
-  BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 2), 5);
-  BOOST_REQUIRE_EQUAL(matrix(1, 2), 6);
-  BOOST_REQUIRE_EQUAL(matrix(2, 2), 2);
-  BOOST_REQUIRE_EQUAL(matrix(0, 3), 7);
-  BOOST_REQUIRE_EQUAL(matrix(1, 3), 8);
-  BOOST_REQUIRE_EQUAL(matrix(2, 3), 3);
-  BOOST_REQUIRE_EQUAL(matrix(0, 4), 9);
-  BOOST_REQUIRE_EQUAL(matrix(1, 4), 10);
-  BOOST_REQUIRE_EQUAL(matrix(2, 4), 0);
-  BOOST_REQUIRE_EQUAL(matrix(0, 5), 11);
-  BOOST_REQUIRE_EQUAL(matrix(1, 5), 12);
-  BOOST_REQUIRE_EQUAL(matrix(2, 5), 3);
-  BOOST_REQUIRE_EQUAL(matrix(0, 6), 13);
-  BOOST_REQUIRE_EQUAL(matrix(1, 6), 14);
-  BOOST_REQUIRE_EQUAL(matrix(2, 6), 3);
+  REQUIRE(matrix(0, 0) == 1);
+  REQUIRE(matrix(1, 0) == 2);
+  REQUIRE(matrix(2, 0) == 0);
+  REQUIRE(matrix(0, 1) == 3);
+  REQUIRE(matrix(1, 1) == 4);
+  REQUIRE(matrix(2, 1) == 1);
+  REQUIRE(matrix(0, 2) == 5);
+  REQUIRE(matrix(1, 2) == 6);
+  REQUIRE(matrix(2, 2) == 2);
+  REQUIRE(matrix(0, 3) == 7);
+  REQUIRE(matrix(1, 3) == 8);
+  REQUIRE(matrix(2, 3) == 3);
+  REQUIRE(matrix(0, 4) == 9);
+  REQUIRE(matrix(1, 4) == 10);
+  REQUIRE(matrix(2, 4) == 0);
+  REQUIRE(matrix(0, 5) == 11);
+  REQUIRE(matrix(1, 5) == 12);
+  REQUIRE(matrix(2, 5) == 3);
+  REQUIRE(matrix(0, 6) == 13);
+  REQUIRE(matrix(1, 6) == 14);
+  REQUIRE(matrix(2, 6) == 3);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
+  REQUIRE(info.Type(0) == Datatype::numeric);
+  REQUIRE(info.Type(1) == Datatype::numeric);
+  REQUIRE(info.Type(2) == Datatype::categorical);
 
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("hello", 2), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("goodbye", 2), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("coffee", 2), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("confusion", 2), 3);
+  REQUIRE(info.MapString<arma::uword>("hello", 2) == 0);
+  REQUIRE(info.MapString<arma::uword>("goodbye", 2) == 1);
+  REQUIRE(info.MapString<arma::uword>("coffee", 2) == 2);
+  REQUIRE(info.MapString<arma::uword>("confusion", 2) == 3);
 
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 2), "hello");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 2), "goodbye");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(2, 2), "coffee");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(3, 2), "confusion");
+  REQUIRE(info.UnmapString(0, 2) == "hello");
+  REQUIRE(info.UnmapString(1, 2) == "goodbye");
+  REQUIRE(info.UnmapString(2, 2) == "coffee");
+  REQUIRE(info.UnmapString(3, 2) == "confusion");
 
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest01)
+TEST_CASE("CategoricalCSVLoadTest01", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1345,37 +1503,37 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest01)
   DatasetInfo info;
   data::Load("test.csv", matrix, info, true);
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, 4);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
+  REQUIRE(matrix.n_cols == 4);
+  REQUIRE(matrix.n_rows == 3);
 
-  BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(0, 1), 0);
-  BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 3), 0);
-  BOOST_REQUIRE_EQUAL(matrix(1, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 3), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 3), 1);
+  REQUIRE(matrix(0, 0) == 0);
+  REQUIRE(matrix(0, 1) == 0);
+  REQUIRE(matrix(0, 2) == 1);
+  REQUIRE(matrix(0, 3) == 0);
+  REQUIRE(matrix(1, 0) == 1);
+  REQUIRE(matrix(1, 1) == 1);
+  REQUIRE(matrix(1, 2) == 1);
+  REQUIRE(matrix(1, 3) == 1);
+  REQUIRE(matrix(2, 0) == 1);
+  REQUIRE(matrix(2, 1) == 1);
+  REQUIRE(matrix(2, 2) == 1);
+  REQUIRE(matrix(2, 3) == 1);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
+  REQUIRE(info.Type(0) == Datatype::categorical);
+  REQUIRE(info.Type(1) == Datatype::numeric);
+  REQUIRE(info.Type(2) == Datatype::numeric);
+  REQUIRE(info.Type(3) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 0), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 0), 1);
+  REQUIRE(info.MapString<arma::uword>("1", 0) == 0);
+  REQUIRE(info.MapString<arma::uword>("", 0) == 1);
 
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "1");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "");
+  REQUIRE(info.UnmapString(0, 0) == "1");
+  REQUIRE(info.UnmapString(1, 0) == "");
 
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest02)
+TEST_CASE("CategoricalCSVLoadTest02", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1390,36 +1548,36 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest02)
   DatasetInfo info;
   data::Load("test.csv", matrix, info, true);
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, 4);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
+  REQUIRE(matrix.n_cols == 4);
+  REQUIRE(matrix.n_rows == 3);
 
-  BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 2), 0);
-  BOOST_REQUIRE_EQUAL(matrix(0, 3), 0);
-  BOOST_REQUIRE_EQUAL(matrix(1, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 3), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 3), 1);
+  REQUIRE(matrix(0, 0) == 0);
+  REQUIRE(matrix(0, 1) == 1);
+  REQUIRE(matrix(0, 2) == 0);
+  REQUIRE(matrix(0, 3) == 0);
+  REQUIRE(matrix(1, 0) == 1);
+  REQUIRE(matrix(1, 1) == 1);
+  REQUIRE(matrix(1, 2) == 1);
+  REQUIRE(matrix(1, 3) == 1);
+  REQUIRE(matrix(2, 0) == 1);
+  REQUIRE(matrix(2, 1) == 1);
+  REQUIRE(matrix(2, 2) == 1);
+  REQUIRE(matrix(2, 3) == 1);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
+  REQUIRE(info.Type(0) == Datatype::categorical);
+  REQUIRE(info.Type(1) == Datatype::numeric);
+  REQUIRE(info.Type(2) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 0), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 0), 0);
+  REQUIRE(info.MapString<arma::uword>("", 0) == 1);
+  REQUIRE(info.MapString<arma::uword>("1", 0) == 0);
 
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "1");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "");
+  REQUIRE(info.UnmapString(0, 0) == "1");
+  REQUIRE(info.UnmapString(1, 0) == "");
 
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest03)
+TEST_CASE("CategoricalCSVLoadTest03", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1434,36 +1592,36 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest03)
   DatasetInfo info;
   data::Load("test.csv", matrix, info, true);
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, 4);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
+  REQUIRE(matrix.n_cols == 4);
+  REQUIRE(matrix.n_rows == 3);
 
-  BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 3), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 3), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 3), 1);
+  REQUIRE(matrix(0, 0) == 0);
+  REQUIRE(matrix(0, 1) == 1);
+  REQUIRE(matrix(0, 2) == 1);
+  REQUIRE(matrix(0, 3) == 1);
+  REQUIRE(matrix(1, 0) == 1);
+  REQUIRE(matrix(1, 1) == 1);
+  REQUIRE(matrix(1, 2) == 1);
+  REQUIRE(matrix(1, 3) == 1);
+  REQUIRE(matrix(2, 0) == 1);
+  REQUIRE(matrix(2, 1) == 1);
+  REQUIRE(matrix(2, 2) == 1);
+  REQUIRE(matrix(2, 3) == 1);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
+  REQUIRE(info.Type(0) == Datatype::categorical);
+  REQUIRE(info.Type(1) == Datatype::numeric);
+  REQUIRE(info.Type(2) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 0), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 0), 1);
+  REQUIRE(info.MapString<arma::uword>("", 0) == 0);
+  REQUIRE(info.MapString<arma::uword>("1", 0) == 1);
 
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "1");
+  REQUIRE(info.UnmapString(0, 0) == "");
+  REQUIRE(info.UnmapString(1, 0) == "1");
 
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest04)
+TEST_CASE("CategoricalCSVLoadTest04", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1478,36 +1636,36 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest04)
   DatasetInfo info;
   data::Load("test.csv", matrix, info, true);
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, 4);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
+  REQUIRE(matrix.n_cols == 4);
+  REQUIRE(matrix.n_rows == 3);
 
-  BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 3), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 3), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 3), 1);
+  REQUIRE(matrix(0, 0) == 0);
+  REQUIRE(matrix(0, 1) == 1);
+  REQUIRE(matrix(0, 2) == 1);
+  REQUIRE(matrix(0, 3) == 1);
+  REQUIRE(matrix(1, 0) == 1);
+  REQUIRE(matrix(1, 1) == 1);
+  REQUIRE(matrix(1, 2) == 1);
+  REQUIRE(matrix(1, 3) == 1);
+  REQUIRE(matrix(2, 0) == 1);
+  REQUIRE(matrix(2, 1) == 1);
+  REQUIRE(matrix(2, 2) == 1);
+  REQUIRE(matrix(2, 3) == 1);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
+  REQUIRE(info.Type(0) == Datatype::categorical);
+  REQUIRE(info.Type(1) == Datatype::numeric);
+  REQUIRE(info.Type(2) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("200-DM", 0), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 0), 1);
+  REQUIRE(info.MapString<arma::uword>("200-DM", 0) == 0);
+  REQUIRE(info.MapString<arma::uword>("1", 0) == 1);
 
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "200-DM");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "1");
+  REQUIRE(info.UnmapString(0, 0) == "200-DM");
+  REQUIRE(info.UnmapString(1, 0) == "1");
 
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest00)
+TEST_CASE("CategoricalNontransposedCSVLoadTest00", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1525,81 +1683,81 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest00)
   DatasetInfo info;
   data::Load("test.csv", matrix, info, true, false); // No transpose.
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 7);
+  REQUIRE(matrix.n_cols == 3);
+  REQUIRE(matrix.n_rows == 7);
 
-  BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 2), 2);
-  BOOST_REQUIRE_EQUAL(matrix(1, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 2), 2);
-  BOOST_REQUIRE_EQUAL(matrix(2, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 2), 2);
-  BOOST_REQUIRE_EQUAL(matrix(3, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(3, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(3, 2), 2);
-  BOOST_REQUIRE_EQUAL(matrix(4, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(4, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(4, 2), 2);
-  BOOST_REQUIRE_EQUAL(matrix(5, 0), 11);
-  BOOST_REQUIRE_EQUAL(matrix(5, 1), 12);
-  BOOST_REQUIRE_EQUAL(matrix(5, 2), 15);
-  BOOST_REQUIRE_EQUAL(matrix(6, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(6, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(6, 2), 2);
+  REQUIRE(matrix(0, 0) == 0);
+  REQUIRE(matrix(0, 1) == 1);
+  REQUIRE(matrix(0, 2) == 2);
+  REQUIRE(matrix(1, 0) == 0);
+  REQUIRE(matrix(1, 1) == 1);
+  REQUIRE(matrix(1, 2) == 2);
+  REQUIRE(matrix(2, 0) == 0);
+  REQUIRE(matrix(2, 1) == 1);
+  REQUIRE(matrix(2, 2) == 2);
+  REQUIRE(matrix(3, 0) == 0);
+  REQUIRE(matrix(3, 1) == 1);
+  REQUIRE(matrix(3, 2) == 2);
+  REQUIRE(matrix(4, 0) == 0);
+  REQUIRE(matrix(4, 1) == 1);
+  REQUIRE(matrix(4, 2) == 2);
+  REQUIRE(matrix(5, 0) == 11);
+  REQUIRE(matrix(5, 1) == 12);
+  REQUIRE(matrix(5, 2) == 15);
+  REQUIRE(matrix(6, 0) == 0);
+  REQUIRE(matrix(6, 1) == 1);
+  REQUIRE(matrix(6, 2) == 2);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(1) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(3) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(4) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(5) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(6) == Datatype::categorical);
+  REQUIRE(info.Type(0) == Datatype::categorical);
+  REQUIRE(info.Type(1) == Datatype::categorical);
+  REQUIRE(info.Type(2) == Datatype::categorical);
+  REQUIRE(info.Type(3) == Datatype::categorical);
+  REQUIRE(info.Type(4) == Datatype::categorical);
+  REQUIRE(info.Type(5) == Datatype::numeric);
+  REQUIRE(info.Type(6) == Datatype::categorical);
 
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 0), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("2", 0), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("hello", 0), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("3", 1), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("4", 1), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("goodbye", 1), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("5", 2), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("6", 2), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("coffee", 2), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("7", 3), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("8", 3), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("confusion", 3), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("9", 4), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("10", 4), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("hello", 4), 2);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("13", 6), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("14", 6), 1);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("confusion", 6), 2);
+  REQUIRE(info.MapString<arma::uword>("1", 0) == 0);
+  REQUIRE(info.MapString<arma::uword>("2", 0) == 1);
+  REQUIRE(info.MapString<arma::uword>("hello", 0) == 2);
+  REQUIRE(info.MapString<arma::uword>("3", 1) == 0);
+  REQUIRE(info.MapString<arma::uword>("4", 1) == 1);
+  REQUIRE(info.MapString<arma::uword>("goodbye", 1) == 2);
+  REQUIRE(info.MapString<arma::uword>("5", 2) == 0);
+  REQUIRE(info.MapString<arma::uword>("6", 2) == 1);
+  REQUIRE(info.MapString<arma::uword>("coffee", 2) == 2);
+  REQUIRE(info.MapString<arma::uword>("7", 3) == 0);
+  REQUIRE(info.MapString<arma::uword>("8", 3) == 1);
+  REQUIRE(info.MapString<arma::uword>("confusion", 3) == 2);
+  REQUIRE(info.MapString<arma::uword>("9", 4) == 0);
+  REQUIRE(info.MapString<arma::uword>("10", 4) == 1);
+  REQUIRE(info.MapString<arma::uword>("hello", 4) == 2);
+  REQUIRE(info.MapString<arma::uword>("13", 6) == 0);
+  REQUIRE(info.MapString<arma::uword>("14", 6) == 1);
+  REQUIRE(info.MapString<arma::uword>("confusion", 6) == 2);
 
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 0), "1");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 0), "2");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(2, 0), "hello");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "3");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "4");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(2, 1), "goodbye");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 2), "5");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 2), "6");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(2, 2), "coffee");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 3), "7");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 3), "8");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(2, 3), "confusion");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 4), "9");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 4), "10");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(2, 4), "hello");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 6), "13");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 6), "14");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(2, 6), "confusion");
+  REQUIRE(info.UnmapString(0, 0) == "1");
+  REQUIRE(info.UnmapString(1, 0) == "2");
+  REQUIRE(info.UnmapString(2, 0) == "hello");
+  REQUIRE(info.UnmapString(0, 1) == "3");
+  REQUIRE(info.UnmapString(1, 1) == "4");
+  REQUIRE(info.UnmapString(2, 1) == "goodbye");
+  REQUIRE(info.UnmapString(0, 2) == "5");
+  REQUIRE(info.UnmapString(1, 2) == "6");
+  REQUIRE(info.UnmapString(2, 2) == "coffee");
+  REQUIRE(info.UnmapString(0, 3) == "7");
+  REQUIRE(info.UnmapString(1, 3) == "8");
+  REQUIRE(info.UnmapString(2, 3) == "confusion");
+  REQUIRE(info.UnmapString(0, 4) == "9");
+  REQUIRE(info.UnmapString(1, 4) == "10");
+  REQUIRE(info.UnmapString(2, 4) == "hello");
+  REQUIRE(info.UnmapString(0, 6) == "13");
+  REQUIRE(info.UnmapString(1, 6) == "14");
+  REQUIRE(info.UnmapString(2, 6) == "confusion");
 
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest01)
+TEST_CASE("CategoricalNontransposedCSVLoadTest01", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1614,37 +1772,37 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest01)
   DatasetInfo info;
   data::Load("test.csv", matrix, info, true, false); // No transpose.
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
+  REQUIRE(matrix.n_cols == 3);
+  REQUIRE(matrix.n_rows == 4);
 
-  BOOST_REQUIRE_EQUAL(matrix(0, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(3, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(3, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(3, 2), 1);
+  REQUIRE(matrix(0, 0) == 1);
+  REQUIRE(matrix(0, 1) == 1);
+  REQUIRE(matrix(0, 2) == 1);
+  REQUIRE(matrix(1, 0) == 1);
+  REQUIRE(matrix(1, 1) == 1);
+  REQUIRE(matrix(1, 2) == 1);
+  REQUIRE(matrix(2, 0) == 0);
+  REQUIRE(matrix(2, 1) == 1);
+  REQUIRE(matrix(2, 2) == 1);
+  REQUIRE(matrix(3, 0) == 1);
+  REQUIRE(matrix(3, 1) == 1);
+  REQUIRE(matrix(3, 2) == 1);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
+  REQUIRE(info.Type(0) == Datatype::numeric);
+  REQUIRE(info.Type(1) == Datatype::numeric);
+  REQUIRE(info.Type(2) == Datatype::categorical);
+  REQUIRE(info.Type(3) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 2), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 2), 1);
+  REQUIRE(info.MapString<arma::uword>("", 2) == 0);
+  REQUIRE(info.MapString<arma::uword>("1", 2) == 1);
 
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 2), "");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 2), "1");
+  REQUIRE(info.UnmapString(0, 2) == "");
+  REQUIRE(info.UnmapString(1, 2) == "1");
 
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest02)
+TEST_CASE("CategoricalNontransposedCSVLoadTest02", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1659,37 +1817,37 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest02)
   DatasetInfo info;
   data::Load("test.csv", matrix, info, true, false); // No transpose.
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
+  REQUIRE(matrix.n_cols == 3);
+  REQUIRE(matrix.n_rows == 4);
 
-  BOOST_REQUIRE_EQUAL(matrix(0, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(3, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(3, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(3, 2), 1);
+  REQUIRE(matrix(0, 0) == 1);
+  REQUIRE(matrix(0, 1) == 1);
+  REQUIRE(matrix(0, 2) == 1);
+  REQUIRE(matrix(1, 0) == 0);
+  REQUIRE(matrix(1, 1) == 1);
+  REQUIRE(matrix(1, 2) == 1);
+  REQUIRE(matrix(2, 0) == 1);
+  REQUIRE(matrix(2, 1) == 1);
+  REQUIRE(matrix(2, 2) == 1);
+  REQUIRE(matrix(3, 0) == 1);
+  REQUIRE(matrix(3, 1) == 1);
+  REQUIRE(matrix(3, 2) == 1);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(1) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
+  REQUIRE(info.Type(0) == Datatype::numeric);
+  REQUIRE(info.Type(1) == Datatype::categorical);
+  REQUIRE(info.Type(2) == Datatype::numeric);
+  REQUIRE(info.Type(3) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 1), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 1), 1);
+  REQUIRE(info.MapString<arma::uword>("", 1) == 0);
+  REQUIRE(info.MapString<arma::uword>("1", 1) == 1);
 
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
+  REQUIRE(info.UnmapString(0, 1) == "");
+  REQUIRE(info.UnmapString(1, 1) == "1");
 
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest03)
+TEST_CASE("CategoricalNontransposedCSVLoadTest03", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1704,37 +1862,37 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest03)
   DatasetInfo info;
   data::Load("test.csv", matrix, info, true, false); // No transpose.
 
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
+  REQUIRE(matrix.n_cols == 3);
+  REQUIRE(matrix.n_rows == 4);
 
-  BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
-  BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
-  BOOST_REQUIRE_EQUAL(matrix(3, 0), 1);
-  BOOST_REQUIRE_EQUAL(matrix(3, 1), 1);
-  BOOST_REQUIRE_EQUAL(matrix(3, 2), 1);
+  REQUIRE(matrix(0, 0) == 0);
+  REQUIRE(matrix(0, 1) == 1);
+  REQUIRE(matrix(0, 2) == 1);
+  REQUIRE(matrix(1, 0) == 1);
+  REQUIRE(matrix(1, 1) == 1);
+  REQUIRE(matrix(1, 2) == 1);
+  REQUIRE(matrix(2, 0) == 1);
+  REQUIRE(matrix(2, 1) == 1);
+  REQUIRE(matrix(2, 2) == 1);
+  REQUIRE(matrix(3, 0) == 1);
+  REQUIRE(matrix(3, 1) == 1);
+  REQUIRE(matrix(3, 2) == 1);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
-  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
+  REQUIRE(info.Type(0) == Datatype::categorical);
+  REQUIRE(info.Type(1) == Datatype::numeric);
+  REQUIRE(info.Type(2) == Datatype::numeric);
+  REQUIRE(info.Type(3) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("", 1), 0);
-  BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 1), 1);
+  REQUIRE(info.MapString<arma::uword>("", 1) == 0);
+  REQUIRE(info.MapString<arma::uword>("1", 1) == 1);
 
-  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "");
-  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
+  REQUIRE(info.UnmapString(0, 1) == "");
+  REQUIRE(info.UnmapString(1, 1) == "1");
 
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
+TEST_CASE("CategoricalNontransposedCSVLoadTest04", "[LoadSaveTest]")
 {
     fstream f;
     f.open("test.csv", fstream::out);
@@ -1749,32 +1907,32 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
     DatasetInfo info;
     data::Load("test.csv", matrix, info, true, false); // No transpose.
 
-    BOOST_REQUIRE_EQUAL(matrix.n_cols, 3);
-    BOOST_REQUIRE_EQUAL(matrix.n_rows, 4);
+    REQUIRE(matrix.n_cols == 3);
+    REQUIRE(matrix.n_rows == 4);
 
-    BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
-    BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-    BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
-    BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
+    REQUIRE(info.Type(0) == Datatype::categorical);
+    REQUIRE(info.Type(1) == Datatype::numeric);
+    REQUIRE(info.Type(2) == Datatype::numeric);
+    REQUIRE(info.Type(3) == Datatype::numeric);
 
-    BOOST_REQUIRE_EQUAL(matrix(0, 0), 0);
-    BOOST_REQUIRE_EQUAL(matrix(0, 1), 1);
-    BOOST_REQUIRE_EQUAL(matrix(0, 2), 1);
-    BOOST_REQUIRE_EQUAL(matrix(1, 0), 1);
-    BOOST_REQUIRE_EQUAL(matrix(1, 1), 1);
-    BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
-    BOOST_REQUIRE_EQUAL(matrix(2, 0), 1);
-    BOOST_REQUIRE_EQUAL(matrix(2, 1), 1);
-    BOOST_REQUIRE_EQUAL(matrix(2, 2), 1);
-    BOOST_REQUIRE_EQUAL(matrix(3, 0), 1);
-    BOOST_REQUIRE_EQUAL(matrix(3, 1), 1);
-    BOOST_REQUIRE_EQUAL(matrix(3, 2), 1);
+    REQUIRE(matrix(0, 0) == 0);
+    REQUIRE(matrix(0, 1) == 1);
+    REQUIRE(matrix(0, 2) == 1);
+    REQUIRE(matrix(1, 0) == 1);
+    REQUIRE(matrix(1, 1) == 1);
+    REQUIRE(matrix(1, 2) == 1);
+    REQUIRE(matrix(2, 0) == 1);
+    REQUIRE(matrix(2, 1) == 1);
+    REQUIRE(matrix(2, 2) == 1);
+    REQUIRE(matrix(3, 0) == 1);
+    REQUIRE(matrix(3, 1) == 1);
+    REQUIRE(matrix(3, 2) == 1);
 
-    BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("200-DM", 1), 0);
-    BOOST_REQUIRE_EQUAL(info.MapString<arma::uword>("1", 1), 1);
+    REQUIRE(info.MapString<arma::uword>("200-DM", 1) == 0);
+    REQUIRE(info.MapString<arma::uword>("1", 1) == 1);
 
-    BOOST_REQUIRE_EQUAL(info.UnmapString(0, 1), "200-DM");
-    BOOST_REQUIRE_EQUAL(info.UnmapString(1, 1), "1");
+    REQUIRE(info.UnmapString(0, 1) == "200-DM");
+    REQUIRE(info.UnmapString(1, 1) == "1");
 
     remove("test.csv");
 }
@@ -1782,7 +1940,7 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest04)
 /**
  * A harder test CSV based on the concerns in #658.
  */
-BOOST_AUTO_TEST_CASE(HarderKeonTest)
+TEST_CASE("HarderKeonTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -1797,28 +1955,28 @@ BOOST_AUTO_TEST_CASE(HarderKeonTest)
   data::DatasetInfo info;
   data::Load("test.csv", dataset, info, true, true);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+  REQUIRE(dataset.n_rows == 5);
+  REQUIRE(dataset.n_cols == 4);
 
-  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 5);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(0), 3);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(1), 4);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(2), 0);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(3), 2); // \t and "" are equivalent.
-  BOOST_REQUIRE_EQUAL(info.NumMappings(4), 4);
+  REQUIRE(info.Dimensionality() == 5);
+  REQUIRE(info.NumMappings(0) == 3);
+  REQUIRE(info.NumMappings(1) == 4);
+  REQUIRE(info.NumMappings(2) == 0);
+  REQUIRE(info.NumMappings(3) == 2); // \t and "" are equivalent.
+  REQUIRE(info.NumMappings(4) == 4);
 
   // Now load non-transposed.
   data::DatasetInfo ntInfo;
   data::Load("test.csv", dataset, ntInfo, true, false);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 4);
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 5);
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 5);
 
-  BOOST_REQUIRE_EQUAL(ntInfo.Dimensionality(), 4);
-  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(0), 4);
-  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(1), 5);
-  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(2), 5);
-  BOOST_REQUIRE_EQUAL(ntInfo.NumMappings(3), 3);
+  REQUIRE(ntInfo.Dimensionality() == 4);
+  REQUIRE(ntInfo.NumMappings(0) == 4);
+  REQUIRE(ntInfo.NumMappings(1) == 5);
+  REQUIRE(ntInfo.NumMappings(2) == 5);
+  REQUIRE(ntInfo.NumMappings(3) == 3);
 
   remove("test.csv");
 }
@@ -1826,7 +1984,7 @@ BOOST_AUTO_TEST_CASE(HarderKeonTest)
 /**
  * A simple ARFF load test.  Two attributes, both numeric.
  */
-BOOST_AUTO_TEST_CASE(SimpleARFFTest)
+TEST_CASE("SimpleARFFTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.arff", fstream::out);
@@ -1846,15 +2004,15 @@ BOOST_AUTO_TEST_CASE(SimpleARFFTest)
   DatasetInfo info;
   data::Load("test.arff", dataset, info);
 
-  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 2);
-  BOOST_REQUIRE(info.Type(0) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
+  REQUIRE(info.Dimensionality() == 2);
+  REQUIRE(info.Type(0) == Datatype::numeric);
+  REQUIRE(info.Type(1) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 2);
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+  REQUIRE(dataset.n_rows == 2);
+  REQUIRE(dataset.n_cols == 4);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_CLOSE(dataset[i], double(i + 1), 1e-5);
+    REQUIRE(dataset[i] == Approx(double(i + 1)).epsilon(1e-7));
 
   remove("test.arff");
 }
@@ -1863,7 +2021,7 @@ BOOST_AUTO_TEST_CASE(SimpleARFFTest)
  * Another simple ARFF load test.  Three attributes, two categorical, one
  * numeric.
  */
-BOOST_AUTO_TEST_CASE(SimpleARFFCategoricalTest)
+TEST_CASE("SimpleARFFCategoricalTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.arff", fstream::out);
@@ -1887,32 +2045,32 @@ BOOST_AUTO_TEST_CASE(SimpleARFFCategoricalTest)
   DatasetInfo info;
   data::Load("test.arff", dataset, info);
 
-  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+  REQUIRE(info.Dimensionality() == 3);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(0), 3);
-  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(2), 2);
+  REQUIRE(info.Type(0) == Datatype::categorical);
+  REQUIRE(info.NumMappings(0) == 3);
+  REQUIRE(info.Type(1) == Datatype::numeric);
+  REQUIRE(info.Type(2) == Datatype::categorical);
+  REQUIRE(info.NumMappings(2) == 2);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+  REQUIRE(dataset.n_rows == 3);
+  REQUIRE(dataset.n_cols == 4);
 
   // The first dimension must all be different (except the ones that are the
   // same).
-  BOOST_REQUIRE_EQUAL(dataset(0, 0), dataset(0, 3));
-  BOOST_REQUIRE_NE(dataset(0, 0), dataset(0, 1));
-  BOOST_REQUIRE_NE(dataset(0, 1), dataset(0, 2));
-  BOOST_REQUIRE_NE(dataset(0, 2), dataset(0, 0));
+  REQUIRE(dataset(0, 0) == dataset(0, 3));
+  REQUIRE(dataset(0, 0) != dataset(0, 1));
+  REQUIRE(dataset(0, 1) != dataset(0, 2));
+  REQUIRE(dataset(0, 2) != dataset(0, 0));
 
-  BOOST_REQUIRE_CLOSE(dataset(1, 0), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(1, 1), 2.34, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(1, 2), 1.03e5, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(1, 3), -1.3, 1e-5);
+  REQUIRE(dataset(1, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(dataset(1, 1) == Approx(2.34).epsilon(1e-7));
+  REQUIRE(dataset(1, 2) == Approx(1.03e5).epsilon(1e-7));
+  REQUIRE(dataset(1, 3) == Approx(-1.3).epsilon(1e-7));
 
-  BOOST_REQUIRE_EQUAL(dataset(2, 0), dataset(2, 2));
-  BOOST_REQUIRE_EQUAL(dataset(2, 1), dataset(2, 3));
-  BOOST_REQUIRE_NE(dataset(2, 0), dataset(2, 1));
+  REQUIRE(dataset(2, 0) == dataset(2, 2));
+  REQUIRE(dataset(2, 1) == dataset(2, 3));
+  REQUIRE(dataset(2, 0) != dataset(2, 1));
 
   remove("test.arff");
 }
@@ -1921,7 +2079,7 @@ BOOST_AUTO_TEST_CASE(SimpleARFFCategoricalTest)
  * A harder ARFF test, where we have each type of supported value, and some
  * random whitespace too.
  */
-BOOST_AUTO_TEST_CASE(HarderARFFTest)
+TEST_CASE("HarderARFFTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.arff", fstream::out);
@@ -1946,39 +2104,39 @@ BOOST_AUTO_TEST_CASE(HarderARFFTest)
   DatasetInfo info;
   data::Load("test.arff", dataset, info);
 
-  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 5);
+  REQUIRE(info.Dimensionality() == 5);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::numeric);
+  REQUIRE(info.Type(0) == Datatype::numeric);
 
-  BOOST_REQUIRE(info.Type(1) == Datatype::categorical);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(1), 3);
+  REQUIRE(info.Type(1) == Datatype::categorical);
+  REQUIRE(info.NumMappings(1) == 3);
 
-  BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(4) == Datatype::numeric);
+  REQUIRE(info.Type(2) == Datatype::numeric);
+  REQUIRE(info.Type(3) == Datatype::numeric);
+  REQUIRE(info.Type(4) == Datatype::numeric);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 3);
+  REQUIRE(dataset.n_rows == 5);
+  REQUIRE(dataset.n_cols == 3);
 
-  BOOST_REQUIRE_CLOSE(dataset(0, 0), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(0, 1), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(0, 2), 3.0, 1e-5);
+  REQUIRE(dataset(0, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(dataset(0, 1) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(dataset(0, 2) == Approx(3.0).epsilon(1e-7));
 
-  BOOST_REQUIRE_NE(dataset(1, 0), dataset(1, 1));
-  BOOST_REQUIRE_NE(dataset(1, 1), dataset(1, 2));
-  BOOST_REQUIRE_NE(dataset(1, 0), dataset(1, 2));
+  REQUIRE(dataset(1, 0) != dataset(1, 1));
+  REQUIRE(dataset(1, 1) != dataset(1, 2));
+  REQUIRE(dataset(1, 0) != dataset(1, 2));
 
-  BOOST_REQUIRE_CLOSE(dataset(2, 0), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(2, 1), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(2, 2), 5.0, 1e-5);
+  REQUIRE(dataset(2, 0) == Approx(3.0).epsilon(1e-7));
+  REQUIRE(dataset(2, 1) == Approx(4.0).epsilon(1e-7));
+  REQUIRE(dataset(2, 2) == Approx(5.0).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(dataset(3, 0), 4.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(3, 1), 5.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(3, 2), 6.5, 1e-5);
+  REQUIRE(dataset(3, 0) == Approx(4.5).epsilon(1e-7));
+  REQUIRE(dataset(3, 1) == Approx(5.5).epsilon(1e-7));
+  REQUIRE(dataset(3, 2) == Approx(6.5).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(dataset(4, 0), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(4, 1), 7.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(4, 2), 8.0, 1e-5);
+  REQUIRE(dataset(4, 0) == Approx(6.0).epsilon(1e-7));
+  REQUIRE(dataset(4, 1) == Approx(7.0).epsilon(1e-7));
+  REQUIRE(dataset(4, 2) == Approx(8.0).epsilon(1e-7));
 
   remove("test.arff");
 }
@@ -1986,7 +2144,7 @@ BOOST_AUTO_TEST_CASE(HarderARFFTest)
 /**
  * If we pass a bad DatasetInfo, it should throw.
  */
-BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
+TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.arff", fstream::out);
@@ -2010,7 +2168,7 @@ BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
   arma::mat dataset;
   DatasetInfo info(6);
 
-  BOOST_REQUIRE_THROW(data::LoadARFF("test.arff", dataset, info),
+  REQUIRE_THROWS_AS(data::LoadARFF("test.arff", dataset, info),
       std::invalid_argument);
 
   remove("test.arff");
@@ -2019,13 +2177,13 @@ BOOST_AUTO_TEST_CASE(BadDatasetInfoARFFTest)
 /**
  * If file is not found, it should throw.
  */
-BOOST_AUTO_TEST_CASE(NonExistentFileARFFTest)
+TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest]")
 {
   arma::mat dataset;
   DatasetInfo info;
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(data::LoadARFF("nonexistentfile.arff", dataset, info),
+  REQUIRE_THROWS_AS(data::LoadARFF("nonexistentfile.arff", dataset, info),
       std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -2034,7 +2192,7 @@ BOOST_AUTO_TEST_CASE(NonExistentFileARFFTest)
  * A test to check whether the arff loader is case insensitive to declarations:
  * @relation, @attribute, @data.
  */
-BOOST_AUTO_TEST_CASE(CaseTest)
+TEST_CASE("CaseTest", "[LoadSaveTest]")
 {
   arma::mat dataset;
 
@@ -2042,14 +2200,52 @@ BOOST_AUTO_TEST_CASE(CaseTest)
 
   LoadARFF<double, IncrementPolicy>("casecheck.arff", dataset, info);
 
-  BOOST_CHECK_EQUAL(dataset.n_rows, 2);
-  BOOST_CHECK_EQUAL(dataset.n_cols, 3);
+  REQUIRE(dataset.n_rows == 2);
+  REQUIRE(dataset.n_cols == 3);
+}
+
+/**
+ * Ensure that a failure happens if we set a category to use capital letters but
+ * it receives them in lowercase.
+ */
+TEST_CASE("CategoryCaseTest", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation    \t test" << endl;
+  f << endl;
+  f << endl;
+  f << "@attribute @@@@flfl {A, B, C, D}" << endl;
+  f << endl;
+  f << "% comment" << endl;
+  f << "@attribute \"hello world\" string" << endl;
+  f << "@attribute 12345 integer" << endl;
+  f << "@attribute real real" << endl;
+  f << "@attribute \"blah blah blah     \t \" numeric % comment" << endl;
+  f << "% comment" << endl;
+  f << "@data" << endl;
+  f << "A, one, 3, 4.5, 6" << endl;
+  f << "B, two, 4, 5.5, 7 % comment" << endl;
+  f << "c, \"three five, six\", 5, 6.5, 8" << endl;
+  f.close();
+
+  arma::mat dataset;
+  data::DatasetInfo info;
+
+  // Make sure to parse with fatal errors (that's what the `true` parameter
+  // means).
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(data::Load("test.arff", dataset, info, true),
+      std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  remove("test.arff");
 }
 
 /**
  * Test that a CSV with the wrong number of columns fails.
  */
-BOOST_AUTO_TEST_CASE(MalformedCSVTest)
+TEST_CASE("MalformedCSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2061,7 +2257,7 @@ BOOST_AUTO_TEST_CASE(MalformedCSVTest)
   arma::mat dataset;
   DatasetInfo di;
 
-  BOOST_REQUIRE(!data::Load("test.csv", dataset, di, false));
+  REQUIRE(!data::Load("test.csv", dataset, di, false));
 
   remove("test.csv");
 }
@@ -2069,7 +2265,7 @@ BOOST_AUTO_TEST_CASE(MalformedCSVTest)
 /**
  * Test that a TSV can load with LoadCSV.
  */
-BOOST_AUTO_TEST_CASE(LoadCSVTSVTest)
+TEST_CASE("LoadCSVTSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.tsv", fstream::out);
@@ -2080,13 +2276,13 @@ BOOST_AUTO_TEST_CASE(LoadCSVTSVTest)
   arma::mat dataset;
   DatasetInfo di;
 
-  BOOST_REQUIRE(data::Load("test.tsv", dataset, di, false));
+  REQUIRE(data::Load("test.tsv", dataset, di, false));
 
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 2);
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 4);
+  REQUIRE(dataset.n_cols == 2);
+  REQUIRE(dataset.n_rows == 4);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_EQUAL(dataset[i], i + 1);
+    REQUIRE(dataset[i] == i + 1);
 
   remove("test.tsv");
 }
@@ -2094,7 +2290,7 @@ BOOST_AUTO_TEST_CASE(LoadCSVTSVTest)
 /**
  * Test that a text file can load with LoadCSV.
  */
-BOOST_AUTO_TEST_CASE(LoadCSVTXTTest)
+TEST_CASE("LoadCSVTXTTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.txt", fstream::out);
@@ -2105,13 +2301,13 @@ BOOST_AUTO_TEST_CASE(LoadCSVTXTTest)
   arma::mat dataset;
   DatasetInfo di;
 
-  BOOST_REQUIRE(data::Load("test.txt", dataset, di, false));
+  REQUIRE(data::Load("test.txt", dataset, di, false));
 
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 2);
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 4);
+  REQUIRE(dataset.n_cols == 2);
+  REQUIRE(dataset.n_rows == 4);
 
   for (size_t i = 0; i < 8; ++i)
-    BOOST_REQUIRE_EQUAL(dataset[i], i + 1);
+    REQUIRE(dataset[i] == i + 1);
 
   remove("test.txt");
 }
@@ -2119,7 +2315,7 @@ BOOST_AUTO_TEST_CASE(LoadCSVTXTTest)
 /**
  * Test that a non-transposed CSV with the wrong number of columns fails.
  */
-BOOST_AUTO_TEST_CASE(MalformedNoTransposeCSVTest)
+TEST_CASE("MalformedNoTransposeCSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.csv", fstream::out);
@@ -2131,7 +2327,7 @@ BOOST_AUTO_TEST_CASE(MalformedNoTransposeCSVTest)
   arma::mat dataset;
   DatasetInfo di;
 
-  BOOST_REQUIRE(!data::Load("test.csv", dataset, di, false, false));
+  REQUIRE(!data::Load("test.csv", dataset, di, false, false));
 
   remove("test.csv");
 }
@@ -2139,7 +2335,7 @@ BOOST_AUTO_TEST_CASE(MalformedNoTransposeCSVTest)
 /**
  * Test that a non-transposed TSV can load with LoadCSV.
  */
-BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTSVTest)
+TEST_CASE("LoadCSVNoTransposeTSVTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.tsv", fstream::out);
@@ -2150,19 +2346,19 @@ BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTSVTest)
   arma::mat dataset;
   DatasetInfo di;
 
-  BOOST_REQUIRE(data::Load("test.tsv", dataset, di, false, false));
+  REQUIRE(data::Load("test.tsv", dataset, di, false, false));
 
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 2);
+  REQUIRE(dataset.n_cols == 4);
+  REQUIRE(dataset.n_rows == 2);
 
-  BOOST_REQUIRE_EQUAL(dataset[0], 1);
-  BOOST_REQUIRE_EQUAL(dataset[1], 5);
-  BOOST_REQUIRE_EQUAL(dataset[2], 2);
-  BOOST_REQUIRE_EQUAL(dataset[3], 6);
-  BOOST_REQUIRE_EQUAL(dataset[4], 3);
-  BOOST_REQUIRE_EQUAL(dataset[5], 7);
-  BOOST_REQUIRE_EQUAL(dataset[6], 4);
-  BOOST_REQUIRE_EQUAL(dataset[7], 8);
+  REQUIRE(dataset[0] == 1);
+  REQUIRE(dataset[1] == 5);
+  REQUIRE(dataset[2] == 2);
+  REQUIRE(dataset[3] == 6);
+  REQUIRE(dataset[4] == 3);
+  REQUIRE(dataset[5] == 7);
+  REQUIRE(dataset[6] == 4);
+  REQUIRE(dataset[7] == 8);
 
   remove("test.tsv");
 }
@@ -2170,7 +2366,7 @@ BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTSVTest)
 /**
  * Test that a non-transposed text file can load with LoadCSV.
  */
-BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTXTTest)
+TEST_CASE("LoadCSVNoTransposeTXTTest", "[LoadSaveTest]")
 {
   fstream f;
   f.open("test.txt", fstream::out);
@@ -2181,19 +2377,19 @@ BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTXTTest)
   arma::mat dataset;
   DatasetInfo di;
 
-  BOOST_REQUIRE(data::Load("test.txt", dataset, di, false, false));
+  REQUIRE(data::Load("test.txt", dataset, di, false, false));
 
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 2);
+  REQUIRE(dataset.n_cols == 4);
+  REQUIRE(dataset.n_rows == 2);
 
-  BOOST_REQUIRE_EQUAL(dataset[0], 1);
-  BOOST_REQUIRE_EQUAL(dataset[1], 5);
-  BOOST_REQUIRE_EQUAL(dataset[2], 2);
-  BOOST_REQUIRE_EQUAL(dataset[3], 6);
-  BOOST_REQUIRE_EQUAL(dataset[4], 3);
-  BOOST_REQUIRE_EQUAL(dataset[5], 7);
-  BOOST_REQUIRE_EQUAL(dataset[6], 4);
-  BOOST_REQUIRE_EQUAL(dataset[7], 8);
+  REQUIRE(dataset[0] == 1);
+  REQUIRE(dataset[1] == 5);
+  REQUIRE(dataset[2] == 2);
+  REQUIRE(dataset[3] == 6);
+  REQUIRE(dataset[4] == 3);
+  REQUIRE(dataset[5] == 7);
+  REQUIRE(dataset[6] == 4);
+  REQUIRE(dataset[7] == 8);
 
   remove("test.txt");
 }
@@ -2201,7 +2397,7 @@ BOOST_AUTO_TEST_CASE(LoadCSVNoTransposeTXTTest)
 /**
  * Make sure DatasetMapper properly unmaps from non-unique strings.
  */
-BOOST_AUTO_TEST_CASE(DatasetMapperNonUniqueTest)
+TEST_CASE("DatasetMapperNonUniqueTest", "[LoadSaveTest]")
 {
   DatasetMapper<MissingPolicy> dm(1);
 
@@ -2212,13 +2408,11 @@ BOOST_AUTO_TEST_CASE(DatasetMapperNonUniqueTest)
   dm.MapString<double>("cheese", 0);
 
   double nan = std::numeric_limits<double>::quiet_NaN();
-  BOOST_REQUIRE_EQUAL(dm.NumMappings(0), 3);
-  BOOST_REQUIRE_EQUAL(dm.NumUnmappings(nan, 0), 3);
+  REQUIRE(dm.NumMappings(0) == 3);
+  REQUIRE(dm.NumUnmappings(nan, 0) == 3);
 
-  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0), "hello");
-  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0, 0), "hello");
-  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0, 1), "goodbye");
-  BOOST_REQUIRE_EQUAL(dm.UnmapString(nan, 0, 2), "cheese");
+  REQUIRE(dm.UnmapString(nan, 0) == "hello");
+  REQUIRE(dm.UnmapString(nan, 0, 0) == "hello");
+  REQUIRE(dm.UnmapString(nan, 0, 1) == "goodbye");
+  REQUIRE(dm.UnmapString(nan, 0, 2) == "cheese");
 }
-
-BOOST_AUTO_TEST_SUITE_END();

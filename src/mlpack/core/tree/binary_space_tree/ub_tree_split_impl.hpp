@@ -1,5 +1,5 @@
 /**
- * @file ub_tree_split_impl.hpp
+ * @file core/tree/binary_space_tree/ub_tree_split_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of UBTreeSplit, a class that splits a node according
@@ -132,7 +132,7 @@ bool UBTreeSplit<BoundType, MatType>::SplitNode(BoundType& bound,
   }
 
   // Set the minimum and the maximum addresses.
-  for (size_t k = 0; k < bound.Dim(); k++)
+  for (size_t k = 0; k < bound.Dim(); ++k)
   {
     bound.LoAddress()[k] = addresses[begin].first[k];
     bound.HiAddress()[k] = addresses[begin + count - 1].first[k];
@@ -148,7 +148,7 @@ void UBTreeSplit<BoundType, MatType>::InitializeAddresses(const MatType& data)
   addresses.resize(data.n_cols);
 
   // Calculate all addresses.
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
     addresses[i].first.zeros(data.n_rows);
     bound::addr::PointToAddress(addresses[i].first, data.col(i));
@@ -169,13 +169,13 @@ size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
     std::vector<size_t> newFromOld(data.n_cols);
     std::vector<size_t> oldFromNew(data.n_cols);
 
-    for (size_t i = 0; i < splitInfo.addresses->size(); i++)
+    for (size_t i = 0; i < splitInfo.addresses->size(); ++i)
     {
       newFromOld[i] = i;
       oldFromNew[i] = i;
     }
 
-    for (size_t i = 0; i < splitInfo.addresses->size(); i++)
+    for (size_t i = 0; i < splitInfo.addresses->size(); ++i)
     {
       size_t index = (*splitInfo.addresses)[i].second;
       size_t oldI = oldFromNew[i];
@@ -210,10 +210,10 @@ size_t UBTreeSplit<BoundType, MatType>::PerformSplit(
   {
     std::vector<size_t> newFromOld(data.n_cols);
 
-    for (size_t i = 0; i < splitInfo.addresses->size(); i++)
+    for (size_t i = 0; i < splitInfo.addresses->size(); ++i)
       newFromOld[i] = i;
 
-    for (size_t i = 0; i < splitInfo.addresses->size(); i++)
+    for (size_t i = 0; i < splitInfo.addresses->size(); ++i)
     {
       size_t index = (*splitInfo.addresses)[i].second;
       size_t oldI = oldFromNew[i];

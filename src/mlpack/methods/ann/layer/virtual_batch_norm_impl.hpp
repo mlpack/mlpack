@@ -1,5 +1,5 @@
 /**
- * @file virtual_batch_norm_impl.hpp
+ * @file methods/ann/layer/virtual_batch_norm_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of the VirtualBatchNorm layer.
@@ -65,7 +65,7 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void VirtualBatchNorm<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   inputParameter = input;
   arma::mat inputMean = arma::mean(input, 1);
@@ -90,7 +90,7 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void VirtualBatchNorm<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
@@ -115,9 +115,9 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void VirtualBatchNorm<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   gradient.set_size(size + size, 1);
 

@@ -1,5 +1,5 @@
 /**
- * @file adaboost_model.hpp
+ * @file methods/adaboost/adaboost_model.hpp
  * @author Ryan Curtin
  *
  * A serializable AdaBoost model, used by the main program.
@@ -38,7 +38,7 @@ class AdaBoostModel
   //! The type of weak learner.
   size_t weakLearnerType;
   //! Non-NULL if using decision stumps.
-  AdaBoost<decision_stump::DecisionStump<>>* dsBoost;
+  AdaBoost<tree::ID3DecisionStump>* dsBoost;
   //! Non-NULL if using perceptrons.
   AdaBoost<perceptron::Perceptron<>>* pBoost;
   //! Number of dimensions in training data.
@@ -79,7 +79,7 @@ class AdaBoostModel
   //! Modify the dimensionality of the model.
   size_t& Dimensionality() { return dimensionality; }
 
-  //! Train the model.
+  //! Train the model, treat the data is all of the numeric type.
   void Train(const arma::mat& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,

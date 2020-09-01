@@ -1,5 +1,5 @@
 /**
- * @file linear_svm.hpp
+ * @file methods/linear_svm/linear_svm.hpp
  * @author Ayush Chamoli
  *
  * An implementation of Linear SVM.
@@ -119,7 +119,7 @@ class LinearSVM
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
-   * @paran delta Margin of difference between correct class and other classes.
+   * @param delta Margin of difference between correct class and other classes.
    * @param fitIntercept add intercept term or not.
    * @param optimizer Desired optimizer.
    */
@@ -140,7 +140,7 @@ class LinearSVM
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
-   * @paran delta Margin of difference between correct class and other classes.
+   * @param delta Margin of difference between correct class and other classes.
    * @param fitIntercept add intercept term or not.
    */
   LinearSVM(const size_t inputSize,
@@ -155,7 +155,7 @@ class LinearSVM
    *
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
-   * @paran delta Margin of difference between correct class and other classes.
+   * @param delta Margin of difference between correct class and other classes.
    * @param fitIntercept add intercept term or not.
    */
   LinearSVM(const size_t numClasses = 0,
