@@ -333,7 +333,7 @@ bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal,
           const bool transpose,
-          arma::file_type inputLoadType)
+          const arma::file_type inputLoadType)
 {
   Timer::Start("loading_data");
 
