@@ -185,7 +185,7 @@ static void mlpackMain()
   }
 
   // Initialize GMM.
-  GMM* gmm;
+  GMM* gmm = NULL;
 
   if (IO::HasParam("input_model"))
   {

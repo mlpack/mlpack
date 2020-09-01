@@ -62,16 +62,16 @@ BINDING_LONG_DESC(
     "."
     "\n"
     "Use " + PRINT_PARAM_STRING("predictions") + " instead of " +
-    PRINT_PARAM_STRING("output") + '.' +
-    "\n\n"
+    PRINT_PARAM_STRING("output") + '.');
+
+// Example.
+BINDING_EXAMPLE(
     "The training data given with the " + PRINT_PARAM_STRING("training") +
     " option may have class labels as its last dimension (so, if the training "
     "data is in CSV format, labels should be the last column).  Alternately, "
     "the " + PRINT_PARAM_STRING("labels") + " parameter may be used to specify "
-    "a separate matrix of labels.");
-
-// Example.
-BINDING_EXAMPLE(
+    "a separate matrix of labels."
+    "\n\n"
     "All these options make it easy to train a perceptron, and then re-use that"
     " perceptron for later classification.  The invocation below trains a "
     "perceptron on " + PRINT_DATASET("training_data") + " with labels " +

@@ -22,17 +22,14 @@
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include "catch.hpp"
 #include <mlpack/methods/kmeans/kill_empty_clusters.hpp>
-#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kmeans;
 using namespace mlpack::metric;
 using namespace mlpack::tree;
 using namespace mlpack::neighbor;
-
-BOOST_AUTO_TEST_SUITE(KMeansTest);
 
 // Generate dataset; written transposed because it's easier to read.
 arma::mat kMeansData("  0.0   0.0;" // Class 1.
@@ -69,7 +66,7 @@ arma::mat kMeansData("  0.0   0.0;" // Class 1.
 /**
  * 30-point 3-class test case for K-Means.
  */
-BOOST_AUTO_TEST_CASE(KMeansSimpleTest)
+TEST_CASE("KMeansSimpleTest", "[KMeansTest]")
 {
   // This test was originally written to use RandomPartition, and is left that
   // way because RandomPartition gives better initializations here.
@@ -83,30 +80,30 @@ BOOST_AUTO_TEST_CASE(KMeansSimpleTest)
   size_t firstClass = assignments(0);
 
   for (size_t i = 1; i < 13; ++i)
-    BOOST_REQUIRE_EQUAL(assignments(i), firstClass);
+    REQUIRE(assignments(i) == firstClass);
 
   size_t secondClass = assignments(13);
 
   // To ensure that class 1 != class 2.
-  BOOST_REQUIRE_NE(firstClass, secondClass);
+  REQUIRE(firstClass != secondClass);
 
   for (size_t i = 13; i < 20; ++i)
-    BOOST_REQUIRE_EQUAL(assignments(i), secondClass);
+    REQUIRE(assignments(i) == secondClass);
 
   size_t thirdClass = assignments(20);
 
   // To ensure that this is the third class which we haven't seen yet.
-  BOOST_REQUIRE_NE(firstClass, thirdClass);
-  BOOST_REQUIRE_NE(secondClass, thirdClass);
+  REQUIRE(firstClass != thirdClass);
+  REQUIRE(secondClass != thirdClass);
 
   for (size_t i = 20; i < 30; ++i)
-    BOOST_REQUIRE_EQUAL(assignments(i), thirdClass);
+    REQUIRE(assignments(i) == thirdClass);
 }
 
 /**
  * Make sure the empty cluster policy class does nothing.
  */
-BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
+TEST_CASE("AllowEmptyClusterTest", "[KMeansTest]")
 {
   arma::Row<size_t> assignments;
   assignments.randu(30);
@@ -129,17 +126,17 @@ BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
 
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], assignmentsOld[i]);
+    REQUIRE(assignments[i] == assignmentsOld[i]);
 
   // Make sure no counts were changed.
   for (size_t i = 0; i < 3; ++i)
-    BOOST_REQUIRE_EQUAL(counts[i], countsOld[i]);
+    REQUIRE(counts[i] == countsOld[i]);
 }
 
 /**
  * Make sure kill empty cluster policy removes the empty cluster.
  */
-BOOST_AUTO_TEST_CASE(KillEmptyClusterTest)
+TEST_CASE("KillEmptyClusterTest", "[KMeansTest]")
 {
   arma::Row<size_t> assignments;
   assignments.randu(30);
@@ -162,20 +159,20 @@ BOOST_AUTO_TEST_CASE(KillEmptyClusterTest)
 
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], assignmentsOld[i]);
+    REQUIRE(assignments[i] == assignmentsOld[i]);
 
   // Make sure no counts were changed for clusters that are not empty.
   for (size_t i = 0; i < 2; ++i)
-    BOOST_REQUIRE_EQUAL(counts[i], countsOld[i]);
+    REQUIRE(counts[i] == countsOld[i]);
 
   // Make sure that counts contain one less element than old counts.
-  BOOST_REQUIRE_GT(countsOld.n_elem, counts.n_elem);
+  REQUIRE(countsOld.n_elem > counts.n_elem);
 }
 
 /**
  * Make sure the max variance method finds the correct point.
  */
-BOOST_AUTO_TEST_CASE(MaxVarianceNewClusterTest)
+TEST_CASE("MaxVarianceNewClusterTest", "[KMeansTest]")
 {
   // Five points.
   arma::mat data("0.4 1.0 5.0 -2.0 -2.5;"
@@ -220,22 +217,22 @@ BOOST_AUTO_TEST_CASE(MaxVarianceNewClusterTest)
     assignments[i] = closestCluster;
   }
 
-  BOOST_REQUIRE_EQUAL(assignments[0], 0);
-  BOOST_REQUIRE_EQUAL(assignments[1], 0);
-  BOOST_REQUIRE_EQUAL(assignments[2], 2);
-  BOOST_REQUIRE_EQUAL(assignments[3], 1);
-  BOOST_REQUIRE_EQUAL(assignments[4], 1);
+  REQUIRE(assignments[0] == 0);
+  REQUIRE(assignments[1] == 0);
+  REQUIRE(assignments[2] == 2);
+  REQUIRE(assignments[3] == 1);
+  REQUIRE(assignments[4] == 1);
 
   // Ensure that the counts are right.
-  BOOST_REQUIRE_EQUAL(counts[0], 2);
-  BOOST_REQUIRE_EQUAL(counts[1], 2);
-  BOOST_REQUIRE_EQUAL(counts[2], 1);
+  REQUIRE(counts[0] == 2);
+  REQUIRE(counts[1] == 2);
+  REQUIRE(counts[2] == 1);
 }
 
 /**
  * Make sure the random partitioner seems to return valid results.
  */
-BOOST_AUTO_TEST_CASE(RandomPartitionTest)
+TEST_CASE("RandomPartitionTest", "[KMeansTest]")
 {
   arma::mat data;
   data.randu(2, 1000); // One thousand points.
@@ -246,17 +243,17 @@ BOOST_AUTO_TEST_CASE(RandomPartitionTest)
   RandomPartition::Cluster(data, 18, assignments);
 
   // Ensure that the right number of assignments were given.
-  BOOST_REQUIRE_EQUAL(assignments.n_elem, 1000);
+  REQUIRE(assignments.n_elem == 1000);
 
   // Ensure that no value is greater than 17 (the maximum valid cluster).
   for (size_t i = 0; i < 1000; ++i)
-    BOOST_REQUIRE_LT(assignments[i], 18);
+    REQUIRE(assignments[i] < 18);
 }
 
 /**
  * Make sure that random initialization fails for a corner case dataset.
  */
-BOOST_AUTO_TEST_CASE(RandomInitialAssignmentFailureTest)
+TEST_CASE("RandomInitialAssignmentFailureTest", "[KMeansTest]")
 {
   // This is a very synthetic dataset.  It is one Gaussian with a huge number of
   // points combined with one faraway Gaussian with very few points.  Normally,
@@ -292,14 +289,14 @@ BOOST_AUTO_TEST_CASE(RandomInitialAssignmentFailureTest)
 
   // Only one success allowed.  The probability of two successes should be
   // infinitesimal.
-  BOOST_REQUIRE_LT(successes, 2);
+  REQUIRE(successes < 2);
 }
 
 /**
  * Make sure that specifying initial assignments is successful for a corner case
  * dataset which doesn't usually converge otherwise.
  */
-BOOST_AUTO_TEST_CASE(InitialAssignmentTest)
+TEST_CASE("InitialAssignmentTest", "[KMeansTest]")
 {
   // For a better description of this dataset, see
   // RandomInitialAssignmentFailureTest.
@@ -321,9 +318,9 @@ BOOST_AUTO_TEST_CASE(InitialAssignmentTest)
 
   // Check results.
   for (size_t i = 0; i < 10000; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], 0);
+    REQUIRE(assignments[i] == 0);
   for (size_t i = 10000; i < 10002; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], 1);
+    REQUIRE(assignments[i] == 1);
 
   // Now, slightly harder.  Give it one incorrect assignment in each cluster.
   // The wrong assignment should be quickly fixed.
@@ -334,16 +331,16 @@ BOOST_AUTO_TEST_CASE(InitialAssignmentTest)
 
   // Check results.
   for (size_t i = 0; i < 10000; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], 0);
+    REQUIRE(assignments[i] == 0);
   for (size_t i = 10000; i < 10002; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], 1);
+    REQUIRE(assignments[i] == 1);
 }
 
 /**
  * Make sure specifying initial centroids is successful for a corner case which
  * doesn't usually converge otherwise.
  */
-BOOST_AUTO_TEST_CASE(InitialCentroidTest)
+TEST_CASE("InitialCentroidTest", "[KMeansTest]")
 {
   // For a better description of this dataset, see
   // RandomInitialAssignmentFailureTest.
@@ -365,9 +362,9 @@ BOOST_AUTO_TEST_CASE(InitialCentroidTest)
 
   // Check results.
   for (size_t i = 0; i < 10000; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], 0);
+    REQUIRE(assignments[i] == 0);
   for (size_t i = 10000; i < 10002; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], 1);
+    REQUIRE(assignments[i] == 1);
 
   // Now add a little noise to the initial centroids.
   centroids.col(0) = arma::vec("3 4");
@@ -377,15 +374,15 @@ BOOST_AUTO_TEST_CASE(InitialCentroidTest)
 
   // Check results.
   for (size_t i = 0; i < 10000; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], 0);
+    REQUIRE(assignments[i] == 0);
   for (size_t i = 10000; i < 10002; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], 1);
+    REQUIRE(assignments[i] == 1);
 }
 
 /**
  * Ensure that initial assignments override initial centroids.
  */
-BOOST_AUTO_TEST_CASE(InitialAssignmentOverrideTest)
+TEST_CASE("InitialAssignmentOverrideTest", "[KMeansTest]")
 {
   // For a better description of this dataset, see
   // RandomInitialAssignmentFailureTest.
@@ -412,22 +409,22 @@ BOOST_AUTO_TEST_CASE(InitialAssignmentOverrideTest)
   // Because the initial assignments guess should take priority, we should get
   // those same results back.
   for (size_t i = 0; i < 10000; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], 0);
+    REQUIRE(assignments[i] == 0);
   for (size_t i = 10000; i < 10002; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], 1);
+    REQUIRE(assignments[i] == 1);
 
   // Make sure the centroids are about right too.
-  BOOST_REQUIRE_LT(centroids(0, 0), 10.0);
-  BOOST_REQUIRE_LT(centroids(1, 0), 10.0);
-  BOOST_REQUIRE_GT(centroids(0, 1), 40.0);
-  BOOST_REQUIRE_GT(centroids(1, 1), 40.0);
+  REQUIRE(centroids(0, 0) < 10.0);
+  REQUIRE(centroids(1, 0) < 10.0);
+  REQUIRE(centroids(0, 1) > 40.0);
+  REQUIRE(centroids(1, 1) > 40.0);
 }
 
 /**
  * Test that the refined starting policy returns decent initial cluster
  * estimates.
  */
-BOOST_AUTO_TEST_CASE(RefinedStartTest)
+TEST_CASE("RefinedStartTest", "[KMeansTest]")
 {
   // Our dataset will be five Gaussians of largely varying numbers of points and
   // we expect that the refined starting policy should return good guesses at
@@ -486,14 +483,14 @@ BOOST_AUTO_TEST_CASE(RefinedStartTest)
   // figure is a corner case which actually does not give good clusters), and
   // random initial starts give distortion around 22000.  So we'll require that
   // our distortion is less than 14000.
-  BOOST_REQUIRE_LT(distortion, 14000.0);
+  REQUIRE(distortion < 14000.0);
 }
 
 #ifdef ARMA_HAS_SPMAT
 /**
  * Make sure sparse k-means works okay.
  */
-BOOST_AUTO_TEST_CASE(SparseKMeansTest)
+TEST_CASE("SparseKMeansTest", "[KMeansTest]")
 {
   // Huge dimensionality, few points.
   arma::SpMat<double> data(5000, 12);
@@ -520,23 +517,23 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
   size_t clusterOne = assignments[0];
   size_t clusterTwo = assignments[6];
 
-  BOOST_REQUIRE_EQUAL(assignments[0], clusterOne);
-  BOOST_REQUIRE_EQUAL(assignments[1], clusterOne);
-  BOOST_REQUIRE_EQUAL(assignments[2], clusterOne);
-  BOOST_REQUIRE_EQUAL(assignments[3], clusterOne);
-  BOOST_REQUIRE_EQUAL(assignments[4], clusterOne);
-  BOOST_REQUIRE_EQUAL(assignments[5], clusterOne);
-  BOOST_REQUIRE_EQUAL(assignments[6], clusterTwo);
-  BOOST_REQUIRE_EQUAL(assignments[7], clusterTwo);
-  BOOST_REQUIRE_EQUAL(assignments[8], clusterTwo);
-  BOOST_REQUIRE_EQUAL(assignments[9], clusterTwo);
-  BOOST_REQUIRE_EQUAL(assignments[10], clusterTwo);
-  BOOST_REQUIRE_EQUAL(assignments[11], clusterTwo);
+  REQUIRE(assignments[0] == clusterOne);
+  REQUIRE(assignments[1] == clusterOne);
+  REQUIRE(assignments[2] == clusterOne);
+  REQUIRE(assignments[3] == clusterOne);
+  REQUIRE(assignments[4] == clusterOne);
+  REQUIRE(assignments[5] == clusterOne);
+  REQUIRE(assignments[6] == clusterTwo);
+  REQUIRE(assignments[7] == clusterTwo);
+  REQUIRE(assignments[8] == clusterTwo);
+  REQUIRE(assignments[9] == clusterTwo);
+  REQUIRE(assignments[10] == clusterTwo);
+  REQUIRE(assignments[11] == clusterTwo);
 }
 
 #endif // ARMA_HAS_SPMAT
 
-BOOST_AUTO_TEST_CASE(ElkanTest)
+TEST_CASE("ElkanTest", "[KMeansTest]")
 {
   const size_t trials = 5;
 
@@ -563,14 +560,14 @@ BOOST_AUTO_TEST_CASE(ElkanTest)
     elkan.Cluster(dataset, k, elkanAssignments, elkanCentroids, false, true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
-      BOOST_REQUIRE_EQUAL(assignments[i], elkanAssignments[i]);
+      REQUIRE(assignments[i] == elkanAssignments[i]);
 
     for (size_t i = 0; i < centroids.n_elem; ++i)
-      BOOST_REQUIRE_CLOSE(naiveCentroids[i], elkanCentroids[i], 1e-5);
+      REQUIRE(naiveCentroids[i] == Approx(elkanCentroids[i]).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(HamerlyTest)
+TEST_CASE("HamerlyTest", "[KMeansTest]")
 {
   const size_t trials = 5;
 
@@ -598,14 +595,14 @@ BOOST_AUTO_TEST_CASE(HamerlyTest)
         true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
-      BOOST_REQUIRE_EQUAL(assignments[i], hamerlyAssignments[i]);
+      REQUIRE(assignments[i] == hamerlyAssignments[i]);
 
     for (size_t i = 0; i < centroids.n_elem; ++i)
-      BOOST_REQUIRE_CLOSE(naiveCentroids[i], hamerlyCentroids[i], 1e-5);
+      REQUIRE(naiveCentroids[i] == Approx(hamerlyCentroids[i]).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(PellegMooreTest)
+TEST_CASE("PellegMooreTest", "[KMeansTest]")
 {
   const size_t trials = 5;
 
@@ -632,14 +629,14 @@ BOOST_AUTO_TEST_CASE(PellegMooreTest)
     pellegMoore.Cluster(dataset, k, pmAssignments, pmCentroids, false, true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
-      BOOST_REQUIRE_EQUAL(assignments[i], pmAssignments[i]);
+      REQUIRE(assignments[i] == pmAssignments[i]);
 
     for (size_t i = 0; i < centroids.n_elem; ++i)
-      BOOST_REQUIRE_CLOSE(naiveCentroids[i], pmCentroids[i], 1e-5);
+      REQUIRE(naiveCentroids[i] == Approx(pmCentroids[i]).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(DTNNTest)
+TEST_CASE("DTNNTest", "[KMeansTest]")
 {
   const size_t trials = 5;
 
@@ -664,14 +661,14 @@ BOOST_AUTO_TEST_CASE(DTNNTest)
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
-      BOOST_REQUIRE_EQUAL(assignments[i], dtnnAssignments[i]);
+      REQUIRE(assignments[i] == dtnnAssignments[i]);
 
     for (size_t i = 0; i < centroids.n_elem; ++i)
-      BOOST_REQUIRE_CLOSE(naiveCentroids[i], dtnnCentroids[i], 1e-5);
+      REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
+TEST_CASE("DTNNCoverTreeTest", "[KMeansTest]")
 {
   const size_t trials = 5;
 
@@ -696,10 +693,10 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
-      BOOST_REQUIRE_EQUAL(assignments[i], dtnnAssignments[i]);
+      REQUIRE(assignments[i] == dtnnAssignments[i]);
 
     for (size_t i = 0; i < centroids.n_elem; ++i)
-      BOOST_REQUIRE_CLOSE(naiveCentroids[i], dtnnCentroids[i], 1e-5);
+      REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(1e-7));
   }
 }
 
@@ -707,7 +704,7 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
  * Make sure that the sample initialization strategy successfully samples points
  * from the dataset.
  */
-BOOST_AUTO_TEST_CASE(SampleInitializationTest)
+TEST_CASE("SampleInitializationTest", "[KMeansTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
   const size_t clusters = 10;
@@ -716,8 +713,8 @@ BOOST_AUTO_TEST_CASE(SampleInitializationTest)
   SampleInitialization::Cluster(dataset, clusters, centroids);
 
   // Check that the size of the matrix is correct.
-  BOOST_REQUIRE_EQUAL(centroids.n_cols, 10);
-  BOOST_REQUIRE_EQUAL(centroids.n_rows, 5);
+  REQUIRE(centroids.n_cols == 10);
+  REQUIRE(centroids.n_rows == 5);
 
   // Check that each entry in the matrix is some sample from the dataset.
   for (size_t i = 0; i < clusters; ++i)
@@ -733,8 +730,6 @@ BOOST_AUTO_TEST_CASE(SampleInitializationTest)
         break;
     }
 
-    BOOST_REQUIRE_LT(j, dataset.n_cols);
+    REQUIRE(j < dataset.n_cols);
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

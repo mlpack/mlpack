@@ -150,6 +150,7 @@ if (BUILD_JULIA_BINDINGS)
       COMMAND ${CMAKE_COMMAND}
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DJULIA_H_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in
           -DJULIA_H_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
           -DJULIA_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.cpp.in
@@ -210,8 +211,7 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc_impl.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_model_type_import.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/strip_type.hpp)
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp)
   target_link_libraries(generate_jl_${name} mlpack ${MLPACK_LIBRARIES})
   set_target_properties(generate_jl_${name} PROPERTIES
       COMPILE_FLAGS "-DBINDING_TYPE=BINDING_TYPE_JL"

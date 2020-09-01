@@ -49,16 +49,18 @@ BINDING_LONG_DESC(
     "\n\n"
     "The coding is found with an algorithm which alternates between a "
     "dictionary step, which updates the dictionary D, and a coding step, which "
-    "updates the coding matrix Z.");
-
-// Example.
-BINDING_EXAMPLE(
+    "updates the coding matrix Z."
+    "\n\n"
     "To run this program, the input matrix X must be specified (with -i), along"
     " with the number of atoms in the dictionary (-k).  An initial dictionary "
     "may also be specified with the " +
     PRINT_PARAM_STRING("initial_dictionary") + " parameter.  The l1-norm "
     "regularization parameter is specified with the " +
-    PRINT_PARAM_STRING("lambda") + " parameter.  For example, to run LCC on "
+    PRINT_PARAM_STRING("lambda") + " parameter.");
+
+// Example.
+BINDING_EXAMPLE(
+    "For example, to run LCC on "
     "the dataset " + PRINT_DATASET("data") + " using 200 atoms and an "
     "l1-regularization parameter of 0.1, saving the dictionary " +
     PRINT_PARAM_STRING("dictionary") + " and the codes into " +
@@ -140,7 +142,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "tolerance");
 
   // Do we have an existing model?
-  LocalCoordinateCoding* lcc;
+  LocalCoordinateCoding* lcc = NULL;
   if (IO::HasParam("input_model"))
     lcc = IO::GetParam<LocalCoordinateCoding*>("input_model");
 

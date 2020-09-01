@@ -45,7 +45,7 @@ void IO::Add(ParamData&& data)
   #endif
 
   // Temporary outstream object for detecting duplicate identifiers.
-  util::PrefixedOutStream outstr(std::cerr,
+  util::PrefixedOutStream outstr(MLPACK_CERR_STREAM,
         BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
 
   #undef BASH_RED

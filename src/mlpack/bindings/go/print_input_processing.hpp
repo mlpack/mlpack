@@ -16,7 +16,7 @@
 #include "get_type.hpp"
 #include "get_go_type.hpp"
 #include "strip_type.hpp"
-#include "camel_case.hpp"
+#include <mlpack/bindings/util/camel_case.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -46,7 +46,7 @@ void PrintInputProcessing(
   std::string goParamName = paramName;
   if (!paramName.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   /**
@@ -110,8 +110,8 @@ void PrintInputProcessing(
   }
   else
   {
-    goParamName = CamelCase(goParamName, true);
-    // Print function call to set the given parameter into the cli.
+    goParamName = util::CamelCase(goParamName, true);
+    // Print function call to set the given parameter into the io.
     std::cout << prefix << "setParam" << GetType<T>(d) << "(\""
               << d.name << "\", " << goParamName << ")"
               << std::endl;
@@ -139,7 +139,7 @@ void PrintInputProcessing(
   std::string goParamName = paramName;
   if (!paramName.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   /**
@@ -170,8 +170,8 @@ void PrintInputProcessing(
   }
   else
   {
-    goParamName = CamelCase(goParamName, true);
-    // Print function call to set the given parameter into the cli.
+    goParamName = util::CamelCase(goParamName, true);
+    // Print function call to set the given parameter into the io.
     std::cout << prefix << "gonumToArma" << GetType<T>(d)
               << "(\"" << d.name << "\", " << goParamName
               << ")" << std::endl;
@@ -200,7 +200,7 @@ void PrintInputProcessing(
   std::string goParamName = paramName;
   if (!paramName.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   /**
@@ -231,8 +231,8 @@ void PrintInputProcessing(
   }
   else
   {
-    goParamName = CamelCase(goParamName, true);
-    // Print function call to set the given parameter into the cli.
+    goParamName = util::CamelCase(goParamName, true);
+    // Print function call to set the given parameter into the io.
     std::cout << prefix << "gonumToArmaMatWithInfo"
               << "(\"" << d.name << "\", " << goParamName
               << ")" << std::endl;
@@ -265,7 +265,7 @@ void PrintInputProcessing(
   std::string goParamName = paramName;
   if (!paramName.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   /**
@@ -294,8 +294,8 @@ void PrintInputProcessing(
   }
   else
   {
-    goParamName = CamelCase(goParamName, true);
-    // Print function call to set the given parameter into the cli.
+    goParamName = util::CamelCase(goParamName, true);
+    // Print function call to set the given parameter into the io.
     std::cout << prefix << "set" << strippedType << "(\"" << d.name
               << "\", " << goParamName << ")" << std::endl;
 

@@ -16,32 +16,31 @@ if (NOT BUILD_GO_BINDINGS)
 endif ()
 
 if (BUILD_GO_BINDINGS)
+
+  find_package(Go 1.11.0)
+  if (NOT GO_FOUND)
+    set(GO_NOT_FOUND_MSG "${GO_NOT_FOUND_MSG}\n    - Go")
+  endif ()
+  find_package(Gonum)
+  if (NOT GONUM_FOUND)
+    set(GO_NOT_FOUND_MSG "${GO_NOT_FOUND_MSG}\n    - Gonum")
+  endif ()
+
   ## We need to check here if Golang is even available.  Although actually
   ## technically, I'm not sure if we even need to know!  For the tests though we
   ## do.  So it's probably a good idea to check.
   if (FORCE_BUILD_GO_BINDINGS)
-    find_package(Go 1.11.0)
-    find_package(Gonum)
     if (NOT GO_FOUND OR NOT GONUM_FOUND)
       unset(BUILD_GO_BINDINGS CACHE)
       set(BUILD_GO_SHLIB OFF)
-      message(FATAL_ERROR "Go or Gonum not found; unable to build Go bindings!")
+      message(FATAL_ERROR "\nCould not Build Go Bindings; the following modules are not available: ${GO_NOT_FOUND_MSG}")
     endif()
   else ()
-    find_package(Go 1.11.0)
-    find_package(Gonum)
     if (NOT GO_FOUND OR NOT GONUM_FOUND)
       unset(BUILD_GO_BINDINGS CACHE)
       set(BUILD_GO_SHLIB OFF)
+      not_found_return("Not building Go bindings; the following modules are not available: ${GO_NOT_FOUND_MSG}")
     endif()
-  endif ()
-
-  if (NOT GO_FOUND)
-    not_found_return("Go not found; not building Go bindings.")
-  endif ()
-
-  if (NOT GONUM_FOUND)
-    not_found_return("Gonum not found; not building Go bindings.")
   endif ()
 
   add_custom_target(go)
@@ -81,7 +80,6 @@ if (BUILD_GO_SHLIB)
     print_method_config.hpp
     print_method_init.hpp
     print_output_processing.hpp
-    camel_case.hpp
     strip_type.hpp
   )
 
@@ -195,6 +193,7 @@ if (BUILD_GO_BINDINGS)
       COMMAND ${CMAKE_COMMAND}
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DGO_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.h.in
           -DGO_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h
           -P ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake
@@ -224,7 +223,7 @@ if (BUILD_GO_BINDINGS)
       COMMAND ${CMAKE_COMMAND}
           -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/bin/generate_go_${name}
           -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/${name}.go
-          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateGoBinding.cmake)
+          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
 
   add_dependencies(go generate_go_${name})
 endif ()
@@ -236,6 +235,7 @@ if(BUILD_GO_SHLIB)
       COMMAND ${CMAKE_COMMAND}
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DGO_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/go_method.cpp.in
           -DGO_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/build/${name}.cpp
           -P ${CMAKE_SOURCE_DIR}/CMake/go/ConfigureGoHCPP.cmake

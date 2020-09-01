@@ -50,7 +50,8 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
     SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
         queryNode,
     SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
-        referenceNode)
+        referenceNode,
+    const bool bruteForce)
 {
   // Increment the visit counter.
   ++numVisited;
@@ -58,15 +59,30 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
   // Store the current traversal info.
   traversalInfo = rule.TraversalInfo();
 
-  // If both are leaves, we must evaluate the base case.
-  if (queryNode.IsLeaf() && referenceNode.IsLeaf())
+  // Determine whether we need to brute-force the reference node.  We have no
+  // realistic way to track how many base cases we've done for each point, so we
+  // act as though we have done zero.
+  if (!bruteForce && Defeatist &&
+      (referenceNode.Parent() != NULL) &&
+      (referenceNode.Parent()->Overlap()) &&
+      (referenceNode.NumDescendants() < rule.MinimumBaseCases()))
   {
+    // We've actually recursed too far.  Go back up one level and brute-force
+    // the computation, and then we are done.
+    Traverse(queryNode, *referenceNode.Parent(), true);
+    return;
+  }
+  else if ((queryNode.IsLeaf() && referenceNode.IsLeaf()) || bruteForce)
+  {
+    // If both are leaves or if we explicitly need to do brute-force search, we
+    // must evaluate the base cases.
+
     // Loop through each of the points in each node.
-    const size_t queryEnd = queryNode.NumPoints();
-    const size_t refEnd = referenceNode.NumPoints();
+    const size_t queryEnd = queryNode.NumDescendants();
+    const size_t refEnd = referenceNode.NumDescendants();
     for (size_t query = 0; query < queryEnd; ++query)
     {
-      const size_t queryIndex = queryNode.Point(query);
+      const size_t queryIndex = queryNode.Descendant(query);
       // See if we need to investigate this point.  Restore the traversal
       // information first.
       rule.TraversalInfo() = traversalInfo;
@@ -76,7 +92,7 @@ SpillDualTreeTraverser<RuleType, Defeatist>::Traverse(
         continue; // We can't improve this particular point.
 
       for (size_t ref = 0; ref < refEnd; ++ref)
-        rule.BaseCase(queryIndex, referenceNode.Point(ref));
+        rule.BaseCase(queryIndex, referenceNode.Descendant(ref));
 
       numBaseCases += refEnd;
     }
