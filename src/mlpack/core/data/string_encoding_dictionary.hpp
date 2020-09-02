@@ -94,7 +94,7 @@ class StringEncodingDictionary
    * Serialize the class to the given archive.
    */
   template<typename Archive>
-  void serialize(Archive& ar)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & CEREAL_NVP(mapping);
   }
@@ -213,7 +213,7 @@ class StringEncodingDictionary<boost::string_view>
    * Serialize the class to the given archive.
    */
   template<typename Archive>
-  void serialize(Archive& ar)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     size_t numTokens = tokens.size();
 
@@ -328,7 +328,7 @@ class StringEncodingDictionary<int>
    * Serialize the class to the given archive.
    */
   template<typename Archive>
-  void serialize(Archive& ar)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & CEREAL_NVP(mapping);
     ar & CEREAL_NVP(size);

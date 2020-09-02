@@ -257,7 +257,7 @@ class TfIdfEncodingPolicy
    * Serialize the class to the given archive.
    */
   template<typename Archive>
-  void serialize(Archive& ar)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & CEREAL_NVP(tfType);
     ar & CEREAL_NVP(smoothIdf);

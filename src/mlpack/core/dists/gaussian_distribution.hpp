@@ -178,7 +178,7 @@ class GaussianDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void serialize(Archive& ar)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     // We just need to serialize each of the members.
     ar & CEREAL_NVP(mean);

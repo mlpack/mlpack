@@ -71,7 +71,7 @@ class ImageInfo
   size_t& Quality() { return quality; }
 
   template<typename Archive>
-  void serialize(Archive& ar)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & CEREAL_NVP(width);
     ar & CEREAL_NVP(channels);
