@@ -163,8 +163,8 @@ template<typename Archive>
 void Linear3D<InputDataType, OutputDataType, RegularizerType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar & CEREAL_NVP(inSize);
+  ar & CEREAL_NVP(outSize);
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.

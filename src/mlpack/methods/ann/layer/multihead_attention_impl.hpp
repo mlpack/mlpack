@@ -436,11 +436,11 @@ template <typename Archive>
 void MultiheadAttention<InputDataType, OutputDataType, RegularizerType>::
 serialize(Archive& ar, const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(tgtSeqLen);
-  ar & BOOST_SERIALIZATION_NVP(srcSeqLen);
-  ar & BOOST_SERIALIZATION_NVP(embedDim);
-  ar & BOOST_SERIALIZATION_NVP(numHeads);
-  ar & BOOST_SERIALIZATION_NVP(headDim);
+  ar & CEREAL_NVP(tgtSeqLen);
+  ar & CEREAL_NVP(srcSeqLen);
+  ar & CEREAL_NVP(embedDim);
+  ar & CEREAL_NVP(numHeads);
+  ar & CEREAL_NVP(headDim);
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
