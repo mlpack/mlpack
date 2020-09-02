@@ -26,6 +26,8 @@
 #include "visitor/weight_set_visitor.hpp"
 #include "visitor/run_set_visitor.hpp"
 
+#include <boost/serialization/variant.hpp>
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -719,7 +721,7 @@ template<typename OutputLayerType, typename MergeLayerType,
 template<typename Archive>
 void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar)
+    Archive& ar const unsigned int version)
 {
   ar & CEREAL_NVP(parameter);
   ar & CEREAL_NVP(backwardRNN);
