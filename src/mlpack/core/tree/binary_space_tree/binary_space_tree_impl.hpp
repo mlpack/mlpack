@@ -1065,7 +1065,7 @@ template<typename MetricType,
              class SplitType>
 template<typename Archive>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-    serialize(Archive& ar)
+    serialize(Archive& ar, const unsigned int version)
 {
   // If we're loading, and we have children, they need to be deleted.
   if (cereal::is_loading<Archive>())
