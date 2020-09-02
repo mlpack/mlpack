@@ -201,7 +201,7 @@ inline bool RangeType<T>::Contains(const RangeType<T>& r) const
 //! Serialize the range.
 template<typename T>
 template<typename Archive>
-void RangeType<T>::serialize(Archive& ar)
+void RangeType<T>::serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(hi);
   ar & CEREAL_NVP(lo);
