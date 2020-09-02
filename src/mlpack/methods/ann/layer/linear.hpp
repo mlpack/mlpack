@@ -55,8 +55,14 @@ class Linear
   //! Copy constructor.
   Linear(const Linear& layer);
 
+  //! Move constructor.
+  Linear(Linear&&);
+
   //! Copy assignment operator.
-  Linear& operator = (const Linear& layer);
+  Linear& operator=(const Linear& layer);
+
+  //! Move assignment operator.
+  Linear& operator=(Linear&& layer);
 
   /*
    * Reset the layer parameter.

@@ -643,9 +643,9 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
         network.network[i]));
   }
 
-  for (size_t i = 0; i < this->network.size(); ++i)
+  for (const auto& net:this->network)
   {
-    boost::apply_visitor(resetVisitor, this->network[i]);
+    boost::apply_visitor(resetVisitor, net);
   }
 };
 

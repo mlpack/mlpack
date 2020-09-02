@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(CheckCopyVanillaNetworkTest)
 }
 
 /**
- * Train the vanilla network on a larger dataset.
+ * Train the vanila network on a larger dataset.
  */
 TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
 {
@@ -189,7 +189,6 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   model.Add<SigmoidLayer<> >();
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
-
 
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
