@@ -81,7 +81,7 @@ class SoftMarginLoss
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar);
+  void serialize(Archive& ar, std::uint32_t const version);
 
  private:
   //! Locally-stored output parameter object.

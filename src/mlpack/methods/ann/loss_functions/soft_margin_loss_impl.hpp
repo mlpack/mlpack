@@ -60,7 +60,7 @@ void SoftMarginLoss<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void SoftMarginLoss<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, std::uint32_t const version)
 {
   ar & CEREAL_NVP(reduction);
 }

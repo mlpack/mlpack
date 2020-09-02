@@ -213,7 +213,7 @@ class BayesianLinearRegression
    * Serialize the BayesianLinearRegression model.
    **/
   template<typename Archive>
-  void serialize(Archive& ar);
+  void serialize(Archive& ar, std::uint32_t const version);
 
  private:
   //! Center the data if true.
