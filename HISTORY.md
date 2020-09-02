@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Fix incorrect parsing of required matrix/model parameters for command-line
+    bindings (#2600).
+
   * Add manual type specification support to `data::Load()` and `data::Save()`
     (#2084, #2135, #2602).
 
