@@ -1039,7 +1039,8 @@ double LSHSearch<SortPolicy, MatType>::ComputeRecall(
 
 template<typename SortPolicy, typename MatType>
 template<typename Archive>
-void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar)
+void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar
+                                               const unsigned int /*version*/)
 {
   ar & CEREAL_NVP(referenceSet);
   ar & CEREAL_NVP(numProj);
