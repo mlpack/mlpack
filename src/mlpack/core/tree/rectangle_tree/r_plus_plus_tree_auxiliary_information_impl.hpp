@@ -125,10 +125,10 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::NullifyData()
  */
 template<typename TreeType>
 template<typename Archive>
-void RPlusPlusTreeAuxiliaryInformation<TreeType>::serialize(Archive& ar)
+void RPlusPlusTreeAuxiliaryInformation<TreeType>::serialize(
+    Archive& ar
+)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
   ar & CEREAL_NVP(outerBound);
 }
 

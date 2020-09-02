@@ -520,10 +520,10 @@ void DiscreteHilbertValue<TreeElemType>::RedistributeHilbertValues(
 
 template<typename TreeElemType>
 template<typename Archive>
-void DiscreteHilbertValue<TreeElemType>::serialize(Archive& ar)
+void DiscreteHilbertValue<TreeElemType>::serialize(
+    Archive& ar
+)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
   ar & CEREAL_POINTER(localHilbertValues);
   ar & CEREAL_NVP(ownsLocalHilbertValues);
   ar & CEREAL_NVP(numValues);

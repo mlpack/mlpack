@@ -982,9 +982,6 @@ template<typename MetricType, typename ElemType>
 template<typename Archive>
 void CellBound<MetricType, ElemType>::serialize(Archive& ar)
 {
-  // Allocate memory for the bounds, if necessary.
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
   ar & cereal::make_array(bounds, dim);
   ar & CEREAL_NVP(minWidth);
   ar & CEREAL_NVP(loBound);

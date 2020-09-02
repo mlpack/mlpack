@@ -87,9 +87,6 @@ template<typename Archive>
 void IPMetric<KernelType>::serialize(Archive& ar)
 {
   // If we're loading, we need to allocate space for the kernel, and we will own
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   // the kernel.
   if (cereal::is_loading<Archive>())
   {
