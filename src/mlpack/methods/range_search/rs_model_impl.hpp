@@ -451,9 +451,6 @@ bool& NaiveVisitor::operator()(RSType* rs) const
 template<typename Archive>
 void RSModel::serialize(Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar(CEREAL_NVP(treeType));
   ar(CEREAL_NVP(randomBasis));
   ar(CEREAL_NVP(q));

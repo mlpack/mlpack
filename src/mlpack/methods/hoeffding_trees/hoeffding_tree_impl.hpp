@@ -795,9 +795,6 @@ void HoeffdingTree<
     CategoricalSplitType
 >::serialize(Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(splitDimension);
 
   // Clear memory for the mappings if necessary.

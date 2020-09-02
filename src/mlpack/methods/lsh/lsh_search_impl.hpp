@@ -1041,9 +1041,6 @@ template<typename SortPolicy, typename MatType>
 template<typename Archive>
 void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(referenceSet);
   ar & CEREAL_NVP(numProj);
   ar & CEREAL_NVP(numTables);

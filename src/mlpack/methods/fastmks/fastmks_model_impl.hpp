@@ -134,9 +134,6 @@ void FastMKSModel::BuildModel(arma::mat&& referenceData,
 template<typename Archive>
 void FastMKSModel::serialize(Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(kernelType);
 
   if (cereal::is_loading<Archive>())

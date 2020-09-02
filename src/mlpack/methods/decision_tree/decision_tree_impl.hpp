@@ -1133,9 +1133,6 @@ void DecisionTree<FitnessFunction,
                   ElemType,
                   NoRecursion>::serialize(Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   // Clean memory if needed.
   if (cereal::is_loading<Archive>())
   {

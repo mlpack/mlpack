@@ -451,9 +451,6 @@ void TransposedConvolution<
     OutputDataType
 >::serialize(Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);
   ar & CEREAL_NVP(batchSize);
