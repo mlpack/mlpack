@@ -97,7 +97,7 @@ class PositiveDefiniteConstraint
 
   //! Serialize the constraint (which stores nothing, so, nothing to do).
   template<typename Archive>
-  static void serialize(Archive& /* ar */) { }
+  static void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace gmm

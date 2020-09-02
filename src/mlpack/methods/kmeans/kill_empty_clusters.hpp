@@ -65,7 +65,7 @@ class KillEmptyClusters
 
   //! Serialize the empty cluster policy (nothing to do).
   template<typename Archive>
-  void serialize(Archive& /* ar */) { }
+  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace kmeans
