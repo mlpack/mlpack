@@ -980,7 +980,9 @@ inline ElemType CellBound<MetricType, ElemType>::Diameter() const
 //! Serialize the bound object.
 template<typename MetricType, typename ElemType>
 template<typename Archive>
-void CellBound<MetricType, ElemType>::serialize(Archive& ar)
+void CellBound<MetricType, ElemType>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
   ar & cereal::make_array(bounds, dim);
   ar & CEREAL_NVP(minWidth);

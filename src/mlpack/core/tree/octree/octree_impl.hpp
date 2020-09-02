@@ -709,8 +709,8 @@ Octree<MetricType, StatisticType, MatType>::RangeDistance(
 template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
 void Octree<MetricType, StatisticType, MatType>::serialize(
-    Archive& ar
-)
+    Archive& ar,
+    const unsigned int /* version */)
 {
   // If we're loading and we have children, they need to be deleted.
   if (cereal::is_loading<Archive>())

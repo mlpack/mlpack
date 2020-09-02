@@ -1393,8 +1393,8 @@ template<typename MetricType,
 template<typename Archive>
 void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::serialize(
-    Archive& ar
-)
+    Archive& ar,
+    const unsigned int /* version */)
 {
   // Clean up memory, if necessary.
   if (cereal::is_loading<Archive>())
