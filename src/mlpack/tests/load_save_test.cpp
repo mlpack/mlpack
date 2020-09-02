@@ -276,11 +276,11 @@ TEST_CASE("SaveSparseTXTTest", "[LoadSaveTest]")
                       "0 0 0.3 0;"
                       "0 0 0 0.4;";
 
-  REQUIRE(data::Save("test_sparse_file.txt", test, true, true) == true);
+  REQUIRE(data::Save("test_sparse_file.json", test, true, true) == true);
 
   // Load it in and make sure it is the same.
   arma::sp_mat test2;
-  REQUIRE(data::Load("test_sparse_file.txt", test2, true, true) == true);
+  REQUIRE(data::Load("test_sparse_file.json", test2, true, true) == true);
 
   REQUIRE(test2.n_rows == 4);
   REQUIRE(test2.n_cols == 4);
