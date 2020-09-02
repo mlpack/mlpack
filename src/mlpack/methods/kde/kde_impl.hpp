@@ -714,8 +714,6 @@ void KDE<KernelType,
          SingleTreeTraversalType>::
 serialize(Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
   // Serialize preferences.
   ar & CEREAL_NVP(relError);
   ar & CEREAL_NVP(absError);
