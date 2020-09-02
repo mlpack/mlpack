@@ -89,7 +89,7 @@ struct variant_impl {
             Archive & ar,
             int which,
             V & v,
-            const unsigned int version
+            std::uint32_t const version
         ){
             if(which == 0){
                 // note: A non-intrusive implementation (such as this one)
@@ -114,7 +114,7 @@ struct variant_impl {
         Archive & ar,
         int which,
         V & v,
-        const unsigned int version
+        std::uint32_t const version
     ){
         typedef typename mpl::eval_if<mpl::empty<S>,
             mpl::identity<load_null>,
@@ -129,7 +129,7 @@ template<class Archive, BOOST_VARIANT_ENUM_PARAMS(/* typename */ class T)>
 void load(
     Archive & ar,
     boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>& v,
-    const unsigned int version
+    std::uint32_t const version
 ){
     int which;
     typedef typename boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>::types types;

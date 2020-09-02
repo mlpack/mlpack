@@ -252,7 +252,7 @@ class CellBound
    * Serialize the bound object.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, std::uint32_t const version);
 
  private:
   //! The precision of the tree element type.
