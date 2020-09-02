@@ -124,7 +124,7 @@ class MultiheadAttention
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
   //! Get the target sequence length.
   size_t TgtSeqLen() const { return tgtSeqLen; }

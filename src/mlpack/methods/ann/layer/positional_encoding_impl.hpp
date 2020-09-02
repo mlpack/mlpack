@@ -74,10 +74,11 @@ void PositionalEncoding<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void PositionalEncoding<InputDataType, OutputDataType>::serialize(Archive& ar)
+void PositionalEncoding<InputDataType, OutputDataType>::serialize(
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & CEREAL_NVP(embedDim);
-  ar & CEREAL_NVP(maxSequenceLength);
+  ar & BOOST_SERIALIZATION_NVP(embedDim);
+  ar & BOOST_SERIALIZATION_NVP(maxSequenceLength);
 
   if (cereal::is_loading<Archive>())
     InitPositionalEncoding();
