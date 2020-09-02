@@ -126,7 +126,9 @@ void NMS<UseCoordinates>::Evaluate(
 
 template<bool UseCoordinates>
 template<typename Archive>
-void NMS<UseCoordinates>::serialize(Archive& ar)
+void NMS<UseCoordinates>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
   // Nothing to do here.
 }

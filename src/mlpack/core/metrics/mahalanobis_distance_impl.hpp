@@ -50,7 +50,8 @@ double MahalanobisDistance<true>::Evaluate(const VecTypeA& a,
 // Serialize the Mahalanobis distance.
 template<bool TakeRoot>
 template<typename Archive>
-void MahalanobisDistance<TakeRoot>::serialize(Archive& ar)
+void MahalanobisDistance<TakeRoot>::serialize(Archive& ar,
+                                              const unsigned int /* version */)
 {
   ar & CEREAL_NVP(covariance);
 }
