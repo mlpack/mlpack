@@ -221,7 +221,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
 
     // Save the number of classes.
     size_t numClasses;
-    if (Archive::is_saving::value)
+    if (cereal::is_saving<Archive>())
       numClasses = sufficientStatistics.n_rows;
     ar & CEREAL_NVP(numClasses);
     ar & CEREAL_NVP(observations);
