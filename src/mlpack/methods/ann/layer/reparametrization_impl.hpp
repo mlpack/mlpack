@@ -92,9 +92,6 @@ template<typename Archive>
 void Reparametrization<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(latentSize);
   ar & CEREAL_NVP(stochastic);
   ar & CEREAL_NVP(includeKl);

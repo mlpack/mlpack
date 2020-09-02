@@ -219,9 +219,6 @@ template<typename Archive>
 void Glimpse<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(size);
   ar & CEREAL_NVP(depth);

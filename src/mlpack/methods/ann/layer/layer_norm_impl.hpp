@@ -121,9 +121,6 @@ template<typename Archive>
 void LayerNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(size);
 
   if (cereal::is_loading<Archive>())

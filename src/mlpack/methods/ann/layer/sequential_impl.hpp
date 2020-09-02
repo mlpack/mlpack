@@ -230,9 +230,6 @@ void Sequential<
     InputDataType, OutputDataType, Residual, CustomLayers...>::serialize(
         Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   // If loading, delete the old layers.
   if (cereal::is_loading<Archive>())
   {

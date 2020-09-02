@@ -68,9 +68,6 @@ template<typename Archive>
 void AlphaDropout<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(ratio);
   ar & CEREAL_NVP(alphaDash);
   ar & CEREAL_NVP(a);

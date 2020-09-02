@@ -382,9 +382,6 @@ template<typename Archive>
 void GRU<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   // If necessary, clean memory from the old model.
   if (cereal::is_loading<Archive>())
   {

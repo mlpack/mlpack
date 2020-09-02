@@ -66,9 +66,6 @@ template<typename Archive>
 void Dropout<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(ratio);
 
   // Reset scale.

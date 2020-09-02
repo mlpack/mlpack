@@ -200,9 +200,6 @@ template<typename Archive>
 void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   // We just need to serialize the maximum number of iterations, the weights,
   // and the biases.
   ar & CEREAL_NVP(maxIterations);

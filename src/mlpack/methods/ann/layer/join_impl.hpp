@@ -52,9 +52,6 @@ template<typename Archive>
 void Join<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(inSizeRows);
   ar & CEREAL_NVP(inSizeCols);
 }

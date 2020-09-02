@@ -144,9 +144,6 @@ template<typename Archive>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   if (cereal::is_loading<Archive>())
   {
     boost::apply_visitor(deleteVisitor, wrappedLayer);

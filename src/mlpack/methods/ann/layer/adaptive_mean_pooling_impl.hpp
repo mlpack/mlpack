@@ -72,9 +72,6 @@ template<typename Archive>
 void AdaptiveMeanPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(outputWidth);
   ar & CEREAL_NVP(outputHeight);
   ar & CEREAL_NVP(reset);

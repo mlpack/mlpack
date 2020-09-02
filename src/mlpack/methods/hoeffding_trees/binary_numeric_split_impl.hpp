@@ -173,9 +173,6 @@ template<typename Archive>
 void BinaryNumericSplit<FitnessFunction, ObservationType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   // Serialize.
   ar & CEREAL_NVP(sortedElements);
   ar & CEREAL_NVP(classCounts);

@@ -64,9 +64,6 @@ template<typename Archive>
 void Padding<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(padWLeft);
   ar & CEREAL_NVP(padWRight);
   ar & CEREAL_NVP(padHTop);

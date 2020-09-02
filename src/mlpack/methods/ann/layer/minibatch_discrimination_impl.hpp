@@ -129,9 +129,6 @@ template<typename Archive>
 void MiniBatchDiscrimination<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(A);
   ar & CEREAL_NVP(B);
   ar & CEREAL_NVP(C);

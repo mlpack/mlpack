@@ -50,9 +50,6 @@ template<typename Archive>
 void LogCoshLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(a);
 }
 

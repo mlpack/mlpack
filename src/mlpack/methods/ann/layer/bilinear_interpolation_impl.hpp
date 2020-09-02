@@ -178,9 +178,6 @@ template<typename Archive>
 void BilinearInterpolation<InputDataType, OutputDataType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(inRowSize);
   ar & CEREAL_NVP(inColSize);
   ar & CEREAL_NVP(outRowSize);

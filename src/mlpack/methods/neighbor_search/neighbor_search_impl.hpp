@@ -942,9 +942,6 @@ void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::serialize(
     Archive& ar)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   // Serialize preferences for search.
   ar(CEREAL_NVP(searchMode));
   ar(CEREAL_NVP(treeNeedsReset));

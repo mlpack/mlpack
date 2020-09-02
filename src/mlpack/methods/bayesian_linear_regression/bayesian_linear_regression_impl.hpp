@@ -24,9 +24,6 @@ template<typename Archive>
 void BayesianLinearRegression::serialize(Archive& ar)
 {
   ar & CEREAL_NVP(centerData);
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(scaleData);
   ar & CEREAL_NVP(nIterMax);
   ar & CEREAL_NVP(tol);
