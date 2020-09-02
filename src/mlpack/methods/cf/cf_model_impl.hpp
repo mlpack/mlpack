@@ -205,7 +205,7 @@ const CFType<DecompositionPolicy, NormalizationType>* CFModel::CFPtr() const
 }
 
 template<typename Archive>
-void CFModel::serialize(Archive& ar)
+void CFModel::serialize(Archive& ar, const unsigned int /* version */)
 {
   // This should never happen, but just in case, be clean with memory.
   if (cereal::is_loading<Archive>())

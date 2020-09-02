@@ -132,7 +132,7 @@ void FastMKSModel::BuildModel(arma::mat&& referenceData,
 }
 
 template<typename Archive>
-void FastMKSModel::serialize(Archive& ar)
+void FastMKSModel::serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(kernelType);
 

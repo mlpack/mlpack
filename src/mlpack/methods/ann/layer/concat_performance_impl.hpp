@@ -102,7 +102,7 @@ void ConcatPerformance<
     OutputLayerType,
     InputDataType,
     OutputDataType
->::serialize(Archive& ar)
+>::serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(inSize);
 }

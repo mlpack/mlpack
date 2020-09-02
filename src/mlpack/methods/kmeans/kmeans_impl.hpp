@@ -347,7 +347,7 @@ void KMeans<MetricType,
             InitialPartitionPolicy,
             EmptyClusterPolicy,
             LloydStepType,
-            MatType>::serialize(Archive& ar)
+            MatType>::serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(maxIterations);
   ar & CEREAL_NVP(metric);

@@ -793,7 +793,7 @@ void HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::serialize(Archive& ar)
+>::serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(splitDimension);
 
