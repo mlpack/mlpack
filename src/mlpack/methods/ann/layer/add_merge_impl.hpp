@@ -153,14 +153,14 @@ void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   // Be sure to clear other layers before loading.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     network.clear();
 
   ar & CEREAL_NVP(network);
   ar & CEREAL_NVP(model);
   ar & CEREAL_NVP(run);
   ar & CEREAL_NVP(ownsLayers);
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     ownsLayers = !model;
 }
 

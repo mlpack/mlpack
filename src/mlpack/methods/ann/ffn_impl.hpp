@@ -556,7 +556,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
   ar & CEREAL_NVP(reset);
 
   // Be sure to clear other layers before loading.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     std::for_each(network.begin(), network.end(),
         boost::apply_visitor(deleteVisitor));
@@ -566,7 +566,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
   ar & CEREAL_NVP(network);
 
   // If we are loading, we need to initialize the weights.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     size_t offset = 0;
     for (size_t i = 0; i < network.size(); ++i)

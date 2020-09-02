@@ -202,7 +202,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
     ar & CEREAL_NVP(splitPoints);
     ar & CEREAL_NVP(sufficientStatistics);
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       // Clean other objects.
       observations.clear();
@@ -213,7 +213,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
   {
     // The binning has not happened yet, so we only need to save the information
     // required before binning.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       observations.zeros(observationsBeforeBinning);
       labels.zeros(observationsBeforeBinning);
@@ -227,7 +227,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
     ar & CEREAL_NVP(observations);
     ar & CEREAL_NVP(labels);
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       // Clean other objects.
       splitPoints.clear();

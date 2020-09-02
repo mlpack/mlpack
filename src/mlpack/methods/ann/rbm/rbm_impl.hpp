@@ -325,7 +325,7 @@ void RBM<InitializationRuleType, DataType, PolicyType>::serialize(
   ar & CEREAL_NVP(visiblePenalty);
 
   // If we are loading, we need to initialize the weights.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     size_t shape = parameter.n_elem;
     positiveGradient.set_size(shape, 1);

@@ -383,7 +383,7 @@ void GRU<InputDataType, OutputDataType>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
   // If necessary, clean memory from the old model.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     boost::apply_visitor(deleteVisitor, input2GateModule);
     boost::apply_visitor(deleteVisitor, output2GateModule);

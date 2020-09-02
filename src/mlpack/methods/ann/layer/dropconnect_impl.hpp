@@ -110,7 +110,7 @@ void DropConnect<InputDataType, OutputDataType>::serialize(
     const unsigned int /* version */)
 {
   // Delete the old network first, if needed.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     boost::apply_visitor(DeleteVisitor(), baseLayer);
   }
@@ -119,7 +119,7 @@ void DropConnect<InputDataType, OutputDataType>::serialize(
   ar & CEREAL_NVP(scale);
   ar & CEREAL_NVP(baseLayer);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     network.clear();
     network.push_back(baseLayer);

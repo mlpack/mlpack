@@ -651,7 +651,7 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
   // serialize the tree.
   if (naive)
   {
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (setOwner && referenceSet)
         delete referenceSet;
@@ -665,7 +665,7 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
   else
   {
     // Delete the current reference tree, if necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (treeOwner && referenceTree)
         delete referenceTree;
@@ -675,7 +675,7 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
 
     ar & CEREAL_POINTER(referenceTree);
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (setOwner && referenceSet)
         delete referenceSet;

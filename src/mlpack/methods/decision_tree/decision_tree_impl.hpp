@@ -1135,7 +1135,7 @@ void DecisionTree<FitnessFunction,
                                           const unsigned int /* version */)
 {
   // Clean memory if needed.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < children.size(); ++i)
       delete children[i];

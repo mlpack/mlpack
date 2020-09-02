@@ -496,7 +496,7 @@ serialize(Archive& ar, const unsigned int /* version */)
   ar & CEREAL_NVP(genWeights);
   ar & CEREAL_NVP(discWeights);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // Share the parameters between the network.
     generator.Parameters() = arma::mat(parameter.memptr(), genWeights, 1, false,

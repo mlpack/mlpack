@@ -90,7 +90,7 @@ void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::serialize(
 
   // This is inefficient, but necessary so that WeightSetVisitor sets the right
   // size.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     weights.set_size(outSize * inSize, 1);
 }
 

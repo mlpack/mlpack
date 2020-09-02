@@ -123,7 +123,7 @@ void LayerNorm<InputDataType, OutputDataType>::serialize(
 {
   ar & CEREAL_NVP(size);
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     weights.set_size(size + size, 1);
     loading = true;
