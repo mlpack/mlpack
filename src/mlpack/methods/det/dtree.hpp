@@ -330,7 +330,7 @@ class DTree
    * Serialize the density estimation tree.
    */
   template<typename Archive>
-  void serialize(Archive& ar);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   // Utility methods.

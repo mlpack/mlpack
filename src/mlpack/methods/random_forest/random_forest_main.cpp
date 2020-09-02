@@ -147,7 +147,7 @@ class RandomForestModel
 
   // Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & CEREAL_NVP(rf);
   }

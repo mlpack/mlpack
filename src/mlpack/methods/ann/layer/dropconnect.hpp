@@ -154,7 +154,7 @@ class DropConnect
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! The probability of setting a value to zero.

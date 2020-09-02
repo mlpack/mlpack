@@ -166,7 +166,7 @@ class HoeffdingTreeModel
    * Serialize the model.
    */
   template<typename Archive>
-  void serialize(Archive& ar)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     // Clear memory if needed.
     if (cereal::is_loading<Archive>())

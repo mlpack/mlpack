@@ -451,7 +451,7 @@ class DecisionTree :
    * Serialize the tree.
    */
   template<typename Archive>
-  void serialize(Archive& ar);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
   //! Get the number of children.
   size_t NumChildren() const { return children.size(); }

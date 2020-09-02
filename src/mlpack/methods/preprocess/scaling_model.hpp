@@ -87,7 +87,7 @@ class ScalingModel
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     if (cereal::is_loading<Archive>())
     {

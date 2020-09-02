@@ -155,7 +155,7 @@ class BatchSVDPolicy
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & CEREAL_NVP(w);
     ar & CEREAL_NVP(h);

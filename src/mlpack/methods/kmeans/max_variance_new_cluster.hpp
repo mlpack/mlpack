@@ -56,7 +56,7 @@ class MaxVarianceNewCluster
 
   //! Serialize the object.
   template<typename Archive>
-  void serialize(Archive& ar);
+  void serialize(Archive& ar, const unsigned int version);
 
  private:
   //! Index of iteration for which variance is cached.

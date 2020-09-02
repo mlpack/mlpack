@@ -89,7 +89,7 @@ class KLDivergence
    * Serialize the loss function
    */
   template<typename Archive>
-  void serialize(Archive& ar);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored output parameter object.
