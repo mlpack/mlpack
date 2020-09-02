@@ -129,14 +129,14 @@ void NoisyLinear<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void NoisyLinear<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
     weights.set_size((outSize * inSize + outSize) * 2, 1);
 }
 

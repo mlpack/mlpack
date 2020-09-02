@@ -119,11 +119,11 @@ void LayerNorm<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void LayerNorm<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(size);
 
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     weights.set_size(size + size, 1);
     loading = true;

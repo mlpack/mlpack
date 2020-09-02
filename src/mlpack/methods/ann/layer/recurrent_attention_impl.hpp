@@ -208,15 +208,15 @@ void RecurrentAttention<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void RecurrentAttention<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(rho);
   ar & CEREAL_NVP(outSize);
   ar & CEREAL_NVP(forwardStep);
   ar & CEREAL_NVP(backwardStep);
 
-  ar & CEREAL_VARIANT_POINTER(rnnModule);
-  ar & CEREAL_VARIANT_POINTER(actionModule);
+  ar & CEREAL_NVP(rnnModule);
+  ar & CEREAL_NVP(actionModule);
 }
 
 } // namespace ann

@@ -142,18 +142,18 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version */)
 {
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     boost::apply_visitor(deleteVisitor, wrappedLayer);
   }
 
-  ar & CEREAL_VARIANT_POINTER(wrappedLayer);
+  ar & CEREAL_NVP(wrappedLayer);
   ar & CEREAL_NVP(layerWeightSize);
 
   // If we are loading, we need to initialize the weights.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     weights.set_size(layerWeightSize + 1, 1);
   }

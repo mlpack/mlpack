@@ -68,8 +68,8 @@ GRU<InputDataType, OutputDataType>::GRU(
 
   allZeros = arma::zeros<arma::mat>(outSize, batchSize);
 
-  outParameter.emplace_back(allZeros.memptr(),
-      allZeros.n_rows, allZeros.n_cols, false, true);
+  outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+      allZeros.n_rows, allZeros.n_cols, false, true)));
 
   prevOutput = outParameter.begin();
   backIterator = outParameter.end();
@@ -94,8 +94,8 @@ void GRU<InputDataType, OutputDataType>::Forward(
     }
 
     outParameter.clear();
-    outParameter.emplace_back(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, true);
+    outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, true)));
 
     prevOutput = outParameter.begin();
     backIterator = outParameter.end();
@@ -160,14 +160,14 @@ void GRU<InputDataType, OutputDataType>::Forward(
     forwardStep = 0;
     if (!deterministic)
     {
-      outParameter.emplace_back(allZeros.memptr(),
-          allZeros.n_rows, allZeros.n_cols, false, true);
+      outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+          allZeros.n_rows, allZeros.n_cols, false, true)));
       prevOutput = --outParameter.end();
     }
     else
     {
-      *prevOutput = arma::mat(allZeros.memptr(),
-          allZeros.n_rows, allZeros.n_cols, false, true);
+      *prevOutput = std::move(arma::mat(allZeros.memptr(),
+          allZeros.n_rows, allZeros.n_cols, false, true));
     }
   }
   else if (!deterministic)
@@ -209,8 +209,8 @@ void GRU<InputDataType, OutputDataType>::Backward(
     }
 
     outParameter.clear();
-    outParameter.emplace_back(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, true);
+    outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, true)));
 
     prevOutput = outParameter.begin();
     backIterator = outParameter.end();
@@ -333,8 +333,8 @@ void GRU<InputDataType, OutputDataType>::Gradient(
     }
 
     outParameter.clear();
-    outParameter.emplace_back(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, true);
+    outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, true)));
 
     prevOutput = outParameter.begin();
     backIterator = outParameter.end();
@@ -366,8 +366,8 @@ template<typename InputDataType, typename OutputDataType>
 void GRU<InputDataType, OutputDataType>::ResetCell(const size_t /* size */)
 {
   outParameter.clear();
-  outParameter.emplace_back(allZeros.memptr(),
-    allZeros.n_rows, allZeros.n_cols, false, true);
+  outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
+    allZeros.n_rows, allZeros.n_cols, false, true)));
 
   prevOutput = outParameter.begin();
   backIterator = outParameter.end();
@@ -380,10 +380,10 @@ void GRU<InputDataType, OutputDataType>::ResetCell(const size_t /* size */)
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void GRU<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version */)
 {
   // If necessary, clean memory from the old model.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     boost::apply_visitor(deleteVisitor, input2GateModule);
     boost::apply_visitor(deleteVisitor, output2GateModule);
@@ -397,12 +397,12 @@ void GRU<InputDataType, OutputDataType>::serialize(
   ar & CEREAL_NVP(outSize);
   ar & CEREAL_NVP(rho);
 
-  ar & CEREAL_VARIANT_POINTER(input2GateModule);
-  ar & CEREAL_VARIANT_POINTER(output2GateModule);
-  ar & CEREAL_VARIANT_POINTER(outputHidden2GateModule);
-  ar & CEREAL_VARIANT_POINTER(inputGateModule);
-  ar & CEREAL_VARIANT_POINTER(forgetGateModule);
-  ar & CEREAL_VARIANT_POINTER(hiddenStateModule);
+  ar & CEREAL_NVP(input2GateModule);
+  ar & CEREAL_NVP(output2GateModule);
+  ar & CEREAL_NVP(outputHidden2GateModule);
+  ar & CEREAL_NVP(inputGateModule);
+  ar & CEREAL_NVP(forgetGateModule);
+  ar & CEREAL_NVP(hiddenStateModule);
 }
 
 } // namespace ann

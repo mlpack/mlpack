@@ -58,11 +58,11 @@ void Add<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Add<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(outSize);
 
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
     weights.set_size(outSize, 1);
 }
 

@@ -112,13 +112,13 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version */)
 {
   // Be sure to clear other layers before loading.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
     network.clear();
 
-  ar & CEREAL_VECTOR_VARIANT_POINTER(network);
+  ar & CEREAL_NVP(network);
   ar & CEREAL_NVP(model);
   ar & CEREAL_NVP(run);
   ar & CEREAL_NVP(ownsLayer);

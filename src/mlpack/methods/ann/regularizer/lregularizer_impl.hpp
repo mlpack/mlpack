@@ -51,7 +51,8 @@ void LRegularizer<2>::Evaluate(const MatType& weight, MatType& gradient)
 
 template<int Power>
 template<typename Archive>
-void LRegularizer<Power>::serialize(Archive& ar)
+void LRegularizer<Power>::serialize(
+    Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(factor);
 }

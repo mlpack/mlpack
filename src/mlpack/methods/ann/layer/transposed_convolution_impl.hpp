@@ -449,7 +449,8 @@ void TransposedConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::serialize(Archive& ar)
+>::serialize(
+    Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);
@@ -468,8 +469,8 @@ void TransposedConvolution<
   ar & CEREAL_NVP(outputHeight);
   ar & CEREAL_NVP(paddingForward);
   ar & CEREAL_NVP(paddingBackward);
-
-  if (cereal::is_loading<Archive>())
+  
+  if (Archive::is_loading::value)
   {
     weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
         1);
@@ -511,6 +512,13 @@ void TransposedConvolution<
   padWRight = totalVerticalPadding - totalVerticalPadding / 2;
   padHTop = totalHorizontalPadding / 2;
   padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
+
+  // If Padding is negative throw a fatal error.
+  if (totalHorizontalPadding < 0 || totalVerticalPadding < 0)
+  {
+    Log::Fatal << "The output width / output height is not possible given "
+               << "same padding for the layer." << std::endl;
+  }
 }
 
 } // namespace ann

@@ -256,10 +256,10 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version */)
 {
   // Clean up memory, if we are loading.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     // Clear old things, if needed.
     boost::apply_visitor(DeleteVisitor(), recurrentModule);
@@ -268,15 +268,15 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & CEREAL_VARIANT_POINTER(startModule);
-  ar & CEREAL_VARIANT_POINTER(inputModule);
-  ar & CEREAL_VARIANT_POINTER(feedbackModule);
-  ar & CEREAL_VARIANT_POINTER(transferModule);
+  ar & CEREAL_NVP(startModule);
+  ar & CEREAL_NVP(inputModule);
+  ar & CEREAL_NVP(feedbackModule);
+  ar & CEREAL_NVP(transferModule);
   ar & CEREAL_NVP(rho);
   ar & CEREAL_NVP(ownsLayer);
 
   // Set up the network.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     initialModule = new Sequential<>();
     mergeModule = new AddMerge<>(false, false, false);

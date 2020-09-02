@@ -74,7 +74,8 @@ void FlexibleReLU<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void FlexibleReLU<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar,
+    const unsigned int /* version*/)
 {
   ar & CEREAL_NVP(alpha);
 }

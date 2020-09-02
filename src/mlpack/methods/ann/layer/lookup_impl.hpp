@@ -21,12 +21,12 @@ namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputDataType, typename OutputDataType>
 Lookup<InputDataType, OutputDataType>::Lookup(
-    const size_t vocabSize,
-    const size_t embeddingSize) :
-    vocabSize(vocabSize),
-    embeddingSize(embeddingSize)
+    const size_t inSize,
+    const size_t outSize) :
+    inSize(inSize),
+    outSize(outSize)
 {
-  weights.set_size(embeddingSize, vocabSize);
+  weights.set_size(outSize, inSize);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -34,29 +34,17 @@ template<typename eT>
 void Lookup<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
-  const size_t seqLength = input.n_rows;
-  const size_t batchSize = input.n_cols;
-
-  output.set_size(embeddingSize * seqLength, batchSize);
-
-  for (size_t i = 0; i < batchSize; ++i)
-  {
-    // ith column of output is a vectorized form of a matrix of shape
-    // (embeddingSize, seqLength) selected as a combination of columns from the
-    // weights.
-    output.col(i) = arma::vectorise(weights.cols(
-        arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
-  }
+  output = weights.cols(arma::conv_to<arma::uvec>::from(input) - 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Lookup<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& /* gy */,
-    arma::Mat<eT>& /* g */)
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
-  Log::Fatal << "Lookup cannot be used as an intermediate layer." << std::endl;
+  g = gy;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -66,34 +54,17 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
-  const size_t seqLength = input.n_rows;
-  const size_t batchSize = input.n_cols;
-
-  arma::Cube<eT> errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(),
-      embeddingSize, seqLength, batchSize, false, false);
-
-  gradient.set_size(arma::size(weights));
-  gradient.zeros();
-
-  for (size_t i = 0; i < batchSize; ++i)
-  {
-    gradient.cols(arma::conv_to<arma::uvec>::from(input.col(i)) - 1)
-        += errorTemp.slice(i);
-  }
+  gradient = arma::zeros<arma::Mat<eT> >(weights.n_rows, weights.n_cols);
+  gradient.cols(arma::conv_to<arma::uvec>::from(input) - 1) = error;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Lookup<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version */)
 {
-  ar & CEREAL_NVP(vocabSize);
-  ar & CEREAL_NVP(embeddingSize);
-
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
-  if (cereal::is_loading<Archive>())
-    weights.set_size(embeddingSize, vocabSize);
+  ar & CEREAL_NVP(inSize);
+  ar & CEREAL_NVP(outSize);
 }
 
 } // namespace ann

@@ -88,14 +88,14 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 template<typename Archive>
 void Linear<InputDataType, OutputDataType, RegularizerType>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
     weights.set_size(outSize * inSize + outSize, 1);
 }
 

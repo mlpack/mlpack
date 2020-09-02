@@ -127,7 +127,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MiniBatchDiscrimination<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, const unsigned int /* version */)
 {
   ar & CEREAL_NVP(A);
   ar & CEREAL_NVP(B);
@@ -135,7 +135,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::serialize(
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     weights.set_size(A * B * C, 1);
   }
