@@ -605,7 +605,8 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
-    Archive& ar)
+    Archive& ar,
+    const unsigned int /* version */)
 {
   // Serialize preferences for search.
   ar & CEREAL_NVP(naive);
@@ -621,23 +622,19 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
   // serialize the tree.
   if (naive)
   {
-    if (cereal::is_loading<Archive>())
+    if (Archive::is_loading::value)
     {
       if (setOwner && referenceSet)
         delete referenceSet;
 
       setOwner = true;
     }
-    MatType* referenceSetTemp = const_cast<MatType*>(referenceSet);
-    ar & CEREAL_POINTER(referenceSetTemp);
-    if (cereal::is_loading<Archive>())
-    {
-      referenceSet = referenceSetTemp;
-    }
+
+    ar & CEREAL_POINTER(referenceSet);
     ar & CEREAL_NVP(metric);
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
-    if (cereal::is_loading<Archive>())
+    if (Archive::is_loading::value)
     {
       if (treeOwner && referenceTree)
         delete referenceTree;
@@ -650,7 +647,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
   else
   {
     // Delete the current reference tree, if necessary and if we are loading.
-    if (cereal::is_loading<Archive>())
+    if (Archive::is_loading::value)
     {
       if (treeOwner && referenceTree)
         delete referenceTree;
@@ -664,7 +661,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.
-    if (cereal::is_loading<Archive>())
+    if (Archive::is_loading::value)
     {
       if (setOwner && referenceSet)
         delete referenceSet;

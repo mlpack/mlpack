@@ -1131,17 +1131,18 @@ void DecisionTree<FitnessFunction,
                   CategoricalSplitType,
                   DimensionSelectionType,
                   ElemType,
-                  NoRecursion>::serialize(Archive& ar)
+                  NoRecursion>::serialize(Archive& ar,
+                                          const unsigned int /* version */)
 {
   // Clean memory if needed.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     for (size_t i = 0; i < children.size(); ++i)
       delete children[i];
     children.clear();
   }
   // Serialize the children first.
-  ar & CEREAL_VECTOR_POINTER(children);
+  CEREAL_VECTOR_POINTER(children);
 
   // Now serialize the rest of the object.
   ar & CEREAL_NVP(splitDimension);

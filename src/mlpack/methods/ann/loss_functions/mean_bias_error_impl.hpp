@@ -48,7 +48,8 @@ void MeanBiasError<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanBiasError<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */)
+    Archive& /* ar */,
+    const unsigned int /* version */)
 {
   // Nothing to do here.
 }

@@ -189,7 +189,8 @@ double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
 template<typename FitnessFunction, typename ObservationType>
 template<typename Archive>
 void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
-    Archive& ar)
+    Archive& ar,
+    const unsigned int /* version */)
 {
   ar & CEREAL_NVP(samplesSeen);
   ar & CEREAL_NVP(observationsBeforeBinning);
@@ -201,7 +202,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
     ar & CEREAL_NVP(splitPoints);
     ar & CEREAL_NVP(sufficientStatistics);
 
-    if (cereal::is_loading<Archive>())
+    if (Archive::is_loading::value)
     {
       // Clean other objects.
       observations.clear();
@@ -212,7 +213,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
   {
     // The binning has not happened yet, so we only need to save the information
     // required before binning.
-    if (cereal::is_loading<Archive>())
+    if (Archive::is_loading::value)
     {
       observations.zeros(observationsBeforeBinning);
       labels.zeros(observationsBeforeBinning);
@@ -220,13 +221,13 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
 
     // Save the number of classes.
     size_t numClasses;
-    if (cereal::is_saving<Archive>())
+    if (Archive::is_saving::value)
       numClasses = sufficientStatistics.n_rows;
     ar & CEREAL_NVP(numClasses);
     ar & CEREAL_NVP(observations);
     ar & CEREAL_NVP(labels);
 
-    if (cereal::is_loading<Archive>())
+    if (Archive::is_loading::value)
     {
       // Clean other objects.
       splitPoints.clear();

@@ -36,7 +36,7 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
   for (size_t i = 0; i < input.n_cols; ++i)
   {
     size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget < input.n_rows,
+    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
         "Target class out of range.");
 
     output -= input(currentTarget, i);
@@ -56,7 +56,7 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
   for (size_t i = 0; i < input.n_cols; ++i)
   {
     size_t currentTarget = target(i) - 1;
-    Log::Assert(currentTarget < input.n_rows,
+    Log::Assert(currentTarget >= 0 && currentTarget < input.n_rows,
         "Target class out of range.");
 
     output(currentTarget, i) = -1;
@@ -66,7 +66,8 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */)
+    Archive& /* ar */,
+    const unsigned int /* version */)
 {
   // Nothing to do here.
 }

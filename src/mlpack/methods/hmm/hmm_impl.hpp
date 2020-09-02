@@ -681,7 +681,7 @@ void HMM<Distribution>::ConvertToLogSpace() const
 //! Serialize the HMM.
 template<typename Distribution>
 template<typename Archive>
-void HMM<Distribution>::load(Archive& ar)
+void HMM<Distribution>::load(Archive& ar, const unsigned int /* version */)
 {
   arma::mat transition;
   arma::vec initial;
@@ -705,7 +705,8 @@ void HMM<Distribution>::load(Archive& ar)
 //! Serialize the HMM.
 template<typename Distribution>
 template<typename Archive>
-void HMM<Distribution>::save(Archive& ar) const
+void HMM<Distribution>::save(Archive& ar,
+                             const unsigned int /* version */) const
 {
   arma::mat transition = exp(logTransition);
   arma::vec initial = exp(logInitial);

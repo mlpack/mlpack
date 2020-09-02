@@ -15,6 +15,7 @@
 // In case it hasn't been included yet.
 #include "ra_model.hpp"
 #include <mlpack/core/math/random_basis.hpp>
+#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -332,21 +333,21 @@ RAModel<SortPolicy>::~RAModel()
 
 template<typename SortPolicy>
 template<typename Archive>
-void RAModel<SortPolicy>::serialize(Archive& ar
-                                )
+void RAModel<SortPolicy>::serialize(Archive& ar,
+                                    const unsigned int /* version */)
 {
   ar & CEREAL_NVP(treeType);
   ar & CEREAL_NVP(randomBasis);
   ar & CEREAL_NVP(q);
 
   // This should never happen, but just in case, be clean with memory.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     boost::apply_visitor(DeleteVisitor(), raSearch);
   }
 
   // We only need to serialize one of the kRANN objects.
-  ar & CEREAL_VARIANT_POINTER(raSearch);
+  ar & CEREAL_NVP(raSearch);
 }
 
 template<typename SortPolicy>

@@ -87,8 +87,8 @@ double LogisticRegression<MatType>::Train(
       lambda);
 
   // Set size of parameters vector according to the input data received.
-  if (parameters.n_elem != predictors.n_rows + 1)
-    parameters = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
+  parameters = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
+  errorFunction.InitialPoint() = parameters;
 
   Timer::Start("logistic_regression_optimization");
   const double out = optimizer.Optimize(errorFunction, parameters,
@@ -172,7 +172,9 @@ double LogisticRegression<MatType>::ComputeAccuracy(
 
 template<typename MatType>
 template<typename Archive>
-void LogisticRegression<MatType>::serialize(Archive& ar)
+void LogisticRegression<MatType>::serialize(
+    Archive& ar,
+    const unsigned int /* version */)
 {
   ar & CEREAL_NVP(parameters);
   ar & CEREAL_NVP(lambda);

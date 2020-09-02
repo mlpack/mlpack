@@ -64,7 +64,8 @@ void CELU<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void CELU<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar,
+    const unsigned int /* version */)
 {
   ar & CEREAL_NVP(alpha);
 }

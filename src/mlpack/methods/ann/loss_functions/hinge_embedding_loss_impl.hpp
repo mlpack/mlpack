@@ -50,7 +50,8 @@ void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void HingeEmbeddingLoss<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */)
+    Archive& /* ar */,
+    const unsigned int /* version */)
 {
   // Nothing to do here.
 }

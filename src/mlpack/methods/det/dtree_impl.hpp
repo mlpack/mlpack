@@ -992,8 +992,8 @@ void DTree<MatType, TagType>::FillMinMax(const StatType& mins,
 
 template <typename MatType, typename TagType>
 template <typename Archive>
-void DTree<MatType, TagType>::serialize(Archive& ar
-                                    )
+void DTree<MatType, TagType>::serialize(Archive& ar,
+                                        const unsigned int /* version */)
 {
   ar & CEREAL_NVP(start);
   ar & CEREAL_NVP(end);
@@ -1010,7 +1010,7 @@ void DTree<MatType, TagType>::serialize(Archive& ar
   ar & CEREAL_NVP(bucketTag);
   ar & CEREAL_NVP(alphaUpper);
 
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     if (left)
       delete left;
@@ -1038,7 +1038,7 @@ void DTree<MatType, TagType>::serialize(Archive& ar
     ar & CEREAL_NVP(minVals);
 
     // This is added in order to reduce (dramatically!) the model file size.
-    if (cereal::is_loading<Archive>() && left && right)
+    if (Archive::is_loading::value && left && right)
       FillMinMax(minVals, maxVals);
   }
 }

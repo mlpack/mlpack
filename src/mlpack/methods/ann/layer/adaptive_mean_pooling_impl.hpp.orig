@@ -70,8 +70,12 @@ void AdaptiveMeanPooling<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void AdaptiveMeanPooling<InputDataType, OutputDataType>::serialize(
+<<<<<<< HEAD
+    Archive& ar)
+=======
     Archive& ar,
     const unsigned int /* version */)
+>>>>>>> parent of b32b8d8da... Remove version from serilize function signature
 {
   ar & CEREAL_NVP(outputWidth);
   ar & CEREAL_NVP(outputHeight);

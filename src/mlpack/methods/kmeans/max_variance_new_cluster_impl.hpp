@@ -98,7 +98,8 @@ void MaxVarianceNewCluster::EmptyCluster(const MatType& data,
 
 //! Serialize the object.
 template<typename Archive>
-void MaxVarianceNewCluster::serialize(Archive& /* ar */)
+void MaxVarianceNewCluster::serialize(Archive& /* ar */,
+                                      const unsigned int /* version */)
 {
   // Serialization is useless here, because the only thing we store is
   // precalculated quantities, and if we're serializing, our precalculations are
@@ -106,7 +107,7 @@ void MaxVarianceNewCluster::serialize(Archive& /* ar */)
   // a different clustering, probably).  So there is no need to store anything,
   // and if we are loading, we just reset the assignments array so
   // precalculation will happen next time EmptyCluster() is called.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
     assignments.set_size(0);
 }
 

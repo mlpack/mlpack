@@ -625,14 +625,15 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void RangeSearch<MetricType, MatType, TreeType>::serialize(
-    Archive& ar)
+    Archive& ar,
+    const unsigned int /* version */)
 {
   // Serialize preferences for search.
   ar & CEREAL_NVP(naive);
   ar & CEREAL_NVP(singleMode);
 
   // Reset base cases and scores if we are loading.
-  if (cereal::is_loading<Archive>())
+  if (Archive::is_loading::value)
   {
     baseCases = 0;
     scores = 0;
@@ -642,21 +643,17 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
   // serialize the tree.
   if (naive)
   {
-    if (cereal::is_loading<Archive>())
+    if (Archive::is_loading::value)
     {
       if (referenceSet)
         delete referenceSet;
     }
-    MatType* referenceSetTemp = const_cast<MatType*>(referenceSet);
-    ar & CEREAL_POINTER(referenceSetTemp);
-    if (cereal::is_loading<Archive>())
-    {
-     referenceSet =referenceSetTemp;
-    }
+
+    ar & CEREAL_NVP(referenceSet);
     ar & CEREAL_NVP(metric);
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
-    if (cereal::is_loading<Archive>())
+    if (Archive::is_loading::value)
     {
       if (treeOwner && referenceTree)
         delete referenceTree;
@@ -669,7 +666,7 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
   else
   {
     // Delete the current reference tree, if necessary and if we are loading.
-    if (cereal::is_loading<Archive>())
+    if (Archive::is_loading::value)
     {
       if (treeOwner && referenceTree)
         delete referenceTree;
@@ -678,12 +675,12 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
       treeOwner = true;
     }
 
-    ar & CEREAL_POINTER(referenceTree);
+    ar & CEREAL_NVP(referenceTree);
     ar & CEREAL_NVP(oldFromNewReferences);
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.
-    if (cereal::is_loading<Archive>())
+    if (Archive::is_loading::value)
     {
       referenceSet = &referenceTree->Dataset();
       metric = referenceTree->Metric(); // Get the metric from the tree.
