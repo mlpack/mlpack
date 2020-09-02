@@ -203,7 +203,7 @@ class BallBound
 
   //! Serialize the bound.
   template<typename Archive>
-  void serialize(Archive& ar);
+  void serialize(Archive& ar, const unsigned int version);
 };
 
 //! A specialization of BoundTraits for this bound type.

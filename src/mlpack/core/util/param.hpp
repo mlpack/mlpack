@@ -1035,7 +1035,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @code
  * template<typename Archive>
- * void serialize(Archive& ar);
+ * void serialize(Archive& ar, const unsigned int version);
  * @endcode
  *
  * @param TYPE Type of the model to be loaded.
@@ -1066,7 +1066,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @code
  * template<typename Archive>
- * void serialize(Archive& ar);
+ * void serialize(Archive& ar, const unsigned int version);
  * @endcode
  *
  * @param TYPE Type of the model to be loaded.

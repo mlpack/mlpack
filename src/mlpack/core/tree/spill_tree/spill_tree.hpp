@@ -483,7 +483,7 @@ class SpillTree
    * Serialize the tree.
    */
   template<typename Archive>
-  void serialize(Archive& ar);
+  void serialize(Archive& ar, const unsigned int version);
 };
 
 } // namespace tree
