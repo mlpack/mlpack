@@ -55,9 +55,9 @@ char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length)
 {
   std::ostringstream oss;
   {
-    boost::archive::binary_oarchive oa(oss);
+    cereal::BinaryOutputArchive oa(oss);
     ${MODEL_TYPE}* model = (${MODEL_TYPE}*) ptr;
-    oa << boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\", model);
+    oa & cereal::make_nvp(\"${MODEL_SAFE_TYPE}\", model);
   }
 
   *length = oss.str().length();
@@ -76,8 +76,8 @@ void* Deserialize${MODEL_SAFE_TYPE}Ptr(const char* buffer, const size_t length)
 
   std::istringstream iss(std::string(buffer, length));
   {
-    boost::archive::binary_iarchive ia(iss);
-    ia >> boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\", t);
+    cereal::BinaryInputArchive ia(iss);
+    ia & cereal::make_nvp(\"${MODEL_SAFE_TYPE}\", t);
   }
 
   // Julia will be responsible for freeing this.
