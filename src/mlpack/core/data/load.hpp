@@ -149,7 +149,8 @@ extern template bool Load<double>(const std::string&,
 extern template bool Load<int>(const std::string&,
                                arma::Mat<int>&,
                                const bool,
-                               const bool);
+                               const bool,
+                               const arma::file_type);
 
 extern template bool Load<unsigned int>(const std::string&,
                                         arma::SpMat<unsigned int>&,
