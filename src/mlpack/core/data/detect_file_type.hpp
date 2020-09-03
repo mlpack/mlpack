@@ -51,8 +51,6 @@ arma::file_type AutoDetect(std::fstream& stream,
  * Return the type based only on the extension.
  *
  * @param filename Name of the file whose type we should detect.
- * @param fatal If true, then if the format is not known, an exception will be
- *     thrown.
  * @return Detected type of file.  arma::file_type_unknown if unknown.
  */
 arma::file_type DetectFromExtension(const std::string& filename);
