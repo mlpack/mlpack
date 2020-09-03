@@ -133,6 +133,11 @@ add_executable(mlpack_catch_test
   linear_regression_test.cpp
   load_save_test.cpp
   main.cpp
+  octree_test.cpp
+  one_hot_encoding_test.cpp
+  quic_svd_test.cpp
+  randomized_svd_test.cpp
+  rectangle_tree_test.cpp
   regularized_svd_test.cpp
   scaling_test.cpp
   serialization_catch.cpp
