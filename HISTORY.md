@@ -1,6 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Add manual type specification support to `data::Load()` and `data::Save()` (#2084).
+  * Add manual type specification support to `data::Load()` and `data::Save()`
+    (#2084, #2135, #2602).
+
+  * Remove use of internal Armadillo functionality (#2596, #2601, #2602).
 
 ### mlpack 3.4.0
 ###### 2020-09-01
