@@ -28,23 +28,25 @@ namespace data /** Functions to load and save matrices and models. */ {
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
  * will transpose the matrix at load time (unless the transpose parameter is set
- * to false).  If the filetype cannot be determined, an error will be given.
+ * to false).
  *
  * The supported types of files are the same as found in Armadillo:
  *
- *  - CSV (csv_ascii), denoted by .csv, or optionally .txt
- *  - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
- *  - ASCII (raw_ascii), denoted by .txt
- *  - Armadillo ASCII (arma_ascii), also denoted by .txt
- *  - PGM (pgm_binary), denoted by .pgm
- *  - PPM (ppm_binary), denoted by .ppm
- *  - Raw binary (raw_binary), denoted by .bin
- *  - Armadillo binary (arma_binary), denoted by .bin
- *  - HDF5, denoted by .hdf, .hdf5, .h5, or .he5
+ *  - CSV (arma::csv_ascii), denoted by .csv, or optionally .txt
+ *  - TSV (arma::raw_ascii), denoted by .tsv, .csv, or .txt
+ *  - ASCII (arma::raw_ascii), denoted by .txt
+ *  - Armadillo ASCII (arma::arma_ascii), also denoted by .txt
+ *  - PGM (arma::pgm_binary), denoted by .pgm
+ *  - PPM (arma::ppm_binary), denoted by .ppm
+ *  - Raw binary (arma::raw_binary), denoted by .bin
+ *  - Armadillo binary (arma::arma_binary), denoted by .bin
+ *  - HDF5 (arma::hdf5_binary), denoted by .hdf, .hdf5, .h5, or .he5
  *
- * If the file extension is not one of those types, an error will be given.
- * This is preferable to Armadillo's default behavior of loading an unknown
- * filetype as raw_binary, which can have very confusing effects.
+ * By default, this function will try to automatically determine the type of
+ * file to load based on its extension and by inspecting the file.  If you know
+ * the file type and want to specify it manually, override the default
+ * `inputLoadType` parameter with the correct type above (e.g.
+ * `arma::csv_ascii`.)
  *
  * If the parameter 'fatal' is set to true, a std::runtime_error exception will
  * be thrown if the matrix does not load successfully.  The parameter

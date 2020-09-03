@@ -40,17 +40,23 @@ namespace data /** Functions to load and save matrices. */ {
  *  - Armadillo binary (arma_binary), denoted by .bin
  *  - HDF5 (hdf5_binary), denoted by .hdf5, .hdf, .h5, or .he5
  *
- * If the file extension is not one of those types, an error will be given.  If
- * the 'fatal' parameter is set to true, a std::runtime_error exception will be
- * thrown upon failure.  If the 'transpose' parameter is set to true, the matrix
- * will be transposed before saving.  Generally, because mlpack stores matrices
- * in a column-major format and most datasets are stored on disk as row-major,
- * this parameter should be left at its default value of 'true'.
+ * By default, this function will try to automatically determine the format to
+ * save with based only on the filename's extension.  If you would prefer to
+ * specify a file type manually, override the default
+ * `inputSaveType` parameter with the correct type above (e.g.
+ * `arma::csv_ascii`.)
+ *
+ * If the 'fatal' parameter is set to true, a std::runtime_error exception will
+ * be thrown upon failure.  If the 'transpose' parameter is set to true, the
+ * matrix will be transposed before saving.  Generally, because mlpack stores
+ * matrices in a column-major format and most datasets are stored on disk as
+ * row-major, this parameter should be left at its default value of 'true'.
  *
  * @param filename Name of file to save to.
  * @param matrix Matrix to save into file.
  * @param fatal If an error should be reported as fatal (default false).
  * @param transpose If true, transpose the matrix before saving (default true).
+ * @param inputSaveType File type to save to (defaults to arma::auto_detect).
  * @return Boolean value indicating success or failure of save.
  */
 template<typename eT>
