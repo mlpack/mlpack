@@ -30,11 +30,16 @@
 
 #include "dtb.hpp"
 
-PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree",
-    // Short description.
+// Program Name.
+BINDING_NAME("Fast Euclidean Minimum Spanning Tree");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of the Dual-Tree Boruvka algorithm for computing the "
-    "Euclidean minimum spanning tree of a set of input points.",
-    // Long description.
+    "Euclidean minimum spanning tree of a set of input points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program can compute the Euclidean minimum spanning tree of a set of "
     "input points using the dual-tree Boruvka algorithm."
     "\n\n"
@@ -47,8 +52,10 @@ PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree",
     "and if the " + PRINT_PARAM_STRING("naive") + " option is given, then "
     "brute-force search is used (this is typically much slower in low "
     "dimensions).  The leaf size does not affect the results, but it may have "
-    "some effect on the runtime of the algorithm."
-    "\n\n"
+    "some effect on the runtime of the algorithm.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the minimum spanning tree of the input dataset " +
     PRINT_DATASET("data") + " can be calculated with a leaf size of 20 and "
     "stored as " + PRINT_DATASET("spanning_tree") + " using the following "
@@ -60,14 +67,16 @@ PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree",
     "The output matrix is a three-dimensional matrix, where each row indicates "
     "an edge.  The first dimension corresponds to the lesser index of the edge;"
     " the second dimension corresponds to the greater index of the edge; and "
-    "the third column corresponds to the distance between the two points.",
-    SEE_ALSO("EMST Tutorial", "@doxygen/emst_tutorial.html"),
-    SEE_ALSO("Minimum spanning tree on Wikipedia",
-        "https://en.wikipedia.org/wiki/Minimum_spanning_tree"),
-    SEE_ALSO("Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis, and "
-        "Applications (pdf)", "http://www.mlpack.org/papers/emst.pdf"),
-    SEE_ALSO("mlpack::emst::DualTreeBoruvka class documentation",
-        "@doxygen/classmlpack_1_1emst_1_1DualTreeBoruvka.html"));
+    "the third column corresponds to the distance between the two points.");
+
+// See also...
+BINDING_SEE_ALSO("EMST Tutorial", "@doxygen/emst_tutorial.html");
+BINDING_SEE_ALSO("Minimum spanning tree on Wikipedia",
+        "https://en.wikipedia.org/wiki/Minimum_spanning_tree");
+BINDING_SEE_ALSO("Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,"
+        " and Applications (pdf)", "http://www.mlpack.org/papers/emst.pdf");
+BINDING_SEE_ALSO("mlpack::emst::DualTreeBoruvka class documentation",
+        "@doxygen/classmlpack_1_1emst_1_1DualTreeBoruvka.html");
 
 PARAM_MATRIX_IN_REQ("input", "Input data matrix.", "i");
 PARAM_MATRIX_OUT("output", "Output data.  Stored as an edge list.", "o");

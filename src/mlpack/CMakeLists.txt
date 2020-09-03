@@ -54,7 +54,7 @@ target_link_libraries(mlpack ${MLPACK_LIBRARIES})
 
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 3.3
+  VERSION 3.4
   SOVERSION 3
 )
 
@@ -166,7 +166,6 @@ if (BUILD_JULIA_BINDINGS)
       "\nend\ninclude(\"functions.jl\")\ninclude(\"serialization.jl\")\nend\n")
 endif ()
 
-
 # If we are building Go bindings, we have to end the 'module' declaration in
 # models.go
 if (BUILD_GO_BINDINGS)
@@ -188,6 +187,10 @@ if (BUILD_GO_BINDINGS)
          ${models})
   endforeach()
 endif()
+
+# If we are building R-bindings, we have to run some setup after we
+# recurse into methods/.  If not, this macro is empty.
+post_r_setup()
 
 # If we are building Markdown documentation, we have to run some setup after we
 # recurse into methods/.  If not, this function is empty.

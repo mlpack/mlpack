@@ -22,11 +22,16 @@ using namespace mlpack::util;
 using namespace std;
 using namespace boost;
 
-PROGRAM_INFO("Descriptive Statistics",
-    // Short description.
+// Program Name.
+BINDING_NAME("Descriptive Statistics");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A utility for printing descriptive statistics about a dataset.  This "
-    "prints a number of details about a dataset in a tabular format.",
-    // Long description.
+    "prints a number of details about a dataset in a tabular format.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes a dataset and prints out the descriptive statistics "
     "of the data. Descriptive statistics is the discipline of quantitatively "
     "describing the main features of a collection of information, or the "
@@ -40,8 +45,10 @@ PROGRAM_INFO("Descriptive Statistics",
     "specific dimension to analyze if there are too many dimensions. The " +
     PRINT_PARAM_STRING("population") + " parameter can be specified when the "
     "dataset should be considered as a population.  Otherwise, the dataset "
-    "will be considered as a sample."
-    "\n\n"
+    "will be considered as a sample.");
+
+// Example.
+BINDING_EXAMPLE(
     "So, a simple example where we want to print out statistical facts about "
     "the dataset " + PRINT_DATASET("X") + " using the default settings, we "
     "could run "
@@ -52,10 +59,12 @@ PROGRAM_INFO("Descriptive Statistics",
     "the dataset as a population, we could run"
     "\n\n" +
     PRINT_CALL("preprocess_describe", "input", "X", "width", 10, "precision", 5,
-        "verbose", true),
-    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
-    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"),
-    SEE_ALSO("@preprocess_split", "#preprocess_split"));
+        "verbose", true));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
+BINDING_SEE_ALSO("@preprocess_split", "#preprocess_split");
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data,", "i");

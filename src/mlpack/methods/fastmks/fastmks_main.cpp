@@ -24,20 +24,27 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::util;
 
-PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
-    // Short description.
+// Program Name.
+BINDING_NAME("FastMKS (Fast Max-Kernel Search)");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of the single-tree and dual-tree fast max-kernel search"
     " (FastMKS) algorithm.  Given a set of reference points and a set of query"
     " points, this can find the reference point with maximum kernel value for "
-    "each query point; trained models can be reused for future queries.",
-    // Long description.
+    "each query point; trained models can be reused for future queries.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program will find the k maximum kernels of a set of points, "
     "using a query set and a reference set (which can optionally be the same "
     "set). More specifically, for each point in the query set, the k points in"
     " the reference set with maximum kernel evaluations are found.  The kernel "
     "function used is specified with the " + PRINT_PARAM_STRING("kernel") +
-    " parameter."
-    "\n\n"
+    " parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following command will calculate, for each point in the "
     "query set " + PRINT_DATASET("query") + ", the five points in the "
     "reference set " + PRINT_DATASET("reference") + " with maximum kernel "
@@ -57,14 +64,16 @@ PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
     "\n\n"
     "This program performs FastMKS using a cover tree.  The base used to build "
     "the cover tree can be specified with the " + PRINT_PARAM_STRING("base") +
-    " parameter.",
-    SEE_ALSO("Fast max-kernel search tutorial (fastmks)",
-        "@doxygen/fmkstutorial.html"),
-    SEE_ALSO("k-nearest-neighbor search", "#knn"),
-    SEE_ALSO("Dual-tree Fast Exact Max-Kernel Search (pdf)",
-        "http://mlpack.org/papers/fmks.pdf"),
-    SEE_ALSO("mlpack::fastmks::FastMKS class documentation",
-        "@doxygen/classmlpack_1_1fastmks_1_1FastMKS.html"));
+    " parameter.");
+
+// See also...
+BINDING_SEE_ALSO("Fast max-kernel search tutorial (fastmks)",
+        "@doxygen/fmkstutorial.html");
+BINDING_SEE_ALSO("k-nearest-neighbor search", "#knn");
+BINDING_SEE_ALSO("Dual-tree Fast Exact Max-Kernel Search (pdf)",
+        "http://mlpack.org/papers/fmks.pdf");
+BINDING_SEE_ALSO("mlpack::fastmks::FastMKS class documentation",
+        "@doxygen/classmlpack_1_1fastmks_1_1FastMKS.html");
 
 // Model-building parameters.
 PARAM_MATRIX_IN("reference", "The reference dataset.", "r");

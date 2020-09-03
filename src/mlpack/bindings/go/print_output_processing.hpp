@@ -16,7 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include "get_type.hpp"
 #include "strip_type.hpp"
-#include "camel_case.hpp"
+#include <mlpack/bindings/util/camel_case.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -44,7 +44,7 @@ void PrintOutputProcessing(
    */
 
   std::string name = d.name;
-  name = CamelCase(name, true);
+  name = util::CamelCase(name, true);
   std::cout << prefix << name << " := getParam" << GetType<T>(d)
             << "(\"" << d.name << "\")" << std::endl;
 }
@@ -70,7 +70,7 @@ void PrintOutputProcessing(
    *
    */
   std::string name = d.name;
-  name = CamelCase(name, true);
+  name = util::CamelCase(name, true);
   std::cout << prefix << "var " << name << "Ptr mlpackArma" << std::endl;
   std::cout << prefix << name << " := " << name
             << "Ptr.armaToGonum" << GetType<T>(d)
@@ -96,7 +96,7 @@ void PrintOutputProcessing(
    *
    */
   std::string name = d.name;
-  name = CamelCase(name, true);
+  name = util::CamelCase(name, true);
   std::cout << prefix << "var " << name << "Ptr mlpackArma" << std::endl;
   std::cout << prefix << name << " := " << name << "Ptr.armaToGonumWith"
             << "Info(\""  << d.name << "\")" << std::endl;
@@ -126,7 +126,7 @@ void PrintOutputProcessing(
    *
    */
   std::string name = d.name;
-  name = CamelCase(name, true);
+  name = util::CamelCase(name, true);
   std::cout << prefix << "var " << name << " " << goStrippedType << std::endl;
   std::cout << prefix << name << ".get" << strippedType
             << "(\"" << d.name << "\")" << std::endl;

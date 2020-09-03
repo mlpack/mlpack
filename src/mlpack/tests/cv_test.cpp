@@ -36,7 +36,7 @@
 #include <mlpack/core/data/confusion_matrix.hpp>
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include "catch.hpp"
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
@@ -47,12 +47,10 @@ using namespace mlpack::regression;
 using namespace mlpack::tree;
 using namespace mlpack::data;
 
-BOOST_AUTO_TEST_SUITE(CVTest);
-
 /**
  * Test metrics for binary classification.
  */
-BOOST_AUTO_TEST_CASE(BinaryClassificationMetricsTest)
+TEST_CASE("BinaryClassificationMetricsTest", "[CVTest]")
 {
   // Using the same data for training and testing.
   arma::mat data = arma::linspace<arma::rowvec>(1.0, 10.0, 10);
@@ -66,20 +64,22 @@ BOOST_AUTO_TEST_CASE(BinaryClassificationMetricsTest)
 
   LogisticRegression<> lr(data, predictedLabels);
 
-  BOOST_REQUIRE_CLOSE(Accuracy::Evaluate(lr, data, labels), 0.7, 1e-5);
+  REQUIRE(Accuracy::Evaluate(lr, data, labels) == Approx(0.7).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(Precision<Binary>::Evaluate(lr, data, labels), 0.6, 1e-5);
+  REQUIRE(Precision<Binary>::Evaluate(lr, data, labels)
+          == Approx(0.6).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(Recall<Binary>::Evaluate(lr, data, labels), 0.75, 1e-5);
+  REQUIRE(Recall<Binary>::Evaluate(lr, data, labels)
+          == Approx(0.75).epsilon(1e-7));
 
   double f1 = 2 * 0.6 * 0.75 / (0.6 + 0.75);
-  BOOST_REQUIRE_CLOSE(F1<Binary>::Evaluate(lr, data, labels), f1, 1e-5);
+  REQUIRE(F1<Binary>::Evaluate(lr, data, labels) == Approx(f1).epsilon(1e-7));
 }
 
 /**
  * Test for confusion matrix.
  */
-BOOST_AUTO_TEST_CASE(ConfusionMatrixTest)
+TEST_CASE("ConfusionMatrixTest", "[CVTest]")
 {
   // Labels that will be considered as "ground truth".
   arma::Row<size_t> labels("0 0 1 0 0  1 0 1 0 1");
@@ -89,16 +89,16 @@ BOOST_AUTO_TEST_CASE(ConfusionMatrixTest)
   // Confusion matrix.
   arma::Mat<int> output;
   data::ConfusionMatrix(predictedLabels, labels, output, 2);
-  BOOST_REQUIRE_EQUAL(output(0, 0), 4);
-  BOOST_REQUIRE_EQUAL(output(0, 1), 1);
-  BOOST_REQUIRE_EQUAL(output(1, 0), 2);
-  BOOST_REQUIRE_EQUAL(output(1, 1), 3);
+  REQUIRE(output(0, 0) == 4);
+  REQUIRE(output(0, 1) == 1);
+  REQUIRE(output(1, 0) == 2);
+  REQUIRE(output(1, 1) == 3);
 }
 
 /**
  * Test metrics for multiclass classification.
  */
-BOOST_AUTO_TEST_CASE(MulticlassClassificationMetricsTest)
+TEST_CASE("MulticlassClassificationMetricsTest", "[CVTest]")
 {
   // Using the same data for training and testing.
   arma::mat data = arma::linspace<arma::rowvec>(1.0, 12.0, 12);
@@ -115,40 +115,41 @@ BOOST_AUTO_TEST_CASE(MulticlassClassificationMetricsTest)
 
   // Assert that the Naive Bayes model really predicts the labels above in
   // response to the data.
-  BOOST_REQUIRE_CLOSE(Accuracy::Evaluate(nb, data, predictedLabels), 1.0, 1e-5);
+  REQUIRE(Accuracy::Evaluate(nb, data, predictedLabels)
+          == Approx(1.0).epsilon(1e-7));
 
   double microaveragedPrecision = double(1 + 1 + 3 + 4) / 12;
-  BOOST_REQUIRE_CLOSE(Precision<Micro>::Evaluate(nb, data, labels),
-      microaveragedPrecision, 1e-5);
+  REQUIRE(Precision<Micro>::Evaluate(nb, data, labels)
+          == Approx(microaveragedPrecision).epsilon(1e-7));
 
   double microaveragedRecall = double(1 + 1 + 3 + 4) / 12;
-  BOOST_REQUIRE_CLOSE(Recall<Micro>::Evaluate(nb, data, labels),
-      microaveragedRecall, 1e-5);
+  REQUIRE(Recall<Micro>::Evaluate(nb, data, labels)
+          == Approx(microaveragedRecall).epsilon(1e-7));
 
   double microaveragedF1 = 2 * microaveragedPrecision * microaveragedRecall /
     (microaveragedPrecision + microaveragedRecall);
-  BOOST_REQUIRE_CLOSE(F1<Micro>::Evaluate(nb, data, labels),
-      microaveragedF1, 1e-5);
+  REQUIRE(F1<Micro>::Evaluate(nb, data, labels)
+          == Approx(microaveragedF1).epsilon(1e-7));
 
   double macroaveragedPrecision = (0.5 + 0.5 + 0.75 + 1.0) / 4;
-  BOOST_REQUIRE_CLOSE(Precision<Macro>::Evaluate(nb, data, labels),
-      macroaveragedPrecision, 1e-5);
+  REQUIRE(Precision<Macro>::Evaluate(nb, data, labels)
+          == Approx(macroaveragedPrecision).epsilon(1e-7));
 
   double macroaveragedRecall = (0.5 + 1.0 / 3 + 1.0 + 1.0) / 4;
-  BOOST_REQUIRE_CLOSE(Recall<Macro>::Evaluate(nb, data, labels),
-      macroaveragedRecall, 1e-5);
+  REQUIRE(Recall<Macro>::Evaluate(nb, data, labels)
+          == Approx(macroaveragedRecall).epsilon(1e-7));
 
   double macroaveragedF1 = (2 * 0.5 * 0.5 / (0.5 + 0.5) +
       2 * 0.5 * (1.0 / 3) / (0.5 + (1.0 / 3)) + 2 * 0.75 * 1.0 / (0.75 + 1.0) +
       2 * 1.0 * 1.0 / (1.0 + 1.0)) / 4;
-  BOOST_REQUIRE_CLOSE(F1<Macro>::Evaluate(nb, data, labels),
-      macroaveragedF1, 1e-5);
+  REQUIRE(F1<Macro>::Evaluate(nb, data, labels)
+          == Approx(macroaveragedF1).epsilon(1e-7));
 }
 
 /**
  * Test the mean squared error.
  */
-BOOST_AUTO_TEST_CASE(MSETest)
+TEST_CASE("MSETest", "[CVTest]")
 {
   // Making two points that define the linear function f(x) = x - 1
   arma::mat trainingData("0 1");
@@ -163,13 +164,14 @@ BOOST_AUTO_TEST_CASE(MSETest)
 
   double expectedMSE = (0 * 0 + 1 * 1 + 2 * 2) / 3.0;
 
-  BOOST_REQUIRE_CLOSE(MSE::Evaluate(lr, data, responses), expectedMSE, 1e-5);
+  REQUIRE(MSE::Evaluate(lr, data, responses)
+          == Approx(expectedMSE).epsilon(1e-7));
 }
 
 /**
  * Test the R squared metric (R2 Score).
  */
-BOOST_AUTO_TEST_CASE(R2ScoreTest)
+TEST_CASE("R2ScoreTest", "[CVTest]")
 {
   // Making two points that define the linear function f(x) = x - 1.
   arma::mat trainingData("0 1");
@@ -185,13 +187,14 @@ BOOST_AUTO_TEST_CASE(R2ScoreTest)
 
   double expectedR2 = 0.99999779;
 
-  BOOST_REQUIRE_CLOSE(R2Score::Evaluate(lr, data, responses), expectedR2, 1e-5);
+  REQUIRE(R2Score::Evaluate(lr, data, responses)
+          == Approx(expectedR2).epsilon(1e-7));
 }
 
 /**
  * Test the mean squared error with matrix responses.
  */
-BOOST_AUTO_TEST_CASE(MSEMatResponsesTest)
+TEST_CASE("MSEMatResponsesTest", "[CVTest]")
 {
   arma::mat data("1 2");
   arma::mat trainingResponses("1 2; 3 4");
@@ -212,7 +215,8 @@ BOOST_AUTO_TEST_CASE(MSEMatResponsesTest)
 
   double expectedMSE = (0 * 0 + 1 * 1 + 2 * 2 + 3 * 3) / 4.0;
 
-  BOOST_REQUIRE_CLOSE(MSE::Evaluate(ffn, data, responses), expectedMSE, 1e-1);
+  REQUIRE(MSE::Evaluate(ffn, data, responses)
+          == Approx(expectedMSE).epsilon(1e-3));
 }
 
 template<typename Class,
@@ -231,7 +235,7 @@ void CheckPredictionsType()
  * Test MetaInfoExtractor correctly recognizes the type of predictions for a
  * given machine learning algorithm.
  */
-BOOST_AUTO_TEST_CASE(PredictionsTypeTest)
+TEST_CASE("PredictionsTypeTest", "[CVTest]")
 {
   CheckPredictionsType<LinearRegression, arma::rowvec>();
   // CheckPredictionsType<FFN<>, arma::mat>();
@@ -250,7 +254,7 @@ BOOST_AUTO_TEST_CASE(PredictionsTypeTest)
  * Test MetaInfoExtractor correctly identifies whether a given machine learning
  * algorithm supports weighted learning.
  */
-BOOST_AUTO_TEST_CASE(SupportsWeightsTest)
+TEST_CASE("SupportsWeightsTest", "[CVTest]")
 {
   static_assert(MetaInfoExtractor<LinearRegression>::SupportsWeights,
       "Value should be true");
@@ -282,7 +286,7 @@ void CheckWeightsType()
  * Test MetaInfoExtractor correctly recognizes the type of weights for a given
  * machine learning algorithm.
  */
-BOOST_AUTO_TEST_CASE(WeightsTypeTest)
+TEST_CASE("WeightsTypeTest", "[CVTest]")
 {
   CheckWeightsType<LinearRegression, arma::rowvec>();
   CheckWeightsType<DecisionTree<>, arma::rowvec>();
@@ -294,7 +298,7 @@ BOOST_AUTO_TEST_CASE(WeightsTypeTest)
  * Test MetaInfoExtractor correctly identifies whether a given machine learning
  * algorithm takes a data:DatasetInfo parameter.
  */
-BOOST_AUTO_TEST_CASE(TakesDatasetInfoTest)
+TEST_CASE("TakesDatasetInfoTest", "[CVTest]")
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesDatasetInfo,
       "Value should be true");
@@ -308,7 +312,7 @@ BOOST_AUTO_TEST_CASE(TakesDatasetInfoTest)
  * Test MetaInfoExtractor correctly identifies whether a given machine learning
  * algorithm takes the numClasses parameter.
  */
-BOOST_AUTO_TEST_CASE(TakesNumClassesTest)
+TEST_CASE("TakesNumClassesTest", "[CVTest]")
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesNumClasses,
       "Value should be true");
@@ -324,7 +328,7 @@ BOOST_AUTO_TEST_CASE(TakesNumClassesTest)
  * Test the simple cross-validation strategy implementation with the Accuracy
  * metric.
  */
-BOOST_AUTO_TEST_CASE(SimpleCVAccuracyTest)
+TEST_CASE("SimpleCVAccuracyTest", "[CVTest]")
 {
   // Using the first half of data for training and the rest for validation.
   // The validation labels are 75% correct.
@@ -334,13 +338,13 @@ BOOST_AUTO_TEST_CASE(SimpleCVAccuracyTest)
 
   SimpleCV<LogisticRegression<>, Accuracy> cv(0.5, data, labels);
 
-  BOOST_REQUIRE_CLOSE(cv.Evaluate(), 0.75, 1e-5);
+  REQUIRE(cv.Evaluate() == Approx(0.75).epsilon(1e-7));
 }
 
 /**
  * Test the simple cross-validation strategy implementation with the MSE metric.
  */
-BOOST_AUTO_TEST_CASE(SimpleCVMSETest)
+TEST_CASE("SimpleCVMSETest", "[CVTest]")
 {
   // Using the first two points for training and remaining three for validation.
   // See the test MSETest for more explanation.
@@ -351,7 +355,7 @@ BOOST_AUTO_TEST_CASE(SimpleCVMSETest)
 
   SimpleCV<LinearRegression, MSE> cv(0.6, data, responses);
 
-  BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedMSE, 1e-5);
+  REQUIRE(cv.Evaluate() == Approx(expectedMSE).epsilon(1e-7));
 
   arma::mat noiseData("-1 -2 -3 -4 -5");
   arma::rowvec noiseResponses("10 20 30 40 50");
@@ -365,7 +369,7 @@ BOOST_AUTO_TEST_CASE(SimpleCVMSETest)
   SimpleCV<LinearRegression, MSE> weightedCV(0.3, allData, allResponces,
       weights);
 
-  BOOST_REQUIRE_CLOSE(weightedCV.Evaluate(), expectedMSE, 1e-5);
+  REQUIRE(weightedCV.Evaluate() == Approx(expectedMSE).epsilon(1e-7));
 
   arma::rowvec weights2 = arma::join_rows(arma::zeros(noiseData.n_cols - 1).t(),
       arma::ones(data.n_cols + 1).t());
@@ -373,7 +377,27 @@ BOOST_AUTO_TEST_CASE(SimpleCVMSETest)
   SimpleCV<LinearRegression, MSE> weightedCV2(0.3, allData, allResponces,
       weights2);
 
-  BOOST_REQUIRE_GT(std::abs(weightedCV2.Evaluate() - expectedMSE), 1e-5);
+  REQUIRE(std::abs(weightedCV2.Evaluate() - expectedMSE) > 1e-5);
+}
+
+/**
+ * Test that scores of -nan are filtered out.
+ */
+TEST_CASE("FilterNANCVTest", "[CVTest]")
+{
+  // Create a dataset with only one positive label, so it will not be in every
+  // fold.
+  arma::mat data(3, 10, arma::fill::randu);
+  arma::Row<size_t> labels(10, arma::fill::zeros);
+  labels[0] = 1;
+
+  const size_t numClasses = 2;
+  KFoldCV<NaiveBayesClassifier<>, F1<Binary>> kfoldcv(2, data, labels,
+      numClasses);
+
+  const double result = kfoldcv.Evaluate();
+  REQUIRE(!std::isnan(result));
+  REQUIRE(!std::isinf(result));
 }
 
 template<typename... DTArgs>
@@ -390,7 +414,7 @@ arma::Row<size_t> PredictLabelsWithDT(const arma::mat& data,
  * Test the simple cross-validation strategy implementation with decision trees
  * constructed in multiple ways.
  */
-BOOST_AUTO_TEST_CASE(SimpleCVWithDTTest)
+TEST_CASE("SimpleCVWithDTTest", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
@@ -411,21 +435,21 @@ BOOST_AUTO_TEST_CASE(SimpleCVWithDTTest)
         trainingData, trainingLabels, numClasses, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
         arma::join_rows(trainingLabels, predictedLabels), numClasses);
-    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+    REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
         trainingData, datasetInfo, trainingLabels, numClasses, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
         arma::join_rows(trainingLabels, predictedLabels), numClasses);
-    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+    REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
         trainingData, trainingLabels, numClasses, weights, minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data,
         arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
-    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+    REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
   {
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(testData,
@@ -433,14 +457,14 @@ BOOST_AUTO_TEST_CASE(SimpleCVWithDTTest)
         minimumLeafSize);
     SimpleCV<DecisionTree<InformationGain>, Accuracy> cv(0.5, data, datasetInfo,
         arma::join_rows(trainingLabels, predictedLabels), numClasses, weights);
-    BOOST_REQUIRE_CLOSE(cv.Evaluate(minimumLeafSize), 1.0, 1e-5);
+    REQUIRE(cv.Evaluate(minimumLeafSize) == Approx(1.0).epsilon(1e-7));
   }
 }
 
 /**
  * Test k-fold cross-validation with the MSE metric.
  */
-BOOST_AUTO_TEST_CASE(KFoldCVMSETest)
+TEST_CASE("KFoldCVMSETest", "[CVTest]")
 {
   // Defining dataset with two sets of responses for the same two data points.
   arma::mat data("0 1  0 1");
@@ -453,17 +477,17 @@ BOOST_AUTO_TEST_CASE(KFoldCVMSETest)
   double expectedMSE =
       double((1 - 0) * (1 - 0) + (3 - 1) * (3 - 1)) / 2 * 2 / 2;
 
-  BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedMSE, 1e-5);
+  REQUIRE(cv.Evaluate() == Approx(expectedMSE).epsilon(1e-7));
 
   // Assert we can access a trained model without the exception of
   // uninitialization.
-  cv.Model();
+  REQUIRE_NOTHROW(cv.Model());
 }
 
 /**
  * Test k-fold cross-validation with the Accuracy metric.
  */
-BOOST_AUTO_TEST_CASE(KFoldCVAccuracyTest)
+TEST_CASE("KFoldCVAccuracyTest", "[CVTest]")
 {
   // Making a 10-points dataset. The last point should be classified wrong when
   // it is tested separately.
@@ -479,17 +503,17 @@ BOOST_AUTO_TEST_CASE(KFoldCVAccuracyTest)
   // fail with the remaining one.
   double expectedAccuracy = (9 * 1.0 + 0.0) / 10;
 
-  BOOST_REQUIRE_CLOSE(cv.Evaluate(), expectedAccuracy, 1e-5);
+  REQUIRE(cv.Evaluate() == Approx(expectedAccuracy).epsilon(1e-7));
 
   // Assert we can access a trained model without the exception of
   // uninitialization.
-  cv.Model();
+  REQUIRE_NOTHROW(cv.Model());
 }
 
 /**
  * Test k-fold cross-validation with weighted linear regression.
  */
-BOOST_AUTO_TEST_CASE(KFoldCVWithWeightedLRTest)
+TEST_CASE("KFoldCVWithWeightedLRTest", "[CVTest]")
 {
   // Each fold will be filled with this dataset.
   arma::mat data("1 2 3 4");
@@ -506,14 +530,14 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithWeightedLRTest)
 
   double mse = MSE::Evaluate(cv.Model(), testData, testResponses);
 
-  BOOST_REQUIRE_CLOSE(1.0 - mse, 1.0, 1e-5);
+  REQUIRE((1.0 - mse) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
  * Test k-fold cross-validation with decision trees constructed in multiple
  * ways.
  */
-BOOST_AUTO_TEST_CASE(KFoldCVWithDTTest)
+TEST_CASE("KFoldCVWithDTTest", "[CVTest]")
 {
   arma::mat originalData;
   arma::Row<size_t> originalLabels;
@@ -539,7 +563,7 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTest)
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data, labels,
         numClasses, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
-    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+    REQUIRE(accuracy == Approx(1.0).epsilon(1e-7));
   }
   {
     KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
@@ -548,7 +572,7 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTest)
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data,
         datasetInfo, labels, numClasses, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
-    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+    REQUIRE(accuracy == Approx(1.0).epsilon(1e-7));
   }
   {
     KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
@@ -557,7 +581,7 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTest)
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data, labels,
         numClasses, weights, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
-    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+    REQUIRE(accuracy == Approx(1.0).epsilon(1e-7));
   }
   {
     KFoldCV<DecisionTree<InformationGain>, Accuracy> cv(2, doubledData,
@@ -566,7 +590,7 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTest)
     arma::Row<size_t> predictedLabels = PredictLabelsWithDT(data, data,
         datasetInfo, labels, numClasses, weights, minimumLeafSize);
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
-    BOOST_REQUIRE_CLOSE(accuracy, 1.0, 1e-5);
+    REQUIRE(accuracy == Approx(1.0).epsilon(1e-7));
   }
 }
 
@@ -574,7 +598,7 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTest)
  * Test k-fold cross-validation with decision trees constructed in multiple
  * ways, but with larger k and no shuffling.
  */
-BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestLargeKNoShuffle)
+TEST_CASE("KFoldCVWithDTTestLargeKNoShuffle", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
@@ -591,7 +615,7 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestLargeKNoShuffle)
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }
 
 /**
@@ -600,7 +624,7 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestLargeKNoShuffle)
  * cross-validation bin is not even (the last is smaller), and also with no
  * shuffling.
  */
-BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestUnevenBinsNoShuffle)
+TEST_CASE("KFoldCVWithDTTestUnevenBinsNoShuffle", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
@@ -617,14 +641,14 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestUnevenBinsNoShuffle)
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }
 
 /**
  * Test k-fold cross-validation with decision trees constructed in multiple
  * ways, but with larger k.
  */
-BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestLargeK)
+TEST_CASE("KFoldCVWithDTTestLargeK", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
@@ -641,7 +665,7 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestLargeK)
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }
 
 /**
@@ -649,7 +673,7 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestLargeK)
  * ways, but with larger k such that the number of points in each
  * cross-validation bin is not even (the last is smaller).
  */
-BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestUnevenBins)
+TEST_CASE("KFoldCVWithDTTestUnevenBins", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
@@ -666,14 +690,14 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestUnevenBins)
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }
 
 /**
  * Test k-fold cross-validation with decision trees constructed in multiple
  * ways, but with larger k and weights.
  */
-BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestLargeKWeighted)
+TEST_CASE("KFoldCVWithDTTestLargeKWeighted", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
@@ -691,7 +715,7 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestLargeKWeighted)
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }
 
 /**
@@ -699,7 +723,7 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestLargeKWeighted)
  * ways, but with larger k such that the number of points in each
  * cross-validation bin is not even (the last is smaller) and weights.
  */
-BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestUnevenBinsWeighted)
+TEST_CASE("KFoldCVWithDTTestUnevenBinsWeighted", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
@@ -717,13 +741,13 @@ BOOST_AUTO_TEST_CASE(KFoldCVWithDTTestUnevenBinsWeighted)
 
   // This is a very loose tolerance, but we expect about the same as we would
   // from an individual decision tree training.
-  BOOST_REQUIRE_GT(accuracy, 0.7);
+  REQUIRE(accuracy > 0.7);
 }
 
 /**
  * Test Silhouette Score
  */
-BOOST_AUTO_TEST_CASE(SilhouetteScoreTest)
+TEST_CASE("SilhouetteScoreTest", "[CVTest]")
 {
   arma::mat X;
   X << 0 << 1 << 1 << 0 << 0 << arma::endr
@@ -732,7 +756,5 @@ BOOST_AUTO_TEST_CASE(SilhouetteScoreTest)
   arma::Row<size_t> labels = {0, 1, 2, 0, 0};
   metric::EuclideanDistance metric;
   double silhouetteScore = SilhouetteScore::Overall(X, labels, metric);
-  BOOST_REQUIRE_CLOSE(silhouetteScore, 0.1121684822489150, 1e-5);
+  REQUIRE(silhouetteScore == Approx(0.1121684822489150).epsilon(1e-7));
 }
-
-BOOST_AUTO_TEST_SUITE_END();

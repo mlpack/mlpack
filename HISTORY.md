@@ -1,5 +1,35 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+
+### mlpack 3.4.0
+###### 2020-09-01
+
+  * Issue warnings when metrics produce NaNs in KFoldCV (#2595).
+
+  * Added bindings for _R_ during Google Summer of Code (#2556).
+
+  * Added common striptype function for all bindings (#2556).
+
+  * Refactored common utility function of bindings to bindings/util (#2556).
+
+  * Renamed InformationGain to HoeffdingInformationGain in
+    methods/hoeffding_trees/information_gain.hpp (#2556).
+
+  * Added macro for changing stream of printing and warnings/errors (#2556).
+
+  * Added Spatial Dropout layer (#2564).
+
+  * Force CMake to show error when it didn't find Python/modules (#2568).
+
+  * Refactor `ProgramInfo()` to separate out all the different
+    information (#2558).
+
+  * Add bindings for one-hot encoding (#2325).
+
+  * Added Soft Actor-Critic to RL methods (#2487).
+
+  * Added Categorical DQN to q_networks (#2454).
+
   * Added N-step DQN to q_networks (#2461).
 
   * Add Silhoutte Score metric and Pairwise Distances (#2406).
@@ -15,6 +45,12 @@
     Julia, and Go.  Also called "Bayesian Ridge", this is equivalent to a
     version of linear regression where the regularization parameter is
     automatically tuned (#2030).
+
+  * Fix defeatist search for spill tree traversals (#2566, #1269).
+
+  * Fix incremental training of logistic regression models (#2560).
+
+  * Change default configuration of `BUILD_PYTHON_BINDINGS` to `OFF` (#2575).
 
 ### mlpack 3.3.2
 ###### 2020-06-18
