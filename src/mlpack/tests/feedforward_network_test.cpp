@@ -97,7 +97,7 @@ void CheckCopyFunction(ModelType* network1,
 /**
  * Check whether copying Vanila network is working or not.
  */
-BOOST_AUTO_TEST_CASE(CheckCopyVanillaNetworkTest)
+TEST_CASE("CheckCopyVanillaNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(CheckCopyVanillaNetworkTest)
 }
 
 /**
- * Train the vanila network on a larger dataset.
+ * Train the vanilla network on a larger dataset.
  */
 TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
 {
