@@ -87,7 +87,7 @@ arma::file_type GuessFileType(std::istream& f)
 
   if (!loadOkay)
   {
-    delete dataMem;
+    delete[] dataMem;
     return arma::file_type_unknown;
   }
 
@@ -114,7 +114,7 @@ arma::file_type GuessFileType(std::istream& f)
     }
   }
 
-  delete dataMem;
+  delete[] dataMem;
 
   if (hasBinary)
     return arma::raw_binary;
