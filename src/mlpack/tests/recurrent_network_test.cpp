@@ -19,17 +19,14 @@
 #include <mlpack/core/data/binarize.hpp>
 #include <mlpack/core/math/random.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
+#include "catch.hpp"
+#include "serialization_catch.hpp"
 #include "custom_layer.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace ens;
 using namespace mlpack::math;
-
-BOOST_AUTO_TEST_SUITE(RecurrentNetworkTest);
 
 /**
  * Construct a 2-class dataset out of noisy sines.
@@ -75,7 +72,7 @@ void GenerateNoisySines(arma::cube& data,
 /**
  * Train the BRNN on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(SequenceClassificationBRNNTest)
+TEST_CASE("SequenceClassificationBRNNTest", "[RecurrentNetworkTest]")
 {
   // Using same test for RNN below.
   size_t successes = 0;
@@ -111,10 +108,10 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationBRNNTest)
 
     StandardSGD opt(0.1, 1, 500 * input.n_cols, -100);
     model.Train(input, labels, opt);
-    BOOST_TEST_CHECKPOINT("Training over");
+    INFO("Training over");
     arma::cube prediction;
     model.Predict(input, prediction);
-    BOOST_TEST_CHECKPOINT("Prediction over");
+    INFO("Prediction over");
 
     size_t error = 0;
     for (size_t i = 0; i < prediction.n_cols; ++i)
@@ -133,7 +130,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationBRNNTest)
     }
 
     double classificationError = 1 - double(error) / prediction.n_cols;
-    BOOST_TEST_CHECKPOINT(classificationError);
+    INFO(classificationError);
     if (classificationError <= 0.2)
     {
       ++successes;
@@ -141,13 +138,13 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationBRNNTest)
     }
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
 
 /**
  * Train the vanilla network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
+TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
 {
   // It isn't guaranteed that the recurrent network will converge in the
   // specified number of iterations using random weights. If this works 1 of 6
@@ -231,7 +228,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     }
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
 
 /**
@@ -645,13 +642,13 @@ void ReberGrammarTestNetwork(ModelType& model,
     offset += 3;
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
 
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
+TEST_CASE("LSTMReberGrammarTest", "[RecurrentNetworkTest]")
 {
   RNN<MeanSquaredError<> > model(5);
   model.Add<Linear<> >(7, 10);
@@ -664,7 +661,7 @@ BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
+TEST_CASE("FastLSTMReberGrammarTest", "[RecurrentNetworkTest]")
 {
   RNN<MeanSquaredError<> > model(5);
   model.Add<Linear<> >(7, 8);
@@ -677,7 +674,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
+TEST_CASE("GRURecursiveReberGrammarTest", "[RecurrentNetworkTest]")
 {
   RNN<MeanSquaredError<> > model(5);
   model.Add<Linear<> >(7, 16);
@@ -690,7 +687,7 @@ BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
 /**
  * Train BLSTM on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(BRNNReberGrammarTest)
+TEST_CASE("BRNNReberGrammarTest", "[RecurrentNetworkTest]")
 {
   BRNN<MeanSquaredError<>, AddMerge<>, SigmoidLayer<> > model(5);
   model.Add<Linear<> >(7, 10);
@@ -869,14 +866,14 @@ void DistractedSequenceRecallTestNetwork(
     offset += 2;
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
 
 /**
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-BOOST_AUTO_TEST_CASE(LSTMDistractedSequenceRecallTest)
+TEST_CASE("LSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest]")
 {
   DistractedSequenceRecallTestNetwork<LSTM<> >(4, 8);
 }
@@ -885,7 +882,7 @@ BOOST_AUTO_TEST_CASE(LSTMDistractedSequenceRecallTest)
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-BOOST_AUTO_TEST_CASE(FastLSTMDistractedSequenceRecallTest)
+TEST_CASE("FastLSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest]")
 {
   DistractedSequenceRecallTestNetwork<FastLSTM<> >(4, 8);
 }
@@ -894,7 +891,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMDistractedSequenceRecallTest)
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
+TEST_CASE("GRUDistractedSequenceRecallTest", "[RecurrentNetworkTest]")
 {
   DistractedSequenceRecallTestNetwork<GRU<> >(4, 8);
 }
@@ -956,7 +953,7 @@ void BatchSizeTest()
 /**
  * Ensure LSTMs work with larger batch sizes.
  */
-BOOST_AUTO_TEST_CASE(LSTMBatchSizeTest)
+TEST_CASE("LSTMBatchSizeTest", "[RecurrentNetworkTest]")
 {
   BatchSizeTest<LSTM<>>();
 }
@@ -964,7 +961,7 @@ BOOST_AUTO_TEST_CASE(LSTMBatchSizeTest)
 /**
  * Ensure fast LSTMs work with larger batch sizes.
  */
-BOOST_AUTO_TEST_CASE(FastLSTMBatchSizeTest)
+TEST_CASE("FastLSTMBatchSizeTest", "[RecurrentNetworkTest]")
 {
   BatchSizeTest<FastLSTM<>>();
 }
@@ -972,7 +969,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMBatchSizeTest)
 /**
  * Ensure GRUs work with larger batch sizes.
  */
-BOOST_AUTO_TEST_CASE(GRUBatchSizeTest)
+TEST_CASE("GRUBatchSizeTest", "[RecurrentNetworkTest]")
 {
   BatchSizeTest<GRU<>>();
 }
@@ -980,7 +977,7 @@ BOOST_AUTO_TEST_CASE(GRUBatchSizeTest)
 /**
  * Make sure the RNN can be properly serialized.
  */
-BOOST_AUTO_TEST_CASE(SerializationTest)
+TEST_CASE("RNNSerializationTest", "[RecurrentNetworkTest]")
 {
   const size_t rho = 10;
 
@@ -1172,13 +1169,13 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
     offset += 3;
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
 
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(CustomRecursiveReberGrammarTest)
+TEST_CASE("CustomRecursiveReberGrammarTest", "[RecurrentNetworkTest]")
 {
   ReberGrammarTestCustomNetwork(16, true);
 }
@@ -1312,16 +1309,16 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
 /**
  * Test RNN using multiple timestep input and single output.
  */
-BOOST_AUTO_TEST_CASE(MultiTimestepTest)
+TEST_CASE("MultiTimestepTest", "[RecurrentNetworkTest]")
 {
   double err = RNNSineTest(4, 10, 20);
-  BOOST_REQUIRE_LE(err, 0.025);
+  REQUIRE(err <= 0.025);
 }
 
 /**
  * Test that RNN::Train() returns finite objective value.
  */
-BOOST_AUTO_TEST_CASE(RNNTrainReturnObjective)
+TEST_CASE("RNNTrainReturnObjective", "[RecurrentNetworkTest]")
 {
   const size_t rho = 10;
 
@@ -1371,13 +1368,13 @@ BOOST_AUTO_TEST_CASE(RNNTrainReturnObjective)
   StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
   double objVal = model.Train(input, labels, opt);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 }
 
 /**
  * Test that BRNN::Train() returns finite objective value.
  */
-BOOST_AUTO_TEST_CASE(BRNNTrainReturnObjective)
+TEST_CASE("BRNNTrainReturnObjective", "[RecurrentNetworkTest]")
 {
   const size_t rho = 10;
 
@@ -1407,16 +1404,16 @@ BOOST_AUTO_TEST_CASE(BRNNTrainReturnObjective)
 
   StandardSGD opt(0.1, 1, 500 * input.n_cols, -100);
   double objVal = model.Train(input, labels, opt);
-  BOOST_TEST_CHECKPOINT("Training over");
+  INFO("Training over");
 
   // Test that BRNN::Train() returns finite objective value.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 }
 
 /**
  * Test that RNN::Train() does not give an error for large rho.
  */
-BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
+TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
 {
   // Setting rho value greater than sequence length which is 17.
   const size_t rho = 100;
@@ -1473,7 +1470,5 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
   }
   ens::SGD<> opt(0.01, 1, 100);
   model.Train(inputs[0], targets[0], opt);
-  BOOST_TEST_CHECKPOINT("Training over");
+  INFO("Training over");
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -131,7 +131,7 @@ TEST_CASE("GiniImpurityRangeTest", "[HoeffdingTreeTest]")
   REQUIRE(GiniImpurity::Range(1000) == Approx(0.999).epsilon(1e-7));
 }
 
-TEST_CASE("InformationGainPerfectSimpleTest", "[HoeffdingTreeTest]")
+TEST_CASE("HoeffdingInformationGainPerfectSimpleTest", "[HoeffdingTreeTest]")
 {
   // Make a simple test for Gini impurity with one class.  In this case it
   // should always be 0.  We'll assemble the count matrix by hand.
@@ -143,10 +143,11 @@ TEST_CASE("InformationGainPerfectSimpleTest", "[HoeffdingTreeTest]")
   counts(1, 1) = 0; // 0 points in category 1 with class 1.
 
   // Since the split gets us nothing, there should be no gain.
-  REQUIRE(InformationGain::Evaluate(counts) == Approx(0.0).margin(1e-10));
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) ==
+      Approx(0.0).margin(1e-10));
 }
 
-TEST_CASE("InformationGainImperfectSimpleTest", "[HoeffdingTreeTest]")
+TEST_CASE("HoeffdingInformationGainImperfectSimpleTest", "[HoeffdingTreeTest]")
 {
   // Make a simple test where a split will give us perfect classification.
   arma::Mat<size_t> counts(2, 2); // 2 categories, 2 classes.
@@ -159,10 +160,11 @@ TEST_CASE("InformationGainImperfectSimpleTest", "[HoeffdingTreeTest]")
   // The impurity before the split should be 0.5 log2(0.5) + 0.5 log2(0.5) = -1.
   // The impurity after the split should be 0.
   // So the gain should be 1.
-  REQUIRE(InformationGain::Evaluate(counts) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) ==
+      Approx(1.0).epsilon(1e-7));
 }
 
-TEST_CASE("InformationGainBadSplitTest", "[HoeffdingTreeTest]")
+TEST_CASE("HoeffdingInformationGainBadSplitTest", "[HoeffdingTreeTest]")
 {
   // Make a simple test where a split gets us nothing.
   arma::Mat<size_t> counts(2, 2);
@@ -171,14 +173,14 @@ TEST_CASE("InformationGainBadSplitTest", "[HoeffdingTreeTest]")
   counts(1, 0) = 5;
   counts(1, 1) = 5;
 
-  REQUIRE(InformationGain::Evaluate(counts) == Approx(0.0).margin(1e-10));
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) == Approx(0.0).margin(1e-10));
 }
 
 /**
  * A hand-crafted more difficult test for the Gini impurity, where four
  * categories and three classes are available.
  */
-TEST_CASE("InformationGainThreeClassTest", "[HoeffdingTreeTest]")
+TEST_CASE("HoeffdingInformationGainThreeClassTest", "[HoeffdingTreeTest]")
 {
   arma::Mat<size_t> counts(3, 4);
 
@@ -205,32 +207,32 @@ TEST_CASE("InformationGainThreeClassTest", "[HoeffdingTreeTest]")
   // (category 2)  0.28571 * -1.5850 -
   // (category 3)  0.23810 * -0.92193
   //   = 0.64116649
-  REQUIRE(InformationGain::Evaluate(counts) ==
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) ==
       Approx(0.64116649).epsilon(1e-7));
 }
 
-TEST_CASE("InformationGainZeroTest", "[HoeffdingTreeTest]")
+TEST_CASE("HoeffdingInformationGainZeroTest", "[HoeffdingTreeTest]")
 {
   // When nothing has been seen, the information gain should be zero.
   arma::Mat<size_t> counts = arma::zeros<arma::Mat<size_t>>(10, 10);
 
-  REQUIRE(InformationGain::Evaluate(counts) == Approx(0.0).margin(1e-10));
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) == Approx(0.0).margin(1e-10));
 }
 
 /**
  * Test that the range of information gains is correct for a handful of class
  * sizes.
  */
-TEST_CASE("InformationGainRangeTest", "[HoeffdingTreeTest]")
+TEST_CASE("HoeffdingInformationGainRangeTest", "[HoeffdingTreeTest]")
 {
-  REQUIRE(InformationGain::Range(1) == Approx(0).epsilon(1e-7));
-  REQUIRE(InformationGain::Range(2) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(InformationGain::Range(3) == Approx(1.5849625).epsilon(1e-7));
-  REQUIRE(InformationGain::Range(4) == Approx(2).epsilon(1e-7));
-  REQUIRE(InformationGain::Range(5) == Approx(2.32192809).epsilon(1e-7));
-  REQUIRE(InformationGain::Range(10) == Approx(3.32192809).epsilon(1e-7));
-  REQUIRE(InformationGain::Range(100) == Approx(6.64385619).epsilon(1e-7));
-  REQUIRE(InformationGain::Range(1000) == Approx(9.96578428).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(1) == Approx(0).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(2) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(3) == Approx(1.5849625).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(4) == Approx(2).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(5) == Approx(2.32192809).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(10) == Approx(3.32192809).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(100) == Approx(6.64385619).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(1000) == Approx(9.96578428).epsilon(1e-7));
 }
 
 /**

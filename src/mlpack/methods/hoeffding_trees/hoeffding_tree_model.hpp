@@ -43,10 +43,10 @@ class HoeffdingTreeModel
   typedef HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit,
       HoeffdingCategoricalSplit> GiniBinaryTreeType;
   //! Convenience typedef for INFO_HOEFFDING tree type.
-  typedef HoeffdingTree<InformationGain, HoeffdingDoubleNumericSplit,
+  typedef HoeffdingTree<HoeffdingInformationGain, HoeffdingDoubleNumericSplit,
       HoeffdingCategoricalSplit> InfoHoeffdingTreeType;
   //! Convenience typedef for INFO_BINARY tree type.
-  typedef HoeffdingTree<InformationGain, BinaryDoubleNumericSplit,
+  typedef HoeffdingTree<HoeffdingInformationGain, BinaryDoubleNumericSplit,
       HoeffdingCategoricalSplit> InfoBinaryTreeType;
 
   /**

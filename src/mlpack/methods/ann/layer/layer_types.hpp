@@ -47,6 +47,7 @@
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
+#include <mlpack/methods/ann/layer/spatial_dropout.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 #include <mlpack/methods/ann/layer/hardshrink.hpp>
@@ -289,6 +290,7 @@ using LayerTypes = boost::variant<
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     Softmax<arma::mat, arma::mat>*,
+    SpatialDropout<arma::mat, arma::mat>*,
     TransposedConvolution<NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,

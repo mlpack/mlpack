@@ -19,16 +19,13 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
+#include "catch.hpp"
+#include "serialization_catch.hpp"
 #include "custom_layer.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::kmeans;
-
-BOOST_AUTO_TEST_SUITE(FeedForwardNetworkTest);
 
 /**
  * Train and evaluate a model with the specified structure.
@@ -57,13 +54,13 @@ void TestNetwork(ModelType& model,
 
   size_t correct = arma::accu(prediction == testLabels);
   double classificationError = 1 - double(correct) / testData.n_cols;
-  BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
+  REQUIRE(classificationError <= classificationErrorThreshold);
 }
 
 /**
  * Train the vanilla network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
+TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -131,7 +128,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
-BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
+TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
 {
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -204,13 +201,13 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
     }
   }
 
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 /**
  * Train the dropout network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
+TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -284,7 +281,7 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
 /**
  * Train the highway network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(HighwayNetworkTest)
+TEST_CASE("HighwayNetworkTest", "[FeedForwardNetworkTest]")
 {
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -311,7 +308,7 @@ BOOST_AUTO_TEST_CASE(HighwayNetworkTest)
 /**
  * Train the DropConnect network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
+TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -385,7 +382,7 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
  * Test miscellaneous things of FFN,
  * e.g. copy/move constructor, assignment operator.
  */
-BOOST_AUTO_TEST_CASE(FFNMiscTest)
+TEST_CASE("FFNMiscTest", "[FeedForwardNetworkTest]")
 {
   FFN<MeanSquaredError<>> model;
   model.Add<Linear<>>(2, 3);
@@ -400,7 +397,7 @@ BOOST_AUTO_TEST_CASE(FFNMiscTest)
 /**
  * Test that serialization works ok.
  */
-BOOST_AUTO_TEST_CASE(SerializationTest)
+TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -449,7 +446,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
  * Test if the custom layers work. The target is to see if the code compiles
  * when the Train and Prediction are called.
  */
-BOOST_AUTO_TEST_CASE(CustomLayerTest)
+TEST_CASE("CustomLayerTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -481,7 +478,7 @@ BOOST_AUTO_TEST_CASE(CustomLayerTest)
 /**
  * Test the overload of Forward function which allows partial forward pass.
  */
-BOOST_AUTO_TEST_CASE(PartialForwardTest)
+TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 {
   FFN<NegativeLogLikelihood<>, RandomInitialization> model;
   model.Add<Linear<> >(5, 10);
@@ -528,7 +525,7 @@ BOOST_AUTO_TEST_CASE(PartialForwardTest)
 /**
  * Test that FFN::Train() returns finite objective value.
  */
-BOOST_AUTO_TEST_CASE(FFNTrainReturnObjective)
+TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -557,13 +554,13 @@ BOOST_AUTO_TEST_CASE(FFNTrainReturnObjective)
 
   double objVal = model.Train(trainData, trainLabels, opt);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 }
 
 /**
  * Test that FFN::Model() allows us to access the instantiated network.
  */
-BOOST_AUTO_TEST_CASE(FFNReturnModel)
+TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
 {
   // Create dummy network.
   FFN<NegativeLogLikelihood<> > model;
@@ -598,7 +595,7 @@ BOOST_AUTO_TEST_CASE(FFNReturnModel)
  * Test to see if the FFN code compiles when the Optimizer
  * doesn't have the MaxIterations() method.
  */
-BOOST_AUTO_TEST_CASE(OptimizerTest)
+TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -626,7 +623,7 @@ BOOST_AUTO_TEST_CASE(OptimizerTest)
 /**
  * Train the RBF network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(RBFNetworkTest)
+TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -703,5 +700,3 @@ BOOST_AUTO_TEST_CASE(RBFNetworkTest)
   // RBFN neural net with MeanSquaredError.
   TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
