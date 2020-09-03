@@ -1,6 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
 
+### mlpack 3.4.0
+###### 2020-09-01
+
   * Issue warnings when metrics produce NaNs in KFoldCV (#2595).
 
   * Added bindings for _R_ during Google Summer of Code (#2556).
