@@ -74,8 +74,7 @@ arma::file_type GuessFileType(std::istream& f)
 
   const arma::uword nUse = std::min(nMax, arma::uword(4096));
 
-  unsigned char* dataMem =
-      (unsigned char*) malloc(sizeof(unsigned char) *nUse);
+  unsigned char* dataMem = new unsigned char[nUse];
   memset(dataMem, 0, nUse);
 
   f.clear();
@@ -137,7 +136,7 @@ arma::file_type GuessFileType(std::istream& f)
  * @return The detected file type.
  */
 arma::file_type AutoDetect(std::fstream& stream,
-                           const std::string filename)
+                           const std::string& filename)
 {
   // Get the extension.
   std::string extension = Extension(filename);
