@@ -877,7 +877,7 @@ BOOST_AUTO_TEST_CASE(SoftMarginLossTest)
 BOOST_AUTO_TEST_CASE(MeanAbsoluteErrorTest)
 {
   arma::mat input1, target1, output, input2, target2;
-  MeanAbsoluteError<> module(true);
+  MeanAbsoluteError<> module;
 
   // Test the Forward function on a user generated input and compare it
   // against the manually calculated result.
