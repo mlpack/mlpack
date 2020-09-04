@@ -940,11 +940,8 @@ template<typename SortPolicy,
 template<typename Archive>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::serialize(
-    Archive& ar)
+    Archive& ar, std::uint32_t const version)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   // Serialize preferences for search.
   ar(CEREAL_NVP(searchMode));
   ar(CEREAL_NVP(treeNeedsReset));

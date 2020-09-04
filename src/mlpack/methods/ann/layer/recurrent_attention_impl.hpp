@@ -208,11 +208,8 @@ void RecurrentAttention<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void RecurrentAttention<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, std::uint32_t const version)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(rho);
   ar & CEREAL_NVP(outSize);
   ar & CEREAL_NVP(forwardStep);

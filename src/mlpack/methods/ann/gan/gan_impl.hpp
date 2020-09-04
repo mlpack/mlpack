@@ -19,7 +19,6 @@
 #include <mlpack/methods/ann/init_rules/network_init.hpp>
 #include <mlpack/methods/ann/visitor/output_parameter_visitor.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
-#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
 namespace ann /** Artifical Neural Network.  */ {
@@ -487,7 +486,7 @@ template<
 >
 template<typename Archive>
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
-serialize(Archive& ar, const unsigned int /* version */)
+serialize(Archive& ar, std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(parameter);
   ar & CEREAL_NVP(generator);

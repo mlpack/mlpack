@@ -150,11 +150,8 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar)
+    Archive& ar, std::uint32_t const version)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   // Be sure to clear other layers before loading.
   if (cereal::is_loading<Archive>())
     network.clear();

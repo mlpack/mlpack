@@ -307,11 +307,8 @@ template<
 >
 template<typename Archive>
 void RBM<InitializationRuleType, DataType, PolicyType>::serialize(
-    Archive& ar)
+    Archive& ar, std::uint32_t const version)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(parameter);
   ar & CEREAL_NVP(visibleSize);
   ar & CEREAL_NVP(hiddenSize);

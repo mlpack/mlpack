@@ -380,11 +380,8 @@ void GRU<InputDataType, OutputDataType>::ResetCell(const size_t /* size */)
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void GRU<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, std::uint32_t const version)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   // If necessary, clean memory from the old model.
   if (cereal::is_loading<Archive>())
   {

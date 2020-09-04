@@ -256,11 +256,8 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar)
+    Archive& ar, std::uint32_t const version)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   // Clean up memory, if we are loading.
   if (cereal::is_loading<Archive>())
   {

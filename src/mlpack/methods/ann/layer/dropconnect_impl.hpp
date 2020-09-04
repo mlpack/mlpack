@@ -106,12 +106,9 @@ void DropConnect<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void DropConnect<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, std::uint32_t const /* version */)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
-  // Delete the old network first, if needed.
+   // Delete the old network first, if needed.
   if (cereal::is_loading<Archive>())
   {
     boost::apply_visitor(DeleteVisitor(), baseLayer);

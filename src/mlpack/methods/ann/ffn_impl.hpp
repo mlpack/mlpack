@@ -539,11 +539,8 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename Archive>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar)
+    Archive& ar, std::uint32_t const /* version */)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(parameter);
   ar & CEREAL_NVP(width);
   ar & CEREAL_NVP(height);

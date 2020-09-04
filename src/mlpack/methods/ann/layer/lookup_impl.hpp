@@ -85,11 +85,8 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Lookup<InputDataType, OutputDataType>::serialize(
-    Archive& ar)
+    Archive& ar, std::uint32_t const version)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(vocabSize);
   ar & CEREAL_NVP(embeddingSize);
 

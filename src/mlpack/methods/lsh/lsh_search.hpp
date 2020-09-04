@@ -265,6 +265,7 @@ class LSHSearch
    * Serialize the LSH model.
    *
    * @param ar Archive to serialize to.
+   * @param version serialize class version to provide backward compatibility
    */
   template<typename Archive>
   void serialize(Archive& ar, std::uint32_t const version);

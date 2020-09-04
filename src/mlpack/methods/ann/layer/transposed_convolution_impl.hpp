@@ -449,11 +449,8 @@ void TransposedConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::serialize(Archive& ar)
+>::serialize(Archive& ar, std::uint32_t const version)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);
   ar & CEREAL_NVP(batchSize);

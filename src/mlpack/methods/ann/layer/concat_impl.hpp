@@ -268,11 +268,8 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar)
+    Archive& ar, std::uint32_t const version)
 {
-  uint8_t version = 1;
-  ar & CEREAL_NVP(version);
-
   ar & CEREAL_NVP(model);
   ar & CEREAL_NVP(run);
 
@@ -285,7 +282,6 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::serialize(
       std::for_each(network.begin(), network.end(),
           boost::apply_visitor(deleteVisitor));
     }
-
     ar & CEREAL_VECTOR_VARIANT_POINTER(network);
   }
 }

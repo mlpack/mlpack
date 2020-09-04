@@ -115,7 +115,7 @@ class Lookup
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, std::uint32_t const /* version */);
 
  private:
   //! Locally-stored size of the vocabulary.
