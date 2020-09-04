@@ -430,7 +430,9 @@ set(Boost_ADDITIONAL_VERSIONS
   "1.61.1" "1.61.0" "1.61"
   "1.60.1" "1.60.0" "1.60"
   "1.59.1" "1.59.0" "1.59"
-  "1.58.1" "1.58.0" "1.58")
+  "1.58.1" "1.58.0" "1.58"
+  "1.74.0" "1.73"  
+  "17.4.0" "17.4"	)
 # Disable forced config-mode CMake search for Boost, which only imports targets
 # and does not set the variables that we need.
 #
