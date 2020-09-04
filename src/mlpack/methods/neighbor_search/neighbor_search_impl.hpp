@@ -511,9 +511,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // Create the traverser.
       tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
-      // Set the value of minBaseCases.
-      traverser.MinBaseCases() = k;
-
       // Now have it traverse for each point.
       for (size_t i = 0; i < querySet.n_cols; ++i)
         traverser.Traverse(i, *referenceTree);
@@ -819,9 +816,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // Create the traverser.
       tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
-      // Set the value of minBaseCases.
-      traverser.MinBaseCases() = k;
-
       // Now have it traverse for each point.
       for (size_t i = 0; i < referenceSet->n_cols; ++i)
         traverser.Traverse(i, *referenceTree);
@@ -946,9 +940,11 @@ template<typename SortPolicy,
 template<typename Archive>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // Serialize preferences for search.
   ar(CEREAL_NVP(searchMode));
   ar(CEREAL_NVP(treeNeedsReset));
@@ -962,8 +958,12 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
     {
       delete referenceSet;
     }
-
-    ar(CEREAL_POINTER(referenceSet));
+    MatType* referenceSetTemp = const_cast<MatType*>(referenceSet);
+    ar(CEREAL_POINTER(referenceSetTemp));
+    if (cereal::is_loading<Archive>())
+    {
+      referenceSet = referenceSetTemp;
+    }
     ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.

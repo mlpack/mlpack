@@ -625,9 +625,11 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void RangeSearch<MetricType, MatType, TreeType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // Serialize preferences for search.
   ar & CEREAL_NVP(naive);
   ar & CEREAL_NVP(singleMode);
@@ -648,8 +650,12 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
       if (referenceSet)
         delete referenceSet;
     }
-
-    ar & CEREAL_NVP(referenceSet);
+    MatType* referenceSetTemp = const_cast<MatType*>(referenceSet);
+    ar & CEREAL_POINTER(referenceSetTemp);
+    if (cereal::is_loading<Archive>())
+    {
+     referenceSet =referenceSetTemp;
+    }
     ar & CEREAL_NVP(metric);
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
@@ -675,7 +681,7 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
       treeOwner = true;
     }
 
-    ar & CEREAL_NVP(referenceTree);
+    ar & CEREAL_POINTER(referenceTree);
     ar & CEREAL_NVP(oldFromNewReferences);
 
     // If we are loading, set the dataset accordingly and clean up memory if

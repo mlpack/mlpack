@@ -37,7 +37,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     height(0),
     reset(false),
     numFunctions(0),
-    deterministic(true)
+    deterministic(false)
 {
   /* Nothing to do here. */
 }
@@ -58,7 +58,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
   numFunctions = responses.n_cols;
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
-  this->deterministic = true;
+  this->deterministic = false;
   ResetDeterministic();
 
   if (!reset)
@@ -155,12 +155,6 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
 {
   if (parameter.is_empty())
     ResetParameters();
-
-  if (!deterministic)
-  {
-    deterministic = true;
-    ResetDeterministic();
-  }
 
   Forward(inputs);
   results = boost::apply_visitor(outputParameterVisitor, network.back());
@@ -545,8 +539,11 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename Archive>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(parameter);
   ar & CEREAL_NVP(width);
   ar & CEREAL_NVP(height);
@@ -563,7 +560,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & CEREAL_NVP(network);
+  ar & CEREAL_VECTOR_VARIANT_POINTER(network);
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())

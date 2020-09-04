@@ -25,8 +25,6 @@
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/weight_set_visitor.hpp"
 
-#include <boost/serialization/variant.hpp>
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -90,7 +88,8 @@ typename std::enable_if<
       !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
       ::value, void>::type
 RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::
-WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
+WarnMessageMaxIterations(OptimizerType& /* optimizer */,
+                         size_t /* samples */) const
 {
   return;
 }
@@ -546,8 +545,11 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename Archive>
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   ar & CEREAL_NVP(parameter);
   ar & CEREAL_NVP(rho);
   ar & CEREAL_NVP(single);
@@ -563,7 +565,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & CEREAL_NVP(network);
+  ar & CEREAL_VECTOR_VARIANT_POINTER(network);
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())

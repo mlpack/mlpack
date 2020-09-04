@@ -228,8 +228,11 @@ template<typename InputDataType, typename OutputDataType, bool Residual,
 template<typename Archive>
 void Sequential<
     InputDataType, OutputDataType, Residual, CustomLayers...>::serialize(
-        Archive& ar, const unsigned int /* version */)
+        Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // If loading, delete the old layers.
   if (cereal::is_loading<Archive>())
   {
@@ -240,7 +243,8 @@ void Sequential<
   }
 
   ar & CEREAL_NVP(model);
-  ar & CEREAL_NVP(network);
+  ar & CEREAL_VECTOR_VARIANT_POINTER(network);
+
   ar & CEREAL_NVP(ownsLayers);
   if (cereal::is_loading<Archive>())
     ownsLayers = !model;

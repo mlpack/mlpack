@@ -106,9 +106,11 @@ void DropConnect<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void DropConnect<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // Delete the old network first, if needed.
   if (cereal::is_loading<Archive>())
   {
@@ -117,7 +119,7 @@ void DropConnect<InputDataType, OutputDataType>::serialize(
 
   ar & CEREAL_NVP(ratio);
   ar & CEREAL_NVP(scale);
-  ar & CEREAL_NVP(baseLayer);
+  ar & CEREAL_VARIANT_POINTER(baseLayer);
 
   if (cereal::is_loading<Archive>())
   {

@@ -256,8 +256,11 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar)
 {
+  uint8_t version = 1;
+  ar & CEREAL_NVP(version);
+
   // Clean up memory, if we are loading.
   if (cereal::is_loading<Archive>())
   {
@@ -268,10 +271,10 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & CEREAL_NVP(startModule);
-  ar & CEREAL_NVP(inputModule);
-  ar & CEREAL_NVP(feedbackModule);
-  ar & CEREAL_NVP(transferModule);
+  ar & CEREAL_VARIANT_POINTER(startModule);
+  ar & CEREAL_VARIANT_POINTER(inputModule);
+  ar & CEREAL_VARIANT_POINTER(feedbackModule);
+  ar & CEREAL_VARIANT_POINTER(transferModule);
   ar & CEREAL_NVP(rho);
   ar & CEREAL_NVP(ownsLayer);
 
