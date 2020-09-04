@@ -889,7 +889,7 @@ BOOST_AUTO_TEST_CASE(MeanAbsoluteErrorTest)
   input2 = arma::mat("1 2 3 4 5 6 7 8");
   target2 = arma::mat("1 2 3 4 5 6 7 8");
   double error2 = module.Forward(input2, target2);
-  BOOST_REQUIRE_EQUAL(error2, 0)
+  BOOST_REQUIRE_EQUAL(error2, 0);
 
   // Test the Backward function.
   module.Backward(input1, target1, output);
