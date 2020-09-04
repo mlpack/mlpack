@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/mean_absolute_error.hpp
  * @author Aakash Kaushik
  *
- * Implementation of the Mean Absoulte Error function.
+ * Implementation of the Mean Absolute Error function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
