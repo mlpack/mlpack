@@ -605,8 +605,7 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, std::uint32_t const version)
 {
   // Serialize preferences for search.
   ar & CEREAL_NVP(naive);
@@ -629,8 +628,12 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
 
       setOwner = true;
     }
-
-    ar & CEREAL_POINTER(referenceSet);
+    MatType* referenceSetTemp = const_cast<MatType*>(referenceSet);
+    ar & CEREAL_POINTER(referenceSetTemp);
+    if (cereal::is_loading<Archive>())
+    {
+      referenceSet = referenceSetTemp;
+    }
     ar & CEREAL_NVP(metric);
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
