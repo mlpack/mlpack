@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/mean_absolute_error_impl.hpp
  * @author Aakash Kaushik
  *
- * Implementation of the Mean Absoulte Error function.
+ * Implementation of the Mean Absolute Error function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,8 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-MeanAbsoluteError<InputDataType, OutputDataType>::MeanAbsoluteError(const bool mean):
-  mean(mean)
+MeanAbsoluteError<InputDataType, OutputDataType>::MeanAbsoluteError(const bool reduction):
+  reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -32,10 +32,10 @@ MeanAbsoluteError<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
-  if (mean)
-    return arma::accu(arma::mean(arma::abs((input - target) / input)));
-
-  return arma::accu(arma::abs((input - target) / input));
+  if (reduction)
+    return arma::accu(arma::abs((input - target) / input));
+    
+  return arma::accu(arma::mean(arma::abs((input - target) / input)));
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -45,6 +45,9 @@ void MeanAbsoluteError<InputDataType, OutputDataType>::Backward(
     const OutputType& output,
   OutputType& output)
 {
+  if (reduction)
+    output = (target / arma::square(input));
+
   output = (target / arma::square(input)) / target.n_cols;
 }
 
@@ -54,10 +57,10 @@ void MeanAbsoluteError<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(mean);
+  ar & BOOST_SERIALIZATION_NVP(reduction);
 }
 
-} //namespace ann
-} //namespace mlpack
+} //namespace ann.
+} //namespace mlpack.
 
 #endif

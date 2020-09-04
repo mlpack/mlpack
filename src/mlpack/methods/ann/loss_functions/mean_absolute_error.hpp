@@ -37,10 +37,10 @@ class MeanAbsoluteError
   /**
    * Create the MeanAbsoluteError object.
    * 
-   * @param mean Reduction type. If true, it returns the mean of 
+   * @param reduction Reduction type. If true, it returns the mean of 
    * the loss. Else, it returns the sum.
    */
-  MeanAbsoluteError(const bool mean = true);
+  MeanAbsoluteError(const bool reduction = true);
 
   /**
    * Computes the mean absolute error function.
@@ -60,7 +60,7 @@ class MeanAbsoluteError
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
-  void backward(const InputType& input,
+  void Backward(const InputType& input,
                 const TargetType& target,
                 OutputType& output);
 
@@ -70,12 +70,12 @@ class MeanAbsoluteError
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the value of reduction type.
-  bool Mean() const { return mean; }
+  bool Reduction() const { return reduction; }
   //! Set the value of reduction type.
-  bool& Mean() { return mean; }
+  bool& Reduction() { return reduction; }
 
   /**
-  * Serialize the layer
+  * Serialize the layer.
   */
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -85,11 +85,11 @@ class MeanAbsoluteError
   OutputDataType outputParameter;
 
   //! Reduction type. If true, performs mean of loss else sum.
-  bool mean;
-}; // class MeanAbsoluteError
+  bool reduction;
+}; // class MeanAbsoluteError.
 
-} // namespace ann
-} // namespace mlpack
+} // namespace ann.
+} // namespace mlpack.
 
 // Include implementation.
 #include "mean_absolute_error_impl.hpp"
