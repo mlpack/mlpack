@@ -871,5 +871,39 @@ BOOST_AUTO_TEST_CASE(SoftMarginLossTest)
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
 }
+/**
+ * Simple test for the mean absoulte error function.
+ */
+BOOST_AUTO_TEST_CASE(MeanAbsoluteErrorTest)
+{
+  arma::mat input1, target1, output, input2, target2
+  MeanAbsoluteError<> module(false)
 
+  // Test the Forward function on a user generated input and compare it
+  // against the manually calculated result.
+  input1 = arma::mat("0.2 0.2 0.2 0.2 0.2 0.2 0.2");
+  target1 = arma::ones(1,7);
+  double error1 = module.Forward(input1,target1);
+  BOOST_REQUIRE_EQUAL(error1, 28);
+
+  input2 = arma::mat("1 2 3 4 5 6 7 8");
+  target2 = arma::mat("1 2 3 4 5 6 7 8");
+  double error2 = module.Forward(input2, target2);
+  BOOST_REQUIRE_EQUAL(error2, 0)
+
+  // Test the Backward function.
+  module.Backward(input1, target1, output);
+  for (double el : output)
+   BOOST_REQUIRE_CLOSE(error1, 3.5, 0.00001);
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, input1.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input1.n_cols);
+
+  module.Backward(input2, target2, output);
+  for (double el : output)
+    BOOST_REQUIRE_EQUAL(el, 0);
+
+  BOOST_REQUIRE_EQUAL(output.n_rows, input2.n_rows);
+  BOOST_REQUIRE_EQUAL(output.n_cols, input2.n_cols);
+}
 BOOST_AUTO_TEST_SUITE_END();
