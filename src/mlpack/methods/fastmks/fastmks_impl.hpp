@@ -640,8 +640,7 @@ template<typename KernelType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void FastMKS<KernelType, MatType, TreeType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, std::uint32_t const version)
 {
   // Serialize preferences for search.
   ar & CEREAL_NVP(naive);
@@ -659,7 +658,12 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
       setOwner = true;
     }
 
-    ar & CEREAL_POINTER(referenceSet);
+    MatType* referenceSetTmp = const_cast<MatType*>(referenceSet);
+    ar & CEREAL_POINTER(referenceSetTmp);
+    if (cereal::is_loading<Archive>())
+    {
+      referenceSet = referenceSetTmp;
+    }
     ar & CEREAL_NVP(metric);
   }
   else
