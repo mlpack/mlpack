@@ -87,9 +87,9 @@ class MeanAbsolutePercentageError
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the value of reduction type.
+  //! Get the value of reduction parameter.
   bool Reduction() const { return reduction; }
-  //! Set the value of reduction type.
+  //! Set the value of reduction parameter.
   bool& Reduction() { return reduction; }
 
   /**
