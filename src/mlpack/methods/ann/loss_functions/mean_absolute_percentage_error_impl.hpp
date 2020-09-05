@@ -46,10 +46,10 @@ template<typename InputType, typename TargetType, typename OutputType>
 void MeanAbsolutePercentageError<InputDataType, OutputDataType>::Backward(
     const InputType& input,
     const TargetType& target,
-  OutputType& output)
+    OutputType& output)
 
 {
-  output = 1/target;
+  output = 1 / target;
 
   if (!reduction)
     output = output / target.n_cols;
@@ -64,7 +64,7 @@ void MeanAbsolutePercentageError<InputDataType, OutputDataType>::serialize(
   ar & BOOST_SERIALIZATION_NVP(reduction);
 }
 
-} //namespace ann
-} //namespace mlpack
+} // namespace ann
+} // namespace mlpack
 
 #endif
