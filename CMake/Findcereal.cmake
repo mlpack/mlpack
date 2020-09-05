@@ -1,33 +1,40 @@
-# This file is orignially written by: 
-# https://github.com/facebookresearch/flashlight
+#Findcereal.cmake
+find_path(CEREAL_INCLUDE_DIRS
+  NAMES cereal
+  PATHS "$ENV{ProgramFiles}/cereal/include"
+  )
 
-# Try to find Cereal
-#
-# Sets the following variables:
-# CEREAL_FOUND
-# CEREAL_INCLUDE_DIRS - directories with Cereal headers
-# CEREAL_DEFINITIONS - Cereal compiler flags
+if(CEREAL_INCLUDE_DIRS)
+  # ------------------------------------------------------------------------
+  #  Extract version information from <CEREAL>
+  # ------------------------------------------------------------------------
 
-find_path(cereal_header_paths_tmp
-  NAMES
-    cereal.hpp
-  PATH_SUFFIXES
-  include
-  cereal/include
-	PATHS
-    ${CEREAL_ROOT_DIR}
-    ${CEREAL_ROOT_DIR}/include
-    ${CEREAL_ROOT_DIR}/cereal/include
-    $ENV{CEREAL_ROOT_DIR}
-    $ENV{CEREAL_ROOT_DIR}/include
-    $ENV{CEREAL_ROOT_DIR}/cereal
-    )
+  set(CEREAL_VERSION_MAJOR 0)
+  set(CEREAL_VERSION_MINOR 0)
+  set(CEREAL_VERSION_PATCH 0)
 
-get_filename_component(cereal_INCLUDE_DIRS ${cereal_header_paths_tmp} PATH)
+  if(EXISTS "${CEREAL_INCLUDE_DIRS}/cereal/version.hpp")
+
+    set(CEREAL_FOUND YES)
+
+    # Read and parse cereal version header file for version number
+    file(READ "${CEREAL_INCLUDE_DIRS}/cereal/version.hpp"
+        _CEREAL_HEADER_CONTENTS)
+    string(REGEX REPLACE ".*#define CEREAL_VERSION_MAJOR ([0-9]+).*" "\\1"
+        CEREAL_VERSION_MAJOR "${_CEREAL_HEADER_CONTENTS}")
+    string(REGEX REPLACE ".*#define CEREAL_VERSION_MINOR ([0-9]+).*" "\\1"
+        CEREAL_VERSION_MINOR "${_CEREAL_HEADER_CONTENTS}")
+    string(REGEX REPLACE ".*#define CEREAL_VERSION_PATCH ([0-9]+).*" "\\1"
+        CEREAL_VERSION_PATCH "${_CEREAL_HEADER_CONTENTS}")
+  endif()
+
+  set(CEREAL_VERSION_STRING "${CEREAL_VERSION_MAJOR}.${CEREAL_VERSION_MINOR}.${CEREAL_VERSION_PATCH}")
+endif ()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(cereal
-  REQUIRED_VARS cereal_INCLUDE_DIRS
+  REQUIRED_VARS CEREAL_INCLUDE_DIRS
+  VERSION_VAR CEREAL_VERSION_STRING
   )
 
-mark_as_advanced(cereal_FOUND)
+mark_as_advanced(CEREAL_INCLUDE_DIRS)

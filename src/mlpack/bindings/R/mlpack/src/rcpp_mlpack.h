@@ -15,6 +15,8 @@
 
 #include <Rcpp.h>
 
+#define CEREAL_ARCHIVES_JSON_HPP_
+
 // To suppress Found ‘__assert_fail’, possibly from ‘assert’ (C).
 #define BOOST_DISABLE_ASSERTS
 

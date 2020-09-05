@@ -91,12 +91,13 @@ bool Load(const std::string& filename,
       cereal::XMLInputArchive ar(ifs);
       ar(cereal::make_nvp(name.c_str(), t));
     }
-
+#if (BINDING_TYPE != BINDING_TYPE_R)
     else if (f == format::json)
     {
      cereal::JSONInputArchive ar(ifs);
      ar(cereal::make_nvp(name.c_str(), t));
     }
+#endif
     else if (f == format::binary)
     {
       cereal::BinaryInputArchive ar(ifs);

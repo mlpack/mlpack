@@ -14,6 +14,10 @@
 
 #include <Rcpp.h>
 
+#define BINDING_TYPE BINDING_TYPE_R
+
+#define CEREAL_ARCHIVES_JSON_HPP_
+
 // To suppress Found ‘__assert_fail’, possibly from ‘assert’ (C).
 #define BOOST_DISABLE_ASSERTS
 
@@ -44,25 +48,6 @@
 @R_SRC@
 
 #include <mlpack/core.hpp>
-
-// These are all the boost files, we need to compile R bindings for mlpack that
-// are not a part of mlpack itself.
-#include <boost/serialization/archive_exception.cpp>
-#include <boost/serialization/basic_archive.cpp>
-#include <boost/serialization/basic_oarchive.cpp>
-#include <boost/serialization/basic_oserializer.cpp>
-#include <boost/serialization/basic_iarchive.cpp>
-#include <boost/serialization/basic_iserializer.cpp>
-#include <boost/serialization/basic_pointer_iserializer.cpp>
-#include <boost/serialization/basic_pointer_oserializer.cpp>
-#include <boost/serialization/basic_text_oprimitive.cpp>
-#include <boost/serialization/binary_iarchive.cpp>
-#include <boost/serialization/binary_oarchive.cpp>
-#include <boost/serialization/extended_type_info_typeid.cpp>
-#include <boost/serialization/extended_type_info.cpp>
-#include <boost/serialization/basic_serializer_map.cpp>
-#include <boost/serialization/void_cast.cpp>
-#include <boost/serialization/utf8_codecvt_facet.cpp>
 
 #undef ARMA_EXTRA_MAT_PROTO
 #undef ARMA_EXTRA_MAT_MEAT

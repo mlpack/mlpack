@@ -22,6 +22,7 @@ option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 set(ARMADILLO_VERSION "8.400.0")
 set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
+set(CEREAL_VERSION "1.1.2")
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -412,7 +413,7 @@ else ()
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 endif ()
 
-find_package(cereal 1.3.0)
+find_package(cereal "${CEREAL_VERSION}" REQUIRED)
 
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.

@@ -39,7 +39,7 @@ steps:
         sudo apt-get -y update
         sudo apt-get install -y r-base-core
       fi
-      sudo Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'))"
+      sudo Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat', 'Rcereal'))"
     fi
 
     # Install armadillo.
