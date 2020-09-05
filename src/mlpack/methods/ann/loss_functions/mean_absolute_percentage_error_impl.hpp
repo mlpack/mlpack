@@ -33,7 +33,7 @@ MeanAbsolutePercentageError<InputDataType, OutputDataType>::Forward(
     const TargetType& target)
 {
   InputType loss = arma::abs((input - target) / target);
-  typename InputType::elem_type lossSum = arma:accu(loss);
+  typename InputType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
     return lossSum;

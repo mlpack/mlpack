@@ -881,8 +881,8 @@ BOOST_AUTO_TEST_CASE(MeanAbsolutePercentageErrorTest)
   MeanAbsolutePercentageError<> module;
 
   // Test for sum reduction.
-  input = arma::mat(3, -0.5, 2, 7);
-  target = arma::mat(2.5, 0.2, 2, 8);
+  input = arma::mat("3, -0.5, 2, 7");
+  target = arma::mat("2.5, 0.2, 2, 8");
   expectedOutput = arma::mat("0.4 5.0 0.5 0.125");
 
   // Test the Forward function. Loss should be 3.825.
