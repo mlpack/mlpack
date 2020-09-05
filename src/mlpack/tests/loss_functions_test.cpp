@@ -887,7 +887,7 @@ BOOST_AUTO_TEST_CASE(MeanAbsolutePercentageErrorTest)
 
   // Test the Forward function. Loss should be 3.825.
   double loss = module.Forward(input,target);
-  BOOST_REQUIRE_EQUAL(loss, 3.825);
+  BOOST_REQUIRE_CLOSE(loss, 3.825, 1e-1); 
 
   // Test the Backward function.
   module.Backward(input, target, output);
@@ -902,11 +902,11 @@ BOOST_AUTO_TEST_CASE(MeanAbsolutePercentageErrorTest)
 
   // Test the Forward function. Loss should be 0.95625.
   loss = module.Forward(input,target);
-  BOOST_REQUIRE_EQUAL(loss, 0.95625);
+  BOOST_REQUIRE_CLOSE(loss, 0.95625, 1e-1);
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 1.5062, 1e-3);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 1.50625, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
