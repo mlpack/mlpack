@@ -416,9 +416,8 @@ endif ()
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
-
-  "1.74.0" "1.73"  
-  "17.4.0" "17.4"		
+  "1.74.0" "1.74"  
+  "17.3.0" "17.3"		
   "1.72.0" "1.72"
   "1.71.0" "1.71"
   "1.70.0" "1.70"
