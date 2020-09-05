@@ -883,7 +883,7 @@ BOOST_AUTO_TEST_CASE(MeanAbsolutePercentageErrorTest)
   // Test for sum reduction.
   input = arma::mat(3, -0.5, 2, 7);
   target = arma::mat(2.5, 0.2, 2, 8);
-  expectedOutput = arma::mat("0.4 5.0 0.5 0.125")
+  expectedOutput = arma::mat("0.4 5.0 0.5 0.125");
 
   // Test the Forward function. Loss should be 3.825.
   double loss = module.Forward(input,target);
@@ -898,7 +898,7 @@ BOOST_AUTO_TEST_CASE(MeanAbsolutePercentageErrorTest)
 
   // Test for mean reduction by modifying reduction parameter using accessor.
   module.Reduction() = false;
-  expectedOutput = arma::mat("0.1 1.25 0.1250 0.0312")
+  expectedOutput = arma::mat("0.1 1.25 0.1250 0.0312");
 
   // Test the Forward function. Loss should be 0.95625.
   loss = module.Forward(input,target);
