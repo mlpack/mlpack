@@ -48,8 +48,11 @@ void MeanAbsolutePercentageError<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 
-{
-  output = 1 / target;
+{ 
+  if (input < target)
+    output = - 1 / target;
+  else 
+    output = 1 / target;
 
   if (!reduction)
     output = output / target.n_cols;
