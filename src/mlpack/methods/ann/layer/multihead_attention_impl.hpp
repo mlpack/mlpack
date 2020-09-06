@@ -434,7 +434,7 @@ template <typename InputDataType, typename OutputDataType,
           typename RegularizerType>
 template <typename Archive>
 void MultiheadAttention<InputDataType, OutputDataType, RegularizerType>::
-serialize(Archive& ar, const unsigned int /* version */)
+serialize(Archive& ar, std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(tgtSeqLen);
   ar & CEREAL_NVP(srcSeqLen);

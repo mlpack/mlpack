@@ -129,7 +129,7 @@ void NoisyLinear<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void NoisyLinear<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);

@@ -75,7 +75,7 @@ void PositionalEncoding<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void PositionalEncoding<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(embedDim);
   ar & CEREAL_NVP(maxSequenceLength);

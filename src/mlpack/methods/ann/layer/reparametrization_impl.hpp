@@ -90,7 +90,7 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Reparametrization<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(latentSize);
   ar & CEREAL_NVP(stochastic);

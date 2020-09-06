@@ -132,7 +132,7 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void VirtualBatchNorm<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(size);
 

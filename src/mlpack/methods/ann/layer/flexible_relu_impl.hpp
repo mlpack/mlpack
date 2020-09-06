@@ -75,7 +75,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void FlexibleReLU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version*/)
+    std::uint32_t const /* version*/)
 {
   ar & CEREAL_NVP(alpha);
 }
