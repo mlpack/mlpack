@@ -884,10 +884,10 @@ BOOST_AUTO_TEST_CASE(MeanAbsolutePercentageErrorTest)
   target = arma::mat("2.5 0.2 2 8");
   expectedOutput = arma::mat("10.0 -125.0 12.5 -3.125");
 
-  // Test the Forward function. Loss should be 95.6246.
+  // Test the Forward function. Loss should be 95.625.
   // Loss value calculated manually.
   double loss = module.Forward(input,target);
-  BOOST_REQUIRE_CLOSE(loss, 95.6246, 1e-1); 
+  BOOST_REQUIRE_CLOSE(loss, 95.625, 1e-1); 
 
   // Test the Backward function.
   module.Backward(input, target, output);

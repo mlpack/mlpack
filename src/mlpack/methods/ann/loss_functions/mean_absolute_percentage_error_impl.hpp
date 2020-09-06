@@ -31,8 +31,7 @@ MeanAbsolutePercentageError<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
-  InputType denominator = target + 1e-6;
-  InputType loss = arma::abs((input - target) / denominator); 
+  InputType loss = arma::abs((input - target) / target); 
   return arma::accu(loss) * (100 / target.n_cols);
 }
 
