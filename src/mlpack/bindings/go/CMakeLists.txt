@@ -9,6 +9,30 @@ macro (not_found_return message)
   endif()
 endmacro ()
 
+macro (post_go_setup)
+  if (BUILD_GO_BINDINGS)
+    # If we are building Go bindings, we have to end the 'module' declaration in
+    # models.go
+    file(APPEND
+        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/models.go"
+        "*/\n"
+        "import \"C\"\n\n"
+        "import (\n"
+        "  \"runtime\"\n"
+        "  \"unsafe\"\n"
+        ")\n\n")
+
+    include("${CMAKE_SOURCE_DIR}/CMake/go/AppendModel.cmake")
+    # Read list content.
+    get_property(MODELS GLOBAL PROPERTY GO_MODELS)
+    foreach (models IN LISTS MODELS)
+      append_model(
+        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/models.go"
+         ${models})
+    endforeach()
+  endif()
+endmacro ()
+
 # If we are not supposed to make Go bindings, define the macro so it does
 # nothing and leave this file.
 if (NOT BUILD_GO_BINDINGS)
@@ -176,7 +200,7 @@ set_property(GLOBAL PROPERTY GO_MODELS "")
 macro (add_go_binding name)
 if (BUILD_GO_BINDINGS)
 
-  # Include all .h that define model to models.go. 
+  # Include all .h that define model to models.go.
   file(READ "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp" MAIN_FILE)
   if (MAIN_FILE MATCHES "PARAM_MODEL")
     file(APPEND
