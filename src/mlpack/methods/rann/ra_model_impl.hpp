@@ -332,7 +332,7 @@ RAModel<SortPolicy>::~RAModel()
 
 template<typename SortPolicy>
 template<typename Archive>
-void RAModel<SortPolicy>::serialize(Archive& ar, 
+void RAModel<SortPolicy>::serialize(Archive& ar,
     std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(treeType);
