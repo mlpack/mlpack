@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
   wgan.Predict(noise, orgPredictions);
 
   GAN<FFN<EarthMoverDistance<> >, GaussianInitialization,
-      std::function<double()>, WGAN> wganText(generator, discriminator,
+      std::function<double()>, WGAN> wganJson(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
@@ -179,17 +179,17 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
-  SerializeObjectAll(wgan, wganXml, wganText, wganBinary);
+  SerializeObjectAll(wgan, wganXml, wganJson, wganBinary);
 
-  arma::mat predictions, xmlPredictions, textPredictions, binaryPredictions;
+  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
   wgan.Predict(noise, predictions);
   wganXml.Predict(noise, xmlPredictions);
-  wganText.Predict(noise, textPredictions);
+  wganJson.Predict(noise, jsonPredictions);
   wganBinary.Predict(noise, binaryPredictions);
 
   CheckMatrices(orgPredictions, predictions);
   CheckMatrices(orgPredictions, xmlPredictions);
-  CheckMatrices(orgPredictions, textPredictions);
+  CheckMatrices(orgPredictions, jsonPredictions);
   CheckMatrices(orgPredictions, binaryPredictions);
 }
 
@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
   wganGP.Predict(noise, orgPredictions);
 
   GAN<FFN<EarthMoverDistance<> >, GaussianInitialization,
-      std::function<double()>, WGANGP> wganGPText(generator, discriminator,
+      std::function<double()>, WGANGP> wganGPJson(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
@@ -341,17 +341,17 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
-  SerializeObjectAll(wganGP, wganGPXml, wganGPText, wganGPBinary);
+  SerializeObjectAll(wganGP, wganGPXml, wganGPJson, wganGPBinary);
 
-  arma::mat predictions, xmlPredictions, textPredictions, binaryPredictions;
+  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
   wganGP.Predict(noise, predictions);
   wganGPXml.Predict(noise, xmlPredictions);
-  wganGPText.Predict(noise, textPredictions);
+  wganGPJson.Predict(noise, jsonPredictions);
   wganGPBinary.Predict(noise, binaryPredictions);
 
   CheckMatrices(orgPredictions, predictions);
   CheckMatrices(orgPredictions, xmlPredictions);
-  CheckMatrices(orgPredictions, textPredictions);
+  CheckMatrices(orgPredictions, jsonPredictions);
   CheckMatrices(orgPredictions, binaryPredictions);
 }
 

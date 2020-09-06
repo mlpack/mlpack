@@ -429,19 +429,19 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 
   model.Train(trainData, trainLabels, opt);
 
-  FFN<NegativeLogLikelihood<>> xmlModel, textModel, binaryModel;
+  FFN<NegativeLogLikelihood<>> xmlModel, jsonModel, binaryModel;
   xmlModel.Add<Linear<>>(10, 10); // Layer that will get removed.
 
   // Serialize into other models.
-  SerializeObjectAll(model, xmlModel, textModel, binaryModel);
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
-  arma::mat predictions, xmlPredictions, textPredictions, binaryPredictions;
+  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
   model.Predict(testData, predictions);
   xmlModel.Predict(testData, xmlPredictions);
-  textModel.Predict(testData, textPredictions);
-  textModel.Predict(testData, binaryPredictions);
+  jsonModel.Predict(testData, jsonPredictions);
+  jsonModel.Predict(testData, binaryPredictions);
 
-  CheckMatrices(predictions, xmlPredictions, textPredictions,
+  CheckMatrices(predictions, xmlPredictions, jsonPredictions,
       binaryPredictions);
 }
 

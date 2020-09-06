@@ -1409,7 +1409,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeModelSerializationTest)
   // sure we get reasonable results.
   for (size_t i = 0; i < 4; ++i)
   {
-    HoeffdingTreeModel m, xmlM, textM, binaryM;
+    HoeffdingTreeModel m, xmlM, jsonM, binaryM;
     switch (i)
     {
       case 0:
@@ -1436,28 +1436,28 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeModelSerializationTest)
         100);
 
     // Now make sure the performance is reasonable.
-    arma::Row<size_t> predictions, predictionsXml, predictionsText,
+    arma::Row<size_t> predictions, predictionsXml, predictionsJson,
         predictionsBinary;
-    arma::rowvec probabilities, probabilitiesXml, probabilitiesText,
+    arma::rowvec probabilities, probabilitiesXml, probabilitiesJson,
         probabilitiesBinary;
 
-    SerializeObjectAll(m, xmlM, textM, binaryM);
+    SerializeObjectAll(m, xmlM, jsonM, binaryM);
 
     // Get predictions for all.
     m.Classify(dataset, predictions, probabilities);
     xmlM.Classify(dataset, predictionsXml, probabilitiesXml);
-    textM.Classify(dataset, predictionsText, probabilitiesText);
+    jsonM.Classify(dataset, predictionsJson, probabilitiesJson);
     binaryM.Classify(dataset, predictionsBinary, probabilitiesBinary);
 
     for (size_t i = 0; i < 3000; ++i)
     {
       // Check consistency of predictions and probabilities.
       BOOST_REQUIRE_EQUAL(predictions[i], predictionsXml[i]);
-      BOOST_REQUIRE_EQUAL(predictions[i], predictionsText[i]);
+      BOOST_REQUIRE_EQUAL(predictions[i], predictionsJson[i]);
       BOOST_REQUIRE_EQUAL(predictions[i], predictionsBinary[i]);
 
       BOOST_REQUIRE_CLOSE(probabilities[i], probabilitiesXml[i], 1e-5);
-      BOOST_REQUIRE_CLOSE(probabilities[i], probabilitiesText[i], 1e-5);
+      BOOST_REQUIRE_CLOSE(probabilities[i], probabilitiesJson[i], 1e-5);
       BOOST_REQUIRE_CLOSE(probabilities[i], probabilitiesBinary[i], 1e-5);
     }
   }
