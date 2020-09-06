@@ -51,14 +51,8 @@ class MeanAbsolutePercentageError
  public:
   /**
    * Create the MeanAbsolutePercentageError object.
-   * 
-   * @param reduction Specifies the reduction to apply to the output. If false,
-   *                  'mean' reduction is used, where sum of the output will be
-   *                  divided by the number of elements in the output. If
-   *                  true, 'sum' reduction is used and the output will be
-   *                  summed. It is set to true by default.
    */
-  MeanAbsolutePercentageError(const bool reduction = true);
+  MeanAbsolutePercentageError();
 
   /**
    * Computes the mean absolute percentage error function.
@@ -87,11 +81,6 @@ class MeanAbsolutePercentageError
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the value of reduction parameter.
-  bool Reduction() const { return reduction; }
-  //! Set the value of reduction parameter.
-  bool& Reduction() { return reduction; }
-
   /**
   * Serialize the layer.
   */
@@ -101,9 +90,6 @@ class MeanAbsolutePercentageError
  private:
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! The boolean value that tells if reduction is sum or mean.
-  bool reduction;
 }; // class MeanAbsolutePercentageError
 
 } // namespace ann

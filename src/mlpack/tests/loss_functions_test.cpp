@@ -880,35 +880,18 @@ BOOST_AUTO_TEST_CASE(MeanAbsolutePercentageErrorTest)
   arma::mat input, target, output, expectedOutput;
   MeanAbsolutePercentageError<> module;
 
-  // Test for sum reduction.
   input = arma::mat("3 -0.5 2 7");
   target = arma::mat("2.5 0.2 2 8");
-  expectedOutput = arma::mat("0.4 5.0 0.5 0.125");
+  expectedOutput = arma::mat("10.0 -125.0 12.5 -3.125");
 
-  // Test the Forward function. Loss should be 3.825.
+  // Test the Forward function. Loss should be 95.6246.
   // Loss value calculated manually.
   double loss = module.Forward(input,target);
-  BOOST_REQUIRE_CLOSE(loss, 3.825, 1e-1); 
+  BOOST_REQUIRE_CLOSE(loss, 95.6246, 1e-1); 
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 6.025, 1e-3);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
-  CheckMatrices(output, expectedOutput, 0.1);
-
-  // Test for mean reduction by modifying reduction parameter using accessor.
-  module.Reduction() = false;
-  expectedOutput = arma::mat("0.1 1.25 0.1250 0.0312");
-
-  // Test the Forward function. Loss should be 0.95625.
-  // Loss value calculated manually.
-  loss = module.Forward(input,target);
-  BOOST_REQUIRE_CLOSE(loss, 0.95625, 1e-1);
-
-  // Test the Backward function.
-  module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), 1.50625, 1e-3);
+  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -105.625, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);

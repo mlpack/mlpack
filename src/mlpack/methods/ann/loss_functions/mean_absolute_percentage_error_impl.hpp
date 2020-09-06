@@ -19,8 +19,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-MeanAbsolutePercentageError<InputDataType, OutputDataType>::MeanAbsolutePercentageError(
-  const bool reduction) : reduction(reduction)
+MeanAbsolutePercentageError<InputDataType, OutputDataType>::MeanAbsolutePercentageError()
 {
   // Nothing to do here.
 }
@@ -32,13 +31,9 @@ MeanAbsolutePercentageError<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
-  InputType loss = arma::abs((input - target) / target);
-  typename InputType::elem_type lossSum = arma::accu(loss);
-
-  if (reduction)
-    return lossSum;
-    
-  return lossSum / target.n_cols;
+  InputType denominator = target + 1e-6;
+  InputType loss = arma::abs((input - target) / denominator); 
+  return arma::accu(loss) * (100 / target.n_cols);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -49,22 +44,16 @@ void MeanAbsolutePercentageError<InputDataType, OutputDataType>::Backward(
     OutputType& output)
 
 { 
-  if (input < target)
-    output = - 1 / target;
-  else 
-    output = 1 / target;
-
-  if (!reduction)
-    output = output / target.n_cols;
+  output = (((arma::conv_to<arma::mat>::from(input < target) * -2) + 1) / target) * (100 / target.n_cols) ;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanAbsolutePercentageError<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
+    Archive& /* ar */,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(reduction);
+  // Nothing to do here.
 }
 
 } // namespace ann
