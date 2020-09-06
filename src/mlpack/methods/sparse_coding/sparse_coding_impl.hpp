@@ -110,7 +110,7 @@ double SparseCoding::Train(
 }
 
 template<typename Archive>
-void SparseCoding::serialize(Archive& ar, const unsigned int /* version */)
+void SparseCoding::serialize(Archive& ar, std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(atoms);
   ar & CEREAL_NVP(dictionary);

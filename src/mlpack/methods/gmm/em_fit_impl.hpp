@@ -412,7 +412,7 @@ template<typename InitialClusteringType,
          typename Distribution>
 template<typename Archive>
 void EMFit<InitialClusteringType, CovarianceConstraintPolicy, Distribution>::
-serialize(Archive& ar, const unsigned int /* version */)
+serialize(Archive& ar, std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(maxIterations);
   ar & CEREAL_NVP(tolerance);

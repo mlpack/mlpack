@@ -46,7 +46,7 @@ class LRegularizer
 
   //! Serialize the regularizer (nothing to do).
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, std::uint32_t const /* version */);
 
   //! The power of the regularizer.
   static const int Power = TPower;

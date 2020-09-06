@@ -712,7 +712,7 @@ void KDE<KernelType,
          TreeType,
          DualTreeTraversalType,
          SingleTreeTraversalType>::
-serialize(Archive& ar, const unsigned int /* version */)
+serialize(Archive& ar, std::uint32_t const /* version */)
 {
   // Serialize preferences.
   ar & CEREAL_NVP(relError);

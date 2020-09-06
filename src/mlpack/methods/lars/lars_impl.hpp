@@ -22,7 +22,7 @@ namespace regression {
  * Serialize the LARS model.
  */
 template<typename Archive>
-void LARS::serialize(Archive& ar, const unsigned int /* version */)
+void LARS::serialize(Archive& ar, std::uint32_t const /* version */)
 {
   // If we're loading, we have to use the internal storage.
   if (cereal::is_loading<Archive>())

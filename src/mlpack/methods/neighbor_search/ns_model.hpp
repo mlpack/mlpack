@@ -350,7 +350,7 @@ class NSModel
 
   //! Serialize the neighbor search model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, std::uint32_t const /* version */);
 
   //! Expose the dataset.
   const arma::mat& Dataset() const;

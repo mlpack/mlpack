@@ -232,7 +232,7 @@ class SoftmaxRegression
    * Serialize the SoftmaxRegression model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, std::uint32_t const /* version */)
   {
     ar & CEREAL_NVP(parameters);
     ar & CEREAL_NVP(numClasses);

@@ -99,7 +99,7 @@ void MaxVarianceNewCluster::EmptyCluster(const MatType& data,
 //! Serialize the object.
 template<typename Archive>
 void MaxVarianceNewCluster::serialize(Archive& /* ar */,
-                                      const unsigned int /* version */)
+                                      std::uint32_t const /* version */)
 {
   // Serialization is useless here, because the only thing we store is
   // precalculated quantities, and if we're serializing, our precalculations are

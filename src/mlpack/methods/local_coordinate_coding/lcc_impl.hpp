@@ -108,7 +108,7 @@ double LocalCoordinateCoding::Train(
 
 template<typename Archive>
 void LocalCoordinateCoding::serialize(Archive& ar,
-                                      const unsigned int /* version */)
+                                      std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(atoms);
   ar & CEREAL_NVP(dictionary);

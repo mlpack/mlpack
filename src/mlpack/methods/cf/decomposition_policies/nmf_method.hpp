@@ -152,7 +152,7 @@ class NMFPolicy
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, std::uint32_t const /* version */)
   {
     ar & CEREAL_NVP(w);
     ar & CEREAL_NVP(h);

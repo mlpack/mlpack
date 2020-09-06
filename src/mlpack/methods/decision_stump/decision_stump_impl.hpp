@@ -200,7 +200,7 @@ DecisionStump<MatType>::DecisionStump(const DecisionStump<>& other,
 template<typename MatType>
 template<typename Archive>
 void DecisionStump<MatType>::serialize(Archive& ar,
-                                       const unsigned int /* version */)
+                                       std::uint32_t const /* version */)
 {
   // This is straightforward; just serialize all of the members of the class.
   // None need special handling.
