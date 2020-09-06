@@ -53,7 +53,7 @@ template<typename InputDataType, typename OutputDataType, typename DistType>
 template<typename Archive>
 void ReconstructionLoss<InputDataType, OutputDataType, DistType>::serialize(
     Archive& /* ar */,
-    const unsigned int /* version */)
+    std::uint32_t const /* version */)
 {
   // Nothing to do here.
 }
