@@ -43,7 +43,8 @@ struct PCATestFixture
 /**
  * Make sure that if we ask for a dataset in 3 dimensions back, we get it.
  */
-TEST_CASE_METHOD(PCATestFixture, "PCADimensionTest", "[PCAMainTest]")
+TEST_CASE_METHOD(PCATestFixture, "PCADimensionTest",
+                 "[PCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -62,7 +63,8 @@ TEST_CASE_METHOD(PCATestFixture, "PCADimensionTest", "[PCAMainTest]")
  * Ensure that if we retain all variance, we get back a matrix with the same
  * dimensionality.
  */
-TEST_CASE_METHOD(PCATestFixture, "PCAVarRetainTest", "[PCAMainTest]")
+TEST_CASE_METHOD(PCATestFixture, "PCAVarRetainTest",
+                 "[PCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(4, 5);
 
@@ -81,7 +83,8 @@ TEST_CASE_METHOD(PCATestFixture, "PCAVarRetainTest", "[PCAMainTest]")
 /**
  * Ensure that if we retain no variance, we get back no dimensions.
  */
-TEST_CASE_METHOD(PCATestFixture, "PCANoVarRetainTest", "[PCAMainTest]")
+TEST_CASE_METHOD(PCATestFixture, "PCANoVarRetainTest",
+                 "[PCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -101,7 +104,7 @@ TEST_CASE_METHOD(PCATestFixture, "PCANoVarRetainTest", "[PCAMainTest]")
  * Check that we can't specify an invalid new dimensionality.
  */
 TEST_CASE_METHOD(PCATestFixture, "PCATooHighNewDimensionalityTest",
-        "[PCAMainTest]")
+                 "[PCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
