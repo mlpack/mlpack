@@ -1,5 +1,5 @@
 /**
- * @file detect_file_type.hpp
+ * @file core/data/detect_file_type.hpp
  * @author Conrad Sanderson
  * @author Ryan Curtin
  *
