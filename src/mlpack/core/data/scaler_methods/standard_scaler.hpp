@@ -99,7 +99,7 @@ class StandardScaler
   const arma::vec& ItemStdDev() const { return itemStdDev; }
 
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, std::uint32_t const /* version */)
   {
     ar & CEREAL_NVP(itemMean);
     ar & CEREAL_NVP(itemStdDev);

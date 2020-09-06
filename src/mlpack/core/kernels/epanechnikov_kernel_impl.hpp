@@ -79,7 +79,7 @@ double EpanechnikovKernel::ConvolutionIntegral(const VecTypeA& a,
 //! Serialize the kernel.
 template<typename Archive>
 void EpanechnikovKernel::serialize(Archive& ar,
-                                   const unsigned int /* version */)
+                                   std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(bandwidth);
   ar & CEREAL_NVP(inverseBandwidthSquared);

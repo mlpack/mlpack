@@ -151,7 +151,7 @@ class DatasetMapper
    * Serialize the dataset information.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, std::uint32_t const /* version */)
   {
     ar & CEREAL_NVP(types);
     ar & CEREAL_NVP(maps);

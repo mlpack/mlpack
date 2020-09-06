@@ -199,7 +199,7 @@ EncodeHelper(const std::vector<std::string>& input,
 template<typename EncodingPolicyType, typename DictionaryType>
 template<typename Archive>
 void StringEncoding<EncodingPolicyType, DictionaryType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, std::uint32_t const /* version */)
 {
   ar & CEREAL_NVP(encodingPolicy);
   ar & CEREAL_NVP(dictionary);

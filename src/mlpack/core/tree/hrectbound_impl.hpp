@@ -664,7 +664,7 @@ template<typename MetricType, typename ElemType>
 template<typename Archive>
 void HRectBound<MetricType, ElemType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    std::uint32_t const /* version */)
 {
   // We can't serialize a raw array directly, so wrap it.
   ar & cereal::make_array(bounds, dim);

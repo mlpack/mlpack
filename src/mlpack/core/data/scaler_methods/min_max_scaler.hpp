@@ -128,7 +128,7 @@ class MinMaxScaler
   double ScaleMin() const { return scaleMin; }
 
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, std::uint32_t const /* version */)
   {
     ar & CEREAL_NVP(itemMin);
     ar & CEREAL_NVP(itemMax);

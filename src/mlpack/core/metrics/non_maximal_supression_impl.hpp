@@ -128,7 +128,7 @@ template<bool UseCoordinates>
 template<typename Archive>
 void NMS<UseCoordinates>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    std::uint32_t const /* version */)
 {
   // Nothing to do here.
 }

@@ -982,7 +982,7 @@ template<typename MetricType, typename ElemType>
 template<typename Archive>
 void CellBound<MetricType, ElemType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    std::uint32_t const /* version */)
 {
   ar & cereal::make_array(bounds, dim);
   ar & CEREAL_NVP(minWidth);
