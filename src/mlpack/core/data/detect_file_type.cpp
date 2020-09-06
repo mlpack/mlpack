@@ -187,9 +187,8 @@ arma::file_type AutoDetect(std::fstream& stream,
     // We'll let Armadillo do its guessing (although we have to check if it is
     // arma_ascii ourselves) and see what we come up with.
 
-    // This is taken from load_auto_detect() in diskio_meat.hpp
+    // This is adapted from load_auto_detect() in diskio_meat.hpp.
     const std::string ARMA_MAT_TXT = "ARMA_MAT_TXT";
-    // char* rawHeader = new char[ARMA_MAT_TXT.length() + 1];
     std::string rawHeader(ARMA_MAT_TXT.length(), '\0');
     std::streampos pos = stream.tellg();
 
