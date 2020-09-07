@@ -1,5 +1,5 @@
-### mlpack ?.?.?
-###### ????-??-??
+### mlpack 3.4.1
+###### 2020-09-07
   * Fix incorrect parsing of required matrix/model parameters for command-line
     bindings (#2600).
 
