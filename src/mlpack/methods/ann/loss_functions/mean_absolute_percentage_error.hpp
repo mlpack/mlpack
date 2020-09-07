@@ -18,9 +18,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The mean absolute percentage error performance function measures the network's
- * performance according to the mean of the absolute difference between
- * input and target divided by target.
+ * The mean absolute percentage error performance function measures the
+ * network's performance according to the mean of the absolute difference
+ * between input and target divided by target.
  *
  * For more information, refer to the following paper,
  *

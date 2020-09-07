@@ -19,7 +19,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-MeanAbsolutePercentageError<InputDataType, OutputDataType>::MeanAbsolutePercentageError()
+MeanAbsolutePercentageError<InputDataType, OutputDataType>::
+MeanAbsolutePercentageError()
 {
   // Nothing to do here.
 }
@@ -43,7 +44,8 @@ void MeanAbsolutePercentageError<InputDataType, OutputDataType>::Backward(
     OutputType& output)
 
 { 
-  output = (((arma::conv_to<arma::mat>::from(input < target) * -2) + 1) / target) * (100 / target.n_cols) ;
+  output = (((arma::conv_to<arma::mat>::from(input < target) * -2) + 1) /
+      target) * (100 / target.n_cols) ;
 }
 
 template<typename InputDataType, typename OutputDataType>
