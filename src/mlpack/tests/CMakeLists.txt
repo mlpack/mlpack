@@ -16,7 +16,6 @@ add_executable(mlpack_test
   emst_test.cpp
   fastmks_test.cpp
   facilities_test.cpp
-  feedforward_network_test.cpp
   gan_test.cpp
   gmm_test.cpp
   hmm_test.cpp
@@ -25,7 +24,6 @@ add_executable(mlpack_test
   hyperplane_test.cpp
   init_rules_test.cpp
   kde_test.cpp
-  kmeans_test.cpp
   krann_search_test.cpp
   ksinit_test.cpp
   lars_test.cpp
@@ -59,9 +57,7 @@ add_executable(mlpack_test
   random_forest_test.cpp
   random_test.cpp
   range_search_test.cpp
-  rbm_network_test.cpp
   rectangle_tree_test.cpp
-  recurrent_network_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
   serialization.cpp
@@ -97,7 +93,6 @@ add_executable(mlpack_test
   main_tests/hmm_viterbi_test.cpp
   main_tests/hoeffding_tree_test.cpp
   main_tests/kde_test.cpp
-  main_tests/kmeans_test.cpp
   main_tests/krann_test.cpp
   main_tests/linear_svm_test.cpp
   main_tests/lmnn_test.cpp
@@ -135,12 +130,14 @@ add_executable(mlpack_catch_test
   cv_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
+  feedforward_network_test.cpp
   image_load_test.cpp
   imputation_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
   kfn_test.cpp
+  kmeans_test.cpp
   knn_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
@@ -149,6 +146,8 @@ add_executable(mlpack_catch_test
   one_hot_encoding_test.cpp
   quic_svd_test.cpp
   randomized_svd_test.cpp
+  rbm_network_test.cpp
+  recurrent_network_test.cpp
   regularized_svd_test.cpp
   scaling_test.cpp
   serialization_catch.cpp
@@ -169,6 +168,7 @@ add_executable(mlpack_catch_test
   main_tests/image_converter_test.cpp
   main_tests/kernel_pca_test.cpp
   main_tests/kfn_test.cpp
+  main_tests/kmeans_test.cpp
   main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/nca_test.cpp
@@ -229,8 +229,6 @@ add_custom_command(TARGET mlpack_test
 set(parallel_tests
   "AsyncLearningTest;"
   "LocalCoordinateCodingTest;"
-  "FeedForwardNetworkTest;"
-  "RecurrentNetworkTest;"
   "GMMTest;"
   "CFTest;"
   "HMMTest;"

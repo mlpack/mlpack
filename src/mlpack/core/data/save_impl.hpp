@@ -15,6 +15,7 @@
 // In case it hasn't already been included.
 #include "save.hpp"
 #include "extension.hpp"
+#include "detect_file_type.hpp"
 
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/json.hpp>
@@ -26,42 +27,52 @@ namespace data {
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Col<eT>& vec,
-          const bool fatal)
+          const bool fatal,
+          arma::file_type inputSaveType)
 {
   // Don't transpose: one observation per line (for CSVs at least).
-  return Save(filename, vec, fatal, false);
+  return Save(filename, vec, fatal, false, inputSaveType);
 }
 
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Row<eT>& rowvec,
-          const bool fatal)
+          const bool fatal,
+          arma::file_type inputSaveType)
 {
-  return Save(filename, rowvec, fatal, true);
+  return Save(filename, rowvec, fatal, true, inputSaveType);
 }
 
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
           const bool fatal,
-          bool transpose)
+          bool transpose,
+          arma::file_type inputSaveType)
 {
   Timer::Start("saving_data");
 
-  // First we will try to discriminate by file extension.
-  std::string extension = Extension(filename);
-  if (extension == "")
-  {
-    Timer::Stop("saving_data");
-    if (fatal)
-      Log::Fatal << "No extension given with filename '" << filename << "'; "
-          << "type unknown.  Save failed." << std::endl;
-    else
-      Log::Warn << "No extension given with filename '" << filename << "'; "
-          << "type unknown.  Save failed." << std::endl;
+  arma::file_type saveType = inputSaveType;
+  std::string stringType = "";
 
-    return false;
+  if (inputSaveType == arma::auto_detect)
+  {
+    // Detect the file type using only the extension.
+    saveType = DetectFromExtension(filename);
+    if (saveType == arma::file_type_unknown)
+    {
+      if (fatal)
+        Log::Fatal << "Could not detect type of file '" << filename << "' for "
+            << "writing.  Save failed." << std::endl;
+      else
+        Log::Warn << "Could not detect type of file '" << filename << "' for "
+            << "writing.  Save failed." << std::endl;
+
+      return false;
+    }
   }
+
+  stringType = GetStringType(saveType);
 
   // Catch errors opening the file.
   std::fstream stream;

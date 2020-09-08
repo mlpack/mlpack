@@ -1,5 +1,21 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+
+### mlpack 3.4.1
+###### 2020-09-07
+  * Fix incorrect parsing of required matrix/model parameters for command-line
+    bindings (#2600).
+
+  * Add manual type specification support to `data::Load()` and `data::Save()`
+    (#2084, #2135, #2602).
+
+  * Remove use of internal Armadillo functionality (#2596, #2601, #2602).
+
+### mlpack 3.4.0
+###### 2020-09-01
+
+  * Issue warnings when metrics produce NaNs in KFoldCV (#2595).
+
   * Added bindings for _R_ during Google Summer of Code (#2556).
 
   * Added common striptype function for all bindings (#2556).

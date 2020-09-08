@@ -49,6 +49,56 @@ TEST_CASE("NotExistLoad", "[LoadSaveTest]")
 }
 
 /**
+ * Make sure load fails if the file extension is wrong in automatic detection mode.
+ */
+TEST_CASE("WrongExtensionWrongLoad", "[LoadSaveTest]")
+{
+  // Try to load arma::arma_binary file with ".csv" extension
+  arma::mat test = "1 5;"
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
+
+  arma::mat testTrans = trans(test);
+  REQUIRE(testTrans.quiet_save("test_file.csv", arma::arma_binary) == true);
+
+  // Now reload through our interface.
+  REQUIRE(data::Load("test_file.csv", test) == false);
+
+  // Remove the file.
+  remove("test_file.csv");
+}
+
+/**
+ * Make sure load is successful even if the file extension is wrong when file type is specified.
+ */
+TEST_CASE("WrongExtensionCorrectLoad", "[LoadSaveTest]")
+{
+  // Try to load arma::arma_binary file with ".csv" extension
+  arma::mat test = "1 5;"
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
+
+  arma::mat testTrans = trans(test);
+  REQUIRE(testTrans.quiet_save("test_file.csv", arma::arma_binary) == true);
+
+  // Now reload through our interface.
+  REQUIRE(
+      data::Load("test_file.csv", test, false, true, arma::arma_binary)
+      == true);
+
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
+
+  for (size_t i = 0; i < 8; i++)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-3));
+
+  // Remove the file.
+  remove("test_file.csv");
+}
+
+/**
  * Make sure a CSV is loaded correctly.
  */
 TEST_CASE("LoadCSVTest", "[LoadSaveTest]")
@@ -203,6 +253,32 @@ TEST_CASE("LoadTSVExtensionTest", "[LoadSaveTest]")
 
   // Remove the file.
   remove("test_file.tsv");
+}
+
+/**
+ * Test that we can manually specify the format for loading.
+ */
+TEST_CASE("LoadAnyExtensionFileTest", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test_file.blah", fstream::out);
+
+  f << "1\t2\t3\t4" << endl;
+  f << "5\t6\t7\t8" << endl;
+
+  f.close();
+
+  arma::mat test;
+  REQUIRE(data::Load("test_file.blah", test, false, true, arma::raw_ascii));
+
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
+
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
+
+  // Remove the file.
+  remove("test_file.blah");
 }
 
 /**
@@ -890,6 +966,32 @@ TEST_CASE("SaveArmaBinaryTest", "[LoadSaveTest]")
 
   // Remove the file.
   remove("test_file.bin");
+}
+
+/**
+ * Make sure that we can manually specify the format.
+ */
+TEST_CASE("SaveArmaBinaryArbitraryExtensionTest", "[LoadSaveTest]")
+{
+  arma::mat test = "1 5;"
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
+
+  REQUIRE(data::Save("test_file.blerp.blah", test, false, true,
+      arma::arma_binary) == true);
+
+  REQUIRE(data::Load("test_file.blerp.blah", test, false, true,
+      arma::arma_binary) == true);
+
+  REQUIRE(test.n_rows == 4);
+  REQUIRE(test.n_cols == 2);
+
+  for (size_t i = 0; i < 8; ++i)
+    REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
+
+  // Remove the file.
+  remove("test_file.blerp.blah");
 }
 
 /**
