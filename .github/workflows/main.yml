@@ -30,7 +30,7 @@ jobs:
         - name: Install Build Dependencies
           run: |
             sudo apt-get update
-            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev
+            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev libcereal-dev
             curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
             cmake . && make && sudo make install && cd ..
             sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/'
