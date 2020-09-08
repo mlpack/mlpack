@@ -8,14 +8,12 @@ if(CEREAL_INCLUDE_DIRS)
   # ------------------------------------------------------------------------
   #  Extract version information from <CEREAL>
   # ------------------------------------------------------------------------
-
+  set(CEREAL_FOUND YES)
   set(CEREAL_VERSION_MAJOR 0)
   set(CEREAL_VERSION_MINOR 0)
   set(CEREAL_VERSION_PATCH 0)
 
   if(EXISTS "${CEREAL_INCLUDE_DIRS}/cereal/version.hpp")
-
-    set(CEREAL_FOUND YES)
 
     # Read and parse cereal version header file for version number
     file(READ "${CEREAL_INCLUDE_DIRS}/cereal/version.hpp"
@@ -26,8 +24,22 @@ if(CEREAL_INCLUDE_DIRS)
         CEREAL_VERSION_MINOR "${_CEREAL_HEADER_CONTENTS}")
     string(REGEX REPLACE ".*#define CEREAL_VERSION_PATCH ([0-9]+).*" "\\1"
         CEREAL_VERSION_PATCH "${_CEREAL_HEADER_CONTENTS}")
-  endif()
 
+  elseif(EXISTS "${CEREAL_INCLUDE_DIRS}/cereal/types/valarray.hpp")
+    set(CEREAL_VERSION_MAJOR 1)
+    set(CEREAL_VERSION_MINOR 1)
+    set(CEREAL_VERSION_PATCH 2)
+
+  elseif(EXISTS "${CEREAL_INCLUDE_DIRS}/cereal/details/polymorphic_impl_fwd.hpp")
+
+    set(CEREAL_VERSION_MAJOR 1)
+    set(CEREAL_VERSION_MINOR 2)
+    set(CEREAL_VERSION_PATCH 0)
+  else()
+    set(CEREAL_VERSION_MAJOR 1)
+    set(CEREAL_VERSION_MINOR 1)
+    set(CEREAL_VERSION_PATCH 1) 
+  endif()
   set(CEREAL_VERSION_STRING "${CEREAL_VERSION_MAJOR}.${CEREAL_VERSION_MINOR}.${CEREAL_VERSION_PATCH}")
 endif ()
 
