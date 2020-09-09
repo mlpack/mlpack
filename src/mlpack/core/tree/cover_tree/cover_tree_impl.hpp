@@ -1784,7 +1784,25 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
       children[i]->Parent() = this;
     }
   }
-}
+
+  if (!hasParent)
+  {
+    std::stack<CoverTree*> stack;
+    for (size_t i = 0; i < children.size(); ++i)
+    {
+      stack.push(children[i]);
+    }
+    while (!stack.empty())
+    {
+      CoverTree* node = stack.top();
+      stack.pop();
+      node->dataset = dataset;
+      for (size_t i = 0; i < node->children.size(); ++i)
+      {
+        stack.push(node->children[i]);
+      }
+    }
+  }}
 
 } // namespace tree
 } // namespace mlpack
