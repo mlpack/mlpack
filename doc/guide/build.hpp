@@ -90,9 +90,9 @@ In addition, mlpack has the following optional dependencies:
 For Python bindings, the following packages are required:
 
  - setuptools
- - cython >= 0.24
- - numpy
- - pandas >= 0.15.0
+ - cython >= 0.23.4
+ - numpy  >= 1.11.0
+ - pandas >= 0.17.1
  - pytest-runner
 
 In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be 
