@@ -114,9 +114,9 @@ If you would like to use or build the mlpack Python bindings, make sure that the
 following Python packages are installed:
 
       setuptools
-      cython >= 0.24
-      numpy
-      pandas >= 0.15.0
+      cython >= 0.23.4
+      numpy  >= 1.11.0
+      pandas >= 0.17.1
 
 If you would like to build the Julia bindings, make sure that Julia >= 1.3.0 is
 installed.
