@@ -1802,7 +1802,8 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
         stack.push(node->children[i]);
       }
     }
-  }}
+  }
+}
 
 } // namespace tree
 } // namespace mlpack

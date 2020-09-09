@@ -752,6 +752,25 @@ void Octree<MetricType, StatisticType, MatType>::serialize(
     for (size_t i = 0; i < children.size(); ++i)
       children[i]->parent = this;
   }
+
+  if (!hasParent)
+  {
+    std::stack<Octree*> stack;
+    for (size_t i = 0; i < children.size(); ++i)
+    {
+      stack.push(children[i]);
+    }
+    while (!stack.empty())
+    {
+      Octree* node = stack.top();
+      stack.pop();
+      node->dataset = dataset;
+      for (size_t i = 0; i < node->children.size(); ++i)
+      {
+        stack.push(node->children[i]);
+      }
+    }
+  }
 }
 
 //! Split the node.
