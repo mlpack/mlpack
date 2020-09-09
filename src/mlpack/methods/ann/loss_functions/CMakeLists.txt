@@ -39,8 +39,6 @@ set(SOURCES
   hinge_embedding_loss_impl.hpp
   empty_loss.hpp
   empty_loss_impl.hpp
-  mean_absolute_percentage_error.hpp
-  mean_absolute_percentage_error_impl.hpp
 )
 
 # Add directory name to sources.
