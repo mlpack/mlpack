@@ -321,13 +321,11 @@ bool Save(const std::string& filename,
       cereal::XMLOutputArchive ar(ofs);
       ar(cereal::make_nvp(name.c_str(), t));
     }
-#if (BINDING_TYPE != BINDING_TYPE_R)
     else if (f == format::json)
     {
       cereal::JSONOutputArchive ar(ofs);
       ar(cereal::make_nvp(name.c_str(), t));
     }
-#endif
     else if (f == format::binary)
     {
       cereal::BinaryOutputArchive ar(ofs);
