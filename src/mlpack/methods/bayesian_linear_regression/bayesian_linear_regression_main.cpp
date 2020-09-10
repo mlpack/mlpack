@@ -86,8 +86,8 @@ BINDING_EXAMPLE(
                "predictions", "test_predictions") +
     "\n\n"
     "Because the estimator computes a predictive distribution instead of "
-    "simple point estimate, the " + PRINT_PARAM_STRING("stds") + " parameter "
-    "allows to save the prediction uncertainties: "
+    "a simple point estimate, the " + PRINT_PARAM_STRING("stds") + " parameter "
+    "allows one to save the prediction uncertainties: "
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input_model",
                "blr_model", "test", "test",
