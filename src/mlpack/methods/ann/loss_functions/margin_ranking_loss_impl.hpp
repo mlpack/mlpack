@@ -65,7 +65,7 @@ void MarginRankingLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(margin);
+  ar(CEREAL_NVP(margin));
 }
 
 } // namespace ann

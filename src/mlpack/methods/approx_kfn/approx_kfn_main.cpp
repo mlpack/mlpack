@@ -153,14 +153,14 @@ class ApproxKFNModel
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(type);
+    ar(CEREAL_NVP(type));
     if (type == 0)
     {
-      ar & CEREAL_NVP(ds);
+      ar(CEREAL_NVP(ds));
     }
     else
     {
-      ar & CEREAL_NVP(qdafn);
+      ar(CEREAL_NVP(qdafn));
     }
   }
 };

@@ -1042,25 +1042,25 @@ template<typename Archive>
 void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
                                                const uint32_t /*version*/)
 {
-  ar & CEREAL_NVP(referenceSet);
-  ar & CEREAL_NVP(numProj);
-  ar & CEREAL_NVP(numTables);
+  ar(CEREAL_NVP(referenceSet));
+  ar(CEREAL_NVP(numProj));
+  ar(CEREAL_NVP(numTables));
 
   // Delete existing projections, if necessary.
   if (cereal::is_loading<Archive>())
     projections.reset();
 
-  ar & CEREAL_NVP(projections);
-  ar & CEREAL_NVP(offsets);
-  ar & CEREAL_NVP(hashWidth);
-  ar & CEREAL_NVP(secondHashSize);
-  ar & CEREAL_NVP(secondHashWeights);
-  ar & CEREAL_NVP(bucketSize);
+  ar(CEREAL_NVP(projections));
+  ar(CEREAL_NVP(offsets));
+  ar(CEREAL_NVP(hashWidth));
+  ar(CEREAL_NVP(secondHashSize));
+  ar(CEREAL_NVP(secondHashWeights));
+  ar(CEREAL_NVP(bucketSize));
 
   size_t tables;
   if (cereal::is_saving<Archive>())
     tables = secondHashTable.size();
-  ar & CEREAL_NVP(tables);
+  ar(CEREAL_NVP(tables));
 
   // Set size of second hash table if needed.
   if (cereal::is_loading<Archive>())
@@ -1069,10 +1069,10 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
     secondHashTable.resize(tables);
   }
 
-  ar & CEREAL_NVP(secondHashTable);
-  ar & CEREAL_NVP(bucketContentSize);
-  ar & CEREAL_NVP(bucketRowInHashTable);
-  ar & CEREAL_NVP(distanceEvaluations);
+  ar(CEREAL_NVP(secondHashTable));
+  ar(CEREAL_NVP(bucketContentSize));
+  ar(CEREAL_NVP(bucketRowInHashTable));
+  ar(CEREAL_NVP(distanceEvaluations));
 }
 
 } // namespace neighbor

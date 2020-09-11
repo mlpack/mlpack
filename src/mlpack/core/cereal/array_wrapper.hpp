@@ -36,15 +36,15 @@ class ArrayWrapper
   template<class Archive>
   void save(Archive& ar) const
   {
-    ar & CEREAL_NVP(arraySize);
+    ar(CEREAL_NVP(arraySize));
     for (size_t i = 0; i < arraySize; ++i)
-      ar & cereal::make_nvp("item", arrayAddress[i]);
+      ar(cereal::make_nvp("item", arrayAddress[i]));
   }
 
   template<class Archive>
   void load(Archive& ar)
   {
-    ar & CEREAL_NVP(arraySize);
+    ar(CEREAL_NVP(arraySize));
     delete[] arrayAddress;
     if (arraySize == 0)
     {
@@ -53,7 +53,7 @@ class ArrayWrapper
     }
     arrayAddress = new T[arraySize];
     for (size_t i = 0; i < arraySize; ++i)
-      ar & cereal::make_nvp("item", arrayAddress[i]);
+      ar(cereal::make_nvp("item", arrayAddress[i]));
   }
 
  private:

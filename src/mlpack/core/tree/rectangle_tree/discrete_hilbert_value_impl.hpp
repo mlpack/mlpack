@@ -524,11 +524,11 @@ void DiscreteHilbertValue<TreeElemType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_POINTER(localHilbertValues);
-  ar & CEREAL_NVP(ownsLocalHilbertValues);
-  ar & CEREAL_NVP(numValues);
-  ar & CEREAL_POINTER(valueToInsert);
-  ar & CEREAL_NVP(ownsValueToInsert);
+  ar(CEREAL_POINTER(localHilbertValues));
+  ar(CEREAL_NVP(ownsLocalHilbertValues));
+  ar(CEREAL_NVP(numValues));
+  ar(CEREAL_POINTER(valueToInsert));
+  ar(CEREAL_NVP(ownsValueToInsert));
 }
 
 } // namespace tree

@@ -117,10 +117,10 @@ class BernoulliDistribution
   void serialize(Archive& ar, const uint32_t /* version */)
   {
     // We just need to serialize each of the members.
-    ar & CEREAL_NVP(probability);
-    ar & CEREAL_NVP(logits);
-    ar & CEREAL_NVP(applyLogistic);
-    ar & CEREAL_NVP(eps);
+    ar(CEREAL_NVP(probability));
+    ar(CEREAL_NVP(logits));
+    ar(CEREAL_NVP(applyLogistic));
+    ar(CEREAL_NVP(eps));
   }
 
  private:

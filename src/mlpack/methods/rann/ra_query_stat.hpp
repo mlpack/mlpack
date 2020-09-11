@@ -64,8 +64,8 @@ class RAQueryStat
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(bound);
-    ar & CEREAL_NVP(numSamplesMade);
+    ar(CEREAL_NVP(bound));
+    ar(CEREAL_NVP(numSamplesMade));
   }
 
  private:

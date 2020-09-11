@@ -239,10 +239,10 @@ void Sequential<
     }
   }
 
-  ar & CEREAL_NVP(model);
-  ar & CEREAL_VECTOR_VARIANT_POINTER(network);
+  ar(CEREAL_NVP(model));
+  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
 
-  ar & CEREAL_NVP(ownsLayers);
+  ar(CEREAL_NVP(ownsLayers));
   if (cereal::is_loading<Archive>())
     ownsLayers = !model;
 }

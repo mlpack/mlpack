@@ -431,11 +431,11 @@ serialize(Archive& ar, const uint32_t /* version */)
 {
   // This model is simple; just serialize all the members. No special handling
   // required.
-  ar & CEREAL_NVP(numUsersForSimilarity);
-  ar & CEREAL_NVP(rank);
-  ar & CEREAL_NVP(decomposition);
-  ar & CEREAL_NVP(cleanedData);
-  ar & CEREAL_NVP(normalization);
+  ar(CEREAL_NVP(numUsersForSimilarity));
+  ar(CEREAL_NVP(rank));
+  ar(CEREAL_NVP(decomposition));
+  ar(CEREAL_NVP(cleanedData));
+  ar(CEREAL_NVP(normalization));
 }
 
 } // namespace cf

@@ -210,13 +210,13 @@ template<typename Archive>
 void RecurrentAttention<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t version)
 {
-  ar & CEREAL_NVP(rho);
-  ar & CEREAL_NVP(outSize);
-  ar & CEREAL_NVP(forwardStep);
-  ar & CEREAL_NVP(backwardStep);
+  ar(CEREAL_NVP(rho));
+  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(forwardStep));
+  ar(CEREAL_NVP(backwardStep));
 
-  ar & CEREAL_VARIANT_POINTER(rnnModule);
-  ar & CEREAL_VARIANT_POINTER(actionModule);
+  ar(CEREAL_VARIANT_POINTER(rnnModule));
+  ar(CEREAL_VARIANT_POINTER(actionModule));
 }
 
 } // namespace ann

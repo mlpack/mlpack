@@ -795,19 +795,19 @@ void HoeffdingTree<
     CategoricalSplitType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(splitDimension);
+  ar(CEREAL_NVP(splitDimension));
 
   // Clear memory for the mappings if necessary.
   if (cereal::is_loading<Archive>() && ownsMappings && dimensionMappings)
     delete dimensionMappings;
 
-  ar & CEREAL_POINTER(dimensionMappings);
+  ar(CEREAL_POINTER(dimensionMappings));
 
   // Special handling for const object.
   data::DatasetInfo* d = NULL;
   if (cereal::is_saving<Archive>())
     d = const_cast<data::DatasetInfo*>(datasetInfo);
-  ar & CEREAL_POINTER(d);
+  ar(CEREAL_POINTER(d));
   if (cereal::is_loading<Archive>())
   {
     if (datasetInfo && ownsInfo)
@@ -823,18 +823,18 @@ void HoeffdingTree<
     children.clear();
   }
 
-  ar & CEREAL_NVP(majorityClass);
-  ar & CEREAL_NVP(majorityProbability);
+  ar(CEREAL_NVP(majorityClass));
+  ar(CEREAL_NVP(majorityProbability));
 
   // Depending on whether or not we have split yet, we may need to save
   // different things.
   if (splitDimension == size_t(-1))
   {
     // We have not yet split.  So we have to serialize the splits.
-    ar & CEREAL_NVP(numSamples);
-    ar & CEREAL_NVP(numClasses);
-    ar & CEREAL_NVP(maxSamples);
-    ar & CEREAL_NVP(successProbability);
+    ar(CEREAL_NVP(numSamples));
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(maxSamples));
+    ar(CEREAL_NVP(successProbability));
 
     // Serialize the splits, but not if we haven't seen any samples yet (in
     // which case we can just reinitialize).
@@ -865,21 +865,21 @@ void HoeffdingTree<
       return;
 
     // Serialize numeric splits.
-    ar & CEREAL_NVP(numericSplits);
+    ar(CEREAL_NVP(numericSplits));
 
     // Serialize categorical splits.
-    ar & CEREAL_NVP(categoricalSplits);
+    ar(CEREAL_NVP(categoricalSplits));
   }
   else
   {
     // We have split, so we only need to save the split and the children.
     if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
-      ar & CEREAL_NVP(categoricalSplit);
+      ar(CEREAL_NVP(categoricalSplit));
     else
-      ar & CEREAL_NVP(numericSplit);
+      ar(CEREAL_NVP(numericSplit));
 
     // Serialize the children, because we have split.
-      ar & CEREAL_VECTOR_POINTER(children);
+      ar(CEREAL_VECTOR_POINTER(children));
 
     if (cereal::is_loading<Archive>())
     {

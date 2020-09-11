@@ -205,15 +205,15 @@ class SVDPlusPlusPolicy
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(maxIterations);
-    ar & CEREAL_NVP(alpha);
-    ar & CEREAL_NVP(lambda);
-    ar & CEREAL_NVP(w);
-    ar & CEREAL_NVP(h);
-    ar & CEREAL_NVP(p);
-    ar & CEREAL_NVP(q);
-    ar & CEREAL_NVP(y);
-    ar & CEREAL_NVP(implicitData);
+    ar(CEREAL_NVP(maxIterations));
+    ar(CEREAL_NVP(alpha));
+    ar(CEREAL_NVP(lambda));
+    ar(CEREAL_NVP(w));
+    ar(CEREAL_NVP(h));
+    ar(CEREAL_NVP(p));
+    ar(CEREAL_NVP(q));
+    ar(CEREAL_NVP(y));
+    ar(CEREAL_NVP(implicitData));
   }
 
  private:

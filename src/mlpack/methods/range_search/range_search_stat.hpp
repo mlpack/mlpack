@@ -48,7 +48,7 @@ class RangeSearchStat
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(lastDistance);
+    ar(CEREAL_NVP(lastDistance));
   }
 
  private:

@@ -353,9 +353,9 @@ void NaiveBayesClassifier<ModelMatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(means);
-  ar & CEREAL_NVP(variances);
-  ar & CEREAL_NVP(probabilities);
+  ar(CEREAL_NVP(means));
+  ar(CEREAL_NVP(variances));
+  ar(CEREAL_NVP(probabilities));
 }
 
 } // namespace naive_bayes

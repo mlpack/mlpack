@@ -94,8 +94,8 @@ void RBF<InputDataType, OutputDataType, Activation>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(distances);
-  ar & CEREAL_NVP(centres);
+  ar(CEREAL_NVP(distances));
+  ar(CEREAL_NVP(centres));
 }
 
 } // namespace ann

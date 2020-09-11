@@ -393,16 +393,16 @@ void GRU<InputDataType, OutputDataType>::serialize(
     boost::apply_visitor(deleteVisitor, hiddenStateModule);
   }
 
-  ar & CEREAL_NVP(inSize);
-  ar & CEREAL_NVP(outSize);
-  ar & CEREAL_NVP(rho);
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(rho));
 
-  ar & CEREAL_VARIANT_POINTER(input2GateModule);
-  ar & CEREAL_VARIANT_POINTER(output2GateModule);
-  ar & CEREAL_VARIANT_POINTER(outputHidden2GateModule);
-  ar & CEREAL_VARIANT_POINTER(inputGateModule);
-  ar & CEREAL_VARIANT_POINTER(forgetGateModule);
-  ar & CEREAL_VARIANT_POINTER(hiddenStateModule);
+  ar(CEREAL_VARIANT_POINTER(input2GateModule));
+  ar(CEREAL_VARIANT_POINTER(output2GateModule));
+  ar(CEREAL_VARIANT_POINTER(outputHidden2GateModule));
+  ar(CEREAL_VARIANT_POINTER(inputGateModule));
+  ar(CEREAL_VARIANT_POINTER(forgetGateModule));
+  ar(CEREAL_VARIANT_POINTER(hiddenStateModule));
 }
 
 } // namespace ann

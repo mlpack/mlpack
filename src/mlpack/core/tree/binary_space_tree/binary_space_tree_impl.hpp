@@ -1082,30 +1082,30 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     right = NULL;
   }
 
-  ar & CEREAL_NVP(begin);
-  ar & CEREAL_NVP(count);
-  ar & CEREAL_NVP(bound);
-  ar & CEREAL_NVP(stat);
+  ar(CEREAL_NVP(begin));
+  ar(CEREAL_NVP(count));
+  ar(CEREAL_NVP(bound));
+  ar(CEREAL_NVP(stat));
 
-  ar & CEREAL_NVP(parentDistance);
-  ar & CEREAL_NVP(furthestDescendantDistance);
+  ar(CEREAL_NVP(parentDistance));
+  ar(CEREAL_NVP(furthestDescendantDistance));
 
   // Save children last.
   bool hasLeft = (left != NULL);
   bool hasRight = (right != NULL);
   bool hasParent = (parent != NULL);
 
-  ar & CEREAL_NVP(hasLeft);
-  ar & CEREAL_NVP(hasRight);
-  ar & CEREAL_NVP(hasParent);
+  ar(CEREAL_NVP(hasLeft));
+  ar(CEREAL_NVP(hasRight));
+  ar(CEREAL_NVP(hasParent));
   if (hasLeft)
-    ar & CEREAL_POINTER(left);
+    ar(CEREAL_POINTER(left));
   if (hasRight)
-    ar & CEREAL_POINTER(right);
+    ar(CEREAL_POINTER(right));
   if (!hasParent)
   {
     MatType* datasetTemp = const_cast<MatType*>(dataset);
-    ar & CEREAL_POINTER(datasetTemp);
+    ar(CEREAL_POINTER(datasetTemp));
     if (cereal::is_loading<Archive>())
     {
       dataset = datasetTemp; 

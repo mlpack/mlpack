@@ -53,8 +53,8 @@ void Join<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(inSizeRows);
-  ar & CEREAL_NVP(inSizeCols);
+  ar(CEREAL_NVP(inSizeRows));
+  ar(CEREAL_NVP(inSizeCols));
 }
 
 } // namespace ann

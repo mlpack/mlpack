@@ -429,9 +429,9 @@ void HollowBallBound<TMetricType, ElemType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(radii);
-  ar & CEREAL_NVP(center);
-  ar & CEREAL_NVP(hollowCenter);
+  ar(CEREAL_NVP(radii));
+  ar(CEREAL_NVP(center));
+  ar(CEREAL_NVP(hollowCenter));
 
   if (cereal::is_loading<Archive>())
   {
@@ -440,7 +440,7 @@ void HollowBallBound<TMetricType, ElemType>::serialize(
       delete metric;
   }
 
-  ar & CEREAL_POINTER(metric);
+  ar(CEREAL_POINTER(metric));
   if (cereal::is_loading<Archive>())
     ownsMetric = true;
 }

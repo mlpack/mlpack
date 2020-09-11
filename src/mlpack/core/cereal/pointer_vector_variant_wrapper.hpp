@@ -49,10 +49,10 @@ class PointerVectorVariantWrapper
   void save(Archive& ar) const
   {
     size_t vecSize = vectorPointerVariant.size();
-    ar & CEREAL_NVP(vecSize);
+    ar(CEREAL_NVP(vecSize));
     for (size_t i = 0; i < vectorPointerVariant.size(); ++i)
     {
-      ar & CEREAL_VARIANT_POINTER(vectorPointerVariant.at(i));
+      ar(CEREAL_VARIANT_POINTER(vectorPointerVariant.at(i)));
     }
   }
 
@@ -60,11 +60,11 @@ class PointerVectorVariantWrapper
   void load(Archive& ar)
   {
     size_t vecSize = 0;
-    ar & CEREAL_NVP(vecSize);
+    ar(CEREAL_NVP(vecSize));
     vectorPointerVariant.resize(vecSize);
     for (size_t i = 0; i < vectorPointerVariant.size(); ++i)
     {
-      ar & CEREAL_VARIANT_POINTER(vectorPointerVariant.at(i));
+      ar(CEREAL_VARIANT_POINTER(vectorPointerVariant.at(i)));
     }
   }
 

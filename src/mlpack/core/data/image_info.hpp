@@ -73,10 +73,10 @@ class ImageInfo
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(width);
-    ar & CEREAL_NVP(channels);
-    ar & CEREAL_NVP(height);
-    ar & CEREAL_NVP(quality);
+    ar(CEREAL_NVP(width));
+    ar(CEREAL_NVP(channels));
+    ar(CEREAL_NVP(height));
+    ar(CEREAL_NVP(quality));
   }
 
  private:

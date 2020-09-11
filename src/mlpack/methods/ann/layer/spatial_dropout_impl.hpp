@@ -100,12 +100,12 @@ void SpatialDropout<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(size);
-  ar & CEREAL_NVP(ratio);
-  ar & CEREAL_NVP(batchSize);
-  ar & CEREAL_NVP(inputSize);
-  ar & CEREAL_NVP(reset);
-  ar & CEREAL_NVP(deterministic);
+  ar(CEREAL_NVP(size));
+  ar(CEREAL_NVP(ratio));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(inputSize));
+  ar(CEREAL_NVP(reset));
+  ar(CEREAL_NVP(deterministic));
 
   // Reset scale.
   scale = 1.0 / (1.0 - ratio);

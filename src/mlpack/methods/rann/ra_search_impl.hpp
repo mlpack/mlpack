@@ -608,14 +608,14 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
     Archive& ar, const uint32_t version)
 {
   // Serialize preferences for search.
-  ar & CEREAL_NVP(naive);
-  ar & CEREAL_NVP(singleMode);
+  ar(CEREAL_NVP(naive));
+  ar(CEREAL_NVP(singleMode));
 
-  ar & CEREAL_NVP(tau);
-  ar & CEREAL_NVP(alpha);
-  ar & CEREAL_NVP(sampleAtLeaves);
-  ar & CEREAL_NVP(firstLeafExact);
-  ar & CEREAL_NVP(singleSampleLimit);
+  ar(CEREAL_NVP(tau));
+  ar(CEREAL_NVP(alpha));
+  ar(CEREAL_NVP(sampleAtLeaves));
+  ar(CEREAL_NVP(firstLeafExact));
+  ar(CEREAL_NVP(singleSampleLimit));
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
@@ -629,12 +629,12 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
       setOwner = true;
     }
     MatType* referenceSetTemp = const_cast<MatType*>(referenceSet);
-    ar & CEREAL_POINTER(referenceSetTemp);
+    ar(CEREAL_POINTER(referenceSetTemp));
     if (cereal::is_loading<Archive>())
     {
       referenceSet = referenceSetTemp;
     }
-    ar & CEREAL_NVP(metric);
+    ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
     if (cereal::is_loading<Archive>())
@@ -659,8 +659,8 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
       treeOwner = true;
     }
 
-    ar & CEREAL_POINTER(referenceTree);
-    ar & CEREAL_NVP(oldFromNewReferences);
+    ar(CEREAL_POINTER(referenceTree));
+    ar(CEREAL_NVP(oldFromNewReferences));
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.

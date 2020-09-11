@@ -121,16 +121,16 @@ void MeanPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(kernelWidth);
-  ar & CEREAL_NVP(kernelHeight);
-  ar & CEREAL_NVP(strideWidth);
-  ar & CEREAL_NVP(strideHeight);
-  ar & CEREAL_NVP(batchSize);
-  ar & CEREAL_NVP(floor);
-  ar & CEREAL_NVP(inputWidth);
-  ar & CEREAL_NVP(inputHeight);
-  ar & CEREAL_NVP(outputWidth);
-  ar & CEREAL_NVP(outputHeight);
+  ar(CEREAL_NVP(kernelWidth));
+  ar(CEREAL_NVP(kernelHeight));
+  ar(CEREAL_NVP(strideWidth));
+  ar(CEREAL_NVP(strideHeight));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(floor));
+  ar(CEREAL_NVP(inputWidth));
+  ar(CEREAL_NVP(inputHeight));
+  ar(CEREAL_NVP(outputWidth));
+  ar(CEREAL_NVP(outputHeight));
 }
 
 } // namespace ann

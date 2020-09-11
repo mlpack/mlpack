@@ -51,7 +51,7 @@ void HardShrink<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(lambda);
+  ar(CEREAL_NVP(lambda));
 }
 
 } // namespace ann

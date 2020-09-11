@@ -45,13 +45,13 @@ struct save_visitor : public boost::static_visitor<void>
   template<class T>
   void operator()(const T* value) const
   {
-    ar & CEREAL_POINTER(value);
+    ar(CEREAL_POINTER(value));
   }
 
   template<typename... Types>
   void operator()(boost::variant<Types*...>& value) const
   {
-    ar & make_pointer_variant(value);
+    ar(make_pointer_variant(value));
   }
 
   Archive& ar;
@@ -65,7 +65,7 @@ struct load_visitor : public boost::static_visitor<void>
   {
     // Note that T will be a pointer type.
     T loadVariant;
-    ar & CEREAL_POINTER(loadVariant);
+    ar(CEREAL_POINTER(loadVariant));
     variant = loadVariant;
   }
 
@@ -73,7 +73,7 @@ struct load_visitor : public boost::static_visitor<void>
   static void load_impl(Archive& ar, VariantType& value, std::false_type)
   {
     // This must be a nested boost::variant.
-    ar & make_pointer_variant(value);
+    ar(make_pointer_variant(value));
   }
 
   template<typename Archive, typename VariantType>
@@ -105,7 +105,7 @@ class PointerVariantWrapper
   {
     // which represents the index in std::variant.
     int which = pointerVariant.which();
-    ar & CEREAL_NVP(which);
+    ar(CEREAL_NVP(which));
     save_visitor<Archive> s(ar);
     boost::apply_visitor(s, pointerVariant);
   }
@@ -115,7 +115,7 @@ class PointerVariantWrapper
   {
     // Load the size of the serialized type.
     int which;
-    ar & CEREAL_NVP(which);
+    ar(CEREAL_NVP(which));
 
     // Create function pointers to each overload of load_visitor<T>::load, for
     // all T in VariantTypes.

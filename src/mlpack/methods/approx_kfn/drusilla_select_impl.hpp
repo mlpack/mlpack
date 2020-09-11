@@ -204,10 +204,10 @@ template<typename Archive>
 void DrusillaSelect<MatType>::serialize(Archive& ar,
                                         const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(candidateSet);
-  ar & CEREAL_NVP(candidateIndices);
-  ar & CEREAL_NVP(l);
-  ar & CEREAL_NVP(m);
+  ar(CEREAL_NVP(candidateSet));
+  ar(CEREAL_NVP(candidateIndices));
+  ar(CEREAL_NVP(l));
+  ar(CEREAL_NVP(m));
 }
 
 } // namespace neighbor

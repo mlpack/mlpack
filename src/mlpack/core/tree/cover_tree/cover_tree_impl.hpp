@@ -1746,24 +1746,24 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
   }
 
   bool hasParent = (parent != NULL);
-  ar & CEREAL_NVP(hasParent);
+  ar(CEREAL_NVP(hasParent));
   MatType* datasetTemp = const_cast<MatType*>(dataset);
   if (!hasParent)
-    ar & CEREAL_POINTER(datasetTemp);
+    ar(CEREAL_POINTER(datasetTemp));
 
   if (cereal::is_loading<Archive>())
   {
     dataset  = datasetTemp;
   }
 
-  ar & CEREAL_NVP(point);
-  ar & CEREAL_NVP(scale);
-  ar & CEREAL_NVP(base);
-  ar & CEREAL_NVP(stat);
-  ar & CEREAL_NVP(numDescendants);
-  ar & CEREAL_NVP(parentDistance);
-  ar & CEREAL_NVP(furthestDescendantDistance);
-  ar & CEREAL_POINTER(metric);
+  ar(CEREAL_NVP(point));
+  ar(CEREAL_NVP(scale));
+  ar(CEREAL_NVP(base));
+  ar(CEREAL_NVP(stat));
+  ar(CEREAL_NVP(numDescendants));
+  ar(CEREAL_NVP(parentDistance));
+  ar(CEREAL_NVP(furthestDescendantDistance));
+  ar(CEREAL_POINTER(metric));
 
   if (cereal::is_loading<Archive>() && !hasParent)
   {
@@ -1772,7 +1772,7 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
   }
 
   // Lastly, serialize the children.
-  ar & CEREAL_VECTOR_POINTER(children);
+  ar(CEREAL_VECTOR_POINTER(children));
 
   if (cereal::is_loading<Archive>())
   {

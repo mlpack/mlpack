@@ -541,13 +541,13 @@ template<typename Archive>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(parameter);
-  ar & CEREAL_NVP(width);
-  ar & CEREAL_NVP(height);
+  ar(CEREAL_NVP(parameter));
+  ar(CEREAL_NVP(width));
+  ar(CEREAL_NVP(height));
 
   arma::mat currentInput; // Temporary matrix to output.
-  ar & CEREAL_NVP(currentInput);
-  ar & CEREAL_NVP(reset);
+  ar(CEREAL_NVP(currentInput));
+  ar(CEREAL_NVP(reset));
 
   // Be sure to clear other layers before loading.
   if (cereal::is_loading<Archive>())
@@ -557,7 +557,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & CEREAL_VECTOR_VARIANT_POINTER(network);
+  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())

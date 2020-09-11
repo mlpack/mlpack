@@ -643,8 +643,8 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
     Archive& ar, const uint32_t version)
 {
   // Serialize preferences for search.
-  ar & CEREAL_NVP(naive);
-  ar & CEREAL_NVP(singleMode);
+  ar(CEREAL_NVP(naive));
+  ar(CEREAL_NVP(singleMode));
 
   // If we are doing naive search, serialize the dataset.  Otherwise we
   // serialize the tree.
@@ -659,12 +659,12 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
     }
 
     MatType* referenceSetTmp = const_cast<MatType*>(referenceSet);
-    ar & CEREAL_POINTER(referenceSetTmp);
+    ar(CEREAL_POINTER(referenceSetTmp));
     if (cereal::is_loading<Archive>())
     {
       referenceSet = referenceSetTmp;
     }
-    ar & CEREAL_NVP(metric);
+    ar(CEREAL_NVP(metric));
   }
   else
   {
@@ -677,7 +677,7 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
       treeOwner = true;
     }
 
-    ar & CEREAL_POINTER(referenceTree);
+    ar(CEREAL_POINTER(referenceTree));
 
     if (cereal::is_loading<Archive>())
     {

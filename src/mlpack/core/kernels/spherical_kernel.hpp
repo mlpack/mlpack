@@ -109,8 +109,8 @@ class SphericalKernel
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(bandwidth);
-    ar & CEREAL_NVP(bandwidthSquared);
+    ar(CEREAL_NVP(bandwidth));
+    ar(CEREAL_NVP(bandwidthSquared));
   }
 
  private:

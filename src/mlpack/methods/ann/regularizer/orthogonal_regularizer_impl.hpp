@@ -57,7 +57,7 @@ template<typename Archive>
 void OrthogonalRegularizer::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(factor);
+  ar(CEREAL_NVP(factor));
 }
 
 } // namespace ann

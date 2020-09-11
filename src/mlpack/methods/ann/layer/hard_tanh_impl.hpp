@@ -62,8 +62,8 @@ void HardTanH<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(maxValue);
-  ar & CEREAL_NVP(minValue);
+  ar(CEREAL_NVP(maxValue));
+  ar(CEREAL_NVP(minValue));
 }
 
 } // namespace ann

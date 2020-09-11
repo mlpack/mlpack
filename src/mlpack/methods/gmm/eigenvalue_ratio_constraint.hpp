@@ -108,7 +108,7 @@ class EigenvalueRatioConstraint
   {
     // Strip the const for the sake of loading/saving.  This is the only time it
     // is modified (other than the constructor).
-    ar & CEREAL_NVP(const_cast<arma::vec&>(ratios));
+    ar(CEREAL_NVP(const_cast<arma::vec&>(ratios)));
   }
 
  private:

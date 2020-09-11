@@ -36,7 +36,7 @@ class BinaryNumericSplitInfo
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(splitPoint);
+    ar(CEREAL_NVP(splitPoint));
   }
 
  private:

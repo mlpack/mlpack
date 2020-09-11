@@ -51,7 +51,7 @@ void LogCoshLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(a);
+  ar(CEREAL_NVP(a));
 }
 
 } // namespace ann

@@ -188,8 +188,8 @@ class CombinedNormalization
   {
     std::string tagName = "normalization_";
     tagName += std::to_string(I);
-    ar & cereal::make_nvp(
-        tagName.c_str(), std::get<I>(normalizations));
+    ar(cereal::make_nvp(
+        tagName.c_str(), std::get<I>(normalizations)));
     SequenceSerialize<I + 1, Archive>(ar, version);
   }
 

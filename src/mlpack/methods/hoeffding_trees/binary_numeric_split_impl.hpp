@@ -175,8 +175,8 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::serialize(
     const uint32_t /* version */)
 {
   // Serialize.
-  ar & CEREAL_NVP(sortedElements);
-  ar & CEREAL_NVP(classCounts);
+  ar(CEREAL_NVP(sortedElements));
+  ar(CEREAL_NVP(classCounts));
 }
 
 

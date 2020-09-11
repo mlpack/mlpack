@@ -149,8 +149,8 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::serialize(
     boost::apply_visitor(deleteVisitor, wrappedLayer);
   }
 
-  ar & CEREAL_VARIANT_POINTER(wrappedLayer);
-  ar & CEREAL_NVP(layerWeightSize);
+  ar(CEREAL_VARIANT_POINTER(wrappedLayer));
+  ar(CEREAL_NVP(layerWeightSize));
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())

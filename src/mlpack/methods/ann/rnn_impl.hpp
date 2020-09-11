@@ -547,13 +547,13 @@ template<typename Archive>
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(parameter);
-  ar & CEREAL_NVP(rho);
-  ar & CEREAL_NVP(single);
-  ar & CEREAL_NVP(inputSize);
-  ar & CEREAL_NVP(outputSize);
-  ar & CEREAL_NVP(targetSize);
-  ar & CEREAL_NVP(reset);
+  ar(CEREAL_NVP(parameter));
+  ar(CEREAL_NVP(rho));
+  ar(CEREAL_NVP(single));
+  ar(CEREAL_NVP(inputSize));
+  ar(CEREAL_NVP(outputSize));
+  ar(CEREAL_NVP(targetSize));
+  ar(CEREAL_NVP(reset));
 
   if (cereal::is_loading<Archive>())
   {
@@ -562,7 +562,7 @@ void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & CEREAL_VECTOR_VARIANT_POINTER(network);
+  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())

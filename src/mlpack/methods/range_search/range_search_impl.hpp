@@ -628,8 +628,8 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   // Serialize preferences for search.
-  ar & CEREAL_NVP(naive);
-  ar & CEREAL_NVP(singleMode);
+  ar(CEREAL_NVP(naive));
+  ar(CEREAL_NVP(singleMode));
 
   // Reset base cases and scores if we are loading.
   if (cereal::is_loading<Archive>())
@@ -648,12 +648,12 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
         delete referenceSet;
     }
     MatType* referenceSetTemp = const_cast<MatType*>(referenceSet);
-    ar & CEREAL_POINTER(referenceSetTemp);
+    ar(CEREAL_POINTER(referenceSetTemp));
     if (cereal::is_loading<Archive>())
     {
      referenceSet =referenceSetTemp;
     }
-    ar & CEREAL_NVP(metric);
+    ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
     if (cereal::is_loading<Archive>())
@@ -678,8 +678,8 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
       treeOwner = true;
     }
 
-    ar & CEREAL_POINTER(referenceTree);
-    ar & CEREAL_NVP(oldFromNewReferences);
+    ar(CEREAL_POINTER(referenceTree));
+    ar(CEREAL_NVP(oldFromNewReferences));
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.

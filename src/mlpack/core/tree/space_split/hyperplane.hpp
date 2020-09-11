@@ -132,8 +132,8 @@ class HyperplaneBase
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(projVect);
-    ar & CEREAL_NVP(splitVal);
+    ar(CEREAL_NVP(projVect));
+    ar(CEREAL_NVP(splitVal));
   };
 };
 

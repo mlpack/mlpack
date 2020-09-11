@@ -71,8 +71,8 @@ void HuberLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(delta);
-  ar & CEREAL_NVP(mean);
+  ar(CEREAL_NVP(delta));
+  ar(CEREAL_NVP(mean));
 }
 
 } // namespace ann

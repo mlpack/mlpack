@@ -143,10 +143,10 @@ class DiagonalGaussianDistribution
   void serialize(Archive& ar, const uint32_t /* version */)
   {
     // We just need to serialize each of the members.
-    ar & CEREAL_NVP(mean);
-    ar & CEREAL_NVP(covariance);
-    ar & CEREAL_NVP(invCov);
-    ar & CEREAL_NVP(logDetCov);
+    ar(CEREAL_NVP(mean));
+    ar(CEREAL_NVP(covariance));
+    ar(CEREAL_NVP(invCov));
+    ar(CEREAL_NVP(logDetCov));
   }
 };
 

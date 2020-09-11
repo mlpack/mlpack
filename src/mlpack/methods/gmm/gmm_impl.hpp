@@ -193,8 +193,8 @@ double GMM::Train(const arma::mat& observations,
 template<typename Archive>
 void GMM::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(gaussians);
-  ar & CEREAL_NVP(dimensionality);
+  ar(CEREAL_NVP(gaussians));
+  ar(CEREAL_NVP(dimensionality));
 
   // Load (or save) the gaussians.  Not going to use the default std::vector
   // serialize here because it won't call out correctly to serialize() for each
@@ -202,9 +202,9 @@ void GMM::serialize(Archive& ar, const uint32_t /* version */)
   if (cereal::is_loading<Archive>())
     dists.resize(gaussians);
 
-  ar & CEREAL_NVP(dists);
+  ar(CEREAL_NVP(dists));
 
-  ar & CEREAL_NVP(weights);
+  ar(CEREAL_NVP(weights));
 }
 
 } // namespace gmm

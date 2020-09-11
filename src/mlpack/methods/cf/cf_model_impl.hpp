@@ -211,7 +211,7 @@ void CFModel::serialize(Archive& ar, const uint32_t /* version */)
   if (cereal::is_loading<Archive>())
     boost::apply_visitor(DeleteVisitor(), cf);
 
-  ar & CEREAL_VARIANT_POINTER(cf);
+  ar(CEREAL_VARIANT_POINTER(cf));
 }
 
 #endif

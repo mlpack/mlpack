@@ -114,9 +114,9 @@ void DropConnect<InputDataType, OutputDataType>::serialize(
     boost::apply_visitor(DeleteVisitor(), baseLayer);
   }
 
-  ar & CEREAL_NVP(ratio);
-  ar & CEREAL_NVP(scale);
-  ar & CEREAL_VARIANT_POINTER(baseLayer);
+  ar(CEREAL_NVP(ratio));
+  ar(CEREAL_NVP(scale));
+  ar(CEREAL_VARIANT_POINTER(baseLayer));
 
   if (cereal::is_loading<Archive>())
   {

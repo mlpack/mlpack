@@ -68,8 +68,8 @@ template<typename Archive>
 void NormalDistribution<DataType>::serialize(Archive& ar,
                                              const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(mean);
-  ar & CEREAL_NVP(sigma);
+  ar(CEREAL_NVP(mean));
+  ar(CEREAL_NVP(sigma));
 }
 
 } // namespace ann

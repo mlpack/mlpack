@@ -77,7 +77,7 @@ void FlexibleReLU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version*/)
 {
-  ar & CEREAL_NVP(alpha);
+  ar(CEREAL_NVP(alpha));
 }
 
 } // namespace ann

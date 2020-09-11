@@ -349,10 +349,10 @@ void KMeans<MetricType,
             LloydStepType,
             MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(maxIterations);
-  ar & CEREAL_NVP(metric);
-  ar & CEREAL_NVP(partitioner);
-  ar & CEREAL_NVP(emptyClusterAction);
+  ar(CEREAL_NVP(maxIterations));
+  ar(CEREAL_NVP(metric));
+  ar(CEREAL_NVP(partitioner));
+  ar(CEREAL_NVP(emptyClusterAction));
 }
 
 } // namespace kmeans

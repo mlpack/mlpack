@@ -129,9 +129,9 @@ template<typename Archive>
 void MiniBatchDiscrimination<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(A);
-  ar & CEREAL_NVP(B);
-  ar & CEREAL_NVP(C);
+  ar(CEREAL_NVP(A));
+  ar(CEREAL_NVP(B));
+  ar(CEREAL_NVP(C));
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.

@@ -175,8 +175,8 @@ class LaplaceDistribution
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(mean);
-    ar & CEREAL_NVP(scale);
+    ar(CEREAL_NVP(mean));
+    ar(CEREAL_NVP(scale));
   }
 
  private:

@@ -96,7 +96,7 @@ class StringEncodingDictionary
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(mapping);
+    ar(CEREAL_NVP(mapping));
   }
 
  private:
@@ -217,7 +217,7 @@ class StringEncodingDictionary<boost::string_view>
   {
     size_t numTokens = tokens.size();
 
-    ar & CEREAL_NVP(numTokens);
+    ar(CEREAL_NVP(numTokens));
 
     if (cereal::is_loading<Archive>())
     {
@@ -225,10 +225,10 @@ class StringEncodingDictionary<boost::string_view>
 
       for (std::string& token : tokens)
       {
-        ar & CEREAL_NVP(token);
+        ar(CEREAL_NVP(token));
 
         size_t tokenValue = 0;
-        ar & CEREAL_NVP(tokenValue);
+        ar(CEREAL_NVP(tokenValue));
         mapping[token] = tokenValue;
       }
     }
@@ -236,10 +236,10 @@ class StringEncodingDictionary<boost::string_view>
     {
       for (std::string& token : tokens)
       {
-        ar & CEREAL_NVP(token);
+        ar(CEREAL_NVP(token));
 
         size_t tokenValue = mapping.at(token);
-        ar & CEREAL_NVP(tokenValue);
+        ar(CEREAL_NVP(tokenValue));
       }
     }
   }
@@ -330,8 +330,8 @@ class StringEncodingDictionary<int>
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(mapping);
-    ar & CEREAL_NVP(size);
+    ar(CEREAL_NVP(mapping));
+    ar(CEREAL_NVP(size));
   }
 
  private:

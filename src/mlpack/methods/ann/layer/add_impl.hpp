@@ -60,7 +60,7 @@ template<typename Archive>
 void Add<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(outSize);
+  ar(CEREAL_NVP(outSize));
 
   if (cereal::is_loading<Archive>())
     weights.set_size(outSize, 1);

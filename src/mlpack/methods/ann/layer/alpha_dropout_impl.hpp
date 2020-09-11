@@ -68,10 +68,10 @@ template<typename Archive>
 void AlphaDropout<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(ratio);
-  ar & CEREAL_NVP(alphaDash);
-  ar & CEREAL_NVP(a);
-  ar & CEREAL_NVP(b);
+  ar(CEREAL_NVP(ratio));
+  ar(CEREAL_NVP(alphaDash));
+  ar(CEREAL_NVP(a));
+  ar(CEREAL_NVP(b));
 }
 
 } // namespace ann

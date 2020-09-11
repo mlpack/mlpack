@@ -112,13 +112,13 @@ double SparseCoding::Train(
 template<typename Archive>
 void SparseCoding::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(atoms);
-  ar & CEREAL_NVP(dictionary);
-  ar & CEREAL_NVP(lambda1);
-  ar & CEREAL_NVP(lambda2);
-  ar & CEREAL_NVP(maxIterations);
-  ar & CEREAL_NVP(objTolerance);
-  ar & CEREAL_NVP(newtonTolerance);
+  ar(CEREAL_NVP(atoms));
+  ar(CEREAL_NVP(dictionary));
+  ar(CEREAL_NVP(lambda1));
+  ar(CEREAL_NVP(lambda2));
+  ar(CEREAL_NVP(maxIterations));
+  ar(CEREAL_NVP(objTolerance));
+  ar(CEREAL_NVP(newtonTolerance));
 }
 
 } // namespace sparse_coding

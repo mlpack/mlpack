@@ -1252,8 +1252,8 @@ class TestInner
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & CEREAL_NVP(c);
-    ar & CEREAL_NVP(s);
+    ar(CEREAL_NVP(c));
+    ar(CEREAL_NVP(s));
   }
 
   // Public members for testing.
@@ -1269,10 +1269,10 @@ class Test
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & CEREAL_NVP(x);
-    ar & CEREAL_NVP(y);
-    ar & CEREAL_NVP(ina);
-    ar & CEREAL_NVP(inb);
+    ar(CEREAL_NVP(x));
+    ar(CEREAL_NVP(y));
+    ar(CEREAL_NVP(ina));
+    ar(CEREAL_NVP(inb));
   }
 
   // Public members for testing.

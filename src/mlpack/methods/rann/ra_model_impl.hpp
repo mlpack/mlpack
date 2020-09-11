@@ -335,9 +335,9 @@ template<typename Archive>
 void RAModel<SortPolicy>::serialize(Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(treeType);
-  ar & CEREAL_NVP(randomBasis);
-  ar & CEREAL_NVP(q);
+  ar(CEREAL_NVP(treeType));
+  ar(CEREAL_NVP(randomBasis));
+  ar(CEREAL_NVP(q));
 
   // This should never happen, but just in case, be clean with memory.
   if (cereal::is_loading<Archive>())
@@ -346,7 +346,7 @@ void RAModel<SortPolicy>::serialize(Archive& ar,
   }
 
   // We only need to serialize one of the kRANN objects.
-  ar & CEREAL_VARIANT_POINTER(raSearch);
+  ar(CEREAL_VARIANT_POINTER(raSearch));
 }
 
 template<typename SortPolicy>

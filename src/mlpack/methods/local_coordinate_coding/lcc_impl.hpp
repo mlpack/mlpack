@@ -110,11 +110,11 @@ template<typename Archive>
 void LocalCoordinateCoding::serialize(Archive& ar,
                                       const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(atoms);
-  ar & CEREAL_NVP(dictionary);
-  ar & CEREAL_NVP(lambda);
-  ar & CEREAL_NVP(maxIterations);
-  ar & CEREAL_NVP(tolerance);
+  ar(CEREAL_NVP(atoms));
+  ar(CEREAL_NVP(dictionary));
+  ar(CEREAL_NVP(lambda));
+  ar(CEREAL_NVP(maxIterations));
+  ar(CEREAL_NVP(tolerance));
 }
 
 } // namespace lcc

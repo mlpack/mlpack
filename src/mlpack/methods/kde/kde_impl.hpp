@@ -715,15 +715,15 @@ void KDE<KernelType,
 serialize(Archive& ar, const uint32_t /* version */)
 {
   // Serialize preferences.
-  ar & CEREAL_NVP(relError);
-  ar & CEREAL_NVP(absError);
-  ar & CEREAL_NVP(trained);
-  ar & CEREAL_NVP(mode);
-  ar & CEREAL_NVP(monteCarlo);
-  ar & CEREAL_NVP(mcProb);
-  ar & CEREAL_NVP(initialSampleSize);
-  ar & CEREAL_NVP(mcEntryCoef);
-  ar & CEREAL_NVP(mcBreakCoef);
+  ar(CEREAL_NVP(relError));
+  ar(CEREAL_NVP(absError));
+  ar(CEREAL_NVP(trained));
+  ar(CEREAL_NVP(mode));
+  ar(CEREAL_NVP(monteCarlo));
+  ar(CEREAL_NVP(mcProb));
+  ar(CEREAL_NVP(initialSampleSize));
+  ar(CEREAL_NVP(mcEntryCoef));
+  ar(CEREAL_NVP(mcBreakCoef));
 
   // If we are loading, clean up memory if necessary.
   if (cereal::is_loading<Archive>())
@@ -738,10 +738,10 @@ serialize(Archive& ar, const uint32_t /* version */)
   }
 
   // Serialize the rest of values.
-  ar & CEREAL_NVP(kernel);
-  ar & CEREAL_NVP(metric);
-  ar & CEREAL_POINTER(referenceTree);
-  ar & CEREAL_POINTER(oldFromNewReferences);
+  ar(CEREAL_NVP(kernel));
+  ar(CEREAL_NVP(metric));
+  ar(CEREAL_POINTER(referenceTree));
+  ar(CEREAL_POINTER(oldFromNewReferences));
 }
 
 template<typename KernelType,

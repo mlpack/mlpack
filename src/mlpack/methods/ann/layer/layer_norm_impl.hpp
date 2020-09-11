@@ -121,7 +121,7 @@ template<typename Archive>
 void LayerNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(size);
+  ar(CEREAL_NVP(size));
 
   if (cereal::is_loading<Archive>())
   {
@@ -129,9 +129,9 @@ void LayerNorm<InputDataType, OutputDataType>::serialize(
     loading = true;
   }
 
-  ar & CEREAL_NVP(eps);
-  ar & CEREAL_NVP(gamma);
-  ar & CEREAL_NVP(beta);
+  ar(CEREAL_NVP(eps));
+  ar(CEREAL_NVP(gamma));
+  ar(CEREAL_NVP(beta));
 }
 
 } // namespace ann

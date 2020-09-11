@@ -153,8 +153,8 @@ class DatasetMapper
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(types);
-    ar & CEREAL_NVP(maps);
+    ar(CEREAL_NVP(types));
+    ar(CEREAL_NVP(maps));
   }
 
   //! Return the policy of the mapper.

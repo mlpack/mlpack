@@ -86,8 +86,8 @@ void ELU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(alpha);
-  ar & CEREAL_NVP(lambda);
+  ar(CEREAL_NVP(alpha));
+  ar(CEREAL_NVP(lambda));
 }
 
 } // namespace ann

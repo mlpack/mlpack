@@ -429,13 +429,13 @@ void RandomForest<
   else
     numTrees = trees.size();
 
-  ar & CEREAL_NVP(numTrees);
+  ar(CEREAL_NVP(numTrees));
 
   // Allocate space if needed.
   if (cereal::is_loading<Archive>())
     trees.resize(numTrees);
 
-  ar & CEREAL_NVP(trees);
+  ar(CEREAL_NVP(trees));
 }
 
 template<

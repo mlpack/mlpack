@@ -685,16 +685,16 @@ void HMM<Distribution>::load(Archive& ar, const uint32_t /* version */)
 {
   arma::mat transition;
   arma::vec initial;
-  ar & CEREAL_NVP(dimensionality);
-  ar & CEREAL_NVP(tolerance);
-  ar & CEREAL_NVP(transition);
-  ar & CEREAL_NVP(initial);
+  ar(CEREAL_NVP(dimensionality));
+  ar(CEREAL_NVP(tolerance));
+  ar(CEREAL_NVP(transition));
+  ar(CEREAL_NVP(initial));
 
   // Now serialize each emission.  If we are loading, we must resize the vector
   // of emissions correctly.
   emission.resize(transition.n_rows);
   // Load the emissions; generate the correct name for each one.
-  ar & CEREAL_NVP(emission);
+  ar(CEREAL_NVP(emission));
 
   logTransition = log(transition);
   logInitial = log(initial);
@@ -710,11 +710,11 @@ void HMM<Distribution>::save(Archive& ar,
 {
   arma::mat transition = exp(logTransition);
   arma::vec initial = exp(logInitial);
-  ar & CEREAL_NVP(dimensionality);
-  ar & CEREAL_NVP(tolerance);
-  ar & CEREAL_NVP(transition);
-  ar & CEREAL_NVP(initial);
-  ar & CEREAL_NVP(emission);
+  ar(CEREAL_NVP(dimensionality));
+  ar(CEREAL_NVP(tolerance));
+  ar(CEREAL_NVP(transition));
+  ar(CEREAL_NVP(initial));
+  ar(CEREAL_NVP(emission));
 }
 
 } // namespace hmm

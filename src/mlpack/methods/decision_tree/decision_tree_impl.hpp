@@ -1142,12 +1142,12 @@ void DecisionTree<FitnessFunction,
     children.clear();
   }
   // Serialize the children first.
-  ar & CEREAL_VECTOR_POINTER(children);
+  ar(CEREAL_VECTOR_POINTER(children));
 
   // Now serialize the rest of the object.
-  ar & CEREAL_NVP(splitDimension);
-  ar & CEREAL_NVP(dimensionTypeOrMajorityClass);
-  ar & CEREAL_NVP(classProbabilities);
+  ar(CEREAL_NVP(splitDimension));
+  ar(CEREAL_NVP(dimensionTypeOrMajorityClass));
+  ar(CEREAL_NVP(classProbabilities));
 }
 
 template<typename FitnessFunction,

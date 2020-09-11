@@ -118,10 +118,10 @@ void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
   if (cereal::is_loading<Archive>())
     network.clear();
 
-  ar & CEREAL_VECTOR_VARIANT_POINTER(network);
-  ar & CEREAL_NVP(model);
-  ar & CEREAL_NVP(run);
-  ar & CEREAL_NVP(ownsLayer);
+  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
+  ar(CEREAL_NVP(model));
+  ar(CEREAL_NVP(run));
+  ar(CEREAL_NVP(ownsLayer));
 }
 
 } // namespace ann

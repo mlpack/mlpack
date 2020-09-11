@@ -727,25 +727,25 @@ void Octree<MetricType, StatisticType, MatType>::serialize(
 
   bool hasParent = (parent != NULL);
 
-  ar & CEREAL_NVP(begin);
-  ar & CEREAL_NVP(count);
-  ar & CEREAL_NVP(bound);
-  ar & CEREAL_NVP(stat);
-  ar & CEREAL_NVP(parentDistance);
-  ar & CEREAL_NVP(furthestDescendantDistance);
-  ar & CEREAL_NVP(metric);
-  ar & CEREAL_NVP(hasParent);
+  ar(CEREAL_NVP(begin));
+  ar(CEREAL_NVP(count));
+  ar(CEREAL_NVP(bound));
+  ar(CEREAL_NVP(stat));
+  ar(CEREAL_NVP(parentDistance));
+  ar(CEREAL_NVP(furthestDescendantDistance));
+  ar(CEREAL_NVP(metric));
+  ar(CEREAL_NVP(hasParent));
   if (!hasParent)
   {
     MatType* datasetTemp = const_cast<MatType*>(dataset);
-    ar & CEREAL_POINTER(datasetTemp);
+    ar(CEREAL_POINTER(datasetTemp));
     if (cereal::is_loading<Archive>())
     {
       dataset = datasetTemp;
     }
   }
 
-  ar & CEREAL_VECTOR_POINTER(children);
+  ar(CEREAL_VECTOR_POINTER(children));
 
   if (cereal::is_loading<Archive>())
   {

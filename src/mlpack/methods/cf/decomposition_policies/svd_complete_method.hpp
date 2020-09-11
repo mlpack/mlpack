@@ -160,8 +160,8 @@ class SVDCompletePolicy
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(w);
-    ar & CEREAL_NVP(h);
+    ar(CEREAL_NVP(w));
+    ar(CEREAL_NVP(h));
   }
 
  private:

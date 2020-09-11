@@ -183,15 +183,15 @@ template<typename MatType>
 template<typename Archive>
 void QDAFN<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(l);
-  ar & CEREAL_NVP(m);
-  ar & CEREAL_NVP(lines);
-  ar & CEREAL_NVP(projections);
-  ar & CEREAL_NVP(sIndices);
-  ar & CEREAL_NVP(sValues);
+  ar(CEREAL_NVP(l));
+  ar(CEREAL_NVP(m));
+  ar(CEREAL_NVP(lines));
+  ar(CEREAL_NVP(projections));
+  ar(CEREAL_NVP(sIndices));
+  ar(CEREAL_NVP(sValues));
   if (cereal::is_loading<Archive>())
     candidateSet.clear();
-  ar & CEREAL_NVP(candidateSet);
+  ar(CEREAL_NVP(candidateSet));
 }
 
 } // namespace neighbor

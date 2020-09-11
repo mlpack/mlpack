@@ -204,11 +204,11 @@ void DecisionStump<MatType>::serialize(Archive& ar,
 {
   // This is straightforward; just serialize all of the members of the class.
   // None need special handling.
-  ar & CEREAL_NVP(numClasses);
-  ar & CEREAL_NVP(bucketSize);
-  ar & CEREAL_NVP(splitDimension);
-  ar & CEREAL_NVP(split);
-  ar & CEREAL_NVP(binLabels);
+  ar(CEREAL_NVP(numClasses));
+  ar(CEREAL_NVP(bucketSize));
+  ar(CEREAL_NVP(splitDimension));
+  ar(CEREAL_NVP(split));
+  ar(CEREAL_NVP(binLabels));
 }
 
 /**

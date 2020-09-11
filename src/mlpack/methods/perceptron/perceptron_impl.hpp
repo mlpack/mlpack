@@ -203,9 +203,9 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::serialize(
 {
   // We just need to serialize the maximum number of iterations, the weights,
   // and the biases.
-  ar & CEREAL_NVP(maxIterations);
-  ar & CEREAL_NVP(weights);
-  ar & CEREAL_NVP(biases);
+  ar(CEREAL_NVP(maxIterations));
+  ar(CEREAL_NVP(weights));
+  ar(CEREAL_NVP(biases));
 }
 
 } // namespace perceptron

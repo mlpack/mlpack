@@ -74,7 +74,7 @@ class CauchyKernel
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(bandwidth);
+    ar(CEREAL_NVP(bandwidth));
   }
 
  private:

@@ -995,20 +995,20 @@ template <typename Archive>
 void DTree<MatType, TagType>::serialize(Archive& ar,
                                         const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(start);
-  ar & CEREAL_NVP(end);
-  ar & CEREAL_NVP(maxVals);
-  ar & CEREAL_NVP(minVals);
-  ar & CEREAL_NVP(splitDim);
-  ar & CEREAL_NVP(splitValue);
-  ar & CEREAL_NVP(logNegError);
-  ar & CEREAL_NVP(subtreeLeavesLogNegError);
-  ar & CEREAL_NVP(subtreeLeaves);
-  ar & CEREAL_NVP(root);
-  ar & CEREAL_NVP(ratio);
-  ar & CEREAL_NVP(logVolume);
-  ar & CEREAL_NVP(bucketTag);
-  ar & CEREAL_NVP(alphaUpper);
+  ar(CEREAL_NVP(start));
+  ar(CEREAL_NVP(end));
+  ar(CEREAL_NVP(maxVals));
+  ar(CEREAL_NVP(minVals));
+  ar(CEREAL_NVP(splitDim));
+  ar(CEREAL_NVP(splitValue));
+  ar(CEREAL_NVP(logNegError));
+  ar(CEREAL_NVP(subtreeLeavesLogNegError));
+  ar(CEREAL_NVP(subtreeLeaves));
+  ar(CEREAL_NVP(root));
+  ar(CEREAL_NVP(ratio));
+  ar(CEREAL_NVP(logVolume));
+  ar(CEREAL_NVP(bucketTag));
+  ar(CEREAL_NVP(alphaUpper));
 
   if (cereal::is_loading<Archive>())
   {
@@ -1024,18 +1024,18 @@ void DTree<MatType, TagType>::serialize(Archive& ar,
   bool hasLeft = (left != NULL);
   bool hasRight = (right != NULL);
 
-  ar & CEREAL_NVP(hasLeft);
-  ar & CEREAL_NVP(hasRight);
+  ar(CEREAL_NVP(hasLeft));
+  ar(CEREAL_NVP(hasRight));
 
   if (hasLeft)
-    ar & CEREAL_POINTER(left);
+    ar(CEREAL_POINTER(left));
   if (hasRight)
-    ar & CEREAL_POINTER(right);
+    ar(CEREAL_POINTER(right));
 
   if (root)
   {
-    ar & CEREAL_NVP(maxVals);
-    ar & CEREAL_NVP(minVals);
+    ar(CEREAL_NVP(maxVals));
+    ar(CEREAL_NVP(minVals));
 
     // This is added in order to reduce (dramatically!) the model file size.
     if (cereal::is_loading<Archive>() && left && right)

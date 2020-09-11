@@ -112,22 +112,22 @@ class ScalingModel
       zcascale = NULL;
     }
 
-    ar & CEREAL_NVP(scalerType);
-    ar & CEREAL_NVP(epsilon);
-    ar & CEREAL_NVP(minValue);
-    ar & CEREAL_NVP(maxValue);
+    ar(CEREAL_NVP(scalerType));
+    ar(CEREAL_NVP(epsilon));
+    ar(CEREAL_NVP(minValue));
+    ar(CEREAL_NVP(maxValue));
     if (scalerType == ScalerTypes::MIN_MAX_SCALER)
-      ar & CEREAL_POINTER(minmaxscale);
+      ar(CEREAL_POINTER(minmaxscale));
     else if (scalerType == ScalerTypes::MEAN_NORMALIZATION)
-      ar & CEREAL_POINTER(meanscale);
+      ar(CEREAL_POINTER(meanscale));
     else if (scalerType == ScalerTypes::MAX_ABS_SCALER)
-      ar & CEREAL_POINTER(maxabsscale);
+      ar(CEREAL_POINTER(maxabsscale));
     else if (scalerType == ScalerTypes::STANDARD_SCALER)
-      ar & CEREAL_POINTER(standardscale);
+      ar(CEREAL_POINTER(standardscale));
     else if (scalerType == ScalerTypes::PCA_WHITENING)
-      ar & CEREAL_POINTER(pcascale);
+      ar(CEREAL_POINTER(pcascale));
     else if (scalerType == ScalerTypes::ZCA_WHITENING)
-      ar & CEREAL_POINTER(zcascale);
+      ar(CEREAL_POINTER(zcascale));
   }
 };
 

@@ -87,8 +87,8 @@ template<typename Archive>
 void Lookup<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t version)
 {
-  ar & CEREAL_NVP(vocabSize);
-  ar & CEREAL_NVP(embeddingSize);
+  ar(CEREAL_NVP(vocabSize));
+  ar(CEREAL_NVP(embeddingSize));
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.

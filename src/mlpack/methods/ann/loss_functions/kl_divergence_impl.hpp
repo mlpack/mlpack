@@ -66,7 +66,7 @@ void KLDivergence<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(takeMean);
+  ar(CEREAL_NVP(takeMean));
 }
 
 } // namespace ann

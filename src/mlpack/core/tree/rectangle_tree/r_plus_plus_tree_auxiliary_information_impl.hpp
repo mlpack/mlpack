@@ -129,7 +129,7 @@ void RPlusPlusTreeAuxiliaryInformation<TreeType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(outerBound);
+  ar(CEREAL_NVP(outerBound));
 }
 
 } // namespace tree

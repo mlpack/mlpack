@@ -258,9 +258,9 @@ template<typename Archive>
 void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
                                                    const uint32_t version)
 {
-  ar & CEREAL_NVP(numClasses);
-  ar & CEREAL_NVP(tolerance);
-  ar & CEREAL_NVP(alpha);
+  ar(CEREAL_NVP(numClasses));
+  ar(CEREAL_NVP(tolerance));
+  ar(CEREAL_NVP(alpha));
 
   // Now serialize each weak learner.
   if (cereal::is_loading<Archive>())
@@ -268,7 +268,7 @@ void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
     wl.clear();
     wl.resize(alpha.size());
   }
-  ar & CEREAL_NVP(wl);
+  ar(CEREAL_NVP(wl));
 }
 
 } // namespace adaboost

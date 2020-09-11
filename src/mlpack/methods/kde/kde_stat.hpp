@@ -69,10 +69,10 @@ class KDEStat
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(mcBeta);
-    ar & CEREAL_NVP(mcAlpha);
-    ar & CEREAL_NVP(accumAlpha);
-    ar & CEREAL_NVP(accumError);
+    ar(CEREAL_NVP(mcBeta));
+    ar(CEREAL_NVP(mcAlpha));
+    ar(CEREAL_NVP(accumAlpha));
+    ar(CEREAL_NVP(accumError));
 
     if (cereal::is_loading<Archive>())
     {

@@ -134,7 +134,7 @@ template<typename Archive>
 void VirtualBatchNorm<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(size);
+  ar(CEREAL_NVP(size));
 
   if (cereal::is_loading<Archive>())
   {
@@ -142,9 +142,9 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::serialize(
     loading = false;
   }
 
-  ar & CEREAL_NVP(eps);
-  ar & CEREAL_NVP(gamma);
-  ar & CEREAL_NVP(beta);
+  ar(CEREAL_NVP(eps));
+  ar(CEREAL_NVP(gamma));
+  ar(CEREAL_NVP(beta));
 }
 
 } // namespace ann

@@ -102,8 +102,8 @@ class FastMKSStat
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(bound);
-    ar & CEREAL_NVP(selfKernel);
+    ar(CEREAL_NVP(bound));
+    ar(CEREAL_NVP(selfKernel));
 
     // Void out last kernel information on load.
     if (cereal::is_loading<Archive>())

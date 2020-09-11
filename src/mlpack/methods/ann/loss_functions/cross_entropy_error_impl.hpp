@@ -52,7 +52,7 @@ void CrossEntropyError<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(eps);
+  ar(CEREAL_NVP(eps));
 }
 
 } // namespace ann

@@ -201,8 +201,8 @@ template<typename Archive>
 void StringEncoding<EncodingPolicyType, DictionaryType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(encodingPolicy);
-  ar & CEREAL_NVP(dictionary);
+  ar(CEREAL_NVP(encodingPolicy));
+  ar(CEREAL_NVP(dictionary));
 }
 
 } // namespace data

@@ -189,7 +189,7 @@ template <typename ElemType, typename PrecisionType>
 template <typename Archive>
 void BLEU<ElemType, PrecisionType>::serialize(Archive& ar, const uint32_t version)
 {
-  ar & CEREAL_NVP(maxOrder);
+  ar(CEREAL_NVP(maxOrder));
 }
 
 } // namespace metric

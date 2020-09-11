@@ -62,7 +62,7 @@ template<typename Archive>
 void SoftMarginLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t version)
 {
-  ar & CEREAL_NVP(reduction);
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

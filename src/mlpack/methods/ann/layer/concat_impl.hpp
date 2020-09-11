@@ -270,8 +270,8 @@ template<typename Archive>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::serialize(
     Archive& ar, const uint32_t version)
 {
-  ar & CEREAL_NVP(model);
-  ar & CEREAL_NVP(run);
+  ar(CEREAL_NVP(model));
+  ar(CEREAL_NVP(run));
 
   // Do we have to load or save a model?
   if (model)
@@ -282,7 +282,7 @@ void Concat<InputDataType, OutputDataType, CustomLayers...>::serialize(
       std::for_each(network.begin(), network.end(),
           boost::apply_visitor(deleteVisitor));
     }
-    ar & CEREAL_VECTOR_VARIANT_POINTER(network);
+    ar(CEREAL_VECTOR_VARIANT_POINTER(network));
   }
 }
 

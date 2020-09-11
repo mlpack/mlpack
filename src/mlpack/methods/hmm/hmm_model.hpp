@@ -160,7 +160,7 @@ class HMMModel
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t version)
   {
-    ar & CEREAL_NVP(type);
+    ar(CEREAL_NVP(type));
 
     // If necessary, clean memory.
     if (cereal::is_loading<Archive>())
@@ -177,14 +177,14 @@ class HMMModel
     }
 
     if (type == HMMType::DiscreteHMM)
-      ar & CEREAL_POINTER(discreteHMM);
+      ar(CEREAL_POINTER(discreteHMM));
     else if (type == HMMType::GaussianHMM)
-      ar & CEREAL_POINTER(gaussianHMM);
+      ar(CEREAL_POINTER(gaussianHMM));
     else if (type == HMMType::GaussianMixtureModelHMM)
-      ar & CEREAL_POINTER(gmmHMM);
+      ar(CEREAL_POINTER(gmmHMM));
 
     if (type == HMMType::DiagonalGaussianMixtureModelHMM)
-      ar & CEREAL_POINTER(diagGMMHMM);
+      ar(CEREAL_POINTER(diagGMMHMM));
   }
 
   // Accessor method for type of HMM

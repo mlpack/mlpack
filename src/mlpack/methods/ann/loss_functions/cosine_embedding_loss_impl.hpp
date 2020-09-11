@@ -107,9 +107,9 @@ template<typename Archive>
 void CosineEmbeddingLoss<InputDataType, OutputDataType>::serialize(
     Archive&  ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(margin);
-  ar & CEREAL_NVP(similarity);
-  ar & CEREAL_NVP(takeMean);
+  ar(CEREAL_NVP(margin));
+  ar(CEREAL_NVP(similarity));
+  ar(CEREAL_NVP(takeMean));
 }
 
 } // namespace ann

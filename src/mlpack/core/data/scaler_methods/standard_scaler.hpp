@@ -101,8 +101,8 @@ class StandardScaler
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(itemMean);
-    ar & CEREAL_NVP(itemStdDev);
+    ar(CEREAL_NVP(itemMean));
+    ar(CEREAL_NVP(itemStdDev));
   }
 
  private:

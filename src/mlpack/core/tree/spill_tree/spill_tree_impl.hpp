@@ -921,14 +921,14 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     right = NULL;
   }
 
-  ar & CEREAL_NVP(count);
-  ar & CEREAL_POINTER(pointsIndex);
-  ar & CEREAL_NVP(overlappingNode);
-  ar & CEREAL_NVP(hyperplane);
-  ar & CEREAL_NVP(bound);
-  ar & CEREAL_NVP(stat);
-  ar & CEREAL_NVP(parentDistance);
-  ar & CEREAL_NVP(furthestDescendantDistance);
+  ar(CEREAL_NVP(count));
+  ar(CEREAL_POINTER(pointsIndex));
+  ar(CEREAL_NVP(overlappingNode));
+  ar(CEREAL_NVP(hyperplane));
+  ar(CEREAL_NVP(bound));
+  ar(CEREAL_NVP(stat));
+  ar(CEREAL_NVP(parentDistance));
+  ar(CEREAL_NVP(furthestDescendantDistance));
   // Force a non-const pointer.
   MatType* datasetPtr = const_cast<MatType*>(dataset);
 
@@ -943,16 +943,16 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   bool hasRight = (right != NULL);
   bool hasParent = (parent != NULL);
 
-  ar & CEREAL_NVP(hasLeft);
-  ar & CEREAL_NVP(hasRight);
-  ar & CEREAL_NVP(hasParent);
+  ar(CEREAL_NVP(hasLeft));
+  ar(CEREAL_NVP(hasRight));
+  ar(CEREAL_NVP(hasParent));
 
   if (hasLeft)
-    ar & CEREAL_POINTER(left);
+    ar(CEREAL_POINTER(left));
   if (hasRight)
-    ar & CEREAL_POINTER(right);
+    ar(CEREAL_POINTER(right));
   if (!hasParent)
-    ar & CEREAL_POINTER(datasetPtr);
+    ar(CEREAL_POINTER(datasetPtr));
 
   if (cereal::is_loading<Archive>())
   {

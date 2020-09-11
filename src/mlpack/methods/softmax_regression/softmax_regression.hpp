@@ -234,10 +234,10 @@ class SoftmaxRegression
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(parameters);
-    ar & CEREAL_NVP(numClasses);
-    ar & CEREAL_NVP(lambda);
-    ar & CEREAL_NVP(fitIntercept);
+    ar(CEREAL_NVP(parameters));
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(lambda));
+    ar(CEREAL_NVP(fitIntercept));
   }
 
  private:

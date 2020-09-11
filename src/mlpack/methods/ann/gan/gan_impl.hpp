@@ -488,12 +488,12 @@ template<typename Archive>
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
 serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(parameter);
-  ar & CEREAL_NVP(generator);
-  ar & CEREAL_NVP(discriminator);
-  ar & CEREAL_NVP(reset);
-  ar & CEREAL_NVP(genWeights);
-  ar & CEREAL_NVP(discWeights);
+  ar(CEREAL_NVP(parameter));
+  ar(CEREAL_NVP(generator));
+  ar(CEREAL_NVP(discriminator));
+  ar(CEREAL_NVP(reset));
+  ar(CEREAL_NVP(genWeights));
+  ar(CEREAL_NVP(discWeights));
 
   if (cereal::is_loading<Archive>())
   {

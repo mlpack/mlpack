@@ -182,18 +182,18 @@ class HoeffdingTreeModel
       infoBinaryTree = NULL;
     }
 
-    ar & CEREAL_NVP(type);
+    ar(CEREAL_NVP(type));
 
     // Fake dataset info may be needed to create fake trees.
     data::DatasetInfo info;
     if (type == GINI_HOEFFDING)
-      ar & CEREAL_POINTER(giniHoeffdingTree);
+      ar(CEREAL_POINTER(giniHoeffdingTree));
     else if (type == GINI_BINARY)
-      ar & CEREAL_POINTER(giniBinaryTree);
+      ar(CEREAL_POINTER(giniBinaryTree));
     else if (type == INFO_HOEFFDING)
-      ar & CEREAL_POINTER(infoHoeffdingTree);
+      ar(CEREAL_POINTER(infoHoeffdingTree));
     else if (type == INFO_BINARY)
-      ar & CEREAL_POINTER(infoBinaryTree);
+      ar(CEREAL_POINTER(infoBinaryTree));
   }
 
  private:

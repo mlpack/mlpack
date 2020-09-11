@@ -103,9 +103,9 @@ class MaxAbsScaler
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(itemMin);
-    ar & CEREAL_NVP(itemMax);
-    ar & CEREAL_NVP(scale);
+    ar(CEREAL_NVP(itemMin));
+    ar(CEREAL_NVP(itemMax));
+    ar(CEREAL_NVP(scale));
   }
  private:
   // Vector which holds minimum of each feature.

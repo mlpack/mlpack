@@ -158,11 +158,11 @@ class Subview
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(inSize);
-    ar & CEREAL_NVP(beginRow);
-    ar & CEREAL_NVP(endRow);
-    ar & CEREAL_NVP(beginCol);
-    ar & CEREAL_NVP(endCol);
+    ar(CEREAL_NVP(inSize));
+    ar(CEREAL_NVP(beginRow));
+    ar(CEREAL_NVP(endRow));
+    ar(CEREAL_NVP(beginCol));
+    ar(CEREAL_NVP(endCol));
   }
 
  private:

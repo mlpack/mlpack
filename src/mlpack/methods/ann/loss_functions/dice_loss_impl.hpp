@@ -56,7 +56,7 @@ void DiceLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(smooth);
+  ar(CEREAL_NVP(smooth));
 }
 
 } // namespace ann

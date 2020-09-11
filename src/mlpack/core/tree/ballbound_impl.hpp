@@ -287,8 +287,8 @@ void BallBound<MetricType, VecType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(radius);
-  ar & CEREAL_NVP(center);
+  ar(CEREAL_NVP(radius));
+  ar(CEREAL_NVP(center));
 
   if (cereal::is_loading<Archive>())
   {
@@ -297,8 +297,8 @@ void BallBound<MetricType, VecType>::serialize(
       delete metric;
   }
 
-  ar & CEREAL_POINTER(metric);
-  ar & CEREAL_NVP(ownsMetric);
+  ar(CEREAL_POINTER(metric));
+  ar(CEREAL_NVP(ownsMetric));
 }
 
 } // namespace bound

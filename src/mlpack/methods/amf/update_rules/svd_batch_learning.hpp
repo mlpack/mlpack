@@ -168,12 +168,12 @@ class SVDBatchLearning
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & CEREAL_NVP(u);
-    ar & CEREAL_NVP(kw);
-    ar & CEREAL_NVP(kh);
-    ar & CEREAL_NVP(momentum);
-    ar & CEREAL_NVP(mW);
-    ar & CEREAL_NVP(mH);
+    ar(CEREAL_NVP(u));
+    ar(CEREAL_NVP(kw));
+    ar(CEREAL_NVP(kh));
+    ar(CEREAL_NVP(momentum));
+    ar(CEREAL_NVP(mW));
+    ar(CEREAL_NVP(mH));
   }
 
  private:

@@ -32,8 +32,8 @@ void LARS::serialize(Archive& ar, const uint32_t /* version */)
   }
   else
   {
-    ar & cereal::make_nvp("matGramInternal",
-        (const_cast<arma::mat&>(*matGram)));
+    ar(cereal::make_nvp("matGramInternal",
+        (const_cast<arma::mat&>(*matGram))));
   }
 
   ar(CEREAL_NVP(matUtriCholFactor));

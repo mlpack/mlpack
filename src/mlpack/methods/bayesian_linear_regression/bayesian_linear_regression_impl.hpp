@@ -23,18 +23,18 @@ namespace regression {
 template<typename Archive>
 void BayesianLinearRegression::serialize(Archive& ar, const uint32_t version)
 {
-  ar & CEREAL_NVP(centerData);
-  ar & CEREAL_NVP(scaleData);
-  ar & CEREAL_NVP(nIterMax);
-  ar & CEREAL_NVP(tol);
-  ar & CEREAL_NVP(dataOffset);
-  ar & CEREAL_NVP(dataScale);
-  ar & CEREAL_NVP(responsesOffset);
-  ar & CEREAL_NVP(alpha);
-  ar & CEREAL_NVP(beta);
-  ar & CEREAL_NVP(gamma);
-  ar & CEREAL_NVP(omega);
-  ar & CEREAL_NVP(matCovariance);
+  ar(CEREAL_NVP(centerData));
+  ar(CEREAL_NVP(scaleData));
+  ar(CEREAL_NVP(nIterMax));
+  ar(CEREAL_NVP(tol));
+  ar(CEREAL_NVP(dataOffset));
+  ar(CEREAL_NVP(dataScale));
+  ar(CEREAL_NVP(responsesOffset));
+  ar(CEREAL_NVP(alpha));
+  ar(CEREAL_NVP(beta));
+  ar(CEREAL_NVP(gamma));
+  ar(CEREAL_NVP(omega));
+  ar(CEREAL_NVP(matCovariance));
 }
 
 } // namespace regression

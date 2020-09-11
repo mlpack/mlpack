@@ -73,10 +73,10 @@ void AdaptiveMeanPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar & CEREAL_NVP(outputWidth);
-  ar & CEREAL_NVP(outputHeight);
-  ar & CEREAL_NVP(reset);
-  ar & CEREAL_NVP(poolingLayer);
+  ar(CEREAL_NVP(outputWidth));
+  ar(CEREAL_NVP(outputHeight));
+  ar(CEREAL_NVP(reset));
+  ar(CEREAL_NVP(poolingLayer));
 }
 
 } // namespace ann
