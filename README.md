@@ -101,10 +101,10 @@ Citations are beneficial for the growth and improvement of mlpack.
 mlpack has the following dependencies:
 
       Armadillo      >= 8.400.0
-      Boost (math_c99, unit_test_framework, serialization,
-             spirit) >= 1.58.0
+      Boost (math_c99, unit_test_framework, spirit) >= 1.58.0
       CMake          >= 3.2.2
       ensmallen      >= 2.10.0
+      cereal         >= 1.1.2
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
