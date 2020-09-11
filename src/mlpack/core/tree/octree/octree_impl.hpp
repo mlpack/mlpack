@@ -753,6 +753,7 @@ void Octree<MetricType, StatisticType, MatType>::serialize(
       children[i]->parent = this;
   }
 
+  // We have to correct the dataset pointers in all of the children.
   if (!hasParent)
   {
     std::stack<Octree*> stack;
