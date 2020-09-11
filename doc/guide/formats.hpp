@@ -484,8 +484,7 @@ void serialize(Archive& ar);
 
 \note
 For more information on this method and how it works, see the
-cereal documentation at
-https://uscilab.github.io/cereal/index.html
+cereal documentation at https://uscilab.github.io/cereal/index.html.
 
 \note
 Examples of serialize() methods can be found in most classes; one fairly
