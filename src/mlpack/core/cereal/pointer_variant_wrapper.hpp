@@ -86,15 +86,15 @@ struct load_visitor : public boost::static_visitor<void>
   }
 };
 
-template<typename... VariantTypes>
-class pointer_variant_wrapper
-{
-/*
+/**
  * The objective of this class is to create a wrapper for
  * boost::variant. 
  * Cereal supports the serialization of boost::variant, but 
  * we need to serialize it if it holds a raw pointers.
  */
+template<typename... VariantTypes>
+class pointer_variant_wrapper
+{
  public:
   pointer_variant_wrapper(boost::variant<VariantTypes...>& pointerVar)
     : pointerVariant(pointerVar)
