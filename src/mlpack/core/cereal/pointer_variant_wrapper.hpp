@@ -86,24 +86,24 @@ struct load_visitor : public boost::static_visitor<void>
   }
 };
 
-template<typename... VariantTypes>
-class pointer_variant_wrapper
-{
-/*
+/**
  * The objective of this class is to create a wrapper for
  * boost::variant. 
  * Cereal supports the serialization of boost::variant, but 
  * we need to serialize it if it holds a raw pointers.
  */
+template<typename... VariantTypes>
+class pointer_variant_wrapper
+{
  public:
-  pointer_variant_wrapper(boost::variant<VariantTypes...>& pointerVar)
-    : pointerVariant(pointerVar)
+  pointer_variant_wrapper(boost::variant<VariantTypes...>& pointerVar) :
+      pointerVariant(pointerVar)
   {}
 
   template<class Archive>
   void save(Archive& ar) const
   {
-    // which represent the index in std::variant.
+    // which represents the index in std::variant.
     int which = pointerVariant.which();
     ar & CEREAL_NVP(which);
     save_visitor<Archive> s(ar);
