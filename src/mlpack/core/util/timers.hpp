@@ -99,7 +99,7 @@ class Timers
 {
  public:
   //! Default to disabled.
-  Timers() : enabled(false) {  }
+  Timers() : enabled(false) { }
 
   /**
    * Returns a copy of all the timers used via this interface.
