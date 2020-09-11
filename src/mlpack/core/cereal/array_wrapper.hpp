@@ -4,7 +4,7 @@
  *
  * Implementation of an array wrapper.
  *
- * This implementation allows to serilize array easily using cereal.
+ * This implementation allows to seriliaze an array easily using cereal.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
