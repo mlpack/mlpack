@@ -103,7 +103,7 @@ class pointer_variant_wrapper
   template<class Archive>
   void save(Archive& ar) const
   {
-    // which represent the index in std::variant.
+    // which represents the index in std::variant.
     int which = pointerVariant.which();
     ar & CEREAL_NVP(which);
     save_visitor<Archive> s(ar);
