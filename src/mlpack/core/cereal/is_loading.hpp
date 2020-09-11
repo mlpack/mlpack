@@ -30,7 +30,7 @@ struct is_cereal_archive
     // to check if it is a loading archive.
     constexpr static bool value = std::is_same<Archive, cereal::BinaryInputArchive>::value ||
 //#if (BINDING_TYPE != BINDING_TYPE_R)
-std::is_same<Archive, cereal::JSONInputArchive>::value ||
+        std::is_same<Archive, cereal::JSONInputArchive>::value ||
 //#endif
       std::is_same<Archive, cereal::XMLInputArchive>::value;
 };
