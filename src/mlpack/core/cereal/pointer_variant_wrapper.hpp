@@ -96,8 +96,8 @@ template<typename... VariantTypes>
 class pointer_variant_wrapper
 {
  public:
-  pointer_variant_wrapper(boost::variant<VariantTypes...>& pointerVar)
-    : pointerVariant(pointerVar)
+  pointer_variant_wrapper(boost::variant<VariantTypes...>& pointerVar) :
+      pointerVariant(pointerVar)
   {}
 
   template<class Archive>
