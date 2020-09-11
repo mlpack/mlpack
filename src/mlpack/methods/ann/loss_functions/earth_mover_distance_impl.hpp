@@ -48,7 +48,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void EarthMoverDistance<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
-    std::uint32_t const /* version */)
+    const uint32_t /* version */)
 {
   /* Nothing to do here */
 }

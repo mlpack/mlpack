@@ -173,7 +173,7 @@ double LogisticRegression<MatType>::ComputeAccuracy(
 template<typename MatType>
 template<typename Archive>
 void LogisticRegression<MatType>::serialize(Archive& ar,
-    std::uint32_t const /* version */)
+    const uint32_t /* version */)
 {
   ar & CEREAL_NVP(parameters);
   ar & CEREAL_NVP(lambda);

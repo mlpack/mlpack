@@ -92,7 +92,7 @@ template<typename InputDataType, typename OutputDataType,
 template<typename Archive>
 void RBF<InputDataType, OutputDataType, Activation>::serialize(
     Archive& ar,
-    std::uint32_t const /* version */)
+    const uint32_t /* version */)
 {
   ar & CEREAL_NVP(distances);
   ar & CEREAL_NVP(centres);

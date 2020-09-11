@@ -30,7 +30,7 @@ class NoConstraint
 
   //! Serialize the object (nothing to do).
   template<typename Archive>
-  static void serialize(Archive& /* ar */, std::uint32_t const /* version */) { }
+  static void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace gmm

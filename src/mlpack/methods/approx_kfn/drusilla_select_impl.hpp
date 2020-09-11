@@ -202,7 +202,7 @@ void DrusillaSelect<MatType>::Search(const MatType& querySet,
 template<typename MatType>
 template<typename Archive>
 void DrusillaSelect<MatType>::serialize(Archive& ar,
-                                        std::uint32_t const /* version */)
+                                        const uint32_t /* version */)
 {
   ar & CEREAL_NVP(candidateSet);
   ar & CEREAL_NVP(candidateIndices);

@@ -904,7 +904,7 @@ template<typename MetricType,
              class SplitType>
 template<typename Archive>
 void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    serialize(Archive& ar, std::uint32_t const version)
+    serialize(Archive& ar, const uint32_t version)
 {
   // If we're loading, and we have children, they need to be deleted.
   if (cereal::is_loading<Archive>())

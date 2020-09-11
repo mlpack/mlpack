@@ -97,7 +97,7 @@ class AdaBoostModel
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
     if (cereal::is_loading<Archive>())
     {

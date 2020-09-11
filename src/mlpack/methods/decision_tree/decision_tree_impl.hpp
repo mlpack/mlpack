@@ -1132,7 +1132,7 @@ void DecisionTree<FitnessFunction,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::serialize(Archive& ar,
-                                          std::uint32_t const /* version */)
+                                          const uint32_t /* version */)
 {
   // Clean memory if needed.
   if (cereal::is_loading<Archive>())

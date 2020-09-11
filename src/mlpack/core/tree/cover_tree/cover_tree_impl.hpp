@@ -1728,7 +1728,7 @@ template<
 template<typename Archive>
 void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::serialize(
     Archive& ar,
-    std::uint32_t const /* version */)
+    const uint32_t /* version */)
 {
   // If we're loading, and we have children, they need to be deleted.  We may
   // also need to delete the local metric and dataset.

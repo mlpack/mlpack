@@ -161,7 +161,7 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 template<typename Archive>
 void Linear3D<InputDataType, OutputDataType, RegularizerType>::serialize(
-    Archive& ar, std::uint32_t const /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   ar & CEREAL_NVP(inSize);
   ar & CEREAL_NVP(outSize);

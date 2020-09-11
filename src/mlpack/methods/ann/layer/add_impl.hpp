@@ -58,7 +58,7 @@ void Add<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Add<InputDataType, OutputDataType>::serialize(
-    Archive& ar, std::uint32_t const /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   ar & CEREAL_NVP(outSize);
 

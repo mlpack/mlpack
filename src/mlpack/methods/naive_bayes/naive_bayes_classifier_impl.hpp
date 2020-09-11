@@ -351,7 +351,7 @@ template<typename ModelMatType>
 template<typename Archive>
 void NaiveBayesClassifier<ModelMatType>::serialize(
     Archive& ar,
-    std::uint32_t const /* version */)
+    const uint32_t /* version */)
 {
   ar & CEREAL_NVP(means);
   ar & CEREAL_NVP(variances);

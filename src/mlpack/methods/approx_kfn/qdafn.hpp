@@ -81,7 +81,7 @@ class QDAFN
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   //! Get the number of projections.
   size_t NumProjections() const { return candidateSet.size(); }

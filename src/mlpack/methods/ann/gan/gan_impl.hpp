@@ -486,7 +486,7 @@ template<
 >
 template<typename Archive>
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
-serialize(Archive& ar, std::uint32_t const /* version */)
+serialize(Archive& ar, const uint32_t /* version */)
 {
   ar & CEREAL_NVP(parameter);
   ar & CEREAL_NVP(generator);

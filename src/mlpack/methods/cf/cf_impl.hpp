@@ -427,7 +427,7 @@ template<typename DecompositionPolicy,
 template<typename Archive>
 void CFType<DecompositionPolicy,
             NormalizationType>::
-serialize(Archive& ar, std::uint32_t const /* version */)
+serialize(Archive& ar, const uint32_t /* version */)
 {
   // This model is simple; just serialize all the members. No special handling
   // required.

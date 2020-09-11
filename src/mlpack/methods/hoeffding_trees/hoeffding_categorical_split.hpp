@@ -108,7 +108,7 @@ class HoeffdingCategoricalSplit
 
   //! Serialize the categorical split.
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
     ar & CEREAL_NVP(sufficientStatistics);
   }

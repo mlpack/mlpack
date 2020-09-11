@@ -108,7 +108,7 @@ class BinaryNumericSplit
 
   //! Serialize the object.
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The elements seen so far, in sorted order.

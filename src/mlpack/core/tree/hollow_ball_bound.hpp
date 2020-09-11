@@ -232,7 +232,7 @@ class HollowBallBound
 
   //! Serialize the bound.
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const version);
+  void serialize(Archive& ar, const uint32_t version);
 };
 
 //! A specialization of BoundTraits for this bound type.

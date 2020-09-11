@@ -127,7 +127,7 @@ template<typename TreeType>
 template<typename Archive>
 void RPlusPlusTreeAuxiliaryInformation<TreeType>::serialize(
     Archive& ar,
-    std::uint32_t const /* version */)
+    const uint32_t /* version */)
 {
   ar & CEREAL_NVP(outerBound);
 }

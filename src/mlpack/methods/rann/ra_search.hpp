@@ -358,7 +358,7 @@ class RASearch
 
   //! Serialize the object.
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Permutations of reference points during tree building.

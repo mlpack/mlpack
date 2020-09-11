@@ -522,7 +522,7 @@ template<typename TreeElemType>
 template<typename Archive>
 void DiscreteHilbertValue<TreeElemType>::serialize(
     Archive& ar,
-    std::uint32_t const /* version */)
+    const uint32_t /* version */)
 {
   ar & CEREAL_POINTER(localHilbertValues);
   ar & CEREAL_NVP(ownsLocalHilbertValues);

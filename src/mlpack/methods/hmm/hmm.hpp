@@ -357,13 +357,13 @@ class HMM
    * Load the object.
    */
   template<typename Archive>
-  void load(Archive& ar, std::uint32_t const version);
+  void load(Archive& ar, const uint32_t version);
 
   /**
    * Save the object.
    */
   template<typename Archive>
-  void save(Archive& ar, std::uint32_t const version) const;
+  void save(Archive& ar, const uint32_t version) const;
 
  protected:
   // Helper functions.

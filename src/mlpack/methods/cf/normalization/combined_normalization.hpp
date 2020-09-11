@@ -102,7 +102,7 @@ class CombinedNormalization
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const version)
+  void serialize(Archive& ar, const uint32_t version)
   {
     SequenceSerialize<0, Archive>(ar, version);
   }
@@ -184,7 +184,7 @@ class CombinedNormalization
       int I, /* Which normalization in tuple to serialize */
       typename Archive,
       typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
-  void SequenceSerialize(Archive& ar, std::uint32_t const version)
+  void SequenceSerialize(Archive& ar, const uint32_t version)
   {
     std::string tagName = "normalization_";
     tagName += std::to_string(I);
@@ -199,7 +199,7 @@ class CombinedNormalization
       typename Archive,
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
       typename = void>
-  void SequenceSerialize(Archive& /* ar */, std::uint32_t const /* version */)
+  void SequenceSerialize(Archive& /* ar */, const uint32_t /* version */)
   { }
 };
 

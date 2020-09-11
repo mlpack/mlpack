@@ -311,7 +311,7 @@ class HoeffdingTree
 
   //! Serialize the split.
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   // We need to keep some information for before we have split.

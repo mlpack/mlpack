@@ -55,7 +55,7 @@ void OrthogonalRegularizer::Evaluate(const MatType& weight, MatType& gradient)
 
 template<typename Archive>
 void OrthogonalRegularizer::serialize(
-    Archive& ar, std::uint32_t const /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   ar & CEREAL_NVP(factor);
 }

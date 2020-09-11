@@ -104,7 +104,7 @@ class Add
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of output units.

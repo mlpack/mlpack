@@ -256,7 +256,7 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
 template<typename WeakLearnerType, typename MatType>
 template<typename Archive>
 void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
-                                                   std::uint32_t const version)
+                                                   const uint32_t version)
 {
   ar & CEREAL_NVP(numClasses);
   ar & CEREAL_NVP(tolerance);

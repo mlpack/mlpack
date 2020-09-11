@@ -68,7 +68,7 @@ template<bool UseCoordinates>
 template<typename Archive>
 void IoU<UseCoordinates>::serialize(
     Archive& ar,
-    std::uint32_t const /* version */)
+    const uint32_t /* version */)
 {
   // Nothing to do here.
 }

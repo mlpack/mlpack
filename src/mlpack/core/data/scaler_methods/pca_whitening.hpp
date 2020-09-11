@@ -121,7 +121,7 @@ class PCAWhitening
   const double& Epsilon() const { return epsilon; }
 
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
     ar & CEREAL_NVP(eigenValues);
     ar & CEREAL_NVP(eigenVectors);

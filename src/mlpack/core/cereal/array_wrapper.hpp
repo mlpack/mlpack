@@ -33,13 +33,6 @@ class ArrayWrapper
       arraySize(size)
   {}
 
-  /*
-  * Cereal does not require to split member, it can do that internally
-  * If this is the case we can not implement optimized version, since
-  * the only possible one is optimized.
-  * Some verification needed...
-  * default implementation
-  */
   template<class Archive>
   void save(Archive& ar) const
   {
@@ -63,16 +56,6 @@ class ArrayWrapper
       ar & cereal::make_nvp("item", arrayAddress[i]);
   }
 
-  T* address() const
-  {
-    return arrayAddress;
-  }
-
-  size_t count() const
-  {
-    return arraySize;
-  }
-
  private:
   ArrayWrapper& operator=(ArrayWrapper rhs);
   // note: I would like to make the copy constructor private but this breaks
@@ -84,6 +67,7 @@ class ArrayWrapper
   size_t& arraySize;
 };
 
+/* This function is used to serialized old c-style array */
 template<class T, class S>
 inline
 ArrayWrapper<T> make_array(T*& t, S& s)

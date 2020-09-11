@@ -63,7 +63,7 @@ void ReinforceNormal<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void ReinforceNormal<InputDataType, OutputDataType>::serialize(
-    Archive& ar, std::uint32_t const /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   ar & CEREAL_NVP(stdev);
 }

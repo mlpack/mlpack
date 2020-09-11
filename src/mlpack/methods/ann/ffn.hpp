@@ -331,7 +331,7 @@ class FFN
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   /**
    * Perform the forward pass of the data in real batch mode.

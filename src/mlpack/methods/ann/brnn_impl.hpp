@@ -719,7 +719,7 @@ template<typename OutputLayerType, typename MergeLayerType,
 template<typename Archive>
 void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar, std::uint32_t const version)
+    Archive& ar, const uint32_t version)
 {
   ar & CEREAL_NVP(parameter);
   ar & CEREAL_NVP(backwardRNN);

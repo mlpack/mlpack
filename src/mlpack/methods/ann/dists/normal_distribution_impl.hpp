@@ -66,7 +66,7 @@ void NormalDistribution<DataType>::ProbBackward(
 template<typename DataType>
 template<typename Archive>
 void NormalDistribution<DataType>::serialize(Archive& ar,
-                                             std::uint32_t const /* version */)
+                                             const uint32_t /* version */)
 {
   ar & CEREAL_NVP(mean);
   ar & CEREAL_NVP(sigma);

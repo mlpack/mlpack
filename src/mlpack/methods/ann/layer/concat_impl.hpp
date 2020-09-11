@@ -268,7 +268,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, std::uint32_t const version)
+    Archive& ar, const uint32_t version)
 {
   ar & CEREAL_NVP(model);
   ar & CEREAL_NVP(run);

@@ -299,7 +299,7 @@ class FastMKS
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The reference dataset.  We never own this; only the tree or a higher level

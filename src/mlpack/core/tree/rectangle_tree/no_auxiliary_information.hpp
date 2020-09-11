@@ -141,7 +141,7 @@ class NoAuxiliaryInformation
    * Serialize the information.
    */
   template<typename Archive>
-  void serialize(Archive &, std::uint32_t const /* version */) { }
+  void serialize(Archive &, const uint32_t /* version */) { }
 };
 
 } // namespace tree

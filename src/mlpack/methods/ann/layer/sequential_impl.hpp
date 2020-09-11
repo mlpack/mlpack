@@ -228,7 +228,7 @@ template<typename InputDataType, typename OutputDataType, bool Residual,
 template<typename Archive>
 void Sequential<
     InputDataType, OutputDataType, Residual, CustomLayers...>::serialize(
-        Archive& ar, std::uint32_t const version)
+        Archive& ar, const uint32_t version)
 {
   // If loading, delete the old layers.
   if (cereal::is_loading<Archive>())

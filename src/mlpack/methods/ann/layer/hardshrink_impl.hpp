@@ -49,7 +49,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void HardShrink<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    std::uint32_t const /* version */)
+    const uint32_t /* version */)
 {
   ar & CEREAL_NVP(lambda);
 }

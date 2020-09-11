@@ -121,7 +121,7 @@ class HoeffdingNumericSplit
 
   //! Serialize the object.
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Before binning, this holds the points we have seen so far.

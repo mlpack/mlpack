@@ -268,7 +268,7 @@ class LSHSearch
    * @param version serialize class version to provide backward compatibility
    */
   template<typename Archive>
-  void serialize(Archive& ar, std::uint32_t const version);
+  void serialize(Archive& ar, const uint32_t version);
 
   //! Return the number of distance evaluations performed.
   size_t DistanceEvaluations() const { return distanceEvaluations; }

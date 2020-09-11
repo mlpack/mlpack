@@ -106,7 +106,7 @@ void DropConnect<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void DropConnect<InputDataType, OutputDataType>::serialize(
-    Archive& ar, std::uint32_t const /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
    // Delete the old network first, if needed.
   if (cereal::is_loading<Archive>())

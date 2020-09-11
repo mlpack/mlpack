@@ -66,7 +66,7 @@ void AlphaDropout<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void AlphaDropout<InputDataType, OutputDataType>::serialize(
-    Archive& ar, std::uint32_t const /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   ar & CEREAL_NVP(ratio);
   ar & CEREAL_NVP(alphaDash);

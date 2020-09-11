@@ -427,7 +427,7 @@ template<typename TMetricType, typename ElemType>
 template<typename Archive>
 void HollowBallBound<TMetricType, ElemType>::serialize(
     Archive& ar,
-    std::uint32_t const /* version */)
+    const uint32_t /* version */)
 {
   ar & CEREAL_NVP(radii);
   ar & CEREAL_NVP(center);

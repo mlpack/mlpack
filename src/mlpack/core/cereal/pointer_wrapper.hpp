@@ -46,7 +46,7 @@ class PointerWrapper
   {}
 
   template<class Archive>
-  void save(Archive& ar, std::uint32_t const /*version*/) const
+  void save(Archive& ar, const uint32_t /*version*/) const
   {
     std::unique_ptr<T> smartPointer;
     if (this->localPointer != NULL)
@@ -56,7 +56,7 @@ class PointerWrapper
   }
 
   template<class Archive>
-  void load(Archive& ar, std::uint32_t const /*version*/)
+  void load(Archive& ar, const uint32_t /*version*/)
   {
     std::unique_ptr<T> smartPointer;
     ar(CEREAL_NVP(smartPointer));
