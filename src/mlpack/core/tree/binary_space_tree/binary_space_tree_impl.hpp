@@ -1090,7 +1090,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   ar & CEREAL_NVP(parentDistance);
   ar & CEREAL_NVP(furthestDescendantDistance);
 
-  // Save children last; otherwise cereal gets confused.
+  // Save children last.
   bool hasLeft = (left != NULL);
   bool hasRight = (right != NULL);
   bool hasParent = (parent != NULL);
