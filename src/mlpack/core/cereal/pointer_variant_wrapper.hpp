@@ -28,13 +28,13 @@ namespace cereal {
 
 // Forward declaration.
 template<typename... VariantTypes>
-class pointer_variant_wrapper;
+class PointerVariantWrapper;
 
 template<typename... VariantTypes>
-inline pointer_variant_wrapper<VariantTypes...>
+inline PointerVariantWrapper<VariantTypes...>
 make_pointer_variant(boost::variant<VariantTypes...>& t)
 {
-  return pointer_variant_wrapper<VariantTypes...>(t);
+  return PointerVariantWrapper<VariantTypes...>(t);
 }
 
 template<class Archive>
@@ -93,10 +93,10 @@ struct load_visitor : public boost::static_visitor<void>
  * we need to serialize it if it holds a raw pointers.
  */
 template<typename... VariantTypes>
-class pointer_variant_wrapper
+class PointerVariantWrapper
 {
  public:
-  pointer_variant_wrapper(boost::variant<VariantTypes...>& pointerVar) :
+  PointerVariantWrapper(boost::variant<VariantTypes...>& pointerVar) :
       pointerVariant(pointerVar)
   {}
 

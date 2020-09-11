@@ -1,5 +1,5 @@
 /**
- * @file core/cereal/pointer_vector_wrapper.hpp
+ * @file core/cereal/PointerVectorWrapper.hpp
  * @author Omar Shrit
  *
  * Implementation of a vector wrapper to enable the serialization of
@@ -23,7 +23,7 @@
 namespace cereal {
 
 template<class T>
-class pointer_vector_wrapper
+class PointerVectorWrapper
 {
 /*
  * The objective of this class is to create a wrapper for
@@ -32,7 +32,7 @@ class pointer_vector_wrapper
  * we need to add the size of the vector if it holds a raw pointers.
  */
  public:
-  pointer_vector_wrapper(std::vector<T*>& pointerVec)
+  PointerVectorWrapper(std::vector<T*>& pointerVec)
     : pointerVector(pointerVec)
   {}
 
@@ -64,10 +64,10 @@ class pointer_vector_wrapper
 };
 
 template<class T>
-inline pointer_vector_wrapper<T>
+inline PointerVectorWrapper<T>
 make_pointer_vector(std::vector<T*>& t)
 {
-  return pointer_vector_wrapper<T>(t);
+  return PointerVectorWrapper<T>(t);
 }
 
 #define CEREAL_VECTOR_POINTER(T) cereal::make_pointer_vector(T)

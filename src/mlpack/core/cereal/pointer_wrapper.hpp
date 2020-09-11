@@ -32,7 +32,7 @@ std::unique_ptr<T> make_unique(Args&&... args)
 namespace cereal {
 
 template<class T>
-class pointer_wrapper
+class PointerWrapper
 {
 /*
  * The objective of this class is to create a wrapper for
@@ -41,7 +41,7 @@ class pointer_wrapper
  * because it will be difficult to change all pointer type in mlpack
  */
  public:
-  pointer_wrapper(T*& pointer)
+  PointerWrapper(T*& pointer)
     : localPointer(pointer)
   {}
 
@@ -70,10 +70,10 @@ class pointer_wrapper
 };
 
 template<class T>
-inline pointer_wrapper<T>
+inline PointerWrapper<T>
 make_pointer(T*& t)
 {
-  return pointer_wrapper<T>(t);
+  return PointerWrapper<T>(t);
 }
 
 #define CEREAL_POINTER(T) cereal::make_pointer(T)

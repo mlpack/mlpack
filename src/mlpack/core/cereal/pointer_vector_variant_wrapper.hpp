@@ -20,17 +20,17 @@
 namespace cereal {
 
 template<typename... VariantTypes>
-class pointer_vector_variant_wrapper;
+class PointerVectorVariantWrapper;
 
 template<typename... VariantTypes>
-inline pointer_vector_variant_wrapper<VariantTypes...>
+inline PointerVectorVariantWrapper<VariantTypes...>
 make_vector_pointer_variant(std::vector<boost::variant<VariantTypes...>>& t)
 {
-  return pointer_vector_variant_wrapper<VariantTypes...>(t);
+  return PointerVectorVariantWrapper<VariantTypes...>(t);
 }
 
 template<typename... VariantTypes>
-class pointer_vector_variant_wrapper
+class PointerVectorVariantWrapper
 {
 /*
  * The objective of this class is to create a wrapper for
@@ -40,7 +40,7 @@ class pointer_vector_variant_wrapper
  * pointers.
  */
  public:
-  pointer_vector_variant_wrapper(
+  PointerVectorVariantWrapper(
       std::vector<boost::variant<VariantTypes...>>& vecPointerVar)
       : vectorPointerVariant(vecPointerVar)
   {}
