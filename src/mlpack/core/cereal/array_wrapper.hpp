@@ -21,12 +21,12 @@
 
 namespace cereal {
 
+/** 
+ * This class is used as a shim for cereal to be able to serialize a raw pointer array.
+ */
 template<class T>
 class ArrayWrapper
 {
-/* 
- * This file add make_array functionality to cereal
- */
  public:
   ArrayWrapper(T*& addr, std::size_t& size) :
       arrayAddress(addr),
