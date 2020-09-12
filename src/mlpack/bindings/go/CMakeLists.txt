@@ -11,8 +11,7 @@ endmacro ()
 
 macro (post_go_setup)
   if (BUILD_GO_BINDINGS)
-    # If we are building Go bindings, we have to end the 'module' declaration in
-    # models.go
+    # Once `GO_MODELS` is populated, generate `models.go`.
     file(APPEND
         "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/models.go"
         "*/\n"

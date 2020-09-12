@@ -9,7 +9,7 @@ endmacro ()
 
 macro (post_julia_setup)
   # If we are building Julia bindings, we have to end the 'module' declaration in
-  # mlpack.jl
+  # mlpack.jl.
   if (BUILD_JULIA_BINDINGS)
     file(APPEND
         "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
