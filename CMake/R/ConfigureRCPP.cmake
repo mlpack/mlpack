@@ -55,8 +55,8 @@ Rcpp::RawVector Serialize${MODEL_SAFE_TYPE}Ptr(SEXP ptr)
   std::ostringstream oss;
   {
     cereal::BinaryOutputArchive oa(oss);
-    oa << cereal::make_nvp(\"${MODEL_SAFE_TYPE}\",
-          *Rcpp::as<${MODEL_PTR_TYPEDEF}>(ptr));
+    oa(cereal::make_nvp(\"${MODEL_SAFE_TYPE}\",
+          *Rcpp::as<${MODEL_PTR_TYPEDEF}>(ptr)));
   }
 
   Rcpp::RawVector raw_vec(oss.str().size());
@@ -77,7 +77,7 @@ SEXP Deserialize${MODEL_SAFE_TYPE}Ptr(Rcpp::RawVector str)
   std::istringstream iss(std::string((char *) &str[0], str.size()));
   {
     cereal::BinaryInputArchive ia(iss);
-    ia >> cereal::make_nvp(\"${MODEL_SAFE_TYPE}\", *ptr);
+    ia(cereal::make_nvp(\"${MODEL_SAFE_TYPE}\", *ptr));
   }
 
   // R will be responsible for freeing this.
