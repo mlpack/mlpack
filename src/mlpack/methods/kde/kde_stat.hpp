@@ -73,14 +73,6 @@ class KDEStat
     ar(CEREAL_NVP(mcAlpha));
     ar(CEREAL_NVP(accumAlpha));
     ar(CEREAL_NVP(accumError));
-
-    if (cereal::is_loading<Archive>())
-    {
-      mcBeta = -1;
-      mcAlpha = -1;
-      accumAlpha = -1;
-      accumError = -1;
-    }
   }
 
  private:
