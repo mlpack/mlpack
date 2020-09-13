@@ -87,7 +87,7 @@ add_executable(mlpack_test
   main_tests/gmm_probability_test.cpp
   main_tests/gmm_train_test.cpp
   main_tests/hmm_generate_test.cpp
-  main_tests/hmm_loglik_test.cpp 
+  main_tests/hmm_loglik_test.cpp
   main_tests/hmm_test_utils.hpp
   main_tests/hmm_train_test.cpp
   main_tests/hmm_viterbi_test.cpp
