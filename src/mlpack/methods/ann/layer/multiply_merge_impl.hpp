@@ -112,7 +112,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const uint32_t version)
+    Archive& ar, const uint32_t /* version */)
 {
   // Be sure to clear other layers before loading.
   if (cereal::is_loading<Archive>())
