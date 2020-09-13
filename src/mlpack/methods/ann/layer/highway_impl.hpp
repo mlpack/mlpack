@@ -216,7 +216,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void Highway<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const uint32_t version)
+    Archive& ar, const uint32_t /* version */)
 {
   // If loading, delete the old layers and set size for weights.
   if (cereal::is_loading<Archive>())
