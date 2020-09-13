@@ -65,7 +65,7 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
 
   // Read in the unsigned integer that denotes the type of the model.
   char type;
-  ar >> CEREAL_NVP(type);
+  ar(CEREAL_NVP(type));
 
   using namespace mlpack::distribution;
 
