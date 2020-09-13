@@ -63,6 +63,12 @@ class PointerVectorWrapper
   std::vector<T*>& pointerVector;
 };
 
+/**
+ * Serialize an std::vector that holds raw pointer object by encapsulating them
+ * into a smart pointer.
+ *
+ * @param t A reference to std::vector that holds raw pointer to be serialized.
+ */
 template<class T>
 inline PointerVectorWrapper<T>
 make_pointer_vector(std::vector<T*>& t)
@@ -70,6 +76,7 @@ make_pointer_vector(std::vector<T*>& t)
   return PointerVectorWrapper<T>(t);
 }
 
+//! Cereal macro that facilitate the use of vector pointer wrapper
 #define CEREAL_VECTOR_POINTER(T) cereal::make_pointer_vector(T)
 
 } // namespace cereal

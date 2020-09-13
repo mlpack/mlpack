@@ -19,9 +19,18 @@
 
 namespace cereal {
 
+// Forward declaration
 template<typename... VariantTypes>
 class PointerVectorVariantWrapper;
 
+/**
+ * Serialize a std::vector of boost variants in which the variant in each boost
+ * variant is a raw pointer.
+ * This wrapper will wrap each boost variant independently by encapsulating each
+ * boost variant into the PoninterVariantWrapper we have created already.
+ *
+ * @param t A reference to a vector of boost variants that holds raw pointer.
+ */
 template<typename... VariantTypes>
 inline PointerVectorVariantWrapper<VariantTypes...>
 make_vector_pointer_variant(std::vector<boost::variant<VariantTypes...>>& t)
@@ -72,6 +81,7 @@ class PointerVectorVariantWrapper
   std::vector<boost::variant<VariantTypes...>>& vectorPointerVariant;
 };
 
+//! Cereal macro that facilitate the use of the pointer vector variant wrapper
 #define CEREAL_VECTOR_VARIANT_POINTER(T) cereal::make_vector_pointer_variant(T)
 
 } // namespace cereal

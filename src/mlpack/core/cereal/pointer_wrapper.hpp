@@ -69,6 +69,12 @@ class PointerWrapper
   T*& localPointer;
 };
 
+/**
+ * Serialize raw pointer object by encapsulating the pointer into a smart
+ * pointer.
+ *
+ * @param t A reference to raw pointer to be serialized.
+ */
 template<class T>
 inline PointerWrapper<T>
 make_pointer(T*& t)
@@ -76,6 +82,7 @@ make_pointer(T*& t)
   return PointerWrapper<T>(t);
 }
 
+//! Cereal macro that facilitate the use of the pointer wrapper
 #define CEREAL_POINTER(T) cereal::make_pointer(T)
 
 } // namespace cereal

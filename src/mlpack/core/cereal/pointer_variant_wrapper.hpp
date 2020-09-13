@@ -30,6 +30,13 @@ namespace cereal {
 template<typename... VariantTypes>
 class PointerVariantWrapper;
 
+/**
+ * Serialize a boost variant in which the variant it self is a raw pointer.
+ * This wrapper will wrap each variant independently by encapsulating each variant
+ * into the PoninterWrapper we have created already.
+ *
+ * @param t A reference to boost variant that holds raw pointer.
+ */
 template<typename... VariantTypes>
 inline PointerVariantWrapper<VariantTypes...>
 make_pointer_variant(boost::variant<VariantTypes...>& t)
@@ -133,6 +140,7 @@ class PointerVariantWrapper
   boost::variant<VariantTypes...>& pointerVariant;
 };
 
+//! Cereal macro that facilitate the use of the pointer variant wrapper
 #define CEREAL_VARIANT_POINTER(T) cereal::make_pointer_variant(T)
 
 } // namespace cereal
