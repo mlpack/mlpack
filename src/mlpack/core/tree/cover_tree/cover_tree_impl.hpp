@@ -730,7 +730,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     CoverTree() // Create an empty CoverTree.
 {
   // Now, serialize to our empty tree.
-  ar >> cereal::make_nvp("this", *this);
+  ar(cereal::make_nvp("this", *this));
 }
 
 
