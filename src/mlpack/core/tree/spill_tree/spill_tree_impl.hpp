@@ -397,7 +397,7 @@ SpillTree(
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
   // can serialize from it.
-  ar >> CEREAL_NVP(*this);
+  ar(CEREAL_NVP(*this));
 }
 
 /**
