@@ -921,6 +921,10 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     right = NULL;
   }
 
+  if (cereal::is_loading<Archive>())
+  {
+    localDataset = true;
+  }
   ar(CEREAL_NVP(count));
   ar(CEREAL_POINTER(pointsIndex));
   ar(CEREAL_NVP(overlappingNode));
@@ -930,13 +934,7 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   ar(CEREAL_NVP(parentDistance));
   ar(CEREAL_NVP(furthestDescendantDistance));
   // Force a non-const pointer.
-  MatType* datasetPtr = const_cast<MatType*>(dataset);
-
-  if (cereal::is_loading<Archive>())
-  {
-    dataset = datasetPtr;
-    localDataset = true;
-  }
+  MatType*& datasetPtr = const_cast<MatType*&>(dataset);
 
   // Save children last; otherwise cereal gets confused.
   bool hasLeft = (left != NULL);

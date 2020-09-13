@@ -667,7 +667,7 @@ void HRectBound<MetricType, ElemType>::serialize(
     const uint32_t /* version */)
 {
   // We can't serialize a raw array directly, so wrap it.
-  ar(cereal::make_array(bounds, dim));
+  ar(CEREAL_POINTER_ARRAY(bounds, dim));
   ar(CEREAL_NVP(minWidth));
   ar(CEREAL_NVP(metric));
 }
