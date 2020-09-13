@@ -142,7 +142,7 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const uint32_t version)
+    Archive& ar, const uint32_t /* version */)
 {
   if (cereal::is_loading<Archive>())
   {
