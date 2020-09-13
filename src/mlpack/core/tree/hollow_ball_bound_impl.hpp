@@ -432,17 +432,15 @@ void HollowBallBound<TMetricType, ElemType>::serialize(
   ar(CEREAL_NVP(radii));
   ar(CEREAL_NVP(center));
   ar(CEREAL_NVP(hollowCenter));
-
+  ar(CEREAL_POINTER(metric));
   if (cereal::is_loading<Archive>())
   {
     // If we're loading, delete the local metric since we'll have a new one.
     if (ownsMetric)
       delete metric;
-  }
 
-  ar(CEREAL_POINTER(metric));
-  if (cereal::is_loading<Archive>())
-    ownsMetric = true;
+    ownsMetric = true;    
+  }
 }
 
 } // namespace bound

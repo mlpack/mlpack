@@ -1429,12 +1429,8 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   if (!hasParent)
   {
-    MatType* datasetTemp = const_cast<MatType*>(dataset);
+    MatType*& datasetTemp = const_cast<MatType*&>(dataset);
     ar(CEREAL_POINTER(datasetTemp));
-    if(cereal::is_loading<Archive>())
-    {
-      dataset = datasetTemp;
-    }
   } 
 
   ar(CEREAL_NVP(points));

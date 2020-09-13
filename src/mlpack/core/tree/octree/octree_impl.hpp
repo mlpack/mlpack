@@ -737,12 +737,8 @@ void Octree<MetricType, StatisticType, MatType>::serialize(
   ar(CEREAL_NVP(hasParent));
   if (!hasParent)
   {
-    MatType* datasetTemp = const_cast<MatType*>(dataset);
+    MatType*& datasetTemp = const_cast<MatType*&>(dataset);
     ar(CEREAL_POINTER(datasetTemp));
-    if (cereal::is_loading<Archive>())
-    {
-      dataset = datasetTemp;
-    }
   }
 
   ar(CEREAL_VECTOR_POINTER(children));
