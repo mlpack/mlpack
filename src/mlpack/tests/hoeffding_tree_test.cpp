@@ -1201,13 +1201,13 @@ BOOST_AUTO_TEST_CASE(MultipleSerializationTest)
   std::ostringstream oss;
   {
     cereal::BinaryOutputArchive boa(oss);
-    boa << CEREAL_NVP(shallowTree);
+    boa(CEREAL_NVP(shallowTree));
   }
 
   std::istringstream iss(oss.str());
   {
     cereal::BinaryInputArchive bia(iss);
-    bia >> CEREAL_NVP(deepTree);
+    bia(CEREAL_NVP(deepTree));
   }
 
   // Now do some classification and make sure the results are the same.

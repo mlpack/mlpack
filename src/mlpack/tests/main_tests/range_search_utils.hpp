@@ -29,7 +29,7 @@ inline std::string ModelToString(RSModel* model)
   // It is not possible to serialize this model, I am getting an error
   // of not serialize function is found fir this model, even that we have
   // declared that in the rs_model_impl
-  oa << CEREAL_POINTER(model);
+  oa(CEREAL_POINTER(model));
   return oss.str();
 }
 
