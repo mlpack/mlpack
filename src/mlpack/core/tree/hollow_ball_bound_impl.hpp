@@ -439,7 +439,7 @@ void HollowBallBound<TMetricType, ElemType>::serialize(
     if (ownsMetric)
       delete metric;
 
-    ownsMetric = true;    
+    ownsMetric = true;
   }
 }
 
