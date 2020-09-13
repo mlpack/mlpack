@@ -545,8 +545,6 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
   ar(CEREAL_NVP(width));
   ar(CEREAL_NVP(height));
 
-  arma::mat currentInput; // Temporary matrix to output.
-  ar(CEREAL_NVP(currentInput));
   ar(CEREAL_NVP(reset));
 
   // Be sure to clear other layers before loading.
