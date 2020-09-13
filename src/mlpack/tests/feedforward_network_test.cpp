@@ -59,7 +59,7 @@ void TestNetwork(ModelType& model,
 
 // network1 should be allocated with `new`, and trained on some data.
 template<typename MatType = arma::mat, typename ModelType>
-void CheckCopyFunction(ModelType* network1,
+void CheckCopyMoveFunction(ModelType* network1,
                        MatType& trainData,
                        MatType& trainLabels,
                        MatType& testData,
@@ -80,19 +80,22 @@ void CheckCopyFunction(ModelType* network1,
         arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
   }
 
-  FFN<> network2(*network1);
   arma::mat predictions1;
   network1->Predict(trainData, predictions1);
+  FFN<> network3;
+  network3 = *network1;
+  FFN<> network2(std::move(*network1));
   delete network1;
 
   // Deallocating all of network1's memory, so that
   // if network2 is trying to use any of that memory.
   arma::mat predictions2;
   network2.Predict(trainData, predictions2);
+  arma::mat predictions3;
+  network3.Predict(trainData, predictions3);
   CheckMatrices(predictions1, predictions2);
+  CheckMatrices(predictions1, predictions3);
 }
-
-
 
 /**
  * Check whether copying Vanila network is working or not.
@@ -141,7 +144,8 @@ TEST_CASE("CheckCopyVanillaNetworkTest", "[FeedForwardNetworkTest]")
   model->Add<LogSoftMax<> >();
 
   // Check whether copy is working or not.
-  CheckCopyFunction<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  CheckCopyMoveFunction<>(model,
+      trainData, trainLabels, testData, testLabels, 1, 0.1);
 }
 
 /**

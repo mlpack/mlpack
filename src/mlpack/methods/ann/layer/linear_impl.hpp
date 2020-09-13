@@ -57,8 +57,8 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
   Linear&& layer) :
-    inSize(layer.inSize),
-    outSize(layer.outSize),
+    inSize(0),
+    outSize(0),
     weights(std::move(layer.weights)),
     regularizer(std::move(layer.regularizer))
 {
