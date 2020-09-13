@@ -489,7 +489,7 @@ Octree<MetricType, StatisticType, MatType>::Octree(
     Octree() // Create an empty tree.
 {
   // De-serialize the tree into this object.
-  ar >> CEREAL_NVP(*this);
+  ar(CEREAL_NVP(*this));
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
