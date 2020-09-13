@@ -395,7 +395,7 @@ RectangleTree(
     RectangleTree() // Use default constructor.
 {
   // Now serialize.
-  ar >> CEREAL_NVP(*this);
+  ar(CEREAL_NVP(*this));
 }
 
 /**
