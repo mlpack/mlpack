@@ -44,7 +44,7 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
-	const Linear& layer) :
+    const Linear& layer) :
     inSize(layer.inSize),
     outSize(layer.outSize),
     weights(layer.weights),
@@ -56,7 +56,7 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
-  Linear&& layer) :
+    Linear&& layer) :
     inSize(0),
     outSize(0),
     weights(std::move(layer.weights)),
@@ -73,10 +73,10 @@ operator=(const Linear& layer)
 { 
   if (this != &layer)
   {
-  inSize = layer.inSize;
-  outSize = layer.outSize;
-  weights = layer.weights;
-  regularizer = layer.regularizer;
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = layer.weights;
+    regularizer = layer.regularizer;
   }
   return *this;
 }
@@ -89,10 +89,10 @@ operator=(Linear&& layer)
 { 
   if (this != &layer)
   {
-  inSize = layer.inSize;
-  outSize = layer.outSize;
-  weights = std::move(layer.weights);
-  regularizer = std::move(layer.regularizer);
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = std::move(layer.weights);
+    regularizer = std::move(layer.regularizer);
   }
   return *this;
 }
