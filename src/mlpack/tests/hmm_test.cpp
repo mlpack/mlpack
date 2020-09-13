@@ -1081,7 +1081,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
   {
     std::ofstream ofs("test-hmm-save.xml");
     cereal::XMLOutputArchive ar(ofs);
-    ar << CEREAL_NVP(hmm);
+    ar(CEREAL_NVP(hmm));
   }
 
   // Load the HMM.
@@ -1089,7 +1089,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
   {
     std::ifstream ifs("test-hmm-save.xml");
     cereal::XMLInputArchive ar(ifs);
-    ar >> cereal::make_nvp("hmm", hmm2);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.
@@ -1146,7 +1146,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
   {
     std::ofstream ofs("test-hmm-save.xml");
     cereal::XMLOutputArchive ar(ofs);
-    ar << cereal::make_nvp("hmm", hmm);
+    ar(cereal::make_nvp("hmm", hmm));
   }
 
   // Load the HMM.
@@ -1154,7 +1154,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
   {
     std::ifstream ifs("test-hmm-save.xml");
     cereal::XMLInputArchive ar(ifs);
-    ar >> cereal::make_nvp("hmm", hmm2);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.
@@ -1209,7 +1209,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
   {
     std::ofstream ofs("test-hmm-save.xml");
     cereal::XMLOutputArchive ar(ofs);
-    ar << cereal::make_nvp("hmm", hmm);
+    ar(cereal::make_nvp("hmm", hmm));
   }
 
   // Load the HMM.
@@ -1217,7 +1217,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
   {
     std::ifstream ifs("test-hmm-save.xml");
     cereal::XMLInputArchive ar(ifs);
-    ar >> cereal::make_nvp("hmm", hmm2);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.
@@ -1810,7 +1810,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
   {
     std::ofstream ofs("test-hmm-save.xml");
     cereal::XMLOutputArchive ar(ofs);
-    ar << cereal::make_nvp("hmm", hmm);
+    ar(cereal::make_nvp("hmm", hmm));
   }
 
   // Load the HMM.
@@ -1818,7 +1818,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
   {
     std::ifstream ifs("test-hmm-save.xml");
     cereal::XMLInputArchive ar(ifs);
-    ar >> cereal::make_nvp("hmm", hmm2);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.

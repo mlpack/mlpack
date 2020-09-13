@@ -524,7 +524,7 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
   {
     std::ofstream ofs("test-gmm-save.xml");
     cereal::XMLOutputArchive ar(ofs);
-    ar << CEREAL_NVP(gmm);
+    ar(CEREAL_NVP(gmm));
   }
 
   // Load the GMM.
@@ -532,7 +532,7 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
   {
     std::ifstream ifs("test-gmm-save.xml");
     cereal::XMLInputArchive ar(ifs);
-    ar >> cereal::make_nvp("gmm", gmm2);
+    ar(cereal::make_nvp("gmm", gmm2));
   }
 
   // Remove clutter.
@@ -1147,7 +1147,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMLoadSaveTest)
   {
     std::ofstream ofs("test-diagonal-gmm-save.xml");
     cereal::XMLOutputArchive ar(ofs);
-    ar << cereal::make_nvp("gmm", gmm);
+    ar(cereal::make_nvp("gmm", gmm));
   }
 
   // Load the gmm into gmm2.
@@ -1155,7 +1155,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMLoadSaveTest)
   {
     std::ifstream ifs("test-diagonal-gmm-save.xml");
     cereal::XMLInputArchive ar(ifs);
-    ar >> cereal::make_nvp("gmm", gmm2);
+    ar(cereal::make_nvp("gmm", gmm2));
   }
 
   // Remove clutter.
