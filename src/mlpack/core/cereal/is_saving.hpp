@@ -28,12 +28,12 @@ template<typename Archive>
 struct is_cereal_archive_saving
 {
   // Archive::is_saving is not implemented yet, so we can use std::is_same<>
-    // to check if it is a loading archive.
-    constexpr static bool value = std::is_same<Archive, cereal::BinaryOutputArchive>::value ||
+  // to check if it is a loading archive.
+  constexpr static bool value = std::is_same<Archive, cereal::BinaryOutputArchive>::value ||
 //#if (BINDING_TYPE != BINDING_TYPE_R)
-        std::is_same<Archive, cereal::JSONOutputArchive>::value ||
+    std::is_same<Archive, cereal::JSONOutputArchive>::value ||
 //#endif
-      std::is_same<Archive, cereal::XMLOutputArchive>::value;
+    std::is_same<Archive, cereal::XMLOutputArchive>::value;
 };
 
 template<typename Archive>
