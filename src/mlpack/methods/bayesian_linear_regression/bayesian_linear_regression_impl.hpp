@@ -21,7 +21,7 @@ namespace regression {
  * Serialize the Bayesian linear regression model.
  */
 template<typename Archive>
-void BayesianLinearRegression::serialize(Archive& ar, const uint32_t version)
+void BayesianLinearRegression::serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(centerData));
   ar(CEREAL_NVP(scaleData));
