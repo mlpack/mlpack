@@ -984,7 +984,7 @@ void CellBound<MetricType, ElemType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(cereal::make_array(bounds, dim));
+  ar(CEREAL_POINTER_ARRAY(bounds, dim));
   ar(CEREAL_NVP(minWidth));
   ar(CEREAL_NVP(loBound));
   ar(CEREAL_NVP(hiBound));

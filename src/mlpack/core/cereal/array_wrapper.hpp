@@ -76,7 +76,7 @@ ArrayWrapper<T> make_array(T*& t, S& s)
 }
 
 //! Cereal macro that facilitate the use of the pointer array wrapper
-#define CEREAL_POINTER_ARRAY(T) cereal::make_array(T)
+#define CEREAL_POINTER_ARRAY(T,S) cereal::make_array(T, S)
 
 } // namespace cereal
 
