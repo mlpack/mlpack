@@ -940,7 +940,7 @@ template<typename SortPolicy,
 template<typename Archive>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::serialize(
-    Archive& ar, const uint32_t version)
+    Archive& ar, const uint32_t /* version */)
 {
   // Serialize preferences for search.
   ar(CEREAL_NVP(searchMode));
@@ -955,12 +955,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
     {
       delete referenceSet;
     }
-    MatType* referenceSetTemp = const_cast<MatType*>(referenceSet);
+    MatType*& referenceSetTemp = const_cast<MatType*&>(referenceSet);
     ar(CEREAL_POINTER(referenceSetTemp));
-    if (cereal::is_loading<Archive>())
-    {
-      referenceSet = referenceSetTemp;
-    }
     ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.

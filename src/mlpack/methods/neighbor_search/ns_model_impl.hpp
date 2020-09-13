@@ -356,7 +356,7 @@ NSModel<SortPolicy>::~NSModel()
 //! Serialize the kNN model.
 template<typename SortPolicy>
 template<typename Archive>
-void NSModel<SortPolicy>::serialize(Archive& ar, const uint32_t version)
+void NSModel<SortPolicy>::serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(treeType));
   ar(CEREAL_NVP(leafSize));
