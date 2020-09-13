@@ -658,12 +658,8 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
       setOwner = true;
     }
 
-    MatType* referenceSetTmp = const_cast<MatType*>(referenceSet);
+    MatType*& referenceSetTmp = const_cast<MatType*&>(referenceSet);
     ar(CEREAL_POINTER(referenceSetTmp));
-    if (cereal::is_loading<Archive>())
-    {
-      referenceSet = referenceSetTmp;
-    }
     ar(CEREAL_NVP(metric));
   }
   else
