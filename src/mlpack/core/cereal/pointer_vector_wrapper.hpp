@@ -22,15 +22,21 @@
 
 namespace cereal {
 
-template<class T>
-class PointerVectorWrapper
-{
-/*
+/**
  * The objective of this class is to create a wrapper for
  * std::vector that hold pointers by adding also the size of the vector.
  * Cereal supports the serialization of the std vector, but 
- * we need to add the size of the vector if it holds a raw pointers.
+ * we need to serialize the vector if it holds raw pointer.
+ * This wrapper uses the PointerWrapper we have already created, it serialize
+ * each pointer in the vector independently.
+ *
+ * We need to add the size of the vector if it holds a raw pointers, during the
+ * serialization, so we can know the size of the number pointer to allocated
+ * during the deserialization process.
  */
+template<class T>
+class PointerVectorWrapper
+{
  public:
   PointerVectorWrapper(std::vector<T*>& pointerVec)
     : pointerVector(pointerVec)

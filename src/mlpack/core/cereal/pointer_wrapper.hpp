@@ -31,15 +31,18 @@ std::unique_ptr<T> make_unique(Args&&... args)
 
 namespace cereal {
 
+/**
+ * The objective of this class is to create a wrapper for
+ * raw pointer by encapsulating them in a smart pointer of type unique_ptr.
+ *
+ * Cereal does not support the serialization of raw pointer out of the box.
+ * Therefore, we have created this wrapper to serialize raw pointer in cereal
+ * as a smart pointer since because it will be difficult to change all pointer
+ * type in mlpack.
+ */
 template<class T>
 class PointerWrapper
 {
-/*
- * The objective of this class is to create a wrapper for
- * raw pointer by encapsulating them in a smart pointer unique_ptr
- * This will allow to serialize raw pointer in cereal as a smart pointer
- * because it will be difficult to change all pointer type in mlpack
- */
  public:
   PointerWrapper(T*& pointer)
     : localPointer(pointer)

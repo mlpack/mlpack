@@ -38,16 +38,16 @@ make_vector_pointer_variant(std::vector<boost::variant<VariantTypes...>>& t)
   return PointerVectorVariantWrapper<VariantTypes...>(t);
 }
 
-template<typename... VariantTypes>
-class PointerVectorVariantWrapper
-{
-/*
+/**
  * The objective of this class is to create a wrapper for
- * a vector of boost::variant that holds pointer. 
+ * a vector of boost::variant that holds pointer.
  * Cereal supports the serialization of boost::variant, but 
  * we need to serialize it if it holds a vector of boost::variant that holds a
  * pointers.
  */
+template<typename... VariantTypes>
+class PointerVectorVariantWrapper
+{
  public:
   PointerVectorVariantWrapper(
       std::vector<boost::variant<VariantTypes...>>& vecPointerVar)
