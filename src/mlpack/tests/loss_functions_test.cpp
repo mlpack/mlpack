@@ -32,7 +32,6 @@
 #include <mlpack/methods/ann/loss_functions/cosine_embedding_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/l1_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_absolute_percentage_error.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -868,30 +867,6 @@ BOOST_AUTO_TEST_CASE(SoftMarginLossTest)
   // Test the Backward function.
   module2.Backward(input, target, output);
   BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -0.164697, 1e-3);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
-  CheckMatrices(output, expectedOutput, 0.1);
-}
-/**
- * Simple test for the Mean Absolute Percentage Error function.
- */
-BOOST_AUTO_TEST_CASE(MeanAbsolutePercentageErrorTest)
-{
-  arma::mat input, target, output, expectedOutput;
-  MeanAbsolutePercentageError<> module;
-
-  input = arma::mat("3 -0.5 2 7");
-  target = arma::mat("2.5 0.2 2 8");
-  expectedOutput = arma::mat("10.0 -125.0 12.5 -3.125");
-
-  // Test the Forward function. Loss should be 95.625.
-  // Loss value calculated manually.
-  double loss = module.Forward(input,target);
-  BOOST_REQUIRE_CLOSE(loss, 95.625, 1e-1); 
-
-  // Test the Backward function.
-  module.Backward(input, target, output);
-  BOOST_REQUIRE_CLOSE(arma::as_scalar(arma::accu(output)), -105.625, 1e-3);
   BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
   BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
