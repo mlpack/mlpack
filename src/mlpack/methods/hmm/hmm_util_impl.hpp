@@ -40,7 +40,7 @@ void LoadHMMAndPerformAction(const std::string& modelFile,
                              ExtraInfoType* x)
 {
   const std::string extension = data::Extension(modelFile);
-  if (extension == "xml")[B]
+  if (extension == "xml")
     LoadHMMAndPerformActionHelper<ActionType, cereal::XMLInputArchive>(modelFile, x);
   else if (extension == "bin")
     LoadHMMAndPerformActionHelper<ActionType, cereal::BinaryInputArchive>(modelFile, x);
@@ -104,7 +104,7 @@ void DeserializeHMMAndPerformAction(ArchiveType& ar, ExtraInfoType* x)
 {
   // Extract the HMM and perform the action.
   HMMType hmm;
-  ar >> CEREAL_NVP(hmm);
+  ar(CEREAL_NVP(hmm));
   ActionType::Apply(hmm, x);
 }
 
@@ -144,8 +144,8 @@ void SaveHMMHelper(HMMType& hmm, const std::string& modelFile)
   if (type == char(-1))
     Log::Fatal << "Unknown HMM type given to SaveHMM()!" << std::endl;
 
-  ar << CEREAL_NVP(type);
-  ar << CEREAL_NVP(hmm);
+  ar(CEREAL_NVP(type));
+  ar(CEREAL_NVP(hmm));
 }
 
 // Utility functions to turn a type into something we can store.
