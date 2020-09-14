@@ -23,12 +23,10 @@ CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
        WeightsType>::CVBase() :
-    isDatasetInfoPassed(false),
-    numClasses(0)
+    isDatasetInfoPassed(false)
 {
   static_assert(!MIE::TakesNumClasses,
-      "The given MLAlgorithm requires the numClasses parameter; "
-      "make sure that you pass numClasses with type size_t!");
+      "The given MLAlgorithm requires the numClasses parameter");
 }
 
 template<typename MLAlgorithm,
