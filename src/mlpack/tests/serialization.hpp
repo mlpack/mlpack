@@ -222,7 +222,7 @@ void SerializeObject(T& t, T& newT)
     try
     {
       T& x(newT);
-      iCEREAL_NVP(x));
+      i(CEREAL_NVP(x));
     }
     catch (cereal::Exception& e)
     {
