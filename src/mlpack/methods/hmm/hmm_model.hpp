@@ -182,8 +182,7 @@ class HMMModel
       ar(CEREAL_POINTER(gaussianHMM));
     else if (type == HMMType::GaussianMixtureModelHMM)
       ar(CEREAL_POINTER(gmmHMM));
-
-    if (type == HMMType::DiagonalGaussianMixtureModelHMM)
+    else if (type == HMMType::DiagonalGaussianMixtureModelHMM)
       ar(CEREAL_POINTER(diagGMMHMM));
   }
 
