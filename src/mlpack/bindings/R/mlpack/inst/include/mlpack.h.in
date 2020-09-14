@@ -14,10 +14,6 @@
 
 #include <Rcpp.h>
 
-#define BINDING_TYPE BINDING_TYPE_R
-
-#define CEREAL_ARCHIVES_JSON_HPP_
-
 // To suppress Found ‘__assert_fail’, possibly from ‘assert’ (C).
 #define BOOST_DISABLE_ASSERTS
 
@@ -45,12 +41,20 @@
 // To suppress warnings related to core/util/arma_util.hpp.
 #define MLPACK_CORE_UTIL_ARMA_CONFIG_HPP
 
+// Undefine macro due to macro collision.
+#undef Realloc
+#undef Free
+
 @R_SRC@
 
 #include <mlpack/core.hpp>
 
 #undef ARMA_EXTRA_MAT_PROTO
 #undef ARMA_EXTRA_MAT_MEAT
+
+// Define R Internal macro again after including cereal headers.
+#define Realloc(p,n,t) (t *) R_chk_realloc( (void *)(p), (R_SIZE_T)((n) * sizeof(t)) )
+#define Free(p)        (R_chk_free( (void *)(p) ), (p) = NULL)
 
 // instead of including RcppArmadillo.h -- which re-includes parts
 // of Armadillo already brought in by mlpack, we just include pieces
