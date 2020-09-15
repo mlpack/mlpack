@@ -26,8 +26,8 @@ Softmin<InputDataType, OutputDataType>::Softmin()
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void softmax<InputDataType, OutputDataType>::Forward(
-    const InputType& input
+void Softmin<InputDataType, OutputDataType>::Forward(
+    const InputType& input,
     OutputType& output)
 { 
   InputType inputMin = arma::repmat(arma::min(input,1),1,input.n_cols);
@@ -38,7 +38,7 @@ void softmax<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-void Softmax<InputDataType, OutputDataType>::Backward(
+void Softmin<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& input,
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
@@ -47,8 +47,8 @@ void Softmax<InputDataType, OutputDataType>::Backward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<template Archive>
-void Softmax<InputDataType, OutputDataType>::serialize(
+template<typename Archive>
+void Softmin<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
     const unsigned int /* version */)
 {

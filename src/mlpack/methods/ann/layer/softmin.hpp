@@ -60,14 +60,14 @@ class Softmin
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::mat<eT>& input,
-                const arma::mat<eT>& gy,
-                arma::mat<eT>& g);
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter };
+  OutputDataType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter };
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
   InputDataType& Delta() const { return delta; }
