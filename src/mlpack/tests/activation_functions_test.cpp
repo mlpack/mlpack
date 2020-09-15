@@ -559,6 +559,46 @@ void CheckCELUDerivativeCorrect(const arma::colvec input,
 }
 
 /**
+ * Implementation of the Softmin activation function test. The function is
+ * implemented as Softmin layer in the file softmin.hpp.
+ *
+ * @param input Input data used for evaluating the Softmin activation function.
+ * @param target Target data used to evaluate the Softmin activation.
+ */
+void CheckSoftminActivationCorrect(const arma::colvec input,
+                                   const arma::colvec target)
+{
+  // Initialize Softmin object.
+  Softmin<> softmin;
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  softmin.Forward(input,activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Implementation of the Softmin activation function derivative test. The function
+ * is implemented as Softmin layer in the file softmin.hpp.
+ *
+ * @param input Input data used for evaluating the Softmin activation function.
+ * @param target Target data used to evaluate the Softmin activation.
+ */
+/*
+void CheckSoftminDerivativeCorrect(const arma::colvec input,
+                                   const arma::colvec target)
+{
+  // Initialize Softmin object.
+  Softmin<> softmin;
+
+  // Not written as the Backward function is not implemented yet.
+}
+*/
+
+/**
  * Basic test of the tanh function.
  */
 TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")
@@ -1062,4 +1102,30 @@ TEST_CASE("GaussianFunctionTest", "[ActivationFunctionsTest]")
                                            desiredActivations);
   CheckDerivativeCorrect<GaussianFunction>(desiredActivations,
                                            desiredDerivatives);
+}
+
+/**
+ * Basic test of the Softmin function.
+ */
+TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
+{
+
+  //Calculated using Softmin activation function in PyTorch
+  const arma::colvec desiredActivations("2.2505e-43 1.2415e-45 \
+                                         3.3835e-46 1.0000e+00 \
+                                         1.1205e-44 8.2792e-44 \
+                                         4.1220e-45 3.0457e-44");
+
+  /* 
+  Commented out because derivative test not written 
+  const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
+  */
+
+  CheckSoftminActivationCorrect(activationData,
+                                desiredActivations);
+  /* 
+  Commented out because derivative test not written 
+  CheckHardShrinkDerivativeCorrect(desiredActivations,
+                                   desiredDerivatives);
+  */
 }
