@@ -30,9 +30,10 @@ void softmax<InputDataType, OutputDataType>::Forward(
     const InputType& input
     OutputType& output)
 { 
+  InputType inputMax = arma::repmat(arma::max(input,1),1,input.n_cols);
   output = arma::repmat(arma::log(arma::sum(
-      arma::exp(-input),1)), 1, input.n_cols);
-  output = arma::exp(- input - output);
+      arma::exp(- (input - inputMax)),1)), 1, input.n_cols);
+  output = arma::exp(- (input - inputMax) - output);
 }
 
 template<typename InputDataType, typename OutputDataType>
