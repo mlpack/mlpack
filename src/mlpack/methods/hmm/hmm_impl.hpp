@@ -662,9 +662,7 @@ arma::vec HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
     // t = -1) is state 0; this is not our assumption here.  To force that
     // behavior, you could append a single starting state to every single data
     // sequence and that should produce results in line with MATLAB.
-    for (size_t state = 0; state < logTransition.n_rows; state++) {
-        forwardLogProb(state) = logInitial(state) + emissionLogProb(state);
-    }
+  forwardLogProb = logInitial + emissionLogProb;
 
     // Normalize probability.
     logScales = math::AccuLog(forwardLogProb);
