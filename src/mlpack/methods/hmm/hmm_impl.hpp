@@ -785,7 +785,7 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
 
 /**
  * Make sure the variables in log space are in sync with the linear
- * counter parts
+ * counterparts.
  */
 template<typename Distribution>
 void HMM<Distribution>::ConvertToLogSpace() const
