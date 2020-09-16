@@ -444,8 +444,8 @@ class HMM
    * @return Forward probabilities
    */
   arma::vec ForwardAtT0(
-    const arma::vec& emissionLogProb,
-    double& logScales) const;
+      const arma::vec& emissionLogProb,
+      double& logScales) const;
 
   /**
    * Given emission probabilities, computes forward probabilities for time t>0.
