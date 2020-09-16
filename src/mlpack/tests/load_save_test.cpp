@@ -1329,16 +1329,16 @@ TEST_CASE("LoadXMLTest", "[LoadSaveTest]")
 /**
  * Make sure we can load and save.
  */
-TEST_CASE("LoadTextTest", "[LoadSaveTest]")
+TEST_CASE("LoadJsonTest", "[LoadSaveTest]")
 {
   Test x(10, 12);
 
-  REQUIRE(data::Save("test.txt", "x", x, false) == true);
+  REQUIRE(data::Save("test.json", "x", x, false) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.txt", "x", y, false) == true);
+  REQUIRE(data::Load("test.json", "x", y, false) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
