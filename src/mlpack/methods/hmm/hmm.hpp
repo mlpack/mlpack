@@ -456,9 +456,9 @@ class HMM
    * @return Forward probabilities
    */
   arma::vec ForwardAtTn(
-    const arma::vec& emissionLogProb,
-    double& logScales,
-    const arma::vec& prevForwardLogProb) const;
+      const arma::vec& emissionLogProb,
+      double& logScales,
+      const arma::vec& prevForwardLogProb) const;
 
   // Helper functions.
   /**
