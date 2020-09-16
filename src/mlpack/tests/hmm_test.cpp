@@ -843,8 +843,8 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
     BOOST_REQUIRE_CLOSE(loglikelihood, loglikelihoodRef, 1e-3);
   }
 
-  //test loglikelihoosd calculation in incremental way.
-  //It simulates the case where we have a stream of data.
+  // Test loglikelihood calculation in an incremental way.
+  // It simulates the case where we have a stream of data.
   {
     double loglikelihood;
     arma::vec forwardLogProb;
