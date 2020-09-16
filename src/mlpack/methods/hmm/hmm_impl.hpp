@@ -588,10 +588,10 @@ double HMM<Distribution>::LogLikelihood(const arma::vec &data,
                                         double &logLikelihood,
                                         arma::vec& forwardLogProb) const
 {
-    auto isStartOfSeq = forwardLogProb.empty();
-    auto curLogScale = LogScale(data, forwardLogProb);
-    logLikelihood = isStartOfSeq ? curLogScale : curLogScale + logLikelihood;
-    return logLikelihood;
+  bool isStartOfSeq = forwardLogProb.empty();
+  double curLogScale = LogScale(data, forwardLogProb);
+  logLikelihood = isStartOfSeq ? curLogScale : curLogScale + logLikelihood;
+  return logLikelihood;
 }
 
 /**
