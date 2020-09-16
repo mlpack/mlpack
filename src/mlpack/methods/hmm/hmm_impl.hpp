@@ -570,14 +570,14 @@ template<typename Distribution>
 double HMM<Distribution>::LogScale(const arma::vec &data,
                                         arma::vec& forwardLogProb) const
 {
-    arma::vec emissionLogProb(logTransition.n_rows);
+  arma::vec emissionLogProb(logTransition.n_rows);
 
-    for (size_t state = 0; state < logTransition.n_rows; state++)
-    {
-          emissionLogProb(state) = emission[state].LogProbability(data);
-    }
+  for (size_t state = 0; state < logTransition.n_rows; state++)
+  {
+    emissionLogProb(state) = emission[state].LogProbability(data);
+  }
 
-    return LogScaleEmissionProb(emissionLogProb, forwardLogProb);
+  return LogScaleEmissionProb(emissionLogProb, forwardLogProb);
 }
 
 /**
