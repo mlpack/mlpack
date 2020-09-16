@@ -198,7 +198,7 @@ bool Save(const std::string& filename,
   arma::file_type saveType;
   std::string stringType;
 
-  if (extension == "json" || extension == "tsv")
+  if (extension == "txt" || extension == "tsv")
   {
     saveType = arma::coord_ascii;
     stringType = "raw ASCII formatted data";
