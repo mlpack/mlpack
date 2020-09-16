@@ -653,23 +653,23 @@ arma::vec HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
 
 
-    ConvertToLogSpace();
+  ConvertToLogSpace();
 
-    arma::vec forwardLogProb(logTransition.n_rows);
-    forwardLogProb.fill(-std::numeric_limits<double>::infinity());
-    // The first entry in the forward algorithm uses the initial state
-    // probabilities.  Note that MATLAB assumes that the starting state (at
-    // t = -1) is state 0; this is not our assumption here.  To force that
-    // behavior, you could append a single starting state to every single data
-    // sequence and that should produce results in line with MATLAB.
+  arma::vec forwardLogProb(logTransition.n_rows);
+  forwardLogProb.fill(-std::numeric_limits<double>::infinity());
+  // The first entry in the forward algorithm uses the initial state
+  // probabilities.  Note that MATLAB assumes that the starting state (at
+  // t = -1) is state 0; this is not our assumption here.  To force that
+  // behavior, you could append a single starting state to every single data
+  // sequence and that should produce results in line with MATLAB.
   forwardLogProb = logInitial + emissionLogProb;
 
-    // Normalize probability.
-    logScales = math::AccuLog(forwardLogProb);
+  // Normalize probability.
+  logScales = math::AccuLog(forwardLogProb);
   if (std::isfinite(logScales))
    forwardLogProb -= logScales;
 
-    return forwardLogProb;
+  return forwardLogProb;
 }
 
 /**
@@ -684,23 +684,22 @@ arma::vec HMM<Distribution>::ForwardAtTn(const arma::vec& emissionLogProb,
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
 
 
-    arma::vec forwardLogProb(logTransition.n_rows);
-    forwardLogProb.fill(-std::numeric_limits<double>::infinity());
-    // Now compute the probabilities for each successive observation.
-    for (size_t state = 0; state < logTransition.n_rows; state++) {
-        // The forward probability of state j at time t is the sum over all
-        // states of the probability of the previous state transitioning to
-        // the current state and emitting the given observation.
-        arma::vec tmp = prevForwardLogProb + logTransition.row(state).t();
-        forwardLogProb(state) = math::AccuLog(tmp) + emissionLogProb(state);
-    }
-    // Normalize probability.
-    logScales = math::AccuLog(forwardLogProb);
-    if (std::isfinite(logScales)){
-        forwardLogProb -= logScales;
-    }
+  arma::vec forwardLogProb(logTransition.n_rows);
+  forwardLogProb.fill(-std::numeric_limits<double>::infinity());
+  // Now compute the probabilities for each successive observation.
+  for (size_t state = 0; state < logTransition.n_rows; state++) {
+    // The forward probability of state j at time t is the sum over all
+    // states of the probability of the previous state transitioning to
+    // the current state and emitting the given observation.
+    arma::vec tmp = prevForwardLogProb + logTransition.row(state).t();
+    forwardLogProb(state) = math::AccuLog(tmp) + emissionLogProb(state);
+  }
+  // Normalize probability.
+  logScales = math::AccuLog(forwardLogProb);
+  if (std::isfinite(logScales))
+   forwardLogProb -= logScales;
 
-    return forwardLogProb;
+  return forwardLogProb;
 }
 
 /**
