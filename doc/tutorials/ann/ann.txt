@@ -589,7 +589,7 @@ arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
     dataset.n_cols - 1);
 
 // Split the data from the training set.
-arma::mat trainLabelsTemp = dataset.submat(dataset.n_rows - 3, 0,
+arma::mat trainLabels = dataset.submat(dataset.n_rows - 3, 0,
     dataset.n_rows - 1, dataset.n_cols - 1);
 
 // Initialize the network.
@@ -615,50 +615,76 @@ Now, we can look at the output model file, \c model.xml:
 
 @code
 $ cat model.xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<!DOCTYPE boost_serialization>
-<boost_serialization signature="serialization::archive" version="15">
-<model class_id="0" tracking_level="0" version="0">
-  <parameter class_id="1" tracking_level="1" version="0" object_id="_0">
-    <n_rows>66</n_rows>
-    <n_cols>1</n_cols>
-    <n_elem>66</n_elem>
-    <vec_state>0</vec_state>
-    <item>-7.55971528334903642e+00</item>
-    <item>-9.95435955058058930e+00</item>
-    <item>9.31133928948225353e+00</item>
-    <item>-5.36784434861701953e+00</item>
-    ...
-  </parameter>
-  <width>0</width>
-  <height>0</height>
-  <currentInput object_id="_1">
-    <n_rows>0</n_rows>
-    <n_cols>0</n_cols>
-    <n_elem>0</n_elem>
-    <vec_state>0</vec_state>
-  </currentInput>
-  <network class_id="2" tracking_level="0" version="0">
-    <count>3</count>
-    <item_version>0</item_version>
-    <item class_id="3" tracking_level="0" version="0">
-      <which>18</which>
-      <value class_id="4" tracking_level="1" version="0" object_id="_2">
-        <inSize>21</inSize>
-        <outSize>3</outSize>
-      </value>
-    </item>
-    <item>
-      <which>2</which>
-      <value class_id="5" tracking_level="1" version="0" object_id="_3"></value>
-    </item>
-    <item>
-      <which>20</which>
-      <value class_id="6" tracking_level="1" version="0" object_id="_4"></value>
-    </item>
-  </network>
-</model>
-</boost_serialization>
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<model>
+		<cereal_class_version>0</cereal_class_version>
+		<parameter>
+			<n_rows>60</n_rows>
+			<n_cols>1</n_cols>
+			<vec_state>0</vec_state>
+			<elem>10.461979353567767</elem>
+			<elem>-10.040855482151116</elem>
+			<elem>0.18048901768535316</elem>
+			<elem>4.8989495084787169</elem>
+			<elem>-4.4381643782652276</elem>
+			<elem>0.049477846402230616</elem>
+			<elem>2.5271808924795987</elem>
+			<elem>-3.96993488526287</elem>
+			...
+		</parameter>
+		<width>0</width>
+		<height>0</height>
+		<reset>true</reset>
+		<value0>
+			<vecSize>3</vecSize>
+			<value0>
+				<which>30</which>
+				<value0>
+					<cereal_class_version>0</cereal_class_version>
+					<smartPointer>
+						<ptr_wrapper>
+							<valid>1</valid>
+							<data>
+								<cereal_class_version>0</cereal_class_version>
+								<inSize>19</inSize>
+								<outSize>3</outSize>
+							</data>
+						</ptr_wrapper>
+					</smartPointer>
+				</value0>
+			</value0>
+			<value1>
+				<which>6</which>
+				<value0>
+					<cereal_class_version>0</cereal_class_version>
+					<smartPointer>
+						<ptr_wrapper>
+							<valid>1</valid>
+							<data>
+								<cereal_class_version>0</cereal_class_version>
+							</data>
+						</ptr_wrapper>
+					</smartPointer>
+				</value0>
+			</value1>
+			<value2>
+				<which>32</which>
+				<value0>
+					<cereal_class_version>0</cereal_class_version>
+					<smartPointer>
+						<ptr_wrapper>
+							<valid>1</valid>
+							<data>
+								<cereal_class_version>0</cereal_class_version>
+							</data>
+						</ptr_wrapper>
+					</smartPointer>
+				</value0>
+			</value2>
+		</value0>
+	</model>
+</cereal>
 @endcode
 
 As you can see, the \c \<parameter\> section of \c model.xml contains the trained
