@@ -43,7 +43,7 @@ void Softmin<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
-  //g = Need to figure out. 
+  g = input % (arma::repmat(arma::sum(gy % input), input.n_rows, 1) - gy);
 }
 
 template<typename InputDataType, typename OutputDataType>
