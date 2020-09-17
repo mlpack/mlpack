@@ -982,7 +982,7 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
       if (node->left)
         stack.push(node->left);
       if (node->right)
-       stack.push(node->right); 
+       stack.push(node->right);
     }
   }
 }
