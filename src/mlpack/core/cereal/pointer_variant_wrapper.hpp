@@ -80,7 +80,9 @@ struct load_visitor : public boost::static_visitor<void>
   static void load_impl(Archive& ar, VariantType& value, std::false_type)
   {
     // This must be a nested boost::variant.
-    ar(make_pointer_variant(value));
+    T loadVariant;
+    ar(make_pointer_variant(loadVariant));
+    value = loadVariant;
   }
 
   template<typename Archive, typename VariantType>
