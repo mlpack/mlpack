@@ -587,16 +587,26 @@ void CheckSoftminActivationCorrect(const arma::colvec input,
  * @param input Input data used for evaluating the Softmin activation function.
  * @param target Target data used to evaluate the Softmin activation.
  */
-/*
 void CheckSoftminDerivativeCorrect(const arma::colvec input,
                                    const arma::colvec target)
 {
   // Initialize Softmin object.
   Softmin<> softmin;
 
-  // Not written as the Backward function is not implemented yet.
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives, activations;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  softmin.Forward(input, activations);
+  softmin.Backward(activations, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
+  {
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  } 
+
 }
-*/
+
 
 /**
  * Basic test of the tanh function.
@@ -1117,14 +1127,14 @@ TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
                                          4.12196167e-45 3.04574061e-44");
 
   /* 
-  Commented out because derivative test not written.
+  Commented out because derivatives haven't been figured out.
   const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
   */
 
   CheckSoftminActivationCorrect(activationData,
                                 desiredActivations);
   /* 
-  Commented out because derivative test not written.
+  Commented out because derivatives haven't been figured out.
   CheckHardShrinkDerivativeCorrect(desiredActivations,
                                    desiredDerivatives);
   */
