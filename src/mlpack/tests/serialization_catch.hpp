@@ -33,15 +33,7 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 
   {
     OArchiveType o(ofs);
-
-    try
-    {
-      o(CEREAL_NVP(x));
-    }
-    catch (cereal::Exception& e)
-    {
-      success = false;
-    }
+    o(CEREAL_NVP(x));
   }
 
   REQUIRE(success == true);
@@ -54,15 +46,7 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 
   {
     IArchiveType i(ifs);
-
-    try
-    {
-      i(CEREAL_NVP(x));
-    }
-    catch (cereal::Exception& e)
-    {
-      success = false;
-    }
+    i(CEREAL_NVP(x));
   }
   ifs.close();
 
@@ -119,15 +103,7 @@ void TestArmadilloSerialization(MatType& x)
 
   {
     OArchiveType o(ofs);
-
-    try
-    {
-      o(CEREAL_NVP(x));
-    }
-    catch (cereal::Exception& e)
-    {
-      success = false;
-    }
+    o(CEREAL_NVP(x));
   }
 
   REQUIRE(success == true);
@@ -140,15 +116,7 @@ void TestArmadilloSerialization(MatType& x)
 
   {
     IArchiveType i(ifs);
-
-    try
-    {
-      i(CEREAL_NVP(x));
-    }
-    catch (cereal::Exception& e)
-    {
-      success = false;
-    }
+    i(CEREAL_NVP(x));
   }
   ifs.close();
 
@@ -193,16 +161,8 @@ void SerializeObject(T& t, T& newT)
   {
     OArchiveType o(ofs);
 
-    try
-    {
-      T& x(t);
-      o(CEREAL_NVP(x));
-    }
-    catch (cereal::Exception& e)
-    {
-      std::cerr << e.what() << std::endl;
-      success = false;
-    }
+    T& x(t);
+    o(CEREAL_NVP(x));
   }
   ofs.close();
 
@@ -212,17 +172,8 @@ void SerializeObject(T& t, T& newT)
 
   {
     IArchiveType i(ifs);
-
-    try
-    {
-      T& x(newT);
-      i(CEREAL_NVP(x));
-    }
-    catch (cereal::Exception& e)
-    {
-      std::cout << e.what() << "\n";
-      success = false;
-    }
+    T& x(newT);
+    i(CEREAL_NVP(x));
   }
   ifs.close();
 
@@ -253,15 +204,7 @@ void SerializePointerObject(T* t, T*& newT)
 
   {
     OArchiveType o(ofs);
-    try
-    {
-      o(CEREAL_NVP(t));
-    }
-    catch (cereal::Exception& e)
-    {
-      std::cout << e.what() << "\n";
-      success = false;
-    }
+    o(CEREAL_NVP(t));
   }
   ofs.close();
 
@@ -271,19 +214,9 @@ void SerializePointerObject(T* t, T*& newT)
 
   {
     IArchiveType i(ifs);
-
-    try
-    {
-      i(CEREAL_NVP(newT));
-    }
-    catch (std::exception& e)
-    {
-      std::cout << e.what() << "\n";
-      success = false;
-    }
+    i(CEREAL_NVP(newT));
   }
   ifs.close();
-
   remove(fileName.c_str());
 
   REQUIRE(success == true);
