@@ -1111,10 +1111,10 @@ TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
 {
 
   //Calculated using Softmin activation function in PyTorch
-  const arma::colvec desiredActivations("2.2505e-43 1.2415e-45 \
-                                         3.3835e-46 1.0000e+00 \
-                                         1.1205e-44 8.2792e-44 \
-                                         4.1220e-45 3.0457e-44");
+  const arma::colvec desiredActivations("2.25051482e-43 1.24151100e-45 \
+                                         3.38351218e-46 1.00000000e+00 \
+                                         1.12046535e-44 8.27918134e-44 \
+                                         4.12196167e-45 3.04574061e-44");
 
   /* 
   Commented out because derivative test not written 

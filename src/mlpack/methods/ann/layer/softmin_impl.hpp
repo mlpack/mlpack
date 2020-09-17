@@ -30,9 +30,9 @@ void Softmin<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     OutputType& output)
 { 
-  InputType inputMin = arma::repmat(arma::min(input,1),1,input.n_cols);
+  InputType inputMin = arma::repmat(arma::min(input,0), input.n_rows, 1);
   output = arma::repmat(arma::log(arma::sum(
-      arma::exp(-(input - inputMin)),1)), 1, input.n_cols);
+      arma::exp(-(input - inputMin)),0)), input.n_rows, 1);
   output = arma::exp(-(input - inputMin) - output);
 }
 
