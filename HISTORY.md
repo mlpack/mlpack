@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Softmin activation function as layer in ann/layer.
 
 ### mlpack 3.4.1
 ###### 2020-09-07
