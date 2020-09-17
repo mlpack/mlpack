@@ -46,13 +46,13 @@ double R2Score::Evaluate(MLAlgorithm& model,
   if (residualSumSquared == 0.0)
     return totalSumSquared ? 1.0 : DBL_MIN;
   // Returning adjusted R-squared
-  if(adjR2){
+  if (adjR2)
+  {
     double rsq = 1 - (residualSumSquared / totalSumSquared);
-    double n = data.n_cols; // number of observations
-    double k = data.n_rows;
-    return (1 - ((1 - rsq) * ((n - 1) / (n - k - 1))));
+    return (1 - ((1 - rsq) * ((data.n_cols - 1) / (data.n_cols - data.n_rows - 1))));
   }
-  // Returning R-squared
+ 
+    // Returning R-squared
   return 1 - residualSumSquared / totalSumSquared;
 }
 
