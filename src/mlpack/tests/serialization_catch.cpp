@@ -104,9 +104,9 @@ void CheckMatrices(const arma::cube& x,
   // Now check elements.
   for (size_t i = 0; i < x.n_elem; ++i)
   {
-    REQUIRE(x[i] == xmlX[i]);
-    REQUIRE(x[i] == jsonX[i]);
-    REQUIRE(x[i] == binaryX[i]);
+    REQUIRE(x[i] ==Approx(xmlX[i]));
+    REQUIRE(x[i] ==Approx(jsonX[i]));
+    REQUIRE(x[i] ==Approx(binaryX[i]));
   }
 }
 
