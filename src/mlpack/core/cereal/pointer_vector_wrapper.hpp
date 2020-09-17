@@ -1,5 +1,5 @@
 /**
- * @file core/cereal/PointerVectorWrapper.hpp
+ * @file core/cereal/pointer_vector_wrapper.hpp
  * @author Omar Shrit
  *
  * Implementation of a vector wrapper to enable the serialization of
