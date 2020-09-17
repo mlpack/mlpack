@@ -1,3 +1,12 @@
+/**
+ * This file is backported from cereal 1.3 to support the serialization 
+ * of objects of type associative containers (std::map, std::pair, etc.)
+ * 
+ * This file add the support for serialization of containers for any
+ * version of cereal starting from 1.1.2 that is required by Ubuntu
+ * 16.04
+ * 
+ */
 /*! \file unordered_map.hpp
     \brief Support for types found in \<unordered_map\>
     \ingroup STLSupport */
