@@ -160,8 +160,6 @@ void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
   ar(CEREAL_NVP(model));
   ar(CEREAL_NVP(run));
   ar(CEREAL_NVP(ownsLayers));
-  if (cereal::is_loading<Archive>())
-    ownsLayers = !model;
 }
 
 } // namespace ann
