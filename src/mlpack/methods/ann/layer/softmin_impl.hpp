@@ -32,8 +32,8 @@ void Softmin<InputDataType, OutputDataType>::Forward(
 { 
   InputType inputMin = arma::repmat(arma::min(input,1),1,input.n_cols);
   output = arma::repmat(arma::log(arma::sum(
-      arma::exp(- (input - inputMin)),1)), 1, input.n_cols);
-  output = arma::exp(- (input - inputMin) - output);
+      arma::exp(-(input - inputMin)),1)), 1, input.n_cols);
+  output = arma::exp(-(input - inputMin) - output);
 }
 
 template<typename InputDataType, typename OutputDataType>

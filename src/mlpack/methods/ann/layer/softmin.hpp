@@ -19,15 +19,15 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
-* Implementation of the Softmin layer. The Softmin function takes as a input
-* a vector of K real numbers, rescaling them so that the elements of the
-* K-dimensional output vector lie in the range [0, 1] and sum to 1.
-* 
-* @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
-*         arma::sp_mat or arma::cube).
-* @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
-*         arma::sp_mat or arma::cube).
-*/
+ * Implementation of the Softmin layer. The Softmin function takes as a input
+ * a vector of K real numbers, rescaling them so that the elements of the
+ * K-dimensional output vector lie in the range [0, 1] and sum to 1.
+ * 
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ */
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
