@@ -67,6 +67,7 @@ steps:
     -DARMADILLO_LIBRARY="..\armadillo-8.400.0\Release\armadillo.lib" `
     -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.60.0.0\lib\native\include `
     -DBOOST_LIBRARYDIR=$(Agent.ToolsDirectory)\boost_libs `
+    -DCEREAL_INCLUDE_DIRS=$(Agent.ToolsDirectory)\cereal `
     -DBUILD_JULIA_BINDINGS=OFF `
     -DCMAKE_BUILD_TYPE=Release ..
   displayName: 'Configure mlpack'
