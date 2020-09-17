@@ -1056,19 +1056,6 @@ void LSHSearch<SortPolicy, MatType>::serialize(Archive& ar,
   ar(CEREAL_NVP(secondHashSize));
   ar(CEREAL_NVP(secondHashWeights));
   ar(CEREAL_NVP(bucketSize));
-
-  size_t tables;
-  if (cereal::is_saving<Archive>())
-    tables = secondHashTable.size();
-  ar(CEREAL_NVP(tables));
-
-  // Set size of second hash table if needed.
-  if (cereal::is_loading<Archive>())
-  {
-    secondHashTable.clear();
-    secondHashTable.resize(tables);
-  }
-
   ar(CEREAL_NVP(secondHashTable));
   ar(CEREAL_NVP(bucketContentSize));
   ar(CEREAL_NVP(bucketRowInHashTable));
