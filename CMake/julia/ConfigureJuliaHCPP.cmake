@@ -57,7 +57,7 @@ char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length)
   {
     cereal::BinaryOutputArchive oa(oss);
     ${MODEL_TYPE}* model = (${MODEL_TYPE}*) ptr;
-    oa & cereal::make_nvp(\"${MODEL_SAFE_TYPE}\", model);
+    oa(CEREAL_POINTER(model));
   }
 
   *length = oss.str().length();
@@ -72,16 +72,16 @@ char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length)
 // Deserialize a ${MODEL_TYPE} pointer.
 void* Deserialize${MODEL_SAFE_TYPE}Ptr(const char* buffer, const size_t length)
 {
-  ${MODEL_TYPE}* t = new ${MODEL_TYPE}();
+  ${MODEL_TYPE}* model = new ${MODEL_TYPE}();
 
   std::istringstream iss(std::string(buffer, length));
   {
     cereal::BinaryInputArchive ia(iss);
-    ia & cereal::make_nvp(\"${MODEL_SAFE_TYPE}\", t);
+    ia(CEREAL_POINTER(model));
   }
 
   // Julia will be responsible for freeing this.
-  return (void*) t;
+  return (void*) model;
 }
 ")
   endforeach ()
