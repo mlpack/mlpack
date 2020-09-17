@@ -100,8 +100,8 @@ installed through apt:
 
 @code
 # apt-get install libboost-math-dev libboost-test-dev libcereal-dev
-  libarmadillo-dev binutils-dev python-pandas python-numpy cython
-  python-setuptools
+  libarmadillo-dev binutils-dev python3-pandas python3-numpy cython3
+  python3-setuptools
 @endcode
 
 If you are using Ubuntu 19.10 or newer, you can also install @c libensmallen-dev
@@ -123,7 +123,7 @@ On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
 # dnf install boost-devel boost-test boost-math armadillo-devel binutils-devel 
-  python2-Cython python2-setuptools python2-numpy python2-pandas ensmallen-devel 
+  python3-Cython python3-setuptools python3-numpy python3-pandas ensmallen-devel 
   stbi-devel cereal-devel
 @endcode
 

@@ -7,6 +7,16 @@ macro (not_found_return message)
   return()
 endmacro ()
 
+macro (post_julia_setup)
+  # If we are building Julia bindings, we have to end the 'module' declaration in
+  # mlpack.jl.
+  if (BUILD_JULIA_BINDINGS)
+    file(APPEND
+        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
+        "\nend\ninclude(\"functions.jl\")\ninclude(\"serialization.jl\")\nend\n")
+  endif ()
+endmacro ()
+
 # If we are not supposed to make Julia bindings, define the macro so it does
 # nothing and leave this file.
 if (NOT BUILD_JULIA_BINDINGS)
