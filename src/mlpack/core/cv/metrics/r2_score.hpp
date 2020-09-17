@@ -53,12 +53,15 @@ class R2Score
    * @param data Column-major data containing test items.
    * @param responses Ground truth (correct) target values for the test items,
    *     should be either a row vector or a column-major matrix.
+   * @param adjR2 Boolean value which specifies whether to calculate adjusted
+   *    R2 or not
    * @return calculated R2 Score.
    */
   template<typename MLAlgorithm, typename DataType, typename ResponsesType>
   static double Evaluate(MLAlgorithm& model,
                          const DataType& data,
-                         const ResponsesType& responses);
+                         const ResponsesType& responses,
+                         const bool adjR2 = false);
 
   /**
    * Information for hyper-parameter tuning code. It indicates that we want
