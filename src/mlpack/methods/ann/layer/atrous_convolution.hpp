@@ -257,6 +257,9 @@ class AtrousConvolution
   //! Modify the internal Padding layer.
   ann::Padding<>& Padding() { return padding; }
 
+  //! Get size of the weight matrix.
+  size_t WeightSize() const { return weightSize; }
+
   /**
    * Serialize the layer.
    */
@@ -393,6 +396,9 @@ class AtrousConvolution
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Size of the weight matrix.
+  size_t weightSize = outSize * inSize * kernelWidth * kernelHeight;
 }; // class AtrousConvolution
 
 } // namespace ann
