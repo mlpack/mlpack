@@ -101,7 +101,7 @@ class Add
   size_t OutputSize() const { return outSize; }
 
   //! Get the size of weights.
-  size_t const& WeightSize() { return outSize; }
+  size_t WeightSize() const { return outSize; }
 
   /**
    * Serialize the layer

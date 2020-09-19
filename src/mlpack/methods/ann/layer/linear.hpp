@@ -135,7 +135,10 @@ class Linear
   OutputDataType& Bias() { return bias; }
 
   //! Get the size of the weights.
-  size_t WeightSize() const { return weightSize; }
+  size_t WeightSize() const
+  {
+    return (inSize * outSize) + outSize;
+  }
 
   /**
    * Serialize the layer
@@ -173,10 +176,6 @@ class Linear
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
-
-  //! Size of the weight matrix.
-  size_t weightSize = inSize * outSize;
-
 }; // class Linear
 
 } // namespace ann
