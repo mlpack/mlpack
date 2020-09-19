@@ -18,7 +18,6 @@ macro (post_python_bindings)
             -D SETUP_PY_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
             -D SETUP_PY_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
             -D PACKAGE_VERSION="${PACKAGE_VERSION}"
-            -D Boost_SERIALIZATION_LIBRARY="${Boost_SERIALIZATION_LIBRARY_RELEASE}"
             -D Boost_LIBRARY_DIRS="${Boost_LIBRARY_DIRS}"
             -D ARMADILLO_LIBRARIES="${ARMADILLO_LIBRARIES}"
             -D MLPACK_LIBRARY=$<TARGET_LINKER_FILE:mlpack>
