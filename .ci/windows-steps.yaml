@@ -14,10 +14,6 @@ steps:
     nuget install boost_random-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_math_c99-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
-    nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory) -Version 1.2.2 -Verbosity detailed
-
-    dir $(Agent.ToolsDirectory)
-    dir $(Agent.ToolsDirectory)\unofficial-flayan-cereal.1.2.2
 
     mkdir -p $(Agent.ToolsDirectory)/boost_libs
     cp $(Agent.ToolsDirectory)/boost_math_c99-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
@@ -53,6 +49,31 @@ steps:
     maximumCpuCount: false
   displayName: 'Build armadillo'
 
+# Configure Cereal
+- bash: |
+    git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
+
+    curl -O https://github.com/USCiLab/cereal/archive/v1.3.0.tar.gz
+    tar -xzvf v1.3.0.tar.gz
+
+    cd cereal-1.3.0/ && cmake $(CMakeGenerator) \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_BUILD_TYPE=Release .
+  displayName: 'Configure cereal'
+
+# Build cereal
+- task: MSBuild@1
+  inputs:
+    solution: 'cereal-1.3.0/*.sln'
+    msbuildLocationMethod: 'location'
+    msbuildVersion: $(MSBuildVersion)
+    configuration: 'Release'
+    msbuildArchitecture: 'x64'
+    msbuildArguments: /m /p:BuildInParallel=true
+    clean: false
+    maximumCpuCount: false
+  displayName: 'Build cereal'
+
 # Configure mlpack
 - powershell: |
     mkdir build
@@ -66,7 +87,7 @@ steps:
     -DARMADILLO_LIBRARY="..\armadillo-8.400.0\Release\armadillo.lib" `
     -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.60.0.0\lib\native\include `
     -DBOOST_LIBRARYDIR=$(Agent.ToolsDirectory)\boost_libs `
-    -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\unofficial-flayan-cereal.1.2.2\include `
+    -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\cereal-1.3.0\include `
     -DBUILD_JULIA_BINDINGS=OFF `
     -DCMAKE_BUILD_TYPE=Release ..
   displayName: 'Configure mlpack'
