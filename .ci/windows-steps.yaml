@@ -53,10 +53,10 @@ steps:
 - bash: |
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
 
-    curl -LJO https://github.com/USCiLab/cereal/archive/v1.3.0.tar.gz
-    tar -xzvf v1.3.0.tar.gz
+    git clone https://github.com/USCiLab/cereal.git
 
-    cd cereal-1.3.0/ && cmake $(CMakeGenerator) \
+    cd cereal/ && cmake $(CMakeGenerator) \
+
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_BUILD_TYPE=Release .
   displayName: 'Configure cereal'
@@ -64,7 +64,7 @@ steps:
 # Build cereal
 - task: MSBuild@1
   inputs:
-    solution: 'cereal-1.3.0/*.sln'
+    solution: 'cereal/*.sln'
     msbuildLocationMethod: 'location'
     msbuildVersion: $(MSBuildVersion)
     configuration: 'Release'
@@ -87,7 +87,7 @@ steps:
     -DARMADILLO_LIBRARY="..\armadillo-8.400.0\Release\armadillo.lib" `
     -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.60.0.0\lib\native\include `
     -DBOOST_LIBRARYDIR=$(Agent.ToolsDirectory)\boost_libs `
-    -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\cereal-1.3.0\include `
+    -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\cereal\include `
     -DBUILD_JULIA_BINDINGS=OFF `
     -DCMAKE_BUILD_TYPE=Release ..
   displayName: 'Configure mlpack'
