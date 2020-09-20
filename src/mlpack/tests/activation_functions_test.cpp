@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-
+#include <iostream>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/ann/activation_functions/identity_function.hpp>
@@ -602,11 +602,11 @@ void CheckSoftminDerivativeCorrect(const arma::colvec input,
   softmin.Backward(activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
+    std::cout<<"der: "<<derivatives.at(i)<<"target: "<<target.at(i);
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   } 
 
 }
-
 
 /**
  * Basic test of the tanh function.
@@ -1119,23 +1119,15 @@ TEST_CASE("GaussianFunctionTest", "[ActivationFunctionsTest]")
  */
 TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
 {
+  const arma::colvec activationData1("1.7 3.6");
 
-  // Calculated manually using Python-numpy.
-  const arma::colvec desiredActivations("2.25051482e-43 1.24151100e-45 \
-                                         3.38351218e-46 1.00000000e+00 \
-                                         1.12046535e-44 8.27918134e-44 \
-                                         4.12196167e-45 3.04574061e-44");
+  // Hand-calculated values.
+  const arma::colvec desiredActivations("0.8699 0.1301");
 
-  /* 
-  Commented out because derivatives haven't been figured out.
-  const arma::colvec desiredDerivatives("1 1 1 1 1 1 1 0");
-  */
+  const arma::colvec desiredDerivatives("-0.1132 0.1132");
 
-  CheckSoftminActivationCorrect(activationData,
+  CheckSoftminActivationCorrect(activationData1,
                                 desiredActivations);
-  /* 
-  Commented out because derivatives haven't been figured out.
-  CheckHardShrinkDerivativeCorrect(desiredActivations,
-                                   desiredDerivatives);
-  */
+  CheckSoftminDerivativeCorrect(desiredActivations,
+                                desiredDerivatives);
 }
