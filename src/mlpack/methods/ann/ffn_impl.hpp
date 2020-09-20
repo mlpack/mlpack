@@ -622,6 +622,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
   {
     this->network.push_back(boost::apply_visitor(copyVisitor,
         network.network[i]));
+    boost::apply_visitor(resetVisitor, this->network.back());
   }
 };
 

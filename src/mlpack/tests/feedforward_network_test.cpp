@@ -57,6 +57,104 @@ void TestNetwork(ModelType& model,
   REQUIRE(classificationError <= classificationErrorThreshold);
 }
 
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::mat, typename ModelType>
+void CheckCopyFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  network1->Train(trainData, trainLabels, opt);
+
+  arma::mat predictions1;
+  network1->Predict(trainData, predictions1);
+  FFN<> network2;
+  network2 = *network1;
+  delete network1;
+
+  // Deallocating all of network1's memory, so that
+  // if network2 is trying to use any of that memory.
+  arma::mat predictions2;
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::mat, typename ModelType>
+void CheckMoveFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  network1->Train(trainData, trainLabels, opt);
+
+  arma::mat predictions1;
+  network1->Predict(trainData, predictions1);
+  FFN<> network2(std::move(*network1));
+  delete network1;
+
+  // Deallocating all of network1's memory, so that
+  // if network2 is trying to use any of that memory.
+  arma::mat predictions2;
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
+/**
+ * Check whether copying and moving Vanila network is working or not.
+ */
+TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Output
+   *  Layer         Layer         Layer
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |     +>|     |     +>|     |
+   * +-----+     | +--+--+     | +-----+
+   *             |             |
+   *  Bias       |  Bias       |
+   *  Layer      |  Layer      |
+   * +-----+     | +-----+     |
+   * |     |     | |     |     |
+   * |     +-----+ |     +-----+
+   * |     |       |     |
+   * +-----+       +-----+
+   */
+
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<Linear<> >(trainData.n_rows, 8);
+  model->Add<SigmoidLayer<> >();
+  model->Add<Linear<> >(8, 3);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  model1->Add<Linear<> >(trainData.n_rows, 8);
+  model1->Add<SigmoidLayer<> >();
+  model1->Add<Linear<> >(8, 3);
+  model1->Add<LogSoftMax<> >();
+
+  // Check whether copy cpnstructor is working or not.
+  CheckCopyFunction<>(model, trainData, trainLabels, 1);
+
+  // Check whether move cpnstructor is working or not.
+  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
+}
+
 /**
  * Train the vanilla network on a larger dataset.
  */
