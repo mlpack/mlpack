@@ -14,7 +14,7 @@ steps:
     nuget install boost_random-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_math_c99-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
-    nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory) -Version 1.2.2
+    nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory) -Version 1.2.2 -Verbosity detailed
 
     dir $(Agent.ToolsDirectory)
     dir $(Agent.ToolsDirectory)\unofficial-flayan-cereal.1.2.2
