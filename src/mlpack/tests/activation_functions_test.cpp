@@ -596,7 +596,7 @@ void CheckSoftminDerivativeCorrect(const arma::colvec input,
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives, activations;
 
-  // This error vector will be set to 1 to get the derivatives.
+  // This error vector will be set to [[1.0],[0.0]] to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   error(1) = 0.0;
   softmin.Forward(input, activations);
