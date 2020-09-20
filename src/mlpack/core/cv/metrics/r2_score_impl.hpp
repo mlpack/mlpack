@@ -18,7 +18,8 @@ namespace cv {
 template<typename MLAlgorithm, typename DataType, typename ResponsesType>
 double R2Score::Evaluate(MLAlgorithm& model,
                          const DataType& data,
-                         const ResponsesType& responses)
+                         const ResponsesType& responses,
+                         const bool adjR2)
 {
   if (data.n_cols != responses.n_cols)
   {
