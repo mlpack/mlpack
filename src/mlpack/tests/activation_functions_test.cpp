@@ -598,11 +598,11 @@ void CheckSoftminDerivativeCorrect(const arma::colvec input,
 
   // This error vector will be set to 1 to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  error(1) = 0.0;
   softmin.Forward(input, activations);
   softmin.Backward(activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
-    std::cout<<"der: "<<derivatives.at(i)<<"target: "<<target.at(i);
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
   } 
 
@@ -1122,12 +1122,12 @@ TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
   const arma::colvec activationData1("1.7 3.6");
 
   // Hand-calculated values.
-  const arma::colvec desiredActivations("0.8699 0.1301");
+  const arma::colvec desiredActivations("0.86989153 0.13010847");
 
-  const arma::colvec desiredDerivatives("-0.1132 0.1132");
+  const arma::colvec desiredDerivatives("-0.113180256 0.113180256");
 
   CheckSoftminActivationCorrect(activationData1,
                                 desiredActivations);
-  CheckSoftminDerivativeCorrect(desiredActivations,
+  CheckSoftminDerivativeCorrect(activationData1,
                                 desiredDerivatives);
 }
