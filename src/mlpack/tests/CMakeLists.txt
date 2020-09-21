@@ -8,7 +8,6 @@ add_executable(mlpack_test
   cli_binding_test.cpp
   io_test.cpp
   cosine_tree_test.cpp
-  dbscan_test.cpp
   dcgan_test.cpp
   det_test.cpp
   distribution_test.cpp
@@ -128,6 +127,7 @@ add_executable(mlpack_catch_test
   convolutional_network_test.cpp
   convolution_test.cpp
   cv_test.cpp
+  dbscan_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
   feedforward_network_test.cpp
@@ -273,4 +273,3 @@ add_test(NAME "catch_test" COMMAND mlpack_catch_test WORKING_DIRECTORY ${CMAKE_B
 
 # Use RUN_SERIAL for long running parallel tests
 set_tests_properties(${parallel_tests} PROPERTIES RUN_SERIAL TRUE)
-
