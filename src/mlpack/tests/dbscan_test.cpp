@@ -78,7 +78,6 @@ TEST_CASE("OutlierTest", "[DBSCANTest]")
   REQUIRE(assignments[15] == SIZE_MAX);
   REQUIRE(assignments[45] == SIZE_MAX);
   REQUIRE(assignments[101] == SIZE_MAX);
-
 }
 
 /**
