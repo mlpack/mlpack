@@ -69,6 +69,32 @@ class RBM
       const ElemType radius = 1,
       const bool persistence = false);
 
+  /**
+   * Initialize all the parameters of the network using initializeRule.
+   *
+   * @param initializeRule InitializationRule object for initializing the
+   *        network parameter.
+   * @param visibleSize Number of visible neurons.
+   * @param hiddenSize Number of hidden neurons.
+   * @param batchSize Batch size to be used for training.
+   * @param numSteps Number of Gibbs Sampling steps.
+   * @param negSteps Number of negative samples to average negative gradient.
+   * @param poolSize Number of hidden neurons to pool together.
+   * @param slabPenalty Regulariser of slab variables.
+   * @param radius Feasible regions for visible layer samples.
+   * @param persistence Indicates whether to use Persistent CD or not.
+   */
+  RBM(InitializationRuleType initializeRule,
+      const size_t visibleSize,
+      const size_t hiddenSize,
+      const size_t batchSize = 1,
+      const size_t numSteps = 1,
+      const size_t negSteps = 1,
+      const size_t poolSize = 2,
+      const ElemType slabPenalty = 8,
+      const ElemType radius = 1,
+      const bool persistence = false);
+
   // Reset the network.
   template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
@@ -97,6 +123,26 @@ class RBM
   template<typename OptimizerType, typename... CallbackType>
   double Train(OptimizerType& optimizer, CallbackType&&... callbacks);
 
+  /**
+   * Train the RBM on the given input data.
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization. If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
+   * @param trainData Training data to be used.
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback functions.
+   * @param optimizer Optimizer type.
+   * @param callbacks Callback Functions for ensmallen optimizer
+   *      `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
+  template<typename OptimizerType, typename... CallbackType>
+  double Train(arma::Mat<ElemType>& trainData,
+               OptimizerType& optimizer,
+               CallbackType&&... callbacks);
   /**
    * Evaluate the RBM network with the given parameters.
    * The function is needed for monitoring the progress of the network.
@@ -250,6 +296,20 @@ class RBM
   template<typename Policy = PolicyType, typename InputType = DataType>
   typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
   HiddenMean(const InputType& input, DataType& output);
+
+  /**
+   * Perform the forward pass of the data in real batch mode.
+   *
+   * Forward and Backward should be used as a pair, and they are designed mainly
+   * for advanced users. User should try to use Predict and Train unless those
+   * two functions can't satisfy some special requirements.
+   *
+   * @param input The input data.
+   * @param output The predicted results.
+   */
+  template<typename Policy = PolicyType, typename InputType = DataType>
+  typename std::enable_if<std::is_same<Policy, BinaryRBM>::value, void>::type
+  Forward(const InputType& input, DataType& output);
 
   /**
    * The function calculates the mean of the distribution P(h|v),
