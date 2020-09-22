@@ -1,6 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  arma_extend_test.cpp
   async_learning_test.cpp
   augmented_rnns_tasks_test.cpp
   callback_test.cpp
@@ -119,6 +118,7 @@ add_executable(mlpack_catch_test
   ann_test_tools.hpp
   ann_visitor_test.cpp
   armadillo_svd_test.cpp
+  arma_extend_test.cpp
   bayesian_linear_regression_test.cpp
   bias_svd_test.cpp
   binarize_test.cpp
