@@ -16,7 +16,6 @@
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
 
-
 using namespace mlpack;
 using namespace mlpack::range;
 using namespace mlpack::dbscan;
