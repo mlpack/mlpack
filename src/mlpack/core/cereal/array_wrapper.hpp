@@ -58,10 +58,6 @@ class ArrayWrapper
 
  private:
   ArrayWrapper& operator=(ArrayWrapper rhs);
-  // note: I would like to make the copy constructor private but this breaks
-  // make_array.  So I make make_array a friend
-  template<class Tx, class S>
-  friend const cereal::ArrayWrapper<Tx> make_array(Tx*& t, S& s);
 
   T*& arrayAddress;
   size_t& arraySize;
