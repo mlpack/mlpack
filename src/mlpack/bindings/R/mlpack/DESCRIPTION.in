@@ -6,7 +6,18 @@ Author: mlpack Team
 Maintainer: James Joseph Balamuta <balamut2@illinois.edu>
 Description: 'mlpack' is a fast, flexible machine learning library, written
              in C++, that aims to provide fast, extensible implementations of
-             cutting-edge machine learning algorithms.
+             cutting-edge machine learning algorithms. Note that 'mlpack' is
+             licensed under 3-clause BSD, some reproductions of 'boost' source
+             code inside 'mlpack' are licensed under Boost Software License 1,
+             uses of 'stb' are licensed under MIT License and the Public Domain,
+             'Ensmallen' is licensed under 3-clause BSD,
+             'Armadillo' starting from 7.800.0 is licensed under Apache License 2,
+             'RcppArmadillo' and 'RcppEnsmallen' (the 'Rcpp' bindings/bridge to
+             'Armadillo' and 'Ensmallen' libraries) are
+             licensed under the GNU GPL version 2 or later. Thus, 'mlpack' bindings
+             for R are also licensed under similar terms. Note that
+             'mlpack' requires a compiler that supports 'C++11',
+             'Armadillo' 8.400 or later, and 'Ensmallen' 2.10.0 or later.
 SystemRequirements: A C++11 compiler. Versions 4.8.*, 4.9.* or later of GCC
                     will be fine.
 License: file LICENSE
