@@ -528,7 +528,8 @@ double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq) const
  * accumulate log scale over the entire sequence
  */
 template<typename Distribution>
-double HMM<Distribution>::LogScaleEmissionProb(const arma::vec& emissionLogProb,
+double HMM<Distribution>::EmissionLogScaleFactor(
+                                        const arma::vec& emissionLogProb,
                                         arma::vec& forwardLogProb) const
 {
     double curLogScale;
@@ -550,13 +551,14 @@ double HMM<Distribution>::LogScaleEmissionProb(const arma::vec& emissionLogProb,
  * Compute the log-likelihood of the given emission probability up to time t
  */
 template<typename Distribution>
-double HMM<Distribution>::LogLikelihoodEmissionProb(
+double HMM<Distribution>::EmissionLogLikelihood(
                                         const arma::vec& emissionLogProb,
                                         double &logLikelihood,
                                         arma::vec& forwardLogProb) const
 {
     bool isStartOfSeq = forwardLogProb.empty();
-    double curLogScale = LogScaleEmissionProb(emissionLogProb, forwardLogProb);
+    double curLogScale = EmissionLogScaleFactor(emissionLogProb,
+                                                forwardLogProb);
     logLikelihood = isStartOfSeq ? curLogScale : curLogScale + logLikelihood;
     return logLikelihood;
 }
@@ -577,7 +579,7 @@ double HMM<Distribution>::LogScaleFactor(const arma::vec &data,
     emissionLogProb(state) = emission[state].LogProbability(data);
   }
 
-  return LogScaleEmissionProb(emissionLogProb, forwardLogProb);
+  return EmissionLogScaleFactor(emissionLogProb, forwardLogProb);
 }
 
 /**
