@@ -45,7 +45,7 @@ steps:
     msbuildVersion: $(MSBuildVersion)
     configuration: 'Release'
     msbuildArchitecture: 'x64'
-    msbuildArguments: /m /p:BuildInParallel=true
+#    msbuildArguments: /m /p:BuildInParallel=true
     clean: false
     maximumCpuCount: false
   displayName: 'Build armadillo'
@@ -76,7 +76,7 @@ steps:
     msbuildVersion: $(MSBuildVersion)
     configuration: 'Release'
     msbuildArchitecture: 'x64'
-    maximumCpuCount: 1
+    maximumCpuCount: false
     clean: false
   displayName: 'Build mlpack'
 
