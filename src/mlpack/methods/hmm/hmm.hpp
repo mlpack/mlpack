@@ -338,7 +338,7 @@ class HMM
    * or time t=0
    * @return Log scale factor of the given sequence of data up at time t.
    */
-  double LogScale(const arma::vec &data,
+  double LogScaleFactor(const arma::vec &data,
                        arma::vec& forwardLogProb) const;
   /**
    * Compute the log-likelihood of the given data up to time t
