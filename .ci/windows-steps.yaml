@@ -90,7 +90,7 @@ steps:
 # Run tests via ctest.
 - bash: |
     cd build
-    CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release .
+    CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release . -j1
   displayName: 'Run tests via ctest'
 
 # Copy artifacts
