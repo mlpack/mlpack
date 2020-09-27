@@ -105,7 +105,7 @@ TEST_CASE_METHOD(
 {
   arma::mat x;
   if (!data::Load("iris_test.csv", x))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+    FAIL("Cannot load test dataset iris_test.csv!");
 
   // Get initial number of rows and columns in file.
   int numRows = x.n_rows;
@@ -133,7 +133,7 @@ TEST_CASE_METHOD(
 {
   arma::mat x;
   if (!data::Load("iris_test.csv", x))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+    FAIL("Cannot load test dataset iris_test.csv!");
 
   // Input random data points.
   SetInputParam("input", x);
@@ -170,7 +170,7 @@ TEST_CASE_METHOD(
 {
   arma::mat x;
   if (!data::Load("iris_test.csv", x))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+    FAIL("Cannot load test dataset iris_test.csv!");
 
   // Input random data points.
   SetInputParam("input", x);
@@ -205,7 +205,7 @@ TEST_CASE_METHOD(
 {
   arma::mat x;
   if (!data::Load("iris_test.csv", x))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+    FAIL("Cannot load test dataset iris_test.csv!");
 
   // Input random data points.
   SetInputParam("input", x);
@@ -246,6 +246,6 @@ TEST_CASE_METHOD(
   SetInputParam("max_iterations", (int) -1);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROW_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
