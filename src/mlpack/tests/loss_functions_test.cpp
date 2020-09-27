@@ -55,7 +55,7 @@ TEST_CASE("HuberLossTest", "[LossFunctionsTest]")
   input = arma::mat("17.45 12.91 13.63 29.01 7.12 15.47 31.52 31.97");
   target = arma::mat("16.52 13.11 13.67 29.51 24.31 15.03 30.72 34.07");
   double loss = module.Forward(input, target);
-  REQUIRE(loss == Approx(2.410631).epsilon(1e-6));
+  REQUIRE(loss == Approx(2.410631).epsilon(1e-5));
 
   // Test the backward function.
   module.Backward(input, target, output);
