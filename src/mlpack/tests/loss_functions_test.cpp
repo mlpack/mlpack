@@ -179,11 +179,11 @@ TEST_CASE("SimpleMeanSquaredLogarithmicErrorTest", "[LossFunctionsTest]")
   input = arma::mat("2");
   target = arma::mat("3");
   error = module.Forward(input, target);
-  REQUIRE(error == Approx(0.082760974810151655).epsilon(0.001));
+  REQUIRE(error == Approx(0.082760974810151655).epsilon(1e-3));
 
   // Test the Backward function on a single input.
   module.Backward(input, target, output);
-  REQUIRE(arma::accu(output) == Approx(-0.1917880483011872).epsilon(0.001));
+  REQUIRE(arma::accu(output) == Approx(-0.1917880483011872).epsilon(1e-3));
   REQUIRE(output.n_elem == 1);
 }
 
@@ -201,7 +201,7 @@ TEST_CASE("KLDivergenceMeanTest", "[LossFunctionsTest]")
   target = arma::exp(arma::mat("2 1 1 1 1 1 1 1 1 1"));
 
   loss = module.Forward(input, target);
-  REQUIRE(loss == Approx(-1.1 ).epsilon(1e-10));
+  REQUIRE(loss == Approx(-1.1 ).epsilon(1e-5));
 
   // Test the Backward function.
   module.Backward(input, target, output);
@@ -511,14 +511,14 @@ TEST_CASE("DiceLossTest", "[LossFunctionsTest]")
   // Test the Forward function. Loss should be 0.185185185.
   input2 = arma::ones(10, 1) * 0.5;
   loss = module.Forward(input2, target);
-  REQUIRE(loss == Approx(0.185185185).epsilon(0.00001));
+  REQUIRE(loss == Approx(0.185185185).epsilon(1e-5));
 
   // Test the Backward function for input = target.
   module.Backward(input1, target, output);
   for (double el : output)
   {
     // For input = target we should get 0.0 everywhere.
-    REQUIRE(el == Approx(0.0).epsilon(0.00001));
+    REQUIRE(el == Approx(0.0).epsilon(1e-5));
   }
   REQUIRE(output.n_rows == input1.n_rows);
   REQUIRE(output.n_cols == input1.n_cols);
@@ -528,7 +528,7 @@ TEST_CASE("DiceLossTest", "[LossFunctionsTest]")
   for (double el : output)
   {
     // For the 0.5 constant vector we should get -0.0877914951989026 everywhere.
-    REQUIRE(el == Approx(-0.0877914951989026).epsilon(0.00001));
+    REQUIRE(el == Approx(-0.0877914951989026).epsilon(1e-5));
   }
   REQUIRE(output.n_rows == input2.n_rows);
   REQUIRE(output.n_cols == input2.n_cols);
@@ -668,7 +668,7 @@ TEST_CASE("SimpleL1LossTest", "[LossFunctionsTest]")
   input2 = arma::mat("0 1 1 0 1 0 0 1");
   target2 = arma::mat("0 1 1 0 1 0 0 1");
   double error2 = module.Forward(input2, target2);
-  REQUIRE(error2 == Approx(0.0).epsilon(0.00001));
+  REQUIRE(error2 == Approx(0.0).epsilon(1e-5));
 
   // Test the Backward function.
   module.Backward(input1, target1, output);
