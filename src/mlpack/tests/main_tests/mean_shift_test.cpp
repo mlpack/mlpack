@@ -19,8 +19,8 @@ static const std::string testName = "MeanShift";
 #include <mlpack/methods/mean_shift/mean_shift_main.cpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 
