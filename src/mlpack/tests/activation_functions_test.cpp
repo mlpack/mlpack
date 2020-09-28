@@ -581,8 +581,8 @@ void CheckSoftminActivationCorrect(const arma::colvec input,
 }
 
 /**
- * Implementation of the Softmin activation function derivative test. The function
- * is implemented as Softmin layer in the file softmin.hpp.
+ * Implementation of the Softmin activation function derivative test.
+ * The function is implemented as Softmin layer in the file softmin.hpp.
  *
  * @param input Input data used for evaluating the Softmin activation function.
  * @param target Target data used to evaluate the Softmin activation.
@@ -596,9 +596,11 @@ void CheckSoftminDerivativeCorrect(const arma::colvec input,
   // Test the calculation of the derivatives using the entire vector as input.
   arma::colvec derivatives, activations;
 
-  // This error vector will be set to [[1.0],[0.0]] to get the derivatives.
+  // This error vector will be set to [[1.0],[0.0],[1.0],[0.0]]
+  // to get the derivatives.
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
   error(1) = 0.0;
+  error(3) = 0.0;
   softmin.Forward(input, activations);
   softmin.Backward(activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
@@ -1119,15 +1121,17 @@ TEST_CASE("GaussianFunctionTest", "[ActivationFunctionsTest]")
  */
 TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
 {
-  const arma::colvec activationData1("1.7 3.6");
+  const arma::colvec activationData("4.2 2.4 7.0 6.4");
 
-  // Hand-calculated values.
-  const arma::colvec desiredActivations("0.86989153 0.13010847");
+  // Hand-calculated Values.
+  const arma::colvec desiredActivations("0.1384799 0.8377550 \
+                                         0.0084209 0.0153440");
 
-  const arma::colvec desiredDerivatives("0.113180256 -0.113180256");
+  const arma::colvec desiredDerivatives("0.1181371 -0.1230670 \
+                                         0.0071839 -0.0022540");
 
-  CheckSoftminActivationCorrect(activationData1,
+  CheckSoftminActivationCorrect(activationData,
                                 desiredActivations);
-  CheckSoftminDerivativeCorrect(activationData1,
+  CheckSoftminDerivativeCorrect(activationData,
                                 desiredDerivatives);
 }
