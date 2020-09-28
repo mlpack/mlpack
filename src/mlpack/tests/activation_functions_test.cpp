@@ -1124,11 +1124,11 @@ TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
   const arma::colvec activationData("4.2 2.4 7.0 6.4");
 
   // Hand-calculated Values.
-  const arma::colvec desiredActivations("0.1384799 0.8377550 \
-                                         0.0084209 0.0153440");
+  const arma::colvec desiredActivations("0.1384799751 0.8377550303 \
+                                         0.008420976 0.0153440186");
 
-  const arma::colvec desiredDerivatives("0.1181371 -0.1230670 \
-                                         0.0071839 -0.0022540");
+  const arma::colvec desiredDerivatives("0.1181371351 -0.12306701070 \
+                                         0.0071839266 -0.0022540509");
 
   CheckSoftminActivationCorrect(activationData,
                                 desiredActivations);
