@@ -246,17 +246,32 @@ double KFoldCV<MLAlgorithm,
 {
   arma::vec evaluations(k);
 
+  size_t numInvalidScores = 0;
   for (size_t i = 0; i < k; ++i)
   {
     MLAlgorithm&& model  = base.Train(GetTrainingSubset(xs, i),
         GetTrainingSubset(ys, i), args...);
     evaluations(i) = Metric::Evaluate(model, GetValidationSubset(xs, i),
         GetValidationSubset(ys, i));
+    if (std::isnan(evaluations(i)) || std::isinf(evaluations(i)))
+    {
+      ++numInvalidScores;
+      Log::Warn << "KFoldCV::TrainAndEvaluate(): fold " << i << " returned "
+          << "a score of " << evaluations(i) << "; ignoring when computing "
+          << "the average score." << std::endl;
+    }
     if (i == k - 1)
       modelPtr.reset(new MLAlgorithm(std::move(model)));
   }
 
-  return arma::mean(evaluations);
+  if (numInvalidScores == k)
+  {
+    Log::Warn << "KFoldCV::TrainAndEvaluate(): all folds returned invalid "
+        << "scores!  Returning 0.0 as overall score." << std::endl;
+    return 0.0;
+  }
+
+  return arma::mean(evaluations.elem(arma::find_finite(evaluations)));
 }
 
 template<typename MLAlgorithm,

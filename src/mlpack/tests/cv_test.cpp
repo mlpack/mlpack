@@ -380,6 +380,26 @@ TEST_CASE("SimpleCVMSETest", "[CVTest]")
   REQUIRE(std::abs(weightedCV2.Evaluate() - expectedMSE) > 1e-5);
 }
 
+/**
+ * Test that scores of -nan are filtered out.
+ */
+TEST_CASE("FilterNANCVTest", "[CVTest]")
+{
+  // Create a dataset with only one positive label, so it will not be in every
+  // fold.
+  arma::mat data(3, 10, arma::fill::randu);
+  arma::Row<size_t> labels(10, arma::fill::zeros);
+  labels[0] = 1;
+
+  const size_t numClasses = 2;
+  KFoldCV<NaiveBayesClassifier<>, F1<Binary>> kfoldcv(2, data, labels,
+      numClasses);
+
+  const double result = kfoldcv.Evaluate();
+  REQUIRE(!std::isnan(result));
+  REQUIRE(!std::isinf(result));
+}
+
 template<typename... DTArgs>
 arma::Row<size_t> PredictLabelsWithDT(const arma::mat& data,
                                       const DTArgs&... args)

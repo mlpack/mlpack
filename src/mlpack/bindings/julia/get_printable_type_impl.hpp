@@ -14,7 +14,7 @@
 #define MLPACK_BINDINGS_JULIA_GET_PRINTABLE_TYPE_IMPL_HPP
 
 #include "get_printable_type.hpp"
-#include "strip_type.hpp"
+#include <mlpack/bindings/util/strip_type.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -105,7 +105,7 @@ std::string GetPrintableType(
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
-  std::string type = StripType(data.cppType);
+  std::string type = util::StripType(data.cppType);
   if (type == "mlpackModel")
   {
     // If this is true, then we are being called from the Markdown bindings.

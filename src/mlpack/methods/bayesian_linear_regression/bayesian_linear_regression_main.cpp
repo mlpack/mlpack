@@ -70,27 +70,27 @@ BINDING_EXAMPLE(
     PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
     "with center set to true and scale set to false (so, Bayesian "
     "linear regression is being solved, and then the model is saved to " +
-    PRINT_MODEL("bayesian_linear_regression_model") + ":"
+    PRINT_MODEL("blr_model") + ":"
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input", "data", "responses",
                "responses", "center", 1, "scale", 0, "output_model",
-               "bayesian_linear_regression_model") +
+               "blr_model") +
     "\n\n"
     "The following command uses the " +
-    PRINT_MODEL("bayesian_linear_regression_model") + " to provide predicted " +
+    PRINT_MODEL("blr_model") + " to provide predicted " +
     " responses for the data " + PRINT_DATASET("test") + " and save those " +
     " responses to " + PRINT_DATASET("test_predictions") + ": "
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input_model",
-               "bayesian_linear_regression_model", "test", "test",
+               "blr_model", "test", "test",
                "predictions", "test_predictions") +
     "\n\n"
     "Because the estimator computes a predictive distribution instead of "
-    "simple point estimate, the " + PRINT_PARAM_STRING("stds") + " parameter "
-    "allows to save the prediction uncertainties: "
+    "a simple point estimate, the " + PRINT_PARAM_STRING("stds") + " parameter "
+    "allows one to save the prediction uncertainties: "
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input_model",
-               "bayesian_linear_regression_model", "test", "test",
+               "blr_model", "test", "test",
                "predictions", "test_predictions", "stds", "stds"));
 
 // See also...

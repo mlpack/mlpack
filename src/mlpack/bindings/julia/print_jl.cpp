@@ -10,7 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "print_jl.hpp"
-#include "strip_type.hpp"
 #include <mlpack/core/util/hyphenate_string.hpp>
 
 #include <set>

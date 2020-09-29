@@ -23,6 +23,7 @@
 #define BINDING_TYPE_PYX 2
 #define BINDING_TYPE_JL 3
 #define BINDING_TYPE_GO 4
+#define BINDING_TYPE_R 5
 #define BINDING_TYPE_MARKDOWN 128
 #define BINDING_TYPE_UNKNOWN -1
 
@@ -314,6 +315,38 @@ static const std::string testName = "";
     } \
     } \
     }
+
+PARAM_FLAG("verbose", "Display informational messages and the full list of "
+    "parameters and timers at the end of execution.", "v");
+
+// Nothing else needs to be defined---the binding will use mlpackMain() as-is.
+
+#elif(BINDING_TYPE == BINDING_TYPE_R) // This is a R binding.
+
+// This doesn't actually matter for this binding type.
+#define BINDING_MATRIX_TRANSPOSED true
+
+#include <mlpack/bindings/R/R_option.hpp>
+#include <mlpack/bindings/R/print_doc_functions.hpp>
+
+#define PRINT_PARAM_STRING mlpack::bindings::r::ParamString
+#define PRINT_PARAM_VALUE mlpack::bindings::r::PrintValue
+#define PRINT_DATASET mlpack::bindings::r::PrintDataset
+#define PRINT_MODEL mlpack::bindings::r::PrintModel
+#define PRINT_CALL(...) mlpack::bindings::r::ProgramCall(false, __VA_ARGS__)
+#define BINDING_IGNORE_CHECK mlpack::bindings::r::IgnoreCheck
+
+namespace mlpack {
+namespace util {
+
+template<typename T>
+using Option = mlpack::bindings::r::ROption<T>;
+
+}
+}
+
+static const std::string testName = "";
+#include <mlpack/core/util/param.hpp>
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
