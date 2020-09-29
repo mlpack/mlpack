@@ -640,8 +640,8 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
   mlpackMain();
 
   // Check that number of children is 2.
-  REQUIRE((IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes()-1
-      == 2);
+  REQUIRE(
+      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes() - 1 == 2);
 }
 
 /**
