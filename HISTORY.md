@@ -1,5 +1,16 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Mean Absolute Percentage Error.
+
+### mlpack 3.4.1
+###### 2020-09-07
+  * Fix incorrect parsing of required matrix/model parameters for command-line
+    bindings (#2600).
+
+  * Add manual type specification support to `data::Load()` and `data::Save()`
+    (#2084, #2135, #2602).
+
+  * Remove use of internal Armadillo functionality (#2596, #2601, #2602).
 
 ### mlpack 3.4.0
 ###### 2020-09-01

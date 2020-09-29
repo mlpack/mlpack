@@ -7,6 +7,40 @@ macro (not_found_return message)
   return()
 endmacro ()
 
+macro (post_python_bindings)
+  # If we are building Python bindings, we have to configure setup.py but only
+  # after we've recursed into methods/.
+  if (BUILDING_PYTHON_BINDINGS)
+    get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        PROPERTY INCLUDE_DIRECTORIES)
+    add_custom_target(python_configure
+        COMMAND ${CMAKE_COMMAND}
+            -D SETUP_PY_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
+            -D SETUP_PY_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
+            -D PACKAGE_VERSION="${PACKAGE_VERSION}"
+            -D Boost_SERIALIZATION_LIBRARY="${Boost_SERIALIZATION_LIBRARY_RELEASE}"
+            -D Boost_LIBRARY_DIRS="${Boost_LIBRARY_DIRS}"
+            -D ARMADILLO_LIBRARIES="${ARMADILLO_LIBRARIES}"
+            -D MLPACK_LIBRARY=$<TARGET_LINKER_FILE:mlpack>
+            -D MLPACK_LIBDIR=$<TARGET_LINKER_FILE_DIR:mlpack>
+            -D MLPACK_PYXS="${MLPACK_PYXS}"
+            -D OpenMP_CXX_FLAGS="${OpenMP_CXX_FLAGS}"
+            -D DISABLE_CFLAGS="${DISABLE_CFLAGS}"
+            -D CYTHON_INCLUDE_DIRECTORIES="${CYTHON_INCLUDE_DIRECTORIES}"
+            -D CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -D OUTPUT_DIR=${CMAKE_BINARY_DIR}
+            -P "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/ConfigureSetup.cmake"
+        BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
+        COMMENT "Configuring setup.py...")
+    add_dependencies(python_configure python_copy)
+    add_dependencies(python_configured python_configure)
+
+    # Append the package version to __init__.py after all the imports are loaded.
+    file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
+    "__version__='${PACKAGE_VERSION}'\n")
+  endif ()
+endmacro ()
+
 # If we are not supposed to make Python bindings, define the macro so it does
 # nothing and leave this file.
 if (NOT BUILD_PYTHON_BINDINGS)

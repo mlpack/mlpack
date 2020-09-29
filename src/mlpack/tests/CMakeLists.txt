@@ -1,13 +1,11 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  arma_extend_test.cpp
   async_learning_test.cpp
   augmented_rnns_tasks_test.cpp
   callback_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
   io_test.cpp
-  dbscan_test.cpp
   dcgan_test.cpp
   det_test.cpp
   distribution_test.cpp
@@ -44,14 +42,12 @@ add_executable(mlpack_test
   nbc_test.cpp
   nmf_test.cpp
   nystroem_method_test.cpp
-  pca_test.cpp
   perceptron_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp
   q_learning_test.cpp
   qdafn_test.cpp
   radical_test.cpp
-  random_forest_test.cpp
   random_test.cpp
   range_search_test.cpp
   reward_clipping_test.cpp
@@ -69,7 +65,6 @@ add_executable(mlpack_test
   union_find_test.cpp
   wgan_test.cpp
   main_tests/cf_test.cpp
-  main_tests/dbscan_test.cpp
   main_tests/det_test.cpp
   main_tests/emst_test.cpp
   main_tests/fastmks_test.cpp
@@ -91,10 +86,8 @@ add_executable(mlpack_test
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
   main_tests/nmf_test.cpp
-  main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
   main_tests/radical_test.cpp
-  main_tests/random_forest_test.cpp
   main_tests/range_search_test.cpp
   main_tests/test_helper.hpp
 )
@@ -110,6 +103,7 @@ add_executable(mlpack_catch_test
   ann_test_tools.hpp
   ann_visitor_test.cpp
   armadillo_svd_test.cpp
+  arma_extend_test.cpp
   bayesian_linear_regression_test.cpp
   bias_svd_test.cpp
   binarize_test.cpp
@@ -118,6 +112,7 @@ add_executable(mlpack_catch_test
   convolution_test.cpp
   cosine_tree_test.cpp
   cv_test.cpp
+  dbscan_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
   hoeffding_tree_test.cpp
@@ -135,7 +130,9 @@ add_executable(mlpack_catch_test
   main.cpp
   octree_test.cpp
   one_hot_encoding_test.cpp
+  pca_test.cpp
   quic_svd_test.cpp
+  random_forest_test.cpp
   randomized_svd_test.cpp
   rectangle_tree_test.cpp
   regularized_svd_test.cpp
@@ -159,6 +156,7 @@ add_executable(mlpack_catch_test
   main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/bayesian_linear_regression_test.cpp
+  main_tests/dbscan_test.cpp
   main_tests/decision_stump_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/hoeffding_tree_test.cpp
@@ -169,11 +167,13 @@ add_executable(mlpack_catch_test
   main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/nca_test.cpp
+  main_tests/pca_test.cpp
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_imputer_test.cpp
   main_tests/preprocess_one_hot_encode_test.cpp
   main_tests/preprocess_scale_test.cpp
   main_tests/preprocess_split_test.cpp
+  main_tests/random_forest_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/test_helper.hpp
@@ -270,4 +270,3 @@ add_test(NAME "catch_test" COMMAND mlpack_catch_test WORKING_DIRECTORY ${CMAKE_B
 
 # Use RUN_SERIAL for long running parallel tests
 set_tests_properties(${parallel_tests} PROPERTIES RUN_SERIAL TRUE)
-

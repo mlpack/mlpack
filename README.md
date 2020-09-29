@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.4.0.tar.gz">current stable version (3.4.0)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.4.1.tar.gz">current stable version (3.4.1)</a>
   </em>
 </p>
 
@@ -152,7 +152,7 @@ on Ubuntu, you can install mlpack with the following command:
 
 Note: Older Ubuntu versions may not have the most recent version of mlpack
 available---for instance, at the time of this writing, Ubuntu 16.04 only has
-mlpack 3.4.0 available.  Options include upgrading your Ubuntu version, finding
+mlpack 3.4.1 available.  Options include upgrading your Ubuntu version, finding
 a PPA or other non-official sources, or installing with a manual build.
 
 There are some useful pages to consult in addition to this section:
