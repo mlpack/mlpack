@@ -166,6 +166,9 @@ if (BUILD_R_BINDINGS)
   set(LICENSE_SOURCES
     "${CMAKE_SOURCE_DIR}/LICENSE.txt"
   )
+  set(COPYRIGHT_SOURCES
+    "${CMAKE_SOURCE_DIR}/COPYRIGHT.txt"
+  )
   add_custom_target(r_copy ALL)
 
   # First we have to create all the required directories for copy.
@@ -220,6 +223,7 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
           ${R_TESTS_SOURCES}
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests)
+  # Retrieve license files
   add_custom_command(TARGET r_copy PRE_BUILD
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
           ${LICENSE_SOURCES}
@@ -228,6 +232,15 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND} ARGS -E rename
           "${CMAKE_CURRENT_BINARY_DIR}/mlpack/LICENSE.txt"
           "${CMAKE_CURRENT_BINARY_DIR}/mlpack/LICENSE")
+  # Add copyright files
+  add_custom_command(TARGET r_copy PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
+          ${COPYRIGHT_SOURCES}
+          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/inst)
+  add_custom_command(TARGET r_copy PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} ARGS -E rename
+          "${CMAKE_CURRENT_BINARY_DIR}/mlpack/inst/COPYRIGHT.txt"
+          "${CMAKE_CURRENT_BINARY_DIR}/mlpack/inst/COPYRIGHTS")
   # This file will take care of multiple definition of functions in .cpp files.
   add_custom_command(TARGET r_copy PRE_BUILD
       COMMAND ${CMAKE_COMMAND} ARGS -E touch

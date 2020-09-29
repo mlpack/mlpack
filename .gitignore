@@ -11,3 +11,4 @@ Testing/
 *.swp
 *.swo
 *~
+.Rproj.user
