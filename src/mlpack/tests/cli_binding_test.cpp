@@ -14,6 +14,7 @@
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 #include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace std;
 using namespace mlpack;

@@ -686,7 +686,8 @@ TEST_CASE_METHOD(IOTestDestroyer, "RequiredInputMatrixParamAliasTest",
 }
 
 // Make sure that when we don't pass a required matrix, parsing fails.
-BOOST_AUTO_TEST_CASE(RequiredUnspecifiedInputMatrixParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "RequiredUnspecifiedInputMatrixParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -701,13 +702,11 @@ BOOST_AUTO_TEST_CASE(RequiredUnspecifiedInputMatrixParamTest)
 
   // The const-cast is a little hacky but should be fine...
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
+  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv)),
       std::exception);
   Log::Fatal.ignoreInput = false;
 }
 
-BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
->>>>>>> 64dda1387dd997cf570c15b1123f7a41e4d65b06
 TEST_CASE_METHOD(IOTestDestroyer, "InputMatrixNoTransposeParamTest",
                 "[IOTest]")
 {
