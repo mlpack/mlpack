@@ -148,10 +148,10 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
   model1->Add<Linear<> >(8, 3);
   model1->Add<LogSoftMax<> >();
 
-  // Check whether copy cpnstructor is working or not.
+  // Check whether copy constructor is working or not.
   CheckCopyFunction<>(model, trainData, trainLabels, 1);
 
-  // Check whether move cpnstructor is working or not.
+  // Check whether move constructor is working or not.
   CheckMoveFunction<>(model1, trainData, trainLabels, 1);
 }
 
