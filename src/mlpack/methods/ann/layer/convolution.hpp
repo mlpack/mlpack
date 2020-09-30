@@ -253,6 +253,12 @@ class Convolution
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
 
+  //! Get size of weights for the layer.
+  size_t WeightSize() const
+  {
+    return (outSize * inSize * kernelWidth *kernelHeight) + outSize;
+  }
+
   /**
    * Serialize the layer.
    */

@@ -86,3 +86,37 @@ TEST_CASE("WeightSizeVisitorTest", "[ANNVisitorTest]")
   REQUIRE(weightSize == randomSize * randomSize + randomSize);
 }
 
+/**
+ * Test that WeightSizeVisitor works properly for Convolution layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForConvLayer", "[ANNVisitorTest]")
+{
+  size_t randomInSize = arma::randi(arma::distr_param(1, 100));
+  size_t randomOutSize = arma::randi(arma::distr_param(1, 100));
+  size_t randomKernelWidth = arma::randi(arma::distr_param(1, 100));
+  size_t randomKernelHeight = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> convLayer = new Convolution<>(randomInSize, randomOutSize,
+      randomKernelWidth, randomKernelHeight);
+
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
+                                           convLayer);
+
+  REQUIRE(weightSize == (randomOutSize * randomInSize * randomKernelWidth *
+      randomKernelHeight) + randomOutSize);
+}
+
+/**
+ * Test that WeightSizeVisitor works properly for BatchNorm layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForBatchNormLayer", "[ANNVisitorTest]")
+{
+  size_t randomSize = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> batchNorm = new BatchNorm<>(randomSize);
+
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
+                                           batchNorm);
+
+  REQUIRE(weightSize == 2 * randomSize);
+}
