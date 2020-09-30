@@ -17,10 +17,7 @@
 #include <mlpack/methods/pca/decomposition_policies/randomized_svd_method.hpp>
 #include <mlpack/methods/pca/decomposition_policies/randomized_block_krylov_method.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-
-BOOST_AUTO_TEST_SUITE(PCATest);
+#include "catch.hpp"
 
 using namespace arma;
 using namespace mlpack;
@@ -50,9 +47,9 @@ void ArmaComparisonPCA(
   for (size_t i = 0; i < eigVal.n_elem; ++i)
   {
     if (eigVal[i] == 0.0)
-      BOOST_REQUIRE_SMALL(eigVal1[i], 1e-15);
+      REQUIRE(eigVal1[i] == Approx(0.0).margin(1e-15));
     else
-      BOOST_REQUIRE_CLOSE(eigVal[i], eigVal1[i], 0.0001);
+      REQUIRE(eigVal[i] == Approx(eigVal1[i]).epsilon(1e-6));
   }
 }
 
@@ -88,14 +85,14 @@ void PCADimensionalityReduction(
     ++trial;
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 
   // Compare with correct results.
   mat correct("-1.53781086 -3.51358020 -0.16139887 -1.87706634  7.08985628;"
               " 1.29937798  3.45762685 -2.69910005 -3.15620704  1.09830225");
 
-  BOOST_REQUIRE_EQUAL(data.n_rows, correct.n_rows);
-  BOOST_REQUIRE_EQUAL(data.n_cols, correct.n_cols);
+  REQUIRE(data.n_rows == correct.n_rows);
+  REQUIRE(data.n_cols == correct.n_cols);
 
   // If the eigenvectors are pointed opposite directions, they will cancel
   // each other out in this summation.
@@ -110,10 +107,10 @@ void PCADimensionalityReduction(
 
   for (size_t row = 0; row < 2; row++)
     for (size_t col = 0; col < 5; col++)
-      BOOST_REQUIRE_CLOSE(data(row, col), correct(row, col), 1e-3);
+      REQUIRE(data(row, col) == Approx(correct(row, col)).epsilon(1e-5));
 
   // Check that the amount of variance retained is right.
-  BOOST_REQUIRE_CLOSE(varRetained, 0.904876047045906, 1e-5);
+  REQUIRE(varRetained == Approx(0.904876047045906).epsilon(1e-7));
 }
 
 /**
@@ -141,50 +138,50 @@ void PCAVarianceRetained()
   arma::mat origData = data;
   double varRetained = p.Apply(data, 0.1);
 
-  BOOST_REQUIRE_EQUAL(data.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(data.n_cols, 5);
-  BOOST_REQUIRE_CLOSE(varRetained, 0.616237391936100, 1e-5);
+  REQUIRE(data.n_rows == 1);
+  REQUIRE(data.n_cols == 5);
+  REQUIRE(varRetained == Approx(0.616237391936100).epsilon(1e-7));
 
   data = origData;
   varRetained = p.Apply(data, 0.5);
 
-  BOOST_REQUIRE_EQUAL(data.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(data.n_cols, 5);
-  BOOST_REQUIRE_CLOSE(varRetained, 0.616237391936100, 1e-5);
+  REQUIRE(data.n_rows == 1);
+  REQUIRE(data.n_cols == 5);
+  REQUIRE(varRetained == Approx(0.616237391936100).epsilon(1e-7));
 
   data = origData;
   varRetained = p.Apply(data, 0.7);
 
-  BOOST_REQUIRE_EQUAL(data.n_rows, 2);
-  BOOST_REQUIRE_EQUAL(data.n_cols, 5);
-  BOOST_REQUIRE_CLOSE(varRetained, 0.904876047045906, 1e-5);
+  REQUIRE(data.n_rows == 2);
+  REQUIRE(data.n_cols == 5);
+  REQUIRE(varRetained == Approx(0.904876047045906).epsilon(1e-7));
 
   data = origData;
   varRetained = p.Apply(data, 0.904);
 
-  BOOST_REQUIRE_EQUAL(data.n_rows, 2);
-  BOOST_REQUIRE_EQUAL(data.n_cols, 5);
-  BOOST_REQUIRE_CLOSE(varRetained, 0.904876047045906, 1e-5);
+  REQUIRE(data.n_rows == 2);
+  REQUIRE(data.n_cols == 5);
+  REQUIRE(varRetained == Approx(0.904876047045906).epsilon(1e-7));
 
   data = origData;
   varRetained = p.Apply(data, 0.905);
 
-  BOOST_REQUIRE_EQUAL(data.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(data.n_cols, 5);
-  BOOST_REQUIRE_CLOSE(varRetained, 1.0, 1e-5);
+  REQUIRE(data.n_rows == 3);
+  REQUIRE(data.n_cols == 5);
+  REQUIRE(varRetained == Approx(1.0).epsilon(1e-7));
 
   data = origData;
   varRetained = p.Apply(data, 1.0);
 
-  BOOST_REQUIRE_EQUAL(data.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(data.n_cols, 5);
-  BOOST_REQUIRE_CLOSE(varRetained, 1.0, 1e-5);
+  REQUIRE(data.n_rows == 3);
+  REQUIRE(data.n_cols == 5);
+  REQUIRE(varRetained == Approx(1.0).epsilon(1e-7));
 }
 
 /**
  * Compare the output of our exact PCA implementation with Armadillo's.
  */
-BOOST_AUTO_TEST_CASE(ArmaComparisonExactPCATest)
+TEST_CASE("ArmaComparisonExactPCATest", "[PCATest]")
 {
   ArmaComparisonPCA<ExactSVDPolicy>();
 }
@@ -193,7 +190,7 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonExactPCATest)
  * Compare the output of our randomized block krylov PCA implementation with
  * Armadillo's.
  */
-BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedBlockKrylovPCATest)
+TEST_CASE("ArmaComparisonRandomizedBlockKrylovPCATest", "[PCATest]")
 {
   RandomizedBlockKrylovSVDPolicy decomposition(5);
   ArmaComparisonPCA<RandomizedBlockKrylovSVDPolicy>(false, decomposition);
@@ -202,7 +199,7 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedBlockKrylovPCATest)
 /**
  * Compare the output of our randomized-SVD PCA implementation with Armadillo's.
  */
-BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedPCATest)
+TEST_CASE("ArmaComparisonRandomizedPCATest", "[PCATest]")
 {
   ArmaComparisonPCA<RandomizedSVDPolicy>();
 }
@@ -211,7 +208,7 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonRandomizedPCATest)
  * Test that dimensionality reduction with exact-svd PCA works the same way
  * MATLAB does (which should be correct!).
  */
-BOOST_AUTO_TEST_CASE(ExactPCADimensionalityReductionTest)
+TEST_CASE("ExactPCADimensionalityReductionTest", "[PCATest]")
 {
   PCADimensionalityReduction<ExactSVDPolicy>();
 }
@@ -220,7 +217,7 @@ BOOST_AUTO_TEST_CASE(ExactPCADimensionalityReductionTest)
  * Test that dimensionality reduction with randomized block krylov PCA works the
  * same way MATLAB does (which should be correct!).
  */
-BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovPCADimensionalityReductionTest)
+TEST_CASE("RandomizedBlockKrylovPCADimensionalityReductionTest", "[PCATest]")
 {
   RandomizedBlockKrylovSVDPolicy decomposition(5);
   PCADimensionalityReduction<RandomizedBlockKrylovSVDPolicy>(false,
@@ -231,7 +228,7 @@ BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovPCADimensionalityReductionTest)
  * Test that dimensionality reduction with randomized-svd PCA works the same way
  * MATLAB does (which should be correct!).
  */
-BOOST_AUTO_TEST_CASE(RandomizedPCADimensionalityReductionTest)
+TEST_CASE("RandomizedPCADimensionalityReductionTest", "[PCATest]")
 {
   PCADimensionalityReduction<RandomizedSVDPolicy>();
 }
@@ -240,7 +237,7 @@ BOOST_AUTO_TEST_CASE(RandomizedPCADimensionalityReductionTest)
  * Test that dimensionality reduction with QUIC-SVD PCA works the same way
  * as the Exact-SVD PCA method.
  */
-BOOST_AUTO_TEST_CASE(QUICPCADimensionalityReductionTest)
+TEST_CASE("QUICPCADimensionalityReductionTest", "[PCATest]")
 {
   arma::mat data, data1;
   data::Load("test_data_3_1000.csv", data);
@@ -275,16 +272,16 @@ BOOST_AUTO_TEST_CASE(QUICPCADimensionalityReductionTest)
     }
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
-  BOOST_REQUIRE_EQUAL(data.n_rows, data1.n_rows);
-  BOOST_REQUIRE_EQUAL(data.n_cols, data1.n_cols);
+  REQUIRE(successes >= 1);
+  REQUIRE(data.n_rows == data1.n_rows);
+  REQUIRE(data.n_cols == data1.n_cols);
 }
 
 /**
  * Test that setting the variance retained parameter to perform dimensionality
  * reduction works using the exact svd PCA method.
  */
-BOOST_AUTO_TEST_CASE(ExactPCAVarianceRetainedTest)
+TEST_CASE("ExactPCAVarianceRetainedTest", "[PCATest]")
 {
   PCAVarianceRetained<ExactSVDPolicy>();
 }
@@ -292,7 +289,7 @@ BOOST_AUTO_TEST_CASE(ExactPCAVarianceRetainedTest)
 /**
  * Test that scaling PCA works.
  */
-BOOST_AUTO_TEST_CASE(PCAScalingTest)
+TEST_CASE("PCAScalingTest", "[PCATest]")
 {
   // Generate an artificial dataset in 3 dimensions.
   arma::mat data(3, 5000);
@@ -317,25 +314,22 @@ BOOST_AUTO_TEST_CASE(PCAScalingTest)
   // The first two components of the eigenvector with largest eigenvalue should
   // be somewhere near sqrt(2) / 2.  The third component should be close to
   // zero.  There is noise, of course...
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.35);
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.35);
-  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.1); // Large tolerance for noise.
+  REQUIRE(std::abs(eigvec(0, 0)) == Approx(sqrt(2) / 2).epsilon(0.0035));
+  REQUIRE(std::abs(eigvec(1, 0)) == Approx(sqrt(2) / 2).epsilon(0.0035));
+  REQUIRE(eigvec(2, 0) == Approx(0.0).margin(0.1)); // Large tolerance for noise.
 
   // The second component should be focused almost entirely in the third
   // dimension.
-  BOOST_REQUIRE_SMALL(eigvec(0, 1), 0.1);
-  BOOST_REQUIRE_SMALL(eigvec(1, 1), 0.1);
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(2, 1)), 1.0, 0.35);
+  REQUIRE(eigvec(0, 1) == Approx(0.0).margin(0.1));
+  REQUIRE(eigvec(1, 1) == Approx(0.0).margin(0.1));
+  REQUIRE(std::abs(eigvec(2, 1)) == Approx(1.0).epsilon(0.0035));
 
   // The third component should have the same absolute value characteristics as
-  // the first (plus 20% tolerance).
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.35);
-  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.35);
-  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.1); // Large tolerance for noise.
+  // the first (plus tolerance).
+  REQUIRE(std::abs(eigvec(0, 0)) == Approx(sqrt(2) / 2).epsilon(0.0035));
+  REQUIRE(std::abs(eigvec(1, 0)) == Approx(sqrt(2) / 2).epsilon(0.0035));
+  REQUIRE(eigvec(2, 0) == Approx(0.0).margin(0.1)); // Large tolerance for noise.
 
   // The eigenvalues should sum to three.
-  BOOST_REQUIRE_CLOSE(accu(eigval), 3.0, 0.1); // 10% tolerance.
+  REQUIRE(accu(eigval) == Approx(3.0).epsilon(0.001));
 }
-
-
-BOOST_AUTO_TEST_SUITE_END();
