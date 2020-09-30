@@ -8,10 +8,11 @@ on:
       - master
   release:
     types: [published, created, edited]
+name: R CMD check mlpack
 
 jobs:
   jobR:
-    name: mlpack-R
+    name: Build mlpack_r_tarball
     runs-on: ubuntu-20.04
     outputs:
       r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
@@ -27,16 +28,31 @@ jobs:
             MLPACK_VERSION_VALUE=${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}
             echo ::set-output name=mlpack_r_package::$(echo mlpack_"$MLPACK_VERSION_VALUE".tar.gz)
 
+        - uses: r-lib/actions/setup-r@master
+          with:
+            r-version: release
+
+        - name: Query dependencies
+          run: |
+            cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
+            Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
+            rm -r DESCRIPTION
+
+        - name: Cache R packages
+          if: runner.os != 'Windows'
+          uses: actions/cache@v1
+          with:
+            path: ${{ env.R_LIBS_USER }}
+            key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
+            restore-keys: ${{ runner.os }}-r-release-
+
         - name: Install Build Dependencies
           run: |
             sudo apt-get update
             sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev
             curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
             cmake . && make && sudo make install && cd ..
-            sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/'
-            sudo apt-get -y update
-            sudo apt-get install -y r-base-core
-            sudo Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'))"
+            Rscript -e "library(remotes)" -e "update(readRDS('depends.Rds'))"
 
         - name: CMake
           run: |
@@ -74,6 +90,8 @@ jobs:
       R_CHECK_ARGS: "--no-build-vignettes"
       _R_CHECK_FORCE_SUGGESTS: 0
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RSPM: ${{ matrix.config.rspm }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - uses: actions/download-artifact@v2
@@ -86,10 +104,19 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
+      - name: Query dependencies
+        run: Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE), 'depends.Rds')"
+
+      - name: Cache R packages
+        if: runner.os != 'Windows'
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
+          restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
+
       - name: Install dependencies
-        run: |
-          Rscript -e "install.packages('remotes')" -e "remotes::install_cran('rcmdcheck')"
-          Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'))"
+        run: Rscript -e "library(remotes)" -e "update(readRDS('depends.Rds'))" -e "remotes::install_cran('rcmdcheck')"
 
       - name: Check
         run: Rscript -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'warning', check_dir = 'check')"
