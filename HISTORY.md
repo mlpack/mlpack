@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * HMM: calculate likelihood for data stream with/without pre-calculated emission probability
   * Added Mean Absolute Percentage Error.
 
 ### mlpack 3.4.1
