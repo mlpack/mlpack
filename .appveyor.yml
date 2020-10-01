@@ -54,10 +54,8 @@ install:
 
 build_script:
   - mkdir boost_libs
-  - ps: cp ${env:BOOST_PROG_OPTION} C:\projects\mlpack\boost_libs\
   - ps: cp ${env:BOOST_MATH} C:\projects\mlpack\boost_libs\
   - ps: cp ${env:BOOST_RANDOM} C:\projects\mlpack\boost_libs\
-  - ps: cp ${env:BOOST_SERIALIZATION} C:\projects\mlpack\boost_libs\
   - ps: cp ${env:BOOST_UNIT_TEST} C:\projects\mlpack\boost_libs\
   - echo TEST_ARMA is %ARMADILLO_DOWNLOAD%
   - >
