@@ -11,11 +11,28 @@ on:
 name: R CMD check mlpack
 
 jobs:
+  cancel:
+    name: 'Cancel Previous Builds'
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'mlpack/mlpack' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Get all workflow ids and set to env variable
+        run: echo ::set-env name=WORKFLOW_IDS_TO_CANCEL::$(curl https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows -s | jq -r '.workflows | map(.id|tostring) | join(",")')
+
+      - uses: styfle/cancel-workflow-action@0.5.0
+        with:
+          workflow_id: ${{ env.WORKFLOW_IDS_TO_CANCEL }}
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+
   jobR:
     name: Build mlpack_r_tarball
+    if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-20.04
+
     outputs:
       r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
+
     steps:
         - uses: actions/checkout@v2
 
@@ -78,6 +95,7 @@ jobs:
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    if: ${{ github.repository == 'mlpack/mlpack' }}
 
     strategy:
       fail-fast: false
