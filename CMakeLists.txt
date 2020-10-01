@@ -141,7 +141,7 @@ set(COMPILER_SUPPORT_LIBRARIES "")
 
 # If we are using MSVC, we need /bigobj.
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zm200")
 endif ()
 
 # If we are using MINGW, we need sections and big-obj, otherwise we create too

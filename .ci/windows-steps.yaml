@@ -76,7 +76,6 @@ steps:
     msbuildVersion: $(MSBuildVersion)
     configuration: 'Release'
     msbuildArchitecture: 'x64'
-#    msbuildArguments: /Zm200
     maximumCpuCount: false
     clean: false
   displayName: 'Build mlpack'
