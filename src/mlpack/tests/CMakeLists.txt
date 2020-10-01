@@ -37,7 +37,6 @@ add_executable(mlpack_test
   matrix_completion_test.cpp
   maximal_inputs_test.cpp
   mean_shift_test.cpp
-  metric_test.cpp
   mlpack_test.cpp
   mock_categorical_data.hpp
   nbc_test.cpp
@@ -137,6 +136,7 @@ add_executable(mlpack_catch_test
   load_save_test.cpp
   loss_functions_test.cpp
   main.cpp
+  metric_test.cpp
   nca_test.cpp
   one_hot_encoding_test.cpp
   pca_test.cpp
