@@ -55,6 +55,7 @@ jobs:
         - name: Install R-bindings dependencies
           run: |
             remotes::install_deps(dependencies = TRUE)
+            remotes::install_cran("roxygen2")
           shell: Rscript {0}
 
         - name: CMake
