@@ -32,7 +32,6 @@ add_executable(mlpack_test
   local_coordinate_coding_test.cpp
   log_test.cpp
   logistic_regression_test.cpp
-  loss_functions_test.cpp
   lsh_test.cpp
   math_test.cpp
   matrix_completion_test.cpp
@@ -136,6 +135,7 @@ add_executable(mlpack_catch_test
   knn_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
+  loss_functions_test.cpp
   main.cpp
   nca_test.cpp
   one_hot_encoding_test.cpp
