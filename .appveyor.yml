@@ -1,14 +1,10 @@
 clone_depth: 10
 
 environment:
-  BOOST_PROG_OPTION : "C:/projects/mlpack/\
-  boost_program_options-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
   BOOST_MATH : "C:/projects/mlpack/\
   boost_math_c99-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
   BOOST_RANDOM : "C:/projects/mlpack/\
   boost_random-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
-  BOOST_SERIALIZATION : "C:/projects/mlpack/\
-  boost_serialization-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
   BOOST_UNIT_TEST : "C:/projects/mlpack/\
   boost_unit_test_framework-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
   ARMADILLO_DOWNLOAD : "https://data.kurg.org/armadillo-8.400.0.tar.xz"
@@ -45,17 +41,14 @@ install:
       nuget install boost_unit_test_framework-vc140
       -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: >
-      nuget install boost_program_options-vc140
-      -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
-  - ps: >
       nuget install boost_random-vc140
-      -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
-  - ps: >
-      nuget install boost_serialization-vc140
       -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: >
       nuget install boost_math_c99-vc140
       -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
+  - ps: >
+      nuget install unofficial-flayan-cereal
+      -o "${env:APPVEYOR_BUILD_FOLDER}"
   - ps: nuget install OpenBLAS -o "${env:APPVEYOR_BUILD_FOLDER}"
   - set path=C:\Program Files (x86)\WiX Toolset v3.11\bin;%path%
 
@@ -89,6 +82,7 @@ build_script:
     -DLAPACK_LIBRARIES:FILEPATH=%BLAS_LIBRARY%
     -DARMADILLO_INCLUDE_DIR="C:/projects/mlpack/armadillo-8.400.0/include"
     -DARMADILLO_LIBRARY:FILEPATH=%ARMADILLO_LIBRARY%
+    -DCEREAL_INCLUDE_DIR="C:/projects/mlpack/unofficial-flayan-cereal.1.2.2/build/native/include"
     -DBOOST_INCLUDEDIR:PATH=%BOOST_INCLUDE%
     -DBOOST_LIBRARYDIR:PATH="C:/projects/mlpack/boost_libs"
     -DDEBUG=OFF
