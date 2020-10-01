@@ -47,8 +47,8 @@ void ParseCommandLine(int argc, char** argv)
   {
     // Add the parameter to desc.
     util::ParamData& d = it->second;
-    IO::GetSingleton().functionMap[d.tname]["AddToCLI11"]
-      (d, NULL, (void*) &app);
+    IO::GetSingleton().functionMap[d.tname]["AddToCLI11"](d, NULL, (void*)
+        &app);
   }
 
   // Mark that we did parsing.
@@ -136,13 +136,15 @@ void ParseCommandLine(int argc, char** argv)
     util::ParamData d = iter->second;
     if (d.required)
     {
-      const std::string cliName;
+      // CLI11 expects the parameter name to have "--" prepended.
+      std::string cliName;
       IO::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
           (void*) &cliName);
+      cliName = "--" + cliName;
 
       if (!app.count(cliName))
       {
-        Log::Fatal << "Required option --" << cliName << " is undefined."
+        Log::Fatal << "Required option " << cliName << " is undefined."
             << std::endl;
       }
     }

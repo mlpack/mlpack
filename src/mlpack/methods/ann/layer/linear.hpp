@@ -52,6 +52,18 @@ class Linear
          const size_t outSize,
          RegularizerType regularizer = RegularizerType());
 
+  //! Copy constructor.
+  Linear(const Linear& layer);
+
+  //! Move constructor.
+  Linear(Linear&&);
+
+  //! Copy assignment operator.
+  Linear& operator=(const Linear& layer);
+
+  //! Move assignment operator.
+  Linear& operator=(Linear&& layer);
+
   /*
    * Reset the layer parameter.
    */
