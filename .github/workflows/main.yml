@@ -36,7 +36,6 @@ jobs:
           run: |
             cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
             Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
-            rm -r DESCRIPTION
 
         - name: Cache R packages
           if: runner.os != 'Windows'
@@ -52,7 +51,12 @@ jobs:
             sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev
             curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
             cmake . && make && sudo make install && cd ..
-            Rscript -e "library(remotes)" -e "update(readRDS('depends.Rds'))"
+
+        - name: Install R-bindings dependencies
+          run: |
+            remotes::install_deps(dependencies = TRUE)
+            remotes::install_cran("rcmdcheck")
+          shell: Rscript {0}
 
         - name: CMake
           run: |
@@ -116,7 +120,10 @@ jobs:
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
 
       - name: Install dependencies
-        run: Rscript -e "library(remotes)" -e "update(readRDS('depends.Rds'))" -e "remotes::install_cran('rcmdcheck')"
+        run: |
+          remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
+          remotes::install_cran("rcmdcheck")
+        shell: Rscript {0}
 
       - name: Check
         run: Rscript -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'warning', check_dir = 'check')"
