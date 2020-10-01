@@ -41,7 +41,7 @@ struct RangeSearchTestFixture
  * Check that we have to specify a reference set or input model.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchNoReference",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
@@ -52,7 +52,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchNoReference",
  * Check that we cannot pass an incorrect parameter.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchWrongParameter",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   string wrongString = "abc";
 
@@ -65,7 +65,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchWrongParameter",
  * Check that we have to specify a query if an input model is specified.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchInputModelNoQuery",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat inputData;
   double minVal = 0, maxVal = 3;
@@ -98,7 +98,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchInputModelNoQuery",
  * Check that we cannot specify a tree type which is not available or wrong.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchDifferentTree",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat inputData;
   double minVal = 0, maxVal = 3;
@@ -127,7 +127,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchDifferentTree",
  * Check that we cannot specify both a reference set and input model.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchBothReferenceAndModel",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat inputData, queryData;
   double minVal = 0, maxVal = 3;
@@ -165,7 +165,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchBothReferenceAndModel",
  * set is specified.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchTest",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat x = {{0, 3, 3, 4, 3, 1},
                  {4, 4, 4, 5, 5, 2},
@@ -213,7 +213,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchTest",
  * when a query set is provided.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSeachTestwithQuery",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat queryData = {{5, 3, 1}, {4, 2, 4}, {3, 1, 7}};
   arma::mat x = {{0, 3, 3, 4, 3, 1},
@@ -258,7 +258,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSeachTestwithQuery",
  * it can be used again.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "ModelCheck",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat inputData, queryData;
   double minVal = 0, maxVal = 3;
@@ -310,7 +310,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "ModelCheck",
  * different leaf size parameters.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "LeafValueTesting",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
@@ -375,7 +375,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "LeafValueTesting",
  * compare against.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "TreeTypeTesting",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
@@ -448,7 +448,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "TreeTypeTesting",
  * results to non-projected data but different models.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "RandomBasisTesting",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
@@ -492,7 +492,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RandomBasisTesting",
  * Ensure that naive mode gives the same result, but different models.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "NaiveModeTest",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
@@ -547,7 +547,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "NaiveModeTest",
  * Ensure that single-tree mode gives the same result but different models.
  */
 TEST_CASE_METHOD(RangeSearchTestFixture, "SingleModeTest",
-                 "[RangeSearchMainTest][BindingTests]"
+                 "[RangeSearchMainTest][BindingTests]")
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
