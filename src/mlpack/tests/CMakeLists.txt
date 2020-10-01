@@ -55,7 +55,6 @@ add_executable(mlpack_test
   radical_test.cpp
   random_forest_test.cpp
   random_test.cpp
-  range_search_test.cpp
   rectangle_tree_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
@@ -105,7 +104,6 @@ add_executable(mlpack_test
   main_tests/perceptron_test.cpp
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
-  main_tests/range_search_test.cpp
   main_tests/test_helper.hpp
 )
 
@@ -146,6 +144,7 @@ add_executable(mlpack_catch_test
   one_hot_encoding_test.cpp
   quic_svd_test.cpp
   randomized_svd_test.cpp
+  range_search_test.cpp
   rbm_network_test.cpp
   recurrent_network_test.cpp
   regularized_svd_test.cpp
@@ -179,6 +178,7 @@ add_executable(mlpack_catch_test
   main_tests/preprocess_split_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
+  main_tests/range_search_test.cpp
   main_tests/test_helper.hpp
 )
 
