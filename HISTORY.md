@@ -1,5 +1,6 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Mean Absolute Percentage Error.
 
 ### mlpack 3.4.1
 ###### 2020-09-07
