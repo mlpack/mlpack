@@ -12,4 +12,4 @@ jobs:
       - uses: styfle/cancel-workflow-action@0.4.0
         with:
           workflow_id: ${{ env.WORKFLOW_IDS_TO_CANCEL }}
-          access_token: ${{ secrets.GITHUB_TOKEN }}
+          access_token: ${{ secrets.MLPACK_GITHUB_ACTIONS }}
