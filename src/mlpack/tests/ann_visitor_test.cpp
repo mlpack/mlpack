@@ -87,7 +87,7 @@ TEST_CASE("WeightSizeVisitorTest", "[ANNVisitorTest]")
 }
 
 /**
- * Test that WeightSizeVisitor works properly for BatchNorm layer.
+ * Test that WeightSizeVisitor works properly for WeightNorm layer.
  */
 TEST_CASE("WeightSizeVisitorTestForWeightNormLayer", "[ANNVisitorTest]")
 {
@@ -100,4 +100,20 @@ TEST_CASE("WeightSizeVisitorTestForWeightNormLayer", "[ANNVisitorTest]")
                                            weightNorm);
 
   REQUIRE(weightSize == randomSize * randomSize + randomSize + 1);
+}
+
+/**
+ * Test that WeightSizeVisitor works properly for LSTM layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForLSTMLayer", "[ANNVisitorTest]")
+{
+  size_t randomSize = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> lstm = new LSTM<>(randomSize, randomSize);
+
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
+                                           lstm);
+
+  REQUIRE(weightSize == 4 * randomSize * randomSize + 7 * randomSize +
+      4 * randomSize * randomSize);
 }

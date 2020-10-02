@@ -171,6 +171,9 @@ class LSTM
   //! Get the number of output units.
   size_t OutSize() const { return outSize; }
 
+ //! Get size of weights.
+  size_t WeightSize() const { return 4 * outSize * inSize + 7 * outSize +
+      4 * outSize * outSize; }
   /**
    * Serialize the layer
    */
