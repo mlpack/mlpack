@@ -115,9 +115,9 @@ class DropConnect
   std::vector<LayerTypes<> >& Model() { return network; }
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return parameters; }
+  OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return parameters; }
+  OutputDataType& Parameters() { return weights; }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -164,7 +164,7 @@ class DropConnect
   double scale;
 
   //! Locally-stored weight object.
-  OutputDataType parameters;
+  OutputDataType weights;
 
   //! Locally-stored delta object.
   OutputDataType delta;
