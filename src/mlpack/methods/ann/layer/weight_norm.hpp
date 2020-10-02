@@ -137,6 +137,9 @@ class WeightNorm
   //! Get the wrapped layer.
   LayerTypes<CustomLayers...> const& Layer() { return wrappedLayer; }
 
+  //! Get size of weights.
+  size_t WeightSize() const { return layerWeightSize + 1; }
+
   /**
    * Serialize the layer.
    */

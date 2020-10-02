@@ -86,3 +86,18 @@ TEST_CASE("WeightSizeVisitorTest", "[ANNVisitorTest]")
   REQUIRE(weightSize == randomSize * randomSize + randomSize);
 }
 
+/**
+ * Test that WeightSizeVisitor works properly for BatchNorm layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForWeightNormLayer", "[ANNVisitorTest]")
+{
+  size_t randomSize = arma::randi(arma::distr_param(1, 100));
+  LayerTypes<> linear = new Linear<>(randomSize, randomSize);
+
+  LayerTypes<> weightNorm = new WeightNorm<>(Linear);
+
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
+                                           weightNorm);
+
+  REQUIRE(weightSize == 2 * randomSize + 1);
+}
