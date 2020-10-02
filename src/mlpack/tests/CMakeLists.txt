@@ -77,7 +77,8 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
-  wgan_test.cpp
+  wgan_mnist_test.cpp
+  wgan_gp_mnist_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/det_test.cpp
