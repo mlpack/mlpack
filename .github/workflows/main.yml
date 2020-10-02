@@ -12,7 +12,7 @@ name: R CMD check mlpack
 
 jobs:
   cancel:
-    name: 'Cancel Previous Builds'
+    name: 'Cancel Previous Builds Test'
     if: ${{ github.event_name == 'pull_request' && github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
     timeout-minutes: 3
