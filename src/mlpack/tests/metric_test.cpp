@@ -127,14 +127,12 @@ TEST_CASE("IoUMetricTest", "[MetricTest]")
   bbox1 << 49 << 75 << 154 << 50;
   bbox2 << 42 << 78 << 144 << 48;
   // Value calculated using Python interpreter.
-  REQUIRE(IoU<>::Evaluate(bbox1, bbox2) ==
-          Approx(0.7898879).epsilon(1e-6));
+  REQUIRE(IoU<>::Evaluate(bbox1, bbox2) == Approx(0.7898879).epsilon(1e-6));
 
   bbox1 << 35 << 51 << 161 << 59;
   bbox2 << 36 << 60 << 144 << 48;
   // Value calculated using Python interpreter.
-  REQUIRE(IoU<>::Evaluate(bbox1, bbox2) ==
-          Approx(0.7309670).epsilon(1e-6));
+  REQUIRE(IoU<>::Evaluate(bbox1, bbox2) == Approx(0.7309670).epsilon(1e-6));
 }
 
 TEST_CASE("NMSMetricTest", "[MetricTest]")
