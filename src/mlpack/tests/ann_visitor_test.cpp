@@ -92,12 +92,12 @@ TEST_CASE("WeightSizeVisitorTest", "[ANNVisitorTest]")
 TEST_CASE("WeightSizeVisitorTestForWeightNormLayer", "[ANNVisitorTest]")
 {
   size_t randomSize = arma::randi(arma::distr_param(1, 100));
-  LayerTypes<> linear = new Linear<>(randomSize, randomSize);
 
-  LayerTypes<> weightNorm = new WeightNorm<>(Linear);
+  Linear<>* linear = new Linear<>(randomSize, randomSize);
+  LayerTypes<> weightNorm = new WeightNorm<>(linear);
 
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
                                            weightNorm);
 
-  REQUIRE(weightSize == 2 * randomSize + 1);
+  REQUIRE(weightSize == randomSize * randomSize + randomSize + 1);
 }
