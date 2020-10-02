@@ -131,6 +131,7 @@ add_executable(mlpack_catch_test
   decision_stump_test.cpp
   decision_tree_test.cpp
   feedforward_network_test.cpp
+  feedforward_network_2_test.cpp
   image_load_test.cpp
   imputation_test.cpp
   kernel_pca_test.cpp
