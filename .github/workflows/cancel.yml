@@ -2,7 +2,7 @@ name: Cancel
 on: [pull_request, pull_request_target]
 jobs:
   cancel:
-    name: 'Cancel Previous Runs'
+    name: 'Cancel Previous Runs Test'
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
