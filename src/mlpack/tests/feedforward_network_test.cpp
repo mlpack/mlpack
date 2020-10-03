@@ -146,10 +146,10 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
   model1->Add<Linear<> >(8, 3);
   model1->Add<LogSoftMax<> >();
 
-  // Check whether copy cpnstructor is working or not.
+  // Check whether copy constructor is working or not.
   CheckCopyFunction<>(model, trainData, trainLabels, 1);
 
-  // Check whether move cpnstructor is working or not.
+  // Check whether move constructor is working or not.
   CheckMoveFunction<>(model1, trainData, trainLabels, 1);
 }
 
@@ -487,7 +487,7 @@ TEST_CASE("FFNMiscTest", "[FeedForwardNetworkTest]")
   auto copiedModel(model);
   copiedModel = model;
   auto movedModel(std::move(model));
-  movedModel = std::move(copiedModel);
+  auto moveOperator = std::move(copiedModel);
 }
 
 /**
@@ -715,3 +715,4 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
   model.Train(trainData, trainLabels, opt);
 }
+
