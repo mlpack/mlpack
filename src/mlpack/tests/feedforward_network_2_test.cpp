@@ -28,6 +28,36 @@ using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::kmeans;
 
+/**
+ * Train and evaluate a model with the specified structure.
+ */
+template<typename MatType = arma::mat, typename ModelType>
+void TestNetwork(ModelType& model,
+                 MatType& trainData,
+                 MatType& trainLabels,
+                 MatType& testData,
+                 MatType& testLabels,
+                 const size_t maxEpochs,
+                 const double classificationErrorThreshold)
+{
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  model.Train(trainData, trainLabels, opt);
+
+  MatType predictionTemp;
+  model.Predict(testData, predictionTemp);
+  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
+
+  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  {
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+  }
+
+  size_t correct = arma::accu(prediction == testLabels);
+  double classificationError = 1 - double(correct) / testData.n_cols;
+  REQUIRE(classificationError <= classificationErrorThreshold);
+}
+
 
 /**
  * Train the highway network on a larger dataset.
