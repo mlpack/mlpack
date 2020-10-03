@@ -43,6 +43,62 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
+Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
+    const Linear& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    weights(layer.weights),
+    regularizer(layer.regularizer)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
+    Linear&& layer) :
+    inSize(0),
+    outSize(0),
+    weights(std::move(layer.weights)),
+    regularizer(std::move(layer.regularizer))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear<InputDataType, OutputDataType, RegularizerType>&
+Linear<InputDataType, OutputDataType, RegularizerType>::
+operator=(const Linear& layer)
+{ 
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = layer.weights;
+    regularizer = layer.regularizer;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear<InputDataType, OutputDataType, RegularizerType>&
+Linear<InputDataType, OutputDataType, RegularizerType>::
+operator=(Linear&& layer)
+{ 
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = std::move(layer.weights);
+    regularizer = std::move(layer.regularizer);
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 void Linear<InputDataType, OutputDataType, RegularizerType>::Reset()
 {
   weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
@@ -92,11 +148,7 @@ void Linear<InputDataType, OutputDataType, RegularizerType>::serialize(
 {
   ar & BOOST_SERIALIZATION_NVP(inSize);
   ar & BOOST_SERIALIZATION_NVP(outSize);
-
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
-  if (Archive::is_loading::value)
-    weights.set_size(outSize * inSize + outSize, 1);
+  ar & BOOST_SERIALIZATION_NVP(weights);
 }
 
 } // namespace ann

@@ -52,3 +52,37 @@ TEST_CASE("BiasSetVisitorTest", "[ANNVisitorTest]")
 
   boost::apply_visitor(DeleteVisitor(), linear);
 }
+
+/**
+ * Test that WeightSetVisitor works properly.
+ */
+TEST_CASE("WeightSetVisitorTest", "[ANNVisitorTest]")
+{
+  size_t randomSize = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> linear = new Linear<>(randomSize, randomSize);
+
+  arma::mat layerWeights(randomSize * randomSize + randomSize, 1);
+  layerWeights.zeros();
+
+  size_t setWeights = boost::apply_visitor(WeightSetVisitor(layerWeights, 0),
+      linear);
+
+  REQUIRE(setWeights == randomSize * randomSize + randomSize);
+}
+
+/**
+ * Test that WeightSizeVisitor works properly.
+ */
+TEST_CASE("WeightSizeVisitorTest", "[ANNVisitorTest]")
+{
+  size_t randomSize = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> linear = new Linear<>(randomSize, randomSize);
+
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
+      linear);
+
+  REQUIRE(weightSize == randomSize * randomSize + randomSize);
+}
+

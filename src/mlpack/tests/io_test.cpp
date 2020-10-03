@@ -598,6 +598,105 @@ BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
     BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
 }
 
+// Make sure we can correctly load required matrix parameters.
+BOOST_AUTO_TEST_CASE(RequiredInputMatrixParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --matrix is an input parameter; it won't be transposed.
+  PARAM_MATRIX_IN_REQ("matrix", "Test matrix", "m");
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "--matrix_file";
+  argv[2] = "test_data_3_1000.csv";
+
+  int argc = 3;
+
+  // The const-cast is a little hacky but should be fine...
+  ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --matrix parameter should exist.
+  BOOST_REQUIRE(IO::HasParam("matrix"));
+  // The --matrix_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(IO::HasParam("matrix_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::mat dataset = IO::GetParam<arma::mat>("matrix");
+  arma::mat dataset2 = IO::GetParam<arma::mat>("matrix");
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 1000);
+  BOOST_REQUIRE_EQUAL(dataset2.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(dataset2.n_cols, 1000);
+
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+}
+
+// Make sure loading required matrix options by alias succeeds.
+BOOST_AUTO_TEST_CASE(RequiredInputMatrixParamAliasTest)
+{
+  AddRequiredCLIOptions();
+
+  // --matrix is an input parameter; it won't be transposed.
+  PARAM_MATRIX_IN_REQ("matrix", "Test matrix", "m");
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-m";
+  argv[2] = "test_data_3_1000.csv";
+
+  int argc = 3;
+
+  // The const-cast is a little hacky but should be fine...
+  ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --matrix parameter should exist.
+  BOOST_REQUIRE(IO::HasParam("matrix"));
+  // The --matrix_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(IO::HasParam("matrix_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::mat dataset = IO::GetParam<arma::mat>("matrix");
+  arma::mat dataset2 = IO::GetParam<arma::mat>("matrix");
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 1000);
+  BOOST_REQUIRE_EQUAL(dataset2.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(dataset2.n_cols, 1000);
+
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+}
+
+// Make sure that when we don't pass a required matrix, parsing fails.
+BOOST_AUTO_TEST_CASE(RequiredUnspecifiedInputMatrixParamTest)
+{
+  AddRequiredCLIOptions();
+
+  // --matrix is an input parameter; it won't be transposed.
+  PARAM_MATRIX_IN_REQ("matrix", "Test matrix", "m");
+
+  // Set some fake arguments.
+  const char* argv[1];
+  argv[0] = "./test";
+
+  int argc = 1;
+
+  // The const-cast is a little hacky but should be fine...
+  Log::Fatal.ignoreInput = true;
+  BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
+      std::exception);
+  Log::Fatal.ignoreInput = false;
+}
+
 BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
 {
   AddRequiredCLIOptions();
