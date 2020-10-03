@@ -1,7 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  async_learning_test.cpp
-  augmented_rnns_tasks_test.cpp
   callback_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
@@ -112,6 +110,8 @@ add_executable(mlpack_catch_test
   ann_visitor_test.cpp
   armadillo_svd_test.cpp
   arma_extend_test.cpp
+  async_learning_test.cpp
+  augmented_rnns_tasks_test.cpp
   bayesian_linear_regression_test.cpp
   bias_svd_test.cpp
   binarize_test.cpp
@@ -227,7 +227,6 @@ add_custom_command(TARGET mlpack_test
 
 # The list of long running parallel tests
 set(parallel_tests
-  "AsyncLearningTest;"
   "LocalCoordinateCodingTest;"
   "GMMTest;"
   "CFTest;"

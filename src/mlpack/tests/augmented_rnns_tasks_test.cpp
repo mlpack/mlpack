@@ -22,8 +22,7 @@
 #include <mlpack/methods/ann/augmented/tasks/add.hpp>
 #include <mlpack/methods/ann/augmented/tasks/score.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using std::vector;
 using std::pair;
@@ -219,12 +218,11 @@ class HardCodedAddModel
   }
 };
 
-BOOST_AUTO_TEST_SUITE(AugmentedRNNsTasks);
 
 // Test of CopyTask instance generator.
 // The data from generator is fed to the dummy hard-coded model above
 // that should be able to solve the task perfectly.
-BOOST_AUTO_TEST_CASE(CopyTaskTest)
+TEST_CASE("CopyTaskTest", "[AugmentedRNNsTasks]")
 {
   // Check the setup on various lengths...
   for (size_t maxLen = 2; maxLen <= 16; ++maxLen)
@@ -242,8 +240,7 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
       arma::field<arma::mat> predResponse;
       model.Predict(testPredictor, predResponse);
       // A single failure is a failure.
-      BOOST_REQUIRE_GE(SequencePrecision<arma::mat>(testResponse, predResponse),
-                       0.99);
+      REQUIRE(SequencePrecision<arma::mat>(testResponse, predResponse) >= 0.99);
     }
   }
 }
@@ -251,7 +248,7 @@ BOOST_AUTO_TEST_CASE(CopyTaskTest)
 // Test of SortTask instance generator.
 // The data from generator is fed to the dummy hard-coded model above
 // that should be able to solve the task perfectly.
-BOOST_AUTO_TEST_CASE(SortTaskTest)
+TEST_CASE("SortTaskTest", "[AugmentedRNNsTasks]")
 {
   size_t bitLen = 5;
   for (size_t maxLen = 2; maxLen <= 16; ++maxLen)
@@ -266,15 +263,14 @@ BOOST_AUTO_TEST_CASE(SortTaskTest)
     arma::field<arma::mat> predResponse;
     model.Predict(testPredictor, predResponse);
     // A single failure is a failure.
-    BOOST_REQUIRE_GE(SequencePrecision<arma::mat>(testResponse, predResponse),
-                     0.99);
+    REQUIRE(SequencePrecision<arma::mat>(testResponse, predResponse) >= 0.99);
   }
 }
 
 // Test of AddTask instance generator.
 // The data from generator is fed to the dummy hard-coded model above
 // that should be able to solve the task perfectly.
-BOOST_AUTO_TEST_CASE(AddTaskTest)
+TEST_CASE("AddTaskTest", "[AugmentedRNNsTasks]")
 {
   for (size_t bitLen = 2; bitLen <= 16; ++bitLen)
   {
@@ -288,9 +284,6 @@ BOOST_AUTO_TEST_CASE(AddTaskTest)
     arma::field<arma::mat> predResponse;
     model.Predict(testPredictor, predResponse);
     // A single failure is a failure.
-    BOOST_REQUIRE_GE(SequencePrecision<arma::mat>(testResponse, predResponse),
-                     0.99);
+    REQUIRE(SequencePrecision<arma::mat>(testResponse, predResponse) >= 0.99);
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();
