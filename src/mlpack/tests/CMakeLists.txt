@@ -146,7 +146,7 @@ add_executable(mlpack_catch_test
   randomized_svd_test.cpp
   rbm_network_test.cpp
   recurrent_network_test.cpp
-  rnn_rebert_test.cpp
+  rnn_reber_test.cpp
   regularized_svd_test.cpp
   scaling_test.cpp
   serialization_catch.cpp
