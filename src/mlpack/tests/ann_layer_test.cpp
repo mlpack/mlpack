@@ -4662,7 +4662,13 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
 {
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        tgtSeqLen(2),
+        srcSeqLen(2),
+        embedDim(4),
+        nHeads(2),
+        vocabSize(5),
+        batchSize(2)
     {
       input = arma::randu(embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
       target = arma::zeros(vocabSize, batchSize);
@@ -4715,12 +4721,12 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
     MultiheadAttention<>* attnModule;
 
     arma::mat input, target, attnMask, keyPaddingMask;
-    const size_t tgtSeqLen = 2;
-    const size_t srcSeqLen = 2;
-    const size_t embedDim = 4;
-    const size_t nHeads = 2;
-    const size_t vocabSize = 5;
-    const size_t batchSize = 2;
+    const size_t tgtSeqLen;
+    const size_t srcSeqLen;
+    const size_t embedDim;
+    const size_t nHeads;
+    const size_t vocabSize;
+    const size_t batchSize;
   } function;
 
   REQUIRE(CheckGradient(function) <= 3e-06);

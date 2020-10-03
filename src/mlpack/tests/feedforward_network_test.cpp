@@ -489,7 +489,7 @@ TEST_CASE("FFNMiscTest", "[FeedForwardNetworkTest]")
   auto copiedModel(model);
   copiedModel = model;
   auto movedModel(std::move(model));
-  movedModel = std::move(copiedModel);
+  auto moveOperator = std::move(copiedModel);
 }
 
 /**
