@@ -28,6 +28,47 @@ using namespace mlpack::ann;
 using namespace ens;
 using namespace mlpack::math;
 
+/**
+ * Construct a 2-class dataset out of noisy sines.
+ *
+ * @param data Input data used to store the noisy sines.
+ * @param labels Labels used to store the target class of the noisy sines.
+ * @param points Number of points/features in a single sequence.
+ * @param sequences Number of sequences for each class.
+ * @param noise The noise factor that influences the sines.
+ */
+void GenerateNoisySines(arma::cube& data,
+                        arma::mat& labels,
+                        const size_t points,
+                        const size_t sequences,
+                        const double noise = 0.3)
+{
+  arma::colvec x =  arma::linspace<arma::colvec>(0, points - 1, points) /
+      points * 20.0;
+  arma::colvec y1 = arma::sin(x + arma::as_scalar(arma::randu(1)) * 3.0);
+  arma::colvec y2 = arma::sin(x / 2.0 + arma::as_scalar(arma::randu(1)) * 3.0);
+
+  data = arma::zeros(1 /* single dimension */, sequences * 2, points);
+  labels = arma::zeros(2 /* 2 classes */, sequences * 2);
+
+  for (size_t seq = 0; seq < sequences; seq++)
+  {
+    arma::vec sequence = arma::randu(points) * noise + y1 +
+        arma::as_scalar(arma::randu(1) - 0.5) * noise;
+    for (size_t i = 0; i < points; ++i)
+      data(0, seq, i) = sequence[i];
+
+    labels(0, seq) = 1;
+
+    sequence = arma::randu(points) * noise + y2 +
+        arma::as_scalar(arma::randu(1) - 0.5) * noise;
+    for (size_t i = 0; i < points; ++i)
+      data(0, sequences + seq, i) = sequence[i];
+
+    labels(1, sequences + seq) = 1;
+  }
+}
+
 /*
  * This sample is a simplified version of Derek D. Monner's Distracted Sequence
  * Recall task, which involves 10 symbols:
@@ -371,47 +412,6 @@ TEST_CASE("RNNSerializationTest", "[RecurrentNetworkTest]")
   binaryModel.Predict(input, binaryPrediction);
 
   CheckMatrices(prediction, xmlPrediction, jsonPrediction, binaryPrediction);
-}
-
-/**
- * Construct a 2-class dataset out of noisy sines.
- *
- * @param data Input data used to store the noisy sines.
- * @param labels Labels used to store the target class of the noisy sines.
- * @param points Number of points/features in a single sequence.
- * @param sequences Number of sequences for each class.
- * @param noise The noise factor that influences the sines.
- */
-void GenerateNoisySines(arma::cube& data,
-                        arma::mat& labels,
-                        const size_t points,
-                        const size_t sequences,
-                        const double noise = 0.3)
-{
-  arma::colvec x =  arma::linspace<arma::colvec>(0, points - 1, points) /
-      points * 20.0;
-  arma::colvec y1 = arma::sin(x + arma::as_scalar(arma::randu(1)) * 3.0);
-  arma::colvec y2 = arma::sin(x / 2.0 + arma::as_scalar(arma::randu(1)) * 3.0);
-
-  data = arma::zeros(1 /* single dimension */, sequences * 2, points);
-  labels = arma::zeros(2 /* 2 classes */, sequences * 2);
-
-  for (size_t seq = 0; seq < sequences; seq++)
-  {
-    arma::vec sequence = arma::randu(points) * noise + y1 +
-        arma::as_scalar(arma::randu(1) - 0.5) * noise;
-    for (size_t i = 0; i < points; ++i)
-      data(0, seq, i) = sequence[i];
-
-    labels(0, seq) = 1;
-
-    sequence = arma::randu(points) * noise + y2 +
-        arma::as_scalar(arma::randu(1) - 0.5) * noise;
-    for (size_t i = 0; i < points; ++i)
-      data(0, sequences + seq, i) = sequence[i];
-
-    labels(1, sequences + seq) = 1;
-  }
 }
 
 /**
