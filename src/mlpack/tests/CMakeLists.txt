@@ -229,10 +229,6 @@ add_custom_command(TARGET mlpack_test
 set(parallel_tests
   "AsyncLearningTest;"
   "LocalCoordinateCodingTest;"
-  "FeedForwardNetworkTest;"
-  "RecurrentNetworkTest;"
-  "SparseAutoencoderTest;"
-  "GMMTest;"
   "CFTest;"
   "LARSTest;"
   "LogisticRegressionTest;"

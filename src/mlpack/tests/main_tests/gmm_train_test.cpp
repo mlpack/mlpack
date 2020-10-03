@@ -139,7 +139,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPositiveTrialsTest",
 }
 
 // Checking that percentage is between 0 and 1.
-TEST_CASE_METHOD(GmmTrainTestFixture, "RefinedStartPercentageTest",
+TEST_CASE_METHOD(GmmTrainTestFixture, "GMMRefinedStartPercentageTest",
                  "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
