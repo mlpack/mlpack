@@ -139,8 +139,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          Rscript -e "install.packages('remotes')" -e "remotes::install_cran('rcmdcheck')"
-          Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat', 'Rcereal'))"
           remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
