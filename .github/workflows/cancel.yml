@@ -2,14 +2,11 @@ name: Cancel
 on: [pull_request]
 jobs:
   cancel:
-    name: 'Cancel Previous Runs'
+    name: 'Cancel Previous Runs Test'
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Get all workflow ids and set to env variable
-        run: echo ::set-env name=WORKFLOW_IDS_TO_CANCEL::$(curl https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows -s | jq -r '.workflows | map(.id|tostring) | join(",")')
-
-      - uses: styfle/cancel-workflow-action@0.4.0
-        with:
-          workflow_id: 2822588, 2799074, 2372494
-          access_token: ${{ github.token }}
+    - uses: rokroskar/workflow-run-cleanup-action@master
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
