@@ -3,6 +3,8 @@
 set(SOURCES
   dataset_mapper.hpp
   dataset_mapper_impl.hpp
+  detect_file_type.hpp
+  detect_file_type.cpp
   extension.hpp
   format.hpp
   has_serialize.hpp

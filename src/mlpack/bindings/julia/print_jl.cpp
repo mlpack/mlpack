@@ -10,12 +10,11 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "print_jl.hpp"
-#include "strip_type.hpp"
 #include <mlpack/core/util/hyphenate_string.hpp>
 
 #include <set>
 
-using namespace mlpack;
+using namespace mlpack::util;
 using namespace std;
 
 namespace mlpack {
@@ -27,12 +26,12 @@ extern std::string programName;
 /**
  * Print the code for a .jl binding for an mlpack program to stdout.
  */
-void PrintJL(const util::ProgramDoc& programInfo,
+void PrintJL(const util::BindingDetails& doc,
              const string& functionName,
              const std::string& mlpackJuliaLibSuffix)
 {
   // Restore parameters.
-  IO::RestoreSettings(programInfo.programName);
+  IO::RestoreSettings(doc.programName);
 
   map<string, util::ParamData>& parameters = IO::Parameters();
   typedef map<string, util::ParamData>::iterator ParamIter;
@@ -168,10 +167,15 @@ void PrintJL(const util::ProgramDoc& programInfo,
   cout << endl;
 
   // Next print the description.
-  cout << util::HyphenateString(programInfo.documentation(), 0) << endl;
+  cout << HyphenateString(doc.longDescription(), 0) << endl << endl;
+
+  // Next print the examples.
+  for (size_t j = 0; j < doc.example.size(); ++j)
+  {
+    cout << util::HyphenateString(doc.example[j](), 0) << endl << endl;
+  }
 
   // Next, print information on the input options.
-  cout << endl;
   cout << "# Arguments" << endl;
   cout << endl;
 

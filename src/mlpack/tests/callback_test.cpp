@@ -44,11 +44,11 @@ using namespace mlpack::distribution;
  * @param sequences Number of sequences for each class.
  * @param noise The noise factor that influences the sines.
  */
-void GenerateNoisySines(arma::cube& data,
-                        arma::mat& labels,
-                        const size_t points,
-                        const size_t sequences,
-                        const double noise = 0.3)
+void GenerateNoisyData(arma::cube& data,
+                       arma::mat& labels,
+                       const size_t points,
+                       const size_t sequences,
+                       const double noise = 0.3)
 {
   arma::colvec x =  arma::linspace<arma::colvec>(0, points - 1, points) /
       points * 20.0;
@@ -324,7 +324,7 @@ TEST_CASE("BRNNWithOptimizerCallbackTest", "[CallbackTest]")
 
   arma::cube input;
   arma::mat labelsTemp;
-  GenerateNoisySines(input, labelsTemp, rho, 6);
+  GenerateNoisyData(input, labelsTemp, rho, 6);
 
   arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, rho);
   for (size_t i = 0; i < labelsTemp.n_cols; ++i)
@@ -359,7 +359,7 @@ TEST_CASE("BRNNCallbackTest", "[CallbackTest]")
 
   arma::cube input;
   arma::mat labelsTemp;
-  GenerateNoisySines(input, labelsTemp, rho, 6);
+  GenerateNoisyData(input, labelsTemp, rho, 6);
 
   arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, rho);
   for (size_t i = 0; i < labelsTemp.n_cols; ++i)

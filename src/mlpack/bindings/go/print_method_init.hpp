@@ -16,7 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include "get_go_type.hpp"
 #include "strip_type.hpp"
-#include "camel_case.hpp"
+#include <mlpack/bindings/util/camel_case.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -46,7 +46,7 @@ void PrintMethodInit(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.
@@ -100,7 +100,7 @@ void PrintMethodInit(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.
@@ -133,7 +133,7 @@ void PrintMethodInit(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.
@@ -166,7 +166,7 @@ void PrintMethodInit(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.

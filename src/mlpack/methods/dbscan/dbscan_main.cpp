@@ -27,11 +27,16 @@ using namespace mlpack::tree;
 using namespace mlpack::util;
 using namespace std;
 
-PROGRAM_INFO("DBSCAN clustering",
-    // Short description.
+// Program Name.
+BINDING_NAME("DBSCAN clustering");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of DBSCAN clustering.  Given a dataset, this can "
-    "compute and return a clustering of that dataset.",
-    // Long description.
+    "compute and return a clustering of that dataset.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements the DBSCAN algorithm for clustering using "
     "accelerated tree-based range search.  The type of tree that is used "
     "may be parameterized, or brute-force range search may also be used."
@@ -58,19 +63,23 @@ PROGRAM_INFO("DBSCAN clustering",
     " 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'. The " +
     PRINT_PARAM_STRING("single_mode") + " parameter will force single-tree "
     "search (as opposed to the default dual-tree search), and '" +
-    PRINT_PARAM_STRING("naive") + " will force brute-force range search."
-    "\n\n"
+    PRINT_PARAM_STRING("naive") + " will force brute-force range search.");
+
+// Example.
+BINDING_EXAMPLE(
     "An example usage to run DBSCAN on the dataset in " +
     PRINT_DATASET("input") + " with a radius of 0.5 and a minimum cluster size"
     " of 5 is given below:"
     "\n\n" +
-    PRINT_CALL("dbscan", "input", "input", "epsilon", 0.5, "min_size", 5),
-    SEE_ALSO("DBSCAN on Wikipedia", "https://en.wikipedia.org/wiki/DBSCAN"),
-    SEE_ALSO("A density-based algorithm for discovering clusters in large "
+    PRINT_CALL("dbscan", "input", "input", "epsilon", 0.5, "min_size", 5));
+
+// See also...
+BINDING_SEE_ALSO("DBSCAN on Wikipedia", "https://en.wikipedia.org/wiki/DBSCAN");
+BINDING_SEE_ALSO("A density-based algorithm for discovering clusters in large "
         "spatial databases with noise (pdf)",
-        "http://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf"),
-    SEE_ALSO("mlpack::dbscan::DBSCAN class documentation",
-        "@doxygen/classmlpack_1_1dbscan_1_1DBSCAN.html"));
+        "http://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf");
+BINDING_SEE_ALSO("mlpack::dbscan::DBSCAN class documentation",
+        "@doxygen/classmlpack_1_1dbscan_1_1DBSCAN.html");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to cluster.", "i");
 PARAM_UROW_OUT("assignments", "Output matrix for assignments of each "

@@ -19,8 +19,8 @@ static const std::string testName = "SparseCoding";
 #include <mlpack/methods/sparse_coding/sparse_coding_main.cpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -41,8 +41,6 @@ struct SparseCodingTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(SparseCodingMainTest, SparseCodingTestFixture);
-
 /**
  * Helper function to load datasets.
  */
@@ -50,18 +48,19 @@ void LoadData(arma::mat& inputData, arma::mat& testData)
 {
   // Load train dataset.
   if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
+    FAIL("Cannot load train dataset iris_train.csv!");
 
   // Load test dataset.
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+    FAIL("Cannot load test dataset iris_test.csv!");
 }
 
 /**
  * Make sure that output points in dictionary equals number of
  * atoms passed and codes have desired dimension.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingOutputDimensionTest)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingOutputDimensionTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -78,25 +77,26 @@ BOOST_AUTO_TEST_CASE(SparseCodingOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output dictionary points are equals number of atoms.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("dictionary").n_cols, 2);
+  REQUIRE(IO::GetParam<arma::mat>("dictionary").n_cols == 2);
 
   // Check that number of output dictionary rows equal number of input rows
   // which equal 4 for each data point.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("dictionary").n_rows, 4);
+  REQUIRE(IO::GetParam<arma::mat>("dictionary").n_rows == 4);
 
   // Check that number of output points are equal to number of test points.
   // Test file contains 63 data points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("codes").n_cols, 63);
+  REQUIRE(IO::GetParam<arma::mat>("codes").n_cols == 63);
 
   // Check that number of output codes rows equal number of atoms.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("codes").n_rows, 2);
+  REQUIRE(IO::GetParam<arma::mat>("codes").n_rows == 2);
 }
 
 /**
  * Ensure that training data is normalized if normalize
  * parameter is set to true.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingNormalizationTest)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingNormalizationTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -155,11 +155,12 @@ BOOST_AUTO_TEST_CASE(SparseCodingNormalizationTest)
  * newton_tolerance value is always non-negative and number
  * of atoms is always positive.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingBoundsTest)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingBoundsTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
+    FAIL("Cannot load train dataset iris_train.csv!");
 
   // Test for L1 value.
 
@@ -169,7 +170,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingBoundsTest)
   SetInputParam("lambda1", (double) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Test for L2 value.
@@ -181,7 +182,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingBoundsTest)
   SetInputParam("lambda2", (double) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Test for max_iterations.
@@ -193,7 +194,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingBoundsTest)
   SetInputParam("max_iterations", (int) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Test for objective_tolerance.
@@ -205,7 +206,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingBoundsTest)
   SetInputParam("objective_tolerance", (double) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Test for newton_tolerance.
@@ -217,7 +218,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingBoundsTest)
   SetInputParam("newton_tolerance", (double) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Test for atoms.
@@ -227,24 +228,25 @@ BOOST_AUTO_TEST_CASE(SparseCodingBoundsTest)
   SetInputParam("atoms", (int) 0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Make sure atoms are specified if training data is passed.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingReqAtomsTest)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingReqAtomsTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset iris_train.csv!");
+    FAIL("Cannot load train dataset iris_train.csv!");
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -252,7 +254,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingReqAtomsTest)
  * Ensure only one of input_model or initial_dictionary
  * is specified.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingModelVerTest)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingModelVerTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -266,7 +269,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelVerTest)
   SetInputParam("initial_dictionary", std::move(initialDictionary));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -274,7 +277,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelVerTest)
  * Ensure that specified number of atoms and initial_dictionary
  * atoms are equal.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingAtomsVerTest)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingAtomsVerTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -289,7 +293,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingAtomsVerTest)
   SetInputParam("max_iterations", (int) 100);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -297,7 +301,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingAtomsVerTest)
  * Ensure that input data and initial_dictionary
  * have same number of rows.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingRowsVerTest)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingRowsVerTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -316,7 +321,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingRowsVerTest)
   SetInputParam("normalize", (bool) true);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -324,7 +329,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingRowsVerTest)
  * Ensure that training data and test data
  * have same dimensionality w.r.t rows.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingDataDimensionalityTest)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingDataDimensionalityTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -342,14 +348,15 @@ BOOST_AUTO_TEST_CASE(SparseCodingDataDimensionalityTest)
   SetInputParam("test", std::move(testData));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that saved model can be reused again.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingModelReuseTest)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingModelReuseTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -384,18 +391,18 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelReuseTest)
   mlpackMain();
 
   // Check that number of output dictionary points are equals number of atoms.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("dictionary").n_cols, 2);
+  REQUIRE(IO::GetParam<arma::mat>("dictionary").n_cols == 2);
 
   // Check that number of output dictionary rows equal number of input rows
   // which equal 4 for each data point.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("dictionary").n_rows, 4);
+  REQUIRE(IO::GetParam<arma::mat>("dictionary").n_rows == 4);
 
   // Check that number of output points are equal to number of test points.
   // Test file contains 63 data points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("codes").n_cols, 63);
+  REQUIRE(IO::GetParam<arma::mat>("codes").n_cols == 63);
 
   // Check that number of output codes rows equal number of atoms.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("codes").n_rows, 2);
+  REQUIRE(IO::GetParam<arma::mat>("codes").n_rows == 2);
 
   // Check that initial outputs and final outputs
   // using two models model are same.
@@ -407,7 +414,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingModelReuseTest)
  * Ensure that for different value of max iterations
  * outputs are different.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingDiffMaxItrTest)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingDiffMaxItrTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -447,18 +455,19 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffMaxItrTest)
 
   // Check that initial outputs and final outputs
   // using two models model are different.
-  BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      IO::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+  REQUIRE(arma::accu(dictionary ==
+      IO::GetParam<arma::mat>("dictionary")) < dictionary.n_elem);
 
-  BOOST_REQUIRE_LT(arma::accu(codes ==
-      IO::GetParam<arma::mat>("codes")), codes.n_elem);
+  REQUIRE(arma::accu(codes ==
+      IO::GetParam<arma::mat>("codes")) < codes.n_elem);
 }
 
 /**
  * Ensure that for different value of objective_tolerance
  * outputs are different.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingDiffObjToleranceTest)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingDiffObjToleranceTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -495,18 +504,19 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffObjToleranceTest)
 
   // Check that initial outputs and final outputs
   // using two models model are different.
-  BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      IO::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
-
-  BOOST_REQUIRE_LT(arma::accu(codes ==
-      IO::GetParam<arma::mat>("codes")), codes.n_elem);
+  REQUIRE(arma::accu(dictionary ==
+      IO::GetParam<arma::mat>("dictionary")) < dictionary.n_elem);
+  REQUIRE(arma::accu(codes ==
+      IO::GetParam<arma::mat>("codes")) < codes.n_elem);
 }
 
 /**
  * Ensure that for different value of newton_tolerance
  * outputs are different.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingDiffNewtonToleranceTest)
+TEST_CASE_METHOD(SparseCodingTestFixture,
+                 "SparseCodingDiffNewtonToleranceTest",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -543,18 +553,19 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffNewtonToleranceTest)
 
   // Check that initial outputs and final outputs
   // using two models model are different.
-  BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      IO::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+  REQUIRE(arma::accu(dictionary ==
+      IO::GetParam<arma::mat>("dictionary")) < dictionary.n_elem);
 
-  BOOST_REQUIRE_LT(arma::accu(codes ==
-      IO::GetParam<arma::mat>("codes")), codes.n_elem);
+  REQUIRE(arma::accu(codes ==
+      IO::GetParam<arma::mat>("codes")) < codes.n_elem);
 }
 
 /**
  * Ensure that for different value of lambda1
  * outputs are different.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingDiffL1Test)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingDiffL1Test",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -591,18 +602,19 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL1Test)
 
   // Check that initial outputs and final outputs
   // using two models model are different.
-  BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      IO::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+  REQUIRE(arma::accu(dictionary ==
+      IO::GetParam<arma::mat>("dictionary")) < dictionary.n_elem);
 
-  BOOST_REQUIRE_LT(arma::accu(codes ==
-      IO::GetParam<arma::mat>("codes")), codes.n_elem);
+  REQUIRE(arma::accu(codes ==
+      IO::GetParam<arma::mat>("codes")) < codes.n_elem);
 }
 
 /**
  * Ensure that for different value of lambda2
  * outputs are different.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingDiffL2Test)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingDiffL2Test",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -639,18 +651,19 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL2Test)
 
   // Check that initial outputs and final outputs
   // using two models model are different.
-  BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      IO::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+  REQUIRE(arma::accu(dictionary ==
+      IO::GetParam<arma::mat>("dictionary")) < dictionary.n_elem);
 
-  BOOST_REQUIRE_LT(arma::accu(codes ==
-      IO::GetParam<arma::mat>("codes")), codes.n_elem);
+  REQUIRE(arma::accu(codes ==
+      IO::GetParam<arma::mat>("codes")) < codes.n_elem);
 }
 
 /**
  * Ensure that for different value of lambda1 & lambda2
  * outputs are different.
  */
-BOOST_AUTO_TEST_CASE(SparseCodingDiffL1L2Test)
+TEST_CASE_METHOD(SparseCodingTestFixture, "SparseCodingDiffL1L2Test",
+                 "[SparseCodingMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat testData;
@@ -689,11 +702,9 @@ BOOST_AUTO_TEST_CASE(SparseCodingDiffL1L2Test)
 
   // Check that initial outputs and final outputs
   // using two models model are different.
-  BOOST_REQUIRE_LT(arma::accu(dictionary ==
-      IO::GetParam<arma::mat>("dictionary")), dictionary.n_elem);
+  REQUIRE(arma::accu(dictionary ==
+      IO::GetParam<arma::mat>("dictionary")) < dictionary.n_elem);
 
-  BOOST_REQUIRE_LT(arma::accu(codes ==
-      IO::GetParam<arma::mat>("codes")), codes.n_elem);
+  REQUIRE(arma::accu(codes ==
+      IO::GetParam<arma::mat>("codes")) < codes.n_elem);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

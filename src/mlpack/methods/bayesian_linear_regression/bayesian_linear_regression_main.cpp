@@ -21,10 +21,15 @@ using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::util;
 
-PROGRAM_INFO("BayesianLinearRegression",
-    // Short description.
-    "An implementation of the bayesian linear regression.",
-    // Long description.
+// Program Name.
+BINDING_NAME("BayesianLinearRegression");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "An implementation of the bayesian linear regression.");
+
+// Long description.
+BINDING_LONG_DESC(
     "An implementation of the bayesian linear regression."
     "\n"
     "This model is a probabilistic view and implementation of the linear "
@@ -57,42 +62,46 @@ PROGRAM_INFO("BayesianLinearRegression",
     "responses to the test points can be saved with the " +
     PRINT_PARAM_STRING("predictions") + " output parameter. The "
     "corresponding standard deviation can be save by precising the " +
-    PRINT_PARAM_STRING("stds") + " parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("stds") + " parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following command trains a model on the data " +
     PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
     "with center set to true and scale set to false (so, Bayesian "
     "linear regression is being solved, and then the model is saved to " +
-    PRINT_MODEL("bayesian_linear_regression_model") + ":"
+    PRINT_MODEL("blr_model") + ":"
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input", "data", "responses",
                "responses", "center", 1, "scale", 0, "output_model",
-               "bayesian_linear_regression_model") +
+               "blr_model") +
     "\n\n"
     "The following command uses the " +
-    PRINT_MODEL("bayesian_linear_regression_model") + " to provide predicted " +
+    PRINT_MODEL("blr_model") + " to provide predicted " +
     " responses for the data " + PRINT_DATASET("test") + " and save those " +
     " responses to " + PRINT_DATASET("test_predictions") + ": "
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input_model",
-               "bayesian_linear_regression_model", "test", "test",
+               "blr_model", "test", "test",
                "predictions", "test_predictions") +
     "\n\n"
     "Because the estimator computes a predictive distribution instead of "
-    "simple point estimate, the " + PRINT_PARAM_STRING("stds") + " parameter "
-    "allows to save the prediction uncertainties: "
+    "a simple point estimate, the " + PRINT_PARAM_STRING("stds") + " parameter "
+    "allows one to save the prediction uncertainties: "
     "\n\n" +
     PRINT_CALL("bayesian_linear_regression", "input_model",
-               "bayesian_linear_regression_model", "test", "test",
-               "predictions", "test_predictions", "stds", "stds"),
-    SEE_ALSO("Bayesian Interpolation",
-        "https://authors.library.caltech.edu/13792/1/MACnc92a.pdf"),
-    SEE_ALSO("Bayesian Linear Regression, Section 3.3",
+               "blr_model", "test", "test",
+               "predictions", "test_predictions", "stds", "stds"));
+
+// See also...
+BINDING_SEE_ALSO("Bayesian Interpolation",
+        "https://authors.library.caltech.edu/13792/1/MACnc92a.pdf");
+BINDING_SEE_ALSO("Bayesian Linear Regression, Section 3.3",
         "MLA Bishop, Christopher M. Pattern Recognition and Machine "
-        "Learning. New York :Springer, 2006, section 3.3."),
-    SEE_ALSO("mlpack::regression::BayesianLinearRegression C++ class "
+        "Learning. New York :Springer, 2006, section 3.3.");
+BINDING_SEE_ALSO("mlpack::regression::BayesianLinearRegression C++ class "
         "documentation",
-        "@doxygen/classmlpack_1_1regression_1_1BayesianLinearRegression.html"));
+        "@doxygen/classmlpack_1_1regression_1_1BayesianLinearRegression.html");
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 

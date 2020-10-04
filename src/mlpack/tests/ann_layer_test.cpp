@@ -15,9 +15,11 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/init_rules/glorot_init.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
@@ -85,11 +87,10 @@ TEST_CASE("GradientAddLayerTest", "[ANNLayerTest]")
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -414,11 +415,10 @@ TEST_CASE("GradientLinearLayerTest", "[ANNLayerTest]")
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -447,6 +447,108 @@ TEST_CASE("GradientLinearLayerTest", "[ANNLayerTest]")
   } function;
 
   REQUIRE(CheckGradient(function) <= 1e-4);
+}
+
+/**
+ * Simple Linear3D layer test.
+ */
+TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
+{
+  const size_t inSize = 4;
+  const size_t outSize = 1;
+  const size_t nPoints = 2;
+  const size_t batchSize = 1;
+  arma::mat input, output, delta;
+
+  Linear3D<> module(inSize, outSize);
+  module.Reset();
+  module.Parameters().randu();
+
+  // Test the Forward function.
+  input = arma::zeros(inSize * nPoints, batchSize);
+  module.Forward(input, output);
+  REQUIRE(arma::accu(module.Bias())
+      == Approx(arma::accu(output) / (nPoints * batchSize)).epsilon(1e-3));
+
+  // Test the Backward function.
+  module.Backward(input, input, delta);
+  REQUIRE(arma::accu(delta) == 0);
+}
+
+/**
+ * Jacobian Linear3D module test.
+ */
+TEST_CASE("JacobianLinear3DLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inSize = math::RandInt(2, 10);
+    const size_t outSize = math::RandInt(2, 10);
+    const size_t nPoints = math::RandInt(2, 10);
+    const size_t batchSize = 1;
+
+    arma::mat input;
+    input.set_size(inSize * nPoints, batchSize);
+
+    Linear3D<> module(inSize, outSize);
+    module.Parameters().randu();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Simple Gradient test for Linear3D layer.
+ */
+TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        inSize(4),
+        outSize(1),
+        nPoints(2),
+        batchSize(4)
+    {
+      input = arma::randu(inSize * nPoints, batchSize);
+      target = arma::zeros(outSize * nPoints, batchSize);
+      target(0, 0) = 1;
+      target(0, 3) = 1;
+      target(1, 1) = 1;
+      target(1, 2) = 1;
+
+      model = new FFN<MeanSquaredError<>, RandomInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<>>();
+      model->Add<Linear3D<>>(inSize, outSize);
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<MeanSquaredError<>, RandomInitialization>* model;
+    arma::mat input, target;
+    const size_t inSize;
+    const size_t outSize;
+    const size_t nPoints;
+    const size_t batchSize;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-7);
 }
 
 /**
@@ -490,11 +592,10 @@ TEST_CASE("GradientNoisyLinearLayerTest", "[ANNLayerTest]")
   // Noisy linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -594,11 +695,10 @@ TEST_CASE("GradientLinearNoBiasLayerTest", "[ANNLayerTest]")
   // LinearNoBias function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -696,11 +796,10 @@ TEST_CASE("GradientFlexibleReLULayerTest", "[ANNLayerTest]")
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(2, 1)),
+        target(arma::mat("1"))
     {
-      input = arma::randu(2, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
           NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
 
@@ -916,10 +1015,10 @@ TEST_CASE("GradientLSTMLayerTest", "[ANNLayerTest]")
   // LSTM function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(1, 1, 5)),
+        target(arma::ones(1, 1, 5))
     {
-      input = arma::randu(1, 1, 5);
-      target.ones(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
@@ -972,7 +1071,7 @@ TEST_CASE("LSTMLayerParametersTest", "[ANNLayerTest]")
 
   // Now ensure all the results are the same.
   REQUIRE(layer1.InSize() == layer2.InSize());
-  REQUIRE(layer2.OutSize() == layer2.OutSize());
+  REQUIRE(layer1.OutSize() == layer2.OutSize());
   REQUIRE(layer1.Rho() == layer2.Rho());
 }
 
@@ -1021,10 +1120,10 @@ TEST_CASE("GradientFastLSTMLayerTest", "[ANNLayerTest]")
   // Fast LSTM function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(1, 1, 5)),
+        target(arma::ones(1, 1, 5))
     {
-      input = arma::randu(1, 1, 5);
-      target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
@@ -1080,7 +1179,7 @@ TEST_CASE("FastLSTMLayerParametersTest", "[ANNLayerTest]")
 
   // Now ensure all the results are the same.
   REQUIRE(layer1.InSize() == layer2.InSize());
-  REQUIRE(layer2.OutSize() == layer2.OutSize());
+  REQUIRE(layer1.OutSize() == layer2.OutSize());
   REQUIRE(layer1.Rho() == layer2.Rho());
 }
 
@@ -1277,7 +1376,7 @@ TEST_CASE("GRULayerParametersTest", "[ANNLayerTest]")
 
   // Now ensure all the results are the same.
   REQUIRE(layer1.InSize() == layer2.InSize());
-  REQUIRE(layer2.OutSize() == layer2.OutSize());
+  REQUIRE(layer1.OutSize() == layer2.OutSize());
   REQUIRE(layer1.Rho() == layer2.Rho());
 }
 
@@ -1290,10 +1389,10 @@ TEST_CASE("GradientGRULayerTest", "[ANNLayerTest]")
   // GRU function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(1, 1, 5)),
+        target(arma::ones(1, 1, 5))
     {
-      input = arma::randu(1, 1, 5);
-      target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
@@ -1530,11 +1629,10 @@ TEST_CASE("GradientConcatLayerTest", "[ANNLayerTest]")
   // Concat function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -1599,11 +1697,10 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
   // Concatenate function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -1646,40 +1743,95 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
 {
-  arma::mat output, input, delta, gradient;
-  Lookup<> module(10, 5);
+  const size_t vocabSize = 10;
+  const size_t embeddingSize = 2;
+  const size_t seqLength = 3;
+  const size_t batchSize = 4;
+
+  arma::mat output, input, gy, g, gradient;
+
+  Lookup<> module(vocabSize, embeddingSize);
   module.Parameters().randu();
 
   // Test the Forward function.
-  input = arma::zeros(2, 1);
-  input(0) = 1;
-  input(1) = 3;
+  input = arma::zeros(seqLength, batchSize);
+  for (size_t i = 0; i < input.n_elem; ++i)
+  {
+    int token = math::RandInt(1, vocabSize);
+    input(i) = token;
+  }
 
   module.Forward(input, output);
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    // The Lookup module uses index - 1 for the cols.
+    const double outputSum = arma::accu(module.Parameters().cols(
+        arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
-  // The Lookup module uses index - 1 for the cols.
-  const double outputSum = arma::accu(module.Parameters().col(0)) +
-      arma::accu(module.Parameters().col(2));
-
-  REQUIRE(outputSum == Approx(arma::accu(output)).epsilon(1e-5));
-
-  // Test the Backward function.
-  module.Backward(input, input, delta);
-  REQUIRE(arma::accu(input) == arma::accu(input));
+    REQUIRE(std::fabs(outputSum - arma::accu(output.col(i))) <= 1e-5);
+  }
 
   // Test the Gradient function.
-  arma::mat error = arma::ones(2, 5);
-  error = error.t();
-  error.col(1) *= 0.5;
-
+  arma::mat error = 0.01 * arma::randu(embeddingSize * seqLength, batchSize);
   module.Gradient(input, error, gradient);
 
-  // The Lookup module uses index - 1 for the cols.
-  const double gradientSum = arma::accu(gradient.col(0)) +
-      arma::accu(gradient.col(2));
+  REQUIRE(std::fabs(arma::accu(error) - arma::accu(gradient)) <= 1e-07);
+}
 
-  REQUIRE(gradientSum == Approx(arma::accu(error)).epsilon(1e-5));
-  REQUIRE(arma::accu(gradient) == Approx(arma::accu(error)).epsilon(1e-5));
+/**
+ * Lookup layer numerical gradient test.
+ */
+TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
+{
+  // Lookup function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input.set_size(seqLength, batchSize);
+      for (size_t i = 0; i < input.n_elem; ++i)
+      {
+        input(i) = math::RandInt(1, vocabSize);
+      }
+      target = arma::zeros(vocabSize, batchSize);
+      for (size_t i = 0; i < batchSize; ++i)
+      {
+        const size_t targetWord = math::RandInt(1, vocabSize);
+        target(targetWord, i) = 1;
+      }
+
+      model = new FFN<CrossEntropyError<>, GlorotInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<Lookup<> >(vocabSize, embeddingSize);
+      model->Add<Linear<> >(embeddingSize * seqLength, vocabSize);
+      model->Add<Softmax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, batchSize);
+      model->Gradient(model->Parameters(), 0, gradient, batchSize);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<CrossEntropyError<>, GlorotInitialization>* model;
+    arma::mat input, target;
+
+    const size_t seqLength = 10;
+    const size_t embeddingSize = 8;
+    const size_t vocabSize = 20;
+    const size_t batchSize = 4;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-6);
 }
 
 /**
@@ -1688,12 +1840,12 @@ TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("LookupLayerParametersTest", "[ANNLayerTest]")
 {
-  // Parameter order : inSize, outSize.
-  Lookup<> layer(5, 7);
+  // Parameter order : vocabSize, embedingSize.
+  Lookup<> layer(100, 8);
 
   // Make sure we can get the parameters successfully.
-  REQUIRE(layer.InSize() == 5);
-  REQUIRE(layer.OutSize() == 7);
+  REQUIRE(layer.VocabSize() == 100);
+  REQUIRE(layer.EmbeddingSize() == 8);
 }
 
 /**
@@ -1749,11 +1901,10 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
   // Softmax function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1; 0"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1; 0");
-
       model = new FFN<MeanSquaredError<>, RandomInitialization>;
       model->Predictors() = input;
       model->Responses() = target;
@@ -1953,12 +2104,10 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
     // Add function gradient instantiation.
     struct GradientFunction
     {
-      GradientFunction()
+      GradientFunction() :
+          input(arma::randn(32, 2048)),
+          target(arma::ones(1, 2048))
       {
-        input = arma::randn(32, 2048);
-        arma::mat target;
-        target.ones(1, 2048);
-
         model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
         model->Predictors() = input;
         model->Responses() = target;
@@ -2028,12 +2177,11 @@ TEST_CASE("GradientVirtualBatchNormTest", "[ANNLayerTest]")
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randn(5, 256)),
+        target(arma::ones(1, 256))
     {
-      input = arma::randn(5, 256);
       arma::mat referenceBatch = arma::mat(input.memptr(), input.n_rows, 16);
-      arma::mat target;
-      target.ones(1, 256);
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -2091,12 +2239,10 @@ TEST_CASE("MiniBatchDiscriminationTest", "[ANNLayerTest]")
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randn(5, 4)),
+        target(arma::ones(1, 4))
     {
-      input = arma::randn(5, 4);
-      arma::mat target;
-      target.ones(1, 4);
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -2271,11 +2417,10 @@ TEST_CASE("GradientTransposedConvolutionLayerTest", "[ANNLayerTest]")
   {
     struct GradientFunction
     {
-      GradientFunction()
+      GradientFunction() :
+          input(arma::linspace<arma::colvec>(0, 35, 36)),
+          target(arma::mat("1"))
       {
-        input = arma::linspace<arma::colvec>(0, 35, 36);
-        target = arma::mat("1");
-
         model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
         model->Predictors() = input;
         model->Responses() = target;
@@ -2388,11 +2533,10 @@ TEST_CASE("GradientAtrousConvolutionLayerTest", "[ANNLayerTest]")
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::linspace<arma::colvec>(0, 35, 36)),
+        target(arma::mat("1"))
     {
-      input = arma::linspace<arma::colvec>(0, 35, 36);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -2419,7 +2563,7 @@ TEST_CASE("GradientAtrousConvolutionLayerTest", "[ANNLayerTest]")
     arma::mat input, target;
   } function;
 
-  // TODO: this tolerance seems far higher than necessary.  The implementation
+  // TODO: this tolerance seems far higher than necessary. The implementation
   // should be checked.
   REQUIRE(CheckGradient(function) <= 0.2);
 }
@@ -2570,12 +2714,10 @@ TEST_CASE("GradientLayerNormTest", "[ANNLayerTest]")
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randn(10, 256)),
+        target(arma::ones(1, 256))
     {
-      input = arma::randn(10, 256);
-      arma::mat target;
-      target.ones(1, 256);
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -2892,11 +3034,10 @@ TEST_CASE("GradientReparametrizationLayerTest", "[ANNLayerTest]")
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -2936,11 +3077,10 @@ TEST_CASE("GradientReparametrizationLayerBetaTest", "[ANNLayerTest]")
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 2)),
+        target(arma::mat("1 1"))
     {
-      input = arma::randu(10, 2);
-      target = arma::mat("1 1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -3092,11 +3232,10 @@ TEST_CASE("GradientHighwayLayerTest", "[ANNLayerTest]")
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(5, 1)),
+        target(arma::mat("1"))
     {
-      input = arma::randu(5, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -3144,11 +3283,10 @@ TEST_CASE("GradientSequentialLayerTest", "[ANNLayerTest]")
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -3195,11 +3333,10 @@ TEST_CASE("GradientWeightNormLayerTest", "[ANNLayerTest]")
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -4029,12 +4166,10 @@ TEST_CASE("GradientBatchNormWithMiniBatchesTest", "[ANNLayerTest]")
   {
     struct GradientFunction
     {
-      GradientFunction()
+      GradientFunction() :
+          input(arma::randn(16, 1024)),
+          target(arma::ones(1, 1024))
       {
-        input = arma::randn(16, 1024);
-        arma::mat target;
-        target.ones(1, 1024);
-
         model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
         model->Predictors() = input;
         model->Responses() = target;
@@ -4109,4 +4244,490 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
 
   // Value calculated using torch.nn.Conv2d().
   REQUIRE(arma::accu(output) == 4156);
+}
+
+TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
+{
+  FFN<> module;
+  module.Add<BatchNorm<>>(2, 1e-5, false);
+  module.Add<LogSoftMax<>>();
+
+  arma::mat input(4, 3), output;
+  module.ResetParameters();
+
+  // The model should switch to Deterministic mode for predicting.
+  module.Predict(input, output);
+  REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == true);
+
+  output.ones();
+  module.Train(input, output);
+  // The model should switch to training mode for predicting.
+  REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == 0);
+}
+
+/**
+ * Linear module weight initialization test.
+ */
+TEST_CASE("LinearLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 10, outSize = 4;
+  Linear<> linear = Linear<>(inSize, outSize);
+  linear.Reset();
+  RandomInitialization().Initialize(linear.Weight());
+  linear.Bias().ones();
+
+  REQUIRE(std::equal(linear.Weight().begin(),
+      linear.Weight().end(), linear.Parameters().begin()));
+
+  REQUIRE(std::equal(linear.Bias().begin(),
+      linear.Bias().end(), linear.Parameters().begin() + inSize * outSize));
+
+  REQUIRE(linear.Weight().n_rows == outSize);
+  REQUIRE(linear.Weight().n_cols == inSize);
+  REQUIRE(linear.Bias().n_rows == outSize);
+  REQUIRE(linear.Bias().n_cols == 1);
+  REQUIRE(linear.Parameters().n_rows == inSize * outSize + outSize);
+}
+
+/**
+ * Atrous Convolution module weight initialization test.
+ */
+TEST_CASE("AtrousConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
+  AtrousConvolution<> module = AtrousConvolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 6, 7, std::make_tuple(8, 9),
+      std::make_tuple(10, 11), 12, 13, 14, 15);
+  module.Reset();
+  RandomInitialization().Initialize(module.Weight());
+  module.Bias().ones();
+
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
+
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - outSize));
+
+  REQUIRE(module.Weight().n_rows == kernelWidth);
+  REQUIRE(module.Weight().n_cols == kernelHeight);
+  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Bias().n_rows == outSize);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Convolution module weight initialization test.
+ */
+TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
+  Convolution<> module = Convolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 6, 7, std::tuple<size_t, size_t>(8, 9),
+      std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
+  module.Reset();
+  RandomInitialization().Initialize(module.Weight());
+  module.Bias().ones();
+
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
+
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - outSize));
+
+  REQUIRE(module.Weight().n_rows == kernelWidth);
+  REQUIRE(module.Weight().n_cols == kernelHeight);
+  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Bias().n_rows == outSize);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Transposed Convolution module weight initialization test.
+ */
+TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 3, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 4;
+  TransposedConvolution<> module = TransposedConvolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 1, 1, 1, 1, 5, 5, 6, 6);
+  module.Reset();
+  RandomInitialization().Initialize(module.Weight());
+  module.Bias().ones();
+
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
+
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - outSize));
+
+  REQUIRE(module.Weight().n_rows == kernelWidth);
+  REQUIRE(module.Weight().n_cols == kernelHeight);
+  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Bias().n_rows == outSize);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Simple Test for SpatialDropout layer.
+ */
+TEST_CASE("SpatialDropoutLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, gy, g, temp;
+  arma::mat outputsExpected = arma::zeros(8, 12);
+  arma::mat gsExpected = arma::zeros(8, 12);
+
+  // Set the seed to a random value.
+  arma::arma_rng::set_seed_random();
+  SpatialDropout<> module(3, 0.2);
+
+  // Input is a batch of 2 images, each of size (2,2) and having 4 channels.
+  input << 0.4963 << 0.0885 << 0.7682 << 0.1320 << 0.3074 << 0.4901 << 0.6341
+      << 0.8964 << 0.4556 << 0.3489 << 0.6323 << 0.4017 << arma::endr;
+
+  gy << 1 << 3 << 2 << 4 << 5 << 7 << 6 << 8
+      << 9 << 11 << 10 << 12 << arma::endr;
+
+  // Following values have been calculated using torch.nn.Dropout2d(p=0.2).
+  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << arma::endr;
+  outputsExpected.row(0) = temp;
+  temp << 0 << 0 << 0 << 0 << 0.3842 << 0.6126 << 0.7926 << 1.1205
+      << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  outputsExpected.row(1) = temp;
+  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0 << 0 << 0 << 0
+      << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  outputsExpected.row(2) = temp;
+  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0.3842 << 0.6126
+      << 0.7926 << 1.1205 << 0 << 0 << 0 << 0 << arma::endr;
+  outputsExpected.row(3) = temp;
+  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  outputsExpected.row(4) = temp;
+  temp << 0 << 0 << 0 << 0 << 0.3842 << 0.6126 << 0.7926 << 1.1205
+      << 0 << 0 << 0 << 0 << arma::endr;
+  outputsExpected.row(5) = temp;
+  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0  << arma::endr;
+  outputsExpected.row(6) = temp;
+  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0.3842 << 0.6126 << 0.7926
+      << 1.1205 << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  outputsExpected.row(7) = temp;
+  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << arma::endr;
+  gsExpected.row(0) = temp;
+  temp << 0 << 0 << 0 << 0 << 6.2500 << 8.7500 << 7.5000 << 10.0000
+      << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  gsExpected.row(1) = temp;
+  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 0 << 0 << 0 << 0
+      << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  gsExpected.row(2) = temp;
+  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 6.2500 << 8.7500
+      << 7.5000 << 10.0000 << 0 << 0 << 0 << 0 << arma::endr;
+  gsExpected.row(3) = temp;
+  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  gsExpected.row(4) = temp;
+  temp << 0 << 0 << 0 << 0 << 6.2500 << 8.7500 << 7.5000 << 10.0000
+      << 0 << 0 << 0 << 0 << arma::endr;
+  gsExpected.row(5) = temp;
+  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << arma::endr;
+  gsExpected.row(6) = temp;
+  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 6.2500 << 8.7500 << 7.5000
+      << 10.0000 << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  gsExpected.row(7) = temp;
+
+  input = input.t();
+  gy = gy.t();
+  outputsExpected = outputsExpected.t();
+  gsExpected = gsExpected.t();
+
+  // Compute the Forward and Backward passes and store the results.
+  module.Forward(input, output);
+  module.Backward(input, gy, g);
+
+  // Check through all possible cases, to find a match and then compare results.
+  for (size_t i = 0; i < outputsExpected.n_cols; ++i)
+  {
+    if (arma::approx_equal(outputsExpected.col(i), output, "absdiff", 1e-1))
+    {
+      // Check the correctness of the Forward pass of the layer.
+      CheckMatrices(output, outputsExpected.col(i), 1e-1);
+      // Check the correctness of the Backward pass of the layer.
+      CheckMatrices(g, gsExpected.col(i), 1e-1);
+    }
+  }
+
+  // Check if the output is same as input when using deterministic mode.
+  module.Deterministic() = true;
+  output.clear();
+  module.Forward(input, output);
+  CheckMatrices(output, input, 1e-1);
+}
+
+/**
+ * Test that the function that can access the parameters of the
+ * SpatialDropout layer works.
+ */
+TEST_CASE("SpatialDropoutLayerParametersTest", "[ANNLayerTest]")
+{
+  // Create the layer using the empty constructor.
+  SpatialDropout<> layer;
+
+  // Set the input parameters.
+  layer.Size() = 3;
+  layer.Ratio(0.2);
+
+  // Check whether the input parameters have been set correctly.
+  REQUIRE(layer.Size() == 3);
+  REQUIRE(layer.Ratio() == 0.2);
+}
+
+/**
+ * Simple Positional Encoding layer test.
+ */
+TEST_CASE("SimplePositionalEncodingTest", "[ANNLayerTest]")
+{
+  const size_t seqLength = 5;
+  const size_t embedDim = 4;
+  const size_t batchSize = 2;
+
+  arma::mat input = arma::randu(embedDim * seqLength, batchSize);
+  arma::mat gy = 0.01 * arma::randu(embedDim * seqLength, batchSize);
+  arma::mat output, g;
+
+  PositionalEncoding<> module(embedDim, seqLength);
+
+  // Check Forward function.
+  module.Forward(input, output);
+  arma::mat pe = output - input;
+  CheckMatrices(arma::mean(pe, 1), module.Encoding());
+
+  // Check Backward function.
+  module.Backward(input, gy, g);
+  REQUIRE(std::equal(gy.begin(), gy.end(), g.begin()));
+}
+
+/**
+ * Jacobian test for Positional Encoding layer.
+ */
+TEST_CASE("JacobianPositionalEncodingTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t embedDim = 4;
+    const size_t seqLength = math::RandInt(5, 10);
+    arma::mat input;
+    input.set_size(embedDim * seqLength, 1);
+
+    PositionalEncoding<> module(embedDim, seqLength);
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Simple Multihead Attention test.
+ */
+TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
+{
+  size_t tLen = 5;
+  size_t sLen = tLen;
+  size_t embedDim = 4;
+  size_t numHeads = 2;
+  size_t bsz = 3;
+
+  arma::mat query = 0.1 * arma::randu(embedDim * tLen, bsz);
+  arma::mat output;
+
+  arma::mat attnMask = arma::zeros(tLen, sLen);
+  for (size_t i = 0; i < tLen; ++i)
+  {
+    for (size_t j = 0; j < sLen; ++j)
+    {
+      if (i < j)
+        attnMask(i, j) = std::numeric_limits<double>::lowest();
+    }
+  }
+
+  arma::mat keyPaddingMask = arma::zeros(1, sLen);
+  keyPaddingMask(sLen - 1) = std::numeric_limits<double>::lowest();
+
+  MultiheadAttention<> module(tLen, sLen, embedDim, numHeads);
+  module.AttentionMask() = attnMask;
+  module.KeyPaddingMask() = keyPaddingMask;
+  module.Reset();
+  module.Parameters().randu();
+
+  // Forward test.
+  arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
+
+  module.Forward(input, output);
+  REQUIRE(output.n_rows == embedDim * tLen);
+  REQUIRE(output.n_cols == bsz);
+
+  // Backward test.
+  arma::mat gy = 0.01 * arma::randu(embedDim * tLen, bsz);
+  arma::mat g;
+  module.Backward(input, gy, g);
+  REQUIRE(g.n_rows == input.n_rows);
+  REQUIRE(g.n_cols == input.n_cols);
+
+  // Gradient test.
+  arma::mat error = 0.05 * arma::randu(embedDim * tLen, bsz);
+  arma::mat gradient;
+  module.Gradient(input, error, gradient);
+  REQUIRE(gradient.n_rows == module.Parameters().n_rows);
+  REQUIRE(gradient.n_cols == module.Parameters().n_cols);
+}
+
+/**
+ * Jacobian MultiheadAttention module test.
+ */
+TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
+{
+  // Check when query = key = value.
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
+
+    MultiheadAttention<> module(tgtSeqLen, tgtSeqLen, embedDim, nHeads);
+    module.Parameters().randu();
+
+    double error = CustomJacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+
+  // Check when key = value.
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t srcSeqLen = math::RandInt(2, 5);
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat input = arma::join_cols(arma::join_cols(query, key), key);
+
+    MultiheadAttention<> module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
+    module.Parameters().randu();
+
+    double error = CustomJacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+
+  // Check when query, key and value are not same.
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t srcSeqLen = math::RandInt(2, 5);
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat value = 0.045 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat input = arma::join_cols(arma::join_cols(query, key), value);
+
+    MultiheadAttention<> module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
+    module.Parameters().randu();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Numerical gradient test for MultiheadAttention layer.
+ */
+TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
+{
+  struct GradientFunction
+  {
+    GradientFunction() :
+        tgtSeqLen(2),
+        srcSeqLen(2),
+        embedDim(4),
+        nHeads(2),
+        vocabSize(5),
+        batchSize(2)
+    {
+      input = arma::randu(embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
+      target = arma::zeros(vocabSize, batchSize);
+      for (size_t i = 0; i < target.n_elem; ++i)
+      {
+        const size_t label = mlpack::math::RandInt(1, vocabSize);
+        target(i) = label;
+      }
+
+      attnMask = arma::zeros(tgtSeqLen, srcSeqLen);
+      for (size_t i = 0; i < tgtSeqLen; ++i)
+      {
+        for (size_t j = 0; j < srcSeqLen; ++j)
+        {
+          if (i < j)
+            attnMask(i, j) = std::numeric_limits<double>::lowest();
+        }
+      }
+
+      keyPaddingMask = arma::zeros(1, srcSeqLen);
+      keyPaddingMask(srcSeqLen - 1) = std::numeric_limits<double>::lowest();
+
+      model = new FFN<NegativeLogLikelihood<>, XavierInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      attnModule = new MultiheadAttention<>(tgtSeqLen, srcSeqLen,
+          embedDim, nHeads);
+      attnModule->AttentionMask() = attnMask;
+      attnModule->KeyPaddingMask() = keyPaddingMask;
+      model->Add(attnModule);
+      model->Add<Linear<>>(embedDim * tgtSeqLen, vocabSize);
+      model->Add<LogSoftMax<>>();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, batchSize);
+      model->Gradient(model->Parameters(), 0, gradient, batchSize);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, XavierInitialization>* model;
+    MultiheadAttention<>* attnModule;
+
+    arma::mat input, target, attnMask, keyPaddingMask;
+    const size_t tgtSeqLen;
+    const size_t srcSeqLen;
+    const size_t embedDim;
+    const size_t nHeads;
+    const size_t vocabSize;
+    const size_t batchSize;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 3e-06);
 }

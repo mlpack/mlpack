@@ -13,7 +13,7 @@
 #ifndef MLPACK_BINDINGS_JULIA_PRINT_PARAM_DEFN_HPP
 #define MLPACK_BINDINGS_JULIA_PRINT_PARAM_DEFN_HPP
 
-#include "strip_type.hpp"
+#include <mlpack/bindings/util/strip_type.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -83,7 +83,7 @@ void PrintParamDefn(
   //       Ptr{Nothing}, (Vector{UInt8}, UInt), buffer, length(buffer)))
   // end
 
-  std::string type = StripType(d.cppType);
+  std::string type = util::StripType(d.cppType);
 
   // First, print the import of the struct.
   std::cout << "import ..." << type << std::endl;

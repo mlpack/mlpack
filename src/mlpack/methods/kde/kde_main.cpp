@@ -22,14 +22,18 @@ using namespace mlpack::kde;
 using namespace mlpack::util;
 using namespace std;
 
-// Define parameters for the executable.
-PROGRAM_INFO("Kernel Density Estimation",
-    // Short description.
+// Program Name.
+BINDING_NAME("Kernel Density Estimation");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of kernel density estimation with dual-tree algorithms. "
     "Given a set of reference points and query points and a kernel function, "
     "this can estimate the density function at the location of each query point"
-    " using trees; trees that are built can be saved for later use.",
-    // Long description.
+    " using trees; trees that are built can be saved for later use.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs a Kernel Density Estimation. KDE is a "
     "non-parametric way of estimating probability density function. "
     "For each query point the program will estimate its probability density "
@@ -68,8 +72,10 @@ PROGRAM_INFO("Kernel Density Estimation",
     "computations an exact approach would take, this program recurses the tree "
     "whenever a fraction of the amount of the node's descendant points have "
     "already been computed. This fraction is set using " +
-    PRINT_PARAM_STRING("mc_break_coef") + "."
-    "\n\n"
+    PRINT_PARAM_STRING("mc_break_coef") + ".");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following will run KDE using the data in " +
     PRINT_DATASET("ref_data") + " for training and the data in " +
     PRINT_DATASET("qu_data") + " as query data. It will apply an Epanechnikov "
@@ -108,19 +114,20 @@ PROGRAM_INFO("Kernel Density Estimation",
         0.2, "kernel", "gaussian", "tree", "kd-tree", "rel_error",
         0.05, "predictions", "out_data", "monte_carlo", "", "mc_probability",
         0.95, "initial_sample_size", 200, "mc_entry_coef", 3.5, "mc_break_coef",
-        0.6) +
-    "\n\n",
-    SEE_ALSO("@knn", "#knn"),
-    SEE_ALSO("Kernel density estimation on Wikipedia",
-        "https://en.wikipedia.org/wiki/Kernel_density_estimation"),
-    SEE_ALSO("Tree-Independent Dual-Tree Algorithms",
-             "https://arxiv.org/pdf/1304.4327.pdf"),
-    SEE_ALSO("Fast High-dimensional Kernel Summations Using the Monte Carlo "
-        "Multipole Method", "http://papers.nips.cc/paper/3539-fast-high-"
+        0.6));
+
+// See also...
+BINDING_SEE_ALSO("@knn", "#knn");
+BINDING_SEE_ALSO("Kernel density estimation on Wikipedia",
+        "https://en.wikipedia.org/wiki/Kernel_density_estimation");
+BINDING_SEE_ALSO("Tree-Independent Dual-Tree Algorithms",
+             "https://arxiv.org/pdf/1304.4327.pdf");
+BINDING_SEE_ALSO("Fast High-dimensional Kernel Summations Using the Monte Carlo"
+        " Multipole Method", "http://papers.nips.cc/paper/3539-fast-high-"
         "dimensional-kernel-summations-using-the-monte-carlo-multipole-method."
-        "pdf"),
-    SEE_ALSO("mlpack::kde::KDE C++ class documentation",
-        "@doxygen/classmlpack_1_1kde_1_1KDE.html"));
+        "pdf");
+BINDING_SEE_ALSO("mlpack::kde::KDE C++ class documentation",
+        "@doxygen/classmlpack_1_1kde_1_1KDE.html");
 
 // Required options.
 PARAM_MATRIX_IN("reference", "Input reference dataset use for KDE.", "r");
