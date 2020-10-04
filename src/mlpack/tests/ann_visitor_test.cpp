@@ -99,7 +99,7 @@ TEST_CASE("WeightSizeVisitorTestForWeightNormLayer", "[ANNVisitorTest]")
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
                                            weightNorm);
 
-  REQUIRE(weightSize == randomSize * randomSize + randomSize + 1);
+  REQUIRE(weightSize == weightNorm.Parameters().n_elem);
 }
 
 /**
@@ -114,6 +114,5 @@ TEST_CASE("WeightSizeVisitorTestForLSTMLayer", "[ANNVisitorTest]")
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
                                            lstm);
 
-  REQUIRE(weightSize == 4 * randomSize * randomSize + 7 * randomSize +
-      4 * randomSize * randomSize);
+  REQUIRE(weightSize == lstm.Parameters().n_elem);
 }
