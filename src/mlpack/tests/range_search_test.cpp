@@ -1104,7 +1104,8 @@ TEST_CASE("RangeTrainTest", "[RangeSearchTest]")
     for (size_t j = 0; j < sorted[i].size(); ++j)
     {
       REQUIRE(sorted[i][j].second == baselineSorted[i][j].second);
-      REQUIRE(sorted[i][j].first == Approx(baselineSorted[i][j].first).epsilon(1e-7));
+      REQUIRE(sorted[i][j].first == Approx(baselineSorted[i][j].first).epsilon
+          (1e-7));
     }
   }
 }
@@ -1145,7 +1146,8 @@ TEST_CASE("TrainTreeTest", "[RangeSearchTest]")
     for (size_t j = 0; j < sorted[i].size(); ++j)
     {
       REQUIRE(sorted[i][j].second == baselineSorted[i][j].second);
-      REQUIRE(sorted[i][j].first == Approx(baselineSorted[i][j].first).epsilon(1e-7));
+      REQUIRE(sorted[i][j].first == Approx(baselineSorted[i][j].first).epsilon
+          (1e-7));
     }
   }
 }
@@ -1199,7 +1201,8 @@ TEST_CASE("MoveConstructorMatrixTest", "[RangeSearchTest]")
     for (size_t j = 0; j < sorted[i].size(); ++j)
     {
       REQUIRE(sorted[i][j].second == moveSorted[i][j].second);
-      REQUIRE(sorted[i][j].first == Approx(moveSorted[i][j].first).epsilon(1e-7));
+      REQUIRE(sorted[i][j].first == Approx(moveSorted[i][j].first).epsilon
+          (1e-7));
     }
   }
 }
@@ -1241,7 +1244,8 @@ TEST_CASE("MoveTrainTest", "[RangeSearchTest]")
     for (size_t j = 0; j < sorted[i].size(); ++j)
     {
       REQUIRE(sorted[i][j].second == moveSorted[i][j].second);
-      REQUIRE(sorted[i][j].first == Approx(moveSorted[i][j].first).epsilon(1e-7));
+      REQUIRE(sorted[i][j].first == Approx(moveSorted[i][j].first).epsilon
+          (1e-7));
     }
   }
 }
@@ -1283,7 +1287,7 @@ TEST_CASE("RSModelTest", "[RangeSearchTest]")
   models[26] = RSModel(RSModel::TreeTypes::OCTREE, true);
   models[27] = RSModel(RSModel::TreeTypes::OCTREE, false);
 
-  for (size_t j = 0; j < 2; ++j)
+  for (size_t j = 0; j != 2; ++j)
   {
     // Get a baseline.
     RangeSearch<> rs(referenceData);
@@ -1325,8 +1329,8 @@ TEST_CASE("RSModelTest", "[RangeSearchTest]")
         for (size_t l = 0; l < sorted[k].size(); ++l)
         {
           REQUIRE(sorted[k][l].second == baselineSorted[k][l].second);
-          REQUIRE(sorted[k][l].first == Approx(baselineSorted[k][l].first).epsilon
-              (1e-7));
+          REQUIRE(sorted[k][l].first == Approx(baselineSorted[k][l].first).
+            epsilon(1e-7));
         }
       }
     }
@@ -1369,7 +1373,7 @@ TEST_CASE("RSModelMonochromaticTest", "[RangeSearchTest]")
   models[26] = RSModel(RSModel::TreeTypes::OCTREE, true);
   models[27] = RSModel(RSModel::TreeTypes::OCTREE, false);
 
-  for (size_t j = 0; j < 2; ++j)
+  for (size_t j = 0; j != 2; ++j)
   {
     // Get a baseline.
     RangeSearch<> rs(referenceData);
@@ -1408,8 +1412,8 @@ TEST_CASE("RSModelMonochromaticTest", "[RangeSearchTest]")
         for (size_t l = 0; l < sorted[k].size(); ++l)
         {
           REQUIRE(sorted[k][l].second == baselineSorted[k][l].second);
-          REQUIRE(sorted[k][l].first == Approx(baselineSorted[k][l].first).epsilon
-              (1e-7));
+          REQUIRE(sorted[k][l].first == Approx(baselineSorted[k][l].first).
+            epsilon(1e-7));
         }
       }
     }
