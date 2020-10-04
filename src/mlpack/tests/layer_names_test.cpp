@@ -15,18 +15,15 @@
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer_names.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace ann;
 
-BOOST_AUTO_TEST_SUITE(LayerNamesTest);
-
 /**
  * Test if the LayerNameVisitor works properly.
  */
-BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
+TEST_CASE("LayerNameVisitorTest", "[LayerNamesTest]")
 {
   LayerTypes<> atrousConvolution = new AtrousConvolution<>();
   LayerTypes<> alphaDropout = new AlphaDropout<>();
@@ -63,69 +60,69 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
   // Bilinear interpolation is not yet supported by the string converter.
   LayerTypes<> unsupportedLayer = new BilinearInterpolation<>();
 
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       atrousConvolution) == "atrousconvolution");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       alphaDropout) == "alphadropout");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       batchNorm) == "batchnorm");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       constant) == "constant");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       convolution) == "convolution");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       dropConnect) == "dropconnect");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       dropout) == "dropout");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       flexibleReLU) == "flexiblerelu");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       layerNorm) == "layernorm");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       linear) == "linear");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       linearNoBias) == "linearnobias");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       maxPooling) == "maxpooling");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       meanPooling) == "meanpooling");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       multiplyConstant) == "multiplyconstant");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       reLULayer) == "relu");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       transposedConvolution) == "transposedconvolution");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       identityLayer) == "identity");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       tanHLayer) == "tanh");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       eLU) == "elu");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       hardTanH) == "hardtanh");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       leakyReLU) == "leakyrelu");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       pReLU) == "prelu");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       sigmoidLayer) == "sigmoid");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       logSoftMax) == "logsoftmax");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       unsupportedLayer) == "unsupported");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       lstmLayer) == "lstm");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       creluLayer) == "crelu");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       highwayLayer) == "highway");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       gruLayer) == "gru");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       glimpseLayer) == "glimpse");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       fastlstmLayer) == "fastlstm");
-  BOOST_REQUIRE(boost::apply_visitor(LayerNameVisitor(),
+  REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       weightnormLayer) == "weightnorm");
   // Delete all instances.
   boost::apply_visitor(DeleteVisitor(), atrousConvolution);
@@ -161,5 +158,3 @@ BOOST_AUTO_TEST_CASE(LayerNameVisitorTest)
   boost::apply_visitor(DeleteVisitor(), fastlstmLayer);
   boost::apply_visitor(DeleteVisitor(), weightnormLayer);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -24,9 +24,6 @@ add_executable(mlpack_test
   kde_test.cpp
   krann_search_test.cpp
   ksinit_test.cpp
-  lars_test.cpp
-  layer_names_test.cpp
-  lin_alg_test.cpp
   linear_svm_test.cpp
   lmnn_test.cpp
   local_coordinate_coding_test.cpp
@@ -131,6 +128,9 @@ add_executable(mlpack_catch_test
   kfn_test.cpp
   kmeans_test.cpp
   knn_test.cpp
+  lars_test.cpp
+  layer_names_test.cpp
+  lin_alg_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
   loss_functions_test.cpp
@@ -232,7 +232,6 @@ set(parallel_tests
   "GMMTest;"
   "CFTest;"
   "HMMTest;"
-  "LARSTest;"
   "LogisticRegressionTest;"
   "GmmTrainMainTest;"
   "LinearSVMTest")
