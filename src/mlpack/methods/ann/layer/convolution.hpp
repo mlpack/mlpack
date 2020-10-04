@@ -256,7 +256,7 @@ class Convolution
   //! Get size of weights for the layer.
   size_t WeightSize() const
   {
-    return (outSize * inSize * kernelWidth *kernelHeight) + outSize;
+    return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
   }
 
   /**

@@ -102,8 +102,7 @@ TEST_CASE("WeightSizeVisitorTestForConvLayer", "[ANNVisitorTest]")
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
                                            convLayer);
 
-  REQUIRE(weightSize == (randomOutSize * randomInSize * randomKernelWidth *
-      randomKernelHeight) + randomOutSize);
+  REQUIRE(weightSize == convLayer.Parameters().n_elem);
 }
 
 /**
@@ -118,5 +117,5 @@ TEST_CASE("WeightSizeVisitorTestForBatchNormLayer", "[ANNVisitorTest]")
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
                                            batchNorm);
 
-  REQUIRE(weightSize == 2 * randomSize);
+  REQUIRE(weightSize == batchNorm.Parameters().n_elem);
 }
