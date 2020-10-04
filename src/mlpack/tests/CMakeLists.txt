@@ -7,8 +7,6 @@ add_executable(mlpack_test
   cli_binding_test.cpp
   io_test.cpp
   dcgan_test.cpp
-  det_test.cpp
-  distribution_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp
   fastmks_test.cpp
@@ -113,6 +111,8 @@ add_executable(mlpack_catch_test
   decision_stump_test.cpp
   decision_tree_test.cpp
   hoeffding_tree_test.cpp
+  det_test.cpp
+  distribution_test.cpp
   feedforward_network_test.cpp
   image_load_test.cpp
   imputation_test.cpp
