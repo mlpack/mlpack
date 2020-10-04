@@ -20,7 +20,6 @@ add_executable(mlpack_test
   hyperplane_test.cpp
   init_rules_test.cpp
   kde_test.cpp
-  kernel_svm_test.cpp
   krann_search_test.cpp
   ksinit_test.cpp
   lars_test.cpp
@@ -125,14 +124,11 @@ add_executable(mlpack_catch_test
   distribution_test.cpp
   feedforward_network_test.cpp
   image_load_test.cpp
-<<<<<<< HEAD
   imputation_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
-=======
   kernel_svm_test.cpp
->>>>>>> 553905b4f... Migrating test to catch
   kfn_test.cpp
   kmeans_test.cpp
   knn_test.cpp
