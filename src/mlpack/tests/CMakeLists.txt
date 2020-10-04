@@ -57,10 +57,7 @@ add_executable(mlpack_test
   serialization.cpp
   serialization.hpp
   serialization_test.cpp
-  sfinae_test.cpp
-  sort_policy_test.cpp
   spill_tree_test.cpp
-  string_encoding_test.cpp
   sumtree_test.cpp
   termination_policy_test.cpp
   test_function_tools.hpp
@@ -148,10 +145,13 @@ add_executable(mlpack_catch_test
   scaling_test.cpp
   serialization_catch.cpp
   serialization_catch.hpp
+  sfinae_test.cpp
   softmax_regression_test.cpp
+  sort_policy_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
   split_data_test.cpp
+  string_encoding_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
   svdplusplus_test.cpp
