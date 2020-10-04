@@ -330,7 +330,7 @@ TEST_CASE("BLEUScoreTest", "[MetricTest]")
 
   //! We are not using smoothing function here.
   bleu.Evaluate(referenceCorpus, translationCorpus);
-  REQUIRE(bleu.BLEUScore() == Approx(0.0).epsilon(1e-7));
+  REQUIRE(bleu.BLEUScore() == Approx(0.0).epsilon(1e-5));
   REQUIRE(bleu.BrevityPenalty() == 1.0);
   REQUIRE(bleu.Ratio() == 1.0);
   REQUIRE(bleu.TranslationLength() == 12);
@@ -346,7 +346,7 @@ TEST_CASE("BLEUScoreTest", "[MetricTest]")
 
   //! We will use smoothing function here by setting smooth to true.
   bleu.Evaluate(referenceCorpus, translationCorpus, true);
-  REQUIRE(bleu.BLEUScore() == Approx(0.459307).epsilon(1e-3));
+  REQUIRE(bleu.BLEUScore() == Approx(0.459307).epsilon(1e-5));
   REQUIRE(bleu.BrevityPenalty() == 1.0);
   REQUIRE(bleu.Ratio() == 1.0);
   REQUIRE(bleu.TranslationLength() == 12);
@@ -356,6 +356,6 @@ TEST_CASE("BLEUScoreTest", "[MetricTest]")
   for (size_t i = 0; i < bleu.Precisions().size(); ++i)
   {
     REQUIRE(bleu.Precisions()[i] ==
-            Approx(expectedPrecision[i]).epsilon(1e-5));
+            Approx(expectedPrecision[i]).epsilon(1e-4));
   }
 }
