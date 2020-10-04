@@ -4,8 +4,7 @@ on:
     branches:
       - master
   pull_request_target:
-    branches:
-      - master
+    types: [assigned, opened, synchronize, reopened]
   release:
     types: [published, created, edited]
 name: R CMD check mlpack
