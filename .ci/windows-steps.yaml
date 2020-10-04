@@ -78,6 +78,7 @@ steps:
     msbuildVersion: $(MSBuildVersion)
     configuration: 'Release'
     msbuildArchitecture: 'x64'
+    platform: 'x64'
     msbuildArguments: /m /p:BuildInParallel=true
     maximumCpuCount: false
     clean: false
