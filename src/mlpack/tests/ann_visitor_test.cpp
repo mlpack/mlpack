@@ -98,8 +98,11 @@ TEST_CASE("WeightSizeVisitorTestForWeightNormLayer", "[ANNVisitorTest]")
 
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
                                            weightNorm);
+  arma::mat param;
+  boost::apply_visitor(ParametersVisitor(param),
+                                          weightNorm);
 
-  REQUIRE(weightSize == weightNorm.Parameters().n_elem);
+  REQUIRE(weightSize == param.n_elem);
 }
 
 /**
@@ -113,6 +116,9 @@ TEST_CASE("WeightSizeVisitorTestForLSTMLayer", "[ANNVisitorTest]")
 
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
                                            lstm);
+  arma::mat param;
+  boost::apply_visitor(ParametersVisitor(param),
+                                          lstm);
 
-  REQUIRE(weightSize == lstm.Parameters().n_elem);
+  REQUIRE(weightSize == param.n_elem);
 }
