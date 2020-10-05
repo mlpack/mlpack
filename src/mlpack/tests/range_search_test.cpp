@@ -1074,7 +1074,7 @@ TEST_CASE("EmptySearchTest", "[RangeSearchTest]")
 /**
  * Make sure things work right after Train() is called.
  */
-TEST_CASE("RangeTrainTest", "[RangeSearchTest]")
+TEST_CASE("TrainTest", "[RangeSearchTest]")
 {
   RangeSearch<> empty;
 
