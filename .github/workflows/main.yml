@@ -155,5 +155,6 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check/mlpack.Rcheck/00check.log
-          path: check/mlpack.Rcheck/00install.out
+          path: |
+            check/mlpack.Rcheck/00check.log
+            check/mlpack.Rcheck/00install.out
