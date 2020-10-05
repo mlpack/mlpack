@@ -78,11 +78,15 @@ jobs:
         - name: CMake
           run: |
             mkdir build
-            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=ON ..
+            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_CLI_BINDINGS=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=ON ..
 
         - name: Build
           run: |
-            cd build && make R -j2
+            cd build && make -j2
+
+        - name: Run tests via ctest
+          run: |
+            cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
 
         - name: Upload R packages
           uses: actions/upload-artifact@v2
