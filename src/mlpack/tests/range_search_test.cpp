@@ -1074,7 +1074,7 @@ TEST_CASE("EmptySearchTest", "[RangeSearchTest]")
 /**
  * Make sure things work right after Train() is called.
  */
-TEST_CASE("TrainTest", "[RangeSearchTest]")
+TEST_CASE("RangeSearchTrainTest", "[RangeSearchTest]")
 {
   RangeSearch<> empty;
 
@@ -1448,7 +1448,7 @@ TEST_CASE("NeighborPtrDeleteTest", "[RangeSearchTest]")
 /**
  * Test copy constructor and copy operator.
  */
-TEST_CASE("CopyConstructorAndOperatorTest", "[RangeSearchTest]")
+TEST_CASE("RangeSearchCopyConstructorAndOperatorTest", "[RangeSearchTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   RangeSearch<> rs(std::move(dataset));
@@ -1493,7 +1493,7 @@ TEST_CASE("CopyConstructorAndOperatorTest", "[RangeSearchTest]")
 /**
  * Test move constructor.
  */
-TEST_CASE("MoveConstructorTest", "[RangeSearchTest]")
+TEST_CASE("RangeSearchMoveConstructorTest", "[RangeSearchTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   RangeSearch<>* rs = new RangeSearch<>(std::move(dataset));
@@ -1532,7 +1532,7 @@ TEST_CASE("MoveConstructorTest", "[RangeSearchTest]")
 /**
  * Test move operator.
  */
-TEST_CASE("MoveOperatorTest", "[RangeSearchTest]")
+TEST_CASE("RangeSearchMoveOperatorTest", "[RangeSearchTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
   RangeSearch<>* rs = new RangeSearch<>(std::move(dataset));
