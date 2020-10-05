@@ -78,7 +78,7 @@ jobs:
         - name: CMake
           run: |
             mkdir build
-            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_CLI_BINDINGS=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=ON ..
+            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=ON ..
 
         - name: Build
           run: |
