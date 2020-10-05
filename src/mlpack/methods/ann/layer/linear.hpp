@@ -146,12 +146,6 @@ class Linear
   //! Modify the bias weights of the layer.
   OutputDataType& Bias() { return bias; }
 
-  //! Get the size of the weights.
-  size_t WeightSize() const
-  {
-    return (inSize * outSize) + outSize;
-  }
-
   /**
    * Serialize the layer
    */

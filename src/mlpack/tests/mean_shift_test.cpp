@@ -12,12 +12,14 @@
 
 #include <mlpack/methods/mean_shift/mean_shift.hpp>
 
-#include "test_catch_tools.hpp"
-#include "catch.hpp"
+#include <boost/test/unit_test.hpp>
+#include "test_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::meanshift;
 using namespace mlpack::distribution;
+
+BOOST_AUTO_TEST_SUITE(MeanShiftTest);
 
 // Generate dataset; written transposed because it's easier to read.
 arma::mat meanShiftData("  0.0   0.0;" // Class 1.
@@ -55,7 +57,7 @@ arma::mat meanShiftData("  0.0   0.0;" // Class 1.
 /**
  * 30-point 3-class test case for Mean Shift.
  */
-TEST_CASE("MeanShiftSimpleTest", "[MeanShiftTest]")
+BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest)
 {
   MeanShift<> meanShift;
 
@@ -68,29 +70,29 @@ TEST_CASE("MeanShiftSimpleTest", "[MeanShiftTest]")
   size_t firstClass = assignments(0);
 
   for (size_t i = 1; i < 13; ++i)
-    REQUIRE(assignments(i) == firstClass);
+    BOOST_REQUIRE_EQUAL(assignments(i), firstClass);
 
   size_t secondClass = assignments(13);
 
   // To ensure that class 1 != class 2.
-  REQUIRE(firstClass != secondClass);
+  BOOST_REQUIRE_NE(firstClass, secondClass);
 
   for (size_t i = 13; i < 20; ++i)
-    REQUIRE(assignments(i) == secondClass);
+    BOOST_REQUIRE_EQUAL(assignments(i), secondClass);
 
   size_t thirdClass = assignments(20);
 
   // To ensure that this is the third class which we haven't seen yet.
-  REQUIRE(firstClass != thirdClass);
-  REQUIRE(secondClass != thirdClass);
+  BOOST_REQUIRE_NE(firstClass, thirdClass);
+  BOOST_REQUIRE_NE(secondClass, thirdClass);
 
   for (size_t i = 20; i < 30; ++i)
-    REQUIRE(assignments(i) == thirdClass);
+    BOOST_REQUIRE_EQUAL(assignments(i), thirdClass);
 }
 
 // Generate samples from four Gaussians, and make sure mean shift nearly
 // recovers those four centers.
-TEST_CASE("GaussianClustering", "[MeanShiftTest]")
+BOOST_AUTO_TEST_CASE(GaussianClustering)
 {
   GaussianDistribution g1("0.0 0.0 0.0", arma::eye<arma::mat>(3, 3));
   GaussianDistribution g2("5.0 5.0 5.0", 2 * arma::eye<arma::mat>(3, 3));
@@ -160,5 +162,7 @@ TEST_CASE("GaussianClustering", "[MeanShiftTest]")
       break;
   }
 
-  REQUIRE(success == true);
+  BOOST_REQUIRE_EQUAL(success, true);
 }
+
+BOOST_AUTO_TEST_SUITE_END();

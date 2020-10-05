@@ -13,9 +13,8 @@
 #include <mlpack/methods/random_forest/random_forest.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 
-#include "serialization_catch.hpp"
-#include "test_catch_tools.hpp"
 #include "catch.hpp"
+#include "serialization.hpp"
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;

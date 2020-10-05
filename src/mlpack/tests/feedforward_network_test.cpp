@@ -148,10 +148,10 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
   model1->Add<Linear<> >(8, 3);
   model1->Add<LogSoftMax<> >();
 
-  // Check whether copy constructor is working or not.
+  // Check whether copy cpnstructor is working or not.
   CheckCopyFunction<>(model, trainData, trainLabels, 1);
 
-  // Check whether move constructor is working or not.
+  // Check whether move cpnstructor is working or not.
   CheckMoveFunction<>(model1, trainData, trainLabels, 1);
 }
 
@@ -489,7 +489,7 @@ TEST_CASE("FFNMiscTest", "[FeedForwardNetworkTest]")
   auto copiedModel(model);
   copiedModel = model;
   auto movedModel(std::move(model));
-  auto moveOperator = std::move(copiedModel);
+  movedModel = std::move(copiedModel);
 }
 
 /**
@@ -764,7 +764,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   model.Add<Linear<> >(8, 3);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.2);
+  TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -796,5 +796,5 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear<> >(140, 2);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.2);
+  TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
 }
