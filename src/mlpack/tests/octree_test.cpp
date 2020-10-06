@@ -298,7 +298,7 @@ TEST_CASE("CopyConstructorTest", "[OctreeTest]")
 /**
  * Test the move constructor.
  */
-TEST_CASE("MoveConstructorTest", "[OctreeTest]")
+TEST_CASE("OcTreeTestMoveConstructorTest", "[OctreeTest]")
 {
   // Use a small random dataset.
   arma::mat dataset(3, 100, arma::fill::randu);
