@@ -299,7 +299,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "ModelCheck",
   CheckMatrices(distances, distancetemp);
 
   REQUIRE(ModelToString(outputModel) ==
-                      ModelToString(IO::GetParam<RSModel*>("output_model")));
+          ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
@@ -357,7 +357,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "LeafValueTesting",
     CheckMatrices(distances, distancestemp);
 
     REQUIRE(ModelToString(outputModel1) !=
-                     ModelToString(IO::GetParam<RSModel*>("output_model")));
+            ModelToString(IO::GetParam<RSModel*>("output_model")));
 
     if (i != leafSizes.size() - 1)
       delete IO::GetParam<RSModel*>("output_model");
@@ -431,7 +431,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "TreeTypeTesting",
     CheckMatrices(neighbors, neighborsTemp);
     CheckMatrices(distances, distancestemp);
     REQUIRE(ModelToString(outputModel1) !=
-                     ModelToString(IO::GetParam<RSModel*>("output_model")));
+            ModelToString(IO::GetParam<RSModel*>("output_model")));
 
     if (i != trees.size() - 1)
       delete IO::GetParam<RSModel*>("output_model");
@@ -480,7 +480,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RandomBasisTesting",
   mlpackMain();
 
   REQUIRE(ModelToString(outputModel) !=
-                   ModelToString(IO::GetParam<RSModel*>("output_model")));
+          ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   delete outputModel;
 
@@ -535,7 +535,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "NaiveModeTest",
   CheckMatrices(distances, distancestemp);
 
   REQUIRE(ModelToString(outputModel) !=
-                   ModelToString(IO::GetParam<RSModel*>("output_model")));
+          ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   delete outputModel;
 
@@ -589,7 +589,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "SingleModeTest",
   CheckMatrices(neighbors, neighborsTemp);
   CheckMatrices(distances, distancestemp);
   REQUIRE(ModelToString(outputModel) !=
-                   ModelToString(IO::GetParam<RSModel*>("output_model")));
+          ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   delete outputModel;
 
