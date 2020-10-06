@@ -61,10 +61,10 @@ inline std::string PrintValue(const T& value, bool quotes)
 {
   std::ostringstream oss;
   if (quotes)
-    oss << "\"";
+    oss << "`";
   oss << value;
   if (quotes)
-    oss << "\"";
+    oss << "`";
   return oss.str();
 }
 
@@ -76,7 +76,7 @@ inline std::string PrintValue(const std::vector<T>& value, bool quotes)
 {
   std::ostringstream oss;
   if (quotes)
-    oss << "\"";
+    oss << "`";
   oss << "c(";
   if (value.size() > 0)
   {
@@ -86,7 +86,7 @@ inline std::string PrintValue(const std::vector<T>& value, bool quotes)
   }
   oss << ")";
   if (quotes)
-    oss << "\"";
+    oss << "`";
   return oss.str();
 }
 
@@ -229,7 +229,9 @@ std::string ProgramCall(const bool markdown,
 
   // Find out if we have any output options first.
   std::ostringstream ossOutput;
-  oss << "output <- ";
+  ossOutput << PrintOutputOptions(markdown, args...);
+  if (ossOutput.str() != "")
+    oss << "output <- ";
   oss << programName << "(";
 
   // Now process each input option.
@@ -330,7 +332,7 @@ inline std::string ProgramCall(const std::string& programName)
  */
 inline std::string PrintModel(const std::string& modelName)
 {
-  return "\"" + modelName + "\"";
+  return "`" + modelName + "`";
 }
 
 /**
@@ -339,7 +341,7 @@ inline std::string PrintModel(const std::string& modelName)
  */
 inline std::string PrintDataset(const std::string& datasetName)
 {
-  return "\"" + datasetName + "\"";
+  return "`" + datasetName + "`";
 }
 
 /**
@@ -357,7 +359,7 @@ inline std::string ProgramCallClose()
 inline std::string ParamString(const std::string& paramName)
 {
   // For a R binding we don't need to know the type.
-  return "\"" + paramName + "\"";
+  return "`" + paramName + "`";
 }
 
 /**
