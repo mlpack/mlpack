@@ -1287,7 +1287,7 @@ TEST_CASE("RSModelTest", "[RangeSearchTest]")
   models[26] = RSModel(RSModel::TreeTypes::OCTREE, true);
   models[27] = RSModel(RSModel::TreeTypes::OCTREE, false);
 
-  for (size_t j = 0; j != 2; ++j)
+  for (size_t j = 0; j < 3; ++j)
   {
     // Get a baseline.
     RangeSearch<> rs(referenceData);
@@ -1373,7 +1373,7 @@ TEST_CASE("RSModelMonochromaticTest", "[RangeSearchTest]")
   models[26] = RSModel(RSModel::TreeTypes::OCTREE, true);
   models[27] = RSModel(RSModel::TreeTypes::OCTREE, false);
 
-  for (size_t j = 0; j != 2; ++j)
+  for (size_t j = 0; j < 3; ++j)
   {
     // Get a baseline.
     RangeSearch<> rs(referenceData);
