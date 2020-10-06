@@ -522,7 +522,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRandSVDTest)
  */
 BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRegSVDTest)
 {
-  GetRecommendationsAllUsers<RegSVDPolicy>();
+  //GetRecommendationsAllUsers<RegSVDPolicy>();
 }
 
 /**
