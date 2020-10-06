@@ -4,8 +4,6 @@ add_executable(mlpack_test
   augmented_rnns_tasks_test.cpp
   callback_test.cpp
   cf_test.cpp
-  cli_binding_test.cpp
-  io_test.cpp
   cosine_tree_test.cpp
   dcgan_test.cpp
   drusilla_select_test.cpp
@@ -115,6 +113,7 @@ add_executable(mlpack_catch_test
   bias_svd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
+  cli_binding_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
   cv_test.cpp
@@ -127,6 +126,7 @@ add_executable(mlpack_catch_test
   feedforward_network_2_test.cpp
   image_load_test.cpp
   imputation_test.cpp
+  io_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
