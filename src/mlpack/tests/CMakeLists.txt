@@ -4,11 +4,7 @@ add_executable(mlpack_test
   augmented_rnns_tasks_test.cpp
   callback_test.cpp
   cf_test.cpp
-  cli_binding_test.cpp
-  io_test.cpp
   dcgan_test.cpp
-  det_test.cpp
-  distribution_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp
   fastmks_test.cpp
@@ -30,12 +26,10 @@ add_executable(mlpack_test
   local_coordinate_coding_test.cpp
   log_test.cpp
   logistic_regression_test.cpp
-  loss_functions_test.cpp
   lsh_test.cpp
   math_test.cpp
   matrix_completion_test.cpp
   maximal_inputs_test.cpp
-  mean_shift_test.cpp
   metric_test.cpp
   mlpack_test.cpp
   mock_categorical_data.hpp
@@ -55,9 +49,6 @@ add_executable(mlpack_test
   serialization.cpp
   serialization.hpp
   serialization_test.cpp
-  sfinae_test.cpp
-  sort_policy_test.cpp
-  string_encoding_test.cpp
   termination_policy_test.cpp
   test_function_tools.hpp
   test_tools.hpp
@@ -83,7 +74,6 @@ add_executable(mlpack_test
   main_tests/local_coordinate_coding_test.cpp
   main_tests/logistic_regression_test.cpp
   main_tests/lsh_test.cpp
-  main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
   main_tests/nmf_test.cpp
   main_tests/perceptron_test.cpp
@@ -108,6 +98,7 @@ add_executable(mlpack_catch_test
   bias_svd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
+  cli_binding_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
   cosine_tree_test.cpp
@@ -115,10 +106,13 @@ add_executable(mlpack_catch_test
   dbscan_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
-  hoeffding_tree_test.cpp
+  det_test.cpp
+  distribution_test.cpp
   feedforward_network_test.cpp
+  hoeffding_tree_test.cpp
   image_load_test.cpp
   imputation_test.cpp
+  io_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
@@ -127,7 +121,10 @@ add_executable(mlpack_catch_test
   knn_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
+  loss_functions_test.cpp
   main.cpp
+  mean_shift_test.cpp
+  nca_test.cpp
   octree_test.cpp
   one_hot_encoding_test.cpp
   pca_test.cpp
@@ -139,11 +136,14 @@ add_executable(mlpack_catch_test
   scaling_test.cpp
   serialization_catch.cpp
   serialization_catch.hpp
+  sfinae_test.cpp
   softmax_regression_test.cpp
+  sort_policy_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
   spill_tree_test.cpp
   split_data_test.cpp
+  string_encoding_test.cpp
   sumtree_test.cpp
   svd_batch_test.cpp
   svd_incremental_test.cpp
@@ -166,6 +166,7 @@ add_executable(mlpack_catch_test
   main_tests/kmeans_test.cpp
   main_tests/knn_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/mean_shift_test.cpp
   main_tests/nca_test.cpp
   main_tests/pca_test.cpp
   main_tests/preprocess_binarize_test.cpp
