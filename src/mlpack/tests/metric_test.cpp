@@ -39,10 +39,10 @@ TEST_CASE("L1MetricTest", "[MetricTest]")
   ManhattanDistance lMetric;
 
   REQUIRE((double) arma::accu(arma::abs(a1 - b1)) ==
-          Approx(lMetric.Evaluate(a1, b1)).epsilon(1e-7));
+      Approx(lMetric.Evaluate(a1, b1)).epsilon(1e-7));
 
   REQUIRE((double) arma::accu(arma::abs(a2 - b2)) ==
-          Approx(lMetric.Evaluate(a2, b2)).epsilon(1e-7));
+      Approx(lMetric.Evaluate(a2, b2)).epsilon(1e-7));
 }
 
 /**
@@ -65,10 +65,10 @@ TEST_CASE("L2MetricTest", "[MetricTest]")
   EuclideanDistance lMetric;
 
   REQUIRE((double) sqrt(arma::accu(arma::square(a1 - b1))) ==
-          Approx(lMetric.Evaluate(a1, b1)).epsilon(1e-7));
+      Approx(lMetric.Evaluate(a1, b1)).epsilon(1e-7));
 
   REQUIRE((double) sqrt(arma::accu(arma::square(a2 - b2))) ==
-          Approx(lMetric.Evaluate(a2, b2)).epsilon(1e-7));
+      Approx(lMetric.Evaluate(a2, b2)).epsilon(1e-7));
 }
 
 /**
@@ -91,10 +91,10 @@ TEST_CASE("LINFMetricTest", "[MetricTest]")
   ChebyshevDistance lMetric;
 
   REQUIRE((double) arma::as_scalar(arma::max(arma::abs(a1 - b1))) ==
-          Approx(lMetric.Evaluate(a1, b1)).epsilon(1e-7));
+      Approx(lMetric.Evaluate(a1, b1)).epsilon(1e-7));
 
   REQUIRE((double) arma::as_scalar(arma::max(arma::abs(a2 - b2))) ==
-          Approx(lMetric.Evaluate(a2, b2)).epsilon(1e-7));
+      Approx(lMetric.Evaluate(a2, b2)).epsilon(1e-7));
 }
 
 /**
@@ -114,13 +114,13 @@ TEST_CASE("IoUMetricTest", "[MetricTest]")
   bbox2 << 54 << 66 << 198 << 114;
   // Value calculated using Python interpreter.
   REQUIRE(IoU<true>::Evaluate(bbox1, bbox2) ==
-          Approx(0.7980093).epsilon(1e-6));
+      Approx(0.7980093).epsilon(1e-6));
 
   bbox1 << 31 << 69 << 201 << 125;
   bbox2 << 18 << 63 << 235 << 135;
   // Value calculated using Python interpreter.
   REQUIRE(IoU<true>::Evaluate(bbox1, bbox2) ==
-          Approx(0.612479577).epsilon(1e-6));
+      Approx(0.612479577).epsilon(1e-6));
 
   // Use hieght - width representation of bounding boxes.
   // Bounding boxes represent {x0, y0, h, w}.
@@ -341,7 +341,7 @@ TEST_CASE("BLEUScoreTest", "[MetricTest]")
   for (size_t i = 0; i < bleu.Precisions().size(); ++i)
   {
     REQUIRE(bleu.Precisions()[i] ==
-            Approx((double)expectedPrecision[i]).epsilon(1e-4));
+        Approx((double)expectedPrecision[i]).epsilon(1e-4));
   }
 
   //! We will use smoothing function here by setting smooth to true.
@@ -356,6 +356,6 @@ TEST_CASE("BLEUScoreTest", "[MetricTest]")
   for (size_t i = 0; i < bleu.Precisions().size(); ++i)
   {
     REQUIRE(bleu.Precisions()[i] ==
-            Approx(expectedPrecision[i]).epsilon(1e-4));
+        Approx(expectedPrecision[i]).epsilon(1e-4));
   }
 }
