@@ -116,6 +116,8 @@ set(SOURCES
   celu_impl.hpp
   softshrink.hpp
   softshrink_impl.hpp
+  softmin.hpp
+  softmin_impl.hpp
 )
 
 # Add directory name to sources.
