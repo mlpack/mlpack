@@ -94,6 +94,16 @@ class SAC
       EnvironmentType environment = EnvironmentType());
 
   /**
+   * Delete copy constructor.
+   */
+  SAC(SAC const&) = delete;
+
+  /**
+   * Enable move constructor by default.
+   */
+  SAC(SAC&&) = default;
+
+  /**
     * Clean memory.
     */
   ~SAC();
