@@ -42,7 +42,7 @@ std::string GetBindingName(const std::string& language,
     // For Go bindings, the name is unchanged.
     return name;
   }
-  else if (language == "r")
+  else if (language == "r-binding")
   {
     // For R bindings, the name is unchanged.
     return name;

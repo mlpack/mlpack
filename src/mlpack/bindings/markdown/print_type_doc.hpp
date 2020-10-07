@@ -48,7 +48,7 @@ std::string PrintTypeDoc(util::ParamData& data)
   {
     return go::PrintTypeDoc<typename std::remove_pointer<T>::type>(data);
   }
-  else if (BindingInfo::Language() == "r")
+  else if (BindingInfo::Language() == "r-binding")
   {
     return r::PrintTypeDoc<typename std::remove_pointer<T>::type>(data);
   }
