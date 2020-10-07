@@ -202,7 +202,7 @@ TEST_CASE("AdjR2ScoreTest", "[CVTest]")
   X << 1 << 2 << 3 << 4 << 5 << 6 << arma::endr
     << 2 << 3 << 4 << 5 << 6 << 7 << arma::endr;
   arma::rowvec Y;
-  y << 3 << 5 << 7 << 9 << 11 << 13;
+  Y << 3 << 5 << 7 << 9 << 11 << 13;
   
   LinearRegression lr(X, Y);
   
