@@ -63,67 +63,67 @@ TEST_CASE("LayerNameVisitorTest", "[LayerNamesTest]")
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
       atrousConvolution) == "atrousconvolution");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      alphaDropout) == "alphadropout");
+      alphaDropout) == "alphadropout");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      batchNorm) == "batchnorm");
+      batchNorm) == "batchnorm");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      constant) == "constant");
+      constant) == "constant");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      convolution) == "convolution");
+      convolution) == "convolution");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      dropConnect) == "dropconnect");
+      dropConnect) == "dropconnect");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      dropout) == "dropout");
+      dropout) == "dropout");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      flexibleReLU) == "flexiblerelu");
+      flexibleReLU) == "flexiblerelu");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      layerNorm) == "layernorm");
+      layerNorm) == "layernorm");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      linear) == "linear");
+      linear) == "linear");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      linearNoBias) == "linearnobias");
+      linearNoBias) == "linearnobias");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      maxPooling) == "maxpooling");
+      maxPooling) == "maxpooling");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      meanPooling) == "meanpooling");
+      meanPooling) == "meanpooling");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      multiplyConstant) == "multiplyconstant");
+      multiplyConstant) == "multiplyconstant");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      reLULayer) == "relu");
+      reLULayer) == "relu");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      transposedConvolution) == "transposedconvolution");
+      transposedConvolution) == "transposedconvolution");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      identityLayer) == "identity");
+      identityLayer) == "identity");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      tanHLayer) == "tanh");
+      tanHLayer) == "tanh");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      eLU) == "elu");
+      eLU) == "elu");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      hardTanH) == "hardtanh");
+      hardTanH) == "hardtanh");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      leakyReLU) == "leakyrelu");
+      leakyReLU) == "leakyrelu");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      pReLU) == "prelu");
+      pReLU) == "prelu");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      sigmoidLayer) == "sigmoid");
+      sigmoidLayer) == "sigmoid");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      logSoftMax) == "logsoftmax");
+      logSoftMax) == "logsoftmax");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      unsupportedLayer) == "unsupported");
+      unsupportedLayer) == "unsupported");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      lstmLayer) == "lstm");
+      lstmLayer) == "lstm");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      creluLayer) == "crelu");
+      creluLayer) == "crelu");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      highwayLayer) == "highway");
+      highwayLayer) == "highway");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      gruLayer) == "gru");
+      gruLayer) == "gru");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      glimpseLayer) == "glimpse");
+      glimpseLayer) == "glimpse");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      fastlstmLayer) == "fastlstm");
+      fastlstmLayer) == "fastlstm");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      weightnormLayer) == "weightnorm");
+      weightnormLayer) == "weightnorm");
   // Delete all instances.
   boost::apply_visitor(DeleteVisitor(), atrousConvolution);
   boost::apply_visitor(DeleteVisitor(), alphaDropout);

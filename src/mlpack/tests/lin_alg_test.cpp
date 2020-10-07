@@ -49,11 +49,13 @@ TEST_CASE("TestCenterA", "[LinAlgTest]")
   //  [-6 -3  0  3  6 ]
   //  [-8 -4  0  4  8]]
   for (int row = 0; row < 5; row++)
+  {
     for (int col = 0; col < 5; col++)
     {
       REQUIRE(tmp_out(row, col) ==
           Approx((double) (col - 2) * row).epsilon(1e-7));
     }
+  }
 }
 
 TEST_CASE("TestCenterB", "[LinAlgTest]")
@@ -75,11 +77,13 @@ TEST_CASE("TestCenterB", "[LinAlgTest]")
   //  [-7.5 -4.5 -1.5 1.5 1.5 4.5]
   //  [-10  -6   -2   2   6   10 ]]
   for (int row = 0; row < 5; row++)
+  {
     for (int col = 0; col < 6; col++)
     {
       REQUIRE(tmp_out(row, col) ==
           Approx((double) (col - 2.5) * row).epsilon(1e-7));
     }
+  }
 }
 
 TEST_CASE("TestOrthogonalize", "[LinAlgTest]")

@@ -36,7 +36,8 @@ void LARSVerifyCorrectness(arma::vec beta, arma::vec errCorr, double lambda)
     if (beta(j) == 0)
     {
       // Make sure that |errCorr(j)| <= lambda.
-      REQUIRE(std::max(fabs(errCorr(j)) - lambda, 0.0) == Approx(0.0).margin(tol));
+      REQUIRE(std::max(fabs(errCorr(j)) - lambda, 0.0) ==
+          Approx(0.0).margin(tol));
     }
     else if (beta(j) < 0)
     {
