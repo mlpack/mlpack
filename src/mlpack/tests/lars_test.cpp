@@ -187,7 +187,7 @@ TEST_CASE("PredictTest", "[LARSTest]")
           if (std::abs(betaOptPred[i]) < 1e-5)
             REQUIRE(adjPred[i] == Approx(0.0).margin(1e-5));
           else
-            REQUIRE(adjPred[i] == Approx( betaOptPred[i]).epsilon(1e-7));
+            REQUIRE(adjPred[i] == Approx(betaOptPred[i]).epsilon(1e-7));
         }
       }
     }
@@ -219,7 +219,7 @@ TEST_CASE("PredictRowMajorTest", "[LARSTest]")
     if (std::abs(colMajorPred[i]) < 1e-5)
       REQUIRE(rowMajorPred[i] == Approx(0.0).margin(1e-5));
     else
-      REQUIRE(colMajorPred[i] == Approx( rowMajorPred[i]).epsilon(1e-7));
+      REQUIRE(colMajorPred[i] == Approx(rowMajorPred[i]).epsilon(1e-7));
   }
 }
 
@@ -296,7 +296,7 @@ TEST_CASE("TrainingAndAccessingBetaTest", "[LARSTest]")
 
   REQUIRE(beta.n_elem == lars2.Beta().n_elem);
   for (size_t i = 0; i < beta.n_elem; ++i)
-    REQUIRE(beta[i] == Approx( lars2.Beta()[i]).epsilon(1e-7));
+    REQUIRE(beta[i] == Approx(lars2.Beta()[i]).epsilon(1e-7));
 }
 
 /**
@@ -318,7 +318,7 @@ TEST_CASE("TrainingConstructorWithDefaultsTest", "[LARSTest]")
 
   REQUIRE(beta.n_elem == lars2.Beta().n_elem);
   for (size_t i = 0; i < beta.n_elem; ++i)
-    REQUIRE(beta[i] == Approx( lars2.Beta()[i]).epsilon(1e-7));
+    REQUIRE(beta[i] == Approx(lars2.Beta()[i]).epsilon(1e-7));
 }
 
 /**
@@ -345,7 +345,7 @@ TEST_CASE("TrainingConstructorWithNonDefaultsTest", "[LARSTest]")
 
   REQUIRE(beta.n_elem == lars2.Beta().n_elem);
   for (size_t i = 0; i < beta.n_elem; ++i)
-    REQUIRE(beta[i] == Approx( lars2.Beta()[i]).epsilon(1e-7));
+    REQUIRE(beta[i] == Approx(lars2.Beta()[i]).epsilon(1e-7));
 }
 
 /**

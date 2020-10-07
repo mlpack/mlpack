@@ -61,7 +61,7 @@ TEST_CASE("LayerNameVisitorTest", "[LayerNamesTest]")
   LayerTypes<> unsupportedLayer = new BilinearInterpolation<>();
 
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
-                      atrousConvolution) == "atrousconvolution");
+      atrousConvolution) == "atrousconvolution");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
                       alphaDropout) == "alphadropout");
   REQUIRE(boost::apply_visitor(LayerNameVisitor(),
