@@ -691,7 +691,7 @@ class CallForVersion : public Success {
         : CallForVersion("This should be caught in your main function, see examples", ExitCodes::Success) {}
 };
 
-/// Does not output a diagnostic in CLI11_PARSE, but allows to return from main() with a specific error code.
+/// Does not output a diagnostic in CLI11_PARSE, but allows main() to return with a specific error code.
 class RuntimeError : public ParseError {
     CLI11_ERROR_DEF(ParseError, RuntimeError)
     explicit RuntimeError(int exit_code = 1) : RuntimeError("Runtime error", exit_code) {}

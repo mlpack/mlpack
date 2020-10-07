@@ -16,7 +16,7 @@
 
 #include <mlpack/core/util/hyphenate_string.hpp>
 #include "strip_type.hpp"
-#include "camel_case.hpp"
+#include <mlpack/bindings/util/camel_case.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -28,7 +28,7 @@ namespace go {
 inline std::string GetBindingName(const std::string& bindingName)
 {
   // No modification is needed to the name---we just use it as-is.
-  return CamelCase(bindingName, false) + "()";
+  return util::CamelCase(bindingName, false) + "()";
 }
 
 /**
@@ -149,7 +149,7 @@ std::string PrintOptionalInputs(const std::string& paramName,
     util::ParamData& d = IO::Parameters()[paramName];
     if (d.input && !d.required)
     {
-      std::string goParamName = CamelCase(paramName, false);
+      std::string goParamName = util::CamelCase(paramName, false);
 
       // Print the input option.
       std::ostringstream oss;
@@ -358,7 +358,7 @@ template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args)
 {
   std::string result = "";
-  std::string goProgramName = CamelCase(programName, false);
+  std::string goProgramName = util::CamelCase(programName, false);
 
   // Initialize the method parameter structure
   std::ostringstream oss;
@@ -421,7 +421,7 @@ inline std::string PrintDataset(const std::string& datasetName)
 inline std::string ProgramCall(const std::string& programName)
 {
   std::ostringstream oss;
-  std::string goProgramName = CamelCase(programName, false);
+  std::string goProgramName = util::CamelCase(programName, false);
 
   std::ostringstream ossInital;
   // Determine if we have any output options.
@@ -449,7 +449,7 @@ inline std::string ProgramCall(const std::string& programName)
     if (it->second.input && !it->second.required && !it->second.persistent)
     {
       // Print the input option.
-      ossInputs << "param." << CamelCase(it->second.name, false) << " = ";
+      ossInputs << "param." << util::CamelCase(it->second.name, false) << " = ";
       std::string value;
       IO::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
           it->second, NULL, (void*) &value);
@@ -490,9 +490,9 @@ inline std::string ProgramCall(const std::string& programName)
   for (auto i = parameters.begin(); i != parameters.end(); ++i)
   {
     if (i->second.input && i->second.required && i != parameters.end())
-      ossOutputs << CamelCase(i->second.name, true) << ", ";
+      ossOutputs << util::CamelCase(i->second.name, true) << ", ";
     else if (i == parameters.end())
-      ossOutputs << CamelCase(i->second.name, true);
+      ossOutputs << util::CamelCase(i->second.name, true);
   }
   if (param != "")
     ossOutputs << "param";
@@ -521,7 +521,7 @@ inline std::string ProgramCallClose()
 inline std::string ParamString(const std::string& paramName)
 {
   // For a Go binding we don't need to know the type.
-  return "\"" + CamelCase(paramName, false) + "\"";
+  return "\"" + util::CamelCase(paramName, false) + "\"";
 }
 
 /**

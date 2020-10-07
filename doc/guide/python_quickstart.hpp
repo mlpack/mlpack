@@ -32,9 +32,9 @@ build and install mlpack.  You can copy-paste the commands into your shell.
 @code{.sh}
 sudo apt-get install libboost-all-dev g++ cmake libarmadillo-dev python-pip wget
 sudo pip install cython setuptools distutils numpy pandas
-wget https://www.mlpack.org/files/mlpack-3.2.2.tar.gz
-tar -xvzpf mlpack-3.2.2.tar.gz
-mkdir -p mlpack-3.2.2/build/ && cd mlpack-3.2.2/build/
+wget https://www.mlpack.org/files/mlpack-3.4.1.tar.gz
+tar -xvzpf mlpack-3.4.1.tar.gz
+mkdir -p mlpack-3.4.1/build/ && cd mlpack-3.4.1/build/
 cmake ../ && make -j4 && sudo make install
 @endcode
 

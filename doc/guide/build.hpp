@@ -30,7 +30,7 @@ to build mlpack on Windows, see \ref build_windows (alternatively, you can read
 is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">mlpack-3.2.2</a>
+<a href="https://www.mlpack.org/files/mlpack-3.4.1.tar.gz">mlpack-3.4.1</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -38,9 +38,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget https://www.mlpack.org/files/mlpack-3.2.2.tar.gz
-$ tar -xvzpf mlpack-3.2.2.tar.gz
-$ mkdir mlpack-3.2.2/build && cd mlpack-3.2.2/build
+$ wget https://www.mlpack.org/files/mlpack-3.4.1.tar.gz
+$ tar -xvzpf mlpack-3.4.1.tar.gz
+$ mkdir mlpack-3.4.1/build && cd mlpack-3.4.1/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -65,8 +65,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.2.2.tar.gz
-$ cd mlpack-3.2.2
+$ tar -xvzpf mlpack-3.4.1.tar.gz
+$ cd mlpack-3.4.1
 $ mkdir build
 @endcode
 
@@ -100,8 +100,8 @@ installed through apt:
 
 @code
 # apt-get install libboost-math-dev libboost-test-dev libboost-serialization-dev
-  libarmadillo-dev binutils-dev python-pandas python-numpy cython
-  python-setuptools
+  libarmadillo-dev binutils-dev python3-pandas python3-numpy cython3
+  python3-setuptools
 @endcode
 
 If you are using Ubuntu 19.10 or newer, you can also install @c libensmallen-dev
@@ -123,7 +123,7 @@ On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
 # dnf install boost-devel boost-test boost-math armadillo-devel binutils-devel 
-  python2-Cython python2-setuptools python2-numpy python2-pandas ensmallen-devel 
+  python3-Cython python3-setuptools python3-numpy python3-pandas ensmallen-devel 
   stbi-devel
 @endcode
 

@@ -19,8 +19,8 @@ static const std::string testName = "Kmeans";
 #include "test_helper.hpp"
 #include <mlpack/methods/kmeans/kmeans_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -46,22 +46,21 @@ void ResetKmSettings()
   IO::RestoreSettings(testName);
 }
 
-BOOST_FIXTURE_TEST_SUITE(KmeansMainTest, KmTestFixture);
-
 /**
  * Checking that number of Clusters are non negative
  */
-BOOST_AUTO_TEST_CASE(NonNegativeClustersTest)
+TEST_CASE_METHOD(KmTestFixture, "NonNegativeClustersTest",
+                 "[KmeansMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("clusters", (int) -1); // Invalid
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -69,7 +68,8 @@ BOOST_AUTO_TEST_CASE(NonNegativeClustersTest)
 /**
  * Checking that initial centroids are provided if clusters are to be auto detected
  */
-BOOST_AUTO_TEST_CASE(AutoDetectClusterTest)
+TEST_CASE_METHOD(KmTestFixture, "AutoDetectClusterTest",
+                 "[KmeansMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 4;
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(AutoDetectClusterTest)
   SetInputParam("clusters", (int) 0); // Invalid
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -88,13 +88,14 @@ BOOST_AUTO_TEST_CASE(AutoDetectClusterTest)
 /**
  * Checking that percentage is between 0 and 1 when --refined_start is specified
 */
-BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
+TEST_CASE_METHOD(KmTestFixture, "RefinedStartPercentageTest",
+                 "[KmeansMainTest][BindingTests]")
 {
   int c = 2;
   double P = 2.0;
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("refined_start", true);
@@ -102,7 +103,7 @@ BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
   SetInputParam("percentage", std::move(P));     // Invalid
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -110,13 +111,14 @@ BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
 /**
  * Checking percentage is non-negative when --refined_start is specified
  */
-BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
+TEST_CASE_METHOD(KmTestFixture, "NonNegativePercentageTest",
+                 "[KmeansMainTest][BindingTests]")
 {
   int c = 2;
   double P = -1.0;
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
   SetInputParam("refined_start", true);
@@ -124,7 +126,7 @@ BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
   SetInputParam("percentage", P);     // Invalid
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -132,12 +134,13 @@ BOOST_AUTO_TEST_CASE(NonNegativePercentageTest)
 /**
  * Checking that size and dimensionality of prediction is correct.
  */
-BOOST_AUTO_TEST_CASE(KmClusteringSizeCheck)
+TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheck",
+                 "[KmeansMainTest][BindingTests]")
 {
   int c = 2;
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   size_t col = inputData.n_cols;
   size_t row = inputData.n_rows;
@@ -147,22 +150,23 @@ BOOST_AUTO_TEST_CASE(KmClusteringSizeCheck)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, row+1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, col);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("centroid").n_rows, row);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("centroid").n_cols, c);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == row+1);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == col);
+  REQUIRE(IO::GetParam<arma::mat>("centroid").n_rows == row);
+  REQUIRE(IO::GetParam<arma::mat>("centroid").n_cols == c);
 }
 
 /**
  * Checking that size and dimensionality of prediction is correct when --labels_only is specified
  */
-BOOST_AUTO_TEST_CASE(KmClusteringSizeCheckLabelOnly)
+TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheckLabelOnly",
+                 "[KmeansMainTest][BindingTests]")
 {
   int c = 2;
 
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
   size_t col = inputData.n_cols;
   size_t row = inputData.n_rows;
 
@@ -172,24 +176,25 @@ BOOST_AUTO_TEST_CASE(KmClusteringSizeCheckLabelOnly)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, col);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("centroid").n_rows, row);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("centroid").n_cols, c);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == col);
+  REQUIRE(IO::GetParam<arma::mat>("centroid").n_rows == row);
+  REQUIRE(IO::GetParam<arma::mat>("centroid").n_cols == c);
 }
 
 
 /**
  * Checking that predictions are not same when --allow_empty_clusters or kill_empty_clusters are specified
  */
-BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
+TEST_CASE_METHOD(KmTestFixture, "KmClusteringEmptyClustersCheck",
+                 "[KmeansMainTest][BindingTests]")
 {
   int c = 400;
   int iterations = 100;
 
   arma::mat inputData;
   if (!data::Load("test_data_3_1000.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset test_data_3_1000.csv!");
+    FAIL("Unable to load train dataset test_data_3_1000.csv!");
   arma::mat initCentroid = arma::randu<arma::mat>(inputData.n_rows, c);
 
   SetInputParam("input", inputData);
@@ -235,23 +240,24 @@ BOOST_AUTO_TEST_CASE(KmClusteringEmptyClustersCheck)
 
   if (killEmptyOutput.n_elem == allowEmptyOutput.n_elem)
   {
-    BOOST_REQUIRE_GT(arma::accu(killEmptyOutput != allowEmptyOutput), 1);
-    BOOST_REQUIRE_GT(arma::accu(killEmptyOutput != normalOutput), 1);
+    REQUIRE(arma::accu(killEmptyOutput != allowEmptyOutput) > 1);
+    REQUIRE(arma::accu(killEmptyOutput != normalOutput) > 1);
   }
-  BOOST_REQUIRE_GT(arma::accu(normalOutput != allowEmptyOutput), 1);
+  REQUIRE(arma::accu(normalOutput != allowEmptyOutput) > 1);
 }
 
 /**
  * Checking that that size and dimensionality of Final Input File is correct
  * when flag --in_place is specified
  */
-BOOST_AUTO_TEST_CASE(KmClusteringResultSizeCheck)
+TEST_CASE_METHOD(KmTestFixture, "KmClusteringResultSizeCheck",
+                 "[KmeansMainTest][BindingTests]")
 {
   int c = 2;
 
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   size_t row = inputData.n_rows;
   size_t col = inputData.n_cols;
@@ -265,30 +271,32 @@ BOOST_AUTO_TEST_CASE(KmClusteringResultSizeCheck)
   // here input is actually accessed through output
   // due to a little trick in kmeans_main
 
-  BOOST_REQUIRE_EQUAL(processedInput.n_cols, col);
-  BOOST_REQUIRE_EQUAL(processedInput.n_rows, row+1);
+  REQUIRE(processedInput.n_cols == col);
+  REQUIRE(processedInput.n_rows == row+1);
 }
 
 /**
  * Ensuring that absence of Number of Clusters is checked.
  */
-BOOST_AUTO_TEST_CASE(KmClustersNotDefined)
+TEST_CASE_METHOD(KmTestFixture, "KmClustersNotDefined",
+                 "[KmeansMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Unable to load train dataset vc2.csv!");
+    FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Checking that all the algorithms yield same results
  */
-BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
+TEST_CASE_METHOD(KmTestFixture, "AlgorithmsSimilarTest",
+                 "[KmeansMainTest][BindingTests]")
 {
   int c = 5;
   arma::mat inputData(10, 1000);
@@ -393,5 +401,3 @@ BOOST_AUTO_TEST_CASE(AlgorithmsSimilarTest)
   CheckMatrices(naiveCentroid, dualTreeCentroid);
   CheckMatrices(naiveCentroid, dualCoverTreeCentroid);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

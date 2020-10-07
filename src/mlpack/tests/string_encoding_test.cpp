@@ -20,14 +20,13 @@
 #include <mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp>
 #include <boost/test/unit_test.hpp>
 #include <memory>
-#include "test_tools.hpp"
-#include "serialization.hpp"
+#include "test_catch_tools.hpp"
+#include "catch.hpp"
+#include "serialization_catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::data;
 using namespace std;
-
-BOOST_AUTO_TEST_SUITE(StringEncodingTest);
 
 //! Common input for some tests.
 static vector<string> stringEncodingInput = {
@@ -64,21 +63,21 @@ void CheckVectors(const vector<vector<ValueType>>& a,
                   const vector<vector<ValueType>>& b,
                   const ValueType tolerance = 1e-5)
 {
-  BOOST_REQUIRE_EQUAL(a.size(), b.size());
+  REQUIRE(a.size() == b.size());
 
   for (size_t i = 0; i < a.size(); ++i)
   {
-    BOOST_REQUIRE_EQUAL(a[i].size(), b[i].size());
+    REQUIRE(a[i].size() == b[i].size());
 
     for (size_t j = 0; j < a[i].size(); ++j)
-      BOOST_REQUIRE_CLOSE(a[i][j], b[i][j], tolerance);
+      REQUIRE(a[i][j] == Approx(b[i][j]).epsilon(tolerance / 100));
   }
 }
 
 /**
  * Test the dictionary encoding algorithm.
  */
-BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
+TEST_CASE("DictionaryEncodingTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
@@ -97,7 +96,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
   {
     keysCount[keyValue.second]++;
 
-    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+    REQUIRE(keysCount[keyValue.second] == 1);
   }
 
   arma::mat expected = {
@@ -115,7 +114,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
 /**
  * Test the dictionary encoding algorithm with unicode characters.
  */
-BOOST_AUTO_TEST_CASE(UnicodeDictionaryEncodingTest)
+TEST_CASE("UnicodeDictionaryEncodingTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
@@ -134,7 +133,7 @@ BOOST_AUTO_TEST_CASE(UnicodeDictionaryEncodingTest)
   {
     keysCount[keyValue.second]++;
 
-    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+    REQUIRE(keysCount[keyValue.second] == 1);
   }
 
   arma::mat expected = {
@@ -149,7 +148,7 @@ BOOST_AUTO_TEST_CASE(UnicodeDictionaryEncodingTest)
 /**
  * Test the one pass modification of the dictionary encoding algorithm.
  */
-BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingTest)
+TEST_CASE("OnePassDictionaryEncodingTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
@@ -169,7 +168,7 @@ BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingTest)
   {
     keysCount[keyValue.second]++;
 
-    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+    REQUIRE(keysCount[keyValue.second] == 1);
   }
 
   vector<vector<size_t>> expected = {
@@ -179,14 +178,14 @@ BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingTest)
     { 36, 37, 14, 38, 39,  8, 40,  1, 41, 42, 43, 44,  6, 45, 13 }
   };
 
-  BOOST_REQUIRE(output == expected);
+  REQUIRE(output == expected);
 }
 
 
 /**
  * Test the SplitByAnyOf tokenizer.
  */
-BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerTest)
+TEST_CASE("SplitByAnyOfTokenizerTest", "[StringEncodingTest]")
 {
   std::vector<boost::string_view> tokens;
   boost::string_view line(stringEncodingInput[0]);
@@ -204,16 +203,16 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerTest)
     "bindings", "to", "other", "languages"
   };
 
-  BOOST_REQUIRE_EQUAL(tokens.size(), expected.size());
+  REQUIRE(tokens.size() == expected.size());
 
   for (size_t i = 0; i < tokens.size(); ++i)
-    BOOST_REQUIRE_EQUAL(tokens[i], expected[i]);
+    REQUIRE(tokens[i] == expected[i]);
 }
 
 /**
  * Test the SplitByAnyOf tokenizer in case of unicode characters.
  */
-BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerUnicodeTest)
+TEST_CASE("SplitByAnyOfTokenizerUnicodeTest", "[StringEncodingTest]")
 {
   vector<string> expectedUtf8Tokens = {
     "\xF0\x9F\x84\xBC\xF0\x9F\x84\xBB\xF0\x9F\x84\xBF\xF0\x9F\x84\xB0"
@@ -236,16 +235,16 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTokenizerUnicodeTest)
     token = tokenizer(line);
   }
 
-  BOOST_REQUIRE_EQUAL(tokens.size(), expectedUtf8Tokens.size());
+  REQUIRE(tokens.size() == expectedUtf8Tokens.size());
 
   for (size_t i = 0; i < tokens.size(); ++i)
-    BOOST_REQUIRE_EQUAL(tokens[i], expectedUtf8Tokens[i]);
+    REQUIRE(tokens[i] == expectedUtf8Tokens[i]);
 }
 
 /**
  * Test the CharExtract tokenizer.
  */
-BOOST_AUTO_TEST_CASE(DictionaryEncodingIndividualCharactersTest)
+TEST_CASE("DictionaryEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -270,7 +269,7 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingIndividualCharactersTest)
  * Test the one pass modification of the dictionary encoding algorithm
  * in case of individual character encoding.
  */
-BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingIndividualCharactersTest)
+TEST_CASE("OnePassDictionaryEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   std::vector<string> input = {
     "GACCA",
@@ -289,13 +288,13 @@ BOOST_AUTO_TEST_CASE(OnePassDictionaryEncodingIndividualCharactersTest)
     { 1, 2, 4 }
   };
 
-  BOOST_REQUIRE(output == expected);
+  REQUIRE(output == expected);
 }
 
 /**
  * Test the functionality of copy constructor.
  */
-BOOST_AUTO_TEST_CASE(StringEncodingCopyTest)
+TEST_CASE("StringEncodingCopyTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
   arma::sp_mat output;
@@ -318,12 +317,12 @@ BOOST_AUTO_TEST_CASE(StringEncodingCopyTest)
 
   const DictionaryType& copiedDictionary = encoderCopy.Dictionary();
 
-  BOOST_REQUIRE_EQUAL(naiveDictionary.size(), copiedDictionary.Size());
+  REQUIRE(naiveDictionary.size() == copiedDictionary.Size());
 
   for (const pair<string, size_t>& keyValue : naiveDictionary)
   {
-    BOOST_REQUIRE(copiedDictionary.HasToken(keyValue.first));
-    BOOST_REQUIRE_EQUAL(copiedDictionary.Value(keyValue.first),
+    REQUIRE(copiedDictionary.HasToken(keyValue.first));
+    REQUIRE(copiedDictionary.Value(keyValue.first) ==
         keyValue.second);
   }
 }
@@ -331,7 +330,7 @@ BOOST_AUTO_TEST_CASE(StringEncodingCopyTest)
 /**
  * Test the move assignment operator.
  */
-BOOST_AUTO_TEST_CASE(StringEncodingMoveTest)
+TEST_CASE("StringEncodingMoveTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
   arma::sp_mat output;
@@ -354,12 +353,12 @@ BOOST_AUTO_TEST_CASE(StringEncodingMoveTest)
 
   const DictionaryType& copiedDictionary = encoderCopy.Dictionary();
 
-  BOOST_REQUIRE_EQUAL(naiveDictionary.size(), copiedDictionary.Size());
+  REQUIRE(naiveDictionary.size() == copiedDictionary.Size());
 
   for (const pair<string, size_t>& keyValue : naiveDictionary)
   {
-    BOOST_REQUIRE(copiedDictionary.HasToken(keyValue.first));
-    BOOST_REQUIRE_EQUAL(copiedDictionary.Value(keyValue.first),
+    REQUIRE(copiedDictionary.HasToken(keyValue.first));
+    REQUIRE(copiedDictionary.Value(keyValue.first) ==
         keyValue.second);
   }
 }
@@ -377,16 +376,16 @@ void CheckDictionaries(const StringEncodingDictionary<TokenType>& expected,
   const MapType& mapping = obtained.Mapping();
   const MapType& expectedMapping = expected.Mapping();
 
-  BOOST_REQUIRE_EQUAL(mapping.size(), expectedMapping.size());
+  REQUIRE(mapping.size() == expectedMapping.size());
 
   for (auto& keyVal : expectedMapping)
   {
-    BOOST_REQUIRE_EQUAL(mapping.at(keyVal.first), keyVal.second);
+    REQUIRE(mapping.at(keyVal.first) == keyVal.second);
   }
 
   for (auto& keyVal : mapping)
   {
-    BOOST_REQUIRE_EQUAL(expectedMapping.at(keyVal.first), keyVal.second);
+    REQUIRE(expectedMapping.at(keyVal.first) == keyVal.second);
   }
 }
 
@@ -413,14 +412,14 @@ void CheckDictionaries(
   const MapType& expectedMapping = expected.Mapping();
   const MapType& mapping = obtained.Mapping();
 
-  BOOST_REQUIRE_EQUAL(tokens.size(), expectedTokens.size());
-  BOOST_REQUIRE_EQUAL(mapping.size(), expectedMapping.size());
-  BOOST_REQUIRE_EQUAL(mapping.size(), tokens.size());
+  REQUIRE(tokens.size() == expectedTokens.size());
+  REQUIRE(mapping.size() == expectedMapping.size());
+  REQUIRE(mapping.size() == tokens.size());
 
   for (size_t i = 0; i < tokens.size(); ++i)
   {
-    BOOST_REQUIRE_EQUAL(tokens[i], expectedTokens[i]);
-    BOOST_REQUIRE_EQUAL(expectedMapping.at(tokens[i]), mapping.at(tokens[i]));
+    REQUIRE(tokens[i] == expectedTokens[i]);
+    REQUIRE(expectedMapping.at(tokens[i]) == mapping.at(tokens[i]));
   }
 }
 
@@ -438,11 +437,11 @@ void CheckDictionaries(const StringEncodingDictionary<int>& expected,
   const MapType& expectedMapping = expected.Mapping();
   const MapType& mapping = obtained.Mapping();
 
-  BOOST_REQUIRE_EQUAL(expected.Size(), obtained.Size());
+  REQUIRE(expected.Size() == obtained.Size());
 
   for (size_t i = 0; i < mapping.size(); ++i)
   {
-    BOOST_REQUIRE_EQUAL(mapping[i], expectedMapping[i]);
+    REQUIRE(mapping[i] == expectedMapping[i]);
   }
 }
 
@@ -450,7 +449,7 @@ void CheckDictionaries(const StringEncodingDictionary<int>& expected,
  * Serialization test for the general template of the StringEncodingDictionary
  * class.
  */
-BOOST_AUTO_TEST_CASE(StringEncodingDictionarySerialization)
+TEST_CASE("StringEncodingDictionarySerialization", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<string>;
 
@@ -485,7 +484,7 @@ BOOST_AUTO_TEST_CASE(StringEncodingDictionarySerialization)
  * Serialization test for the dictionary encoding algorithm with
  * the SplitByAnyOf tokenizer.
  */
-BOOST_AUTO_TEST_CASE(SplitByAnyOfDictionaryEncodingSerialization)
+TEST_CASE("SplitByAnyOfDictionaryEncodingSerialization", "[StringEncodingTest]")
 {
   using EncoderType = DictionaryEncoding<SplitByAnyOf::TokenType>;
 
@@ -515,7 +514,7 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfDictionaryEncodingSerialization)
  * Serialization test for the dictionary encoding algorithm with
  * the CharExtract tokenizer.
  */
-BOOST_AUTO_TEST_CASE(CharExtractDictionaryEncodingSerialization)
+TEST_CASE("CharExtractDictionaryEncodingSerialization", "[StringEncodingTest]")
 {
   using EncoderType = DictionaryEncoding<CharExtract::TokenType>;
 
@@ -544,7 +543,7 @@ BOOST_AUTO_TEST_CASE(CharExtractDictionaryEncodingSerialization)
 /**
  * Test the Bag of Words encoding algorithm.
  */ 
-BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
+TEST_CASE("BagOfWordsEncodingTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
@@ -563,7 +562,7 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
   {
     keysCount[keyValue.second]++;
 
-    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+    REQUIRE(keysCount[keyValue.second] == 1);
   }
 
 /* The expected values were obtained by the following Python script:
@@ -619,7 +618,7 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
 /**
  * Test the Bag of Words encoding algorithm. The output is saved into a vector.
  */ 
-BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingTest)
+TEST_CASE("VectorBagOfWordsEncodingTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
@@ -639,7 +638,7 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingTest)
   {
     keysCount[keyValue.second]++;
 
-    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+    REQUIRE(keysCount[keyValue.second] == 1);
   }
 
   /* The expected values were obtained by the same script as in
@@ -653,13 +652,13 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingTest)
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
   };
 
-  BOOST_REQUIRE(output == expected);
+  REQUIRE(output == expected);
 }
 
 /**
  * Test the Bag of Words algorithm for individual characters.
  */
-BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
+TEST_CASE("BagOfWordsEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -685,7 +684,7 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingIndividualCharactersTest)
  * Test the Bag of Words encoding algorithm in case of individual
  * characters encoding. The output type is vector<vector<size_t>>.
  */
-BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingIndividualCharactersTest)
+TEST_CASE("VectorBagOfWordsEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   std::vector<string> input = {
     "GACCA",
@@ -704,7 +703,7 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingIndividualCharactersTest)
     { 1, 1, 0, 1, 0 }
   };
 
-  BOOST_REQUIRE(output == expected);
+  REQUIRE(output == expected);
 }
 
 /**
@@ -712,7 +711,7 @@ BOOST_AUTO_TEST_CASE(VectorBagOfWordsEncodingIndividualCharactersTest)
  * and the smooth inverse document frequency type. These parameters are
  * the default ones.
  */
-BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
+TEST_CASE("RawCountSmoothIdfEncodingTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
@@ -730,7 +729,7 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
   {
     keysCount[keyValue.second]++;
 
-    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+    REQUIRE(keysCount[keyValue.second] == 1);
   }
 
   /* The expected values were obtained by the following Python script:
@@ -814,7 +813,7 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingTest)
  * and the smooth inverse document frequency type. These parameters are
  * the default ones. The output type is vector<vector<double>>.
  */
-BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingTest)
+TEST_CASE("VectorRawCountSmoothIdfEncodingTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
@@ -834,7 +833,7 @@ BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingTest)
   {
     keysCount[keyValue.second]++;
 
-    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+    REQUIRE(keysCount[keyValue.second] == 1);
   }
 
   /* The expected values were obtained by the same script as in
@@ -862,7 +861,7 @@ BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingTest)
  * raw count term frequency type and the smooth inverse document frequency type.
  * These parameters are the default ones.
  */
-BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingIndividualCharactersTest)
+TEST_CASE("RawCountSmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -943,7 +942,7 @@ BOOST_AUTO_TEST_CASE(RawCountSmoothIdfEncodingIndividualCharactersTest)
  * These parameters are the default ones. The output type is
  * vector<vector<double>>.
  */
-BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingIndividualCharactersTest)
+TEST_CASE("VectorRawCountSmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   std::vector<string> input = {
     "GACCA",
@@ -971,7 +970,7 @@ BOOST_AUTO_TEST_CASE(VectorRawCountSmoothIdfEncodingIndividualCharactersTest)
  * Test the Tf-Idf encoding algorithm with the raw count term frequency type
  * and the non-smooth inverse document frequency type.
  */
-BOOST_AUTO_TEST_CASE(TfIdfRawCountEncodingTest)
+TEST_CASE("TfIdfRawCountEncodingTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
@@ -991,7 +990,7 @@ BOOST_AUTO_TEST_CASE(TfIdfRawCountEncodingTest)
   {
     keysCount[keyValue.second]++;
 
-    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+    REQUIRE(keysCount[keyValue.second] == 1);
   }
 
   /* The expected values were obtained by almost the same script as in
@@ -1021,7 +1020,7 @@ BOOST_AUTO_TEST_CASE(TfIdfRawCountEncodingTest)
  * and the non-smooth inverse document frequency type. The output type is
  * vector<vector<double>>.
  */
-BOOST_AUTO_TEST_CASE(VectorTfIdfRawCountEncodingTest)
+TEST_CASE("VectorTfIdfRawCountEncodingTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
 
@@ -1040,7 +1039,7 @@ BOOST_AUTO_TEST_CASE(VectorTfIdfRawCountEncodingTest)
   {
     keysCount[keyValue.second]++;
 
-    BOOST_REQUIRE_EQUAL(keysCount[keyValue.second], 1);
+    REQUIRE(keysCount[keyValue.second] == 1);
   }
 
   /* The expected values were obtained by almost the same script as in
@@ -1069,7 +1068,7 @@ BOOST_AUTO_TEST_CASE(VectorTfIdfRawCountEncodingTest)
  * raw count term frequency type and the non-smooth inverse document frequency
  * type.
  */
-BOOST_AUTO_TEST_CASE(RawCountTfIdfEncodingIndividualCharactersTest)
+TEST_CASE("RawCountTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1100,7 +1099,7 @@ BOOST_AUTO_TEST_CASE(RawCountTfIdfEncodingIndividualCharactersTest)
  * raw count term frequency type and the non-smooth inverse document frequency
  * type. The output type is vector<vector<double>>.
  */
-BOOST_AUTO_TEST_CASE(VectorRawCountTfIdfEncodingIndividualCharactersTest)
+TEST_CASE("VectorRawCountTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   std::vector<string> input = {
     "GACCA",
@@ -1130,7 +1129,7 @@ BOOST_AUTO_TEST_CASE(VectorRawCountTfIdfEncodingIndividualCharactersTest)
  * Test the Tf-Idf encoding algorithm for individual characters with the
  * binary term frequency type and the smooth inverse document frequency type.
  */
-BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
+TEST_CASE("BinarySmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1161,7 +1160,7 @@ BOOST_AUTO_TEST_CASE(BinarySmoothIdfEncodingIndividualCharactersTest)
  * binary term frequency type and the smooth inverse document frequency type.
  * The output type is vector<vector<double>>.
  */
-BOOST_AUTO_TEST_CASE(VectorBinarySmoothIdfEncodingIndividualCharactersTest)
+TEST_CASE("VectorBinarySmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   std::vector<string> input = {
     "GACCA",
@@ -1192,7 +1191,7 @@ BOOST_AUTO_TEST_CASE(VectorBinarySmoothIdfEncodingIndividualCharactersTest)
  * binary term frequency type and the non-smooth inverse document frequency
  * type.
  */
-BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
+TEST_CASE("BinaryTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1223,7 +1222,7 @@ BOOST_AUTO_TEST_CASE(BinaryTfIdfEncodingIndividualCharactersTest)
  * sublinear term frequency type and the smooth inverse document frequency
  * type.
  */
-BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
+TEST_CASE("SublinearSmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1255,7 +1254,7 @@ BOOST_AUTO_TEST_CASE(SublinearSmoothIdfEncodingIndividualCharactersTest)
  * sublinear term frequency type and the non-smooth inverse document frequency
  * type.
  */
-BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
+TEST_CASE("SublinearTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1287,7 +1286,7 @@ BOOST_AUTO_TEST_CASE(SublinearTfIdfEncodingIndividualCharactersTest)
  * standard term frequency type and the smooth inverse document frequency
  * type.
  */
-BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
+TEST_CASE("TermFrequencySmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1368,7 +1367,7 @@ BOOST_AUTO_TEST_CASE(TermFrequencySmoothIdfEncodingIndividualCharactersTest)
  * standard term frequency type and the non-smooth inverse document frequency
  * type.
  */
-BOOST_AUTO_TEST_CASE(TermFrequencyTfIdfEncodingIndividualCharactersTest)
+TEST_CASE("TermFrequencyTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1399,7 +1398,7 @@ BOOST_AUTO_TEST_CASE(TermFrequencyTfIdfEncodingIndividualCharactersTest)
  * Serialization test for the Tf-Idf encoding algorithm with
  * the SplitByAnyOf tokenizer.
  */
-BOOST_AUTO_TEST_CASE(SplitByAnyOfTfIdfEncodingSerialization)
+TEST_CASE("SplitByAnyOfTfIdfEncodingSerialization", "[StringEncodingTest]")
 {
   using EncoderType = TfIdfEncoding<SplitByAnyOf::TokenType>;
 
@@ -1424,6 +1423,3 @@ BOOST_AUTO_TEST_CASE(SplitByAnyOfTfIdfEncodingSerialization)
 
   CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
-

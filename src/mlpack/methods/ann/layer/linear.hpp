@@ -52,6 +52,18 @@ class Linear
          const size_t outSize,
          RegularizerType regularizer = RegularizerType());
 
+  //! Copy constructor.
+  Linear(const Linear& layer);
+
+  //! Move constructor.
+  Linear(Linear&&);
+
+  //! Copy assignment operator.
+  Linear& operator=(const Linear& layer);
+
+  //! Move assignment operator.
+  Linear& operator=(Linear&& layer);
+
   /*
    * Reset the layer parameter.
    */
@@ -133,6 +145,12 @@ class Linear
   OutputDataType const& Bias() const { return bias; }
   //! Modify the bias weights of the layer.
   OutputDataType& Bias() { return bias; }
+
+  //! Get the size of the weights.
+  size_t WeightSize() const
+  {
+    return (inSize * outSize) + outSize;
+  }
 
   /**
    * Serialize the layer

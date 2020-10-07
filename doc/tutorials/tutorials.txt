@@ -15,6 +15,7 @@ get started with mlpack in different languages.
   - \ref cli_quickstart
   - \ref julia_quickstart
   - \ref go_quickstart
+  - \ref r_quickstart
 
 @section introd_tut Introductory Tutorials
 

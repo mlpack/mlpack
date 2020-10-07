@@ -14,7 +14,7 @@
 
 #include "print_output_processing.hpp"
 
-#include "strip_type.hpp"
+#include <mlpack/bindings/util/strip_type.hpp>
 #include "get_julia_type.hpp"
 
 namespace mlpack {
@@ -104,7 +104,7 @@ void PrintOutputProcessing(
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  std::string type = StripType(d.cppType);
+  std::string type = util::StripType(d.cppType);
   std::cout << functionName << "_internal.IOGetParam"
       << type << "(\"" << d.name << "\")";
 }

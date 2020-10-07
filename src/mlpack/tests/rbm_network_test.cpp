@@ -26,20 +26,17 @@
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace ens;
 using namespace mlpack::regression;
 
-BOOST_AUTO_TEST_SUITE(RBMNetworkTest);
-
 /*
  * Tests the BinaryRBM implementation on the Digits dataset.
  */
-BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
+TEST_CASE("BinaryRBMClassificationTest", "[RBMNetworkTest]")
 {
   // Normalised dataset.
   int hiddenLayerSize = 100;
@@ -84,7 +81,7 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
   double objVal = model.Train(msgd);
 
   // Test that objective value returned by RBM::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 
   for (size_t i = 0; i < trainData.n_cols; ++i)
   {
@@ -117,13 +114,13 @@ BOOST_AUTO_TEST_CASE(BinaryRBMClassificationTest)
 
   // We allow a 6% tolerance because the RBM may not reconstruct samples as
   // well.  (Typically it does, but we have no guarantee.)
-  BOOST_REQUIRE_GE(rbmClassificationAccuracy, classificationAccuracy - 6.0);
+  REQUIRE(rbmClassificationAccuracy >= classificationAccuracy - 6.0);
 }
 
 /*
  * Tests the SpikeSlabRBM implementation on the Digits dataset.
  */
-BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
+TEST_CASE("ssRBMClassificationTest", "[RBMNetworkTest]")
 {
   size_t batchSize = 10;
   size_t numEpoches = 3;
@@ -184,7 +181,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   double objVal = modelssRBM.Train(msgd);
 
   // Test that objective value returned by RBM::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 
   for (size_t i = 0; i < trainData.n_cols; ++i)
   {
@@ -211,7 +208,7 @@ BOOST_AUTO_TEST_CASE(ssRBMClassificationTest)
   // omitted here for speed.  We add a margin of 3% since ssRBM isn't guaranteed
   // to give us better results (we just generally expect it to be about as good
   // or better).
-  BOOST_REQUIRE_GE(ssRbmClassificationAccuracy, 76.18 - 3.0);
+  REQUIRE(ssRbmClassificationAccuracy >= 76.18 - 3.0);
 }
 
 template<typename MatType = arma::mat>
@@ -239,13 +236,13 @@ void BuildVanillaNetwork(MatType& trainData,
   }
 
   for (size_t i = 0; i < freeEnergy.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(calculatedFreeEnergy(i), freeEnergy(i), 1e-3);
+    REQUIRE(calculatedFreeEnergy(i) == Approx(freeEnergy(i)).epsilon(1e-5));
 }
 
 /*
  * Train and evaluate a Vanilla network with the specified structure.
  */
-BOOST_AUTO_TEST_CASE(MiscTest)
+TEST_CASE("MiscTest", "[RBMNetworkTest]")
 {
   arma::Mat<float> X = arma::Mat<float>("0.0, 0.0, 0.0;"
                           "0.0, 1.0, 1.0;"
@@ -254,5 +251,3 @@ BOOST_AUTO_TEST_CASE(MiscTest)
   X = X.t();
   BuildVanillaNetwork<arma::Mat<float>>(X, 2);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -1,6 +1,37 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+
   * Added Pixel Shuffle layer (#2563).
+
+  * Added Mean Absolute Percentage Error.
+
+  * Added Softmin activation function as layer in ann/layer.
+
+### mlpack 3.4.1
+###### 2020-09-07
+  * Fix incorrect parsing of required matrix/model parameters for command-line
+    bindings (#2600).
+
+  * Add manual type specification support to `data::Load()` and `data::Save()`
+    (#2084, #2135, #2602).
+
+  * Remove use of internal Armadillo functionality (#2596, #2601, #2602).
+
+### mlpack 3.4.0
+###### 2020-09-01
+
+  * Issue warnings when metrics produce NaNs in KFoldCV (#2595).
+
+  * Added bindings for _R_ during Google Summer of Code (#2556).
+
+  * Added common striptype function for all bindings (#2556).
+
+  * Refactored common utility function of bindings to bindings/util (#2556).
+
+  * Renamed InformationGain to HoeffdingInformationGain in
+    methods/hoeffding_trees/information_gain.hpp (#2556).
+
+  * Added macro for changing stream of printing and warnings/errors (#2556).
 
   * Added Spatial Dropout layer (#2564).
 
@@ -30,6 +61,8 @@
     Julia, and Go.  Also called "Bayesian Ridge", this is equivalent to a
     version of linear regression where the regularization parameter is
     automatically tuned (#2030).
+
+  * Fix defeatist search for spill tree traversals (#2566, #1269).
 
   * Fix incremental training of logistic regression models (#2560).
 

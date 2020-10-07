@@ -104,16 +104,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\boost\boost_1_66_0;C:\mlpack\armadillo-8.500.1\include;C:\mlpack\mlpack-3.2.2\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\boost\boost_1_66_0;C:\mlpack\armadillo-8.500.1\include;C:\mlpack\mlpack-3.4.1\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>C:\mlpack\mlpack-3.2.2\build\Debug\mlpack.lib;C:\boost\boost_1_66_0\lib64-msvc-14.1\libboost_serialization-vc141-mt-gd-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\mlpack\mlpack-3.4.1\build\Debug\mlpack.lib;C:\boost\boost_1_66_0\lib64-msvc-14.1\libboost_serialization-vc141-mt-gd-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "C:\mlpack\mlpack-3.2.2\build\Debug\mlpack.dll" $(OutDir)
-xcopy /y "C:\mlpack\mlpack-3.2.2\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
+      <Command>xcopy /y "C:\mlpack\mlpack-3.4.1\build\Debug\mlpack.dll" $(OutDir)
+xcopy /y "C:\mlpack\mlpack-3.4.1\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
 xcopy /y "$(ProjectDir)..\..\..\..\src\mlpack\tests\data\german.csv" "$(ProjectDir)data\german.csv*"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

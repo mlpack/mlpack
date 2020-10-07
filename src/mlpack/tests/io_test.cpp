@@ -29,8 +29,7 @@ static const std::string testName = "";
 #include <mlpack/bindings/cli/parse_command_line.hpp>
 #include <mlpack/bindings/cli/end_program.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -45,8 +44,6 @@ struct IOTestDestroyer
 {
   IOTestDestroyer() { IO::ClearSettings(); }
 };
-
-BOOST_FIXTURE_TEST_SUITE(IOTest, IOTestDestroyer);
 
 /**
  * Before running a test that uses the CLI options, we have to add the default
@@ -72,7 +69,7 @@ void AddRequiredCLIOptions()
  * Tests that CLI works as intended, namely that IO::Add propagates
  * successfully.
  */
-BOOST_AUTO_TEST_CASE(TestCLIAdd)
+TEST_CASE_METHOD(IOTestDestroyer, "TestCLIAdd", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -81,19 +78,17 @@ BOOST_AUTO_TEST_CASE(TestCLIAdd)
   CLIOption<bool> b(false, "global/bool", "True or false.", "a", "bool");
 
   // IO::HasParam should return false here.
-  BOOST_REQUIRE(!IO::HasParam("global/bool"));
+  REQUIRE(!IO::HasParam("global/bool"));
 
   // Check that our aliasing works.
-  BOOST_REQUIRE_EQUAL(IO::HasParam("global/bool"),
-      IO::HasParam("a"));
-  BOOST_REQUIRE_EQUAL(IO::GetParam<bool>("global/bool"),
-      IO::GetParam<bool>("a"));
+  REQUIRE(IO::HasParam("global/bool") == IO::HasParam("a"));
+  REQUIRE(IO::GetParam<bool>("global/bool") == IO::GetParam<bool>("a"));
 }
 
 /**
  * Tests that the various PARAM_* macros work properly.
  */
-BOOST_AUTO_TEST_CASE(TestOption)
+TEST_CASE_METHOD(IOTestDestroyer, "TestOption", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -101,13 +96,13 @@ BOOST_AUTO_TEST_CASE(TestOption)
   // this.
   PARAM_IN(int, "test_parent/test", "test desc", "", 42, false);
 
-  BOOST_REQUIRE_EQUAL(IO::GetParam<int>("test_parent/test"), 42);
+  REQUIRE(IO::GetParam<int>("test_parent/test") == 42);
 }
 
 /**
  * Test that duplicate flags are filtered out correctly.
  */
-BOOST_AUTO_TEST_CASE(TestDuplicateFlag)
+TEST_CASE_METHOD(IOTestDestroyer, "TestDuplicateFlag", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -120,14 +115,15 @@ BOOST_AUTO_TEST_CASE(TestDuplicateFlag)
   argv[2] = "--test";
 
   // This should not throw an exception.
-  BOOST_REQUIRE_NO_THROW(
+  REQUIRE_NOTHROW(
       ParseCommandLine(argc, const_cast<char**>(argv)));
 }
 
 /**
  * Test that duplicate options throw an exception.
  */
-BOOST_AUTO_TEST_CASE(TestDuplicateParam)
+TEST_CASE_METHOD(IOTestDestroyer, "TestDuplicateParam",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -141,7 +137,7 @@ BOOST_AUTO_TEST_CASE(TestDuplicateParam)
 
   // This should throw an exception.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
+  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv)),
       std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -149,16 +145,17 @@ BOOST_AUTO_TEST_CASE(TestDuplicateParam)
 /**
  * Ensure that a Boolean option which we define is set correctly.
  */
-BOOST_AUTO_TEST_CASE(TestBooleanOption)
+TEST_CASE_METHOD(IOTestDestroyer, "TestBooleanOption",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
   PARAM_FLAG("flag_test", "flag test description", "");
 
-  BOOST_REQUIRE_EQUAL(IO::HasParam("flag_test"), false);
+  REQUIRE(IO::HasParam("flag_test") == false);
 
   // Now check that CLI reflects that it is false by default.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<bool>("flag_test"), false);
+  REQUIRE(IO::GetParam<bool>("flag_test") == false);
 
   // Now, if we specify this flag, it should be true.
   int argc = 2;
@@ -168,14 +165,15 @@ BOOST_AUTO_TEST_CASE(TestBooleanOption)
 
   ParseCommandLine(argc, const_cast<char**>(argv));
 
-  BOOST_REQUIRE_EQUAL(IO::GetParam<bool>("flag_test"), true);
-  BOOST_REQUIRE_EQUAL(IO::HasParam("flag_test"), true);
+  REQUIRE(IO::GetParam<bool>("flag_test") == true);
+  REQUIRE(IO::HasParam("flag_test") == true);
 }
 
 /**
  * Test that a vector option works correctly.
  */
-BOOST_AUTO_TEST_CASE(TestVectorOption)
+TEST_CASE_METHOD(IOTestDestroyer, "TestVectorOption",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -191,20 +189,21 @@ BOOST_AUTO_TEST_CASE(TestVectorOption)
 
   ParseCommandLine(argc, const_cast<char**>(argv));
 
-  BOOST_REQUIRE(IO::HasParam("test_vec"));
+  REQUIRE(IO::HasParam("test_vec"));
 
   vector<size_t> v = IO::GetParam<vector<size_t>>("test_vec");
 
-  BOOST_REQUIRE_EQUAL(v.size(), 3);
-  BOOST_REQUIRE_EQUAL(v[0], 1);
-  BOOST_REQUIRE_EQUAL(v[1], 2);
-  BOOST_REQUIRE_EQUAL(v[2], 4);
+  REQUIRE(v.size() == 3);
+  REQUIRE(v[0] == 1);
+  REQUIRE(v[1] == 2);
+  REQUIRE(v[2] == 4);
 }
 
 /**
  * Test that we can use a vector option by specifying it many times.
  */
-BOOST_AUTO_TEST_CASE(TestVectorOption2)
+TEST_CASE_METHOD(IOTestDestroyer, "TestVectorOption2",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -222,17 +221,18 @@ BOOST_AUTO_TEST_CASE(TestVectorOption2)
 
   ParseCommandLine(argc, const_cast<char**>(argv));
 
-  BOOST_REQUIRE(IO::HasParam("test2_vec"));
+  REQUIRE(IO::HasParam("test2_vec"));
 
   vector<size_t> v = IO::GetParam<vector<size_t>>("test2_vec");
 
-  BOOST_REQUIRE_EQUAL(v.size(), 3);
-  BOOST_REQUIRE_EQUAL(v[0], 1);
-  BOOST_REQUIRE_EQUAL(v[1], 2);
-  BOOST_REQUIRE_EQUAL(v[2], 4);
+  REQUIRE(v.size() == 3);
+  REQUIRE(v[0] == 1);
+  REQUIRE(v[1] == 2);
+  REQUIRE(v[2] == 4);
 }
 
-BOOST_AUTO_TEST_CASE(InputColVectorParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "InputColVectorParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -250,24 +250,25 @@ BOOST_AUTO_TEST_CASE(InputColVectorParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --vector parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("vector"));
+  REQUIRE(IO::HasParam("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("vector_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("vector_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   arma::vec vec1 = IO::GetParam<arma::vec>("vector");
   arma::vec vec2 = IO::GetParam<arma::vec>("vector");
 
-  BOOST_REQUIRE_EQUAL(vec1.n_rows, 63);
-  BOOST_REQUIRE_EQUAL(vec2.n_rows, 63);
+  REQUIRE(vec1.n_rows == 63);
+  REQUIRE(vec2.n_rows == 63);
 
   for (size_t i = 0; i < vec1.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(vec1[i], vec2[i], 1e-10);
+    REQUIRE(vec1[i] == Approx(vec2[i]).epsilon(1e-12));
 }
 
-BOOST_AUTO_TEST_CASE(InputUnsignedColVectorParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "InputUnsignedColVectorParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -285,24 +286,25 @@ BOOST_AUTO_TEST_CASE(InputUnsignedColVectorParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --vector parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("vector"));
+  REQUIRE(IO::HasParam("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("vector_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("vector_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   arma::Col<size_t> vec1 = IO::GetParam<arma::Col<size_t>>("vector");
   arma::Col<size_t> vec2 = IO::GetParam<arma::Col<size_t>>("vector");
 
-  BOOST_REQUIRE_EQUAL(vec1.n_rows, 63);
-  BOOST_REQUIRE_EQUAL(vec2.n_rows, 63);
+  REQUIRE(vec1.n_rows == 63);
+  REQUIRE(vec2.n_rows == 63);
 
   for (size_t i = 0; i < vec1.n_elem; ++i)
-    BOOST_REQUIRE_EQUAL(vec1[i], vec2[i]);
+    REQUIRE(vec1[i] == vec2[i]);
 }
 
-BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "InputRowVectorParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -320,24 +322,25 @@ BOOST_AUTO_TEST_CASE(InputRowVectorParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --vector parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("row"));
+  REQUIRE(IO::HasParam("row"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("row_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("row_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   arma::rowvec vec1 = IO::GetParam<arma::rowvec>("row");
   arma::rowvec vec2 = IO::GetParam<arma::rowvec>("row");
 
-  BOOST_REQUIRE_EQUAL(vec1.n_cols, 7);
-  BOOST_REQUIRE_EQUAL(vec2.n_cols, 7);
+  REQUIRE(vec1.n_cols == 7);
+  REQUIRE(vec2.n_cols == 7);
 
   for (size_t i = 0; i < vec1.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(vec1[i], vec2[i], 1e-10);
+    REQUIRE(vec1[i] == Approx(vec2[i]).epsilon(1e-12));
 }
 
-BOOST_AUTO_TEST_CASE(InputUnsignedRowVectorParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "InputUnsignedRowVectorParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -355,24 +358,25 @@ BOOST_AUTO_TEST_CASE(InputUnsignedRowVectorParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --vector parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("row"));
+  REQUIRE(IO::HasParam("row"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("row_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("row_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   arma::Row<size_t> vec1 = IO::GetParam<arma::Row<size_t>>("row");
   arma::Row<size_t> vec2 = IO::GetParam<arma::Row<size_t>>("row");
 
-  BOOST_REQUIRE_EQUAL(vec1.n_cols, 7);
-  BOOST_REQUIRE_EQUAL(vec2.n_cols, 7);
+  REQUIRE(vec1.n_cols == 7);
+  REQUIRE(vec2.n_cols == 7);
 
   for (size_t i = 0; i < vec1.n_elem; ++i)
-    BOOST_REQUIRE_EQUAL(vec1[i], vec2[i]);
+    REQUIRE(vec1[i] == vec2[i]);
 }
 
-BOOST_AUTO_TEST_CASE(OutputColParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "OutputColParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -390,11 +394,11 @@ BOOST_AUTO_TEST_CASE(OutputColParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --vector parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("vector"));
+  REQUIRE(IO::HasParam("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("vector_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("vector_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
@@ -411,15 +415,16 @@ BOOST_AUTO_TEST_CASE(OutputColParamTest)
   arma::vec dataset2;
   data::Load("test.csv", dataset2);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, dataset2.n_rows);
+  REQUIRE(dataset.n_rows == dataset2.n_rows);
   for (size_t i = 0; i < dataset.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+    REQUIRE(dataset[i] == Approx(dataset2[i]).epsilon(1e-12));
 
   // Remove the file.
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(OutputUnsignedColParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedColParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -437,11 +442,11 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedColParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --vector parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("vector"));
+  REQUIRE(IO::HasParam("vector"));
   // The --vector_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("vector_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("vector_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
@@ -458,15 +463,16 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedColParamTest)
   arma::Col<size_t> dataset2;
   data::Load("test.csv", dataset2);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, dataset2.n_rows);
+  REQUIRE(dataset.n_rows == dataset2.n_rows);
   for (size_t i = 0; i < dataset.n_elem; ++i)
-    BOOST_REQUIRE_EQUAL(dataset[i], dataset2[i]);
+    REQUIRE(dataset[i] == dataset2[i]);
 
   // Remove the file.
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(OutputRowParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "OutputRowParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -484,11 +490,11 @@ BOOST_AUTO_TEST_CASE(OutputRowParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --row parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("row"));
+  REQUIRE(IO::HasParam("row"));
   // The --row_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("row_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("row_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
@@ -505,15 +511,15 @@ BOOST_AUTO_TEST_CASE(OutputRowParamTest)
   arma::rowvec dataset2;
   data::Load("test.csv", dataset2);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, dataset2.n_cols);
+  REQUIRE(dataset.n_cols == dataset2.n_cols);
   for (size_t i = 0; i < dataset.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+    REQUIRE(dataset[i] == Approx(dataset2[i]).epsilon(1e-12));
 
   // Remove the file.
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(OutputUnsignedRowParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedRowParamTest", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -531,11 +537,11 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedRowParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --row parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("row"));
+  REQUIRE(IO::HasParam("row"));
   // The --row_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("row_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("row_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
@@ -552,15 +558,16 @@ BOOST_AUTO_TEST_CASE(OutputUnsignedRowParamTest)
   arma::Row<size_t> dataset2;
   data::Load("test.csv", dataset2);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, dataset2.n_cols);
+  REQUIRE(dataset.n_cols == dataset2.n_cols);
   for (size_t i = 0; i < dataset.n_elem; ++i)
-    BOOST_REQUIRE_EQUAL(dataset[i], dataset2[i]);
+    REQUIRE(dataset[i] == dataset2[i]);
 
   // Remove the file.
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "InputMatrixParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -579,26 +586,129 @@ BOOST_AUTO_TEST_CASE(InputMatrixParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --matrix parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("matrix"));
+  REQUIRE(IO::HasParam("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("matrix_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   arma::mat dataset = IO::GetParam<arma::mat>("matrix");
   arma::mat dataset2 = IO::GetParam<arma::mat>("matrix");
 
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 1000);
-  BOOST_REQUIRE_EQUAL(dataset2.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(dataset2.n_cols, 1000);
+  REQUIRE(dataset.n_rows == 3);
+  REQUIRE(dataset.n_cols == 1000);
+  REQUIRE(dataset2.n_rows == 3);
+  REQUIRE(dataset2.n_cols == 1000);
 
   for (size_t i = 0; i < dataset.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+    REQUIRE(dataset[i] == Approx(dataset2[i]).epsilon(1e-12));
 }
 
-BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
+// Make sure we can correctly load required matrix parameters.
+TEST_CASE_METHOD(IOTestDestroyer, "RequiredInputMatrixParamTest",
+                "[IOTest]")
+{
+  AddRequiredCLIOptions();
+
+  // --matrix is an input parameter; it won't be transposed.
+  PARAM_MATRIX_IN_REQ("matrix", "Test matrix", "m");
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "--matrix_file";
+  argv[2] = "test_data_3_1000.csv";
+
+  int argc = 3;
+
+  // The const-cast is a little hacky but should be fine...
+  ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --matrix parameter should exist.
+  REQUIRE(IO::HasParam("matrix"));
+  // The --matrix_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::mat dataset = IO::GetParam<arma::mat>("matrix");
+  arma::mat dataset2 = IO::GetParam<arma::mat>("matrix");
+
+  REQUIRE(dataset.n_rows == 3);
+  REQUIRE(dataset.n_cols == 1000);
+  REQUIRE(dataset2.n_rows == 3);
+  REQUIRE(dataset2.n_cols == 1000);
+
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    REQUIRE(dataset[i] == Approx(dataset2[i]).epsilon(1e-12));
+}
+
+// Make sure loading required matrix options by alias succeeds.
+TEST_CASE_METHOD(IOTestDestroyer, "RequiredInputMatrixParamAliasTest",
+                "[IOTest]")
+{
+  AddRequiredCLIOptions();
+
+  // --matrix is an input parameter; it won't be transposed.
+  PARAM_MATRIX_IN_REQ("matrix", "Test matrix", "m");
+
+  // Set some fake arguments.
+  const char* argv[3];
+  argv[0] = "./test";
+  argv[1] = "-m";
+  argv[2] = "test_data_3_1000.csv";
+
+  int argc = 3;
+
+  // The const-cast is a little hacky but should be fine...
+  ParseCommandLine(argc, const_cast<char**>(argv));
+
+  // The --matrix parameter should exist.
+  REQUIRE(IO::HasParam("matrix"));
+  // The --matrix_file parameter should not exist (it should be transparent from
+  // inside the program).
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
+  Log::Fatal.ignoreInput = false;
+
+  arma::mat dataset = IO::GetParam<arma::mat>("matrix");
+  arma::mat dataset2 = IO::GetParam<arma::mat>("matrix");
+
+  REQUIRE(dataset.n_rows == 3);
+  REQUIRE(dataset.n_cols == 1000);
+  REQUIRE(dataset2.n_rows == 3);
+  REQUIRE(dataset2.n_cols == 1000);
+
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    REQUIRE(dataset[i] == Approx(dataset2[i]).epsilon(1e-12));
+}
+
+// Make sure that when we don't pass a required matrix, parsing fails.
+TEST_CASE_METHOD(IOTestDestroyer, "RequiredUnspecifiedInputMatrixParamTest",
+                "[IOTest]")
+{
+  AddRequiredCLIOptions();
+
+  // --matrix is an input parameter; it won't be transposed.
+  PARAM_MATRIX_IN_REQ("matrix", "Test matrix", "m");
+
+  // Set some fake arguments.
+  const char* argv[1];
+  argv[0] = "./test";
+
+  int argc = 1;
+
+  // The const-cast is a little hacky but should be fine...
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv)),
+      std::exception);
+  Log::Fatal.ignoreInput = false;
+}
+
+TEST_CASE_METHOD(IOTestDestroyer, "InputMatrixNoTransposeParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -617,26 +727,27 @@ BOOST_AUTO_TEST_CASE(InputMatrixNoTransposeParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --matrix parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("matrix"));
+  REQUIRE(IO::HasParam("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("matrix_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   arma::mat dataset = IO::GetParam<arma::mat>("matrix");
   arma::mat dataset2 = IO::GetParam<arma::mat>("matrix");
 
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 1000);
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 3);
-  BOOST_REQUIRE_EQUAL(dataset2.n_rows, 1000);
-  BOOST_REQUIRE_EQUAL(dataset2.n_cols, 3);
+  REQUIRE(dataset.n_rows == 1000);
+  REQUIRE(dataset.n_cols == 3);
+  REQUIRE(dataset2.n_rows == 1000);
+  REQUIRE(dataset2.n_cols == 3);
 
   for (size_t i = 0; i < dataset.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+    REQUIRE(dataset[i] == Approx(dataset2[i]).epsilon(1e-12));
 }
 
-BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -654,11 +765,11 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --matrix parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("matrix"));
+  REQUIRE(IO::HasParam("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("matrix_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
@@ -675,16 +786,16 @@ BOOST_AUTO_TEST_CASE(OutputMatrixParamTest)
   arma::mat dataset2;
   data::Load("test.csv", dataset2);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, dataset2.n_cols);
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, dataset2.n_rows);
+  REQUIRE(dataset.n_cols == dataset2.n_cols);
+  REQUIRE(dataset.n_rows == dataset2.n_rows);
   for (size_t i = 0; i < dataset.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+    REQUIRE(dataset[i] == Approx(dataset2[i]).epsilon(1e-12));
 
   // Remove the file.
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixNoTransposeParamTest", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -702,11 +813,11 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // The --matrix parameter should exist.
-  BOOST_REQUIRE(IO::HasParam("matrix"));
+  REQUIRE(IO::HasParam("matrix"));
   // The --matrix_file parameter should not exist (it should be transparent from
   // inside the program).
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(IO::HasParam("matrix_file"), runtime_error);
+  REQUIRE_THROWS_AS(IO::HasParam("matrix_file"), runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Since it's an output parameter, we don't need any input and don't need to
@@ -723,16 +834,17 @@ BOOST_AUTO_TEST_CASE(OutputMatrixNoTransposeParamTest)
   arma::mat dataset2;
   data::Load("test.csv", dataset2, true, false);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, dataset2.n_cols);
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, dataset2.n_rows);
+  REQUIRE(dataset.n_cols == dataset2.n_cols);
+  REQUIRE(dataset.n_rows == dataset2.n_rows);
   for (size_t i = 0; i < dataset.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(dataset[i], dataset2[i], 1e-10);
+    REQUIRE(dataset[i] == Approx(dataset2[i]).epsilon(1e-12));
 
   // Remove the file.
   remove("test.csv");
 }
 
-BOOST_AUTO_TEST_CASE(IntParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "IntParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -747,11 +859,12 @@ BOOST_AUTO_TEST_CASE(IntParamTest)
 
   ParseCommandLine(argc, const_cast<char**>(argv));
 
-  BOOST_REQUIRE(IO::HasParam("int"));
-  BOOST_REQUIRE_EQUAL(IO::GetParam<int>("int"), 3);
+  REQUIRE(IO::HasParam("int"));
+  REQUIRE(IO::GetParam<int>("int") == 3);
 }
 
-BOOST_AUTO_TEST_CASE(StringParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "StringParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -766,11 +879,12 @@ BOOST_AUTO_TEST_CASE(StringParamTest)
 
   ParseCommandLine(argc, const_cast<char**>(argv));
 
-  BOOST_REQUIRE(IO::HasParam("string"));
-  BOOST_REQUIRE_EQUAL(IO::GetParam<string>("string"), string("3"));
+  REQUIRE(IO::HasParam("string"));
+  REQUIRE(IO::GetParam<string>("string") == string("3"));
 }
 
-BOOST_AUTO_TEST_CASE(DoubleParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "DoubleParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -785,11 +899,11 @@ BOOST_AUTO_TEST_CASE(DoubleParamTest)
 
   ParseCommandLine(argc, const_cast<char**>(argv));
 
-  BOOST_REQUIRE(IO::HasParam("double"));
-  BOOST_REQUIRE_CLOSE(IO::GetParam<double>("double"), 3.12, 1e-10);
+  REQUIRE(IO::HasParam("double"));
+  REQUIRE(IO::GetParam<double>("double") == Approx(3.12).epsilon(1e-12));
 }
 
-BOOST_AUTO_TEST_CASE(RequiredOptionTest)
+TEST_CASE_METHOD(IOTestDestroyer, "RequiredOptionTest", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -801,12 +915,13 @@ BOOST_AUTO_TEST_CASE(RequiredOptionTest)
   int argc = 1;
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
+  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv)),
       runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
-BOOST_AUTO_TEST_CASE(UnknownOptionTest)
+TEST_CASE_METHOD(IOTestDestroyer, "UnknownOptionTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -817,7 +932,7 @@ BOOST_AUTO_TEST_CASE(UnknownOptionTest)
   int argc = 2;
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
+  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv)),
       runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -825,7 +940,8 @@ BOOST_AUTO_TEST_CASE(UnknownOptionTest)
 /**
  * Test that GetPrintableParam() works.
  */
-BOOST_AUTO_TEST_CASE(UnmappedParamTest)
+TEST_CASE_METHOD(IOTestDestroyer, "UnmappedParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -850,15 +966,15 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
   ParseCommandLine(argc, const_cast<char**>(argv));
 
   // Now check that we can get unmapped parameters.
-  BOOST_REQUIRE_EQUAL(IO::GetPrintableParam<arma::mat>("matrix"),
+  REQUIRE(IO::GetPrintableParam<arma::mat>("matrix") ==
       "'test_data_3_1000.csv' (3x1000 matrix)");
   // This will have size 0x0 since it's an output parameter, and it hasn't been
   // set since ParseCommandLine() was called.
-  BOOST_REQUIRE_EQUAL(IO::GetPrintableParam<arma::mat>("matrix2"),
+  REQUIRE(IO::GetPrintableParam<arma::mat>("matrix2") ==
       "'file2.csv' (0x0 matrix)");
-  BOOST_REQUIRE_EQUAL(IO::GetPrintableParam<GaussianKernel*>("kernel"),
+  REQUIRE(IO::GetPrintableParam<GaussianKernel*>("kernel") ==
       "kernel.txt");
-  BOOST_REQUIRE_EQUAL(IO::GetPrintableParam<GaussianKernel*>("kernel2"),
+  REQUIRE(IO::GetPrintableParam<GaussianKernel*>("kernel2") ==
       "kernel2.txt");
 
   remove("kernel.txt");
@@ -868,7 +984,7 @@ BOOST_AUTO_TEST_CASE(UnmappedParamTest)
  * Test that we can serialize a model and then deserialize it through the CLI
  * interface.
  */
-BOOST_AUTO_TEST_CASE(SerializationTest)
+TEST_CASE_METHOD(IOTestDestroyer, "IOSerializationTest", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -902,7 +1018,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   // Load the kernel from file.
   GaussianKernel* gk2 = IO::GetParam<GaussianKernel*>("kernel");
 
-  BOOST_REQUIRE_CLOSE(gk2->Bandwidth(), 0.5, 1e-5);
+  REQUIRE(gk2->Bandwidth() == Approx(0.5).epsilon(1e-7));
 
   // Clean up the memory...
   delete gk2;
@@ -914,7 +1030,8 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
 /**
  * Test that an exception is thrown when a required model is not specified.
  */
-BOOST_AUTO_TEST_CASE(RequiredModelTest)
+TEST_CASE_METHOD(IOTestDestroyer, "RequiredModelTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -927,7 +1044,7 @@ BOOST_AUTO_TEST_CASE(RequiredModelTest)
   int argc = 1;
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(ParseCommandLine(argc, const_cast<char**>(argv)),
+  REQUIRE_THROWS_AS(ParseCommandLine(argc, const_cast<char**>(argv)),
       runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -935,7 +1052,8 @@ BOOST_AUTO_TEST_CASE(RequiredModelTest)
 /**
  * Test that we can load both a dataset and its associated info.
  */
-BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
+TEST_CASE_METHOD(IOTestDestroyer, "MatrixAndDatasetInfoTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -975,32 +1093,32 @@ BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
   DatasetInfo info = move(get<0>(IO::GetParam<TupleType>("dataset")));
   arma::mat dataset = move(get<1>(IO::GetParam<TupleType>("dataset")));
 
-  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+  REQUIRE(info.Dimensionality() == 3);
 
-  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(0), 3);
-  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
-  BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
-  BOOST_REQUIRE_EQUAL(info.NumMappings(2), 2);
+  REQUIRE(info.Type(0) == Datatype::categorical);
+  REQUIRE(info.NumMappings(0) == 3);
+  REQUIRE(info.Type(1) == Datatype::numeric);
+  REQUIRE(info.Type(2) == Datatype::categorical);
+  REQUIRE(info.NumMappings(2) == 2);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+  REQUIRE(dataset.n_rows == 3);
+  REQUIRE(dataset.n_cols == 4);
 
   // The first dimension must all be different (except the ones that are the
   // same).
-  BOOST_REQUIRE_EQUAL(dataset(0, 0), dataset(0, 3));
-  BOOST_REQUIRE_NE(dataset(0, 0), dataset(0, 1));
-  BOOST_REQUIRE_NE(dataset(0, 1), dataset(0, 2));
-  BOOST_REQUIRE_NE(dataset(0, 2), dataset(0, 0));
+  REQUIRE(dataset(0, 0) == dataset(0, 3));
+  REQUIRE(dataset(0, 0) != dataset(0, 1));
+  REQUIRE(dataset(0, 1) != dataset(0, 2));
+  REQUIRE(dataset(0, 2) != dataset(0, 0));
 
-  BOOST_REQUIRE_CLOSE(dataset(1, 0), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(1, 1), 2.34, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(1, 2), 1.03e5, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(1, 3), -1.3, 1e-5);
+  REQUIRE(dataset(1, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(dataset(1, 1) == Approx(2.34).epsilon(1e-7));
+  REQUIRE(dataset(1, 2) == Approx(1.03e5).epsilon(1e-7));
+  REQUIRE(dataset(1, 3) == Approx(-1.3).epsilon(1e-7));
 
-  BOOST_REQUIRE_EQUAL(dataset(2, 0), dataset(2, 2));
-  BOOST_REQUIRE_EQUAL(dataset(2, 1), dataset(2, 3));
-  BOOST_REQUIRE_NE(dataset(2, 0), dataset(2, 1));
+  REQUIRE(dataset(2, 0) == dataset(2, 2));
+  REQUIRE(dataset(2, 1) == dataset(2, 3));
+  REQUIRE(dataset(2, 0) != dataset(2, 1));
 
   remove("test.arff");
 }
@@ -1008,7 +1126,7 @@ BOOST_AUTO_TEST_CASE(MatrixAndDatasetInfoTest)
 /**
  * Test that we can access a parameter before we load it.
  */
-BOOST_AUTO_TEST_CASE(RawIntegralParameter)
+TEST_CASE_METHOD(IOTestDestroyer, "RawIntegralParameter", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -1024,14 +1142,14 @@ BOOST_AUTO_TEST_CASE(RawIntegralParameter)
   IO::GetRawParam<double>("double") = 3.0;
 
   // Now when we get it, it should be what we just set it to.
-  BOOST_REQUIRE_CLOSE(IO::GetParam<double>("double"), 3.0, 1e-5);
+  REQUIRE(IO::GetParam<double>("double") == Approx(3.0).epsilon(1e-7));
 }
 
 /**
  * Test that we can load a dataset with a pre-set mapping through
  * IO::GetRawParam().
  */
-BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
+TEST_CASE_METHOD(IOTestDestroyer, "RawDatasetInfoLoadParameter", "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -1082,18 +1200,18 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
       std::get<1>(IO::GetParam<tuple<DatasetInfo, arma::mat>>("tuple"));
 
   // Check the values.
-  BOOST_REQUIRE_CLOSE(dataset(0, 0), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(1, 0), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(2, 0), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(0, 1), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(1, 1), 2.34, 1e-5);
-  BOOST_REQUIRE_SMALL(dataset(2, 1), 1e-5);
-  BOOST_REQUIRE_SMALL(dataset(0, 2), 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(1, 2), 1.03e+5, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(2, 2), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(0, 3), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(dataset(1, 3), -1.3, 1e-5);
-  BOOST_REQUIRE_SMALL(dataset(2, 3), 1e-5);
+  REQUIRE(dataset(0, 0) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(dataset(1, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(dataset(2, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(dataset(0, 1) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(dataset(1, 1) == Approx(2.34).epsilon(1e-7));
+  REQUIRE(dataset(2, 1) == Approx(0.0).margin(1e-5));
+  REQUIRE(dataset(0, 2) == Approx(0.0).margin(1e-5));
+  REQUIRE(dataset(1, 2) == Approx(1.03e+5).epsilon(1e-7));
+  REQUIRE(dataset(2, 2) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(dataset(0, 3) == Approx(2.0).epsilon(1e-7));
+  REQUIRE(dataset(1, 3) == Approx(-1.3).epsilon(1e-7));
+  REQUIRE(dataset(2, 3) == Approx(0.0).margin(1e-5));
 
   remove("test.arff");
 }
@@ -1101,7 +1219,8 @@ BOOST_AUTO_TEST_CASE(RawDatasetInfoLoadParameter)
 /**
  * Make sure typenames are properly stored.
  */
-BOOST_AUTO_TEST_CASE(CppNameTest)
+TEST_CASE_METHOD(IOTestDestroyer, "CppNameTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 
@@ -1110,9 +1229,7 @@ BOOST_AUTO_TEST_CASE(CppNameTest)
   PARAM_DOUBLE_IN("double", "Test double", "d", 0.0);
 
   // Check that the C++ typenames are right.
-  BOOST_REQUIRE_EQUAL(IO::Parameters().at("matrix").cppType, "arma::mat");
-  BOOST_REQUIRE_EQUAL(IO::Parameters().at("help").cppType, "bool");
-  BOOST_REQUIRE_EQUAL(IO::Parameters().at("double").cppType, "double");
+  REQUIRE(IO::Parameters().at("matrix").cppType == "arma::mat");
+  REQUIRE(IO::Parameters().at("help").cppType == "bool");
+  REQUIRE(IO::Parameters().at("double").cppType == "double");
 }
-
-BOOST_AUTO_TEST_SUITE_END();
