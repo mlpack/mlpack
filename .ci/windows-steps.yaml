@@ -122,6 +122,95 @@ steps:
     replaceExistingArchive: true
   displayName: 'Build artifacts'
 
+# Build MSI installer.
+- powershell: |
+    # Pull the documentation for the installer.
+    try {
+      (new-object net.webclient).DownloadFile(${env:JENKINS_DOC_DOWNLOAD},
+      'dist\win-installer\jenkinsdoc.zip')
+    }
+    catch {
+      Write-Output "Unable to download precompiled Doxygen documentation from Jenkins!"
+    }
+    try {
+      (Add-Type -AssemblyName System.IO.Compression.FileSystem);
+      [System.IO.Compression.ZipFile]::ExtractToDirectory(${env:JENKINS_DOC},
+      'dist\win-installer\staging\doc')
+    }
+    catch {
+      Write-Output "Unable to add doc to installer, skipping!"
+    }
+    # Preparing installer staging.
+    mkdir dist\win-installer\staging\lib
+    cp build\Release\*.lib dist\win-installer\staging\lib\
+    cp build\Release\*.exp dist\win-installer\staging\lib\
+    cp build\Release\*.dll dist\win-installer\staging\
+    cp build\Release\*.exe dist\win-installer\staging\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\staging\
+    cp $(Agent.ToolsDirectory)\boost_libs\boost_unit_test_framework-vc*.dll dist\win-installer\staging\
+    cp build\include\mlpack dist\win-installer\staging -recurse
+    cp doc\examples dist\win-installer\staging -recurse
+    cp src\mlpack\tests\data\german.csv dist\win-installer\staging\examples\sample-ml-app\sample-ml-app\data\
+    # Check current git version or mlpack version.
+    $ver = (Get-Content
+      "src\mlpack\core\util\version.hpp" |
+      where {$_ -like "*MLPACK_VERSION*"});
+      $env:MLPACK_VERSION += $ver[0].substring($ver[0].length - 1, 1) + '.';
+      $env:MLPACK_VERSION += $ver[1].substring($ver[1].length - 1, 1) + '.';
+      $env:MLPACK_VERSION += $ver[2].substring($ver[2].length - 1, 1);
+
+    if (Test-Path "src/mlpack/core/util/gitversion.hpp")
+    {
+      $ver = (Get-Content ${env:GIT_VERSION_FILE});
+      $env:INSTALL_VERSION = $ver.Split('"')[1].Split(' ')[1];
+    }
+    else
+    {
+      $env:INSTALL_VERSION = $env:MLPACK_VERSION;
+    }
+    # Build the MSI installer.
+    cd dist\win-installer\mlpack-win-installer
+    heat dir ..\staging
+        -cg HeatGenerated
+        -dr INSTALLFOLDER
+        -sreg
+        -srd
+        -var var.HarvestPath
+        -ag
+        -sfrag
+        -out HeatGeneratedFileList.wxs
+    candle
+        -dHarvestPath=..\staging
+        -dConfiguration=Release
+        -dOutDir=bin\x64\Release\
+        -dPlatform=x64
+        -dProjectDir=.
+        -dProjectExt=.wixproj
+        -dProjectFileName=mlpack-win-installer.wixproj
+        -dProjectName=mlpack-win-installer
+        -dProjectPath=mlpack-win-installer.wixproj
+        -dTargetDir=.\bin\x64\Release\
+        -dTargetExt=.msi
+        -dTargetFileName=mlpack-windows.msi
+        -dTargetName=mlpack-windows
+        -dTargetPath=.\bin\x64\Release\mlpack-windows.msi
+        -out obj\x64\Release\
+        -arch x64
+        -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll"
+        Product.wxs HeatGeneratedFileList.wxs
+    light
+        -out .\bin\x64\Release\mlpack-%INSTALL_VERSION%.msi
+        -pdbout .\bin\x64\Release\mlpack-windows.wixpdb
+        -cultures:null
+        -loc mlpack-localization.wxl
+        -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll"
+        -contentsfile obj\x64\Release\mlpack-win-installer.wixproj.BindContentsFileListnull.txt
+        -outputsfile obj\x64\Release\mlpack-win-installer.wixproj.BindOutputsFileListnull.txt
+        -builtoutputsfile obj\x64\Release\mlpack-win-installer.wixproj.BindBuiltOutputsFileListnull.txt
+        -wixprojectfile mlpack-win-installer.wixproj
+        obj\x64\Release\Product.wixobj obj\x64\Release\HeatGeneratedFileList.wixobj
+  displayName: 'Build MSI Windows installer'
+
 # Publish artifacts to Azure Pipelines
 - task: PublishBuildArtifacts@1
   inputs:
@@ -138,6 +227,11 @@ steps:
     pathtoPublish: 'build/Testing/'
     artifactName: 'Tests'
   displayName: 'Publish artifacts test results'
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: 'dist\win-installer\mlpack-win-installer\bin\x64\Release\*.msi'
+    artifactName: mlpack-windows-installer
+  displayName: 'Publish Windows MSI installer'
 
 # Publish test results to Azure Pipelines
 - task: PublishTestResults@2
