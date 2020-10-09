@@ -492,7 +492,7 @@ TEST_CASE("DualTreeVsNaive1", "[RangeSearchTest]")
     {
       REQUIRE(sortedTree[i][j].second == sortedNaive[i][j].second);
       REQUIRE(sortedTree[i][j].first ==
-              Approx(sortedNaive[i][j].first).epsilon(1e-7));
+          Approx(sortedNaive[i][j].first).epsilon(1e-7));
     }
   }
 }
@@ -541,7 +541,7 @@ TEST_CASE("DualTreeVsNaive2", "[RangeSearchTest]")
     {
       REQUIRE(sortedTree[i][j].second == sortedNaive[i][j].second);
       REQUIRE(sortedTree[i][j].first ==
-              Approx(sortedNaive[i][j].first).epsilon(1e-7));
+          Approx(sortedNaive[i][j].first).epsilon(1e-7));
     }
   }
 }
@@ -590,7 +590,7 @@ TEST_CASE("SingleTreeVsNaive", "[RangeSearchTest]")
     {
       REQUIRE(sortedTree[i][j].second == sortedNaive[i][j].second);
       REQUIRE(sortedTree[i][j].first ==
-              Approx(sortedNaive[i][j].first).epsilon(1e-7));
+          Approx(sortedNaive[i][j].first).epsilon(1e-7));
     }
   }
 }
@@ -663,7 +663,7 @@ TEST_CASE("CoverTreeTest", "[RangeSearchTest]")
       {
         REQUIRE(kdSorted[i][j].second == coverSorted[i][j].second);
         REQUIRE(kdSorted[i][j].first ==
-                Approx(coverSorted[i][j].first).epsilon(1e-7));
+            Approx(coverSorted[i][j].first).epsilon(1e-7));
       }
       REQUIRE(kdSorted[i].size() == coverSorted[i].size());
     }
@@ -741,7 +741,7 @@ TEST_CASE("CoverTreeTwoDatasetsTest", "[RangeSearchTest]")
       {
         REQUIRE(kdSorted[i][j].second == coverSorted[i][j].second);
         REQUIRE(kdSorted[i][j].first ==
-                Approx(coverSorted[i][j].first).epsilon(1e-7));
+            Approx(coverSorted[i][j].first).epsilon(1e-7));
       }
       REQUIRE(kdSorted[i].size() == coverSorted[i].size());
     }
@@ -815,7 +815,7 @@ TEST_CASE("CoverTreeSingleTreeTest", "[RangeSearchTest]")
       {
         REQUIRE(kdSorted[i][j].second == coverSorted[i][j].second);
         REQUIRE(kdSorted[i][j].first ==
-                Approx(coverSorted[i][j].first).epsilon(1e-7));
+            Approx(coverSorted[i][j].first).epsilon(1e-7));
       }
       REQUIRE(kdSorted[i].size() == coverSorted[i].size());
     }
@@ -889,7 +889,7 @@ TEST_CASE("SingleBallTreeTest", "[RangeSearchTest]")
       {
         REQUIRE(kdSorted[i][j].second == ballSorted[i][j].second);
         REQUIRE(kdSorted[i][j].first ==
-                Approx(ballSorted[i][j].first).epsilon(1e-7));
+            Approx(ballSorted[i][j].first).epsilon(1e-7));
       }
       REQUIRE(kdSorted[i].size() == ballSorted[i].size());
     }
@@ -963,7 +963,7 @@ TEST_CASE("DualBallTreeTest", "[RangeSearchTest]")
       {
         REQUIRE(kdSorted[i][j].second == ballSorted[i][j].second);
         REQUIRE(kdSorted[i][j].first ==
-                Approx(ballSorted[i][j].first).epsilon(1e-7));
+            Approx(ballSorted[i][j].first).epsilon(1e-7));
       }
       REQUIRE(kdSorted[i].size() == ballSorted[i].size());
     }
@@ -1042,7 +1042,7 @@ TEST_CASE("DualBallTreeTest2", "[RangeSearchTest]")
       {
         REQUIRE(kdSorted[i][j].second == ballSorted[i][j].second);
         REQUIRE(kdSorted[i][j].first ==
-                Approx(ballSorted[i][j].first).epsilon (1e-7));
+            Approx(ballSorted[i][j].first).epsilon (1e-7));
       }
     }
   }
@@ -1105,7 +1105,7 @@ TEST_CASE("RangeSearchTrainTest", "[RangeSearchTest]")
     {
       REQUIRE(sorted[i][j].second == baselineSorted[i][j].second);
       REQUIRE(sorted[i][j].first ==
-              Approx(baselineSorted[i][j].first).epsilon(1e-7));
+          Approx(baselineSorted[i][j].first).epsilon(1e-7));
     }
   }
 }
@@ -1147,7 +1147,7 @@ TEST_CASE("TrainTreeTest", "[RangeSearchTest]")
     {
       REQUIRE(sorted[i][j].second == baselineSorted[i][j].second);
       REQUIRE(sorted[i][j].first ==
-              Approx(baselineSorted[i][j].first).epsilon(1e-7));
+          Approx(baselineSorted[i][j].first).epsilon(1e-7));
     }
   }
 }
@@ -1202,7 +1202,7 @@ TEST_CASE("MoveConstructorMatrixTest", "[RangeSearchTest]")
     {
       REQUIRE(sorted[i][j].second == moveSorted[i][j].second);
       REQUIRE(sorted[i][j].first ==
-              Approx(moveSorted[i][j].first).epsilon(1e-7));
+          Approx(moveSorted[i][j].first).epsilon(1e-7));
     }
   }
 }
@@ -1245,7 +1245,7 @@ TEST_CASE("MoveTrainTest", "[RangeSearchTest]")
     {
       REQUIRE(sorted[i][j].second == moveSorted[i][j].second);
       REQUIRE(sorted[i][j].first ==
-              Approx(moveSorted[i][j].first).epsilon(1e-7));
+          Approx(moveSorted[i][j].first).epsilon(1e-7));
     }
   }
 }
@@ -1330,7 +1330,7 @@ TEST_CASE("RSModelTest", "[RangeSearchTest]")
         {
           REQUIRE(sorted[k][l].second == baselineSorted[k][l].second);
           REQUIRE(sorted[k][l].first ==
-                  Approx(baselineSorted[k][l].first).epsilon(1e-7));
+              Approx(baselineSorted[k][l].first).epsilon(1e-7));
         }
       }
     }
@@ -1413,7 +1413,7 @@ TEST_CASE("RSModelMonochromaticTest", "[RangeSearchTest]")
         {
           REQUIRE(sorted[k][l].second == baselineSorted[k][l].second);
           REQUIRE(sorted[k][l].first ==
-                  Approx(baselineSorted[k][l].first).epsilon(1e-7));
+              Approx(baselineSorted[k][l].first).epsilon(1e-7));
         }
       }
     }
