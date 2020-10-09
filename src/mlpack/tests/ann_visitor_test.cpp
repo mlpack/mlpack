@@ -54,6 +54,20 @@ TEST_CASE("BiasSetVisitorTest", "[ANNVisitorTest]")
 }
 
 /**
+ * Check correctness of WeightSize() for a layer.
+ */
+void CheckCorrectnessOfWeightSize(LayerTypes<>& layer)
+{
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
+      layer);
+
+  arma::mat parameters;
+  boost::apply_visitor(ParametersVisitor(parameters), layer);
+
+  REQUIRE(weightSize == parameters.n_elem);
+}
+
+/**
  * Test that WeightSetVisitor works properly.
  */
 TEST_CASE("WeightSetVisitorTest", "[ANNVisitorTest]")
@@ -80,11 +94,9 @@ TEST_CASE("WeightSizeVisitorTest", "[ANNVisitorTest]")
 
   LayerTypes<> linear = new Linear<>(randomSize, randomSize);
 
-  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
-      linear);
-
-  REQUIRE(weightSize == randomSize * randomSize + randomSize);
+  CheckCorrectnessOfWeightSize(linear);
 }
+
 
 /**
  * Test that WeightSizeVisitor works properly for Convolution layer.
@@ -98,11 +110,7 @@ TEST_CASE("WeightSizeVisitorTestForConvLayer", "[ANNVisitorTest]")
 
   LayerTypes<> convLayer = new Convolution<>(randomInSize, randomOutSize,
       randomKernelWidth, randomKernelHeight);
-
-  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
-                                           convLayer);
-
-  REQUIRE(weightSize == convLayer.Parameters().n_elem);
+  CheckCorrectnessOfWeightSize(convLayer);
 }
 
 /**
@@ -113,9 +121,5 @@ TEST_CASE("WeightSizeVisitorTestForBatchNormLayer", "[ANNVisitorTest]")
   size_t randomSize = arma::randi(arma::distr_param(1, 100));
 
   LayerTypes<> batchNorm = new BatchNorm<>(randomSize);
-
-  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
-                                           batchNorm);
-
-  REQUIRE(weightSize == batchNorm.Parameters().n_elem);
+  CheckCorrectnessOfWeightSize(batchNorm);
 }
