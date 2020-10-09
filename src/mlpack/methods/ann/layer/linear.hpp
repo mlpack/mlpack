@@ -17,6 +17,7 @@
 #include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
 #include "layer_types.hpp"
+#include "base_class_layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -33,9 +34,10 @@ namespace ann /** Artificial Neural Network. */ {
 template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat,
-    typename RegularizerType = NoRegularizer
+    typename RegularizerType = NoRegularizer,
+    typename eT
 >
-class Linear
+class Linear : public BaseLayer
 {
  public:
   //! Create the Linear object.
@@ -76,7 +78,7 @@ class Linear
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
+
   void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
@@ -88,7 +90,7 @@ class Linear
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
+
   void Backward(const arma::Mat<eT>& /* input */,
                 const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
@@ -100,7 +102,7 @@ class Linear
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
+
   void Gradient(const arma::Mat<eT>& input,
                 const arma::Mat<eT>& error,
                 arma::Mat<eT>& gradient);
@@ -155,8 +157,8 @@ class Linear
   /**
    * Serialize the layer
    */
-  template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  //template<typename Archive>
+  //void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   //! Locally-stored number of input units.

@@ -20,8 +20,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-Linear<InputDataType, OutputDataType, RegularizerType>::Linear() :
+    typename RegularizerType, typename eT>
+Linear<InputDataType, OutputDataType, RegularizerType, eT>::Linear() :
     inSize(0),
     outSize(0)
 {
@@ -29,8 +29,8 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear() :
 }
 
 template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
+    typename RegularizerType, typename eT>
+Linear<InputDataType, OutputDataType, RegularizerType, eT>::Linear(
     const size_t inSize,
     const size_t outSize,
     RegularizerType regularizer) :
@@ -42,8 +42,8 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
 }
 
 template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
+    typename RegularizerType, typename eT>
+Linear<InputDataType, OutputDataType, RegularizerType, eT>::Linear(
     const Linear& layer) :
     inSize(layer.inSize),
     outSize(layer.outSize),
@@ -54,8 +54,8 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
 }
 
 template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
+    typename RegularizerType, typename eT>
+Linear<InputDataType, OutputDataType, RegularizerType, eT>::Linear(
     Linear&& layer) :
     inSize(0),
     outSize(0),
@@ -66,9 +66,9 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
 }
 
 template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-Linear<InputDataType, OutputDataType, RegularizerType>&
-Linear<InputDataType, OutputDataType, RegularizerType>::
+    typename RegularizerType, typename eT>
+Linear<InputDataType, OutputDataType, RegularizerType, eT>&
+Linear<InputDataType, OutputDataType, RegularizerType, eT>::
 operator=(const Linear& layer)
 { 
   if (this != &layer)
@@ -82,9 +82,9 @@ operator=(const Linear& layer)
 }
 
 template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-Linear<InputDataType, OutputDataType, RegularizerType>&
-Linear<InputDataType, OutputDataType, RegularizerType>::
+    typename RegularizerType, typename eT>
+Linear<InputDataType, OutputDataType, RegularizerType, eT>&
+Linear<InputDataType, OutputDataType, RegularizerType, eT>::
 operator=(Linear&& layer)
 { 
   if (this != &layer)
@@ -98,8 +98,8 @@ operator=(Linear&& layer)
 }
 
 template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-void Linear<InputDataType, OutputDataType, RegularizerType>::Reset()
+    typename RegularizerType, typename eT>
+void Linear<InputDataType, OutputDataType, RegularizerType, eT>::Reset()
 {
   weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
   bias = arma::mat(weights.memptr() + weight.n_elem,
@@ -107,9 +107,8 @@ void Linear<InputDataType, OutputDataType, RegularizerType>::Reset()
 }
 
 template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-template<typename eT>
-void Linear<InputDataType, OutputDataType, RegularizerType>::Forward(
+    typename RegularizerType, typename eT>
+void Linear<InputDataType, OutputDataType, RegularizerType, eT>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   output = weight * input;
@@ -117,18 +116,16 @@ void Linear<InputDataType, OutputDataType, RegularizerType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-template<typename eT>
-void Linear<InputDataType, OutputDataType, RegularizerType>::Backward(
+    typename RegularizerType, typename eT>
+void Linear<InputDataType, OutputDataType, RegularizerType, eT>::Backward(
     const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   g = weight.t() * gy;
 }
 
 template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-template<typename eT>
-void Linear<InputDataType, OutputDataType, RegularizerType>::Gradient(
+    typename RegularizerType, typename eT>
+void Linear<InputDataType, OutputDataType, RegularizerType, eT>::Gradient(
     const arma::Mat<eT>& input,
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
@@ -140,16 +137,16 @@ void Linear<InputDataType, OutputDataType, RegularizerType>::Gradient(
   regularizer.Evaluate(weights, gradient);
 }
 
-template<typename InputDataType, typename OutputDataType,
-    typename RegularizerType>
-template<typename Archive>
-void Linear<InputDataType, OutputDataType, RegularizerType>::serialize(
-    Archive& ar, const unsigned int /* version */)
-{
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
-  ar & BOOST_SERIALIZATION_NVP(weights);
-}
+//template<typename InputDataType, typename OutputDataType,
+//    typename RegularizerType>
+//template<typename Archive>
+//void Linear<InputDataType, OutputDataType, RegularizerType>::serialize(
+//    Archive& ar, const unsigned int /* version */)
+//{
+//  ar & BOOST_SERIALIZATION_NVP(inSize);
+//  ar & BOOST_SERIALIZATION_NVP(outSize);
+//  ar & BOOST_SERIALIZATION_NVP(weights);
+//}
 
 } // namespace ann
 } // namespace mlpack

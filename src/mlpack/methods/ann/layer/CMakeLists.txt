@@ -5,31 +5,17 @@ set(SOURCES
   add_impl.hpp
   add_merge.hpp
   add_merge_impl.hpp
-  adaptive_max_pooling.hpp
-  adaptive_max_pooling_impl.hpp
-  adaptive_mean_pooling.hpp
-  adaptive_mean_pooling_impl.hpp
   alpha_dropout.hpp
   alpha_dropout_impl.hpp
-  atrous_convolution.hpp
-  atrous_convolution_impl.hpp
   base_layer.hpp
   batch_norm.hpp
   batch_norm_impl.hpp
   bilinear_interpolation.hpp
   bilinear_interpolation_impl.hpp
-  concat.hpp
-  concat_impl.hpp
-  concat_performance.hpp
-  concat_performance_impl.hpp
   concatenate.hpp
   concatenate_impl.hpp
   constant.hpp
   constant_impl.hpp
-  convolution.hpp
-  convolution_impl.hpp
-  dropconnect.hpp
-  dropconnect_impl.hpp
   dropout.hpp
   dropout_impl.hpp
   elu.hpp
@@ -38,14 +24,8 @@ set(SOURCES
   fast_lstm_impl.hpp
   flexible_relu.hpp
   flexible_relu_impl.hpp
-  glimpse.hpp
-  glimpse_impl.hpp
-  gru.hpp
-  gru_impl.hpp
   hard_tanh.hpp
   hard_tanh_impl.hpp
-  highway.hpp
-  highway_impl.hpp
   join.hpp
   join_impl.hpp
   layer.hpp
@@ -118,6 +98,7 @@ set(SOURCES
   softshrink_impl.hpp
   softmin.hpp
   softmin_impl.hpp
+  base_class_layer.hpp
 )
 
 # Add directory name to sources.

@@ -39,8 +39,8 @@
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
-#include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
-#include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
+//#include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
+//#include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/positional_encoding.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>

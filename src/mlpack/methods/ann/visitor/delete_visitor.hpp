@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_VISITOR_DELETE_VISITOR_HPP
 
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
+//#include <mlpack/methods/ann/layer/layer_types.hpp>
 
 #include <boost/variant.hpp>
 
@@ -46,6 +46,6 @@ class DeleteVisitor : public boost::static_visitor<void>
 } // namespace mlpack
 
 // Include implementation.
-#include "delete_visitor_impl.hpp"
+//#include "delete_visitor_impl.hpp"
 
 #endif

@@ -9,8 +9,6 @@ set(SOURCES
   bias_set_visitor_impl.hpp
   copy_visitor.hpp
   copy_visitor_impl.hpp
-  delete_visitor.hpp
-  delete_visitor_impl.hpp
   delta_visitor.hpp
   delta_visitor_impl.hpp
   deterministic_set_visitor.hpp

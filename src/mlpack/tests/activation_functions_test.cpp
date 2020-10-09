@@ -12,7 +12,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/layer/layer.hpp>
+//#include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/ann/activation_functions/identity_function.hpp>
 #include <mlpack/methods/ann/activation_functions/softsign_function.hpp>
