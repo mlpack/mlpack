@@ -4,7 +4,7 @@
 
   * Added Softmin activation function as layer in ann/layer.
 
-  * Fix spurious ARMA_64BIT_WORD compilation warnings on 32-bit systems.
+  * Fix spurious ARMA_64BIT_WORD compilation warnings on 32-bit systems (#2665).
 
 ### mlpack 3.4.1
 ###### 2020-09-07
