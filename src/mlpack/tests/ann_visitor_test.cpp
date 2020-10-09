@@ -72,17 +72,78 @@ TEST_CASE("WeightSetVisitorTest", "[ANNVisitorTest]")
 }
 
 /**
- * Test that WeightSizeVisitor works properly.
+ * Test that WeightSizeVisitor works properly for linear layer.
  */
-TEST_CASE("WeightSizeVisitorTest", "[ANNVisitorTest]")
+TEST_CASE("WeightSizeVisitorTestForLinearLayer", "[ANNVisitorTest]")
 {
-  size_t randomSize = arma::randi(arma::distr_param(1, 100));
+  size_t randomInSize = arma::randi(arma::distr_param(1, 100));
+  size_t randomOutSize = arma::randi(arma::distr_param(1, 100));
 
-  LayerTypes<> linear = new Linear<>(randomSize, randomSize);
+  LayerTypes<> linearLayer = new Linear<>(randomInSize, randomOutSize);
 
-  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
-      linear);
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(), linearLayer);
 
-  REQUIRE(weightSize == randomSize * randomSize + randomSize);
+  REQUIRE(weightSize == randomInSize * randomOutSize + randomOutSize);
 }
 
+/**
+ * Test that WeightSizeVisitor works properly for concat layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForConcatLayer", "[ANNVisitorTest]")
+{
+  LayerTypes<> concatLayer = new Concat<>();
+  
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(), concatLayer);
+
+  REQUIRE(weightSize == 0);
+}
+
+/**
+ * Test that WeightSizeVisitor works properly for fast lstm layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForFastLSTMLayer", "[ANNVisitorTest]")
+{
+  size_t randomInSize = arma::randi(arma::distr_param(1, 100));
+  size_t randomOutSize = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> fastLSTMLayer = new FastLSTM<>(randomInSize, randomOutSize);
+
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(), fastLSTMLayer);
+
+  REQUIRE(weightSize == 4 * randomInSize * randomOutSize + 4 * randomOutSize
+      + 4 * randomOutSize * randomOutSize);
+}
+
+/**
+ * Test that WeightSizeVisitor works properly for Add layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForAddLayer", "[ANNVisitorTest]")
+{
+  size_t randomOutSize = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> addLayer = new Add<>(randomOutSize);
+
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(), addLayer);
+
+  REQUIRE(weightSize == randomOutSize);
+}
+
+/**
+ * Test that WeightSizeVisitor works properly for Atrous Convolution Layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForAtrousConvolutionLayer", "[ANNVisitorTest]")
+{
+  size_t randomInSize = arma::randi(arma::distr_param(1, 100));
+  size_t randomOutSize = arma::randi(arma::distr_param(1, 100));
+  size_t randomKernelWidth = arma::randi(arma::distr_param(1, 100));
+  size_t randomKernelHeight = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> atrousConvLayer = new AtrousConvolution<>(randomInSize, randomOutSize,
+      randomKernelWidth, randomKernelHeight);
+
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
+                                           atrousConvLayer);
+ 
+ REQUIRE(weightSize == randomOutSize * randomInSize * randomKernelWidth
+     * randomKernelHeight + randomOutSize);
+}

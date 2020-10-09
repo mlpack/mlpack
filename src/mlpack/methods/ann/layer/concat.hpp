@@ -197,10 +197,7 @@ class Concat
   size_t const& ConcatAxis() const { return axis; }
 
   //! Get the size of the weight matrix.
-  size_t WeightSize() const
-  {
-    return 0;
-  }
+  size_t WeightSize() const { return 0; }
 
   /**
    * Serialize the layer
