@@ -50,7 +50,7 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm(
     count(0),
     averageFactor(0.0)
 {
-  weights.set_size(size + size, 1);
+  weights.set_size(WeightSize(), 1);
   runningMean.zeros(size, 1);
   runningVariance.ones(size, 1);
 }
