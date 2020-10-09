@@ -126,7 +126,7 @@ steps:
 - powershell: |
     # Pull the documentation for the installer.
     try {
-      (new-object net.webclient).DownloadFile(${env:JENKINS_DOC_DOWNLOAD},
+      (new-object net.webclient).DownloadFile('http://ci.mlpack.org/job/mlpack%20-%20doxygen%20build/lastSuccessfulBuild/artifact/build/doc/html/*zip*/html.zip'),
       'dist\win-installer\jenkinsdoc.zip')
     }
     catch {
@@ -134,7 +134,7 @@ steps:
     }
     try {
       (Add-Type -AssemblyName System.IO.Compression.FileSystem);
-      [System.IO.Compression.ZipFile]::ExtractToDirectory(${env:JENKINS_DOC},
+      [System.IO.Compression.ZipFile]::ExtractToDirectory('dist\win-installer\jenkinsdoc.zip',
       'dist\win-installer\staging\doc')
     }
     catch {
@@ -159,7 +159,7 @@ steps:
 
     if (Test-Path "src/mlpack/core/util/gitversion.hpp")
     {
-      $ver = (Get-Content ${env:GIT_VERSION_FILE});
+      $ver = (Get-Content "src/mlpack/core/util/gitversion.hpp"
       $env:INSTALL_VERSION = $ver.Split('"')[1].Split(' ')[1];
     }
     else
