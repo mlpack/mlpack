@@ -18,9 +18,6 @@ add_executable(mlpack_test
   kde_test.cpp
   krann_search_test.cpp
   ksinit_test.cpp
-  lars_test.cpp
-  layer_names_test.cpp
-  lin_alg_test.cpp
   linear_svm_test.cpp
   lmnn_test.cpp
   local_coordinate_coding_test.cpp
@@ -30,7 +27,6 @@ add_executable(mlpack_test
   math_test.cpp
   matrix_completion_test.cpp
   maximal_inputs_test.cpp
-  metric_test.cpp
   mlpack_test.cpp
   mock_categorical_data.hpp
   nbc_test.cpp
@@ -43,7 +39,6 @@ add_executable(mlpack_test
   qdafn_test.cpp
   radical_test.cpp
   random_test.cpp
-  range_search_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
   serialization.cpp
@@ -78,7 +73,6 @@ add_executable(mlpack_test
   main_tests/nmf_test.cpp
   main_tests/perceptron_test.cpp
   main_tests/radical_test.cpp
-  main_tests/range_search_test.cpp
   main_tests/test_helper.hpp
 )
 
@@ -119,10 +113,14 @@ add_executable(mlpack_catch_test
   kfn_test.cpp
   kmeans_test.cpp
   knn_test.cpp
+  lars_test.cpp
+  layer_names_test.cpp
+  lin_alg_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
   loss_functions_test.cpp
   main.cpp
+  metric_test.cpp
   mean_shift_test.cpp
   nca_test.cpp
   octree_test.cpp
@@ -131,7 +129,10 @@ add_executable(mlpack_catch_test
   quic_svd_test.cpp
   random_forest_test.cpp
   randomized_svd_test.cpp
+  range_search_test.cpp
+  rbm_network_test.cpp
   rectangle_tree_test.cpp
+  recurrent_network_test.cpp
   regularized_svd_test.cpp
   scaling_test.cpp
   serialization_catch.cpp
@@ -177,6 +178,7 @@ add_executable(mlpack_catch_test
   main_tests/random_forest_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
+  main_tests/range_search_test.cpp
   main_tests/test_helper.hpp
 )
 
@@ -230,7 +232,6 @@ set(parallel_tests
   "GMMTest;"
   "CFTest;"
   "HMMTest;"
-  "LARSTest;"
   "LogisticRegressionTest;"
   "GmmTrainMainTest;"
   "LinearSVMTest")
