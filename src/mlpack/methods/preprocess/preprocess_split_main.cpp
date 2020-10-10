@@ -148,7 +148,7 @@ static void mlpackMain()
         IO::GetParam<arma::Mat<size_t>>("input_labels");
     arma::Row<size_t> labelsRow = labels.row(0);
 
-    if(IO::HasParam("stratify"))
+    if(stratifyData)
     {
       const auto value =
           data::StratifiedSplit(data, labelsRow, testRatio, !shuffleData);
