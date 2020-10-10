@@ -20,8 +20,7 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 #include "serialization.hpp"
 
 using namespace mlpack;
@@ -30,14 +29,12 @@ using namespace mlpack::math;
 using namespace mlpack::regression;
 using namespace std::placeholders;
 
-BOOST_AUTO_TEST_SUITE(WGANNetworkTest);
-
 /*
  * Tests the standard WGAN implementation on the MNIST dataset.
  * It's not viable to train on bigger parameters due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
  */
-BOOST_AUTO_TEST_CASE(WGANMNISTTest)
+TEST_CASE("WGANMNISTTest", "[WGANNetworkTest]")
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 5;
@@ -131,7 +128,7 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
   double objVal = wgan.Train(trainData, optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 
   // Generate samples.
   Log::Info << "Sampling..." << std::endl;
@@ -198,7 +195,7 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
  * It's not viable to train on bigger parameters due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
  */
-BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
+TEST_CASE("WGANGPMNISTTest","[WGANNetworkTest]")
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 5;
@@ -293,7 +290,7 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
   double objVal = wganGP.Train(trainData, optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 
   // Generate samples.
   Log::Info << "Sampling..." << std::endl;
@@ -354,5 +351,3 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
   CheckMatrices(orgPredictions, textPredictions);
   CheckMatrices(orgPredictions, binaryPredictions);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

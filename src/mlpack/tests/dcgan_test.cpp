@@ -20,8 +20,7 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 #include "serialization.hpp"
 
 using namespace mlpack;
@@ -30,14 +29,12 @@ using namespace mlpack::math;
 using namespace mlpack::regression;
 using namespace std::placeholders;
 
-BOOST_AUTO_TEST_SUITE(DCGANNetworkTest);
-
 /*
  * Tests the DCGAN implementation on the MNIST dataset.
  * It's not viable to train on bigger parameters due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
  */
-BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
+TEST_CASE("DCGANMNISTTest", "[DCGANNetworkTest]")
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 5;
@@ -129,7 +126,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   double objVal = dcgan.Train(trainData, optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 
   // Generate samples.
   Log::Info << "Sampling..." << std::endl;
@@ -196,7 +193,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
  * Tests the DCGAN implementation with minibatch layer on the MNIST dataset.
  * It's not viable to train on bigger parameters due to time constraints.
 
-BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
+TEST_CASE("DCGANMNISTTest", "[DCGANNetworkTest]")
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 5;
@@ -284,7 +281,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   double objVal = dcgan.Train(optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
@@ -350,7 +347,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
  * It's currently not possible to run this every time due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
 
-BOOST_AUTO_TEST_CASE(DCGANCelebATest)
+TEST_CASE("DCGANCelebATest", "[DCGANNetworkTest]")
 {
   size_t dNumKernels = 64;
   size_t discriminatorPreTrain = 300;
@@ -470,5 +467,3 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
   Log::Info << "Output generated!" << std::endl;
 }
 */
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -5,12 +5,10 @@ add_executable(mlpack_test
   callback_test.cpp
   cf_test.cpp
   cosine_tree_test.cpp
-  dcgan_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp
   fastmks_test.cpp
   facilities_test.cpp
-  gan_test.cpp
   gmm_test.cpp
   hmm_test.cpp
   hoeffding_tree_test.cpp
@@ -26,7 +24,6 @@ add_executable(mlpack_test
   log_test.cpp
   logistic_regression_test.cpp
   lsh_test.cpp
-  math_test.cpp
   matrix_completion_test.cpp
   maximal_inputs_test.cpp
   mlpack_test.cpp
@@ -59,7 +56,6 @@ add_executable(mlpack_test
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
-  wgan_test.cpp
   main_tests/cf_test.cpp
   main_tests/det_test.cpp
   main_tests/emst_test.cpp
@@ -108,11 +104,13 @@ add_executable(mlpack_catch_test
   convolution_test.cpp
   cv_test.cpp
   dbscan_test.cpp
+  dcgan_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
   det_test.cpp
   distribution_test.cpp
   feedforward_network_test.cpp
+  gan_test.cpp
   image_load_test.cpp
   imputation_test.cpp
   io_test.cpp
@@ -129,6 +127,7 @@ add_executable(mlpack_catch_test
   load_save_test.cpp
   loss_functions_test.cpp
   main.cpp
+  math_test.cpp
   metric_test.cpp
   mean_shift_test.cpp
   nca_test.cpp
@@ -155,6 +154,7 @@ add_executable(mlpack_catch_test
   svd_incremental_test.cpp
   svdplusplus_test.cpp
   test_catch_tools.hpp
+  wgan_test.cpp
   main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/bayesian_linear_regression_test.cpp
