@@ -50,8 +50,10 @@ class HardCodedCopyModel
     size_t zeroCnt = 0, oneCnt = 0;
     for (size_t i = 1; i < input.n_rows; i += 2)
     {
-      size_t& addVar = (input.at(i, 0) == 0) ? zeroCnt : oneCnt;
-      ++addVar;
+      if (input.at(i, 0) == 0)
+        ++zeroCnt;
+      else
+        ++oneCnt;
     }
     assert(oneCnt % zeroCnt == 0);
     nRepeats = oneCnt / zeroCnt;
@@ -157,7 +159,7 @@ class HardCodedAddModel
     predictors = predictors.t();
     predictors.reshape(3, predictors.n_elem / 3);
     assert(predictors.n_rows == 3);
-    int num_A = 0, num_B = 0;
+    size_t num_A = 0, num_B = 0;
     bool num = false; // True iff we have already seen the separating symbol.
     size_t cnt = 0;
     for (size_t i = 0; i < predictors.n_cols; ++i)
