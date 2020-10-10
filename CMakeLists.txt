@@ -569,6 +569,7 @@ add_custom_target(mlpack_arma_config ALL
     COMMAND ${CMAKE_COMMAND}
         -D ARMADILLO_INCLUDE_DIR="${ARMADILLO_INCLUDE_DIR}"
         -D OPENMP_FOUND="${OPENMP_FOUND}"
+        -D CMAKE_SIZEOF_VOID_P="${CMAKE_SIZEOF_VOID_P}"
         -P CMake/CreateArmaConfigInfo.cmake
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Updating arma_config.hpp (if necessary)")
