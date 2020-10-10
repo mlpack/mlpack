@@ -126,8 +126,7 @@ steps:
 - powershell: |
     # Pull the documentation for the installer.
     try {
-      (new-object net.webclient).DownloadFile('http://ci.mlpack.org/job/mlpack%20-%20doxygen%20build/lastSuccessfulBuild/artifact/build/doc/html/*zip*/html.zip'),
-      'dist\win-installer\jenkinsdoc.zip')
+      (new-object net.webclient).DownloadFile('http://ci.mlpack.org/job/mlpack%20-%20doxygen%20build/lastSuccessfulBuild/artifact/build/doc/html/*zip*/html.zip'), 'dist\win-installer\jenkinsdoc.zip')
     }
     catch {
       Write-Output "Unable to download precompiled Doxygen documentation from Jenkins!"
@@ -159,7 +158,7 @@ steps:
 
     if (Test-Path "src/mlpack/core/util/gitversion.hpp")
     {
-      $ver = (Get-Content "src/mlpack/core/util/gitversion.hpp"
+      $ver = (Get-Content "src/mlpack/core/util/gitversion.hpp");
       $env:INSTALL_VERSION = $ver.Split('"')[1].Split(' ')[1];
     }
     else
