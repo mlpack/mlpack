@@ -10,18 +10,14 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-// Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
-// to use FPC_WEAK, and it's not at all intuitive how to do that.
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/core/data/load.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;
-
-BOOST_AUTO_TEST_SUITE(LARSTest);
 
 void GenerateProblem(
     arma::mat& X, arma::rowvec& y, size_t nPoints, size_t nDims)
@@ -40,17 +36,18 @@ void LARSVerifyCorrectness(arma::vec beta, arma::vec errCorr, double lambda)
     if (beta(j) == 0)
     {
       // Make sure that |errCorr(j)| <= lambda.
-      BOOST_REQUIRE_SMALL(std::max(fabs(errCorr(j)) - lambda, 0.0), tol);
+      REQUIRE(std::max(fabs(errCorr(j)) - lambda, 0.0) ==
+          Approx(0.0).margin(tol));
     }
     else if (beta(j) < 0)
     {
       // Make sure that errCorr(j) == lambda.
-      BOOST_REQUIRE_SMALL(errCorr(j) - lambda, tol);
+      REQUIRE(errCorr(j) - lambda == Approx(0.0).margin(tol));
     }
     else // beta(j) > 0
     {
       // Make sure that errCorr(j) == -lambda.
-      BOOST_REQUIRE_SMALL(errCorr(j) + lambda, tol);
+      REQUIRE(errCorr(j) + lambda == Approx(0.0).margin(tol));
     }
   }
 }
@@ -85,23 +82,23 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
   }
 }
 
-BOOST_AUTO_TEST_CASE(LARSTestLassoCholesky)
+TEST_CASE("LARSTestLassoCholesky", "[LARSTest]")
 {
   LassoTest(100, 10, false, true);
 }
 
 
-BOOST_AUTO_TEST_CASE(LARSTestLassoGram)
+TEST_CASE("LARSTestLassoGram", "[LARSTest]")
 {
   LassoTest(100, 10, false, false);
 }
 
-BOOST_AUTO_TEST_CASE(LARSTestElasticNetCholesky)
+TEST_CASE("LARSTestElasticNetCholesky", "[LARSTest]")
 {
   LassoTest(100, 10, true, true);
 }
 
-BOOST_AUTO_TEST_CASE(LARSTestElasticNetGram)
+TEST_CASE("LARSTestElasticNetGram", "[LARSTest]")
 {
   LassoTest(100, 10, true, false);
 }
@@ -109,7 +106,7 @@ BOOST_AUTO_TEST_CASE(LARSTestElasticNetGram)
 // Ensure that LARS doesn't crash when the data has linearly dependent features
 // (meaning that there is a singularity).  This test uses the Cholesky
 // factorization.
-BOOST_AUTO_TEST_CASE(CholeskySingularityTest)
+TEST_CASE("CholeskySingularityTest", "[LARSTest]")
 {
   arma::mat X;
   arma::mat Y;
@@ -133,7 +130,7 @@ BOOST_AUTO_TEST_CASE(CholeskySingularityTest)
 }
 
 // Same as the above test but with no cholesky factorization.
-BOOST_AUTO_TEST_CASE(NoCholeskySingularityTest)
+TEST_CASE("NoCholeskySingularityTest", "[LARSTest]")
 {
   arma::mat X;
   arma::mat Y;
@@ -158,7 +155,7 @@ BOOST_AUTO_TEST_CASE(NoCholeskySingularityTest)
 }
 
 // Make sure that Predict() provides reasonable enough solutions.
-BOOST_AUTO_TEST_CASE(PredictTest)
+TEST_CASE("PredictTest", "[LARSTest]")
 {
   for (size_t i = 0; i < 2; ++i)
   {
@@ -185,20 +182,20 @@ BOOST_AUTO_TEST_CASE(PredictTest)
         lars.Predict(X, predictions);
         arma::vec adjPred = X * predictions.t();
 
-        BOOST_REQUIRE_EQUAL(predictions.n_elem, 1000);
+        REQUIRE(predictions.n_elem == 1000);
         for (size_t i = 0; i < betaOptPred.n_elem; ++i)
         {
           if (std::abs(betaOptPred[i]) < 1e-5)
-            BOOST_REQUIRE_SMALL(adjPred[i], 1e-5);
+            REQUIRE(adjPred[i] == Approx(0.0).margin(1e-5));
           else
-            BOOST_REQUIRE_CLOSE(adjPred[i], betaOptPred[i], 1e-5);
+            REQUIRE(adjPred[i] == Approx(betaOptPred[i]).epsilon(1e-7));
         }
       }
     }
   }
 }
 
-BOOST_AUTO_TEST_CASE(PredictRowMajorTest)
+TEST_CASE("PredictRowMajorTest", "[LARSTest]")
 {
   arma::mat X;
   arma::rowvec y;
@@ -217,20 +214,20 @@ BOOST_AUTO_TEST_CASE(PredictRowMajorTest)
   lars.Predict(X, colMajorPred);
   lars.Predict(X.t(), rowMajorPred, true);
 
-  BOOST_REQUIRE_EQUAL(colMajorPred.n_elem, rowMajorPred.n_elem);
+  REQUIRE(colMajorPred.n_elem == rowMajorPred.n_elem);
   for (size_t i = 0; i < colMajorPred.n_elem; ++i)
   {
     if (std::abs(colMajorPred[i]) < 1e-5)
-      BOOST_REQUIRE_SMALL(rowMajorPred[i], 1e-5);
+      REQUIRE(rowMajorPred[i] == Approx(0.0).margin(1e-5));
     else
-      BOOST_REQUIRE_CLOSE(colMajorPred[i], rowMajorPred[i], 1e-5);
+      REQUIRE(colMajorPred[i] == Approx(rowMajorPred[i]).epsilon(1e-7));
   }
 }
 
 /**
  * Make sure that if we train twice, there is no issue.
  */
-BOOST_AUTO_TEST_CASE(RetrainTest)
+TEST_CASE("RetrainTest", "[LARSTest]")
 {
   arma::mat origX;
   arma::rowvec origY;
@@ -257,7 +254,7 @@ BOOST_AUTO_TEST_CASE(RetrainTest)
  * Make sure if we train twice using the Cholesky decomposition, there is no
  * issue.
  */
-BOOST_AUTO_TEST_CASE(RetrainCholeskyTest)
+TEST_CASE("RetrainCholeskyTest", "[LARSTest]")
 {
   arma::mat origX;
   arma::rowvec origY;
@@ -284,7 +281,7 @@ BOOST_AUTO_TEST_CASE(RetrainCholeskyTest)
  * Make sure that we get correct solution coefficients when running training
  * and accessing solution coefficients separately.
  */
-BOOST_AUTO_TEST_CASE(TrainingAndAccessingBetaTest)
+TEST_CASE("TrainingAndAccessingBetaTest", "[LARSTest]")
 {
   arma::mat X;
   arma::rowvec y;
@@ -298,16 +295,16 @@ BOOST_AUTO_TEST_CASE(TrainingAndAccessingBetaTest)
   LARS lars2;
   lars2.Train(X, y);
 
-  BOOST_REQUIRE_EQUAL(beta.n_elem, lars2.Beta().n_elem);
+  REQUIRE(beta.n_elem == lars2.Beta().n_elem);
   for (size_t i = 0; i < beta.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(beta[i], lars2.Beta()[i], 1e-5);
+    REQUIRE(beta[i] == Approx(lars2.Beta()[i]).epsilon(1e-7));
 }
 
 /**
  * Make sure that we learn the same when running training separately and through
  * constructor. Test it with default parameters.
  */
-BOOST_AUTO_TEST_CASE(TrainingConstructorWithDefaultsTest)
+TEST_CASE("TrainingConstructorWithDefaultsTest", "[LARSTest]")
 {
   arma::mat X;
   arma::rowvec y;
@@ -320,16 +317,16 @@ BOOST_AUTO_TEST_CASE(TrainingConstructorWithDefaultsTest)
 
   LARS lars2(X, y);
 
-  BOOST_REQUIRE_EQUAL(beta.n_elem, lars2.Beta().n_elem);
+  REQUIRE(beta.n_elem == lars2.Beta().n_elem);
   for (size_t i = 0; i < beta.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(beta[i], lars2.Beta()[i], 1e-5);
+    REQUIRE(beta[i] == Approx(lars2.Beta()[i]).epsilon(1e-7));
 }
 
 /**
  * Make sure that we learn the same when running training separately and through
  * constructor. Test it with non default parameters.
  */
-BOOST_AUTO_TEST_CASE(TrainingConstructorWithNonDefaultsTest)
+TEST_CASE("TrainingConstructorWithNonDefaultsTest", "[LARSTest]")
 {
   arma::mat X;
   arma::rowvec y;
@@ -347,15 +344,15 @@ BOOST_AUTO_TEST_CASE(TrainingConstructorWithNonDefaultsTest)
 
   LARS lars2(X, y, transposeData, useCholesky, lambda1, lambda2);
 
-  BOOST_REQUIRE_EQUAL(beta.n_elem, lars2.Beta().n_elem);
+  REQUIRE(beta.n_elem == lars2.Beta().n_elem);
   for (size_t i = 0; i < beta.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(beta[i], lars2.Beta()[i], 1e-5);
+    REQUIRE(beta[i] == Approx(lars2.Beta()[i]).epsilon(1e-7));
 }
 
 /**
  * Test that LARS::Train() returns finite error value.
  */
-BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
+TEST_CASE("LARSTrainReturnCorrelation", "[LARSTest]")
 {
   arma::mat X;
   arma::mat Y;
@@ -373,35 +370,35 @@ BOOST_AUTO_TEST_CASE(LARSTrainReturnCorrelation)
   arma::vec betaOpt1;
   double error = lars1.Train(X, y, betaOpt1);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
+  REQUIRE(std::isfinite(error) == true);
 
   // Test without Cholesky decomposition and with lasso.
   LARS lars2(false, lambda1, 0.0);
   arma::vec betaOpt2;
   error = lars2.Train(X, y, betaOpt2);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
+  REQUIRE(std::isfinite(error) == true);
 
   // Test with Cholesky decomposition and with elasticnet.
   LARS lars3(true, lambda1, lambda2);
   arma::vec betaOpt3;
   error = lars3.Train(X, y, betaOpt3);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
+  REQUIRE(std::isfinite(error) == true);
 
   // Test without Cholesky decomposition and with elasticnet.
   LARS lars4(false, lambda1, lambda2);
   arma::vec betaOpt4;
   error = lars4.Train(X, y, betaOpt4);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(error), true);
+  REQUIRE(std::isfinite(error) == true);
 }
 
 /**
  * Test that LARS::ComputeError() returns error value less than 1
  * and greater than 0.
  */
-BOOST_AUTO_TEST_CASE(LARSTestComputeError)
+TEST_CASE("LARSTestComputeError", "[LARSTest]")
 {
   arma::mat X;
   arma::mat Y;
@@ -416,15 +413,15 @@ BOOST_AUTO_TEST_CASE(LARSTestComputeError)
   double train1 = lars1.Train(X, y, betaOpt1);
   double cost = lars1.ComputeError(X, y);
 
-  BOOST_REQUIRE_EQUAL(cost <= 1, true);
-  BOOST_REQUIRE_EQUAL(cost >= 0, true);
-  BOOST_REQUIRE_EQUAL(cost == train1, true);
+  REQUIRE(cost <= 1);
+  REQUIRE(cost >= 0);
+  REQUIRE(cost == train1);
 }
 
 /**
  * Simple test for LARS copy constructor.
  */
-BOOST_AUTO_TEST_CASE(LARSCopyConstructorTest)
+TEST_CASE("LARSCopyConstructorTest", "[LARSTest]")
 {
   arma::mat features, Y;
   arma::rowvec targets;
@@ -447,13 +444,13 @@ BOOST_AUTO_TEST_CASE(LARSCopyConstructorTest)
   // The output of both models should be the same.
   CheckMatrices(predictions, predictionsFromCopiedModel);
   // Check if we can train the model again.
-  BOOST_REQUIRE_NO_THROW(models[0].Train(features, targets));
+  REQUIRE_NOTHROW(models[0].Train(features, targets));
 
   // Check if we can train the copied model.
   mlpack::regression::LARS glm2(false, 0.1, 0.1);
   models.emplace_back(glm2); // Call the copy constructor.
-  BOOST_REQUIRE_NO_THROW(glm2.Train(features, targets));
-  BOOST_REQUIRE_NO_THROW(models[1].Train(features, targets));
+  REQUIRE_NOTHROW(glm2.Train(features, targets));
+  REQUIRE_NOTHROW(models[1].Train(features, targets));
 
   // Create a copy using assignment operator.
   mlpack::regression::LARS glm3 = glm2;
@@ -462,5 +459,3 @@ BOOST_AUTO_TEST_CASE(LARSCopyConstructorTest)
   // The output of both models should be the same.
   CheckMatrices(predictions, predictionsFromCopiedModel);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
