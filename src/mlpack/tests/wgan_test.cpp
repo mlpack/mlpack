@@ -195,7 +195,7 @@ TEST_CASE("WGANMNISTTest", "[WGANNetworkTest]")
  * It's not viable to train on bigger parameters due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
  */
-TEST_CASE("WGANGPMNISTTest","[WGANNetworkTest]")
+TEST_CASE("WGANGPMNISTTest", "[WGANNetworkTest]")
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 5;
