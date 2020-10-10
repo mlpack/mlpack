@@ -29,14 +29,14 @@ namespace fs {
  * arma::Mat<double> output;
  * size_t outputSize = 1;
  *
- * // removes all low-variance features.
+ * // Removes all low-variance features.
  * data::fs::Chi2Selection(input, target, output, outputSize);
  * @endcode
  *
  * @param input Input dataset with actual number of features.
- * @param target Ouput labels for the respective Input.
+ * @param target Output labels for the respective input.
  * @param output Output matrix with lesser number of features.
- * @param outputSize No of features you want in output matrix.
+ * @param outputSize Number of features in the output matrix.
  */
 template<typename T>
 void Chi2Selection(const arma::Mat<T>& input,

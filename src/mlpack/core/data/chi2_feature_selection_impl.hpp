@@ -25,9 +25,9 @@ namespace fs {
 /**
  *
  * @param input Input dataset with actual number of features.
- * @param target Ouput labels for the respective Input. 
+ * @param target Output labels for the respective Input. 
  * @param output Output matrix with lesser number of features.
- * @param outputSize No of features you want in output matrix.
+ * @param outputSize Number of features in the output matrix.
  */
 template<typename T>
 void Chi2Selection(const arma::Mat<T>& input,
@@ -44,14 +44,14 @@ void Chi2Selection(const arma::Mat<T>& input,
   }
   if (target.n_cols != input.n_cols)
   {
-    throw std::runtime_error("No of columns in target and input "
+    throw std::runtime_error("Number of columns in target and input "
         "does not match, Please verify!");
   }
   std::vector<std::vector<double>> outputIndex(input.n_rows,
       std::vector<double> (2));
   for (size_t i = 0; i < input.n_rows; i++)
   {
-    std::unordered_map<size_t, std::unordered_map<size_t, size_t >> chiTable;
+    std::unordered_map<size_t, std::unordered_map<size_t, size_t>> chiTable;
     std::unordered_map<size_t, size_t>labels, expected;
     for (size_t j = 0; j < input.n_cols; j++)
     {
@@ -60,7 +60,7 @@ void Chi2Selection(const arma::Mat<T>& input,
      expected[input.at(i, j)]++;
     }
 
-    // For safety, Lets add a padding .
+    // For safety, lets add a padding.
     for (auto it = chiTable.begin(); it != chiTable.end(); it++)
       for (size_t i = 0; i < outputLabels.n_rows; i++)
         if (it->second.find(outputLabels(i)) == it->second.end())
