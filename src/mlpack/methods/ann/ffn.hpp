@@ -510,13 +510,13 @@ class FFN
   CopyVisitor<CustomLayers...> copyVisitor;
 
   // The GAN class should have access to internal members.
-  template<
+  /*template<
     typename Model,
     typename InitializerType,
     typename NoiseType,
     typename PolicyType
   >
-  friend class GAN;
+  friend class GAN;*/
 }; // class FFN
 
 } // namespace ann
