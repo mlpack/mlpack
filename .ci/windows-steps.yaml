@@ -125,20 +125,10 @@ steps:
 # Build MSI installer.
 - powershell: |
     # Pull the documentation for the installer.
-    try {
-      (new-object net.webclient).DownloadFile('http://ci.mlpack.org/job/mlpack%20-%20doxygen%20build/lastSuccessfulBuild/artifact/build/doc/html/*zip*/html.zip'), 'dist\win-installer\jenkinsdoc.zip')
-    }
-    catch {
-      Write-Output "Unable to download precompiled Doxygen documentation from Jenkins!"
-    }
-    try {
-      (Add-Type -AssemblyName System.IO.Compression.FileSystem);
-      [System.IO.Compression.ZipFile]::ExtractToDirectory('dist\win-installer\jenkinsdoc.zip',
-      'dist\win-installer\staging\doc')
-    }
-    catch {
-      Write-Output "Unable to add doc to installer, skipping!"
-    }
+    try{(new-object net.webclient).DownloadFile('http://ci.mlpack.org/job/mlpack%20-%20doxygen%20build/lastSuccessfulBuild/artifact/build/doc/html/*zip*/html.zip'), 'dist\win-installer\jenkinsdoc.zip')}
+    catch{Write-Output "Unable to download precompiled Doxygen documentation from Jenkins!"}
+    try {(Add-Type -AssemblyName System.IO.Compression.FileSystem); [System.IO.Compression.ZipFile]::ExtractToDirectory('dist\win-installer\jenkinsdoc.zip', 'dist\win-installer\staging\doc')}
+    catch{Write-Output "Unable to add doc to installer, skipping!"}
     # Preparing installer staging.
     mkdir dist\win-installer\staging\lib
     cp build\Release\*.lib dist\win-installer\staging\lib\
