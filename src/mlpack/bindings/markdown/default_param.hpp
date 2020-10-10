@@ -55,7 +55,7 @@ void DefaultParam(util::ParamData& data,
     *((std::string*) output) =
         go::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     *((std::string*) output) =
         r::DefaultParamImpl<typename std::remove_pointer<T>::type>(data);

@@ -50,7 +50,7 @@ inline std::string GetBindingName(const std::string& bindingName)
   {
     return go::GetBindingName(bindingName);
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     return r::GetBindingName(bindingName);
   }
@@ -82,7 +82,7 @@ inline std::string PrintLanguage(const std::string& language)
   {
     return "Go";
   }
-  else if (language == "r-binding")
+  else if (language == "r")
   {
     return "R";
   }
@@ -114,7 +114,7 @@ inline std::string PrintImport(const std::string& bindingName)
   {
     return go::PrintImport();
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     return r::PrintImport();
   }
@@ -146,7 +146,7 @@ inline std::string PrintInputOptionInfo()
   {
     return go::PrintInputOptionInfo();
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     return r::PrintInputOptionInfo();
   }
@@ -178,7 +178,7 @@ inline std::string PrintOutputOptionInfo()
   {
     return go::PrintOutputOptionInfo();
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     return r::PrintOutputOptionInfo();
   }
@@ -411,7 +411,7 @@ inline std::string PrintValue(const T& value, bool quotes)
   {
     result = go::PrintValue(value, quotes);
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     result = r::PrintValue(value, quotes);
   }
@@ -458,7 +458,7 @@ inline std::string PrintDefault(const std::string& paramName)
     {
       oss << go::PrintDefault(paramName);
     }
-    else if (BindingInfo::Language() == "r-binding")
+    else if (BindingInfo::Language() == "r")
     {
       oss << r::PrintDefault(paramName);
     }
@@ -494,7 +494,7 @@ inline std::string PrintDataset(const std::string& dataset)
   {
     result = go::PrintDataset(dataset);
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     result = r::PrintDataset(dataset);
   }
@@ -529,7 +529,7 @@ inline std::string PrintModel(const std::string& model)
   {
     result = go::PrintModel(model);
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     result = r::PrintModel(model);
   }
@@ -571,7 +571,7 @@ std::string ProgramCall(const std::string& programName, Args... args)
     s += "```go\n";
     s += go::ProgramCall(programName, args...);
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     s += "```R\n";
     s += r::ProgramCall(true, programName, args...);
@@ -626,7 +626,7 @@ inline std::string ProgramCall(const std::string& programName)
       s += import + "\n";
     s += go::ProgramCall(programName);
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     s += "R\n";
     std::string import = PrintImport(programName);
@@ -672,7 +672,7 @@ inline std::string ParamString(const std::string& paramName)
   {
     s = go::ParamString(paramName);
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     s = r::ParamString(paramName);
   }
@@ -723,7 +723,7 @@ inline bool IgnoreCheck(const T& t)
   {
     return go::IgnoreCheck(t);
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     return r::IgnoreCheck(t);
   }

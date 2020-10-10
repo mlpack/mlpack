@@ -54,7 +54,7 @@ void GetPrintableType(util::ParamData& data,
     *((std::string*) output) =
         go::GetPrintableType<typename std::remove_pointer<T>::type>(data);
   }
-  else if (BindingInfo::Language() == "r-binding")
+  else if (BindingInfo::Language() == "r")
   {
     *((std::string*) output) =
         r::GetPrintableType<typename std::remove_pointer<T>::type>(data);
