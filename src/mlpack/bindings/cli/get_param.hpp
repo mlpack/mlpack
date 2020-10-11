@@ -129,11 +129,10 @@ T*& GetParam(
  * @param output Place to store pointer to value.
  */
 template<typename T>
-void GetParam(const util::ParamData& d, const void* /* input */, void* output)
+void GetParam(util::ParamData& d, const void* /* input */, void* output)
 {
   // Cast to the correct type.
-  *((T**) output) = &GetParam<typename std::remove_pointer<T>::type>(
-      const_cast<util::ParamData&>(d));
+  *((T**) output) = &GetParam<typename std::remove_pointer<T>::type>(d);
 }
 
 } // namespace cli

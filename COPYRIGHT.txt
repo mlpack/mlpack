@@ -132,6 +132,9 @@ Copyright:
   Copyright 2020, Lakshya Ojha <ojhalakshya@gmail.com>
   Copyright 2020, Bisakh Mondal <bisakhmondal00@gmail.com>
   Copyright 2020, Benson Muite <benson_muite@emailplus.org>
+  Copyright 2020, Sarthak Bhardwaj <7sarthakbhardwaj@gmail.com>
+  Copyright 2020, Aakash Kaushik <kaushikaakash7539@gmail.com>
+  Copyright 2020, Anush Kini <anushkini@gmail.com>   
 
 License: BSD-3-clause
   All rights reserved.

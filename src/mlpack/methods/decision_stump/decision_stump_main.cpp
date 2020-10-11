@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "decision_stump.hpp"
@@ -21,12 +21,17 @@ using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
-PROGRAM_INFO("Decision Stump",
-    // Short description.
+// Program Name.
+BINDING_NAME("Decision Stump");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of a decision stump, which is a single-level decision "
     "tree.  Given labeled data, a new decision stump can be trained; or, an "
-    "existing decision stump can be used to classify points.",
-    // Long description.
+    "existing decision stump can be used to classify points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements a decision stump, which is a single-level decision"
     " tree.  The decision stump will split on one dimension of the input data, "
     "and will split into multiple buckets.  The dimension and bins are selected"
@@ -66,12 +71,14 @@ PROGRAM_INFO("Decision Stump",
     "\n\n"
     "After training, a decision stump can be saved with the " +
     PRINT_PARAM_STRING("output_model") + " output parameter.  That stump may "
-    "later be re-used in subsequent calls to this program (or others).",
-    SEE_ALSO("Decision tree", "#decision_tree"),
-    SEE_ALSO("Decision stumps on Wikipedia",
-        "https://en.wikipedia.org/wiki/Decision_stump"),
-    SEE_ALSO("mlpack::decision_stump::DecisionStump class documentation",
-        "@doxygen/classmlpack_1_1decision__stump_1_1DecisionStump.html"));
+    "later be re-used in subsequent calls to this program (or others).");
+
+// See also...
+BINDING_SEE_ALSO("Decision tree", "#decision_tree");
+BINDING_SEE_ALSO("Decision stumps on Wikipedia",
+        "https://en.wikipedia.org/wiki/Decision_stump");
+BINDING_SEE_ALSO("mlpack::decision_stump::DecisionStump class documentation",
+        "@doxygen/classmlpack_1_1decision__stump_1_1DecisionStump.html");
 
 // Datasets we might load.
 PARAM_MATRIX_IN("training", "The dataset to train on.", "t");
@@ -132,16 +139,16 @@ static void mlpackMain()
 
   // We must either load a model, or train a new stump.
   DSModel* model;
-  if (CLI::HasParam("training"))
+  if (IO::HasParam("training"))
   {
     model = new DSModel();
-    mat trainingData = std::move(CLI::GetParam<mat>("training"));
+    mat trainingData = std::move(IO::GetParam<mat>("training"));
 
     // Load labels, if necessary.
     Row<size_t> labelsIn;
-    if (CLI::HasParam("labels"))
+    if (IO::HasParam("labels"))
     {
-      labelsIn = std::move(CLI::GetParam<Row<size_t>>("labels"));
+      labelsIn = std::move(IO::GetParam<Row<size_t>>("labels"));
     }
     else
     {
@@ -158,7 +165,7 @@ static void mlpackMain()
     Row<size_t> labels;
     data::NormalizeLabels(labelsIn, labels, model->mappings);
 
-    const size_t bucketSize = CLI::GetParam<int>("bucket_size");
+    const size_t bucketSize = IO::GetParam<int>("bucket_size");
     const size_t classes = labels.max() + 1;
 
     Timer::Start("training");
@@ -167,14 +174,14 @@ static void mlpackMain()
   }
   else
   {
-    model = CLI::GetParam<DSModel*>("input_model");
+    model = IO::GetParam<DSModel*>("input_model");
   }
 
   // Now, do we need to do any testing?
-  if (CLI::HasParam("test"))
+  if (IO::HasParam("test"))
   {
     // Load the test file.
-    mat testingData = std::move(CLI::GetParam<arma::mat>("test"));
+    mat testingData = std::move(IO::GetParam<arma::mat>("test"));
 
     if (testingData.n_rows <= model->stump.SplitDimension())
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
@@ -187,16 +194,16 @@ static void mlpackMain()
     Timer::Stop("testing");
 
     // Denormalize predicted labels, if we want to save them.
-    if (CLI::HasParam("predictions"))
+    if (IO::HasParam("predictions"))
     {
       Row<size_t> actualLabels;
       data::RevertLabels(predictedLabels, model->mappings, actualLabels);
 
       // Save the predicted labels as output.
-      CLI::GetParam<Row<size_t>>("predictions") = std::move(actualLabels);
+      IO::GetParam<Row<size_t>>("predictions") = std::move(actualLabels);
     }
   }
 
   // Save the model, if desired.
-  CLI::GetParam<DSModel*>("output_model") = model;
+  IO::GetParam<DSModel*>("output_model") = model;
 }

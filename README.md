@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">current stable version (3.2.2)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.4.1.tar.gz">current stable version (3.4.1)</a>
   </em>
 </p>
 
@@ -32,7 +32,7 @@ bindings to other languages.  It is meant to be a machine learning analog to
 LAPACK, and aims to implement a wide array of machine learning methods and
 functions as a "swiss army knife" for machine learning researchers.  In addition
 to its powerful C++ interface, mlpack also provides command-line programs,
-Python bindings, and Julia bindings.
+Python bindings, Julia bindings, Go bindings and R bindings.
 
 [//]: # (numfocus-fiscal-sponsor-attribution)
 
@@ -101,7 +101,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 mlpack has the following dependencies:
 
       Armadillo      >= 8.400.0
-      Boost (program_options, math_c99, unit_test_framework, serialization,
+      Boost (math_c99, unit_test_framework, serialization,
              spirit) >= 1.58.0
       CMake          >= 3.2.2
       ensmallen      >= 2.10.0
@@ -118,8 +118,22 @@ following Python packages are installed:
       numpy
       pandas >= 0.15.0
 
-If you would like to build the Julia bindings, make sure that Julia >= 3.2.2 is
+If you would like to build the Julia bindings, make sure that Julia >= 1.3.0 is
 installed.
+
+If you would like to build the Go bindings, make sure that Go >= 1.11.0 is
+installed with this package:
+
+     Gonum
+
+If you would like to build the R bindings, make sure that R >= 4.0 is
+installed with these R packages.
+
+     Rcpp >= 0.12.12
+     RcppArmadillo >= 0.8.400.0
+     RcppEnsmallen >= 0.2.10.0
+     BH >= 1.58
+     roxygen2
 
 If the STB library headers are available, image loading support will be
 compiled.
@@ -138,7 +152,7 @@ on Ubuntu, you can install mlpack with the following command:
 
 Note: Older Ubuntu versions may not have the most recent version of mlpack
 available---for instance, at the time of this writing, Ubuntu 16.04 only has
-mlpack 3.2.2 available.  Options include upgrading your Ubuntu version, finding
+mlpack 3.4.1 available.  Options include upgrading your Ubuntu version, finding
 a PPA or other non-official sources, or installing with a manual build.
 
 There are some useful pages to consult in addition to this section:
@@ -187,6 +201,11 @@ Options are specified with the -D flag.  The allowed options include:
     PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
     BUILD_JULIA_BINDINGS=(ON/OFF): whether or not to build Julia bindings
     JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
+    BUILD_GO_BINDINGS=(ON/OFF): whether or not to build Go bindings
+    GO_EXECUTABLE=(/path/to/go): Path to specific Go executable
+    BUILD_GO_SHLIB=(ON/OFF): whether or not to build shared libraries required by Go bindings
+    BUILD_R_BINDINGS=(ON/OFF): whether or not to build R bindings
+    R_EXECUTABLE=(/path/to/R): Path to specific R executable
     BUILD_TESTS=(ON/OFF): whether or not to build tests
     BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries

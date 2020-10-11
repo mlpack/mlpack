@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "linear_regression.hpp"
@@ -21,13 +21,18 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Simple Linear Regression and Prediction",
-    // Short description.
+// Program Name.
+BINDING_NAME("Simple Linear Regression and Prediction");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of simple linear regression and ridge regression using "
     "ordinary least squares.  Given a dataset and responses, a model can be "
     "trained and saved for later use, or a pre-trained model can be used to "
-    "output regression predictions for a test set.",
-    // Long description.
+    "output regression predictions for a test set.");
+
+// Long description.
+BINDING_LONG_DESC(
     "An implementation of simple linear regression and simple ridge regression "
     "using ordinary least squares. This solves the problem"
     "\n\n"
@@ -53,8 +58,10 @@ PROGRAM_INFO("Simple Linear Regression and Prediction",
     "and the predicted responses y' may be saved with the " +
     PRINT_PARAM_STRING("output_predictions") + " output parameter.  This type "
     "of regression is related to least-angle regression, which mlpack "
-    "implements as the 'lars' program."
-    "\n\n"
+    "implements as the 'lars' program.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to run a linear regression on the dataset " +
     PRINT_DATASET("X") + " with responses " + PRINT_DATASET("y") + ", saving "
     "the trained model to " + PRINT_MODEL("lr_model") + ", the following "
@@ -69,13 +76,17 @@ PROGRAM_INFO("Simple Linear Regression and Prediction",
     "used:"
     "\n\n" +
     PRINT_CALL("linear_regression", "input_model", "lr_model", "test", "X_test",
-        "output_predictions", "X_test_responses"),
-    SEE_ALSO("Linear/ridge regression tutorial", "@doxygen/lrtutorial.html"),
-    SEE_ALSO("@lars", "#lars"),
-    SEE_ALSO("Linear regression on Wikipedia",
-        "https://en.wikipedia.org/wiki/Linear_regression"),
-    SEE_ALSO("mlpack::regression::LinearRegression C++ class documentation",
-        "@doxygen/classmlpack_1_1regression_1_1LinearRegression.html"));
+        "output_predictions", "X_test_responses"));
+
+// See also...
+BINDING_SEE_ALSO("Linear/ridge regression tutorial",
+       "@doxygen/lrtutorial.html");
+BINDING_SEE_ALSO("@lars", "#lars");
+BINDING_SEE_ALSO("Linear regression on Wikipedia",
+        "https://en.wikipedia.org/wiki/Linear_regression");
+BINDING_SEE_ALSO("mlpack::regression::LinearRegression C++ class "
+        "documentation",
+        "@doxygen/classmlpack_1_1regression_1_1LinearRegression.html");
 
 PARAM_MATRIX_IN("training", "Matrix containing training set X (regressors).",
     "t");
@@ -99,7 +110,7 @@ PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
 
 static void mlpackMain()
 {
-  const double lambda = CLI::GetParam<double>("lambda");
+  const double lambda = IO::GetParam<double>("lambda");
 
   RequireOnlyOnePassed({ "training", "input_model" }, true);
 
@@ -110,8 +121,8 @@ static void mlpackMain()
 
   LinearRegression* lr;
 
-  const bool computeModel = !CLI::HasParam("input_model");
-  const bool computePrediction = CLI::HasParam("test");
+  const bool computeModel = !IO::HasParam("input_model");
+  const bool computePrediction = IO::HasParam("test");
 
   // If they specified a model file, we also need a test file or we
   // have nothing to do.
@@ -130,11 +141,11 @@ static void mlpackMain()
   if (computeModel)
   {
     Timer::Start("load_regressors");
-    regressors = std::move(CLI::GetParam<mat>("training"));
+    regressors = std::move(IO::GetParam<mat>("training"));
     Timer::Stop("load_regressors");
 
     // Are the responses in a separate file?
-    if (!CLI::HasParam("training_responses"))
+    if (!IO::HasParam("training_responses"))
     {
       // The initial predictors for y, Nx1.
       if (regressors.n_rows < 2)
@@ -149,7 +160,7 @@ static void mlpackMain()
     {
       // The initial predictors for y, Nx1.
       Timer::Start("load_responses");
-      responses = CLI::GetParam<rowvec>("training_responses");
+      responses = IO::GetParam<rowvec>("training_responses");
       Timer::Stop("load_responses");
 
       if (responses.n_cols != regressors.n_cols)
@@ -167,7 +178,7 @@ static void mlpackMain()
   {
     // A model file was passed in, so load it.
     Timer::Start("load_model");
-    lr = CLI::GetParam<LinearRegression*>("input_model");
+    lr = IO::GetParam<LinearRegression*>("input_model");
     Timer::Stop("load_model");
   }
 
@@ -179,11 +190,11 @@ static void mlpackMain()
     // that needs to load to print the size.
     Timer::Start("load_test_points");
     std::ostringstream oss;
-    oss << CLI::GetPrintableParam<mat>("test");
+    oss << IO::GetPrintableParam<mat>("test");
     std::string testOutput = oss.str();
     Timer::Stop("load_test_points");
 
-    mat points = std::move(CLI::GetParam<mat>("test"));
+    mat points = std::move(IO::GetParam<mat>("test"));
 
     // Ensure that test file data has the right number of features.
     if ((lr->Parameters().n_elem - 1) != points.n_rows)
@@ -205,9 +216,9 @@ static void mlpackMain()
     Timer::Stop("prediction");
 
     // Save predictions.
-    CLI::GetParam<rowvec>("output_predictions") = std::move(predictions);
+    IO::GetParam<rowvec>("output_predictions") = std::move(predictions);
   }
 
   // Save the model if needed.
-  CLI::GetParam<LinearRegression*>("output_model") = lr;
+  IO::GetParam<LinearRegression*>("output_model") = lr;
 }

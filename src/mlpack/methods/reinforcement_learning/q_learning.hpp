@@ -90,10 +90,19 @@ class QLearning
   ~QLearning();
 
   /**
-   * Execute a step in an episode.
-   * @return Reward for the step.
+   * Trains the DQN agent(non-categorical).
    */
-  double Step();
+  void TrainAgent();
+
+  /**
+   * Trains the DQN agent of categorical type.
+   */
+  void TrainCategoricalAgent();
+
+  /**
+   * Select an action, given an agent.
+   */
+  void SelectAction();
 
   /**
    * Execute an episode.
@@ -101,9 +110,9 @@ class QLearning
    */
   double Episode();
 
-  /**
-   * @return Total steps from beginning.
-   */
+  //! Modify total steps from beginning.
+  size_t& TotalSteps() { return totalSteps; }
+  //! Get total steps from beginning.
   const size_t& TotalSteps() const { return totalSteps; }
 
   //! Modify the state of the agent.

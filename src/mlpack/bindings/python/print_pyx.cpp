@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "print_pyx.hpp"
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/hyphenate_string.hpp>
 #include <set>
 
@@ -26,28 +26,27 @@ namespace python {
  * Given a list of parameter definition and program documentation, print a
  * generated .pyx file to stdout.
  *
- * @param parameters List of parameters the program will use (from CLI).
- * @param programInfo Documentation for the program.
+ * @param doc Documentation for the program.
  * @param mainFilename Filename of the main program (i.e.
  *      "/path/to/pca_main.cpp").
  * @param functionName Name of the function (i.e. "pca").
  */
-void PrintPYX(const ProgramDoc& programInfo,
+void PrintPYX(const util::BindingDetails& doc,
               const string& mainFilename,
               const string& functionName)
 {
   // Restore parameters.
-  CLI::RestoreSettings(programInfo.programName);
+  IO::RestoreSettings(doc.programName);
 
-  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
-  typedef std::map<std::string, util::ParamData>::const_iterator ParamIter;
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  typedef std::map<std::string, util::ParamData>::iterator ParamIter;
 
   // Split into input and output parameters.  Take two passes on the input
   // parameters, so that we get the required ones first.
   vector<string> inputOptions, outputOptions;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && d.required)
     {
       // Ignore some parameters.
@@ -63,7 +62,7 @@ void PrintPYX(const ProgramDoc& programInfo,
 
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input && !d.required &&
         d.name != "help" && d.name != "info" &&
         d.name != "version")
@@ -75,10 +74,10 @@ void PrintPYX(const ProgramDoc& programInfo,
   // Now import all the necessary packages.
   cout << "cimport arma" << endl;
   cout << "cimport arma_numpy" << endl;
-  cout << "from cli cimport CLI" << endl;
-  cout << "from cli cimport SetParam, SetParamPtr, SetParamWithInfo, "
+  cout << "from io cimport IO" << endl;
+  cout << "from io cimport SetParam, SetParamPtr, SetParamWithInfo, "
       << "GetParamPtr" << endl;
-  cout << "from cli cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
+  cout << "from io cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
       << "ResetTimers, EnableTimers" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
   cout << "from serialization cimport SerializeIn, SerializeOut" << endl;
@@ -103,11 +102,11 @@ void PrintPYX(const ProgramDoc& programInfo,
   std::set<std::string> classes;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (classes.count(d.cppType) == 0)
     {
       const size_t indent = 2;
-      CLI::GetSingleton().functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
+      IO::GetSingleton().functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
           NULL);
 
       // Make sure we don't double-print the definition.
@@ -120,9 +119,9 @@ void PrintPYX(const ProgramDoc& programInfo,
   // Print any extra class definitions we might need.
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it->second;
     if (d.input)
-      CLI::GetSingleton().functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
+      IO::GetSingleton().functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
   }
 
   // Print the definition.
@@ -130,12 +129,12 @@ void PrintPYX(const ProgramDoc& programInfo,
   size_t indent = 4 /* 'def ' */ + functionName.size() + 1 /* '(' */;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
+    util::ParamData& d = parameters.at(inputOptions[i]);
 
     if (i != 0)
       cout << "," << endl << std::string(indent, ' ');
 
-    CLI::GetSingleton().functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
+    IO::GetSingleton().functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
   }
 
   // Print closing brace for function definition.
@@ -143,19 +142,28 @@ void PrintPYX(const ProgramDoc& programInfo,
 
   // Print the comment describing the function and its parameters.
   cout << "  \"\"\"" << endl;
-  cout << "  " << programInfo.programName << endl;
+  cout << "  " << doc.programName << endl;
   cout << endl;
-  cout << "  " << HyphenateString(programInfo.documentation(), 2) << endl;
-  cout << endl << endl;
+
+  // Print the description.
+  cout << "  " << HyphenateString(doc.longDescription(), 2) << endl << endl;
+
+  // Next print the examples.
+  for (size_t j = 0; j < doc.example.size(); ++j)
+  {
+    cout << "  " << util::HyphenateString(doc.example[j](), 2) << endl << endl;
+  }
+
+  // Next, print information on the input options.
   cout << "  Input parameters:" << endl;
   cout << endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
+    util::ParamData& d = parameters.at(inputOptions[i]);
 
     cout << "  ";
     size_t indent = 4;
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         NULL);
     cout << endl;
   }
@@ -164,11 +172,11 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << endl;
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
+    util::ParamData& d = parameters.at(outputOptions[i]);
 
     cout << "  ";
     size_t indent = 4;
-    CLI::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    IO::GetSingleton().functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         NULL);
     cout << endl;
   }
@@ -184,7 +192,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "  DisableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  CLI.RestoreSettings(\"" << programInfo.programName << "\")"
+  cout << "  IO.RestoreSettings(\"" << doc.programName << "\")"
       << endl;
 
   // Determine whether or not we need to copy parameters.
@@ -192,7 +200,7 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "    if copy_all_inputs:" << endl;
   cout << "      SetParam[cbool](<const string> 'copy_all_inputs', "
       << "copy_all_inputs)" << endl;
-  cout << "      CLI.SetPassed(<const string> 'copy_all_inputs')" << endl;
+  cout << "      IO.SetPassed(<const string> 'copy_all_inputs')" << endl;
   cout << "  else:" << endl;
   cout << "    raise TypeError(" <<"\"'copy_all_inputs\' must have type "
       << "\'bool'!\")" << endl;
@@ -201,10 +209,10 @@ void PrintPYX(const ProgramDoc& programInfo,
   // Do any input processing.
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(inputOptions[i]);
+    util::ParamData& d = parameters.at(inputOptions[i]);
 
     size_t indent = 2;
-    CLI::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintInputProcessing"](d,
         (void*) &indent, NULL);
   }
 
@@ -212,8 +220,8 @@ void PrintPYX(const ProgramDoc& programInfo,
   cout << "  # Mark all output options as passed." << endl;
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
-    cout << "  CLI.SetPassed(<const string> '" << d.name << "')" << endl;
+    util::ParamData& d = parameters.at(outputOptions[i]);
+    cout << "  IO.SetPassed(<const string> '" << d.name << "')" << endl;
   }
 
   // Call the method.
@@ -227,16 +235,16 @@ void PrintPYX(const ProgramDoc& programInfo,
 
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
-    const util::ParamData& d = parameters.at(outputOptions[i]);
+    util::ParamData& d = parameters.at(outputOptions[i]);
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
-    CLI::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
+    IO::GetSingleton().functionMap[d.tname]["PrintOutputProcessing"](d,
         (void*) &t, NULL);
   }
 
   // Clear the parameters.
   cout << endl;
-  cout << "  CLI.ClearSettings()" << endl;
+  cout << "  IO.ClearSettings()" << endl;
   cout << endl;
 
   cout << "  return result" << endl;

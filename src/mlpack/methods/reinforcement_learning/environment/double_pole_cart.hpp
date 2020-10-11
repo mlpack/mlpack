@@ -88,18 +88,26 @@ class DoublePoleCart
   /**
    * Implementation of action of Double Pole Cart.
    */
-  enum Action
+  class Action
   {
-    backward,
-    forward,
+   public:
+    enum actions
+    {
+      backward,
+      forward
+    };
+    // To store the action.
+    Action::actions action;
 
     // Track the size of the action space.
-    size
+    static const size_t size = 2;
   };
 
   /**
    * Construct a Double Pole Cart instance using the given constants.
    *
+   * @param maxSteps The number of steps after which the episode
+   *    terminates. If the value is 0, there is no limit.
    * @param m1 The mass of the first pole.
    * @param m2 The mass of the second pole.
    * @param l1 The length of the first pole.
@@ -111,10 +119,9 @@ class DoublePoleCart
    * @param thetaThresholdRadians The maximum angle.
    * @param xThreshold The maximum position.
    * @param doneReward Reward recieved by agent on success.
-   * @param maxSteps The number of steps after which the episode
-   *    terminates. If the value is 0, there is no limit.
    */
-  DoublePoleCart(const double m1 = 0.1,
+  DoublePoleCart(const size_t maxSteps = 0,
+                 const double m1 = 0.1,
                  const double m2 = 0.01,
                  const double l1 = 0.5,
                  const double l2 = 0.05,
@@ -124,8 +131,8 @@ class DoublePoleCart
                  const double tau = 0.02,
                  const double thetaThresholdRadians = 36 * 2 * 3.1416 / 360,
                  const double xThreshold = 2.4,
-                 const double doneReward = 0.0,
-                 const size_t maxSteps = 0) :
+                 const double doneReward = 0.0) :
+      maxSteps(maxSteps),
       m1(m1),
       m2(m2),
       l1(l1),
@@ -137,7 +144,6 @@ class DoublePoleCart
       thetaThresholdRadians(thetaThresholdRadians),
       xThreshold(xThreshold),
       doneReward(doneReward),
-      maxSteps(maxSteps),
       stepsPerformed(0)
   { /* Nothing to do here */ }
 
@@ -192,7 +198,7 @@ class DoublePoleCart
             const Action& action,
             arma::vec& dydx)
   {
-    double totalForce = action ? forceMag : -forceMag;
+    double totalForce = action.action ? forceMag : -forceMag;
     double totalMass = massCart;
     double omega1 = state.AngularVelocity(1);
     double omega2 = state.AngularVelocity(2);
@@ -323,6 +329,9 @@ class DoublePoleCart
   size_t& MaxSteps() { return maxSteps; }
 
  private:
+  //! Locally-stored maximum number of steps.
+  size_t maxSteps;
+
   //! Locally-stored mass of the first pole.
   double m1;
 
@@ -355,9 +364,6 @@ class DoublePoleCart
 
   //! Locally-stored done reward.
   double doneReward;
-
-  //! Locally-stored maximum number of steps.
-  size_t maxSteps;
 
   //! Locally-stored number of steps performed.
   size_t stepsPerformed;

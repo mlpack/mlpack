@@ -10,41 +10,8 @@
 #  * JULIA_CPP_IN: path of the julia_method.cpp.in file.
 #  * JULIA_CPP_OUT: name of the output .cpp file.
 #
-# We need to parse the main file and find any PARAM_MODEL_* lines.
-file(READ "${PROGRAM_MAIN_FILE}" MAIN_FILE)
-
-# Grab all "PARAM_MODEL_IN(Model,", "PARAM_MODEL_IN_REQ(Model,",
-# "PARAM_MODEL_OUT(Model,".
-string(REGEX MATCHALL "PARAM_MODEL_IN\\([A-Za-z_<>]*," MODELS_IN
-    "${MAIN_FILE}")
-string(REGEX MATCHALL "PARAM_MODEL_IN_REQ\\([A-Za-z_<>]*," MODELS_IN_REQ
-    "${MAIN_FILE}")
-string(REGEX MATCHALL "PARAM_MODEL_OUT\\([A-Za-z_]*," MODELS_OUT "${MAIN_FILE}")
-
-string(REGEX REPLACE "PARAM_MODEL_IN\\(" "" MODELS_IN_STRIP1 "${MODELS_IN}")
-string(REGEX REPLACE "," "" MODELS_IN_STRIP2 "${MODELS_IN_STRIP1}")
-string(REGEX REPLACE "[<>,]" "" MODELS_IN_SAFE_STRIP2 "${MODELS_IN_STRIP1}")
-
-string(REGEX REPLACE "PARAM_MODEL_IN_REQ\\(" "" MODELS_IN_REQ_STRIP1
-    "${MODELS_IN_REQ}")
-string(REGEX REPLACE "," "" MODELS_IN_REQ_STRIP2 "${MODELS_IN_REQ_STRIP1}")
-string(REGEX REPLACE "[<>,]" "" MODELS_IN_REQ_SAFE_STRIP2
-    "${MODELS_IN_REQ_STRIP1}")
-
-string(REGEX REPLACE "PARAM_MODEL_OUT\\(" "" MODELS_OUT_STRIP1 "${MODELS_OUT}")
-string(REGEX REPLACE "," "" MODELS_OUT_STRIP2 "${MODELS_OUT_STRIP1}")
-string(REGEX REPLACE "[<>,]" "" MODELS_OUT_SAFE_STRIP2 "${MODELS_OUT_STRIP1}")
-
-set(MODEL_TYPES ${MODELS_IN_STRIP2} ${MODELS_IN_REQ_STRIP2}
-    ${MODELS_OUT_STRIP2})
-set(MODEL_SAFE_TYPES ${MODELS_IN_SAFE_STRIP2} ${MODELS_IN_REQ_SAFE_STRIP2}
-    ${MODELS_OUT_SAFE_STRIP2})
-if (MODEL_TYPES)
-  list(REMOVE_DUPLICATES MODEL_TYPES)
-endif ()
-if (MODEL_SAFE_TYPES)
-  list(REMOVE_DUPLICATES MODEL_SAFE_TYPES)
-endif ()
+include("${SOURCE_DIR}/CMake/StripType.cmake")
+strip_type("${PROGRAM_MAIN_FILE}")
 
 # Now, generate the definitions of the functions we need.
 set(MODEL_PTR_DEFNS "")
@@ -59,9 +26,9 @@ if (${NUM_MODEL_TYPES} GREATER 0)
     # Generate the definition.
     set(MODEL_PTR_DEFNS "${MODEL_PTR_DEFNS}
 // Get the pointer to a ${MODEL_TYPE} parameter.
-void* CLI_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName);
+void* IO_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName);
 // Set the pointer to a ${MODEL_TYPE} parameter.
-void CLI_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr);
+void IO_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr);
 // Serialize a ${MODEL_TYPE} pointer.
 char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length);
 // Deserialize a ${MODEL_TYPE} pointer.
@@ -71,16 +38,16 @@ void* Deserialize${MODEL_SAFE_TYPE}Ptr(const char* buffer, const size_t length);
     # Generate the implementation.
     set(MODEL_PTR_IMPLS "${MODEL_PTR_IMPLS}
 // Get the pointer to a ${MODEL_TYPE} parameter.
-void* CLI_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName)
+void* IO_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName)
 {
-  return (void*) CLI::GetParam<${MODEL_TYPE}*>(paramName);
+  return (void*) IO::GetParam<${MODEL_TYPE}*>(paramName);
 }
 
 // Set the pointer to a ${MODEL_TYPE} parameter.
-void CLI_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr)
+void IO_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr)
 {
-  CLI::GetParam<${MODEL_TYPE}*>(paramName) = (${MODEL_TYPE}*) ptr;
-  CLI::SetPassed(paramName);
+  IO::GetParam<${MODEL_TYPE}*>(paramName) = (${MODEL_TYPE}*) ptr;
+  IO::SetPassed(paramName);
 }
 
 // Serialize a ${MODEL_TYPE} pointer.

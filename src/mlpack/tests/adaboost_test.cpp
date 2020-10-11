@@ -12,9 +12,9 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/adaboost/adaboost.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
+#include "serialization_catch.hpp"
+#include "test_catch_tools.hpp"
+#include "catch.hpp"
 
 using namespace arma;
 using namespace mlpack;
@@ -22,23 +22,21 @@ using namespace mlpack::adaboost;
 using namespace mlpack::tree;
 using namespace mlpack::perceptron;
 
-BOOST_AUTO_TEST_SUITE(AdaBoostTest);
-
 /**
  * This test case runs the AdaBoost.mh algorithm on the UCI Iris dataset.  It
  * checks whether the hamming loss breaches the upperbound, which is provided by
  * ztAccumulator.
  */
-BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
+TEST_CASE("HammingLossBoundIris", "[AdaBoostTest]")
 {
   arma::mat inputData;
 
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for iris iris_labels.txt");
+    FAIL("Cannot load labels for iris iris_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
 
@@ -62,8 +60,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
-  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
+  REQUIRE(std::isfinite(ztProduct) == true);
+  REQUIRE(hammingLoss <= ztProduct);
 }
 
 /**
@@ -71,17 +69,17 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
  * checks if the error returned by running a single instance of the weak learner
  * is worse than running the boosted weak learner using adaboost.
  */
-BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
+TEST_CASE("WeakLearnerErrorIris", "[AdaBoostTest]")
 {
   arma::mat inputData;
 
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Mat<size_t> labels;
 
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for iris iris_labels.txt");
+    FAIL("Cannot load labels for iris iris_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
 
@@ -107,7 +105,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
   size_t countError = arma::accu(labels != predictedLabels);;
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
+  REQUIRE(error <= weakLearnerErrorRate);
 }
 
 /**
@@ -115,15 +113,15 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
  * dataset.  It checks whether the hamming loss breaches the upperbound, which
  * is provided by ztAccumulator.
  */
-BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
+TEST_CASE("HammingLossBoundVertebralColumn", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
 
@@ -146,8 +144,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
-  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
+  REQUIRE(std::isfinite(ztProduct) == true);
+  REQUIRE(hammingLoss <= ztProduct);
 }
 
 /**
@@ -155,15 +153,15 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
  * dataset.  It checks if the error returned by running a single instance of the
  * weak learner is worse than running the boosted weak learner using adaboost.
  */
-BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
+TEST_CASE("WeakLearnerErrorVertebralColumn", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
 
@@ -189,7 +187,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
   size_t countError = arma::accu(labels != predictedLabels);
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
+  REQUIRE(error <= weakLearnerErrorRate);
 }
 
 /**
@@ -197,15 +195,15 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
  * dataset.  It checks whether the hamming loss breaches the upperbound, which
  * is provided by ztAccumulator.
  */
-BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
+TEST_CASE("HammingLossBoundNonLinearSepData", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("train_nonlinsep.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
+    FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("train_labels_nonlinsep.txt", labels))
-    BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
+    FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
 
@@ -228,8 +226,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
-  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
+  REQUIRE(std::isfinite(ztProduct) <= true);
+  REQUIRE(hammingLoss <= ztProduct);
 }
 
 /**
@@ -237,15 +235,15 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
  * dataset.  It checks if the error returned by running a single instance of the
  * weak learner is worse than running the boosted weak learner using AdaBoost.
  */
-BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
+TEST_CASE("WeakLearnerErrorNonLinearSepData", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("train_nonlinsep.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
+    FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("train_labels_nonlinsep.txt", labels))
-    BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
+    FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
 
@@ -271,7 +269,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
   size_t countError = arma::accu(labels != predictedLabels);
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
+  REQUIRE(error == weakLearnerErrorRate);
 }
 
 /**
@@ -279,15 +277,15 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
  * checks whether the Hamming loss breaches the upper bound, which is provided
  * by ztAccumulator.  This uses decision stumps as the weak learner.
  */
-BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
+TEST_CASE("HammingLossIris_DS", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for iris_labels.txt");
+    FAIL("Cannot load labels for iris_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
   const size_t numClasses = 3;
@@ -309,8 +307,8 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
-  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
+  REQUIRE(std::isfinite(ztProduct) == true);
+  REQUIRE(hammingLoss <= ztProduct);
 }
 
 /**
@@ -319,15 +317,15 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
  * weak learner is worse than running the boosted weak learner using adaboost.
  * This is for the weak learner: decision stumps.
  */
-BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
+TEST_CASE("WeakLearnerErrorIris_DS", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("iris_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for iris_labels.txt");
+    FAIL("Cannot load labels for iris_labels.txt");
 
   // no need to map the labels here
 
@@ -357,7 +355,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   size_t countError = arma::accu(labels != predictedLabels);
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
+  REQUIRE(error <= weakLearnerErrorRate);
 }
 
 /**
@@ -366,15 +364,15 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
  * weak learner is worse than running the boosted weak learner using adaboost.
  * This is for the weak learner: decision stumps.
  */
-BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
+TEST_CASE("HammingLossBoundVertebralColumn_DS", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
   const size_t numClasses = 3;
@@ -398,8 +396,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
-  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
+  REQUIRE(std::isfinite(ztProduct) == true);
+  REQUIRE(hammingLoss <= ztProduct);
 }
 
 /**
@@ -408,15 +406,15 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
  * weak learner is worse than running the boosted weak learner using adaboost.
  * This is for the weak learner: decision stumps.
  */
-BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
+TEST_CASE("WeakLearnerErrorVertebralColumn_DS", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
   const size_t numClasses = 3;
@@ -442,7 +440,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   size_t countError = arma::accu(labels != predictedLabels);
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
+  REQUIRE(error <= weakLearnerErrorRate);
 }
 
 /**
@@ -450,15 +448,15 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
  * dataset.  It checks whether the hamming loss breaches the upperbound, which
  * is provided by ztAccumulator.  This is for the weak learner: decision stumps.
  */
-BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
+TEST_CASE("HammingLossBoundNonLinearSepData_DS", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("train_nonlinsep.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
+    FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("train_labels_nonlinsep.txt", labels))
-    BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
+    FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner, decision stumps in this case.
   const size_t numClasses = 2;
@@ -482,8 +480,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
   double hammingLoss = (double) countError / labels.n_cols;
 
   // Check that ztProduct is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(ztProduct), true);
-  BOOST_REQUIRE_LE(hammingLoss, ztProduct);
+  REQUIRE(std::isfinite(ztProduct) == true);
+  REQUIRE(hammingLoss <= ztProduct);
 }
 
 /**
@@ -492,15 +490,15 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
  * weak learner is worse than running the boosted weak learner using adaboost.
  * This for the weak learner: decision stumps.
  */
-BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
+TEST_CASE("WeakLearnerErrorNonLinearSepData_DS", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("train_nonlinsep.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
+    FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("train_labels_nonlinsep.txt", labels))
-    BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
+    FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner, decision stumps in this case.
   const size_t numClasses = 2;
@@ -528,7 +526,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   size_t countError = arma::accu(labels != predictedLabels);
   double error = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE_LE(error, weakLearnerErrorRate);
+  REQUIRE(error <= weakLearnerErrorRate);
 }
 
 /**
@@ -536,15 +534,15 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
  * dataset.  It tests the Classify function and checks for a satisfactory error
  * rate.
  */
-BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
+TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptronIter iterations.
@@ -553,12 +551,12 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   arma::mat testData;
 
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset vc2_test.csv!");
+    FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Mat<size_t> trueTestLabels;
 
   if (!data::Load("vc2_test_labels.txt", trueTestLabels))
-    BOOST_FAIL("Cannot load labels for vc2_test_labels.txt");
+    FAIL("Cannot load labels for vc2_test_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
 
@@ -578,26 +576,26 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   a.Classify(testData, predictedLabels1);
   a.Classify(testData, predictedLabels2, probabilities);
 
-  BOOST_REQUIRE_EQUAL(probabilities.n_cols, testData.n_cols);
-  BOOST_REQUIRE_EQUAL(probabilities.n_rows, numClasses);
+  REQUIRE(probabilities.n_cols == testData.n_cols);
+  REQUIRE(probabilities.n_rows == numClasses);
 
   for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
-    BOOST_REQUIRE_EQUAL(predictedLabels1[i], predictedLabels2[i]);
+    REQUIRE(predictedLabels1[i] == predictedLabels2[i]);
 
   arma::colvec pRow;
   arma::uword maxIndex = 0;
 
-  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
-    BOOST_REQUIRE_EQUAL(predictedLabels1(i), maxIndex);
-    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
+    REQUIRE(predictedLabels1(i) == maxIndex);
+    REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
   }
 
   size_t localError = arma::accu(trueTestLabels != predictedLabels1);
   double lError = (double) localError / trueTestLabels.n_cols;
-  BOOST_REQUIRE_LE(lError, 0.30);
+  REQUIRE(lError <= 0.30);
 }
 
 /**
@@ -605,15 +603,15 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
  * dataset.  It tests the Classify function and checks for a satisfactory error
  * rate.
  */
-BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
+TEST_CASE("ClassifyTest_NONLINSEP", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("train_nonlinsep.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
+    FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("train_labels_nonlinsep.txt", labels))
-    BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
+    FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner; in this test decision stumps are used.
   const size_t numClasses = 2;
@@ -623,12 +621,12 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
   arma::mat testData;
 
   if (!data::Load("test_nonlinsep.txt", testData))
-    BOOST_FAIL("Cannot load test dataset test_nonlinsep.txt!");
+    FAIL("Cannot load test dataset test_nonlinsep.txt!");
 
   arma::Mat<size_t> trueTestLabels;
 
   if (!data::Load("test_labels_nonlinsep.txt", trueTestLabels))
-    BOOST_FAIL("Cannot load labels for test_labels_nonlinsep.txt");
+    FAIL("Cannot load labels for test_labels_nonlinsep.txt");
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
 
@@ -647,25 +645,25 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
   a.Classify(testData, predictedLabels1);
   a.Classify(testData, predictedLabels2, probabilities);
 
-  BOOST_REQUIRE_EQUAL(probabilities.n_cols, testData.n_cols);
+  REQUIRE(probabilities.n_cols == testData.n_cols);
 
   for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
-    BOOST_REQUIRE_EQUAL(predictedLabels1[i], predictedLabels2[i]);
+    REQUIRE(predictedLabels1[i] == predictedLabels2[i]);
 
   arma::colvec pRow;
   arma::uword maxIndex = 0;
 
-  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
-    BOOST_REQUIRE_EQUAL(predictedLabels1(i), maxIndex);
-    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
+    REQUIRE(predictedLabels1(i) == maxIndex);
+    REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
   }
 
   size_t localError = arma::accu(trueTestLabels != predictedLabels1);
   double lError = (double) localError / trueTestLabels.n_cols;
-  BOOST_REQUIRE_LE(lError, 0.30);
+  REQUIRE(lError <= 0.30);
 }
 
 /**
@@ -674,15 +672,15 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
  * the remaining third of the dataset (iris_test.csv).  It tests the Classify()
  * function and checks for a satisfactory error rate.
  */
-BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
+TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]")
 {
   arma::mat inputData;
   if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset iris_train.csv!");
+    FAIL("Cannot load test dataset iris_train.csv!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("iris_train_labels.csv", labels))
-    BOOST_FAIL("Cannot load labels for iris_train_labels.csv");
+    FAIL("Cannot load labels for iris_train_labels.csv");
   const size_t numClasses = max(labels.row(0)) + 1;
 
   // Define your own weak learner, perceptron in this case.
@@ -698,14 +696,14 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+    FAIL("Cannot load test dataset iris_test.csv!");
 
   arma::Row<size_t> predictedLabels(testData.n_cols);
   a.Classify(testData, predictedLabels);
 
   arma::Mat<size_t> trueTestLabels;
   if (!data::Load("iris_test_labels.csv", trueTestLabels))
-    BOOST_FAIL("Cannot load test dataset iris_test_labels.csv!");
+    FAIL("Cannot load test dataset iris_test_labels.csv!");
 
   arma::Row<size_t> predictedLabels1(testData.n_cols),
                     predictedLabels2(testData.n_cols);
@@ -714,41 +712,41 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
   a.Classify(testData, predictedLabels1);
   a.Classify(testData, predictedLabels2, probabilities);
 
-  BOOST_REQUIRE_EQUAL(probabilities.n_cols, testData.n_cols);
+  REQUIRE(probabilities.n_cols == testData.n_cols);
 
   for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
-    BOOST_REQUIRE_EQUAL(predictedLabels1[i], predictedLabels2[i]);
+    REQUIRE(predictedLabels1[i] == predictedLabels2[i]);
 
   arma::colvec pRow;
   arma::uword maxIndex = 0;
 
-  for (size_t i = 0; i < predictedLabels1.n_cols; i++)
+  for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
     pRow.max(maxIndex);
-    BOOST_REQUIRE_EQUAL(predictedLabels1(i), maxIndex);
-    BOOST_REQUIRE_CLOSE(arma::accu(probabilities.col(i)), 1, 1e-5);
+    REQUIRE(predictedLabels1(i) == maxIndex);
+    REQUIRE(arma::accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
   }
 
   size_t localError = arma::accu(trueTestLabels != predictedLabels1);
   double lError = (double) localError / labels.n_cols;
-  BOOST_REQUIRE_LE(lError, 0.30);
+  REQUIRE(lError <= 0.30);
 }
 
 /**
  * Ensure that the Train() function works like it is supposed to, by building
  * AdaBoost on one dataset and then re-training on another dataset.
  */
-BOOST_AUTO_TEST_CASE(TrainTest)
+TEST_CASE("TrainTest", "[AdaBoostTest]")
 {
   // First train on the iris dataset.
   arma::mat inputData;
   if (!data::Load("iris_train.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset iris_train.csv!");
+    FAIL("Cannot load test dataset iris_train.csv!");
 
   arma::Mat<size_t> labels;
   if (!data::Load("iris_train_labels.csv", labels))
-    BOOST_FAIL("Cannot load labels for iris_train_labels.csv");
+    FAIL("Cannot load labels for iris_train_labels.csv");
 
   const size_t numClasses = max(labels.row(0)) + 1;
 
@@ -762,9 +760,9 @@ BOOST_AUTO_TEST_CASE(TrainTest)
 
   // Now load another dataset...
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   const size_t newNumClasses = max(labels.row(0)) + 1;
 
@@ -775,11 +773,11 @@ BOOST_AUTO_TEST_CASE(TrainTest)
   // Load test set to see if it trained on vc2 correctly.
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset vc2_test.csv!");
+    FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Mat<size_t> trueTestLabels;
   if (!data::Load("vc2_test_labels.txt", trueTestLabels))
-    BOOST_FAIL("Cannot load labels for vc2_test_labels.txt");
+    FAIL("Cannot load labels for vc2_test_labels.txt");
 
   // Define parameters for AdaBoost.
   arma::Row<size_t> predictedLabels(testData.n_cols);
@@ -788,10 +786,10 @@ BOOST_AUTO_TEST_CASE(TrainTest)
   int localError = arma::accu(trueTestLabels != predictedLabels);
   double lError = (double) localError / trueTestLabels.n_cols;
 
-  BOOST_REQUIRE_LE(lError, 0.30);
+  REQUIRE(lError <= 0.30);
 }
 
-BOOST_AUTO_TEST_CASE(PerceptronSerializationTest)
+TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest]")
 {
   // Build an AdaBoost object.
   mat data = randu<mat>(10, 500);
@@ -822,13 +820,13 @@ BOOST_AUTO_TEST_CASE(PerceptronSerializationTest)
   SerializeObjectAll(ab, abXml, abText, abBinary);
 
   // Now check that the objects are the same.
-  BOOST_REQUIRE_CLOSE(ab.Tolerance(), abXml.Tolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(ab.Tolerance(), abText.Tolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(ab.Tolerance(), abBinary.Tolerance(), 1e-5);
+  REQUIRE(ab.Tolerance() == Approx(abXml.Tolerance()).epsilon(1e-7));
+  REQUIRE(ab.Tolerance() == Approx(abText.Tolerance()).epsilon(1e-7));
+  REQUIRE(ab.Tolerance() == Approx(abBinary.Tolerance()).epsilon(1e-7));
 
-  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abXml.WeakLearners());
-  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abText.WeakLearners());
-  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abBinary.WeakLearners());
+  REQUIRE(ab.WeakLearners() == abXml.WeakLearners());
+  REQUIRE(ab.WeakLearners() == abText.WeakLearners());
+  REQUIRE(ab.WeakLearners() == abBinary.WeakLearners());
 
   for (size_t i = 0; i < ab.WeakLearners(); ++i)
   {
@@ -844,7 +842,7 @@ BOOST_AUTO_TEST_CASE(PerceptronSerializationTest)
   }
 }
 
-BOOST_AUTO_TEST_CASE(ID3DecisionStumpSerializationTest)
+TEST_CASE("ID3DecisionStumpSerializationTest", "[AdaBoostTest]")
 {
   // Build an AdaBoost object.
   mat data = randu<mat>(10, 500);
@@ -875,23 +873,21 @@ BOOST_AUTO_TEST_CASE(ID3DecisionStumpSerializationTest)
   SerializeObjectAll(ab, abXml, abText, abBinary);
 
   // Now check that the objects are the same.
-  BOOST_REQUIRE_CLOSE(ab.Tolerance(), abXml.Tolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(ab.Tolerance(), abText.Tolerance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(ab.Tolerance(), abBinary.Tolerance(), 1e-5);
+  REQUIRE(ab.Tolerance() == Approx(abXml.Tolerance()).epsilon(1e-7));
+  REQUIRE(ab.Tolerance() == Approx(abText.Tolerance()).epsilon(1e-7));
+  REQUIRE(ab.Tolerance() == Approx(abBinary.Tolerance()).epsilon(1e-7));
 
-  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abXml.WeakLearners());
-  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abText.WeakLearners());
-  BOOST_REQUIRE_EQUAL(ab.WeakLearners(), abBinary.WeakLearners());
+  REQUIRE(ab.WeakLearners() == abXml.WeakLearners());
+  REQUIRE(ab.WeakLearners() == abText.WeakLearners());
+  REQUIRE(ab.WeakLearners() == abBinary.WeakLearners());
 
   for (size_t i = 0; i < ab.WeakLearners(); ++i)
   {
-    BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).SplitDimension(),
-                        abXml.WeakLearner(i).SplitDimension());
-    BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).SplitDimension(),
-                        abText.WeakLearner(i).SplitDimension());
-    BOOST_REQUIRE_EQUAL(ab.WeakLearner(i).SplitDimension(),
-                        abBinary.WeakLearner(i).SplitDimension());
+    REQUIRE(ab.WeakLearner(i).SplitDimension() ==
+           abXml.WeakLearner(i).SplitDimension());
+    REQUIRE(ab.WeakLearner(i).SplitDimension() ==
+            abText.WeakLearner(i).SplitDimension());
+    REQUIRE(ab.WeakLearner(i).SplitDimension() ==
+            abBinary.WeakLearner(i).SplitDimension());
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

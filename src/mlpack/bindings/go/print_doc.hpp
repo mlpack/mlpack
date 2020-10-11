@@ -16,7 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/hyphenate_string.hpp>
 #include "get_go_type.hpp"
-#include "camel_case.hpp"
+#include <mlpack/bindings/util/camel_case.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -36,7 +36,7 @@ namespace go {
  * or Required Input.
  */
 template<typename T>
-void PrintDoc(const util::ParamData& d,
+void PrintDoc(util::ParamData& d,
               const void* input,
               void* isLower)
 {
@@ -44,7 +44,7 @@ void PrintDoc(const util::ParamData& d,
   bool Lower = *((bool*) isLower);
   std::ostringstream oss;
   oss << " - ";
-  oss << CamelCase(d.name, Lower) << " (";
+  oss << util::CamelCase(d.name, Lower) << " (";
   oss << GetGoType<typename std::remove_pointer<T>::type>(d) << "): "
       << d.desc;
 

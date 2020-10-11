@@ -18,8 +18,9 @@ static const std::string testName = "ImageConverter";
 #include <mlpack/methods/preprocess/image_converter_main.cpp>
 
 #include "test_helper.hpp"
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
+
 
 using namespace mlpack;
 
@@ -29,7 +30,7 @@ struct ImageConverterTestFixture
   ImageConverterTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~ImageConverterTestFixture()
@@ -38,25 +39,24 @@ struct ImageConverterTestFixture
     remove("test_image777.png");
     remove("test_image999.png");
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(ImageConverterMainTest,
-                         ImageConverterTestFixture);
-
-BOOST_AUTO_TEST_CASE(LoadImageTest)
+TEST_CASE_METHOD(ImageConverterTestFixture, "LoadImageTest",
+                 "[ImageConverterMainTest][BindingTests]")
 {
   SetInputParam<vector<string>>("input", {"test_image.png", "test_image.png"});
 
   mlpackMain();
-  arma::mat output = CLI::GetParam<arma::mat>("output");
+  arma::mat output = IO::GetParam<arma::mat>("output");
   // width * height * channels.
-  BOOST_REQUIRE_EQUAL(output.n_rows, 50 * 50 * 3);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 2);
+  REQUIRE(output.n_rows == 50 * 50 * 3);
+  REQUIRE(output.n_cols == 2);
 }
 
-BOOST_AUTO_TEST_CASE(SaveImageTest)
+TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
+                 "[ImageConverterMainTest][BindingTests]")
 {
   arma::mat testimage = arma::conv_to<arma::mat>::from(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
@@ -69,8 +69,8 @@ BOOST_AUTO_TEST_CASE(SaveImageTest)
   SetInputParam("dataset", testimage);
   mlpackMain();
 
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam<vector<string>>("input", {"test_image777.png",
     "test_image999.png"});
@@ -79,18 +79,19 @@ BOOST_AUTO_TEST_CASE(SaveImageTest)
   SetInputParam("channels", 3);
 
   mlpackMain();
-  arma::mat output = CLI::GetParam<arma::mat>("output");
-  BOOST_REQUIRE_EQUAL(output.n_rows, 5 * 5 * 3);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 2);
+  arma::mat output = IO::GetParam<arma::mat>("output");
+  REQUIRE(output.n_rows == 5 * 5 * 3);
+  REQUIRE(output.n_cols == 2);
   for (size_t i = 0; i < output.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(testimage[i], output[i], 1e-5);
+    REQUIRE(testimage[i] == Approx(output[i]).epsilon(1e-7));
 }
 
 /**
  * Check whether binding throws error if height, width or channel are not
  * specified.
  */
-BOOST_AUTO_TEST_CASE(IncompleteTest)
+TEST_CASE_METHOD(ImageConverterTestFixture, "IncompleteTest",
+                 "[ImageConverterMainTest][BindingTests]")
 {
   arma::mat testimage = arma::conv_to<arma::mat>::from(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
@@ -102,14 +103,15 @@ BOOST_AUTO_TEST_CASE(IncompleteTest)
   SetInputParam("dataset", testimage);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check for invalid height values.
  */
-BOOST_AUTO_TEST_CASE(InvalidInputTest)
+TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidInputTest",
+                 "[ImageConverterMainTest][BindingTests]")
 {
   arma::mat testimage = arma::conv_to<arma::mat>::from(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
@@ -123,14 +125,15 @@ BOOST_AUTO_TEST_CASE(InvalidInputTest)
   SetInputParam("channels", 3);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check for invalid width values.
  */
-BOOST_AUTO_TEST_CASE(InvalidWidthTest)
+TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidWidthTest",
+                 "[ImageConverterMainTest][BindingTests]")
 {
   arma::mat testimage = arma::conv_to<arma::mat>::from(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
@@ -143,14 +146,15 @@ BOOST_AUTO_TEST_CASE(InvalidWidthTest)
   SetInputParam("channels", 3);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check for invalid channel values.
  */
-BOOST_AUTO_TEST_CASE(InvalidChannelTest)
+TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidChannelTest",
+                 "[ImageConverterMainTest][BindingTests]")
 {
   arma::mat testimage = arma::conv_to<arma::mat>::from(
       arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
@@ -163,14 +167,15 @@ BOOST_AUTO_TEST_CASE(InvalidChannelTest)
   SetInputParam("channels", -1);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check for invalid input values.
  */
-BOOST_AUTO_TEST_CASE(EmptyInputTest)
+TEST_CASE_METHOD(ImageConverterTestFixture, "EmptyInputTest",
+                 "[ImageConverterMainTest][BindingTests]")
 {
   SetInputParam<vector<string>>("input", {});
   SetInputParam("height", 50);
@@ -178,8 +183,6 @@ BOOST_AUTO_TEST_CASE(EmptyInputTest)
   SetInputParam("channels", 50);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-
-BOOST_AUTO_TEST_SUITE_END();

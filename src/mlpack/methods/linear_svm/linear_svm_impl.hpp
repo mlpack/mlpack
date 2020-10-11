@@ -214,7 +214,7 @@ double LinearSVM<MatType>::ComputeAccuracy(
 
   // Increment count for every correctly predicted label.
   size_t count = 0;
-  for (size_t i = 0; i < labels.n_elem ; i++)
+  for (size_t i = 0; i < labels.n_elem ; ++i)
     if (testLabels(i) == labels(i))
       count++;
 

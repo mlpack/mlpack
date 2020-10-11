@@ -14,8 +14,12 @@ steps:
     set -e
     sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
     unset BOOST_ROOT
-    pip install cython numpy pandas zipp configparser
     brew install openblas armadillo boost
+
+    if [ "$(binding)" == "python" ]; then
+      pip install --upgrade pip
+      pip install cython numpy pandas zipp configparser
+    fi
 
     if [ "a$(julia.version)" != "a" ]; then
       brew cask install julia
@@ -28,10 +32,16 @@ steps:
 - script: |
     unset BOOST_ROOT
     mkdir build && cd build
-    export GOPATH=$PWD/src/mlpack/bindings/go
-    go get -u -t gonum.org/v1/gonum/...
-    export PYPATH=$(which python)
-    cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=$PYPATH ..
+    if [ "$(binding)" == "go" ]; then
+      export GOPATH=$PWD/src/mlpack/bindings/go
+      go get -u -t gonum.org/v1/gonum/...
+    fi
+    if [ "$(binding)" == "python" ]; then
+      export PYPATH=$(which python)
+      cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=$PYPATH ..
+    else
+      cmake $(CMakeArgs) ..
+    fi
   displayName: 'CMake'
 
 # Build mlpack

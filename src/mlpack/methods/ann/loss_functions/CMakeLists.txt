@@ -27,14 +27,20 @@ set(SOURCES
   negative_log_likelihood_impl.hpp
   log_cosh_loss.hpp
   log_cosh_loss_impl.hpp
+  poisson_nll_loss.hpp
+  poisson_nll_loss_impl.hpp
   reconstruction_loss.hpp
   reconstruction_loss_impl.hpp
   sigmoid_cross_entropy_error.hpp
   sigmoid_cross_entropy_error_impl.hpp
+  soft_margin_loss.hpp
+  soft_margin_loss_impl.hpp
   hinge_embedding_loss.hpp
   hinge_embedding_loss_impl.hpp
   empty_loss.hpp
   empty_loss_impl.hpp
+  mean_absolute_percentage_error.hpp
+  mean_absolute_percentage_error_impl.hpp
 )
 
 # Add directory name to sources.

@@ -167,50 +167,60 @@ class AtrousConvolution
                 arma::Mat<eT>& gradient);
 
   //! Get the parameters.
-  const OutputDataType& Parameters() const { return weights; }
+  OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
+  //! Get the weight of the layer.
+  arma::cube const& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  arma::cube& Weight() { return weight; }
+
+  //! Get the bias of the layer.
+  arma::mat const& Bias() const { return bias; }
+  //! Modify the bias of the layer.
+  arma::mat& Bias() { return bias; }
+
   //! Get the output parameter.
-  const OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  const OutputDataType& Delta() const { return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  const OutputDataType& Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the input width.
-  const size_t& InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  const size_t& InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  const size_t& OutputWidth() const { return outputWidth; }
+  size_t OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  const size_t& OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
-  const size_t& InputSize() const { return inSize; }
+  size_t InputSize() const { return inSize; }
 
   //! Get the output size.
-  const size_t& OutputSize() const { return outSize; }
+  size_t OutputSize() const { return outSize; }
 
   //! Get the kernel width.
   size_t KernelWidth() const { return kernelWidth; }
@@ -243,12 +253,15 @@ class AtrousConvolution
   size_t& DilationHeight() { return dilationHeight; }
 
   //! Get the internal Padding layer.
-  const ann::Padding<>& Padding() const { return padding; }
+  ann::Padding<> const& Padding() const { return padding; }
   //! Modify the internal Padding layer.
   ann::Padding<>& Padding() { return padding; }
 
-  //! Modify the bias weights of the layer.
-  arma::mat& Bias() { return bias; }
+  //! Get size of the weight matrix.
+  size_t WeightSize() const
+  {
+    return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
+  }
 
   /**
    * Serialize the layer.

@@ -39,7 +39,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     height(0),
     reset(false),
     numFunctions(0),
-    deterministic(true)
+    deterministic(false)
 {
   /* Nothing to do here. */
 }
@@ -60,7 +60,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
   numFunctions = responses.n_cols;
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
-  this->deterministic = true;
+  this->deterministic = false;
   ResetDeterministic();
 
   if (!reset)
@@ -158,12 +158,6 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
   if (parameter.is_empty())
     ResetParameters();
 
-  if (!deterministic)
-  {
-    deterministic = true;
-    ResetDeterministic();
-  }
-
   Forward(inputs);
   results = boost::apply_visitor(outputParameterVisitor, network.back());
 }
@@ -242,7 +236,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
   results = arma::mat(resultsTemp.n_elem, predictors.n_cols);
   results.col(0) = resultsTemp.col(0);
 
-  for (size_t i = 1; i < predictors.n_cols; i++)
+  for (size_t i = 1; i < predictors.n_cols; ++i)
   {
     Forward(arma::mat(predictors.colptr(i), predictors.n_rows, 1, false, true));
 
@@ -647,6 +641,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
   {
     this->network.push_back(boost::apply_visitor(copyVisitor,
         network.network[i]));
+    boost::apply_visitor(resetVisitor, this->network.back());
   }
 };
 
