@@ -127,7 +127,7 @@ steps:
     # Pull the documentation for the installer.
     try {
       $url = "http://ci.mlpack.org/job/mlpack%20-%20doxygen%20build/lastSuccessfulBuild/artifact/build/doc/html/*zip*/html.zip"
-      (new-object net.webclient).DownloadFile($url), 'dist\win-installer\jenkinsdoc.zip')
+      (new-object net.webclient).DownloadFile($url, 'dist\win-installer\jenkinsdoc.zip')
     }
     catch {
       Write-Output "Unable to download precompiled Doxygen documentation from Jenkins!"
