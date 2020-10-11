@@ -49,7 +49,8 @@ add_executable(mlpack_test
   test_tools.hpp
   timer_test.cpp
   union_find_test.cpp
-  wgan_test.cpp
+  wgan_gp_mnist_test.cpp
+  wgan_mnist_test.cpp
   main_tests/cf_test.cpp
   main_tests/det_test.cpp
   main_tests/emst_test.cpp
