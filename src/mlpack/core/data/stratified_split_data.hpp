@@ -57,39 +57,58 @@ void StratifiedSplit(const arma::Mat<T>& input,
                      const double testRatio,
                      const bool shuffleData = true)
 {
-  arma::uvec trainIndexes;
-  arma::uvec testIndexes;
+  arma::uvec Indexes;
+  Indexes.set_size(inputLabel.n_cols);
+  size_t trainIdx = 0;
+  size_t testIdx = inputLabel.n_cols - 1;
+  std::unordered_map<U, size_t> labelMap;
+
   if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(
         0, input.n_cols - 1, input.n_cols));
-    input = input.cols(order);
-    inputLabel = inputLabel.cols(order);
+
+    for (auto i: order)
+    {
+      auto label = inputLabel[i];
+      if (static_cast<size_t>(labelMap[label]*testRatio) <
+          static_cast<size_t>((labelMap[label]+1)*testRatio))
+      {
+        Indexes[testIdx] = i;
+        testIdx -= 1;
+      }
+      else
+      {
+        Indexes[trainIdx] = i;
+        trainIdx += 1;
+      }
+      labelMap[label] += 1;
+    }
   }
-
-  arma::Row<U> uniqueLabel = arma::unique(inputLabel);
-
-  for (typename U label : uniqueLabel)
+  else
   {
-    arma::uvec uniqueIndexes = arma::find(inputLabel == label);
-
-    const size_t testStrataSize =
-        static_cast<size_t>(uniqueIndexes.n_rows*testRatio);
-    const size_t trainStrataSize = uniqueIndexes.n_rows - testSize;
-
-    arma::uvec testStrataIndexes =
-        uniqueIndexes.subvec(0, testStrataSize - 1);
-    arma::uvec trainStrataIndexes =
-        uniqueIndexes.subvec(testStrataSize - 1, uniqueIndexes.n_rows - 1);
-
-    testIndexes = join_cols(testIndexes, testStrataIndexes);
-    trainIndexes = join_cols(trainIndexes, trainStrataIndexes);
+    for (size_t i = 0; i < inputLabel.n_cols; i++)
+    {
+      auto label = inputLabel[i];
+      if (static_cast<size_t>(labelMap[label]*testRatio) <
+          static_cast<size_t>((labelMap[label]+1)*testRatio))
+      {
+        Indexes[testIdx] = i;
+        testIdx -= 1;
+      }
+      else
+      {
+        Indexes[trainIdx] = i;
+        trainIdx += 1;
+      }
+      labelMap[label] += 1;
+    }
   }
-
-  testData = input.cols(testIndexes);
-  testLabel = inputLabel.cols(testIndexes);
-  trainData = input.cols(trainIndexes);
-  trainLabel = inputLabel.cols(trainIndexes);
+  testData = input.cols(Indexes.subvec(trainIdx, Indexes.n_rows-1));
+  testLabel = inputLabel.cols(Indexes.subvec(trainIdx, Indexes.n_rows-1));
+  trainData = input.cols(Indexes.subvec(0, trainIdx-1));
+  trainLabel = inputLabel.cols(Indexes.subvec(0, trainIdx-1));
+  labelMap.clear();
 }
 
 /**
@@ -133,3 +152,8 @@ StratifiedSplit(const arma::Mat<T>& input,
                          std::move(trainLabel),
                          std::move(testLabel));
 }
+
+} // namespace data
+} // namespace mlpack
+
+#endif
