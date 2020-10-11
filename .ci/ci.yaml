@@ -54,7 +54,7 @@ jobs:
         binding: 'go'
         python.version: '2.7'
         go.version: '1.11.0'
-        CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=ON -DBUILD_R_BINDINGS=OFF'
+        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=ON -DBUILD_R_BINDINGS=OFF'
 
   steps:
   - template: macos-steps.yaml
