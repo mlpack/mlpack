@@ -23,7 +23,10 @@ namespace data {
 namespace fs {
 
 /**
- *
+ * The function takes an input dataset with a set number of features,
+ * and the required number of features along with the target varibale 
+ * and output the dataset with lesser number of features.
+ * 
  * @param input Input dataset with actual number of features.
  * @param target Output labels for the respective Input. 
  * @param output Output matrix with lesser number of features.
@@ -62,28 +65,36 @@ void Chi2Selection(const arma::Mat<T>& input,
 
     // For safety, lets add a padding.
     for (auto it = chiTable.begin(); it != chiTable.end(); it++)
+    {
       for (size_t i = 0; i < outputLabels.n_rows; i++)
+      {
         if (it->second.find(outputLabels(i)) == it->second.end())
           chiTable[it->first][outputLabels(i)] = 0;
+      }
+    }
 
     // Calculate chi square values.
     double chiValue = 0.0;
     for (auto it = chiTable.begin(); it != chiTable.end(); it++)
+    {
       for (auto jt = it->second.begin(); jt != it->second.end(); jt++)
+      {
         chiValue +=
             (pow((jt->second - ((double)(expected[it->first] *
             labels[jt->first]) / (double)(input.n_cols))), 2) /
             ((double)(expected[it->first] * labels[jt->first]) /
             (double)(input.n_cols)));
+      }
+    }
 
     outputIndex[i][0] = chiValue;
     outputIndex[i][1] = i;
   }
   sort(outputIndex.rbegin(), outputIndex.rend());
-  std::vector<long long unsigned int> indices;
+  std::vector<unsigned long long> indices;
 
   for (size_t i = 0; i < std::min(outputSize, outputIndex.size()); i++)
-    indices.push_back((long long unsigned int)outputIndex[i][1]);
+    indices.push_back((unsigned long long)outputIndex[i][1]);
 
   output = input.rows(arma::uvec(indices));
 }

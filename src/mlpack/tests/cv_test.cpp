@@ -600,7 +600,7 @@ TEST_CASE("KFoldCVWithDTTest", "[CVTest]")
 /**
  * Test for feature selection based on Variance.
  */
-BOOST_AUTO_TEST_CASE(VarianceFeatureSelectionTest)
+TEST_CASE("VarianceFeatureSelectionTest", "[CVTest]")
 {
   // Dataset with 4 features.
   arma::mat matrix;
@@ -612,19 +612,19 @@ BOOST_AUTO_TEST_CASE(VarianceFeatureSelectionTest)
   // Output matirx with less features.
   arma::mat output;
   data::fs::VarianceSelection(matrix, 0.009, output);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 2);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 4);
+  REQUIRE(output.n_rows == 2);
+  REQUIRE(output.n_cols == 4);
   for (size_t i = 0; i < output.n_cols; i++)
   {
-    BOOST_REQUIRE_EQUAL(output(0, i), matrix(0, i));
-    BOOST_REQUIRE_EQUAL(output(1, i), matrix(2, i));
+    REQUIRE(output(0, i) == matrix(0, i));
+    REQUIRE(output(1, i) == matrix(2, i));
   }
 }
 
 /**
  * Test for feature selection based on Correlation.
  */
-BOOST_AUTO_TEST_CASE(CorrelationFeatureSelectionTest)
+TEST_CASE("CorrelationFeatureSelectionTest", "[CVTest]")
 {
   // Dataset with 4 features.
   arma::mat matrix;
@@ -637,16 +637,16 @@ BOOST_AUTO_TEST_CASE(CorrelationFeatureSelectionTest)
   // Output matirx with less features.
   arma::mat output;
   data::fs::CorrelationSelection(matrix, temp, output, 1);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 4);
+  REQUIRE(output.n_rows == 1);
+  REQUIRE(output.n_cols == 4);
   for (size_t i = 0; i < output.n_cols; i++)
-    BOOST_REQUIRE_EQUAL(output(0, i), matrix(0, i));
+    REQUIRE(output(0, i) == matrix(0, i));
 }
 
 /**
  * Test for feature selection based on ch12.
  */
-BOOST_AUTO_TEST_CASE(Chi2FeatureSelectionTest)
+TEST_CASE("Chi2FeatureSelectionTest", "[CVTest]")
 {
   // Dataset with 2 features.
   arma::mat matrix;
@@ -658,10 +658,10 @@ BOOST_AUTO_TEST_CASE(Chi2FeatureSelectionTest)
   arma::mat output;
   arma::rowvec temp =  "0 0 1 1 1 0 1 0 1 1 1 1 1 0;";
   data::fs::Chi2Selection(matrix, temp, output, 1);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 14);
+  REQUIRE(output.n_rows == 1);
+  REQUIRE(output.n_cols == 14);
   for (size_t i = 0; i < output.n_cols; i++)
-    BOOST_REQUIRE_EQUAL(output(0, i), matrix(0, i));
+    REQUIRE(output(0, i) == matrix(0, i));
 }
 
 /**

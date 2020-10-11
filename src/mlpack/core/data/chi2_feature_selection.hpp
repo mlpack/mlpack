@@ -23,13 +23,19 @@ namespace fs {
 
 /**
  *
+ * A chi-square test is used in statistics to test the independence of two 
+ * events. In feature selection, we aim to select the features which are
+ * highly dependent on the response. When two features are independent,
+ * the observed count is close to the expected count, thus we will have
+ * smaller Chi-Square value.
+ * 
  * @code
  * arma::Mat<double> input = loadData();
  * arma::Mat<double> target = loadData();
  * arma::Mat<double> output;
  * size_t outputSize = 1;
  *
- * // Removes all low-variance features.
+ * // Removes all low-valued.
  * data::fs::Chi2Selection(input, target, output, outputSize);
  * @endcode
  *
