@@ -204,7 +204,7 @@ void SerializePointerObject(T* t, T*& newT)
 
   {
     OArchiveType o(ofs);
-    o(CEREAL_NVP(t));
+    o(CEREAL_POINTER(t));
   }
   ofs.close();
 
@@ -214,7 +214,7 @@ void SerializePointerObject(T* t, T*& newT)
 
   {
     IArchiveType i(ifs);
-    i(CEREAL_NVP(newT));
+    i(CEREAL_POINTER(newT));
   }
   ifs.close();
   remove(fileName.c_str());
