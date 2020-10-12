@@ -1688,7 +1688,6 @@ TEST_CASE("DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest", "[HMMTest]")
  */
 TEST_CASE("DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest", "[HMMTest]")
 {
-  math::RandomSeed(std::time(NULL));
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
@@ -1831,12 +1830,11 @@ TEST_CASE("DiagonalGMMHMMLoadSaveTest", "[HMMTest]")
   for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     // Check the number of Gaussians.
-    REQUIRE(hmm.Emission()[j].Gaussians() ==
-                        hmm2.Emission()[j].Gaussians());
+    REQUIRE(hmm.Emission()[j].Gaussians() == hmm2.Emission()[j].Gaussians());
 
     // Check the dimensionality.
     REQUIRE(hmm.Emission()[j].Dimensionality() ==
-                        hmm2.Emission()[j].Dimensionality());
+            hmm2.Emission()[j].Dimensionality());
 
     for (size_t i = 0; i < hmm.Emission()[j].Dimensionality(); ++i)
       // Check the weights.
