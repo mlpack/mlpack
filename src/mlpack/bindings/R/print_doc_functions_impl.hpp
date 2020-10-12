@@ -229,7 +229,9 @@ std::string ProgramCall(const bool markdown,
 
   // Find out if we have any output options first.
   std::ostringstream ossOutput;
-  oss << "output <- ";
+  ossOutput << PrintOutputOptions(markdown, args...);
+  if (ossOutput.str() != "")
+    oss << "output <- ";
   oss << programName << "(";
 
   // Now process each input option.
