@@ -164,11 +164,8 @@ steps:
       $env:INSTALL_VERSION = $env:MLPACK_VERSION;
     }
     # Build the MSI installer.
-    $env:Path += "C:\Program Files (x86)\WiX Toolset v3.11\bin"
     cd dist\win-installer\mlpack-win-installer
-    dir "C:\Program Files (x86)\WiX Toolset v3.11\"
-    dir "C:\Program Files (x86)\WiX Toolset v3.11\bin\"
-    heat dir ..\staging
+    "C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe" dir ..\staging
         -cg HeatGenerated
         -dr INSTALLFOLDER
         -sreg
@@ -177,7 +174,7 @@ steps:
         -ag
         -sfrag
         -out HeatGeneratedFileList.wxs
-    candle
+    "C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe"
         -dHarvestPath=..\staging
         -dConfiguration=Release
         -dOutDir=bin\x64\Release\
@@ -196,7 +193,7 @@ steps:
         -arch x64
         -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll"
         Product.wxs HeatGeneratedFileList.wxs
-    light
+    "C:\Program Files (x86)\WiX Toolset v3.11\bin\light.exe"
         -out .\bin\x64\Release\mlpack-%INSTALL_VERSION%.msi
         -pdbout .\bin\x64\Release\mlpack-windows.wixpdb
         -cultures:null
