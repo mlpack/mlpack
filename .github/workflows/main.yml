@@ -8,7 +8,7 @@ on:
       - master
   release:
     types: [published, created, edited]
-name: R CMD check mlpack
+name: mlpack.mlpack
 
 jobs:
   cancel:
@@ -26,7 +26,7 @@ jobs:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
   jobR:
-    name: Build mlpack_r_tarball
+    name: mlpack R tarball
     if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-20.04
 
@@ -78,11 +78,15 @@ jobs:
         - name: CMake
           run: |
             mkdir build
-            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=ON ..
+            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=ON ..
 
         - name: Build
           run: |
-            cd build && make R -j2
+            cd build && make -j2
+
+        - name: Run tests via ctest
+          run: |
+            cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
 
         - name: Upload R packages
           uses: actions/upload-artifact@v2
@@ -94,16 +98,16 @@ jobs:
     needs: jobR
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.config.name }}
     if: ${{ github.repository == 'mlpack/mlpack' }}
 
     strategy:
       fail-fast: false
       matrix:
         config:
-        - {os: windows-latest, r: '4.0'}
-        - {os: macOS-latest, r: 'release'}
-        - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+        - {os: windows-latest, r: '4.0', name: 'Windows R'}
+        - {os: macOS-latest, r: 'release', name: 'macOS R'}
+        - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest", name: 'Linux R'}
 
 
     env:
@@ -151,4 +155,6 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
+          path: |
+            check/mlpack.Rcheck/00check.log
+            check/mlpack.Rcheck/00install.out

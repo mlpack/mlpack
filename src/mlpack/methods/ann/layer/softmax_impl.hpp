@@ -28,12 +28,12 @@ Softmax<InputDataType, OutputDataType>::Softmax()
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void Softmax<InputDataType, OutputDataType>::Forward(
-    const InputType& input, OutputType& output)
+    const InputType& input,
+    OutputType& output)
 {
-  InputType inputMax = arma::repmat(arma::max(input, 0), input.n_rows, 1);
-  output = inputMax + arma::log(arma::repmat(
-      arma::sum(arma::exp(input - inputMax), 0), input.n_rows, 1));
-  output = arma::exp(input - output);
+  InputType softmaxInput = arma::exp(input.each_row() -
+      arma::max(input, 0));
+  output = softmaxInput.each_row() / sum(softmaxInput, 0);
 }
 
 template<typename InputDataType, typename OutputDataType>

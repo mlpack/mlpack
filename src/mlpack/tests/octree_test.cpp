@@ -12,9 +12,9 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/octree.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
+#include "serialization_catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::math;
@@ -22,28 +22,26 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::bound;
 
-BOOST_AUTO_TEST_SUITE(OctreeTest);
-
 /**
  * Build a quad-tree (2-d octree) on 4 points, and guarantee four points are
  * created.
  */
-BOOST_AUTO_TEST_CASE(SimpleQuadtreeTest)
+TEST_CASE("SimpleQuadtreeTest", "[OctreeTest]")
 {
   // Four corners of the unit square.
   arma::mat dataset("0 0 1 1; 0 1 0 1");
 
   Octree<> t(dataset, 1);
 
-  BOOST_REQUIRE_EQUAL(t.NumChildren(), 4);
-  BOOST_REQUIRE_EQUAL(t.Dataset().n_cols, 4);
-  BOOST_REQUIRE_EQUAL(t.Dataset().n_rows, 2);
-  BOOST_REQUIRE_EQUAL(t.NumDescendants(), 4);
-  BOOST_REQUIRE_EQUAL(t.NumPoints(), 0);
+  REQUIRE(t.NumChildren() == 4);
+  REQUIRE(t.Dataset().n_cols == 4);
+  REQUIRE(t.Dataset().n_rows == 2);
+  REQUIRE(t.NumDescendants() == 4);
+  REQUIRE(t.NumPoints() == 0);
   for (size_t i = 0; i < 4; ++i)
   {
-    BOOST_REQUIRE_EQUAL(t.Child(i).NumDescendants(), 1);
-    BOOST_REQUIRE_EQUAL(t.Child(i).NumPoints(), 1);
+    REQUIRE(t.Child(i).NumDescendants() == 1);
+    REQUIRE(t.Child(i).NumPoints() == 1);
   }
 }
 
@@ -51,62 +49,62 @@ BOOST_AUTO_TEST_CASE(SimpleQuadtreeTest)
  * Build an octree on 3 points and make sure that only three children are
  * created.
  */
-BOOST_AUTO_TEST_CASE(OctreeMissingChildTest)
+TEST_CASE("OctreeMissingChildTest", "[OctreeTest]")
 {
   // Only three corners of the unit square.
   arma::mat dataset("0 0 1; 0 1 1");
 
   Octree<> t(dataset, 1);
 
-  BOOST_REQUIRE_EQUAL(t.NumChildren(), 3);
-  BOOST_REQUIRE_EQUAL(t.Dataset().n_cols, 3);
-  BOOST_REQUIRE_EQUAL(t.Dataset().n_rows, 2);
-  BOOST_REQUIRE_EQUAL(t.NumDescendants(), 3);
-  BOOST_REQUIRE_EQUAL(t.NumPoints(), 0);
+  REQUIRE(t.NumChildren() == 3);
+  REQUIRE(t.Dataset().n_cols == 3);
+  REQUIRE(t.Dataset().n_rows == 2);
+  REQUIRE(t.NumDescendants() == 3);
+  REQUIRE(t.NumPoints() == 0);
   for (size_t i = 0; i < 3; ++i)
   {
-    BOOST_REQUIRE_EQUAL(t.Child(i).NumDescendants(), 1);
-    BOOST_REQUIRE_EQUAL(t.Child(i).NumPoints(), 1);
+    REQUIRE(t.Child(i).NumDescendants() == 1);
+    REQUIRE(t.Child(i).NumPoints() == 1);
   }
 }
 
 /**
  * Ensure that building an empty octree does not fail.
  */
-BOOST_AUTO_TEST_CASE(EmptyOctreeTest)
+TEST_CASE("EmptyOctreeTest", "[OctreeTest]")
 {
   arma::mat dataset;
   Octree<> t(dataset);
 
-  BOOST_REQUIRE_EQUAL(t.NumChildren(), 0);
-  BOOST_REQUIRE_EQUAL(t.Dataset().n_cols, 0);
-  BOOST_REQUIRE_EQUAL(t.Dataset().n_rows, 0);
-  BOOST_REQUIRE_EQUAL(t.NumDescendants(), 0);
-  BOOST_REQUIRE_EQUAL(t.NumPoints(), 0);
+  REQUIRE(t.NumChildren() == 0);
+  REQUIRE(t.Dataset().n_cols == 0);
+  REQUIRE(t.Dataset().n_rows == 0);
+  REQUIRE(t.NumDescendants() == 0);
+  REQUIRE(t.NumPoints() == 0);
 }
 
 /**
  * Ensure that maxLeafSize is respected.
  */
-BOOST_AUTO_TEST_CASE(MaxLeafSizeTest)
+TEST_CASE("MaxLeafSizeTest", "[OctreeTest]")
 {
   arma::mat dataset(5, 15, arma::fill::randu);
   Octree<> t1(dataset, 20);
   Octree<> t2(std::move(dataset), 20);
 
-  BOOST_REQUIRE_EQUAL(t1.NumChildren(), 0);
-  BOOST_REQUIRE_EQUAL(t1.NumDescendants(), 15);
-  BOOST_REQUIRE_EQUAL(t1.NumPoints(), 15);
+  REQUIRE(t1.NumChildren() == 0);
+  REQUIRE(t1.NumDescendants() == 15);
+  REQUIRE(t1.NumPoints() == 15);
 
-  BOOST_REQUIRE_EQUAL(t2.NumChildren(), 0);
-  BOOST_REQUIRE_EQUAL(t2.NumDescendants(), 15);
-  BOOST_REQUIRE_EQUAL(t2.NumPoints(), 15);
+  REQUIRE(t2.NumChildren() == 0);
+  REQUIRE(t2.NumDescendants() == 15);
+  REQUIRE(t2.NumPoints() == 15);
 }
 
 /**
  * Check that the mappings given are correct.
  */
-BOOST_AUTO_TEST_CASE(MappingsTest)
+TEST_CASE("MappingsTest", "[OctreeTest]")
 {
   // Test with both constructors.
   arma::mat dataset(3, 5, arma::fill::randu);
@@ -118,17 +116,17 @@ BOOST_AUTO_TEST_CASE(MappingsTest)
 
   for (size_t i = 0; i < oldFromNewCopy.size(); ++i)
   {
-    BOOST_REQUIRE_SMALL(arma::norm(datacopy.col(oldFromNewCopy[i]) -
-        t1.Dataset().col(i)), 1e-3);
-    BOOST_REQUIRE_SMALL(arma::norm(datacopy.col(oldFromNewMove[i]) -
-        t2.Dataset().col(i)), 1e-3);
+    REQUIRE(arma::norm(datacopy.col(oldFromNewCopy[i]) -
+        t1.Dataset().col(i)) == Approx(0.0).margin(1e-3));
+    REQUIRE(arma::norm(datacopy.col(oldFromNewMove[i]) -
+        t2.Dataset().col(i)) == Approx(0.0).margin(1e-3));
   }
 }
 
 /**
  * Check that the reverse mappings are correct too.
  */
-BOOST_AUTO_TEST_CASE(ReverseMappingsTest)
+TEST_CASE("ReverseMappingsTest", "[OctreeTest]")
 {
   // Test with both constructors.
   arma::mat dataset(3, 300, arma::fill::randu);
@@ -141,13 +139,14 @@ BOOST_AUTO_TEST_CASE(ReverseMappingsTest)
 
   for (size_t i = 0; i < oldFromNewCopy.size(); ++i)
   {
-    BOOST_REQUIRE_SMALL(arma::norm(datacopy.col(oldFromNewCopy[i]) -
-        t1.Dataset().col(i)), 1e-3);
-    BOOST_REQUIRE_SMALL(arma::norm(datacopy.col(oldFromNewMove[i]) -
-        t2.Dataset().col(i)), 1e-3);
+    REQUIRE(arma::norm(datacopy.col(oldFromNewCopy[i]) -
+        t1.Dataset().col(i)) == Approx(0.0).margin(1e-3));
+    REQUIRE(arma::norm(datacopy.col(oldFromNewMove[i]) -
+        t2.Dataset().col(i)) == Approx(0.0).margin(1e-3));
 
-    BOOST_REQUIRE_EQUAL(newFromOldCopy[oldFromNewCopy[i]], i);
-    BOOST_REQUIRE_EQUAL(newFromOldMove[oldFromNewMove[i]], i);
+
+    REQUIRE(newFromOldCopy[oldFromNewCopy[i]] == i);
+    REQUIRE(newFromOldMove[oldFromNewMove[i]] == i);
   }
 }
 
@@ -160,14 +159,14 @@ void CheckOverlap(TreeType& node)
   // Check each combination of children.
   for (size_t i = 0; i < node.NumChildren(); ++i)
     for (size_t j = i + 1; j < node.NumChildren(); ++j)
-      BOOST_REQUIRE_EQUAL(node.Child(i).Bound().Overlap(node.Child(j).Bound()),
+      REQUIRE(node.Child(i).Bound().Overlap(node.Child(j).Bound()) ==
           0.0); // We need exact equality here.
 
   for (size_t i = 0; i < node.NumChildren(); ++i)
     CheckOverlap(node.Child(i));
 }
 
-BOOST_AUTO_TEST_CASE(OverlapTest)
+TEST_CASE("OverlapTest", "[OctreeTest]")
 {
   // Test with both constructors.
   arma::mat dataset(3, 300, arma::fill::randu);
@@ -193,8 +192,8 @@ void CheckFurthestDistances(TreeType& node)
   for (size_t i = 0; i < node.NumPoints(); ++i)
   {
     // Handle floating-point inaccuracies.
-    BOOST_REQUIRE_LE(metric::EuclideanDistance::Evaluate(
-        node.Dataset().col(node.Point(i)), center),
+    REQUIRE(metric::EuclideanDistance::Evaluate(
+        node.Dataset().col(node.Point(i)), center) <=
         node.FurthestPointDistance() * (1 + 1e-5));
   }
 
@@ -202,16 +201,16 @@ void CheckFurthestDistances(TreeType& node)
   for (size_t i = 0; i < node.NumDescendants(); ++i)
   {
     // Handle floating-point inaccuracies.
-    BOOST_REQUIRE_LE(metric::EuclideanDistance::Evaluate(
+    REQUIRE(metric::EuclideanDistance::Evaluate(
         node.Dataset().col(node.Descendant(i)),
-        center), node.FurthestDescendantDistance() * (1 + 1e-5));
+        center) <= node.FurthestDescendantDistance() * (1 + 1e-5));
   }
 
   for (size_t i = 0; i < node.NumChildren(); ++i)
     CheckFurthestDistances(node.Child(i));
 }
 
-BOOST_AUTO_TEST_CASE(FurthestDistanceTest)
+TEST_CASE("FurthestDistanceTest", "[OctreeTest]")
 {
   // Test with both constructors.
   arma::mat dataset(3, 500, arma::fill::randu);
@@ -231,12 +230,12 @@ BOOST_AUTO_TEST_CASE(FurthestDistanceTest)
 template<typename TreeType>
 void CheckNumChildren(TreeType& node)
 {
-  BOOST_REQUIRE_LE(node.NumChildren(), std::pow(2, node.Dataset().n_rows));
+  REQUIRE(node.NumChildren() <= std::pow(2, node.Dataset().n_rows));
   for (size_t i = 0; i < node.NumChildren(); ++i)
     CheckNumChildren(node.Child(i));
 }
 
-BOOST_AUTO_TEST_CASE(MaxNumChildrenTest)
+TEST_CASE("MaxNumChildrenTest", "[OctreeTest]")
 {
   for (size_t d = 1; d < 10; ++d)
   {
@@ -253,37 +252,39 @@ BOOST_AUTO_TEST_CASE(MaxNumChildrenTest)
 template<typename TreeType>
 void CheckSameNode(TreeType& node1, TreeType& node2)
 {
-  BOOST_REQUIRE_EQUAL(node1.NumChildren(), node2.NumChildren());
-  BOOST_REQUIRE_NE(&node1.Dataset(), &node2.Dataset());
+  REQUIRE(node1.NumChildren() == node2.NumChildren());
+  REQUIRE(&node1.Dataset() != &node2.Dataset());
 
   // Make sure the children actually got copied.
   for (size_t i = 0; i < node1.NumChildren(); ++i)
-    BOOST_REQUIRE_NE(&node1.Child(i), &node2.Child(i));
+    REQUIRE(&node1.Child(i) != &node2.Child(i));
 
   // Check that all the points are the same.
-  BOOST_REQUIRE_EQUAL(node1.NumPoints(), node2.NumPoints());
-  BOOST_REQUIRE_EQUAL(node1.NumDescendants(), node2.NumDescendants());
+  REQUIRE(node1.NumPoints() == node2.NumPoints());
+  REQUIRE(node1.NumDescendants() == node2.NumDescendants());
   for (size_t i = 0; i < node1.NumPoints(); ++i)
-    BOOST_REQUIRE_EQUAL(node1.Point(i), node2.Point(i));
+    REQUIRE(node1.Point(i) == node2.Point(i));
   for (size_t i = 0; i < node1.NumDescendants(); ++i)
-    BOOST_REQUIRE_EQUAL(node1.Descendant(i), node2.Descendant(i));
+    REQUIRE(node1.Descendant(i) == node2.Descendant(i));
 
   // Check that the bound is the same.
-  BOOST_REQUIRE_EQUAL(node1.Bound().Dim(), node2.Bound().Dim());
+  REQUIRE(node1.Bound().Dim() == node2.Bound().Dim());
   for (size_t d = 0; d < node1.Bound().Dim(); ++d)
   {
-    BOOST_REQUIRE_CLOSE(node1.Bound()[d].Lo(), node2.Bound()[d].Lo(), 1e-5);
-    BOOST_REQUIRE_CLOSE(node1.Bound()[d].Hi(), node2.Bound()[d].Hi(), 1e-5);
+    REQUIRE(node1.Bound()[d].Lo() ==
+        Approx(node2.Bound()[d].Lo()).epsilon(1e-7));
+    REQUIRE(node1.Bound()[d].Hi() ==
+        Approx(node2.Bound()[d].Hi()).epsilon(1e-7));
   }
 
   // Check that the furthest point and descendant distance are the same.
-  BOOST_REQUIRE_CLOSE(node1.FurthestPointDistance(),
-      node2.FurthestPointDistance(), 1e-5);
-  BOOST_REQUIRE_CLOSE(node1.FurthestDescendantDistance(),
-      node2.FurthestDescendantDistance(), 1e-5);
+  REQUIRE(node1.FurthestPointDistance() ==
+      Approx(node2.FurthestPointDistance()).epsilon(1e-7));
+  REQUIRE(node1.FurthestDescendantDistance() ==
+      Approx(node2.FurthestDescendantDistance()).epsilon(1e-7));
 }
 
-BOOST_AUTO_TEST_CASE(CopyConstructorTest)
+TEST_CASE("CopyConstructorTest", "[OctreeTest]")
 {
   // Use a small random dataset.
   arma::mat dataset(3, 100, arma::fill::randu);
@@ -297,7 +298,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorTest)
 /**
  * Test the move constructor.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+TEST_CASE("OcTreeTestMoveConstructorTest", "[OctreeTest]")
 {
   // Use a small random dataset.
   arma::mat dataset(3, 100, arma::fill::randu);
@@ -309,14 +310,14 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   Octree<> t2(std::move(t));
 
   // Make sure the original tree has no data.
-  BOOST_REQUIRE_EQUAL(t.Dataset().n_rows, 0);
-  BOOST_REQUIRE_EQUAL(t.Dataset().n_cols, 0);
-  BOOST_REQUIRE_EQUAL(t.NumChildren(), 0);
-  BOOST_REQUIRE_EQUAL(t.NumPoints(), 0);
-  BOOST_REQUIRE_EQUAL(t.NumDescendants(), 0);
-  BOOST_REQUIRE_SMALL(t.FurthestPointDistance(), 1e-5);
-  BOOST_REQUIRE_SMALL(t.FurthestDescendantDistance(), 1e-5);
-  BOOST_REQUIRE_EQUAL(t.Bound().Dim(), 0);
+  REQUIRE(t.Dataset().n_rows == 0);
+  REQUIRE(t.Dataset().n_cols == 0);
+  REQUIRE(t.NumChildren() == 0);
+  REQUIRE(t.NumPoints() == 0);
+  REQUIRE(t.NumDescendants() == 0);
+  REQUIRE(t.FurthestPointDistance() == Approx(0.0).margin(1e-5));
+  REQUIRE(t.FurthestDescendantDistance() == Approx(0.0).margin(1e-5));
+  REQUIRE(t.Bound().Dim() == 0);
 
   // Check that the new tree is the same as our copy.
   CheckSameNode(tcopy, t2);
@@ -325,7 +326,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
 /**
  * Test serialization.
  */
-BOOST_AUTO_TEST_CASE(SerializationTest)
+TEST_CASE("OctreeSerializationTest", "[OctreeTest]")
 {
   // Use a small random dataset.
   arma::mat dataset(3, 500, arma::fill::randu);
@@ -345,5 +346,3 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   delete binaryTree;
   delete textTree;
 }
-
-BOOST_AUTO_TEST_SUITE_END();
