@@ -17,7 +17,7 @@ static const std::string testName = "RangeSearchMain";
 #include "test_helper.hpp"
 #include <mlpack/methods/range_search/range_search_main.cpp>
 #include "range_search_utils.hpp"
-#include <boost/test/unit_test.hpp>
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -37,34 +37,35 @@ struct RangeSearchTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(RangeSearchMainTest, RangeSearchTestFixture);
-
 /**
  * Check that we have to specify a reference set or input model.
  */
-BOOST_AUTO_TEST_CASE(RangeSearchNoReference)
+TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchNoReference",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that we cannot pass an incorrect parameter.
  */
-BOOST_AUTO_TEST_CASE(RangeSearchWrongParameter)
+TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchWrongParameter",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   string wrongString = "abc";
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(SetInputParam("RST", wrongString), std::runtime_error);
+  REQUIRE_THROWS_AS(SetInputParam("RST", wrongString), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that we have to specify a query if an input model is specified.
  */
-BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
+TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchInputModelNoQuery",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat inputData;
   double minVal = 0, maxVal = 3;
@@ -72,7 +73,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
   string neighborsFile = "neighbors.csv";
 
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("reference", move(inputData));
   SetInputParam("min", minVal);
@@ -86,7 +87,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
   SetInputParam("input_model", move(IO::GetParam<RSModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   remove(neighborsFile.c_str());
@@ -96,7 +97,8 @@ BOOST_AUTO_TEST_CASE(RangeSearchInputModelNoQuery)
 /**
  * Check that we cannot specify a tree type which is not available or wrong.
  */
-BOOST_AUTO_TEST_CASE(RangeSearchDifferentTree)
+TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchDifferentTree",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat inputData;
   double minVal = 0, maxVal = 3;
@@ -104,7 +106,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchDifferentTree)
   string neighborsFile = "neighbors.csv";
   string wrongTreeType = "RST";
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("reference", move(inputData));
   SetInputParam("min", minVal);
@@ -114,7 +116,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchDifferentTree)
   SetInputParam("tree_type", wrongTreeType);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   remove(neighborsFile.c_str());
@@ -124,7 +126,8 @@ BOOST_AUTO_TEST_CASE(RangeSearchDifferentTree)
 /**
  * Check that we cannot specify both a reference set and input model.
  */
-BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceAndModel)
+TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchBothReferenceAndModel",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat inputData, queryData;
   double minVal = 0, maxVal = 3;
@@ -132,9 +135,9 @@ BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceAndModel)
   string neighborsFile = "neighbors.csv";
 
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
   if (!data::Load("iris_test.csv", queryData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   SetInputParam("reference", move(inputData));
   SetInputParam("min", minVal);
@@ -149,7 +152,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceAndModel)
   SetInputParam("query", move(queryData));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   remove(neighborsFile.c_str());
@@ -161,7 +164,8 @@ BOOST_AUTO_TEST_CASE(RangeSearchBothReferenceAndModel)
  * by comparing with pre-calculated neighbor and distance values, when no query
  * set is specified.
  */
-BOOST_AUTO_TEST_CASE(RangeSearchTest)
+TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchTest",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat x = {{0, 3, 3, 4, 3, 1},
                  {4, 4, 4, 5, 5, 2},
@@ -208,7 +212,8 @@ BOOST_AUTO_TEST_CASE(RangeSearchTest)
  * Check that the correct output is returned for a small synthetic input case,
  * when a query set is provided.
  */
-BOOST_AUTO_TEST_CASE(RangeSeachTestwithQuery)
+TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSeachTestwithQuery",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat queryData = {{5, 3, 1}, {4, 2, 4}, {3, 1, 7}};
   arma::mat x = {{0, 3, 3, 4, 3, 1},
@@ -252,7 +257,8 @@ BOOST_AUTO_TEST_CASE(RangeSeachTestwithQuery)
  * Train a model using a synthetic dataset and then output the model, and ensure
  * it can be used again.
  */
-BOOST_AUTO_TEST_CASE(ModelCheck)
+TEST_CASE_METHOD(RangeSearchTestFixture, "ModelCheck",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat inputData, queryData;
   double minVal = 0, maxVal = 3;
@@ -262,9 +268,9 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   vector<vector<double>> distances, distancetemp;
 
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
   if (!data::Load("iris_test.csv", queryData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   SetInputParam("reference", move(inputData));
   SetInputParam("min", minVal);
@@ -292,8 +298,8 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
   CheckMatrices(neighbors, neighborsTemp);
   CheckMatrices(distances, distancetemp);
 
-  BOOST_REQUIRE_EQUAL(ModelToString(outputModel),
-                      ModelToString(IO::GetParam<RSModel*>("output_model")));
+  REQUIRE(ModelToString(outputModel) ==
+          ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
@@ -303,11 +309,12 @@ BOOST_AUTO_TEST_CASE(ModelCheck)
  * Check that the models are different but the results are the same for three
  * different leaf size parameters.
  */
-BOOST_AUTO_TEST_CASE(LeafValueTesting)
+TEST_CASE_METHOD(RangeSearchTestFixture, "LeafValueTesting",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
@@ -349,8 +356,8 @@ BOOST_AUTO_TEST_CASE(LeafValueTesting)
     CheckMatrices(neighbors, neighborsTemp);
     CheckMatrices(distances, distancestemp);
 
-    BOOST_REQUIRE_NE(ModelToString(outputModel1),
-                     ModelToString(IO::GetParam<RSModel*>("output_model")));
+    REQUIRE(ModelToString(outputModel1) !=
+            ModelToString(IO::GetParam<RSModel*>("output_model")));
 
     if (i != leafSizes.size() - 1)
       delete IO::GetParam<RSModel*>("output_model");
@@ -367,7 +374,8 @@ BOOST_AUTO_TEST_CASE(LeafValueTesting)
  * different tree types.  We use the default kd-tree as the base model to
  * compare against.
  */
-BOOST_AUTO_TEST_CASE(TreeTypeTesting)
+TEST_CASE_METHOD(RangeSearchTestFixture, "TreeTypeTesting",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
@@ -381,9 +389,9 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
                           "max-rp", "ub", "oct"};
 
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
   if (!data::Load("iris_test.csv", queryData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   // Define base parameters with the kd-tree.
   SetInputParam("tree_type", trees[0]);
@@ -403,9 +411,9 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
   for (size_t i = 1; i < trees.size(); ++i)
   {
     if (!data::Load("iris.csv", inputData))
-      BOOST_FAIL("Unable to load dataset iris.csv!");
+      FAIL("Unable to load dataset iris.csv!");
     if (!data::Load("iris_test.csv", queryData))
-      BOOST_FAIL("Unable to load dataset iris_test.csv!");
+      FAIL("Unable to load dataset iris_test.csv!");
 
     SetInputParam("min", minVal);
     SetInputParam("max", maxVal);
@@ -422,8 +430,8 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
 
     CheckMatrices(neighbors, neighborsTemp);
     CheckMatrices(distances, distancestemp);
-    BOOST_REQUIRE_NE(ModelToString(outputModel1),
-                     ModelToString(IO::GetParam<RSModel*>("output_model")));
+    REQUIRE(ModelToString(outputModel1) !=
+            ModelToString(IO::GetParam<RSModel*>("output_model")));
 
     if (i != trees.size() - 1)
       delete IO::GetParam<RSModel*>("output_model");
@@ -439,7 +447,8 @@ BOOST_AUTO_TEST_CASE(TreeTypeTesting)
  * Project the data onto a random basis and ensure that this gives identical
  * results to non-projected data but different models.
  */
-BOOST_AUTO_TEST_CASE(RandomBasisTesting)
+TEST_CASE_METHOD(RangeSearchTestFixture, "RandomBasisTesting",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
@@ -447,9 +456,9 @@ BOOST_AUTO_TEST_CASE(RandomBasisTesting)
 
   arma::mat queryData, inputData;
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
   if (!data::Load("iris_test.csv", queryData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -470,8 +479,8 @@ BOOST_AUTO_TEST_CASE(RandomBasisTesting)
 
   mlpackMain();
 
-  BOOST_REQUIRE_NE(ModelToString(outputModel),
-                   ModelToString(IO::GetParam<RSModel*>("output_model")));
+  REQUIRE(ModelToString(outputModel) !=
+          ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   delete outputModel;
 
@@ -482,7 +491,8 @@ BOOST_AUTO_TEST_CASE(RandomBasisTesting)
 /**
  * Ensure that naive mode gives the same result, but different models.
  */
-BOOST_AUTO_TEST_CASE(NaiveModeTest)
+TEST_CASE_METHOD(RangeSearchTestFixture, "NaiveModeTest",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
@@ -493,9 +503,9 @@ BOOST_AUTO_TEST_CASE(NaiveModeTest)
   vector<vector<double>> distances, distancestemp;
 
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
   if (!data::Load("iris_test.csv", queryData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -524,8 +534,8 @@ BOOST_AUTO_TEST_CASE(NaiveModeTest)
   CheckMatrices(neighbors, neighborsTemp);
   CheckMatrices(distances, distancestemp);
 
-  BOOST_REQUIRE_NE(ModelToString(outputModel),
-                   ModelToString(IO::GetParam<RSModel*>("output_model")));
+  REQUIRE(ModelToString(outputModel) !=
+          ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   delete outputModel;
 
@@ -536,7 +546,8 @@ BOOST_AUTO_TEST_CASE(NaiveModeTest)
 /**
  * Ensure that single-tree mode gives the same result but different models.
  */
-BOOST_AUTO_TEST_CASE(SingleModeTest)
+TEST_CASE_METHOD(RangeSearchTestFixture, "SingleModeTest",
+                 "[RangeSearchMainTest][BindingTests]")
 {
   string distanceFile = "distances.csv";
   string neighborsFile = "neighbors.csv";
@@ -547,9 +558,9 @@ BOOST_AUTO_TEST_CASE(SingleModeTest)
   vector<vector<double>> distances, distancestemp;
 
   if (!data::Load("iris.csv", inputData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
   if (!data::Load("iris_test.csv", queryData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -577,13 +588,11 @@ BOOST_AUTO_TEST_CASE(SingleModeTest)
 
   CheckMatrices(neighbors, neighborsTemp);
   CheckMatrices(distances, distancestemp);
-  BOOST_REQUIRE_NE(ModelToString(outputModel),
-                   ModelToString(IO::GetParam<RSModel*>("output_model")));
+  REQUIRE(ModelToString(outputModel) !=
+          ModelToString(IO::GetParam<RSModel*>("output_model")));
 
   delete outputModel;
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
 }
-
-BOOST_AUTO_TEST_SUITE_END();
