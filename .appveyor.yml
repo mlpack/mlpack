@@ -23,7 +23,7 @@ environment:
       MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       VSVER: Visual Studio 16 2019
-      MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\16.0\Bin\MSBuild.exe
+      MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
       
 # Currently, the VS2019 build seems to always time out.  This seems to be an
 # AppVeyor issue.
