@@ -1,5 +1,5 @@
 /**
- * @file generate_pyx.hpp
+ * @file bindings/python/print_pyx.hpp
  * @author Ryan Curtin
  *
  * Given a list of ParamData structures, emit a .pyx file defining the Cython
@@ -23,13 +23,12 @@ namespace python {
  * Given a list of parameter definition and program documentation, print a
  * generated .pyx file to stdout.
  *
- * @param parameters List of parameters the program will use (from CLI).
- * @param programInfo Documentation for the program.
+ * @param doc Documentation for the program.
  * @param mainFilename Filename of the main program (i.e.
  *      "/path/to/pca_main.cpp").
  * @param functionName Name of the function (i.e. "pca").
  */
-void PrintPYX(const util::ProgramDoc& programInfo,
+void PrintPYX(const util::BindingDetails& doc,
               const std::string& mainFilename,
               const std::string& functionName);
 

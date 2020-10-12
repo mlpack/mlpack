@@ -1,5 +1,5 @@
 /**
- * @file kde_rules.hpp
+ * @file methods/kde/kde_rules.hpp
  * @author Roberto Hueso
  *
  * Rules for Kernel Density Estimation, so that it can be done with arbitrary
@@ -34,8 +34,15 @@ class KDERules
    * @param densities Vector where estimations will be written.
    * @param relError Relative error tolerance.
    * @param absError Absolute error tolerance.
+   * @param mcProb Probability of relative error compliance for Monte Carlo
+   *               estimations.
+   * @param initialSampleSize Initial size of the Monte Carlo samples.
+   * @param mcAccessCoef Access coefficient for Monte Carlo estimations.
+   * @param mcBreakCoef Break coefficient for Monte Carlo estimations.
    * @param metric Instantiated metric.
    * @param kernel Instantiated kernel.
+   * @param monteCarlo If true Monte Carlo estimations will be applied when
+   *                   possible.
    * @param sameSet True if query and reference sets are the same
    *                (monochromatic evaluation).
    */
@@ -44,8 +51,13 @@ class KDERules
            arma::vec& densities,
            const double relError,
            const double absError,
+           const double mcProb,
+           const size_t initialSampleSize,
+           const double mcAccessCoef,
+           const double mcBreakCoef,
            MetricType& metric,
            KernelType& kernel,
+           const bool monteCarlo,
            const bool sameSet);
 
   //! Base Case.
@@ -59,10 +71,10 @@ class KDERules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
-  //! DoubleTree Score.
+  //! Dual-Tree Score.
   double Score(TreeType& queryNode, TreeType& referenceNode);
 
-  //! DoubleTree Rescore.
+  //! Dual-Tree Rescore.
   double Rescore(TreeType& queryNode,
                  TreeType& referenceNode,
                  const double oldScore) const;
@@ -81,6 +93,10 @@ class KDERules
   //! Get the number of scores.
   size_t Scores() const { return scores; }
 
+  //! Get the minimum number of base cases we need to perform to have acceptable
+  //! results.
+  size_t MinimumBaseCases() const { return 0; }
+
  private:
   //! Evaluate kernel value of 2 points given their indexes.
   double EvaluateKernel(const size_t queryIndex,
@@ -89,6 +105,9 @@ class KDERules
   //! Evaluate kernel value of 2 points.
   double EvaluateKernel(const arma::vec& query,
                         const arma::vec& reference) const;
+
+  //! Calculate depth alpha for some node.
+  double CalculateAlpha(TreeType* node);
 
   //! The reference set.
   const arma::mat& referenceSet;
@@ -105,14 +124,46 @@ class KDERules
   //! Relatve error tolerance.
   const double relError;
 
+  //! Significance level for relative error compliance for Monte Carlo
+  //! estimations.
+  const double mcBeta;
+
+  //! Initial sample size for Monte Carlo estimations.
+  const size_t initialSampleSize;
+
+  //! Coefficient to control how much larger does the amount of node descendants
+  //! has to be compared to the initial sample size in order to be a candidate
+  //! for Monte Carlo estimations.
+  const double mcAccessCoef;
+
+  //! Coefficient to control what fraction of the amount of node's descendants
+  //! is the limit before Monte Carlo estimation recurses.
+  const double mcBreakCoef;
+
   //! Instantiated metric.
   MetricType& metric;
 
   //! Instantiated kernel.
   KernelType& kernel;
 
+  //! Whether Monte Carlo estimations are going to be applied.
+  const bool monteCarlo;
+
+  //! Accumulated not used MC alpha values for each query point.
+  arma::vec accumMCAlpha;
+
+  //! Accumulated not used error tolerance for each query point.
+  arma::vec accumError;
+
   //! Whether reference and query sets are the same.
   const bool sameSet;
+
+  //! Whether the kernel used for the rule is the Gaussian Kernel.
+  constexpr static bool kernelIsGaussian =
+      std::is_same<KernelType, kernel::GaussianKernel>::value;
+
+  //! Absolute error tolerance available for each reference point.
+  const double absErrorTol;
 
   //! The last query index.
   size_t lastQueryIndex;
@@ -128,6 +179,49 @@ class KDERules
 
   //! The number of scores.
   size_t scores;
+};
+
+/**
+ * A dual-tree traversal Rules class for cleaning used trees before performing
+ * kernel density estimation.
+ */
+template<typename TreeType>
+class KDECleanRules
+{
+ public:
+  //! Construct KDECleanRules.
+  KDECleanRules() { /* Nothing to do. */ }
+
+  //! Base Case.
+  double BaseCase(const size_t /* queryIndex */, const size_t /* refIndex */);
+
+  //! SingleTree Score.
+  double Score(const size_t /* queryIndex */, TreeType& referenceNode);
+
+  //! SingleTree Rescore.
+  double Rescore(const size_t /* queryIndex */,
+                 TreeType& /* referenceNode */,
+                 const double oldScore) const { return oldScore; }
+
+  //! Dual-Tree Score.
+  double Score(TreeType& queryNode, TreeType& referenceNode);
+
+  //! Dual-Tree Rescore.
+  double Rescore(TreeType& /* queryNode */,
+                 TreeType& /* referenceNode*/ ,
+                 const double oldScore) const { return oldScore; }
+
+  typedef typename tree::TraversalInfo<TreeType> TraversalInfoType;
+
+  //! Get traversal information.
+  const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
+
+  //! Modify traversal information.
+  TraversalInfoType& TraversalInfo() { return traversalInfo; }
+
+ private:
+  //! Traversal information.
+  TraversalInfoType traversalInfo;
 };
 
 } // namespace kde

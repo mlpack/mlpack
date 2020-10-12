@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_split.hpp
+ * @file methods/hoeffding_trees/hoeffding_tree.hpp
  * @author Ryan Curtin
  *
  * An implementation of the standard Hoeffding tree by Pedro Domingos and Geoff
@@ -43,10 +43,10 @@ namespace tree {
  * The class is modular, and takes three template parameters.  The first,
  * FitnessFunction, is the fitness function that should be used to determine
  * whether a split is beneficial; examples might be GiniImpurity or
- * InformationGain.  The NumericSplitType determines how numeric attributes are
- * handled, and the CategoricalSplitType determines how categorical attributes
- * are handled.  As far as the actual splitting goes, the meat of the splitting
- * procedure will be contained in those two classes.
+ * HoeffdingInformationGain.  The NumericSplitType determines how numeric
+ * attributes are handled, and the CategoricalSplitType determines how
+ * categorical attributes are handled.  As far as the actual splitting goes,
+ * the meat of the splitting procedure will be contained in those two classes.
  *
  * @tparam FitnessFunction Fitness function to use.
  * @tparam NumericSplitType Technique for splitting numeric features.
@@ -87,6 +87,8 @@ class HoeffdingTree
    *      in batch training mode.
    * @param minSamples If the node has seen this many points or fewer, no split
    *      will be allowed.
+   * @param categoricalSplitIn Optional instantiated categorical split object.
+   * @param numericSplitIn Optional instantiated numeric split object.
    */
   template<typename MatType>
   HoeffdingTree(const MatType& data,
@@ -109,7 +111,6 @@ class HoeffdingTree
    * this node does not create its own dimensionMappings object (for instance,
    * if this is a child of another node in the tree).
    *
-   * @param dimensionality Dimensionality of the dataset.
    * @param numClasses Number of classes in the dataset.
    * @param datasetInfo Information on the dataset (types of each feature).
    * @param successProbability Probability of success required in Hoeffding
@@ -121,6 +122,10 @@ class HoeffdingTree
    * @param dimensionMappings Mappings from dimension indices to positions in
    *      numeric and categorical split vectors.  If left NULL, a new one will
    *      be created.
+   * @param copyDatasetInfo If true, then a copy of the datasetInfo will be
+   *      made.
+   * @param categoricalSplitIn Optional instantiated categorical split object.
+   * @param numericSplitIn Optional instantiated numeric split object.
    */
   HoeffdingTree(const data::DatasetInfo& datasetInfo,
                 const size_t numClasses,
@@ -133,7 +138,8 @@ class HoeffdingTree
                 const NumericSplitType<FitnessFunction>& numericSplitIn =
                     NumericSplitType<FitnessFunction>(0),
                 std::unordered_map<size_t, std::pair<size_t, size_t>>*
-                    dimensionMappings = NULL);
+                    dimensionMappings = NULL,
+                const bool copyDatasetInfo = true);
 
   /**
    * Construct a Hoeffding tree with no data and no information.  Be sure to
@@ -159,7 +165,7 @@ class HoeffdingTree
    * the given labels.
    *
    * @param data Data points to train on.
-   * @param label Labels of data points.
+   * @param labels Labels of data points.
    * @param batchTraining If true, perform training in batch.
    */
   template<typename MatType>

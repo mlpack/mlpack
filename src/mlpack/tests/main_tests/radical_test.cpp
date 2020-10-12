@@ -1,5 +1,5 @@
 /**
- * @file radical_test.cpp
+ * @file tests/main_tests/radical_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of radical_main.cpp.
@@ -30,14 +30,14 @@ struct RadicalTestFixture
   RadicalTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~RadicalTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -55,12 +55,12 @@ BOOST_AUTO_TEST_CASE(RadicalOutputDimensionTest)
   mlpackMain();
 
   // Check dimension of Y matrix.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_ic").n_rows, 5);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_ic").n_cols, 3);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_ic").n_rows, 5);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_ic").n_cols, 3);
 
   // Check dimension of W matrix.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_unmixing").n_rows, 5);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output_unmixing").n_cols, 5);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_unmixing").n_rows, 5);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_unmixing").n_cols, 5);
 }
 
 /**
@@ -120,14 +120,18 @@ BOOST_AUTO_TEST_CASE(RadicalBoundsTest)
  */
 BOOST_AUTO_TEST_CASE(RadicalDiffNoiseStdDevTest)
 {
-  arma::mat input = arma::randu<arma::mat>(5, 3);
+  arma::mat input("0.497369 0.891621 0.565789;"
+                  "0.33821 0.494571 0.491079;"
+                  "0.424898 0.297599 0.475061;"
+                  "0.285009 0.152635 0.878107;"
+                  "0.321474 0.997979 0.42137");
 
   SetInputParam("input", input);
 
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+  arma::mat Y = IO::GetParam<arma::mat>("output_ic");
 
   bindings::tests::CleanMemory();
 
@@ -139,7 +143,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffNoiseStdDevTest)
 
   // Check that initial output and final output using two models are different.
   BOOST_REQUIRE_LT(arma::accu(Y ==
-      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+      IO::GetParam<arma::mat>("output_ic")), Y.n_elem);
 }
 
 /**
@@ -147,14 +151,18 @@ BOOST_AUTO_TEST_CASE(RadicalDiffNoiseStdDevTest)
  */
 BOOST_AUTO_TEST_CASE(RadicalDiffReplicatesTest)
 {
-  arma::mat input = arma::randu<arma::mat>(5, 3);
+  arma::mat input("0.497369 0.891621 0.565789;"
+                  "0.33821 0.494571 0.491079;"
+                  "0.424898 0.297599 0.475061;"
+                  "0.285009 0.152635 0.878107;"
+                  "0.321474 0.997979 0.42137");
 
   SetInputParam("input", input);
 
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+  arma::mat Y = IO::GetParam<arma::mat>("output_ic");
 
   bindings::tests::CleanMemory();
 
@@ -166,7 +174,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffReplicatesTest)
 
   // Check that initial output and final output using two models are different.
   BOOST_REQUIRE_LT(arma::accu(Y ==
-      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+      IO::GetParam<arma::mat>("output_ic")), Y.n_elem);
 }
 
 /**
@@ -174,14 +182,18 @@ BOOST_AUTO_TEST_CASE(RadicalDiffReplicatesTest)
  */
 BOOST_AUTO_TEST_CASE(RadicalDiffAnglesTest)
 {
-  arma::mat input = arma::randu<arma::mat>(5, 3);
+  arma::mat input("0.497369 0.891621 0.565789;"
+                  "0.33821 0.494571 0.491079;"
+                  "0.424898 0.297599 0.475061;"
+                  "0.285009 0.152635 0.878107;"
+                  "0.321474 0.997979 0.42137");
 
   SetInputParam("input", input);
 
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+  arma::mat Y = IO::GetParam<arma::mat>("output_ic");
 
   bindings::tests::CleanMemory();
 
@@ -193,7 +205,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffAnglesTest)
 
   // Check that initial output and final output using two models are different.
   BOOST_REQUIRE_LT(arma::accu(Y ==
-      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+      IO::GetParam<arma::mat>("output_ic")), Y.n_elem);
 }
 
 /**
@@ -201,14 +213,18 @@ BOOST_AUTO_TEST_CASE(RadicalDiffAnglesTest)
  */
 BOOST_AUTO_TEST_CASE(RadicalDiffSweepsTest)
 {
-  arma::mat input = arma::randu<arma::mat>(5, 3);
+  arma::mat input("0.497369 0.891621 0.565789;"
+                  "0.33821 0.494571 0.491079;"
+                  "0.424898 0.297599 0.475061;"
+                  "0.285009 0.152635 0.878107;"
+                  "0.321474 0.997979 0.42137");
 
   SetInputParam("input", input);
 
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  arma::mat Y = CLI::GetParam<arma::mat>("output_ic");
+  arma::mat Y = IO::GetParam<arma::mat>("output_ic");
 
   bindings::tests::CleanMemory();
 
@@ -220,7 +236,7 @@ BOOST_AUTO_TEST_CASE(RadicalDiffSweepsTest)
 
   // Check that initial output and final output using two models are different.
   BOOST_REQUIRE_LT(arma::accu(Y ==
-      CLI::GetParam<arma::mat>("output_ic")), Y.n_elem);
+      IO::GetParam<arma::mat>("output_ic")), Y.n_elem);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

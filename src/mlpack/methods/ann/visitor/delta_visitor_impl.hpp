@@ -1,5 +1,5 @@
 /**
- * @file delta_visitor_impl.hpp
+ * @file methods/ann/visitor/delta_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Delta() function layer abstraction.
@@ -23,6 +23,11 @@ template<typename LayerType>
 inline arma::mat& DeltaVisitor::operator()(LayerType *layer) const
 {
   return layer->Delta();
+}
+
+inline arma::mat& DeltaVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
 }
 
 } // namespace ann

@@ -1,5 +1,5 @@
 /**
- * @file mountain_car.hpp
+ * @file methods/reinforcement_learning/environment/mountain_car.hpp
  * @author Shangtong Zhang
  *
  * This file is an implementation of Mountain Car task:
@@ -17,6 +17,7 @@
 #define MLPACK_METHODS_RL_ENVIRONMENT_MOUNTAIN_CAR_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -43,7 +44,7 @@ class MountainCar
     /**
      * Construct a state based on the given data.
      *
-     * @param data Data for the velocityand position.
+     * @param data Data for the velocity and position.
      */
     State(const arma::colvec& data): data(data)
     { /* Nothing to do here. */ }
@@ -75,37 +76,49 @@ class MountainCar
   /**
    * Implementation of action of Mountain Car.
    */
-  enum Action
+  class Action
   {
-    backward,
-    stop,
-    forward,
+   public:
+    enum actions
+    {
+      backward,
+      stop,
+      forward
+    };
+    // To store the action.
+    Action::actions action;
 
-    //! Track the size of the action space.
-    size
+    // Track the size of the action space.
+    static const size_t size = 3;
   };
 
   /**
    * Construct a Mountain Car instance using the given constant.
    *
+   * @param maxSteps The number of steps after which the episode
+   *    terminates. If the value is 0, there is no limit.
    * @param positionMin Minimum legal position.
    * @param positionMax Maximum legal position.
    * @param positionGoal Final target position.
    * @param velocityMin Minimum legal velocity.
    * @param velocityMax Maximum legal velocity.
+   * @param doneReward The reward recieved by the agent on success.
    */
-  MountainCar(const double positionMin = -1.2,
+  MountainCar(const size_t maxSteps = 200,
+              const double positionMin = -1.2,
               const double positionMax = 0.6,
               const double positionGoal = 0.5,
               const double velocityMin = -0.07,
               const double velocityMax = 0.07,
               const double doneReward = 0) :
+      maxSteps(maxSteps),
       positionMin(positionMin),
       positionMax(positionMax),
       positionGoal(positionGoal),
       velocityMin(velocityMin),
       velocityMax(velocityMax),
-      doneReward(doneReward)
+      doneReward(doneReward),
+      stepsPerformed(0)
   { /* Nothing to do here */ }
 
   /**
@@ -119,34 +132,36 @@ class MountainCar
    */
   double Sample(const State& state,
                 const Action& action,
-                State& nextState) const
+                State& nextState)
   {
+    // Update the number of steps performed.
+    stepsPerformed++;
+
     // Calculate acceleration.
-    int direction = action - 1;
+    int direction = action.action - 1;
     nextState.Velocity() = state.Velocity() + 0.001 * direction - 0.0025 *
         std::cos(3 * state.Position());
-    nextState.Velocity() = std::min(
-        std::max(nextState.Velocity(), velocityMin), velocityMax);
+    nextState.Velocity() = math::ClampRange(nextState.Velocity(),
+        velocityMin, velocityMax);
 
     // Update states.
     nextState.Position() = state.Position() + nextState.Velocity();
-    nextState.Position() = std::min(
-        std::max(nextState.Position(), positionMin), positionMax);
+    nextState.Position() = math::ClampRange(nextState.Position(),
+        positionMin, positionMax);
 
     if (nextState.Position() == positionMin && nextState.Velocity() < 0)
       nextState.Velocity() = 0.0;
 
+    // Check if the episode has terminated.
     bool done = IsTerminal(nextState);
-    /**
-     * If done is true , it means that car has reached its goal.
-     * To make sure that the agent learns this, we will give some
-     * positive reward to the agent. If the agent doesn't reach the
-     * terminal state, then we will give a -1.0 reward to penalize 
-     * the agent to take that step.
-     */
-    if (done)
+
+    // Do not reward the agent if time ran out.
+    if (done && maxSteps != 0 && stepsPerformed >= maxSteps)
+      return 0;
+    else if (done)
       return doneReward;
-    return -1.0;
+
+    return -1;
   }
 
   /**
@@ -157,7 +172,7 @@ class MountainCar
    * @param action The current action.
    * @return reward, it's always -1.0.
    */
-  double Sample(const State& state, const Action& action) const
+  double Sample(const State& state, const Action& action)
   {
     State nextState;
     return Sample(state, action, nextState);
@@ -169,26 +184,49 @@ class MountainCar
    *
    * @return Initial state for each episode.
    */
-  State InitialSample() const
+  State InitialSample()
   {
     State state;
+    stepsPerformed = 0;
     state.Velocity() = 0.0;
     state.Position() = arma::as_scalar(arma::randu(1)) * 0.2 - 0.6;
     return state;
   }
 
   /**
-   * Whether given state is a terminal state.
+   * This function checks if the car has reached the terminal state.
    *
    * @param state desired state.
    * @return true if state is a terminal state, otherwise false.
    */
   bool IsTerminal(const State& state) const
   {
-    return state.Position() >= positionGoal;
+    if (maxSteps != 0 && stepsPerformed >= maxSteps)
+    {
+      Log::Info << "Episode terminated due to the maximum number of steps"
+          "being taken.";
+      return true;
+    }
+    else if (state.Position() >= positionGoal)
+    {
+      Log::Info << "Episode terminated due to agent succeeding.";
+      return true;
+    }
+    return false;
   }
 
+  //! Get the number of steps performed.
+  size_t StepsPerformed() const { return stepsPerformed; }
+
+  //! Get the maximum number of steps allowed.
+  size_t MaxSteps() const { return maxSteps; }
+  //! Set the maximum number of steps allowed.
+  size_t& MaxSteps() { return maxSteps; }
+
  private:
+  //! Locally-stored maximum number of steps.
+  size_t maxSteps;
+
   //! Locally-stored minimum legal position.
   double positionMin;
 
@@ -206,6 +244,9 @@ class MountainCar
 
   //! Locally-stored done reward.
   double doneReward;
+
+  //! Locally-stored number of steps performed.
+  size_t stepsPerformed;
 };
 
 } // namespace rl

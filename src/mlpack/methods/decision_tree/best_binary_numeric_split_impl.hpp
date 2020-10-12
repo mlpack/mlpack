@@ -1,5 +1,5 @@
 /**
- * @file best_binary_numeric_split_impl.hpl
+ * @file methods/decision_tree/best_binary_numeric_split_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of strategy that finds the best binary numeric split.
@@ -30,7 +30,9 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 {
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
-    return bestGain;
+    return DBL_MAX;
+  if (bestGain == 0.0)
+    return DBL_MAX; // It can't be outperformed.
 
   // Next, sort the data.
   arma::uvec sortedIndices = arma::sort_index(data);
@@ -38,6 +40,11 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   arma::rowvec sortedWeights;
   for (size_t i = 0; i < sortedLabels.n_elem; ++i)
     sortedLabels[i] = labels[sortedIndices[i]];
+
+  // Sanity check: if the first element is the same as the last, we can't split
+  // in this dimension.
+  if (data[sortedIndices[0]] == data[sortedIndices[sortedIndices.n_elem - 1]])
+    return DBL_MAX;
 
   // Only initialize if we are using weights.
   if (UseWeights)
@@ -50,10 +57,68 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
   // Loop through all possible split points, choosing the best one.  Also, force
   // a minimum leaf size of 1 (empty children don't make sense).
-  double bestFoundGain = bestGain;
+  double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
+  bool improved = false;
   const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
-  for (size_t index = minimum; index < data.n_elem - (minimum - 1); ++index)
+
+  // We need to count the number of points for each class.
+  arma::Mat<size_t> classCounts;
+  arma::mat classWeightSums;
+  double totalWeight = 0.0;
+  double totalLeftWeight = 0.0;
+  double totalRightWeight = 0.0;
+  if (UseWeights)
   {
+    classWeightSums.zeros(numClasses, 2);
+    totalWeight = arma::accu(sortedWeights);
+    bestFoundGain *= totalWeight;
+
+    // Initialize the counts.
+    // These points have to be on the left.
+    for (size_t i = 0; i < minimum - 1; ++i)
+    {
+      classWeightSums(sortedLabels[i], 0) += sortedWeights[i];
+      totalLeftWeight += sortedWeights[i];
+    }
+
+    // These points have to be on the right.
+    for (size_t i = minimum - 1; i < data.n_elem; ++i)
+    {
+      classWeightSums(sortedLabels[i], 1) += sortedWeights[i];
+      totalRightWeight += sortedWeights[i];
+    }
+  }
+  else
+  {
+    classCounts.zeros(numClasses, 2);
+    bestFoundGain *= data.n_elem;
+
+    // Initialize the counts.
+    // These points have to be on the left.
+    for (size_t i = 0; i < minimum - 1; ++i)
+      ++classCounts(sortedLabels[i], 0);
+
+    // These points have to be on the right.
+    for (size_t i = minimum - 1; i < data.n_elem; ++i)
+      ++classCounts(sortedLabels[i], 1);
+  }
+
+  for (size_t index = minimum; index < data.n_elem - minimum; ++index)
+  {
+    // Update class weight sums or counts.
+    if (UseWeights)
+    {
+      classWeightSums(sortedLabels[index - 1], 1) -= sortedWeights[index - 1];
+      classWeightSums(sortedLabels[index - 1], 0) += sortedWeights[index - 1];
+      totalLeftWeight += sortedWeights[index - 1];
+      totalRightWeight -= sortedWeights[index - 1];
+    }
+    else
+    {
+      --classCounts(sortedLabels[index - 1], 1);
+      ++classCounts(sortedLabels[index - 1], 0);
+    }
+
     // Make sure that the value has changed.
     if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
       continue;
@@ -61,36 +126,26 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     // Calculate the gain for the left and right child.  Only use weights if
     // needed.
     const double leftGain = UseWeights ?
-        FitnessFunction::template Evaluate<true>(sortedLabels.subvec(0,
-            index - 1), numClasses, sortedWeights.subvec(0, index - 1)) :
-        FitnessFunction::template Evaluate<false>(sortedLabels.subvec(0,
-            index - 1), numClasses, sortedWeights /* ignored */);
+        FitnessFunction::template EvaluatePtr<true>(classWeightSums.colptr(0),
+            numClasses, totalLeftWeight) :
+        FitnessFunction::template EvaluatePtr<false>(classCounts.colptr(0),
+            numClasses, index);
     const double rightGain = UseWeights ?
-        FitnessFunction::template Evaluate<true>(sortedLabels.subvec(index,
-            sortedLabels.n_elem - 1), numClasses, sortedWeights.subvec(index,
-            sortedLabels.n_elem - 1)) :
-        FitnessFunction::template Evaluate<false>(sortedLabels.subvec(index,
-            sortedLabels.n_elem - 1), numClasses, sortedWeights /* ignored */);
+        FitnessFunction::template EvaluatePtr<true>(classWeightSums.colptr(1),
+            numClasses, totalRightWeight) :
+        FitnessFunction::template EvaluatePtr<false>(classCounts.colptr(1),
+            numClasses, size_t(sortedLabels.n_elem - index));
 
     double gain;
     if (UseWeights)
     {
-      const double leftWeights = arma::accu(sortedWeights.subvec(0, index - 1));
-      const double rightWeights = arma::accu(sortedWeights.subvec(index,
-          sortedWeights.n_elem - 1));
-      const double fullWeight = leftWeights + rightWeights;
-
-      gain = (leftWeights / fullWeight) * leftGain +
-          (rightWeights / fullWeight) * rightGain;
+      gain = totalLeftWeight * leftGain + totalRightWeight * rightGain;
     }
     else
     {
-      // Calculate the fraction of points in the left and right children.
-      const double leftRatio = double(index) / double(sortedLabels.n_elem);
-      const double rightRatio = 1.0 - leftRatio;
-
       // Calculate the gain at this split point.
-      gain = leftRatio * leftGain + rightRatio * rightGain;
+      gain = double(index) * leftGain +
+          double(sortedLabels.n_elem - index) * rightGain;
     }
 
     // Corner case: is this the best possible split?
@@ -103,17 +158,29 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // and index.
       classProbabilities[0] = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
+
       return gain;
     }
-    else if (gain > bestFoundGain + minimumGainSplit)
+    else if (gain > bestFoundGain)
     {
       // We still have a better split.
       bestFoundGain = gain;
       classProbabilities.set_size(1);
       classProbabilities[0] = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
+      improved = true;
     }
   }
+
+  // If we didn't improve, return the original gain exactly as we got it
+  // (without introducing floating point errors).
+  if (!improved)
+    return DBL_MAX;
+
+  if (UseWeights)
+    bestFoundGain /= totalWeight;
+  else
+    bestFoundGain /= sortedLabels.n_elem;
 
   return bestFoundGain;
 }

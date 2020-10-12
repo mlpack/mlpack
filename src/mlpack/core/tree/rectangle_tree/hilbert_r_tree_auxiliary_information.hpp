@@ -1,5 +1,5 @@
 /**
- * @file hilbert_r_tree_auxiliary_information.hpp
+ * @file core/tree/rectangle_tree/hilbert_r_tree_auxiliary_information.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the HilbertRTreeAuxiliaryInformation class,

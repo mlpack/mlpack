@@ -1,5 +1,5 @@
 /**
- * @file softsign_function.hpp
+ * @file methods/ann/activation_functions/softsign_function.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the softsign function as described by
@@ -35,11 +35,11 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @f{eqnarray*}{
  * f(x) &=& \frac{x}{1 + |x|} \\
- * f'(x) &=& (1 - |x|)^2 \\
+ * f'(x) &=& (1 - |f(x)|)^2 \\
  * f(x) &=& \left\{
  *   \begin{array}{lr}
- *     -\frac{y}{y-1} & : x > 0 \\
- *     \frac{x}{1 + x} & : x \le 0
+ *     -\frac{x}{1 - x} & : x \le 0 \\
+ *     \frac{x}{1 + x} & : x > 0
  *   \end{array}
  * \right.
  * @f}
@@ -71,14 +71,14 @@ class SoftsignFunction
   {
     y.set_size(arma::size(x));
 
-    for (size_t i = 0; i < x.n_elem; i++)
+    for (size_t i = 0; i < x.n_elem; ++i)
       y(i) = Fn(x(i));
   }
 
   /**
    * Computes the first derivative of the softsign function.
    *
-   * @param y Input data.
+   * @param y Input activation.
    * @return f'(x)
    */
   static double Deriv(const double y)
@@ -123,7 +123,7 @@ class SoftsignFunction
   {
     x.set_size(arma::size(y));
 
-    for (size_t i = 0; i < y.n_elem; i++)
+    for (size_t i = 0; i < y.n_elem; ++i)
       x(i) = Inv(y(i));
   }
 }; // class SoftsignFunction

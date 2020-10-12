@@ -1,8 +1,13 @@
 /**
- * @file binding_info.cpp
+ * @file bindings/markdown/binding_info.cpp
  * @author Ryan Curtin
  *
  * Implementation of BindingInfo functions.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "binding_info.hpp"
 
@@ -12,7 +17,8 @@ namespace mlpack {
 namespace bindings {
 namespace markdown {
 
-util::ProgramDoc& BindingInfo::GetProgramDoc(const std::string& bindingName)
+util::BindingDetails& BindingInfo::GetBindingDetails(
+    const std::string& bindingName)
 {
   if (GetSingleton().map.count(bindingName) == 0)
   {
@@ -21,15 +27,6 @@ util::ProgramDoc& BindingInfo::GetProgramDoc(const std::string& bindingName)
   }
 
   return GetSingleton().map.at(bindingName);
-}
-
-/**
- * Register a ProgramDoc object with the given bindingName.
- */
-void BindingInfo::RegisterProgramDoc(const std::string& bindingName,
-                                     const util::ProgramDoc& programDoc)
-{
-  GetSingleton().map[bindingName] = programDoc;
 }
 
 //! Get or modify the current language (don't set it to something invalid!).

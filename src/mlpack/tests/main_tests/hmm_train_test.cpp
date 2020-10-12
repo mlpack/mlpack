@@ -1,5 +1,5 @@
 /**
- * @file hmm_training_tests.cpp
+ * @file tests/main_tests/hmm_train_test.cpp
  * @author Daivik Nema
  *
  * Test mlpackMain() of hmm_train_main.cpp.
@@ -35,14 +35,14 @@ struct HMMTrainMainTestFixture
   HMMTrainMainTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~HMMTrainMainTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
@@ -64,7 +64,7 @@ inline void CheckMatricesDiffer(arma::mat& a, arma::mat& b, double tolerance)
   bool valsEqual = true;
   if (dimsEqual)
   {
-    for (size_t i=0; i<a.n_elem; i++)
+    for (size_t i = 0; i < a.n_elem; ++i)
     {
       if (std::abs(a[i]) < tolerance / 2)
         valsEqual = valsEqual && (std::abs(b[i]) < tolerance / 2);
@@ -101,8 +101,8 @@ inline void ApproximatelyEqual(HMMModel& h1,
     BOOST_REQUIRE_EQUAL(d1.size(), d2.size());
 
     size_t states = d1.size();
-    for (size_t i = 0; i < states; i++)
-      for (size_t j = 0; j < d1[i].Dimensionality(); j++)
+    for (size_t i = 0; i < states; ++i)
+      for (size_t j = 0; j < d1[i].Dimensionality(); ++j)
         CheckMatrices(d1[i].Probabilities(j)*100,
             d2[i].Probabilities(j)*100,
             tolerance);
@@ -126,7 +126,7 @@ inline void ApproximatelyEqual(HMMModel& h1,
     BOOST_REQUIRE_EQUAL(d1.size(), d2.size());
 
     size_t states = d1.size();
-    for (size_t i=0; i < states; i++)
+    for (size_t i=0; i < states; ++i)
     {
       CheckMatrices(d1[i].Mean()*100, d2[i].Mean()*100, tolerance);
       CheckMatrices(d1[i].Covariance()*100, d2[i].Covariance()*100, tolerance);
@@ -149,11 +149,11 @@ inline void ApproximatelyEqual(HMMModel& h1,
     BOOST_REQUIRE_EQUAL(d1.size(), d2.size());
 
     size_t states = d1.size();
-    for (size_t i=0; i < states; i++)
+    for (size_t i=0; i < states; ++i)
     {
       BOOST_REQUIRE_EQUAL(d1[i].Gaussians(), d2[i].Gaussians());
       size_t gaussians = d1[i].Gaussians();
-      for (size_t j=0; j<gaussians; j++)
+      for (size_t j=0; j<gaussians; ++j)
       {
         CheckMatrices(d1[i].Component(j).Mean()*100,
             d2[i].Component(j).Mean()*100,
@@ -183,11 +183,11 @@ inline void ApproximatelyEqual(HMMModel& h1,
 
     // Check if gaussian, mean, covariance and weights are equal.
     size_t states = d1.size();
-    for (size_t i = 0; i < states; i++)
+    for (size_t i = 0; i < states; ++i)
     {
       BOOST_REQUIRE_EQUAL(d1[i].Gaussians(), d2[i].Gaussians());
       size_t gaussians = d1[i].Gaussians();
-      for (size_t j = 0; j < gaussians; j++)
+      for (size_t j = 0; j < gaussians; ++j)
       {
         CheckMatrices(d1[i].Component(j).Mean()*100,
             d2[i].Component(j).Mean()*100,
@@ -317,16 +317,16 @@ BOOST_AUTO_TEST_CASE(HMMTrainReuseDiscreteModelTest)
 
   mlpackMain();
 
-  HMMModel h1 = *(CLI::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
 
-  SetInputParam("input_model", CLI::GetParam<HMMModel*>("output_model"));
+  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
 
-  CLI::GetSingleton().Parameters()["type"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["states"].wasPassed = false;
+  IO::GetSingleton().Parameters()["type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["states"].wasPassed = false;
 
   mlpackMain();
 
-  HMMModel h2 = *(CLI::GetParam<HMMModel*>("output_model"));
+  HMMModel h2 = *(IO::GetParam<HMMModel*>("output_model"));
 
   ApproximatelyEqual(h1, h2);
 }
@@ -350,17 +350,17 @@ BOOST_AUTO_TEST_CASE(HMMTrainReuseGaussianModelTest)
 
   mlpackMain();
 
-  HMMModel h1 = *(CLI::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
 
-  SetInputParam("input_model", CLI::GetParam<HMMModel*>("output_model"));
+  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
   SetInputParam("tolerance", 1e10);
 
-  CLI::GetSingleton().Parameters()["type"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["states"].wasPassed = false;
+  IO::GetSingleton().Parameters()["type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["states"].wasPassed = false;
 
   mlpackMain();
 
-  HMMModel h2 = *(CLI::GetParam<HMMModel*>("output_model"));
+  HMMModel h2 = *(IO::GetParam<HMMModel*>("output_model"));
 
   ApproximatelyEqual(h1, h2);
 }
@@ -381,17 +381,17 @@ BOOST_AUTO_TEST_CASE(HMMTrainNoLabelsReuseModelTest)
   // This call will train HMM using Baum-Welch training
   mlpackMain();
 
-  HMMModel h1 = *(CLI::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
 
-  SetInputParam("input_model", CLI::GetParam<HMMModel*>("output_model"));
+  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
 
-  CLI::GetSingleton().Parameters()["type"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["states"].wasPassed = false;
+  IO::GetSingleton().Parameters()["type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["states"].wasPassed = false;
 
   // Train again using Baum Welch
   mlpackMain();
 
-  HMMModel h2 = *(CLI::GetParam<HMMModel*>("output_model"));
+  HMMModel h2 = *(IO::GetParam<HMMModel*>("output_model"));
 
   ApproximatelyEqual(h1, h2);
 }
@@ -449,21 +449,21 @@ BOOST_AUTO_TEST_CASE(HMMTrainRetrainTest1)
 
   mlpackMain();
 
-  HMMModel h1 = *(CLI::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
 
   std::string inputObsFile2 = "obs4.csv";
 
-  CLI::GetSingleton().Parameters()["input_file"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["type"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["states"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input_file"].wasPassed = false;
+  IO::GetSingleton().Parameters()["type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["states"].wasPassed = false;
 
   FileExists(inputObsFile2);
   SetInputParam("input_file", std::move(inputObsFile2));
-  SetInputParam("input_model", CLI::GetParam<HMMModel*>("output_model"));
+  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
 
   mlpackMain();
 
-  HMMModel h2 = *(CLI::GetParam<HMMModel*>("output_model"));
+  HMMModel h2 = *(IO::GetParam<HMMModel*>("output_model"));
 
   BOOST_REQUIRE(h1.Type() == h2.Type());
   // Since we know that type of HMMs is discrete
@@ -485,7 +485,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainRetrainTest2)
 
   mlpackMain();
 
-  HMMModel h1 = *(CLI::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
 
   std::string inputObsFile2 = "obs3.csv";
   std::string inputLabFile2 = "lab1_corrupt.csv";
@@ -493,10 +493,10 @@ BOOST_AUTO_TEST_CASE(HMMTrainRetrainTest2)
   SetInputParam("input_file", std::move(inputObsFile2));
   // Provide a labels file with more states than initially specified
   SetInputParam("labels_file", std::move(inputLabFile2));
-  SetInputParam("input_model", CLI::GetParam<HMMModel*>("output_model"));
+  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
 
-  CLI::GetSingleton().Parameters()["type"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["states"].wasPassed = false;
+  IO::GetSingleton().Parameters()["type"].wasPassed = false;
+  IO::GetSingleton().Parameters()["states"].wasPassed = false;
 
   Log::Fatal.ignoreInput = true;
   BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
@@ -517,7 +517,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainRetrainTest3)
 
   mlpackMain();
 
-  HMMModel h1 = *(CLI::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
 
   std::string inputObsFile2 = "obs2.csv";
   std::string inputLabFile2 = "lab2.csv";
@@ -526,15 +526,15 @@ BOOST_AUTO_TEST_CASE(HMMTrainRetrainTest3)
   SetInputParam("input_file", std::move(inputObsFile2));
   SetInputParam("labels_file", std::move(inputLabFile2));
   SetInputParam("type", std::move(type));
-  SetInputParam("input_model", CLI::GetParam<HMMModel*>("output_model"));
+  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
 
-  CLI::GetSingleton().Parameters()["states"].wasPassed = false;
+  IO::GetSingleton().Parameters()["states"].wasPassed = false;
 
   mlpackMain();
   // Note that when emission type is changed -- like in this test, a warning
   // is printed stating that the new type is being ignored (no error is raised)
 
-  HMMModel h2 = *(CLI::GetParam<HMMModel*>("output_model"));
+  HMMModel h2 = *(IO::GetParam<HMMModel*>("output_model"));
 
   BOOST_REQUIRE(h1.Type() == DiscreteHMM);
   BOOST_REQUIRE(h2.Type() == DiscreteHMM);

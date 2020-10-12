@@ -1,5 +1,5 @@
 /**
- * @file spill_tree_impl.hpp
+ * @file core/tree/spill_tree/spill_tree_impl.hpp
  *
  * Implementation of generalized hybrid spill tree (SpillTree).
  *
@@ -34,7 +34,7 @@ SpillTree(
     left(NULL),
     right(NULL),
     parent(NULL),
-    count(0),
+    count(data.n_cols),
     pointsIndex(NULL),
     overlappingNode(false),
     hyperplane(),
@@ -71,7 +71,7 @@ SpillTree(
     left(NULL),
     right(NULL),
     parent(NULL),
-    count(0),
+    count(data.n_cols),
     pointsIndex(NULL),
     overlappingNode(false),
     hyperplane(),
@@ -109,7 +109,7 @@ SpillTree(
     left(NULL),
     right(NULL),
     parent(parent),
-    count(0),
+    count(points.n_elem),
     pointsIndex(NULL),
     overlappingNode(false),
     hyperplane(),
@@ -193,6 +193,88 @@ SpillTree(const SpillTree& other) :
 }
 
 /**
+ * Copy assignment operator: copy the given other tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+operator=(const SpillTree& other)
+{
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
+
+  delete pointsIndex;
+  delete left;
+  delete right;
+
+  left = NULL;
+  right = NULL;
+  parent = other.parent;
+  count = other.count;
+  pointsIndex = NULL;
+  overlappingNode = other.overlappingNode;
+  hyperplane = other.hyperplane;
+  bound = other.bound;
+  stat = other.stat;
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+
+  // Copy matrix, but only if we are the root and the other tree has its own
+  // copy of the dataset.
+  dataset = (other.parent == NULL && other.localDataset) ?
+      new MatType(*other.dataset) : other.dataset;
+  localDataset = other.parent == NULL && other.localDataset;
+
+  // Create left and right children (if any).
+  if (other.Left())
+  {
+    left = new SpillTree(*other.Left());
+    left->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  if (other.Right())
+  {
+    right = new SpillTree(*other.Right());
+    right->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  // If vector of indexes, copy it.
+  if (other.pointsIndex)
+    pointsIndex = new arma::Col<size_t>(*other.pointsIndex);
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL && localDataset)
+  {
+    std::queue<SpillTree*> queue;
+    if (left)
+      queue.push(left);
+    if (right)
+      queue.push(right);
+    while (!queue.empty())
+    {
+      SpillTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      if (node->left)
+        queue.push(node->left);
+      if (node->right)
+        queue.push(node->right);
+    }
+  }
+  return *this;
+}
+
+/**
  * Move constructor.
  */
 template<typename MetricType,
@@ -235,6 +317,66 @@ SpillTree(SpillTree&& other) :
     left->parent = this;
   if (right)
     right->parent = this;
+}
+
+/**
+ * Move assignment operator: take ownership of the given tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename HyperplaneMetricType> class HyperplaneType,
+         template<typename SplitMetricType, typename SplitMatType>
+             class SplitType>
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>&
+SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
+operator=(SpillTree&& other)
+{
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  if (localDataset)
+    delete dataset;
+
+  delete pointsIndex;
+  delete left;
+  delete right;
+
+  left = other.left;
+  right = other.right;
+  parent = other.parent;
+  count = other.count;
+  pointsIndex = other.pointsIndex;
+  overlappingNode = other.overlappingNode;
+  hyperplane = other.hyperplane;
+  bound = std::move(other.bound);
+  stat = std::move(other.stat);
+  parentDistance = other.parentDistance;
+  furthestDescendantDistance = other.furthestDescendantDistance;
+  minimumBoundDistance = other.minimumBoundDistance;
+  dataset = other.dataset;
+  localDataset = other.localDataset;
+
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.left = NULL;
+  other.right = NULL;
+  other.count = 0;
+  other.pointsIndex = NULL;
+  other.parentDistance = 0.0;
+  other.furthestDescendantDistance = 0.0;
+  other.minimumBoundDistance = 0.0;
+  other.dataset = NULL;
+  other.localDataset = false;
+
+  // Set new parent.
+  if (left)
+    left->parent = this;
+  if (right)
+    right->parent = this;
+
+  return *this;
 }
 
 /**
@@ -538,15 +680,16 @@ template<typename MetricType,
 inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
     SplitType>::Descendant(const size_t index) const
 {
-  if (IsLeaf())
+  if (IsLeaf() || overlappingNode)
     return (*pointsIndex)[index];
-  size_t num = left->NumDescendants();
+
+  // If this is not a leaf and not an overlapping node, then determine whether
+  // we should get the descendant from the left or the right node.
+  const size_t num = left->NumDescendants();
   if (index < num)
     return left->Descendant(index);
-  if (right)
+  else
     return right->Descendant(index - num);
-  // This should never happen.
-  return (size_t() - 1);
 }
 
 /**
@@ -580,7 +723,7 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
               const double rho)
 {
   // We need to expand the bounds of this node properly.
-  for (size_t i = 0; i < points.n_elem; i++)
+  for (size_t i = 0; i < points.n_elem; ++i)
     bound |= dataset->col(points[i]);
 
   // Calculate the furthest descendant distance.
@@ -591,7 +734,6 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   {
     pointsIndex = new arma::Col<size_t>();
     pointsIndex->swap(points);
-    count = pointsIndex->n_elem;
     return; // We can't split this.
   }
 
@@ -603,7 +745,6 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   {
     pointsIndex = new arma::Col<size_t>();
     pointsIndex->swap(points);
-    count = pointsIndex->n_elem;
     return; // We can't split this.
   }
 
@@ -611,16 +752,23 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   // Split the node.
   overlappingNode = SplitPoints(tau, rho, points, leftPoints, rightPoints);
 
-  // We don't need the information in points, so lets clean it.
-  arma::Col<size_t>().swap(points);
+  if (overlappingNode)
+  {
+    // If the node is overlapping, we have to keep track of which points are
+    // held in the node.
+    pointsIndex = new arma::Col<size_t>();
+    pointsIndex->swap(points);
+  }
+  else
+  {
+    // Otherwise, we don't need the information in points, so let's clean it.
+    arma::Col<size_t>().swap(points);
+  }
 
   // Now we will recursively split the children by calling their constructors
   // (which perform this splitting process).
   left = new SpillTree(this, leftPoints, tau, maxLeafSize, rho);
   right = new SpillTree(this, rightPoints, tau, maxLeafSize, rho);
-
-  // Update count number, to represent the number of descendant points.
-  count = left->NumDescendants() + right->NumDescendants();
 
   // Calculate parent distances for those two nodes.
   arma::vec center, leftCenter, rightCenter;
@@ -653,7 +801,7 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   size_t left = 0, right = 0, leftFrontier = 0, rightFrontier = 0;
 
   // Count the number of points to the left/right of the splitting hyperplane.
-  for (size_t i = 0; i < points.n_elem; i++)
+  for (size_t i = 0; i < points.n_elem; ++i)
   {
     // Store projection value for future use.
     projections[i] = hyperplane.Project(dataset->col(points[i]));
@@ -680,14 +828,25 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     // Perform the actual splitting considering the overlapping buffer.  Points
     // with projection value in the range (-tau, tau) are included in both,
     // leftPoints and rightPoints.
+    const size_t leftUnique = points.n_elem - right - leftFrontier;
+    const size_t overlap = leftFrontier + rightFrontier;
+
     leftPoints.resize(left + rightFrontier);
     rightPoints.resize(right + leftFrontier);
-    for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; i++)
+    for (size_t i = 0, rc = overlap, lc = 0, rf = 0, lf = leftUnique;
+         i < points.n_elem; ++i)
     {
-      if (projections[i] < tau || projections[i] <= 0)
+      // We put any points in the frontier should come last in the left node,
+      // and first in the right node.  (This ordering is not required.)
+      if (projections[i] < -tau)
         leftPoints[lc++] = points[i];
-      if (projections[i] > -tau)
+      else if (projections[i] < tau)
+        leftPoints[lf++] = points[i];
+
+      if (projections[i] > tau)
         rightPoints[rc++] = points[i];
+      else if (projections[i] > -tau)
+        rightPoints[rf++] = points[i];
     }
     // Return true, because it is a overlapping node.
     return true;
@@ -699,7 +858,7 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   // rightPoints.
   leftPoints.resize(left);
   rightPoints.resize(right);
-  for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; i++)
+  for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; ++i)
   {
     if (projections[i] <= 0)
       leftPoints[lc++] = points[i];

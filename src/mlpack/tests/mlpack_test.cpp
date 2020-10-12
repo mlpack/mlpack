@@ -1,5 +1,5 @@
 /**
- * @file mlpack_test.cpp
+ * @file tests/mlpack_test.cpp
  *
  * Simple file defining the name of the overall test for mlpack, and set up
  * global test fixture for each test. Each individual test is contained in
@@ -13,11 +13,6 @@
 #define BOOST_TEST_MODULE mlpackTest
 
 #include <boost/version.hpp>
-
-// We only need to do this for old Boost versions.
-#if BOOST_VERSION < 103600
-  #define BOOST_AUTO_TEST_MAIN
-#endif
 
 #if BOOST_VERSION >= 105900
   #include <boost/test/tree/visitor.hpp>
@@ -40,8 +35,8 @@ struct TestsVisitor : boost::unit_test::test_tree_visitor
    */
   void visit(boost::unit_test::test_case const& test)
   {
-    std::cout << std::string(indentations, ' ') << std::string(test.p_name)
-        << "*" << std::endl;
+    MLPACK_COUT_STREAM << std::string(indentations, ' ')
+        << std::string(test.p_name) << "*" << std::endl;
   }
 
   /*
@@ -58,8 +53,8 @@ struct TestsVisitor : boost::unit_test::test_tree_visitor
       return true;
     }
 
-    std::cout << std::string(indentations, ' ') << std::string(suite.p_name)
-        << "*" << std::endl;
+    MLPACK_COUT_STREAM << std::string(indentations, ' ')
+        << std::string(suite.p_name) << "*" << std::endl;
 
     // Increase tab width (4 spaces).
     indentations += 4;
@@ -112,7 +107,7 @@ struct GlobalFixture
     #endif
 
     for (int i = 0; i < boost::unit_test::framework::master_test_suite().argc;
-        i++)
+        ++i)
     {
       std::string argument(
           boost::unit_test::framework::master_test_suite().argv[i]);

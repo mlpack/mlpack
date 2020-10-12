@@ -1,5 +1,5 @@
 /**
- * @file random_dimension_select.hpp
+ * @file methods/decision_tree/random_dimension_select.hpp
  * @author Ryan Curtin
  *
  * Selects one single random dimension to split on.
@@ -25,7 +25,7 @@ class RandomDimensionSelect
    * Construct the RandomDimensionSelect object with the given number of
    * dimensions.
    */
-  RandomDimensionSelect(const size_t dimensions) : dimensions(dimensions) { }
+  RandomDimensionSelect() : dimensions(0) { }
 
   /**
    * Get the first dimension to select from.
@@ -43,9 +43,14 @@ class RandomDimensionSelect
    */
   size_t Next() const { return dimensions; }
 
+  //! Get the number of dimensions.
+  size_t Dimensions() const { return dimensions; }
+  //! Set the number of dimensions.
+  size_t& Dimensions() { return dimensions; }
+
  private:
   //! The number of dimensions to select from.
-  const size_t dimensions;
+  size_t dimensions;
 };
 
 } // namespace tree

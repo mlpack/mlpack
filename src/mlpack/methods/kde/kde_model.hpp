@@ -1,5 +1,5 @@
 /**
- * @file kde_model.hpp
+ * @file methods/kde/kde_model.hpp
  * @author Roberto Hueso
  *
  * Model for KDE. It abstracts different types of tree, kernels, etc.
@@ -172,6 +172,175 @@ class TrainVisitor : public boost::static_visitor<void>
 };
 
 /**
+ * BandwidthVisitor modifies the bandwidth of a KDEType kernel.
+ */
+class BandwidthVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Relative error tolerance.
+  const double bandwidth;
+
+ public:
+  //! Default BandwidthVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! BandwidthVisitor constructor.
+  BandwidthVisitor(const double bandwidth);
+};
+
+/**
+ * RelErrorVisitor modifies relative error tolerance for a KDEType.
+ */
+class RelErrorVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Relative error tolerance.
+  const double relError;
+
+ public:
+  //! Default RelErrorVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! RelErrorVisitor constructor.
+  RelErrorVisitor(const double relError);
+};
+
+/**
+ * AbsErrorVisitor modifies absolute error tolerance for a KDEType.
+ */
+class AbsErrorVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Absolute error tolerance.
+  const double absError;
+
+ public:
+  //! Default AbsErrorVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! AbsErrorVisitor constructor.
+  AbsErrorVisitor(const double absError);
+};
+
+/**
+ * MonteCarloVisitor activates or deactivates Monte Carlo for a given KDEType.
+ */
+class MonteCarloVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Whether to use Monte Carlo estimations or not.
+  const bool monteCarlo;
+
+ public:
+  //! Default MonteCarloVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! MonteCarloVisitor constructor.
+  MonteCarloVisitor(const bool monteCarlo);
+};
+
+/**
+ * MCProbabilityVisitor sets the Monte Carlo probability for a given KDEType.
+ */
+class MCProbabilityVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Monte Carlo probability.
+  const double probability;
+
+ public:
+  //! Default MCProbabilityVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! MCProbabilityVisitor constructor.
+  MCProbabilityVisitor(const double probability);
+};
+
+/**
+ * MCSampleSizeVisitor sets the Monte Carlo intial sample size for a given
+ * KDEType.
+ */
+class MCSampleSizeVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Monte Carlo sample size.
+  const size_t sampleSize;
+
+ public:
+  //! Default MCSampleSizeVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! MCSampleSizeVisitor constructor.
+  MCSampleSizeVisitor(const size_t sampleSize);
+};
+
+/**
+ * MCEntryCoefVisitor sets the Monte Carlo entry coefficient.
+ */
+class MCEntryCoefVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Monte Carlo entry coefficient.
+  const double entryCoef;
+
+ public:
+  //! Default MCEntryCoefVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! MCEntryCoefVisitor constructor.
+  MCEntryCoefVisitor(const double entryCoef);
+};
+
+/**
+ * MCBreakCoefVisitor sets the Monte Carlo break coefficient.
+ */
+class MCBreakCoefVisitor : public boost::static_visitor<void>
+{
+ private:
+  //! Monte Carlo break coefficient.
+  const double breakCoef;
+
+ public:
+  //! Default MCBreakCoefVisitor on some KDEType.
+  template<typename KernelType,
+           template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  void operator()(KDEType<KernelType, TreeType>* kde) const;
+
+  //! MCBreakCoefVisitor constructor.
+  MCBreakCoefVisitor(const double breakCoef);
+};
+
+/**
  * ModeVisitor exposes the Mode() method of the KDEType.
  */
 class ModeVisitor : public boost::static_visitor<KDEMode&>
@@ -227,6 +396,22 @@ class KDEModel
   //! Type of tree.
   TreeTypes treeType;
 
+  //! Whether Monte Carlo estimations will be used.
+  bool monteCarlo;
+
+  //! Probability of estimation being bounded by relative error when using
+  //! Monte Carlo estimations.
+  double mcProb;
+
+  //! Size of the initial sample for Monte Carlo estimations.
+  size_t initialSampleSize;
+
+  //! Entry coefficient for Monte Carlo estimations.
+  double mcEntryCoef;
+
+  //! Break coefficient for Monte Carlo estimations.
+  double mcBreakCoef;
+
   /**
    * kdeModel holds an instance of each possible combination of KernelType and
    * TreeType. It is initialized using BuildModel.
@@ -270,12 +455,28 @@ class KDEModel
    *                 value can have a maximum error of 0.1 units.
    * @param kernelType Type of kernel to use.
    * @param treeType Type of tree to use.
+   * @param monteCarlo Whether to use Monte Carlo estimations when possible.
+   * @param mcProb of a Monte Carlo estimation to be bounded by relative
+   *        error tolerance.
+   * @param initialSampleSize Initial sample size for Monte Carlo estimations.
+   * @param mcEntryCoef Coefficient to control how much larger does the amount
+   *                    of node descendants has to be compared to the initial
+   *                    sample size in order for it to be a candidate for Monte
+   *                    Carlo estimations.
+   * @param mcBreakCoef Coefficient to control what fraction of the node's
+   *                    descendants evaluated is the limit before Monte Carlo
+   *                    estimation recurses.
    */
   KDEModel(const double bandwidth = 1.0,
-           const double relError = 0.05,
-           const double absError = 0,
+           const double relError = KDEDefaultParams::relError,
+           const double absError = KDEDefaultParams::absError,
            const KernelTypes kernelType = KernelTypes::GAUSSIAN_KERNEL,
-           const TreeTypes treeType = TreeTypes::KD_TREE);
+           const TreeTypes treeType = TreeTypes::KD_TREE,
+           const bool monteCarlo = KDEDefaultParams::mode,
+           const double mcProb = KDEDefaultParams::mcProb,
+           const size_t initialSampleSize = KDEDefaultParams::initialSampleSize,
+           const double mcEntryCoef = KDEDefaultParams::mcEntryCoef,
+           const double mcBreakCoef = KDEDefaultParams::mcBreakCoef);
 
   //! Copy constructor of the given model.
   KDEModel(const KDEModel& other);
@@ -297,25 +498,25 @@ class KDEModel
 
   //! Serialize the KDE model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int version);
 
   //! Get the bandwidth of the kernel.
   double Bandwidth() const { return bandwidth; }
 
   //! Modify the bandwidth of the kernel.
-  double& Bandwidth() { return bandwidth; }
+  void Bandwidth(const double newBandwidth);
 
   //! Get the relative error tolerance.
   double RelativeError() const { return relError; }
 
   //! Modify the relative error tolerance.
-  double& RelativeError() { return relError; }
+  void RelativeError(const double newRelError);
 
   //! Get the absolute error tolerance.
   double AbsoluteError() const { return absError; }
 
   //! Modify the absolute error tolerance.
-  double& AbsoluteError() { return absError; }
+  void AbsoluteError(const double newAbsError);
 
   //! Get the tree type of the model.
   TreeTypes TreeType() const { return treeType; }
@@ -328,6 +529,36 @@ class KDEModel
 
   //! Modify the kernel type of the model.
   KernelTypes& KernelType() { return kernelType; }
+
+  //! Get whether the model is using Monte Carlo estimations or not.
+  bool MonteCarlo() const { return monteCarlo; }
+
+  //! Modify whether the model is using Monte Carlo estimations or not.
+  void MonteCarlo(const bool newMonteCarlo);
+
+  //! Get Monte Carlo probability of error being bounded by relative error.
+  double MCProbability() const { return mcProb; }
+
+  //! Modify Monte Carlo probability of error being bounded by relative error.
+  void MCProbability(const double newMCProb);
+
+  //! Get the initial sample size for Monte Carlo estimations.
+  size_t MCInitialSampleSize() const { return initialSampleSize; }
+
+  //! Modify the initial sample size for Monte Carlo estimations.
+  void MCInitialSampleSize(const size_t newSampleSize);
+
+  //! Get Monte Carlo entry coefficient.
+  double MCEntryCoefficient() const { return mcEntryCoef; }
+
+  //! Modify Monte Carlo entry coefficient.
+  void MCEntryCoefficient(const double newEntryCoef);
+
+  //! Get Monte Carlo break coefficient.
+  double MCBreakCoefficient() const { return mcBreakCoef; }
+
+  //! Modify Monte Carlo break coefficient.
+  void MCBreakCoefficient(const double newBreakCoef);
 
   //! Get the mode of the model.
   KDEMode Mode() const;
@@ -376,6 +607,9 @@ class KDEModel
 
 } // namespace kde
 } // namespace mlpack
+
+//! Set the serialization version of the KDEModel class.
+BOOST_TEMPLATE_CLASS_VERSION(template<>, mlpack::kde::KDEModel, 1);
 
 #include "kde_model_impl.hpp"
 

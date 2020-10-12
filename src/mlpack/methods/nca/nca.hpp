@@ -1,5 +1,5 @@
 /**
- * @file nca.hpp
+ * @file methods/nca/nca.hpp
  * @author Ryan Curtin
  *
  * Declaration of NCA class (Neighborhood Components Analysis).
@@ -56,10 +56,6 @@ class NCA
    *
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
-   * @param stepSize Step size for stochastic gradient descent.
-   * @param maxIterations Maximum iterations for stochastic gradient descent.
-   * @param tolerance Tolerance for termination of stochastic gradient descent.
-   * @param shuffle Whether or not to shuffle the dataset during SGD.
    * @param metric Instantiated metric to use.
    */
   NCA(const arma::mat& dataset,
@@ -73,9 +69,13 @@ class NCA
    * dataset.n_rows), that matrix will be used as the starting point for
    * optimization.
    *
-   * @param output_matrix Covariance matrix of Mahalanobis distance.
+   * @tparam CallbackTypes Types of Callback functions.
+   * @param outputMatrix Covariance matrix of Mahalanobis distance.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    */
-  void LearnDistance(arma::mat& outputMatrix);
+  template<typename... CallbackTypes>
+  void LearnDistance(arma::mat& outputMatrix, CallbackTypes&&... callbacks);
 
   //! Get the dataset reference.
   const arma::mat& Dataset() const { return dataset; }

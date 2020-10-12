@@ -1,5 +1,5 @@
 /**
- * @file fast_lstm_impl.hpp
+ * @file methods/ann/layer/fast_lstm_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Fast LSTM class, which implements a fast lstm network
@@ -112,7 +112,7 @@ void FastLSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void FastLSTM<InputDataType, OutputDataType>::Forward(
-    InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   // Check if the batch size changed, the number of cols is defines the input
   // batch size.
@@ -128,9 +128,11 @@ void FastLSTM<InputDataType, OutputDataType>::Forward(
       forwardStep, forwardStep + batchStep);
   gate.cols(forwardStep, forwardStep + batchStep).each_col() += input2GateBias;
 
-  FastSigmoid(std::move(
-      gate.submat(0, forwardStep, 3 * outSize - 1, forwardStep + batchStep)),
-      std::move(gateActivation.cols(forwardStep, forwardStep + batchStep)));
+  arma::subview<double> sigmoidOut = gateActivation.cols(forwardStep,
+      forwardStep + batchStep);
+  FastSigmoid(
+      gate.submat(0, forwardStep, 3 * outSize - 1, forwardStep + batchStep),
+      sigmoidOut);
 
   stateActivation.cols(forwardStep, forwardStep + batchStep) = arma::tanh(
       gate.submat(3 * outSize, forwardStep, 4 * outSize - 1,
@@ -178,14 +180,20 @@ void FastLSTM<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void FastLSTM<InputDataType, OutputDataType>::Backward(
-  const InputType&& /* input */, ErrorType&& gy, GradientType&& g)
+  const InputType& /* input */, const ErrorType& gy, GradientType& g)
 {
+  ErrorType gyLocal;
   if (gradientStepIdx > 0)
   {
-    gy += output2GateWeight.t() * prevError;
+    gyLocal = gy + output2GateWeight.t() * prevError;
+  }
+  else
+  {
+    gyLocal = ErrorType(((ErrorType&) gy).memptr(), gy.n_rows, gy.n_cols, false,
+        false);
   }
 
-  cellActivationError = gy % gateActivation.submat(outSize,
+  cellActivationError = gyLocal % gateActivation.submat(outSize,
       backwardStep - batchStep, 2 * outSize - 1, backwardStep) %
       (1 - arma::pow(cellActivation.cols(backwardStep - batchStep,
       backwardStep), 2));
@@ -225,7 +233,7 @@ void FastLSTM<InputDataType, OutputDataType>::Backward(
 
   prevError.submat(outSize, 0, 2 * outSize - 1, batchStep) =
       cellActivation.cols(backwardStep - batchStep,
-      backwardStep) % gy % gateActivation.submat(
+      backwardStep) % gyLocal % gateActivation.submat(
        outSize, backwardStep - batchStep, 2 * outSize - 1, backwardStep) %
       (1.0 - gateActivation.submat(
       outSize, backwardStep - batchStep, 2 * outSize - 1, backwardStep));
@@ -244,7 +252,9 @@ void FastLSTM<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void FastLSTM<InputDataType, OutputDataType>::Gradient(
-    InputType&& input, ErrorType&& /* error */, GradientType&& gradient)
+    const InputType& input,
+    const ErrorType& /* error */,
+    GradientType& gradient)
 {
   // Gradient of the input to gate layer.
   gradient.submat(0, 0, input2GateWeight.n_elem - 1, 0) =

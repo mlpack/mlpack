@@ -1,5 +1,5 @@
 /**
- * @file one_step_sarsa_worker.hpp
+ * @file methods/reinforcement_learning/worker/one_step_sarsa_worker.hpp
  * @author Shangtong Zhang
  *
  * This file is the definition of OneStepSarsaWorker class,
@@ -55,6 +55,9 @@ class OneStepSarsaWorker
       const TrainingConfig& config,
       bool deterministic):
       updater(updater),
+      #if ENS_VERSION_MAJOR >= 2
+      updatePolicy(NULL),
+      #endif
       environment(environment),
       config(config),
       deterministic(deterministic),
@@ -62,13 +65,171 @@ class OneStepSarsaWorker
   { Reset(); }
 
   /**
+   * Copy another OneStepSarsaWorker.
+   *
+   * @param other OneStepSarsaWorker to copy.
+   */
+  OneStepSarsaWorker(const OneStepSarsaWorker& other) :
+      updater(other.updater),
+      #if ENS_VERSION_MAJOR >= 2
+      updatePolicy(NULL),
+      #endif
+      environment(other.environment),
+      config(other.config),
+      deterministic(other.deterministic),
+      steps(other.steps),
+      episodeReturn(other.episodeReturn),
+      pending(other.pending),
+      pendingIndex(other.pendingIndex),
+      network(other.network),
+      state(other.state),
+      action(other.action)
+  {
+    Reset();
+
+    #if ENS_VERSION_MAJOR >= 2
+    updatePolicy = new typename UpdaterType::template
+        Policy<arma::mat, arma::mat>(updater,
+                                     network.Parameters().n_rows,
+                                     network.Parameters().n_cols);
+    #endif
+  }
+
+  /**
+   * Take ownership of another OneStepSarsaWorker.
+   *
+   * @param other OneStepSarsaWorker to take ownership of.
+   */
+  OneStepSarsaWorker(OneStepSarsaWorker&& other) :
+      updater(std::move(other.updater)),
+      #if ENS_VERSION_MAJOR >= 2
+      updatePolicy(NULL),
+      #endif
+      environment(std::move(other.environment)),
+      config(std::move(other.config)),
+      deterministic(std::move(other.deterministic)),
+      steps(std::move(other.steps)),
+      episodeReturn(std::move(other.episodeReturn)),
+      pending(std::move(other.pending)),
+      pendingIndex(std::move(other.pendingIndex)),
+      network(std::move(other.network)),
+      state(std::move(other.state)),
+      action(std::move(other.action))
+  {
+    #if ENS_VERSION_MAJOR >= 2
+    other.updatePolicy = NULL;
+
+    updatePolicy = new typename UpdaterType::template
+        Policy<arma::mat, arma::mat>(updater,
+                                     network.Parameters().n_rows,
+                                     network.Parameters().n_cols);
+    #endif
+  }
+
+  /**
+   * Copy another OneStepSarsaWorker.
+   *
+   * @param other OneStepSarsaWorker to copy.
+   */
+  OneStepSarsaWorker& operator=(const OneStepSarsaWorker& other)
+  {
+    if (&other == this)
+      return *this;
+
+    #if ENS_VERSION_MAJOR >= 2
+    delete updatePolicy;
+    #endif
+
+    updater = other.updater;
+    environment = other.environment;
+    config = other.config;
+    deterministic = other.deterministic;
+    steps = other.steps;
+    episodeReturn = other.episodeReturn;
+    pending = other.pending;
+    pendingIndex = other.pendingIndex;
+    network = other.network;
+    state = other.state;
+    action = other.action;
+
+    #if ENS_VERSION_MAJOR >= 2
+    updatePolicy = new typename UpdaterType::template
+        Policy<arma::mat, arma::mat>(updater,
+                                     network.Parameters().n_rows,
+                                     network.Parameters().n_cols);
+    #endif
+
+    Reset();
+
+    return *this;
+  }
+
+  /**
+   * Take ownership of another OneStepSarsaWorker.
+   *
+   * @param other OneStepSarsaWorker to take ownership of.
+   */
+  OneStepSarsaWorker& operator=(OneStepSarsaWorker&& other)
+  {
+    if (&other == this)
+      return *this;
+
+    #if ENS_VERSION_MAJOR >= 2
+    delete updatePolicy;
+    #endif
+
+    updater = std::move(other.updater);
+    environment = std::move(other.environment);
+    config = std::move(other.config);
+    deterministic = std::move(other.deterministic);
+    steps = std::move(other.steps);
+    episodeReturn = std::move(other.episodeReturn);
+    pending = std::move(other.pending);
+    pendingIndex = std::move(other.pendingIndex);
+    network = std::move(other.network);
+    state = std::move(other.state);
+    action = std::move(other.action);
+
+    #if ENS_VERSION_MAJOR >= 2
+    other.updatePolicy = NULL;
+
+    updatePolicy = new typename UpdaterType::template
+        Policy<arma::mat, arma::mat>(updater,
+                                     network.Parameters().n_rows,
+                                     network.Parameters().n_cols);
+    #endif
+
+    return *this;
+  }
+
+  /**
+   * Clean memory.
+   */
+  ~OneStepSarsaWorker()
+  {
+    #if ENS_VERSION_MAJOR >= 2
+    delete updatePolicy;
+    #endif
+  }
+
+  /**
    * Initialize the worker.
    * @param learningNetwork The shared network.
    */
   void Initialize(NetworkType& learningNetwork)
   {
+    #if ENS_VERSION_MAJOR == 1
     updater.Initialize(learningNetwork.Parameters().n_rows,
-        learningNetwork.Parameters().n_cols);
+                       learningNetwork.Parameters().n_cols);
+    #else
+    delete updatePolicy;
+
+    updatePolicy = new typename UpdaterType::template
+        Policy<arma::mat, arma::mat>(updater,
+                                     learningNetwork.Parameters().n_rows,
+                                     learningNetwork.Parameters().n_cols);
+    #endif
+
     // Build local network.
     network = learningNetwork;
   }
@@ -91,7 +252,7 @@ class OneStepSarsaWorker
             double& totalReward)
   {
     // Interact with the environment.
-    if (action == ActionType::size)
+    if (action.action == ActionType::size)
     {
       // Invalid action means we are at the beginning of an episode.
       arma::colvec actionValue;
@@ -148,17 +309,18 @@ class OneStepSarsaWorker
         };
         double targetActionValue = 0;
         if (!(terminal && i == pending.size() - 1))
-          targetActionValue = actionValue[std::get<4>(transition)];
+          targetActionValue = actionValue[std::get<4>(transition).action];
         targetActionValue = std::get<2>(transition) +
             config.Discount() * targetActionValue;
 
         // Compute the training target for current state.
-        network.Forward(std::get<0>(transition).Encode(), actionValue);
-        actionValue[std::get<1>(transition)] = targetActionValue;
+        arma::mat input = std::get<0>(transition).Encode();
+        network.Forward(input, actionValue);
+        actionValue[std::get<1>(transition).action] = targetActionValue;
 
         // Compute gradient.
         arma::mat gradients;
-        network.Backward(actionValue, gradients);
+        network.Backward(input, actionValue, gradients);
 
         // Accumulate gradients.
         totalGradients += gradients;
@@ -171,8 +333,13 @@ class OneStepSarsaWorker
           config.GradientLimit()); });
 
       // Perform async update of the global network.
-      updater.Update(learningNetwork.Parameters(),
+      #if ENS_VERSION_MAJOR == 1
+      updater.Update(learningNetwork.Parameters(), config.StepSize(),
+          totalGradients);
+      #else
+      updatePolicy->Update(learningNetwork.Parameters(),
           config.StepSize(), totalGradients);
+      #endif
 
       // Sync the local network with the global network.
       network = learningNetwork;
@@ -210,11 +377,15 @@ class OneStepSarsaWorker
     episodeReturn = 0;
     pendingIndex = 0;
     state = environment.InitialSample();
-    action = ActionType::size;
+    using actions = typename EnvironmentType::Action::actions;
+    action.action = static_cast<actions>(ActionType::size);
   }
 
   //! Locally-stored optimizer.
   UpdaterType updater;
+  #if ENS_VERSION_MAJOR >= 2
+  typename UpdaterType::template Policy<arma::mat, arma::mat>* updatePolicy;
+  #endif
 
   //! Locally-stored task.
   EnvironmentType environment;

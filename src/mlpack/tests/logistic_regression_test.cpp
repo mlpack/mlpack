@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression_test.cpp
+ * @file tests/logistic_regression_test.cpp
  * @author Ryan Curtin
  * @author Arun Reddy
  *
@@ -780,7 +780,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSparseLBFGSTest)
 
   BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lrSparse.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrSparse.Parameters()[i], 5e-4);
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrSparse.Parameters()[i], 1e-3);
 }
 
 /**
@@ -809,7 +809,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSparseSGDTest)
 
   BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lrSparse.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrSparse.Parameters()[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrSparse.Parameters()[i], 1e-3);
 }
 
 /**
@@ -960,6 +960,101 @@ BOOST_AUTO_TEST_CASE(ClassifyProbabilitiesTest)
     else
       BOOST_REQUIRE_CLOSE(probabilities(1, i), 1.0, 10.0);
   }
+}
+
+/**
+ * Test that LogisticRegression::Train() returns finite final objective
+ * value.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionTrainReturnObjective)
+{
+  // Very simple fake dataset.
+  arma::mat data("1 2 3;"
+                 "1 2 3");
+  arma::Row<size_t> responses("1 1 0");
+
+  // Check with L_BFGS optimizer.
+  LogisticRegression<> lr1(data.n_rows, 0.5);
+  double objVal = lr1.Train<ens::L_BFGS>(data, responses);
+
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+
+  // Check with a pre-defined L_BFGS optimizer.
+  LogisticRegression<> lr2(data.n_rows, 0.5);
+  ens::L_BFGS lbfgsOpt;
+  objVal = lr2.Train(data, responses, lbfgsOpt);
+
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+
+  // Check with SGD optimizer.
+  LogisticRegression<> lr3(data.n_rows, 0.5);
+  objVal = lr3.Train<ens::StandardSGD>(data, responses);
+
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+
+  // Check with pre-defined SGD optimizer.
+  LogisticRegression<> lr4(data.n_rows, 0.0005);
+  ens::StandardSGD sgdOpt;
+  sgdOpt.StepSize() = 0.15;
+  sgdOpt.Tolerance() = 1e-75;
+  objVal = lr4.Train(data, responses, sgdOpt);
+
+  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+}
+
+/**
+ * Test that construction *then* training works fine.  Thanks @Trento89 for the
+ * test case (see #2358).
+ */
+BOOST_AUTO_TEST_CASE(ConstructionThenTraining)
+{
+  arma::mat myMatrix;
+
+  // Four points, three dimensions.
+  myMatrix << 0.555950 << 0.274690 << 0.540605 << 0.798938 << arma::endr
+           << 0.948014 << 0.973234 << 0.216504 << 0.883152 << arma::endr
+           << 0.023787 << 0.675382 << 0.231751 << 0.450332 << arma::endr;
+
+  arma::Row<size_t> myTargets("1 0 1 0");
+
+  regression::LogisticRegression<> lr;
+
+  // Make sure that training doesn't crash with invalid parameter sizes.
+  BOOST_REQUIRE_NO_THROW(lr.Train(myMatrix, myTargets));
+}
+
+/**
+ * Make sure that incremental training works.
+ */
+BOOST_AUTO_TEST_CASE(IncrementalTraining)
+{
+  // Generate a two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(3, 1000);
+  arma::Row<size_t> responses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 500; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Now train a logistic regression object on it.
+  LogisticRegression<> lr(data.n_rows, 0.5);
+  for (size_t epoch = 0; epoch < 10; ++epoch)
+    for (size_t i = 0; i < data.n_cols; ++i)
+      lr.Train<ens::StandardSGD>(data, responses);
+
+  // Ensure that the error is close to zero.
+  const double acc = lr.ComputeAccuracy(data, responses);
+
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 3.0); // 3% error tolerance.
 }
 
 BOOST_AUTO_TEST_SUITE_END();

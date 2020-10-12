@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_function_impl.hpp
+ * @file methods/linear_svm/linear_svm_function_impl.hpp
  * @author Shikhar Bhardwaj
  * @author Ayush Chamoli
  *
@@ -89,7 +89,7 @@ void LinearSVMFunction<MatType>::GetGroundTruthMatrix(
 
   // Row pointers are the labels of the examples, and column pointers are the
   // number of cumulative entries made uptil that column.
-  for (size_t i = 0; i < labels.n_elem; i++)
+  for (size_t i = 0; i < labels.n_elem; ++i)
   {
     rowPointers(i) = labels(i);
     colPointers(i + 1) = i + 1;
@@ -285,7 +285,7 @@ void LinearSVMFunction<MatType>::Gradient(
   }
   else
   {
-    gradient.set_size(size(parameters));
+    gradient.set_size(arma::size(parameters));
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
         dataset * difference.t();
     gradient.row(parameters.n_rows - 1) =
@@ -320,7 +320,7 @@ void LinearSVMFunction<MatType>::Gradient(
   {
     scores = parameters.rows(0, dataset.n_rows - 1).t()
         * dataset.cols(firstId, lastId)
-        + arma::repmat(parameters.row(dataset.n_rows).t(), 1, dataset.n_cols);
+        + arma::repmat(parameters.row(dataset.n_rows).t(), 1, batchSize);
   }
 
   arma::mat margin = scores - (arma::repmat(arma::ones(numClasses).t()
@@ -342,7 +342,7 @@ void LinearSVMFunction<MatType>::Gradient(
   }
   else
   {
-    gradient.set_size(size(parameters));
+    gradient.set_size(arma::size(parameters));
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
         dataset.cols(firstId, lastId) * difference.t();
     gradient.row(parameters.n_rows - 1) =
@@ -396,7 +396,7 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   }
   else
   {
-    gradient.set_size(size(parameters));
+    gradient.set_size(arma::size(parameters));
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
             dataset * difference.t();
     gradient.row(parameters.n_rows - 1) =
@@ -466,7 +466,7 @@ double LinearSVMFunction<MatType>::EvaluateWithGradient(
   }
   else
   {
-    gradient.set_size(size(parameters));
+    gradient.set_size(arma::size(parameters));
     gradient.submat(0, 0, parameters.n_rows - 2, parameters.n_cols - 1) =
         dataset.cols(firstId, lastId) * difference.t();
     gradient.row(parameters.n_rows - 1) =

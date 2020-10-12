@@ -1,5 +1,5 @@
 /**
- * @file mse.hpp
+ * @file core/cv/metrics/mse.hpp
  * @author Kirill Mishchenko
  *
  * The mean squared error (MSE).

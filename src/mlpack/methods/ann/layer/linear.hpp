@@ -1,5 +1,5 @@
 /**
- * @file linear.hpp
+ * @file methods/ann/layer/linear.hpp
  * @author Marcus Edel
  *
  * Definition of the Linear layer class also known as fully-connected layer or
@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LINEAR_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
 #include "layer_types.hpp"
 
@@ -31,7 +32,8 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename OutputDataType = arma::mat,
+    typename RegularizerType = NoRegularizer
 >
 class Linear
 {
@@ -44,8 +46,23 @@ class Linear
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
+   * @param regularizer The regularizer to use, optional.
    */
-  Linear(const size_t inSize, const size_t outSize);
+  Linear(const size_t inSize,
+         const size_t outSize,
+         RegularizerType regularizer = RegularizerType());
+
+  //! Copy constructor.
+  Linear(const Linear& layer);
+
+  //! Move constructor.
+  Linear(Linear&&);
+
+  //! Copy assignment operator.
+  Linear& operator=(const Linear& layer);
+
+  //! Move assignment operator.
+  Linear& operator=(Linear&& layer);
 
   /*
    * Reset the layer parameter.
@@ -60,21 +77,21 @@ class Linear
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -84,9 +101,9 @@ class Linear
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }
@@ -108,10 +125,32 @@ class Linear
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the input size.
+  size_t InputSize() const { return inSize; }
+
+  //! Get the output size.
+  size_t OutputSize() const { return outSize; }
+
   //! Get the gradient.
   OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
+
+  //! Get the weight of the layer.
+  OutputDataType const& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  OutputDataType& Weight() { return weight; }
+
+  //! Get the bias of the layer.
+  OutputDataType const& Bias() const { return bias; }
+  //! Modify the bias weights of the layer.
+  OutputDataType& Bias() { return bias; }
+
+  //! Get the size of the weights.
+  size_t WeightSize() const
+  {
+    return (inSize * outSize) + outSize;
+  }
 
   /**
    * Serialize the layer
@@ -146,6 +185,9 @@ class Linear
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  //! Locally-stored regularizer object.
+  RegularizerType regularizer;
 }; // class Linear
 
 } // namespace ann

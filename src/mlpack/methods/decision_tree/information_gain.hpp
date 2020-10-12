@@ -1,5 +1,5 @@
 /**
- * @file information_gain.hpp
+ * @file methods/decision_tree/information_gain.hpp
  * @author Ryan Curtin
  *
  * An implementation of information gain, which can be used in place of Gini
@@ -26,6 +26,26 @@ class InformationGain
 {
  public:
   /**
+   * Evaluate the Gini impurity given a vector of class weight counts.
+   */
+  template<bool UseWeights, typename CountType>
+  static double EvaluatePtr(const CountType* counts,
+                            const size_t countLength,
+                            const CountType totalCount)
+  {
+    double gain = 0.0;
+
+    for (size_t i = 0; i < countLength; ++i)
+    {
+      const double f = ((double) counts[i] / (double) totalCount);
+      if (f > 0.0)
+        gain += f * std::log2(f);
+    }
+
+    return gain;
+  }
+
+  /**
    * Given a set of labels, calculate the information gain of those labels.
    * Note that it is possible that due to floating-point representation issues,
    * it is possible that the gain returned can be very slightly greater than 0!
@@ -34,6 +54,7 @@ class InformationGain
    *
    * @param labels Labels of the dataset.
    * @param numClasses Number of classes in the dataset.
+   * @param weights Weights associated with labels.
    */
   template<bool UseWeights>
   static double Evaluate(const arma::Row<size_t>& labels,

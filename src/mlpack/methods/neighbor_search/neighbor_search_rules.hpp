@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search_rules.hpp
+ * @file methods/neighbor_search/neighbor_search_rules.hpp
  * @author Ryan Curtin
  *
  * Defines the pruning rules and base case rules necessary to perform a
@@ -156,6 +156,10 @@ class NeighborSearchRules
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   //! Modify the traversal info.
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
+
+  //! Get the minimum number of base cases we need to perform to have acceptable
+  //! results.  This is only needed in defeatist search mode.
+  size_t MinimumBaseCases() const { return k; }
 
  protected:
   //! The reference set.

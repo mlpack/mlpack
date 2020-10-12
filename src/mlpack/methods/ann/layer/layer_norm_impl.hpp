@@ -1,5 +1,5 @@
 /**
- * @file layer_norm_impl.hpp
+ * @file methods/ann/layer/layer_norm_impl.hpp
  * @author Shikhar Jaiswal
  *
  * Implementation of the Layer Normalization class.
@@ -22,6 +22,7 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputDataType, typename OutputDataType>
 LayerNorm<InputDataType, OutputDataType>::LayerNorm() :
+    size(0),
     eps(1e-8),
     loading(false)
 {
@@ -56,14 +57,14 @@ void LayerNorm<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void LayerNorm<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   mean = arma::mean(input, 0);
   variance = arma::var(input, 1, 0);
 
   // Normalize the input.
   output = input.each_row() - mean;
-
+  inputMean = output;
   output.each_row() /= arma::sqrt(variance + eps);
 
   // Reused in the backward and gradient step.
@@ -77,12 +78,11 @@ void LayerNorm<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void LayerNorm<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
-  const arma::mat inputMean = input.each_row() - mean;
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
-  // dl / dxhat
+  // dl / dxhat.
   const arma::mat norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
@@ -96,16 +96,15 @@ void LayerNorm<InputDataType, OutputDataType>::Backward(
 
   // sum (dl / dxhat * -1 / stdInv) + variance *
   // (sum -2 * (x - mu)) / m.
-  g.each_row() += (arma::sum(norm.each_row() % -stdInv, 0) + (var %
-      arma::mean(-2 * inputMean, 0))) / input.n_rows;
+  g.each_row() += arma::sum(norm.each_row() % -stdInv, 0) / input.n_rows;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void LayerNorm<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   gradient.set_size(size + size, 1);
 

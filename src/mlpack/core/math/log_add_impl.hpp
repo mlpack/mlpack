@@ -1,8 +1,13 @@
 /**
- * @file log_add_impl.hpp
+ * @file core/math/log_add_impl.hpp
  * @author Arash Abghari
  *
  * Implementation of logarithmic addition functions.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_MATH_LOG_ADD_IMPL_HPP
 #define MLPACK_CORE_MATH_LOG_ADD_IMPL_HPP

@@ -1,5 +1,5 @@
 /**
- * @file reward_set_visitor_impl.hpp
+ * @file methods/ann/visitor/reward_set_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Reward() function layer abstraction.
@@ -28,6 +28,11 @@ template<typename LayerType>
 inline void RewardSetVisitor::operator()(LayerType* layer) const
 {
   LayerReward(layer);
+}
+
+inline void RewardSetVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
 }
 
 template<typename T>

@@ -1,5 +1,5 @@
 /**
- * @file gmm.cpp
+ * @file methods/gmm/gmm.cpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ryan Curtin
  * @author Michael Fox
@@ -59,7 +59,7 @@ double GMM::LogProbability(const arma::vec& observation) const
   // Sum the probability for each Gaussian in our mixture (and we have to
   // multiply by the prior for each Gaussian too).
   double sum = -std::numeric_limits<double>::infinity();
-  for (size_t i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; ++i)
     sum = math::LogAdd(sum, log(weights[i]) +
         dists[i].LogProbability(observation));
 
@@ -117,7 +117,12 @@ arma::vec GMM::Random() const
     }
   }
 
-  return trans(chol(dists[gaussian].Covariance())) *
+  arma::mat cholDecomp;
+  if (!arma::chol(cholDecomp, dists[gaussian].Covariance()))
+  {
+    Log::Fatal << "Cholesky decomposition failed." << std::endl;
+  }
+  return trans(cholDecomp) *
       arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
 }
 
@@ -136,10 +141,12 @@ void GMM::Classify(const arma::mat& observations,
   for (size_t i = 0; i < observations.n_cols; ++i)
   {
     // Find maximum probability component.
-    double probability = 0;
+    double probability = -std::numeric_limits<double>::infinity();
     for (size_t j = 0; j < gaussians; ++j)
     {
-      double newProb = Probability(observations.unsafe_col(i), j);
+      // We have to use LogProbability() otherwise Probability() would overflow
+      // easily.
+      double newProb = LogProbability(observations.unsafe_col(i), j);
       if (newProb >= probability)
       {
         probability = newProb;
@@ -158,18 +165,19 @@ double GMM::LogLikelihood(
     const arma::vec& weightsL) const
 {
   double loglikelihood = 0;
-  arma::vec phis;
-  arma::mat likelihoods(gaussians, data.n_cols);
+  arma::vec logPhis;
+  arma::mat logLikelihoods(gaussians, data.n_cols);
 
-  for (size_t i = 0; i < gaussians; i++)
+  // It has to be LogProbability() otherwise Probability() would overflow easily
+  for (size_t i = 0; i < gaussians; ++i)
   {
-    distsL[i].Probability(data, phis);
-    likelihoods.row(i) = weightsL(i) * trans(phis);
+    distsL[i].LogProbability(data, logPhis);
+    logLikelihoods.row(i) = log(weightsL(i)) + trans(logPhis);
   }
 
   // Now sum over every point.
-  for (size_t j = 0; j < data.n_cols; j++)
-    loglikelihood += log(accu(likelihoods.col(j)));
+  for (size_t j = 0; j < data.n_cols; ++j)
+    loglikelihood += mlpack::math::AccuLog(logLikelihoods.col(j));
   return loglikelihood;
 }
 

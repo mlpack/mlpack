@@ -1,5 +1,5 @@
 /**
- * @file parameters_visitor_impl.hpp
+ * @file methods/ann/visitor/parameters_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Parameters() function layer abstraction.
@@ -19,8 +19,8 @@ namespace mlpack {
 namespace ann {
 
 //! ParametersVisitor visitor class.
-inline ParametersVisitor::ParametersVisitor(arma::mat&& parameters) :
-    parameters(std::move(parameters))
+inline ParametersVisitor::ParametersVisitor(arma::mat& parameters) :
+    parameters(parameters)
 {
   /* Nothing to do here. */
 }
@@ -29,6 +29,11 @@ template<typename LayerType>
 inline void ParametersVisitor::operator()(LayerType *layer) const
 {
   LayerParameters(layer, layer->OutputParameter());
+}
+
+inline void ParametersVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
 }
 
 template<typename T, typename P>

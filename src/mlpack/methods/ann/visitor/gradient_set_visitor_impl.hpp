@@ -1,5 +1,5 @@
 /**
- * @file gradient_set_visitor_impl.hpp
+ * @file methods/ann/visitor/gradient_set_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Gradient() function layer abstraction.
@@ -19,9 +19,9 @@ namespace mlpack {
 namespace ann {
 
 //! GradientSetVisitor visitor class.
-inline GradientSetVisitor::GradientSetVisitor(arma::mat&& gradient,
+inline GradientSetVisitor::GradientSetVisitor(arma::mat& gradient,
                                               size_t offset) :
-    gradient(std::move(gradient)),
+    gradient(gradient),
     offset(offset)
 {
   /* Nothing to do here. */
@@ -31,6 +31,11 @@ template<typename LayerType>
 inline size_t GradientSetVisitor::operator()(LayerType* layer) const
 {
   return LayerGradients(layer, layer->OutputParameter());
+}
+
+inline size_t GradientSetVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
 }
 
 template<typename T>
@@ -55,7 +60,7 @@ GradientSetVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
     modelOffset += boost::apply_visitor(GradientSetVisitor(
-        std::move(gradient), modelOffset + offset), layer->Model()[i]);
+        gradient, modelOffset + offset), layer->Model()[i]);
   }
 
   return modelOffset;
@@ -74,7 +79,7 @@ GradientSetVisitor::LayerGradients(T* layer, arma::mat& /* input */) const
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
     modelOffset += boost::apply_visitor(GradientSetVisitor(
-        std::move(gradient), modelOffset + offset), layer->Model()[i]);
+        gradient, modelOffset + offset), layer->Model()[i]);
   }
 
   return modelOffset;

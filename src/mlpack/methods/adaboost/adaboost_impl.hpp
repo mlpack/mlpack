@@ -1,5 +1,5 @@
 /*
- * @file adaboost_impl.hpp
+ * @file methods/adaboost/adaboost_impl.hpp
  * @author Udit Saxena
  *
  * Implementation of the AdaBoost class.
@@ -56,8 +56,7 @@ AdaBoost<WeakLearnerType, MatType>::AdaBoost(
 template<typename WeakLearnerType, typename MatType>
 AdaBoost<WeakLearnerType, MatType>::AdaBoost(const double tolerance) :
     numClasses(0),
-    tolerance(tolerance),
-    ztProduct(1.0)
+    tolerance(tolerance)
 {
   // Nothing to do.
 }
@@ -83,7 +82,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
   // changing by less than the tolerance.
   double rt, crt = 0.0, alphat = 0.0, zt;
 
-  ztProduct = 1.0;
+  double ztProduct = 1.0;
 
   // To be used for prediction by the weak learner.
   arma::Row<size_t> predictedLabels(labels.n_cols);
@@ -107,7 +106,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
   arma::Row<size_t> finalH(predictedLabels.n_cols);
 
   // Now, start the boosting rounds.
-  for (size_t i = 0; i < iterations; i++)
+  for (size_t i = 0; i < iterations; ++i)
   {
     // Initialized to zero in every round.  rt is used for calculation of
     // alphat; it is the weighted error.
@@ -128,7 +127,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     // buildClassificationMatrix(ht, predictedLabels);
 
     // Now, calculate alpha(t) using ht.
-    for (size_t j = 0; j < D.n_cols; j++) // instead of D, ht
+    for (size_t j = 0; j < D.n_cols; ++j) // instead of D, ht
     {
       if (predictedLabels(j) == labels(j))
         rt += arma::accu(D.col(j));
@@ -158,12 +157,12 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
     wl.push_back(w);
 
     // Now start modifying the weights.
-    for (size_t j = 0; j < D.n_cols; j++)
+    for (size_t j = 0; j < D.n_cols; ++j)
     {
       const double expo = exp(alphat);
       if (predictedLabels(j) == labels(j))
       {
-        for (size_t k = 0; k < D.n_rows; k++)
+        for (size_t k = 0; k < D.n_rows; ++k)
         {
           // We calculate zt, the normalization constant.
           D(k, j) /= expo;
@@ -179,7 +178,7 @@ double AdaBoost<WeakLearnerType, MatType>::Train(
       }
       else
       {
-        for (size_t k = 0; k < D.n_rows; k++)
+        for (size_t k = 0; k < D.n_rows; ++k)
         {
           // We calculate zt, the normalization constant.
           D(k, j) *= expo;
@@ -212,26 +211,41 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
     arma::Row<size_t>& predictedLabels)
 {
   arma::Row<size_t> tempPredictedLabels(test.n_cols);
-  arma::mat cMatrix(numClasses, test.n_cols);
+  arma::mat probabilities;
 
-  cMatrix.zeros();
+  Classify(test, predictedLabels, probabilities);
+}
+
+/**
+ * Classify the given test points.
+ */
+template<typename WeakLearnerType, typename MatType>
+void AdaBoost<WeakLearnerType, MatType>::Classify(
+    const MatType& test,
+    arma::Row<size_t>& predictedLabels,
+    arma::mat& probabilities)
+{
+  arma::Row<size_t> tempPredictedLabels(test.n_cols);
+
+  probabilities.zeros(numClasses, test.n_cols);
   predictedLabels.set_size(test.n_cols);
 
-  for (size_t i = 0; i < wl.size(); i++)
+  for (size_t i = 0; i < wl.size(); ++i)
   {
     wl[i].Classify(test, tempPredictedLabels);
 
-    for (size_t j = 0; j < tempPredictedLabels.n_cols; j++)
-      cMatrix(tempPredictedLabels(j), j) += alpha[i];
+    for (size_t j = 0; j < tempPredictedLabels.n_cols; ++j)
+      probabilities(tempPredictedLabels(j), j) += alpha[i];
   }
 
-  arma::colvec cMRow;
+  arma::colvec pRow;
   arma::uword maxIndex = 0;
 
-  for (size_t i = 0; i < predictedLabels.n_cols; i++)
+  for (size_t i = 0; i < predictedLabels.n_cols; ++i)
   {
-    cMRow = cMatrix.unsafe_col(i);
-    cMRow.max(maxIndex);
+    probabilities.col(i) /= arma::accu(probabilities.col(i));
+    pRow = probabilities.unsafe_col(i);
+    pRow.max(maxIndex);
     predictedLabels(i) = maxIndex;
   }
 }
@@ -242,11 +256,16 @@ void AdaBoost<WeakLearnerType, MatType>::Classify(
 template<typename WeakLearnerType, typename MatType>
 template<typename Archive>
 void AdaBoost<WeakLearnerType, MatType>::serialize(Archive& ar,
-                                               const unsigned int /* version */)
+                                                   const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(numClasses);
   ar & BOOST_SERIALIZATION_NVP(tolerance);
-  ar & BOOST_SERIALIZATION_NVP(ztProduct);
+  if (version == 0 && Archive::is_loading::value)
+  {
+    // Load unused ztProduct double and forget it.
+    double tmpZtProduct = 0.0;
+    ar & BOOST_SERIALIZATION_NVP(tmpZtProduct);
+  }
   ar & BOOST_SERIALIZATION_NVP(alpha);
 
   // Now serialize each weak learner.

@@ -2,13 +2,6 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   arma_extend.hpp
-  fn_ccov.hpp
-  fn_inplace_reshape.hpp
-  glue_ccov_meat.hpp
-  glue_ccov_proto.hpp
-  hdf5_misc.hpp
-  op_ccov_meat.hpp
-  op_ccov_proto.hpp
   SpMat_extra_bones.hpp
   SpMat_extra_meat.hpp
   Mat_extra_bones.hpp

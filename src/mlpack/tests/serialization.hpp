@@ -1,5 +1,5 @@
 /**
- * @file serialization.hpp
+ * @file tests/serialization.hpp
  * @author Ryan Curtin
  *
  * Miscellaneous utility functions for serialization tests.
@@ -205,7 +205,7 @@ void SerializeObject(T& t, T& newT)
     }
     catch (boost::archive::archive_exception& e)
     {
-      std::cerr << e.what() << std::endl;
+      MLPACK_CERR_STREAM << e.what() << std::endl;
       success = false;
     }
   }
@@ -224,7 +224,7 @@ void SerializeObject(T& t, T& newT)
     }
     catch (boost::archive::archive_exception& e)
     {
-      std::cout << e.what() << "\n";
+      MLPACK_COUT_STREAM << e.what() << "\n";
       success = false;
     }
   }
@@ -263,7 +263,7 @@ void SerializePointerObject(T* t, T*& newT)
     }
     catch (boost::archive::archive_exception& e)
     {
-      std::cout << e.what() << "\n";
+      MLPACK_COUT_STREAM << e.what() << "\n";
       success = false;
     }
   }
@@ -282,7 +282,7 @@ void SerializePointerObject(T* t, T*& newT)
     }
     catch (std::exception& e)
     {
-      std::cout << e.what() << "\n";
+      MLPACK_COUT_STREAM << e.what() << "\n";
       success = false;
     }
   }

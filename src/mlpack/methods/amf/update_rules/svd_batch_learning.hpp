@@ -1,5 +1,5 @@
 /**
- * @file svd_batch_learning.hpp
+ * @file methods/amf/update_rules/svd_batch_learning.hpp
  * @author Sumedh Ghaisas
  *
  * SVD factorizer used in AMF (Alternating Matrix Factorization).
@@ -100,9 +100,9 @@ class SVDBatchLearning
     // Compute the step.
     arma::mat deltaW;
     deltaW.zeros(n, r);
-    for (size_t i = 0; i < n; i++)
+    for (size_t i = 0; i < n; ++i)
     {
-      for (size_t j = 0; j < m; j++)
+      for (size_t j = 0; j < m; ++j)
       {
         const double val = V(i, j);
         if (val != 0)
@@ -145,9 +145,9 @@ class SVDBatchLearning
     // Compute the step.
     arma::mat deltaH;
     deltaH.zeros(r, m);
-    for (size_t j = 0; j < m; j++)
+    for (size_t j = 0; j < m; ++j)
     {
-      for (size_t i = 0; i < n; i++)
+      for (size_t i = 0; i < n; ++i)
       {
         const double val = V(i, j);
         if (val != 0)

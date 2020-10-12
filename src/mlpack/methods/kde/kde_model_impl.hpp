@@ -1,5 +1,5 @@
 /**
- * @file kde_model_impl.hpp
+ * @file methods/kde/kde_model_impl.hpp
  * @author Roberto Hueso
  *
  * Implementation of KDE Model.
@@ -25,12 +25,22 @@ inline KDEModel::KDEModel(const double bandwidth,
                           const double relError,
                           const double absError,
                           const KernelTypes kernelType,
-                          const TreeTypes treeType) :
+                          const TreeTypes treeType,
+                          const bool monteCarlo,
+                          const double mcProb,
+                          const size_t initialSampleSize,
+                          const double mcEntryCoef,
+                          const double mcBreakCoef) :
   bandwidth(bandwidth),
   relError(relError),
   absError(absError),
   kernelType(kernelType),
-  treeType(treeType)
+  treeType(treeType),
+  monteCarlo(monteCarlo),
+  mcProb(mcProb),
+  initialSampleSize(initialSampleSize),
+  mcEntryCoef(mcEntryCoef),
+  mcBreakCoef(mcBreakCoef)
 {
   // Nothing to do.
 }
@@ -41,7 +51,12 @@ inline KDEModel::KDEModel(const KDEModel& other) :
   relError(other.relError),
   absError(other.absError),
   kernelType(other.kernelType),
-  treeType(other.treeType)
+  treeType(other.treeType),
+  monteCarlo(other.monteCarlo),
+  mcProb(other.mcProb),
+  initialSampleSize(other.initialSampleSize),
+  mcEntryCoef(other.mcEntryCoef),
+  mcBreakCoef(other.mcBreakCoef)
 {
   // Nothing to do.
 }
@@ -53,14 +68,24 @@ inline KDEModel::KDEModel(KDEModel&& other) :
   absError(other.absError),
   kernelType(other.kernelType),
   treeType(other.treeType),
+  monteCarlo(other.monteCarlo),
+  mcProb(other.mcProb),
+  initialSampleSize(other.initialSampleSize),
+  mcEntryCoef(other.mcEntryCoef),
+  mcBreakCoef(other.mcBreakCoef),
   kdeModel(std::move(other.kdeModel))
 {
   // Reset other model.
   other.bandwidth = 1.0;
-  other.relError = 0.05;
-  other.absError = 0;
+  other.relError = KDEDefaultParams::relError;
+  other.absError = KDEDefaultParams::absError;
   other.kernelType = KernelTypes::GAUSSIAN_KERNEL;
   other.treeType = TreeTypes::KD_TREE;
+  other.monteCarlo = KDEDefaultParams::monteCarlo;
+  other.mcProb = KDEDefaultParams::mcProb;
+  other.initialSampleSize = KDEDefaultParams::initialSampleSize;
+  other.mcEntryCoef = KDEDefaultParams::mcEntryCoef;
+  other.mcBreakCoef = KDEDefaultParams::mcBreakCoef;
   other.kdeModel = decltype(other.kdeModel)();
 }
 
@@ -72,6 +97,11 @@ inline KDEModel& KDEModel::operator=(KDEModel other)
   absError = other.absError;
   kernelType = other.kernelType;
   treeType = other.treeType;
+  monteCarlo = other.monteCarlo;
+  mcProb = other.mcProb;
+  initialSampleSize = other.initialSampleSize;
+  mcEntryCoef = other.mcEntryCoef;
+  mcBreakCoef = other.mcBreakCoef;
   kdeModel = std::move(other.kdeModel);
   return *this;
 }
@@ -214,6 +244,26 @@ inline void KDEModel::BuildModel(arma::mat&& referenceSet)
         (relError, absError, kernel::TriangularKernel(bandwidth));
   }
 
+  // Set whether to use Monte Carlo estimations or not.
+  MonteCarloVisitor MCVisitor(monteCarlo);
+  boost::apply_visitor(MCVisitor, kdeModel);
+
+  // Set Monte Carlo probability.
+  MCProbabilityVisitor probabilityVisitor(mcProb);
+  boost::apply_visitor(probabilityVisitor, kdeModel);
+
+  // Set Monte Carlo initial sample size.
+  MCSampleSizeVisitor sampleSizeVisitor(initialSampleSize);
+  boost::apply_visitor(sampleSizeVisitor, kdeModel);
+
+  // Set Monte Carlo entry coefficient.
+  MCEntryCoefVisitor entryCoefficientVisitor(mcEntryCoef);
+  boost::apply_visitor(entryCoefficientVisitor, kdeModel);
+
+  // Set Monte Carlo break coefficient.
+  MCBreakCoefVisitor breakCoefficientVisitor(mcBreakCoef);
+  boost::apply_visitor(breakCoefficientVisitor, kdeModel);
+
   // Train the model.
   TrainVisitor train(std::move(referenceSet));
   boost::apply_visitor(train, kdeModel);
@@ -313,6 +363,150 @@ void TrainVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
     throw std::runtime_error("no KDE model initialized");
 }
 
+// Modify kernel bandwidth.
+BandwidthVisitor::BandwidthVisitor(const double bandwidth) :
+    bandwidth(bandwidth)
+{}
+
+// Default modify kernel bandwidth.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void BandwidthVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->Kernel() = KernelType(bandwidth);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Modify relative error tolerance.
+RelErrorVisitor::RelErrorVisitor(const double relError) :
+    relError(relError)
+{}
+
+// Default modify relative error tolerance.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void RelErrorVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->RelativeError(relError);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Modify absolute error tolerance.
+AbsErrorVisitor::AbsErrorVisitor(const double absError) :
+    absError(absError)
+{}
+
+// Default modify absolute error tolerance.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void AbsErrorVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->AbsoluteError(absError);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Activate or deactivate Monte Carlo.
+MonteCarloVisitor::MonteCarloVisitor(const bool monteCarlo) :
+    monteCarlo(monteCarlo)
+{}
+
+// Default activate or deactivate Monte Carlo.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void MonteCarloVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->MonteCarlo() = monteCarlo;
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Set Monte Carlo probability.
+MCProbabilityVisitor::MCProbabilityVisitor(const double probability) :
+    probability(probability)
+{}
+
+// Default probability for Monte Carlo.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void MCProbabilityVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->MCProb(probability);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Set Monte Carlo sample size.
+MCSampleSizeVisitor::MCSampleSizeVisitor(const size_t sampleSize) :
+    sampleSize(sampleSize)
+{}
+
+// Default sample size for Monte Carlo.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void MCSampleSizeVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->MCInitialSampleSize() = sampleSize;
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Set Monte Carlo entry coefficient.
+MCEntryCoefVisitor::MCEntryCoefVisitor(const double entryCoef) :
+    entryCoef(entryCoef)
+{}
+
+// Default entry coefficient for Monte Carlo.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void MCEntryCoefVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->MCEntryCoef(entryCoef);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
+// Set Monte Carlo break coefficient.
+MCBreakCoefVisitor::MCBreakCoefVisitor(const double breakCoef) :
+    breakCoef(breakCoef)
+{}
+
+// Default break coefficient for Monte Carlo.
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void MCBreakCoefVisitor::operator()(KDEType<KernelType, TreeType>* kde) const
+{
+  if (kde)
+    kde->MCBreakCoef(breakCoef);
+  else
+    throw std::runtime_error("no KDE model initialized");
+}
+
 // Delete model.
 template<typename KDEType>
 void DeleteVisitor::operator()(KDEType* kde) const
@@ -345,7 +539,7 @@ KDEMode& KDEModel::Mode()
 
 // Serialize the model.
 template<typename Archive>
-void KDEModel::serialize(Archive& ar, const unsigned int /* version */)
+void KDEModel::serialize(Archive& ar, const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_NVP(bandwidth);
   ar & BOOST_SERIALIZATION_NVP(relError);
@@ -353,10 +547,93 @@ void KDEModel::serialize(Archive& ar, const unsigned int /* version */)
   ar & BOOST_SERIALIZATION_NVP(kernelType);
   ar & BOOST_SERIALIZATION_NVP(treeType);
 
+  // Backward compatibility: Old versions of KDEModel did not need to handle
+  // Monte Carlo parameters.
+  if (version > 0)
+  {
+    ar & BOOST_SERIALIZATION_NVP(monteCarlo);
+    ar & BOOST_SERIALIZATION_NVP(mcProb);
+    ar & BOOST_SERIALIZATION_NVP(initialSampleSize);
+    ar & BOOST_SERIALIZATION_NVP(mcEntryCoef);
+    ar & BOOST_SERIALIZATION_NVP(mcBreakCoef);
+  }
+  else if (Archive::is_loading::value)
+  {
+    monteCarlo = KDEDefaultParams::monteCarlo;
+    mcProb = KDEDefaultParams::mcProb;
+    initialSampleSize = KDEDefaultParams::initialSampleSize;
+    mcEntryCoef = KDEDefaultParams::mcEntryCoef;
+    mcBreakCoef = KDEDefaultParams::mcBreakCoef;
+  }
+
   if (Archive::is_loading::value)
     boost::apply_visitor(DeleteVisitor(), kdeModel);
 
   ar & BOOST_SERIALIZATION_NVP(kdeModel);
+}
+
+// Modify model kernel bandwidth.
+void KDEModel::Bandwidth(const double newBandwidth)
+{
+  bandwidth = newBandwidth;
+  BandwidthVisitor bandwidthVisitor(newBandwidth);
+  boost::apply_visitor(bandwidthVisitor, kdeModel);
+}
+
+// Modify model relative error tolerance.
+void KDEModel::RelativeError(const double newRelError)
+{
+  relError = newRelError;
+  RelErrorVisitor relErrorVisitor(newRelError);
+  boost::apply_visitor(relErrorVisitor, kdeModel);
+}
+
+// Modify model absolute error tolerance.
+void KDEModel::AbsoluteError(const double newAbsError)
+{
+  absError = newAbsError;
+  AbsErrorVisitor absErrorVisitor(newAbsError);
+  boost::apply_visitor(absErrorVisitor, kdeModel);
+}
+
+// Modify whether Monte Carlo estimations will be used.
+void KDEModel::MonteCarlo(const bool newMonteCarlo)
+{
+  monteCarlo = newMonteCarlo;
+  MonteCarloVisitor monteCarloVisitor(newMonteCarlo);
+  boost::apply_visitor(monteCarloVisitor, kdeModel);
+}
+
+// Modify model Monte Carlo probability.
+void KDEModel::MCProbability(const double newMCProb)
+{
+  mcProb = newMCProb;
+  MCProbabilityVisitor mcProbVisitor(newMCProb);
+  boost::apply_visitor(mcProbVisitor, kdeModel);
+}
+
+// Modify model Monte Carlo initial sample size.
+void KDEModel::MCInitialSampleSize(const size_t newSampleSize)
+{
+  initialSampleSize = newSampleSize;
+  MCSampleSizeVisitor mcSampleSizeVisitor(newSampleSize);
+  boost::apply_visitor(mcSampleSizeVisitor, kdeModel);
+}
+
+// Modify model Monte Carlo entry coefficient.
+void KDEModel::MCEntryCoefficient(const double newEntryCoef)
+{
+  mcEntryCoef = newEntryCoef;
+  MCEntryCoefVisitor mcEntryCoefVisitor(newEntryCoef);
+  boost::apply_visitor(mcEntryCoefVisitor, kdeModel);
+}
+
+// Modify model Monte Carlo break coefficient.
+void KDEModel::MCBreakCoefficient(const double newBreakCoef)
+{
+  mcBreakCoef = newBreakCoef;
+  MCBreakCoefVisitor mcBreakCoefVisitor(newBreakCoef);
+  boost::apply_visitor(mcBreakCoefVisitor, kdeModel);
 }
 
 } // namespace kde

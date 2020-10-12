@@ -1,5 +1,5 @@
 /**
- * @file loss_visitor.hpp
+ * @file methods/ann/visitor/loss_visitor.hpp
  * @author Atharva Khandait
  *
  * This file provides an abstraction for the Loss() function for different
@@ -29,6 +29,8 @@ class LossVisitor : public boost::static_visitor<double>
   //! Return the Loss.
   template<typename LayerType>
   double operator()(LayerType* layer) const;
+
+  double operator()(MoreTypes layer) const;
 
  private:
   //! Return 0 if the module doesn't implement the Loss() or Model() function.

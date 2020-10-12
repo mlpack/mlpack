@@ -1,5 +1,5 @@
 /**
- * @file flexible_relu.hpp
+ * @file methods/ann/layer/flexible_relu.hpp
  * @author Aarush Gupta
  * @author Manthan-R-Sheth
  *
@@ -84,7 +84,7 @@ class FlexibleReLU
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -96,7 +96,7 @@ class FlexibleReLU
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& gy, DataType&& g);
+  void Backward(const DataType& input, const DataType& gy, DataType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -106,9 +106,9 @@ class FlexibleReLU
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return alpha; }

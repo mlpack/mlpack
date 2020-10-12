@@ -1,5 +1,5 @@
 /**
- * @file naive_bayes_classifier_impl.hpp
+ * @file methods/naive_bayes/naive_bayes_classifier_impl.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Vahab Akbarzadeh (v.akbarzadeh@gmail.com)
  * @author Shihao Jing (shihao.jing810@gmail.com)
@@ -31,8 +31,10 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const bool incremental) :
-    trainingPoints(0) // Set when we call Train().
+    const bool incremental,
+    const double epsilon) :
+    trainingPoints(0), // Set when we call Train().
+    epsilon(epsilon)
 {
   static_assert(std::is_same<ElemType, typename MatType::elem_type>::value,
       "NaiveBayesClassifier: element type of given data must match the element "
@@ -60,8 +62,10 @@ NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
 template<typename ModelMatType>
 NaiveBayesClassifier<ModelMatType>::NaiveBayesClassifier(
     const size_t dimensionality,
-    const size_t numClasses) :
-    trainingPoints(0)
+    const size_t numClasses,
+    const double epsilon) :
+    trainingPoints(0),
+    epsilon(epsilon)
 {
   // Initialize model to 0.
   probabilities.zeros(numClasses);
@@ -164,10 +168,8 @@ void NaiveBayesClassifier<ModelMatType>::Train(
         variances.col(i) /= (probabilities[i] - 1);
   }
 
-  // Ensure that the variances are invertible.
-  for (size_t i = 0; i < variances.n_elem; ++i)
-    if (variances[i] == 0.0)
-      variances[i] = 1e-50;
+  // Add epsilon to prevent log of zero.
+  variances += epsilon;
 
   probabilities /= data.n_cols;
   trainingPoints += data.n_cols;
@@ -215,7 +217,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
   // means.n_cols.
 
   // Loop over every class.
-  for (size_t i = 0; i < means.n_cols; i++)
+  for (size_t i = 0; i < means.n_cols; ++i)
   {
     // This is an adaptation of gmm::phi() for the case where the covariance is
     // a diagonal matrix.
@@ -224,7 +226,7 @@ void NaiveBayesClassifier<ModelMatType>::LogLikelihood(
     arma::Mat<ElemType> exponents = arma::sum(diffs % rhs, 0);
 
     logLikelihoods.row(i) += (data.n_rows / -2.0 * log(2 * M_PI) - 0.5 *
-        std::log(arma::det(arma::diagmat(variances.col(i)))) + exponents);
+        arma::accu(arma::log(variances.col(i))) + exponents);
   }
 }
 
@@ -266,13 +268,17 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   // term.
   ModelMatType logLikelihoods;
   LogLikelihood(point, logLikelihoods);
-  const double logProbX = log(arma::accu(exp(logLikelihoods))); // Log(Prob(X)).
-  logLikelihoods -= logProbX;
+
+  // To prevent underflow in log of sum of exp of x operation (where x is a
+  // small negative value), we use logsumexp(x - max(x)) + max(x).
+  const double maxValue = arma::max(logLikelihoods);
+  const double logProbX = log(arma::accu(exp(logLikelihoods - maxValue))) +
+      maxValue;
+  probabilities = exp(logLikelihoods - logProbX); // log(exp(value)) == value.
 
   arma::uword maxIndex = 0;
   logLikelihoods.max(maxIndex);
   prediction = (size_t) maxIndex;
-  probabilities = exp(logLikelihoods); // log(exp(value)) == value.
 }
 
 template<typename ModelMatType>
@@ -318,15 +324,19 @@ void NaiveBayesClassifier<ModelMatType>::Classify(
   ModelMatType logLikelihoods;
   LogLikelihood(data, logLikelihoods);
 
-  // This will hold log(Prob(X)) for each point.
-  arma::Col<ElemType> logProbX(data.n_cols);
+  predictionProbs.set_size(arma::size(logLikelihoods));
+  double maxValue, logProbX;
   for (size_t j = 0; j < data.n_cols; ++j)
   {
-    logProbX(j) = log(arma::accu(exp(logLikelihoods.col(j))));
-    logLikelihoods.col(j) -= logProbX(j);
+    // The LogLikelihood() gives us the unnormalized log likelihood which is
+    // Log(Prob(X|Y)) + Log(Prob(Y)), so we subtract the normalization term.
+    // Besides, to prevent underflow in log of sum of exp of x operation (where
+    // x is a small negative value), we use logsumexp(x - max(x)) + max(x).
+    maxValue = arma::max(logLikelihoods.col(j));
+    logProbX = log(arma::accu(exp(logLikelihoods.col(j) -
+        maxValue))) + maxValue;
+    predictionProbs.col(j) = arma::exp(logLikelihoods.col(j) - logProbX);
   }
-
-  predictionProbs = arma::exp(logLikelihoods);
 
   // Now calculate maximum probabilities for each point.
   for (size_t i = 0; i < data.n_cols; ++i)

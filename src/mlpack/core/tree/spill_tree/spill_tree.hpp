@@ -1,5 +1,5 @@
 /**
- * @file spill_tree.hpp
+ * @file core/tree/spill_tree/spill_tree.hpp
  *
  * Definition of generalized hybrid spill tree (SpillTree).
  *
@@ -90,8 +90,8 @@ class SpillTree
   //! The number of points of the dataset contained in this node (and its
   //! children).
   size_t count;
-  //! The list of indexes of points contained in this node (non-null for
-  //! leaf nodes).
+  //! The list of indexes of points contained in this node (non-NULL if the node
+  //! is a leaf or if overlappingNode is true).
   arma::Col<size_t>* pointsIndex;
   //! Flag to distinguish overlapping nodes from non-overlapping nodes.
   bool overlappingNode;
@@ -208,6 +208,20 @@ class SpillTree
    * @param other tree to be moved.
    */
   SpillTree(SpillTree&& other);
+
+   /**
+   * Copy the given Spill Tree.
+   *
+   * @param other The tree to be copied.
+   */
+  SpillTree& operator=(const SpillTree& other);
+
+  /**
+   * Take ownership of the given Spill Tree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  SpillTree& operator=(SpillTree&& other);
 
   /**
    * Initialize the tree from a boost::serialization archive.

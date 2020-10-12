@@ -1,5 +1,5 @@
 /**
- * @file parametric_relu.hpp
+ * @file methods/ann/layer/parametric_relu.hpp
  * @author Prasanna Patil
  *
  * Definition of PReLU layer first introduced in the,
@@ -51,7 +51,7 @@ class PReLU
    * alpha in the range 0 to 1. Default (alpha = 0.03). This parameter
    * is trainable.
    *
-   * @param alpha Non zero gradient
+   * @param userAlpha Non zero gradient
    */
   PReLU(const double userAlpha = 0.03);
 
@@ -68,7 +68,7 @@ class PReLU
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -80,7 +80,7 @@ class PReLU
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& gy, DataType&& g);
+  void Backward(const DataType& input, const DataType& gy, DataType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -90,9 +90,9 @@ class PReLU
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return alpha; }
@@ -126,60 +126,6 @@ class PReLU
   void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  /**
-   * Computes the parametric ReLU function.
-   *
-   * @param x Input data.
-   * @return f(x).
-   */
-  double Fn(const double x)
-  {
-    return std::max(x, alpha(0) * x);
-  }
-
-  /**
-   * Computes the parametric ReLU function using a dense matrix as input.
-   *
-   * @param x Input data.
-   * @param y The resulting output activation.
-   */
-  template<typename eT>
-  void Fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
-  {
-    y = x;
-    arma::uvec negative = arma::find(x < 0);
-    y(negative) = x(negative) * alpha(0);
-  }
-
-  /**
-   * Computes the first derivative of the parametric ReLU function.
-   *
-   * @param x Input data.
-   * @return f'(x)
-   */
-  double Deriv(const double x)
-  {
-    return (x >= 0) ? 1 : alpha(0);
-  }
-
-  /**
-   * Computes the first derivative of the PReLU function.
-   *
-   * @param x Input activations.
-   * @param y The resulting derivatives.
-   */
-
-  template<typename InputType, typename OutputType>
-  void Deriv(const InputType& x, OutputType& y)
-  {
-    y.set_size(arma::size(x));
-
-    for (size_t i = 0; i < x.n_elem; i++)
-    {
-      y(i) = Deriv(x(i));
-    }
-  }
-
   //! Locally-stored delta object.
   OutputDataType delta;
 

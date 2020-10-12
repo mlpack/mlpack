@@ -1,5 +1,5 @@
 /**
- * @file loss_visitor_impl.hpp
+ * @file methods/ann/visitor/loss_visitor_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the Loss() function layer abstraction.
@@ -23,6 +23,11 @@ template<typename LayerType>
 inline double LossVisitor::operator()(LayerType* layer) const
 {
   return LayerLoss(layer);
+}
+
+inline double LossVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
 }
 
 template<typename T>

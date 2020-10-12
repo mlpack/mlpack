@@ -1,5 +1,5 @@
 /**
- * @file dropout_impl.hpp
+ * @file methods/ann/layer/dropout_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Dropout class, which implements a regularizer that
@@ -32,8 +32,8 @@ Dropout<InputDataType, OutputDataType>::Dropout(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dropout<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input,
-    arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input,
+    arma::Mat<eT>& output)
 {
   // The dropout mask will not be multiplied in the deterministic mode
   // (during testing).
@@ -54,9 +54,9 @@ void Dropout<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dropout<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   g = gy % mask * scale;
 }

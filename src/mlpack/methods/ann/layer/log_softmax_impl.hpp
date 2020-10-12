@@ -1,5 +1,5 @@
 /**
- * @file log_softmax_impl.hpp
+ * @file methods/ann/layer/log_softmax_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the LogSoftmax class.
@@ -27,7 +27,7 @@ LogSoftMax<InputDataType, OutputDataType>::LogSoftMax()
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void LogSoftMax<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   arma::mat maxInput = arma::repmat(arma::max(input), input.n_rows, 1);
   output = (maxInput - input);
@@ -64,9 +64,9 @@ void LogSoftMax<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void LogSoftMax<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& input,
-    arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   g = arma::exp(input) + gy;
 }

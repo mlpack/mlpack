@@ -1,5 +1,5 @@
 /**
- * @file linear_regression.hpp
+ * @file methods/linear_regression/linear_regression.hpp
  * @author James Cline
  * @author Michael Fox
  *

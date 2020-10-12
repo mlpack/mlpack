@@ -10,6 +10,8 @@ set(SOURCES
   log_add.hpp
   log_add_impl.hpp
   make_alias.hpp
+  multiply_slices_impl.hpp
+  multiply_slices.hpp
   random.hpp
   random.cpp
   random_basis.hpp
@@ -18,6 +20,8 @@ set(SOURCES
   range_impl.hpp
   round.hpp
   shuffle_data.hpp
+  ccov.hpp
+  ccov_impl.hpp
 )
 
 # add directory name to sources

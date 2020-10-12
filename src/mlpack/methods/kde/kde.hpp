@@ -1,5 +1,5 @@
 /**
- * @file kde.hpp
+ * @file methods/kde/kde.hpp
  * @author Roberto Hueso
  *
  * Kernel Density Estimation.
@@ -26,6 +26,35 @@ enum KDEMode
 {
   DUAL_TREE_MODE,
   SINGLE_TREE_MODE
+};
+
+//! KDEDefaultParams contains the default input parameter values for KDE.
+struct KDEDefaultParams
+{
+  //! Relative error tolerance.
+  static constexpr double relError = 0.05;
+
+  //! Absolute error tolerance.
+  static constexpr double absError = 0;
+
+  //! KDE algorithm mode.
+  static constexpr KDEMode mode = KDEMode::DUAL_TREE_MODE;
+
+  //! Whether to use Monte Carlo estimations when possible.
+  static constexpr bool monteCarlo = false;
+
+  //! Probability of a Monte Carlo estimation to be bounded by the relative
+  //! error tolerance.
+  static constexpr double mcProb = 0.95;
+
+  //! Initial sample size for Monte Carlo estimations.
+  static constexpr size_t initialSampleSize = 100;
+
+  //! Monte Carlo entry coefficient.
+  static constexpr double mcEntryCoef = 3;
+
+  //! Monte Carlo break coefficient.
+  static constexpr double mcBreakCoef = 0.4;
 };
 
 /**
@@ -70,12 +99,28 @@ class KDE
    * @param kernel Instantiated kernel object.
    * @param mode Mode for the algorithm.
    * @param metric Instantiated metric object.
+   * @param monteCarlo Whether to use Monte Carlo estimations when possible.
+   * @param mcProb Probability of a Monte Carlo estimation to be bounded by
+   *               relative error tolerance.
+   * @param initialSampleSize Initial sample size for Monte Carlo estimations.
+   * @param mcEntryCoef Coefficient to control how much larger does the amount
+   *                    of node descendants has to be compared to the initial
+   *                    sample size in order for it to be a candidate for Monte
+   *                    Carlo estimations.
+   * @param mcBreakCoef Coefficient to control what fraction of the node's
+   *                    descendants evaluated is the limit before Monte Carlo
+   *                    estimation recurses.
    */
-  KDE(const double relError = 0.05,
-      const double absError = 0,
+  KDE(const double relError = KDEDefaultParams::relError,
+      const double absError = KDEDefaultParams::absError,
       KernelType kernel = KernelType(),
-      const KDEMode mode = DUAL_TREE_MODE,
-      MetricType metric = MetricType());
+      const KDEMode mode = KDEDefaultParams::mode,
+      MetricType metric = MetricType(),
+      const bool monteCarlo = KDEDefaultParams::monteCarlo,
+      const double mcProb = KDEDefaultParams::mcProb,
+      const size_t initialSampleSize = KDEDefaultParams::initialSampleSize,
+      const double mcEntryCoef = KDEDefaultParams::mcEntryCoef,
+      const double mcBreakCoef = KDEDefaultParams::mcBreakCoef);
 
   /**
    * Construct KDE object as a copy of the given model. This may be
@@ -214,9 +259,40 @@ class KDE
   //! Modify the mode of KDE.
   KDEMode& Mode() { return mode; }
 
+  //! Get whether Monte Carlo estimations are being used or not.
+  bool MonteCarlo() const { return monteCarlo; }
+
+  //! Modify whether Monte Carlo estimations are being used or not.
+  bool& MonteCarlo() { return monteCarlo; }
+
+  //! Get Monte Carlo probability of error being bounded by relative error.
+  double MCProb() const { return mcProb; }
+
+  //! Modify Monte Carlo probability of error being bounded by relative error.
+  //! (0 <= newProb < 1).
+  void MCProb(const double newProb);
+
+  //! Get Monte Carlo initial sample size.
+  size_t MCInitialSampleSize() const { return initialSampleSize; }
+
+  //! Modify Monte Carlo initial sample size.
+  size_t& MCInitialSampleSize() { return initialSampleSize; }
+
+  //! Get Monte Carlo entry coefficient.
+  double MCEntryCoef() const { return mcEntryCoef; }
+
+  //! Modify Monte Carlo entry coefficient. (newCoef >= 1).
+  void MCEntryCoef(const double newCoef);
+
+  //! Get Monte Carlo break coefficient.
+  double MCBreakCoef() const { return mcBreakCoef; }
+
+  //! Modify Monte Carlo break coefficient. (0 < newCoef <= 1).
+  void MCBreakCoef(const double newCoef);
+
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int version);
 
  private:
   //! Kernel.
@@ -246,6 +322,25 @@ class KDE
   //! Mode of the KDE algorithm.
   KDEMode mode;
 
+  //! If true Monte Carlo approximations will be used when possible.
+  bool monteCarlo;
+
+  //! Probability of error being bounded by relError when Monte Carlo is used.
+  double mcProb;
+
+  //! Size of the initial sample for Monte Carlo approximations.
+  size_t initialSampleSize;
+
+  //! Coefficient to control how much larger does the amount of node descendants
+  //! has to be compared to the initial sample size in order to be a candidate
+  //! for Monte Carlo estimations. If the evaluation results in a non-natural
+  //! number, then the floor function will be applied.
+  double mcEntryCoef;
+
+  //! Coefficient to control what fraction of the amount of node's descendants
+  //! is the limit before Monte Carlo estimation recurses.
+  double mcBreakCoef;
+
   //! Check whether absolute and relative error values are compatible.
   static void CheckErrorValues(const double relError, const double absError);
 
@@ -256,6 +351,41 @@ class KDE
 
 } // namespace kde
 } // namespace mlpack
+
+//! Set the serialization version of the KDE class.
+/* TODO FIX
+Cannot use BOOST_TEMPLATE_CLASS_VERSION because of the problem stated in
+https://stackoverflow.com/questions/8942912/how-to-pass-multi-argument-templates
+-to-macros
+*/
+
+namespace boost {
+namespace serialization{
+
+template<typename KernelType,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename RuleType> class DualTreeTraversalType,
+         template<typename RuleType> class SingleTreeTraversalType>
+struct version<mlpack::kde::KDE<KernelType,
+                                MetricType,
+                                MatType,
+                                TreeType,
+                                DualTreeTraversalType,
+                                SingleTreeTraversalType>>
+{
+  typedef mpl::int_<1> type;
+  typedef mpl::integral_c_tag tag;
+  BOOST_STATIC_CONSTANT(int, value = version::type::value);
+  BOOST_MPL_ASSERT((boost::mpl::less<boost::mpl::int_<1>,
+                    boost::mpl::int_<256>>));
+};
+
+} // namespace serialization.
+} // namespace boost.
 
 // Include implementation.
 #include "kde_impl.hpp"

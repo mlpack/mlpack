@@ -1,5 +1,5 @@
 /**
- * @file random_forest_test.cpp
+ * @file tests/main_tests/random_forest_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of random_forest_main.cpp.
@@ -18,8 +18,8 @@ static const std::string testName = "RandomForest";
 #include <mlpack/methods/random_forest/random_forest_main.cpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -29,36 +29,35 @@ struct RandomForestTestFixture
   RandomForestTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~RandomForestTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
-
-BOOST_FIXTURE_TEST_SUITE(RandomForestMainTest, RandomForestTestFixture);
 
 /**
  * Check that number of output points and number of input
  * points are equal and have appropriate number of classes.
  */
-BOOST_AUTO_TEST_CASE(RandomForestOutputDimensionTest)
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestOutputDimensionTest",
+                 "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
@@ -72,34 +71,32 @@ BOOST_AUTO_TEST_CASE(RandomForestOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
-                      1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 3);
 }
 
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(RandomForestModelReuseTest)
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestModelReuseTest",
+                 "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
@@ -114,90 +111,111 @@ BOOST_AUTO_TEST_CASE(RandomForestModelReuseTest)
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
-  probabilities = std::move(CLI::GetParam<arma::mat>("probabilities"));
+  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(IO::GetParam<arma::mat>("probabilities"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                CLI::GetParam<RandomForestModel*>("output_model"));
+                IO::GetParam<RandomForestModel*>("output_model"));
 
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predicitions.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Row<size_t>>("predictions").n_rows,
-                      1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("probabilities").n_rows, 3);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 3);
 
   // Check that initial predictions and predictions using saved model are same.
-  CheckMatrices(predictions, CLI::GetParam<arma::Row<size_t>>("predictions"));
-  CheckMatrices(probabilities, CLI::GetParam<arma::mat>("probabilities"));
+  CheckMatrices(predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
+  CheckMatrices(probabilities, IO::GetParam<arma::mat>("probabilities"));
 }
 
 /**
  * Make sure number of trees specified is always a positive number.
  */
-BOOST_AUTO_TEST_CASE(RandomForestNumOfTreesTest)
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestNumOfTreesTest",
+                 "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   SetInputParam("num_trees", (int) 0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Make sure minimum leaf size specified is always a positive number.
  */
-BOOST_AUTO_TEST_CASE(RandomForestMinimumLeafSizeTest)
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMinimumLeafSizeTest",
+                 "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   SetInputParam("minimum_leaf_size", (int) 0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Make sure maximum depth specified is always a positive number.
+ */
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMaximumDepthTest",
+                 "[RandomForestMainTest][BindingTests]")
+{
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt");
+
+  SetInputParam("maximum_depth", (int) -1); // Invalid.
+
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Make sure only one of training data or pre-trained model is passed.
  */
-BOOST_AUTO_TEST_CASE(RandomForestTrainingVerTest)
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingVerTest",
+                 "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
@@ -207,26 +225,44 @@ BOOST_AUTO_TEST_CASE(RandomForestTrainingVerTest)
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                CLI::GetParam<RandomForestModel*>("output_model"));
+                IO::GetParam<RandomForestModel*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
+template<typename TreeType>
+inline bool CheckDifferentTrees(const TreeType& nodeA, const TreeType& nodeB)
+{
+  if (nodeA.SplitDimension() != nodeB.SplitDimension())
+    return true;
+
+  if (nodeA.NumChildren() != nodeB.NumChildren())
+    return true;
+
+  for (size_t i = 0; i < nodeA.NumChildren(); ++i)
+    if (CheckDifferentTrees(nodeA.Child(i), nodeB.Child(i)))
+      return true;
+
+  return false;
+}
+
 /**
- * Ensure that training accuracy goes up as minimum_leaf_size decreases.
+ * Ensure that the trees have different structure as the minimum leaf size is
+ * changed.
  */
-BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMinLeafSizeTest",
+                 "[RandomForestMainTest][BindingTests]")
 {
   // Train for minimum leaf size 20.
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   // Input training data.
   SetInputParam("training", inputData);
@@ -236,12 +272,9 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
   mlpackMain();
 
   // Calculate training accuracy.
-  arma::Row<size_t> predictions;
-  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(inputData,
-       predictions);
-
-  size_t correct = arma::accu(predictions == labels);
-  double accuracy20 = (double(correct) / double(labels.n_elem) * 100);
+  RandomForestModel* rf1 =
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
 
   bindings::tests::CleanMemory();
 
@@ -254,12 +287,9 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
 
   mlpackMain();
 
-  // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(inputData,
-       predictions);
-
-  correct = arma::accu(predictions == labels);
-  double accuracy10 = (double(correct) / double(labels.n_elem) * 100);
+  RandomForestModel* rf2 =
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
 
   bindings::tests::CleanMemory();
 
@@ -272,53 +302,58 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffMinLeafSizeTest)
 
   mlpackMain();
 
-  // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(inputData,
-       predictions);
+  RandomForestModel* rf3 =
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
 
-  correct = arma::accu(predictions == labels);
-  double accuracy1 = (double(correct) / double(labels.n_elem) * 100);
+  // Check that each tree is different.
+  for (size_t i = 0; i < rf1->rf.NumTrees(); ++i)
+  {
+    REQUIRE(CheckDifferentTrees(rf1->rf.Tree(i), rf2->rf.Tree(i)));
+    REQUIRE(CheckDifferentTrees(rf1->rf.Tree(i), rf3->rf.Tree(i)));
+  }
 
-  BOOST_REQUIRE(accuracy1 > accuracy10 && accuracy10 > accuracy20);
+  delete rf1;
+  delete rf2;
+  delete rf3;
 }
 
 /**
- * Ensure that test accuracy goes up as num_trees increases.
+ * Ensure that the number of trees are different when num_trees is specified
+ * differently.
  */
-BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffNumTreeTest",
+                 "[RandomForestMainTest][BindingTests]")
 {
   // Train for num_trees 1.
   arma::mat inputData;
   if (!data::Load("vc2.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset vc2_test.csv!");
+    FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Row<size_t> testLabels;
   if (!data::Load("vc2_test_labels.txt", testLabels))
-    BOOST_FAIL("Cannot load labels for vc2__test_labels.txt");
+    FAIL("Cannot load labels for vc2__test_labels.txt");
 
   // Input training data.
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
   SetInputParam("num_trees", (int) 1);
+  SetInputParam("minimum_leaf_size", (int) 1);
 
   mlpackMain();
 
-  // Calculate training accuracy.
-  arma::Row<size_t> predictions;
-  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(testData,
-       predictions);
-  bindings::tests::CleanMemory();
+  const size_t numTrees1 =
+      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
 
-  size_t correct = arma::accu(predictions == testLabels);
-  double accuracy1 = (double(correct) / double(testLabels.n_elem) * 100);
+  bindings::tests::CleanMemory();
 
   // Train for num_trees 5.
 
@@ -326,34 +361,95 @@ BOOST_AUTO_TEST_CASE(RandomForestDiffNumTreeTest)
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
   SetInputParam("num_trees", (int) 5);
+  SetInputParam("minimum_leaf_size", (int) 1);
 
   mlpackMain();
 
-  // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(testData,
-       predictions);
-  bindings::tests::CleanMemory();
+  const size_t numTrees2 =
+      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
 
-  correct = arma::accu(predictions == testLabels);
-  double accuracy5 = (double(correct) / double(testLabels.n_elem) * 100);
+  bindings::tests::CleanMemory();
 
   // Train for num_trees 10.
 
   // Input training data.
-  SetInputParam("training", std::move(inputData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
   SetInputParam("num_trees", (int) 10);
+  SetInputParam("minimum_leaf_size", (int) 1);
+
+  mlpackMain();
+
+  const size_t numTrees3 =
+      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
+
+  REQUIRE(numTrees1 != numTrees2);
+  REQUIRE(numTrees2 != numTrees3);
+}
+
+/**
+ * Ensure that the maximum_depth parameter makes a difference.
+ */
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMaxDepthTest",
+                 "[RandomForestMainTest][BindingTests]")
+{
+  // Train for minimum leaf size 20.
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Input training data.
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
+  SetInputParam("maximum_depth", (int) 1);
 
   mlpackMain();
 
   // Calculate training accuracy.
-  CLI::GetParam<RandomForestModel*>("output_model")->rf.Classify(testData,
-       predictions);
+  RandomForestModel* rf1 =
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
 
-  correct = arma::accu(predictions == testLabels);
-  double accuracy10 = (double(correct) / double(testLabels.n_elem) * 100);
+  bindings::tests::CleanMemory();
 
-  BOOST_REQUIRE(accuracy10 >= accuracy5 && accuracy5 >= accuracy1);
+  // Input training data.
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
+  SetInputParam("maximum_depth", (int) 2);
+
+  mlpackMain();
+
+  RandomForestModel* rf2 =
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
+
+  bindings::tests::CleanMemory();
+
+  // Train for minimum leaf size 1.
+
+  // Input training data.
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
+  SetInputParam("maximum_depth", (int) 3);
+
+  mlpackMain();
+
+  RandomForestModel* rf3 =
+      std::move(IO::GetParam<RandomForestModel*>("output_model"));
+  IO::GetParam<RandomForestModel*>("output_model") = NULL;
+
+  // Check that each tree is different.
+  for (size_t i = 0; i < rf1->rf.NumTrees(); ++i)
+  {
+    REQUIRE(CheckDifferentTrees(rf1->rf.Tree(i), rf2->rf.Tree(i)));
+    REQUIRE(CheckDifferentTrees(rf1->rf.Tree(i), rf3->rf.Tree(i)));
+  }
+
+  delete rf1;
+  delete rf2;
+  delete rf3;
 }
-
-BOOST_AUTO_TEST_SUITE_END();

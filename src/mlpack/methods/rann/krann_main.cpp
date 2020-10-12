@@ -1,5 +1,5 @@
 /**
- * @file allkrann_main.cpp
+ * @file methods/rann/krann_main.cpp
  * @author Parikshit Ram
  *
  * Implementation of the kRANN executable.  Allows some number of standard
@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "ra_search.hpp"
@@ -28,21 +28,27 @@ using namespace mlpack::util;
 // Convenience typedef.
 typedef RAModel<NearestNeighborSort> RANNModel;
 
-// Information about the program itself.
-PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
-    // Short description.
+// Program Name.
+BINDING_NAME("K-Rank-Approximate-Nearest-Neighbors (kRANN)");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of rank-approximate k-nearest-neighbor search (kRANN) "
     " using single-tree and dual-tree algorithms.  Given a set of reference "
     "points and query points, this can find the k nearest neighbors in the "
     "reference set of each query point using trees; trees that are built can "
-    "be saved for future use.",
-    // Long description.
+    "be saved for future use.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program will calculate the k rank-approximate-nearest-neighbors of a "
     "set of points. You may specify a separate set of reference points and "
     "query points, or just a reference set which will be used as both the "
     "reference and query set. You must specify the rank approximation (in %) "
-    "(and optionally the success probability)."
-    "\n\n"
+    "(and optionally the success probability).");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following will return 5 neighbors from the top 0.1% of "
     "the data (with probability 0.95) for each point in " +
     PRINT_DATASET("input") + " and store the distances in " +
@@ -62,15 +68,17 @@ PROGRAM_INFO("K-Rank-Approximate-Nearest-Neighbors (kRANN)",
     "neighbors output file corresponds to the index of the point in the "
     "reference set which is the i'th nearest neighbor from the point in the "
     "query set with index j.  Row i and column j in the distances output file "
-    "corresponds to the distance between those two points.",
-    SEE_ALSO("@knn", "#knn"),
-    SEE_ALSO("@lsh", "#lsh"),
-    SEE_ALSO("Rank-approximate nearest neighbor search: Retaining meaning and "
-        "speed in high dimensions (pdf)", "https://papers.nips.cc/paper/3864-"
-        "rank-approximate-nearest-neighbor-search-retaining-meaning-and-speed-"
-        "in-high-dimensions.pdf"),
-    SEE_ALSO("mlpack::neighbor::RASearch C++ class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1RASearch.html"));
+    "corresponds to the distance between those two points.");
+
+// See also...
+BINDING_SEE_ALSO("@knn", "#knn");
+BINDING_SEE_ALSO("@lsh", "#lsh");
+BINDING_SEE_ALSO("Rank-approximate nearest neighbor search: Retaining meaning"
+        " and speed in high dimensions (pdf)", "https://papers.nips.cc/paper/"
+        "3864-rank-approximate-nearest-neighbor-search-retaining-meaning-and"
+        "-speed-in-high-dimensions.pdf");
+BINDING_SEE_ALSO("mlpack::neighbor::RASearch C++ class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1RASearch.html");
 
 // Define our input parameters that this program will take.
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
@@ -115,8 +123,8 @@ PARAM_INT_IN("single_sample_limit", "The limit on the maximum number of "
 
 static void mlpackMain()
 {
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
@@ -133,7 +141,7 @@ static void mlpackMain()
       "saved");
 
   // If the user specifies k but no output files, they should be warned.
-  if (CLI::HasParam("k"))
+  if (IO::HasParam("k"))
   {
     RequireAtLeastOnePassed({ "neighbors", "distances" }, false, "no nearest "
         "neighbor search results will be saved");
@@ -147,24 +155,34 @@ static void mlpackMain()
   ReportIgnoredParam({{ "naive", true }}, "single_mode");
 
   // Sanity check on leaf size.
-  const int lsInt = CLI::GetParam<int>("leaf_size");
+  const int lsInt = IO::GetParam<int>("leaf_size");
   RequireParamValue<int>("leaf_size", [](int x) { return x > 0; }, true,
       "leaf size must be greater than 0");
 
+  // Sanity check on tau.
+  RequireParamValue<double>("tau", [](double x) {
+      return (x >= 0.0 && x <=100.0); }, true,
+      "tau must be in range [0.0, 100.0]");
+
+  // Sanity check on alpha.
+  RequireParamValue<double>("alpha", [](double x) {
+      return (x >= 0.0 && x <=1.0); }, true,
+      "alpha must be in range [0.0, 1.0]");
+
   // We either have to load the reference data, or we have to load the model.
   RANNModel* rann;
-  const bool naive = CLI::HasParam("naive");
-  const bool singleMode = CLI::HasParam("single_mode");
-  if (CLI::HasParam("reference"))
+  const bool naive = IO::HasParam("naive");
+  const bool singleMode = IO::HasParam("single_mode");
+  if (IO::HasParam("reference"))
   {
     rann = new RANNModel();
 
     // Get all the parameters.
-    const string treeType = CLI::GetParam<string>("tree_type");
+    const string treeType = IO::GetParam<string>("tree_type");
     RequireParamInSet<string>("tree_type", { "kd", "cover", "r", "r-star", "x",
         "hilbert-r", "r-plus", "r-plus-plus", "ub", "oct" }, true,
         "unknown tree type");
-    const bool randomBasis = CLI::HasParam("random_basis");
+    const bool randomBasis = IO::HasParam("random_basis");
 
     RANNModel::TreeTypes tree = RANNModel::KD_TREE;
     if (treeType == "kd")
@@ -191,53 +209,56 @@ static void mlpackMain()
     rann->TreeType() = tree;
     rann->RandomBasis() = randomBasis;
 
-    arma::mat referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
-
-    Log::Info << "Using reference data from '"
-        << CLI::GetPrintableParam<arma::mat>("reference") << "' ("
-        << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
-        << endl;
+    Log::Info << "Using reference data from "
+        << IO::GetPrintableParam<arma::mat>("reference") << "." << endl;
+    arma::mat referenceSet = std::move(IO::GetParam<arma::mat>("reference"));
 
     rann->BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
   }
   else
   {
     // Load the model from file.
-    rann = CLI::GetParam<RANNModel*>("input_model");
+    rann = IO::GetParam<RANNModel*>("input_model");
 
     Log::Info << "Using rank-approximate kNN model from '"
-        << CLI::GetPrintableParam<RANNModel>("input_model") << "' (trained on "
+        << IO::GetPrintableParam<RANNModel*>("input_model") << "' (trained on "
         << rann->Dataset().n_rows << "x" << rann->Dataset().n_cols
         << " dataset)." << endl;
 
     // Adjust singleMode and naive if necessary.
-    rann->SingleMode() = CLI::HasParam("single_mode");
-    rann->Naive() = CLI::HasParam("naive");
+    rann->SingleMode() = IO::HasParam("single_mode");
+    rann->Naive() = IO::HasParam("naive");
     rann->LeafSize() = size_t(lsInt);
   }
 
   // Apply the parameters for search.
-  if (CLI::HasParam("tau"))
-    rann->Tau() = CLI::GetParam<double>("tau");
-  if (CLI::HasParam("alpha"))
-    rann->Alpha() = CLI::GetParam<double>("alpha");
-  if (CLI::HasParam("single_sample_limit"))
-    rann->SingleSampleLimit() = CLI::GetParam<double>("single_sample_limit");
-  rann->SampleAtLeaves() = CLI::HasParam("sample_at_leaves");
-  rann->FirstLeafExact() = CLI::HasParam("sample_at_leaves");
+  if (IO::HasParam("tau"))
+    rann->Tau() = IO::GetParam<double>("tau");
+  if (IO::HasParam("alpha"))
+    rann->Alpha() = IO::GetParam<double>("alpha");
+  if (IO::HasParam("single_sample_limit"))
+    rann->SingleSampleLimit() = IO::GetParam<int>("single_sample_limit");
+  rann->SampleAtLeaves() = IO::HasParam("sample_at_leaves");
+  rann->FirstLeafExact() = IO::HasParam("sample_at_leaves");
 
   // Perform search, if desired.
-  if (CLI::HasParam("k"))
+  if (IO::HasParam("k"))
   {
-    const size_t k = (size_t) CLI::GetParam<int>("k");
+    const size_t k = (size_t) IO::GetParam<int>("k");
 
     arma::mat queryData;
-    if (CLI::HasParam("query"))
+    if (IO::HasParam("query"))
     {
-      queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      queryData = std::move(IO::GetParam<arma::mat>("query"));
       Log::Info << "Using query data from '"
-          << CLI::GetPrintableParam<arma::mat>("query") << "' ("
+          << IO::GetPrintableParam<arma::mat>("query") << "' ("
           << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
+      if (queryData.n_rows != rann->Dataset().n_rows)
+      {
+        const size_t dimensions = rann->Dataset().n_rows;
+        Log::Fatal << "Query has invalid dimensions(" << queryData.n_rows <<
+            "); should be " << dimensions << "!" << endl;
+      }
     }
 
     // Sanity check on k value: must be greater than 0, must be less than the
@@ -252,17 +273,17 @@ static void mlpackMain()
 
     arma::Mat<size_t> neighbors;
     arma::mat distances;
-    if (CLI::HasParam("query"))
+    if (IO::HasParam("query"))
       rann->Search(std::move(queryData), k, neighbors, distances);
     else
       rann->Search(k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
     // Save output.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    IO::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    IO::GetParam<arma::mat>("distances") = std::move(distances);
   }
 
   // Save the output model.
-  CLI::GetParam<RANNModel*>("output_model") = rann;
+  IO::GetParam<RANNModel*>("output_model") = rann;
 }

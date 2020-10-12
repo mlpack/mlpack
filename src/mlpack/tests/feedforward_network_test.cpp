@@ -1,5 +1,5 @@
 /**
- * @file feedforward_network_test.cpp
+ * @file tests/feedforward_network_test.cpp
  * @author Marcus Edel
  * @author Palash Ahuja
  *
@@ -15,32 +15,164 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/kmeans/kmeans.hpp>
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
+#include "catch.hpp"
+#include "serialization_catch.hpp"
 #include "custom_layer.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
-
-BOOST_AUTO_TEST_SUITE(FeedForwardNetworkTest);
+using namespace mlpack::kmeans;
 
 /**
- * Train and evaluate a vanilla network with the specified structure.
+ * Train and evaluate a model with the specified structure.
  */
-template<typename MatType = arma::mat>
-void BuildVanillaNetwork(MatType& trainData,
-                         MatType& trainLabels,
-                         MatType& testData,
-                         MatType& testLabels,
-                         const size_t outputSize,
-                         const size_t hiddenLayerSize,
-                         const size_t maxEpochs,
-                         const double classificationErrorThreshold)
+template<typename MatType = arma::mat, typename ModelType>
+void TestNetwork(ModelType& model,
+                 MatType& trainData,
+                 MatType& trainLabels,
+                 MatType& testData,
+                 MatType& testLabels,
+                 const size_t maxEpochs,
+                 const double classificationErrorThreshold)
 {
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  model.Train(trainData, trainLabels, opt);
+
+  MatType predictionTemp;
+  model.Predict(testData, predictionTemp);
+  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
+
+  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  {
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+  }
+
+  size_t correct = arma::accu(prediction == testLabels);
+  double classificationError = 1 - double(correct) / testData.n_cols;
+  REQUIRE(classificationError <= classificationErrorThreshold);
+}
+
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::mat, typename ModelType>
+void CheckCopyFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  network1->Train(trainData, trainLabels, opt);
+
+  arma::mat predictions1;
+  network1->Predict(trainData, predictions1);
+  FFN<> network2;
+  network2 = *network1;
+  delete network1;
+
+  // Deallocating all of network1's memory, so that
+  // if network2 is trying to use any of that memory.
+  arma::mat predictions2;
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::mat, typename ModelType>
+void CheckMoveFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  network1->Train(trainData, trainLabels, opt);
+
+  arma::mat predictions1;
+  network1->Predict(trainData, predictions1);
+  FFN<> network2(std::move(*network1));
+  delete network1;
+
+  // Deallocating all of network1's memory, so that
+  // if network2 is trying to use any of that memory.
+  arma::mat predictions2;
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
+/**
+ * Check whether copying and moving Vanila network is working or not.
+ */
+TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Output
+   *  Layer         Layer         Layer
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |     +>|     |     +>|     |
+   * +-----+     | +--+--+     | +-----+
+   *             |             |
+   *  Bias       |  Bias       |
+   *  Layer      |  Layer      |
+   * +-----+     | +-----+     |
+   * |     |     | |     |     |
+   * |     +-----+ |     +-----+
+   * |     |       |     |
+   * +-----+       +-----+
+   */
+
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<Linear<> >(trainData.n_rows, 8);
+  model->Add<SigmoidLayer<> >();
+  model->Add<Linear<> >(8, 3);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  model1->Add<Linear<> >(trainData.n_rows, 8);
+  model1->Add<SigmoidLayer<> >();
+  model1->Add<Linear<> >(8, 3);
+  model1->Add<LogSoftMax<> >();
+
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model, trainData, trainLabels, 1);
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
+}
+
+/**
+ * Train the vanilla network on a larger dataset.
+ */
+TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
   /*
    * Construct a feed forward network with trainData.n_rows input nodes,
    * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
@@ -64,62 +196,15 @@ void BuildVanillaNetwork(MatType& trainData,
    */
 
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
+  model.Add<Linear<> >(trainData.n_rows, 8);
   model.Add<SigmoidLayer<> >();
-  model.Add<Linear<> >(hiddenLayerSize, outputSize);
+  model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  // RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
-  model.Train(trainData, trainLabels, opt);
-
-  MatType predictionTemp;
-  model.Predict(testData, predictionTemp);
-  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
-
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
-  {
-    prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
-  }
-
-  size_t error = 0;
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-    if (int(arma::as_scalar(prediction.col(i))) ==
-        int(arma::as_scalar(testLabels.col(i))))
-    {
-      error++;
-    }
-  }
-
-  double classificationError = 1 - double(error) / testData.n_cols;
-  BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
-}
-
-/**
- * Train the vanilla network on a larger dataset.
- */
-BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
-{
-  // Load the dataset.
-  arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
-
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
-  trainData.shed_row(trainData.n_rows - 1);
-
-  arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
-
-  arma::mat testLabels = testData.row(testData.n_rows - 1);
-  testData.shed_row(testData.n_rows - 1);
-
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
+  // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  BuildVanillaNetwork<>
-      (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
+  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -132,12 +217,16 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
   labels += 1;
 
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model1.Add<Linear<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
-  BuildVanillaNetwork<>
-      (dataset, labels, dataset, labels, 2, 10, 10, 0.2);
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
-BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
+TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
 {
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -158,7 +247,12 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
 
   ens::VanillaUpdate opt;
   model.ResetParameters();
+  #if ENS_VERSION_MAJOR == 1
   opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
+  #else
+  ens::VanillaUpdate::Policy<arma::mat, arma::mat> optPolicy(opt,
+      model.Parameters().n_rows, model.Parameters().n_cols);
+  #endif
   double stepSize = 0.01;
   size_t batchSize = 10;
 
@@ -177,8 +271,12 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
       arma::mat currentResuls;
       model.Forward(currentData, currentResuls);
       arma::mat gradients;
-      model.Backward(currentLabels, gradients);
+      model.Backward(currentData, currentLabels, gradients);
+      #if ENS_VERSION_MAJOR == 1
       opt.Update(model.Parameters(), stepSize, gradients);
+      #else
+      optPolicy.Update(model.Parameters(), stepSize, gradients);
+      #endif
       batchStart = batchEnd;
 
       arma::mat prediction = arma::zeros<arma::mat>(1, currentResuls.n_cols);
@@ -189,16 +287,7 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
             arma::max(currentResuls.col(i)) == currentResuls.col(i), 1)) + 1;
       }
 
-      size_t correct = 0;
-      for (size_t i = 0; i < currentLabels.n_cols; i++)
-      {
-        if (int(arma::as_scalar(prediction.col(i))) ==
-            int(arma::as_scalar(currentLabels.col(i))))
-        {
-          correct++;
-        }
-      }
-
+      size_t correct = arma::accu(prediction == currentLabels);
       error(1 - (double) correct / batchSize);
     }
     Log::Debug << "Current training error: " << error.mean() << std::endl;
@@ -210,22 +299,27 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTest)
     }
   }
 
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 /**
- * Train and evaluate a Dropout network with the specified structure.
+ * Train the dropout network on a larger dataset.
  */
-template<typename MatType = arma::mat>
-void BuildDropoutNetwork(MatType& trainData,
-                         MatType& trainLabels,
-                         MatType& testData,
-                         MatType& testLabels,
-                         const size_t outputSize,
-                         const size_t hiddenLayerSize,
-                         const size_t maxEpochs,
-                         const double classificationErrorThreshold)
+TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
 {
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
   /*
    * Construct a feed forward network with trainData.n_rows input nodes,
    * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
@@ -249,44 +343,70 @@ void BuildDropoutNetwork(MatType& trainData,
    */
 
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
+  model.Add<Linear<> >(trainData.n_rows, 8);
   model.Add<SigmoidLayer<> >();
   model.Add<Dropout<> >();
-  model.Add<Linear<> >(hiddenLayerSize, outputSize);
+  model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  // Vanilla neural net with logistic activation function.
+  // Because 92% of the patients are not hyperthyroid the neural
+  // network must be significant better than 92%.
+  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  arma::mat dataset;
+  dataset.load("mnist_first250_training_4s_and_9s.arm");
 
-  model.Train(trainData, trainLabels, opt);
-
-  MatType predictionTemp;
-  model.Predict(testData, predictionTemp);
-  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
-
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
+  // Normalize each point since these are images.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+    dataset.col(i) /= norm(dataset.col(i), 2);
   }
 
-  size_t error = 0;
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-    if (int(arma::as_scalar(prediction.col(i))) ==
-        int(arma::as_scalar(testLabels.col(i))))
-    {
-      error++;
-    }
-  }
+  arma::mat labels = arma::zeros(1, dataset.n_cols);
+  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+  labels += 1;
 
-  double classificationError = 1 - double(error) / testData.n_cols;
-  BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model1.Add<Linear<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
+  // Vanilla neural net with logistic activation function.
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 /**
- * Train the dropout network on a larger dataset.
+ * Train the highway network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
+TEST_CASE("HighwayNetworkTest", "[FeedForwardNetworkTest]")
+{
+  arma::mat dataset;
+  dataset.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+    dataset.col(i) /= norm(dataset.col(i), 2);
+
+  arma::mat labels = arma::zeros(1, dataset.n_cols);
+  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+  labels += 1;
+
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(dataset.n_rows, 10);
+  Highway<>* highway = new Highway<>(10, true);
+  highway->Add<Linear<> >(10, 10);
+  highway->Add<SigmoidLayer<> >();
+  model.Add(highway); // This takes ownership of the memory.
+  model.Add<Linear<> >(10, 2);
+  model.Add<LogSoftMax<> >();
+  TestNetwork<>(model, dataset, labels, dataset, labels, 10, 0.2);
+}
+
+/**
+ * Train the DropConnect network on a larger dataset.
+ */
+TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -301,42 +421,6 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
 
-  // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
-  // network must be significant better than 92%.
-  BuildDropoutNetwork<>
-      (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
-
-  arma::mat dataset;
-  dataset.load("mnist_first250_training_4s_and_9s.arm");
-
-  // Normalize each point since these are images.
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-    dataset.col(i) /= norm(dataset.col(i), 2);
-
-  arma::mat labels = arma::zeros(1, dataset.n_cols);
-  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
-  labels += 1;
-
-  // Vanilla neural net with logistic activation function.
-  BuildDropoutNetwork<>
-      (dataset, labels, dataset, labels, 2, 10, 10, 0.2);
-}
-
-/**
- * Train and evaluate a DropConnect network(with a baselayer) with the
- * specified structure.
- */
-template<typename MatType = arma::mat>
-void BuildDropConnectNetwork(MatType& trainData,
-                             MatType& trainLabels,
-                             MatType& testData,
-                             MatType& testLabels,
-                             const size_t outputSize,
-                             const size_t hiddenLayerSize,
-                             const size_t maxEpochs,
-                             const double classificationErrorThreshold)
-{
  /*
   *  Construct a feed forward network with trainData.n_rows input nodes,
   *  hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
@@ -362,62 +446,15 @@ void BuildDropConnectNetwork(MatType& trainData,
   */
 
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear<> >(trainData.n_rows, hiddenLayerSize);
+  model.Add<Linear<> >(trainData.n_rows, 8);
   model.Add<SigmoidLayer<> >();
-  model.Add<DropConnect<> >(hiddenLayerSize, outputSize);
+  model.Add<DropConnect<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
-
-  model.Train(trainData, trainLabels, opt);
-
-  MatType predictionTemp;
-  model.Predict(testData, predictionTemp);
-  MatType prediction = arma::zeros<MatType>(1, predictionTemp.n_cols);
-
-  for (size_t i = 0; i < predictionTemp.n_cols; ++i)
-  {
-    prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
-  }
-
-  size_t error = 0;
-  for (size_t i = 0; i < testData.n_cols; i++)
-  {
-    if (int(arma::as_scalar(prediction.col(i))) ==
-        int(arma::as_scalar(testLabels.col(i))))
-    {
-      error++;
-    }
-  }
-
-  double classificationError = 1 - double(error) / testData.n_cols;
-  BOOST_REQUIRE_LE(classificationError, classificationErrorThreshold);
-}
-
-/**
- * Train the dropconnect network on a larger dataset.
- */
-BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
-{
-  // Load the dataset.
-  arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
-
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
-  trainData.shed_row(trainData.n_rows - 1);
-
-  arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
-
-  arma::mat testLabels = testData.row(testData.n_rows - 1);
-  testData.shed_row(testData.n_rows - 1);
-
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
+  // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  BuildDropConnectNetwork<>
-      (trainData, trainLabels, testData, testLabels, 3, 8, 10, 0.1);
+  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
@@ -430,16 +467,20 @@ BOOST_AUTO_TEST_CASE(DropConnectNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
   labels += 1;
 
+  FFN<NegativeLogLikelihood<> > model1;
+  model1.Add<Linear<> >(dataset.n_rows, 10);
+  model1.Add<SigmoidLayer<> >();
+  model1.Add<DropConnect<> >(10, 2);
+  model1.Add<LogSoftMax<> >();
   // Vanilla neural net with logistic activation function.
-  BuildDropConnectNetwork<>
-      (dataset, labels, dataset, labels, 2, 10, 10, 0.2);
+  TestNetwork<>(model1, dataset, labels, dataset, labels, 10, 0.2);
 }
 
 /**
  * Test miscellaneous things of FFN,
  * e.g. copy/move constructor, assignment operator.
  */
-BOOST_AUTO_TEST_CASE(FFNMiscTest)
+TEST_CASE("FFNMiscTest", "[FeedForwardNetworkTest]")
 {
   FFN<MeanSquaredError<>> model;
   model.Add<Linear<>>(2, 3);
@@ -448,13 +489,13 @@ BOOST_AUTO_TEST_CASE(FFNMiscTest)
   auto copiedModel(model);
   copiedModel = model;
   auto movedModel(std::move(model));
-  movedModel = std::move(copiedModel);
+  auto moveOperator = std::move(copiedModel);
 }
 
 /**
  * Test that serialization works ok.
  */
-BOOST_AUTO_TEST_CASE(SerializationTest)
+TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -470,7 +511,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   testData.shed_row(testData.n_rows - 1);
 
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid the neural
+  // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);
@@ -503,7 +544,7 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
  * Test if the custom layers work. The target is to see if the code compiles
  * when the Train and Prediction are called.
  */
-BOOST_AUTO_TEST_CASE(CustomLayerTest)
+TEST_CASE("CustomLayerTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -535,7 +576,7 @@ BOOST_AUTO_TEST_CASE(CustomLayerTest)
 /**
  * Test the overload of Forward function which allows partial forward pass.
  */
-BOOST_AUTO_TEST_CASE(PartialForwardTest)
+TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 {
   FFN<NegativeLogLikelihood<>, RandomInitialization> model;
   model.Add<Linear<> >(5, 10);
@@ -579,4 +620,181 @@ BOOST_AUTO_TEST_CASE(PartialForwardTest)
   CheckMatrices(output, arma::ones(10, 1) * 20);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+/**
+ * Test that FFN::Train() returns finite objective value.
+ */
+TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
+  // Vanilla neural net with logistic activation function.
+  // Because 92% of the patients are not hyperthyroid the neural
+  // network must be significantly better than 92%.
+  FFN<NegativeLogLikelihood<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<SigmoidLayer<> >();
+  model.Add<Dropout<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+
+  double objVal = model.Train(trainData, trainLabels, opt);
+
+  REQUIRE(std::isfinite(objVal) == true);
+}
+
+/**
+ * Test that FFN::Model() allows us to access the instantiated network.
+ */
+TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
+{
+  // Create dummy network.
+  FFN<NegativeLogLikelihood<> > model;
+  Linear<>* linearA = new Linear<>(3, 3);
+  model.Add(linearA);
+  Linear<>* linearB = new Linear<>(3, 4);
+  model.Add(linearB);
+
+  // Initialize network parameter.
+  model.ResetParameters();
+
+  // Set all network parameter to one.
+  model.Parameters().ones();
+
+  // Zero the second layer parameter.
+  linearB->Parameters().zeros();
+
+  // Get the layer parameter from layer A and layer B and store them in
+  // parameterA and parameterB.
+  arma::mat parameterA, parameterB;
+  boost::apply_visitor(ParametersVisitor(parameterA), model.Model()[0]);
+  boost::apply_visitor(ParametersVisitor(parameterB), model.Model()[1]);
+
+  CheckMatrices(parameterA, arma::ones(3 * 3 + 3, 1));
+  CheckMatrices(parameterB, arma::zeros(3 * 4 + 4, 1));
+
+  CheckMatrices(linearA->Parameters(), arma::ones(3 * 3 + 3, 1));
+  CheckMatrices(linearB->Parameters(), arma::zeros(3 * 4 + 4, 1));
+}
+
+/**
+ * Test to see if the FFN code compiles when the Optimizer
+ * doesn't have the MaxIterations() method.
+ */
+TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
+  model.Add<Linear<> >(trainData.n_rows, 8);
+  model.Add<CustomLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
+  model.Train(trainData, trainLabels, opt);
+}
+
+/**
+ * Train the RBF network on a larger dataset.
+ */
+TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat trainLabels1 = arma::zeros(3, trainData.n_cols);
+  for (size_t i = 0; i < trainData.n_cols; i++)
+  {
+    trainLabels1.col(i).row((trainLabels(i) - 1)) = 1;
+  }
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         RBF          Activation    Output
+   *  Layer         Layer         Layer        Layer
+   * +-----+       +-----+       +-----+       +-----+
+   * |     |       |     |       |     |       |     |
+   * |     +------>|     +------>|     +------>|     |
+   * |     |       |     |       |     |       |     |
+   * +-----+       +--+--+       +-----+       +-----+
+   */
+  arma::mat centroids;
+  KMeans<> kmeans;
+  kmeans.Cluster(trainData, 8, centroids);
+
+  FFN<MeanSquaredError<> > model;
+  model.Add<RBF<> >(trainData.n_rows, 8, centroids);
+  model.Add<Linear<> >(8, 3);
+
+  // RBFN neural net with MeanSquaredError.
+  TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.2);
+
+  arma::mat dataset;
+  dataset.load("mnist_first250_training_4s_and_9s.arm");
+
+  // Normalize each point since these are images.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    dataset.col(i) /= norm(dataset.col(i), 2);
+  }
+
+  arma::mat labels = arma::zeros(1, dataset.n_cols);
+  labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
+
+  arma::mat labels1 = arma::zeros(2, dataset.n_cols);
+
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    labels1.col(i).row(labels(i)) = 1;
+  }
+  labels += 1;
+
+  arma::mat centroids1;
+  arma::Row<size_t> assignments;
+  KMeans<> kmeans1;
+  kmeans1.Cluster(dataset, 140, centroids1);
+
+  FFN<MeanSquaredError<> > model1;
+  model1.Add<RBF<> >(dataset.n_rows, 140, centroids1, 4.1);
+  model1.Add<Linear<> >(140, 2);
+
+  // RBFN neural net with MeanSquaredError.
+  TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.2);
+}

@@ -1,12 +1,18 @@
 /**
- * @file generate_markdown.binding.cpp.in
+ * @file markdown/generate_markdown.binding.cpp.in
  * @author Ryan Curtin
  *
  * Print Markdown for a specific binding.  This provides two utility
  * methods---one that prints info for a table of contents, and one that prints
  * the Markdown bindings themselves.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#define BINDING_NAME "${BINDING}"
+
+#define MARKDOWN_BINDING_NAME "${BINDING}"
 
 #include <mlpack/core.hpp>
 #include "generate_markdown.${BINDING}.hpp"

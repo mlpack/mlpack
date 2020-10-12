@@ -1,5 +1,5 @@
 /**
- * @file weight_size_visitor_impl.hpp
+ * @file methods/ann/visitor/weight_size_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the WeightSize() function layer abstraction.
@@ -23,6 +23,11 @@ template<typename LayerType>
 inline size_t WeightSizeVisitor::operator()(LayerType* layer) const
 {
   return LayerSize(layer, layer->OutputParameter());
+}
+
+inline size_t WeightSizeVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
 }
 
 template<typename T, typename P>

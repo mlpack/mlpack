@@ -1,5 +1,5 @@
 /**
- * @file nbc_test.cpp
+ * @file tests/nbc_test.cpp
  *
  * Test for the Naive Bayes classifier.
  *
@@ -43,20 +43,20 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
   size_t dimension = nbcTest.Means().n_rows;
   calcMat.zeros(2 * dimension + 1, classes);
 
-  for (size_t i = 0; i < dimension; i++)
+  for (size_t i = 0; i < dimension; ++i)
   {
-    for (size_t j = 0; j < classes; j++)
+    for (size_t j = 0; j < classes; ++j)
     {
       calcMat(i, j) = nbcTest.Means()(i, j);
       calcMat(i + dimension, j) = nbcTest.Variances()(i, j);
     }
   }
 
-  for (size_t i = 0; i < classes; i++)
+  for (size_t i = 0; i < classes; ++i)
     calcMat(2 * dimension, i) = nbcTest.Probabilities()(i);
 
-  for (size_t i = 0; i < calcMat.n_rows; i++)
-    for (size_t j = 0; j < classes; j++)
+  for (size_t i = 0; i < calcMat.n_rows; ++i)
+    for (size_t j = 0; j < classes; ++j)
       BOOST_REQUIRE_CLOSE(trainRes(i, j) + .00001, calcMat(i, j), 0.01);
 
   arma::mat testData;
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
 
   nbcTest.Classify(testData, calcVec, calcProbs);
 
-  for (size_t i = 0; i < testData.n_cols; i++)
+  for (size_t i = 0; i < testData.n_cols; ++i)
     BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
 
   for (size_t i = 0; i < testResProbs.n_cols; ++i)
@@ -111,20 +111,20 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
   size_t dimension = nbcTest.Means().n_rows;
   calcMat.zeros(2 * dimension + 1, classes);
 
-  for (size_t i = 0; i < dimension; i++)
+  for (size_t i = 0; i < dimension; ++i)
   {
-    for (size_t j = 0; j < classes; j++)
+    for (size_t j = 0; j < classes; ++j)
     {
       calcMat(i, j) = nbcTest.Means()(i, j);
       calcMat(i + dimension, j) = nbcTest.Variances()(i, j);
     }
   }
 
-  for (size_t i = 0; i < classes; i++)
+  for (size_t i = 0; i < classes; ++i)
     calcMat(2 * dimension, i) = nbcTest.Probabilities()(i);
 
-  for (size_t i = 0; i < calcMat.n_cols; i++)
-    for (size_t j = 0; j < classes; j++)
+  for (size_t i = 0; i < calcMat.n_cols; ++i)
+    for (size_t j = 0; j < classes; ++j)
       BOOST_REQUIRE_CLOSE(trainRes(j, i) + .00001, calcMat(j, i), 0.01);
 
   arma::mat testData;
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   nbcTest.Classify(testData, calcVec, calcProbs);
 
-  for (size_t i = 0; i < testData.n_cols; i++)
+  for (size_t i = 0; i < testData.n_cols; ++i)
     BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
 
   for (size_t i = 0; i < testResProba.n_cols; ++i)
@@ -312,6 +312,47 @@ BOOST_AUTO_TEST_CASE(SeparateTrainIndividualIncrementalTest)
       BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], nbcTrain.Probabilities()[i],
           1e-5);
   }
+}
+
+/**
+ * Check if NaiveBayesClassifier::Classify() works properly for a high
+ * dimension datasets.
+ */
+BOOST_AUTO_TEST_CASE(NaiveBayesClassifierHighDimensionsTest)
+{
+  // Set file names of dataset of training and test.
+  // The training dataset has 5 classes and each class has 1,000 dimensions.
+  const char* trainFilename = "nbc_high_dim_train.csv";
+  const char* testFilename = "nbc_high_dim_test.csv";
+  const char* trainLabelsFileName = "nbc_high_dim_train_labels.csv";
+  const char* testLabelsFilename = "nbc_high_dim_test_labels.csv";
+
+  size_t classes = 5;
+
+  // Create variables for training and assign data to them.
+  arma::mat trainData;
+  arma::Row<size_t> trainLabels;
+  data::Load(trainFilename, trainData, true);
+  data::Load(trainLabelsFileName, trainLabels, true);
+
+  // Initialize and train a NBC model.
+  NaiveBayesClassifier<> nbcTest(trainData, trainLabels, classes);
+
+  // Create variables for test and assign data to them.
+  arma::mat testData, calcProbs;
+  arma::Row<size_t> testLabels;
+  arma::Row<size_t> calcVec;
+  data::Load(testFilename, testData, true);
+  data::Load(testLabelsFilename, testLabels, true);
+
+  // Classify observations in the test dataset. To use Classify() method with
+  // a parameter for probabilities of predictions, we pass 'calcProbs' to the
+  // method.
+  nbcTest.Classify(testData, calcVec, calcProbs);
+
+  // Check the results.
+  for (size_t i = 0; i < calcVec.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(calcVec(i), testLabels(i));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

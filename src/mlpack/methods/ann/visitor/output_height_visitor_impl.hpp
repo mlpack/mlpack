@@ -1,5 +1,5 @@
 /**
- * @file output_height_visitor_impl.hpp
+ * @file methods/ann/visitor/output_height_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the OutputHeight() function layer abstraction.
@@ -23,6 +23,11 @@ template<typename LayerType>
 inline size_t OutputHeightVisitor::operator()(LayerType* layer) const
 {
   return LayerOutputHeight(layer);
+}
+
+inline size_t OutputHeightVisitor::operator()(MoreTypes layer) const
+{
+  return layer.apply_visitor(*this);
 }
 
 template<typename T>

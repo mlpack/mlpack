@@ -1,5 +1,5 @@
 /**
- * @file all_categorical_split_impl.hpp
+ * @file methods/decision_tree/all_categorical_split_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the AllCategoricalSplit categorical split class.
@@ -53,7 +53,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   // If each child will have the minimum number of points in it, we can split.
   // Otherwise we can't.
   if (arma::min(counts) < minimumLeafSize)
-    return bestGain;
+    return DBL_MAX;
 
   // Calculate the gain of the split.  First we have to calculate the labels
   // that would be assigned to each child.
@@ -106,7 +106,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   }
 
   // Otherwise there was no improvement.
-  return bestGain;
+  return DBL_MAX;
 }
 
 template<typename FitnessFunction>

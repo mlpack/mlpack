@@ -1,5 +1,5 @@
 /**
- * @file test_tools.hpp
+ * @file tests/test_tools.hpp
  * @author Ryan Curtin
  *
  * This file includes some useful macros for tests.
@@ -155,7 +155,6 @@ inline void CheckMatricesNotEqual(const arma::cube& a,
   if (!areDifferent)
     BOOST_ERROR("The matrices are equal.");
 }
-
 
 // Filter typeinfo string to generate unique filenames for serialization tests.
 inline std::string FilterFileName(const std::string& inputString)

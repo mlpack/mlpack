@@ -1,5 +1,5 @@
 /**
- * @file fastmks_impl.hpp
+ * @file methods/fastmks/fastmks_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the FastMKS class (fast max-kernel search).
@@ -93,6 +93,62 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(const MatType& referenceSet,
   Timer::Stop("tree_building");
 }
 
+// No instantiated kernel.
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(
+    MatType&& referenceSet,
+    const bool singleMode,
+    const bool naive) :
+    referenceSet(naive ? new MatType(std::move(referenceSet)) : NULL),
+    referenceTree(NULL),
+    treeOwner(true),
+    setOwner(naive),
+    singleMode(singleMode),
+    naive(naive)
+{
+  Timer::Start("tree_building");
+  if (!naive)
+  {
+    referenceTree = new Tree(std::move(referenceSet));
+    referenceSet = &referenceTree->Dataset();
+  }
+  Timer::Stop("tree_building");
+}
+
+// Instantiated kernel.
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(MatType&& referenceSet,
+                                                KernelType& kernel,
+                                                const bool singleMode,
+                                                const bool naive) :
+    referenceSet(naive ? new MatType(std::move(referenceSet)) : NULL),
+    referenceTree(NULL),
+    treeOwner(true),
+    setOwner(naive),
+    singleMode(singleMode),
+    naive(naive),
+    metric(kernel)
+{
+  Timer::Start("tree_building");
+
+  // If necessary, the reference tree should be built.  There is no query tree.
+  if (!naive)
+  {
+    referenceTree = new Tree(referenceSet, metric);
+    referenceSet = &referenceTree->Dataset();
+  }
+
+  Timer::Stop("tree_building");
+}
+
 // One dataset, pre-built tree.
 template<typename KernelType,
          typename MatType,
@@ -164,6 +220,9 @@ template<typename KernelType,
 FastMKS<KernelType, MatType, TreeType>&
 FastMKS<KernelType, MatType, TreeType>::operator=(const FastMKS& other)
 {
+  if (this == &other)
+    return *this;
+
   // Clear anything we currently have.
   if (treeOwner)
     delete referenceTree;
@@ -256,6 +315,60 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet)
+{
+  if (setOwner)
+    delete this->referenceSet;
+
+  if (!naive)
+  {
+    if (treeOwner && referenceTree)
+      delete referenceTree;
+    referenceTree = new Tree(std::move(referenceSet), metric);
+    referenceSet = referenceTree->Dataset();
+    treeOwner = true;
+    setOwner = false;
+  }
+  else
+  {
+    this->referenceSet = new MatType(std::move(referenceSet));
+    this->setOwner = true;
+  }
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Train(MatType&& referenceSet,
+                                                   KernelType& kernel)
+{
+  if (setOwner)
+    delete this->referenceSet;
+
+  this->metric = metric::IPMetric<KernelType>(kernel);
+
+  if (!naive)
+  {
+    if (treeOwner && referenceTree)
+      delete referenceTree;
+    referenceTree = new Tree(std::move(referenceSet), metric);
+    treeOwner = true;
+    setOwner = false;
+  }
+  else
+  {
+    this->referenceSet = new MatType(std::move(referenceSet));
+    this->setOwner = true;
+  }
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Train(Tree* tree)
 {
   if (naive)
@@ -295,6 +408,15 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     throw std::invalid_argument(ss.str());
   }
 
+  if (querySet.n_rows != referenceSet->n_rows)
+  {
+    std::stringstream ss;
+    ss << "The number of dimensions in the query set (" << querySet.n_rows
+        << ") must be equal to the number of dimensions in the reference set ("
+        << referenceSet->n_rows << ")!";
+    throw std::invalid_argument(ss.str());
+  }
+
   Timer::Start("computing_products");
 
   // No remapping will be necessary because we are using the cover tree.
@@ -324,7 +446,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
         }
       }
 
-      for (size_t j = 1; j <= k; j++)
+      for (size_t j = 1; j <= k; ++j)
       {
         indices(k - j, q) = pqueue.top().second;
         kernels(k - j, q) = pqueue.top().first;
@@ -385,6 +507,14 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
     std::stringstream ss;
     ss << "requested value of k (" << k << ") is greater than the number of "
         << "points in the reference set (" << referenceSet->n_cols << ")";
+    throw std::invalid_argument(ss.str());
+  }
+  if (queryTree->Dataset().n_rows != referenceSet->n_rows)
+  {
+    std::stringstream ss;
+    ss << "The number of dimensions in the query set ("
+        << queryTree->Dataset().n_rows << ") must be equal to the number of "
+        << "dimensions in the reference set (" << referenceSet->n_rows << ")!";
     throw std::invalid_argument(ss.str());
   }
 
@@ -456,7 +586,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
         }
       }
 
-      for (size_t j = 1; j <= k; j++)
+      for (size_t j = 1; j <= k; ++j)
       {
         indices(k - j, q) = pqueue.top().second;
         kernels(k - j, q) = pqueue.top().first;

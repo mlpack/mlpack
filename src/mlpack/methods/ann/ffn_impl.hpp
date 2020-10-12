@@ -1,5 +1,5 @@
 /**
- * @file ffn_impl.hpp
+ * @file methods/ann/ffn_impl.hpp
  * @author Marcus Edel
  *
  * Definition of the FFN class, which implements feed forward neural networks.
@@ -39,9 +39,9 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     height(0),
     reset(false),
     numFunctions(0),
-    deterministic(true)
+    deterministic(false)
 {
-  /* Nothing to do here */
+  /* Nothing to do here. */
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -60,7 +60,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
   numFunctions = responses.n_cols;
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
-  this->deterministic = true;
+  this->deterministic = false;
   ResetDeterministic();
 
   if (!reset)
@@ -70,36 +70,54 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::ResetData(
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
-double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
-      arma::mat predictors,
-      arma::mat responses,
-      OptimizerType& optimizer)
+typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const
 {
-  ResetData(std::move(predictors), std::move(responses));
-
-  // Train the model.
-  Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(*this, parameter);
-  Timer::Stop("ffn_optimization");
-
-  Log::Info << "FFN::FFN(): final objective of trained model is " << out
-      << "." << std::endl;
-  return out;
+  if (optimizer.MaxIterations() < samples &&
+      optimizer.MaxIterations() != 0)
+  {
+    Log::Warn << "The optimizer's maximum number of iterations "
+              << "is less than the size of the dataset; the "
+              << "optimizer will not pass over the entire "
+              << "dataset. To fix this, modify the maximum "
+              << "number of iterations to be at least equal "
+              << "to the number of points of your dataset "
+              << "(" << samples << ")." << std::endl;
+  }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename OptimizerType>
+typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::
+WarnMessageMaxIterations(OptimizerType& /* optimizer */, size_t /* samples */)
+    const
+{
+  return;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename OptimizerType, typename... CallbackTypes>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
-    arma::mat predictors, arma::mat responses)
+      arma::mat predictors,
+      arma::mat responses,
+      OptimizerType& optimizer,
+      CallbackTypes&&... callbacks)
 {
   ResetData(std::move(predictors), std::move(responses));
 
-  OptimizerType optimizer;
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(*this, parameter);
+  const double out = optimizer.Optimize(*this, parameter, callbacks...);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
@@ -109,37 +127,59 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename OptimizerType, typename... CallbackTypes>
+double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
+    arma::mat predictors,
+    arma::mat responses,
+    CallbackTypes&&... callbacks)
+{
+  ResetData(std::move(predictors), std::move(responses));
+
+  OptimizerType optimizer;
+
+  WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
+
+  // Train the model.
+  Timer::Start("ffn_optimization");
+  const double out = optimizer.Optimize(*this, parameter, callbacks...);
+  Timer::Stop("ffn_optimization");
+
+  Log::Info << "FFN::FFN(): final objective of trained model is " << out
+      << "." << std::endl;
+  return out;
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+template<typename PredictorsType, typename ResponsesType>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
-    arma::mat inputs, arma::mat& results)
+    const PredictorsType& inputs, ResponsesType& results)
 {
   if (parameter.is_empty())
     ResetParameters();
 
-  if (!deterministic)
-  {
-    deterministic = true;
-    ResetDeterministic();
-  }
-
-  currentInput = std::move(inputs);
-  Forward(std::move(currentInput));
+  Forward(inputs);
   results = boost::apply_visitor(outputParameterVisitor, network.back());
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename PredictorsType, typename ResponsesType>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
-    arma::mat inputs, arma::mat& results, const size_t begin, const size_t end)
+    const PredictorsType& inputs,
+    ResponsesType& results,
+    const size_t begin,
+    const size_t end)
 {
-  boost::apply_visitor(ForwardVisitor(std::move(inputs), std::move(
-      boost::apply_visitor(outputParameterVisitor, network[begin]))),
+  boost::apply_visitor(ForwardVisitor(inputs,
+      boost::apply_visitor(outputParameterVisitor, network[begin])),
       network[begin]);
 
   for (size_t i = 1; i < end - begin + 1; ++i)
   {
-    boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[begin + i - 1])), std::move(
-        boost::apply_visitor(outputParameterVisitor, network[begin + i]))),
+    boost::apply_visitor(ForwardVisitor(boost::apply_visitor(
+        outputParameterVisitor, network[begin + i - 1]),
+        boost::apply_visitor(outputParameterVisitor, network[begin + i])),
         network[begin + i]);
   }
 
@@ -148,25 +188,28 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Forward(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename PredictorsType, typename TargetsType, typename GradientsType>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward(
-    arma::mat targets, arma::mat& gradients)
+    const PredictorsType& inputs,
+    const TargetsType& targets,
+    GradientsType& gradients)
 {
-  double res = outputLayer.Forward(std::move(boost::apply_visitor(
-      outputParameterVisitor, network.back())), std::move(targets));
+  double res = outputLayer.Forward(boost::apply_visitor(
+      outputParameterVisitor, network.back()), targets);
 
   for (size_t i = 0; i < network.size(); ++i)
   {
     res += boost::apply_visitor(lossVisitor, network[i]);
   }
 
-  outputLayer.Backward(std::move(boost::apply_visitor(outputParameterVisitor,
-      network.back())), std::move(targets), std::move(error));
+  outputLayer.Backward(boost::apply_visitor(outputParameterVisitor,
+      network.back()), targets, error);
 
   gradients = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
 
   Backward();
   ResetGradients(gradients);
-  Gradient(std::move(currentInput));
+  Gradient(inputs);
 
   return res;
 }
@@ -186,18 +229,16 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
   }
 
   arma::mat resultsTemp;
-  Forward(std::move(arma::mat(predictors.colptr(0),
-      predictors.n_rows, 1, false, true)));
+  Forward(arma::mat(predictors.colptr(0), predictors.n_rows, 1, false, true));
   resultsTemp = boost::apply_visitor(outputParameterVisitor,
       network.back()).col(0);
 
   results = arma::mat(resultsTemp.n_elem, predictors.n_cols);
   results.col(0) = resultsTemp.col(0);
 
-  for (size_t i = 1; i < predictors.n_cols; i++)
+  for (size_t i = 1; i < predictors.n_cols; ++i)
   {
-    Forward(std::move(arma::mat(predictors.colptr(i),
-        predictors.n_rows, 1, false, true)));
+    Forward(arma::mat(predictors.colptr(i), predictors.n_rows, 1, false, true));
 
     resultsTemp = boost::apply_visitor(outputParameterVisitor,
         network.back());
@@ -207,8 +248,9 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename PredictorsType, typename ResponsesType>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
-    arma::mat predictors, arma::mat responses)
+    const PredictorsType& predictors, const ResponsesType& responses)
 {
   if (parameter.is_empty())
     ResetParameters();
@@ -219,10 +261,10 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     ResetDeterministic();
   }
 
-  Forward(std::move(predictors));
+  Forward(predictors);
 
-  double res = outputLayer.Forward(std::move(boost::apply_visitor(
-      outputParameterVisitor, network.back())), std::move(responses));
+  double res = outputLayer.Forward(boost::apply_visitor(
+      outputParameterVisitor, network.back()), responses);
 
   for (size_t i = 0; i < network.size(); ++i)
   {
@@ -261,10 +303,10 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     ResetDeterministic();
   }
 
-  Forward(std::move(predictors.cols(begin, begin + batchSize - 1)));
+  Forward(predictors.cols(begin, begin + batchSize - 1));
   double res = outputLayer.Forward(
-      std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
-      std::move(responses.cols(begin, begin + batchSize - 1)));
+      boost::apply_visitor(outputParameterVisitor, network.back()),
+      responses.cols(begin, begin + batchSize - 1));
 
   for (size_t i = 0; i < network.size(); ++i)
   {
@@ -322,10 +364,10 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     ResetDeterministic();
   }
 
-  Forward(std::move(predictors.cols(begin, begin + batchSize - 1)));
+  Forward(predictors.cols(begin, begin + batchSize - 1));
   double res = outputLayer.Forward(
-      std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
-      std::move(responses.cols(begin, begin + batchSize - 1)));
+      boost::apply_visitor(outputParameterVisitor, network.back()),
+      responses.cols(begin, begin + batchSize - 1));
 
   for (size_t i = 0; i < network.size(); ++i)
   {
@@ -333,13 +375,13 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
   }
 
   outputLayer.Backward(
-      std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
-      std::move(responses.cols(begin, begin + batchSize - 1)),
-      std::move(error));
+      boost::apply_visitor(outputParameterVisitor, network.back()),
+      responses.cols(begin, begin + batchSize - 1),
+      error);
 
   Backward();
   ResetGradients(gradient);
-  Gradient(std::move(predictors.cols(begin, begin + batchSize - 1)));
+  Gradient(predictors.cols(begin, begin + batchSize - 1));
 
   return res;
 }
@@ -393,18 +435,19 @@ void FFN<OutputLayerType, InitializationRuleType,
   size_t offset = 0;
   for (size_t i = 0; i < network.size(); ++i)
   {
-    offset += boost::apply_visitor(GradientSetVisitor(std::move(gradient),
-        offset), network[i]);
+    offset += boost::apply_visitor(GradientSetVisitor(gradient, offset),
+        network[i]);
   }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename InputType>
 void FFN<OutputLayerType, InitializationRuleType,
-         CustomLayers...>::Forward(arma::mat&& input)
+         CustomLayers...>::Forward(const InputType& input)
 {
-  boost::apply_visitor(ForwardVisitor(std::move(input), std::move(
-      boost::apply_visitor(outputParameterVisitor, network.front()))),
+  boost::apply_visitor(ForwardVisitor(input,
+      boost::apply_visitor(outputParameterVisitor, network.front())),
       network.front());
 
   if (!reset)
@@ -431,9 +474,9 @@ void FFN<OutputLayerType, InitializationRuleType,
       boost::apply_visitor(SetInputHeightVisitor(height), network[i]);
     }
 
-    boost::apply_visitor(ForwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[i - 1])), std::move(
-        boost::apply_visitor(outputParameterVisitor, network[i]))), network[i]);
+    boost::apply_visitor(ForwardVisitor(boost::apply_visitor(
+        outputParameterVisitor, network[i - 1]),
+        boost::apply_visitor(outputParameterVisitor, network[i])), network[i]);
 
     if (!reset)
     {
@@ -459,37 +502,38 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Backward()
 {
-  boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, network.back())), std::move(error), std::move(
-      boost::apply_visitor(deltaVisitor, network.back()))), network.back());
+  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+      outputParameterVisitor, network.back()), error,
+      boost::apply_visitor(deltaVisitor, network.back())), network.back());
 
   for (size_t i = 2; i < network.size(); ++i)
   {
-    boost::apply_visitor(BackwardVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[network.size() - i])), std::move(
-        boost::apply_visitor(deltaVisitor, network[network.size() - i + 1])),
-        std::move(boost::apply_visitor(deltaVisitor,
-        network[network.size() - i]))), network[network.size() - i]);
+    boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+        outputParameterVisitor, network[network.size() - i]),
+        boost::apply_visitor(deltaVisitor, network[network.size() - i + 1]),
+        boost::apply_visitor(deltaVisitor, network[network.size() - i])),
+        network[network.size() - i]);
   }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+template<typename InputType>
 void FFN<OutputLayerType, InitializationRuleType,
-         CustomLayers...>::Gradient(arma::mat&& input)
+         CustomLayers...>::Gradient(const InputType& input)
 {
-  boost::apply_visitor(GradientVisitor(std::move(input), std::move(
-      boost::apply_visitor(deltaVisitor, network[1]))), network.front());
+  boost::apply_visitor(GradientVisitor(input,
+      boost::apply_visitor(deltaVisitor, network[1])), network.front());
 
   for (size_t i = 1; i < network.size() - 1; ++i)
   {
-    boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-        outputParameterVisitor, network[i - 1])), std::move(
-        boost::apply_visitor(deltaVisitor, network[i + 1]))), network[i]);
+    boost::apply_visitor(GradientVisitor(boost::apply_visitor(
+        outputParameterVisitor, network[i - 1]),
+        boost::apply_visitor(deltaVisitor, network[i + 1])), network[i]);
   }
 
-  boost::apply_visitor(GradientVisitor(std::move(boost::apply_visitor(
-      outputParameterVisitor, network[network.size() - 2])), std::move(error)),
+  boost::apply_visitor(GradientVisitor(boost::apply_visitor(
+      outputParameterVisitor, network[network.size() - 2]), error),
       network[network.size() - 1]);
 }
 
@@ -502,7 +546,13 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
   ar & BOOST_SERIALIZATION_NVP(parameter);
   ar & BOOST_SERIALIZATION_NVP(width);
   ar & BOOST_SERIALIZATION_NVP(height);
-  ar & BOOST_SERIALIZATION_NVP(currentInput);
+
+  // Early versions used the currentInput member, which is now no longer needed.
+  if (version < 2)
+  {
+    arma::mat currentInput; // Temporary matrix to output.
+    ar & BOOST_SERIALIZATION_NVP(currentInput);
+  }
 
   // Earlier versions of the FFN code did not serialize whether or not the model
   // was reset.
@@ -532,8 +582,8 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
     size_t offset = 0;
     for (size_t i = 0; i < network.size(); ++i)
     {
-      offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
-          offset), network[i]);
+      offset += boost::apply_visitor(WeightSetVisitor(parameter, offset),
+          network[i]);
 
       boost::apply_visitor(resetVisitor, network[i]);
     }
@@ -559,7 +609,6 @@ void FFN<OutputLayerType, InitializationRuleType,
   std::swap(parameter, network.parameter);
   std::swap(numFunctions, network.numFunctions);
   std::swap(error, network.error);
-  std::swap(currentInput, network.currentInput);
   std::swap(deterministic, network.deterministic);
   std::swap(delta, network.delta);
   std::swap(inputParameter, network.inputParameter);
@@ -581,7 +630,6 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     parameter(network.parameter),
     numFunctions(network.numFunctions),
     error(network.error),
-    currentInput(network.currentInput),
     deterministic(network.deterministic),
     delta(network.delta),
     inputParameter(network.inputParameter),
@@ -593,6 +641,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
   {
     this->network.push_back(boost::apply_visitor(copyVisitor,
         network.network[i]));
+    boost::apply_visitor(resetVisitor, this->network.back());
   }
 };
 
@@ -610,7 +659,6 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::FFN(
     parameter(std::move(network.parameter)),
     numFunctions(network.numFunctions),
     error(std::move(network.error)),
-    currentInput(std::move(network.currentInput)),
     deterministic(network.deterministic),
     delta(std::move(network.delta)),
     inputParameter(std::move(network.inputParameter)),

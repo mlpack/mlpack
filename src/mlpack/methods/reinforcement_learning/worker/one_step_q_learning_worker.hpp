@@ -1,5 +1,5 @@
 /**
- * @file one_step_q_learning_worker.hpp
+ * @file methods/reinforcement_learning/worker/one_step_q_learning_worker.hpp
  * @author Shangtong Zhang
  *
  * This file is the definition of OneStepQLearningWorker class,
@@ -54,6 +54,9 @@ class OneStepQLearningWorker
       const TrainingConfig& config,
       bool deterministic):
       updater(updater),
+      #if ENS_VERSION_MAJOR >= 2
+      updatePolicy(NULL),
+      #endif
       environment(environment),
       config(config),
       deterministic(deterministic),
@@ -61,13 +64,167 @@ class OneStepQLearningWorker
   { Reset(); }
 
   /**
+   * Copy another OneStepQLearningWorker.
+   *
+   * @param other OneStepQLearningWorker to copy.
+   */
+  OneStepQLearningWorker(const OneStepQLearningWorker& other) :
+      updater(other.updater),
+      #if ENS_VERSION_MAJOR >= 2
+      updatePolicy(NULL),
+      #endif
+      environment(other.environment),
+      config(other.config),
+      deterministic(other.deterministic),
+      steps(other.steps),
+      episodeReturn(other.episodeReturn),
+      pending(other.pending),
+      pendingIndex(other.pendingIndex),
+      network(other.network),
+      state(other.state)
+  {
+    #if ENS_VERSION_MAJOR >= 2
+    updatePolicy = new typename UpdaterType::template
+        Policy<arma::mat, arma::mat>(updater,
+                                     network.Parameters().n_rows,
+                                     network.Parameters().n_cols);
+    #endif
+
+    Reset();
+  }
+
+  /**
+   * Take ownership of another OneStepQLearningWorker.
+   *
+   * @param other OneStepQLearningWorker to take ownership of.
+   */
+  OneStepQLearningWorker(OneStepQLearningWorker&& other) :
+      updater(std::move(other.updater)),
+      #if ENS_VERSION_MAJOR >= 2
+      updatePolicy(NULL),
+      #endif
+      environment(std::move(other.environment)),
+      config(std::move(other.config)),
+      deterministic(std::move(other.deterministic)),
+      steps(std::move(other.steps)),
+      episodeReturn(std::move(other.episodeReturn)),
+      pending(std::move(other.pending)),
+      pendingIndex(std::move(other.pendingIndex)),
+      network(std::move(other.network)),
+      state(std::move(other.state))
+  {
+    #if ENS_VERSION_MAJOR >= 2
+    other.updatePolicy = NULL;
+
+    updatePolicy = new typename UpdaterType::template
+        Policy<arma::mat, arma::mat>(updater,
+                                     network.Parameters().n_rows,
+                                     network.Parameters().n_cols);
+    #endif
+  }
+
+  /**
+   * Copy another OneStepQLearningWorker.
+   *
+   * @param other OneStepQLearningWorker to copy.
+   */
+  OneStepQLearningWorker& operator=(const OneStepQLearningWorker& other)
+  {
+    if (&other == this)
+      return *this;
+
+    #if ENS_VERSION_MAJOR >= 2
+    delete updatePolicy;
+    #endif
+
+    updater = other.updater;
+    environment = other.environment;
+    config = other.config;
+    deterministic = other.deterministic;
+    steps = other.steps;
+    episodeReturn = other.episodeReturn;
+    pending = other.pending;
+    pendingIndex = other.pendingIndex;
+    network = other.network;
+    state = other.state;
+
+    #if ENS_VERSION_MAJOR >= 2
+    updatePolicy = new typename UpdaterType::template
+        Policy<arma::mat, arma::mat>(updater,
+                                     network.Parameters().n_rows,
+                                     network.Parameters().n_cols);
+    #endif
+
+    Reset();
+
+    return *this;
+  }
+
+  /**
+   * Take ownership of another OneStepQLearningWorker.
+   *
+   * @param other OneStepQLearningWorker to take ownership of.
+   */
+  OneStepQLearningWorker& operator=(OneStepQLearningWorker&& other)
+  {
+    if (&other == this)
+      return *this;
+
+    #if ENS_VERSION_MAJOR >= 2
+    delete updatePolicy;
+    #endif
+
+    updater = std::move(other.updater);
+    environment = std::move(other.environment);
+    config = std::move(other.config);
+    deterministic = std::move(other.deterministic);
+    steps = std::move(other.steps);
+    episodeReturn = std::move(other.episodeReturn);
+    pending = std::move(other.pending);
+    pendingIndex = std::move(other.pendingIndex);
+    network = std::move(other.network);
+    state = std::move(other.state);
+
+    #if ENS_VERSION_MAJOR >= 2
+    other.updatePolicy = NULL;
+
+    updatePolicy = new typename UpdaterType::template
+        Policy<arma::mat, arma::mat>(updater,
+                                     network.Parameters().n_rows,
+                                     network.Parameters().n_cols);
+    #endif
+
+    return *this;
+  }
+
+  /**
+   * Clean memory.
+   */
+  ~OneStepQLearningWorker()
+  {
+    #if ENS_VERSION_MAJOR >= 2
+    delete updatePolicy;
+    #endif
+  }
+
+  /**
    * Initialize the worker.
    * @param learningNetwork The shared network.
    */
   void Initialize(NetworkType& learningNetwork)
   {
+    #if ENS_VERSION_MAJOR == 1
     updater.Initialize(learningNetwork.Parameters().n_rows,
-        learningNetwork.Parameters().n_cols);
+                       learningNetwork.Parameters().n_cols);
+    #else
+    delete updatePolicy;
+
+    updatePolicy = new typename UpdaterType::template
+        Policy<arma::mat, arma::mat>(updater,
+                                     learningNetwork.Parameters().n_rows,
+                                     learningNetwork.Parameters().n_cols);
+    #endif
+
     // Build local network.
     network = learningNetwork;
   }
@@ -144,12 +301,13 @@ class OneStepQLearningWorker
             config.Discount() * targetActionValue;
 
         // Compute the training target for current state.
-        network.Forward(std::get<0>(transition).Encode(), actionValue);
-        actionValue[std::get<1>(transition)] = targetActionValue;
+        arma::mat input = std::get<0>(transition).Encode();
+        network.Forward(input, actionValue);
+        actionValue[std::get<1>(transition).action] = targetActionValue;
 
         // Compute gradient.
         arma::mat gradients;
-        network.Backward(actionValue, gradients);
+        network.Backward(input, actionValue, gradients);
 
         // Accumulate gradients.
         totalGradients += gradients;
@@ -162,8 +320,13 @@ class OneStepQLearningWorker
           config.GradientLimit()); });
 
       // Perform async update of the global network.
-      updater.Update(learningNetwork.Parameters(),
+      #if ENS_VERSION_MAJOR == 1
+      updater.Update(learningNetwork.Parameters(), config.StepSize(),
+          totalGradients);
+      #else
+      updatePolicy->Update(learningNetwork.Parameters(),
           config.StepSize(), totalGradients);
+      #endif
 
       // Sync the local network with the global network.
       network = learningNetwork;
@@ -204,6 +367,9 @@ class OneStepQLearningWorker
 
   //! Locally-stored optimizer.
   UpdaterType updater;
+  #if ENS_VERSION_MAJOR >= 2
+  typename UpdaterType::template Policy<arma::mat, arma::mat>* updatePolicy;
+  #endif
 
   //! Locally-stored task.
   EnvironmentType environment;

@@ -1,5 +1,5 @@
 /**
- * @file reset_visitor_impl.hpp
+ * @file methods/ann/visitor/reset_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Reset() function layer abstraction.
@@ -23,6 +23,11 @@ template<typename LayerType>
 inline void ResetVisitor::operator()(LayerType* layer) const
 {
   ResetParameter(layer);
+}
+
+inline void ResetVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
 }
 
 template<typename T>

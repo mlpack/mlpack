@@ -1,5 +1,5 @@
 /**
- * @file dice_loss.hpp
+ * @file methods/ann/loss_functions/dice_loss.hpp
  * @author N Rajiv Vaidyanathan
  *
  * Definition of the dice loss function.
@@ -24,6 +24,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * For more information see the following.
  *
+ * @code
  * @article{Milletari2016,
  *   author    = {Fausto Milletari and Nassir Navab and Seyed{-}Ahmad Ahmadi},
  *   title     = {V-Net: Fully Convolutional Neural Networks for
@@ -35,6 +36,7 @@ namespace ann /** Artificial Neural Network. */ {
  *   archivePrefix = {arXiv},
  *   eprint    = {1606.04797},
  * }
+ * @endcode
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -62,7 +64,8 @@ class DiceLoss
    * @param target The target vector.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, const TargetType&& target);
+  typename InputType::elem_type Forward(const InputType& input,
+                                        const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -72,9 +75,9 @@ class DiceLoss
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  void Backward(const InputType& input,
+                const TargetType& target,
+                OutputType& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }

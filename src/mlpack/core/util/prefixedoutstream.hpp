@@ -1,5 +1,5 @@
 /**
- * @file prefixedoutstream.hpp
+ * @file core/util/prefixedoutstream.hpp
  * @author Ryan Curtin
  * @author Matthew Amidon
  *
@@ -26,13 +26,13 @@ namespace util {
  * next line.  For example,
  *
  * @code
- * PrefixedOutStream outstr(std::cout, "[TEST] ");
+ * PrefixedOutStream outstr(MLPACK_COUT_STREAM, "[TEST] ");
  * outstr << "Hello world I like " << 7.5;
  * outstr << "...Continue" << std::endl;
  * outstr << "After the CR\n" << std::endl;
  * @endcode
  *
- * would give, on std::cout,
+ * would give, on MLPACK_COUT_STREAM,
  *
  * @code
  * [TEST] Hello world I like 7.5...Continue
@@ -111,7 +111,8 @@ class PrefixedOutStream
   template<typename T>
   PrefixedOutStream& operator<<(const T& s);
 
-  //! The output stream that all data is to be sent to; example: std::cout.
+  //! The output stream that all data is to be sent to; example:
+  //! MLPACK_COUT_STREAM.
   std::ostream& destination;
 
   //! Discards input, prints nothing if true.
@@ -124,7 +125,7 @@ class PrefixedOutStream
  private:
   /**
    * Conducts the base logic required in all the operator << overloads.  Mostly
-   * just a good idea to reduce copy-pasta.
+   * just a good idea to reduce copy-paste.
    *
    * This overload is for non-Armadillo objects, which need special handling
    * during printing.
@@ -138,7 +139,7 @@ class PrefixedOutStream
 
   /**
    * Conducts the base logic required in all the operator << overloads.  Mostly
-   * just a good idea to reduce copy-pasta.
+   * just a good idea to reduce copy-paste.
    *
    * This overload is for Armadillo objects, which need special handling during
    * printing.

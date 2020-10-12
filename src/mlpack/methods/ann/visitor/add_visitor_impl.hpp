@@ -1,5 +1,5 @@
 /**
- * @file add_visitor_impl.hpp
+ * @file methods/ann/visitor/add_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Add() function layer abstraction.
@@ -32,6 +32,12 @@ template<typename LayerType>
 inline void AddVisitor<CustomLayers...>::operator()(LayerType* layer) const
 {
   LayerAdd<LayerType>(layer);
+}
+
+template<typename... CustomLayers>
+inline void AddVisitor<CustomLayers...>::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
 }
 
 template<typename... CustomLayers>

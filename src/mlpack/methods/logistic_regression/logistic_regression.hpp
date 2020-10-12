@@ -1,5 +1,5 @@
 /**
- * @file logistic_regression.hpp
+ * @file methods/logistic_regression/logistic_regression.hpp
  * @author Sumedh Ghaisas
  * @author Arun Reddy
  *
@@ -123,35 +123,41 @@ class LogisticRegression
    * parameters vector directly with Parameters() and modify it as desired.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType = ens::L_BFGS>
+  template<typename OptimizerType = ens::L_BFGS, typename... CallbackTypes>
   double Train(const MatType& predictors,
-               const arma::Row<size_t>& responses);
+               const arma::Row<size_t>& responses,
+               CallbackTypes&&... callbacks);
 
   /**
    * Train the LogisticRegression model with the given instantiated optimizer.
    * Using this overload allows configuring the instantiated optimizer before
    * training is performed.
    *
-   * Note that the initial point of the optimizer
-   * (optimizer.Function().GetInitialPoint()) will be used as the initial point
-   * of the optimization, overwriting any existing trained model.  If you don't
-   * want to overwrite the existing model, set
-   * optimizer.Function().GetInitialPoint() to the current parameters vector,
-   * accessible via Parameters().
+   * This will use the existing model parameters as a starting point for the
+   * optimization.  If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
    *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer with instantiated error function.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error)
    */
-  template<typename OptimizerType>
+  template<typename OptimizerType, typename... CallbackTypes>
   double Train(const MatType& predictors,
                const arma::Row<size_t>& responses,
-               OptimizerType& optimizer);
+               OptimizerType& optimizer,
+               CallbackTypes&&... callbacks);
 
   //! Return the parameters (the b vector).
   const arma::rowvec& Parameters() const { return parameters; }

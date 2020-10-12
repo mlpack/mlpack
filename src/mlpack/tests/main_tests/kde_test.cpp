@@ -1,5 +1,5 @@
 /**
- * @file kde_test.cpp
+ * @file tests/main_tests/kde_test.cpp
  * @author Roberto Hueso
  *
  * Test mlpackMain() of kde_main.cpp
@@ -30,21 +30,22 @@ struct KDETestFixture
  public:
   KDETestFixture()
   {
-      // Cache in the options for this program.
-      CLI::RestoreSettings(testName);
+    // Cache in the options for this program.
+    IO::RestoreSettings(testName);
   }
 
   ~KDETestFixture()
   {
-      // Clear the settings.
-      CLI::ClearSettings();
+    // Clear the settings.
+    bindings::tests::CleanMemory();
+    IO::ClearSettings();
   }
 };
 
 void ResetKDESettings()
 {
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 }
 
 BOOST_FIXTURE_TEST_SUITE(KDEMainTest, KDETestFixture);
@@ -84,11 +85,11 @@ BOOST_AUTO_TEST_CASE(KDEGaussianRTreeResultsMain)
 
   mlpackMain();
 
-  mainEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
 }
 
 /**
@@ -124,11 +125,11 @@ BOOST_AUTO_TEST_CASE(KDETriangularBallTreeResultsMain)
 
   mlpackMain();
 
-  mainEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
 }
 
 /**
@@ -165,11 +166,11 @@ BOOST_AUTO_TEST_CASE(KDEMonoResultsMain)
 
   mlpackMain();
 
-  mainEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < reference.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
 }
 
 /**
@@ -199,7 +200,7 @@ BOOST_AUTO_TEST_CASE(KDEOutputSize)
 
   mlpackMain();
   // Check number of output elements.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::vec>("predictions").size(), samples);
+  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::vec>("predictions").size(), samples);
 }
 
 /**
@@ -221,22 +222,21 @@ BOOST_AUTO_TEST_CASE(KDEModelReuse)
 
   mlpackMain();
 
-  arma::vec oldEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
+  arma::vec oldEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Change parameters and load model.
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  SetInputParam("bandwidth", 0.5);
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
   SetInputParam("query", query);
   SetInputParam("input_model",
-      std::move(CLI::GetParam<KDEModel*>("output_model")));
+      std::move(IO::GetParam<KDEModel*>("output_model")));
 
   mlpackMain();
 
-  arma::vec newEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
+  arma::vec newEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Check estimations are the same.
   for (size_t i = 0; i < samples; ++i)
-    BOOST_REQUIRE_CLOSE(oldEstimations[i], newEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(oldEstimations[i], newEstimations[i], 100 * relError);
 }
 
 /**
@@ -274,11 +274,11 @@ BOOST_AUTO_TEST_CASE(KDEGaussianSingleKDTreeResultsMain)
 
   mlpackMain();
 
-  mainEstimations = std::move(CLI::GetParam<arma::vec>("predictions"));
+  mainEstimations = std::move(IO::GetParam<arma::vec>("predictions"));
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], relError);
+    BOOST_REQUIRE_CLOSE(kdeEstimations[i], mainEstimations[i], 100 * relError);
 }
 
 /**
@@ -403,6 +403,161 @@ BOOST_AUTO_TEST_CASE(KDEMainInvalidRelativeError)
   SetInputParam("rel_error", 0.3);
   BOOST_REQUIRE_NO_THROW(mlpackMain());
   Log::Fatal.ignoreInput = false;
+}
+
+/**
+  * Ensure we get an exception when an invalid Monte Carlo probability is
+  * specified.
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainInvalidMCProbability)
+{
+  arma::mat reference = arma::randu<arma::mat>(1, 10);
+  arma::mat query = arma::randu<arma::mat>(1, 5);
+
+  // Main params.
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("kernel", std::string("gaussian"));
+  SetInputParam("monte_carlo", true);
+
+  Log::Fatal.ignoreInput = true;
+  // Invalid under 0.
+  SetInputParam("mc_probability", -0.1);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+
+  // Invalid over 1.
+  SetInputParam("mc_probability", 1.1);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+
+  // Valid value.
+  SetInputParam("mc_probability", 0.3);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+  * Ensure we get an exception when an invalid Monte Carlo initial sample size
+  * is specified.
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainInvalidMCInitialSampleSize)
+{
+  arma::mat reference = arma::randu<arma::mat>(1, 10);
+  arma::mat query = arma::randu<arma::mat>(1, 5);
+
+  // Main params.
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("kernel", std::string("gaussian"));
+  SetInputParam("monte_carlo", true);
+
+  Log::Fatal.ignoreInput = true;
+  // Invalid under 0.
+  SetInputParam("initial_sample_size", -1);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+
+  // Invalid 0.
+  SetInputParam("initial_sample_size", 0);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+
+  // Valid value.
+  SetInputParam("initial_sample_size", 20);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+  * Ensure we get an exception when an invalid Monte Carlo entry coefficient
+  * is specified.
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainInvalidMCEntryCoef)
+{
+  arma::mat reference = arma::randu<arma::mat>(1, 10);
+  arma::mat query = arma::randu<arma::mat>(1, 5);
+
+  // Main params.
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("kernel", std::string("gaussian"));
+  SetInputParam("monte_carlo", true);
+
+  Log::Fatal.ignoreInput = true;
+  // Invalid under 1.
+  SetInputParam("mc_entry_coef", 0.5);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+
+  // Valid greater than 1.
+  SetInputParam("mc_entry_coef", 1.1);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+  * Ensure we get an exception when an invalid Monte Carlo break coefficient
+  * is specified.
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainInvalidMCBreakCoef)
+{
+  arma::mat reference = arma::randu<arma::mat>(1, 10);
+  arma::mat query = arma::randu<arma::mat>(1, 5);
+
+  // Main params.
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  SetInputParam("kernel", std::string("gaussian"));
+  SetInputParam("monte_carlo", true);
+
+  Log::Fatal.ignoreInput = true;
+  // Invalid under 0.
+  SetInputParam("mc_break_coef", -0.5);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+
+  // Valid between 0 and 1.
+  SetInputParam("mc_break_coef", 0.3);
+  BOOST_REQUIRE_NO_THROW(mlpackMain());
+
+  // Invalid greater than 1.
+  SetInputParam("mc_break_coef", 1.1);
+  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+  * Ensure when --monte_carlo flag is true, then KDEMain actually uses Monte
+  * Carlo estimations. Since this test has a random component, it might fail
+  * (although it's unlikely).
+ **/
+BOOST_AUTO_TEST_CASE(KDEMainMonteCarloFlag)
+{
+  // Datasets.
+  arma::mat reference = arma::randu(1, 5000);
+  arma::mat query = arma::randu(1, 300);
+  arma::vec estimations1, estimations2, differences;
+  double kernelBandwidth = 0.2;
+
+  // Parameters for estimations.
+  SetInputParam("reference", arma::mat(reference));
+  SetInputParam("query", arma::mat(query));
+  SetInputParam("kernel", std::string("gaussian"));
+  SetInputParam("tree", std::string("kd-tree"));
+  SetInputParam("bandwidth", kernelBandwidth);
+  SetInputParam("monte_carlo", true);
+
+  // Compute estimations 1.
+  mlpackMain();
+  estimations1 = std::move(IO::GetParam<arma::vec>("predictions"));
+
+  delete IO::GetParam<KDEModel*>("output_model");
+
+  // Compute estimations 2.
+  SetInputParam("reference", reference);
+  SetInputParam("query", query);
+  mlpackMain();
+  estimations2 = std::move(IO::GetParam<arma::vec>("predictions"));
+
+  // Check whether results are equal.
+  differences = arma::abs(estimations1 - estimations2);
+  const double sumDifferences = arma::accu(differences);
+  BOOST_REQUIRE_GT(sumDifferences, 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

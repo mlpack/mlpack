@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search_impl.hpp
+ * @file methods/neighbor_search/neighbor_search_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of Neighbor-Search class to perform all-nearest-neighbors on
@@ -115,7 +115,7 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
                                          const double epsilon,
                                          const MetricType metric) :
     referenceTree(NULL),
-    referenceSet(new MatType()), // Empty matrix.
+    referenceSet(mode == NAIVE_MODE ? new MatType() : NULL), // Empty matrix.
     searchMode(mode),
     epsilon(epsilon),
     metric(metric),
@@ -129,7 +129,8 @@ SingleTreeTraversalType>::NeighborSearch(const NeighborSearchMode mode,
   // Build the tree on the empty dataset, if necessary.
   if (mode != NAIVE_MODE)
   {
-    referenceTree = BuildTree<Tree>(*referenceSet, oldFromNewReferences);
+    referenceTree = BuildTree<Tree>(std::move(arma::mat()),
+        oldFromNewReferences);
     referenceSet = &referenceTree->Dataset();
   }
 }
@@ -181,8 +182,7 @@ SingleTreeTraversalType>::NeighborSearch(NeighborSearch&& other) :
     treeNeedsReset(other.treeNeedsReset)
 {
   // Clear the other model.
-  other.referenceSet = new MatType();
-  other.referenceTree = BuildTree<Tree>(*other.referenceSet,
+  other.referenceTree = BuildTree<Tree>(std::move(MatType()),
       other.oldFromNewReferences);
   other.referenceSet = &other.referenceTree->Dataset();
   other.searchMode = DUAL_TREE_MODE,
@@ -276,8 +276,11 @@ NeighborSearch<SortPolicy,
   scores = other.scores;
   treeNeedsReset = other.treeNeedsReset;
 
-  // Reset the other object.
-  other.referenceTree = BuildTree<Tree>(*other.referenceSet,
+  // Reset the other object.  Clean memory if needed.
+  if (!other.referenceTree)
+    delete other.referenceSet;
+
+  other.referenceTree = BuildTree<Tree>(std::move(arma::mat()),
       other.oldFromNewReferences);
   other.referenceSet = &other.referenceTree->Dataset();
   other.searchMode = DUAL_TREE_MODE,
@@ -508,9 +511,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // Create the traverser.
       tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
-      // Set the value of minBaseCases.
-      traverser.MinBaseCases() = k;
-
       // Now have it traverse for each point.
       for (size_t i = 0; i < querySet.n_cols; ++i)
         traverser.Traverse(i, *referenceTree);
@@ -539,13 +539,13 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       neighbors.set_size(k, querySet.n_cols);
       distances.set_size(k, querySet.n_cols);
 
-      for (size_t i = 0; i < distances.n_cols; i++)
+      for (size_t i = 0; i < distances.n_cols; ++i)
       {
         // Map distances (copy a column).
         distances.col(oldFromNewQueries[i]) = distancePtr->col(i);
 
         // Map indices of neighbors.
-        for (size_t j = 0; j < distances.n_rows; j++)
+        for (size_t j = 0; j < distances.n_rows; ++j)
         {
           neighbors(j, oldFromNewQueries[i]) =
               oldFromNewReferences[(*neighborPtr)(j, i)];
@@ -580,8 +580,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       neighbors.set_size(k, querySet.n_cols);
 
       // Map indices of neighbors.
-      for (size_t i = 0; i < neighbors.n_cols; i++)
-        for (size_t j = 0; j < neighbors.n_rows; j++)
+      for (size_t i = 0; i < neighbors.n_cols; ++i)
+        for (size_t j = 0; j < neighbors.n_rows; ++j)
           neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
       // Finished with temporary matrix.
@@ -666,8 +666,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     neighbors.set_size(k, querySet.n_cols);
 
     // Map indices of neighbors.
-    for (size_t i = 0; i < neighbors.n_cols; i++)
-      for (size_t j = 0; j < neighbors.n_rows; j++)
+    for (size_t i = 0; i < neighbors.n_cols; ++i)
+      for (size_t j = 0; j < neighbors.n_rows; ++j)
         neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
     // Finished with temporary matrix.
@@ -816,9 +816,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // Create the traverser.
       tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
-      // Set the value of minBaseCases.
-      traverser.MinBaseCases() = k;
-
       // Now have it traverse for each point.
       for (size_t i = 0; i < referenceSet->n_cols; ++i)
         traverser.Traverse(i, *referenceTree);
@@ -883,7 +880,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::EffectiveError(
   double effectiveError = 0;
   size_t numCases = 0;
 
-  for (size_t i = 0; i < foundDistances.n_elem; i++)
+  for (size_t i = 0; i < foundDistances.n_elem; ++i)
   {
     if (realDistances(i) != 0 &&
         foundDistances(i) != SortPolicy::WorstDistance())

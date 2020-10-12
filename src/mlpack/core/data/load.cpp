@@ -1,5 +1,5 @@
 /**
- * @file load.cpp
+ * @file core/data/load.cpp
  * @author Tham Ngap Wei
  *
  * Force instantiation of some Load() overloads to reduce compile time.
@@ -18,32 +18,68 @@ namespace data /** Functions to load and save matrices and models. */ {
 template bool Load<int>(const std::string&,
                         arma::Mat<int>&,
                         const bool,
-                        const bool);
+                        const bool,
+                        const arma::file_type);
 
 template bool Load<unsigned int>(const std::string&,
                                  arma::Mat<unsigned int>&,
                                  const bool,
-                                 const bool);
+                                 const bool,
+                                 const arma::file_type);
 
 template bool Load<unsigned long>(const std::string&,
                                   arma::Mat<unsigned long>&,
                                   const bool,
-                                  const bool);
+                                  const bool,
+                                  const arma::file_type);
 
 template bool Load<unsigned long long>(const std::string&,
                                        arma::Mat<unsigned long long>&,
                                        const bool,
-                                       const bool);
+                                       const bool,
+                                       const arma::file_type);
 
 template bool Load<float>(const std::string&,
                           arma::Mat<float>&,
                           const bool,
-                          const bool);
+                          const bool,
+                          const arma::file_type);
 
 template bool Load<double>(const std::string&,
                            arma::Mat<double>&,
                            const bool,
+                           const bool,
+                           const arma::file_type);
+
+template bool Load<int>(const std::string&,
+                        arma::SpMat<int>&,
+                        const bool,
+                        const bool);
+
+template bool Load<unsigned int>(const std::string&,
+                                 arma::SpMat<unsigned int>&,
+                                 const bool,
+                                 const bool);
+
+template bool Load<unsigned long>(const std::string&,
+                                  arma::SpMat<unsigned long>&,
+                                  const bool,
+                                  const bool);
+
+template bool Load<unsigned long long>(const std::string&,
+                                       arma::SpMat<unsigned long long>&,
+                                       const bool,
+                                       const bool);
+
+template bool Load<double>(const std::string&,
+                           arma::SpMat<double>&,
+                           const bool,
                            const bool);
+
+template bool Load<float>(const std::string&,
+                          arma::SpMat<float>&,
+                          const bool,
+                          const bool);
 
 template bool Load<int, IncrementPolicy>(const std::string&,
                                          arma::Mat<int>&,

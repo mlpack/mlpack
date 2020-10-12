@@ -1,9 +1,14 @@
 /**
- * @file print_type_doc.hpp
+ * @file bindings/cli/print_type_doc.hpp
  * @author Ryan Curtin
  *
  * Print documentation for a given type, detailing what the type actually is to
  * the user.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_BINDINGS_CLI_PRINT_TYPE_DOC_HPP
 #define MLPACK_BINDINGS_CLI_PRINT_TYPE_DOC_HPP
@@ -19,7 +24,7 @@ namespace cli {
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
@@ -31,7 +36,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0);
 
 /**
@@ -39,7 +44,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0);
 
 /**
@@ -47,7 +52,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
@@ -56,7 +61,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
 
@@ -64,7 +69,7 @@ std::string PrintTypeDoc(
  * Print the command-line type of an option into a string.
  */
 template<typename T>
-void PrintTypeDoc(const util::ParamData& data,
+void PrintTypeDoc(util::ParamData& data,
                   const void* /* input */,
                   void* output)
 {

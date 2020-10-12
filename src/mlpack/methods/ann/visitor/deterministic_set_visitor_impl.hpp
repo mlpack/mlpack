@@ -1,5 +1,5 @@
 /**
- * @file deterministic_set_visitor_impl.hpp
+ * @file methods/ann/visitor/deterministic_set_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Deterministic() function layer abstraction.
@@ -29,6 +29,11 @@ template<typename LayerType>
 inline void DeterministicSetVisitor::operator()(LayerType* layer) const
 {
   LayerDeterministic(layer);
+}
+
+inline void DeterministicSetVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
 }
 
 template<typename T>

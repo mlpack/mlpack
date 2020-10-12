@@ -1,5 +1,5 @@
 /*
- * @file ksinit_test.cpp
+ * @file tests/ksinit_test.cpp
  * @author Praveen Ch
  *
  * Tests the working of Kathirvalavakumar Subavathi Initialization for a

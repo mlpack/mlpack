@@ -1,5 +1,5 @@
 /**
- * @file run_set_visitor.hpp
+ * @file methods/ann/visitor/run_set_visitor.hpp
  * @author Saksham Bansal
  *
  * This file provides an abstraction for the Run() function for
@@ -34,6 +34,8 @@ class RunSetVisitor : public boost::static_visitor<void>
   //! Set the run parameter.
   template<typename LayerType>
   void operator()(LayerType* layer) const;
+
+  void operator()(MoreTypes layer) const;
 
  private:
   //! The run parameter.

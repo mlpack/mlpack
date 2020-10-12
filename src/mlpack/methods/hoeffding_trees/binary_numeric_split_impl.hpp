@@ -1,5 +1,5 @@
 /**
- * @file binary_numeric_split_impl.hpp
+ * @file methods/hoeffding_trees/binary_numeric_split_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the BinaryNumericSplit class.

@@ -1,5 +1,5 @@
 /**
- * @file rnn.hpp
+ * @file methods/ann/rnn.hpp
  * @author Marcus Edel
  *
  * Definition of the RNN class, which implements recurrent neural networks.
@@ -23,6 +23,7 @@
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 #include <ensmallen.hpp>
@@ -73,6 +74,35 @@ class RNN
   ~RNN();
 
   /**
+   * Check if the optimizer has MaxIterations() parameter, if it does
+   * then check if it's value is less than the number of datapoints
+   * in the dataset.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+
+  /**
+   * Check if the optimizer has MaxIterations() parameter, if it
+   * doesn't then simply return from the function.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param optimizer optimizer used in the training process.
+   * @param samples Number of datapoints in the dataset.
+   */
+  template<typename OptimizerType>
+  typename std::enable_if<
+      !HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
+      ::value, void>::type
+  WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
+
+  /**
    * Train the recurrent neural network on the given input data using the given
    * optimizer.
    *
@@ -91,15 +121,19 @@ class RNN
    * at time slice k.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param optimizer Instantiated optimizer used to train the model.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType>
+  template<typename OptimizerType, typename... CallbackTypes>
   double Train(arma::cube predictors,
                arma::cube responses,
-               OptimizerType& optimizer);
+               OptimizerType& optimizer,
+               CallbackTypes&&... callbacks);
 
   /**
    * Train the recurrent neural network on the given input data. By default, the
@@ -121,12 +155,17 @@ class RNN
    * at time slice k.
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
-  template<typename OptimizerType = ens::StandardSGD>
-  double Train(arma::cube predictors, arma::cube responses);
+  template<typename OptimizerType = ens::StandardSGD, typename... CallbackTypes>
+  double Train(arma::cube predictors,
+               arma::cube responses,
+               CallbackTypes&&... callbacks);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -286,7 +325,8 @@ class RNN
    *
    * @param input Data sequence to compute probabilities for.
    */
-  void Forward(arma::mat&& input);
+  template<typename InputType>
+  void Forward(const InputType& input);
 
   /**
    * Reset the state of RNN cells in the network for new input sequence.
@@ -304,7 +344,7 @@ class RNN
    * layer defined optimizer.
    */
   template<typename InputType>
-  void Gradient(InputType&& input);
+  void Gradient(const InputType& input);
 
   /**
    * Reset the module status by setting the current deterministic parameter

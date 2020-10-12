@@ -1,13 +1,10 @@
 /***
- * @file arma_extend.hpp
+ * @file core/arma_extend/arma_extend.hpp
  * @author Ryan Curtin
  *
  * Include Armadillo extensions which currently are not part of the main
  * Armadillo codebase.
  *
- * This will allow the use of the ccov() function (which performs the same
- * function as cov(trans(X)) but without the cost of computing trans(X)).  This
- * also gives sparse matrix support, if it is necessary.
  */
 #ifndef MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
 #define MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
@@ -39,9 +36,10 @@
     #endif
 #endif
 
-// Make sure that U64 and S64 support is enabled.
-#ifndef ARMA_USE_U64S64
-  #define ARMA_USE_U64S64
+// Force definition of old HDF5 API.  Thanks to Mike Roberts for helping find
+// this workaround.
+#if !defined(H5_USE_110_API)
+  #define H5_USE_110_API
 #endif
 
 // Include everything we'll need for serialize().
@@ -50,20 +48,5 @@
 #include <boost/serialization/array.hpp>
 
 #include <armadillo>
-
-namespace arma {
-  // u64/s64
-  #include "hdf5_misc.hpp"
-
-  // ccov()
-  #include "op_ccov_proto.hpp"
-  #include "op_ccov_meat.hpp"
-  #include "glue_ccov_proto.hpp"
-  #include "glue_ccov_meat.hpp"
-  #include "fn_ccov.hpp"
-
-  // inplace_reshape()
-  #include "fn_inplace_reshape.hpp"
-};
 
 #endif

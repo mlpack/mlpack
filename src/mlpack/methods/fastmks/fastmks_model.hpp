@@ -1,5 +1,5 @@
 /**
- * @file fastmks_model.hpp
+ * @file methods/fastmks/fastmks_model.hpp
  * @author Ryan Curtin
  *
  * A utility struct to contain all the possible FastMKS models.
@@ -70,7 +70,7 @@ class FastMKSModel
    * to the correct entry in KernelTypes for the given KernelType class!
    */
   template<typename TKernelType>
-  void BuildModel(const arma::mat& referenceData,
+  void BuildModel(arma::mat&& referenceData,
                   TKernelType& kernel,
                   const bool singleMode,
                   const bool naive,

@@ -40,4 +40,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(kmeans)
 add_python_binding(kmeans)
-add_markdown_docs(kmeans "cli;python" "clustering")
+add_julia_binding(kmeans)
+add_go_binding(kmeans)
+add_r_binding(kmeans)
+add_markdown_docs(kmeans "cli;python;julia;go;r" "clustering")

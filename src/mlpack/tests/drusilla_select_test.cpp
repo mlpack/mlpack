@@ -1,5 +1,5 @@
 /**
- * @file drusilla_select_test.cpp
+ * @file tests/drusilla_select_test.cpp
  * @author Ryan Curtin
  *
  * Test for DrusillaSelect.

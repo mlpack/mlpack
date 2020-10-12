@@ -1,5 +1,5 @@
 /**
- * @file output_parameter_visitor.hpp
+ * @file methods/ann/visitor/output_parameter_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the OutputParameter() function for
@@ -30,6 +30,8 @@ class OutputParameterVisitor : public boost::static_visitor<arma::mat&>
   //! Return the output parameter set.
   template<typename LayerType>
   arma::mat& operator()(LayerType* layer) const;
+
+  arma::mat& operator()(MoreTypes layer) const;
 };
 
 } // namespace ann

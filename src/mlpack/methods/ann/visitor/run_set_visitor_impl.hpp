@@ -1,5 +1,5 @@
 /**
- * @file run_set_visitor_impl.hpp
+ * @file methods/ann/visitor/run_set_visitor_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of the Run() function layer abstraction.
@@ -29,6 +29,11 @@ template<typename LayerType>
 inline void RunSetVisitor::operator()(LayerType* layer) const
 {
   LayerRun(layer);
+}
+
+inline void RunSetVisitor::operator()(MoreTypes layer) const
+{
+  layer.apply_visitor(*this);
 }
 
 template<typename T>

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.3.2)
 project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
+include(CMake/CheckHash.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -12,21 +13,67 @@ option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
+option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
+option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
+option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 
-# Currently Python bindings aren't known to build successfully on Windows, so
-# set BUILD_PYTHON_BINDINGS to OFF when the platform is Windows.
+# Set minimum library version required by mlpack.
+set(ARMADILLO_VERSION "8.400.0")
+set(ENSMALLEN_VERSION "2.10.0")
+set(BOOST_VERSION "1.58")
+
 if (WIN32)
-  option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
-  message(WARNING "By default Python bindings are not compiled for Windows because they are not known to work.  Set BUILD_PYTHON_BINDINGS to ON if you want them built.")
+
+  set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
+  set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
 else ()
-  option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
 
+# Detect whether the user passed BUILD_PYTHON_BINDINGS in order to determine if
+# we should fail if Python isn't found.
+if (BUILD_PYTHON_BINDINGS)
+  set(FORCE_BUILD_PYTHON_BINDINGS ON)
+else()
+  set(FORCE_BUILD_PYTHON_BINDINGS OFF)
+endif()
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
+
+# Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
+# we should fail if Julia isn't found.
+if (BUILD_JULIA_BINDINGS)
+  set(FORCE_BUILD_JULIA_BINDINGS ON)
+else()
+  set(FORCE_BUILD_JULIA_BINDINGS OFF)
+endif()
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
+
+# Detect whether the user passed BUILD_GO_BINDINGS in order to determine if
+# we should fail if Go isn't found.
+if (BUILD_GO_BINDINGS)
+  set(FORCE_BUILD_GO_BINDINGS ON)
+else()
+  set(FORCE_BUILD_GO_BINDINGS OFF)
+endif()
+option(BUILD_GO_BINDINGS "Build Go bindings." ON)
+
+# If building Go bindings then build go shared libraries.
+if (BUILD_GO_BINDINGS)
+  set(BUILD_GO_SHLIB ON)
+endif()
+
+# Detect whether the user passed BUILD_R_BINDINGS in order to determine if
+# we should fail if R isn't found.
+if (BUILD_R_BINDINGS)
+  set(FORCE_BUILD_R_BINDINGS ON)
+else()
+  set(FORCE_BUILD_R_BINDINGS OFF)
+endif()
+option(BUILD_R_BINDINGS "Build R bindings." ON)
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
@@ -46,6 +93,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+
+# Disable any downloads if needed.
+if (DISABLE_DOWNLOADS)
+  set(DOWNLOAD_ENSMALLEN OFF)
+  set(DOWNLOAD_STB_IMAGE OFF)
+endif ()
 
 # If we are on a Unix-like system, use the GNU install directories module.
 # Otherwise set the values manually.
@@ -75,6 +128,10 @@ if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ftemplate-depth=1000")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
+
+  # To remove unused functions warnings.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-function")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-function")
 endif()
 
 # These support libraries are used if we need to link against something
@@ -139,7 +196,7 @@ endif()
 
 # Setup build for test coverage
 if(BUILD_WITH_COVERAGE)
-  # Currently coverage only works with GNU g++
+  # Currently coverage only works with GNU g++.
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Find gcov and lcov
     find_program(GCOV gcov)
@@ -151,6 +208,7 @@ if(BUILD_WITH_COVERAGE)
     endif()
 
     set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "supc++")
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "quadmath")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
     message(STATUS "Adding debug compile options for code coverage.")
     # Remove optimizations for better line coverage
@@ -255,94 +313,80 @@ endif()
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
+#   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
-
-find_package(Armadillo 6.500.0 REQUIRED)
-
-# If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
-# system (where size_t will be 64 bits), suggest to the user that they should
-# compile Armadillo with 64-bit words.  Note that with Armadillo 5.000.0 and
-# newer, ARMA_64BIT_WORD is enabled by default.
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  # Check the version, to see if ARMA_64BIT_WORD is enabled by default.
-  set(ARMA_HAS_64BIT_WORD 0)
-  if(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
-    set(ARMA_HAS_64BIT_WORD 1)
-  else()
-    # Can we open the configuration file?  If not, issue a warning.
-    if(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-      message(WARNING "Armadillo configuration file "
-          "(${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
-    else()
-      # We are on a 64-bit system.  Does Armadillo have ARMA_64BIT_WORD enabled?
-      file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" ARMA_CONFIG)
-      string(REGEX MATCH
-          "[\r\n][ ]*#define ARMA_64BIT_WORD"
-          ARMA_HAS_64BIT_WORD_PRE
-          "${ARMA_CONFIG}")
-
-      string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
-    endif()
-  endif()
-
-  if(ARMA_HAS_64BIT_WORD EQUAL 0)
-    message(WARNING "This is a 64-bit system, but Armadillo was compiled "
-        "without 64-bit index support.  Consider recompiling Armadillo with "
-        "ARMA_64BIT_WORD to enable 64-bit indices (large matrix support). "
-        "mlpack will still work without ARMA_64BIT_WORD defined, but will not "
-        "scale to matrices with more than 4 billion elements.")
-  endif()
-else()
-  # If we are on a 32-bit system, we must manually specify the size of the word
-  # to be 32 bits, since otherwise Armadillo will produce a warning that it is
-  # disabling 64-bit support.
-  if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    add_definitions(-DARMA_32BIT_WORD)
-  endif ()
-endif()
-
-# On Windows, Armadillo should be using LAPACK and BLAS but we still need to
-# link against it.  We don't want to use the FindLAPACK or FindBLAS modules
-# because then we are required to have a FORTRAN compiler (argh!) so we will try
-# and find LAPACK and BLAS ourselves, using a slightly modified variant of the
-# script Armadillo uses to find these.
-if (WIN32)
-  find_library(LAPACK_LIBRARY
-      NAMES lapack liblapack lapack_win32_MT lapack_win32
-      PATHS "C:/Program Files/Armadillo"
-      PATH_SUFFIXES "examples/lib_win32/")
-
-  if (NOT LAPACK_LIBRARY)
-    message(FATAL_ERROR "Cannot find LAPACK library (.lib)!")
-  endif ()
-
-  find_library(BLAS_LIBRARY
-      NAMES blas libblas blas_win32_MT blas_win32
-      PATHS "C:/Program Files/Armadillo"
-      PATH_SUFFIXES "examples/lib_win32/")
-
-  if (NOT BLAS_LIBRARY)
-    message(FATAL_ERROR "Cannot find BLAS library (.lib)!")
-  endif ()
-
-  # Piggyback LAPACK and BLAS linking into Armadillo link.
-  set(ARMADILLO_LIBRARIES
-       ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
-endif ()
+find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
+# Find stb_image.h and stb_image_write.h.
+find_package(StbImage)
+# Download stb_image for image loading.
+if (NOT STB_IMAGE_FOUND)
+  if (DOWNLOAD_STB_IMAGE)
+    set(STB_DIR "stb")
+    install(DIRECTORY DESTINATION "${CMAKE_BINARY_DIR}/deps/${STB_DIR}")
+    file(DOWNLOAD http://mlpack.org/files/stb-2.22/stb_image.h
+        "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h"
+        STATUS STB_IMAGE_DOWNLOAD_STATUS_LIST LOG STB_IMAGE_DOWNLOAD_LOG
+        SHOW_PROGRESS)
+    list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 0 STB_IMAGE_DOWNLOAD_STATUS)
+    file(DOWNLOAD http://mlpack.org/files/stb-1.13/stb_image_write.h
+        "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h"
+        STATUS STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST
+        LOG STB_IMAGE_WRITE_DOWNLOAD_LOG
+        SHOW_PROGRESS)
+    list(GET STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST 0
+        STB_IMAGE_WRITE_DOWNLOAD_STATUS)
+    if (STB_IMAGE_DOWNLOAD_STATUS EQUAL 0 AND
+        STB_IMAGE_WRITE_DOWNLOAD_STATUS EQUAL 0)
+      check_hash (http://mlpack.org/files/stb/hash.md5 "${CMAKE_BINARY_DIR}/deps/${STB_DIR}"
+          HASH_CHECK_FAIL)
+      if (HASH_CHECK_FAIL EQUAL 0)
+        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        message(STATUS
+            "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        # Now we have to also ensure these header files get installed.
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+        add_definitions(-DHAS_STB)
+        set(STB_AVAILABLE "1")
+      else ()
+        message(WARNING
+            "stb/stb_image.h is not installed. Image utilities will not be available!")
+      endif ()
+    else ()
+        file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+        list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
+        message(WARNING
+            "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
+        message(WARNING
+            "stb/stb_image.h is not installed. Image utilities will not be available!")
+    endif ()
+  else ()
+    message(WARNING
+        "stb/stb_image.h is not installed. Image utilities will not be available!")
+  endif ()
+else ()
+  # Already has STB installed.
+  add_definitions(-DHAS_STB)
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${STB_IMAGE_INCLUDE_DIR})
+  set(STB_AVAILABLE "1")
+endif ()
+
+
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
-find_package(Ensmallen 1.10.0)
+find_package(Ensmallen "${ENSMALLEN_VERSION}")
 if (NOT ENSMALLEN_FOUND)
   if (DOWNLOAD_ENSMALLEN)
     file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
         "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
-        STATUS ENS_DOWNLOAD_STATUS_LIST LOG ENS_DOWBLOAD_LOG
+        STATUS ENS_DOWNLOAD_STATUS_LIST LOG ENS_DOWNLOAD_LOG
         SHOW_PROGRESS)
     list(GET ENS_DOWNLOAD_STATUS_LIST 0 ENS_DOWNLOAD_STATUS)
     if (ENS_DOWNLOAD_STATUS EQUAL 0)
@@ -353,6 +397,12 @@ if (NOT ENSMALLEN_FOUND)
       # Get the name of the directory.
       file (GLOB ENS_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
           "${CMAKE_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*")
+      # list(FILTER) is not available on 3.5 or older, but try to keep
+      # configuring without filtering the list anyway (it might work if only
+      # the file ensmallen-latest.tar.gz is present.
+      if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
+        list(FILTER ENS_DIRECTORIES EXCLUDE REGEX "ensmallen-.*\.tar\.gz")
+      endif ()
       list(LENGTH ENS_DIRECTORIES ENS_DIRECTORIES_LEN)
       if (ENS_DIRECTORIES_LEN EQUAL 1)
         list(GET ENS_DIRECTORIES 0 ENSMALLEN_INCLUDE_DIR)
@@ -360,14 +410,17 @@ if (NOT ENSMALLEN_FOUND)
             "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include")
         message(STATUS
             "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
+
+        # Now we have to also ensure these header files get installed.
+        install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits")
+        install(FILES "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
       else ()
         message(FATAL_ERROR "Problem unpacking ensmallen!  Expected only one directory ensmallen-x.y.z/; found ${ENS_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
       endif ()
     else ()
       list(GET ENS_DOWNLOAD_STATUS_LIST 1 ENS_DOWNLOAD_ERROR)
       message(FATAL_ERROR
-          "Could not download ensmallen! Error code ${ENS_DOWNLOAD_STATUS}:
-${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWBLOAD_LOG}")
+          "Could not download ensmallen! Error code ${ENS_DOWNLOAD_STATUS}: ${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWNLOAD_LOG}")
     endif ()
   else ()
     # Release versions will have ensmallen packaged with the release so we can
@@ -387,6 +440,11 @@ endif ()
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.74.0" "1.74"  
+  "17.3.0" "17.3"		
+  "1.72.0" "1.72"
+  "1.71.0" "1.71"
+  "1.70.0" "1.70"
   "1.69.0" "1.69"
   "1.68.0" "1.68"
   "1.67.0" "1.67"
@@ -398,19 +456,15 @@ set(Boost_ADDITIONAL_VERSIONS
   "1.61.1" "1.61.0" "1.61"
   "1.60.1" "1.60.0" "1.60"
   "1.59.1" "1.59.0" "1.59"
-  "1.58.1" "1.58.0" "1.58"
-  "1.57.1" "1.57.0" "1.57"
-  "1.56.1" "1.56.0" "1.56"
-  "1.55.1" "1.55.0" "1.55"
-  "1.54.1" "1.54.0" "1.54"
-  "1.53.1" "1.53.0" "1.53"
-  "1.52.1" "1.52.0" "1.52"
-  "1.51.1" "1.51.0" "1.51"
-  "1.50.1" "1.50.0" "1.50"
-  "1.49.1" "1.49.0" "1.49")
-find_package(Boost 1.49
+  "1.58.1" "1.58.0" "1.58")
+# Disable forced config-mode CMake search for Boost, which only imports targets
+# and does not set the variables that we need.
+#
+# TODO for the brave: transition all mlpack's CMake to 'target-based modern
+# CMake'.  Good luck!  You'll need it.
+set(Boost_NO_BOOST_CMAKE 1)
+find_package(Boost "${BOOST_VERSION}"
     COMPONENTS
-      program_options
       unit_test_framework
       serialization
     REQUIRED
@@ -423,6 +477,8 @@ link_directories(${Boost_LIBRARY_DIRS})
 # handle it.
 if (MSVC)
   link_directories(${Boost_LIBRARY_DIRS})
+  set(CMAKE_MSVCIDE_RUN_PATH ${CMAKE_MSVCIDE_RUN_PATH} ${Boost_LIBRARY_DIRS})
+  message("boost lib dirs ${Boost_LIBRARY_DIRS}")
   set(Boost_LIBRARIES "")
 endif ()
 
@@ -475,6 +531,21 @@ if (WIN32)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+  # Copy all necessary DLLs for runtime to the build directory.
+  # This is a little hackish, but I can't figure out clear ways to make CMake
+  # consistently link everything 100% statically across platforms or set the
+  # runtime path right always, so this is the best I know how to do for now.
+  foreach(dir ${DLL_COPY_DIRS})
+    file(GLOB dir_dll_list "${dir}/*.dll")
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
+    file(COPY ${dir_dll_list} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+  endforeach ()
+
+  foreach(file ${DLL_COPY_LIBS})
+    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Release/)
+    file(COPY ${file} DESTINATION ${CMAKE_BINARY_DIR}/Debug/)
+  endforeach()
 else ()
   # If not on Windows, put them under more standard UNIX-like places.  This is
   # necessary, otherwise they would all end up in
@@ -520,8 +591,8 @@ include(CMake/CreateArmaConfigInfo.cmake)
 add_custom_target(mlpack_arma_config ALL
     COMMAND ${CMAKE_COMMAND}
         -D ARMADILLO_INCLUDE_DIR="${ARMADILLO_INCLUDE_DIR}"
-        -D ARMADILLO_VERSION_MAJOR="${ARMADILLO_VERSION_MAJOR}"
         -D OPENMP_FOUND="${OPENMP_FOUND}"
+        -D CMAKE_SIZEOF_VOID_P="${CMAKE_SIZEOF_VOID_P}"
         -P CMake/CreateArmaConfigInfo.cmake
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Updating arma_config.hpp (if necessary)")
@@ -548,8 +619,8 @@ if (BUILD_CLI_EXECUTABLES AND UNIX)
     )
 
     # Set the rules to install the documentation.
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
-        DESTINATION ${CMAKE_INSTALL_MANDIR})
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/share/man/"
+        DESTINATION "${CMAKE_INSTALL_MANDIR}")
   endif ()
 endif ()
 
@@ -600,8 +671,8 @@ if (DOXYGEN_FOUND)
       COMMENT "Generating API documentation with Doxygen"
   )
 
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
-      DESTINATION ${CMAKE_INSTALL_DOCDIR}
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
+      DESTINATION "${CMAKE_INSTALL_DOCDIR}"
       COMPONENT doc
       OPTIONAL
   )
@@ -642,7 +713,7 @@ if (PKG_CONFIG_FOUND)
     if ("${first}" STREQUAL "/")
       # We need to split the directory and the library.
       string(REGEX REPLACE "(.*/)[^/]*$" "\\1" library_dir "${lib}")
-      string(REGEX REPLACE ".*/lib([^/]*).so.*$" "\\1" library_name "${lib}")
+      string(REGEX REPLACE ".*/lib([^/]*)[.][a-z]*[.]*$" "\\1" library_name "${lib}")
 
       list(APPEND MLPACK_LIBRARIES_LIST "-L${library_dir}")
       list(APPEND MLPACK_LIBRARIES_LIST "-l${library_name}")
@@ -680,6 +751,7 @@ if (PKG_CONFIG_FOUND)
       DEPENDS mlpack_headers
       COMMENT "Generating mlpack.pc (pkg-config) file.")
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig/)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc"
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
+
 endif ()

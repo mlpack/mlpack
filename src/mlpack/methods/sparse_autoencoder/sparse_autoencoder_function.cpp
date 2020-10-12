@@ -1,5 +1,5 @@
 /**
- * @file sparse_autoencoder_function.cpp
+ * @file methods/sparse_autoencoder/sparse_autoencoder_function.cpp
  * @author Siddharth Agrawal
  *
  * Implementation of function to be optimized for sparse autoencoders.

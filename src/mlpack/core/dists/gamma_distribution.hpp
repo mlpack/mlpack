@@ -1,12 +1,12 @@
 /**
- * @file gamma_distribution.hpp
+ * @file core/dists/gamma_distribution.hpp
  * @author Yannis Mentekidis
  * @author Rohan Raj
  *
  * Implementation of a Gamma distribution of multidimensional data that fits
  * gamma parameters (alpha, beta) to data.
  * The fitting is done independently for each dataset dimension (row), based on
- * the assumption each dimension is fully indepeendent.
+ * the assumption each dimension is fully independent.
  *
  * Based on "Estimating a Gamma Distribution" by Thomas P. Minka:
  * research.microsoft.com/~minka/papers/minka-gamma.pdf
@@ -21,7 +21,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
-#include <boost/program_options.hpp>
 
 namespace mlpack {
 namespace distribution {
@@ -154,7 +153,7 @@ class GammaDistribution
    * @param x The 1-dimensional observation.
    * @param dim The dimension for which to calculate the probability.
    */
-  double Probability(double x, size_t dim) const;
+  double Probability(double x, const size_t dim) const;
 
   /**
    * This function returns the logarithm of the probability of a group of
@@ -179,12 +178,12 @@ class GammaDistribution
 
   /**
    * This function returns the logarithm of the probability of a single
-   * observation. 
+   * observation.
    *
    * @param x The 1-dimensional observation.
    * @param dim The dimension for which to calculate the probability.
    */
-  double LogProbability(double x, size_t dim) const;
+  double LogProbability(double x, const size_t dim) const;
 
   /**
    * This function returns an observation of this distribution.

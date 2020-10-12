@@ -1,5 +1,5 @@
 /**
- * @file r_star_tree_split_impl.hpp
+ * @file core/tree/rectangle_tree/r_star_tree_split_impl.hpp
  * @author Andrew Wells
  *
  * Implementation of class (RStarTreeSplit) to split a RectangleTree.
@@ -50,7 +50,7 @@ size_t RStarTreeSplit::ReinsertPoints(TreeType* tree,
       std::vector<std::pair<ElemType, size_t>> sorted(tree->Count());
       arma::Col<ElemType> center;
       tree->Bound().Center(center);
-      for (size_t i = 0; i < sorted.size(); i++)
+      for (size_t i = 0; i < sorted.size(); ++i)
       {
         sorted[i].first = tree->Metric().Evaluate(center,
             tree->Dataset().col(tree->Point(i)));
@@ -60,7 +60,7 @@ size_t RStarTreeSplit::ReinsertPoints(TreeType* tree,
       std::sort(sorted.begin(), sorted.end(), PairComp<ElemType, size_t>);
 
       // Remove the points furthest from the center of the node.
-      for (size_t i = 0; i < p; i++)
+      for (size_t i = 0; i < p; ++i)
         root->DeletePoint(sorted[sorted.size() - 1 - i].second, relevels);
 
       // Now reinsert the points, but reverse the order---insert the closest to
@@ -94,7 +94,7 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
   /**
    * Check each dimension, to find which dimension is best to split on.
    */
-  for (size_t j = 0; j < tree->Bound().Dim(); j++)
+  for (size_t j = 0; j < tree->Bound().Dim(); ++j)
   {
     ElemType axisScore = 0.0;
 
@@ -111,7 +111,7 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
     arma::Col<ElemType> margins(numPossibleSplits, arma::fill::zeros);
     arma::Col<ElemType> overlaps(numPossibleSplits, arma::fill::zeros);
 
-    for (size_t i = 0; i < numPossibleSplits; i++)
+    for (size_t i = 0; i < numPossibleSplits; ++i)
     {
       // The ith arrangement is obtained by placing the first
       // tree->MinLeafSize() + i points in one rectangle and the rest in
@@ -130,7 +130,7 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
       areas[i] = bound1.Volume() + bound2.Volume();
       overlaps[i] = bound1.Overlap(bound2);
 
-      for (size_t k = 0; k < bound1.Dim(); k++)
+      for (size_t k = 0; k < bound1.Dim(); ++k)
         margins[i] += bound1[k].Width() + bound2[k].Width();
 
       axisScore += margins[i];
@@ -145,7 +145,7 @@ void RStarTreeSplit::PickLeafSplit(TreeType* tree,
       size_t areaIndex = 0;
       bool tiedOnOverlap = false;
 
-      for (size_t i = 1; i < areas.n_elem; i++)
+      for (size_t i = 1; i < areas.n_elem; ++i)
       {
         if (overlaps[i] < overlaps[overlapIndex])
         {
@@ -198,7 +198,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
    * dimension to prepare for reinsertion of points into the new nodes.
    */
   std::vector<std::pair<ElemType, size_t>> sorted(tree->Count());
-  for (size_t i = 0; i < sorted.size(); i++)
+  for (size_t i = 0; i < sorted.size(); ++i)
   {
     sorted[i].first = tree->Dataset().col(tree->Point(i))[bestAxis];
     sorted[i].second = tree->Point(i);
@@ -232,7 +232,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
   tree->bound.Clear();
 
   // Insert the points into the appropriate tree.
-  for (size_t i = 0; i < numPoints; i++)
+  for (size_t i = 0; i < numPoints; ++i)
   {
     if (i < bestIndex + tree->MinLeafSize())
       treeOne->InsertPoint(sorted[i].second);
@@ -289,7 +289,7 @@ bool RStarTreeSplit::SplitNonLeafNode(
   /**
    * Check over each dimension to see which is best to use for splitting.
    */
-  for (size_t j = 0; j < tree->Bound().Dim(); j++)
+  for (size_t j = 0; j < tree->Bound().Dim(); ++j)
   {
     ElemType axisLoScore = 0.0;
     ElemType axisHiScore = 0.0;
@@ -298,7 +298,7 @@ bool RStarTreeSplit::SplitNonLeafNode(
     // bound.
     arma::Col<ElemType> loDimValues(tree->NumChildren());
     arma::Col<ElemType> hiDimValues(tree->NumChildren());
-    for (size_t i = 0; i < tree->NumChildren(); i++)
+    for (size_t i = 0; i < tree->NumChildren(); ++i)
     {
       loDimValues[i] = tree->Child(i).Bound()[j].Lo();
       hiDimValues[i] = tree->Child(i).Bound()[j].Hi();
@@ -347,7 +347,7 @@ bool RStarTreeSplit::SplitNonLeafNode(
       overlaps[2 * i + 1] = hb1.Overlap(hb2);
 
       // Now calculate margins for each.
-      for (size_t k = 0; k < lb1.Dim(); k++)
+      for (size_t k = 0; k < lb1.Dim(); ++k)
       {
         margins[2 * i]     += lb1[k].Width() + lb2[k].Width();
         margins[2 * i + 1] += hb1[k].Width() + hb2[k].Width();
@@ -381,7 +381,7 @@ bool RStarTreeSplit::SplitNonLeafNode(
 
       // Find the best possible split (and whether it is on the low values or
       // high values of the bounds).
-      for (size_t i = 1; i < numPossibleSplits; i++)
+      for (size_t i = 1; i < numPossibleSplits; ++i)
       {
         // Check bounds.
         if (overlaps[2 * i + indexOffset] < overlaps[overlapIndex])
@@ -458,12 +458,12 @@ bool RStarTreeSplit::SplitNonLeafNode(
 
     // We have to update the children of treeOne so that they record the correct
     // parent.
-    for (size_t i = 0; i < treeOne->NumChildren(); i++)
+    for (size_t i = 0; i < treeOne->NumChildren(); ++i)
       treeOne->children[i]->Parent() = treeOne;
   }
 
   // Update the children of treeTwo to have the correct parent.
-  for (size_t i = 0; i < treeTwo->NumChildren(); i++)
+  for (size_t i = 0; i < treeTwo->NumChildren(); ++i)
     treeTwo->children[i]->Parent() = treeTwo;
 
   // If we have overflowed hte parent's children, then we need to split that

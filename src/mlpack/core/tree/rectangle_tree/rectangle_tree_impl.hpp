@@ -1,5 +1,5 @@
 /**
- * @file rectangle_tree_impl.hpp
+ * @file core/tree/rectangle_tree/rectangle_tree_impl.hpp
  * @author Andrew Wells
  *
  * Implementation of generalized rectangle tree.
@@ -15,11 +15,29 @@
 // In case it wasn't included already for some reason.
 #include "rectangle_tree.hpp"
 
-#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/log.hpp>
 
 namespace mlpack {
 namespace tree {
+
+// Build the statistics, bottom-up.
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+BuildStatistics(RectangleTree* node)
+{
+  // Recurse first.
+  for (size_t i = 0; i < node->NumChildren(); ++i)
+    BuildStatistics(&node->Child(i));
+
+  // Now build the statistic.
+  node->Stat() = StatisticType(*node);
+}
 
 template<typename MetricType,
          typename StatisticType,
@@ -52,13 +70,14 @@ RectangleTree(const MatType& data,
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
     auxiliaryInfo(this)
 {
-  stat = StatisticType(*this);
-
   // For now, just insert the points in order.
   RectangleTree* root = this;
 
-  for (size_t i = firstDataIndex; i < data.n_cols; i++)
+  for (size_t i = firstDataIndex; i < data.n_cols; ++i)
     root->InsertPoint(i);
+
+  // Initialize statistic recursively after tree construction is complete.
+  BuildStatistics(this);
 }
 
 template<typename MetricType,
@@ -92,13 +111,14 @@ RectangleTree(MatType&& data,
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
     auxiliaryInfo(this)
 {
-  stat = StatisticType(*this);
-
   // For now, just insert the points in order.
   RectangleTree* root = this;
 
-  for (size_t i = firstDataIndex; i < dataset->n_cols; i++)
+  for (size_t i = firstDataIndex; i < dataset->n_cols; ++i)
     root->InsertPoint(i);
+
+  // Initialize statistic recursively after tree construction is complete.
+  BuildStatistics(this);
 }
 
 template<typename MetricType,
@@ -131,7 +151,8 @@ RectangleTree(
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
     auxiliaryInfo(this)
 {
-  stat = StatisticType(*this);
+  // Initialize statistic.
+  BuildStatistics(this);
 }
 
 /**
@@ -161,6 +182,7 @@ RectangleTree(
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
     bound(other.bound),
+    stat(other.stat),
     parentDistance(other.ParentDistance()),
     dataset(deepCopy ?
         (parent ? parent->dataset : new MatType(*other.dataset)) :
@@ -173,7 +195,7 @@ RectangleTree(
   {
     if (numChildren > 0)
     {
-      for (size_t i = 0; i < numChildren; i++)
+      for (size_t i = 0; i < numChildren; ++i)
         children[i] = new RectangleTree(other.Child(i), true, this);
     }
   }
@@ -181,6 +203,9 @@ RectangleTree(
     children = other.children;
 }
 
+/**
+ * Move constructor.
+ */
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -201,6 +226,7 @@ RectangleTree(RectangleTree&& other) :
     maxLeafSize(other.MaxLeafSize()),
     minLeafSize(other.MinLeafSize()),
     bound(std::move(other.bound)),
+    stat(std::move(other.stat)),
     parentDistance(other.ParentDistance()),
     dataset(other.dataset),
     ownsDataset(other.ownsDataset),
@@ -217,9 +243,11 @@ RectangleTree(RectangleTree&& other) :
   }
   if (!IsLeaf())
   {
-    for (size_t i = 0; i < numChildren; i++)
+    for (size_t i = 0; i < numChildren; ++i)
       children[i]->parent = this;
   }
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
   other.maxNumChildren = 0;
   other.minNumChildren = 0;
   other.numChildren = 0;
@@ -232,6 +260,121 @@ RectangleTree(RectangleTree&& other) :
   other.parentDistance = 0;
   other.dataset = NULL;
   other.ownsDataset = false;
+}
+
+/**
+ * Copy assignment operator: copy the given other tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>&
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+operator=(const RectangleTree& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  for (size_t i = 0; i < numChildren; ++i)
+    delete children[i];
+
+  if (ownsDataset)
+    delete dataset;
+
+  maxNumChildren = other.MaxNumChildren();
+  minNumChildren = other.MinNumChildren();
+  numChildren = other.NumChildren();
+  children.resize(maxNumChildren + 1, NULL);
+  parent = NULL;
+  begin = other.Begin();
+  count = other.Count();
+  numDescendants = other.numDescendants;
+  maxLeafSize = other.MaxLeafSize();
+  minLeafSize = other.MinLeafSize();
+  bound = other.bound;
+  stat = other.stat;
+  parentDistance = other.ParentDistance();
+  dataset = new MatType(*other.dataset);
+  ownsDataset = true;
+  points = other.points;
+  auxiliaryInfo = AuxiliaryInfoType(other.auxiliaryInfo, this, true);
+
+  if (numChildren > 0)
+  {
+    for (size_t i = 0; i < numChildren; ++i)
+      children[i] = new RectangleTree(other.Child(i), true, this);
+  }
+
+  return *this;
+}
+
+/**
+ * Move assignment operator: take ownership of the given tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType,
+         template<typename> class AuxiliaryInformationType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>&
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
+              AuxiliaryInformationType>::
+operator=(RectangleTree&& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  for (size_t i = 0; i < numChildren; ++i)
+    delete children[i];
+
+  if (ownsDataset)
+    delete dataset;
+
+  maxNumChildren = other.MaxNumChildren();
+  minNumChildren = other.MinNumChildren();
+  numChildren = other.NumChildren();
+  children = std::move(other.children);
+  parent = other.Parent();
+  begin = other.Begin();
+  count = other.Count();
+  numDescendants = other.numDescendants;
+  maxLeafSize = other.MaxLeafSize();
+  minLeafSize = other.MinLeafSize();
+  bound = std::move(other.bound);
+  stat = std::move(other.stat);
+  parentDistance = other.ParentDistance();
+  dataset = other.dataset;
+  ownsDataset = other.ownsDataset;
+  points = std::move(other.points);
+  auxiliaryInfo = std::move(other.auxiliaryInfo);
+
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.maxNumChildren = 0;
+  other.minNumChildren = 0;
+  other.numChildren = 0;
+  other.parent = NULL;
+  other.begin = 0;
+  other.count = 0;
+  other.numDescendants = 0;
+  other.maxLeafSize = 0;
+  other.minLeafSize = 0;
+  other.parentDistance = 0;
+  other.dataset = NULL;
+  other.ownsDataset = false;
+
+  return *this;
 }
 
 /**
@@ -270,7 +413,7 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
               AuxiliaryInformationType>::
 ~RectangleTree()
 {
-  for (size_t i = 0; i < numChildren; i++)
+  for (size_t i = 0; i < numChildren; ++i)
     delete children[i];
 
   if (ownsDataset)
@@ -293,7 +436,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 {
   parent = NULL;
 
-  for (size_t i = 0; i < children.size(); i++)
+  for (size_t i = 0; i < children.size(); ++i)
     children[i] = NULL;
 
   numChildren = 0;
@@ -453,7 +596,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 
   if (numChildren == 0)
   {
-    for (size_t i = 0; i < count; i++)
+    for (size_t i = 0; i < count; ++i)
     {
       if (points[i] == point)
       {
@@ -473,7 +616,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     }
   }
 
-  for (size_t i = 0; i < numChildren; i++)
+  for (size_t i = 0; i < numChildren; ++i)
     if (children[i]->Bound().Contains(dataset->col(point)))
       if (children[i]->DeletePoint(point, lvls))
         return true;
@@ -497,7 +640,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
 {
   if (numChildren == 0)
   {
-    for (size_t i = 0; i < count; i++)
+    for (size_t i = 0; i < count; ++i)
     {
       if (points[i] == point)
       {
@@ -517,7 +660,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     }
   }
 
-  for (size_t i = 0; i < numChildren; i++)
+  for (size_t i = 0; i < numChildren; ++i)
     if (children[i]->Bound().Contains(dataset->col(point)))
       if (children[i]->DeletePoint(point, relevels))
         return true;
@@ -540,7 +683,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
                    AuxiliaryInformationType>::
     RemoveNode(const RectangleTree* node, std::vector<bool>& relevels)
 {
-  for (size_t i = 0; i < numChildren; i++)
+  for (size_t i = 0; i < numChildren; ++i)
   {
     if (children[i] == node)
     {
@@ -559,7 +702,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     }
 
     bool contains = true;
-    for (size_t j = 0; j < node->Bound().Dim(); j++)
+    for (size_t j = 0; j < node->Bound().Dim(); ++j)
       contains &= Child(i).Bound()[j].Contains(node->Bound()[j]);
 
     if (contains)
@@ -580,7 +723,7 @@ size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
                      DescentType, AuxiliaryInformationType>::TreeSize() const
 {
   int n = 0;
-  for (int i = 0; i < numChildren; i++)
+  for (int i = 0; i < numChildren; ++i)
     n += children[i]->TreeSize();
 
   return n + 1; // Add one for this node.
@@ -940,7 +1083,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   if (IsLeaf() && count < minLeafSize && parent != NULL)
   {
     // We can't delete the root node.
-    for (size_t i = 0; i < parent->NumChildren(); i++)
+    for (size_t i = 0; i < parent->NumChildren(); ++i)
     {
       if (parent->children[i] == this)
       {
@@ -981,7 +1124,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
           root->AuxiliaryInfo().UpdateAuxiliaryInfo(root);
 
        // Reinsert the points at the root node.
-        for (size_t j = 0; j < count; j++)
+        for (size_t j = 0; j < count; ++j)
           root->InsertPoint(points[j], relevels);
 
         // This will check the minFill of the parent.
@@ -1000,7 +1143,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
     if (parent != NULL)
     {
       // The normal case.  We need to be careful with the root.
-      for (size_t j = 0; j < parent->NumChildren(); j++)
+      for (size_t j = 0; j < parent->NumChildren(); ++j)
       {
         if (parent->children[j] == this)
         {
@@ -1042,7 +1185,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
             root->AuxiliaryInfo().UpdateAuxiliaryInfo(root);
 
           // Reinsert the nodes at the root node.
-          for (size_t i = 0; i < numChildren; i++)
+          for (size_t i = 0; i < numChildren; ++i)
             root->InsertNode(children[i], level, relevels);
 
           // This will check the minFill of the point.
@@ -1066,7 +1209,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
         children.resize(maxNumChildren + 1);
       }
 
-      for (size_t i = 0; i < child->NumChildren(); i++)
+      for (size_t i = 0; i < child->NumChildren(); ++i)
       {
         children[i] = child->children[i];
         children[i]->Parent() = this;
@@ -1076,7 +1219,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       numChildren = child->NumChildren();
       child->NumChildren() = 0;
 
-      for (size_t i = 0; i < child->Count(); i++)
+      for (size_t i = 0; i < child->Count(); ++i)
       {
         // In case the tree has a height of two.
         points[i] = child->Point(i);
@@ -1120,12 +1263,12 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   bool shrunk = false;
   if (IsLeaf())
   {
-    for (size_t i = 0; i < bound.Dim(); i++)
+    for (size_t i = 0; i < bound.Dim(); ++i)
     {
       if (bound[i].Lo() == point[i])
       {
         ElemType min = std::numeric_limits<ElemType>::max();
-        for (size_t j = 0; j < count; j++)
+        for (size_t j = 0; j < count; ++j)
         {
           if (dataset->col(points[j])[i] < min)
             min = dataset->col(points[j])[i];
@@ -1144,7 +1287,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       else if (bound[i].Hi() == point[i])
       {
         ElemType max = std::numeric_limits<ElemType>::lowest();
-        for (size_t j = 0; j < count; j++)
+        for (size_t j = 0; j < count; ++j)
         {
           if (dataset->col(points[j])[i] > max)
             max = dataset->col(points[j])[i];
@@ -1164,12 +1307,12 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   }
   else
   {
-    for (size_t i = 0; i < bound.Dim(); i++)
+    for (size_t i = 0; i < bound.Dim(); ++i)
     {
       if (bound[i].Lo() == point[i])
       {
         ElemType min = std::numeric_limits<ElemType>::max();
-        for (size_t j = 0; j < numChildren; j++)
+        for (size_t j = 0; j < numChildren; ++j)
         {
           if (children[j]->Bound()[i].Lo() < min)
             min = children[j]->Bound()[i].Lo();
@@ -1184,7 +1327,7 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
       else if (bound[i].Hi() == point[i])
       {
         ElemType max = std::numeric_limits<ElemType>::lowest();
-        for (size_t j = 0; j < numChildren; j++)
+        for (size_t j = 0; j < numChildren; ++j)
         {
           if (children[j]->Bound()[i].Hi() > max)
             max = children[j]->Bound()[i].Hi();
@@ -1219,20 +1362,20 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   ElemType sum = 0;
 
   // I think it may be faster to just recalculate the whole thing.
-  for (size_t i = 0; i < bound.Dim(); i++)
+  for (size_t i = 0; i < bound.Dim(); ++i)
   {
     sum += bound[i].Width();
     bound[i].Lo() = std::numeric_limits<ElemType>::max();
     bound[i].Hi() = std::numeric_limits<ElemType>::lowest();
   }
 
-  for (size_t i = 0; i < numChildren; i++)
+  for (size_t i = 0; i < numChildren; ++i)
   {
     bound |= children[i]->Bound();
   }
 
   ElemType sum2 = 0;
-  for (size_t i = 0; i < bound.Dim(); i++)
+  for (size_t i = 0; i < bound.Dim(); ++i)
     sum2 += bound[i].Width();
 
   return sum != sum2;
@@ -1256,7 +1399,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   // Clean up memory, if necessary.
   if (Archive::is_loading::value)
   {
-    for (size_t i = 0; i < numChildren; i++)
+    for (size_t i = 0; i < numChildren; ++i)
       delete children[i];
     children.clear();
 
