@@ -164,8 +164,10 @@ steps:
       $env:INSTALL_VERSION = $env:MLPACK_VERSION;
     }
     # Build the MSI installer.
-    set path="C:\Program Files (x86)\WiX Toolset v3.11\bin";$path
+    $env:Path += "C:\Program Files (x86)\WiX Toolset v3.11\bin"
     cd dist\win-installer\mlpack-win-installer
+    dir "C:\Program Files (x86)\WiX Toolset v3.11\"
+    dir "C:\Program Files (x86)\WiX Toolset v3.11\bin\"
     heat dir ..\staging
         -cg HeatGenerated
         -dr INSTALLFOLDER
