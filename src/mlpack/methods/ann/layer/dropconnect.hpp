@@ -150,6 +150,9 @@ class DropConnect
     scale = 1.0 / (1.0 - ratio);
   }
 
+  //! Return the size of the weight matrix.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */
