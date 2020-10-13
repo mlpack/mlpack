@@ -295,7 +295,7 @@ endif()
 find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 
 # Include directories for the previous dependencies.
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
 # Find stb_image.h and stb_image_write.h.
@@ -414,6 +414,7 @@ else ()
 endif ()
 
 find_package(cereal "${CEREAL_VERSION}" REQUIRED)
+set(MLPACK_INCLUDE_DIRS ${CEREAL_INCLUDE_DIR})
 
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
