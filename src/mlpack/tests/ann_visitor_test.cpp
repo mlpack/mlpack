@@ -142,7 +142,7 @@ TEST_CASE("WeightSizeVisitorTestForAtrousConvolutionLayer", "[ANNVisitorTest]")
       randomKernelWidth, randomKernelHeight);
 
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
-                                           atrousConvLayer);
+      atrousConvLayer);
  
  REQUIRE(weightSize == randomOutSize * randomInSize * randomKernelWidth
      * randomKernelHeight + randomOutSize);
