@@ -956,7 +956,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
       delete referenceSet;
     }
 
-    ar(CEREAL_POINTER(const_cast<MatType*&>(referenceSet));
+    ar(CEREAL_POINTER(const_cast<MatType*&>(referenceSet)));
     ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
