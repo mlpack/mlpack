@@ -21,8 +21,8 @@ static const std::string testName = "HMMLoglik";
 #include <mlpack/methods/hmm/hmm.hpp>
 #include <mlpack/methods/hmm/hmm_loglik_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 #include "hmm_test_utils.hpp"
 
@@ -45,9 +45,8 @@ struct HMMLoglikTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(HMMLoglikMainTest, HMMLoglikTestFixture);
-
-BOOST_AUTO_TEST_CASE(HMMLoglikOutputNegativeTest)
+TEST_CASE_METHOD(HMMLoglikTestFixture, "HMMLoglikOutputNegativeTest",
+                 "[HMMLoglikMainTest][BindingTests]")
 {
   // Load data to train a discrete HMM model with.
   arma::mat inp;
@@ -69,7 +68,5 @@ BOOST_AUTO_TEST_CASE(HMMLoglikOutputNegativeTest)
   double loglik = IO::GetParam<double>("log_likelihood");
 
   // Since the log of a probability <= 0 ...
-  BOOST_REQUIRE(loglik <= 0);
+  REQUIRE(loglik <= 0);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
