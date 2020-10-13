@@ -81,7 +81,14 @@ class PointerVectorVariantWrapper
   std::vector<boost::variant<VariantTypes...>>& vectorPointerVariant;
 };
 
-//! Cereal macro that facilitate the use of the pointer vector variant wrapper
+/**
+ * Cereal does not support the serialization of raw pointer.
+ * This macro enable developers to serialize a std vector that holds boost::variants
+ * that holds raw pointers by using the above PointerVectorVariantWrapper class
+ * which replace the internal raw pointers by smart pointer internally.
+ *
+ * @param T std::vector<boost::variant> that holds raw pointer to be serialized.
+ */
 #define CEREAL_VECTOR_VARIANT_POINTER(T) cereal::make_vector_pointer_variant(T)
 
 } // namespace cereal

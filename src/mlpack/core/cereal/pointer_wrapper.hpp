@@ -85,7 +85,14 @@ make_pointer(T*& t)
   return PointerWrapper<T>(t);
 }
 
-//! Cereal macro that facilitate the use of the pointer wrapper
+/**
+ * Cereal does not support the serialization of raw pointer.
+ * This macro enable developers to serialize a raw pointer by using the
+ * above PointerWrapper class which replace the raw pointer by a smart pointer
+ * internally.
+ *
+ * @param T Raw pointer to be serialized.
+ */
 #define CEREAL_POINTER(T) cereal::make_pointer(T)
 
 } // namespace cereal

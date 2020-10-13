@@ -144,7 +144,14 @@ class PointerVariantWrapper
   boost::variant<VariantTypes...>& pointerVariant;
 };
 
-//! Cereal macro that facilitate the use of the pointer variant wrapper
+/**
+ * Cereal does not support the serialization of raw pointer.
+ * This macro enable developers to serialize boost::variant that holds raw
+ * pointers by using the above PointerVariantWrapper class which replace the
+ * internal raw pointers by smart pointer internally.
+ *
+ * @param T boost::variant that holds raw pointer to be serialized.
+ */
 #define CEREAL_VARIANT_POINTER(T) cereal::make_pointer_variant(T)
 
 } // namespace cereal

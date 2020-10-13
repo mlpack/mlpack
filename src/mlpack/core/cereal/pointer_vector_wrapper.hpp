@@ -82,7 +82,14 @@ make_pointer_vector(std::vector<T*>& t)
   return PointerVectorWrapper<T>(t);
 }
 
-//! Cereal macro that facilitate the use of vector pointer wrapper
+/**
+ * Cereal does not support the serialization of raw pointer.
+ * This macro enable developers to serialize std vectors that holds raw
+ * pointers by using the above PointerVectorWrapper class which replace the internal
+ * raw pointers by smart pointer internally.
+ *
+ * @param T std::vector that holds raw pointer to be serialized.
+ */
 #define CEREAL_VECTOR_POINTER(T) cereal::make_pointer_vector(T)
 
 } // namespace cereal

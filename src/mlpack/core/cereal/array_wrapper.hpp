@@ -63,7 +63,12 @@ class ArrayWrapper
   size_t& arraySize;
 };
 
-/* This function is used to serialized old c-style array */
+/**
+ * This function is used to serialized old c-style array
+ *
+ * @param T C Style array.
+ * @param S the size of the array.
+ */
 template<class T, class S>
 inline
 ArrayWrapper<T> make_array(T*& t, S& s)
@@ -71,7 +76,14 @@ ArrayWrapper<T> make_array(T*& t, S& s)
   return ArrayWrapper<T>(t, s);
 }
 
-//! Cereal macro that facilitate the use of the pointer array wrapper
+/**
+ * Cereal does not support the serialization of raw pointer.
+ * This macro enable developers to serialize old c-style array by using the
+ * above ArrayWrapper class which serialize each member independently.
+ *
+ * @param T C Style array.
+ * @param S Size of the array.
+ */
 #define CEREAL_POINTER_ARRAY(T,S) cereal::make_array(T, S)
 
 } // namespace cereal
