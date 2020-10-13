@@ -57,8 +57,48 @@ void StratifiedSplit(const arma::Mat<T>& input,
                      const double testRatio,
                      const bool shuffleData = true)
 {
+  /*
+  Basic idea:
+  Let us say we have to stratify a dataset based on labels:
+  0 0 0 0 0 1 1 1 1 1 1 (5 0s, 6 1s)
+
+  Let our test ratio be 0.2:
+  We visit each label and keep the count of each label in our unordered map
+
+  Whenever we encounter a label, we calculate
+  current_count*test_ratio --- labelMap[label]*testRatio and
+  current_count+1 * test_ratio --- (labelMap[label]+1)*testRatio
+
+  We then static_cast these counts to size_t to remove their decimal points.
+  If in this case, our integer counts are same then we add to our train set.
+  If there is a difference in counts, then we add to our test set
+
+  Considering our example
+  0 -- train set ( 0*0.2 == 1*0.2 ) (After casting)
+  0 -- train set ( 1*0.2 == 2*0.2 ) (After casting)
+  0 -- train set ( 2*0.2 == 3*0.2 ) (After casting)
+  0 -- train set ( 3*0.2 == 4*0.2 ) (After casting)
+  0 -- test set  ( 4*0.2 <  5*0.2 ) (After casting)
+
+  1 -- train set ( 0*0.2 == 1*0.2 ) (After casting)
+  1 -- train set ( 1*0.2 == 2*0.2 ) (After casting)
+  1 -- train set ( 2*0.2 == 3*0.2 ) (After casting)
+  1 -- train set ( 3*0.2 == 4*0.2 ) (After casting)
+  1 -- test set  ( 4*0.2 <  5*0.2 ) (After casting)
+  1 -- train set ( 5*0.2 == 6*0.2 ) (After casting)
+
+  Finally
+  train set,
+  0 0 0 0 1 1 1 1 1 (4 0s, 5 1s)
+
+  test set,
+  0 1
+  */
   arma::uvec Indexes;
   Indexes.set_size(inputLabel.n_cols);
+
+  //Single index vector which adds train Indexes from the start and test
+  //indexes from the end
   size_t trainIdx = 0;
   size_t testIdx = inputLabel.n_cols - 1;
   std::unordered_map<U, size_t> labelMap;
@@ -68,6 +108,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(
         0, input.n_cols - 1, input.n_cols));
 
+    //visit the labels in shuffled order
     for (auto i: order)
     {
       auto label = inputLabel[i];
@@ -85,7 +126,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
       labelMap[label] += 1;
     }
   }
-  else
+  else //no shuffling required
   {
     for (size_t i = 0; i < inputLabel.n_cols; i++)
     {
