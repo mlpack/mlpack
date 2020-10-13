@@ -35,11 +35,9 @@
 
 #include <iostream>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
-
-BOOST_AUTO_TEST_SUITE(CFTest);
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
+#include "serialization_catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::cf;
@@ -111,10 +109,10 @@ void GetRecommendationsAllUsers()
   c.GetRecommendations(numRecs, recommendations);
 
   // Check if correct number of recommendations are generated.
-  BOOST_REQUIRE_EQUAL(recommendations.n_rows, numRecs);
+  REQUIRE(recommendations.n_rows == numRecs);
 
   // Check if recommendations are generated for all users.
-  BOOST_REQUIRE_EQUAL(recommendations.n_cols, numUsers);
+  REQUIRE(recommendations.n_cols == numUsers);
 }
 
 /**
@@ -148,10 +146,10 @@ void GetRecommendationsQueriedUser()
   c.GetRecommendations(numRecsDefault, recommendations, users);
 
   // Check if correct number of recommendations are generated.
-  BOOST_REQUIRE_EQUAL(recommendations.n_rows, numRecsDefault);
+  REQUIRE(recommendations.n_rows == numRecsDefault);
 
   // Check if recommendations are generated for the right number of users.
-  BOOST_REQUIRE_EQUAL(recommendations.n_cols, numUsers);
+  REQUIRE(recommendations.n_cols == numUsers);
 }
 
 /**
@@ -184,8 +182,8 @@ void RecommendationAccuracy(const size_t allowedFailures = 17)
   size_t numRecs = 150;
   c.GetRecommendations(numRecs, recommendations, users);
 
-  BOOST_REQUIRE_EQUAL(recommendations.n_rows, numRecs);
-  BOOST_REQUIRE_EQUAL(recommendations.n_cols, 50);
+  REQUIRE(recommendations.n_rows == numRecs);
+  REQUIRE(recommendations.n_cols == 50);
 
   size_t failures = 0;
   for (size_t i = 0; i < 50; ++i)
@@ -205,7 +203,7 @@ void RecommendationAccuracy(const size_t allowedFailures = 17)
       {
         // Make sure we aren't being recommended an item that the user already
         // rated.
-        BOOST_REQUIRE_EQUAL((double) c.CleanedData()(item, user), 0.0);
+        REQUIRE((double) c.CleanedData()(item, user) == 0.0);
       }
     }
 
@@ -214,7 +212,7 @@ void RecommendationAccuracy(const size_t allowedFailures = 17)
   }
 
   // Make sure the right item showed up in at least 2/3 of the recommendations.
-  BOOST_REQUIRE_LT(failures, allowedFailures);
+  REQUIRE(failures < allowedFailures);
 }
 
 // Make sure that Predict() is returning reasonable results.
@@ -252,7 +250,7 @@ void CFPredict(const double rmseBound = 1.5)
   const double rmse = std::sqrt(totalError / savedCols.n_cols);
 
   // The root mean square error should be less than ?.
-  BOOST_REQUIRE_LT(rmse, rmseBound);
+  REQUIRE(rmse < rmseBound);
 }
 
 // Do the same thing as the previous test, but ensure that the ratings we
@@ -287,7 +285,7 @@ void BatchPredict()
   for (size_t i = 0; i < combinations.n_cols; ++i)
   {
     const double prediction = c.Predict(combinations(0, i), combinations(1, i));
-    BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
+    REQUIRE(prediction == Approx(predictions[i]).epsilon(1e-10));
   }
 }
 
@@ -330,8 +328,9 @@ void Train(DecompositionPolicy& decomposition)
 
   for (size_t i = 0; i < combinations.n_cols; ++i)
   {
-    const double prediction = c.Predict(combinations(0, i), combinations(1, i));
-    BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
+    const double prediction = c.Predict(combinations(0, i),
+      combinations(1, i));
+    REQUIRE(prediction == Approx(predictions[i]).epsilon(1e-10));
   }
 }
 
@@ -374,7 +373,7 @@ void TrainWithCoordinateList(DecompositionPolicy& decomposition)
   for (size_t i = 0; i < combinations.n_cols; ++i)
   {
     const double prediction = c.Predict(combinations(0, i), combinations(1, i));
-    BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
+    REQUIRE(prediction == Approx(predictions[i]).epsilon(1e-10));
   }
 }
 
@@ -414,7 +413,7 @@ void EmptyConstructorTrain()
   {
     const double prediction = c.Predict(combinations(0, i),
         combinations(1, i));
-    BOOST_REQUIRE_CLOSE(prediction, predictions[i], 1e-8);
+    REQUIRE(prediction == Approx(predictions[i]).epsilon(1e-10));
   }
 }
 
@@ -450,60 +449,60 @@ void Serialization()
   SerializeObjectAll(c, cXml, cText, cBinary);
 
   // Check the internals.
-  BOOST_REQUIRE_EQUAL(c.NumUsersForSimilarity(), cXml.NumUsersForSimilarity());
-  BOOST_REQUIRE_EQUAL(c.NumUsersForSimilarity(),
+  REQUIRE(c.NumUsersForSimilarity() == cXml.NumUsersForSimilarity());
+  REQUIRE(c.NumUsersForSimilarity() ==
       cBinary.NumUsersForSimilarity());
-  BOOST_REQUIRE_EQUAL(c.NumUsersForSimilarity(), cText.NumUsersForSimilarity());
+  REQUIRE(c.NumUsersForSimilarity() == cText.NumUsersForSimilarity());
 
-  BOOST_REQUIRE_EQUAL(c.Rank(), cXml.Rank());
-  BOOST_REQUIRE_EQUAL(c.Rank(), cBinary.Rank());
-  BOOST_REQUIRE_EQUAL(c.Rank(), cText.Rank());
+  REQUIRE(c.Rank() == cXml.Rank());
+  REQUIRE(c.Rank() == cBinary.Rank());
+  REQUIRE(c.Rank() == cText.Rank());
 
   CheckMatrices(c.Decomposition().W(), cXml.Decomposition().W(),
       cBinary.Decomposition().W(), cText.Decomposition().W());
   CheckMatrices(c.Decomposition().H(), cXml.Decomposition().H(),
       cBinary.Decomposition().H(), cText.Decomposition().H());
 
-  BOOST_REQUIRE_EQUAL(c.CleanedData().n_rows, cXml.CleanedData().n_rows);
-  BOOST_REQUIRE_EQUAL(c.CleanedData().n_rows, cBinary.CleanedData().n_rows);
-  BOOST_REQUIRE_EQUAL(c.CleanedData().n_rows, cText.CleanedData().n_rows);
+  REQUIRE(c.CleanedData().n_rows == cXml.CleanedData().n_rows);
+  REQUIRE(c.CleanedData().n_rows == cBinary.CleanedData().n_rows);
+  REQUIRE(c.CleanedData().n_rows == cText.CleanedData().n_rows);
 
-  BOOST_REQUIRE_EQUAL(c.CleanedData().n_cols, cXml.CleanedData().n_cols);
-  BOOST_REQUIRE_EQUAL(c.CleanedData().n_cols, cBinary.CleanedData().n_cols);
-  BOOST_REQUIRE_EQUAL(c.CleanedData().n_cols, cText.CleanedData().n_cols);
+  REQUIRE(c.CleanedData().n_cols == cXml.CleanedData().n_cols);
+  REQUIRE(c.CleanedData().n_cols == cBinary.CleanedData().n_cols);
+  REQUIRE(c.CleanedData().n_cols == cText.CleanedData().n_cols);
 
-  BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero, cXml.CleanedData().n_nonzero);
-  BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero,
+  REQUIRE(c.CleanedData().n_nonzero == cXml.CleanedData().n_nonzero);
+  REQUIRE(c.CleanedData().n_nonzero ==
       cBinary.CleanedData().n_nonzero);
-  BOOST_REQUIRE_EQUAL(c.CleanedData().n_nonzero, cText.CleanedData().n_nonzero);
+  REQUIRE(c.CleanedData().n_nonzero == cText.CleanedData().n_nonzero);
 
   c.CleanedData().sync();
 
   for (size_t i = 0; i <= c.CleanedData().n_cols; ++i)
   {
-    BOOST_REQUIRE_EQUAL(c.CleanedData().col_ptrs[i],
+    REQUIRE(c.CleanedData().col_ptrs[i] ==
         cXml.CleanedData().col_ptrs[i]);
-    BOOST_REQUIRE_EQUAL(c.CleanedData().col_ptrs[i],
+    REQUIRE(c.CleanedData().col_ptrs[i] ==
         cBinary.CleanedData().col_ptrs[i]);
-    BOOST_REQUIRE_EQUAL(c.CleanedData().col_ptrs[i],
+    REQUIRE(c.CleanedData().col_ptrs[i] ==
         cText.CleanedData().col_ptrs[i]);
   }
 
   for (size_t i = 0; i <= c.CleanedData().n_nonzero; ++i)
   {
-    BOOST_REQUIRE_EQUAL(c.CleanedData().row_indices[i],
+    REQUIRE(c.CleanedData().row_indices[i] ==
         cXml.CleanedData().row_indices[i]);
-    BOOST_REQUIRE_EQUAL(c.CleanedData().row_indices[i],
+    REQUIRE(c.CleanedData().row_indices[i] ==
         cBinary.CleanedData().row_indices[i]);
-    BOOST_REQUIRE_EQUAL(c.CleanedData().row_indices[i],
+    REQUIRE(c.CleanedData().row_indices[i] ==
         cText.CleanedData().row_indices[i]);
 
-    BOOST_REQUIRE_CLOSE(c.CleanedData().values[i], cXml.CleanedData().values[i],
-        1e-5);
-    BOOST_REQUIRE_CLOSE(c.CleanedData().values[i],
-        cBinary.CleanedData().values[i], 1e-5);
-    BOOST_REQUIRE_CLOSE(c.CleanedData().values[i],
-        cText.CleanedData().values[i], 1e-5);
+    REQUIRE(c.CleanedData().values[i] ==
+      Approx(cXml.CleanedData().values[i]).epsilon(1e-7));
+    REQUIRE(c.CleanedData().values[i] ==
+      Approx(cBinary.CleanedData().values[i]).epsilon(1e-7));
+    REQUIRE(c.CleanedData().values[i] ==
+      Approx(cText.CleanedData().values[i]).epsilon(1e-7));
   }
 }
 
@@ -511,7 +510,7 @@ void Serialization()
  * Make sure that correct number of recommendations are generated when query
  * set for randomized SVD.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRandSVDTest)
+TEST_CASE("CFGetRecommendationsAllUsersRandSVDTest", "[CFTest]")
 {
   GetRecommendationsAllUsers<RandomizedSVDPolicy>();
 }
@@ -520,7 +519,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRandSVDTest)
  * Make sure that correct number of recommendations are generated when query
  * set for regularized SVD.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRegSVDTest)
+TEST_CASE("CFGetRecommendationsAllUsersRegSVDTest", "[CFTest]")
 {
   GetRecommendationsAllUsers<RegSVDPolicy>();
 }
@@ -530,7 +529,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersRegSVDTest)
  * set for Batch SVD.
  */
 
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersBatchSVDTest)
+TEST_CASE("CFGetRecommendationsAllUsersBatchSVDTest", "[CFTest]")
 {
   GetRecommendationsAllUsers<BatchSVDPolicy>();
 }
@@ -539,7 +538,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersBatchSVDTest)
  * Make sure that correct number of recommendations are generated when query
  * set for NMF.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersNMFTest)
+TEST_CASE("CFGetRecommendationsAllUsersNMFTest", "[CFTest]")
 {
   GetRecommendationsAllUsers<NMFPolicy>();
 }
@@ -548,7 +547,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersNMFTest)
  * Make sure that correct number of recommendations are generated when query
  * set for SVD Complete Incremental method.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDCompleteTest)
+TEST_CASE("CFGetRecommendationsAllUsersSVDCompleteTest", "[CFTest]")
 {
   GetRecommendationsAllUsers<SVDCompletePolicy>();
 }
@@ -557,7 +556,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDCompleteTest)
  * Make sure that correct number of recommendations are generated when query
  * set for SVD Incomplete Incremental method.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDIncompleteTest)
+TEST_CASE("CFGetRecommendationsAllUsersSVDIncompleteTest", "[CFTest]")
 {
   GetRecommendationsAllUsers<SVDIncompletePolicy>();
 }
@@ -566,7 +565,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDIncompleteTest)
  * Make sure that correct number of recommendations are generated when query
  * set for Bias SVD method.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersBiasSVDTest)
+TEST_CASE("CFGetRecommendationsAllUsersBiasSVDTest", "[CFTest]")
 {
   GetRecommendationsAllUsers<BiasSVDPolicy>();
 }
@@ -575,7 +574,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersBiasSVDTest)
  * Make sure that correct number of recommendations are generated when query
  * set for SVDPlusPlus method.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDPPTest)
+TEST_CASE("CFGetRecommendationsAllUsersSVDPPTest", "[CFTest]")
 {
   GetRecommendationsAllUsers<SVDPlusPlusPolicy>();
 }
@@ -584,7 +583,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersSVDPPTest)
  * Make sure that the recommendations are generated for queried users only
  * for randomized SVD.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRandSVDTest)
+TEST_CASE("CFGetRecommendationsQueriedUserRandSVDTest", "[CFTest]")
 {
   GetRecommendationsQueriedUser<RandomizedSVDPolicy>();
 }
@@ -593,7 +592,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRandSVDTest)
  * Make sure that the recommendations are generated for queried users only
  * for regularized SVD.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRegSVDTest)
+TEST_CASE("CFGetRecommendationsQueriedUserRegSVDTest", "[CFTest]")
 {
   GetRecommendationsQueriedUser<RegSVDPolicy>();
 }
@@ -602,7 +601,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserRegSVDTest)
  * Make sure that the recommendations are generated for queried users only
  * for batch SVD.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserBatchSVDTest)
+TEST_CASE("CFGetRecommendationsQueriedUserBatchSVDTest", "[CFTest]")
 {
   GetRecommendationsQueriedUser<BatchSVDPolicy>();
 }
@@ -611,7 +610,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserBatchSVDTest)
  * Make sure that the recommendations are generated for queried users only
  * for NMF.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserNMFTest)
+TEST_CASE("CFGetRecommendationsQueriedUserNMFTest", "[CFTest]")
 {
   GetRecommendationsQueriedUser<NMFPolicy>();
 }
@@ -620,7 +619,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserNMFTest)
  * Make sure that the recommendations are generated for queried users only
  * for SVD Complete Incremental method.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDCompleteTest)
+TEST_CASE("CFGetRecommendationsQueriedUserSVDCompleteTest", "[CFTest]")
 {
   GetRecommendationsQueriedUser<SVDCompletePolicy>();
 }
@@ -629,7 +628,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDCompleteTest)
  * Make sure that the recommendations are generated for queried users only
  * for SVD Incomplete Incremental method.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDIncompleteTest)
+TEST_CASE("CFGetRecommendationsQueriedUserSVDIncompleteTest", "[CFTest]")
 {
   GetRecommendationsQueriedUser<SVDIncompletePolicy>();
 }
@@ -638,7 +637,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDIncompleteTest)
  * Make sure that the recommendations are generated for queried users only
  * for Bias SVD method.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserBiasSVDTest)
+TEST_CASE("CFGetRecommendationsQueriedUserBiasSVDTest", "[CFTest]")
 {
   GetRecommendationsQueriedUser<BiasSVDPolicy>();
 }
@@ -647,7 +646,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserBiasSVDTest)
  * Make sure that the recommendations are generated for queried users only
  * for SVDPlusPlus method.
  */
-BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDPPTest)
+TEST_CASE("CFGetRecommendationsQueriedUserSVDPPTest", "[CFTest]")
 {
   GetRecommendationsQueriedUser<SVDPlusPlusPolicy>();
 }
@@ -656,7 +655,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserSVDPPTest)
  * Make sure recommendations that are generated are reasonably accurate
  * for randomized SVD.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracyRandSVDTest)
+TEST_CASE("RecommendationAccuracyRandSVDTest", "[CFTest]")
 {
   RecommendationAccuracy<RandomizedSVDPolicy>();
 }
@@ -665,7 +664,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyRandSVDTest)
  * Make sure recommendations that are generated are reasonably accurate
  * for regularized SVD.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracyRegSVDTest)
+TEST_CASE("RecommendationAccuracyRegSVDTest", "[CFTest]")
 {
   RecommendationAccuracy<RegSVDPolicy>();
 }
@@ -674,7 +673,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyRegSVDTest)
  * Make sure recommendations that are generated are reasonably accurate
  * for batch SVD.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracyBatchSVDTest)
+TEST_CASE("RecommendationAccuracyBatchSVDTest", "[CFTest]")
 {
   RecommendationAccuracy<BatchSVDPolicy>();
 }
@@ -683,7 +682,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyBatchSVDTest)
  * Make sure recommendations that are generated are reasonably accurate
  * for NMF.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracyNMFTest)
+TEST_CASE("RecommendationAccuracyNMFTest", "[CFTest]")
 {
   RecommendationAccuracy<NMFPolicy>();
 }
@@ -692,7 +691,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyNMFTest)
  * Make sure recommendations that are generated are reasonably accurate
  * for SVD Complete Incremental method.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDCompleteTest)
+TEST_CASE("RecommendationAccuracySVDCompleteTest", "[CFTest]")
 {
   RecommendationAccuracy<SVDCompletePolicy>();
 }
@@ -701,7 +700,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDCompleteTest)
  * Make sure recommendations that are generated are reasonably accurate
  * for SVD Incomplete Incremental method.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
+TEST_CASE("RecommendationAccuracySVDIncompleteTest", "[CFTest]")
 {
   RecommendationAccuracy<SVDIncompletePolicy>();
 }
@@ -710,7 +709,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDIncompleteTest)
  * Make sure recommendations that are generated are reasonably accurate
  * for Bias SVD method.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracyBiasSVDTest)
+TEST_CASE("RecommendationAccuracyBiasSVDTest", "[CFTest]")
 {
   // This algorithm seems to be far less effective than others.
   // We therefore allow failures on 44% of the runs.
@@ -723,31 +722,31 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyBiasSVDTest)
  */
 // This test is commented out because it fails and we haven't solved it yet.
 // Please refer to issue #1501 for more info about this test.
-// BOOST_AUTO_TEST_CASE(RecommendationAccuracySVDPPTest)
+// TEST_CASE("RecommendationAccuracySVDPPTest", "[CFTest]")
 // {
 //   RecommendationAccuracy<SVDPlusPlusPolicy>();
 // }
 
 // Make sure that Predict() is returning reasonable results for randomized SVD.
-BOOST_AUTO_TEST_CASE(CFPredictRandSVDTest)
+TEST_CASE("CFPredictRandSVDTest", "[CFTest]")
 {
   CFPredict<RandomizedSVDPolicy>();
 }
 
 // Make sure that Predict() is returning reasonable results for regularized SVD.
-BOOST_AUTO_TEST_CASE(CFPredictRegSVDTest)
+TEST_CASE("CFPredictRegSVDTest", "[CFTest]")
 {
   CFPredict<RegSVDPolicy>();
 }
 
 // Make sure that Predict() is returning reasonable results for batch SVD.
-BOOST_AUTO_TEST_CASE(CFPredictBatchSVDTest)
+TEST_CASE("CFPredictBatchSVDTest", "[CFTest]")
 {
   CFPredict<BatchSVDPolicy>();
 }
 
 // Make sure that Predict() is returning reasonable results for NMF.
-BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
+TEST_CASE("CFPredictNMFTest", "[CFTest]")
 {
   CFPredict<NMFPolicy>();
 }
@@ -756,7 +755,7 @@ BOOST_AUTO_TEST_CASE(CFPredictNMFTest)
  * Make sure that Predict() is returning reasonable results for SVD Complete
  * Incremental method.
  */
-BOOST_AUTO_TEST_CASE(CFPredictSVDCompleteTest)
+TEST_CASE("CFPredictSVDCompleteTest", "[CFTest]")
 {
   CFPredict<SVDCompletePolicy>();
 }
@@ -765,7 +764,7 @@ BOOST_AUTO_TEST_CASE(CFPredictSVDCompleteTest)
  * Make sure that Predict() is returning reasonable results for SVD Incomplete
  * Incremental method.
  */
-BOOST_AUTO_TEST_CASE(CFPredictSVDIncompleteTest)
+TEST_CASE("CFPredictSVDIncompleteTest", "[CFTest]")
 {
   CFPredict<SVDIncompletePolicy>();
 }
@@ -774,7 +773,7 @@ BOOST_AUTO_TEST_CASE(CFPredictSVDIncompleteTest)
  * Make sure that Predict() is returning reasonable results for Bias SVD
  * method.
  */
-BOOST_AUTO_TEST_CASE(CFPredictBiasSVDTest)
+TEST_CASE("CFPredictBiasSVDTest", "[CFTest]")
 {
   CFPredict<BiasSVDPolicy>();
 }
@@ -783,59 +782,59 @@ BOOST_AUTO_TEST_CASE(CFPredictBiasSVDTest)
  * Make sure that Predict() is returning reasonable results for SVDPlusPlus
  * method.
  */
-BOOST_AUTO_TEST_CASE(CFPredictSVDPPTest)
+TEST_CASE("CFPredictSVDPPTest", "[CFTest]")
 {
   CFPredict<SVDPlusPlusPolicy>();
 }
 
 // Compare batch Predict() and individual Predict() for randomized SVD.
-BOOST_AUTO_TEST_CASE(CFBatchPredictRandSVDTest)
+TEST_CASE("CFBatchPredictRandSVDTest", "[CFTest]")
 {
   BatchPredict<RandomizedSVDPolicy>();
 }
 
 // Compare batch Predict() and individual Predict() for regularized SVD.
-BOOST_AUTO_TEST_CASE(CFBatchPredictRegSVDTest)
+TEST_CASE("CFBatchPredictRegSVDTest", "[CFTest]")
 {
   BatchPredict<RegSVDPolicy>();
 }
 
 // Compare batch Predict() and individual Predict() for batch SVD.
-BOOST_AUTO_TEST_CASE(CFBatchPredictBatchSVDTest)
+TEST_CASE("CFBatchPredictBatchSVDTest", "[CFTest]")
 {
   BatchPredict<BatchSVDPolicy>();
 }
 
 // Compare batch Predict() and individual Predict() for NMF.
-BOOST_AUTO_TEST_CASE(CFBatchPredictNMFTest)
+TEST_CASE("CFBatchPredictNMFTest", "[CFTest]")
 {
   BatchPredict<NMFPolicy>();
 }
 
 // Compare batch Predict() and individual Predict() for
 // SVD Complete Incremental method.
-BOOST_AUTO_TEST_CASE(CFBatchPredictSVDCompleteTest)
+TEST_CASE("CFBatchPredictSVDCompleteTest", "[CFTest]")
 {
   BatchPredict<SVDCompletePolicy>();
 }
 
 // Compare batch Predict() and individual Predict() for
 // SVD Incomplete Incremental method.
-BOOST_AUTO_TEST_CASE(CFBatchPredictSVDIncompleteTest)
+TEST_CASE("CFBatchPredictSVDIncompleteTest", "[CFTest]")
 {
   BatchPredict<SVDIncompletePolicy>();
 }
 
 // Compare batch Predict() and individual Predict() for
 // Bias SVD method.
-BOOST_AUTO_TEST_CASE(CFBatchPredictBiasSVDTest)
+TEST_CASE("CFBatchPredictBiasSVDTest", "[CFTest]")
 {
   BatchPredict<BiasSVDPolicy>();
 }
 
 // Compare batch Predict() and individual Predict() for
 // SVDPlusPlus method.
-BOOST_AUTO_TEST_CASE(CFBatchPredictSVDPPTest)
+TEST_CASE("CFBatchPredictSVDPPTest", "[CFTest]")
 {
   BatchPredict<SVDPlusPlusPolicy>();
 }
@@ -844,7 +843,7 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictSVDPPTest)
  * Make sure we can train an already-trained model and it works okay for
  * randomized SVD.
  */
-BOOST_AUTO_TEST_CASE(TrainRandSVDTest)
+TEST_CASE("TrainRandSVDTest", "[CFTest]")
 {
   RandomizedSVDPolicy decomposition;
   Train(decomposition);
@@ -854,7 +853,7 @@ BOOST_AUTO_TEST_CASE(TrainRandSVDTest)
  * Make sure we can train an already-trained model and it works okay for
  * regularized SVD.
  */
-BOOST_AUTO_TEST_CASE(TrainRegSVDTest)
+TEST_CASE("TrainRegSVDTest", "[CFTest]")
 {
   RegSVDPolicy decomposition;
   TrainWithCoordinateList(decomposition);
@@ -864,7 +863,7 @@ BOOST_AUTO_TEST_CASE(TrainRegSVDTest)
  * Make sure we can train an already-trained model and it works okay for
  * batch SVD.
  */
-BOOST_AUTO_TEST_CASE(TrainBatchSVDTest)
+TEST_CASE("TrainBatchSVDTest", "[CFTest]")
 {
   BatchSVDPolicy decomposition;
   Train(decomposition);
@@ -874,7 +873,7 @@ BOOST_AUTO_TEST_CASE(TrainBatchSVDTest)
  * Make sure we can train an already-trained model and it works okay for
  * NMF.
  */
-BOOST_AUTO_TEST_CASE(TrainNMFTest)
+TEST_CASE("TrainNMFTest", "[CFTest]")
 {
   NMFPolicy decomposition;
   Train(decomposition);
@@ -884,7 +883,7 @@ BOOST_AUTO_TEST_CASE(TrainNMFTest)
  * Make sure we can train an already-trained model and it works okay for
  * SVD Complete Incremental method.
  */
-BOOST_AUTO_TEST_CASE(TrainSVDCompleteTest)
+TEST_CASE("TrainSVDCompleteTest", "[CFTest]")
 {
   SVDCompletePolicy decomposition;
   Train(decomposition);
@@ -894,7 +893,7 @@ BOOST_AUTO_TEST_CASE(TrainSVDCompleteTest)
  * Make sure we can train an already-trained model and it works okay for
  * SVD Incomplete Incremental method.
  */
-BOOST_AUTO_TEST_CASE(TrainSVDIncompleteTest)
+TEST_CASE("TrainSVDIncompleteTest", "[CFTest]")
 {
   SVDIncompletePolicy decomposition;
   Train(decomposition);
@@ -904,7 +903,7 @@ BOOST_AUTO_TEST_CASE(TrainSVDIncompleteTest)
  * Make sure we can train an already-trained model and it works okay for
  * BiasSVD method.
  */
-BOOST_AUTO_TEST_CASE(TrainBiasSVDTest)
+TEST_CASE("TrainBiasSVDTest", "[CFTest]")
 {
   BiasSVDPolicy decomposition;
   TrainWithCoordinateList(decomposition);
@@ -914,7 +913,7 @@ BOOST_AUTO_TEST_CASE(TrainBiasSVDTest)
  * Make sure we can train an already-trained model and it works okay for
  * SVDPlusPlus method.
  */
-BOOST_AUTO_TEST_CASE(TrainSVDPPTest)
+TEST_CASE("TrainSVDPPTest", "[CFTest]")
 {
   SVDPlusPlusPolicy decomposition;
   TrainWithCoordinateList(decomposition);
@@ -924,7 +923,7 @@ BOOST_AUTO_TEST_CASE(TrainSVDPPTest)
  * Make sure we can train a model after using the empty constructor when
  * using randomized SVD.
  */
-BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRandSVDTest)
+TEST_CASE("EmptyConstructorTrainRandSVDTest", "[CFTest]")
 {
   EmptyConstructorTrain<RandomizedSVDPolicy>();
 }
@@ -933,7 +932,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRandSVDTest)
  * Make sure we can train a model after using the empty constructor when
  * using regularized SVD.
  */
-BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRegSVDTest)
+TEST_CASE("EmptyConstructorTrainRegSVDTest", "[CFTest]")
 {
   EmptyConstructorTrain<RegSVDPolicy>();
 }
@@ -942,7 +941,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainRegSVDTest)
  * Make sure we can train a model after using the empty constructor when
  * using batch SVD.
  */
-BOOST_AUTO_TEST_CASE(EmptyConstructorTrainBatchSVDTest)
+TEST_CASE("EmptyConstructorTrainBatchSVDTest", "[CFTest]")
 {
   EmptyConstructorTrain<BatchSVDPolicy>();
 }
@@ -951,7 +950,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainBatchSVDTest)
  * Make sure we can train a model after using the empty constructor when
  * using NMF.
  */
-BOOST_AUTO_TEST_CASE(EmptyConstructorTrainNMFTest)
+TEST_CASE("EmptyConstructorTrainNMFTest", "[CFTest]")
 {
   EmptyConstructorTrain<NMFPolicy>();
 }
@@ -960,7 +959,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainNMFTest)
  * Make sure we can train a model after using the empty constructor when
  * using SVD Complete Incremental method.
  */
-BOOST_AUTO_TEST_CASE(EmptyConstructorTrainSVDCompleteTest)
+TEST_CASE("EmptyConstructorTrainSVDCompleteTest", "[CFTest]")
 {
   EmptyConstructorTrain<SVDCompletePolicy>();
 }
@@ -969,7 +968,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainSVDCompleteTest)
  * Make sure we can train a model after using the empty constructor when
  * using SVD Incomplete Incremental method.
  */
-BOOST_AUTO_TEST_CASE(EmptyConstructorTrainSVDIncompleteTest)
+TEST_CASE("EmptyConstructorTrainSVDIncompleteTest", "[CFTest]")
 {
   EmptyConstructorTrain<SVDIncompletePolicy>();
 }
@@ -977,7 +976,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTrainSVDIncompleteTest)
 /**
  * Ensure we can load and save the CF model using randomized SVD policy.
  */
-BOOST_AUTO_TEST_CASE(SerializationRandSVDTest)
+TEST_CASE("SerializationRandSVDTest", "[CFTest]")
 {
   Serialization<RandomizedSVDPolicy>();
 }
@@ -985,7 +984,7 @@ BOOST_AUTO_TEST_CASE(SerializationRandSVDTest)
 /**
  * Ensure we can load and save the CF model using batch SVD policy.
  */
-BOOST_AUTO_TEST_CASE(SerializationBatchSVDTest)
+TEST_CASE("SerializationBatchSVDTest", "[CFTest]")
 {
   Serialization<BatchSVDPolicy>();
 }
@@ -993,7 +992,7 @@ BOOST_AUTO_TEST_CASE(SerializationBatchSVDTest)
 /**
  * Ensure we can load and save the CF model using NMF policy.
  */
-BOOST_AUTO_TEST_CASE(SerializationNMFTest)
+TEST_CASE("SerializationNMFTest", "[CFTest]")
 {
   Serialization<NMFPolicy>();
 }
@@ -1001,7 +1000,7 @@ BOOST_AUTO_TEST_CASE(SerializationNMFTest)
 /**
  * Ensure we can load and save the CF model using SVD Complete Incremental.
  */
-BOOST_AUTO_TEST_CASE(SerializationSVDCompleteTest)
+TEST_CASE("SerializationSVDCompleteTest", "[CFTest]")
 {
   Serialization<SVDCompletePolicy>();
 }
@@ -1009,7 +1008,7 @@ BOOST_AUTO_TEST_CASE(SerializationSVDCompleteTest)
 /**
  * Ensure we can load and save the CF model using SVD Incomplete Incremental.
  */
-BOOST_AUTO_TEST_CASE(SerializationSVDIncompleteTest)
+TEST_CASE("SerializationSVDIncompleteTest", "[CFTest]")
 {
   Serialization<SVDIncompletePolicy>();
 }
@@ -1018,7 +1017,7 @@ BOOST_AUTO_TEST_CASE(SerializationSVDIncompleteTest)
  * Make sure that Predict() is returning reasonable results for NMF and
  * OverallMeanNormalization.
  */
-BOOST_AUTO_TEST_CASE(CFPredictOverallMeanNormalization)
+TEST_CASE("CFPredictOverallMeanNormalization", "[CFTest]")
 {
   CFPredict<NMFPolicy, OverallMeanNormalization>(2.0);
 }
@@ -1027,7 +1026,7 @@ BOOST_AUTO_TEST_CASE(CFPredictOverallMeanNormalization)
  * Make sure that Predict() is returning reasonable results for NMF and
  * UserMeanNormalization.
  */
-BOOST_AUTO_TEST_CASE(CFPredictUserMeanNormalization)
+TEST_CASE("CFPredictUserMeanNormalization", "[CFTest]")
 {
   CFPredict<NMFPolicy, UserMeanNormalization>(2.0);
 }
@@ -1036,7 +1035,7 @@ BOOST_AUTO_TEST_CASE(CFPredictUserMeanNormalization)
  * Make sure that Predict() is returning reasonable results for NMF and
  * ItemMeanNormalization.
  */
-BOOST_AUTO_TEST_CASE(CFPredictItemMeanNormalization)
+TEST_CASE("CFPredictItemMeanNormalization", "[CFTest]")
 {
   CFPredict<NMFPolicy, ItemMeanNormalization>(2.0);
 }
@@ -1045,7 +1044,7 @@ BOOST_AUTO_TEST_CASE(CFPredictItemMeanNormalization)
  * Make sure that Predict() is returning reasonable results for NMF and
  * ZScoreNormalization.
  */
-BOOST_AUTO_TEST_CASE(CFPredictZScoreNormalization)
+TEST_CASE("CFPredictZScoreNormalization", "[CFTest]")
 {
   CFPredict<NMFPolicy, ZScoreNormalization>(2.0);
 }
@@ -1055,7 +1054,7 @@ BOOST_AUTO_TEST_CASE(CFPredictZScoreNormalization)
  * CombinedNormalization<OverallMeanNormalization, UserMeanNormalization,
  * ItemMeanNormalization>.
  */
-BOOST_AUTO_TEST_CASE(CFPredictCombinedNormalization)
+TEST_CASE("CFPredictCombinedNormalization", "[CFTest]")
 {
   CFPredict<NMFPolicy,
             CombinedNormalization<
@@ -1067,7 +1066,7 @@ BOOST_AUTO_TEST_CASE(CFPredictCombinedNormalization)
 /**
  * Make sure that Predict() works with NoNormalization.
  */
-BOOST_AUTO_TEST_CASE(CFPredictNoNormalization)
+TEST_CASE("CFPredictNoNormalization", "[CFTest]")
 {
   CFPredict<RegSVDPolicy, NoNormalization>(2.0);
 }
@@ -1076,7 +1075,7 @@ BOOST_AUTO_TEST_CASE(CFPredictNoNormalization)
  * Make sure recommendations that are generated are reasonably accurate
  * for OverallMeanNormalization.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracyOverallMeanNormalizationTest)
+TEST_CASE("RecommendationAccuracyOverallMeanNormalizationTest", "[CFTest]")
 {
   RecommendationAccuracy<NMFPolicy, OverallMeanNormalization>();
 }
@@ -1085,7 +1084,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyOverallMeanNormalizationTest)
  * Make sure recommendations that are generated are reasonably accurate
  * for UserMeanNormalization.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracyUserMeanNormalizationTest)
+TEST_CASE("RecommendationAccuracyUserMeanNormalizationTest", "[CFTest]")
 {
   RecommendationAccuracy<NMFPolicy, UserMeanNormalization>();
 }
@@ -1094,7 +1093,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyUserMeanNormalizationTest)
  * Make sure recommendations that are generated are reasonably accurate
  * for ItemMeanNormalization.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracyItemMeanNormalizationTest)
+TEST_CASE("RecommendationAccuracyItemMeanNormalizationTest", "[CFTest]")
 {
   RecommendationAccuracy<NMFPolicy, ItemMeanNormalization>();
 }
@@ -1103,7 +1102,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyItemMeanNormalizationTest)
  * Make sure recommendations that are generated are reasonably accurate
  * for ZScoreNormalization.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracyZScoreNormalizationTest)
+TEST_CASE("RecommendationAccuracyZScoreNormalizationTest", "[CFTest]")
 {
   RecommendationAccuracy<NMFPolicy, ZScoreNormalization>();
 }
@@ -1112,7 +1111,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyZScoreNormalizationTest)
  * Make sure recommendations that are generated are reasonably accurate
  * for CombinedNormalization.
  */
-BOOST_AUTO_TEST_CASE(RecommendationAccuracyCombinedNormalizationTest)
+TEST_CASE("RecommendationAccuracyCombinedNormalizationTest", "[CFTest]")
 {
   RecommendationAccuracy<NMFPolicy,
                          CombinedNormalization<
@@ -1124,7 +1123,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyCombinedNormalizationTest)
 /**
  * Ensure we can load and save the CF model using OverallMeanNormalization.
  */
-BOOST_AUTO_TEST_CASE(SerializationOverallMeanNormalizationTest)
+TEST_CASE("SerializationOverallMeanNormalizationTest", "[CFTest]")
 {
   Serialization<NMFPolicy, OverallMeanNormalization>();
 }
@@ -1132,7 +1131,7 @@ BOOST_AUTO_TEST_CASE(SerializationOverallMeanNormalizationTest)
 /**
  * Ensure we can load and save the CF model using UserMeanNormalization.
  */
-BOOST_AUTO_TEST_CASE(SerializationUserMeanNormalizationTest)
+TEST_CASE("SerializationUserMeanNormalizationTest", "[CFTest]")
 {
   Serialization<NMFPolicy, UserMeanNormalization>();
 }
@@ -1140,7 +1139,7 @@ BOOST_AUTO_TEST_CASE(SerializationUserMeanNormalizationTest)
 /**
  * Ensure we can load and save the CF model using ItemMeanNormalization.
  */
-BOOST_AUTO_TEST_CASE(SerializationItemMeanNormalizationTest)
+TEST_CASE("SerializationItemMeanNormalizationTest", "[CFTest]")
 {
   Serialization<NMFPolicy, ItemMeanNormalization>();
 }
@@ -1148,7 +1147,7 @@ BOOST_AUTO_TEST_CASE(SerializationItemMeanNormalizationTest)
 /**
  * Ensure we can load and save the CF model using ZScoreMeanNormalization.
  */
-BOOST_AUTO_TEST_CASE(SerializationZScoreNormalizationTest)
+TEST_CASE("SerializationZScoreNormalizationTest", "[CFTest]")
 {
   Serialization<NMFPolicy, ZScoreNormalization>();
 }
@@ -1156,7 +1155,7 @@ BOOST_AUTO_TEST_CASE(SerializationZScoreNormalizationTest)
 /**
  * Ensure we can load and save the CF model using CombinedNormalization.
  */
-BOOST_AUTO_TEST_CASE(SerializationCombinedNormalizationTest)
+TEST_CASE("SerializationCombinedNormalizationTest", "[CFTest]")
 {
   Serialization<NMFPolicy,
                 CombinedNormalization<
@@ -1169,7 +1168,7 @@ BOOST_AUTO_TEST_CASE(SerializationCombinedNormalizationTest)
  * Make sure that Predict() is returning reasonable results for
  * EuclideanSearch.
  */
-BOOST_AUTO_TEST_CASE(CFPredictEuclideanSearch)
+TEST_CASE("CFPredictEuclideanSearch", "[CFTest]")
 {
   CFPredict<NMFPolicy, OverallMeanNormalization, EuclideanSearch>(2.0);
 }
@@ -1178,7 +1177,7 @@ BOOST_AUTO_TEST_CASE(CFPredictEuclideanSearch)
  * Make sure that Predict() is returning reasonable results for
  * CosineSearch.
  */
-BOOST_AUTO_TEST_CASE(CFPredictCosineSearch)
+TEST_CASE("CFPredictCosineSearch", "[CFTest]")
 {
   CFPredict<NMFPolicy, OverallMeanNormalization, CosineSearch>(2.0);
 }
@@ -1187,7 +1186,7 @@ BOOST_AUTO_TEST_CASE(CFPredictCosineSearch)
  * Make sure that Predict() is returning reasonable results for
  * PearsonSearch.
  */
-BOOST_AUTO_TEST_CASE(CFPredictPearsonSearch)
+TEST_CASE("CFPredictPearsonSearch", "[CFTest]")
 {
   CFPredict<NMFPolicy, OverallMeanNormalization, PearsonSearch>(2.0);
 }
@@ -1196,7 +1195,7 @@ BOOST_AUTO_TEST_CASE(CFPredictPearsonSearch)
  * Make sure that Predict() is returning reasonable results for
  * AverageInterpolation.
  */
-BOOST_AUTO_TEST_CASE(CFPredictAverageInterpolation)
+TEST_CASE("CFPredictAverageInterpolation", "[CFTest]")
 {
   CFPredict<NMFPolicy,
             OverallMeanNormalization,
@@ -1208,7 +1207,7 @@ BOOST_AUTO_TEST_CASE(CFPredictAverageInterpolation)
  * Make sure that Predict() is returning reasonable results for
  * SimilarityInterpolation.
  */
-BOOST_AUTO_TEST_CASE(CFPredictSimilarityInterpolation)
+TEST_CASE("CFPredictSimilarityInterpolation", "[CFTest]")
 {
   CFPredict<NMFPolicy,
             OverallMeanNormalization,
@@ -1220,12 +1219,10 @@ BOOST_AUTO_TEST_CASE(CFPredictSimilarityInterpolation)
  * Make sure that Predict() is returning reasonable results for
  * RegressionInterpolation.
  */
-BOOST_AUTO_TEST_CASE(CFPredictRegressionInterpolation)
+TEST_CASE("CFPredictRegressionInterpolation", "[CFTest]")
 {
   CFPredict<RegSVDPolicy,
             OverallMeanNormalization,
             EuclideanSearch,
             RegressionInterpolation>(2.0);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
