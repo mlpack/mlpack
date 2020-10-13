@@ -49,8 +49,8 @@
 */
 template<typename T, typename U>
 void StratifiedSplit(const arma::Mat<T>& input,
-										 const arma::Row<U>& inputLabel,
-										 arma::Mat<T>& trainData,
+                     const arma::Row<U>& inputLabel,
+                     arma::Mat<T>& trainData,
                      arma::Mat<T>& testData,
                      arma::Row<U>& trainLabel,
                      arma::Row<U>& testLabel,
