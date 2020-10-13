@@ -22,6 +22,10 @@ environment:
       VSVER: Visual Studio 16 2019
       MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
 
+# We have removed the VS studio 15 2017 build since it is not possible to complete
+# or finish the build due to the `compiler out of heap space issues`.
+# Therefore, in the meanwhile, we are only doing the installation for VS 16 2019.
+
 configuration: Release
 
 os: Visual Studio 2019
