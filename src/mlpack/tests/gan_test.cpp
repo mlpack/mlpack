@@ -21,7 +21,8 @@
 #include <ensmallen.hpp>
 
 #include "catch.hpp"
-#include "serialization.hpp"
+#include "test_catch_tools.hpp"
+#include "serialization_catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;

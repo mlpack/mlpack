@@ -13,6 +13,7 @@
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/math/range.hpp>
 #include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace math;
