@@ -68,7 +68,19 @@ BINDING_EXAMPLE(
     "\n\n" +
     PRINT_CALL("preprocess_split", "input", "X", "input_labels", "y",
         "test_ratio", 0.3, "training", "X_train", "training_labels", "y_train",
-        "test", "X_test", "test_labels", "y_test"));
+        "test", "X_test", "test_labels", "y_test") +
+    "Also by default the dataset is not stratified; you can provide the " +
+    PRINT_PARAM_STRING("stratify_data") + " option to stratify the data; "
+    "\n\n" +
+    "If we had a dataset " + PRINT_DATASET("X") + " and associated labels " +
+    PRINT_DATASET("y") + ", and we wanted to stratify these into " +
+    PRINT_DATASET("X_train") + ", " + PRINT_DATASET("y_train") + ", " +
+    PRINT_DATASET("X_test") + ", and " + PRINT_DATASET("y_test") + ", with 30% "
+    "of the data in the test set, we could run"
+    "\n\n" +
+    PRINT_CALL("preprocess_split", "input", "X", "input_labels", "y",
+        "test_ratio", 0.3, "training", "X_train", "training_labels", "y_train",
+        "test", "X_test", "test_labels", "y_test", "stratify_data", true));
 
 // See also...
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
@@ -91,7 +103,7 @@ PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
 
 PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
 PARAM_FLAG("no_shuffle", "Avoid shuffling and splitting the data.", "S");
-PARAM_FLAG("stratify_data", "Avoid stratifying the data.", "z")
+PARAM_FLAG("stratify_data", "Stratify the data according to labels", "z")
 
 using namespace mlpack;
 using namespace mlpack::data;
@@ -152,7 +164,6 @@ static void mlpackMain()
         IO::GetParam<arma::Mat<size_t>>("input_labels");
     arma::Row<size_t> labelsRow = labels.row(0);
 
-
     if(stratifyData)
     {
       const auto value =
@@ -173,8 +184,9 @@ static void mlpackMain()
             IO::GetParam<arma::Mat<size_t>>("test_labels") =
                 std::move(get<3>(value));
     }
-    else {
-      const auto value = data::StratifiedSplit(data, labelsRow, testRatio, !shuffleData);
+    else
+    {
+      const auto value = data::Split(data, labelsRow, testRatio, !shuffleData);
       Log::Info << "Training data contains "
           << get<0>(value).n_cols << " points." << endl;
       Log::Info << "Test data contains "

@@ -18,9 +18,9 @@
  namespace mlpack {
  namespace data {
 /**
-* Given an input dataset and labels, split into a training set and test set.
-* Example usage below.  This overload places the split dataset into the four
-* output parameters given (trainData, testData, trainLabel, and testLabel).
+* Given an input dataset and labels, stratify into a training set and test set.
+* Example usage below.  This overload places the stratified dataset into the
+* four output parameters given (trainData, testData, trainLabel, and testLabel).
 *
 * @code
 * arma::mat input = loadData();
@@ -31,14 +31,14 @@
 * arma::Row<size_t> testLabel;
 * math::RandomSeed(100); // Set the seed if you like.
 *
-* // Split the dataset into a training and test set, with 30% of the data being
-* // held out for the test set.
-* Split(input, label, trainData,
+* // Stratify the dataset into a training and test set, with 30% of the data
+* // being held out for the test set.
+* StratifiedSplit(input, label, trainData,
 *                testData, trainLabel, testLabel, 0.3);
 * @endcode
 *
-* @param input Input dataset to split.
-* @param inputLabel Input labels to split.
+* @param input Input dataset to stratify.
+* @param inputLabel Input labels to stratify.
 * @param trainData Matrix to store training data into.
 * @param testData Matrix to store test data into.
 * @param trainLabel Vector to store training labels into.
@@ -104,28 +104,28 @@ void StratifiedSplit(const arma::Mat<T>& input,
       labelMap[label] += 1;
     }
   }
+  labelMap.clear();
   testData = input.cols(Indexes.subvec(trainIdx, Indexes.n_rows-1));
   testLabel = inputLabel.cols(Indexes.subvec(trainIdx, Indexes.n_rows-1));
   trainData = input.cols(Indexes.subvec(0, trainIdx-1));
   trainLabel = inputLabel.cols(Indexes.subvec(0, trainIdx-1));
-  labelMap.clear();
 }
 
 /**
- * Given an input dataset and labels, split into a training set and test set.
- * Example usage below.  This overload returns the split dataset as a std::tuple
- * with four elements: an arma::Mat<T> containing the training data, an
- * arma::Mat<T> containing the test data, an arma::Row<U> containing the
+ * Given an input dataset and labels, stratify into a training set and test set.
+ * Example usage below.  This overload returns the stratified dataset as a
+ * std::tuple with four elements: an arma::Mat<T> containing the training data,
+ * an arma::Mat<T> containing the test data, an arma::Row<U> containing the
  * training labels, and an arma::Row<U> containing the test labels.
  *
  * @code
  * arma::mat input = loadData();
  * arma::Row<size_t> label = loadLabel();
- * auto splitResult = Split(input, label, 0.2);
+ * auto splitResult = StratifiedSplit(input, label, 0.2);
  * @endcode
  *
- * @param input Input dataset to split.
- * @param inputLabel Input labels to split.
+ * @param input Input dataset to stratify.
+ * @param inputLabel Input labels to stratify.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *       sample is visited in linear order. (Default true).
