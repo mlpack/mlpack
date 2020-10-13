@@ -18,19 +18,9 @@ environment:
   JENKINS_DOC : "C:/projects/mlpack/dist/win-installer/jenkinsdoc.zip"
   GIT_VERSION_FILE : "C:/projects/mlpack/src/mlpack/core/util/gitversion.hpp"
   matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      VSVER: Visual Studio 15 2017 Win64
-      MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       VSVER: Visual Studio 16 2019
       MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
-      
-# Currently, the VS2019 build seems to always time out.  This seems to be an
-# AppVeyor issue.
-#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-#      VSVER: Visual Studio 16 2019
-#      MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
-
 
 configuration: Release
 
@@ -89,6 +79,7 @@ build_script:
     -DBUILD_PYTHON_BINDINGS=OFF
     -DBUILD_GO_BINDINGS=OFF
     -DBUILD_R_BINDINGS=OFF
+    -DBUILD_TESTS=OFF
     -DCMAKE_BUILD_TYPE=Release ..
   - >
     "%MSBUILD%" "C:\projects\mlpack\build\mlpack.sln"
