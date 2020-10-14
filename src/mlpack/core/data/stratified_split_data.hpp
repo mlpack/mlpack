@@ -17,6 +17,7 @@
 
  namespace mlpack {
  namespace data {
+
 /**
 * Given an input dataset and labels, stratify into a training set and test set.
 * Example usage below.  This overload places the stratified dataset into the
@@ -34,7 +35,7 @@
 * // Stratify the dataset into a training and test set, with 30% of the data
 * // being held out for the test set.
 * StratifiedSplit(input, label, trainData,
-*                testData, trainLabel, testLabel, 0.3);
+*                 testData, trainLabel, testLabel, 0.3);
 * @endcode
 *
 * @param input Input dataset to stratify.
@@ -45,7 +46,7 @@
 * @param testLabel Vector to store test labels into.
 * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
 * @param shuffleData If true, the sample order is shuffled; otherwise, each
-*       sample is visited in linear order. (Default true.)
+*        sample is visited in linear order. (Default true.)
 */
 template<typename T, typename U>
 void StratifiedSplit(const arma::Mat<T>& input,
@@ -103,48 +104,31 @@ void StratifiedSplit(const arma::Mat<T>& input,
   size_t testIdx = inputLabel.n_cols - 1;
   std::unordered_map<U, size_t> labelMap;
 
-  if (shuffleData)
-  {
-    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(
-        0, input.n_cols - 1, input.n_cols));
+  arma::uvec order = arma::linspace<arma::uvec>(
+      0, input.n_cols - 1, input.n_cols);
 
-    //visit the labels in shuffled order
-    for (auto i: order)
-    {
-      auto label = inputLabel[i];
-      if (static_cast<size_t>(labelMap[label]*testRatio) <
-          static_cast<size_t>((labelMap[label]+1)*testRatio))
-      {
-        Indexes[testIdx] = i;
-        testIdx -= 1;
-      }
-      else
-      {
-        Indexes[trainIdx] = i;
-        trainIdx += 1;
-      }
-      labelMap[label] += 1;
-    }
-  }
-  else //no shuffling required
+  if(shuffleData)
   {
-    for (size_t i = 0; i < inputLabel.n_cols; i++)
-    {
-      auto label = inputLabel[i];
-      if (static_cast<size_t>(labelMap[label]*testRatio) <
-          static_cast<size_t>((labelMap[label]+1)*testRatio))
-      {
-        Indexes[testIdx] = i;
-        testIdx -= 1;
-      }
-      else
-      {
-        Indexes[trainIdx] = i;
-        trainIdx += 1;
-      }
-      labelMap[label] += 1;
-    }
+    order = arma::shuffle(order);
   }
+
+  for (auto i: order)
+  {
+    auto label = inputLabel[i];
+    if (static_cast<size_t>(labelMap[label]*testRatio) <
+        static_cast<size_t>((labelMap[label]+1)*testRatio))
+    {
+      Indexes[testIdx] = i;
+      testIdx -= 1;
+    }
+    else
+    {
+      Indexes[trainIdx] = i;
+      trainIdx += 1;
+    }
+    labelMap[label] += 1;
+  }
+
   labelMap.clear();
   testData = input.cols(Indexes.subvec(trainIdx, Indexes.n_rows-1));
   testLabel = inputLabel.cols(Indexes.subvec(trainIdx, Indexes.n_rows-1));
