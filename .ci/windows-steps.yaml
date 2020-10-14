@@ -177,35 +177,35 @@ steps:
         -sfrag `
         -out HeatGeneratedFileList.wxs
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `
-        -dHarvestPath=..\staging `
+        -dHarvestPath=../staging `
         -dConfiguration=Release `
-        -dOutDir=bin\x64\Release\ `
+        -dOutDir=bin/x64/Release/ `
         -dPlatform=x64 `
         -dProjectDir=. `
         -dProjectExt=.wixproj `
         -dProjectFileName=mlpack-win-installer.wixproj `
         -dProjectName=mlpack-win-installer `
         -dProjectPath=mlpack-win-installer.wixproj `
-        -dTargetDir=.\bin\x64\Release\ `
+        -dTargetDir=./bin/x64/Release/ `
         -dTargetExt=.msi `
         -dTargetFileName=mlpack-windows.msi `
         -dTargetName=mlpack-windows `
-        -dTargetPath=.\bin\x64\Release\mlpack-windows.msi `
-        -out obj\x64\Release\ `
+        -dTargetPath=./bin/x64/Release/mlpack-windows.msi `
+        -out obj/x64/Release/ `
         -arch x64 `
         -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll" `
         Product.wxs HeatGeneratedFileList.wxs
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\light.exe' `
-        -out .\bin\x64\Release\mlpack-%INSTALL_VERSION%.msi `
-        -pdbout .\bin\x64\Release\mlpack-windows.wixpdb `
+        -out ./bin/x64/Release/mlpack-%INSTALL_VERSION%.msi `
+        -pdbout ./bin/x64/Release/mlpack-windows.wixpdb `
         -cultures:null `
         -loc mlpack-localization.wxl `
         -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll" `
-        -contentsfile obj\x64\Release\mlpack-win-installer.wixproj.BindContentsFileListnull.txt `
-        -outputsfile obj\x64\Release\mlpack-win-installer.wixproj.BindOutputsFileListnull.txt `
-        -builtoutputsfile obj\x64\Release\mlpack-win-installer.wixproj.BindBuiltOutputsFileListnull.txt `
+        -contentsfile obj/x64/Release/mlpack-win-installer.wixproj.BindContentsFileListnull.txt `
+        -outputsfile obj/x64/Release/mlpack-win-installer.wixproj.BindOutputsFileListnull.txt `
+        -builtoutputsfile obj/x64/Release/mlpack-win-installer.wixproj.BindBuiltOutputsFileListnull.txt `
         -wixprojectfile mlpack-win-installer.wixproj `
-        obj\x64\Release\Product.wixobj obj\x64\Release\HeatGeneratedFileList.wixobj
+        obj/x64/Release/Product.wixobj obj\x64\Release\HeatGeneratedFileList.wixobj
   displayName: 'Build MSI Windows installer'
 
 # Publish artifacts to Azure Pipelines
