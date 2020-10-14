@@ -66,8 +66,8 @@ class ArrayWrapper
 /**
  * This function is used to serialized old c-style array
  *
- * @param T C Style array.
- * @param S the size of the array.
+ * @param t C Style array.
+ * @param s the size of the array.
  */
 template<class T, class S>
 inline
