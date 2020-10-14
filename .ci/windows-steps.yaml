@@ -176,6 +176,7 @@ steps:
         -ag `
         -sfrag `
         -out HeatGeneratedFileList.wxs
+    & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' -?
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `
         -dHarvestPath=../staging `
         -dConfiguration=Release `
