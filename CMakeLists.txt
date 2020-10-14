@@ -414,7 +414,7 @@ else ()
 endif ()
 
 find_package(cereal "${CEREAL_VERSION}" REQUIRED)
-set(MLPACK_INCLUDE_DIRS ${CEREAL_INCLUDE_DIR})
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
