@@ -450,8 +450,7 @@ void Serialization()
 
   // Check the internals.
   REQUIRE(c.NumUsersForSimilarity() == cXml.NumUsersForSimilarity());
-  REQUIRE(c.NumUsersForSimilarity() ==
-      cBinary.NumUsersForSimilarity());
+  REQUIRE(c.NumUsersForSimilarity() == cBinary.NumUsersForSimilarity());
   REQUIRE(c.NumUsersForSimilarity() == cText.NumUsersForSimilarity());
 
   REQUIRE(c.Rank() == cXml.Rank());
@@ -472,20 +471,16 @@ void Serialization()
   REQUIRE(c.CleanedData().n_cols == cText.CleanedData().n_cols);
 
   REQUIRE(c.CleanedData().n_nonzero == cXml.CleanedData().n_nonzero);
-  REQUIRE(c.CleanedData().n_nonzero ==
-      cBinary.CleanedData().n_nonzero);
+  REQUIRE(c.CleanedData().n_nonzero == cBinary.CleanedData().n_nonzero);
   REQUIRE(c.CleanedData().n_nonzero == cText.CleanedData().n_nonzero);
 
   c.CleanedData().sync();
 
   for (size_t i = 0; i <= c.CleanedData().n_cols; ++i)
   {
-    REQUIRE(c.CleanedData().col_ptrs[i] ==
-        cXml.CleanedData().col_ptrs[i]);
-    REQUIRE(c.CleanedData().col_ptrs[i] ==
-        cBinary.CleanedData().col_ptrs[i]);
-    REQUIRE(c.CleanedData().col_ptrs[i] ==
-        cText.CleanedData().col_ptrs[i]);
+    REQUIRE(c.CleanedData().col_ptrs[i] == cXml.CleanedData().col_ptrs[i]);
+    REQUIRE(c.CleanedData().col_ptrs[i] == cBinary.CleanedData().col_ptrs[i]);
+    REQUIRE(c.CleanedData().col_ptrs[i] == cText.CleanedData().col_ptrs[i]);
   }
 
   for (size_t i = 0; i <= c.CleanedData().n_nonzero; ++i)
