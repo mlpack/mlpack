@@ -920,7 +920,7 @@ TEST_CASE("NotTrained", "[KDETest]")
   // Check results.
   REQUIRE_THROWS_AS(kde.Evaluate(query, estimations), std::runtime_error);
   REQUIRE_THROWS_AS(kde.Evaluate(&queryTree, oldFromNew, estimations),
-                      std::runtime_error);
+      std::runtime_error);
   REQUIRE_THROWS_AS(kde.Evaluate(estimations), std::runtime_error);
 }
 

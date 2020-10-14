@@ -142,7 +142,7 @@ TEST_CASE("LMNNInitialEvaluationTest", "[LMNNTest]")
   double objective = lmnnfn.Evaluate(arma::eye<arma::mat>(2, 2));
 
   // Result calculated by hand.
-  REQUIRE(objective == Approx( 9.456).epsilon(1e-7));
+  REQUIRE(objective == Approx(9.456).epsilon(1e-7));
 }
 
 /**
@@ -162,10 +162,10 @@ TEST_CASE("LMNNInitialGradientTest", "[LMNNTest]")
   lmnnfn.Gradient(coordinates, gradient);
 
   // Result calculated by hand.
-  REQUIRE(gradient(0, 0) == Approx( -0.288).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.288).epsilon(1e-7));
   REQUIRE(gradient(1, 0) == Approx(0.0).margin(1e-5));
   REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
-  REQUIRE(gradient(1, 1) == Approx( 12.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(12.0).epsilon(1e-7));
 }
 
 /***
@@ -185,12 +185,12 @@ TEST_CASE("LMNNInitialEvaluateWithGradientTest", "[LMNNTest]")
   double objective = lmnnfn.EvaluateWithGradient(coordinates, gradient);
 
   // Result calculated by hand.
-  REQUIRE(objective == Approx( 9.456).epsilon(1e-7));
+  REQUIRE(objective == Approx(9.456).epsilon(1e-7));
   // Check Gradient
-  REQUIRE(gradient(0, 0) == Approx( -0.288).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.288).epsilon(1e-7));
   REQUIRE(gradient(1, 0) == Approx(0.0).margin(1e-5));
   REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
-  REQUIRE(gradient(1, 1) == Approx( 12.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(12.0).epsilon(1e-7));
 }
 
 /**
@@ -209,10 +209,10 @@ TEST_CASE("LMNNSeparableObjectiveTest", "[LMNNTest]")
   arma::mat coordinates = arma::eye<arma::mat>(2, 2);
   REQUIRE(lmnnfn.Evaluate(coordinates, 0, 1) == Approx( 1.576).epsilon(1e-7));
   REQUIRE(lmnnfn.Evaluate(coordinates, 1, 1) == Approx( 1.576).epsilon(1e-7));
-  REQUIRE(lmnnfn.Evaluate(coordinates, 2, 1) == Approx( 1.576).epsilon(1e-7));
-  REQUIRE(lmnnfn.Evaluate(coordinates, 3, 1) == Approx( 1.576).epsilon(1e-7));
-  REQUIRE(lmnnfn.Evaluate(coordinates, 4, 1) == Approx( 1.576).epsilon(1e-7));
-  REQUIRE(lmnnfn.Evaluate(coordinates, 5, 1) == Approx( 1.576).epsilon(1e-7));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 2, 1) == Approx(1.576).epsilon(1e-7));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 3, 1) == Approx(1.576).epsilon(1e-7));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 4, 1) == Approx(1.576).epsilon(1e-7));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 5, 1) == Approx(1.576).epsilon(1e-7));
 }
 
 /**
@@ -232,45 +232,45 @@ TEST_CASE("LMNNSeparableGradientTest", "[LMNNTest]")
 
   lmnnfn.Gradient(coordinates, 0, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   lmnnfn.Gradient(coordinates, 1, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   lmnnfn.Gradient(coordinates, 2, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   lmnnfn.Gradient(coordinates, 3, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   lmnnfn.Gradient(coordinates, 4, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   lmnnfn.Gradient(coordinates, 5, gradient, 1);
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 }
 
 /**
@@ -290,39 +290,39 @@ TEST_CASE("LMNNSeparableEvaluateWithGradientTest", "[LMNNTest]")
 
   double objective = lmnnfn.EvaluateWithGradient(coordinates, 0, gradient, 1);
 
-  REQUIRE(objective == Approx( 1.576).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 1, gradient, 1);
 
-  REQUIRE(objective == Approx( 1.576).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 2, gradient, 1);
 
-  REQUIRE(objective == Approx( 1.576).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 3, gradient, 1);
 
-  REQUIRE(objective == Approx( 1.576).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 4, gradient, 1);
 
