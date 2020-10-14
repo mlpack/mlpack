@@ -19,17 +19,14 @@
 #include <mlpack/core/data/binarize.hpp>
 #include <mlpack/core/math/random.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
+#include "catch.hpp"
+#include "serialization_catch.hpp"
 #include "custom_layer.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace ens;
 using namespace mlpack::math;
-
-BOOST_AUTO_TEST_SUITE(RecurrentNetworkTest);
 
 /**
  * Construct a 2-class dataset out of noisy sines.
@@ -75,7 +72,7 @@ void GenerateNoisySines(arma::cube& data,
 /**
  * Train the BRNN on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(SequenceClassificationBRNNTest)
+TEST_CASE("SequenceClassificationBRNNTest", "[RecurrentNetworkTest]")
 {
   // Using same test for RNN below.
   size_t successes = 0;
@@ -111,10 +108,10 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationBRNNTest)
 
     StandardSGD opt(0.1, 1, 500 * input.n_cols, -100);
     model.Train(input, labels, opt);
-    BOOST_TEST_CHECKPOINT("Training over");
+    INFO("Training over");
     arma::cube prediction;
     model.Predict(input, prediction);
-    BOOST_TEST_CHECKPOINT("Prediction over");
+    INFO("Prediction over");
 
     size_t error = 0;
     for (size_t i = 0; i < prediction.n_cols; ++i)
@@ -133,7 +130,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationBRNNTest)
     }
 
     double classificationError = 1 - double(error) / prediction.n_cols;
-    BOOST_TEST_CHECKPOINT(classificationError);
+    INFO(classificationError);
     if (classificationError <= 0.2)
     {
       ++successes;
@@ -141,13 +138,13 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationBRNNTest)
     }
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
 
 /**
  * Train the vanilla network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
+TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
 {
   // It isn't guaranteed that the recurrent network will converge in the
   // specified number of iterations using random weights. If this works 1 of 6
@@ -231,7 +228,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
     }
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
 
 /**
@@ -480,14 +477,14 @@ arma::Mat<char> GenerateReberGrammarData(
   arma::colvec translation;
 
   // Generate the training data.
-  for (size_t i = 0; i < trainReberGrammarCount; i++)
+  for (size_t i = 0; i < trainReberGrammarCount; ++i)
   {
     if (recursive)
       GenerateRecursiveReber(transitions, 3, 5, trainReber);
     else
       GenerateReber(transitions, trainReber);
 
-    for (size_t j = 0; j < trainReber.length() - 1; j++)
+    for (size_t j = 0; j < trainReber.length() - 1; ++j)
     {
       ReberTranslation(trainReber[j], translation);
       trainInput(0, i) = arma::join_cols(trainInput(0, i), translation);
@@ -498,7 +495,7 @@ arma::Mat<char> GenerateReberGrammarData(
   }
 
   // Generate the test data.
-  for (size_t i = 0; i < testReberGrammarCount; i++)
+  for (size_t i = 0; i < testReberGrammarCount; ++i)
   {
     if (recursive)
       GenerateRecursiveReber(transitions, averageRecursion, maxRecursion,
@@ -506,7 +503,7 @@ arma::Mat<char> GenerateReberGrammarData(
     else
       GenerateReber(transitions, testReber);
 
-    for (size_t j = 0; j < testReber.length() - 1; j++)
+    for (size_t j = 0; j < testReber.length() - 1; ++j)
     {
       ReberTranslation(testReber[j], translation);
       testInput(0, i) = arma::join_cols(testInput(0, i), translation);
@@ -576,7 +573,7 @@ void ReberGrammarTestNetwork(ModelType& model,
     arma::cube inputTemp, labelsTemp;
     for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
     {
-      for (size_t j = 0; j < trainReberGrammarCount; j++)
+      for (size_t j = 0; j < trainReberGrammarCount; ++j)
       {
         // Each sequence may be a different length, so we need to extract them
         // manually.  We will reshape them into a cube with each slice equal to
@@ -595,7 +592,7 @@ void ReberGrammarTestNetwork(ModelType& model,
     double error = 0;
 
     // Ask the network to predict the next Reber grammar in the given sequence.
-    for (size_t i = 0; i < testReberGrammarCount; i++)
+    for (size_t i = 0; i < testReberGrammarCount; ++i)
     {
       arma::cube prediction;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
@@ -609,7 +606,7 @@ void ReberGrammarTestNetwork(ModelType& model,
 
       size_t reberError = 0;
 
-      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); j++)
+      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); ++j)
       {
         char predictedSymbol, inputSymbol;
         std::string reberChoices;
@@ -645,13 +642,13 @@ void ReberGrammarTestNetwork(ModelType& model,
     offset += 3;
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
 
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
+TEST_CASE("LSTMReberGrammarTest", "[RecurrentNetworkTest]")
 {
   RNN<MeanSquaredError<> > model(5);
   model.Add<Linear<> >(7, 10);
@@ -664,7 +661,7 @@ BOOST_AUTO_TEST_CASE(LSTMReberGrammarTest)
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
+TEST_CASE("FastLSTMReberGrammarTest", "[RecurrentNetworkTest]")
 {
   RNN<MeanSquaredError<> > model(5);
   model.Add<Linear<> >(7, 8);
@@ -677,7 +674,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMReberGrammarTest)
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
+TEST_CASE("GRURecursiveReberGrammarTest", "[RecurrentNetworkTest]")
 {
   RNN<MeanSquaredError<> > model(5);
   model.Add<Linear<> >(7, 16);
@@ -690,7 +687,7 @@ BOOST_AUTO_TEST_CASE(GRURecursiveReberGrammarTest)
 /**
  * Train BLSTM on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(BRNNReberGrammarTest)
+TEST_CASE("BRNNReberGrammarTest", "[RecurrentNetworkTest]")
 {
   BRNN<MeanSquaredError<>, AddMerge<>, SigmoidLayer<> > model(5);
   model.Add<Linear<> >(7, 10);
@@ -736,14 +733,14 @@ void GenerateDistractedSequence(arma::mat& input, arma::mat& output)
 
   // Set the target in the input sequence and the corresponding targets in the
   // output sequence by following the correct order.
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < 2; ++i)
   {
     size_t idx = rand() % 2;
     input(idx, index(i)) = 1;
     output(idx, index(i) > index(i == 0) ? 9 : 8) = 1;
   }
 
-  for (size_t i = 2; i < 8; i++)
+  for (size_t i = 2; i < 8; ++i)
     input(2 + rand() % 6, index(i)) = 1;
 
   // Set the prompts which direct the network to give an answer.
@@ -771,11 +768,11 @@ void DistractedSequenceRecallTestNetwork(
   arma::field<arma::mat> testLabels(1, testDistractedSequenceCount);
 
   // Generate the training data.
-  for (size_t i = 0; i < trainDistractedSequenceCount; i++)
+  for (size_t i = 0; i < trainDistractedSequenceCount; ++i)
     GenerateDistractedSequence(trainInput(0, i), trainLabels(0, i));
 
   // Generate the test data.
-  for (size_t i = 0; i < testDistractedSequenceCount; i++)
+  for (size_t i = 0; i < testDistractedSequenceCount; ++i)
     GenerateDistractedSequence(testInput(0, i), testLabels(0, i));
 
   /*
@@ -820,7 +817,7 @@ void DistractedSequenceRecallTestNetwork(
     arma::cube inputTemp, labelsTemp;
     for (size_t iteration = 0; iteration < (9 + offset); iteration++)
     {
-      for (size_t j = 0; j < trainDistractedSequenceCount; j++)
+      for (size_t j = 0; j < trainDistractedSequenceCount; ++j)
       {
         inputTemp = arma::cube(trainInput.at(0, j).memptr(), inputSize, 1,
             trainInput.at(0, j).n_elem / inputSize, false, true);
@@ -835,7 +832,7 @@ void DistractedSequenceRecallTestNetwork(
 
     // Ask the network to predict the targets in the given sequence at the
     // prompts.
-    for (size_t i = 0; i < testDistractedSequenceCount; i++)
+    for (size_t i = 0; i < testDistractedSequenceCount; ++i)
     {
       arma::cube output;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
@@ -869,14 +866,14 @@ void DistractedSequenceRecallTestNetwork(
     offset += 2;
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
 
 /**
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-BOOST_AUTO_TEST_CASE(LSTMDistractedSequenceRecallTest)
+TEST_CASE("LSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest]")
 {
   DistractedSequenceRecallTestNetwork<LSTM<> >(4, 8);
 }
@@ -885,7 +882,7 @@ BOOST_AUTO_TEST_CASE(LSTMDistractedSequenceRecallTest)
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-BOOST_AUTO_TEST_CASE(FastLSTMDistractedSequenceRecallTest)
+TEST_CASE("FastLSTMDistractedSequenceRecallTest", "[RecurrentNetworkTest]")
 {
   DistractedSequenceRecallTestNetwork<FastLSTM<> >(4, 8);
 }
@@ -894,7 +891,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMDistractedSequenceRecallTest)
  * Train the specified networks on the Derek D. Monner's distracted sequence
  * recall task.
  */
-BOOST_AUTO_TEST_CASE(GRUDistractedSequenceRecallTest)
+TEST_CASE("GRUDistractedSequenceRecallTest", "[RecurrentNetworkTest]")
 {
   DistractedSequenceRecallTestNetwork<GRU<> >(4, 8);
 }
@@ -956,7 +953,7 @@ void BatchSizeTest()
 /**
  * Ensure LSTMs work with larger batch sizes.
  */
-BOOST_AUTO_TEST_CASE(LSTMBatchSizeTest)
+TEST_CASE("LSTMBatchSizeTest", "[RecurrentNetworkTest]")
 {
   BatchSizeTest<LSTM<>>();
 }
@@ -964,7 +961,7 @@ BOOST_AUTO_TEST_CASE(LSTMBatchSizeTest)
 /**
  * Ensure fast LSTMs work with larger batch sizes.
  */
-BOOST_AUTO_TEST_CASE(FastLSTMBatchSizeTest)
+TEST_CASE("FastLSTMBatchSizeTest", "[RecurrentNetworkTest]")
 {
   BatchSizeTest<FastLSTM<>>();
 }
@@ -972,7 +969,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMBatchSizeTest)
 /**
  * Ensure GRUs work with larger batch sizes.
  */
-BOOST_AUTO_TEST_CASE(GRUBatchSizeTest)
+TEST_CASE("GRUBatchSizeTest", "[RecurrentNetworkTest]")
 {
   BatchSizeTest<GRU<>>();
 }
@@ -980,7 +977,7 @@ BOOST_AUTO_TEST_CASE(GRUBatchSizeTest)
 /**
  * Make sure the RNN can be properly serialized.
  */
-BOOST_AUTO_TEST_CASE(SerializationTest)
+TEST_CASE("RNNSerializationTest", "[RecurrentNetworkTest]")
 {
   const size_t rho = 10;
 
@@ -1103,7 +1100,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
     arma::cube inputTemp, labelsTemp;
     for (size_t iteration = 0; iteration < (iterations + offset); iteration++)
     {
-      for (size_t j = 0; j < trainReberGrammarCount; j++)
+      for (size_t j = 0; j < trainReberGrammarCount; ++j)
       {
         // Each sequence may be a different length, so we need to extract them
         // manually.  We will reshape them into a cube with each slice equal to
@@ -1122,7 +1119,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
     double error = 0;
 
     // Ask the network to predict the next Reber grammar in the given sequence.
-    for (size_t i = 0; i < testReberGrammarCount; i++)
+    for (size_t i = 0; i < testReberGrammarCount; ++i)
     {
       arma::cube prediction;
       arma::cube input(testInput.at(0, i).memptr(), inputSize, 1,
@@ -1136,7 +1133,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
 
       size_t reberError = 0;
 
-      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); j++)
+      for (size_t j = 0; j < (prediction.n_elem / reberGrammerSize); ++j)
       {
         char predictedSymbol, inputSymbol;
         std::string reberChoices;
@@ -1172,13 +1169,13 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
     offset += 3;
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
 
 /**
  * Train the specified networks on an embedded Reber grammar dataset.
  */
-BOOST_AUTO_TEST_CASE(CustomRecursiveReberGrammarTest)
+TEST_CASE("CustomRecursiveReberGrammarTest", "[RecurrentNetworkTest]")
 {
   ReberGrammarTestCustomNetwork(16, true);
 }
@@ -1233,7 +1230,7 @@ void GenerateNoisySinRNN(arma::cube& data,
 
   x.for_each([&i, gain, freq, phase, noisePercent, interval]
     (arma::colvec::elem_type& val) {
-    double t = interval * (i++);
+    double t = interval * (++i);
     val = gain * ::sin(2 * M_PI * freq * t + phase) +
         (noisePercent * gain / 100 * Random(0.0, 0.1));
   });
@@ -1312,16 +1309,16 @@ double RNNSineTest(size_t hiddenUnits, size_t rho, size_t numEpochs = 100)
 /**
  * Test RNN using multiple timestep input and single output.
  */
-BOOST_AUTO_TEST_CASE(MultiTimestepTest)
+TEST_CASE("MultiTimestepTest", "[RecurrentNetworkTest]")
 {
   double err = RNNSineTest(4, 10, 20);
-  BOOST_REQUIRE_LE(err, 0.025);
+  REQUIRE(err <= 0.025);
 }
 
 /**
  * Test that RNN::Train() returns finite objective value.
  */
-BOOST_AUTO_TEST_CASE(RNNTrainReturnObjective)
+TEST_CASE("RNNTrainReturnObjective", "[RecurrentNetworkTest]")
 {
   const size_t rho = 10;
 
@@ -1371,13 +1368,13 @@ BOOST_AUTO_TEST_CASE(RNNTrainReturnObjective)
   StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
   double objVal = model.Train(input, labels, opt);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 }
 
 /**
  * Test that BRNN::Train() returns finite objective value.
  */
-BOOST_AUTO_TEST_CASE(BRNNTrainReturnObjective)
+TEST_CASE("BRNNTrainReturnObjective", "[RecurrentNetworkTest]")
 {
   const size_t rho = 10;
 
@@ -1407,16 +1404,16 @@ BOOST_AUTO_TEST_CASE(BRNNTrainReturnObjective)
 
   StandardSGD opt(0.1, 1, 500 * input.n_cols, -100);
   double objVal = model.Train(input, labels, opt);
-  BOOST_TEST_CHECKPOINT("Training over");
+  INFO("Training over");
 
   // Test that BRNN::Train() returns finite objective value.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 }
 
 /**
  * Test that RNN::Train() does not give an error for large rho.
  */
-BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
+TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
 {
   // Setting rho value greater than sequence length which is 17.
   const size_t rho = 100;
@@ -1472,8 +1469,6 @@ BOOST_AUTO_TEST_CASE(LargeRhoValueRnnTest)
     targets[i] = makeTarget(trainingData[i].c_str());
   }
   ens::SGD<> opt(0.01, 1, 100);
-  double objVal = model.Train(inputs[0], targets[0], opt);
-  BOOST_TEST_CHECKPOINT("Training over");
+  model.Train(inputs[0], targets[0], opt);
+  INFO("Training over");
 }
-
-BOOST_AUTO_TEST_SUITE_END();

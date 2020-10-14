@@ -19,7 +19,7 @@ The document is split into several sections:
  - @ref bindings_intro
  - @ref bindings_code
  - @ref bindings_general
-    - @ref bindings_general_program_info
+    - @ref bindings_general_program_doc
     - @ref bindings_general_define_params
     - @ref bindings_general_functions
     - @ref bindings_general_more
@@ -59,7 +59,7 @@ workload; therefore an alternate solution is needed.
 
 At the time of the design of this system, mlpack shipped headers for a C++
 library as well as many (~40) hand-written command-line programs that used the
-mlpack::CLI object to manage command-line arguments.  These programs all had
+mlpack::IO object to manage command-line arguments.  These programs all had
 similar structure, and could be logically split into three sections:
 
  - parse the input options supplied by the user
@@ -128,12 +128,18 @@ using namespace std;
 // being used.  Note that the macros must have + on either side of them.  We
 // provide some extra references with the "SEE_ALSO()" macro, which is used to
 // generate documentation for the website.
-PROGRAM_INFO("Mean Shift Clustering",
-    // Short description.
+
+// Program Name.
+BINDING_NAME("Mean Shift Clustering");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A fast implementation of mean-shift clustering using dual-tree range "
     "search.  Given a dataset, this uses the mean shift algorithm to produce "
-    "and return a clustering of the data.",
-    // Long description.
+    "and return a clustering of the data.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs mean shift clustering on the given dataset, storing "
     "the learned cluster assignments either as a column of labels in the input "
     "dataset or separately."
@@ -147,22 +153,26 @@ PROGRAM_INFO("Mean Shift Clustering",
     "\n\n"
     "The output labels may be saved with the " + PRINT_PARAM_STRING("output") +
     " output parameter and the centroids of each cluster may be saved with the"
-    " " + PRINT_PARAM_STRING("centroid") + " output parameter."
-    "\n\n"
+    " " + PRINT_PARAM_STRING("centroid") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to run mean shift clustering on the dataset " +
     PRINT_DATASET("data") + " and store the centroids to " +
     PRINT_DATASET("centroids") + ", the following command may be used: "
     "\n\n" +
-    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"),
-    SEE_ALSO("@kmeans", "#kmeans"),
-    SEE_ALSO("@dbscan", "#dbscan"),
-    SEE_ALSO("Mean shift on Wikipedia",
-        "https://en.wikipedia.org/wiki/Mean_shift"),
-    SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
+    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"));
+
+// See also...
+BINDING_SEE_ALSO("@kmeans", "#kmeans");
+BINDING_SEE_ALSO("@dbscan", "#dbscan");
+BINDING_SEE_ALSO("Mean shift on Wikipedia",
+        "https://en.wikipedia.org/wiki/Mean_shift");
+BINDING_SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
         "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.510.1222"
-        "&rep=rep1&type=pdf"),
-    SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
-        "@doxygen/classmlpack_1_1meanshift_1_1MeanShift.html"));
+        "&rep=rep1&type=pdf");
+BINDING_SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
+        "@doxygen/classmlpack_1_1meanshift_1_1MeanShift.html");
 
 // Define parameters for the executable.
 
@@ -185,8 +195,8 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
 void mlpackMain()
 {
   // Process the parameters that the user passed.
-  const double radius = CLI::GetParam<double>("radius");
-  const int maxIterations = CLI::GetParam<int>("max_iterations");
+  const double radius = IO::GetParam<double>("radius");
+  const int maxIterations = IO::GetParam<int>("max_iterations");
 
   if (maxIterations < 0)
   {
@@ -195,13 +205,13 @@ void mlpackMain()
   }
 
   // Warn, if the user did not specify that they wanted any output.
-  if (!CLI::HasParam("output") && !CLI::HasParam("centroid"))
+  if (!IO::HasParam("output") && !IO::HasParam("centroid"))
   {
     Log::Warn << "--output_file, --in_place, and --centroid_file are not set; "
         << "no results will be saved." << endl;
   }
 
-  arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat dataset = std::move(IO::GetParam<arma::mat>("input"));
   arma::mat centroids;
   arma::Col<size_t> assignments;
 
@@ -218,19 +228,20 @@ void mlpackMain()
     Log::Info << "Estimated radius was " << meanShift.Radius() << ".\n";
 
   // Should we give the user the output matrix?
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::Col<size_t>>("output") = std::move(assignments);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::Col<size_t>>("output") = std::move(assignments);
 
   // Should we give the user the centroid matrix?
-  if (CLI::HasParam("centroid"))
-    CLI::GetParam<arma::mat>("centroid") = std::move(centroids);
+  if (IO::HasParam("centroid"))
+    IO::GetParam<arma::mat>("centroid") = std::move(centroids);
 }
 @endcode
 
 We can see that we have defined the basic program information in the
-@c PROGRAM_INFO() macro.  This is, for instance, what is displayed to describe
-the binding if the user passed the <tt>\--help</tt> option for a
-command-line program.
+@c BINDING_NAME(), @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(),
+@c BINDING_EXAMPLE() and @c BINDING_SEE_ALSO() macros.  This is, for instance,
+what is displayed to describe the binding if the user passed the
+<tt>\--help</tt> option for a command-line program.
 
 Then, we define five parameters, three input and two output, that define the
 data and options that the mean shift clustering will function on.  These
@@ -247,14 +258,16 @@ whether the parameter is input or output.  Some examples:
 Note that each of these macros may have slightly different syntax.  See the
 links above for further documentation.
 
-In order to write a new binding, then, you simply must write a @c PROGRAM_INFO()
-definition of the program with some docuentation, define the input and output
-parameters as @c PARAM macros, and then write an @c mlpackMain() function that
-actually performs the functionality of the binding.  Inside of @c mlpackMain():
+In order to write a new binding, then, you simply must write @c BINDING_NAME(),
+@c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(), @c BINDING_EXAMPLE() and
+@c BINDING_SEE_ALSO() definitions of the program with some docuentation, define
+the input and output parameters as @c PARAM macros, and then write an
+@c mlpackMain() function that actually performs the functionality of the binding.
+Inside of @c mlpackMain():
 
- - All input parameters are accessible through @c CLI::GetParam<type>("name").
+ - All input parameters are accessible through @c IO::GetParam<type>("name").
  - All output parameters should be set by the end of the function with the
-      @c CLI::GetParam<type>("name") method.
+      @c IO::GetParam<type>("name") method.
 
 Then, assuming that your program is saved in the file @c program_name_main.cpp,
 generating bindings for other languages is a simple addition to the
@@ -272,21 +285,33 @@ the categories in @c src/mlpack/bindings/markdown/MarkdownCategories.cmake.
 
 @section bindings_general How to write mlpack bindings
 
-This section describes the general structure of the @c CLI code and how one
+This section describes the general structure of the @c IO code and how one
 might write a new binding for mlpack.  After reading this section it should be
-relatively clear how one could use the @c CLI functionality along with CMake to
+relatively clear how one could use the @c IO functionality along with CMake to
 add a binding for a new mlpack machine learning method.  If it is not clear,
 then the examples in the following sections should clarify.
 
-@subsection bindings_general_program_info Documenting a program with PROGRAM_INFO()
+@subsection bindings_general_program_doc Documenting a program with
+@c BINDING_NAME(), @c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(),
+@c BINDING_EXAMPLE() and @c BINDING_SEE_ALSO().
 
-Any mlpack program should be documented with the @c PROGRAM_INFO() macro, which
-is available from the @c <mlpack/core/util/mlpack_main.hpp> header.  The macro
-is of the form
+Any mlpack program should be documented with the @c BINDING_NAME(),
+@c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC() , @c BINDING_EXAMPLE() and
+@c BINDING_SEE_ALSO() macros, which is available from the
+@c <mlpack/core/util/mlpack_main.hpp> header.  The macros
+are of the form
 
 @code
-PROGRAM_INFO("program name", "short documentation", "long documentation",
-    SEE_ALSO("link", "description"), ...)
+BINDING_NAME("program name");
+BINDING_SHORT_DESC("This is a short, two-sentence description of what the program does.");
+BINDING_LONG_DESC("This is a long description of what the program does."
+    " It might be many lines long and have lots of details about different options.");
+BINDING_EXAMPLE("This contains one example for this particular binding.\n" +
+    PROGRAM_CALL(...));
+BINDING_EXAMPLE("This contains another example for this particular binding.\n" +
+    PROGRAM_CALL(...));
+// There could be many of these "see alsos".
+BINDING_SEE_ALSO("https://en.wikipedia.org/wiki/Machine_learning");
 @endcode
 
 The short documentation should be two sentences indicating what the program
@@ -368,6 +393,14 @@ Command-line program output (snippet):
 Python binding output (snippet):
 
   The parameter 'shuffle', if set, will shuffle the data before learning.
+
+Julia binding output (snippet):
+
+  The parameter `shuffle`, if set, will shuffle the data before learning.
+
+Go binding output (snippet):
+
+  The parameter "Shuffle", if set, will shuffle the data before learning.
 @endcode
 
 @code
@@ -383,6 +416,14 @@ Command-line program output (snippet):
 Python binding output (snippet):
 
   The output matrix can be saved with the 'output' output parameter.
+
+Julia binding output (snippet):
+
+  The output matrix can be saved with the `output` output parameter.
+
+Go binding output (snippet):
+
+  The output matrix can be saved with the "output" output parameter.
 @endcode
 
 @code
@@ -408,12 +449,38 @@ Python binding output (snippet):
 
   >>> output = program(input=x)
   >>> model = output['output_model']
+
+Julia binding output (snippet):
+
+  For example, to train a model on the dataset `x` and save the output model to
+  `model`, the following command can be used:
+
+  julia> model = program(input=x)
+
+Go binding output (snippet):
+
+  For example, to train a model on the dataset "x" and save the output model to
+  "model", the following command can be used:
+
+    // Initialize optional parameters for Program().
+    param := mlpack.ProgramOptions()
+    param.Input = x
+
+    model := mlpack.Program(param)
 @endcode
 
 @code
 Input C++ (full program, 'random_numbers_main.cpp'):
 
-  PROGRAM_INFO("Random Numbers", "This program generates random numbers with a "
+  // Program Name.
+  BINDING_NAME("Random Numbers");
+
+  // Short description.
+  BINDING_SHORT_DESC("An implementation of Random Numbers");
+
+  // Long description.
+  BINDING_LONG_DESC(
+      "This program generates random numbers with a "
       "variety of nonsensical techniques and example parameters.  The input "
       "dataset, which will be ignored, can be specified with the " +
       PRINT_PARAM_STRING("input") + " parameter.  If you would like to subtract"
@@ -425,8 +492,10 @@ Input C++ (full program, 'random_numbers_main.cpp'):
       "The output random numbers can be saved with the " +
       PRINT_PARAM_STRING("output") + " output parameter.  In addition, a "
       "randomly generated linear regression model can be saved with the " +
-      PRINT_PARAM_STRING("output_model") + " output parameter."
-      "\n\n"
+      PRINT_PARAM_STRING("output_model") + " output parameter.");
+
+  // Example.
+  BINDING_EXAMPLE(
       "For example, to generate 100 random numbers with 3 subtracted from them "
       "and save the output to " + PRINT_DATASET("rand") + " and the random "
       "model to " + PRINT_MODEL("rand_lr") + ", use the following "
@@ -479,17 +548,66 @@ Python binding output:
     >>> output = random_numbers(num_values=100, subtract=3)
     >>> rand = output['output']
     >>> rand_lr = output['output_model']
+
+Julia binding output:
+
+    Random Numbers
+
+    This program generates random numbers with a variety of nonsensical
+    techniques and example parameters.  The input dataset, which will be
+    ignored, can be specified with the `input` parameter.  If you would like to
+    subtract values from each number, specify the `subtract` parameter.  The
+    number of random numbers to generate is specified with the `num_values`
+    parameter.
+
+    The output random numbers can be saved with the `output` output parameter.
+    In addition, a randomly generated linear regression model can be saved with
+    the `output_model` output parameter.
+
+    For example, to generate 100 random numbers with 3 subtracted from them and
+    save the output to `rand` and the random model to `rand_lr`, use the
+    following command:
+
+    ```julia
+    julia> rand, rand_lr = random_numbers(num_values=100, subtract=3)
+    ```
+
+Go binding output:
+
+    Random Numbers
+
+    This program generates random numbers with a variety of nonsensical
+    techniques and example parameters.  The input dataset, which will be
+    ignored, can be specified with the "Input" parameter.  If you would like to
+    subtract values from each number, specify the "Subtract" parameter.  The
+    number of random numbers to generate is specified with the "NumValues"
+    parameter.
+
+    The output random numbers can be saved with the "output" output parameter.
+    In addition, a randomly generated linear regression model can be saved with
+    the "outputModel" output parameter.
+
+    For example, to generate 100 random numbers with 3 subtracted from them and
+    save the output to "rand" and the random model to "randLr", use the
+    following command:
+
+    // Initialize optional parameters for RandomNumbers().
+    param := mlpack.RandomNumbersOptions()
+    param.NumValues = 100
+    param.Subtract=3
+
+    rand, randLr := mlpack.RandomNumbers(param)
 @endcode
 
 @subsection bindings_general_define_params Defining parameters for a program
 
-There exist several macros that can be used after a @c PROGRAM_INFO() definition
-to define the parameters that can be specified for a given mlpack program.
-These macros all have the same general definition: the name of the macro
-specifies the type of the parameter, whether or not the parameter is required,
-and whether the parameter is an input or output parameter.  Then as arguments to
-the macro, the name, description, and sometimes the single-character alias and
-the default value of the parameter.
+There exist several macros that can be used after a @c BINDING_LONG_DESC() and
+@c BINDING_EXAMPLE() definition to define the parameters that can be specified
+for a given mlpack program. These macros all have the same general definition:
+the name of the macro specifies the type of the parameter, whether or not the
+parameter is required, and whether the parameter is an input or output parameter.
+Then as arguments to the macros, the name, description, and sometimes the
+single-character alias and the default value of the parameter.
 
 To give a flavor of how these definitions look, the definition
 
@@ -615,23 +733,23 @@ Note that even the parameter documentation strings must be a little be agnostic
 to the binding type, because the command-line interface is so different than the
 Python interface to the user.
 
-@subsection bindings_general_functions Using CLI in an mlpackMain() function
+@subsection bindings_general_functions Using IO in an mlpackMain() function
 
-mlpack's @c CLI module provides a unified abstract interface for getting input
+mlpack's @c IO module provides a unified abstract interface for getting input
 from and providing output to users without needing to consider the language
 (command-line, Python, MATLAB, etc.) that the user is running the program from.
-This means that after the @c PROGRAM_INFO() macro and the @c PARAM_*() macros
-have been defined, a language-agnostic @c mlpackMain() function can be written.
-This function then can perform the actual computation that the entire program is
-meant to.
+This means that after the @c BINDING_LONG_DESC() and @c BINDING_EXAMPLE() macros
+and the @c PARAM_*() macros have been defined, a language-agnostic
+@c mlpackMain() function can be written. This function then can perform the
+actual computation that the entire program is meant to.
 
-Inside of an @c mlpackMain() function, the @c mlpack::CLI module can be used to
+Inside of an @c mlpackMain() function, the @c mlpack::IO module can be used to
 access input parameters and set output parameters.  There are two main functions
 for this, plus a utility printing function:
 
- - @c CLI::GetParam<T>() - get a reference to a parameter
- - @c CLI::HasParam() - returns true if the user specified the parameter
- - @c CLI::GetPrintableParam<T>() - returns a string representing the value of
+ - @c IO::GetParam<T>() - get a reference to a parameter
+ - @c IO::HasParam() - returns true if the user specified the parameter
+ - @c IO::GetPrintableParam<T>() - returns a string representing the value of
       the parameter
 
 So, to print "hello" if the user specified the @c print_hello parameter, the
@@ -640,7 +758,7 @@ following code could be used:
 @code
 using namespace mlpack;
 
-if (CLI::HasParam("print_hello"))
+if (IO::HasParam("print_hello"))
   std::cout << "Hello!" << std::endl;
 else
   std::cout << "No greetings for you!" << std::endl;
@@ -652,7 +770,7 @@ following code could be used:
 @code
 using namespace mlpack;
 
-const std::string& str = CLI::GetParam<std::string>("string");
+const std::string& str = IO::GetParam<std::string>("string");
 @endcode
 
 Matrix types are accessed in the same way:
@@ -660,7 +778,7 @@ Matrix types are accessed in the same way:
 @code
 using namespace mlpack;
 
-arma::mat& matrix = CLI::GetParam<arma::mat>("matrix");
+arma::mat& matrix = IO::GetParam<arma::mat>("matrix");
 @endcode
 
 Similarly, model types can be accessed.  If a @c LinearRegression model was
@@ -670,7 +788,7 @@ the model:
 @code
 using namespace mlpack;
 
-LinearRegression& lr = CLI::GetParam<LinearRegression>("model");
+LinearRegression& lr = IO::GetParam<LinearRegression>("model");
 @endcode
 
 Matrices with categoricals are a little trickier to access since the C++
@@ -683,8 +801,8 @@ parameter.
 using namespace mlpack;
 
 typename std::tuple<data::DatasetInfo, arma::mat> TupleType;
-data::DatasetInfo& di = std::get<0>(CLI::GetParam<TupleType>("matrix"));
-arma::mat& matrix = std::get<1>(CLI::GetParam<TupleType>("matrix"));
+data::DatasetInfo& di = std::get<0>(IO::GetParam<TupleType>("matrix"));
+arma::mat& matrix = std::get<1>(IO::GetParam<TupleType>("matrix"));
 @endcode
 
 These two functions can be used to write an entire program.  The third function,
@@ -703,7 +821,8 @@ could be created for the "random_numbers" program from earlier sections.
 @code
 #include <mlpack/core/util/mlpack_main.hpp>
 
-// The PROGRAM_INFO() and PARAM_*() definitions should go here:
+// BINDING_NAME(), BINDING_SHORT_DESC(), BINDING_LONG_DESC() , BINDING_EXAMPLE(),
+// BINDING_SEE_ALSO() and PARAM_*() definitions should go here:
 // ...
 
 using namespace mlpack;
@@ -711,83 +830,103 @@ using namespace mlpack;
 void mlpackMain()
 {
   // If the user passed an input matrix, tell them that we'll be ignoring it.
-  if (CLI::HasParam("input"))
+  if (IO::HasParam("input"))
   {
     // Print the filename the user passed, if a command-line binding, or the
     // size of the matrix passed, if a Python binding.
     Log::Warn << "The input matrix "
-        << CLI::GetPrintableParam<arma::mat>("input") << " is ignored!"
+        << IO::GetPrintableParam<arma::mat>("input") << " is ignored!"
         << std::endl;
   }
 
   // Get the number of samples and also the value we should subtract.
-  const size_t numSamples = (size_t) CLI::GetParam<int>("num_samples");
-  const double subtractValue = CLI::GetParam<double>("subtract");
+  const size_t numSamples = (size_t) IO::GetParam<int>("num_samples");
+  const double subtractValue = IO::GetParam<double>("subtract");
 
   // Create the random matrix (1-dimensional).
   arma::mat output(1, numSamples, arma::fill::randu);
   output -= subtractValue;
 
   // Save the output matrix if the user wants.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(output); // Avoid copy.
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(output); // Avoid copy.
 
   // Did the user request a random linear regression model?
-  if (CLI::HasParam("output_model"))
+  if (IO::HasParam("output_model"))
   {
     LinearRegression lr;
     lr.Parameters().randu(10); // 10-dimensional (arbitrary).
     lr.Lambda() = 0.0;
     lr.Intercept() = false; // No intercept term.
 
-    CLI::GetParam<LinearRegression>("output_model") = std::move(lr);
+    IO::GetParam<LinearRegression>("output_model") = std::move(lr);
   }
 }
 @endcode
 
-@subsection bindings_general_more More documentation on using CLI
+@subsection bindings_general_more More documentation on using IO
 
-More documentation for the CLI module can either be found on the mlpack::CLI
+More documentation for the IO module can either be found on the mlpack::IO
 documentation page, or by reading the existing mlpack bindings.  These can be
 found in the @c src/mlpack/methods/ folders, by finding the @c _main.cpp files.
 For instance, @c src/mlpack/methods/neighbor_search/knn_main.cpp is the
 k-nearest-neighbor search program definition.
 
-@section bindings_structure Structure of CLI module and associated macros
+@section bindings_structure Structure of IO module and associated macros
 
-This section describes the internal functionality of the CLI module and the
+This section describes the internal functionality of the IO module and the
 associated macros.  If you are only interested in writing mlpack programs, this
 section is probably not worth reading.
 
-There are four main components involved with mlpack bindings:
+There are eight main components involved with mlpack bindings:
 
- - the CLI module, a singleton class that stores parameter information
+ - the IO module, a singleton class that stores parameter information
  - the mlpackMain() function that defines the functionality of the binding
- - the PROGRAM_INFO() macro that defines the binding name and documentation
+ - the BINDING_NAME() macro that defines the binding name
+ - the BINDING_SHORT_DESC() macro that defines the short description
+ - the BINDING_LONG_DESC() macro that defines the long description
+ - (optional) the BINDING_EXAMPLE() macro that defines example usages
+ - (optional) the BINDING_SEE_ALSO() macro that defines "see also" links
  - the PARAM_*() macros that define parameters for the binding
 
-The mlpack::CLI module is a singleton class that stores, at runtime, the binding
+The mlpack::IO module is a singleton class that stores, at runtime, the binding
 name, the documentation, and the parameter information and values.  In order to
 do this, each parameter and the program documentation must make themselves known
-to the CLI singleton.  This is accomplished by having the @c PROGRAM_INFO() and
-@c PARAM_*() macros declare global variables that, in their constructors,
-register themselves with the CLI singleton.
+to the IO singleton.  This is accomplished by having the @c BINDING_NAME(),
+@c BINDING_SHORT_DESC(), @c BINDING_LONG_DESC(), @c BINDING_EXAMPLE(),
+@c BINDING_SEE_ALSO() and @c PARAM_*() macros declare global variables that,
+in their constructors, register themselves with the IO singleton.
 
-The @c PROGRAM_INFO() macro declares an object of type mlpack::util::ProgramDoc.
-The @c ProgramDoc class constructor calls CLI::RegisterProgramDoc() in order to
-register the given program name and documentation.
+The @c BINDING_NAME() macro declares an object of type mlpack::util::ProgramName.
+The @c BINDING_SHORT_DESC() macro declares an object of type
+mlpack::util::ShortDescription.
+The @c BINDING_LONG_DESC() macro declares an object of type
+mlpack::util::LongDescription.
+The @c BINDING_EXAMPLE() macro declares an object of type mlpack::util::Example.
+The @c BINDING_SEE_ALSO() macro declares an object of type
+mlpack::util::SeeAlso.
+The @c ProgramName class constructor calls IO::RegisterProgramName() in order to
+register the given program name.
+The @c ShortDescription class constructor calls IO::RegisterShortDescription() in order to
+register the given short description.
+The @c LongDescription class constructor calls IO::RegisterLongDescription() in order to
+register the given long description.
+The @c Example class constructor calls IO::RegisterExample() in order to
+register the given example.
+The @c SeeAlso class constructor calls IO::RegisterSeeAlso() in order to
+register the given see-also link.
 
 The @c PARAM_*() macros declare an object that will, in its constructor, call
-CLI::Add() to register that parameter with the CLI singleton.  The specific type
+IO::Add() to register that parameter with the IO singleton.  The specific type
 of that object will depend on the binding type being used.
 
-The CLI::Add() function takes an mlpack::util::ParamData object as its input.
+The IO::Add() function takes an mlpack::util::ParamData object as its input.
 This @c ParamData object has a number of fields that must be set to properly
 describe the parameter.  Each of the fields is documented and probably
 self-explanatory, but three fields deserve further explanation:
 
  - the <tt>std::string tname</tt> member is used to encode the true type of
-   the parameter---which is not known by the CLI singleton at runtime.  This
+   the parameter---which is not known by the IO singleton at runtime.  This
    should be set to <tt>TYPENAME(T)</tt> where @c T is the type of the
    parameter.
 
@@ -802,14 +941,14 @@ self-explanatory, but three fields deserve further explanation:
    @c PARAM_*() macro argument.
 
 Thus, the global object defined by the @c PARAM_*() macro must turn its
-arguments into a fully specified @c ParamData object and then call CLI::Add()
+arguments into a fully specified @c ParamData object and then call IO::Add()
 with it.
 
 With different binding types, different behavior is often required for the
 @c GetParam<T>(), @c HasParam(), and @c GetPrintableParam<T>() functions.  In
-order to handle this, the CLI singleton also holds a function pointer map, so
+order to handle this, the IO singleton also holds a function pointer map, so
 that a given type of option can call specific functionality for a certain task.
-This function map is accessible as @c CLI::functionMap and is not meant to be
+This function map is accessible as @c IO::functionMap and is not meant to be
 used by users, but instead by people writing binding types.
 
 Each function in the map must have signature
@@ -821,7 +960,7 @@ void MapFunction(const util::ParamData& d,
 @endcode
 
 The use of void pointers allows any type to be specified as input or output to
-the function without changing the signature for the map.  The CLI function map
+the function without changing the signature for the map.  The IO function map
 is of type
 
 @code
@@ -833,22 +972,22 @@ and the first map key is the typename (<tt>tname</tt>) of the parameter, and the
 second map key is the string name of the function.  For instance, calling
 
 @code
-const util::ParamData& d = CLI::Parameters()["param"];
-CLI::GetSingleton().functionMap[d.tname]["GetParam"](d, input, output);
+const util::ParamData& d = IO::Parameters()["param"];
+IO::GetSingleton().functionMap[d.tname]["GetParam"](d, input, output);
 @endcode
 
 will call the @c GetParam() function for the type of the @c "param" parameter.
 Examples are probably easiest to understand how this functionality works; see
-the CLI::GetParam<T>() source to see how this might be used.
+the IO::GetParam<T>() source to see how this might be used.
 
-The CLI singleton expects the following functions to be defined in the function
+The IO singleton expects the following functions to be defined in the function
 map for each type:
 
  - @c GetParam -- return a pointer to the parameter in @c output.
  - @c GetPrintableParam -- return a pointer to a string description of the
        parameter in @c output.
 
-If these functions are properly defined, then the CLI module will work
+If these functions are properly defined, then the IO module will work
 correctly.  Other functions may also be defined; these may be used by other
 parts of the binding infrastructure for different languages.
 
@@ -875,7 +1014,8 @@ binding:
  - The options defined by @c PARAM_*() macros are of type
    mlpack::bindings::cli::CLIOption.
 
- - The parameter and value printing macros for @c PROGRAM_INFO() are set:
+ - The parameter and value printing macros for @c BINDING_LONG_DESC()
+   and BINDING_EXAMPLE() are set:
    * The @c PRINT_PARAM_STRING() macro is defined as
      mlpack::bindings::cli::ParamString().
    * The @c PRINT_DATASET() macro is defined as
@@ -890,7 +1030,7 @@ binding:
 @code
 int main(int argc, char** argv)
 {
-  // Parse the command-line options; put them into CLI.
+  // Parse the command-line options; put them into IO.
   mlpack::bindings::cli::ParseCommandLine(argc, argv);
 
   mlpackMain();
@@ -906,7 +1046,7 @@ with mlpack::bindings::cli::ParseCommandLine(), then runs the binding with
 @c mlpackMain(), then cleans up with mlpack::bindings::cli::EndProgram().
 
 The @c ParseCommandLine() function reads the input parameters and sets the
-values in CLI.  For matrix-type and model-type parameters, this reads the
+values in IO.  For matrix-type and model-type parameters, this reads the
 filenames from the command-line, but does not load the matrix or model.  Instead
 the matrix or model is loaded the first time it is accessed with
 @c GetParam<T>().
@@ -935,22 +1075,22 @@ of the @c ParamData struct does not hold the model or the matrix, but instead a
 associated with that matrix or model.
 
 This means that functions like @c GetParam<T>() and @c GetPrintableParam<T>()
-(and all of the other associated functions in the CLI function map) must have
+(and all of the other associated functions in the IO function map) must have
 special handling for matrix or model types.  See those implementatipns for more
 details---the special handling is enforced via SFINAE.
 
 @subsection bindings_cli_parsing Parsing the command line
 
-The @c ParseCommandLine() function uses <tt>boost::program_options</tt> to read
-the values from the command line into the @c ParamData structs held by the CLI
+The @c ParseCommandLine() function uses <tt>CLI11</tt> to read
+the values from the command line into the @c ParamData structs held by the IO
 singleton.
 
-In order to set up <tt>boost::program_options</tt>---and to keep its headers
+In order to set up <tt>CLI11</tt>---and to keep its headers
 from needing to be included by the rest of the library---the code loops over
-each parameter known by the CLI singleton and calls the @c "AddToPO" function
+each parameter known by the IO singleton and calls the @c "AddToPO" function
 from the function map.  This in turn calls the necessary functions to register a
-given parameter with <tt>boost::program_options</tt>, and once all parameters
-have been registered, the facilities provided by <tt>boost::program_options</tt>
+given parameter with <tt>CLI11</tt>, and once all parameters
+have been registered, the facilities provided by <tt>CLI11</tt>
 are used to parse the command line input properly.
 
 @section bindings_python Python bindings
@@ -1046,10 +1186,11 @@ individually if you like).  The file
 @c src/mlpack/bindings/python/generate_pyx.cpp.in is configured by CMake to set
 the name of the program and the @c *_main.cpp file to include correctly, then
 the @c mlpack::bindings::python::PrintPYX() function is called by the program.
-The @c PrintPYX() function uses the parameters that have been set in the CLI
-singleton by the @c PROGRAM_INFO() and @c PARAM_*() macros in order to actually
-print a fully-working .pyx file that can be compiled.  The file has several
-sections:
+The @c PrintPYX() function uses the parameters that have been set in the IO
+singleton by the @c BINDING_NAME(), @c BINDING_SHORT_DESC(),
+@c BINDING_LONG_DESC(), @c BINDING_EXAMPLE(), @c BINDING_SEE_ALSO() and
+@c PARAM_*() macros in order to actually print a fully-working .pyx file that
+can be compiled.  The file has several sections:
 
  - Python imports (numpy/pandas/cython/etc.)
  - Cython imports of C++ utility functions and Armadillo functionality
@@ -1084,7 +1225,7 @@ bindings and also the auxiliary Python code included in
 @section bindings_new Adding new binding types
 
 Adding a new binding type to mlpack is fairly straightforward once the general
-structure of the CLI singleton and the function map that CLI uses is understood.
+structure of the IO singleton and the function map that IO uses is understood.
 For each different language that bindings are desired for, the route to a
 solution will be particularly different---so it is hard to provide any general
 guidance for how to make new bindings that will be applicable to each language.
@@ -1093,7 +1234,7 @@ In general, the first thing to handle will be how matrices are passed back and
 forth between the target language.  Typically this might mean getting the memory
 address of an input matrix and wrapping an @c arma::mat object around that
 memory address.  This can be handled in the @c GetParam() function that is part
-of the CLI singleton function map; see @c get_param.hpp for both the CLI and
+of the IO singleton function map; see @c get_param.hpp for both the IO and
 Python bindings for an example (in @c src/mlpack/bindings/cli/ and
 @c src/mlpack/bindings/python/).
 

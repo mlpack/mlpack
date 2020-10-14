@@ -1,0 +1,25 @@
+Package: mlpack
+Title: 'Rcpp' Integration for the 'mlpack' Library
+Version: @PACKAGE_VERSION@
+Date: @PACKAGE_DATE@
+Author: mlpack Team
+Maintainer: Ryan Curtin <ryan@ratml.org>
+Description: 'mlpack' is a fast, flexible machine learning library, written
+             in C++, that aims to provide fast, extensible implementations of
+             cutting-edge machine learning algorithms.
+SystemRequirements: A C++11 compiler. Versions 4.8.*, 4.9.* or later of GCC
+                    will be fine.
+License: BSD_3_clause + file LICENSE
+Depends: R (>= 4.0.0)
+Imports: Rcpp (>= 0.12.12)
+LinkingTo: Rcpp,
+           RcppArmadillo (>= @RcppArmadillo_Version@),
+           BH (>= @BH_Version@),
+           RcppEnsmallen (>= @RcppEnsmallen_Version@)
+Suggests: testthat (>= 2.1.0)
+URL: https://www.mlpack.org/doc/mlpack-@PACKAGE_VERSION@/r_documentation.html,
+     https://github.com/mlpack/mlpack
+BugReports: https://github.com/mlpack/mlpack/issues
+LazyData: true
+RoxygenNote: 7.1.0
+Encoding: UTF-8

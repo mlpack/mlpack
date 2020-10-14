@@ -135,7 +135,7 @@ class NMFPolicy
     // Temporarily store feature vector of queried users.
     arma::mat query(stretchedH.n_rows, users.n_elem);
     // Select feature vectors of queried users.
-    for (size_t i = 0; i < users.n_elem; i++)
+    for (size_t i = 0; i < users.n_elem; ++i)
       query.col(i) = stretchedH.col(users(i));
 
     NeighborSearchPolicy neighborSearch(stretchedH);

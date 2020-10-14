@@ -35,14 +35,14 @@ std::vector<std::vector<std::string>> CreateDataset(const std::string& filename,
  *
  * @param column Column index to check.
  */
-bool IsNumber(const string& column);
+bool IsNumber(const std::string& column);
 
 /**
  * The function parses the given column indices and ranges.
  *
  * @param dimensions A vector of column indices or column ranges.
  */
-std::vector<size_t> GetColumnIndices(const std::vector<string>& dimensions);
+std::vector<size_t> GetColumnIndices(const std::vector<std::string>& dimensions);
 
 /**
  * Function to get the type of column delimiter base on file extension.

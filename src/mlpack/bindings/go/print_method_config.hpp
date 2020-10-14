@@ -16,7 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include "get_go_type.hpp"
 #include "strip_type.hpp"
-#include "camel_case.hpp"
+#include <mlpack/bindings/util/camel_case.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -27,7 +27,7 @@ namespace go {
  */
 template<typename T>
 void PrintMethodConfig(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
@@ -46,7 +46,7 @@ void PrintMethodConfig(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.
@@ -62,7 +62,7 @@ void PrintMethodConfig(
  */
 template<typename T>
 void PrintMethodConfig(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
@@ -78,7 +78,7 @@ void PrintMethodConfig(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.
@@ -94,7 +94,7 @@ void PrintMethodConfig(
  */
 template<typename T>
 void PrintMethodConfig(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
@@ -111,7 +111,7 @@ void PrintMethodConfig(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.
@@ -127,7 +127,7 @@ void PrintMethodConfig(
  */
 template<typename T>
 void PrintMethodConfig(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
@@ -144,7 +144,7 @@ void PrintMethodConfig(
   std::string goParamName = name;
   if (!name.empty())
   {
-    goParamName = CamelCase(goParamName, false);
+    goParamName = util::CamelCase(goParamName, false);
   }
 
   // Only print param that are not required.
@@ -167,7 +167,7 @@ void PrintMethodConfig(
  * @param * (output) Unused parameter.
  */
 template<typename T>
-void PrintMethodConfig(const util::ParamData& d,
+void PrintMethodConfig(util::ParamData& d,
                        const void* input,
                        void* /* output */)
 {

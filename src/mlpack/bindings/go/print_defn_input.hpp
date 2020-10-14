@@ -14,8 +14,8 @@
 #define MLPACK_BINDINGS_GO_PRINT_DEFN_INPUT_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/bindings/util/camel_case.hpp>
 #include "get_go_type.hpp"
-#include "camel_case.hpp"
 #include "strip_type.hpp"
 
 namespace mlpack {
@@ -27,7 +27,7 @@ namespace go {
  */
 template<typename T>
 void PrintDefnInput(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<std::is_same<T,
@@ -36,7 +36,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name, true) << " " << GetGoType<T>(d);
+    std::cout << util::CamelCase(name, true) << " " << GetGoType<T>(d);
   }
 }
 
@@ -45,14 +45,14 @@ void PrintDefnInput(
  */
 template<typename T>
 void PrintDefnInput(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   // param_name *mat.Dense
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name, true) << " *" << GetGoType<T>(d);
+    std::cout << util::CamelCase(name, true) << " *" << GetGoType<T>(d);
   }
 }
 
@@ -61,7 +61,7 @@ void PrintDefnInput(
  */
 template<typename T>
 void PrintDefnInput(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
@@ -69,7 +69,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name, true) << " *" << GetGoType<T>(d);
+    std::cout << util::CamelCase(name, true) << " *" << GetGoType<T>(d);
   }
 }
 
@@ -78,7 +78,7 @@ void PrintDefnInput(
  */
 template<typename T>
 void PrintDefnInput(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
@@ -90,7 +90,7 @@ void PrintDefnInput(
   if (d.required)
   {
     std::string name = d.name;
-    std::cout << CamelCase(name, true) << " *" << goStrippedType;
+    std::cout << util::CamelCase(name, true) << " *" << goStrippedType;
   }
 }
 
@@ -109,9 +109,9 @@ void PrintDefnInput(
  * @param * (output) Unused parameter.
  */
 template<typename T>
-void PrintDefnInput(const util::ParamData& d,
-                           const void* /* input */,
-                           void* /* output */)
+void PrintDefnInput(util::ParamData& d,
+                    const void* /* input */,
+                    void* /* output */)
 {
   PrintDefnInput<typename std::remove_pointer<T>::type>(d);
 }

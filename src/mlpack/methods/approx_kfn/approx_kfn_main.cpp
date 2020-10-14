@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "drusilla_select.hpp"
@@ -21,13 +21,18 @@ using namespace mlpack::neighbor;
 using namespace mlpack::util;
 using namespace std;
 
-PROGRAM_INFO("Approximate furthest neighbor search",
-    // Short description.
+// Program Name.
+BINDING_NAME("Approximate furthest neighbor search");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of two strategies for furthest neighbor search.  This "
     "can be used to compute the furthest neighbor of query point(s) from a set "
     "of points; furthest neighbor models can be saved and reused with future "
-    "query point(s).",
-    // Long description.
+    "query point(s).");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements two strategies for furthest neighbor search. "
     "These strategies are:"
     "\n\n"
@@ -69,8 +74,10 @@ PROGRAM_INFO("Approximate furthest neighbor search",
     PRINT_PARAM_STRING("neighbors") + " and " +
     PRINT_PARAM_STRING("distances") + " output parameters.  Each row of these "
     "output matrices holds the k distances or neighbor indices for each query "
-    "point."
-    "\n\n"
+    "point.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to find the 5 approximate furthest neighbors with " +
     PRINT_DATASET("reference_set") + " as the reference set and " +
     PRINT_DATASET("query_set") + " as the query set using DrusillaSelect, "
@@ -96,18 +103,20 @@ PROGRAM_INFO("Approximate furthest neighbor search",
     PRINT_DATASET("neighbors") + " by calling"
     "\n\n" +
     PRINT_CALL("approx_kfn", "input_model", "model", "query", "new_query_set",
-        "k", 3, "neighbors", "neighbors"),
-    SEE_ALSO("k-furthest-neighbor search", "#kfn"),
-    SEE_ALSO("k-nearest-neighbor search", "#knn"),
-    SEE_ALSO("Fast approximate furthest neighbors with data-dependent candidate"
-        " selection (pdf)", "http://ratml.org/pub/pdf/2016fast.pdf"),
-    SEE_ALSO("Approximate furthest neighbor in high dimensions (pdf)",
+        "k", 3, "neighbors", "neighbors"));
+
+// See also...
+BINDING_SEE_ALSO("k-furthest-neighbor search", "#kfn");
+BINDING_SEE_ALSO("k-nearest-neighbor search", "#knn");
+BINDING_SEE_ALSO("Fast approximate furthest neighbors with data-dependent"
+        " candidate selection (pdf)", "http://ratml.org/pub/pdf/2016fast.pdf");
+BINDING_SEE_ALSO("Approximate furthest neighbor in high dimensions (pdf)",
         "https://pdfs.semanticscholar.org/a4b5/7b9cbf37201fb1d9a56c0f4eefad0466"
-        "9c20.pdf"),
-    SEE_ALSO("mlpack::neighbor::QDAFN class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1QDAFN.html"),
-    SEE_ALSO("mlpack::neighbor::DrusillaSelect class documentation",
-        "@doxygen/classmlpack_1_1neighbor_1_1DrusillaSelect.html"));
+        "9c20.pdf");
+BINDING_SEE_ALSO("mlpack::neighbor::QDAFN class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1QDAFN.html");
+BINDING_SEE_ALSO("mlpack::neighbor::DrusillaSelect class documentation",
+        "@doxygen/classmlpack_1_1neighbor_1_1DrusillaSelect.html");
 
 PARAM_MATRIX_IN("reference", "Matrix containing the reference dataset.", "r");
 PARAM_MATRIX_IN("query", "Matrix containing query points.", "q");
@@ -180,14 +189,14 @@ static void mlpackMain()
       "unknown algorithm");
 
   // If we are searching, we need a set to search in.
-  if (CLI::HasParam("k"))
+  if (IO::HasParam("k"))
   {
     RequireAtLeastOnePassed({ "reference", "query" }, true,
         "if search is being performed, at least one set must be specified");
   }
 
   // Validate parameters.
-  if (CLI::HasParam("k"))
+  if (IO::HasParam("k"))
   {
     RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
         "number of neighbors to search for must be positive");
@@ -203,35 +212,35 @@ static void mlpackMain()
   ReportIgnoredParam({{ "k", false }}, "calculate_error");
   ReportIgnoredParam({{ "calculate_error", false }}, "exact_distances");
 
-  if (CLI::HasParam("calculate_error"))
+  if (IO::HasParam("calculate_error"))
   {
     RequireAtLeastOnePassed({ "exact_distances", "reference" }, true,
         "if error is to be calculated, either precalculated exact distances or "
         "the reference set must be passed");
   }
 
-  if (CLI::HasParam("k") && CLI::HasParam("reference") &&
-      ((size_t) CLI::GetParam<int>("k")) >
-          CLI::GetParam<arma::mat>("reference").n_cols)
+  if (IO::HasParam("k") && IO::HasParam("reference") &&
+      ((size_t) IO::GetParam<int>("k")) >
+          IO::GetParam<arma::mat>("reference").n_cols)
   {
     Log::Fatal << "Number of neighbors to search for ("
-        << CLI::GetParam<int>("k") << ") must be less than the number of "
+        << IO::GetParam<int>("k") << ") must be less than the number of "
         << "reference points ("
-        << CLI::GetParam<arma::mat>("reference").n_cols << ")." << std::endl;
+        << IO::GetParam<arma::mat>("reference").n_cols << ")." << std::endl;
   }
 
   // Do the building of a model, if necessary.
   ApproxKFNModel* m;
   arma::mat referenceSet; // This may be used at query time.
-  if (CLI::HasParam("reference"))
+  if (IO::HasParam("reference"))
   {
-    referenceSet = std::move(CLI::GetParam<arma::mat>("reference"));
+    referenceSet = std::move(IO::GetParam<arma::mat>("reference"));
     m = new ApproxKFNModel();
 
-    const size_t numTables = (size_t) CLI::GetParam<int>("num_tables");
+    const size_t numTables = (size_t) IO::GetParam<int>("num_tables");
     const size_t numProjections =
-        (size_t) CLI::GetParam<int>("num_projections");
-    const string algorithm = CLI::GetParam<string>("algorithm");
+        (size_t) IO::GetParam<int>("num_projections");
+    const string algorithm = IO::GetParam<string>("algorithm");
 
     if (algorithm == "ds")
     {
@@ -254,21 +263,21 @@ static void mlpackMain()
   else
   {
     // We must load the model from what was passed.
-    m = CLI::GetParam<ApproxKFNModel*>("input_model");
+    m = IO::GetParam<ApproxKFNModel*>("input_model");
   }
 
   // Now, do we need to do any queries?
-  if (CLI::HasParam("k"))
+  if (IO::HasParam("k"))
   {
     arma::mat querySet; // This may or may not be used.
-    const size_t k = (size_t) CLI::GetParam<int>("k");
+    const size_t k = (size_t) IO::GetParam<int>("k");
 
     arma::Mat<size_t> neighbors;
     arma::mat distances;
 
-    arma::mat& set = CLI::HasParam("query") ? querySet : referenceSet;
-    if (CLI::HasParam("query"))
-      querySet = std::move(CLI::GetParam<arma::mat>("query"));
+    arma::mat& set = IO::HasParam("query") ? querySet : referenceSet;
+    if (IO::HasParam("query"))
+      querySet = std::move(IO::GetParam<arma::mat>("query"));
 
     if (m->type == 0)
     {
@@ -289,13 +298,13 @@ static void mlpackMain()
     Log::Info << "Search complete." << endl;
 
     // Should we calculate error?
-    if (CLI::HasParam("calculate_error"))
+    if (IO::HasParam("calculate_error"))
     {
       arma::mat exactDistances;
-      if (CLI::HasParam("exact_distances"))
+      if (IO::HasParam("exact_distances"))
       {
         // Check the exact distances matrix has the right dimensions.
-        exactDistances = std::move(CLI::GetParam<arma::mat>("exact_distances"));
+        exactDistances = std::move(IO::GetParam<arma::mat>("exact_distances"));
 
         if (exactDistances.n_rows != k)
         {
@@ -337,9 +346,9 @@ static void mlpackMain()
     }
 
     // Save results, if desired.
-    CLI::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
-    CLI::GetParam<arma::mat>("distances") = std::move(distances);
+    IO::GetParam<arma::Mat<size_t>>("neighbors") = std::move(neighbors);
+    IO::GetParam<arma::mat>("distances") = std::move(distances);
   }
 
-  CLI::GetParam<ApproxKFNModel*>("output_model") = m;
+  IO::GetParam<ApproxKFNModel*>("output_model") = m;
 }

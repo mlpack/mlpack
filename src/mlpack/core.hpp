@@ -69,7 +69,7 @@
 // Now the core mlpack classes.
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/deprecated.hpp>
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
@@ -89,7 +89,6 @@
 #include <mlpack/core/dists/gamma_distribution.hpp>
 #include <mlpack/core/dists/diagonal_gaussian_distribution.hpp>
 #include <mlpack/core/data/confusion_matrix.hpp>
-#include <mlpack/core/data/one_hot_encoding.hpp>
 
 // mlpack::backtrace only for linux
 #ifdef HAS_BFD_DL

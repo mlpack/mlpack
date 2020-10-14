@@ -20,11 +20,9 @@
 #include "print_defn_input.hpp"
 #include "print_defn_output.hpp"
 #include "print_doc.hpp"
-#include "print_import_decl.hpp"
 #include "print_input_processing.hpp"
 #include "print_method_config.hpp"
 #include "print_method_init.hpp"
-#include "print_model_util.hpp"
 #include "print_output_processing.hpp"
 
 namespace mlpack {
@@ -43,7 +41,7 @@ class GoOption
  public:
   /**
    * Construct a GoOption object.  When constructed, it will register itself
-   * with CLI. The testName parameter is not used and added for compatibility
+   * with IO. The testName parameter is not used and added for compatibility
    * reasons.
    *
    * @param defaultValue Default value this parameter will be initialized to
@@ -69,7 +67,7 @@ class GoOption
            const bool noTranspose = false,
            const std::string& /*testName*/ = "")
   {
-    // Create the ParamData object to give to CLI.
+    // Create the ParamData object to give to IO.
     util::ParamData data;
 
     data.desc = description;
@@ -92,48 +90,39 @@ class GoOption
 
     // Restore the parameters for this program.
     if (identifier != "verbose" /*&& identifier != "copy_all_inputs"*/)
-      CLI::RestoreSettings(programName, false);
+      IO::RestoreSettings(programName, false);
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the .cpp,
     // the .h, and the .go binding files.
-    CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
+    IO::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
+    IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
 
-    CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
+    IO::GetSingleton().functionMap[data.tname]["DefaultParam"] =
         &DefaultParam<T>;
-
-    CLI::GetSingleton().functionMap[data.tname]["PrintModelUtilCPP"] =
-        &PrintModelUtilCPP<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintModelUtilH"] =
-        &PrintModelUtilH<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintModelUtilGo"] =
-        &PrintModelUtilGo<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDefnInput"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintDefnInput"] =
         &PrintDefnInput<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDefnOutput"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintDefnOutput"] =
         &PrintDefnOutput<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
+    IO::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
         &PrintOutputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintMethodConfig"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintMethodConfig"] =
         &PrintMethodConfig<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintMethodInit"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintMethodInit"] =
         &PrintMethodInit<T>;
-    CLI::GetSingleton().functionMap[data.tname]["ImportDecl"] =
-        &ImportDecl<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetType"] = &GetType<T>;
+    IO::GetSingleton().functionMap[data.tname]["GetType"] = &GetType<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
-    // import more than one .so that uses CLI, so we have to keep the options
+    // import more than one .so that uses IO, so we have to keep the options
     // separate.  programName is a global variable from mlpack_main.hpp.
-    CLI::Add(std::move(data));
+    IO::Add(std::move(data));
     if (identifier != "verbose" /*&& identifier != "copy_all_inputs"*/)
-      CLI::StoreSettings(programName);
-    CLI::ClearSettings();
+      IO::StoreSettings(programName);
+    IO::ClearSettings();
   }
 };
 

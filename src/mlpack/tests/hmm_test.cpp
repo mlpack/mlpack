@@ -13,21 +13,19 @@
 #include <mlpack/methods/gmm/gmm.hpp>
 #include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::hmm;
 using namespace mlpack::distribution;
 using namespace mlpack::gmm;
 
-BOOST_AUTO_TEST_SUITE(HMMTest);
-
 /**
  * We will use the simple case proposed by Russell and Norvig in Artificial
  * Intelligence: A Modern Approach, 2nd Edition, around p.549.
  */
-BOOST_AUTO_TEST_CASE(SimpleDiscreteHMMTestViterbi)
+TEST_CASE("SimpleDiscreteHMMTestViterbi", "[HMMTest]")
 {
   // We have two hidden states: rain/dry.  Two emission states: umbrella/no
   // umbrella.
@@ -55,18 +53,18 @@ BOOST_AUTO_TEST_CASE(SimpleDiscreteHMMTestViterbi)
   hmm.Predict(observation, states);
 
   // Check each state.
-  BOOST_REQUIRE_EQUAL(states[0], 0); // Rain.
-  BOOST_REQUIRE_EQUAL(states[1], 0); // Rain.
-  BOOST_REQUIRE_EQUAL(states[2], 1); // No rain.
-  BOOST_REQUIRE_EQUAL(states[3], 0); // Rain.
-  BOOST_REQUIRE_EQUAL(states[4], 0); // Rain.
+  REQUIRE(states[0] == 0); // Rain.
+  REQUIRE(states[1] == 0); // Rain.
+  REQUIRE(states[2] == 1); // No rain.
+  REQUIRE(states[3] == 0); // Rain.
+  REQUIRE(states[4] == 0); // Rain.
 }
 
 /**
  * This example is from Borodovsky & Ekisheva, p. 80-81.  It is just slightly
  * more complex.
  */
-BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
+TEST_CASE("BorodovskyHMMTestViterbi", "[HMMTest]")
 {
   // Equally probable initial states.
   arma::vec initial(3);
@@ -94,23 +92,23 @@ BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
   hmm.Predict(observation, states);
 
   // Most probable path is HHHLLLLLL.
-  BOOST_REQUIRE_EQUAL(states[0], 1);
-  BOOST_REQUIRE_EQUAL(states[1], 1);
-  BOOST_REQUIRE_EQUAL(states[2], 1);
-  BOOST_REQUIRE_EQUAL(states[3], 2);
+  REQUIRE(states[0] == 1);
+  REQUIRE(states[1] == 1);
+  REQUIRE(states[2] == 1);
+  REQUIRE(states[3] == 2);
   // This could actually be one of two states (equal probability).
-  BOOST_REQUIRE((states[4] == 1) || (states[4] == 2));
-  BOOST_REQUIRE_EQUAL(states[5], 2);
+  REQUIRE(((states[4] == 1) || (states[4] == 2)) == true);
+  REQUIRE(states[5] == 2);
   // This could also be one of two states.
-  BOOST_REQUIRE((states[6] == 1) || (states[6] == 2));
-  BOOST_REQUIRE_EQUAL(states[7], 2);
-  BOOST_REQUIRE_EQUAL(states[8], 2);
+  REQUIRE(((states[6] == 1) || (states[6] == 2)) == true);
+  REQUIRE(states[7] == 2);
+  REQUIRE(states[8] == 2);
 }
 
 /**
  * Ensure that the forward-backward algorithm is correct.
  */
-BOOST_AUTO_TEST_CASE(ForwardBackwardTwoState)
+TEST_CASE("ForwardBackwardTwoState", "[HMMTest]")
 {
   arma::mat obs("3 3 2 1 1 1 1 3 3 1");
 
@@ -137,35 +135,35 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTwoState)
       scales);
 
   // All values obtained from MATLAB hmmdecode().
-  BOOST_REQUIRE_CLOSE(log, -23.4349, 1e-3);
+  REQUIRE(log == Approx(-23.4349).epsilon(1e-5));
 
-  BOOST_REQUIRE_SMALL(stateProb(0, 0), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(1, 0), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(0, 1), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(1, 1), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(0, 2), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(1, 2), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(0, 3), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(1, 3), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(0, 4), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(1, 4), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(0, 5), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(1, 5), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(0, 6), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(1, 6), 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(0, 7), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(1, 7), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(0, 8), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(1, 8), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(0, 9), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(1, 9), 1e-5);
+  REQUIRE(stateProb(0, 0) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(1, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 1) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(1, 1) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 2) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(1, 2) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 3) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 3) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(0, 4) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 4) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(0, 5) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 5) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(0, 6) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 6) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(0, 7) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(1, 7) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 8) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(1, 8) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 9) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 9) == Approx(0.0).margin(1e-7));
 }
 
 /**
  * In this example we try to estimate the transmission and emission matrices
  * based on some observations.  We use the simplest possible model.
  */
-BOOST_AUTO_TEST_CASE(SimplestBaumWelchDiscreteHMM)
+TEST_CASE("SimplestBaumWelchDiscreteHMM", "[HMMTest]")
 {
   // Don't yet require a useful distribution.  1 state, 1 emission.
   HMM<DiscreteDistribution> hmm(1, DiscreteDistribution(1));
@@ -179,15 +177,15 @@ BOOST_AUTO_TEST_CASE(SimplestBaumWelchDiscreteHMM)
 
   hmm.Train(observations);
 
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 1.0, 1e-5);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(hmm.Emission()[0].Probability("0") == Approx(1.0).epsilon(1e-7));
+  REQUIRE(hmm.Transition()(0, 0) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
  * A slightly more complex model to estimate.
  */
-BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM)
+TEST_CASE("SimpleBaumWelchDiscreteHMM", "[HMMTest]")
 {
   HMM<DiscreteDistribution> hmm(1, 2); // 1 state, 2 emissions.
   // Randomize the emission matrix.
@@ -212,17 +210,17 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM)
 
   hmm.Train(observations);
 
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 0.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("1"), 0.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 1e-5);
+  REQUIRE(hmm.Emission()[0].Probability("0") == Approx(0.5).epsilon(1e-7));
+  REQUIRE(hmm.Emission()[0].Probability("1") == Approx(0.5).epsilon(1e-7));
+  REQUIRE(hmm.Transition()(0, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(1e-7));
 }
 
 /**
  * Increasing complexity, but still simple; 4 emissions, 2 states; the state can
  * be determined directly by the emission.
  */
-BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
+TEST_CASE("SimpleBaumWelchDiscreteHMM_2", "[HMMTest]")
 {
   HMM<DiscreteDistribution> hmm(2, DiscreteDistribution(4));
 
@@ -246,7 +244,7 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
   size_t obsNum = 250; // Number of observations.
   size_t obsLen = 500; // Number of elements in each observation.
   size_t stateZeroStarts = 0; // Number of times we start in state 0.
-  for (size_t i = 0; i < obsNum; i++)
+  for (size_t i = 0; i < obsNum; ++i)
   {
     arma::mat observation(1, obsLen);
 
@@ -301,25 +299,25 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
   double prob = double(stateZeroStarts) / observations.size();
 
   // Only require 2.5% tolerance, because this is a little fuzzier.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], prob, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[1], 1.0 - prob, 2.5);
+  REQUIRE(hmm.Initial()[0] == Approx(prob).epsilon(0.025));
+  REQUIRE(hmm.Initial()[1] == Approx(1.0 - prob).epsilon(0.025));
 
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 0.5, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 0), 0.5, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 1), 0.5, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 1), 0.5, 2.5);
+  REQUIRE(hmm.Transition()(0, 0) == Approx(0.5).epsilon(0.025));
+  REQUIRE(hmm.Transition()(1, 0) == Approx(0.5).epsilon(0.025));
+  REQUIRE(hmm.Transition()(0, 1) == Approx(0.5).epsilon(0.025));
+  REQUIRE(hmm.Transition()(1, 1) == Approx(0.5).epsilon(0.025));
 
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 0.4, 4.0);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("1"), 0.6, 4.0);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability("2"), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability("3"), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability("0"), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability("1"), 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability("2"), 0.2, 4.0);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability("3"), 0.8, 4.0);
+  REQUIRE(hmm.Emission()[0].Probability("0") == Approx(0.4).epsilon(0.04));
+  REQUIRE(hmm.Emission()[0].Probability("1") == Approx(0.6).epsilon(0.04));
+  REQUIRE(hmm.Emission()[0].Probability("2") == Approx(0.0).margin(2.5));
+  REQUIRE(hmm.Emission()[0].Probability("3") == Approx(0.0).margin(2.5));
+  REQUIRE(hmm.Emission()[1].Probability("0") == Approx(0.0).margin(2.5));
+  REQUIRE(hmm.Emission()[1].Probability("1") == Approx(0.0).margin(2.5));
+  REQUIRE(hmm.Emission()[1].Probability("2") == Approx(0.2).epsilon(0.04));
+  REQUIRE(hmm.Emission()[1].Probability("3") == Approx(0.8).epsilon(0.04));
 }
 
-BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
+TEST_CASE("DiscreteHMMLabeledTrainTest", "[HMMTest]")
 {
   // Generate a random Markov model with 3 hidden states and 6 observations.
   arma::mat transition;
@@ -387,10 +385,10 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
   // Make sure the initial weights are fine.  They should be equal (or close).
   arma::vec initial(3);
   initial.fill(1.0 / 3.0);
-  BOOST_REQUIRE_LT(arma::norm(hmm.Initial() - initial), 0.2);
+  REQUIRE(arma::norm(hmm.Initial() - initial) <  0.2);
 
   // Check that the transition matrix is close.
-  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - transition), 0.1);
+  REQUIRE(arma::norm(hmm.Transition() - transition) < 0.1);
 
   for (size_t col = 0; col < hmm.Emission().size(); col++)
   {
@@ -399,8 +397,8 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
     {
       arma::vec obs(1);
       obs[0] = row;
-      BOOST_REQUIRE_SMALL(hmm.Emission()[col].Probability(obs) -
-          emission[col].Probability(obs), 0.07);
+      REQUIRE(hmm.Emission()[col].Probability(obs) -
+          emission[col].Probability(obs) == Approx(0.0).margin(0.07));
     }
   }
 }
@@ -409,7 +407,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
  * Make sure the Generate() function works for a uniformly distributed HMM;
  * we'll take many samples just to make sure.
  */
-BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
+TEST_CASE("DiscreteHMMSimpleGenerateTest", "[HMMTest]")
 {
   // Very simple HMM.  4 emissions with equal probability and 2 states with
   // equal probability.
@@ -428,7 +426,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
   arma::vec stateProb(2);
   emissionProb.zeros();
   stateProb.zeros();
-  for (size_t i = 0; i < 100000; i++)
+  for (size_t i = 0; i < 100000; ++i)
   {
     emissionProb[(size_t) dataSeq.col(i)[0] + 0.5]++;
     stateProb[stateSeq[i]]++;
@@ -439,19 +437,19 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
   stateProb /= accu(stateProb);
 
   // Now check that the probabilities are right.  3% tolerance.
-  BOOST_REQUIRE_CLOSE(emissionProb[0], 0.25, 3.0);
-  BOOST_REQUIRE_CLOSE(emissionProb[1], 0.25, 3.0);
-  BOOST_REQUIRE_CLOSE(emissionProb[2], 0.25, 3.0);
-  BOOST_REQUIRE_CLOSE(emissionProb[3], 0.25, 3.0);
+  REQUIRE(emissionProb[0] == Approx(0.25).epsilon(0.03));
+  REQUIRE(emissionProb[1] == Approx(0.25).epsilon(0.03));
+  REQUIRE(emissionProb[2] == Approx(0.25).epsilon(0.03));
+  REQUIRE(emissionProb[3] == Approx(0.25).epsilon(0.03));
 
-  BOOST_REQUIRE_CLOSE(stateProb[0], 0.50, 3.0);
-  BOOST_REQUIRE_CLOSE(stateProb[1], 0.50, 3.0);
+  REQUIRE(stateProb[0] == Approx(0.50).epsilon(0.03));
+  REQUIRE(stateProb[1] == Approx(0.50).epsilon(0.03));
 }
 
 /**
  * More complex test for Generate().
  */
-BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
+TEST_CASE("DiscreteHMMGenerateTest", "[HMMTest]")
 {
   // 6 emissions, 4 states.  Random transition and emission probability.
   arma::vec initial("1 0 0 0");
@@ -480,7 +478,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
   int numObs = 3000;
   std::vector<arma::mat> sequences(numSeq);
   std::vector<arma::Row<size_t> > states(numSeq);
-  for (int i = 0; i < numSeq; i++)
+  for (int i = 0; i < numSeq; ++i)
   {
     // Random starting state.
     size_t startState = math::RandInt(4);
@@ -493,7 +491,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
   hmm2.Train(sequences, states);
 
   // Check that training gives the same result.
-  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - hmm2.Transition()), 0.02);
+  REQUIRE(arma::norm(hmm.Transition() - hmm2.Transition()) <  0.02);
 
   for (size_t row = 0; row < 6; row++)
   {
@@ -501,13 +499,13 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
     obs[0] = row;
     for (size_t col = 0; col < 4; col++)
     {
-      BOOST_REQUIRE_SMALL(hmm.Emission()[col].Probability(obs) -
-          hmm2.Emission()[col].Probability(obs), 0.02);
+      REQUIRE(hmm.Emission()[col].Probability(obs) -
+          hmm2.Emission()[col].Probability(obs) == Approx(0.0).margin(0.02));
     }
   }
 }
 
-BOOST_AUTO_TEST_CASE(DiscreteHMMLogLikelihoodTest)
+TEST_CASE("DiscreteHMMLogLikelihoodTest", "[HMMTest]")
 {
   // Create a simple HMM with three states and four emissions.
   arma::vec initial("0.5 0.2 0.3"); // Default MATLAB initial states.
@@ -523,17 +521,17 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLogLikelihoodTest)
 
   // Now generate some sequences and check that the log-likelihood is the same
   // as MATLAB gives for this HMM.
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("0 1 2 3"), -4.9887223949, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("1 2 0 0"), -6.0288487077, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("3 3 3 3"), -5.5544000018, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("0 2 2 1 2 3 0 0 1 3 1 0 0 3 1 2 2"),
-      -24.51556128368, 1e-5);
+  REQUIRE(hmm.LogLikelihood("0 1 2 3") == Approx(-4.9887223949).epsilon(1e-7));
+  REQUIRE(hmm.LogLikelihood("1 2 0 0") == Approx(-6.0288487077).epsilon(1e-7));
+  REQUIRE(hmm.LogLikelihood("3 3 3 3") == Approx(-5.5544000018).epsilon(1e-7));
+  REQUIRE(hmm.LogLikelihood("0 2 2 1 2 3 0 0 1 3 1 0 0 3 1 2 2") ==
+      Approx(-24.51556128368).epsilon(1e-7));
 }
 
 /**
  * A simple test to make sure HMMs with Gaussian output distributions work.
  */
-BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
+TEST_CASE("GaussianHMMSimpleTest", "[HMMTest]")
 {
   // We'll have two Gaussians, far away from each other, one corresponding to
   // each state.
@@ -561,7 +559,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
   // 1000-observations sequence.
   classes[0] = 0;
   observations.col(0) = g1.Random();
-  for (size_t i = 1; i < 1000; i++)
+  for (size_t i = 1; i < 1000; ++i)
   {
     double randValue = math::Random();
 
@@ -584,12 +582,12 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
   hmm.Estimate(observations, stateProb);
 
   // Check that each prediction is right.
-  for (size_t i = 0; i < 1000; i++)
+  for (size_t i = 0; i < 1000; ++i)
   {
-    BOOST_REQUIRE_EQUAL(predictedClasses[i], classes[i]);
+    REQUIRE(predictedClasses[i] == classes[i]);
 
     // The probability of the wrong class should be infinitesimal.
-    BOOST_REQUIRE_SMALL(stateProb((classes[i] + 1) % 2, i), 0.001);
+    REQUIRE(stateProb((classes[i] + 1) % 2, i) == Approx(0.0).margin(0.001));
   }
 }
 
@@ -597,7 +595,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
  * Ensure that Gaussian HMMs can be trained properly, for the labeled training
  * case and also for the unlabeled training case.
  */
-BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
+TEST_CASE("GaussianHMMTrainTest", "[HMMTest]")
 {
   // Four emission Gaussians and three internal states.  The goal is to estimate
   // the transition matrix correctly, and each distribution correctly.
@@ -655,21 +653,21 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
   hmm.Train(observations, states);
 
   // Check initial weights.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 1e-3);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[2], 1e-3);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(1e-3));
+  REQUIRE(hmm.Initial()[2] == Approx(0.0).margin(1e-3));
 
   // We use a tolerance of 0.05 for the transition matrices.
   // Check that the transition matrix is correct.
-  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - transition), 0.05);
+  REQUIRE(arma::norm(hmm.Transition() - transition) < 0.05);
 
   // Check that each distribution is correct.
   for (size_t dist = 0; dist < 3; dist++)
   {
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Mean() -
-        emission[dist].Mean()), 0.05);
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Covariance() -
-        emission[dist].Covariance()), 0.1);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Mean() -
+        emission[dist].Mean()) < 0.05);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Covariance() -
+        emission[dist].Covariance()) < 0.1);
   }
 
   // Now let's try it all again, but this time, unlabeled.  Everything will fail
@@ -688,25 +686,25 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
 
   hmm.Train(observations);
 
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.1);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.05);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[2], 0.05);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.001));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.05));
+  REQUIRE(hmm.Initial()[2] == Approx(0.0).margin(0.05));
 
   // The tolerances are increased because there is more error in unlabeled
   // training; we use an absolute tolerance of 0.03 for the transition matrices.
   // Check that the transition matrix is correct.
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
-      BOOST_REQUIRE_SMALL(transition(row, col) - hmm.Transition()(row, col),
-          0.03);
+      REQUIRE(transition(row, col) - hmm.Transition()(row, col) ==
+          Approx(.0).margin(0.03));
 
   // Check that each distribution is correct.
   for (size_t dist = 0; dist < 3; dist++)
   {
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Mean() -
-        emission[dist].Mean()), 0.1);
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Covariance() -
-        emission[dist].Covariance()), 0.25);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Mean() -
+        emission[dist].Mean()) < 0.1);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Covariance() -
+        emission[dist].Covariance()) < 0.25);
   }
 }
 
@@ -714,7 +712,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
  * Make sure that a random sequence generated by a Gaussian HMM fits the
  * distribution correctly.
  */
-BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
+TEST_CASE("GaussianHMMGenerateTest", "[HMMTest]")
 {
   // Our distribution will have three two-dimensional output Gaussians.
   HMM<GaussianDistribution> hmm(3, GaussianDistribution(2));
@@ -736,22 +734,22 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
   hmm2.Train(observations, states);
 
   // Check that the estimated matrices are the same.
-  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - hmm2.Transition()), 0.1);
+  REQUIRE(arma::norm(hmm.Transition() - hmm2.Transition()) < 0.1);
 
   // Check that each Gaussian is the same.
   for (size_t dist = 0; dist < 3; dist++)
   {
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Mean() -
-        hmm2.Emission()[dist].Mean()), 0.2);
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Covariance() -
-        hmm2.Emission()[dist].Covariance()), 0.3);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Mean() -
+        hmm2.Emission()[dist].Mean()) < 0.2);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Covariance() -
+        hmm2.Emission()[dist].Covariance()) < 0.3);
   }
 }
 
 /**
  * Make sure that Predict() is numerically stable.
  */
-BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
+TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
 {
   size_t numState = 10;
   size_t obsDimension = 2;
@@ -845,11 +843,11 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
       7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9,
       9, 9, 9, 9, 9, 9, 9, 9, 9, 9 };
 
-  BOOST_REQUIRE_CLOSE(likelihood, -2734.43, 1e-3);
+  REQUIRE(likelihood == Approx(-2734.43).epsilon(1e-5));
 
   for (size_t i = 0; i < stateSeqRef.n_cols; ++i)
   {
-    BOOST_REQUIRE_EQUAL(stateSeqRef.at(i), stateSeq.at(i));
+    REQUIRE(stateSeqRef.at(i) == stateSeq.at(i));
   }
 }
 
@@ -858,7 +856,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
  * simple model by hand and making sure that prediction of observation sequences
  * works correctly.
  */
-BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
+TEST_CASE("GMMHMMPredictTest", "[HMMTest]")
 {
   // It's possible, but extremely unlikely, that this test can fail.  So we are
   // willing to do three trials in case the first two fail.
@@ -906,7 +904,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
     states[0] = 0;
     observations.col(0) = gmms[0].Random();
 
-    for (size_t i = 1; i < 1000; i++)
+    for (size_t i = 1; i < 1000; ++i)
     {
       double randValue = math::Random();
 
@@ -924,7 +922,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
 
     // Check that the predictions were correct.
     success = true;
-    for (size_t i = 0; i < 1000; i++)
+    for (size_t i = 0; i < 1000; ++i)
     {
       if (predictions[i] != states[i])
       {
@@ -937,14 +935,14 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
       break;
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 /**
  * Test that GMM-based HMMs can train on models correctly using labeled training
  * data.
  */
-BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
+TEST_CASE("GMMHMMLabeledTrainingTest", "[HMMTest]")
 {
   // We will use two GMMs; one with two components and one with three.
   std::vector<GMM> gmms(2, GMM(2, 2));
@@ -978,7 +976,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
     states[obs][0] = 0;
     observations[obs].col(0) = gmms[0].Random();
 
-    for (size_t i = 1; i < 2500; i++)
+    for (size_t i = 1; i < 2500; ++i)
     {
       double randValue = (double) rand() / (double) RAND_MAX;
 
@@ -999,65 +997,65 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
 
   // Check the initial weights.  The dataset was generated with 100% probability
   // of a sequence starting in state 0.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[1] == Approx(.0).margin(0.01));
 
   // Check the results.  Use absolute tolerances instead of percentages.
-  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 0) - transMat(0, 0), 0.03);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 1) - transMat(0, 1), 0.03);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 0) - transMat(1, 0), 0.03);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 1) - transMat(1, 1), 0.03);
+  REQUIRE(hmm.Transition()(0, 0) - transMat(0, 0) == Approx(.0).margin(0.03));
+  REQUIRE(hmm.Transition()(0, 1) - transMat(0, 1) == Approx(.0).margin(0.03));
+  REQUIRE(hmm.Transition()(1, 0) - transMat(1, 0) == Approx(.0).margin(0.03));
+  REQUIRE(hmm.Transition()(1, 1) - transMat(1, 1) == Approx(.0).margin(0.03));
 
   // Now the emission probabilities (the GMMs).
   // We have to sort each GMM for comparison.
   arma::uvec sortedIndices = sort_index(hmm.Emission()[0].Weights());
 
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[0]] -
-      gmms[0].Weights()[0], 0.08);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[1]] -
-      gmms[0].Weights()[1], 0.08);
+  REQUIRE(hmm.Emission()[0].Weights()[sortedIndices[0]] -
+      gmms[0].Weights()[0] == Approx(.0).margin(0.08));
+  REQUIRE(hmm.Emission()[0].Weights()[sortedIndices[1]] -
+      gmms[0].Weights()[1] == Approx(.0).margin(0.08));
 
-  BOOST_REQUIRE_LT(arma::norm(
+  REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[0]).Mean() -
-      gmms[0].Component(0).Mean()), 0.2);
-  BOOST_REQUIRE_LT(arma::norm(
+      gmms[0].Component(0).Mean()) < 0.2);
+  REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[1]).Mean() -
-      gmms[0].Component(1).Mean()), 0.2);
+      gmms[0].Component(1).Mean()) < 0.2);
 
-  BOOST_REQUIRE_LT(arma::norm(
+  REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[0]).Covariance() -
-      gmms[0].Component(0).Covariance()), 0.5);
-  BOOST_REQUIRE_LT(arma::norm(
+      gmms[0].Component(0).Covariance()) < 0.5);
+  REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[1]).Covariance() -
-      gmms[0].Component(0).Covariance()), 0.5);
+      gmms[0].Component(0).Covariance()) < 0.5);
 
   // Sort the GMM.
   sortedIndices = sort_index(hmm.Emission()[1].Weights());
 
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[0]] -
-      gmms[1].Weights()[0], 0.08);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[1]] -
-      gmms[1].Weights()[1], 0.08);
+  REQUIRE(hmm.Emission()[1].Weights()[sortedIndices[0]] -
+      gmms[1].Weights()[0] == Approx(.0).margin(0.08));
+  REQUIRE(hmm.Emission()[1].Weights()[sortedIndices[1]] -
+      gmms[1].Weights()[1] == Approx(.0).margin(0.08));
 
-  BOOST_REQUIRE_LT(arma::norm(
+  REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[0]).Mean() -
-      gmms[1].Component(0).Mean()), 0.2);
-  BOOST_REQUIRE_LT(arma::norm(
+      gmms[1].Component(0).Mean()) < 0.2);
+  REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[1]).Mean() -
-      gmms[1].Component(1).Mean()), 0.2);
+      gmms[1].Component(1).Mean()) < 0.2);
 
-  BOOST_REQUIRE_LT(arma::norm(
+  REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[0]).Covariance() -
-      gmms[1].Component(0).Covariance()), 0.5);
-  BOOST_REQUIRE_LT(arma::norm(
+      gmms[1].Component(0).Covariance()) < 0.5);
+  REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[1]).Covariance() -
-      gmms[1].Component(1).Covariance()), 0.5);
+      gmms[1].Component(1).Covariance()) < 0.5);
 }
 
 /**
  * Test saving and loading of GMM HMMs
  */
-BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
+TEST_CASE("GMMHMMLoadSaveTest", "[HMMTest]")
 {
   // Create a GMM HMM, save it, and load it.
   HMM<GMM> hmm(3, GMM(4, 3));
@@ -1097,26 +1095,27 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
 
   for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
-    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Gaussians(),
+    REQUIRE(hmm.Emission()[j].Gaussians() ==
                         hmm2.Emission()[j].Gaussians());
-    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Dimensionality(),
+    REQUIRE(hmm.Emission()[j].Dimensionality() ==
                         hmm2.Emission()[j].Dimensionality());
 
     for (size_t i = 0; i < hmm.Emission()[j].Dimensionality(); ++i)
-      BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Weights()[i],
-                          hmm2.Emission()[j].Weights()[i], 1e-3);
+      REQUIRE(hmm.Emission()[j].Weights()[i] ==
+          Approx(hmm2.Emission()[j].Weights()[i]).epsilon(1e-5));
 
     for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); ++i)
     {
       for (size_t l = 0; l < hmm.Emission()[j].Dimensionality(); ++l)
       {
-        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Mean()[l],
-            hmm2.Emission()[j].Component(i).Mean()[l], 1e-3);
+        REQUIRE(hmm.Emission()[j].Component(i).Mean()[l] ==
+            Approx(hmm2.Emission()[j].Component(i).Mean()[l]).epsilon(1e-5));
 
         for (size_t k = 0; k < hmm.Emission()[j].Dimensionality(); ++k)
         {
-          BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Covariance()(l, k),
-              hmm2.Emission()[j].Component(i).Covariance()(l, k), 1e-3);
+          REQUIRE(hmm.Emission()[j].Component(i).Covariance()(l, k) ==
+              Approx(hmm2.Emission()[j].Component(i).Covariance()(l,
+              k)).epsilon(1e-5));
         }
       }
     }
@@ -1126,7 +1125,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
 /**
  * Test saving and loading of Gaussian HMMs
  */
-BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
+TEST_CASE("GaussianHMMLoadSaveTest", "[HMMTest]")
 {
   // Create a Gaussian HMM, save it, and load it.
   HMM<GaussianDistribution> hmm(3, GaussianDistribution(2));
@@ -1162,17 +1161,18 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
 
   for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
-    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Dimensionality(),
+    REQUIRE(hmm.Emission()[j].Dimensionality() ==
                         hmm2.Emission()[j].Dimensionality());
 
     for (size_t i = 0; i < hmm.Emission()[j].Dimensionality(); ++i)
     {
-      BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Mean()[i],
-          hmm2.Emission()[j].Mean()[i], 1e-3);
+        REQUIRE(hmm.Emission()[j].Mean()[i] ==
+            Approx(hmm2.Emission()[j].Mean()[i]).epsilon(1e-5));
+
       for (size_t k = 0; k < hmm.Emission()[j].Dimensionality(); ++k)
       {
-        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Covariance()(i, k),
-            hmm2.Emission()[j].Covariance()(i, k), 1e-3);
+        REQUIRE(hmm.Emission()[j].Covariance()(i, k) ==
+            Approx(hmm2.Emission()[j].Covariance()(i, k)).epsilon(1e-5));
       }
     }
   }
@@ -1181,7 +1181,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
 /**
  * Test saving and loading of Discrete HMMs
  */
-BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
+TEST_CASE("DiscreteHMMLoadSaveTest", "[HMMTest]")
 {
   // Create a Discrete HMM, save it, and load it.
   std::vector<DiscreteDistribution> emission(4);
@@ -1225,14 +1225,14 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
 
   for (size_t j = 0; j < hmm.Emission().size(); ++j)
     for (size_t i = 0; i < hmm.Emission()[j].Probabilities().n_elem; ++i)
-      BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Probabilities()[i],
-          hmm2.Emission()[j].Probabilities()[i], 1e-3);
+      REQUIRE(hmm.Emission()[j].Probabilities()[i] ==
+          Approx(hmm2.Emission()[j].Probabilities()[i]).epsilon(1e-5));
 }
 
 /**
  * Test that HMM::Train() returns finite log-likelihood.
  */
-BOOST_AUTO_TEST_CASE(HMMTrainReturnLogLikelihood)
+TEST_CASE("HMMTrainReturnLogLikelihood", "[HMMTest]")
 {
   HMM<DiscreteDistribution> hmm(1, 2); // 1 state, 2 emissions.
   // Randomize the emission matrix.
@@ -1255,7 +1255,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainReturnLogLikelihood)
 
   double loglik = hmm.Train(observations);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(loglik), true);
+  REQUIRE(std::isfinite(loglik) == true);
 }
 
 /********************************************/
@@ -1263,7 +1263,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainReturnLogLikelihood)
 /********************************************/
 
 //! Make sure the prediction of DiagonalGMM HMMs is reasonable.
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
+TEST_CASE("DiagonalGMMHMMPredictTest", "[HMMTest]")
 {
   // This test is probabilistic, so we perform it three times to make it robust.
   bool success = false;
@@ -1304,7 +1304,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
     states[0] = 0;
     observations.col(0) = gmms[0].Random();
 
-    for (size_t i = 1; i < 1000; i++)
+    for (size_t i = 1; i < 1000; ++i)
     {
       double randValue = math::Random();
 
@@ -1322,7 +1322,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
 
     // Check them.
     success = true;
-    for (size_t i = 0; i < 1000; i++)
+    for (size_t i = 0; i < 1000; ++i)
     {
       if (predictions[i] != states[i])
       {
@@ -1335,14 +1335,14 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
       break;
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 /**
  * Make sure a random data sequence generation is correct when the emission
  * distribution is DiagonalGMM.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMGenerateTest)
+TEST_CASE("DiagonalGMMHMMGenerateTest", "[HMMTest]")
 {
   // Build the model.
   HMM<DiagonalGaussianDistribution> hmm(3, DiagonalGaussianDistribution(2));
@@ -1368,15 +1368,15 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMGenerateTest)
   hmm2.Train(observations, states);
 
   // Check that the estimated matrices are the same.
-  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - hmm2.Transition()), 0.05);
+  REQUIRE(arma::norm(hmm.Transition() - hmm2.Transition()) < 0.05);
 
   // Check that each Gaussian is the same.
   for (size_t dist = 0; dist < 3; dist++)
   {
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Mean() -
-        hmm2.Emission()[dist].Mean()), 0.1);
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Covariance() -
-        hmm2.Emission()[dist].Covariance()), 0.2);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Mean() -
+        hmm2.Emission()[dist].Mean()) < 0.1);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Covariance() -
+        hmm2.Emission()[dist].Covariance()) < 0.2);
   }
 }
 
@@ -1384,7 +1384,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMGenerateTest)
  * Make sure the unlabeled 1-state training works reasonably given a single
  * distribution with diagonal covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianOneStateTrainingTest)
+TEST_CASE("DiagonalGMMHMMOneGaussianOneStateTrainingTest", "[HMMTest]")
 {
   // Create a Gaussian distribution with diagonal covariance.
   DiagonalGaussianDistribution d("2.05 3.45", "0.89 1.05");
@@ -1395,7 +1395,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianOneStateTrainingTest)
   {
     observations[obs].col(0) = d.Random();
 
-    for (size_t i = 1; i < 5000; i++)
+    for (size_t i = 1; i < 5000; ++i)
     {
       observations[obs].col(i) = d.Random();
     }
@@ -1422,7 +1422,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianOneStateTrainingTest)
  * Make sure the unlabeled training works reasonably given a single
  * distribution with diagonal covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
+TEST_CASE("DiagonalGMMHMMOneGaussianUnlabeledTrainingTest", "[HMMTest]")
 {
   // Create a sequence of DiagonalGMMs. Each GMM has one gaussian distribution.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(1, 2));
@@ -1446,7 +1446,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
     states[obs][0] = 0;
     observations[obs].col(0) = gmms[0].Random();
 
-    for (size_t i = 1; i < 500; i++)
+    for (size_t i = 1; i < 500; ++i)
     {
       double randValue = math::Random();
 
@@ -1467,35 +1467,36 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
   hmm.Train(observations);
 
   // Check the initial weights.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
-  for (size_t i = 0; i < 2; i++)
-    for (size_t j = 0; j < 2; j++)
-      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.08);
+  for (size_t i = 0; i < 2; ++i)
+    for (size_t j = 0; j < 2; ++j)
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.08));
 
   // Check the estimated weights of the each emission distribution.
-  for (size_t i = 0; i < 2; i++)
-    BOOST_REQUIRE_SMALL(hmm.Emission()[i].Weights()[0] - gmms[i].Weights()[0],
-        0.08);
+  for (size_t i = 0; i < 2; ++i)
+    REQUIRE(hmm.Emission()[i].Weights()[0] - gmms[i].Weights()[0] ==
+        Approx(0.0).margin(0.08));
 
   // Check the estimated means of the each emission distribution.
-  for (size_t i = 0; i < 2; i++)
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Mean() -
-        gmms[i].Component(0).Mean()), 0.2);
+  for (size_t i = 0; i < 2; ++i)
+    REQUIRE(arma::norm(hmm.Emission()[i].Component(0).Mean() -
+        gmms[i].Component(0).Mean()) < 0.2);
 
   // Check the estimated covariances of the each emission distribution.
-  for (size_t i = 0; i < 2; i++)
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Covariance() -
-        gmms[i].Component(0).Covariance()), 0.5);
+  for (size_t i = 0; i < 2; ++i)
+    REQUIRE(arma::norm(hmm.Emission()[i].Component(0).Covariance() -
+        gmms[i].Component(0).Covariance()) < 0.5);
 }
 
 /**
  * Make sure the labeled training works reasonably given a single distribution
  * with diagonal covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianLabeledTrainingTest)
+TEST_CASE("DiagonalGMMHMMOneGaussianLabeledTrainingTest", "[HMMTest]")
 {
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(3, DiagonalGMM(1, 2));
@@ -1523,7 +1524,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianLabeledTrainingTest)
     states[obs][0] = 0;
     observations[obs].col(0) = gmms[0].Random();
 
-    for (size_t i = 1; i < 5000; i++)
+    for (size_t i = 1; i < 5000; ++i)
     {
       double randValue = math::Random();
       double probSum = 0;
@@ -1548,36 +1549,37 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianLabeledTrainingTest)
   hmm.Train(observations, states);
 
   // Check the initial weights.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[2], 0.01);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
+  REQUIRE(hmm.Initial()[2] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
-  for (size_t i = 0; i < 3; i++)
-    for (size_t j = 0; j < 3; j++)
-      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.03);
+  for (size_t i = 0; i < 3; ++i)
+    for (size_t j = 0; j < 3; ++j)
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.03));
 
   // Check the estimated weights of the each emission distribution.
-  for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL(hmm.Emission()[i].Weights()[0] - gmms[i].Weights()[0],
-        0.08);
+  for (size_t i = 0; i < 3; ++i)
+    REQUIRE(hmm.Emission()[i].Weights()[0] - gmms[i].Weights()[0] ==
+        Approx(0.0).margin(0.08));
 
   // Check the estimated means of the each emission distribution.
-  for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Mean() -
-        gmms[i].Component(0).Mean()), 0.2);
+  for (size_t i = 0; i < 3; ++i)
+    REQUIRE(arma::norm(hmm.Emission()[i].Component(0).Mean() -
+        gmms[i].Component(0).Mean()) < 0.2);
 
   // Check the estimated covariances of the each emission distribution.
-  for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Covariance() -
-        gmms[i].Component(0).Covariance()), 0.5);
+  for (size_t i = 0; i < 3; ++i)
+    REQUIRE(arma::norm(hmm.Emission()[i].Component(0).Covariance() -
+        gmms[i].Component(0).Covariance()) < 0.5);
 }
 
 /**
  * Make sure the unlabeled training works reasonably given multiple
  * distributions with diagonal covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest)
+TEST_CASE("DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest", "[HMMTest]")
 {
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
@@ -1607,7 +1609,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest)
     states[obs][0] = 0;
     observations[obs].col(0) = gmms[0].Random();
 
-    for (size_t i = 1; i < 1000; i++)
+    for (size_t i = 1; i < 1000; ++i)
     {
       double randValue = math::Random();
 
@@ -1628,54 +1630,55 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest)
   hmm.Train(observations);
 
   // Check the initial weights.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
-  for (size_t i = 0; i < 2; i++)
-    for (size_t j = 0; j < 2; j++)
-      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.08);
+  for (size_t i = 0; i < 2; ++i)
+    for (size_t j = 0; j < 2; ++j)
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.08));
 
   // Sort by the estimated weights of the first emission distribution.
   arma::uvec sortedIndices = sort_index(hmm.Emission()[0].Weights());
 
   // Check the first emission distribution.
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < 2; ++i)
   {
     // Check the estimated weights using the first DiagonalGMM.
-    BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[i]] -
-        gmms[0].Weights()[i], 0.08);
+    REQUIRE(hmm.Emission()[0].Weights()[sortedIndices[i]] -
+        gmms[0].Weights()[i] == Approx(0.0).margin(0.08));
 
     // Check the estimated means using the first DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[i]).Mean() -
-      gmms[0].Component(i).Mean()), 0.35);
+      gmms[0].Component(i).Mean()) < 0.35);
 
     // Check the estimated covariances using the first DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[i]).Covariance() -
-      gmms[0].Component(i).Covariance()), 0.6);
+      gmms[0].Component(i).Covariance()) < 0.6);
   }
 
   // Sort by the estimated weights of the second emission distribution.
   sortedIndices = sort_index(hmm.Emission()[1].Weights());
 
   // Check the second emission distribution.
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < 2; ++i)
   {
     // Check the estimated weights using the second DiagonalGMM.
-    BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[i]] -
-        gmms[1].Weights()[i], 0.08);
+    REQUIRE(hmm.Emission()[1].Weights()[sortedIndices[i]] -
+        gmms[1].Weights()[i] == Approx(0.0).margin(0.08));
 
     // Check the estimated means using the second DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[i]).Mean() -
-      gmms[1].Component(i).Mean()), 0.35);
+      gmms[1].Component(i).Mean()) < 0.35);
 
     // Check the estimated covariances using the second DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[i]).Covariance() -
-      gmms[1].Component(i).Covariance()), 0.6);
+      gmms[1].Component(i).Covariance()) < 0.6);
   }
 }
 
@@ -1683,9 +1686,8 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest)
  * Make sure the labeled training works reasonably given multiple distributions
  * with diagonal covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest)
+TEST_CASE("DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest", "[HMMTest]")
 {
-  math::RandomSeed(std::time(NULL));
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
@@ -1712,7 +1714,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest)
     states[obs][0] = 0;
     observations[obs].col(0) = gmms[0].Random();
 
-    for (size_t i = 1; i < 2500; i++)
+    for (size_t i = 1; i < 2500; ++i)
     {
       double randValue = math::Random();
 
@@ -1732,70 +1734,71 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest)
   hmm.Train(observations, states);
 
   // Check the initial weights.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
-  for (size_t i = 0; i < 2; i++)
-    for (size_t j = 0; j < 2; j++)
-      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.03);
+  for (size_t i = 0; i < 2; ++i)
+    for (size_t j = 0; j < 2; ++j)
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.03));
 
   // Sort by the estimated weights of the first emission distribution.
   arma::uvec sortedIndices = sort_index(hmm.Emission()[0].Weights());
 
   // Check the first emission distribution.
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < 2; ++i)
   {
     // Check the estimated weights using the first DiagonalGMM.
-    BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[i]] -
-        gmms[0].Weights()[i], 0.08);
+    REQUIRE(hmm.Emission()[0].Weights()[sortedIndices[i]] -
+        gmms[0].Weights()[i] == Approx(0.0).margin(0.08));
 
     // Check the estimated means using the first DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[i]).Mean() -
-      gmms[0].Component(i).Mean()), 0.2);
+      gmms[0].Component(i).Mean()) < 0.2);
 
     // Check the estimated covariances using the first DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[i]).Covariance() -
-      gmms[0].Component(i).Covariance()), 0.5);
+      gmms[0].Component(i).Covariance()) < 0.5);
   }
 
   // Sort by the estimated weights of the second emission distribution.
   sortedIndices = sort_index(hmm.Emission()[1].Weights());
 
   // Check the second emission distribution.
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < 2; ++i)
   {
     // Check the estimated weights using the second DiagonalGMM.
-    BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[i]] -
-        gmms[1].Weights()[i], 0.08);
+    REQUIRE(hmm.Emission()[1].Weights()[sortedIndices[i]] -
+        gmms[1].Weights()[i] == Approx(0.0).margin(0.08));
 
     // Check the estimated means using the second DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[i]).Mean() -
-      gmms[1].Component(i).Mean()), 0.2);
+      gmms[1].Component(i).Mean()) < 0.2);
 
     // Check the estimated covariances using the second DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[i]).Covariance() -
-      gmms[1].Component(i).Covariance()), 0.5);
+      gmms[1].Component(i).Covariance()) < 0.5);
   }
 }
 
 /**
  * Make sure loading and saving the model is correct.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
+TEST_CASE("DiagonalGMMHMMLoadSaveTest", "[HMMTest]")
 {
   // Create a GMM HMM, save and load it.
   HMM<DiagonalGMM> hmm(3, DiagonalGMM(4, 3));
 
   // Generate intial random values.
-  for (size_t j = 0; j < hmm.Emission().size(); j++)
+  for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     hmm.Emission()[j].Weights().randu();
-    for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); i++)
+    for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); ++i)
     {
       hmm.Emission()[j].Component(i).Mean().randu();
       arma::vec covariance = arma::randu<arma::vec>(
@@ -1824,35 +1827,33 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
   // Remove clutter.
   remove("test-hmm-save.xml");
 
-  for (size_t j = 0; j < hmm.Emission().size(); j++)
+  for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     // Check the number of Gaussians.
-    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Gaussians(),
-                        hmm2.Emission()[j].Gaussians());
+    REQUIRE(hmm.Emission()[j].Gaussians() == hmm2.Emission()[j].Gaussians());
 
     // Check the dimensionality.
-    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Dimensionality(),
-                        hmm2.Emission()[j].Dimensionality());
+    REQUIRE(hmm.Emission()[j].Dimensionality() ==
+            hmm2.Emission()[j].Dimensionality());
 
-    for (size_t i = 0; i < hmm.Emission()[j].Dimensionality(); i++)
+    for (size_t i = 0; i < hmm.Emission()[j].Dimensionality(); ++i)
       // Check the weights.
-      BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Weights()[i],
-                          hmm2.Emission()[j].Weights()[i], 1e-3);
+      REQUIRE(hmm.Emission()[j].Weights()[i] ==
+          Approx(hmm2.Emission()[j].Weights()[i]).epsilon(1e-5));
 
-    for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); i++)
+    for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); ++i)
     {
       for (size_t l = 0; l < hmm.Emission()[j].Dimensionality(); l++)
       {
         // Check the means.
-        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Mean()[l],
-            hmm2.Emission()[j].Component(i).Mean()[l], 1e-3);
+      REQUIRE(hmm.Emission()[j].Component(i).Mean()[l] ==
+          Approx(hmm2.Emission()[j].Component(i).Mean()[l]).epsilon(1e-5));
 
         // Check the covariances.
-        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Covariance()[l],
-            hmm2.Emission()[j].Component(i).Covariance()[l], 1e-3);
+      REQUIRE(hmm.Emission()[j].Component(i).Covariance()[l] ==
+          Approx(hmm2.Emission()[j].Component(i).Covariance()[l]).epsilon(
+          1e-5));
       }
     }
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

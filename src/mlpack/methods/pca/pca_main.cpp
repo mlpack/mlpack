@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "pca.hpp"
@@ -25,14 +25,18 @@ using namespace mlpack::pca;
 using namespace mlpack::util;
 using namespace std;
 
-// Document program.
-PROGRAM_INFO("Principal Components Analysis",
-    // Short description.
+// Program Name.
+BINDING_NAME("Principal Components Analysis");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of several strategies for principal components analysis "
     "(PCA), a common preprocessing step.  Given a dataset and a desired new "
     "dimensionality, this can reduce the dimensionality of the data using the "
-    "linear transformation determined by PCA.",
-    // Long description.
+    "linear transformation determined by PCA.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs principal components analysis on the given dataset "
     "using the exact, randomized, randomized block Krylov, or QUIC SVD method. "
     "It will transform the data onto its principal components, optionally "
@@ -50,19 +54,23 @@ PROGRAM_INFO("Principal Components Analysis",
     "Multiple different decomposition techniques can be used.  The method to "
     "use can be specified with the " +
     PRINT_PARAM_STRING("decomposition_method") + " parameter, and it may take "
-    "the values 'exact', 'randomized', or 'quic'."
-    "\n\n"
+    "the values 'exact', 'randomized', or 'quic'.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to reduce the dimensionality of the matrix " +
     PRINT_DATASET("data") + " to 5 dimensions using randomized SVD for the "
     "decomposition, storing the output matrix to " +
     PRINT_DATASET("data_mod") + ", the following command can be used:"
     "\n\n" +
     PRINT_CALL("pca", "input", "data", "new_dimensionality", 5,
-        "decomposition_method", "randomized", "output", "data_mod"),
-    SEE_ALSO("Principal component analysis on Wikipedia",
-        "https://en.wikipedia.org/wiki/Principal_component_analysis"),
-    SEE_ALSO("mlpack::pca::PCA C++ class documentation",
-        "@doxygen/classmlpack_1_1pca_1_1PCA.html"));
+        "decomposition_method", "randomized", "output", "data_mod"));
+
+// See also...
+BINDING_SEE_ALSO("Principal component analysis on Wikipedia",
+        "https://en.wikipedia.org/wiki/Principal_component_analysis");
+BINDING_SEE_ALSO("mlpack::pca::PCA C++ class documentation",
+        "@doxygen/classmlpack_1_1pca_1_1PCA.html");
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform PCA on.", "i");
@@ -92,9 +100,9 @@ void RunPCA(arma::mat& dataset,
   Log::Info << "Performing PCA on dataset..." << endl;
   double varRetained;
 
-  if (CLI::HasParam("var_to_retain"))
+  if (IO::HasParam("var_to_retain"))
   {
-    if (CLI::HasParam("new_dimensionality"))
+    if (IO::HasParam("new_dimensionality"))
       Log::Warn << "New dimensionality (-d) ignored because --var_to_retain "
           << "(-r) was specified." << endl;
 
@@ -112,7 +120,7 @@ void RunPCA(arma::mat& dataset,
 static void mlpackMain()
 {
   // Load input dataset.
-  arma::mat& dataset = CLI::GetParam<arma::mat>("input");
+  arma::mat& dataset = IO::GetParam<arma::mat>("input");
 
   // Issue a warning if the user did not specify an output file.
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
@@ -135,13 +143,13 @@ static void mlpackMain()
   RequireParamValue<double>("var_to_retain",
       [](double x) { return x >= 0.0 && x <= 1.0; }, true,
       "variance retained must be between 0 and 1");
-  size_t newDimension = (CLI::GetParam<int>("new_dimensionality") == 0) ?
-      dataset.n_rows : CLI::GetParam<int>("new_dimensionality");
+  size_t newDimension = (IO::GetParam<int>("new_dimensionality") == 0) ?
+      dataset.n_rows : IO::GetParam<int>("new_dimensionality");
 
   // Get the options for running PCA.
-  const bool scale = CLI::HasParam("scale");
-  const double varToRetain = CLI::GetParam<double>("var_to_retain");
-  const string decompositionMethod = CLI::GetParam<string>(
+  const bool scale = IO::HasParam("scale");
+  const double varToRetain = IO::GetParam<double>("var_to_retain");
+  const string decompositionMethod = IO::GetParam<string>(
       "decomposition_method");
 
   // Perform PCA.
@@ -164,6 +172,6 @@ static void mlpackMain()
   }
 
   // Now save the results.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(dataset);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(dataset);
 }

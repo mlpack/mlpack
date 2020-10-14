@@ -16,8 +16,12 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
-option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
+
+# Set minimum library version required by mlpack.
+set(ARMADILLO_VERSION "8.400.0")
+set(ENSMALLEN_VERSION "2.10.0")
+set(BOOST_VERSION "1.58")
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -29,6 +33,15 @@ else ()
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
+
+# Detect whether the user passed BUILD_PYTHON_BINDINGS in order to determine if
+# we should fail if Python isn't found.
+if (BUILD_PYTHON_BINDINGS)
+  set(FORCE_BUILD_PYTHON_BINDINGS ON)
+else()
+  set(FORCE_BUILD_PYTHON_BINDINGS OFF)
+endif()
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
 
 # Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
 # we should fail if Julia isn't found.
@@ -48,11 +61,19 @@ else()
 endif()
 option(BUILD_GO_BINDINGS "Build Go bindings." ON)
 
-# If building Go bindings then build go shared libraries.    
+# If building Go bindings then build go shared libraries.
 if (BUILD_GO_BINDINGS)
   set(BUILD_GO_SHLIB ON)
 endif()
 
+# Detect whether the user passed BUILD_R_BINDINGS in order to determine if
+# we should fail if R isn't found.
+if (BUILD_R_BINDINGS)
+  set(FORCE_BUILD_R_BINDINGS ON)
+else()
+  set(FORCE_BUILD_R_BINDINGS OFF)
+endif()
+option(BUILD_R_BINDINGS "Build R bindings." ON)
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
@@ -270,50 +291,7 @@ endif()
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
-
-find_package(Armadillo 8.400.0 REQUIRED)
-
-# If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
-# system (where size_t will be 64 bits), suggest to the user that they should
-# compile Armadillo with 64-bit words.  Note that with Armadillo 5.000.0 and
-# newer, ARMA_64BIT_WORD is enabled by default.
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  # Check the version, to see if ARMA_64BIT_WORD is enabled by default.
-  set(ARMA_HAS_64BIT_WORD 0)
-  if(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
-    set(ARMA_HAS_64BIT_WORD 1)
-  else()
-    # Can we open the configuration file?  If not, issue a warning.
-    if(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-      message(WARNING "Armadillo configuration file "
-          "(${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
-    else()
-      # We are on a 64-bit system.  Does Armadillo have ARMA_64BIT_WORD enabled?
-      file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" ARMA_CONFIG)
-      string(REGEX MATCH
-          "[\r\n][ ]*#define ARMA_64BIT_WORD"
-          ARMA_HAS_64BIT_WORD_PRE
-          "${ARMA_CONFIG}")
-
-      string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
-    endif()
-  endif()
-
-  if(ARMA_HAS_64BIT_WORD EQUAL 0)
-    message(WARNING "This is a 64-bit system, but Armadillo was compiled "
-        "without 64-bit index support.  Consider recompiling Armadillo with "
-        "ARMA_64BIT_WORD to enable 64-bit indices (large matrix support). "
-        "mlpack will still work without ARMA_64BIT_WORD defined, but will not "
-        "scale to matrices with more than 4 billion elements.")
-  endif()
-else()
-  # If we are on a 32-bit system, we must manually specify the size of the word
-  # to be 32 bits, since otherwise Armadillo will produce a warning that it is
-  # disabling 64-bit support.
-  if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    add_definitions(-DARMA_32BIT_WORD)
-  endif ()
-endif()
+find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
@@ -379,7 +357,7 @@ endif ()
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
-find_package(Ensmallen 2.10.0)
+find_package(Ensmallen "${ENSMALLEN_VERSION}")
 if (NOT ENSMALLEN_FOUND)
   if (DOWNLOAD_ENSMALLEN)
     file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
@@ -438,6 +416,8 @@ endif ()
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.74.0" "1.74"  
+  "17.3.0" "17.3"		
   "1.72.0" "1.72"
   "1.71.0" "1.71"
   "1.70.0" "1.70"
@@ -459,9 +439,8 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost 1.58
+find_package(Boost "${BOOST_VERSION}"
     COMPONENTS
-      program_options
       unit_test_framework
       serialization
     REQUIRED
@@ -588,8 +567,8 @@ include(CMake/CreateArmaConfigInfo.cmake)
 add_custom_target(mlpack_arma_config ALL
     COMMAND ${CMAKE_COMMAND}
         -D ARMADILLO_INCLUDE_DIR="${ARMADILLO_INCLUDE_DIR}"
-        -D ARMADILLO_VERSION_MAJOR="${ARMADILLO_VERSION_MAJOR}"
         -D OPENMP_FOUND="${OPENMP_FOUND}"
+        -D CMAKE_SIZEOF_VOID_P="${CMAKE_SIZEOF_VOID_P}"
         -P CMake/CreateArmaConfigInfo.cmake
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Updating arma_config.hpp (if necessary)")

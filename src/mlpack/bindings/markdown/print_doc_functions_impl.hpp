@@ -22,6 +22,7 @@
 #include <mlpack/bindings/python/print_doc_functions.hpp>
 #include <mlpack/bindings/julia/print_doc_functions.hpp>
 #include <mlpack/bindings/go/print_doc_functions.hpp>
+#include <mlpack/bindings/R/print_doc_functions.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -49,9 +50,13 @@ inline std::string GetBindingName(const std::string& bindingName)
   {
     return go::GetBindingName(bindingName);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    return r::GetBindingName(bindingName);
+  }
   else
   {
-    throw std::invalid_argument("PrintValue(): unknown "
+    throw std::invalid_argument("GetBindingName(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 }
@@ -76,6 +81,10 @@ inline std::string PrintLanguage(const std::string& language)
   else if (language == "go")
   {
     return "Go";
+  }
+  else if (language == "r")
+  {
+    return "R";
   }
   else
   {
@@ -105,6 +114,10 @@ inline std::string PrintImport(const std::string& bindingName)
   {
     return go::PrintImport();
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    return r::PrintImport();
+  }
   else
   {
     throw std::invalid_argument("PrintImport(): unknown "
@@ -133,6 +146,10 @@ inline std::string PrintInputOptionInfo()
   {
     return go::PrintInputOptionInfo();
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    return r::PrintInputOptionInfo();
+  }
   else
   {
     throw std::invalid_argument("PrintInputOptionInfo(): unknown "
@@ -160,6 +177,10 @@ inline std::string PrintOutputOptionInfo()
   else if (BindingInfo::Language() == "go")
   {
     return go::PrintOutputOptionInfo();
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    return r::PrintOutputOptionInfo();
   }
   else
   {
@@ -390,6 +411,10 @@ inline std::string PrintValue(const T& value, bool quotes)
   {
     result = go::PrintValue(value, quotes);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    result = r::PrintValue(value, quotes);
+  }
   else
   {
     throw std::invalid_argument("PrintValue(): unknown "
@@ -404,10 +429,10 @@ inline std::string PrintValue(const T& value, bool quotes)
  */
 inline std::string PrintDefault(const std::string& paramName)
 {
-  if (CLI::Parameters().count(paramName) == 0)
+  if (IO::Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter" + paramName + "!");
 
-  const util::ParamData& d = CLI::Parameters()[paramName];
+  util::ParamData& d = IO::Parameters()[paramName];
 
   std::ostringstream oss;
 
@@ -432,6 +457,10 @@ inline std::string PrintDefault(const std::string& paramName)
     else if (BindingInfo::Language() == "go")
     {
       oss << go::PrintDefault(paramName);
+    }
+    else if (BindingInfo::Language() == "r")
+    {
+      oss << r::PrintDefault(paramName);
     }
     else
     {
@@ -465,6 +494,10 @@ inline std::string PrintDataset(const std::string& dataset)
   {
     result = go::PrintDataset(dataset);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    result = r::PrintDataset(dataset);
+  }
   else
   {
     throw std::invalid_argument("PrintDataset(): unknown "
@@ -495,6 +528,10 @@ inline std::string PrintModel(const std::string& model)
   else if (BindingInfo::Language() == "go")
   {
     result = go::PrintModel(model);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    result = r::PrintModel(model);
   }
   else
   {
@@ -533,6 +570,11 @@ std::string ProgramCall(const std::string& programName, Args... args)
   {
     s += "```go\n";
     s += go::ProgramCall(programName, args...);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s += "```R\n";
+    s += r::ProgramCall(true, programName, args...);
   }
   else
   {
@@ -579,10 +621,18 @@ inline std::string ProgramCall(const std::string& programName)
   else if (BindingInfo::Language() == "go")
   {
     s += "go\n";
-    std::string import = PrintImport(GetBindingName(programName));
+    std::string import = PrintImport(programName);
     if (import.size() > 0)
       s += import + "\n";
     s += go::ProgramCall(programName);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s += "R\n";
+    std::string import = PrintImport(programName);
+    if (import.size() > 0)
+      s += "R> " + import + "\n";
+    s += r::ProgramCall(programName);
   }
   else
   {
@@ -596,8 +646,9 @@ inline std::string ProgramCall(const std::string& programName)
 /**
  * Print what a user would type to invoke the given option name.  Note that the
  * name *must* exist in the CLI module.  (Note that because of the way
- * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
- * declarataions need to come before the PROGRAM_INFO() declaration.)
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() is structured, this doesn't mean
+ * that all of the PARAM_*() declarataions need to come before
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
 inline std::string ParamString(const std::string& paramName)
 {
@@ -621,6 +672,10 @@ inline std::string ParamString(const std::string& paramName)
   {
     s = go::ParamString(paramName);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::ParamString(paramName);
+  }
   else
   {
     throw std::invalid_argument("ParamString(): unknown "
@@ -633,15 +688,15 @@ inline std::string ParamString(const std::string& paramName)
 /**
  * Print the user-encountered type of an option.
  */
-inline std::string ParamType(const util::ParamData& d)
+inline std::string ParamType(util::ParamData& d)
 {
   std::string output;
-  CLI::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
+  IO::GetSingleton().functionMap[d.tname]["GetPrintableType"](d, NULL,
       &output);
   // We want to make this a link to the type documentation.
   std::string anchorType = output;
   bool result;
-  CLI::GetSingleton().functionMap[d.tname]["IsSerializable"](d, NULL, &result);
+  IO::GetSingleton().functionMap[d.tname]["IsSerializable"](d, NULL, &result);
   if (result)
     anchorType = "model";
 
@@ -667,6 +722,10 @@ inline bool IgnoreCheck(const T& t)
   else if (BindingInfo::Language() == "go")
   {
     return go::IgnoreCheck(t);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    return r::IgnoreCheck(t);
   }
   else
   {

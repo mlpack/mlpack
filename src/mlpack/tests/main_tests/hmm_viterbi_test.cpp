@@ -21,8 +21,8 @@ static const std::string testName = "HMMViterbi";
 #include <mlpack/methods/hmm/hmm.hpp>
 #include <mlpack/methods/hmm/hmm_viterbi_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 #include "hmm_test_utils.hpp"
 
@@ -34,20 +34,20 @@ struct HMMViterbiTestFixture
   HMMViterbiTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~HMMViterbiTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(HMMViterbiMainTest, HMMViterbiTestFixture);
-
-BOOST_AUTO_TEST_CASE(HMMViterbiDiscreteHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMViterbiTestFixture,
+                 "HMMViterbiDiscreteHMMCheckDimensionsTest",
+                 "[HMMViterbiMainTest][BindingTests]")
 {
   // Load data to train a discrete HMM model with.
   arma::mat inp;
@@ -70,15 +70,17 @@ BOOST_AUTO_TEST_CASE(HMMViterbiDiscreteHMMCheckDimensionsTest)
   mlpackMain();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).
-  BOOST_REQUIRE_EQUAL(out.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(out.n_cols, inp.n_cols);
+  REQUIRE(out.n_rows == 1);
+  REQUIRE(out.n_cols == inp.n_cols);
 }
 
-BOOST_AUTO_TEST_CASE(HMMViterbiGaussianHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMViterbiTestFixture,
+                 "HMMViterbiGaussianHMMCheckDimensionsTest",
+                 "[HMMViterbiMainTest][BindingTests]")
 {
   // Load data to train a gaussian HMM model with.
   arma::mat inp;
@@ -101,15 +103,17 @@ BOOST_AUTO_TEST_CASE(HMMViterbiGaussianHMMCheckDimensionsTest)
   mlpackMain();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).
-  BOOST_REQUIRE_EQUAL(out.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(out.n_cols, inp.n_cols);
+  REQUIRE(out.n_rows == 1);
+  REQUIRE(out.n_cols == inp.n_cols);
 }
 
-BOOST_AUTO_TEST_CASE(HMMViterbiGMMHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMViterbiTestFixture,
+                 "HMMViterbiGMMHMMCheckDimensionsTest",
+                 "[HMMViterbiMainTest][BindingTests]")
 {
   std::vector<GMM> gmms(2, GMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
@@ -166,15 +170,17 @@ BOOST_AUTO_TEST_CASE(HMMViterbiGMMHMMCheckDimensionsTest)
   mlpackMain();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).
-  BOOST_REQUIRE_EQUAL(out.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(out.n_cols, observations.n_cols);
+  REQUIRE(out.n_rows == 1);
+  REQUIRE(out.n_cols == observations.n_cols);
 }
 
-BOOST_AUTO_TEST_CASE(HMMViterbiDiagonalGMMHMMCheckDimensionsTest)
+TEST_CASE_METHOD(HMMViterbiTestFixture,
+                 "HMMViterbiDiagonalGMMHMMCheckDimensionsTest",
+                 "[HMMViterbiMainTest][BindingTests]")
 {
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
   gmms[0].Weights() = arma::vec("0.2 0.8");
@@ -231,12 +237,10 @@ BOOST_AUTO_TEST_CASE(HMMViterbiDiagonalGMMHMMCheckDimensionsTest)
   mlpackMain();
 
   // Get the output of viterbi inference.
-  arma::Mat<size_t> out = CLI::GetParam<arma::Mat<size_t> >("output");
+  arma::Mat<size_t> out = IO::GetParam<arma::Mat<size_t> >("output");
 
   // Output sequence length must be the same as input sequence length and
   // there should only be one row (since states are single dimensional values).
-  BOOST_REQUIRE_EQUAL(out.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(out.n_cols, observations.n_cols);
+  REQUIRE(out.n_rows == 1);
+  REQUIRE(out.n_cols == observations.n_cols);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
