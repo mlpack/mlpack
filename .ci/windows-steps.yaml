@@ -179,7 +179,6 @@ steps:
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' -?
     dir ../staging
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `
-        -dHarvestPath=../staging `
         -dConfiguration=Release `
         -dOutDir=bin/x64/Release/ `
         -dPlatform=x64 `
