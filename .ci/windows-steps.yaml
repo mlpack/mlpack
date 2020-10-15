@@ -179,6 +179,8 @@ steps:
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' -?
     dir ../staging
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `
+        mlpack-wix-installer.wixproj Product.wxs HeatGeneratedFileList.wxs `
+        -dHarvestPath=../staging/ `
         -dConfiguration=Release `
         -dOutDir=bin/x64/Release/ `
         -dPlatform=x64 `
@@ -194,8 +196,7 @@ steps:
         -dTargetPath=./bin/x64/Release/mlpack-windows.msi `
         -out obj/x64/Release/ `
         -arch x64 `
-        -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll" `
-        Product.wxs HeatGeneratedFileList.wxs
+        -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll"
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\light.exe' `
         -out ./bin/x64/Release/mlpack-%INSTALL_VERSION%.msi `
         -pdbout ./bin/x64/Release/mlpack-windows.wixpdb `
