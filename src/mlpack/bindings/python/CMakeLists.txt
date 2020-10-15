@@ -15,8 +15,8 @@ macro (post_python_bindings)
         PROPERTY INCLUDE_DIRECTORIES)
     add_custom_target(python_configure
         COMMAND ${CMAKE_COMMAND}
-            -D SETUP_PY_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
-            -D SETUP_PY_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
+            -D DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
+            -D DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
             -D PACKAGE_VERSION="${PACKAGE_VERSION}"
             -D Boost_LIBRARY_DIRS="${Boost_LIBRARY_DIRS}"
             -D ARMADILLO_LIBRARIES="${ARMADILLO_LIBRARIES}"
@@ -28,7 +28,7 @@ macro (post_python_bindings)
             -D CYTHON_INCLUDE_DIRECTORIES="${CYTHON_INCLUDE_DIRECTORIES}"
             -D CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
             -D OUTPUT_DIR=${CMAKE_BINARY_DIR}
-            -P "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/ConfigureSetup.cmake"
+            -P "${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake"
         BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
         COMMENT "Configuring setup.py...")
     add_dependencies(python_configure python_copy)
