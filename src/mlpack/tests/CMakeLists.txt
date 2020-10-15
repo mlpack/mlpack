@@ -1,6 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  callback_test.cpp
   cf_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp
@@ -78,6 +77,7 @@ add_executable(mlpack_catch_test
   bias_svd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
+  callback_test.cpp
   cli_binding_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
