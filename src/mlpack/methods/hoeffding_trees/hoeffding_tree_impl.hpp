@@ -804,13 +804,17 @@ void HoeffdingTree<
   ar(CEREAL_POINTER(dimensionMappings));
 
   // Special handling for const object.
-  ar(CEREAL_POINTER(const_cast<data::DatasetInfo*&>(datasetInfo)));
+  data::DatasetInfo* d = NULL;
+  if (cereal::is_saving<Archive>())
+    d = const_cast<data::DatasetInfo*>(datasetInfo);
+  ar(CEREAL_POINTER(d));
 
   if (cereal::is_loading<Archive>())
   {
     if (datasetInfo && ownsInfo)
       delete datasetInfo;
 
+    datasetInfo = d;
     ownsInfo = true;
     ownsMappings = true; // We also own the mappings we loaded.
 
