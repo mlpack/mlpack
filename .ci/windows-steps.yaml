@@ -184,7 +184,6 @@ steps:
         -dOutDir=bin/x64/Release/ `
         -dPlatform=x64 `
         -dProjectDir=. `
-        -dProjectExt=.wixproj `
         -dProjectFileName=mlpack-win-installer.wixproj `
         -dProjectName=mlpack-win-installer `
         -dProjectPath=mlpack-win-installer.wixproj `
