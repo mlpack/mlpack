@@ -12,7 +12,7 @@ steps:
 # Install Build Dependencies
 - script: |
     set -e
-    sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
+    sudo xcode-select --switch /Applications/Xcode_12.2.app/Contents/Developer
     unset BOOST_ROOT
     brew install openblas armadillo boost
 
