@@ -1,31 +1,22 @@
 # mlpack test executable.
 add_executable(mlpack_test
   callback_test.cpp
-  cf_test.cpp
-  dcgan_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp
   fastmks_test.cpp
   facilities_test.cpp
-  gan_test.cpp
   hpt_test.cpp
   hyperplane_test.cpp
   init_rules_test.cpp
-  krann_search_test.cpp
-  ksinit_test.cpp
   linear_svm_test.cpp
   local_coordinate_coding_test.cpp
   log_test.cpp
   logistic_regression_test.cpp
   lsh_test.cpp
-  math_test.cpp
   matrix_completion_test.cpp
   maximal_inputs_test.cpp
   mlpack_test.cpp
   mock_categorical_data.hpp
-  nbc_test.cpp
-  nmf_test.cpp
-  nystroem_method_test.cpp
   perceptron_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp
@@ -41,18 +32,13 @@ add_executable(mlpack_test
   test_tools.hpp
   timer_test.cpp
   union_find_test.cpp
-  wgan_test.cpp
-  main_tests/cf_test.cpp
   main_tests/det_test.cpp
   main_tests/emst_test.cpp
   main_tests/fastmks_test.cpp
-  main_tests/krann_test.cpp
   main_tests/linear_svm_test.cpp
   main_tests/local_coordinate_coding_test.cpp
   main_tests/logistic_regression_test.cpp
   main_tests/lsh_test.cpp
-  main_tests/nbc_test.cpp
-  main_tests/nmf_test.cpp
   main_tests/perceptron_test.cpp
   main_tests/radical_test.cpp
   main_tests/test_helper.hpp
@@ -76,12 +62,14 @@ add_executable(mlpack_catch_test
   bias_svd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
+  cf_test.cpp
   cli_binding_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
   cosine_tree_test.cpp
   cv_test.cpp
   dbscan_test.cpp
+  dcgan_test.cpp
   decision_stump_test.cpp
   decision_tree_test.cpp
   det_test.cpp
@@ -89,6 +77,7 @@ add_executable(mlpack_catch_test
   gmm_test.cpp
   hmm_test.cpp
   feedforward_network_test.cpp
+  gan_test.cpp
   hoeffding_tree_test.cpp
   image_load_test.cpp
   imputation_test.cpp
@@ -100,6 +89,8 @@ add_executable(mlpack_catch_test
   kfn_test.cpp
   kmeans_test.cpp
   knn_test.cpp
+  krann_search_test.cpp
+  ksinit_test.cpp
   lars_test.cpp
   layer_names_test.cpp
   lin_alg_test.cpp
@@ -108,9 +99,13 @@ add_executable(mlpack_catch_test
   load_save_test.cpp
   loss_functions_test.cpp
   main.cpp
+  math_test.cpp
   metric_test.cpp
   mean_shift_test.cpp
+  nbc_test.cpp
   nca_test.cpp
+  nmf_test.cpp
+  nystroem_method_test.cpp
   octree_test.cpp
   one_hot_encoding_test.cpp
   pca_test.cpp
@@ -144,6 +139,7 @@ add_executable(mlpack_catch_test
   tree_traits_test.cpp
   ub_tree_test.cpp
   vantage_point_tree_test.cpp
+  wgan_test.cpp
   main_tests/adaboost_test.cpp
   main_tests/gmm_generate_test.cpp
   main_tests/gmm_probability_test.cpp
@@ -155,6 +151,7 @@ add_executable(mlpack_catch_test
   main_tests/hmm_viterbi_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/bayesian_linear_regression_test.cpp
+  main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/decision_stump_test.cpp
   main_tests/decision_tree_test.cpp
@@ -165,10 +162,13 @@ add_executable(mlpack_catch_test
   main_tests/kfn_test.cpp
   main_tests/kmeans_test.cpp
   main_tests/knn_test.cpp
+  main_tests/krann_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/lmnn_test.cpp
   main_tests/mean_shift_test.cpp
+  main_tests/nbc_test.cpp
   main_tests/nca_test.cpp
+  main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_imputer_test.cpp
@@ -228,7 +228,6 @@ add_custom_command(TARGET mlpack_test
 # The list of long running parallel tests
 set(parallel_tests
   "LocalCoordinateCodingTest;"
-  "CFTest;"
   "LogisticRegressionTest;"
   "LinearSVMTest")
 
