@@ -179,7 +179,7 @@ steps:
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' -?
     dir ../staging
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `
-        mlpack-wix-installer.wixproj Product.wxs HeatGeneratedFileList.wxs `
+        mlpack-win-installer.wixproj Product.wxs HeatGeneratedFileList.wxs `
         -dHarvestPath=../staging/ `
         -dConfiguration=Release `
         -dOutDir=bin/x64/Release/ `
