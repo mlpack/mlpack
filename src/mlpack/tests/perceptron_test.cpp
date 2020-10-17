@@ -13,21 +13,18 @@
 #include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/perceptron/learning_policies/simple_weight_update.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace arma;
 using namespace mlpack::perceptron;
 using namespace mlpack::distribution;
 
-BOOST_AUTO_TEST_SUITE(PerceptronTest);
-
 /**
  * This test tests whether the SimpleWeightUpdate updates weights and biases correctly,
  * without specifying the instance weight.
  */
-BOOST_AUTO_TEST_CASE(SimpleWeightUpdateWeights)
+TEST_CASE("SimpleWeightUpdateWeights", "[PerceptronTest]")
 {
   SimpleWeightUpdate wip;
 
@@ -48,27 +45,27 @@ BOOST_AUTO_TEST_CASE(SimpleWeightUpdateWeights)
   wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass,
                     correctClass);
 
-  BOOST_CHECK_EQUAL(weights(0, 0), -1);
-  BOOST_CHECK_EQUAL(weights(1, 0), 0);
-  BOOST_CHECK_EQUAL(weights(2, 0), 1);
-  BOOST_CHECK_EQUAL(weights(3, 0), 2);
-  BOOST_CHECK_EQUAL(weights(4, 0), 3);
+  CHECK(weights(0, 0) == -1);
+  CHECK(weights(1, 0) == 0);
+  CHECK(weights(2, 0) == 1);
+  CHECK(weights(3, 0) == 2);
+  CHECK(weights(4, 0) == 3);
 
-  BOOST_CHECK_EQUAL(weights(0, 2), 7);
-  BOOST_CHECK_EQUAL(weights(1, 2), 8);
-  BOOST_CHECK_EQUAL(weights(2, 2), 9);
-  BOOST_CHECK_EQUAL(weights(3, 2), 10);
-  BOOST_CHECK_EQUAL(weights(4, 2), 11);
+  CHECK(weights(0, 2) == 7);
+  CHECK(weights(1, 2) == 8);
+  CHECK(weights(2, 2) == 9);
+  CHECK(weights(3, 2) == 10);
+  CHECK(weights(4, 2) == 11);
 
-  BOOST_CHECK_EQUAL(biases(0), 1);
-  BOOST_CHECK_EQUAL(biases(2), 8);
+  CHECK(biases(0) == 1);
+  CHECK(biases(2) == 8);
 }
 
 /**
  * This test tests whether the SimpleWeightUpdate updates weights and biases correctly,
  * and specifies the instance weight.
  */
-BOOST_AUTO_TEST_CASE(SimpleWeightUpdateInstanceWeight)
+TEST_CASE("SimpleWeightUpdateInstanceWeight", "[PerceptronTest]")
 {
   SimpleWeightUpdate wip;
 
@@ -91,26 +88,26 @@ BOOST_AUTO_TEST_CASE(SimpleWeightUpdateInstanceWeight)
   wip.UpdateWeights(trainingPoint, weights, biases, incorrectClass,
                     correctClass, instanceWeight);
 
-  BOOST_CHECK_EQUAL(weights(0, 0), -3);
-  BOOST_CHECK_EQUAL(weights(1, 0), -4);
-  BOOST_CHECK_EQUAL(weights(2, 0), -5);
-  BOOST_CHECK_EQUAL(weights(3, 0), -6);
-  BOOST_CHECK_EQUAL(weights(4, 0), -7);
+  CHECK(weights(0, 0) == -3);
+  CHECK(weights(1, 0) == -4);
+  CHECK(weights(2, 0) == -5);
+  CHECK(weights(3, 0) == -6);
+  CHECK(weights(4, 0) == -7);
 
-  BOOST_CHECK_EQUAL(weights(0, 2), 9);
-  BOOST_CHECK_EQUAL(weights(1, 2), 12);
-  BOOST_CHECK_EQUAL(weights(2, 2), 15);
-  BOOST_CHECK_EQUAL(weights(3, 2), 18);
-  BOOST_CHECK_EQUAL(weights(4, 2), 21);
+  CHECK(weights(0, 2) == 9);
+  CHECK(weights(1, 2) == 12);
+  CHECK(weights(2, 2) == 15);
+  CHECK(weights(3, 2) == 18);
+  CHECK(weights(4, 2) == 21);
 
-  BOOST_CHECK_EQUAL(biases(0), -1);
-  BOOST_CHECK_EQUAL(biases(2), 10);
+  CHECK(biases(0) == -1);
+  CHECK(biases(2) == 10);
 }
 
 /**
  * This test tests whether the perceptron converges for the AND gate classifier.
  */
-BOOST_AUTO_TEST_CASE(And)
+TEST_CASE("And", "[PerceptronTest]")
 {
   mat trainData;
   trainData << 0 << 1 << 1 << 0 << endr
@@ -126,16 +123,16 @@ BOOST_AUTO_TEST_CASE(And)
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 0);
+  CHECK(predictedLabels(0, 0) == 0);
+  CHECK(predictedLabels(0, 1) == 0);
+  CHECK(predictedLabels(0, 2) == 1);
+  CHECK(predictedLabels(0, 3) == 0);
 }
 
 /**
  * This test tests whether the perceptron converges for the OR gate classifier.
  */
-BOOST_AUTO_TEST_CASE(Or)
+TEST_CASE("Or", "[PerceptronTest]")
 {
   mat trainData;
   trainData << 0 << 1 << 1 << 0 << endr
@@ -152,17 +149,17 @@ BOOST_AUTO_TEST_CASE(Or)
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 0);
+  CHECK(predictedLabels(0, 0) == 1);
+  CHECK(predictedLabels(0, 1) == 1);
+  CHECK(predictedLabels(0, 2) == 1);
+  CHECK(predictedLabels(0, 3) == 0);
 }
 
 /**
  * This tests the convergence on a set of linearly separable data with 3
  * classes.
  */
-BOOST_AUTO_TEST_CASE(Random3)
+TEST_CASE("Random3", "[PerceptronTest]")
 {
   mat trainData;
   trainData << 0 << 1 << 1 << 4 << 5 << 4 << 1 << 2 << 1 << endr
@@ -180,14 +177,14 @@ BOOST_AUTO_TEST_CASE(Random3)
   p.Classify(testData, predictedLabels);
 
   for (size_t i = 0; i < predictedLabels.n_cols; ++i)
-    BOOST_CHECK_EQUAL(predictedLabels(0, i), 0);
+    CHECK(predictedLabels(0, i) == 0);
 }
 
 /**
  * This tests the convergence of the perceptron on a dataset which has only TWO
  * points which belong to different classes.
  */
-BOOST_AUTO_TEST_CASE(TwoPoints)
+TEST_CASE("TwoPoints", "[PerceptronTest]")
 {
   mat trainData;
   trainData << 0 << 1 << endr
@@ -204,15 +201,15 @@ BOOST_AUTO_TEST_CASE(TwoPoints)
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 1);
+  CHECK(predictedLabels(0, 0) == 0);
+  CHECK(predictedLabels(0, 1) == 1);
 }
 
 /**
  * This tests the convergence of the perceptron on a dataset which has a
  * non-linearly separable dataset.
  */
-BOOST_AUTO_TEST_CASE(NonLinearlySeparableDataset)
+TEST_CASE("NonLinearlySeparableDataset", "[PerceptronTest]")
 {
   mat trainData;
   trainData << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8
@@ -232,13 +229,13 @@ BOOST_AUTO_TEST_CASE(NonLinearlySeparableDataset)
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 1);
+  CHECK(predictedLabels(0, 0) == 0);
+  CHECK(predictedLabels(0, 1) == 0);
+  CHECK(predictedLabels(0, 2) == 1);
+  CHECK(predictedLabels(0, 3) == 1);
 }
 
-BOOST_AUTO_TEST_CASE(SecondaryConstructor)
+TEST_CASE("SecondaryConstructor", "[PerceptronTest]")
 {
   mat trainData;
   trainData << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8
@@ -254,5 +251,3 @@ BOOST_AUTO_TEST_CASE(SecondaryConstructor)
 
   Perceptron<> p2(p1);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

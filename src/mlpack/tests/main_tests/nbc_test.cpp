@@ -18,8 +18,8 @@ static const std::string testName = "NBC";
 #include <mlpack/methods/naive_bayes/nbc_main.cpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -40,17 +40,16 @@ struct NBCTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(NBCMainTest, NBCTestFixture);
-
 /**
  * Ensure that we get desired dimensions when both training
  * data and labels are passed.
  */
-BOOST_AUTO_TEST_CASE(NBCOutputDimensionTest)
+TEST_CASE_METHOD(NBCTestFixture, "NBCOutputDimensionTest",
+                "[NBCMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -62,7 +61,7 @@ BOOST_AUTO_TEST_CASE(NBCOutputDimensionTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -79,14 +78,12 @@ BOOST_AUTO_TEST_CASE(NBCOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
 }
 
 /**
@@ -94,12 +91,13 @@ BOOST_AUTO_TEST_CASE(NBCOutputDimensionTest)
  * when labels are not passed specifically and results
  * are same from both label and labeless models.
  */
-BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
+TEST_CASE_METHOD(NBCTestFixture, "NBCLabelsLessDimensionTest",
+                "[NBCMainTest][BindingTests]")
 {
   // Train NBC without providing labels.
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -108,7 +106,7 @@ BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -124,14 +122,12 @@ BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
 
   // Reset data passed.
   IO::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -158,14 +154,12 @@ BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
 
   // Check that initial output and final output matrix
   // from two models are same.
@@ -176,15 +170,16 @@ BOOST_AUTO_TEST_CASE(NBCLabelsLessDimensionTest)
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
+TEST_CASE_METHOD(NBCTestFixture, "NBCModelReuseTest",
+                "[NBCMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -216,14 +211,12 @@ BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
 
   // Check that initial output and final output
   // matrix using saved model are same.
@@ -234,11 +227,12 @@ BOOST_AUTO_TEST_CASE(NBCModelReuseTest)
 /**
  * Make sure only one of training data or pre-trained model is passed.
  */
-BOOST_AUTO_TEST_CASE(NBCTrainingVerTest)
+TEST_CASE_METHOD(NBCTestFixture, "NBCTrainingVerTest",
+                "[NBCMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
@@ -250,7 +244,7 @@ BOOST_AUTO_TEST_CASE(NBCTrainingVerTest)
                 std::move(IO::GetParam<NBCModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -258,16 +252,17 @@ BOOST_AUTO_TEST_CASE(NBCTrainingVerTest)
  * Check that models trained with or without incremental
  * variance outputs same results
  */
-BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
+TEST_CASE_METHOD(NBCTestFixture, "NBCIncrementalVarianceTest",
+                "[NBCMainTest][BindingTests]")
 {
   // Train NBC with incremental variance.
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -284,14 +279,12 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
 
   bindings::tests::CleanMemory();
 
@@ -316,14 +309,12 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_cols,
-                      testSize);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_cols,
-                      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output_probs").n_rows, 2);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
 
   // Check that initial output and final output matrix
   // from two models are same.
@@ -336,11 +327,12 @@ BOOST_AUTO_TEST_CASE(NBCIncrementalVarianceTest)
  * same output.  This test case should be removed in mlpack 4 when the
  * deprecated parameter 'output' is removed.
  */
-BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
+TEST_CASE_METHOD(NBCTestFixture, "NBCOptionConsistencyTest",
+                "[NBCMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -352,7 +344,7 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -375,8 +367,7 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
       IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions must be equal.
-  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
-                                  testY2.begin(), testY2.end());
+  CheckMatrices(testY1, testY2);
 }
 
 
@@ -385,11 +376,12 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest)
  * 'probabilities' give the same output.  This test case should be removed in
  * mlpack 4 when the deprecated parameter: 'output_probabilities' is removed.
  */
-BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest2)
+TEST_CASE_METHOD(NBCTestFixture, "NBCOptionConsistencyTest2",
+                "[NBCMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
-    BOOST_FAIL("Cannot load train dataset trainSet.csv!");
+    FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
@@ -401,7 +393,7 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest2)
 
   arma::mat testData;
   if (!data::Load("testSet.csv", testData))
-    BOOST_FAIL("Cannot load test dataset testSet.csv!");
+    FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
   testData.shed_row(testData.n_rows - 1);
@@ -424,8 +416,5 @@ BOOST_AUTO_TEST_CASE(NBCOptionConsistencyTest2)
       IO::GetParam<arma::mat>("probabilities");
 
   // Both solutions must be equal.
-  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
-                                  testY2.begin(), testY2.end());
+  CheckMatrices(testY1, testY2);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

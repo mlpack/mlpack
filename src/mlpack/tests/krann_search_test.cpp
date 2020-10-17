@@ -14,8 +14,7 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 #include <mlpack/methods/rann/ra_search.hpp>
 #include <mlpack/methods/rann/ra_model.hpp>
@@ -27,10 +26,8 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::bound;
 
-BOOST_AUTO_TEST_SUITE(KRANNTest);
-
 // Test the correctness and guarantees of KRANN when in naive mode.
-BOOST_AUTO_TEST_CASE(NaiveGuaranteeTest)
+TEST_CASE("NaiveGuaranteeTest", "[KRANNTest]")
 {
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -81,12 +78,12 @@ BOOST_AUTO_TEST_CASE(NaiveGuaranteeTest)
   // 5% of 100 queries is 5.
   size_t maxNumQueriesFail = 6;
 
-  BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
+  REQUIRE(numQueriesFail < maxNumQueriesFail);
 }
 
 // Test single-tree rank-approximate search (harder to test because of
 // the randomness involved).
-BOOST_AUTO_TEST_CASE(SingleTreeSearch)
+TEST_CASE("SingleTreeSearch", "[KRANNTest]")
 {
   arma::mat refData;
   arma::mat queryData;
@@ -140,12 +137,12 @@ BOOST_AUTO_TEST_CASE(SingleTreeSearch)
   // 5% of 100 queries is 5.
   size_t maxNumQueriesFail = 6;
 
-  BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
+  REQUIRE(numQueriesFail < maxNumQueriesFail);
 }
 
 // Test dual-tree rank-approximate search (harder to test because of the
 // randomness involved).
-BOOST_AUTO_TEST_CASE(DualTreeSearch)
+TEST_CASE("DualTreeSearch", "[KRANNTest]")
 {
   arma::mat refData;
   arma::mat queryData;
@@ -209,12 +206,12 @@ BOOST_AUTO_TEST_CASE(DualTreeSearch)
   // 5% of 100 queries is 5.
   size_t maxNumQueriesFail = 6;
 
-  BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
+  REQUIRE(numQueriesFail < maxNumQueriesFail);
 }
 
 // Test rank-approximate search with just a single dataset.  These tests just
 // ensure that the method runs okay.
-BOOST_AUTO_TEST_CASE(SingleDatasetNaiveSearch)
+TEST_CASE("SingleDatasetNaiveSearch", "[KRANNTest]")
 {
   arma::mat dataset(5, 2500);
   dataset.randn();
@@ -226,15 +223,15 @@ BOOST_AUTO_TEST_CASE(SingleDatasetNaiveSearch)
 
   naive.Search(1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 2500);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 2500);
+  REQUIRE(neighbors.n_rows == 1);
+  REQUIRE(neighbors.n_cols == 2500);
+  REQUIRE(distances.n_rows == 1);
+  REQUIRE(distances.n_cols == 2500);
 }
 
 // Test rank-approximate search with just a single dataset in single-tree mode.
 // These tests just ensure that the method runs okay.
-BOOST_AUTO_TEST_CASE(SingleDatasetSingleSearch)
+TEST_CASE("SingleDatasetSingleSearch", "[KRANNTest]")
 {
   arma::mat dataset(5, 2500);
   dataset.randn();
@@ -246,15 +243,15 @@ BOOST_AUTO_TEST_CASE(SingleDatasetSingleSearch)
 
   single.Search(1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 2500);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 2500);
+  REQUIRE(neighbors.n_rows == 1);
+  REQUIRE(neighbors.n_cols == 2500);
+  REQUIRE(distances.n_rows == 1);
+  REQUIRE(distances.n_cols == 2500);
 }
 
 // Test rank-approximate search with just a single dataset in dual-tree mode.
 // These tests just ensure that the method runs okay.
-BOOST_AUTO_TEST_CASE(SingleDatasetSearch)
+TEST_CASE("SingleDatasetSearch", "[KRANNTest]")
 {
   arma::mat dataset(5, 2500);
   dataset.randn();
@@ -265,14 +262,14 @@ BOOST_AUTO_TEST_CASE(SingleDatasetSearch)
   RASearch<> allkrann(dataset);
   allkrann.Search(1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 2500);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 2500);
+  REQUIRE(neighbors.n_rows == 1);
+  REQUIRE(neighbors.n_cols == 2500);
+  REQUIRE(distances.n_rows == 1);
+  REQUIRE(distances.n_cols == 2500);
 }
 
 // Test single-tree rank-approximate search with cover trees.
-BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
+TEST_CASE("SingleCoverTreeTest", "[KRANNTest]")
 {
   arma::mat refData;
   arma::mat queryData;
@@ -329,11 +326,11 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   // 5% of 100 queries is 5.
   size_t maxNumQueriesFail = 6;
 
-  BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
+  REQUIRE(numQueriesFail < maxNumQueriesFail);
 }
 
 // Test dual-tree rank-approximate search with cover trees.
-BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
+TEST_CASE("DualCoverTreeTest", "[KRANNTest]")
 {
   arma::mat refData;
   arma::mat queryData;
@@ -396,13 +393,13 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   // 5% of 100 queries is 5.
   size_t maxNumQueriesFail = 6;
 
-  BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
+  REQUIRE(numQueriesFail < maxNumQueriesFail);
 }
 
 // Test single-tree rank-approximate search with ball trees.
 // This is known to not work right now.
 /*
-BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
+TEST_CASE("SingleBallTreeTest", "[KRANNTest]")
 {
   arma::mat refData;
   arma::mat queryData;
@@ -461,11 +458,11 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   // 5% of 100 queries is 5.
   size_t maxNumQueriesFail = 6;
 
-  BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
+  REQUIRE(numQueriesFail < maxNumQueriesFail);
 }
 
 // Test dual-tree rank-approximate search with Ball trees.
-BOOST_AUTO_TEST_CASE(DualBallTreeTest)
+TEST_CASE("DualBallTreeTest", "[KRANNTest]")
 {
   arma::mat refData;
   arma::mat queryData;
@@ -528,7 +525,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   // 5% of 100 queries is 5.
   size_t maxNumQueriesFail = 6;
 
-  BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
+  REQUIRE(numQueriesFail < maxNumQueriesFail);
 }
 */
 
@@ -536,7 +533,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
  * Make sure that the neighborPtr matrix isn't accidentally deleted.
  * See issue #478.
  */
-BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
+TEST_CASE("KRANNNeighborPtrDeleteTest", "[KRANNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
 
@@ -553,16 +550,16 @@ BOOST_AUTO_TEST_CASE(NeighborPtrDeleteTest)
 
   // These will (hopefully) fail is either the neighbors or the distances matrix
   // has been accidentally deleted.
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 50);
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 50);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
+  REQUIRE(neighbors.n_cols == 50);
+  REQUIRE(neighbors.n_rows == 3);
+  REQUIRE(distances.n_cols == 50);
+  REQUIRE(distances.n_rows == 3);
 }
 
 /**
  * Test that the rvalue reference move constructor works.
  */
-BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+TEST_CASE("KRANNMoveConstructorTest", "[KRANNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 200);
   arma::mat copy(dataset);
@@ -570,9 +567,9 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   KRANN moveknn(std::move(copy));
   KRANN knn(dataset);
 
-  BOOST_REQUIRE_EQUAL(copy.n_elem, 0);
-  BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_rows, 3);
-  BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_cols, 200);
+  REQUIRE(copy.n_elem == 0);
+  REQUIRE(moveknn.ReferenceSet().n_rows == 3);
+  REQUIRE(moveknn.ReferenceSet().n_cols == 200);
 
   arma::mat moveDistances, distances;
   arma::Mat<size_t> moveNeighbors, neighbors;
@@ -580,17 +577,17 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   moveknn.Search(1, moveNeighbors, moveDistances);
   knn.Search(1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);
-  BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);
-  BOOST_REQUIRE_EQUAL(moveNeighbors.n_cols, neighbors.n_cols);
-  BOOST_REQUIRE_EQUAL(moveDistances.n_rows, distances.n_rows);
-  BOOST_REQUIRE_EQUAL(moveDistances.n_cols, distances.n_cols);
+  REQUIRE(moveNeighbors.n_rows == neighbors.n_rows);
+  REQUIRE(moveNeighbors.n_rows == neighbors.n_rows);
+  REQUIRE(moveNeighbors.n_cols == neighbors.n_cols);
+  REQUIRE(moveDistances.n_rows == distances.n_rows);
+  REQUIRE(moveDistances.n_cols == distances.n_cols);
 }
 
 /**
  * Test that the dataset can be retrained with the move Train() function.
  */
-BOOST_AUTO_TEST_CASE(MoveTrainTest)
+TEST_CASE("KRANNMoveTrainTest", "[KRANNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 200);
 
@@ -602,24 +599,24 @@ BOOST_AUTO_TEST_CASE(MoveTrainTest)
   arma::Mat<size_t> neighbors;
   knn.Search(1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 200);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 200);
+  REQUIRE(dataset.n_elem == 0);
+  REQUIRE(neighbors.n_cols == 200);
+  REQUIRE(distances.n_cols == 200);
 
   dataset = arma::randu<arma::mat>(3, 300);
   knn.Naive() = true;
   knn.Train(std::move(dataset));
   knn.Search(1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 300);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 300);
+  REQUIRE(dataset.n_elem == 0);
+  REQUIRE(neighbors.n_cols == 300);
+  REQUIRE(distances.n_cols == 300);
 }
 
 /**
  * Make sure the RAModel class works.
  */
-BOOST_AUTO_TEST_CASE(RAModelTest)
+TEST_CASE("RAModelTest", "[KRANNTest]")
 {
   // Ensure that we can build an RAModel<NearestNeighborSearch> and get correct
   // results.
@@ -710,9 +707,7 @@ BOOST_AUTO_TEST_CASE(RAModelTest)
       // 5% of 100 queries is 5.
       size_t maxNumQueriesFail = 50; // See #734 for why this is so high.
 
-      BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
+      REQUIRE(numQueriesFail < maxNumQueriesFail);
     }
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();
