@@ -180,7 +180,7 @@ steps:
     dir ../staging
     type Product.wxs
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `
-        mlpack-win-installer.wixproj Product.wxs HeatGeneratedFileList.wxs `
+        Product.wxs HeatGeneratedFileList.wxs `
         -dConfiguration=Release `
         -dOutDir=bin/x64/Release/ `
         -dPlatform=x64 `
