@@ -20,9 +20,9 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
+#include "serialization_catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -30,14 +30,12 @@ using namespace mlpack::math;
 using namespace mlpack::regression;
 using namespace std::placeholders;
 
-BOOST_AUTO_TEST_SUITE(GANNetworkTest);
-
 /*
  * Load pre trained network values
  * for generating distribution that
  * is close to N(4, 0.5)
  */
-BOOST_AUTO_TEST_CASE(GANTest)
+TEST_CASE("GANTest", "[GANNetworkTest]")
 {
   size_t generatorHiddenLayerSize = 8;
   size_t discriminatorHiddenLayerSize = 8;
@@ -125,8 +123,8 @@ BOOST_AUTO_TEST_CASE(GANTest)
   double originalStd = arma::as_scalar(arma::stddev(
       generatedData.rows(dim, 2 * dim - 1), 0, 1));
 
-  BOOST_REQUIRE_LE(generatedMean - originalMean, 0.2);
-  BOOST_REQUIRE_LE(generatedStd - originalStd, 0.2);
+  REQUIRE(generatedMean - originalMean <= 0.2);
+  REQUIRE(generatedStd - originalStd <= 0.2);
 }
 
 /*
@@ -134,7 +132,7 @@ BOOST_AUTO_TEST_CASE(GANTest)
  * It's not viable to train on bigger parameters due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
  */
-BOOST_AUTO_TEST_CASE(GANMNISTTest)
+TEST_CASE("GANMNISTTest", "[GANNetworkTest]")
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 5;
@@ -217,8 +215,8 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
   Log::Info << "Training..." << std::endl;
   std::stringstream stream;
   double objVal = gan.Train(trainData, optimizer, ens::ProgressBar(70, stream));
-  BOOST_REQUIRE_GT(stream.str().length(), 0);
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(stream.str().length() > 0);
+  REQUIRE(std::isfinite(objVal) == true);
 
   // Generate samples.
   Log::Info << "Sampling..." << std::endl;
@@ -284,7 +282,7 @@ BOOST_AUTO_TEST_CASE(GANMNISTTest)
  * Create GAN network and test for memory sharing
  * between discriminator and gan predictors.
  */
-BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
+TEST_CASE("GANMemorySharingTest", "[GANNetworkTest]")
 {
   size_t generatorHiddenLayerSize = 8;
   size_t discriminatorHiddenLayerSize = 8;
@@ -347,5 +345,3 @@ BOOST_AUTO_TEST_CASE(GANMemorySharingTest)
   CheckMatricesNotEqual(gan.Predictors().head_cols(trainData.n_cols),
       trainData);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

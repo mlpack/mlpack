@@ -21,7 +21,7 @@ static const std::string testName = "CollaborativeFiltering";
 #include <mlpack/core/math/random.hpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
+#include "../catch.hpp"
 
 using namespace mlpack;
 using namespace arma;
@@ -51,12 +51,11 @@ static void ResetSettings()
   IO::RestoreSettings(testName);
 }
 
-BOOST_FIXTURE_TEST_SUITE(CFMainTest, CFTestFixture);
-
 /**
  * Ensure the rank is non-negative.
  */
-BOOST_AUTO_TEST_CASE(CFRankBoundTest)
+TEST_CASE_METHOD(CFTestFixture, "CFRankBoundTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -66,14 +65,15 @@ BOOST_AUTO_TEST_CASE(CFRankBoundTest)
   SetInputParam("training", std::move(dataset));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure min_residue is non-negative.
  */
-BOOST_AUTO_TEST_CASE(CFMinResidueBoundTest)
+TEST_CASE_METHOD(CFTestFixture, "CFMinResidueBoundTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -83,14 +83,15 @@ BOOST_AUTO_TEST_CASE(CFMinResidueBoundTest)
   SetInputParam("training", std::move(dataset));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure max_iterations is non-negative.
  */
-BOOST_AUTO_TEST_CASE(CFMaxIterationsBoundTest)
+TEST_CASE_METHOD(CFTestFixture, "CFMaxIterationsBoundTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -100,14 +101,15 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsBoundTest)
   SetInputParam("training", std::move(dataset));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure recommendations is positive.
  */
-BOOST_AUTO_TEST_CASE(CFRecommendationsBoundTest)
+TEST_CASE_METHOD(CFTestFixture, "CFRecommendationsBoundTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -119,21 +121,22 @@ BOOST_AUTO_TEST_CASE(CFRecommendationsBoundTest)
   SetInputParam("max_iterations", int(5));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // recommendations should not be negative.
   SetInputParam("recommendations", int(-1));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure neighborhood is positive and not larger than the number of users.
  */
-BOOST_AUTO_TEST_CASE(CFNeighborhoodBoundTest)
+TEST_CASE_METHOD(CFTestFixture, "CFNeighborhoodBoundTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -144,21 +147,21 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodBoundTest)
   SetInputParam("training", std::move(dataset));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // neighborhood should not be negative.
   SetInputParam("neighborhood", int(-1));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // neighborhood should not be larger than the number of users.
   SetInputParam("neighborhood", int(userNum + 1));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -167,7 +170,8 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodBoundTest)
  * "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
  * "BiasSVD", "SVDPP" }.
  */
-BOOST_AUTO_TEST_CASE(CFAlgorithmBoundTest)
+TEST_CASE_METHOD(CFTestFixture, "CFAlgorithmBoundTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -177,14 +181,15 @@ BOOST_AUTO_TEST_CASE(CFAlgorithmBoundTest)
   SetInputParam("training", std::move(dataset));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure saved models can be reused again.
  */
-BOOST_AUTO_TEST_CASE(CFModelReuseTest)
+TEST_CASE_METHOD(CFTestFixture, "CFModelReuseTest",
+                "[CFMainTest][BindingTests]")
 {
   std::string algorithms[] = { "NMF", "BatchSVD",
       "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
@@ -222,15 +227,16 @@ BOOST_AUTO_TEST_CASE(CFModelReuseTest)
 
     const Mat<size_t>& output = IO::GetParam<Mat<size_t>>("output");
 
-    BOOST_REQUIRE_EQUAL(output.n_rows, recommendations);
-    BOOST_REQUIRE_EQUAL(output.n_cols, querySize);
+    REQUIRE(output.n_rows == recommendations);
+    REQUIRE(output.n_cols == querySize);
   }
 }
 
 /**
  * Ensure output of all_user_recommendations has correct size.
  */
-BOOST_AUTO_TEST_CASE(CFAllUserRecommendationsTest)
+TEST_CASE_METHOD(CFTestFixture, "CFAllUserRecommendationsTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -244,13 +250,14 @@ BOOST_AUTO_TEST_CASE(CFAllUserRecommendationsTest)
 
   const Mat<size_t>& output = IO::GetParam<Mat<size_t>>("output");
 
-  BOOST_REQUIRE_EQUAL(output.n_cols, userNum);
+  REQUIRE(output.n_cols == userNum);
 }
 
 /**
  * Test that rank is used.
  */
-BOOST_AUTO_TEST_CASE(CFRankTest)
+TEST_CASE_METHOD(CFTestFixture, "CFRankTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -265,13 +272,14 @@ BOOST_AUTO_TEST_CASE(CFRankTest)
 
   const CFModel* outputModel = IO::GetParam<CFModel*>("output_model");
 
-  BOOST_REQUIRE_EQUAL(outputModel->template CFPtr<NMFPolicy>()->Rank(), rank);
+  REQUIRE(outputModel->template CFPtr<NMFPolicy>()->Rank() == rank);
 }
 
 /**
  * Test that min_residue is used.
  */
-BOOST_AUTO_TEST_CASE(CFMinResidueTest)
+TEST_CASE_METHOD(CFTestFixture, "CFMinResidueTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -310,13 +318,14 @@ BOOST_AUTO_TEST_CASE(CFMinResidueTest)
   const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);
+  REQUIRE((arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5));
 }
 
 /**
  * Test that itertaion_only_termination is used.
  */
-BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
+TEST_CASE_METHOD(CFTestFixture, "CFIterationOnlyTerminationTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -354,13 +363,14 @@ BOOST_AUTO_TEST_CASE(CFIterationOnlyTerminationTest)
   const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);
+  REQUIRE((arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5));
 }
 
 /**
  * Test that max_iterations is used.
  */
-BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
+TEST_CASE_METHOD(CFTestFixture, "CFMaxIterationsTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -397,13 +407,14 @@ BOOST_AUTO_TEST_CASE(CFMaxIterationsTest)
   const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5);
+  REQUIRE((arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5));
 }
 
 /**
  * Test that neighborhood is used.
  */
-BOOST_AUTO_TEST_CASE(CFNeighborhoodTest)
+TEST_CASE_METHOD(CFTestFixture, "CFNeighborhoodTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -437,14 +448,15 @@ BOOST_AUTO_TEST_CASE(CFNeighborhoodTest)
   const arma::Mat<size_t> output2 = IO::GetParam<arma::Mat<size_t>>("output");
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
 }
 
 /**
  * Ensure interpolation algorithm is one of { "average", "regression",
  * "similarity" }.
  */
-BOOST_AUTO_TEST_CASE(CFInterpolationAlgorithmBoundTest)
+TEST_CASE_METHOD(CFTestFixture, "CFInterpolationAlgorithmBoundTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -458,14 +470,15 @@ BOOST_AUTO_TEST_CASE(CFInterpolationAlgorithmBoundTest)
   SetInputParam("query", query);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure that using interpolation algorithm makes a difference.
  */
-BOOST_AUTO_TEST_CASE(CFInterpolationTest)
+TEST_CASE_METHOD(CFTestFixture, "CFInterpolationTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -487,8 +500,8 @@ BOOST_AUTO_TEST_CASE(CFInterpolationTest)
 
   const arma::Mat<size_t> output1 = IO::GetParam<arma::Mat<size_t>>("output");
 
-  BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
+  REQUIRE(output1.n_rows == 5);
+  REQUIRE(output1.n_cols == 7);
 
   // Reset passed parameters.
   IO::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -506,8 +519,8 @@ BOOST_AUTO_TEST_CASE(CFInterpolationTest)
 
   const arma::Mat<size_t> output2 = IO::GetParam<arma::Mat<size_t>>("output");
 
-  BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
+  REQUIRE(output2.n_rows == 5);
+  REQUIRE(output2.n_cols == 7);
 
   // Using similarity interpolation algorithm.
   SetInputParam("input_model",
@@ -520,19 +533,20 @@ BOOST_AUTO_TEST_CASE(CFInterpolationTest)
 
   const arma::Mat<size_t> output3 = IO::GetParam<arma::Mat<size_t>>("output");
 
-  BOOST_REQUIRE_EQUAL(output3.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(output3.n_cols, 7);
+  REQUIRE(output3.n_rows == 5);
+  REQUIRE(output3.n_cols == 7);
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output3)));
 }
 
 /**
  * Ensure neighbor search algorithm is one of { "cosine", "euclidean",
  * "pearson" }.
  */
-BOOST_AUTO_TEST_CASE(CFNeighborSearchAlgorithmBoundTest)
+TEST_CASE_METHOD(CFTestFixture, "CFNeighborSearchAlgorithmBoundTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -546,14 +560,15 @@ BOOST_AUTO_TEST_CASE(CFNeighborSearchAlgorithmBoundTest)
   SetInputParam("query", query);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure that using neighbor search algorithm makes a difference.
  */
-BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
+TEST_CASE_METHOD(CFTestFixture, "CFNeighborSearchTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -575,8 +590,8 @@ BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
 
   const arma::Mat<size_t> output1 = IO::GetParam<arma::Mat<size_t>>("output");
 
-  BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
+  REQUIRE(output1.n_rows == 5);
+  REQUIRE(output1.n_cols == 7);
 
   // Reset passed parameters.
   IO::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -594,8 +609,8 @@ BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
 
   const arma::Mat<size_t> output2 = IO::GetParam<arma::Mat<size_t>>("output");
 
-  BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
+  REQUIRE(output2.n_rows == 5);
+  REQUIRE(output2.n_cols == 7);
 
   // Using pearson neighbor search algorithm.
   SetInputParam("input_model",
@@ -608,19 +623,20 @@ BOOST_AUTO_TEST_CASE(CFNeighborSearchTest)
 
   const arma::Mat<size_t> output3 = IO::GetParam<arma::Mat<size_t>>("output");
 
-  BOOST_REQUIRE_EQUAL(output3.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(output3.n_cols, 7);
+  REQUIRE(output3.n_rows == 5);
+  REQUIRE(output3.n_cols == 7);
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output3)));
 }
 
 /**
  * Ensure normalization algorithm is one of { "none", "z_score",
  * "item_mean", "user_mean" }.
  */
-BOOST_AUTO_TEST_CASE(CFNormalizationBoundTest)
+TEST_CASE_METHOD(CFTestFixture, "CFNormalizationBoundTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -637,14 +653,15 @@ BOOST_AUTO_TEST_CASE(CFNormalizationBoundTest)
   SetInputParam("query", query);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure that using normalization techniques make difference.
  */
-BOOST_AUTO_TEST_CASE(CFNormalizationTest)
+TEST_CASE_METHOD(CFTestFixture, "CFNormalizationTest",
+                "[CFMainTest][BindingTests]")
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
@@ -668,8 +685,8 @@ BOOST_AUTO_TEST_CASE(CFNormalizationTest)
 
   const arma::Mat<size_t> output1 = IO::GetParam<arma::Mat<size_t>>("output");
 
-  BOOST_REQUIRE_EQUAL(output1.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(output1.n_cols, 7);
+  REQUIRE(output1.n_rows == 5);
+  REQUIRE(output1.n_cols == 7);
 
   // Query with different normalization techniques.
   ResetSettings();
@@ -687,8 +704,8 @@ BOOST_AUTO_TEST_CASE(CFNormalizationTest)
 
   const arma::Mat<size_t> output2 = IO::GetParam<arma::Mat<size_t>>("output");
 
-  BOOST_REQUIRE_EQUAL(output2.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(output2.n_cols, 7);
+  REQUIRE(output2.n_rows == 5);
+  REQUIRE(output2.n_cols == 7);
 
   // Query with different normalization techniques.
   ResetSettings();
@@ -706,12 +723,10 @@ BOOST_AUTO_TEST_CASE(CFNormalizationTest)
 
   const arma::Mat<size_t> output3 = IO::GetParam<arma::Mat<size_t>>("output");
 
-  BOOST_REQUIRE_EQUAL(output3.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(output3.n_cols, 7);
+  REQUIRE(output3.n_rows == 5);
+  REQUIRE(output3.n_cols == 7);
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output2)));
-  BOOST_REQUIRE(arma::any(arma::vectorise(output1 != output3)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output2)));
+  REQUIRE(arma::any(arma::vectorise(output1 != output3)));
 }
-
-BOOST_AUTO_TEST_SUITE_END();
