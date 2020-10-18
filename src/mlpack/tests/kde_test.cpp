@@ -159,7 +159,7 @@ TEST_CASE("GaussianKDEBruteForceTest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -193,7 +193,7 @@ TEST_CASE("GaussianSingleKDEBruteForceTest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -228,7 +228,7 @@ TEST_CASE("EpanechnikovCoverSingleKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -263,7 +263,7 @@ TEST_CASE("GaussianCoverSingleKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -298,7 +298,7 @@ TEST_CASE("EpanechnikovOctreeSingleKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -335,7 +335,7 @@ TEST_CASE("BallTreeGaussianKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 
   delete queryTree;
   delete referenceTree;
@@ -372,7 +372,7 @@ TEST_CASE("OctreeGaussianKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -406,7 +406,7 @@ TEST_CASE("RTreeGaussianKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -441,7 +441,7 @@ TEST_CASE("StandardCoverTreeGaussianKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -476,7 +476,7 @@ TEST_CASE("StandardCoverTreeEpanechnikovKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -516,7 +516,7 @@ TEST_CASE("DuplicatedReferenceSampleKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 
   delete queryTree;
   delete referenceTree;
@@ -550,7 +550,7 @@ TEST_CASE("DuplicatedQuerySampleKDETest", "[KDETest]")
   kde.Evaluate(queryTree, oldFromNewQueries, estimations);
 
   // Check whether results are equal.
-  REQUIRE(estimations[2] == Approx(estimations[3]).epsilon(relError * 100));
+  REQUIRE(estimations[2] == Approx(estimations[3]).epsilon(relError));
 
   delete queryTree;
   delete referenceTree;
@@ -591,7 +591,7 @@ TEST_CASE("BreadthFirstKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -625,7 +625,7 @@ TEST_CASE("OneDimensionalTest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError * 100));
+    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -834,9 +834,9 @@ TEST_CASE("KDESerializationTest", "[KDETest]")
 
   for (size_t i = 0; i < query.n_cols; ++i)
   {
-    REQUIRE(estimations[i] == Approx(xmlEstimations[i]).epsilon(relError * 100));
-    REQUIRE(estimations[i] == Approx(textEstimations[i]).epsilon(relError * 100));
-    REQUIRE(estimations[i] == Approx(binEstimations[i]).epsilon(relError * 100));
+    REQUIRE(estimations[i] == Approx(xmlEstimations[i]).epsilon(relError));
+    REQUIRE(estimations[i] == Approx(textEstimations[i]).epsilon(relError));
+    REQUIRE(estimations[i] == Approx(binEstimations[i]).epsilon(relError));
   }
 }
 

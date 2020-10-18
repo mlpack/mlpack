@@ -62,7 +62,7 @@ TEST_CASE("OrthogonalInitTest", "[InitRulesTest]")
   for (size_t i = 0; i < weights.n_rows; ++i)
     for (size_t j = 0; j < weights.n_cols; ++j)
       REQUIRE(weights.at(i, j) - orthogonalWeights.at(i, j) == 
-          Approx(0.0).epsilon(1e-3));
+          Approx(0.0).margin(1e-3));
 
   orthogonalInit.Initialize(weights, 200, 100);
   weights = weights.t() * weights;
@@ -70,7 +70,7 @@ TEST_CASE("OrthogonalInitTest", "[InitRulesTest]")
   for (size_t i = 0; i < weights.n_rows; ++i)
     for (size_t j = 0; j < weights.n_cols; ++j)
       REQUIRE(weights.at(i, j) - orthogonalWeights.at(i, j) == 
-          Approx(0.0).epsilon(1e-3));
+          Approx(0.0).margin(1e-3));
 }
 
 /**
@@ -91,7 +91,7 @@ TEST_CASE("OrthogonalInitGainTest", "[InitRulesTest]")
   for (size_t i = 0; i < weights.n_rows; ++i)
     for (size_t j = 0; j < weights.n_cols; ++j)
       REQUIRE(weights.at(i, j) - orthogonalWeights.at(i, j) == 
-          Approx(0.0).epsilon(1e-3));
+          Approx(0.0).margin(1e-3));
 }
 
 /**
