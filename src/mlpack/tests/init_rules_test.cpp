@@ -27,32 +27,30 @@
 #include <mlpack/methods/ann/init_rules/he_init.hpp>
 #include <mlpack/methods/ann/init_rules/lecun_normal_init.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 
-BOOST_AUTO_TEST_SUITE(InitRulesTest);
-
 /**
  * Test the RandomInitialization class with a constant value.
  */
-BOOST_AUTO_TEST_CASE(ConstantInitTest)
+TEST_CASE("ConstantInitTest", "[InitRulesTest]")
 {
   arma::mat weights;
   RandomInitialization constantInit(1, 1);
   constantInit.Initialize(weights, 100, 100);
 
   bool b = arma::all(arma::vectorise(weights) == 1);
-  BOOST_REQUIRE_EQUAL(b, 1);
+  REQUIRE(b == 1);
 }
 
 /**
  * Simple test of the OrthogonalInitialization class with two different
  * sizes.
  */
-BOOST_AUTO_TEST_CASE(OrthogonalInitTest)
+TEST_CASE("OrthogonalInitTest", "[InitRulesTest]")
 {
   arma::mat weights;
   OrthogonalInitialization orthogonalInit;
@@ -63,20 +61,22 @@ BOOST_AUTO_TEST_CASE(OrthogonalInitTest)
 
   for (size_t i = 0; i < weights.n_rows; ++i)
     for (size_t j = 0; j < weights.n_cols; ++j)
-      BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
+      REQUIRE(weights.at(i, j) - orthogonalWeights.at(i, j) == 
+          Approx(0.0).epsilon(1e-3));
 
   orthogonalInit.Initialize(weights, 200, 100);
   weights = weights.t() * weights;
 
   for (size_t i = 0; i < weights.n_rows; ++i)
     for (size_t j = 0; j < weights.n_cols; ++j)
-      BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
+      REQUIRE(weights.at(i, j) - orthogonalWeights.at(i, j) == 
+          Approx(0.0).epsilon(1e-3));
 }
 
 /**
  * Test the OrthogonalInitialization class with a non default gain.
  */
-BOOST_AUTO_TEST_CASE(OrthogonalInitGainTest)
+TEST_CASE("OrthogonalInitGainTest", "[InitRulesTest]")
 {
   arma::mat weights;
 
@@ -90,7 +90,8 @@ BOOST_AUTO_TEST_CASE(OrthogonalInitGainTest)
 
   for (size_t i = 0; i < weights.n_rows; ++i)
     for (size_t j = 0; j < weights.n_cols; ++j)
-      BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
+      REQUIRE(weights.at(i, j) - orthogonalWeights.at(i, j) == 
+          Approx(0.0).epsilon(1e-3));
 }
 
 /**
@@ -98,21 +99,21 @@ BOOST_AUTO_TEST_CASE(OrthogonalInitGainTest)
  * ridiculous to test the const init rule. But at least we make sure it
  * builds without any problems.
  */
-BOOST_AUTO_TEST_CASE(ConstInitTest)
+TEST_CASE("ConstInitTest", "[InitRulesTest]")
 {
   arma::mat weights;
   ConstInitialization zeroInit(0);
   zeroInit.Initialize(weights, 100, 100);
 
   bool b = arma::all(arma::vectorise(weights) == 0);
-  BOOST_REQUIRE_EQUAL(b, 1);
+  REQUIRE(b == 1);
 }
 
 /*
  * Simple test of the KathirvalavakumarSubavathiInitialization class with
  * two different sizes.
  */
-BOOST_AUTO_TEST_CASE(KathirvalavakumarSubavathiInitTest)
+TEST_CASE("KathirvalavakumarSubavathiInitTest", "[InitRulesTest]")
 {
   arma::mat data = arma::randu<arma::mat>(100, 1);
 
@@ -125,18 +126,18 @@ BOOST_AUTO_TEST_CASE(KathirvalavakumarSubavathiInitTest)
   kathirvalavakumarSubavathiInit.Initialize(weights, 100, 100);
   kathirvalavakumarSubavathiInit.Initialize(weights3d, 100, 100, 2);
 
-  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
-  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+  REQUIRE(weights.n_rows == 100);
+  REQUIRE(weights.n_cols == 100);
 
-  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
-  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
-  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
+  REQUIRE(weights3d.n_rows == 100);
+  REQUIRE(weights3d.n_cols == 100);
+  REQUIRE(weights3d.n_slices == 2);
 }
 
 /**
  * Simple test of the NguyenWidrowInitialization class.
  */
-BOOST_AUTO_TEST_CASE(NguyenWidrowInitTest)
+TEST_CASE("NguyenWidrowInitTest", "[InitRulesTest]")
 {
   arma::mat weights;
   arma::cube weights3d;
@@ -146,18 +147,18 @@ BOOST_AUTO_TEST_CASE(NguyenWidrowInitTest)
   nguyenWidrowInit.Initialize(weights, 100, 100);
   nguyenWidrowInit.Initialize(weights3d, 100, 100, 2);
 
-  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
-  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+  REQUIRE(weights.n_rows == 100);
+  REQUIRE(weights.n_cols == 100);
 
-  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
-  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
-  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
+  REQUIRE(weights3d.n_rows == 100);
+  REQUIRE(weights3d.n_cols == 100);
+  REQUIRE(weights3d.n_slices == 2);
 }
 
 /**
  * Simple test of the OivsInitialization class with two different sizes.
  */
-BOOST_AUTO_TEST_CASE(OivsInitTest)
+TEST_CASE("OivsInitTest", "[InitRulesTest]")
 {
   arma::mat weights;
   arma::cube weights3d;
@@ -167,18 +168,18 @@ BOOST_AUTO_TEST_CASE(OivsInitTest)
   oivsInit.Initialize(weights, 100, 100);
   oivsInit.Initialize(weights3d, 100, 100, 2);
 
-  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
-  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+  REQUIRE(weights.n_rows == 100);
+  REQUIRE(weights.n_cols == 100);
 
-  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
-  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
-  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
+  REQUIRE(weights3d.n_rows == 100);
+  REQUIRE(weights3d.n_cols == 100);
+  REQUIRE(weights3d.n_slices == 2);
 }
 
 /**
  * Simple test of the GaussianInitialization class.
  */
-BOOST_AUTO_TEST_CASE(GaussianInitTest)
+TEST_CASE("GaussianInitTest", "[InitRulesTest]")
 {
   const size_t rows = 7;
   const size_t cols = 8;
@@ -192,19 +193,19 @@ BOOST_AUTO_TEST_CASE(GaussianInitTest)
   t.Initialize(weights, rows, cols);
   t.Initialize(weights3d, rows, cols, slices);
 
-  BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
-  BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
+  REQUIRE(weights.n_rows == rows);
+  REQUIRE(weights.n_cols == cols);
 
-  BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
-  BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
-  BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+  REQUIRE(weights3d.n_rows == rows);
+  REQUIRE(weights3d.n_cols == cols);
+  REQUIRE(weights3d.n_slices == slices);
 }
 
 /**
  * Simple test of the NetworkInitialization class, we test it with every
  * implemented initialization rule and make sure the output is reasonable.
  */
-BOOST_AUTO_TEST_CASE(NetworkInitTest)
+TEST_CASE("NetworkInitTest", "[InitRulesTest]")
 {
   arma::mat input = arma::ones(5, 1);
   arma::mat response;
@@ -223,8 +224,8 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   randomModel.Predict(input, response);
 
   bool b = arma::all(arma::vectorise(randomModel.Parameters()) == 0.5);
-  BOOST_REQUIRE_EQUAL(b, 1);
-  BOOST_REQUIRE_EQUAL(randomModel.Parameters().n_elem, 42);
+  REQUIRE(b == 1);
+  REQUIRE(randomModel.Parameters().n_elem == 42);
 
   // Create a simple network and use the OrthogonalInitialization rule to
   // initialize the network parameters.
@@ -235,7 +236,7 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   orthogonalModel.Add<LogSoftMax<> >();
   orthogonalModel.Predict(input, response);
 
-  BOOST_REQUIRE_EQUAL(orthogonalModel.Parameters().n_elem, 42);
+  REQUIRE(orthogonalModel.Parameters().n_elem == 42);
 
   // Create a simple network and use the ZeroInitialization rule to
   // initialize the network parameters.
@@ -247,8 +248,8 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   zeroModel.Add<LogSoftMax<> >();
   zeroModel.Predict(input, response);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(zeroModel.Parameters()), 0);
-  BOOST_REQUIRE_EQUAL(zeroModel.Parameters().n_elem, 42);
+  REQUIRE(arma::accu(zeroModel.Parameters()) == 0);
+  REQUIRE(zeroModel.Parameters().n_elem == 42);
 
   // Create a simple network and use the
   // KathirvalavakumarSubavathiInitialization rule to initialize the network
@@ -263,7 +264,7 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   ksModel.Add<LogSoftMax<> >();
   ksModel.Predict(input, response);
 
-  BOOST_REQUIRE_EQUAL(ksModel.Parameters().n_elem, 42);
+  REQUIRE(ksModel.Parameters().n_elem == 42);
 
   // Create a simple network and use the OivsInitialization rule to
   // initialize the network parameters.
@@ -274,7 +275,7 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   oivsModel.Add<LogSoftMax<> >();
   oivsModel.Predict(input, response);
 
-  BOOST_REQUIRE_EQUAL(oivsModel.Parameters().n_elem, 42);
+  REQUIRE(oivsModel.Parameters().n_elem == 42);
 
   // Create a simple network and use the GaussianInitialization rule to
   // initialize the network parameters.
@@ -285,13 +286,13 @@ BOOST_AUTO_TEST_CASE(NetworkInitTest)
   gaussianModel.Add<LogSoftMax<> >();
   gaussianModel.Predict(input, response);
 
-  BOOST_REQUIRE_EQUAL(gaussianModel.Parameters().n_elem, 42);
+  REQUIRE(gaussianModel.Parameters().n_elem == 42);
 }
 
 /**
  * Simple test of the GlorotInitialization class for uniform distribution.
  */
-BOOST_AUTO_TEST_CASE(GlorotInitUniformTest)
+TEST_CASE("GlorotInitUniformTest", "[InitRulesTest]")
 {
   arma::mat weights;
   arma::cube weights3d;
@@ -301,18 +302,18 @@ BOOST_AUTO_TEST_CASE(GlorotInitUniformTest)
   glorotInit.Initialize(weights, 100, 100);
   glorotInit.Initialize(weights3d, 100, 100, 2);
 
-  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
-  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+  REQUIRE(weights.n_rows == 100);
+  REQUIRE(weights.n_cols == 100);
 
-  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
-  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
-  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
+  REQUIRE(weights3d.n_rows == 100);
+  REQUIRE(weights3d.n_cols == 100);
+  REQUIRE(weights3d.n_slices == 2);
 }
 
 /**
  * Simple test of the GlorotInitialization class for normal distribution.
  */
-BOOST_AUTO_TEST_CASE(GlorotInitNormalTest)
+TEST_CASE("GlorotInitNormalTest", "[InitRulesTest]")
 {
   arma::mat weights;
   arma::cube weights3d;
@@ -322,18 +323,18 @@ BOOST_AUTO_TEST_CASE(GlorotInitNormalTest)
   glorotInit.Initialize(weights, 100, 100);
   glorotInit.Initialize(weights3d, 100, 100, 2);
 
-  BOOST_REQUIRE_EQUAL(weights.n_rows, 100);
-  BOOST_REQUIRE_EQUAL(weights.n_cols, 100);
+  REQUIRE(weights.n_rows == 100);
+  REQUIRE(weights.n_cols == 100);
 
-  BOOST_REQUIRE_EQUAL(weights3d.n_rows, 100);
-  BOOST_REQUIRE_EQUAL(weights3d.n_cols, 100);
-  BOOST_REQUIRE_EQUAL(weights3d.n_slices, 2);
+  REQUIRE(weights3d.n_rows == 100);
+  REQUIRE(weights3d.n_cols == 100);
+  REQUIRE(weights3d.n_slices == 2);
 }
 
 /**
  * Simple test of the HeInitialization class.
  */
-BOOST_AUTO_TEST_CASE(HeInitTest)
+TEST_CASE("HeInitTest", "[InitRulesTest]")
 {
   const size_t rows = 4;
   const size_t cols = 4;
@@ -347,18 +348,18 @@ BOOST_AUTO_TEST_CASE(HeInitTest)
   initializer.Initialize(weights, rows, cols);
   initializer.Initialize(weights3d, rows, cols, slices);
 
-  BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
-  BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
+  REQUIRE(weights.n_rows == rows);
+  REQUIRE(weights.n_cols == cols);
 
-  BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
-  BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
-  BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+  REQUIRE(weights3d.n_rows == rows);
+  REQUIRE(weights3d.n_cols == cols);
+  REQUIRE(weights3d.n_slices == slices);
 }
 
 /**
  * Simple test of the LecunNormalInitialization class.
  */
-BOOST_AUTO_TEST_CASE(LecunNormalInitTest)
+TEST_CASE("LecunNormalInitTest", "[InitRulesTest]")
 {
   const size_t rows = 4;
   const size_t cols = 4;
@@ -372,12 +373,10 @@ BOOST_AUTO_TEST_CASE(LecunNormalInitTest)
   initializer.Initialize(weights, rows, cols);
   initializer.Initialize(weights3d, rows, cols, slices);
 
-  BOOST_REQUIRE_EQUAL(weights.n_rows, rows);
-  BOOST_REQUIRE_EQUAL(weights.n_cols, cols);
+  REQUIRE(weights.n_rows == rows);
+  REQUIRE(weights.n_cols == cols);
 
-  BOOST_REQUIRE_EQUAL(weights3d.n_rows, rows);
-  BOOST_REQUIRE_EQUAL(weights3d.n_cols, cols);
-  BOOST_REQUIRE_EQUAL(weights3d.n_slices, slices);
+  REQUIRE(weights3d.n_rows == rows);
+  REQUIRE(weights3d.n_cols == cols);
+  REQUIRE(weights3d.n_slices == slices);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -19,8 +19,8 @@ static const std::string testName = "EMST";
 #include <mlpack/methods/emst/emst_main.cpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 #include <boost/math/special_functions/round.hpp>
 
@@ -43,17 +43,17 @@ struct EMSTTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(EMSTMainTest, EMSTTestFixture);
-
 /**
  * Make sure that Output has 3 Dimensions and
  * check the number of output edges.
  */
-BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
+
+TEST_CASE_METHOD(EMSTTestFixture, "EMSTOutputDimensionTest",
+                 "[EMSTMainTest][BindingTests]")
 {
   arma::mat x;
   if (!data::Load("test_data_3_1000.csv", x))
-    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.
   SetInputParam("input", std::move(x));
@@ -62,20 +62,21 @@ BOOST_AUTO_TEST_CASE(EMSTOutputDimensionTest)
   mlpackMain();
 
   // Now check that the output has 3 dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 3);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 3);
   // Check number of output points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 999);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 999);
 }
 
 /**
  * Check Naive algorithm Output has 3 Dimensions and
  * check the number of output edges.
  */
-BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
+TEST_CASE_METHOD(EMSTTestFixture, "EMSTNaiveOutputDimensionTest",
+                 "[EMSTMainTest][BindingTests]")
 {
   arma::mat x;
   if (!data::Load("test_data_3_1000.csv", x))
-    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.
   SetInputParam("input", std::move(x));
@@ -84,37 +85,39 @@ BOOST_AUTO_TEST_CASE(EMSTNaiveOutputDimensionTest)
   mlpackMain();
 
   // Now check that the output has 3 dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 3);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 3);
   // Check number of output points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 999);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 999);
 }
 
 /**
  * Ensure that we can't specify an invalid leaf size.
  */
-BOOST_AUTO_TEST_CASE(EMSTInvalidLeafSizeTest)
+TEST_CASE_METHOD(EMSTTestFixture, "EMSTInvalidLeafSizeTest",
+                 "[EMSTMainTest][BindingTests]")
 {
   arma::mat x;
   if (!data::Load("test_data_3_1000.csv", x))
-    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.
   SetInputParam("input", std::move(x));
   SetInputParam("leaf_size", (int) -1); // Invalid leaf size.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that all elements of first two output rows are close to integers.
  */
-BOOST_AUTO_TEST_CASE(EMSTFirstTwoOutputRowsIntegerTest)
+TEST_CASE_METHOD(EMSTTestFixture, "EMSTFirstTwoOutputRowsIntegerTest",
+                 "[EMSTMainTest][BindingTests]")
 {
   arma::mat x;
   if (!data::Load("test_data_3_1000.csv", x))
-    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.
   SetInputParam("input", std::move(x));
@@ -122,11 +125,11 @@ BOOST_AUTO_TEST_CASE(EMSTFirstTwoOutputRowsIntegerTest)
 
   for (size_t i = 0; i < IO::GetParam<arma::mat>("output").n_cols; ++i)
   {
-    BOOST_REQUIRE_CLOSE(IO::GetParam<arma::mat>("output")(0, i),
-        boost::math::iround(IO::GetParam<arma::mat>("output")(0, i)), 1e-5);
-    BOOST_REQUIRE_CLOSE(IO::GetParam<arma::mat>("output")(1, i),
-        boost::math::iround(IO::GetParam<arma::mat>("output")(1, i)), 1e-5);
+    REQUIRE(IO::GetParam<arma::mat>("output")(0, i) ==
+        Approx(boost::math::iround(IO::GetParam<arma::mat>("output")(0, i))).
+        epsilon(1e-5));
+    REQUIRE(IO::GetParam<arma::mat>("output")(1, i) == 
+        Approx(boost::math::iround(IO::GetParam<arma::mat>("output")(1, i))).
+        epsilon(1e-5));
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

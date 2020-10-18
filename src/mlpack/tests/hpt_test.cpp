@@ -20,7 +20,8 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack::cv;
 using namespace mlpack::data;
@@ -28,13 +29,11 @@ using namespace mlpack::hpt;
 using namespace mlpack::regression;
 using namespace ens;
 
-BOOST_AUTO_TEST_SUITE(HPTTest);
-
 /**
  * Test CVFunction runs cross-validation in according with specified fixed
  * arguments and passed parameters.
  */
-BOOST_AUTO_TEST_CASE(CVFunctionTest)
+TEST_CASE("CVFunctionTest", "[HPTTest]")
 {
   arma::mat xs = arma::randn(5, 100);
   arma::vec beta = arma::randn(5, 1);
@@ -61,7 +60,7 @@ BOOST_AUTO_TEST_CASE(CVFunctionTest)
   parameters(1) = lambda1;
   double actual = cvFun.Evaluate(parameters);
 
-  BOOST_REQUIRE_CLOSE(expected, actual, 1e-5);
+  REQUIRE(expected == Approx(actual).epsilon(1e-5));
 }
 
 /**
@@ -69,7 +68,7 @@ BOOST_AUTO_TEST_CASE(CVFunctionTest)
  * arguments and passed parameters, where the passed parameters are categorical
  * parameters.
  */
-BOOST_AUTO_TEST_CASE(CVFunctionCategoricalTest)
+TEST_CASE("CVFunctionCategoricalTest", "[HPTTest]")
 {
   arma::mat xs = arma::randn(5, 100);
   arma::vec beta = arma::randn(5, 1);
@@ -98,7 +97,7 @@ BOOST_AUTO_TEST_CASE(CVFunctionCategoricalTest)
   parameters(1) = 0; // Should be unmapped to 1.0.
   double actual = cvFun.Evaluate(parameters);
 
-  BOOST_REQUIRE_CLOSE(expected, actual, 1e-5);
+  REQUIRE(expected == Approx(actual).epsilon(1e-5));
 }
 
 /**
@@ -142,7 +141,7 @@ class QuadraticFunction
 /**
  * Test CVFunction approximates gradient in the expected way.
  */
-BOOST_AUTO_TEST_CASE(CVFunctionGradientTest)
+TEST_CASE("CVFunctionGradientTest", "[HPTTest]")
 {
   double a = 1.0;
   double b = -1.5;
@@ -173,10 +172,10 @@ BOOST_AUTO_TEST_CASE(CVFunctionGradientTest)
   double aproximateYPartialDerivative = b * (2 * y + yDelta);
   double aproximateZPartialDerivative = c * (2 * z + zDelta);
 
-  BOOST_REQUIRE_EQUAL(gradient.n_elem, 3);
-  BOOST_REQUIRE_CLOSE(gradient(0), aproximateXPartialDerivative, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1), aproximateYPartialDerivative, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(2), aproximateZPartialDerivative, 1e-5);
+  REQUIRE(gradient.n_elem == 3);
+  REQUIRE(gradient(0) == Approx(aproximateXPartialDerivative).epsilon(1e-5));
+  REQUIRE(gradient(1) == Approx(aproximateYPartialDerivative).epsilon(1e-5));
+  REQUIRE(gradient(2) == Approx(aproximateZPartialDerivative).epsilon(1e-5));
 }
 
 
@@ -237,7 +236,7 @@ void FindLARSBestLambdas(arma::mat& xs,
  * Test grid-search optimization leads to the best parameters from the specified
  * ones.
  */
-BOOST_AUTO_TEST_CASE(GridSearchTest)
+TEST_CASE("GridSearchTest", "[HPTTest]")
 {
   arma::mat xs;
   arma::rowvec ys;
@@ -280,17 +279,17 @@ BOOST_AUTO_TEST_CASE(GridSearchTest)
   double actualObjective = optimizer.Optimize(cvFun, actualParameters,
       categoricalDimensions, numCategories);
 
-  BOOST_REQUIRE_CLOSE(expectedObjective, actualObjective, 1e-5);
-  BOOST_REQUIRE_CLOSE(expectedLambda1,
-      datasetInfo.UnmapString(actualParameters(0, 0), 0), 1e-5);
-  BOOST_REQUIRE_CLOSE(expectedLambda2,
-      datasetInfo.UnmapString(actualParameters(1, 0), 1), 1e-5);
+  REQUIRE(expectedObjective == Approx(actualObjective).epsilon(1e-5));
+  REQUIRE(expectedLambda1 ==
+      Approx(datasetInfo.UnmapString(actualParameters(0, 0), 0)).epsilon(1e-5));
+  REQUIRE(expectedLambda2 ==
+      Approx(datasetInfo.UnmapString(actualParameters(1, 0), 1)).epsilon(1e-5));
 }
 
 /**
  * Test HyperParameterTuner.
  */
-BOOST_AUTO_TEST_CASE(HPTTest)
+TEST_CASE("HPTTest", "[HPTTest]")
 {
   arma::mat xs;
   arma::rowvec ys;
@@ -313,9 +312,9 @@ BOOST_AUTO_TEST_CASE(HPTTest)
   std::tie(actualLambda1, actualLambda2) = hpt.Optimize(Fixed(transposeData),
       Fixed(useCholesky), lambda1Set, lambda2Set);
 
-  BOOST_REQUIRE_CLOSE(expectedObjective, hpt.BestObjective(), 1e-5);
-  BOOST_REQUIRE_CLOSE(expectedLambda1, actualLambda1, 1e-5);
-  BOOST_REQUIRE_CLOSE(expectedLambda2, actualLambda2, 1e-5);
+  REQUIRE(expectedObjective == Approx(hpt.BestObjective()).epsilon(1e-5));
+  REQUIRE(expectedLambda1 == Approx(actualLambda1).epsilon(1e-5));
+  REQUIRE(expectedLambda2 == Approx(actualLambda2).epsilon(1e-5));
 
   /* Checking that the model provided by the hyper-parameter tuner shows the
    * same performance. */
@@ -323,13 +322,13 @@ BOOST_AUTO_TEST_CASE(HPTTest)
   arma::mat validationXs = xs.cols(validationFirstColumn, xs.n_cols - 1);
   arma::rowvec validationYs = ys.cols(validationFirstColumn, ys.n_cols - 1);
   double objective = MSE::Evaluate(hpt.BestModel(), validationXs, validationYs);
-  BOOST_REQUIRE_CLOSE(expectedObjective, objective, 1e-5);
+  REQUIRE(expectedObjective == Approx(objective).epsilon(1e-5));
 }
 
 /**
  * Test HyperParamterTuner maximizes Accuracy rather than minimizes it.
  */
-BOOST_AUTO_TEST_CASE(HPTMaximizationTest)
+TEST_CASE("HPTMaximizationTest", "[HPTTest]")
 {
   // Initializing a linearly separable dataset.
   arma::mat xs = arma::linspace<arma::rowvec>(0.0, 10.0, 50);
@@ -348,7 +347,7 @@ BOOST_AUTO_TEST_CASE(HPTMaximizationTest)
   // Making sure that the assumption above is true.
   SimpleCV<LogisticRegression<>, Accuracy>
       cv(validationSize, doubledXs, doubledYs);
-  BOOST_REQUIRE_GT(cv.Evaluate(0.0), cv.Evaluate(1e12));
+  REQUIRE(cv.Evaluate(0.0) > cv.Evaluate(1e12));
 
   HyperParameterTuner<LogisticRegression<>, Accuracy, SimpleCV>
       hpt(validationSize, doubledXs, doubledYs);
@@ -356,14 +355,14 @@ BOOST_AUTO_TEST_CASE(HPTMaximizationTest)
   double actualLambda;
   std::tie(actualLambda) = hpt.Optimize(lambdas);
 
-  BOOST_REQUIRE_CLOSE(hpt.BestObjective(), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(actualLambda, 0.0, 1e-5);
+  REQUIRE(hpt.BestObjective() == Approx(1.0).epsilon(1e-5));
+  REQUIRE(actualLambda == Approx(0.0).epsilon(1e-5));
 }
 
 /**
  * Test HyperParameterTuner works with GradientDescent.
  */
-BOOST_AUTO_TEST_CASE(HPTGradientDescentTest)
+TEST_CASE("HPTGradientDescentTest", "[HPTTest]")
 {
   // Constructor arguments for the fake CV function (QuadraticFunction).
   double a = 1.0;
@@ -398,8 +397,6 @@ BOOST_AUTO_TEST_CASE(HPTGradientDescentTest)
 
   double xOptimized, zOptimized;
   std::tie(xOptimized, zOptimized) = hpt.Optimize(x0, Fixed(y), z0);
-  BOOST_REQUIRE_CLOSE(xOptimized, xMin, 1e-4);
-  BOOST_REQUIRE_CLOSE(zOptimized, zMin, 1e-4);
+  REQUIRE(xOptimized == Approx(xMin).epsilon(1e-4));
+  REQUIRE(zOptimized == Approx(zMin).epsilon(1e-4));
 }
-
-BOOST_AUTO_TEST_SUITE_END();

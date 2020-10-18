@@ -1,15 +1,6 @@
 # mlpack test executable.
 add_executable(mlpack_test
   callback_test.cpp
-  drusilla_select_test.cpp
-  emst_test.cpp
-  fastmks_test.cpp
-  facilities_test.cpp
-  hpt_test.cpp
-  hyperplane_test.cpp
-  init_rules_test.cpp
-  kde_test.cpp
-  linear_svm_test.cpp
   lmnn_test.cpp
   local_coordinate_coding_test.cpp
   log_test.cpp
@@ -33,10 +24,6 @@ add_executable(mlpack_test
   timer_test.cpp
   union_find_test.cpp
   main_tests/det_test.cpp
-  main_tests/emst_test.cpp
-  main_tests/fastmks_test.cpp
-  main_tests/kde_test.cpp
-  main_tests/linear_svm_test.cpp
   main_tests/lmnn_test.cpp
   main_tests/local_coordinate_coding_test.cpp
   main_tests/logistic_regression_test.cpp
@@ -75,14 +62,22 @@ add_executable(mlpack_catch_test
   decision_tree_test.cpp
   det_test.cpp
   distribution_test.cpp
+  drusilla_select_test.cpp
+  emst_test.cpp
   gmm_test.cpp
   hmm_test.cpp
+  hyperplane_test.cpp
+  hpt_test.cpp
+  facilities_test.cpp
+  fastmks_test.cpp
   feedforward_network_test.cpp
   gan_test.cpp
   hoeffding_tree_test.cpp
   image_load_test.cpp
   imputation_test.cpp
+  init_rules_test.cpp
   io_test.cpp
+  kde_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
@@ -95,6 +90,7 @@ add_executable(mlpack_catch_test
   layer_names_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
+  linear_svm_test.cpp
   load_save_test.cpp
   loss_functions_test.cpp
   main.cpp
@@ -142,6 +138,8 @@ add_executable(mlpack_catch_test
   vantage_point_tree_test.cpp
   wgan_test.cpp
   main_tests/adaboost_test.cpp
+  main_tests/emst_test.cpp
+  main_tests/fastmks_test.cpp
   main_tests/gmm_generate_test.cpp
   main_tests/gmm_probability_test.cpp
   main_tests/gmm_train_test.cpp
@@ -158,12 +156,14 @@ add_executable(mlpack_catch_test
   main_tests/decision_tree_test.cpp
   main_tests/hoeffding_tree_test.cpp
   main_tests/image_converter_test.cpp
+  main_tests/kde_test.cpp
   main_tests/kernel_pca_test.cpp
   main_tests/kfn_test.cpp
   main_tests/kmeans_test.cpp
   main_tests/knn_test.cpp
   main_tests/krann_test.cpp
   main_tests/linear_regression_test.cpp
+  main_tests/linear_svm_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
   main_tests/nca_test.cpp
@@ -228,8 +228,7 @@ add_custom_command(TARGET mlpack_test
 # The list of long running parallel tests
 set(parallel_tests
   "LocalCoordinateCodingTest;"
-  "LogisticRegressionTest;"
-  "LinearSVMTest")
+  "LogisticRegressionTest")
 
 # Add tests to the testing framework
 # Get the list of sources from the test target
