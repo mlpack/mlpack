@@ -177,7 +177,7 @@ steps:
     type fragment.wxs
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `
         Product.wxs fragment.wxs `
-        -out obj/x64/Release/ `
+        -out obj/x64/Release/
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\light.exe' `
         -out ./bin/x64/Release/mlpack-%INSTALL_VERSION%.msi `
         -pdbout ./bin/x64/Release/mlpack-windows.wixpdb `
