@@ -178,7 +178,7 @@ TEST_CASE("SparsePolynomialFastMKSTest", "[FastMKSTest]")
       if (std::abs(pk.Evaluate(dataset.col(i), dataset.col(j))) < 1e-10)
       {
         REQUIRE(pk.Evaluate(denseset.col(i), denseset.col(j)) ==
-            Approx(0.0).epsilon(1e-10));
+            Approx(0.0).margin(1e-10));
       }
       else
       {
