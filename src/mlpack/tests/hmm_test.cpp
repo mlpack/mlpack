@@ -1044,7 +1044,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
 
   //test loglikelihood calculation for the whole data
   {
-    auto loglikelihood = hmm.LogLikelihood(obs);
+    const double loglikelihood = hmm.LogLikelihood(obs);
     BOOST_REQUIRE_CLOSE(loglikelihood, loglikelihoodRef, 1e-3);
   }
 
