@@ -37,6 +37,10 @@ steps:
     # Install armadillo.
     curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
     cmake . && make && sudo make install && cd ..
+
+    # Install cereal.
+    wget https://github.com/USCiLab/cereal/archive/v1.3.0.tar.gz
+    tar -xvzpf v1.3.0.tar.gz # Unpack into cereal-1.3.0/.
   displayName: 'Install Build Dependencies'
 
 # Configure mlpack (CMake)
