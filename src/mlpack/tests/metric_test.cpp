@@ -10,21 +10,19 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-#include <boost/test/unit_test.hpp>
+#include "catch.hpp"
 #include <mlpack/core/metrics/iou_metric.hpp>
 #include <mlpack/core/metrics/non_maximal_supression.hpp>
 #include <mlpack/core/metrics/bleu.hpp>
-#include "test_tools.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace std;
 using namespace mlpack::metric;
 
-BOOST_AUTO_TEST_SUITE(MetricTest);
-
 /**
  * Simple test for L-1 metric.
  */
-BOOST_AUTO_TEST_CASE(L1MetricTest)
+TEST_CASE("L1MetricTest", "[MetricTest]")
 {
   arma::vec a1(5);
   a1.randn();
@@ -40,17 +38,17 @@ BOOST_AUTO_TEST_CASE(L1MetricTest)
 
   ManhattanDistance lMetric;
 
-  BOOST_REQUIRE_CLOSE((double) arma::accu(arma::abs(a1 - b1)),
-                      lMetric.Evaluate(a1, b1), 1e-5);
+  REQUIRE((double) arma::accu(arma::abs(a1 - b1)) ==
+      Approx(lMetric.Evaluate(a1, b1)).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE((double) arma::accu(arma::abs(a2 - b2)),
-                      lMetric.Evaluate(a2, b2), 1e-5);
+  REQUIRE((double) arma::accu(arma::abs(a2 - b2)) ==
+      Approx(lMetric.Evaluate(a2, b2)).epsilon(1e-7));
 }
 
 /**
  * Simple test for L-2 metric.
  */
-BOOST_AUTO_TEST_CASE(L2MetricTest)
+TEST_CASE("L2MetricTest", "[MetricTest]")
 {
   arma::vec a1(5);
   a1.randn();
@@ -66,17 +64,17 @@ BOOST_AUTO_TEST_CASE(L2MetricTest)
 
   EuclideanDistance lMetric;
 
-  BOOST_REQUIRE_CLOSE((double) sqrt(arma::accu(arma::square(a1 - b1))),
-                      lMetric.Evaluate(a1, b1), 1e-5);
+  REQUIRE((double) sqrt(arma::accu(arma::square(a1 - b1))) ==
+      Approx(lMetric.Evaluate(a1, b1)).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE((double) sqrt(arma::accu(arma::square(a2 - b2))),
-                      lMetric.Evaluate(a2, b2), 1e-5);
+  REQUIRE((double) sqrt(arma::accu(arma::square(a2 - b2))) ==
+      Approx(lMetric.Evaluate(a2, b2)).epsilon(1e-7));
 }
 
 /**
  * Simple test for L-Infinity metric.
  */
-BOOST_AUTO_TEST_CASE(LINFMetricTest)
+TEST_CASE("LINFMetricTest", "[MetricTest]")
 {
   arma::vec a1(5);
   a1.randn();
@@ -92,50 +90,52 @@ BOOST_AUTO_TEST_CASE(LINFMetricTest)
 
   ChebyshevDistance lMetric;
 
-  BOOST_REQUIRE_CLOSE((double) arma::as_scalar(arma::max(arma::abs(a1 - b1))),
-                      lMetric.Evaluate(a1, b1), 1e-5);
+  REQUIRE((double) arma::as_scalar(arma::max(arma::abs(a1 - b1))) ==
+      Approx(lMetric.Evaluate(a1, b1)).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE((double) arma::as_scalar(arma::max(arma::abs(a2 - b2))),
-                      lMetric.Evaluate(a2, b2), 1e-5);
+  REQUIRE((double) arma::as_scalar(arma::max(arma::abs(a2 - b2))) ==
+      Approx(lMetric.Evaluate(a2, b2)).epsilon(1e-7));
 }
 
 /**
  * Simple test for IoU metric.
  */
-BOOST_AUTO_TEST_CASE(IoUMetricTest)
+TEST_CASE("IoUMetricTest", "[MetricTest]")
 {
   arma::vec bbox1(4), bbox2(4);
   bbox1 << 1 << 2 << 100 << 200;
   bbox2 << 1 << 2 << 100 << 200;
   // IoU of same bounding boxes equals 1.0.
-  BOOST_REQUIRE_CLOSE(1.0, IoU<>::Evaluate(bbox1, bbox2), 1e-4);
+  REQUIRE(1.0 == Approx(IoU<>::Evaluate(bbox1, bbox2)).epsilon(1e-6));
 
   // Use coordinate system to represent bounding boxes.
   // Bounding boxes represent {x0, y0, x1, y1}.
   bbox1 << 39 << 63 << 203 << 112;
   bbox2 << 54 << 66 << 198 << 114;
   // Value calculated using Python interpreter.
-  BOOST_REQUIRE_CLOSE(IoU<true>::Evaluate(bbox1, bbox2), 0.7980093, 1e-4);
+  REQUIRE(IoU<true>::Evaluate(bbox1, bbox2) ==
+      Approx(0.7980093).epsilon(1e-6));
 
   bbox1 << 31 << 69 << 201 << 125;
   bbox2 << 18 << 63 << 235 << 135;
   // Value calculated using Python interpreter.
-  BOOST_REQUIRE_CLOSE(IoU<true>::Evaluate(bbox1, bbox2), 0.612479577, 1e-4);
+  REQUIRE(IoU<true>::Evaluate(bbox1, bbox2) ==
+      Approx(0.612479577).epsilon(1e-6));
 
   // Use hieght - width representation of bounding boxes.
   // Bounding boxes represent {x0, y0, h, w}.
   bbox1 << 49 << 75 << 154 << 50;
   bbox2 << 42 << 78 << 144 << 48;
   // Value calculated using Python interpreter.
-  BOOST_REQUIRE_CLOSE(IoU<>::Evaluate(bbox1, bbox2), 0.7898879, 1e-4);
+  REQUIRE(IoU<>::Evaluate(bbox1, bbox2) == Approx(0.7898879).epsilon(1e-6));
 
   bbox1 << 35 << 51 << 161 << 59;
   bbox2 << 36 << 60 << 144 << 48;
   // Value calculated using Python interpreter.
-  BOOST_REQUIRE_CLOSE(IoU<>::Evaluate(bbox1, bbox2), 0.7309670, 1e-4);
+  REQUIRE(IoU<>::Evaluate(bbox1, bbox2) == Approx(0.7309670).epsilon(1e-6));
 }
 
-BOOST_AUTO_TEST_CASE(NMSMetricTest)
+TEST_CASE("NMSMetricTest", "[MetricTest]")
 {
   arma::mat bbox, selectedBoundingBox, desiredBoundingBox;
   arma::vec bbox1(4), bbox2(4), bbox3(4);
@@ -172,13 +172,13 @@ BOOST_AUTO_TEST_CASE(NMSMetricTest)
 
   selectedBoundingBox = bbox.cols(selectedIndices);
 
-  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_cols, 2);
-  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_rows, 4);
+  REQUIRE(selectedBoundingBox.n_cols == 2);
+  REQUIRE(selectedBoundingBox.n_rows == 4);
   CheckMatrices(desiredBoundingBox, selectedBoundingBox);
 
   for (size_t i = 0; i < desiredIndices.n_elem; i++)
   {
-    BOOST_REQUIRE_EQUAL(desiredIndices[i], selectedIndices[i]);
+    REQUIRE(desiredIndices[i] == selectedIndices[i]);
   }
 
   // Clean up.
@@ -201,8 +201,8 @@ BOOST_AUTO_TEST_CASE(NMSMetricTest)
 
   selectedBoundingBox = bbox.cols(selectedIndices);
 
-  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_cols, 2);
-  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_rows, 4);
+  REQUIRE(selectedBoundingBox.n_cols == 2);
+  REQUIRE(selectedBoundingBox.n_rows == 4);
   CheckMatrices(desiredBoundingBox, selectedBoundingBox);
 
   // Clean up.
@@ -233,8 +233,8 @@ BOOST_AUTO_TEST_CASE(NMSMetricTest)
 
   selectedBoundingBox = bbox.cols(selectedIndices);
 
-  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_cols, 2);
-  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_rows, 4);
+  REQUIRE(selectedBoundingBox.n_cols == 2);
+  REQUIRE(selectedBoundingBox.n_rows == 4);
   CheckMatrices(desiredBoundingBox, selectedBoundingBox);
 
   // Clean up.
@@ -266,8 +266,8 @@ BOOST_AUTO_TEST_CASE(NMSMetricTest)
     selectedIndices);
 
   selectedBoundingBox = bbox.cols(selectedIndices);
-  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_cols, 2);
-  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_rows, 4);
+  REQUIRE(selectedBoundingBox.n_cols == 2);
+  REQUIRE(selectedBoundingBox.n_rows == 4);
   CheckMatrices(desiredBoundingBox, selectedBoundingBox);
 
   // Clean up.
@@ -297,15 +297,15 @@ BOOST_AUTO_TEST_CASE(NMSMetricTest)
     selectedIndices, 0.7);
 
   selectedBoundingBox = bbox.cols(selectedIndices);
-  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_cols, 2);
-  BOOST_REQUIRE_EQUAL(selectedBoundingBox.n_rows, 4);
+  REQUIRE(selectedBoundingBox.n_cols == 2);
+  REQUIRE(selectedBoundingBox.n_rows == 4);
   CheckMatrices(desiredBoundingBox, selectedBoundingBox);
 }
 
 /**
  *
  */
-BOOST_AUTO_TEST_CASE(BLEUScoreTest)
+TEST_CASE("BLEUScoreTest", "[MetricTest]")
 {
   typedef typename std::vector<std::string> WordVector;
   std::vector<std::vector<WordVector>> referenceCorpus
@@ -330,34 +330,32 @@ BOOST_AUTO_TEST_CASE(BLEUScoreTest)
 
   //! We are not using smoothing function here.
   bleu.Evaluate(referenceCorpus, translationCorpus);
-  BOOST_REQUIRE_CLOSE_FRACTION(bleu.BLEUScore(), 0.0, 1e-05);
-  BOOST_REQUIRE_EQUAL(bleu.BrevityPenalty(), 1.0);
-  BOOST_REQUIRE_EQUAL(bleu.Ratio(), 1.0);
-  BOOST_REQUIRE_EQUAL(bleu.TranslationLength(), 12);
-  BOOST_REQUIRE_EQUAL(bleu.ReferenceLength(), 12);
+  REQUIRE(bleu.BLEUScore() == Approx(0.0).epsilon(1e-5));
+  REQUIRE(bleu.BrevityPenalty() == 1.0);
+  REQUIRE(bleu.Ratio() == 1.0);
+  REQUIRE(bleu.TranslationLength() == 12);
+  REQUIRE(bleu.ReferenceLength() == 12);
 
   std::vector<float> expectedPrecision = {0.666666f, 0.5555555f,
       0.3333333f, 0.0f};
   for (size_t i = 0; i < bleu.Precisions().size(); ++i)
   {
-    BOOST_REQUIRE_CLOSE_FRACTION(bleu.Precisions()[i],
-        expectedPrecision[i], 1e-04);
+    REQUIRE(bleu.Precisions()[i] ==
+        Approx((double)expectedPrecision[i]).epsilon(1e-4));
   }
 
   //! We will use smoothing function here by setting smooth to true.
   bleu.Evaluate(referenceCorpus, translationCorpus, true);
-  BOOST_REQUIRE_CLOSE_FRACTION(bleu.BLEUScore(), 0.459307, 1e-05);
-  BOOST_REQUIRE_EQUAL(bleu.BrevityPenalty(), 1.0);
-  BOOST_REQUIRE_EQUAL(bleu.Ratio(), 1.0);
-  BOOST_REQUIRE_EQUAL(bleu.TranslationLength(), 12);
-  BOOST_REQUIRE_EQUAL(bleu.ReferenceLength(), 12);
+  REQUIRE(bleu.BLEUScore() == Approx(0.459307).epsilon(1e-5));
+  REQUIRE(bleu.BrevityPenalty() == 1.0);
+  REQUIRE(bleu.Ratio() == 1.0);
+  REQUIRE(bleu.TranslationLength() == 12);
+  REQUIRE(bleu.ReferenceLength() == 12);
 
   expectedPrecision = {0.692308f, 0.6f, 0.428571f, 0.25f};
   for (size_t i = 0; i < bleu.Precisions().size(); ++i)
   {
-    BOOST_REQUIRE_CLOSE_FRACTION(bleu.Precisions()[i],
-        expectedPrecision[i], 1e-04);
+    REQUIRE(bleu.Precisions()[i] ==
+        Approx(expectedPrecision[i]).epsilon(1e-4));
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

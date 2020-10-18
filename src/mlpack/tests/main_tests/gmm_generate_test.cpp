@@ -17,8 +17,8 @@ static const std::string testName = "GmmGenerate";
 #include <mlpack/methods/gmm/gmm_generate_main.cpp>
 
 #include "test_helper.hpp"
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -38,10 +38,9 @@ struct GmmGenerateTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(GmmGenerateMainTest, GmmGenerateTestFixture);
-
 // Checking that Samples must greater than 0.
-BOOST_AUTO_TEST_CASE(GmmGenerateSamplesTest)
+TEST_CASE_METHOD(GmmGenerateTestFixture, "GmmGenerateSamplesTest",
+                 "[GmmGenerateMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -52,12 +51,13 @@ BOOST_AUTO_TEST_CASE(GmmGenerateSamplesTest)
 
   Log::Fatal.ignoreInput = true;
   SetInputParam("samples", 0); // Invalid
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 // Checking dimensionality of output.
-BOOST_AUTO_TEST_CASE(GmmGenerateDimensionality)
+TEST_CASE_METHOD(GmmGenerateTestFixture, "GmmGenerateDimensionality",
+                 "[GmmGenerateMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -70,9 +70,6 @@ BOOST_AUTO_TEST_CASE(GmmGenerateDimensionality)
 
   arma::mat output = std::move(IO::GetParam<arma::mat>("output"));
 
-  BOOST_REQUIRE_EQUAL(output.n_rows, gmm.Dimensionality());
-  BOOST_REQUIRE_EQUAL(output.n_cols, (int) 10);
+  REQUIRE(output.n_rows == gmm.Dimensionality());
+  REQUIRE(output.n_cols == (int) 10);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
-

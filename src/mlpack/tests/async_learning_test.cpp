@@ -24,17 +24,15 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace mlpack::rl;
 
-BOOST_AUTO_TEST_SUITE(AsyncLearningTest);
 
 // Test async one step q-learning in Cart Pole.
-BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
+TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")
 {
   /**
    * This is for the Travis CI server, in your own machine you should use more
@@ -106,11 +104,11 @@ BOOST_AUTO_TEST_CASE(OneStepQLearningTest)
     }
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 // Test async one step Sarsa in Cart Pole.
-BOOST_AUTO_TEST_CASE(OneStepSarsaTest)
+TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest]")
 {
   /**
    * This is for the Travis CI server, in your own machine you shuold use more
@@ -184,11 +182,11 @@ BOOST_AUTO_TEST_CASE(OneStepSarsaTest)
     }
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 // Test async n step q-learning in Cart Pole.
-BOOST_AUTO_TEST_CASE(NStepQLearningTest)
+TEST_CASE("NStepQLearningTest", "[AsyncLearningTest]")
 {
   /**
    * This is for the Travis CI server, in your own machine you shuold use more
@@ -233,7 +231,7 @@ BOOST_AUTO_TEST_CASE(NStepQLearningTest)
   {
     size_t maxEpisode = 100000;
     if (testEpisodes > maxEpisode)
-      BOOST_REQUIRE(false);
+      REQUIRE(false);
     testEpisodes++;
     rewards[pos++] = reward;
     pos %= rewards.n_elem;
@@ -249,5 +247,3 @@ BOOST_AUTO_TEST_CASE(NStepQLearningTest)
   agent.Train(measure);
   Log::Debug << "Total test episodes: " << testEpisodes << std::endl;
 }
-
-BOOST_AUTO_TEST_SUITE_END();
