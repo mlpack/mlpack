@@ -88,7 +88,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEGaussianRTreeResultsMain",
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(100 * relError));
+    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -129,7 +129,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDETriangularBallTreeResultsMain",
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(100 * relError));
+    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -171,7 +171,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMonoResultsMain",
 
   // Check whether results are equal.
   for (size_t i = 0; i < reference.n_cols; ++i)
-    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(100 * relError));
+    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -240,7 +240,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEModelReuse",
 
   // Check estimations are the same.
   for (size_t i = 0; i < samples; ++i)
-    REQUIRE(oldEstimations[i] == Approx(newEstimations[i]).epsilon(100 * relError));
+    REQUIRE(oldEstimations[i] == Approx(newEstimations[i]).epsilon(relError));
 }
 
 /**
@@ -283,7 +283,7 @@ TEST_CASE_METHOD(KDETestFixture, "KDEGaussianSingleKDTreeResultsMain",
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(100 * relError));
+    REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(relError));
 }
 
 /**
