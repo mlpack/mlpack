@@ -41,7 +41,7 @@ steps:
     # Install cereal.
     wget https://github.com/USCiLab/cereal/archive/v1.3.0.tar.gz
     tar -xvzpf v1.3.0.tar.gz # Unpack into cereal-1.3.0/.
-    cd cereal-1.3.0/ && cmake . && make && sudo make install && cd ..
+    cd cereal-1.3.0/
   displayName: 'Install Build Dependencies'
 
 # Configure mlpack (CMake)
@@ -52,7 +52,7 @@ steps:
       export GOPATH=$PWD/src/mlpack/bindings/go
       go get -u -t gonum.org/v1/gonum/...
     fi
-    cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=`which python` ..
+    cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=`which python` -DCEREAL_INCLUDE_DIR=$PWD/cereal-1.3.0/include/ ..
   displayName: 'CMake'
 
 # Build mlpack
