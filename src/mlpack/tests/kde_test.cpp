@@ -15,9 +15,9 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 
-#include "catch.hpp"
-#include "test_catch_tools.hpp"
-#include "serialization_catch.hpp"
+#include <boost/test/unit_test.hpp>
+#include "test_tools.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kde;
@@ -26,6 +26,8 @@ using namespace mlpack::tree;
 using namespace mlpack::kernel;
 
 using namespace boost::serialization;
+
+BOOST_AUTO_TEST_SUITE(KDETest);
 
 // Brute force gaussian KDE.
 template <typename KernelType>
@@ -49,7 +51,7 @@ void BruteForceKDE(const arma::mat& reference,
 /**
  * Test if simple case is correct according to manually calculated results.
  */
-TEST_CASE("KDESimpleTest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(KDESimpleTest)
 {
   // Transposed reference and query sets because it's easier to read.
   arma::mat reference = { {-1.0, -1.0},
@@ -78,13 +80,13 @@ TEST_CASE("KDESimpleTest", "[KDETest]")
   kde.Train(reference);
   kde.Evaluate(query, estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(estimations[i] == Approx(estimationsResult[i]).epsilon(1e-4));
+    BOOST_REQUIRE_CLOSE(estimations[i], estimationsResult[i], 0.01);
 }
 
 /**
  * Test Train(Tree...) and Evaluate(Tree...).
  */
-TEST_CASE("KDETreeAsArguments", "[KDETest]")
+BOOST_AUTO_TEST_CASE(KDETreeAsArguments)
 {
   // Transposed reference and query sets because it's easier to read.
   arma::mat reference = { {-1.0, -1.0},
@@ -123,7 +125,7 @@ TEST_CASE("KDETreeAsArguments", "[KDETest]")
   kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, std::move(oldFromNewQueries), estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(estimations[i] == Approx(estimationsResult[i]).epsilon(1e-4));
+    BOOST_REQUIRE_CLOSE(estimations[i], estimationsResult[i], 0.01);
   delete queryTree;
   delete referenceTree;
 }
@@ -131,7 +133,7 @@ TEST_CASE("KDETreeAsArguments", "[KDETest]")
 /**
  * Test dual-tree implementation results against brute force results.
  */
-TEST_CASE("GaussianKDEBruteForceTest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(GaussianKDEBruteForceTest)
 {
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
@@ -159,13 +161,13 @@ TEST_CASE("GaussianKDEBruteForceTest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test single-tree implementation results against brute force results.
  */
-TEST_CASE("GaussianSingleKDEBruteForceTest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(GaussianSingleKDEBruteForceTest)
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
@@ -193,14 +195,14 @@ TEST_CASE("GaussianSingleKDEBruteForceTest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test single-tree implementation results against brute force results using
  * a cover-tree and Epanechnikov kernel.
  */
-TEST_CASE("EpanechnikovCoverSingleKDETest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(EpanechnikovCoverSingleKDETest)
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
@@ -228,14 +230,14 @@ TEST_CASE("EpanechnikovCoverSingleKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test single-tree implementation results against brute force results using
  * a cover-tree and Gaussian kernel.
  */
-TEST_CASE("GaussianCoverSingleKDETest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(GaussianCoverSingleKDETest)
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
@@ -263,14 +265,14 @@ TEST_CASE("GaussianCoverSingleKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test single-tree implementation results against brute force results using
  * an octree and Epanechnikov kernel.
  */
-TEST_CASE("EpanechnikovOctreeSingleKDETest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(EpanechnikovOctreeSingleKDETest)
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
@@ -298,13 +300,13 @@ TEST_CASE("EpanechnikovOctreeSingleKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test BallTree dual-tree implementation results against brute force results.
  */
-TEST_CASE("BallTreeGaussianKDETest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(BallTreeGaussianKDETest)
 {
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
@@ -335,7 +337,7 @@ TEST_CASE("BallTreeGaussianKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 
   delete queryTree;
   delete referenceTree;
@@ -344,7 +346,7 @@ TEST_CASE("BallTreeGaussianKDETest", "[KDETest]")
 /**
  * Test Octree dual-tree implementation results against brute force results.
  */
-TEST_CASE("OctreeGaussianKDETest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(OctreeGaussianKDETest)
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
@@ -372,13 +374,13 @@ TEST_CASE("OctreeGaussianKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test RTree dual-tree implementation results against brute force results.
  */
-TEST_CASE("RTreeGaussianKDETest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(RTreeGaussianKDETest)
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
@@ -406,14 +408,14 @@ TEST_CASE("RTreeGaussianKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test Standard Cover Tree dual-tree implementation results against brute
  * force results using Gaussian kernel.
  */
-TEST_CASE("StandardCoverTreeGaussianKDETest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(StandardCoverTreeGaussianKDETest)
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
@@ -441,14 +443,14 @@ TEST_CASE("StandardCoverTreeGaussianKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test Standard Cover Tree dual-tree implementation results against brute
  * force results using Epanechnikov kernel.
  */
-TEST_CASE("StandardCoverTreeEpanechnikovKDETest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(StandardCoverTreeEpanechnikovKDETest)
 {
   arma::mat reference = arma::randu(2, 500);
   arma::mat query = arma::randu(2, 200);
@@ -476,13 +478,13 @@ TEST_CASE("StandardCoverTreeEpanechnikovKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test duplicated value in reference matrix.
  */
-TEST_CASE("DuplicatedReferenceSampleKDETest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(DuplicatedReferenceSampleKDETest)
 {
   arma::mat reference = arma::randu(2, 30);
   arma::mat query = arma::randu(2, 10);
@@ -516,7 +518,7 @@ TEST_CASE("DuplicatedReferenceSampleKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 
   delete queryTree;
   delete referenceTree;
@@ -525,7 +527,7 @@ TEST_CASE("DuplicatedReferenceSampleKDETest", "[KDETest]")
 /**
  * Test duplicated value in query matrix.
  */
-TEST_CASE("DuplicatedQuerySampleKDETest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(DuplicatedQuerySampleKDETest)
 {
   arma::mat reference = arma::randu(2, 30);
   arma::mat query = arma::randu(2, 10);
@@ -550,7 +552,7 @@ TEST_CASE("DuplicatedQuerySampleKDETest", "[KDETest]")
   kde.Evaluate(queryTree, oldFromNewQueries, estimations);
 
   // Check whether results are equal.
-  REQUIRE(estimations[2] == Approx(estimations[3]).epsilon(relError));
+  BOOST_REQUIRE_CLOSE(estimations[2], estimations[3], relError * 100);
 
   delete queryTree;
   delete referenceTree;
@@ -560,7 +562,7 @@ TEST_CASE("DuplicatedQuerySampleKDETest", "[KDETest]")
  * Test dual-tree breadth-first implementation results against brute force
  * results.
  */
-TEST_CASE("BreadthFirstKDETest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(BreadthFirstKDETest)
 {
   arma::mat reference = arma::randu(2, 200);
   arma::mat query = arma::randu(2, 60);
@@ -591,13 +593,13 @@ TEST_CASE("BreadthFirstKDETest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test 1-dimensional implementation results against brute force results.
  */
-TEST_CASE("OneDimensionalTest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(OneDimensionalTest)
 {
   arma::mat reference = arma::randu(1, 200);
   arma::mat query = arma::randu(1, 60);
@@ -625,13 +627,13 @@ TEST_CASE("OneDimensionalTest", "[KDETest]")
 
   // Check whether results are equal.
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(bfEstimations[i], treeEstimations[i], relError * 100);
 }
 
 /**
  * Test a case where an empty reference set is given to train the model.
  */
-TEST_CASE("EmptyReferenceTest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(EmptyReferenceTest)
 {
   arma::mat reference;
   arma::mat query = arma::randu(1, 10);
@@ -649,13 +651,13 @@ TEST_CASE("EmptyReferenceTest", "[KDETest]")
       kde(relError, 0.0, kernel, KDEMode::DUAL_TREE_MODE, metric);
 
   // When training using the dataset matrix.
-  REQUIRE_THROWS_AS(kde.Train(reference), std::invalid_argument);
+  BOOST_REQUIRE_THROW(kde.Train(reference), std::invalid_argument);
 
   // When training using a tree.
   std::vector<size_t> oldFromNewReferences;
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   Tree* referenceTree = new Tree(reference, oldFromNewReferences, 2);
-  REQUIRE_THROWS_AS(
+  BOOST_REQUIRE_THROW(
       kde.Train(referenceTree, &oldFromNewReferences), std::invalid_argument);
 
   delete referenceTree;
@@ -664,7 +666,7 @@ TEST_CASE("EmptyReferenceTest", "[KDETest]")
 /**
  * Tests when reference set values and query set values dimensions don't match.
  */
-TEST_CASE("EvaluationMatchDimensionsTest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(EvaluationMatchDimensionsTest)
 {
   arma::mat reference = arma::randu(3, 10);
   arma::mat query = arma::randu(1, 10);
@@ -683,14 +685,14 @@ TEST_CASE("EvaluationMatchDimensionsTest", "[KDETest]")
   kde.Train(reference);
 
   // When evaluating using the query dataset matrix.
-  REQUIRE_THROWS_AS(kde.Evaluate(query, estimations),
+  BOOST_REQUIRE_THROW(kde.Evaluate(query, estimations),
                     std::invalid_argument);
 
   // When evaluating using a query tree.
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 3);
-  REQUIRE_THROWS_AS(kde.Evaluate(queryTree, oldFromNewQueries, estimations),
+  BOOST_REQUIRE_THROW(kde.Evaluate(queryTree, oldFromNewQueries, estimations),
                     std::invalid_argument);
   delete queryTree;
 }
@@ -698,7 +700,7 @@ TEST_CASE("EvaluationMatchDimensionsTest", "[KDETest]")
 /**
  * Tests when an empty query set is given to be evaluated.
  */
-TEST_CASE("EmptyQuerySetTest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(EmptyQuerySetTest)
 {
   arma::mat reference = arma::randu(1, 10);
   arma::mat query;
@@ -718,26 +720,26 @@ TEST_CASE("EmptyQuerySetTest", "[KDETest]")
   kde.Train(reference);
 
   // The query set must be empty.
-  REQUIRE(query.n_cols == 0);
+  BOOST_REQUIRE_EQUAL(query.n_cols, 0);
   // When evaluating using the query dataset matrix.
-  REQUIRE_NOTHROW(kde.Evaluate(query, estimations));
+  BOOST_REQUIRE_NO_THROW(kde.Evaluate(query, estimations));
 
   // When evaluating using a query tree.
   typedef KDTree<EuclideanDistance, kde::KDEStat, arma::mat> Tree;
   std::vector<size_t> oldFromNewQueries;
   Tree* queryTree = new Tree(query, oldFromNewQueries, 3);
-  REQUIRE_NOTHROW(
+  BOOST_REQUIRE_NO_THROW(
       kde.Evaluate(queryTree, oldFromNewQueries, estimations));
   delete queryTree;
 
   // Estimations must be empty.
-  REQUIRE(estimations.size() == 0);
+  BOOST_REQUIRE_EQUAL(estimations.size(), 0);
 }
 
 /**
  * Tests serialiation of KDE models.
  */
-TEST_CASE("KDESerializationTest", "[KDETest]")
+BOOST_AUTO_TEST_CASE(SerializationTest)
 {
   // Initial KDE model to be serialized.
   const double relError = 0.25;
@@ -777,51 +779,51 @@ TEST_CASE("KDESerializationTest", "[KDETest]")
   SerializeObjectAll(kde, kdeXml, kdeText, kdeBinary);
 
   // Check everything is correct.
-  REQUIRE(kde.RelativeError() == Approx(relError).epsilon(1e-10));
-  REQUIRE(kdeXml.RelativeError() == Approx(relError).epsilon(1e-10));
-  REQUIRE(kdeText.RelativeError() == Approx(relError).epsilon(1e-10));
-  REQUIRE(kdeBinary.RelativeError() == Approx(relError).epsilon(1e-10));
+  BOOST_REQUIRE_CLOSE(kde.RelativeError(), relError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.RelativeError(), relError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.RelativeError(), relError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.RelativeError(), relError, 1e-8);
 
-  REQUIRE(kde.AbsoluteError() == Approx(absError).epsilon(1e-10));
-  REQUIRE(kdeXml.AbsoluteError() == Approx(absError).epsilon(1e-10));
-  REQUIRE(kdeText.AbsoluteError() == Approx(absError).epsilon(1e-10));
-  REQUIRE(kdeBinary.AbsoluteError() == Approx(absError).epsilon(1e-10));
+  BOOST_REQUIRE_CLOSE(kde.AbsoluteError(), absError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.AbsoluteError(), absError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.AbsoluteError(), absError, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.AbsoluteError(), absError, 1e-8);
 
-  REQUIRE(kde.IsTrained());
-  REQUIRE(kdeXml.IsTrained());
-  REQUIRE(kdeText.IsTrained());
-  REQUIRE(kdeBinary.IsTrained());
+  BOOST_REQUIRE_EQUAL(kde.IsTrained(), true);
+  BOOST_REQUIRE_EQUAL(kdeXml.IsTrained(), true);
+  BOOST_REQUIRE_EQUAL(kdeText.IsTrained(), true);
+  BOOST_REQUIRE_EQUAL(kdeBinary.IsTrained(), true);
 
   const KDEMode mode = KDEMode::DUAL_TREE_MODE;
-  REQUIRE(kde.Mode() == mode);
-  REQUIRE(kdeXml.Mode() == mode);
-  REQUIRE(kdeText.Mode() == mode);
-  REQUIRE(kdeBinary.Mode() == mode);
+  BOOST_REQUIRE_EQUAL(kde.Mode(), mode);
+  BOOST_REQUIRE_EQUAL(kdeXml.Mode(), mode);
+  BOOST_REQUIRE_EQUAL(kdeText.Mode(), mode);
+  BOOST_REQUIRE_EQUAL(kdeBinary.Mode(), mode);
 
-  REQUIRE(kde.MonteCarlo() == monteCarlo);
-  REQUIRE(kdeXml.MonteCarlo() == monteCarlo);
-  REQUIRE(kdeText.MonteCarlo() == monteCarlo);
-  REQUIRE(kdeBinary.MonteCarlo() == monteCarlo);
+  BOOST_REQUIRE_EQUAL(kde.MonteCarlo(), monteCarlo);
+  BOOST_REQUIRE_EQUAL(kdeXml.MonteCarlo(), monteCarlo);
+  BOOST_REQUIRE_EQUAL(kdeText.MonteCarlo(), monteCarlo);
+  BOOST_REQUIRE_EQUAL(kdeBinary.MonteCarlo(), monteCarlo);
 
-  REQUIRE(kde.MCProb() == Approx(MCProb).epsilon(1e-10));
-  REQUIRE(kdeXml.MCProb() == Approx(MCProb).epsilon(1e-10));
-  REQUIRE(kdeText.MCProb() == Approx(MCProb).epsilon(1e-10));
-  REQUIRE(kdeBinary.MCProb() == Approx(MCProb).epsilon(1e-10));
+  BOOST_REQUIRE_CLOSE(kde.MCProb(), MCProb, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.MCProb(), MCProb, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.MCProb(), MCProb, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.MCProb(), MCProb, 1e-8);
 
-  REQUIRE(kde.MCInitialSampleSize() == initialSampleSize);
-  REQUIRE(kdeXml.MCInitialSampleSize() == initialSampleSize);
-  REQUIRE(kdeText.MCInitialSampleSize() == initialSampleSize);
-  REQUIRE(kdeBinary.MCInitialSampleSize() == initialSampleSize);
+  BOOST_REQUIRE_EQUAL(kde.MCInitialSampleSize(), initialSampleSize);
+  BOOST_REQUIRE_EQUAL(kdeXml.MCInitialSampleSize(), initialSampleSize);
+  BOOST_REQUIRE_EQUAL(kdeText.MCInitialSampleSize(), initialSampleSize);
+  BOOST_REQUIRE_EQUAL(kdeBinary.MCInitialSampleSize(), initialSampleSize);
 
-  REQUIRE(kde.MCEntryCoef() == Approx(entryCoef).epsilon(1e-10));
-  REQUIRE(kdeXml.MCEntryCoef() == Approx(entryCoef).epsilon(1e-10));
-  REQUIRE(kdeText.MCEntryCoef() == Approx(entryCoef).epsilon(1e-10));
-  REQUIRE(kdeBinary.MCEntryCoef() == Approx(entryCoef).epsilon(1e-10));
+  BOOST_REQUIRE_CLOSE(kde.MCEntryCoef(), entryCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.MCEntryCoef(), entryCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.MCEntryCoef(), entryCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.MCEntryCoef(), entryCoef, 1e-8);
 
-  REQUIRE(kde.MCBreakCoef() == Approx(breakCoef).epsilon(1e-10));
-  REQUIRE(kdeXml.MCBreakCoef() == Approx(breakCoef).epsilon(1e-10));
-  REQUIRE(kdeText.MCBreakCoef() == Approx(breakCoef).epsilon(1e-10));
-  REQUIRE(kdeBinary.MCBreakCoef() == Approx(breakCoef).epsilon(1e-10));
+  BOOST_REQUIRE_CLOSE(kde.MCBreakCoef(), breakCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeXml.MCBreakCoef(), breakCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeText.MCBreakCoef(), breakCoef, 1e-8);
+  BOOST_REQUIRE_CLOSE(kdeBinary.MCBreakCoef(), breakCoef, 1e-8);
 
   // Test if execution gives the same result.
   arma::vec xmlEstimations = arma::vec(query.n_cols, arma::fill::zeros);
@@ -834,16 +836,16 @@ TEST_CASE("KDESerializationTest", "[KDETest]")
 
   for (size_t i = 0; i < query.n_cols; ++i)
   {
-    REQUIRE(estimations[i] == Approx(xmlEstimations[i]).epsilon(relError));
-    REQUIRE(estimations[i] == Approx(textEstimations[i]).epsilon(relError));
-    REQUIRE(estimations[i] == Approx(binEstimations[i]).epsilon(relError));
+    BOOST_REQUIRE_CLOSE(estimations[i], xmlEstimations[i], relError * 100);
+    BOOST_REQUIRE_CLOSE(estimations[i], textEstimations[i], relError * 100);
+    BOOST_REQUIRE_CLOSE(estimations[i], binEstimations[i], relError * 100);
   }
 }
 
 /**
  * Test if the copy constructor and copy operator works properly.
  */
-TEST_CASE("CopyConstructor", "[KDETest]")
+BOOST_AUTO_TEST_CASE(CopyConstructor)
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
@@ -872,15 +874,15 @@ TEST_CASE("CopyConstructor", "[KDETest]")
   // Check results.
   for (size_t i = 0; i < query.n_cols; ++i)
   {
-    REQUIRE(estimations1[i] == Approx(estimations2[i]).epsilon(1e-12));
-    REQUIRE(estimations2[i] == Approx(estimations3[i]).epsilon(1e-12));
+    BOOST_REQUIRE_CLOSE(estimations1[i], estimations2[i], 1e-10);
+    BOOST_REQUIRE_CLOSE(estimations2[i], estimations3[i], 1e-10);
   }
 }
 
 /**
  * Test if the move constructor works properly.
  */
-TEST_CASE("MoveConstructor", "[KDETest]")
+BOOST_AUTO_TEST_CASE(MoveConstructor)
 {
   arma::mat reference = arma::randu(2, 300);
   arma::mat query = arma::randu(2, 100);
@@ -901,15 +903,15 @@ TEST_CASE("MoveConstructor", "[KDETest]")
   constructor.Evaluate(query, estimations2);
 
   // Check results.
-  REQUIRE_THROWS_AS(kde.Evaluate(query, estimations3), std::runtime_error);
+  BOOST_REQUIRE_THROW(kde.Evaluate(query, estimations3), std::runtime_error);
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(estimations1[i] == Approx(estimations2[i]).epsilon(1e-12));
+    BOOST_REQUIRE_CLOSE(estimations1[i], estimations2[i], 1e-10);
 }
 
 /**
  * Test if an untrained KDE works properly.
  */
-TEST_CASE("NotTrained", "[KDETest]")
+BOOST_AUTO_TEST_CASE(NotTrained)
 {
   arma::mat query = arma::randu(1, 10);
   std::vector<size_t> oldFromNew;
@@ -919,17 +921,17 @@ TEST_CASE("NotTrained", "[KDETest]")
   KDE<>::Tree queryTree(query, oldFromNew);
 
   // Check results.
-  REQUIRE_THROWS_AS(kde.Evaluate(query, estimations), std::runtime_error);
-  REQUIRE_THROWS_AS(kde.Evaluate(&queryTree, oldFromNew, estimations),
+  BOOST_REQUIRE_THROW(kde.Evaluate(query, estimations), std::runtime_error);
+  BOOST_REQUIRE_THROW(kde.Evaluate(&queryTree, oldFromNew, estimations),
                       std::runtime_error);
-  REQUIRE_THROWS_AS(kde.Evaluate(estimations), std::runtime_error);
+  BOOST_REQUIRE_THROW(kde.Evaluate(estimations), std::runtime_error);
 }
 
 /**
  * Test single KD-tree implementation results against brute force results using
  * Monte Carlo estimations when possible.
  */
-TEST_CASE("GaussianSingleKDTreeMonteCarloKDE", "[KDETest]")
+BOOST_AUTO_TEST_CASE(GaussianSingleKDTreeMonteCarloKDE)
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 100);
@@ -975,14 +977,14 @@ TEST_CASE("GaussianSingleKDTreeMonteCarloKDE", "[KDETest]")
       ++correctResults;
   }
 
-  REQUIRE(correctResults > 70);
+  BOOST_REQUIRE_GT(correctResults, 70);
 }
 
 /**
  * Test single cover-tree implementation results against brute force results
  * using Monte Carlo estimations when possible.
  */
-TEST_CASE("GaussianSingleCoverTreeMonteCarloKDE", "[KDETest]")
+BOOST_AUTO_TEST_CASE(GaussianSingleCoverTreeMonteCarloKDE)
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 100);
@@ -1028,14 +1030,14 @@ TEST_CASE("GaussianSingleCoverTreeMonteCarloKDE", "[KDETest]")
       ++correctResults;
   }
 
-  REQUIRE(correctResults > 70);
+  BOOST_REQUIRE_GT(correctResults, 70);
 }
 
 /**
  * Test single octree implementation results against brute force results
  * using Monte Carlo estimations when possible.
  */
-TEST_CASE("GaussianSingleOctreeMonteCarloKDE", "[KDETest]")
+BOOST_AUTO_TEST_CASE(GaussianSingleOctreeMonteCarloKDE)
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 100);
@@ -1081,14 +1083,14 @@ TEST_CASE("GaussianSingleOctreeMonteCarloKDE", "[KDETest]")
       ++correctResults;
   }
 
-  REQUIRE(correctResults > 70);
+  BOOST_REQUIRE_GT(correctResults, 70);
 }
 
 /**
  * Test dual kd-tree implementation results against brute force results
  * using Monte Carlo estimations when possible.
  */
-TEST_CASE("GaussianDualKDTreeMonteCarloKDE", "[KDETest]")
+BOOST_AUTO_TEST_CASE(GaussianDualKDTreeMonteCarloKDE)
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
@@ -1134,14 +1136,14 @@ TEST_CASE("GaussianDualKDTreeMonteCarloKDE", "[KDETest]")
       ++correctResults;
   }
 
-  REQUIRE(correctResults > 70);
+  BOOST_REQUIRE_GT(correctResults, 70);
 }
 
 /**
  * Test dual Cover-tree implementation results against brute force results
  * using Monte Carlo estimations when possible.
  */
-TEST_CASE("GaussianDualCoverTreeMonteCarloKDE", "[KDETest]")
+BOOST_AUTO_TEST_CASE(GaussianDualCoverTreeMonteCarloKDE)
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
@@ -1187,14 +1189,14 @@ TEST_CASE("GaussianDualCoverTreeMonteCarloKDE", "[KDETest]")
       ++correctResults;
   }
 
-  REQUIRE(correctResults > 70);
+  BOOST_REQUIRE_GT(correctResults, 70);
 }
 
 /**
  * Test dual octree implementation results against brute force results
  * using Monte Carlo estimations when possible.
  */
-TEST_CASE("GaussianDualOctreeMonteCarloKDE", "[KDETest]")
+BOOST_AUTO_TEST_CASE(GaussianDualOctreeMonteCarloKDE)
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
@@ -1240,14 +1242,14 @@ TEST_CASE("GaussianDualOctreeMonteCarloKDE", "[KDETest]")
       ++correctResults;
   }
 
-  REQUIRE(correctResults > 70);
+  BOOST_REQUIRE_GT(correctResults, 70);
 }
 
 /**
  * Test dual kd-tree breadth first traversal implementation results against
  * brute force results using Monte Carlo estimations when possible.
  */
-TEST_CASE("GaussianBreadthDualKDTreeMonteCarloKDE", "[KDETest]")
+BOOST_AUTO_TEST_CASE(GaussianBreadthDualKDTreeMonteCarloKDE)
 {
   arma::mat reference = arma::randu(2, 3000);
   arma::mat query = arma::randu(2, 200);
@@ -1296,5 +1298,7 @@ TEST_CASE("GaussianBreadthDualKDTreeMonteCarloKDE", "[KDETest]")
       ++correctResults;
   }
 
-  REQUIRE(correctResults > 70);
+  BOOST_REQUIRE_GT(correctResults, 70);
 }
+
+BOOST_AUTO_TEST_SUITE_END();

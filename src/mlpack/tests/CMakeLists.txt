@@ -1,6 +1,7 @@
 # mlpack test executable.
 add_executable(mlpack_test
   callback_test.cpp
+  kde_test.cpp
   lmnn_test.cpp
   local_coordinate_coding_test.cpp
   log_test.cpp
@@ -24,6 +25,7 @@ add_executable(mlpack_test
   timer_test.cpp
   union_find_test.cpp
   main_tests/det_test.cpp
+  main_tests/kde_test.cpp
   main_tests/lmnn_test.cpp
   main_tests/local_coordinate_coding_test.cpp
   main_tests/logistic_regression_test.cpp
@@ -77,7 +79,6 @@ add_executable(mlpack_catch_test
   imputation_test.cpp
   init_rules_test.cpp
   io_test.cpp
-  kde_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
   kernel_traits_test.cpp
@@ -156,7 +157,6 @@ add_executable(mlpack_catch_test
   main_tests/decision_tree_test.cpp
   main_tests/hoeffding_tree_test.cpp
   main_tests/image_converter_test.cpp
-  main_tests/kde_test.cpp
   main_tests/kernel_pca_test.cpp
   main_tests/kfn_test.cpp
   main_tests/kmeans_test.cpp
