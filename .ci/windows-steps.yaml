@@ -178,6 +178,7 @@ steps:
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `
         Product.wxs fragment.wxs `
         -out obj/x64/Release/
+    dir
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\light.exe' `
         -out ./bin/x64/Release/mlpack-%INSTALL_VERSION%.msi `
         -pdbout ./bin/x64/Release/mlpack-windows.wixpdb `
@@ -188,7 +189,7 @@ steps:
         -outputsfile obj/x64/Release/mlpack-win-installer.wixproj.BindOutputsFileListnull.txt `
         -builtoutputsfile obj/x64/Release/mlpack-win-installer.wixproj.BindBuiltOutputsFileListnull.txt `
         -wixprojectfile mlpack-win-installer.wixproj `
-        obj/x64/Release/Product.wixobj obj\x64\Release\HeatGeneratedFileList.wixobj
+        obj/x64/Release/Product.wixobj obj\x64\Release\fragment.wixobj
   displayName: 'Build MSI Windows installer'
 
 # Publish artifacts to Azure Pipelines
