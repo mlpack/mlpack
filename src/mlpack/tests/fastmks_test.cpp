@@ -252,7 +252,7 @@ TEST_CASE("SimpleTrainTest", "[FastMKSTest]")
     if (std::abs(products[i]) < 1e-5)
       REQUIRE(products2[i] == Approx(0.0).epsilon(1e-5));
     else
-      REQUIRE(products[i] == Approx(products2[i]).epsilon(1e-5));
+      REQUIRE(products[i] == Approx(products2[i]).epsilon(1e-7));
 
     REQUIRE(indices[i] == indices2[i]);
   }
@@ -286,7 +286,7 @@ TEST_CASE("SimpleTrainKernelTest", "[FastMKSTest]")
     if (std::abs(products[i]) < 1e-5)
       REQUIRE(products2[i] == Approx(0.0).epsilon(1e-5));
     else
-      REQUIRE(products[i] == Approx(products2[i]).epsilon(1e-5));
+      REQUIRE(products[i] == Approx(products2[i]).epsilon(1e-7));
 
     REQUIRE(indices[i] == indices2[i]);
   }
@@ -417,9 +417,9 @@ TEST_CASE("FastMKSModelLinearTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 
@@ -461,9 +461,9 @@ TEST_CASE("FastMKSModelLinearTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 }
@@ -526,9 +526,9 @@ TEST_CASE("FastMKSModelPolynomialTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 
@@ -570,9 +570,9 @@ TEST_CASE("FastMKSModelPolynomialTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 }
@@ -635,9 +635,9 @@ TEST_CASE("FastMKSModelCosineTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 
@@ -679,9 +679,9 @@ TEST_CASE("FastMKSModelCosineTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 }
@@ -744,9 +744,9 @@ TEST_CASE("FastMKSModelGaussianTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 
@@ -788,9 +788,9 @@ TEST_CASE("FastMKSModelGaussianTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 }
@@ -853,9 +853,9 @@ TEST_CASE("FastMKSModelEpanTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 
@@ -897,9 +897,9 @@ TEST_CASE("FastMKSModelEpanTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 }
@@ -962,9 +962,9 @@ TEST_CASE("FastMKSModelTriangularTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 
@@ -1006,9 +1006,9 @@ TEST_CASE("FastMKSModelTriangularTest", "[FastMKSTest]")
     }
     else
     {
-      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-5));
-      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(mKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mNaiveKernels[i]).epsilon(1e-7));
+      REQUIRE(kernels[i] == Approx(mSingleKernels[i]).epsilon(1e-7));
     }
   }
 }
@@ -1046,7 +1046,7 @@ TEST_CASE("FastMKSCopyConstructorTest", "[FastMKSTest]")
   {
     REQUIRE(newIndices[i] == indices[i]);
     if (std::abs(kernels[i]) > 1e-5)
-      REQUIRE(kernels[i] == Approx(newKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(newKernels[i]).epsilon(1e-7));
     else
       REQUIRE(newKernels[i] == Approx(0.0).epsilon(1e-5));
   }
@@ -1084,7 +1084,7 @@ TEST_CASE("FastMKSMoveConstructorTest", "[FastMKSTest]")
   {
     REQUIRE(newIndices[i] == indices[i]);
     if (std::abs(kernels[i]) > 1e-5)
-      REQUIRE(kernels[i] == Approx(newKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(newKernels[i]).epsilon(1e-7));
     else
       REQUIRE(newKernels[i] == Approx(0.0).epsilon(1e-5));
   }
@@ -1124,7 +1124,7 @@ TEST_CASE("CopyAssignmentTest", "[FastMKSTest]")
   {
     REQUIRE(newIndices[i] == indices[i]);
     if (std::abs(kernels[i]) > 1e-5)
-      REQUIRE(kernels[i] == Approx(newKernels[i]).epsilon(1e-5));
+      REQUIRE(kernels[i] == Approx(newKernels[i]).epsilon(1e-7));
     else
       REQUIRE(newKernels[i] == Approx(0.0).epsilon(1e-5));
   }

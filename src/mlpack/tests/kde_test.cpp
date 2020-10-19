@@ -78,7 +78,7 @@ TEST_CASE("KDESimpleTest", "[KDETest]")
   kde.Train(reference);
   kde.Evaluate(query, estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(estimations[i] == Approx(estimationsResult[i]).epsilon(0.01));
+    REQUIRE(estimations[i] == Approx(estimationsResult[i]).epsilon(1e-4));
 }
 
 /**
@@ -123,7 +123,7 @@ TEST_CASE("KDETreeAsArguments", "[KDETest]")
   kde.Train(referenceTree, &oldFromNewReferences);
   kde.Evaluate(queryTree, std::move(oldFromNewQueries), estimations);
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(estimations[i] == Approx(estimationsResult[i]).epsilon(0.01));
+    REQUIRE(estimations[i] == Approx(estimationsResult[i]).epsilon(1e-4));
   delete queryTree;
   delete referenceTree;
 }
@@ -777,15 +777,15 @@ TEST_CASE("KDESerializationTest", "[KDETest]")
   SerializeObjectAll(kde, kdeXml, kdeText, kdeBinary);
 
   // Check everything is correct.
-  REQUIRE(kde.RelativeError() == Approx(relError).epsilon(1e-8));
-  REQUIRE(kdeXml.RelativeError() == Approx(relError).epsilon(1e-8));
-  REQUIRE(kdeText.RelativeError() == Approx(relError).epsilon(1e-8));
-  REQUIRE(kdeBinary.RelativeError() == Approx(relError).epsilon(1e-8));
+  REQUIRE(kde.RelativeError() == Approx(relError).epsilon(1e-10));
+  REQUIRE(kdeXml.RelativeError() == Approx(relError).epsilon(1e-10));
+  REQUIRE(kdeText.RelativeError() == Approx(relError).epsilon(1e-10));
+  REQUIRE(kdeBinary.RelativeError() == Approx(relError).epsilon(1e-10));
 
-  REQUIRE(kde.AbsoluteError() == Approx(absError).epsilon(1e-8));
-  REQUIRE(kdeXml.AbsoluteError() == Approx(absError).epsilon(1e-8));
-  REQUIRE(kdeText.AbsoluteError() == Approx(absError).epsilon(1e-8));
-  REQUIRE(kdeBinary.AbsoluteError() == Approx(absError).epsilon(1e-8));
+  REQUIRE(kde.AbsoluteError() == Approx(absError).epsilon(1e-10));
+  REQUIRE(kdeXml.AbsoluteError() == Approx(absError).epsilon(1e-10));
+  REQUIRE(kdeText.AbsoluteError() == Approx(absError).epsilon(1e-10));
+  REQUIRE(kdeBinary.AbsoluteError() == Approx(absError).epsilon(1e-10));
 
   REQUIRE(kde.IsTrained());
   REQUIRE(kdeXml.IsTrained());
@@ -803,25 +803,25 @@ TEST_CASE("KDESerializationTest", "[KDETest]")
   REQUIRE(kdeText.MonteCarlo() == monteCarlo);
   REQUIRE(kdeBinary.MonteCarlo() == monteCarlo);
 
-  REQUIRE(kde.MCProb() == Approx(MCProb).epsilon(1e-8));
-  REQUIRE(kdeXml.MCProb() == Approx(MCProb).epsilon(1e-8));
-  REQUIRE(kdeText.MCProb() == Approx(MCProb).epsilon(1e-8));
-  REQUIRE(kdeBinary.MCProb() == Approx(MCProb).epsilon(1e-8));
+  REQUIRE(kde.MCProb() == Approx(MCProb).epsilon(1e-10));
+  REQUIRE(kdeXml.MCProb() == Approx(MCProb).epsilon(1e-10));
+  REQUIRE(kdeText.MCProb() == Approx(MCProb).epsilon(1e-10));
+  REQUIRE(kdeBinary.MCProb() == Approx(MCProb).epsilon(1e-10));
 
   REQUIRE(kde.MCInitialSampleSize() == initialSampleSize);
   REQUIRE(kdeXml.MCInitialSampleSize() == initialSampleSize);
   REQUIRE(kdeText.MCInitialSampleSize() == initialSampleSize);
   REQUIRE(kdeBinary.MCInitialSampleSize() == initialSampleSize);
 
-  REQUIRE(kde.MCEntryCoef() == Approx(entryCoef).epsilon(1e-8));
-  REQUIRE(kdeXml.MCEntryCoef() == Approx(entryCoef).epsilon(1e-8));
-  REQUIRE(kdeText.MCEntryCoef() == Approx(entryCoef).epsilon(1e-8));
-  REQUIRE(kdeBinary.MCEntryCoef() == Approx(entryCoef).epsilon(1e-8));
+  REQUIRE(kde.MCEntryCoef() == Approx(entryCoef).epsilon(1e-10));
+  REQUIRE(kdeXml.MCEntryCoef() == Approx(entryCoef).epsilon(1e-10));
+  REQUIRE(kdeText.MCEntryCoef() == Approx(entryCoef).epsilon(1e-10));
+  REQUIRE(kdeBinary.MCEntryCoef() == Approx(entryCoef).epsilon(1e-10));
 
-  REQUIRE(kde.MCBreakCoef() == Approx(breakCoef).epsilon(1e-8));
-  REQUIRE(kdeXml.MCBreakCoef() == Approx(breakCoef).epsilon(1e-8));
-  REQUIRE(kdeText.MCBreakCoef() == Approx(breakCoef).epsilon(1e-8));
-  REQUIRE(kdeBinary.MCBreakCoef() == Approx(breakCoef).epsilon(1e-8));
+  REQUIRE(kde.MCBreakCoef() == Approx(breakCoef).epsilon(1e-10));
+  REQUIRE(kdeXml.MCBreakCoef() == Approx(breakCoef).epsilon(1e-10));
+  REQUIRE(kdeText.MCBreakCoef() == Approx(breakCoef).epsilon(1e-10));
+  REQUIRE(kdeBinary.MCBreakCoef() == Approx(breakCoef).epsilon(1e-10));
 
   // Test if execution gives the same result.
   arma::vec xmlEstimations = arma::vec(query.n_cols, arma::fill::zeros);
@@ -872,8 +872,8 @@ TEST_CASE("CopyConstructor", "[KDETest]")
   // Check results.
   for (size_t i = 0; i < query.n_cols; ++i)
   {
-    REQUIRE(estimations1[i] == Approx(estimations2[i]).epsilon(1e-10));
-    REQUIRE(estimations2[i] == Approx(estimations3[i]).epsilon(1e-10));
+    REQUIRE(estimations1[i] == Approx(estimations2[i]).epsilon(1e-12));
+    REQUIRE(estimations2[i] == Approx(estimations3[i]).epsilon(1e-12));
   }
 }
 
@@ -903,7 +903,7 @@ TEST_CASE("MoveConstructor", "[KDETest]")
   // Check results.
   REQUIRE_THROWS_AS(kde.Evaluate(query, estimations3), std::runtime_error);
   for (size_t i = 0; i < query.n_cols; ++i)
-    REQUIRE(estimations1[i] == Approx(estimations2[i]).epsilon(1e-10));
+    REQUIRE(estimations1[i] == Approx(estimations2[i]).epsilon(1e-12));
 }
 
 /**

@@ -61,23 +61,23 @@ TEST_CASE("LinearSVMFunctionEvaluate", "[LinearSVMTest]")
   // These were hand-calculated using Python.
   arma::mat parameters = "1 1 1 1 1;"
                          "1 1 1 1 1";
-  REQUIRE(svmf.Evaluate(parameters.t()) == Approx(1.0).epsilon(1e-5));
+  REQUIRE(svmf.Evaluate(parameters.t()) == Approx(1.0).epsilon(1e-7));
 
   parameters = "2 0 1 2 2;"
                "1 2 2 2 2";
-  REQUIRE(svmf.Evaluate(parameters.t()) == Approx(2.0).epsilon(1e-5));
+  REQUIRE(svmf.Evaluate(parameters.t()) == Approx(2.0).epsilon(1e-7));
 
   parameters = "-0.1425 8.3228 0.1724 -0.3374 0.1548;"
                "0.1435 0.0009 -0.1736 0.3356 -0.1544";
-  REQUIRE(svmf.Evaluate(parameters.t()) == Approx(0.0).epsilon(1e-5));
+  REQUIRE(svmf.Evaluate(parameters.t()) == Approx(0.0).epsilon(1e-7));
 
   parameters = "100 3 4 5 23;"
                "43 54 67 32 64";
-  REQUIRE(svmf.Evaluate(parameters.t()) == Approx(85.33333333).epsilon(1e-5));
+  REQUIRE(svmf.Evaluate(parameters.t()) == Approx(85.33333333).epsilon(1e-7));
 
   parameters = "3 71 22 12 6;"
                "100 39 30 57 22";
-  REQUIRE(svmf.Evaluate(parameters.t()) == Approx(11.0).epsilon(1e-5));
+  REQUIRE(svmf.Evaluate(parameters.t()) == Approx(11.0).epsilon(1e-7));
 }
 
 /**
@@ -132,7 +132,7 @@ TEST_CASE("LinearSVMFunctionRandomBinaryEvaluate", "[LinearSVMTest]")
     hingeLoss /= points;
 
     // Compare with the value returned by the function.
-    REQUIRE(svmf.Evaluate(parameters) == Approx(hingeLoss).epsilon(1e-5));
+    REQUIRE(svmf.Evaluate(parameters) == Approx(hingeLoss).epsilon(1e-7));
   }
 }
 
@@ -188,7 +188,7 @@ TEST_CASE("LinearSVMFunctionRandomEvaluate", "[LinearSVMTest]")
     hingeLoss /= points;
 
     // Compare with the value returned by the function.
-    REQUIRE(svmf.Evaluate(parameters) == Approx(hingeLoss).epsilon(1e-5));
+    REQUIRE(svmf.Evaluate(parameters) == Approx(hingeLoss).epsilon(1e-7));
   }
 }
 
@@ -232,9 +232,9 @@ TEST_CASE("LinearSVMFunctionRegularizationEvaluate", "[LinearSVMTest]")
     const double bigRegTerm = 10 * wL2SquaredNorm;
 
     REQUIRE(svmfNoReg.Evaluate(parameters) + smallRegTerm ==
-        Approx(svmfSmallReg.Evaluate(parameters)).epsilon(1e-5));
+        Approx(svmfSmallReg.Evaluate(parameters)).epsilon(1e-7));
     REQUIRE(svmfNoReg.Evaluate(parameters) + bigRegTerm ==
-        Approx(svmfBigReg.Evaluate(parameters)).epsilon(1e-5));
+        Approx(svmfBigReg.Evaluate(parameters)).epsilon(1e-7));
   }
 }
 
@@ -273,7 +273,7 @@ TEST_CASE("LinearSVMFunctionSeparableEvaluate", "[LinearSVMTest]")
     hingeLoss /= points;
 
     // Compare with the value returned by the function.
-    REQUIRE(svmf.Evaluate(parameters) == Approx(hingeLoss).epsilon(1e-5));
+    REQUIRE(svmf.Evaluate(parameters) == Approx(hingeLoss).epsilon(1e-7));
   }
 }
 
@@ -325,9 +325,9 @@ TEST_CASE("LinearSVMFunctionRegularizationSeparableEvaluate", "[LinearSVMTest]")
     for (size_t j = 0; j < points; ++j)
     {
       REQUIRE(svmfNoReg.Evaluate(parameters, j, 1) + smallRegTerm ==
-          Approx(svmfSmallReg.Evaluate(parameters, j, 1)).epsilon(1e-5));
+          Approx(svmfSmallReg.Evaluate(parameters, j, 1)).epsilon(1e-7));
       REQUIRE(svmfNoReg.Evaluate(parameters, j, 1) + bigRegTerm ==
-          Approx(svmfBigReg.Evaluate(parameters, j, 1)).epsilon(1e-5));
+          Approx(svmfBigReg.Evaluate(parameters, j, 1)).epsilon(1e-7));
     }
   }
 }
@@ -399,7 +399,7 @@ TEST_CASE("LinearSVMFunctionGradient", "[LinearSVMTest]")
       for (size_t k = 0; k < numClasses ; ++k)
       {
         REQUIRE(gradient(j, k) ==
-            Approx(evaluatedGradient(j, k)).epsilon(1e-5));
+            Approx(evaluatedGradient(j, k)).epsilon(1e-7));
       }
     }
   }
@@ -458,9 +458,9 @@ TEST_CASE("LinearSVMFunctionSeparableGradient", "[LinearSVMTest]")
         const double bigRegTerm = 20.0 * parameters[j];
 
         REQUIRE(gradient[j] + smallRegTerm ==
-            Approx(smallRegGradient[j]).epsilon(1e-5));
+            Approx(smallRegGradient[j]).epsilon(1e-7));
         REQUIRE(gradient[j] + bigRegTerm ==
-            Approx(bigRegGradient[j]).epsilon(1e-5));
+            Approx(bigRegGradient[j]).epsilon(1e-7));
       }
     }
   }
@@ -490,7 +490,7 @@ TEST_CASE("LinearSVMLBFGSSimpleTest", "[LinearSVMTest]")
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  REQUIRE(acc == Approx(1.0).epsilon(0.5));
+  REQUIRE(acc == Approx(1.0).epsilon(0.005));
 }
 
 /**
@@ -523,7 +523,7 @@ TEST_CASE("LinearSVMGradientDescentSimpleTest", "[LinearSVMTest]")
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  REQUIRE(acc == Approx(1.0).epsilon(0.5));
+  REQUIRE(acc == Approx(1.0).epsilon(0.005));
 }
 
 /**
@@ -784,7 +784,7 @@ TEST_CASE("LinearSVMPSGDSimpleTest", "[LinearSVMTest]")
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(dataset, labels);
-  REQUIRE(acc == Approx(1.0).epsilon(1.0));
+  REQUIRE(acc == Approx(1.0).epsilon(1e-2));
 }
 
 /**
@@ -830,7 +830,7 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(data, labels);
-  REQUIRE(acc == Approx(1.0).epsilon(0.35));
+  REQUIRE(acc == Approx(1.0).epsilon(0.0035));
 
   // Create test dataset.
   for (size_t i = 0; i < points / 2; ++i)
@@ -846,7 +846,7 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
 
   // Compare test accuracy to 1.
   const double testAcc = lsvm.ComputeAccuracy(data, labels);
-  REQUIRE(testAcc == Approx(1.0).epsilon(0.35));
+  REQUIRE(testAcc == Approx(1.0).epsilon(0.0035));
 }
 
 #endif
@@ -872,7 +872,7 @@ TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]")
 
   REQUIRE(lr.Parameters().n_elem == lrSparse.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
-    REQUIRE(lr.Parameters()[i] == Approx(lrSparse.Parameters()[i]).epsilon(5e-4));
+    REQUIRE(lr.Parameters()[i] == Approx(lrSparse.Parameters()[i]).epsilon(5e-6));
 }
 
 /**

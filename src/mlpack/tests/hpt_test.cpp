@@ -60,7 +60,7 @@ TEST_CASE("CVFunctionTest", "[HPTTest]")
   parameters(1) = lambda1;
   double actual = cvFun.Evaluate(parameters);
 
-  REQUIRE(expected == Approx(actual).epsilon(1e-5));
+  REQUIRE(expected == Approx(actual).epsilon(1e-7));
 }
 
 /**
@@ -97,7 +97,7 @@ TEST_CASE("CVFunctionCategoricalTest", "[HPTTest]")
   parameters(1) = 0; // Should be unmapped to 1.0.
   double actual = cvFun.Evaluate(parameters);
 
-  REQUIRE(expected == Approx(actual).epsilon(1e-5));
+  REQUIRE(expected == Approx(actual).epsilon(1e-7));
 }
 
 /**
@@ -173,9 +173,9 @@ TEST_CASE("CVFunctionGradientTest", "[HPTTest]")
   double aproximateZPartialDerivative = c * (2 * z + zDelta);
 
   REQUIRE(gradient.n_elem == 3);
-  REQUIRE(gradient(0) == Approx(aproximateXPartialDerivative).epsilon(1e-5));
-  REQUIRE(gradient(1) == Approx(aproximateYPartialDerivative).epsilon(1e-5));
-  REQUIRE(gradient(2) == Approx(aproximateZPartialDerivative).epsilon(1e-5));
+  REQUIRE(gradient(0) == Approx(aproximateXPartialDerivative).epsilon(1e-7));
+  REQUIRE(gradient(1) == Approx(aproximateYPartialDerivative).epsilon(1e-7));
+  REQUIRE(gradient(2) == Approx(aproximateZPartialDerivative).epsilon(1e-7));
 }
 
 
@@ -279,11 +279,11 @@ TEST_CASE("GridSearchTest", "[HPTTest]")
   double actualObjective = optimizer.Optimize(cvFun, actualParameters,
       categoricalDimensions, numCategories);
 
-  REQUIRE(expectedObjective == Approx(actualObjective).epsilon(1e-5));
+  REQUIRE(expectedObjective == Approx(actualObjective).epsilon(1e-7));
   REQUIRE(expectedLambda1 ==
-      Approx(datasetInfo.UnmapString(actualParameters(0, 0), 0)).epsilon(1e-5));
+      Approx(datasetInfo.UnmapString(actualParameters(0, 0), 0)).epsilon(1e-7));
   REQUIRE(expectedLambda2 ==
-      Approx(datasetInfo.UnmapString(actualParameters(1, 0), 1)).epsilon(1e-5));
+      Approx(datasetInfo.UnmapString(actualParameters(1, 0), 1)).epsilon(1e-7));
 }
 
 /**
@@ -312,9 +312,9 @@ TEST_CASE("HPTTest", "[HPTTest]")
   std::tie(actualLambda1, actualLambda2) = hpt.Optimize(Fixed(transposeData),
       Fixed(useCholesky), lambda1Set, lambda2Set);
 
-  REQUIRE(expectedObjective == Approx(hpt.BestObjective()).epsilon(1e-5));
-  REQUIRE(expectedLambda1 == Approx(actualLambda1).epsilon(1e-5));
-  REQUIRE(expectedLambda2 == Approx(actualLambda2).epsilon(1e-5));
+  REQUIRE(expectedObjective == Approx(hpt.BestObjective()).epsilon(1e-7));
+  REQUIRE(expectedLambda1 == Approx(actualLambda1).epsilon(1e-7));
+  REQUIRE(expectedLambda2 == Approx(actualLambda2).epsilon(1e-7));
 
   /* Checking that the model provided by the hyper-parameter tuner shows the
    * same performance. */
@@ -322,7 +322,7 @@ TEST_CASE("HPTTest", "[HPTTest]")
   arma::mat validationXs = xs.cols(validationFirstColumn, xs.n_cols - 1);
   arma::rowvec validationYs = ys.cols(validationFirstColumn, ys.n_cols - 1);
   double objective = MSE::Evaluate(hpt.BestModel(), validationXs, validationYs);
-  REQUIRE(expectedObjective == Approx(objective).epsilon(1e-5));
+  REQUIRE(expectedObjective == Approx(objective).epsilon(1e-7));
 }
 
 /**
@@ -355,8 +355,8 @@ TEST_CASE("HPTMaximizationTest", "[HPTTest]")
   double actualLambda;
   std::tie(actualLambda) = hpt.Optimize(lambdas);
 
-  REQUIRE(hpt.BestObjective() == Approx(1.0).epsilon(1e-5));
-  REQUIRE(actualLambda == Approx(0.0).epsilon(1e-5));
+  REQUIRE(hpt.BestObjective() == Approx(1.0).epsilon(1e-7));
+  REQUIRE(actualLambda == Approx(0.0).epsilon(1e-7));
 }
 
 /**
@@ -397,6 +397,6 @@ TEST_CASE("HPTGradientDescentTest", "[HPTTest]")
 
   double xOptimized, zOptimized;
   std::tie(xOptimized, zOptimized) = hpt.Optimize(x0, Fixed(y), z0);
-  REQUIRE(xOptimized == Approx(xMin).epsilon(1e-4));
-  REQUIRE(zOptimized == Approx(zMin).epsilon(1e-4));
+  REQUIRE(xOptimized == Approx(xMin).epsilon(1e-6));
+  REQUIRE(zOptimized == Approx(zMin).epsilon(1e-6));
 }
