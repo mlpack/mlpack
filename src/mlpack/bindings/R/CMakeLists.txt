@@ -277,9 +277,9 @@ if (BUILD_R_BINDINGS)
           -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/generate_R.cpp.in
           -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/generate_r_${name}.cpp
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
-          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake
+          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/generate_R.cpp.in
-              ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake
+              ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
               ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp)
 
   add_executable(generate_r_${name}
