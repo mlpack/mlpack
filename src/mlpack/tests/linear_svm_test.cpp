@@ -830,7 +830,7 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
 
   // Compare training accuracy to 1.
   const double acc = lsvm.ComputeAccuracy(data, labels);
-  REQUIRE(acc == Approx(1.0).epsilon(0.0045));
+  REQUIRE(acc == Approx(1.0).epsilon(0.0060));
 
   // Create test dataset.
   for (size_t i = 0; i < points / 2; ++i)
@@ -846,7 +846,7 @@ TEST_CASE("LinearSVMParallelSGDTwoClasses", "[LinearSVMTest]")
 
   // Compare test accuracy to 1.
   const double testAcc = lsvm.ComputeAccuracy(data, labels);
-  REQUIRE(testAcc == Approx(1.0).epsilon(0.0045));
+  REQUIRE(testAcc == Approx(1.0).epsilon(0.0060));
 }
 
 #endif
