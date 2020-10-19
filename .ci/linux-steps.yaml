@@ -52,7 +52,7 @@ steps:
       export GOPATH=$PWD/src/mlpack/bindings/go
       go get -u -t gonum.org/v1/gonum/...
     fi
-    cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=`which python` -DCEREAL_INCLUDE_DIR=$PWD/cereal-1.3.0/include/ ..
+    cmake $(CMakeArgs) -DPYTHON_EXECUTABLE=`which python` -DCEREAL_INCLUDE_DIR=../cereal-1.3.0/include/ ..
   displayName: 'CMake'
 
 # Build mlpack
