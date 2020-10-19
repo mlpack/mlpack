@@ -70,7 +70,7 @@ TEST_CASE("DrusillaSelectExhaustiveExactTest", "[DrusillaSelectTest]")
   for (size_t i = 0; i < distances.n_elem; ++i)
   {
     REQUIRE(neighbors[i] == neighborsTrue[i]);
-    REQUIRE(distances[i] == Approx(distancesTrue[i]).epsilon(1e-5));
+    REQUIRE(distances[i] == Approx(distancesTrue[i]).epsilon(1e-7));
   }
 }
 
@@ -140,9 +140,9 @@ TEST_CASE("DrusillaSelectSerializationTest", "[DrusillaSelectTest]")
     REQUIRE(neighbors[i] == neighborsText[i]);
     REQUIRE(neighbors[i] == neighborsBinary[i]);
 
-    REQUIRE(distances[i] == Approx(distancesXml[i]).epsilon(1e-5));
-    REQUIRE(distances[i] == Approx(distancesText[i]).epsilon(1e-5));
-    REQUIRE(distances[i] == Approx(distancesBinary[i]).epsilon(1e-5));
+    REQUIRE(distances[i] == Approx(distancesXml[i]).epsilon(1e-7));
+    REQUIRE(distances[i] == Approx(distancesText[i]).epsilon(1e-7));
+    REQUIRE(distances[i] == Approx(distancesBinary[i]).epsilon(1e-7));
   }
 }
 

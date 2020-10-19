@@ -127,9 +127,9 @@ TEST_CASE_METHOD(EMSTTestFixture, "EMSTFirstTwoOutputRowsIntegerTest",
   {
     REQUIRE(IO::GetParam<arma::mat>("output")(0, i) ==
         Approx(boost::math::iround(IO::GetParam<arma::mat>("output")(0, i))).
-        epsilon(1e-5));
+        epsilon(1e-7));
     REQUIRE(IO::GetParam<arma::mat>("output")(1, i) == 
         Approx(boost::math::iround(IO::GetParam<arma::mat>("output")(1, i))).
-        epsilon(1e-5));
+        epsilon(1e-7));
   }
 }

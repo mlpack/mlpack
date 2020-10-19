@@ -54,7 +54,7 @@ TEST_CASE("FastMKSSingleTreeVsNaive", "[FastMKSTest]")
     {
       REQUIRE(singleIndices(r, q) == naiveIndices(r, q));
       REQUIRE(singleProducts(r, q) == 
-          Approx(naiveProducts(r, q)).epsilon(1e-5));
+          Approx(naiveProducts(r, q)).epsilon(1e-7));
     }
   }
 }
@@ -88,7 +88,7 @@ TEST_CASE("FastMKSDualTreeVsNaive", "[FastMKSTest]")
     for (size_t r = 0; r < treeIndices.n_rows; ++r)
     {
       REQUIRE(treeIndices(r, q) == naiveIndices(r, q));
-      REQUIRE(treeProducts(r, q) == Approx(naiveProducts(r, q)).epsilon(1e-5));
+      REQUIRE(treeProducts(r, q) == Approx(naiveProducts(r, q)).epsilon(1e-7));
     }
   }
 }
@@ -121,7 +121,7 @@ TEST_CASE("DualTreeVsSingleTree", "[FastMKSTest]")
     for (size_t r = 0; r < treeIndices.n_rows; ++r)
     {
       REQUIRE(treeIndices(r, q) == singleIndices(r, q));
-      REQUIRE(treeProducts(r, q) == Approx(singleProducts(r, q)).epsilon(1e-5));
+      REQUIRE(treeProducts(r, q) == Approx(singleProducts(r, q)).epsilon(1e-7));
     }
   }
 }
@@ -155,7 +155,7 @@ TEST_CASE("SparseFastMKSTest", "[FastMKSTest]")
     {
       if (std::abs(sparseKernels(j, i)) > 1e-15)
         REQUIRE(sparseKernels(j, i) == 
-            Approx(denseKernels(j, i)).epsilon(1e-5));
+            Approx(denseKernels(j, i)).epsilon(1e-7));
       else
         REQUIRE(denseKernels(j, i) == Approx(0.0).epsilon(1e-15));
       REQUIRE(sparseIndices(j, i) == denseIndices(j, i));
@@ -183,7 +183,7 @@ TEST_CASE("SparsePolynomialFastMKSTest", "[FastMKSTest]")
       else
       {
         REQUIRE(pk.Evaluate(dataset.col(i), dataset.col(j)) ==
-            Approx(pk.Evaluate(denseset.col(i), denseset.col(j))).epsilon(1e-5));
+            Approx(pk.Evaluate(denseset.col(i), denseset.col(j))).epsilon(1e-7));
       }
     }
 
@@ -205,7 +205,7 @@ TEST_CASE("SparsePolynomialFastMKSTest", "[FastMKSTest]")
     {
       if (std::abs(sparseKernels(j, i)) > 1e-15)
         REQUIRE(sparseKernels(j, i) ==
-            Approx(denseKernels(j, i)).epsilon(1e-5));
+            Approx(denseKernels(j, i)).epsilon(1e-7));
       else
         REQUIRE(denseKernels(j, i) == Approx(0.0).epsilon(1e-15));
       REQUIRE(sparseIndices(j, i) == denseIndices(j, i));

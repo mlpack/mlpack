@@ -67,7 +67,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
     REQUIRE(results(1, 0) == newFromOld[1]);
     REQUIRE(results(0, 0) == newFromOld[8]);
   }
-  REQUIRE(results(2, 0) == Approx(0.08).epsilon(1e-5));
+  REQUIRE(results(2, 0) == Approx(0.08).epsilon(1e-7));
 
   if (newFromOld[9] < newFromOld[10])
   {
@@ -79,7 +79,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
     REQUIRE(results(1, 1) == newFromOld[9]);
     REQUIRE(results(0, 1) == newFromOld[10]);
   }
-  REQUIRE(results(2, 1) == Approx(0.09).epsilon(1e-5));
+  REQUIRE(results(2, 1) == Approx(0.09).epsilon(1e-7));
 
   if (newFromOld[0] < newFromOld[2])
   {
@@ -91,7 +91,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
     REQUIRE(results(1, 2) == newFromOld[0]);
     REQUIRE(results(0, 2) == newFromOld[2]);
   }
-  REQUIRE(results(2, 2) == Approx(0.1).epsilon(1e-5));
+  REQUIRE(results(2, 2) == Approx(0.1).epsilon(1e-7));
 
   if (newFromOld[1] < newFromOld[2])
   {
@@ -103,7 +103,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
     REQUIRE(results(1, 3) == newFromOld[1]);
     REQUIRE(results(0, 3) == newFromOld[2]);
   }
-  REQUIRE(results(2, 3) == Approx(0.22).epsilon(1e-5));
+  REQUIRE(results(2, 3) == Approx(0.22).epsilon(1e-7));
 
   if (newFromOld[3] < newFromOld[10])
   {
@@ -115,7 +115,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
     REQUIRE(results(1, 4) == newFromOld[3]);
     REQUIRE(results(0, 4) == newFromOld[10]);
   }
-  REQUIRE(results(2, 4) == Approx(0.25).epsilon(1e-5));
+  REQUIRE(results(2, 4) == Approx(0.25).epsilon(1e-7));
 
   if (newFromOld[0] < newFromOld[5])
   {
@@ -127,7 +127,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
     REQUIRE(results(1, 5) == newFromOld[0]);
     REQUIRE(results(0, 5) == newFromOld[5]);
   }
-  REQUIRE(results(2, 5) == Approx(0.27).epsilon(1e-5));
+  REQUIRE(results(2, 5) == Approx(0.27).epsilon(1e-7));
 
   if (newFromOld[8] < newFromOld[9])
   {
@@ -139,7 +139,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
     REQUIRE(results(1, 6) == newFromOld[8]);
     REQUIRE(results(0, 6) == newFromOld[9]);
   }
-  REQUIRE(results(2, 6) == Approx(0.46).epsilon(1e-5));
+  REQUIRE(results(2, 6) == Approx(0.46).epsilon(1e-7));
 
   if (newFromOld[6] < newFromOld[7])
   {
@@ -151,7 +151,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
     REQUIRE(results(1, 7) == newFromOld[6]);
     REQUIRE(results(0, 7) == newFromOld[7]);
   }
-  REQUIRE(results(2, 7) == Approx(0.7).epsilon(1e-5));
+  REQUIRE(results(2, 7) == Approx(0.7).epsilon(1e-7));
 
   if (newFromOld[5] < newFromOld[7])
   {
@@ -163,7 +163,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
     REQUIRE(results(1, 8) == newFromOld[5]);
     REQUIRE(results(0, 8) == newFromOld[7]);
   }
-  REQUIRE(results(2, 8) == Approx(1.08).epsilon(1e-5));
+  REQUIRE(results(2, 8) == Approx(1.08).epsilon(1e-7));
 
   if (newFromOld[3] < newFromOld[4])
   {
@@ -175,7 +175,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
     REQUIRE(results(1, 9) == newFromOld[3]);
     REQUIRE(results(0, 9) == newFromOld[4]);
   }
-  REQUIRE(results(2, 9) == Approx(3.8).epsilon(1e-5));
+  REQUIRE(results(2, 9) == Approx(3.8).epsilon(1e-7));
 }
 
 /**
@@ -215,7 +215,7 @@ TEST_CASE("DualTreeVsNaive", "[EMSTTest]")
   {
     REQUIRE(dualResults(0, i) == naiveResults(0, i));
     REQUIRE(dualResults(1, i) == naiveResults(1, i));
-    REQUIRE(dualResults(2, i) == Approx(naiveResults(2, i)).epsilon(1e-5));
+    REQUIRE(dualResults(2, i) == Approx(naiveResults(2, i)).epsilon(1e-7));
   }
 }
 
@@ -243,7 +243,7 @@ TEST_CASE("EMSTCoverTreeTest", "[EMSTTest]")
   {
     REQUIRE(bstResults(0, i) == coverResults(0, i));
     REQUIRE(bstResults(1, i) == coverResults(1, i));
-    REQUIRE(bstResults(2, i) == Approx(coverResults(2, i)).epsilon(1e-5));
+    REQUIRE(bstResults(2, i) == Approx(coverResults(2, i)).epsilon(1e-7));
   }
 }
 
@@ -272,6 +272,6 @@ TEST_CASE("EMSTBallTreeTest", "[EMSTTest]")
   {
     REQUIRE(bstResults(0, i) == ballResults(0, i));
     REQUIRE(bstResults(1, i) == ballResults(1, i));
-    REQUIRE(bstResults(2, i) == Approx(ballResults(2, i)).epsilon(1e-5));
+    REQUIRE(bstResults(2, i) == Approx(ballResults(2, i)).epsilon(1e-7));
   }
 }
