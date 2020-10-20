@@ -157,7 +157,7 @@ TEST_CASE("SparseFastMKSTest", "[FastMKSTest]")
         REQUIRE(sparseKernels(j, i) == 
             Approx(denseKernels(j, i)).epsilon(1e-7));
       else
-        REQUIRE(denseKernels(j, i) == Approx(0.0).epsilon(1e-15));
+        REQUIRE(denseKernels(j, i) == Approx(0.0).margin(1e-15));
       REQUIRE(sparseIndices(j, i) == denseIndices(j, i));
     }
   }
@@ -207,7 +207,7 @@ TEST_CASE("SparsePolynomialFastMKSTest", "[FastMKSTest]")
         REQUIRE(sparseKernels(j, i) ==
             Approx(denseKernels(j, i)).epsilon(1e-7));
       else
-        REQUIRE(denseKernels(j, i) == Approx(0.0).epsilon(1e-15));
+        REQUIRE(denseKernels(j, i) == Approx(0.0).margin(1e-15));
       REQUIRE(sparseIndices(j, i) == denseIndices(j, i));
     }
   }
@@ -250,7 +250,7 @@ TEST_CASE("SimpleTrainTest", "[FastMKSTest]")
   for (size_t i = 0; i < products.n_elem; ++i)
   {
     if (std::abs(products[i]) < 1e-5)
-      REQUIRE(products2[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(products2[i] == Approx(0.0).margin(1e-5));
     else
       REQUIRE(products[i] == Approx(products2[i]).epsilon(1e-7));
 
@@ -284,7 +284,7 @@ TEST_CASE("SimpleTrainKernelTest", "[FastMKSTest]")
   for (size_t i = 0; i < products.n_elem; ++i)
   {
     if (std::abs(products[i]) < 1e-5)
-      REQUIRE(products2[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(products2[i] == Approx(0.0).margin(1e-5));
     else
       REQUIRE(products[i] == Approx(products2[i]).epsilon(1e-7));
 
@@ -411,9 +411,9 @@ TEST_CASE("FastMKSModelLinearTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -455,9 +455,9 @@ TEST_CASE("FastMKSModelLinearTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -520,9 +520,9 @@ TEST_CASE("FastMKSModelPolynomialTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -564,9 +564,9 @@ TEST_CASE("FastMKSModelPolynomialTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -629,9 +629,9 @@ TEST_CASE("FastMKSModelCosineTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -673,9 +673,9 @@ TEST_CASE("FastMKSModelCosineTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -738,9 +738,9 @@ TEST_CASE("FastMKSModelGaussianTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -782,9 +782,9 @@ TEST_CASE("FastMKSModelGaussianTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -847,9 +847,9 @@ TEST_CASE("FastMKSModelEpanTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -891,9 +891,9 @@ TEST_CASE("FastMKSModelEpanTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -956,9 +956,9 @@ TEST_CASE("FastMKSModelTriangularTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -1000,9 +1000,9 @@ TEST_CASE("FastMKSModelTriangularTest", "[FastMKSTest]")
 
     if (std::abs(kernels[i]) < 1e-5)
     {
-      REQUIRE(mKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mNaiveKernels[i] == Approx(0.0).epsilon(1e-5));
-      REQUIRE(mSingleKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(mKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mNaiveKernels[i] == Approx(0.0).margin(1e-5));
+      REQUIRE(mSingleKernels[i] == Approx(0.0).margin(1e-5));
     }
     else
     {
@@ -1048,7 +1048,7 @@ TEST_CASE("FastMKSCopyConstructorTest", "[FastMKSTest]")
     if (std::abs(kernels[i]) > 1e-5)
       REQUIRE(kernels[i] == Approx(newKernels[i]).epsilon(1e-7));
     else
-      REQUIRE(newKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(newKernels[i] == Approx(0.0).margin(1e-5));
   }
 }
 
@@ -1086,7 +1086,7 @@ TEST_CASE("FastMKSMoveConstructorTest", "[FastMKSTest]")
     if (std::abs(kernels[i]) > 1e-5)
       REQUIRE(kernels[i] == Approx(newKernels[i]).epsilon(1e-7));
     else
-      REQUIRE(newKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(newKernels[i] == Approx(0.0).margin(1e-5));
   }
 }
 
@@ -1126,6 +1126,6 @@ TEST_CASE("CopyAssignmentTest", "[FastMKSTest]")
     if (std::abs(kernels[i]) > 1e-5)
       REQUIRE(kernels[i] == Approx(newKernels[i]).epsilon(1e-7));
     else
-      REQUIRE(newKernels[i] == Approx(0.0).epsilon(1e-5));
+      REQUIRE(newKernels[i] == Approx(0.0).margin(1e-5));
   }
 }
