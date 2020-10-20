@@ -13,8 +13,8 @@
 #include <mlpack/core/math/columns_to_blocks.hpp>
 #include <mlpack/methods/sparse_autoencoder/maximal_inputs.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -35,18 +35,16 @@ arma::mat CreateMaximalInput()
 
 void TestResults(const arma::mat&actualResult, const arma::mat& expectResult)
 {
-  BOOST_REQUIRE_EQUAL(expectResult.n_rows, actualResult.n_rows);
-  BOOST_REQUIRE_EQUAL(expectResult.n_cols, actualResult.n_cols);
+  REQUIRE(expectResult.n_rows == actualResult.n_rows);
+  REQUIRE(expectResult.n_cols == actualResult.n_cols);
 
   for (size_t i = 0; i != expectResult.n_elem; ++i)
   {
-    BOOST_REQUIRE_CLOSE(expectResult[i], actualResult[i], 1e-2);
+    REQUIRE(expectResult[i] == Approx(actualResult[i]).epsilon(1e-4));
   }
 }
 
-BOOST_AUTO_TEST_SUITE(MaximalInputsTest);
-
-BOOST_AUTO_TEST_CASE(ColumnToBlocksEvaluate)
+TEST_CASE("ColumnToBlocksEvaluate", "[MaximalInputsTest]")
 {
   arma::mat output;
   mlpack::math::ColumnsToBlocks ctb(1, 2);
@@ -63,7 +61,7 @@ BOOST_AUTO_TEST_CASE(ColumnToBlocksEvaluate)
   TestResults(output, matlabResults);
 }
 
-BOOST_AUTO_TEST_CASE(ColumnToBlocksChangeBlockSize)
+TEST_CASE("ColumnToBlocksChangeBlockSize", "[MaximalInputsTest]")
 {
   arma::mat output;
   mlpack::math::ColumnsToBlocks ctb(1, 2);
@@ -82,5 +80,3 @@ BOOST_AUTO_TEST_CASE(ColumnToBlocksChangeBlockSize)
 
   TestResults(output, matlabResults);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

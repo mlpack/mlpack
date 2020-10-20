@@ -3,34 +3,18 @@ add_executable(mlpack_test
   callback_test.cpp
   kde_test.cpp
   lmnn_test.cpp
-  local_coordinate_coding_test.cpp
-  log_test.cpp
-  logistic_regression_test.cpp
-  lsh_test.cpp
-  matrix_completion_test.cpp
-  maximal_inputs_test.cpp
   mlpack_test.cpp
   mock_categorical_data.hpp
-  q_learning_test.cpp
-  qdafn_test.cpp
-  random_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
   serialization.cpp
   serialization.hpp
   serialization_test.cpp
-  termination_policy_test.cpp
   test_function_tools.hpp
   test_tools.hpp
-  timer_test.cpp
-  union_find_test.cpp
   main_tests/det_test.cpp
   main_tests/kde_test.cpp
   main_tests/lmnn_test.cpp
-  main_tests/local_coordinate_coding_test.cpp
-  main_tests/logistic_regression_test.cpp
-  main_tests/lsh_test.cpp
-  main_tests/perceptron_test.cpp
   main_tests/test_helper.hpp
 )
 
@@ -93,9 +77,15 @@ add_executable(mlpack_catch_test
   linear_regression_test.cpp
   linear_svm_test.cpp
   load_save_test.cpp
+  local_coordinate_coding_test.cpp
+  logistic_regression_test.cpp
+  log_test.cpp
   loss_functions_test.cpp
+  lsh_test.cpp
   main.cpp
   math_test.cpp
+  matrix_completion_test.cpp
+  maximal_inputs_test.cpp
   metric_test.cpp
   mean_shift_test.cpp
   nbc_test.cpp
@@ -108,9 +98,12 @@ add_executable(mlpack_catch_test
   perceptron_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp
+  qdafn_test.cpp
   quic_svd_test.cpp
+  q_learning_test.cpp
   radical_test.cpp
   random_forest_test.cpp
+  random_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
   rbm_network_test.cpp
@@ -132,10 +125,13 @@ add_executable(mlpack_catch_test
   svd_batch_test.cpp
   svd_incremental_test.cpp
   svdplusplus_test.cpp
+  termination_policy_test.cpp
   test_catch_tools.hpp
+  timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
   ub_tree_test.cpp
+  union_find_test.cpp
   vantage_point_tree_test.cpp
   wgan_test.cpp
   main_tests/adaboost_test.cpp
@@ -164,11 +160,15 @@ add_executable(mlpack_catch_test
   main_tests/krann_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/linear_svm_test.cpp
+  main_tests/local_coordinate_coding_test.cpp
+  main_tests/logistic_regression_test.cpp
+  main_tests/lsh_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
   main_tests/nca_test.cpp
   main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
+  main_tests/perceptron_test.cpp
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_imputer_test.cpp
   main_tests/preprocess_one_hot_encode_test.cpp
@@ -226,9 +226,6 @@ add_custom_command(TARGET mlpack_test
 )
 
 # The list of long running parallel tests
-set(parallel_tests
-  "LocalCoordinateCodingTest;"
-  "LogisticRegressionTest")
 
 # Add tests to the testing framework
 # Get the list of sources from the test target
