@@ -134,20 +134,20 @@ steps:
     }
     try {
       (Add-Type -AssemblyName System.IO.Compression.FileSystem);
-      [System.IO.Compression.ZipFile]::ExtractToDirectory('dist\win-installer\jenkinsdoc.zip', 'dist\win-installer\staging\doc')
+      [System.IO.Compression.ZipFile]::ExtractToDirectory('dist\win-installer\jenkinsdoc.zip', 'dist\win-installer\SourceDir\doc')
     }
     catch{Write-Output "Unable to add doc to installer, skipping!"}
     # Preparing installer staging.
-    mkdir dist\win-installer\staging\lib
-    cp build\Release\*.lib dist\win-installer\staging\lib\
-    cp build\Release\*.exp dist\win-installer\staging\lib\
-    cp build\Release\*.dll dist\win-installer\staging\
-    cp build\Release\*.exe dist\win-installer\staging\
-    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\staging\
-    cp $(Agent.ToolsDirectory)\boost_libs\boost_unit_test_framework-vc*.dll dist\win-installer\staging\
-    cp build\include\mlpack dist\win-installer\staging -recurse
-    cp doc\examples dist\win-installer\staging -recurse
-    cp src\mlpack\tests\data\german.csv dist\win-installer\staging\examples\sample-ml-app\sample-ml-app\data\
+    mkdir dist\win-installer\SourceDir\lib
+    cp build\Release\*.lib dist\win-installer\SourceDir\lib\
+    cp build\Release\*.exp dist\win-installer\SourceDir\lib\
+    cp build\Release\*.dll dist\win-installer\SourceDir\
+    cp build\Release\*.exe dist\win-installer\SourceDir\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\SourceDir\
+    cp $(Agent.ToolsDirectory)\boost_libs\boost_unit_test_framework-vc*.dll dist\win-installer\SourceDir\
+    cp build\include\mlpack dist\win-installer\SourceDir -recurse
+    cp doc\examples dist\win-installer\SourceDir -recurse
+    cp src\mlpack\tests\data\german.csv dist\win-installer\SourceDir\examples\sample-ml-app\sample-ml-app\data\
     # Check current git version or mlpack version.
     $ver = (Get-Content "src\mlpack\core\util\version.hpp" | where {$_ -like "*MLPACK_VERSION*"});
     $env:MLPACK_VERSION += $ver[0].substring($ver[0].length - 1, 1) + '.';
@@ -167,12 +167,12 @@ steps:
     dir
     cd dist\win-installer\mlpack-win-installer
     dir
-    & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe' dir ../staging `
+    & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe' dir ../SourceDir `
         -dr INSTALLFOLDER `
         -cg HeatGenerated `
         -g1 -gg -sf -srd -scom -sreg `
         -out fragment.wxs
-    dir ../staging
+    dir ../SourceDir
     dir
     type fragment.wxs
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `

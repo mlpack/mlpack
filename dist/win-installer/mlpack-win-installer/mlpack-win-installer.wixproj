@@ -28,9 +28,6 @@
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
-  <PropertyGroup>
-    <DefineConstants>HarvestPath=..\staging</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
     <Compile Include="HeatGeneratedFileList.wxs" />
