@@ -12,94 +12,92 @@
 #include <mlpack/core/math/clamp.hpp>
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/math/range.hpp>
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace math;
 
-BOOST_AUTO_TEST_SUITE(MathTest);
-
 /**
  * Verify that the empty constructor creates an empty range.
  */
-BOOST_AUTO_TEST_CASE(RangeEmptyConstructor)
+TEST_CASE("RangeEmptyConstructor", "[MathTest]")
 {
   Range x = Range();
 
   // Just verify that it is empty.
-  BOOST_REQUIRE_GT(x.Lo(), x.Hi());
+  REQUIRE(x.Lo() > x.Hi());
 }
 
 /**
  * Verify that the point constructor correctly creates a range that is just a
  * point.
  */
-BOOST_AUTO_TEST_CASE(RangePointConstructor)
+TEST_CASE("RangePointConstructor", "[MathTest]")
 {
   Range x(10.0);
 
-  BOOST_REQUIRE_CLOSE(x.Lo(), x.Hi(), 1e-25);
-  BOOST_REQUIRE_SMALL(x.Width(), 1e-5);
-  BOOST_REQUIRE_CLOSE(x.Lo(), 10.0, 1e-25);
-  BOOST_REQUIRE_CLOSE(x.Hi(), 10.0, 1e-25);
+  REQUIRE(x.Lo() == Approx(x.Hi()).epsilon(1e-27));
+  REQUIRE(x.Width() == Approx(0.0).margin(1e-5));
+  REQUIRE(x.Lo() == Approx(10.0).epsilon(1e-27));
+  REQUIRE(x.Hi() == Approx(10.0).epsilon(1e-27));
 }
 
 /**
  * Verify that the range constructor correctly creates the range.
  */
-BOOST_AUTO_TEST_CASE(RangeConstructor)
+TEST_CASE("RangeConstructor", "[MathTest]")
 {
   Range x(0.5, 5.5);
 
-  BOOST_REQUIRE_CLOSE(x.Lo(), 0.5, 1e-25);
-  BOOST_REQUIRE_CLOSE(x.Hi(), 5.5, 1e-25);
+  REQUIRE(x.Lo() == Approx(0.5).epsilon(1e-27));
+  REQUIRE(x.Hi() == Approx(5.5).epsilon(1e-27));
 }
 
 /**
  * Test that we get the width correct.
  */
-BOOST_AUTO_TEST_CASE(RangeWidth)
+TEST_CASE("RangeWidth", "[MathTest]")
 {
   Range x(0.0, 10.0);
 
-  BOOST_REQUIRE_CLOSE(x.Width(), 10.0, 1e-20);
+  REQUIRE(x.Width() == Approx(10.0).epsilon(1e-22));
 
   // Make it empty.
   x.Hi() = 0.0;
 
-  BOOST_REQUIRE_SMALL(x.Width(), 1e-5);
+  REQUIRE(x.Width() == Approx(0.0).margin(1e-5));
 
   // Make it negative.
   x.Hi() = -2.0;
 
-  BOOST_REQUIRE_SMALL(x.Width(), 1e-5);
+  REQUIRE(x.Width() == Approx(0.0).margin(1e-5));
 
   // Just one more test.
   x.Lo() = -5.2;
   x.Hi() = 5.2;
 
-  BOOST_REQUIRE_CLOSE(x.Width(), 10.4, 1e-5);
+  REQUIRE(x.Width() == Approx(10.4).epsilon(1e-7));
 }
 
 /**
  * Test that we get the midpoint correct.
  */
-BOOST_AUTO_TEST_CASE(RangeMidpoint)
+TEST_CASE("RangeMidpoint", "[MathTest]")
 {
   Range x(0.0, 10.0);
 
-  BOOST_REQUIRE_CLOSE(x.Mid(), 5.0, 1e-5);
+  REQUIRE(x.Mid() == Approx(5.0).epsilon(1e-7));
 
   x.Lo() = -5.0;
 
-  BOOST_REQUIRE_CLOSE(x.Mid(), 2.5, 1e-5);
+  REQUIRE(x.Mid() == Approx(2.5).epsilon(1e-7));
 }
 
 /**
  * Test that we can expand to include other ranges correctly.
  */
-BOOST_AUTO_TEST_CASE(RangeIncludeOther)
+TEST_CASE("RangeIncludeOther", "[MathTest]")
 {
   // We need to test both |= and |.
   // We have three cases: non-overlapping; overlapping; equivalent, and then a
@@ -112,20 +110,20 @@ BOOST_AUTO_TEST_CASE(RangeIncludeOther)
   z |= y;
   w = x | y;
 
-  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 5.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 5.0, 1e-5);
+  REQUIRE(z.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Hi() == Approx(5.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Hi() == Approx(5.0).epsilon(1e-7));
 
   // Switch operator precedence.
   z = y;
   z |= x;
   w = y | x;
 
-  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 5.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 5.0, 1e-5);
+  REQUIRE(z.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Hi() == Approx(5.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Hi() == Approx(5.0).epsilon(1e-7));
 
   // Now make them overlapping.
   x = Range(0.0, 3.5);
@@ -135,20 +133,20 @@ BOOST_AUTO_TEST_CASE(RangeIncludeOther)
   z |= y;
   w = x | y;
 
-  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 4.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 4.0, 1e-5);
+  REQUIRE(z.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Hi() == Approx(4.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Hi() == Approx(4.0).epsilon(1e-7));
 
   // Switch operator precedence.
   z = y;
   z |= x;
   w = y | x;
 
-  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 4.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 4.0, 1e-5);
+  REQUIRE(z.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Hi() == Approx(4.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Hi() == Approx(4.0).epsilon(1e-7));
 
   // Now the equivalent case.
   x = Range(0.0, 2.0);
@@ -158,25 +156,25 @@ BOOST_AUTO_TEST_CASE(RangeIncludeOther)
   z |= y;
   w = x | y;
 
-  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 2.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 2.0, 1e-5);
+  REQUIRE(z.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Hi() == Approx(2.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Hi() == Approx(2.0).epsilon(1e-7));
 
   z = y;
   z |= x;
   w = y | x;
 
-  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 2.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 2.0, 1e-5);
+  REQUIRE(z.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Hi() == Approx(2.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Hi() == Approx(2.0).epsilon(1e-7));
 }
 
 /**
  * Test that we can 'and' ranges correctly.
  */
-BOOST_AUTO_TEST_CASE(RangeIntersectOther)
+TEST_CASE("RangeIntersectOther", "[MathTest]")
 {
   // We need to test both &= and &.
   // We have three cases: non-overlapping, overlapping; equivalent, and then a
@@ -189,16 +187,16 @@ BOOST_AUTO_TEST_CASE(RangeIntersectOther)
   z &= y;
   w = x & y;
 
-  BOOST_REQUIRE_SMALL(z.Width(), 1e-5);
-  BOOST_REQUIRE_SMALL(w.Width(), 1e-5);
+  REQUIRE(z.Width() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Width() == Approx(0.0).margin(1e-5));
 
   // Reverse operator precedence.
   z = y;
   z &= x;
   w = y & x;
 
-  BOOST_REQUIRE_SMALL(z.Width(), 1e-5);
-  BOOST_REQUIRE_SMALL(w.Width(), 1e-5);
+  REQUIRE(z.Width() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Width() == Approx(0.0).margin(1e-5));
 
   // Now make them overlapping.
   x = Range(0.0, 3.5);
@@ -208,20 +206,20 @@ BOOST_AUTO_TEST_CASE(RangeIntersectOther)
   z &= y;
   w = x & y;
 
-  BOOST_REQUIRE_CLOSE(z.Lo(), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 3.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Lo(), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 3.5, 1e-5);
+  REQUIRE(z.Lo() == Approx(3.0).epsilon(1e-7));
+  REQUIRE(z.Hi() == Approx(3.5).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(3.0).epsilon(1e-7));
+  REQUIRE(w.Hi() == Approx(3.5).epsilon(1e-7));
 
   // Reverse operator precedence.
   z = y;
   z &= x;
   w = y & x;
 
-  BOOST_REQUIRE_CLOSE(z.Lo(), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 3.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Lo(), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 3.5, 1e-5);
+  REQUIRE(z.Lo() == Approx(3.0).epsilon(1e-7));
+  REQUIRE(z.Hi() == Approx(3.5).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(3.0).epsilon(1e-7));
+  REQUIRE(w.Hi() == Approx(3.5).epsilon(1e-7));
 
   // Now make them equivalent.
   x = Range(2.0, 4.0);
@@ -231,16 +229,16 @@ BOOST_AUTO_TEST_CASE(RangeIntersectOther)
   z &= y;
   w = x & y;
 
-  BOOST_REQUIRE_CLOSE(z.Lo(), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Lo(), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 4.0, 1e-5);
+  REQUIRE(z.Lo() == Approx(2.0).epsilon(1e-7));
+  REQUIRE(z.Hi() == Approx(4.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(2.0).epsilon(1e-7));
+  REQUIRE(w.Hi() == Approx(4.0).epsilon(1e-7));
 }
 
 /**
  * Test multiplication of a range with a double.
  */
-BOOST_AUTO_TEST_CASE(RangeMultiply)
+TEST_CASE("RangeMultiply", "[MathTest]")
 {
   // We need to test both * and *=, as well as both cases of *.
   // We'll try with a couple of numbers: -1, 0, 2.
@@ -257,36 +255,36 @@ BOOST_AUTO_TEST_CASE(RangeMultiply)
   z = x * -1.0;
   w = -1.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.Lo(), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.Hi(), 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Lo(), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Lo(), 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 5.0, 1e-5);
+  REQUIRE(y.Lo() == Approx(3.0).epsilon(1e-7));
+  REQUIRE(y.Hi() == Approx(5.0).epsilon(1e-7));
+  REQUIRE(z.Lo() == Approx(3.0).epsilon(1e-7));
+  REQUIRE(z.Hi() == Approx(5.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(3.0).epsilon(1e-7));
+  REQUIRE(w.Hi() == Approx(5.0).epsilon(1e-7));
 
   y = x;
   y *= 0.0;
   z = x * 0.0;
   w = 0.0 * x;
 
-  BOOST_REQUIRE_SMALL(y.Lo(), 1e-5);
-  BOOST_REQUIRE_SMALL(y.Hi(), 1e-5);
-  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
-  BOOST_REQUIRE_SMALL(z.Hi(), 1e-5);
-  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
-  BOOST_REQUIRE_SMALL(w.Hi(), 1e-5);
+  REQUIRE(y.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(y.Hi() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Hi() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Hi() == Approx(0.0).margin(1e-5));
 
   y = x;
   y *= 2.0;
   z = x * 2.0;
   w = 2.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.Lo(), -10.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.Hi(), -6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Lo(), -10.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), -6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Lo(), -10.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), -6.0, 1e-5);
+  REQUIRE(y.Lo() == Approx(-10.0).epsilon(1e-7));
+  REQUIRE(y.Hi() == Approx(-6.0).epsilon(1e-7));
+  REQUIRE(z.Lo() == Approx(-10.0).epsilon(1e-7));
+  REQUIRE(z.Hi() == Approx(-6.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(-10.0).epsilon(1e-7));
+  REQUIRE(w.Hi() == Approx(-6.0).epsilon(1e-7));
 
   x = Range(-2.0, 2.0);
   y = x;
@@ -295,36 +293,36 @@ BOOST_AUTO_TEST_CASE(RangeMultiply)
   z = x * -1.0;
   w = -1.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.Lo(), -2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.Hi(), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Lo(), -2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Lo(), -2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 2.0, 1e-5);
+  REQUIRE(y.Lo() == Approx(-2.0).epsilon(1e-7));
+  REQUIRE(y.Hi() == Approx(2.0).epsilon(1e-7));
+  REQUIRE(z.Lo() == Approx(-2.0).epsilon(1e-7));
+  REQUIRE(z.Hi() == Approx(2.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(-2.0).epsilon(1e-7));
+  REQUIRE(w.Hi() == Approx(2.0).epsilon(1e-7));
 
   y = x;
   y *= 0.0;
   z = x * 0.0;
   w = 0.0 * x;
 
-  BOOST_REQUIRE_SMALL(y.Lo(), 1e-5);
-  BOOST_REQUIRE_SMALL(y.Hi(), 1e-5);
-  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
-  BOOST_REQUIRE_SMALL(z.Hi(), 1e-5);
-  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
-  BOOST_REQUIRE_SMALL(w.Hi(), 1e-5);
+  REQUIRE(y.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(y.Hi() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Hi() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Hi() == Approx(0.0).margin(1e-5));
 
   y = x;
   y *= 2.0;
   z = x * 2.0;
   w = 2.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.Lo(), -4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.Hi(), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Lo(), -4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Lo(), -4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 4.0, 1e-5);
+  REQUIRE(y.Lo() == Approx(-4.0).epsilon(1e-7));
+  REQUIRE(y.Hi() == Approx(4.0).epsilon(1e-7));
+  REQUIRE(z.Lo() == Approx(-4.0).epsilon(1e-7));
+  REQUIRE(z.Hi() == Approx(4.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(-4.0).epsilon(1e-7));
+  REQUIRE(w.Hi() == Approx(4.0).epsilon(1e-7));
 
   x = Range(3.0, 5.0);
 
@@ -333,42 +331,42 @@ BOOST_AUTO_TEST_CASE(RangeMultiply)
   z = x * -1.0;
   w = -1.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.Lo(), -5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.Hi(), -3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Lo(), -5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), -3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Lo(), -5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), -3.0, 1e-5);
+  REQUIRE(y.Lo() == Approx(-5.0).epsilon(1e-7));
+  REQUIRE(y.Hi() == Approx(-3.0).epsilon(1e-7));
+  REQUIRE(z.Lo() == Approx(-5.0).epsilon(1e-7));
+  REQUIRE(z.Hi() == Approx(-3.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(-5.0).epsilon(1e-7));
+  REQUIRE(w.Hi() == Approx(-3.0).epsilon(1e-7));
 
   y = x;
   y *= 0.0;
   z = x * 0.0;
   w = 0.0 * x;
 
-  BOOST_REQUIRE_SMALL(y.Lo(), 1e-5);
-  BOOST_REQUIRE_SMALL(y.Hi(), 1e-5);
-  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
-  BOOST_REQUIRE_SMALL(z.Hi(), 1e-5);
-  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
-  BOOST_REQUIRE_SMALL(w.Hi(), 1e-5);
+  REQUIRE(y.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(y.Hi() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(z.Hi() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Lo() == Approx(0.0).margin(1e-5));
+  REQUIRE(w.Hi() == Approx(0.0).margin(1e-5));
 
   y = x;
   y *= 2.0;
   z = x * 2.0;
   w = 2.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.Lo(), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.Hi(), 10.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Lo(), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.Hi(), 10.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Lo(), 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.Hi(), 10.0, 1e-5);
+  REQUIRE(y.Lo() == Approx(6.0).epsilon(1e-7));
+  REQUIRE(y.Hi() == Approx(10.0).epsilon(1e-7));
+  REQUIRE(z.Lo() == Approx(6.0).epsilon(1e-7));
+  REQUIRE(z.Hi() == Approx(10.0).epsilon(1e-7));
+  REQUIRE(w.Lo() == Approx(6.0).epsilon(1e-7));
+  REQUIRE(w.Hi() == Approx(10.0).epsilon(1e-7));
 }
 
 /**
  * Test equality operator.
  */
-BOOST_AUTO_TEST_CASE(RangeEquality)
+TEST_CASE("RangeEquality", "[MathTest]")
 {
   // Three cases: non-overlapping, overlapping, equivalent.  We should also
   // consider empty ranges, which are not necessarily equal...
@@ -376,24 +374,24 @@ BOOST_AUTO_TEST_CASE(RangeEquality)
   Range y(3.0, 5.0);
 
   // These are odd calls, but we don't want to use operator!= here.
-  BOOST_REQUIRE_EQUAL((x == y), false);
-  BOOST_REQUIRE_EQUAL((y == x), false);
+  REQUIRE((x == y) == false);
+  REQUIRE((y == x) == false);
 
   y = Range(1.0, 3.0);
 
-  BOOST_REQUIRE_EQUAL((x == y), false);
-  BOOST_REQUIRE_EQUAL((y == x), false);
+  REQUIRE((x == y) == false);
+  REQUIRE((y == x) == false);
 
   y = Range(0.0, 2.0);
 
-  BOOST_REQUIRE_EQUAL((x == y), true);
-  BOOST_REQUIRE_EQUAL((y == x), true);
+  REQUIRE((x == y) == true);
+  REQUIRE((y == x) == true);
 
   x = Range(1.0, -1.0); // Empty.
   y = Range(1.0, -1.0); // Also empty.
 
-  BOOST_REQUIRE_EQUAL((x == y), true);
-  BOOST_REQUIRE_EQUAL((y == x), true);
+  REQUIRE((x == y) == true);
+  REQUIRE((y == x) == true);
 
   // No need to test what it does if the empty ranges are different "ranges"
   // because we are not forcing behavior for that.
@@ -402,83 +400,83 @@ BOOST_AUTO_TEST_CASE(RangeEquality)
 /**
  * Test inequality operator.
  */
-BOOST_AUTO_TEST_CASE(RangeInequality)
+TEST_CASE("RangeInequality", "[MathTest]")
 {
   // We will use the same three cases as the RangeEquality test.
   Range x(0.0, 2.0);
   Range y(3.0, 5.0);
 
   // Again, odd calls, but we want to force use of operator!=.
-  BOOST_REQUIRE_EQUAL((x != y), true);
-  BOOST_REQUIRE_EQUAL((y != x), true);
+  REQUIRE((x != y) == true);
+  REQUIRE((y != x) == true);
 
   y = Range(1.0, 3.0);
 
-  BOOST_REQUIRE_EQUAL((x != y), true);
-  BOOST_REQUIRE_EQUAL((y != x), true);
+  REQUIRE((x != y) == true);
+  REQUIRE((y != x) == true);
 
   y = Range(0.0, 2.0);
 
-  BOOST_REQUIRE_EQUAL((x != y), false);
-  BOOST_REQUIRE_EQUAL((y != x), false);
+  REQUIRE((x != y) == false);
+  REQUIRE((y != x) == false);
 
   x = Range(1.0, -1.0); // Empty.
   y = Range(1.0, -1.0); // Also empty.
 
-  BOOST_REQUIRE_EQUAL((x != y), false);
-  BOOST_REQUIRE_EQUAL((y != x), false);
+  REQUIRE((x != y) == false);
+  REQUIRE((y != x) == false);
 }
 
 /**
  * Test strict less-than operator.
  */
-BOOST_AUTO_TEST_CASE(RangeStrictLessThan)
+TEST_CASE("RangeStrictLessThan", "[MathTest]")
 {
   // Three cases: non-overlapping, overlapping, and equivalent.
   Range x(0.0, 2.0);
   Range y(3.0, 5.0);
 
-  BOOST_REQUIRE_EQUAL((x < y), true);
-  BOOST_REQUIRE_EQUAL((y < x), false);
+  REQUIRE((x < y) == true);
+  REQUIRE((y < x) == false);
 
   y = Range(1.0, 3.0);
 
-  BOOST_REQUIRE_EQUAL((x < y), false);
-  BOOST_REQUIRE_EQUAL((y < x), false);
+  REQUIRE((x < y) == false);
+  REQUIRE((y < x) == false);
 
   y = Range(0.0, 2.0);
 
-  BOOST_REQUIRE_EQUAL((x < y), false);
-  BOOST_REQUIRE_EQUAL((y < x), false);
+  REQUIRE((x < y) == false);
+  REQUIRE((y < x) == false);
 }
 
 /**
  * Test strict greater-than operator.
  */
-BOOST_AUTO_TEST_CASE(RangeStrictGreaterThan)
+TEST_CASE("RangeStrictGreaterThan", "[MathTest]")
 {
   // Three cases: non-overlapping, overlapping, and equivalent.
   Range x(0.0, 2.0);
   Range y(3.0, 5.0);
 
-  BOOST_REQUIRE_EQUAL((x > y), false);
-  BOOST_REQUIRE_EQUAL((y > x), true);
+  REQUIRE((x > y) == false);
+  REQUIRE((y > x) == true);
 
   y = Range(1.0, 3.0);
 
-  BOOST_REQUIRE_EQUAL((x > y), false);
-  BOOST_REQUIRE_EQUAL((y > x), false);
+  REQUIRE((x > y) == false);
+  REQUIRE((y > x) == false);
 
   y = Range(0.0, 2.0);
 
-  BOOST_REQUIRE_EQUAL((x > y), false);
-  BOOST_REQUIRE_EQUAL((y > x), false);
+  REQUIRE((x > y) == false);
+  REQUIRE((y > x) == false);
 }
 
 /**
  * Test the Contains() operator.
  */
-BOOST_AUTO_TEST_CASE(RangeContains)
+TEST_CASE("RangeContains", "[MathTest]")
 {
   // We have three Range cases: strictly less than 0; overlapping 0; and
   // strictly greater than 0.  Then the numbers we check can be the same three
@@ -486,107 +484,107 @@ BOOST_AUTO_TEST_CASE(RangeContains)
   // be about 15 total cases.
   Range x(-2.0, -1.0);
 
-  BOOST_REQUIRE(!x.Contains(-3.0));
-  BOOST_REQUIRE(x.Contains(-2.0));
-  BOOST_REQUIRE(x.Contains(-1.5));
-  BOOST_REQUIRE(x.Contains(-1.0));
-  BOOST_REQUIRE(!x.Contains(-0.5));
-  BOOST_REQUIRE(!x.Contains(0.0));
-  BOOST_REQUIRE(!x.Contains(1.0));
+  REQUIRE(!x.Contains(-3.0));
+  REQUIRE(x.Contains(-2.0));
+  REQUIRE(x.Contains(-1.5));
+  REQUIRE(x.Contains(-1.0));
+  REQUIRE(!x.Contains(-0.5));
+  REQUIRE(!x.Contains(0.0));
+  REQUIRE(!x.Contains(1.0));
 
   x = Range(-1.0, 1.0);
 
-  BOOST_REQUIRE(!x.Contains(-2.0));
-  BOOST_REQUIRE(x.Contains(-1.0));
-  BOOST_REQUIRE(x.Contains(0.0));
-  BOOST_REQUIRE(x.Contains(1.0));
-  BOOST_REQUIRE(!x.Contains(2.0));
+  REQUIRE(!x.Contains(-2.0));
+  REQUIRE(x.Contains(-1.0));
+  REQUIRE(x.Contains(0.0));
+  REQUIRE(x.Contains(1.0));
+  REQUIRE(!x.Contains(2.0));
 
   x = Range(1.0, 2.0);
 
-  BOOST_REQUIRE(!x.Contains(-1.0));
-  BOOST_REQUIRE(!x.Contains(0.0));
-  BOOST_REQUIRE(!x.Contains(0.5));
-  BOOST_REQUIRE(x.Contains(1.0));
-  BOOST_REQUIRE(x.Contains(1.5));
-  BOOST_REQUIRE(x.Contains(2.0));
-  BOOST_REQUIRE(!x.Contains(2.5));
+  REQUIRE(!x.Contains(-1.0));
+  REQUIRE(!x.Contains(0.0));
+  REQUIRE(!x.Contains(0.5));
+  REQUIRE(x.Contains(1.0));
+  REQUIRE(x.Contains(1.5));
+  REQUIRE(x.Contains(2.0));
+  REQUIRE(!x.Contains(2.5));
 
   // Now let's try it on an empty range.
   x = Range();
 
-  BOOST_REQUIRE(!x.Contains(-10.0));
-  BOOST_REQUIRE(!x.Contains(0.0));
-  BOOST_REQUIRE(!x.Contains(10.0));
+  REQUIRE(!x.Contains(-10.0));
+  REQUIRE(!x.Contains(0.0));
+  REQUIRE(!x.Contains(10.0));
 
   // And an infinite range.
   x = Range(-DBL_MAX, DBL_MAX);
 
-  BOOST_REQUIRE(x.Contains(-10.0));
-  BOOST_REQUIRE(x.Contains(0.0));
-  BOOST_REQUIRE(x.Contains(10.0));
+  REQUIRE(x.Contains(-10.0));
+  REQUIRE(x.Contains(0.0));
+  REQUIRE(x.Contains(10.0));
 }
 
 /**
  * Test that Range::Contains() works on other Ranges.  It should return false
  * unless the ranges overlap at all.
  */
-BOOST_AUTO_TEST_CASE(RangeContainsRange)
+TEST_CASE("RangeContainsRange", "[MathTest]")
 {
   // Empty ranges should not contain each other.
   Range a;
   Range b;
 
-  BOOST_REQUIRE_EQUAL(a.Contains(b), false);
-  BOOST_REQUIRE_EQUAL(b.Contains(a), false);
+  REQUIRE(a.Contains(b) == false);
+  REQUIRE(b.Contains(a) == false);
 
   // Completely disparate ranges.
   a = Range(-5.0, -3.0);
   b = Range(3.0, 5.0);
 
-  BOOST_REQUIRE_EQUAL(a.Contains(b), false);
-  BOOST_REQUIRE_EQUAL(b.Contains(a), false);
+  REQUIRE(a.Contains(b) == false);
+  REQUIRE(b.Contains(a) == false);
 
   // Overlapping at the end-point; this is containment of the end point.
   a = Range(-5.0, 0.0);
   b = Range(0.0, 5.0);
 
-  BOOST_REQUIRE_EQUAL(a.Contains(b), true);
-  BOOST_REQUIRE_EQUAL(b.Contains(a), true);
+  REQUIRE(a.Contains(b) == true);
+  REQUIRE(b.Contains(a) == true);
 
   // Partially overlapping.
   a = Range(-5.0, 2.0);
   b = Range(-2.0, 5.0);
 
-  BOOST_REQUIRE_EQUAL(a.Contains(b), true);
-  BOOST_REQUIRE_EQUAL(b.Contains(a), true);
+  REQUIRE(a.Contains(b) == true);
+  REQUIRE(b.Contains(a) == true);
 
   // One range encloses the other.
   a = Range(-5.0, 5.0);
   b = Range(-3.0, 3.0);
 
-  BOOST_REQUIRE_EQUAL(a.Contains(b), true);
-  BOOST_REQUIRE_EQUAL(b.Contains(a), true);
+  REQUIRE(a.Contains(b) == true);
+  REQUIRE(b.Contains(a) == true);
 
   // Identical ranges.
   a = Range(-3.0, 3.0);
   b = Range(-3.0, 3.0);
 
-  BOOST_REQUIRE_EQUAL(a.Contains(b), true);
-  BOOST_REQUIRE_EQUAL(b.Contains(a), true);
+  REQUIRE(a.Contains(b) == true);
+  REQUIRE(b.Contains(a) == true);
 
   // Single-point ranges.
   a = Range(0.0, 0.0);
   b = Range(0.0, 0.0);
 
-  BOOST_REQUIRE_EQUAL(a.Contains(b), true);
-  BOOST_REQUIRE_EQUAL(b.Contains(a), true);
+  REQUIRE(a.Contains(b) == true);
+  REQUIRE(b.Contains(a) == true);
 }
 
 /**
  * Make sure shuffling data works.
  */
-BOOST_AUTO_TEST_CASE(ShuffleTest)
+TEST_CASE("ShuffleTest", "[MathTest]")
 {
   arma::mat data(3, 10, arma::fill::zeros);
   arma::Row<size_t> labels(10);
@@ -601,28 +599,28 @@ BOOST_AUTO_TEST_CASE(ShuffleTest)
 
   ShuffleData(data, labels, outputData, outputLabels);
 
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputLabels.n_elem == labels.n_elem);
 
   // Make sure we only have each point once.
   arma::Row<size_t> counts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
-    BOOST_REQUIRE_SMALL(outputData(1, i), 1e-5);
-    BOOST_REQUIRE_SMALL(outputData(2, i), 1e-5);
+    REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
+    REQUIRE(outputData(1, i) == Approx(0.0).margin(1e-5));
+    REQUIRE(outputData(2, i) == Approx(0.0).margin(1e-5));
     counts[outputLabels[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
-    BOOST_REQUIRE_EQUAL(counts[i], 1);
+    REQUIRE(counts[i] == 1);
 }
 
 /**
  * Make sure shuffling sparse data works.
  */
-BOOST_AUTO_TEST_CASE(SparseShuffleTest)
+TEST_CASE("SparseShuffleTest", "[MathTest]")
 {
   arma::sp_mat data(3, 10);
   arma::Row<size_t> labels(10);
@@ -639,28 +637,28 @@ BOOST_AUTO_TEST_CASE(SparseShuffleTest)
 
   ShuffleData(data, labels, outputData, outputLabels);
 
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputLabels.n_elem == labels.n_elem);
 
   // Make sure we only have each point once.
   arma::Row<size_t> counts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
-    BOOST_REQUIRE_SMALL((double) outputData(1, i), 1e-5);
-    BOOST_REQUIRE_SMALL((double) outputData(2, i), 1e-5);
+    REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
+    REQUIRE((double) outputData(1, i) == Approx(0.0).margin(1e-5));
+    REQUIRE((double) outputData(2, i) == Approx(0.0).margin(1e-5));
     counts[outputLabels[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
-    BOOST_REQUIRE_EQUAL(counts[i], 1);
+    REQUIRE(counts[i] == 1);
 }
 
 /**
  * Make sure shuffling cubes works.
  */
-BOOST_AUTO_TEST_CASE(CubeShuffleTest)
+TEST_CASE("CubeShuffleTest", "[MathTest]")
 {
   arma::cube data(3, 10, 5, arma::fill::zeros);
   arma::cube labels(1, 10, 5);
@@ -678,12 +676,12 @@ BOOST_AUTO_TEST_CASE(CubeShuffleTest)
 
   ShuffleData(data, labels, outputData, outputLabels);
 
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(outputData.n_slices, data.n_slices);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_rows, labels.n_rows);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_cols, labels.n_cols);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_slices, labels.n_slices);
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputData.n_slices == data.n_slices);
+  REQUIRE(outputLabels.n_rows == labels.n_rows);
+  REQUIRE(outputLabels.n_cols == labels.n_cols);
+  REQUIRE(outputLabels.n_slices == labels.n_slices);
 
   // Make sure we only have each point once.
   arma::Row<size_t> counts(10, arma::fill::zeros);
@@ -691,20 +689,20 @@ BOOST_AUTO_TEST_CASE(CubeShuffleTest)
   {
     for (size_t s = 0; s < data.n_slices; ++s)
     {
-      BOOST_REQUIRE_EQUAL(data(0, i, s) + data(1, i, s), labels(0, i, s));
-      BOOST_REQUIRE_SMALL(data(2, i, s), 1e-5);
+      REQUIRE(data(0, i, s) + data(1, i, s) == labels(0, i, s));
+      REQUIRE(data(2, i, s) == Approx(0.0).margin(1e-5));
       counts[data(1, i, s)]++;
     }
   }
 
   for (size_t i = 0; i < 10; ++i)
-    BOOST_REQUIRE_EQUAL(counts[i], data.n_slices);
+    REQUIRE(counts[i] == data.n_slices);
 }
 
 /**
  * Make sure shuffling data with weights works.
  */
-BOOST_AUTO_TEST_CASE(ShuffleWeightsTest)
+TEST_CASE("ShuffleWeightsTest", "[MathTest]")
 {
   arma::mat data(3, 10, arma::fill::zeros);
   arma::Row<size_t> labels(10);
@@ -722,35 +720,35 @@ BOOST_AUTO_TEST_CASE(ShuffleWeightsTest)
 
   ShuffleData(data, labels, weights, outputData, outputLabels, outputWeights);
 
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
-  BOOST_REQUIRE_EQUAL(outputWeights.n_elem, weights.n_elem);
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputLabels.n_elem == labels.n_elem);
+  REQUIRE(outputWeights.n_elem == weights.n_elem);
 
   // Make sure we only have each point once.
   arma::Row<size_t> counts(10, arma::fill::zeros);
   arma::Row<size_t> weightCounts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), (size_t) outputWeights[i]);
-    BOOST_REQUIRE_SMALL(outputData(1, i), 1e-5);
-    BOOST_REQUIRE_SMALL(outputData(2, i), 1e-5);
+    REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
+    REQUIRE((size_t) outputData(0, i) == (size_t) outputWeights[i]);
+    REQUIRE(outputData(1, i) == Approx(0.0).margin(1e-5));
+    REQUIRE(outputData(2, i) == Approx(0.0).margin(1e-5));
     counts[outputLabels[i]]++;
     weightCounts[(size_t) outputWeights[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL(counts[i], 1);
-    BOOST_REQUIRE_EQUAL(weightCounts[i], 1);
+    REQUIRE(counts[i] == 1);
+    REQUIRE(weightCounts[i] == 1);
   }
 }
 
 /**
  * Make sure shuffling sparse data with weights works.
  */
-BOOST_AUTO_TEST_CASE(SparseShuffleWeightsTest)
+TEST_CASE("SparseShuffleWeightsTest", "[MathTest]")
 {
   arma::sp_mat data(3, 10);
   arma::Row<size_t> labels(10);
@@ -770,28 +768,28 @@ BOOST_AUTO_TEST_CASE(SparseShuffleWeightsTest)
 
   ShuffleData(data, labels, weights, outputData, outputLabels, outputWeights);
 
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
-  BOOST_REQUIRE_EQUAL(outputWeights.n_elem, weights.n_elem);
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputLabels.n_elem == labels.n_elem);
+  REQUIRE(outputWeights.n_elem == weights.n_elem);
 
   // Make sure we only have each point once.
   arma::Row<size_t> counts(10, arma::fill::zeros);
   arma::Row<size_t> weightCounts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), (size_t) outputWeights[i]);
-    BOOST_REQUIRE_SMALL((double) outputData(1, i), 1e-5);
-    BOOST_REQUIRE_SMALL((double) outputData(2, i), 1e-5);
+    REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
+    REQUIRE((size_t) outputData(0, i) == (size_t) outputWeights[i]);
+    REQUIRE((double) outputData(1, i) == Approx(0.0).margin(1e-5));
+    REQUIRE((double) outputData(2, i) == Approx(0.0).margin(1e-5));
     counts[outputLabels[i]]++;
     weightCounts[(size_t) outputWeights[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL(counts[i], 1);
-    BOOST_REQUIRE_EQUAL(weightCounts[i], 1);
+    REQUIRE(counts[i] == 1);
+    REQUIRE(weightCounts[i] == 1);
   }
 }
 
@@ -799,7 +797,7 @@ BOOST_AUTO_TEST_CASE(SparseShuffleWeightsTest)
  * Make sure shuffling data works when the same matrices are given as input and
  * output.
  */
-BOOST_AUTO_TEST_CASE(InplaceShuffleTest)
+TEST_CASE("InplaceShuffleTest", "[MathTest]")
 {
   arma::mat data(3, 10, arma::fill::zeros);
   arma::Row<size_t> labels(10);
@@ -814,29 +812,29 @@ BOOST_AUTO_TEST_CASE(InplaceShuffleTest)
 
   ShuffleData(outputData, outputLabels, outputData, outputLabels);
 
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputLabels.n_elem == labels.n_elem);
 
   // Make sure we only have each point once.
   arma::Row<size_t> counts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
-    BOOST_REQUIRE_SMALL(outputData(1, i), 1e-5);
-    BOOST_REQUIRE_SMALL(outputData(2, i), 1e-5);
+    REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
+    REQUIRE(outputData(1, i) == Approx(0.0).margin(1e-5));
+    REQUIRE(outputData(2, i) == Approx(0.0).margin(1e-5));
     counts[outputLabels[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
-    BOOST_REQUIRE_EQUAL(counts[i], 1);
+    REQUIRE(counts[i] == 1);
 }
 
 /**
  * Make sure shuffling sparse data works when the input and output matrices are
  * the same.
  */
-BOOST_AUTO_TEST_CASE(InplaceSparseShuffleTest)
+TEST_CASE("InplaceSparseShuffleTest", "[MathTest]")
 {
   arma::sp_mat data(3, 10);
   arma::Row<size_t> labels(10);
@@ -851,28 +849,28 @@ BOOST_AUTO_TEST_CASE(InplaceSparseShuffleTest)
 
   ShuffleData(outputData, outputLabels, outputData, outputLabels);
 
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputLabels.n_elem == labels.n_elem);
 
   // Make sure we only have each point once.
   arma::Row<size_t> counts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
-    BOOST_REQUIRE_SMALL((double) outputData(1, i), 1e-5);
-    BOOST_REQUIRE_SMALL((double) outputData(2, i), 1e-5);
+    REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
+    REQUIRE((double) outputData(1, i) == Approx(0.0).margin(1e-5));
+    REQUIRE((double) outputData(2, i) == Approx(0.0).margin(1e-5));
     counts[outputLabels[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
-    BOOST_REQUIRE_EQUAL(counts[i], 1);
+    REQUIRE(counts[i] == 1);
 }
 
 /**
  * Make sure shuffling cubes works when the input and output cubes are the same.
  */
-BOOST_AUTO_TEST_CASE(InplaceCubeShuffleTest)
+TEST_CASE("InplaceCubeShuffleTest", "[MathTest]")
 {
   arma::cube data(3, 10, 5, arma::fill::zeros);
   arma::cube labels(1, 10, 5);
@@ -890,12 +888,12 @@ BOOST_AUTO_TEST_CASE(InplaceCubeShuffleTest)
 
   ShuffleData(outputData, outputLabels, outputData, outputLabels);
 
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(outputData.n_slices, data.n_slices);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_rows, labels.n_rows);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_cols, labels.n_cols);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_slices, labels.n_slices);
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputData.n_slices == data.n_slices);
+  REQUIRE(outputLabels.n_rows == labels.n_rows);
+  REQUIRE(outputLabels.n_cols == labels.n_cols);
+  REQUIRE(outputLabels.n_slices == labels.n_slices);
 
   // Make sure we only have each point once.
   arma::Row<size_t> counts(10, arma::fill::zeros);
@@ -903,21 +901,21 @@ BOOST_AUTO_TEST_CASE(InplaceCubeShuffleTest)
   {
     for (size_t s = 0; s < data.n_slices; ++s)
     {
-      BOOST_REQUIRE_EQUAL(data(0, i, s) + data(1, i, s), labels(0, i, s));
-      BOOST_REQUIRE_SMALL(data(2, i, s), 1e-5);
+      REQUIRE(data(0, i, s) + data(1, i, s) == labels(0, i, s));
+      REQUIRE(data(2, i, s) == Approx(0.0).margin(1e-5));
       counts[data(1, i, s)]++;
     }
   }
 
   for (size_t i = 0; i < 10; ++i)
-    BOOST_REQUIRE_EQUAL(counts[i], data.n_slices);
+    REQUIRE(counts[i] == data.n_slices);
 }
 
 /**
  * Make sure shuffling data with weights works when the same matrices are given
  * as input and output.
  */
-BOOST_AUTO_TEST_CASE(InplaceShuffleWeightsTest)
+TEST_CASE("InplaceShuffleWeightsTest", "[MathTest]")
 {
   arma::mat data(3, 10, arma::fill::zeros);
   arma::Row<size_t> labels(10);
@@ -936,28 +934,28 @@ BOOST_AUTO_TEST_CASE(InplaceShuffleWeightsTest)
   ShuffleData(outputData, outputLabels, outputWeights, outputData, outputLabels,
       outputWeights);
 
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
-  BOOST_REQUIRE_EQUAL(outputWeights.n_elem, weights.n_elem);
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputLabels.n_elem == labels.n_elem);
+  REQUIRE(outputWeights.n_elem == weights.n_elem);
 
   // Make sure we only have each point once.
   arma::Row<size_t> counts(10, arma::fill::zeros);
   arma::Row<size_t> weightCounts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), (size_t) outputWeights[i]);
-    BOOST_REQUIRE_SMALL(outputData(1, i), 1e-5);
-    BOOST_REQUIRE_SMALL(outputData(2, i), 1e-5);
+    REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
+    REQUIRE((size_t) outputData(0, i) == (size_t) outputWeights[i]);
+    REQUIRE(outputData(1, i) == Approx(0.0).margin(1e-5));
+    REQUIRE(outputData(2, i) == Approx(0.0).margin(1e-5));
     counts[outputLabels[i]]++;
     weightCounts[(size_t) outputWeights[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL(counts[i], 1);
-    BOOST_REQUIRE_EQUAL(weightCounts[i], 1);
+    REQUIRE(counts[i] == 1);
+    REQUIRE(weightCounts[i] == 1);
   }
 }
 
@@ -965,7 +963,7 @@ BOOST_AUTO_TEST_CASE(InplaceShuffleWeightsTest)
  * Make sure shuffling sparse data with weights works when the input and output
  * matrices are the same.
  */
-BOOST_AUTO_TEST_CASE(InplaceSparseShuffleWeightsTest)
+TEST_CASE("InplaceSparseShuffleWeightsTest", "[MathTest]")
 {
   arma::sp_mat data(3, 10);
   arma::Row<size_t> labels(10);
@@ -984,29 +982,27 @@ BOOST_AUTO_TEST_CASE(InplaceSparseShuffleWeightsTest)
   ShuffleData(outputData, outputLabels, outputWeights, outputData, outputLabels,
       outputWeights);
 
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, data.n_rows);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(outputLabels.n_elem, labels.n_elem);
-  BOOST_REQUIRE_EQUAL(outputWeights.n_elem, weights.n_elem);
+  REQUIRE(outputData.n_rows == data.n_rows);
+  REQUIRE(outputData.n_cols == data.n_cols);
+  REQUIRE(outputLabels.n_elem == labels.n_elem);
+  REQUIRE(outputWeights.n_elem == weights.n_elem);
 
   // Make sure we only have each point once.
   arma::Row<size_t> counts(10, arma::fill::zeros);
   arma::Row<size_t> weightCounts(10, arma::fill::zeros);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), outputLabels[i]);
-    BOOST_REQUIRE_EQUAL((size_t) outputData(0, i), (size_t) outputWeights[i]);
-    BOOST_REQUIRE_SMALL((double) outputData(1, i), 1e-5);
-    BOOST_REQUIRE_SMALL((double) outputData(2, i), 1e-5);
+    REQUIRE((size_t) outputData(0, i) == outputLabels[i]);
+    REQUIRE((size_t) outputData(0, i) == (size_t) outputWeights[i]);
+    REQUIRE((double) outputData(1, i) == Approx(0.0).margin(1e-5));
+    REQUIRE((double) outputData(2, i) == Approx(0.0).margin(1e-5));
     counts[outputLabels[i]]++;
     weightCounts[(size_t) outputWeights[i]]++;
   }
 
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL(counts[i], 1);
-    BOOST_REQUIRE_EQUAL(weightCounts[i], 1);
+    REQUIRE(counts[i] == 1);
+    REQUIRE(weightCounts[i] == 1);
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

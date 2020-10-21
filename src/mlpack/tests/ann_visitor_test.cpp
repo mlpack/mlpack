@@ -54,6 +54,20 @@ TEST_CASE("BiasSetVisitorTest", "[ANNVisitorTest]")
 }
 
 /**
+ * Check correctness of WeightSize() for a layer.
+ */
+void CheckCorrectnessOfWeightSize(LayerTypes<>& layer)
+{
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
+      layer);
+
+  arma::mat parameters;
+  boost::apply_visitor(ParametersVisitor(parameters), layer);
+
+  REQUIRE(weightSize == parameters.n_elem);
+}
+
+/**
  * Test that WeightSetVisitor works properly.
  */
 TEST_CASE("WeightSetVisitorTest", "[ANNVisitorTest]")
@@ -83,7 +97,7 @@ TEST_CASE("WeightSizeVisitorTestForLinearLayer", "[ANNVisitorTest]")
 
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(), linearLayer);
 
-  REQUIRE(weightSize == randomInSize * randomOutSize + randomOutSize);
+  CheckCorrectnessOfWeightSize(linearLayer);
 }
 
 /**
@@ -95,7 +109,7 @@ TEST_CASE("WeightSizeVisitorTestForConcatLayer", "[ANNVisitorTest]")
   
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(), concatLayer);
 
-  REQUIRE(weightSize == 0);
+  CheckCorrectnessOfWeightSize(concatLayer);
 }
 
 /**
@@ -110,8 +124,7 @@ TEST_CASE("WeightSizeVisitorTestForFastLSTMLayer", "[ANNVisitorTest]")
 
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(), fastLSTMLayer);
 
-  REQUIRE(weightSize == 4 * randomInSize * randomOutSize + 4 * randomOutSize
-      + 4 * randomOutSize * randomOutSize);
+  CheckCorrectnessOfWeightSize(fastLSTMLayer);
 }
 
 /**
@@ -125,7 +138,7 @@ TEST_CASE("WeightSizeVisitorTestForAddLayer", "[ANNVisitorTest]")
 
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(), addLayer);
 
-  REQUIRE(weightSize == randomOutSize);
+  CheckCorrectnessOfWeightSize(addLayer);
 }
 
 /**
@@ -144,6 +157,32 @@ TEST_CASE("WeightSizeVisitorTestForAtrousConvolutionLayer", "[ANNVisitorTest]")
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
       atrousConvLayer);
  
- REQUIRE(weightSize == randomOutSize * randomInSize * randomKernelWidth
-     * randomKernelHeight + randomOutSize);
+  CheckCorrectnessOfWeightSize(atrousConvLayer);
+}
+
+
+/**
+ * Test that WeightSizeVisitor works properly for Convolution layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForConvLayer", "[ANNVisitorTest]")
+{
+  size_t randomInSize = arma::randi(arma::distr_param(1, 100));
+  size_t randomOutSize = arma::randi(arma::distr_param(1, 100));
+  size_t randomKernelWidth = arma::randi(arma::distr_param(1, 100));
+  size_t randomKernelHeight = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> convLayer = new Convolution<>(randomInSize, randomOutSize,
+      randomKernelWidth, randomKernelHeight);
+  CheckCorrectnessOfWeightSize(convLayer);
+}
+
+/**
+ * Test that WeightSizeVisitor works properly for BatchNorm layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForBatchNormLayer", "[ANNVisitorTest]")
+{
+  size_t randomSize = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> batchNorm = new BatchNorm<>(randomSize);
+  CheckCorrectnessOfWeightSize(batchNorm);
 }

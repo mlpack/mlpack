@@ -12,7 +12,7 @@ steps:
 # Install Build Dependencies
 - script: |
     set -e
-    sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
+    sudo xcode-select --switch /Applications/Xcode_12.2.app/Contents/Developer
     unset BOOST_ROOT
     brew install openblas armadillo boost
 
@@ -23,14 +23,6 @@ steps:
 
     if [ "a$(julia.version)" != "a" ]; then
       brew cask install julia
-    fi
-
-    if [ "$(binding)" == "R" ]; then
-      if [ "a$(R.version)" != "a" ]; then
-        brew cask install r
-      fi
-      brew cask install gfortran
-      Rscript -e "install.packages(c('Rcpp', 'RcppArmadillo', 'RcppEnsmallen', 'BH', 'roxygen2', 'testthat'), repos = 'http://cran.us.r-project.org')"
     fi
 
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf

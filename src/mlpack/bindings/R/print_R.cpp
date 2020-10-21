@@ -92,7 +92,8 @@ void PrintR(const util::BindingDetails& doc,
   cout << "#'" << endl;
 
   // Next, print information on the output options.
-  cout << "#' @return A list with several components:" << endl;
+  if (outputOptions.size() > 0)
+    cout << "#' @return A list with several components:" << endl;
 
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
