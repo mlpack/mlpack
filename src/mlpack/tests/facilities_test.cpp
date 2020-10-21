@@ -16,7 +16,6 @@
 #include <mlpack/core/data/load.hpp>
 
 #include "catch.hpp"
-#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::cv;

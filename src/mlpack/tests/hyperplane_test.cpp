@@ -12,7 +12,6 @@
 #include <mlpack/core/tree/space_split/hyperplane.hpp>
 
 #include "catch.hpp"
-#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::math;
@@ -57,13 +56,11 @@ TEST_CASE("ProjectionTest", "[HyperplaneTest]")
   REQUIRE(h1.Left(arma::vec("-1 1")));
   REQUIRE(!h1.Right(arma::vec("-1 1")));
 
-  REQUIRE(h1.Project(arma::vec("1 0")) ==
-      h1.Project(arma::vec("0 1")));
+  REQUIRE(h1.Project(arma::vec("1 0")) == h1.Project(arma::vec("0 1")));
   REQUIRE(h1.Right(arma::vec("1 0")));
   REQUIRE(!h1.Left(arma::vec("1 0")));
 
-  REQUIRE(h1.Project(arma::vec("-1 -1")) ==
-      h1.Project(arma::vec("-2 0")));
+  REQUIRE(h1.Project(arma::vec("-1 -1")) == h1.Project(arma::vec("-2 0")));
   REQUIRE(h1.Left(arma::vec("-1 -1")));
   REQUIRE(!h1.Right(arma::vec("-1 -1")));
 

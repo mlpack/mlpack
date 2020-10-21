@@ -10,10 +10,9 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/emst/dtb.hpp>
-#include "catch.hpp"
-#include "test_catch_tools.hpp"
-
 #include <mlpack/core/tree/cover_tree.hpp>
+
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::emst;

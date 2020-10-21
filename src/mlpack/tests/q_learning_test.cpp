@@ -36,7 +36,6 @@
 #include <numeric>
 
 #include "catch.hpp"
-#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -584,8 +583,7 @@ TEST_CASE("SACForMultipleActions", "[QLearningTest]")
   agent.SelectAction();
 
   // Test to check if the action dimension given by the agent is correct.
-  REQUIRE(agent.Action().action.size() ==
-                      ContinuousActionEnv::Action::size);
+  REQUIRE(agent.Action().action.size() == ContinuousActionEnv::Action::size);
 
   replayMethod.Store(agent.State(), agent.Action(), 1, agent.State(), 1, 0.99);
   agent.TotalSteps()++;

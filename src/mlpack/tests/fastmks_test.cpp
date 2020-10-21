@@ -14,7 +14,6 @@
 #include <mlpack/methods/fastmks/fastmks_model.hpp>
 
 #include "catch.hpp"
-#include "test_catch_tools.hpp"
 #include "serialization_catch.hpp"
 
 using namespace mlpack;
@@ -121,7 +120,8 @@ TEST_CASE("DualTreeVsSingleTree", "[FastMKSTest]")
     for (size_t r = 0; r < treeIndices.n_rows; ++r)
     {
       REQUIRE(treeIndices(r, q) == singleIndices(r, q));
-      REQUIRE(treeProducts(r, q) == Approx(singleProducts(r, q)).epsilon(1e-7));
+      REQUIRE(treeProducts(r, q) == 
+          Approx(singleProducts(r, q)).epsilon(1e-7));
     }
   }
 }

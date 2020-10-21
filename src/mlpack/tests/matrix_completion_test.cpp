@@ -13,7 +13,6 @@
 #include <mlpack/methods/matrix_completion/matrix_completion.hpp>
 
 #include "catch.hpp"
-#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::matrix_completion;

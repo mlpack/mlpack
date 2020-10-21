@@ -20,7 +20,6 @@ static const std::string testName = "EMST";
 #include "test_helper.hpp"
 
 #include "../catch.hpp"
-#include "../test_catch_tools.hpp"
 
 #include <boost/math/special_functions/round.hpp>
 

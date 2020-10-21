@@ -50,15 +50,15 @@ add_executable(mlpack_catch_test
   distribution_test.cpp
   drusilla_select_test.cpp
   emst_test.cpp
-  gmm_test.cpp
-  hmm_test.cpp
-  hyperplane_test.cpp
-  hpt_test.cpp
   facilities_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
   gan_test.cpp
+  gmm_test.cpp
+  hmm_test.cpp
+  hpt_test.cpp
   hoeffding_tree_test.cpp
+  hyperplane_test.cpp
   image_load_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
@@ -135,6 +135,12 @@ add_executable(mlpack_catch_test
   vantage_point_tree_test.cpp
   wgan_test.cpp
   main_tests/adaboost_test.cpp
+  main_tests/approx_kfn_test.cpp
+  main_tests/bayesian_linear_regression_test.cpp
+  main_tests/cf_test.cpp
+  main_tests/dbscan_test.cpp
+  main_tests/decision_stump_test.cpp
+  main_tests/decision_tree_test.cpp
   main_tests/emst_test.cpp
   main_tests/fastmks_test.cpp
   main_tests/gmm_generate_test.cpp
@@ -145,12 +151,6 @@ add_executable(mlpack_catch_test
   main_tests/hmm_test_utils.hpp
   main_tests/hmm_train_test.cpp
   main_tests/hmm_viterbi_test.cpp
-  main_tests/approx_kfn_test.cpp
-  main_tests/bayesian_linear_regression_test.cpp
-  main_tests/cf_test.cpp
-  main_tests/dbscan_test.cpp
-  main_tests/decision_stump_test.cpp
-  main_tests/decision_tree_test.cpp
   main_tests/hoeffding_tree_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/kernel_pca_test.cpp
@@ -224,8 +224,6 @@ add_custom_command(TARGET mlpack_test
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test_label.tar.bz2
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
-
-# The list of long running parallel tests
 
 # Add tests to the testing framework
 # Get the list of sources from the test target

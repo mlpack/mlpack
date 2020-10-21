@@ -15,7 +15,6 @@
 #include <mlpack/methods/amf/update_rules/nmf_mult_div.hpp>
 
 #include "catch.hpp"
-#include "test_catch_tools.hpp"
 
 using namespace std;
 using namespace arma;

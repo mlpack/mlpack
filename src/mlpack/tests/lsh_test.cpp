@@ -360,7 +360,7 @@ TEST_CASE("RecallTest", "[LSHTest]")
       groundTruth);
 
   // This run should have recall lower than the threshold.
-  REQUIRE(recallChp < recallThreshChp);
+  REQUIRE(recallChp <= recallThreshChp);
 }
 
 /**

@@ -21,7 +21,6 @@
 #include <ensmallen.hpp>
 
 #include "catch.hpp"
-#include "test_catch_tools.hpp"
 
 using namespace mlpack::cv;
 using namespace mlpack::data;

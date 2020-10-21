@@ -21,6 +21,7 @@ static const std::string testName = "LogisticRegression";
 #include "test_helper.hpp"
 
 #include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -180,11 +181,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRResponsesRepresentationTest",
       IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
-  for (arma::Row<size_t>::size_type i = 0; i != testY1.size(); ++i)
-  {
-    REQUIRE(testY1[i] == testY2[i]);  
-  }
-  
+  CheckMatrices(testY1, testY2); 
 }
 
 /**
@@ -237,10 +234,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
       IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions must be equal.
-  for (arma::Row<size_t>::size_type i = 0; i != testY1.size(); ++i)
-  {
-    REQUIRE(testY1[i] == testY2[i]);  
-  }
+  CheckMatrices(testY1, testY2);
 }
 
 /**
@@ -696,10 +690,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LROPtionConsistencyTest",
       std::move(IO::GetParam<arma::Row<size_t>>("output"));
 
   // Both solutions must be equal.
-  for (arma::Row<size_t>::size_type i = 0; i != testY1.size(); ++i)
-  {
-    REQUIRE(testY1[i] == testY2[i]);  
-  }
+  CheckMatrices(testY1, testY2);
 }
 
 /**
@@ -731,8 +722,5 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LROPtionConsistencyTest2",
       std::move(IO::GetParam<arma::mat>("probabilities"));
 
   // Both solutions must be equal.
-  for (arma::Row<size_t>::size_type i = 0; i != testY1.size(); ++i)
-  {
-    REQUIRE(testY1[i] == testY2[i]);  
-  }
+  CheckMatrices(testY1, testY2);
 }

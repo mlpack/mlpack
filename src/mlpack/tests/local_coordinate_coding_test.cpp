@@ -16,7 +16,6 @@
 #include <mlpack/methods/local_coordinate_coding/lcc.hpp>
 
 #include "catch.hpp"
-#include "test_catch_tools.hpp"
 #include "serialization_catch.hpp"
 
 using namespace arma;
@@ -33,7 +32,8 @@ void VerifyCorrectness(const vec& beta, const vec& errCorr, double lambda)
     if (beta(j) == 0)
     {
       // make sure that errCorr(j) <= lambda
-      REQUIRE(std::max(fabs(errCorr(j)) - lambda, 0.0) == Approx(0.0).margin(tol));
+      REQUIRE(std::max(fabs(errCorr(j)) - lambda, 0.0) ==
+          Approx(0.0).margin(tol));
     }
     else if (beta(j) < 0)
     {
@@ -85,7 +85,8 @@ TEST_CASE("LocalCoordinateCodingTestCodingStep", "[LocalCoordinateCodingTest]")
   }
 }
 
-TEST_CASE("LocalCoordinateCodingTestDictionaryStep", "[LocalCoordinateCodingTest]")
+TEST_CASE("LocalCoordinateCodingTestDictionaryStep", 
+          "[LocalCoordinateCodingTest]")
 {
   const double tol = 0.1;
 
@@ -121,7 +122,8 @@ TEST_CASE("LocalCoordinateCodingTestDictionaryStep", "[LocalCoordinateCodingTest
   REQUIRE(norm(grad, "fro") == Approx(0.0).margin(tol));
 }
 
-TEST_CASE("LocalCoordinateCodingSerializationTest", "[LocalCoordinateCodingTest]")
+TEST_CASE("LocalCoordinateCodingSerializationTest", 
+          "[LocalCoordinateCodingTest]")
 {
   mat X = randu<mat>(100, 100);
   size_t nAtoms = 10;
@@ -168,7 +170,8 @@ TEST_CASE("LocalCoordinateCodingSerializationTest", "[LocalCoordinateCodingTest]
  * Test that LocalCoordinateCoding::Train() returns finite final objective
  * value.
  */
-TEST_CASE("LocalCoordinateCodingTrainReturnObjective", "[LocalCoordinateCodingTest]")
+TEST_CASE("LocalCoordinateCodingTrainReturnObjective", 
+          "[LocalCoordinateCodingTest]")
 {
   double lambda1 = 0.1;
   uword nAtoms = 10;
