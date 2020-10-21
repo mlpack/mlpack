@@ -1,20 +1,14 @@
 # mlpack test executable.
 add_executable(mlpack_test
   callback_test.cpp
-  kde_test.cpp
-  lmnn_test.cpp
   mlpack_test.cpp
   mock_categorical_data.hpp
-  reward_clipping_test.cpp
-  rl_components_test.cpp
   serialization.cpp
   serialization.hpp
   serialization_test.cpp
   test_function_tools.hpp
   test_tools.hpp
   main_tests/det_test.cpp
-  main_tests/kde_test.cpp
-  main_tests/lmnn_test.cpp
   main_tests/test_helper.hpp
 )
 
