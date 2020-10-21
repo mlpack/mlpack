@@ -68,26 +68,26 @@ void StratifiedSplit(const arma::Mat<T>& input,
    * We visit each label and keep the count of each label in our unordered map
    *
    * Whenever we encounter a label, we calculate
-   * current_count*test_ratio --- labelMap[label]*testRatio and
-   * current_count+1 * test_ratio --- (labelMap[label]+1)*testRatio
+   * current_count * test_ratio --- labelMap[label] * testRatio and
+   * current_count+1 * test_ratio --- (labelMap[label] + 1) * testRatio
    *
    * We then static_cast these counts to size_t to remove their decimal points.
    * If in this case, our integer counts are same then we add to our train set.
    * If there is a difference in counts, then we add to our test set
    *
    * Considering our example
-   * 0 -- train set ( 0*0.2 == 1*0.2 ) (After casting)
-   * 0 -- train set ( 1*0.2 == 2*0.2 ) (After casting)
-   * 0 -- train set ( 2*0.2 == 3*0.2 ) (After casting)
-   * 0 -- train set ( 3*0.2 == 4*0.2 ) (After casting)
-   * 0 -- test set  ( 4*0.2 <  5*0.2 ) (After casting)
+   * 0 -- train set ( 0 * 0.2 == 1 * 0.2 ) (After casting)
+   * 0 -- train set ( 1 * 0.2 == 2 * 0.2 ) (After casting)
+   * 0 -- train set ( 2 * 0.2 == 3 * 0.2 ) (After casting)
+   * 0 -- train set ( 3 * 0.2 == 4 * 0.2 ) (After casting)
+   * 0 -- test set  ( 4 * 0.2 <  5 * 0.2 ) (After casting)
    *
-   * 1 -- train set ( 0*0.2 == 1*0.2 ) (After casting)
-   * 1 -- train set ( 1*0.2 == 2*0.2 ) (After casting)
-   * 1 -- train set ( 2*0.2 == 3*0.2 ) (After casting)
-   * 1 -- train set ( 3*0.2 == 4*0.2 ) (After casting)
-   * 1 -- test set  ( 4*0.2 <  5*0.2 ) (After casting)
-   * 1 -- train set ( 5*0.2 == 6*0.2 ) (After casting)
+   * 1 -- train set ( 0 * 0.2 == 1 * 0.2 ) (After casting)
+   * 1 -- train set ( 1 * 0.2 == 2 * 0.2 ) (After casting)
+   * 1 -- train set ( 2 * 0.2 == 3 * 0.2 ) (After casting)
+   * 1 -- train set ( 3 * 0.2 == 4 * 0.2 ) (After casting)
+   * 1 -- test set  ( 4 * 0.2 <  5 * 0.2 ) (After casting)
+   * 1 -- train set ( 5 * 0.2 == 6 * 0.2 ) (After casting)
    *
    * Finally
    * train set,
@@ -96,8 +96,8 @@ void StratifiedSplit(const arma::Mat<T>& input,
    * test set,
    * 0 1
    */
-  arma::uvec Indexes;
-  Indexes.set_size(inputLabel.n_cols);
+  arma::uvec indices;
+  indices.set_size(inputLabel.n_cols);
 
   size_t trainIdx = 0;
   size_t testIdx = inputLabel.n_cols - 1;
@@ -117,22 +117,21 @@ void StratifiedSplit(const arma::Mat<T>& input,
     if (static_cast<size_t>(labelMap[label]*testRatio) <
         static_cast<size_t>((labelMap[label]+1)*testRatio))
     {
-      Indexes[testIdx] = i;
+      indices[testIdx] = i;
       testIdx -= 1;
     }
     else
     {
-      Indexes[trainIdx] = i;
+      indices[trainIdx] = i;
       trainIdx += 1;
     }
     labelMap[label] += 1;
   }
 
-  labelMap.clear();
-  testData = input.cols(Indexes.subvec(trainIdx, Indexes.n_rows-1));
-  testLabel = inputLabel.cols(Indexes.subvec(trainIdx, Indexes.n_rows-1));
-  trainData = input.cols(Indexes.subvec(0, trainIdx-1));
-  trainLabel = inputLabel.cols(Indexes.subvec(0, trainIdx-1));
+  testData = input.cols(indices.subvec(trainIdx, indices.n_rows-1));
+  testLabel = inputLabel.cols(indices.subvec(trainIdx, indices.n_rows-1));
+  trainData = input.cols(indices.subvec(0, trainIdx-1));
+  trainLabel = inputLabel.cols(indices.subvec(0, trainIdx-1));
 }
 
 /**
