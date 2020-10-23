@@ -303,8 +303,9 @@ TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
   two_label.fill(2);
   three_label.fill(3);
 
-  const Row<size_t> labels =
-      arma::join_rows(zero_label, one_label, two_label, three_label);
+  Row<size_t> labels = arma::join_rows(zero_label, one_label);
+  labels = arma::join_rows(labels,two_label);
+  labels = arma::join_rows(labels,three_label);
 
   const double test_ratio = 0.3;
 
