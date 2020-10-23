@@ -212,3 +212,113 @@ TEST_CASE("SplitLabeledDataLargerTest", "[SplitDataTest]")
 
   CheckDuplication(std::get<2>(value), std::get<3>(value));
 }
+
+/**
+ * Check that 0 test ratio results in a full train set for stratified split
+ */
+TEST_CASE("ZeroRatioStratifiedSplitData", "[SplitDataTest]")
+{
+  mat input(2, 15);
+  input.randu();
+
+  // Set the lables to 5 0s and 10 1s.
+  const Row<size_t> labels = { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+  const double test_ratio = 0;
+
+  const auto value = Split(input, labels, test_ratio, false, true);
+  REQUIRE(std::get<0>(value).n_cols == 15);
+  REQUIRE(std::get<1>(value).n_cols == 0);
+  REQUIRE(std::get<2>(value).n_cols == 15);
+  REQUIRE(std::get<3>(value).n_cols == 0);
+}
+
+/**
+ * Check that 1 test ratio results in a full test set for stratified split
+ */
+TEST_CASE("TotalRatioStratifiedSplitData", "[SplitDataTest]")
+{
+  mat input(2, 15);
+  input.randu();
+
+  // Set the lables to 5 0s and 10 1s.
+  const Row<size_t> labels = { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+  const double test_ratio = 1;
+
+  const auto value = Split(input, labels, test_ratio, false, true);
+  REQUIRE(std::get<0>(value).n_cols == 0);
+  REQUIRE(std::get<1>(value).n_cols == 15);
+  REQUIRE(std::get<2>(value).n_cols == 0);
+  REQUIRE(std::get<3>(value).n_cols == 15);
+}
+
+/**
+ * Check if data is stratified according to labels
+ */
+TEST_CASE("StratifiedSplitDataResultTest", "[SplitDataTest]")
+{
+  mat input(5, 24);
+  input.randu();
+
+  // Set the lables to 4 0s, 8 1s and 12 2s.
+  const Row<size_t> labels = { 0, 0, 0, 0,
+                               1, 1, 1, 1, 1, 1, 1, 1,
+                               2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
+  const double test_ratio = 0.25;
+
+  const auto value = Split(input, labels, test_ratio, true, true);
+  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 0)).n_rows == 3);
+  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 1)).n_rows == 6);
+  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 2)).n_rows == 9);
+
+  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 0)).n_rows == 1);
+  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 1)).n_rows == 2);
+  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 2)).n_rows == 3);
+
+  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  CheckMatEqual(input, concat);
+}
+
+/**
+ * Check if data is stratified according to labels on a larger data set
+ * Example calculation to find resultant number of samples in the train and
+ * test set:
+ *
+ * Since there are 256 0s and the test ratio is 0.3,
+ * Number of 0s in the test set = 76 ( floor(256 * 0.3) = floor(76.8) )
+ * Number of 0s in the train set = 180 ( 256 - 76 )
+ */
+TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
+{
+  mat input(3,480);
+  input.randu();
+
+  /* 256 0s, 128 1s, 64 2s and 32 3s */
+  Row<size_t> zero_label(256);
+  Row<size_t> one_label(128);
+  Row<size_t> two_label(64);
+  Row<size_t> three_label(32);
+
+  zero_label.fill(0);
+  one_label.fill(1);
+  two_label.fill(2);
+  three_label.fill(3);
+
+  const Row<size_t> labels =
+      arma::join_rows(zero_label, one_label, two_label, three_label);
+
+  const double test_ratio = 0.3;
+
+  const auto value = Split(input, labels, test_ratio, false, true);
+  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 0)).n_rows == 180);
+  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 1)).n_rows == 90);
+  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 2)).n_rows == 45);
+  REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 3)).n_rows == 23);
+
+  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 0)).n_rows == 76);
+  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 1)).n_rows == 38);
+  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 2)).n_rows == 19);
+  REQUIRE(static_cast<uvec>(find(std::get<3>(value) == 3)).n_rows == 9);
+
+  mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  CheckMatEqual(input, concat);
+}
