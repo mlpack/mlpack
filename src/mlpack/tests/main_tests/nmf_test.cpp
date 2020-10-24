@@ -20,7 +20,7 @@ static const std::string testName = "NonNegativeMatrixFactorization";
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
+#include "../catch.hpp"
 
 using namespace mlpack;
 using namespace arma;
@@ -50,13 +50,12 @@ static void ResetSettings()
   IO::RestoreSettings(testName);
 }
 
-BOOST_FIXTURE_TEST_SUITE(NMFMainTest, NMFTestFixture);
-
 /**
  * Ensure the resulting matrices W, H have expected shape.
  * Multdist update rule (Default Case).
  */
-BOOST_AUTO_TEST_CASE(NMFMultdistShapeTest)
+TEST_CASE_METHOD(NMFTestFixture, "NMFMultdistShapeTest",
+                "[NMFMainTest][BindingTests]")
 {
   mat v = randu<mat>(8, 10);
   int r = 5;
@@ -73,17 +72,18 @@ BOOST_AUTO_TEST_CASE(NMFMultdistShapeTest)
   const mat& h = IO::GetParam<mat>("h");
 
   // Check the shapes of W and H.
-  BOOST_REQUIRE_EQUAL(w.n_rows, 8);
-  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
-  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+  REQUIRE(w.n_rows == 8);
+  REQUIRE(w.n_cols == 5);
+  REQUIRE(h.n_rows == 5);
+  REQUIRE(h.n_cols == 10);
 }
 
 /**
  * Ensure the resulting matrices W, H have expected shape.
  * Multdiv update rule.
  */
-BOOST_AUTO_TEST_CASE(NMFMultdivShapeTest)
+TEST_CASE_METHOD(NMFTestFixture, "NMFMultdivShapeTest",
+                "[NMFMainTest][BindingTests]")
 {
   mat v = randu<mat>(8, 10);
   int r = 5;
@@ -100,17 +100,18 @@ BOOST_AUTO_TEST_CASE(NMFMultdivShapeTest)
   const mat& h = IO::GetParam<mat>("h");
 
   // Check the shapes of W and H.
-  BOOST_REQUIRE_EQUAL(w.n_rows, 8);
-  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
-  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+  REQUIRE(w.n_rows == 8);
+  REQUIRE(w.n_cols == 5);
+  REQUIRE(h.n_rows == 5);
+  REQUIRE(h.n_cols == 10);
 }
 
 /**
  * Ensure the resulting matrices W, H have expected shape.
  * Als update rule.
  */
-BOOST_AUTO_TEST_CASE(NMFAlsShapeTest)
+TEST_CASE_METHOD(NMFTestFixture, "NMFAlsShapeTest",
+                "[NMFMainTest][BindingTests]")
 {
   mat v = randu<mat>(8, 10);
   int r = 5;
@@ -127,16 +128,17 @@ BOOST_AUTO_TEST_CASE(NMFAlsShapeTest)
   const mat& h = IO::GetParam<mat>("h");
 
   // Check the shapes of W and H.
-  BOOST_REQUIRE_EQUAL(w.n_rows, 8);
-  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
-  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+  REQUIRE(w.n_rows == 8);
+  REQUIRE(w.n_cols == 5);
+  REQUIRE(h.n_rows == 5);
+  REQUIRE(h.n_cols == 10);
 }
 
 /**
  * Ensure the rank is positive.
  */
-BOOST_AUTO_TEST_CASE(NMFRankBoundTest)
+TEST_CASE_METHOD(NMFTestFixture, "NMFRankBoundTest",
+                "[NMFMainTest][BindingTests]")
 {
   mat v = randu<mat>(10, 10);
   int r;
@@ -147,7 +149,7 @@ BOOST_AUTO_TEST_CASE(NMFRankBoundTest)
   SetInputParam("rank", r);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Rank should not be 0.
@@ -155,14 +157,15 @@ BOOST_AUTO_TEST_CASE(NMFRankBoundTest)
   SetInputParam("rank", r);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure the max_iterations is non-negative.
  */
-BOOST_AUTO_TEST_CASE(NMFMaxIterartionBoundTest)
+TEST_CASE_METHOD(NMFTestFixture, "NMFMaxIterartionBoundTest",
+                "[NMFMainTest][BindingTests]")
 {
   mat v = randu<mat>(10, 10);
   int r = 5;
@@ -173,7 +176,7 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterartionBoundTest)
   SetInputParam("rank", r);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -181,7 +184,8 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterartionBoundTest)
  * Ensure the update rule is one of 
  * {"multdist", "multdiv", "als"}.
  */
-BOOST_AUTO_TEST_CASE(NMFUpdateRuleTest)
+TEST_CASE_METHOD(NMFTestFixture, "NMFUpdateRuleTest",
+                "[NMFMainTest][BindingTests]")
 {
   mat v = randu<mat>(10, 10);
   int r = 5;
@@ -192,7 +196,7 @@ BOOST_AUTO_TEST_CASE(NMFUpdateRuleTest)
   SetInputParam("rank", r);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -200,7 +204,8 @@ BOOST_AUTO_TEST_CASE(NMFUpdateRuleTest)
  * Ensure min_residue is used, by testing that 
  * min_resude makes a difference to the program.  
  */
-BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
+TEST_CASE_METHOD(NMFTestFixture, "NMFMinResidueTest",
+                "[NMFMainTest][BindingTests]")
 {
   mat v = arma::randu(10, 10);
   mat initialW = arma::randu(10, 5);
@@ -234,15 +239,16 @@ BOOST_AUTO_TEST_CASE(NMFMinResidueTest)
   const mat h2 = IO::GetParam<mat>("h");
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE_GT(arma::norm(w1 - w2), 1e-5);
-  BOOST_REQUIRE_GT(arma::norm(h1 - h2), 1e-5);
+  REQUIRE(arma::norm(w1 - w2) > 1e-5);
+  REQUIRE(arma::norm(h1 - h2) > 1e-5);
 }
 
 /**
  * Ensure max_iterations is used, by testing that 
  * max_iterations makes a difference to the program.  
  */
-BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
+TEST_CASE_METHOD(NMFTestFixture, "NMFMaxIterationTest",
+                "[NMFMainTest][BindingTests]")
 {
   mat v = arma::randu(10, 10);
   mat initialW = arma::randu(10, 5);
@@ -280,14 +286,15 @@ BOOST_AUTO_TEST_CASE(NMFMaxIterationTest)
   const mat h2 = IO::GetParam<mat>("h");
 
   // The resulting matrices should be different.
-  BOOST_REQUIRE_GT(arma::norm(w1 - w2), 1e-5);
-  BOOST_REQUIRE_GT(arma::norm(h1 - h2), 1e-5);
+  REQUIRE(arma::norm(w1 - w2) > 1e-5);
+  REQUIRE(arma::norm(h1 - h2) > 1e-5);
 }
 
 /**
  * Test NMF with given initial_w and initial_h.
  */
-BOOST_AUTO_TEST_CASE(NMFWHGivenInitTest)
+TEST_CASE_METHOD(NMFTestFixture, "NMFWHGivenInitTest",
+                "[NMFMainTest][BindingTests]")
 {
   mat v = arma::randu(10, 10);
   mat initialW = arma::randu(10, 5);
@@ -305,16 +312,17 @@ BOOST_AUTO_TEST_CASE(NMFWHGivenInitTest)
   const mat h = IO::GetParam<mat>("h");
 
   // Check the shapes of W and H.
-  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
-  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
-  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+  REQUIRE(w.n_rows == 10);
+  REQUIRE(w.n_cols == 5);
+  REQUIRE(h.n_rows == 5);
+  REQUIRE(h.n_cols == 10);
 }
 
 /**
  * Test NMF with given initial_w.
  */
-BOOST_AUTO_TEST_CASE(NMFWGivenInitTest)
+TEST_CASE_METHOD(NMFTestFixture, "NMFWGivenInitTest",
+                "[NMFMainTest][BindingTests]")
 {
   mat v = arma::randu(10, 10);
   mat initialW = arma::randu(10, 5);
@@ -330,16 +338,17 @@ BOOST_AUTO_TEST_CASE(NMFWGivenInitTest)
   const mat h = IO::GetParam<mat>("h");
 
   // Check the shapes of W and H.
-  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
-  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
-  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+  REQUIRE(w.n_rows == 10);
+  REQUIRE(w.n_cols == 5);
+  REQUIRE(h.n_rows == 5);
+  REQUIRE(h.n_cols == 10);
 }
 
 /**
  * Test NMF with given initial_h.
  */
-BOOST_AUTO_TEST_CASE(NMFHGivenInitTest)
+TEST_CASE_METHOD(NMFTestFixture, "NMFHGivenInitTest",
+                "[NMFMainTest][BindingTests]")
 {
   mat v = arma::randu(10, 10);
   mat initialH = arma::randu(5, 10);
@@ -355,12 +364,8 @@ BOOST_AUTO_TEST_CASE(NMFHGivenInitTest)
   const mat h = IO::GetParam<mat>("h");
 
   // Check the shapes of W and H.
-  BOOST_REQUIRE_EQUAL(w.n_rows, 10);
-  BOOST_REQUIRE_EQUAL(w.n_cols, 5);
-  BOOST_REQUIRE_EQUAL(h.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(h.n_cols, 10);
+  REQUIRE(w.n_rows == 10);
+  REQUIRE(w.n_cols == 5);
+  REQUIRE(h.n_rows == 5);
+  REQUIRE(h.n_cols == 10);
 }
-
-
-BOOST_AUTO_TEST_SUITE_END();
-
