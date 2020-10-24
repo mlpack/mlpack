@@ -128,10 +128,24 @@ void StratifiedSplit(const arma::Mat<T>& input,
     labelMap[label] += 1;
   }
 
-  testData = input.cols(indices.subvec(trainIdx, indices.n_rows - 1));
-  testLabel = inputLabel.cols(indices.subvec(trainIdx, indices.n_rows - 1));
-  trainData = input.cols(indices.subvec(0, trainIdx - 1));
-  trainLabel = inputLabel.cols(indices.subvec(0, trainIdx - 1));
+  const size_t testSize = indices.n_rows - trainIdx;
+  const size_t trainSize = indices.n_rows - testSize;
+
+  trainData.set_size(input.n_rows, trainSize);
+  testData.set_size(input.n_rows, testSize);
+  trainLabel.set_size(trainSize);
+  testLabel.set_size(testSize);
+
+  if (trainSize > 0)
+  {
+    trainData = input.cols(indices.subvec(0, trainIdx - 1));
+    trainLabel = inputLabel.cols(indices.subvec(0, trainIdx - 1));
+  }
+  if (trainSize < input.n_cols)
+  {
+    testData = input.cols(indices.subvec(trainIdx, indices.n_rows - 1));
+    testLabel = inputLabel.cols(indices.subvec(trainIdx, indices.n_rows - 1));
+  }
 }
 
 /**
