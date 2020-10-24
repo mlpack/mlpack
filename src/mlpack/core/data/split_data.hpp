@@ -14,6 +14,7 @@
 #define MLPACK_CORE_DATA_SPLIT_DATA_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <unordered_map>
 
 namespace mlpack {
 namespace data {
@@ -67,27 +68,25 @@ void StratifiedSplit(const arma::Mat<T>& input,
    * Let our test ratio be 0.2:
    * We visit each label and keep the count of each label in our unordered map
    *
-   * Whenever we encounter a label, we calculate
+   * Whenever we encounter a label, we calculate the floored values of
    * current_count * test_ratio --- labelMap[label] * testRatio and
    * current_count+1 * test_ratio --- (labelMap[label] + 1) * testRatio
    *
-   * We then static_cast these counts to size_t to remove their decimal points.
-   * If in this case, our integer counts are same then we add to our train set.
    * If there is a difference in counts, then we add to our test set
    *
    * Considering our example
-   * 0 -- train set ( 0 * 0.2 == 1 * 0.2 ) (After casting)
-   * 0 -- train set ( 1 * 0.2 == 2 * 0.2 ) (After casting)
-   * 0 -- train set ( 2 * 0.2 == 3 * 0.2 ) (After casting)
-   * 0 -- train set ( 3 * 0.2 == 4 * 0.2 ) (After casting)
-   * 0 -- test set  ( 4 * 0.2 <  5 * 0.2 ) (After casting)
+   * 0 -- train set ( 0 * 0.2 == 1 * 0.2 ) (After floor)
+   * 0 -- train set ( 1 * 0.2 == 2 * 0.2 ) (After floor)
+   * 0 -- train set ( 2 * 0.2 == 3 * 0.2 ) (After floor)
+   * 0 -- train set ( 3 * 0.2 == 4 * 0.2 ) (After floor)
+   * 0 -- test set  ( 4 * 0.2 <  5 * 0.2 ) (After floor)
    *
-   * 1 -- train set ( 0 * 0.2 == 1 * 0.2 ) (After casting)
-   * 1 -- train set ( 1 * 0.2 == 2 * 0.2 ) (After casting)
-   * 1 -- train set ( 2 * 0.2 == 3 * 0.2 ) (After casting)
-   * 1 -- train set ( 3 * 0.2 == 4 * 0.2 ) (After casting)
-   * 1 -- test set  ( 4 * 0.2 <  5 * 0.2 ) (After casting)
-   * 1 -- train set ( 5 * 0.2 == 6 * 0.2 ) (After casting)
+   * 1 -- train set ( 0 * 0.2 == 1 * 0.2 ) (After floor)
+   * 1 -- train set ( 1 * 0.2 == 2 * 0.2 ) (After floor)
+   * 1 -- train set ( 2 * 0.2 == 3 * 0.2 ) (After floor)
+   * 1 -- train set ( 3 * 0.2 == 4 * 0.2 ) (After floor)
+   * 1 -- test set  ( 4 * 0.2 <  5 * 0.2 ) (After floor)
+   * 1 -- train set ( 5 * 0.2 == 6 * 0.2 ) (After floor)
    *
    * Finally
    * train set,
@@ -114,23 +113,23 @@ void StratifiedSplit(const arma::Mat<T>& input,
   for (auto i: order)
   {
     auto label = inputLabel[i];
-    if (static_cast<size_t>(labelMap[label] * testRatio) <
-        static_cast<size_t>((labelMap[label] + 1) * testRatio))
-    {
-      indices[testIdx] = i;
-      testIdx -= 1;
-    }
-    else
+
+    if (floor(labelMap[label] * testRatio) ==
+        floor((labelMap[label] + 1) * testRatio))
     {
       indices[trainIdx] = i;
       trainIdx += 1;
+    }
+    else
+    {
+      indices[testIdx] = i;
+      testIdx -= 1;
     }
     labelMap[label] += 1;
   }
 
   const size_t testSize = indices.n_rows - trainIdx;
   const size_t trainSize = indices.n_rows - testSize;
-
   trainData.set_size(input.n_rows, trainSize);
   testData.set_size(input.n_rows, testSize);
   trainLabel.set_size(trainSize);
