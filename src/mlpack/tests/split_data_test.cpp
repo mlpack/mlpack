@@ -214,7 +214,7 @@ TEST_CASE("SplitLabeledDataLargerTest", "[SplitDataTest]")
 }
 
 /**
- * Check that 0 test ratio results in a full train set for stratified split
+ * Check that test ratio of 0 results in a full train set for stratified split.
  */
 TEST_CASE("ZeroRatioStratifiedSplitData", "[SplitDataTest]")
 {
@@ -233,7 +233,7 @@ TEST_CASE("ZeroRatioStratifiedSplitData", "[SplitDataTest]")
 }
 
 /**
- * Check that 1 test ratio results in a full test set for stratified split
+ * Check that test ratio of 1 results in a full test set for stratified split.
  */
 TEST_CASE("TotalRatioStratifiedSplitData", "[SplitDataTest]")
 {
@@ -252,7 +252,7 @@ TEST_CASE("TotalRatioStratifiedSplitData", "[SplitDataTest]")
 }
 
 /**
- * Check if data is stratified according to labels
+ * Check if data is stratified according to labels.
  */
 TEST_CASE("StratifiedSplitDataResultTest", "[SplitDataTest]")
 {
@@ -279,20 +279,20 @@ TEST_CASE("StratifiedSplitDataResultTest", "[SplitDataTest]")
 }
 
 /**
- * Check if data is stratified according to labels on a larger data set
+ * Check if data is stratified according to labels on a larger data set.
  * Example calculation to find resultant number of samples in the train and
  * test set:
  *
  * Since there are 256 0s and the test ratio is 0.3,
- * Number of 0s in the test set = 76 ( floor(256 * 0.3) = floor(76.8) )
- * Number of 0s in the train set = 180 ( 256 - 76 )
+ * Number of 0s in the test set = 76 ( floor(256 * 0.3) = floor(76.8) ).
+ * Number of 0s in the train set = 180 ( 256 - 76 ).
  */
 TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
 {
   mat input(3,480);
   input.randu();
 
-  /* 256 0s, 128 1s, 64 2s and 32 3s */
+  // 256 0s, 128 1s, 64 2s and 32 3s.
   Row<size_t> zero_label(256);
   Row<size_t> one_label(128);
   Row<size_t> two_label(64);
@@ -306,7 +306,6 @@ TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
   Row<size_t> labels = arma::join_rows(zero_label, one_label);
   labels = arma::join_rows(labels,two_label);
   labels = arma::join_rows(labels,three_label);
-
   const double test_ratio = 0.3;
 
   const auto value = Split(input, labels, test_ratio, false, true);
