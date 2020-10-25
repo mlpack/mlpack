@@ -30,4 +30,4 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_cli_executable(ann_low_resource)
+# add_cli_executable(ann_low_resource)

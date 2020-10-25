@@ -17,7 +17,7 @@ option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
-option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." OFF)
 set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
 set(ARMADILLO_INCLUDE_DIR "" CACHE STRING "Path for Armadillo headers.")
 set(OPENBLAS_LIBRARIES "" CACHE STRING "Path for OpenBlas library.")
@@ -25,10 +25,10 @@ set(BOOST_ROOT "" CACHE STRING "Path for boost.")
 set(BOOST_INCLUDE_DIR "" CACHE STRING "Path for boost headers.")
 set(BOOST_LIBRARYDIR "" CACHE STRING "Path for boost libraries.")
 
-if (CMAKE_CROSSCOMPILING AND BOARD_NAME STREQUAL ""))
+if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
 elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
-  include(board/rpi-config.cmake)
+  include(board/flags-config.cmake)
   flags(${BOARD_NAME})
 endif()
 
@@ -67,7 +67,7 @@ if (BUILD_JULIA_BINDINGS)
 else()
   set(FORCE_BUILD_JULIA_BINDINGS OFF)
 endif()
-option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." OFF)
 
 # Detect whether the user passed BUILD_GO_BINDINGS in order to determine if
 # we should fail if Go isn't found.
@@ -76,7 +76,7 @@ if (BUILD_GO_BINDINGS)
 else()
   set(FORCE_BUILD_GO_BINDINGS OFF)
 endif()
-option(BUILD_GO_BINDINGS "Build Go bindings." ON)
+option(BUILD_GO_BINDINGS "Build Go bindings." OFF)
 
 # If building Go bindings then build go shared libraries.
 if (BUILD_GO_BINDINGS)
@@ -90,7 +90,7 @@ if (BUILD_R_BINDINGS)
 else()
   set(FORCE_BUILD_R_BINDINGS OFF)
 endif()
-option(BUILD_R_BINDINGS "Build R bindings." ON)
+option(BUILD_R_BINDINGS "Build R bindings." OFF)
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
@@ -312,14 +312,14 @@ endif()
 # Remove support for older 32bit system, if we need to have 32bit system
 # Since we are cross compiling, We will download it into the deps folder,
 if (CMAKE_CROSSCOMPILING)
-  file(DOWNLOAD https://iweb.dl.sourceforge.net/project/arma/armadillo-9.900.1.tar.xz
-        "${CMAKE_BINARY_DIR}/deps/armadillo-9.900.1.tar.xz"
+  file(DOWNLOAD https://deac-fra.dl.sourceforge.net/project/arma/armadillo-10.1.0.tar.xz
+        "${CMAKE_BINARY_DIR}/deps/armadillo-10.1.0.tar.xz"
         STATUS ARMADILLO_DOWNLOAD_STATUS_LIST LOG ARMADILLO_DOWNLOAD_LOG
         SHOW_PROGRESS)
   list(GET ARMADILLO_DOWNLOAD_STATUS_LIST 0 ARMADILLO_DOWNLOAD_STATUS)
   if (ARMADILLO_DOWNLOAD_STATUS EQUAL 0)
     execute_process(COMMAND ${CMAKE_COMMAND} -E
-        tar xf "${CMAKE_BINARY_DIR}/deps/armadillo-9.900.1.tar.xz"
+        tar xf "${CMAKE_BINARY_DIR}/deps/armadillo-10.1.0.tar.xz"
         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
 
     # Get the name of the directory.
@@ -499,20 +499,13 @@ set(Boost_ADDITIONAL_VERSIONS
 #
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
-set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost "${BOOST_VERSION}"
-    COMPONENTS
-      unit_test_framework
-      serialization
-    REQUIRED
-)
 
 #set(Boost_NO_BOOST_CMAKE 1)
 if (CMAKE_CROSSCOMPILING)
   # Here we will set paths as we have done for armadillo.
   set(Boost_INCLUDE_DIRS ${BOOST_INCLUDE_DIR})
   set(Boost_LIBRARY_DIRS  ${BOOST_LIBRARYDIR})
-  set(Boost_LIBRARIES ${BOOST_PROGRAM_OPTIONS} ${BOOST_SERIALIZATION})
+  set(Boost_LIBRARIES  ${BOOST_SERIALIZATION})
 endif()
 
 link_directories(${Boost_LIBRARY_DIRS})
