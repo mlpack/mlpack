@@ -68,8 +68,8 @@ GRU<InputDataType, OutputDataType>::GRU(
 
   allZeros = arma::zeros<arma::mat>(outSize, batchSize);
 
-  outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-      allZeros.n_rows, allZeros.n_cols, false, true)));
+  outParameter.emplace_back(allZeros.memptr(),
+      allZeros.n_rows, allZeros.n_cols, false, true);
 
   prevOutput = outParameter.begin();
   backIterator = outParameter.end();
@@ -94,8 +94,8 @@ void GRU<InputDataType, OutputDataType>::Forward(
     }
 
     outParameter.clear();
-    outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, true)));
+    outParameter.emplace_back(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, true);
 
     prevOutput = outParameter.begin();
     backIterator = outParameter.end();
@@ -160,14 +160,14 @@ void GRU<InputDataType, OutputDataType>::Forward(
     forwardStep = 0;
     if (!deterministic)
     {
-      outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-          allZeros.n_rows, allZeros.n_cols, false, true)));
+      outParameter.emplace_back(allZeros.memptr(),
+          allZeros.n_rows, allZeros.n_cols, false, true);
       prevOutput = --outParameter.end();
     }
     else
     {
-      *prevOutput = std::move(arma::mat(allZeros.memptr(),
-          allZeros.n_rows, allZeros.n_cols, false, true));
+      *prevOutput = arma::mat(allZeros.memptr(),
+          allZeros.n_rows, allZeros.n_cols, false, true);
     }
   }
   else if (!deterministic)
@@ -209,8 +209,8 @@ void GRU<InputDataType, OutputDataType>::Backward(
     }
 
     outParameter.clear();
-    outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, true)));
+    outParameter.emplace_back(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, true);
 
     prevOutput = outParameter.begin();
     backIterator = outParameter.end();
@@ -333,8 +333,8 @@ void GRU<InputDataType, OutputDataType>::Gradient(
     }
 
     outParameter.clear();
-    outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-        allZeros.n_rows, allZeros.n_cols, false, true)));
+    outParameter.emplace_back(allZeros.memptr(),
+        allZeros.n_rows, allZeros.n_cols, false, true);
 
     prevOutput = outParameter.begin();
     backIterator = outParameter.end();
@@ -366,8 +366,8 @@ template<typename InputDataType, typename OutputDataType>
 void GRU<InputDataType, OutputDataType>::ResetCell(const size_t /* size */)
 {
   outParameter.clear();
-  outParameter.push_back(std::move(arma::mat(allZeros.memptr(),
-    allZeros.n_rows, allZeros.n_cols, false, true)));
+  outParameter.emplace_back(allZeros.memptr(),
+    allZeros.n_rows, allZeros.n_cols, false, true);
 
   prevOutput = outParameter.begin();
   backIterator = outParameter.end();

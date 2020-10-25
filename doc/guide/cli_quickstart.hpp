@@ -10,8 +10,9 @@ This page describes how you can quickly get started using mlpack from the
 command-line and gives a few examples of usage, and pointers to deeper
 documentation.
 
-This quickstart guide is also available for @ref python_quickstart "Python" and
-@ref julia_quickstart "Julia".
+This quickstart guide is also available for @ref python_quickstart "Python",
+@ref r_quickstart "R", @ref julia_quickstart "Julia" and
+@ref go_quickstart "Go".
 
 @section cli_quickstart_install Installing mlpack
 
@@ -108,7 +109,7 @@ The example above has only shown a little bit of the functionality of mlpack.
 Lots of other commands are available with different functionality.  A full list
 of commands and full documentation for each can be found on the following page:
 
- - <a href="https://mlpack.org/doc/mlpack-git/cli_documentation.html">IO documentation</a>
+ - <a href="https://mlpack.org/doc/mlpack-git/cli_documentation.html">CLI documentation</a>
 
 For more information on what mlpack does, see https://www.mlpack.org/.  Next,
 let's go through another example for providing movie recommendations with

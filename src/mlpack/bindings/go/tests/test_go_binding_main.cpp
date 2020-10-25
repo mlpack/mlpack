@@ -18,9 +18,16 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::kernel;
 
-PROGRAM_INFO("Golang binding test",
-    "A simple program to test Golang binding functionality.",
-    "A simple program to test Golang binding functionality.  You can build "
+// Program Name.
+BINDING_NAME("Golang binding test");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "A simple program to test Go binding functionality.");
+
+// Long description.
+BINDING_LONG_DESC(
+    "A simple program to test Go binding functionality.  You can build "
     "mlpack with the BUILD_TESTS option set to off, and this binding will "
     "no longer be built.");
 

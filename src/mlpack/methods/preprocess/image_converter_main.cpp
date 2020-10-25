@@ -20,13 +20,18 @@ using namespace arma;
 using namespace std;
 using namespace mlpack::data;
 
-PROGRAM_INFO("Image Converter",
-    // Short description.
+// Program Name.
+BINDING_NAME("Image Converter");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A utility to load an image or set of images into a single dataset that"
     " can then be used by other mlpack methods and utilities. This can also"
     " unpack an image dataset into individual files, for instance after mlpack"
-    " methods have been used.",
-    // Long description.
+    " methods have been used.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes an image or an array of images and loads them to a"
     " matrix. You can optionally specify the height " +
     PRINT_PARAM_STRING("height") + " width " + PRINT_PARAM_STRING("width")
@@ -39,18 +44,24 @@ PROGRAM_INFO("Image Converter",
     + ".\n\n" +
     "You can also provide a dataset and save them as images using " +
     PRINT_PARAM_STRING("dataset") + " and " + PRINT_PARAM_STRING("save") +
-    " as an parameter. An example to load an image : "  +
+    " as an parameter.");
+
+// Example.
+BINDING_EXAMPLE(
+    " An example to load an image : "
     "\n\n" +
     PRINT_CALL("image_converter", "input", "X", "height", 256, "width", 256,
         "channels", 3, "output", "Y") +
     "\n\n" +
-    " An example to save an image is :" +
+    " An example to save an image is :"
     "\n\n" +
     PRINT_CALL("image_converter", "input", "X", "height", 256, "width", 256,
-        "channels", 3, "dataset", "Y", "save", true),
-    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
-    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
-    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
+        "channels", 3, "dataset", "Y", "save", true));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
+BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
 
 // DEFINE PARAM
 PARAM_VECTOR_IN_REQ(string, "input", "Image filenames which have to "

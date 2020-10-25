@@ -12,8 +12,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/bindings/python/py_option.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -29,44 +28,42 @@ using namespace mlpack;
 using namespace mlpack::bindings;
 using namespace mlpack::bindings::python;
 
-BOOST_AUTO_TEST_SUITE(PythonBindingsTest);
-
 /**
  * Ensure that we can construct a PyOption object, and that it will add itself
- * to the CLI instance.
+ * to the IO instance.
  */
-BOOST_AUTO_TEST_CASE(PyOptionTest)
+TEST_CASE("PyOptionTest", "[PythonBindingsTest]")
 {
   IO::ClearSettings();
   programName = "test";
   PyOption<double> po1(0.0, "test", "test2", "t", "double", false, true, false);
 
-  // Now check that it's in CLI.
+  // Now check that it's in IO.
   IO::RestoreSettings(programName);
-  BOOST_REQUIRE_GT(IO::Parameters().count("test"), 0);
-  BOOST_REQUIRE_GT(IO::Aliases().count('t'), 0);
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].desc, "test2");
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].name, "test");
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].alias, 't');
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].noTranspose, false);
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].required, false);
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].input, true);
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["test"].cppType, "double");
+  REQUIRE(IO::Parameters().count("test") > 0);
+  REQUIRE(IO::Aliases().count('t') > 0);
+  REQUIRE(IO::Parameters()["test"].desc == "test2");
+  REQUIRE(IO::Parameters()["test"].name == "test");
+  REQUIRE(IO::Parameters()["test"].alias == 't');
+  REQUIRE(IO::Parameters()["test"].noTranspose == false);
+  REQUIRE(IO::Parameters()["test"].required == false);
+  REQUIRE(IO::Parameters()["test"].input == true);
+  REQUIRE(IO::Parameters()["test"].cppType == "double");
 
   PyOption<arma::mat> po2(arma::mat(), "mat", "mat2", "m", "arma::mat", true,
       true, true);
 
-  // Now check that it's in CLI.
+  // Now check that it's in IO.
   IO::RestoreSettings(programName);
-  BOOST_REQUIRE_GT(IO::Parameters().count("mat"), 0);
-  BOOST_REQUIRE_GT(IO::Aliases().count('m'), 0);
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].desc, "mat2");
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].name, "mat");
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].alias, 'm');
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].noTranspose, true);
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].required, true);
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].input, true);
-  BOOST_REQUIRE_EQUAL(IO::Parameters()["mat"].cppType, "arma::mat");
+  REQUIRE(IO::Parameters().count("mat") > 0);
+  REQUIRE(IO::Aliases().count('m') > 0);
+  REQUIRE(IO::Parameters()["mat"].desc == "mat2");
+  REQUIRE(IO::Parameters()["mat"].name == "mat");
+  REQUIRE(IO::Parameters()["mat"].alias == 'm');
+  REQUIRE(IO::Parameters()["mat"].noTranspose == true);
+  REQUIRE(IO::Parameters()["mat"].required == true);
+  REQUIRE(IO::Parameters()["mat"].input == true);
+  REQUIRE(IO::Parameters()["mat"].cppType == "arma::mat");
 
   IO::ClearSettings();
 }
@@ -74,7 +71,7 @@ BOOST_AUTO_TEST_CASE(PyOptionTest)
 /**
  * Make sure GetParam() works.
  */
-BOOST_AUTO_TEST_CASE(GetParamDoubleTest)
+TEST_CASE("PyGetParamDoubleTest", "[PythonBindingsTest]")
 {
   util::ParamData d;
   double x = 5.0;
@@ -83,10 +80,10 @@ BOOST_AUTO_TEST_CASE(GetParamDoubleTest)
   double* output = NULL;
   GetParam<double>(d, (void*) NULL, (void*) &output);
 
-  BOOST_REQUIRE_EQUAL(*output, 5.0);
+  REQUIRE(*output == 5.0);
 }
 
-BOOST_AUTO_TEST_CASE(GetParamMatTest)
+TEST_CASE("GetParamMatTest", "[PythonBindingsTest]")
 {
   util::ParamData d;
   arma::mat m(5, 5, arma::fill::ones);
@@ -95,14 +92,12 @@ BOOST_AUTO_TEST_CASE(GetParamMatTest)
   arma::mat* output = NULL;
   GetParam<arma::mat>(d, (void*) NULL, (void*) &output);
 
-  BOOST_REQUIRE_EQUAL(output->n_rows, 5);
-  BOOST_REQUIRE_EQUAL(output->n_cols, 5);
+  REQUIRE(output->n_rows == 5);
+  REQUIRE(output->n_cols == 5);
   for (size_t i = 0; i < 25; ++i)
-    BOOST_REQUIRE_EQUAL((*output)[i], 1.0);
+    REQUIRE((*output)[i] == 1.0);
 }
 
 /**
  * All of the other functions are implicitly tested simply by compilation.
  */
-
-BOOST_AUTO_TEST_SUITE_END();

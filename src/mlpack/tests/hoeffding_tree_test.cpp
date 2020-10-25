@@ -17,9 +17,9 @@
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
+#include "serialization_catch.hpp"
 
 #include <stack>
 
@@ -30,9 +30,7 @@ using namespace mlpack::math;
 using namespace mlpack::data;
 using namespace mlpack::tree;
 
-BOOST_AUTO_TEST_SUITE(HoeffdingTreeTest);
-
-BOOST_AUTO_TEST_CASE(GiniImpurityPerfectSimpleTest)
+TEST_CASE("GiniImpurityPerfectSimpleTest", "[HoeffdingTreeTest]")
 {
   // Make a simple test for Gini impurity with one class.  In this case it
   // should always be 0.  We'll assemble the count matrix by hand.
@@ -44,10 +42,10 @@ BOOST_AUTO_TEST_CASE(GiniImpurityPerfectSimpleTest)
   counts(1, 1) = 0; // 0 points in category 1 with class 1.
 
   // Since the split gets us nothing, there should be no gain.
-  BOOST_REQUIRE_SMALL(GiniImpurity::Evaluate(counts), 1e-10);
+  REQUIRE(GiniImpurity::Evaluate(counts) == Approx(0.0).margin(1e-10));
 }
 
-BOOST_AUTO_TEST_CASE(GiniImpurityImperfectSimpleTest)
+TEST_CASE("GiniImpurityImperfectSimpleTest", "[HoeffdingTreeTest]")
 {
   // Make a simple test where a split will give us perfect classification.
   arma::Mat<size_t> counts(2, 2); // 2 categories, 2 classes.
@@ -60,10 +58,10 @@ BOOST_AUTO_TEST_CASE(GiniImpurityImperfectSimpleTest)
   // The impurity before the split should be 0.5^2 + 0.5^2 = 0.5.
   // The impurity after the split should be 0.
   // So the gain should be 0.5.
-  BOOST_REQUIRE_CLOSE(GiniImpurity::Evaluate(counts), 0.5, 1e-5);
+  REQUIRE(GiniImpurity::Evaluate(counts) == Approx(0.5).epsilon(1e-7));
 }
 
-BOOST_AUTO_TEST_CASE(GiniImpurityBadSplitTest)
+TEST_CASE("GiniImpurityBadSplitTest", "[HoeffdingTreeTest]")
 {
   // Make a simple test where a split gets us nothing.
   arma::Mat<size_t> counts(2, 2);
@@ -72,14 +70,14 @@ BOOST_AUTO_TEST_CASE(GiniImpurityBadSplitTest)
   counts(1, 0) = 5;
   counts(1, 1) = 5;
 
-  BOOST_REQUIRE_SMALL(GiniImpurity::Evaluate(counts), 1e-10);
+  REQUIRE(GiniImpurity::Evaluate(counts) == Approx(0.0).margin(1e-10));
 }
 
 /**
  * A hand-crafted more difficult test for the Gini impurity, where four
  * categories and three classes are available.
  */
-BOOST_AUTO_TEST_CASE(GiniImpurityThreeClassTest)
+TEST_CASE("GiniImpurityThreeClassTest", "[HoeffdingTreeTest]")
 {
   arma::Mat<size_t> counts(3, 4);
 
@@ -106,34 +104,34 @@ BOOST_AUTO_TEST_CASE(GiniImpurityThreeClassTest)
   // (category 2)  0.28571 * 0.66667 -
   // (category 2)  0.23810 * 0.34
   //   = 0.26145
-  BOOST_REQUIRE_CLOSE(GiniImpurity::Evaluate(counts), 0.26145, 1e-3);
+  REQUIRE(GiniImpurity::Evaluate(counts) == Approx(0.26145).epsilon(1e-5));
 }
 
-BOOST_AUTO_TEST_CASE(GiniImpurityZeroTest)
+TEST_CASE("GiniImpurityZeroTest", "[HoeffdingTreeTest]")
 {
   // When nothing has been seen, the gini impurity should be zero.
   arma::Mat<size_t> counts = arma::zeros<arma::Mat<size_t>>(10, 10);
 
-  BOOST_REQUIRE_SMALL(GiniImpurity::Evaluate(counts), 1e-10);
+  REQUIRE(GiniImpurity::Evaluate(counts) == Approx(0.0).margin(1e-10));
 }
 
 /**
  * Test that the range of Gini impurities is correct for a handful of class
  * sizes.
  */
-BOOST_AUTO_TEST_CASE(GiniImpurityRangeTest)
+TEST_CASE("GiniImpurityRangeTest", "[HoeffdingTreeTest]")
 {
-  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(1), 0, 1e-5);
-  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(2), 0.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(3), 0.66666667, 1e-5);
-  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(4), 0.75, 1e-5);
-  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(5), 0.8, 1e-5);
-  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(10), 0.9, 1e-5);
-  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(100), 0.99, 1e-5);
-  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(1000), 0.999, 1e-5);
+  REQUIRE(GiniImpurity::Range(1) == Approx(0).epsilon(1e-7));
+  REQUIRE(GiniImpurity::Range(2) == Approx(0.5).epsilon(1e-7));
+  REQUIRE(GiniImpurity::Range(3) == Approx(0.66666667).epsilon(1e-7));
+  REQUIRE(GiniImpurity::Range(4) == Approx(0.75).epsilon(1e-7));
+  REQUIRE(GiniImpurity::Range(5) == Approx(0.8).epsilon(1e-7));
+  REQUIRE(GiniImpurity::Range(10) == Approx(0.9).epsilon(1e-7));
+  REQUIRE(GiniImpurity::Range(100) == Approx(0.99).epsilon(1e-7));
+  REQUIRE(GiniImpurity::Range(1000) == Approx(0.999).epsilon(1e-7));
 }
 
-BOOST_AUTO_TEST_CASE(InformationGainPerfectSimpleTest)
+TEST_CASE("HoeffdingInformationGainPerfectSimpleTest", "[HoeffdingTreeTest]")
 {
   // Make a simple test for Gini impurity with one class.  In this case it
   // should always be 0.  We'll assemble the count matrix by hand.
@@ -145,10 +143,11 @@ BOOST_AUTO_TEST_CASE(InformationGainPerfectSimpleTest)
   counts(1, 1) = 0; // 0 points in category 1 with class 1.
 
   // Since the split gets us nothing, there should be no gain.
-  BOOST_REQUIRE_SMALL(InformationGain::Evaluate(counts), 1e-10);
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) ==
+      Approx(0.0).margin(1e-10));
 }
 
-BOOST_AUTO_TEST_CASE(InformationGainImperfectSimpleTest)
+TEST_CASE("HoeffdingInformationGainImperfectSimpleTest", "[HoeffdingTreeTest]")
 {
   // Make a simple test where a split will give us perfect classification.
   arma::Mat<size_t> counts(2, 2); // 2 categories, 2 classes.
@@ -161,10 +160,11 @@ BOOST_AUTO_TEST_CASE(InformationGainImperfectSimpleTest)
   // The impurity before the split should be 0.5 log2(0.5) + 0.5 log2(0.5) = -1.
   // The impurity after the split should be 0.
   // So the gain should be 1.
-  BOOST_REQUIRE_CLOSE(InformationGain::Evaluate(counts), 1.0, 1e-5);
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) ==
+      Approx(1.0).epsilon(1e-7));
 }
 
-BOOST_AUTO_TEST_CASE(InformationGainBadSplitTest)
+TEST_CASE("HoeffdingInformationGainBadSplitTest", "[HoeffdingTreeTest]")
 {
   // Make a simple test where a split gets us nothing.
   arma::Mat<size_t> counts(2, 2);
@@ -173,14 +173,14 @@ BOOST_AUTO_TEST_CASE(InformationGainBadSplitTest)
   counts(1, 0) = 5;
   counts(1, 1) = 5;
 
-  BOOST_REQUIRE_SMALL(InformationGain::Evaluate(counts), 1e-10);
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) == Approx(0.0).margin(1e-10));
 }
 
 /**
  * A hand-crafted more difficult test for the Gini impurity, where four
  * categories and three classes are available.
  */
-BOOST_AUTO_TEST_CASE(InformationGainThreeClassTest)
+TEST_CASE("HoeffdingInformationGainThreeClassTest", "[HoeffdingTreeTest]")
 {
   arma::Mat<size_t> counts(3, 4);
 
@@ -207,38 +207,39 @@ BOOST_AUTO_TEST_CASE(InformationGainThreeClassTest)
   // (category 2)  0.28571 * -1.5850 -
   // (category 3)  0.23810 * -0.92193
   //   = 0.64116649
-  BOOST_REQUIRE_CLOSE(InformationGain::Evaluate(counts), 0.64116649, 1e-5);
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) ==
+      Approx(0.64116649).epsilon(1e-7));
 }
 
-BOOST_AUTO_TEST_CASE(InformationGainZeroTest)
+TEST_CASE("HoeffdingInformationGainZeroTest", "[HoeffdingTreeTest]")
 {
   // When nothing has been seen, the information gain should be zero.
   arma::Mat<size_t> counts = arma::zeros<arma::Mat<size_t>>(10, 10);
 
-  BOOST_REQUIRE_SMALL(InformationGain::Evaluate(counts), 1e-10);
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) == Approx(0.0).margin(1e-10));
 }
 
 /**
  * Test that the range of information gains is correct for a handful of class
  * sizes.
  */
-BOOST_AUTO_TEST_CASE(InformationGainRangeTest)
+TEST_CASE("HoeffdingInformationGainRangeTest", "[HoeffdingTreeTest]")
 {
-  BOOST_REQUIRE_CLOSE(InformationGain::Range(1), 0, 1e-5);
-  BOOST_REQUIRE_CLOSE(InformationGain::Range(2), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(InformationGain::Range(3), 1.5849625, 1e-5);
-  BOOST_REQUIRE_CLOSE(InformationGain::Range(4), 2, 1e-5);
-  BOOST_REQUIRE_CLOSE(InformationGain::Range(5), 2.32192809, 1e-5);
-  BOOST_REQUIRE_CLOSE(InformationGain::Range(10), 3.32192809, 1e-5);
-  BOOST_REQUIRE_CLOSE(InformationGain::Range(100), 6.64385619, 1e-5);
-  BOOST_REQUIRE_CLOSE(InformationGain::Range(1000), 9.96578428, 1e-5);
+  REQUIRE(HoeffdingInformationGain::Range(1) == Approx(0).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(2) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(3) == Approx(1.5849625).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(4) == Approx(2).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(5) == Approx(2.32192809).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(10) == Approx(3.32192809).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(100) == Approx(6.64385619).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(1000) == Approx(9.96578428).epsilon(1e-7));
 }
 
 /**
  * Feed the HoeffdingCategoricalSplit class many examples, all from the same
  * class, and verify that the majority class is correct.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitMajorityClassTest)
+TEST_CASE("HoeffdingCategoricalSplitMajorityClassTest", "[HoeffdingTreeTest]")
 {
   // Ten categories, three classes.
   HoeffdingCategoricalSplit<GiniImpurity> split(10, 3);
@@ -246,14 +247,15 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitMajorityClassTest)
   for (size_t i = 0; i < 500; ++i)
   {
     split.Train(mlpack::math::RandInt(0, 10), 1);
-    BOOST_REQUIRE_EQUAL(split.MajorityClass(), 1);
+    REQUIRE(split.MajorityClass() == 1);
   }
 }
 
 /**
  * A harder majority class example.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitHarderMajorityClassTest)
+TEST_CASE("HoeffdingCategoricalSplitHarderMajorityClassTest",
+          "[HoeffdingTreeTest]")
 {
   // Ten categories, three classes.
   HoeffdingCategoricalSplit<GiniImpurity> split(10, 3);
@@ -263,7 +265,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitHarderMajorityClassTest)
   {
     split.Train(mlpack::math::RandInt(0, 10), 1);
     split.Train(mlpack::math::RandInt(0, 10), 2);
-    BOOST_REQUIRE_EQUAL(split.MajorityClass(), 1);
+    REQUIRE(split.MajorityClass() == 1);
   }
 }
 
@@ -271,7 +273,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitHarderMajorityClassTest)
  * Ensure that the fitness function is positive when we pass some data that
  * would result in an improvement if it was split.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitEasyFitnessCheck)
+TEST_CASE("HoeffdingCategoricalSplitEasyFitnessCheck", "[HoeffdingTreeTest]")
 {
   HoeffdingCategoricalSplit<GiniImpurity> split(5, 3);
 
@@ -288,23 +290,24 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitEasyFitnessCheck)
 
   double bestGain, secondBestGain;
   split.EvaluateFitnessFunction(bestGain, secondBestGain);
-  BOOST_REQUIRE_GT(bestGain, 0.0);
-  BOOST_REQUIRE_SMALL(secondBestGain, 1e-10);
+  REQUIRE(bestGain > 0.0);
+  REQUIRE(secondBestGain == Approx(0.0).margin(1e-10));
 }
 
 /**
  * Ensure that the fitness function returns 0 (no improvement) when a split
  * would not get us any improvement.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitNoImprovementFitnessTest)
+TEST_CASE("HoeffdingCategoricalSplitNoImprovementFitnessTest",
+          "[HoeffdingTreeTest]")
 {
   HoeffdingCategoricalSplit<GiniImpurity> split(2, 2);
 
   // No training has yet happened, so a split would get us nothing.
   double bestGain, secondBestGain;
   split.EvaluateFitnessFunction(bestGain, secondBestGain);
-  BOOST_REQUIRE_SMALL(bestGain, 1e-10);
-  BOOST_REQUIRE_SMALL(secondBestGain, 1e-10);
+  REQUIRE(bestGain == Approx(0.0).margin(1e-10));
+  REQUIRE(secondBestGain == Approx(0.0).margin(1e-10));
 
   split.Train(0, 0);
   split.Train(1, 0);
@@ -313,14 +316,14 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitNoImprovementFitnessTest)
 
   // Now, a split still gets us only 50% accuracy in each split bin.
   split.EvaluateFitnessFunction(bestGain, secondBestGain);
-  BOOST_REQUIRE_SMALL(bestGain, 1e-10);
-  BOOST_REQUIRE_SMALL(secondBestGain, 1e-10);
+  REQUIRE(bestGain == Approx(0.0).margin(1e-10));
+  REQUIRE(secondBestGain == Approx(0.0).margin(1e-10));
 }
 
 /**
  * Test that when we do split, we get reasonable split information.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
+TEST_CASE("HoeffdingCategoricalSplitSplitTest", "[HoeffdingTreeTest]")
 {
   HoeffdingCategoricalSplit<GiniImpurity> split(3, 3); // 3 categories.
 
@@ -333,17 +336,17 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
   arma::Col<size_t> childMajorities;
   split.Split(childMajorities, splitInfo);
 
-  BOOST_REQUIRE_EQUAL(childMajorities.n_elem, 3);
-  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(0), 0);
-  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(1), 1);
-  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(2), 2);
+  REQUIRE(childMajorities.n_elem == 3);
+  REQUIRE(splitInfo.CalculateDirection(0) == 0);
+  REQUIRE(splitInfo.CalculateDirection(1) == 1);
+  REQUIRE(splitInfo.CalculateDirection(2) == 2);
 }
 
 /**
  * If we feed the HoeffdingTree a ton of points of the same class, it should
  * not suggest that we split.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingTreeNoSplitTest)
+TEST_CASE("HoeffdingTreeNoSplitTest", "[HoeffdingTreeTest]")
 {
   // Make all dimensions categorical.
   data::DatasetInfo info(3);
@@ -369,7 +372,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeNoSplitTest)
     testPoint(2) = mlpack::math::RandInt(0, 2);
     split.Train(testPoint, 0); // Always label 0.
 
-    BOOST_REQUIRE_EQUAL(split.SplitCheck(), 0);
+    REQUIRE(split.SplitCheck() == 0);
   }
 }
 
@@ -377,7 +380,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeNoSplitTest)
  * If we feed the HoeffdingTree a ton of points of two different classes, it
  * should very clearly suggest that we split (eventually).
  */
-BOOST_AUTO_TEST_CASE(HoeffdingTreeEasySplitTest)
+TEST_CASE("HoeffdingTreeEasySplitTest", "[HoeffdingTreeTest]")
 {
   // It'll be a two-dimensional dataset with two categories each.  In the first
   // dimension, category 0 will only receive points with class 0, and category 1
@@ -398,14 +401,14 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeEasySplitTest)
   }
 
   // Now it should be ready to split.
-  BOOST_REQUIRE_EQUAL(tree.SplitCheck(), 2);
-  BOOST_REQUIRE_EQUAL(tree.SplitDimension(), 0);
+  REQUIRE(tree.SplitCheck() == 2);
+  REQUIRE(tree.SplitDimension() == 0);
 }
 
 /**
  * If we force a success probability of 1, it should never split.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingTreeProbability1SplitTest)
+TEST_CASE("HoeffdingTreeProbability1SplitTest", "[HoeffdingTreeTest]")
 {
   // It'll be a two-dimensional dataset with two categories each.  In the first
   // dimension, category 0 will only receive points with class 0, and category 1
@@ -426,8 +429,8 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeProbability1SplitTest)
   }
 
   // But because the success probability is 1, it should never split.
-  BOOST_REQUIRE_EQUAL(split.SplitCheck(), 0);
-  BOOST_REQUIRE_EQUAL(split.SplitDimension(), size_t(-1));
+  REQUIRE(split.SplitCheck() == 0);
+  REQUIRE(split.SplitDimension() == size_t(-1));
 }
 
 /**
@@ -435,7 +438,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeProbability1SplitTest)
  * perfect classification, another gives almost perfect classification (with 10%
  * error).  Splits should occur after many samples.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingTreeAlmostPerfectSplit)
+TEST_CASE("HoeffdingTreeAlmostPerfectSplit", "[HoeffdingTreeTest]")
 {
   // Two categories and two dimensions.
   data::DatasetInfo info(2);
@@ -461,16 +464,16 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeAlmostPerfectSplit)
   }
 
   // Ensure that splitting should happen.
-  BOOST_REQUIRE_EQUAL(split.SplitCheck(), 2);
+  REQUIRE(split.SplitCheck() == 2);
   // Make sure that it's split on the correct dimension.
-  BOOST_REQUIRE_EQUAL(split.SplitDimension(), 1);
+  REQUIRE(split.SplitDimension() == 1);
 }
 
 /**
  * Test that the HoeffdingTree class will not split if the two features are
  * equally good.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingTreeEqualSplitTest)
+TEST_CASE("HoeffdingTreeEqualSplitTest", "[HoeffdingTreeTest]")
 {
   // Two categories and two dimensions.
   data::DatasetInfo info(2);
@@ -489,7 +492,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeEqualSplitTest)
   }
 
   // Ensure that splitting should not happen.
-  BOOST_REQUIRE_EQUAL(split.SplitCheck(), 0);
+  REQUIRE(split.SplitCheck() == 0);
 }
 
 // This is used in the next test.
@@ -502,7 +505,7 @@ using HoeffdingSizeTNumericSplit = HoeffdingNumericSplit<FitnessFunction,
  * that it can properly classify all of the training points.  (The dataset is
  * perfectly separable.)
  */
-BOOST_AUTO_TEST_CASE(HoeffdingTreeSimpleDatasetTest)
+TEST_CASE("HoeffdingTreeSimpleDatasetTest", "[HoeffdingTreeTest]")
 {
   DatasetInfo info(3);
   info.MapString<size_t>("cat0", 0);
@@ -549,10 +552,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeSimpleDatasetTest)
     streamTree.Train(dataset.col(i), labels[i]);
 
   // Each tree should have a single split.
-  BOOST_REQUIRE_EQUAL(batchTree.NumChildren(), 3);
-  BOOST_REQUIRE_EQUAL(streamTree.NumChildren(), 3);
-  BOOST_REQUIRE_EQUAL(batchTree.SplitDimension(), 1);
-  BOOST_REQUIRE_EQUAL(streamTree.SplitDimension(), 1);
+  REQUIRE(batchTree.NumChildren() == 3);
+  REQUIRE(streamTree.NumChildren() == 3);
+  REQUIRE(batchTree.SplitDimension() == 1);
+  REQUIRE(streamTree.SplitDimension() == 1);
 
   // Now, classify all the points in the dataset.
   arma::Row<size_t> batchLabels(9000);
@@ -564,15 +567,15 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeSimpleDatasetTest)
 
   for (size_t i = 0; i < 9000; ++i)
   {
-    BOOST_REQUIRE_EQUAL(labels[i], streamLabels[i]);
-    BOOST_REQUIRE_EQUAL(labels[i], batchLabels[i]);
+    REQUIRE(labels[i] == streamLabels[i]);
+    REQUIRE(labels[i] == batchLabels[i]);
   }
 }
 
 /**
  * Make sure that a tree that does not split on anything.
  */
-BOOST_AUTO_TEST_CASE(NumDescendantsTest1)
+TEST_CASE("NumDescendantsTest1", "[HoeffdingTreeTest]")
 {
   // Generate data.
   arma::mat dataset(3, 500);
@@ -592,13 +595,13 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest1)
   for (size_t i = 0; i < 500; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
   // As there is just one label, there are no descendants.
-  BOOST_REQUIRE_EQUAL(streamTree.NumDescendants(), 0);
+  REQUIRE(streamTree.NumDescendants() == 0);
 }
 
 /**
  * Test that a tree that does split has some descendants.
  */
-BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
+TEST_CASE("NumDescendantsTest2", "[HoeffdingTreeTest]")
 {
   DatasetInfo info(3);
   info.MapString<size_t>("cat0", 0);
@@ -640,14 +643,14 @@ BOOST_AUTO_TEST_CASE(NumDescendantsTest2)
       HoeffdingCategoricalSplit> TreeType;
   TreeType batchTree(dataset, info, labels, 3, false);
 
-  BOOST_REQUIRE_EQUAL(batchTree.NumDescendants(), 3);
+  REQUIRE(batchTree.NumDescendants() == 3);
 }
 
 /**
  * Test that the HoeffdingNumericSplit class has a fitness function value of 0
  * before it's seen enough points.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitFitnessFunctionTest)
+TEST_CASE("HoeffdingNumericSplitFitnessFunctionTest", "[HoeffdingTreeTest]")
 {
   HoeffdingNumericSplit<GiniImpurity> split(5, 10, 100);
 
@@ -658,22 +661,23 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitFitnessFunctionTest)
     split.Train(mlpack::math::Random(), mlpack::math::RandInt(5));
     double bestGain, secondBestGain;
     split.EvaluateFitnessFunction(bestGain, secondBestGain);
-    BOOST_REQUIRE_SMALL(bestGain, 1e-10);
-    BOOST_REQUIRE_SMALL(secondBestGain, 1e-10);
+    REQUIRE(bestGain == Approx(0.0).margin(1e-10));
+    REQUIRE(secondBestGain == Approx(0.0).margin(1e-10));
   }
 }
 
 /**
  * Make sure the majority class is correct in the samples before binning.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitPreBinningMajorityClassTest)
+TEST_CASE("HoeffdingNumericSplitPreBinningMajorityClassTest",
+          "[HoeffdingTreeTest]")
 {
   HoeffdingNumericSplit<GiniImpurity> split(3, 10, 100);
 
   for (size_t i = 0; i < 100; ++i)
   {
     split.Train(mlpack::math::Random(), 1);
-    BOOST_REQUIRE_EQUAL(split.MajorityClass(), 1);
+    REQUIRE(split.MajorityClass() == 1);
   }
 }
 
@@ -682,7 +686,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitPreBinningMajorityClassTest)
  * HoeffdingNumericSplit bins it reasonably into two bins and returns sensible
  * Gini impurity numbers.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBimodalTest)
+TEST_CASE("HoeffdingNumericSplitBimodalTest", "[HoeffdingTreeTest]")
 {
   // 2 classes, 2 bins, 200 samples before binning.
   HoeffdingNumericSplit<GiniImpurity> split(2, 2, 200);
@@ -695,32 +699,32 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBimodalTest)
 
   // Push the majority class to 1.
   split.Train(-mlpack::math::Random() - 0.3, 1);
-  BOOST_REQUIRE_EQUAL(split.MajorityClass(), 1);
+  REQUIRE(split.MajorityClass() == 1);
 
   // Push the majority class back to 0.
   split.Train(mlpack::math::Random() + 0.3, 0);
   split.Train(mlpack::math::Random() + 0.3, 0);
-  BOOST_REQUIRE_EQUAL(split.MajorityClass(), 0);
+  REQUIRE(split.MajorityClass() == 0);
 
   // Now the binning should be complete, and so the impurity should be
   // (0.5 * (1 - 0.5)) * 2 = 0.50 (it will be 0 in the two created children).
   double bestGain, secondBestGain;
   split.EvaluateFitnessFunction(bestGain, secondBestGain);
-  BOOST_REQUIRE_CLOSE(bestGain, 0.50, 0.03);
-  BOOST_REQUIRE_SMALL(secondBestGain, 1e-10);
+  REQUIRE(bestGain == Approx(0.50).epsilon(0.0003));
+  REQUIRE(secondBestGain == Approx(0.0).margin(1e-10));
 
   // Make sure that if we do create children, that the correct number of
   // children is created, and that the bins end up in the right place.
   NumericSplitInfo<> info;
   arma::Col<size_t> childMajorities;
   split.Split(childMajorities, info);
-  BOOST_REQUIRE_EQUAL(childMajorities.n_elem, 2);
+  REQUIRE(childMajorities.n_elem == 2);
 
   // Now check the split info.
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_NE(info.CalculateDirection(mlpack::math::Random() + 0.3),
-                     info.CalculateDirection(-mlpack::math::Random() - 0.3));
+    REQUIRE(info.CalculateDirection(mlpack::math::Random() + 0.3) !=
+            info.CalculateDirection(-mlpack::math::Random() - 0.3));
   }
 }
 
@@ -729,7 +733,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBimodalTest)
  * less than 1.0 is class 0 and anything greater is class 1.  Then make sure it
  * can perform a perfect split.
  */
-BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleSplitTest)
+TEST_CASE("BinaryNumericSplitSimpleSplitTest", "[HoeffdingTreeTest]")
 {
   BinaryNumericSplit<GiniImpurity> split(2); // 2 classes.
 
@@ -744,8 +748,8 @@ BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleSplitTest)
     // impurity for the children is 0.
     double bestGain, secondBestGain;
     split.EvaluateFitnessFunction(bestGain, secondBestGain);
-    BOOST_REQUIRE_CLOSE(bestGain, 0.5, 1e-5);
-    BOOST_REQUIRE_GT(bestGain, secondBestGain);
+    REQUIRE(bestGain == Approx(0.5).epsilon(1e-7));
+    REQUIRE(bestGain > secondBestGain);
   }
 
   // Now, when we ask it to split, ensure that the split value is reasonable.
@@ -753,21 +757,21 @@ BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleSplitTest)
   BinaryNumericSplitInfo<> splitInfo;
   split.Split(childMajorities, splitInfo);
 
-  BOOST_REQUIRE_EQUAL(childMajorities[0], 0);
-  BOOST_REQUIRE_EQUAL(childMajorities[1], 1);
-  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(0.5), 0);
-  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(1.5), 1);
-  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(0.0), 0);
-  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(-1.0), 0);
-  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(0.9), 0);
-  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(1.1), 1);
+  REQUIRE(childMajorities[0] == 0);
+  REQUIRE(childMajorities[1] == 1);
+  REQUIRE(splitInfo.CalculateDirection(0.5) == 0);
+  REQUIRE(splitInfo.CalculateDirection(1.5) == 1);
+  REQUIRE(splitInfo.CalculateDirection(0.0) == 0);
+  REQUIRE(splitInfo.CalculateDirection(-1.0) == 0);
+  REQUIRE(splitInfo.CalculateDirection(0.9) == 0);
+  REQUIRE(splitInfo.CalculateDirection(1.1) == 1);
 }
 
 /**
  * Create a BinaryNumericSplit object, feed it samples in the same way as
  * before, but with four classes.
  */
-BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleFourClassSplitTest)
+TEST_CASE("BinaryNumericSplitSimpleFourClassSplitTest", "[HoeffdingTreeTest]")
 {
   BinaryNumericSplit<GiniImpurity> split(4); // 4 classes.
 
@@ -784,8 +788,8 @@ BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleFourClassSplitTest)
     // perfect child, giving a gain of 0.75 - 3 * (1/3 * 2/3) = 0.25.
     double bestGain, secondBestGain;
     split.EvaluateFitnessFunction(bestGain, secondBestGain);
-    BOOST_REQUIRE_CLOSE(bestGain, 0.25, 1e-5);
-    BOOST_REQUIRE_GE(bestGain, secondBestGain);
+    REQUIRE(bestGain == Approx(0.25).epsilon(1e-7));
+    REQUIRE(bestGain >= secondBestGain);
   }
 
   // Now, when we ask it to split, ensure that the split value is reasonable.
@@ -795,14 +799,14 @@ BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleFourClassSplitTest)
 
   // We don't really care where it splits -- it can split anywhere.  But it has
   // to split in only two directions.
-  BOOST_REQUIRE_EQUAL(childMajorities.n_elem, 2);
+  REQUIRE(childMajorities.n_elem == 2);
 }
 
 /**
  * Create a HoeffdingTree that uses the HoeffdingNumericSplit and make sure it
  * can split meaningfully on the correct dimension.
  */
-BOOST_AUTO_TEST_CASE(NumericHoeffdingTreeTest)
+TEST_CASE("NumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
 {
   // Generate data.
   arma::mat dataset(3, 9000);
@@ -835,10 +839,10 @@ BOOST_AUTO_TEST_CASE(NumericHoeffdingTreeTest)
     streamTree.Train(dataset.col(i), labels[i]);
 
   // Each tree should have at least one split.
-  BOOST_REQUIRE_GT(batchTree.NumChildren(), 0);
-  BOOST_REQUIRE_GT(streamTree.NumChildren(), 0);
-  BOOST_REQUIRE_EQUAL(batchTree.SplitDimension(), 1);
-  BOOST_REQUIRE_EQUAL(streamTree.SplitDimension(), 1);
+  REQUIRE(batchTree.NumChildren() > 0);
+  REQUIRE(streamTree.NumChildren() > 0);
+  REQUIRE(batchTree.SplitDimension() == 1);
+  REQUIRE(streamTree.SplitDimension() == 1);
 
   // Now, classify all the points in the dataset.
   arma::Row<size_t> batchLabels(9000);
@@ -859,15 +863,15 @@ BOOST_AUTO_TEST_CASE(NumericHoeffdingTreeTest)
   }
 
   // 66% accuracy shouldn't be too much to ask...
-  BOOST_REQUIRE_GT(streamCorrect, 6000);
-  BOOST_REQUIRE_GT(batchCorrect, 6000);
+  REQUIRE(streamCorrect > 6000);
+  REQUIRE(batchCorrect > 6000);
 }
 
 /**
  * The same as the previous test, but with the numeric binary split, and with a
  * categorical feature.
  */
-BOOST_AUTO_TEST_CASE(BinaryNumericHoeffdingTreeTest)
+TEST_CASE("BinaryNumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
 {
   // Generate data.
   arma::mat dataset(4, 9000);
@@ -904,10 +908,10 @@ BOOST_AUTO_TEST_CASE(BinaryNumericHoeffdingTreeTest)
     streamTree.Train(dataset.col(i), labels[i]);
 
   // Each tree should have at least one split.
-  BOOST_REQUIRE_GT(batchTree.NumChildren(), 0);
-  BOOST_REQUIRE_GT(streamTree.NumChildren(), 0);
-  BOOST_REQUIRE_EQUAL(batchTree.SplitDimension(), 1);
-  BOOST_REQUIRE_EQUAL(streamTree.SplitDimension(), 1);
+  REQUIRE(batchTree.NumChildren() > 0);
+  REQUIRE(streamTree.NumChildren() > 0);
+  REQUIRE(batchTree.SplitDimension() == 1);
+  REQUIRE(streamTree.SplitDimension() == 1);
 
   // Now, classify all the points in the dataset.
   arma::Row<size_t> batchLabels(9000);
@@ -928,14 +932,14 @@ BOOST_AUTO_TEST_CASE(BinaryNumericHoeffdingTreeTest)
   }
 
   // Require a pretty high accuracy: 95%.
-  BOOST_REQUIRE_GT(streamCorrect, 8550);
-  BOOST_REQUIRE_GT(batchCorrect, 8550);
+  REQUIRE(streamCorrect > 8550);
+  REQUIRE(batchCorrect > 8550);
 }
 
 /**
  * Test majority probabilities.
  */
-BOOST_AUTO_TEST_CASE(MajorityProbabilityTest)
+TEST_CASE("MajorityProbabilityTest", "[HoeffdingTreeTest]")
 {
   data::DatasetInfo info(1);
   HoeffdingTree<> tree(info, 3);
@@ -949,15 +953,15 @@ BOOST_AUTO_TEST_CASE(MajorityProbabilityTest)
   double probability;
   tree.Classify(arma::vec("1"), prediction, probability);
 
-  BOOST_REQUIRE_EQUAL(prediction, 0);
-  BOOST_REQUIRE_CLOSE(probability, 1.0, 1e-5);
+  REQUIRE(prediction == 0);
+  REQUIRE(probability == Approx(1.0).epsilon(1e-7));
 
   // Make it impure.
   tree.Train(arma::vec("4"), 1);
   tree.Classify(arma::vec("3"), prediction, probability);
 
-  BOOST_REQUIRE_EQUAL(prediction, 0);
-  BOOST_REQUIRE_CLOSE(probability, 0.75, 1e-5);
+  REQUIRE(prediction == 0);
+  REQUIRE(probability == Approx(0.75).epsilon(1e-7));
 
   // Flip the majority class.
   tree.Train(arma::vec("4"), 1);
@@ -966,14 +970,14 @@ BOOST_AUTO_TEST_CASE(MajorityProbabilityTest)
   tree.Train(arma::vec("4"), 1);
   tree.Classify(arma::vec("3"), prediction, probability);
 
-  BOOST_REQUIRE_EQUAL(prediction, 1);
-  BOOST_REQUIRE_CLOSE(probability, 0.625, 1e-5);
+  REQUIRE(prediction == 1);
+  REQUIRE(probability == Approx(0.625).epsilon(1e-7));
 }
 
 /**
  * Make sure that batch training mode outperforms non-batch mode.
  */
-BOOST_AUTO_TEST_CASE(BatchTrainingTest)
+TEST_CASE("BatchTrainingTest", "[HoeffdingTreeTest]")
 {
   // We need to create a dataset with some amount of complexity, that must be
   // split in a handful of ways to accurately classify the data.  An expanding
@@ -1049,11 +1053,11 @@ BOOST_AUTO_TEST_CASE(BatchTrainingTest)
 
   // The batch tree must be a bit better than the stream tree.  But not too
   // much, since the accuracy is already going to be very high.
-  BOOST_REQUIRE_GE(batchCorrect, streamCorrect);
+  REQUIRE(batchCorrect >= streamCorrect);
 }
 
 // Make sure that changing the confidence properly propagates to all leaves.
-BOOST_AUTO_TEST_CASE(ConfidenceChangeTest)
+TEST_CASE("ConfidenceChangeTest", "[HoeffdingTreeTest]")
 {
   // Generate data.
   arma::mat dataset(4, 9000);
@@ -1090,7 +1094,7 @@ BOOST_AUTO_TEST_CASE(ConfidenceChangeTest)
     ++i;
   }
 
-  BOOST_REQUIRE_LT(i, 9000);
+  REQUIRE(i < 9000);
 
   // Now we have split the root node, but we need to make sure we can feed
   // through the rest of the points while requiring a confidence of 1.0, and
@@ -1106,11 +1110,11 @@ BOOST_AUTO_TEST_CASE(ConfidenceChangeTest)
   }
 
   for (size_t c = 0; c < tree.NumChildren(); ++c)
-    BOOST_REQUIRE_EQUAL(tree.Child(c).NumChildren(), 0);
+    REQUIRE(tree.Child(c).NumChildren() == 0);
 }
 
 //! Make sure parameter changes are propagated to children.
-BOOST_AUTO_TEST_CASE(ParameterChangeTest)
+TEST_CASE("ParameterChangeTest", "[HoeffdingTreeTest]")
 {
   // Generate data.
   arma::mat dataset(4, 9000);
@@ -1153,17 +1157,17 @@ BOOST_AUTO_TEST_CASE(ParameterChangeTest)
     HoeffdingTree<>* node = stack.top();
     stack.pop();
 
-    BOOST_REQUIRE_CLOSE(node->SuccessProbability(), 0.7, 1e-5);
-    BOOST_REQUIRE_EQUAL(node->MinSamples(), 17);
-    BOOST_REQUIRE_EQUAL(node->MaxSamples(), 192);
-    BOOST_REQUIRE_EQUAL(node->CheckInterval(), 3);
+    REQUIRE(node->SuccessProbability() == Approx(0.7).epsilon(1e-7));
+    REQUIRE(node->MinSamples() == 17);
+    REQUIRE(node->MaxSamples() == 192);
+    REQUIRE(node->CheckInterval() == 3);
 
     for (size_t i = 0; i < node->NumChildren(); ++i)
       stack.push(&node->Child(i));
   }
 }
 
-BOOST_AUTO_TEST_CASE(MultipleSerializationTest)
+TEST_CASE("MultipleSerializationTest", "[HoeffdingTreeTest]")
 {
   // Generate data.
   arma::mat dataset(4, 9000);
@@ -1216,12 +1220,12 @@ BOOST_AUTO_TEST_CASE(MultipleSerializationTest)
 
   for (size_t i = 0; i < deepPredictions.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(shallowPredictions[i], deepPredictions[i]);
+    REQUIRE(shallowPredictions[i] == deepPredictions[i]);
   }
 }
 
 // Test the Hoeffding tree model.
-BOOST_AUTO_TEST_CASE(HoeffdingTreeModelTest)
+TEST_CASE("HoeffdingTreeModelTest", "[HoeffdingTreeTest]")
 {
   // Generate data.
   arma::mat dataset(4, 3000);
@@ -1288,19 +1292,19 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeModelTest)
     for (size_t i = 0; i < 3000; ++i)
     {
       // Check consistency of predictions.
-      BOOST_REQUIRE_EQUAL(predictions[i], predictions2[i]);
+      REQUIRE(predictions[i] == predictions2[i]);
 
       if (labels[i] == predictions[i])
         ++correct;
     }
 
     // Require at least 95% accuracy.
-    BOOST_REQUIRE_GT(correct, 2850);
+    REQUIRE(correct > 2850);
   }
 }
 
 // Test the Hoeffding tree model in batch mode.
-BOOST_AUTO_TEST_CASE(HoeffdingTreeModelBatchTest)
+TEST_CASE("HoeffdingTreeModelBatchTest", "[HoeffdingTreeTest]")
 {
   // Generate data.
   arma::mat dataset(4, 3000);
@@ -1365,18 +1369,18 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeModelBatchTest)
     for (size_t i = 0; i < 3000; ++i)
     {
       // Check consistency of predictions.
-      BOOST_REQUIRE_EQUAL(predictions[i], predictions2[i]);
+      REQUIRE(predictions[i] == predictions2[i]);
 
       if (labels[i] == predictions[i])
         ++correct;
     }
 
     // Require at least 95% accuracy.
-    BOOST_REQUIRE_GT(correct, 2850);
+    REQUIRE(correct > 2850);
   }
 }
 
-BOOST_AUTO_TEST_CASE(HoeffdingTreeModelSerializationTest)
+TEST_CASE("HoeffdingTreeModelSerializationTest", "[HoeffdingTreeTest]")
 {
   // Generate data.
   arma::mat dataset(4, 3000);
@@ -1451,15 +1455,13 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeModelSerializationTest)
     for (size_t i = 0; i < 3000; ++i)
     {
       // Check consistency of predictions and probabilities.
-      BOOST_REQUIRE_EQUAL(predictions[i], predictionsXml[i]);
-      BOOST_REQUIRE_EQUAL(predictions[i], predictionsText[i]);
-      BOOST_REQUIRE_EQUAL(predictions[i], predictionsBinary[i]);
+      REQUIRE(predictions[i] == predictionsXml[i]);
+      REQUIRE(predictions[i] == predictionsText[i]);
+      REQUIRE(predictions[i] == predictionsBinary[i]);
 
-      BOOST_REQUIRE_CLOSE(probabilities[i], probabilitiesXml[i], 1e-5);
-      BOOST_REQUIRE_CLOSE(probabilities[i], probabilitiesText[i], 1e-5);
-      BOOST_REQUIRE_CLOSE(probabilities[i], probabilitiesBinary[i], 1e-5);
+      REQUIRE(probabilities[i] == Approx(probabilitiesXml[i]).epsilon(1e-7));
+      REQUIRE(probabilities[i] == Approx(probabilitiesText[i]).epsilon(1e-7));
+      REQUIRE(probabilities[i] == Approx(probabilitiesBinary[i]).epsilon(1e-7));
     }
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

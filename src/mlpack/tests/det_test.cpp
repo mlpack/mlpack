@@ -11,8 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 // This trick does not work on Windows.  We will have to comment out the tests
 // that depend on it.
@@ -33,13 +32,11 @@ using namespace mlpack;
 using namespace mlpack::det;
 using namespace std;
 
-BOOST_AUTO_TEST_SUITE(DETTest);
-
 // Tests for the private functions.  We cannot perform these if we are on
 // Windows because we cannot make private functions accessible using the macro
 // trick above.
 #ifndef _WIN32
-BOOST_AUTO_TEST_CASE(TestGetMaxMinVals)
+TEST_CASE("TestGetMaxMinVals", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
@@ -49,15 +46,15 @@ BOOST_AUTO_TEST_CASE(TestGetMaxMinVals)
 
   DTree<arma::mat> tree(testData);
 
-  BOOST_REQUIRE_EQUAL(tree.MaxVals()[0], 7);
-  BOOST_REQUIRE_EQUAL(tree.MinVals()[0], 3);
-  BOOST_REQUIRE_EQUAL(tree.MaxVals()[1], 7);
-  BOOST_REQUIRE_EQUAL(tree.MinVals()[1], 0);
-  BOOST_REQUIRE_EQUAL(tree.MaxVals()[2], 8);
-  BOOST_REQUIRE_EQUAL(tree.MinVals()[2], 1);
+  REQUIRE(tree.MaxVals()[0] == 7);
+  REQUIRE(tree.MinVals()[0] == 3);
+  REQUIRE(tree.MaxVals()[1] == 7);
+  REQUIRE(tree.MinVals()[1] == 0);
+  REQUIRE(tree.MaxVals()[2] == 8);
+  REQUIRE(tree.MinVals()[2] == 1);
 }
 
-BOOST_AUTO_TEST_CASE(TestComputeNodeError)
+TEST_CASE("TestComputeNodeError", "[DETTest]")
 {
   arma::vec maxVals("7 7 8");
   arma::vec minVals("3 0 1");
@@ -65,17 +62,18 @@ BOOST_AUTO_TEST_CASE(TestComputeNodeError)
   DTree<arma::mat> testDTree(maxVals, minVals, 5);
   double trueNodeError = -log(4.0) - log(7.0) - log(7.0);
 
-  BOOST_REQUIRE_CLOSE((double) testDTree.logNegError, trueNodeError, 1e-10);
+  REQUIRE((double) testDTree.logNegError ==
+      Approx(trueNodeError).epsilon(1e-12));
 
   testDTree.start = 3;
   testDTree.end = 5;
 
   double nodeError = testDTree.LogNegativeError(5);
   trueNodeError = 2 * log(2.0 / 5.0) - log(4.0) - log(7.0) - log(7.0);
-  BOOST_REQUIRE_CLOSE(nodeError, trueNodeError, 1e-10);
+  REQUIRE(nodeError == Approx(trueNodeError).epsilon(1e-12));
 }
 
-BOOST_AUTO_TEST_CASE(TestWithinRange)
+TEST_CASE("TestWithinRange", "[DETTest]")
 {
   arma::vec maxVals("7 7 8");
   arma::vec minVals("3 0 1");
@@ -85,14 +83,14 @@ BOOST_AUTO_TEST_CASE(TestWithinRange)
   arma::vec testQuery(3);
   testQuery << 4.5 << 2.5 << 2;
 
-  BOOST_REQUIRE_EQUAL(testDTree.WithinRange(testQuery), true);
+  REQUIRE(testDTree.WithinRange(testQuery) == true);
 
   testQuery << 8.5 << 2.5 << 2;
 
-  BOOST_REQUIRE_EQUAL(testDTree.WithinRange(testQuery), false);
+  REQUIRE(testDTree.WithinRange(testQuery) == false);
 }
 
-BOOST_AUTO_TEST_CASE(TestFindSplit)
+TEST_CASE("TestFindSplit", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
@@ -108,20 +106,21 @@ BOOST_AUTO_TEST_CASE(TestFindSplit)
   size_t trueDim = 2;
   double trueSplit = 5.5;
   double trueLeftError = 2 * log(2.0 / 5.0) - (log(7.0) + log(4.0) + log(4.5));
-  double trueRightError = 2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) + log(2.5));
+  double trueRightError = 2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) +
+      log(2.5));
 
   testDTree.logVolume = log(7.0) + log(4.0) + log(7.0);
-  BOOST_REQUIRE(testDTree.FindSplit(
+  REQUIRE(testDTree.FindSplit(
       testData, obDim, obSplit, obLeftError, obRightError, 1));
 
-  BOOST_REQUIRE(trueDim == obDim);
-  BOOST_REQUIRE_CLOSE(trueSplit, obSplit, 1e-10);
+  REQUIRE(trueDim == obDim);
+  REQUIRE(trueSplit == Approx(obSplit).epsilon(1e-12));
 
-  BOOST_REQUIRE_CLOSE(trueLeftError, obLeftError, 1e-10);
-  BOOST_REQUIRE_CLOSE(trueRightError, obRightError, 1e-10);
+  REQUIRE(trueLeftError == Approx(obLeftError).epsilon(1e-12));
+  REQUIRE(trueRightError == Approx(obRightError).epsilon(1e-12));
 }
 
-BOOST_AUTO_TEST_CASE(TestSplitData)
+TEST_CASE("TestSplitData", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
@@ -140,16 +139,16 @@ BOOST_AUTO_TEST_CASE(TestSplitData)
   size_t splitInd = testDTree.SplitData(
       testData, splitDim, trueSplitVal, oTest);
 
-  BOOST_REQUIRE_EQUAL(splitInd, 2); // 2 points on left side.
+  REQUIRE(splitInd == 2); // 2 points on left side.
 
-  BOOST_REQUIRE_EQUAL(oTest[0], 1);
-  BOOST_REQUIRE_EQUAL(oTest[1], 4);
-  BOOST_REQUIRE_EQUAL(oTest[2], 3);
-  BOOST_REQUIRE_EQUAL(oTest[3], 2);
-  BOOST_REQUIRE_EQUAL(oTest[4], 5);
+  REQUIRE(oTest[0] == 1);
+  REQUIRE(oTest[1] == 4);
+  REQUIRE(oTest[2] == 3);
+  REQUIRE(oTest[3] == 2);
+  REQUIRE(oTest[4] == 5);
 }
 
-BOOST_AUTO_TEST_CASE(TestSparseFindSplit)
+TEST_CASE("TestSparseFindSplit", "[DETTest]")
 {
   arma::mat realData(4, 7);
 
@@ -173,17 +172,17 @@ BOOST_AUTO_TEST_CASE(TestSparseFindSplit)
       (log(7.0) + log(6.5) + log(8.0) + log(6.0));
 
   testDTree.logVolume = log(7.0) + log(7.0) + log(8.0) + log(6.0);
-  BOOST_REQUIRE(testDTree.FindSplit(
+  REQUIRE(testDTree.FindSplit(
       testData, obDim, obSplit, obLeftError, obRightError, 1));
 
-  BOOST_REQUIRE(trueDim == obDim);
-  BOOST_REQUIRE_CLOSE(trueSplit, obSplit, 1e-10);
+  REQUIRE(trueDim == obDim);
+  REQUIRE(trueSplit == Approx(obSplit).epsilon(1e-12));
 
-  BOOST_REQUIRE_CLOSE(trueLeftError, obLeftError, 1e-10);
-  BOOST_REQUIRE_CLOSE(trueRightError, obRightError, 1e-10);
+  REQUIRE(trueLeftError == Approx(obLeftError).epsilon(1e-12));
+  REQUIRE(trueRightError == Approx(obRightError).epsilon(1e-12));
 }
 
-BOOST_AUTO_TEST_CASE(TestSparseSplitData)
+TEST_CASE("TestSparseSplitData", "[DETTest]")
 {
   arma::mat realData(4, 7);
 
@@ -205,22 +204,22 @@ BOOST_AUTO_TEST_CASE(TestSparseSplitData)
   size_t splitInd = testDTree.SplitData(
       testData, splitDim, trueSplitVal, oTest);
 
-  BOOST_REQUIRE_EQUAL(splitInd, 3); // 2 points on left side.
+  REQUIRE(splitInd == 3); // 2 points on left side.
 
-  BOOST_REQUIRE_EQUAL(oTest[0], 1);
-  BOOST_REQUIRE_EQUAL(oTest[1], 4);
-  BOOST_REQUIRE_EQUAL(oTest[2], 3);
-  BOOST_REQUIRE_EQUAL(oTest[3], 2);
-  BOOST_REQUIRE_EQUAL(oTest[4], 5);
-  BOOST_REQUIRE_EQUAL(oTest[5], 6);
-  BOOST_REQUIRE_EQUAL(oTest[6], 7);
+  REQUIRE(oTest[0] == 1);
+  REQUIRE(oTest[1] == 4);
+  REQUIRE(oTest[2] == 3);
+  REQUIRE(oTest[3] == 2);
+  REQUIRE(oTest[4] == 5);
+  REQUIRE(oTest[5] == 6);
+  REQUIRE(oTest[6] == 7);
 }
 
 #endif
 
 // Tests for the public functions.
 
-BOOST_AUTO_TEST_CASE(TestGrow)
+TEST_CASE("TestGrow", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
@@ -244,34 +243,36 @@ BOOST_AUTO_TEST_CASE(TestGrow)
   DTree<arma::mat> testDTree(testData);
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
 
-  BOOST_REQUIRE_EQUAL(oTest[0], 0);
-  BOOST_REQUIRE_EQUAL(oTest[1], 3);
-  BOOST_REQUIRE_EQUAL(oTest[2], 1);
-  BOOST_REQUIRE_EQUAL(oTest[3], 2);
-  BOOST_REQUIRE_EQUAL(oTest[4], 4);
+  REQUIRE(oTest[0] == 0);
+  REQUIRE(oTest[1] == 3);
+  REQUIRE(oTest[2] == 1);
+  REQUIRE(oTest[3] == 2);
+  REQUIRE(oTest[4] == 4);
 
   // Test the structure of the tree.
-  BOOST_REQUIRE(testDTree.Left()->Left() == NULL);
-  BOOST_REQUIRE(testDTree.Left()->Right() == NULL);
-  BOOST_REQUIRE(testDTree.Right()->Left()->Left() == NULL);
-  BOOST_REQUIRE(testDTree.Right()->Left()->Right() == NULL);
-  BOOST_REQUIRE(testDTree.Right()->Right()->Left() == NULL);
-  BOOST_REQUIRE(testDTree.Right()->Right()->Right() == NULL);
+  REQUIRE(testDTree.Left()->Left() == NULL);
+  REQUIRE(testDTree.Left()->Right() == NULL);
+  REQUIRE(testDTree.Right()->Left()->Left() == NULL);
+  REQUIRE(testDTree.Right()->Left()->Right() == NULL);
+  REQUIRE(testDTree.Right()->Right()->Left() == NULL);
+  REQUIRE(testDTree.Right()->Right()->Right() == NULL);
 
-  BOOST_REQUIRE(testDTree.SubtreeLeaves() == 3);
+  REQUIRE(testDTree.SubtreeLeaves() == 3);
 
-  BOOST_REQUIRE(testDTree.SplitDim() == 2);
-  BOOST_REQUIRE_CLOSE(testDTree.SplitValue(), 5.5, 1e-5);
-  BOOST_REQUIRE(testDTree.Right()->SplitDim() == 1);
-  BOOST_REQUIRE_CLOSE(testDTree.Right()->SplitValue(), 0.5, 1e-5);
+  REQUIRE(testDTree.SplitDim() == 2);
+  REQUIRE(testDTree.SplitValue() == Approx(5.5).epsilon(1e-7));
+  REQUIRE(testDTree.Right()->SplitDim() == 1);
+  REQUIRE(testDTree.Right()->SplitValue() == Approx(0.5).epsilon(1e-7));
 
   // Test node errors for every node (these are private functions).
 #ifndef _WIN32
-  BOOST_REQUIRE_CLOSE(testDTree.logNegError, rootError, 1e-10);
-  BOOST_REQUIRE_CLOSE(testDTree.Left()->logNegError, lError, 1e-10);
-  BOOST_REQUIRE_CLOSE(testDTree.Right()->logNegError, rError, 1e-10);
-  BOOST_REQUIRE_CLOSE(testDTree.Right()->Left()->logNegError, rlError, 1e-10);
-  BOOST_REQUIRE_CLOSE(testDTree.Right()->Right()->logNegError, rrError, 1e-10);
+  REQUIRE(testDTree.logNegError == Approx(rootError).epsilon(1e-12));
+  REQUIRE(testDTree.Left()->logNegError == Approx(lError).epsilon(1e-12));
+  REQUIRE(testDTree.Right()->logNegError == Approx(rError).epsilon(1e-12));
+  REQUIRE(testDTree.Right()->Left()->logNegError ==
+      Approx(rlError).epsilon(1e-12));
+  REQUIRE(testDTree.Right()->Right()->logNegError ==
+      Approx(rrError).epsilon(1e-12));
 #endif
 
   // Test alpha.
@@ -281,10 +282,10 @@ BOOST_AUTO_TEST_CASE(TestGrow)
   rAlpha = std::log(-(std::exp(rError) - (std::exp(rlError) +
       std::exp(rrError))));
 
-  BOOST_REQUIRE_CLOSE(alpha, min(rootAlpha, rAlpha), 1e-10);
+  REQUIRE(alpha == Approx(min(rootAlpha, rAlpha)).epsilon(1e-12));
 }
 
-BOOST_AUTO_TEST_CASE(TestPruneAndUpdate)
+TEST_CASE("TestPruneAndUpdate", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
@@ -298,18 +299,19 @@ BOOST_AUTO_TEST_CASE(TestPruneAndUpdate)
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
   alpha = testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
 
-  BOOST_REQUIRE_CLOSE(alpha, numeric_limits<double>::max(), 1e-10);
-  BOOST_REQUIRE(testDTree.SubtreeLeaves() == 1);
+  REQUIRE(alpha == Approx(numeric_limits<double>::max()).epsilon(1e-12));
+  REQUIRE(testDTree.SubtreeLeaves() == 1);
 
   double rootError = -log(4.0) - log(7.0) - log(7.0);
 
-  BOOST_REQUIRE_CLOSE(testDTree.LogNegError(), rootError, 1e-10);
-  BOOST_REQUIRE_CLOSE(testDTree.SubtreeLeavesLogNegError(), rootError, 1e-10);
-  BOOST_REQUIRE(testDTree.Left() == NULL);
-  BOOST_REQUIRE(testDTree.Right() == NULL);
+  REQUIRE(testDTree.LogNegError() == Approx(rootError).epsilon(1e-12));
+  REQUIRE(testDTree.SubtreeLeavesLogNegError() ==
+      Approx(rootError).epsilon(1e-12));
+  REQUIRE(testDTree.Left() == NULL);
+  REQUIRE(testDTree.Right() == NULL);
 }
 
-BOOST_AUTO_TEST_CASE(TestComputeValue)
+TEST_CASE("TestComputeValue", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
@@ -334,22 +336,22 @@ BOOST_AUTO_TEST_CASE(TestComputeValue)
   double d2 = (1.0 / 5.0) / exp(log(4.0) + log(0.5) + log(2.5));
   double d3 = (2.0 / 5.0) / exp(log(4.0) + log(6.5) + log(2.5));
 
-  BOOST_REQUIRE_CLOSE(d1, testDTree.ComputeValue(q1), 1e-10);
-  BOOST_REQUIRE_CLOSE(d2, testDTree.ComputeValue(q2), 1e-10);
-  BOOST_REQUIRE_CLOSE(d3, testDTree.ComputeValue(q3), 1e-10);
-  BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
+  REQUIRE(d1 == Approx(testDTree.ComputeValue(q1)).epsilon(1e-12));
+  REQUIRE(d2 == Approx(testDTree.ComputeValue(q2)).epsilon(1e-12));
+  REQUIRE(d3 == Approx(testDTree.ComputeValue(q3)).epsilon(1e-12));
+  REQUIRE(0.0 == Approx(testDTree.ComputeValue(q4)).epsilon(1e-12));
 
   alpha = testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
 
   double d = 1.0 / exp(log(4.0) + log(7.0) + log(7.0));
 
-  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q1), 1e-10);
-  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q2), 1e-10);
-  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q3), 1e-10);
-  BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
+  REQUIRE(d == Approx(testDTree.ComputeValue(q1)).epsilon(1e-12));
+  REQUIRE(d == Approx(testDTree.ComputeValue(q2)).epsilon(1e-12));
+  REQUIRE(d == Approx(testDTree.ComputeValue(q3)).epsilon(1e-12));
+  REQUIRE(0.0 == Approx(testDTree.ComputeValue(q4)).epsilon(1e-12));
 }
 
-BOOST_AUTO_TEST_CASE(TestVariableImportance)
+TEST_CASE("TestVariableImportance", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
@@ -377,12 +379,14 @@ BOOST_AUTO_TEST_CASE(TestVariableImportance)
 
   testDTree.ComputeVariableImportance(imps);
 
-  BOOST_REQUIRE_CLOSE((double) 0.0, imps[0], 1e-10);
-  BOOST_REQUIRE_CLOSE((double) (rError - (rlError + rrError)), imps[1], 1e-10);
-  BOOST_REQUIRE_CLOSE((double) (rootError - (lError + rError)), imps[2], 1e-10);
+  REQUIRE((double) 0.0 == Approx(imps[0]).epsilon(1e-12));
+  REQUIRE((double) (rError - (rlError + rrError)) ==
+      Approx(imps[1]).epsilon(1e-12));
+  REQUIRE((double) (rootError - (lError + rError)) ==
+      Approx(imps[2]).epsilon(1e-12));
 }
 
-BOOST_AUTO_TEST_CASE(TestSparsePruneAndUpdate)
+TEST_CASE("TestSparsePruneAndUpdate", "[DETTest]")
 {
   arma::mat realData(3, 5);
 
@@ -399,18 +403,19 @@ BOOST_AUTO_TEST_CASE(TestSparsePruneAndUpdate)
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
   alpha = testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
 
-  BOOST_REQUIRE_CLOSE(alpha, numeric_limits<double>::max(), 1e-10);
-  BOOST_REQUIRE(testDTree.SubtreeLeaves() == 1);
+  REQUIRE(alpha == Approx(numeric_limits<double>::max()).epsilon(1e-12));
+  REQUIRE(testDTree.SubtreeLeaves() == 1);
 
   double rootError = -log(4.0) - log(7.0) - log(7.0);
 
-  BOOST_REQUIRE_CLOSE(testDTree.LogNegError(), rootError, 1e-10);
-  BOOST_REQUIRE_CLOSE(testDTree.SubtreeLeavesLogNegError(), rootError, 1e-10);
-  BOOST_REQUIRE(testDTree.Left() == NULL);
-  BOOST_REQUIRE(testDTree.Right() == NULL);
+  REQUIRE(testDTree.LogNegError() == Approx(rootError).epsilon(1e-12));
+  REQUIRE(testDTree.SubtreeLeavesLogNegError() ==
+      Approx(rootError).epsilon(1e-12));
+  REQUIRE(testDTree.Left() == NULL);
+  REQUIRE(testDTree.Right() == NULL);
 }
 
-BOOST_AUTO_TEST_CASE(TestSparseComputeValue)
+TEST_CASE("TestSparseComputeValue", "[DETTest]")
 {
   arma::mat realData(3, 5);
 
@@ -438,25 +443,25 @@ BOOST_AUTO_TEST_CASE(TestSparseComputeValue)
   double d2 = (1.0 / 5.0) / exp(log(4.0) + log(0.5) + log(2.5));
   double d3 = (2.0 / 5.0) / exp(log(4.0) + log(6.5) + log(2.5));
 
-  BOOST_REQUIRE_CLOSE(d1, testDTree.ComputeValue(q1), 1e-10);
-  BOOST_REQUIRE_CLOSE(d2, testDTree.ComputeValue(q2), 1e-10);
-  BOOST_REQUIRE_CLOSE(d3, testDTree.ComputeValue(q3), 1e-10);
-  BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
+  REQUIRE(d1 == Approx(testDTree.ComputeValue(q1)).epsilon(1e-12));
+  REQUIRE(d2 == Approx(testDTree.ComputeValue(q2)).epsilon(1e-12));
+  REQUIRE(d3 == Approx(testDTree.ComputeValue(q3)).epsilon(1e-12));
+  REQUIRE(0.0 == Approx(testDTree.ComputeValue(q4)).epsilon(1e-12));
 
   alpha = testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
 
   double d = 1.0 / exp(log(4.0) + log(7.0) + log(7.0));
 
-  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q1), 1e-10);
-  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q2), 1e-10);
-  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q3), 1e-10);
-  BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
+  REQUIRE(d == Approx(testDTree.ComputeValue(q1)).epsilon(1e-12));
+  REQUIRE(d == Approx(testDTree.ComputeValue(q2)).epsilon(1e-12));
+  REQUIRE(d == Approx(testDTree.ComputeValue(q3)).epsilon(1e-12));
+  REQUIRE(0.0 == Approx(testDTree.ComputeValue(q4)).epsilon(1e-12));
 }
 
 /**
  * These are not yet implemented.
  *
-BOOST_AUTO_TEST_CASE(TestTagTree)
+TEST_CASE("TestTagTree", "[DETTest]")
 {
   MatType testData(3, 5);
 
@@ -469,7 +474,7 @@ BOOST_AUTO_TEST_CASE(TestTagTree)
   delete testDTree;
 }
 
-BOOST_AUTO_TEST_CASE(TestFindBucket)
+TEST_CASE("TestFindBucket", "[DETTest]")
 {
   MatType testData(3, 5);
 
@@ -484,24 +489,24 @@ BOOST_AUTO_TEST_CASE(TestFindBucket)
 
 // Test functions in dt_utils.hpp
 
-BOOST_AUTO_TEST_CASE(TestTrainer)
+TEST_CASE("TestTrainer", "[DETTest]")
 {
 
 }
 
-BOOST_AUTO_TEST_CASE(TestPrintVariableImportance)
+TEST_CASE("TestPrintVariableImportance", "[DETTest]")
 {
 
 }
 
-BOOST_AUTO_TEST_CASE(TestPrintLeafMembership)
+TEST_CASE("TestPrintLeafMembership", "[DETTest]")
 {
 
 }
 */
 
 // Test the copy constructor and the copy operator.
-BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
+TEST_CASE("CopyConstructorAndOperatorTest", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
@@ -544,76 +549,76 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
   delete testDTree;
 
   // Test the data of copied tree (using copy constructor).
-  BOOST_REQUIRE_EQUAL(testDTree2.MaxVals()[0], maxVals0);
-  BOOST_REQUIRE_EQUAL(testDTree2.MinVals()[0], minVals0);
-  BOOST_REQUIRE_EQUAL(testDTree2.MaxVals()[1], maxVals1);
-  BOOST_REQUIRE_EQUAL(testDTree2.MinVals()[1], minVals1);
-  BOOST_REQUIRE_EQUAL(testDTree2.MaxVals()[2], maxVals2);
-  BOOST_REQUIRE_EQUAL(testDTree2.MinVals()[2], minVals2);
+  REQUIRE(testDTree2.MaxVals()[0] == maxVals0);
+  REQUIRE(testDTree2.MinVals()[0] == minVals0);
+  REQUIRE(testDTree2.MaxVals()[1] == maxVals1);
+  REQUIRE(testDTree2.MinVals()[1] == minVals1);
+  REQUIRE(testDTree2.MaxVals()[2] == maxVals2);
+  REQUIRE(testDTree2.MinVals()[2] == minVals2);
 
   // Test the data of the copied tree (using the copy operator).
-  BOOST_REQUIRE_EQUAL(testDTree3.MaxVals()[0], maxVals0);
-  BOOST_REQUIRE_EQUAL(testDTree3.MinVals()[0], minVals0);
-  BOOST_REQUIRE_EQUAL(testDTree3.MaxVals()[1], maxVals1);
-  BOOST_REQUIRE_EQUAL(testDTree3.MinVals()[1], minVals1);
-  BOOST_REQUIRE_EQUAL(testDTree3.MaxVals()[2], maxVals2);
-  BOOST_REQUIRE_EQUAL(testDTree3.MinVals()[2], minVals2);
+  REQUIRE(testDTree3.MaxVals()[0] == maxVals0);
+  REQUIRE(testDTree3.MinVals()[0] == minVals0);
+  REQUIRE(testDTree3.MaxVals()[1] == maxVals1);
+  REQUIRE(testDTree3.MinVals()[1] == minVals1);
+  REQUIRE(testDTree3.MaxVals()[2] == maxVals2);
+  REQUIRE(testDTree3.MinVals()[2] == minVals2);
 
   // Test the structure of the tree copied using the copy constructor.
-  BOOST_REQUIRE(testDTree2.Left()->Left() == NULL);
-  BOOST_REQUIRE(testDTree2.Left()->Right() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Left()->Left() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Left()->Right() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Right()->Left() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Right()->Right() == NULL);
+  REQUIRE(testDTree2.Left()->Left() == NULL);
+  REQUIRE(testDTree2.Left()->Right() == NULL);
+  REQUIRE(testDTree2.Right()->Left()->Left() == NULL);
+  REQUIRE(testDTree2.Right()->Left()->Right() == NULL);
+  REQUIRE(testDTree2.Right()->Right()->Left() == NULL);
+  REQUIRE(testDTree2.Right()->Right()->Right() == NULL);
 
   // Test the structure of the tree copied using the copy operator.
-  BOOST_REQUIRE(testDTree3.Left()->Left() == NULL);
-  BOOST_REQUIRE(testDTree3.Left()->Right() == NULL);
-  BOOST_REQUIRE(testDTree3.Right()->Left()->Left() == NULL);
-  BOOST_REQUIRE(testDTree3.Right()->Left()->Right() == NULL);
-  BOOST_REQUIRE(testDTree3.Right()->Right()->Left() == NULL);
-  BOOST_REQUIRE(testDTree3.Right()->Right()->Right() == NULL);
+  REQUIRE(testDTree3.Left()->Left() == NULL);
+  REQUIRE(testDTree3.Left()->Right() == NULL);
+  REQUIRE(testDTree3.Right()->Left()->Left() == NULL);
+  REQUIRE(testDTree3.Right()->Left()->Right() == NULL);
+  REQUIRE(testDTree3.Right()->Right()->Left() == NULL);
+  REQUIRE(testDTree3.Right()->Right()->Right() == NULL);
 
   // Test the data of the tree copied using the copy constructor.
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MaxVals()[0], maxValsL0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MaxVals()[1], maxValsL1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MaxVals()[2], maxValsL2);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MinVals()[0], minValsL0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MinVals()[1], minValsL1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MinVals()[2], minValsL2);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MaxVals()[0], maxValsR0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MaxVals()[1], maxValsR1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MaxVals()[2], maxValsR2);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MinVals()[0], minValsR0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MinVals()[1], minValsR1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MinVals()[2], minValsR2);
-  BOOST_REQUIRE(testDTree2.SplitDim() == 2);
-  BOOST_REQUIRE_CLOSE(testDTree2.SplitValue(), 5.5, 1e-5);
-  BOOST_REQUIRE(testDTree2.Right()->SplitDim() == 1);
-  BOOST_REQUIRE_CLOSE(testDTree2.Right()->SplitValue(), 0.5, 1e-5);
+  REQUIRE(testDTree2.Left()->MaxVals()[0] == maxValsL0);
+  REQUIRE(testDTree2.Left()->MaxVals()[1] == maxValsL1);
+  REQUIRE(testDTree2.Left()->MaxVals()[2] == maxValsL2);
+  REQUIRE(testDTree2.Left()->MinVals()[0] == minValsL0);
+  REQUIRE(testDTree2.Left()->MinVals()[1] == minValsL1);
+  REQUIRE(testDTree2.Left()->MinVals()[2] == minValsL2);
+  REQUIRE(testDTree2.Right()->MaxVals()[0] == maxValsR0);
+  REQUIRE(testDTree2.Right()->MaxVals()[1] == maxValsR1);
+  REQUIRE(testDTree2.Right()->MaxVals()[2] == maxValsR2);
+  REQUIRE(testDTree2.Right()->MinVals()[0] == minValsR0);
+  REQUIRE(testDTree2.Right()->MinVals()[1] == minValsR1);
+  REQUIRE(testDTree2.Right()->MinVals()[2] == minValsR2);
+  REQUIRE(testDTree2.SplitDim() == 2);
+  REQUIRE(testDTree2.SplitValue() == Approx(5.5).epsilon(1e-7));
+  REQUIRE(testDTree2.Right()->SplitDim() == 1);
+  REQUIRE(testDTree2.Right()->SplitValue() == Approx(0.5).epsilon(1e-7));
 
   // Test the data of the tree copied using the copy operator.
-  BOOST_REQUIRE_EQUAL(testDTree3.Left()->MaxVals()[0], maxValsL0);
-  BOOST_REQUIRE_EQUAL(testDTree3.Left()->MaxVals()[1], maxValsL1);
-  BOOST_REQUIRE_EQUAL(testDTree3.Left()->MaxVals()[2], maxValsL2);
-  BOOST_REQUIRE_EQUAL(testDTree3.Left()->MinVals()[0], minValsL0);
-  BOOST_REQUIRE_EQUAL(testDTree3.Left()->MinVals()[1], minValsL1);
-  BOOST_REQUIRE_EQUAL(testDTree3.Left()->MinVals()[2], minValsL2);
-  BOOST_REQUIRE_EQUAL(testDTree3.Right()->MaxVals()[0], maxValsR0);
-  BOOST_REQUIRE_EQUAL(testDTree3.Right()->MaxVals()[1], maxValsR1);
-  BOOST_REQUIRE_EQUAL(testDTree3.Right()->MaxVals()[2], maxValsR2);
-  BOOST_REQUIRE_EQUAL(testDTree3.Right()->MinVals()[0], minValsR0);
-  BOOST_REQUIRE_EQUAL(testDTree3.Right()->MinVals()[1], minValsR1);
-  BOOST_REQUIRE_EQUAL(testDTree3.Right()->MinVals()[2], minValsR2);
-  BOOST_REQUIRE(testDTree3.SplitDim() == 2);
-  BOOST_REQUIRE_CLOSE(testDTree3.SplitValue(), 5.5, 1e-5);
-  BOOST_REQUIRE(testDTree3.Right()->SplitDim() == 1);
-  BOOST_REQUIRE_CLOSE(testDTree3.Right()->SplitValue(), 0.5, 1e-5);
+  REQUIRE(testDTree3.Left()->MaxVals()[0] == maxValsL0);
+  REQUIRE(testDTree3.Left()->MaxVals()[1] == maxValsL1);
+  REQUIRE(testDTree3.Left()->MaxVals()[2] == maxValsL2);
+  REQUIRE(testDTree3.Left()->MinVals()[0] == minValsL0);
+  REQUIRE(testDTree3.Left()->MinVals()[1] == minValsL1);
+  REQUIRE(testDTree3.Left()->MinVals()[2] == minValsL2);
+  REQUIRE(testDTree3.Right()->MaxVals()[0] == maxValsR0);
+  REQUIRE(testDTree3.Right()->MaxVals()[1] == maxValsR1);
+  REQUIRE(testDTree3.Right()->MaxVals()[2] == maxValsR2);
+  REQUIRE(testDTree3.Right()->MinVals()[0] == minValsR0);
+  REQUIRE(testDTree3.Right()->MinVals()[1] == minValsR1);
+  REQUIRE(testDTree3.Right()->MinVals()[2] == minValsR2);
+  REQUIRE(testDTree3.SplitDim() == 2);
+  REQUIRE(testDTree3.SplitValue() == Approx(5.5).epsilon(1e-7));
+  REQUIRE(testDTree3.Right()->SplitDim() == 1);
+  REQUIRE(testDTree3.Right()->SplitValue() == Approx(0.5).epsilon(1e-7));
 }
 
 // Test the move constructor.
-BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+TEST_CASE("MoveConstructorTest", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
@@ -653,50 +658,50 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
   DTree<arma::mat> testDTree2(std::move(*testDTree));
 
   // Check default values of the original tree.
-  BOOST_REQUIRE_EQUAL(testDTree->LogNegError(), -DBL_MAX);
-  BOOST_REQUIRE(testDTree->Left() == (DTree<arma::mat>*) NULL);
-  BOOST_REQUIRE(testDTree->Right() == (DTree<arma::mat>*) NULL);
+  REQUIRE(testDTree->LogNegError() == -DBL_MAX);
+  REQUIRE(testDTree->Left() == (DTree<arma::mat>*) NULL);
+  REQUIRE(testDTree->Right() == (DTree<arma::mat>*) NULL);
 
   // Delete the original tree.
   delete testDTree;
 
   // Test the data of the moved tree.
-  BOOST_REQUIRE_EQUAL(testDTree2.MaxVals()[0], maxVals0);
-  BOOST_REQUIRE_EQUAL(testDTree2.MinVals()[0], minVals0);
-  BOOST_REQUIRE_EQUAL(testDTree2.MaxVals()[1], maxVals1);
-  BOOST_REQUIRE_EQUAL(testDTree2.MinVals()[1], minVals1);
-  BOOST_REQUIRE_EQUAL(testDTree2.MaxVals()[2], maxVals2);
-  BOOST_REQUIRE_EQUAL(testDTree2.MinVals()[2], minVals2);
+  REQUIRE(testDTree2.MaxVals()[0] == maxVals0);
+  REQUIRE(testDTree2.MinVals()[0] == minVals0);
+  REQUIRE(testDTree2.MaxVals()[1] == maxVals1);
+  REQUIRE(testDTree2.MinVals()[1] == minVals1);
+  REQUIRE(testDTree2.MaxVals()[2] == maxVals2);
+  REQUIRE(testDTree2.MinVals()[2] == minVals2);
 
   // Test the structure of the moved tree.
-  BOOST_REQUIRE(testDTree2.Left()->Left() == NULL);
-  BOOST_REQUIRE(testDTree2.Left()->Right() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Left()->Left() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Left()->Right() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Right()->Left() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Right()->Right() == NULL);
+  REQUIRE(testDTree2.Left()->Left() == NULL);
+  REQUIRE(testDTree2.Left()->Right() == NULL);
+  REQUIRE(testDTree2.Right()->Left()->Left() == NULL);
+  REQUIRE(testDTree2.Right()->Left()->Right() == NULL);
+  REQUIRE(testDTree2.Right()->Right()->Left() == NULL);
+  REQUIRE(testDTree2.Right()->Right()->Right() == NULL);
 
   // Test the data of the moved tree.
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MaxVals()[0], maxValsL0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MaxVals()[1], maxValsL1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MaxVals()[2], maxValsL2);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MinVals()[0], minValsL0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MinVals()[1], minValsL1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MinVals()[2], minValsL2);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MaxVals()[0], maxValsR0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MaxVals()[1], maxValsR1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MaxVals()[2], maxValsR2);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MinVals()[0], minValsR0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MinVals()[1], minValsR1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MinVals()[2], minValsR2);
-  BOOST_REQUIRE(testDTree2.SplitDim() == 2);
-  BOOST_REQUIRE_CLOSE(testDTree2.SplitValue(), 5.5, 1e-5);
-  BOOST_REQUIRE(testDTree2.Right()->SplitDim() == 1);
-  BOOST_REQUIRE_CLOSE(testDTree2.Right()->SplitValue(), 0.5, 1e-5);
+  REQUIRE(testDTree2.Left()->MaxVals()[0] == maxValsL0);
+  REQUIRE(testDTree2.Left()->MaxVals()[1] == maxValsL1);
+  REQUIRE(testDTree2.Left()->MaxVals()[2] == maxValsL2);
+  REQUIRE(testDTree2.Left()->MinVals()[0] == minValsL0);
+  REQUIRE(testDTree2.Left()->MinVals()[1] == minValsL1);
+  REQUIRE(testDTree2.Left()->MinVals()[2] == minValsL2);
+  REQUIRE(testDTree2.Right()->MaxVals()[0] == maxValsR0);
+  REQUIRE(testDTree2.Right()->MaxVals()[1] == maxValsR1);
+  REQUIRE(testDTree2.Right()->MaxVals()[2] == maxValsR2);
+  REQUIRE(testDTree2.Right()->MinVals()[0] == minValsR0);
+  REQUIRE(testDTree2.Right()->MinVals()[1] == minValsR1);
+  REQUIRE(testDTree2.Right()->MinVals()[2] == minValsR2);
+  REQUIRE(testDTree2.SplitDim() == 2);
+  REQUIRE(testDTree2.SplitValue() == Approx(5.5).epsilon(1e-7));
+  REQUIRE(testDTree2.Right()->SplitDim() == 1);
+  REQUIRE(testDTree2.Right()->SplitValue() == Approx(0.5).epsilon(1e-7));
 }
 
 // Test the move operator.
-BOOST_AUTO_TEST_CASE(MoveOperatorTest)
+TEST_CASE("MoveOperatorTest", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
@@ -736,46 +741,44 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
   DTree<arma::mat> testDTree2 = std::move(*testDTree);
 
   // Check default values of the original tree.
-  BOOST_REQUIRE_EQUAL(testDTree->LogNegError(), -DBL_MAX);
-  BOOST_REQUIRE(testDTree->Left() == (DTree<arma::mat>*) NULL);
-  BOOST_REQUIRE(testDTree->Right() == (DTree<arma::mat>*) NULL);
+  REQUIRE(testDTree->LogNegError() == -DBL_MAX);
+  REQUIRE(testDTree->Left() == (DTree<arma::mat>*) NULL);
+  REQUIRE(testDTree->Right() == (DTree<arma::mat>*) NULL);
 
   // Delete the original tree.
   delete testDTree;
 
   // Test the data of the moved tree.
-  BOOST_REQUIRE_EQUAL(testDTree2.MaxVals()[0], maxVals0);
-  BOOST_REQUIRE_EQUAL(testDTree2.MinVals()[0], minVals0);
-  BOOST_REQUIRE_EQUAL(testDTree2.MaxVals()[1], maxVals1);
-  BOOST_REQUIRE_EQUAL(testDTree2.MinVals()[1], minVals1);
-  BOOST_REQUIRE_EQUAL(testDTree2.MaxVals()[2], maxVals2);
-  BOOST_REQUIRE_EQUAL(testDTree2.MinVals()[2], minVals2);
+  REQUIRE(testDTree2.MaxVals()[0] == maxVals0);
+  REQUIRE(testDTree2.MinVals()[0] == minVals0);
+  REQUIRE(testDTree2.MaxVals()[1] == maxVals1);
+  REQUIRE(testDTree2.MinVals()[1] == minVals1);
+  REQUIRE(testDTree2.MaxVals()[2] == maxVals2);
+  REQUIRE(testDTree2.MinVals()[2] == minVals2);
 
   // Test the structure of the moved tree.
-  BOOST_REQUIRE(testDTree2.Left()->Left() == NULL);
-  BOOST_REQUIRE(testDTree2.Left()->Right() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Left()->Left() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Left()->Right() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Right()->Left() == NULL);
-  BOOST_REQUIRE(testDTree2.Right()->Right()->Right() == NULL);
+  REQUIRE(testDTree2.Left()->Left() == NULL);
+  REQUIRE(testDTree2.Left()->Right() == NULL);
+  REQUIRE(testDTree2.Right()->Left()->Left() == NULL);
+  REQUIRE(testDTree2.Right()->Left()->Right() == NULL);
+  REQUIRE(testDTree2.Right()->Right()->Left() == NULL);
+  REQUIRE(testDTree2.Right()->Right()->Right() == NULL);
 
   // Test the data of moved tree.
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MaxVals()[0], maxValsL0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MaxVals()[1], maxValsL1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MaxVals()[2], maxValsL2);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MinVals()[0], minValsL0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MinVals()[1], minValsL1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Left()->MinVals()[2], minValsL2);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MaxVals()[0], maxValsR0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MaxVals()[1], maxValsR1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MaxVals()[2], maxValsR2);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MinVals()[0], minValsR0);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MinVals()[1], minValsR1);
-  BOOST_REQUIRE_EQUAL(testDTree2.Right()->MinVals()[2], minValsR2);
-  BOOST_REQUIRE(testDTree2.SplitDim() == 2);
-  BOOST_REQUIRE_CLOSE(testDTree2.SplitValue(), 5.5, 1e-5);
-  BOOST_REQUIRE(testDTree2.Right()->SplitDim() == 1);
-  BOOST_REQUIRE_CLOSE(testDTree2.Right()->SplitValue(), 0.5, 1e-5);
+  REQUIRE(testDTree2.Left()->MaxVals()[0] == maxValsL0);
+  REQUIRE(testDTree2.Left()->MaxVals()[1] == maxValsL1);
+  REQUIRE(testDTree2.Left()->MaxVals()[2] == maxValsL2);
+  REQUIRE(testDTree2.Left()->MinVals()[0] == minValsL0);
+  REQUIRE(testDTree2.Left()->MinVals()[1] == minValsL1);
+  REQUIRE(testDTree2.Left()->MinVals()[2] == minValsL2);
+  REQUIRE(testDTree2.Right()->MaxVals()[0] == maxValsR0);
+  REQUIRE(testDTree2.Right()->MaxVals()[1] == maxValsR1);
+  REQUIRE(testDTree2.Right()->MaxVals()[2] == maxValsR2);
+  REQUIRE(testDTree2.Right()->MinVals()[0] == minValsR0);
+  REQUIRE(testDTree2.Right()->MinVals()[1] == minValsR1);
+  REQUIRE(testDTree2.Right()->MinVals()[2] == minValsR2);
+  REQUIRE(testDTree2.SplitDim() == 2);
+  REQUIRE(testDTree2.SplitValue() == Approx(5.5).epsilon(1e-7));
+  REQUIRE(testDTree2.Right()->SplitDim() == 1);
+  REQUIRE(testDTree2.Right()->SplitValue() == Approx(0.5).epsilon(1e-7));
 }
-
-BOOST_AUTO_TEST_SUITE_END();

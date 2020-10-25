@@ -28,39 +28,50 @@ using namespace mlpack::math;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Hidden Markov Model (HMM) Training",
-    // Short description.
+// Program Name.
+BINDING_NAME("Hidden Markov Model (HMM) Training");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of training algorithms for Hidden Markov Models (HMMs). "
     "Given labeled or unlabeled data, an HMM can be trained for further use "
-    "with other mlpack HMM tools.",
-    // Long description.
+    "with other mlpack HMM tools.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program allows a Hidden Markov Model to be trained on labeled or "
     "unlabeled data.  It supports four types of HMMs: Discrete HMMs, "
     "Gaussian HMMs, GMM HMMs, or Diagonal GMM HMMs"
     "\n\n"
-    "Either one input sequence can be specified (with --input_file), or, a "
-    "file containing files in which input sequences can be found (when "
-    "--input_file and --batch are used together).  In addition, labels can be "
-    "provided in the file specified by --labels_file, and if --batch is used, "
-    "the file given to --labels_file should contain a list of files of labels "
-    "corresponding to the sequences in the file given to --input_file."
+    "Either one input sequence can be specified (with " +
+    PRINT_PARAM_STRING("input_file") + "), or, a file containing files in "
+    "which input sequences can be found (when "+
+    PRINT_PARAM_STRING("input_file") + "and" + PRINT_PARAM_STRING("batch") +
+    " are used together).  In addition, labels can be "
+    "provided in the file specified by " + PRINT_PARAM_STRING("labels_file") +
+    ", and if " + PRINT_PARAM_STRING("batch") + " is used, "
+    "the file given to " + PRINT_PARAM_STRING("labels_file") +
+    " should contain a list of files of labels corresponding to the sequences"
+    " in the file given to " + PRINT_PARAM_STRING("input_file") + "."
     "\n\n"
     "The HMM is trained with the Baum-Welch algorithm if no labels are "
     "provided.  The tolerance of the Baum-Welch algorithm can be set with the "
-    "--tolerance option.  By default, the transition matrix is randomly "
-    "initialized and the emission distributions are initialized to fit the "
-    "extent of the data."
+    + PRINT_PARAM_STRING("tolerance") + "option.  By default, the transition "
+    "matrix is randomly initialized and the emission distributions are "
+    "initialized to fit the extent of the data."
     "\n\n"
     "Optionally, a pre-created HMM model can be used as a guess for the "
-    "transition matrix and emission probabilities; this is specifiable with "
-    "--model_file.",
-    SEE_ALSO("@hmm_generate", "#hmm_generate"),
-    SEE_ALSO("@hmm_loglik", "#hmm_loglik"),
-    SEE_ALSO("@hmm_viterbi", "#hmm_viterbi"),
-    SEE_ALSO("Hidden Mixture Models on Wikipedia",
-        "https://en.wikipedia.org/wiki/Hidden_Markov_model"),
-    SEE_ALSO("mlpack::hmm::HMM class documentation",
-        "@doxygen/classmlpack_1_1hmm_1_1HMM.html"));
+    "transition matrix and emission probabilities; this is specifiable with " +
+    PRINT_PARAM_STRING("output_model") + ".");
+
+// See also...
+BINDING_SEE_ALSO("@hmm_generate", "#hmm_generate");
+BINDING_SEE_ALSO("@hmm_loglik", "#hmm_loglik");
+BINDING_SEE_ALSO("@hmm_viterbi", "#hmm_viterbi");
+BINDING_SEE_ALSO("Hidden Mixture Models on Wikipedia",
+        "https://en.wikipedia.org/wiki/Hidden_Markov_model");
+BINDING_SEE_ALSO("mlpack::hmm::HMM class documentation",
+        "@doxygen/classmlpack_1_1hmm_1_1HMM.html");
 
 PARAM_STRING_IN_REQ("input_file", "File containing input observations.", "i");
 PARAM_STRING_IN("type", "Type of HMM: discrete | gaussian | diag_gmm | gmm.",

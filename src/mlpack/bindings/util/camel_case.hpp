@@ -1,25 +1,23 @@
 /**
- * @file bindings/go/camel_case.hpp
- * @author Yashwant Singh
+ * @file bindings/util/camel_case.hpp
+ * @author Yashwant Singh Parihar
  *
- * Given a C++ typename that may have template parameters, return stripped and
- * printable versions to be used in Go bindings.
+ * Convert snake_case name to CamelCase.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_BINDINGS_GO_CAMEL_CASE_HPP
-#define MLPACK_BINDINGS_GO_CAMEL_CASE_HPP
+#ifndef MLPACK_BINDINGS_UTIL_CAMEL_CASE_HPP
+#define MLPACK_BINDINGS_UTIL_CAMEL_CASE_HPP
 
 namespace mlpack {
-namespace bindings {
-namespace go {
+namespace util {
 
 /**
  * Given an snake_case like, e.g., "logistic_regression", return
- * CamelCase(e.g. "LogisticRegression") that can be used in Go code.
+ * CamelCase(e.g. "LogisticRegression") that can be used in bindings.
  *
  * @param s input string.
  * @param lower is of bool type. If lower is true then output must be
@@ -50,8 +48,7 @@ inline std::string CamelCase(std::string s, bool lower)
   return s.substr(0, resInd);
 }
 
-} // namespace go
-} // namespace bindings
+} // namespace util
 } // namespace mlpack
 
 #endif

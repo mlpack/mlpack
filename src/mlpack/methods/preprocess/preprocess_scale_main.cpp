@@ -28,12 +28,17 @@ using namespace mlpack::data;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Scale Data",
-    // Short description.
+// Program Name.
+BINDING_NAME("Scale Data");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A utility to perform feature scaling on datasets using one of six"
     "techniques.  Both scaling and inverse scaling are supported, and"
-    "scalers can be saved and then applied to other datasets.",
-    // Long description.
+    "scalers can be saved and then applied to other datasets.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes a dataset and performs feature scaling using one of "
     "the six scaler methods namely: 'max_abs_scaler', 'mean_normalization', "
     "'min_max_scaler' ,'standard_scaler', 'pca_whitening' and 'zca_whitening'."
@@ -47,8 +52,10 @@ PROGRAM_INFO("Scale Data",
     "\n\n"
     "The model to scale features can be saved using " +
     PRINT_PARAM_STRING("output_model") + " and later can be loaded back using"
-    + PRINT_PARAM_STRING("input_model") + "."
-    "\n\n"
+    + PRINT_PARAM_STRING("input_model") + ".");
+
+// Example.
+BINDING_EXAMPLE(
     "So, a simple example where we want to scale the dataset " +
     PRINT_DATASET("X") + " into " + PRINT_DATASET("X_scaled")+ " with "
     " standard_scaler as scaler_method, we could run "
@@ -78,10 +85,12 @@ PROGRAM_INFO("Scale Data",
     " of default 0 to 1. We could run "
     "\n\n" +
     PRINT_CALL("preprocess_scale", "input", "X", "output", "X_scaled",
-    "scaler_method", "min_max_scaler", "min_value", 1, "max_value", 3),
-    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
-    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
-    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
+    "scaler_method", "min_max_scaler", "min_value", 1, "max_value", 3));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
+BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");

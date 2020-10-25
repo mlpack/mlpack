@@ -18,8 +18,8 @@ static const std::string testName = "PreprocessSplit";
 #include <mlpack/methods/preprocess/preprocess_split_main.cpp>
 
 #include "test_helper.hpp"
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 #include <cmath>
 
@@ -42,14 +42,12 @@ struct PreprocessSplitTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(PreprocessSplitMainTest,
-                         PreprocessSplitTestFixture);
-
 /**
  * Check that desired output dimensions are received for both input data and
  * labels.
  */
-BOOST_AUTO_TEST_CASE(PreprocessSplitDimensionTest)
+TEST_CASE_METHOD(PreprocessSplitTestFixture, "PreprocessSplitDimensionTest",
+                 "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -71,15 +69,15 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitDimensionTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("training").n_cols,
-                      std::ceil(0.9 * inputSize));
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("test").n_cols,
-                      std::floor(0.1 * inputSize));
+  REQUIRE(IO::GetParam<arma::mat>("training").n_cols ==
+      std::ceil(0.9 * inputSize));
+  REQUIRE(IO::GetParam<arma::mat>("test").n_cols ==
+      std::floor(0.1 * inputSize));
 
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols,
+  REQUIRE(
+      IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols ==
       std::ceil(0.9 * labelSize));
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols,
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols ==
       std::floor(0.1 * labelSize));
 }
 
@@ -87,7 +85,10 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitDimensionTest)
  * Check that desired output dimensions are received for the input data when
  * labels are not provided.
  */
-BOOST_AUTO_TEST_CASE(PreprocessSplitLabelLessDimensionTest)
+TEST_CASE_METHOD(
+    PreprocessSplitTestFixture,
+    "PreprocessSplitLabelLessDimensionTest",
+    "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -105,16 +106,17 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitLabelLessDimensionTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("training").n_cols,
+  REQUIRE(IO::GetParam<arma::mat>("training").n_cols ==
       std::ceil(0.9 * inputSize));
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("test").n_cols,
+  REQUIRE(IO::GetParam<arma::mat>("test").n_cols ==
       std::floor(0.1 * inputSize));
 }
 
 /**
  * Ensure that test ratio is always a non-negative number.
  */
-BOOST_AUTO_TEST_CASE(PreprocessSplitTestRatioTest)
+TEST_CASE_METHOD(PreprocessSplitTestFixture, "PreprocessSplitTestRatioTest",
+                 "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -129,14 +131,16 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitTestRatioTest)
   SetInputParam("test_ratio", (double) -0.2);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that if test size is 0 then train consist of whole input data.
  */
-BOOST_AUTO_TEST_CASE(PreprocessSplitZeroTestRatioTest)
+TEST_CASE_METHOD(
+    PreprocessSplitTestFixture, "PreprocessSplitZeroTestRatioTest",
+    "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -157,19 +161,20 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitZeroTestRatioTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("training").n_cols, inputSize);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("test").n_cols, 0);
+  REQUIRE(IO::GetParam<arma::mat>("training").n_cols == inputSize);
+  REQUIRE(IO::GetParam<arma::mat>("test").n_cols == 0);
 
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols, labelSize);
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols, 0);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols ==
+      labelSize);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols == 0);
 }
 
 /**
  * Check that if test size is 1 then test consist of whole input data.
  */
-BOOST_AUTO_TEST_CASE(PreprocessSplitUnityTestRatioTest)
+TEST_CASE_METHOD(
+    PreprocessSplitTestFixture, "PreprocessSplitUnityTestRatioTest",
+    "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -190,19 +195,19 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitUnityTestRatioTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("training").n_cols, 0);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("test").n_cols, inputSize);
+  REQUIRE(IO::GetParam<arma::mat>("training").n_cols == 0);
+  REQUIRE(IO::GetParam<arma::mat>("test").n_cols == inputSize);
 
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols, 0);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols,
-      labelSize);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols == 0);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols == labelSize);
 }
 
 /**
  * Check shuffle_data flag is working as expected.
  */
-BOOST_AUTO_TEST_CASE(PreprocessSplitLabelShuffleDataTest)
+TEST_CASE_METHOD(
+    PreprocessSplitTestFixture, "PreprocessSplitLabelShuffleDataTest",
+    "[PreprocessSplitMainTest][BindingTests]")
 {
   // Load custom dataset.
   arma::mat inputData;
@@ -220,14 +225,12 @@ BOOST_AUTO_TEST_CASE(PreprocessSplitLabelShuffleDataTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("training").n_cols,
+  REQUIRE(IO::GetParam<arma::mat>("training").n_cols ==
       std::ceil(0.9 * inputSize));
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("test").n_cols,
+  REQUIRE(IO::GetParam<arma::mat>("test").n_cols ==
       std::floor(0.1 * inputSize));
 
   arma::mat concat = arma::join_rows(IO::GetParam<arma::mat>("training"),
       IO::GetParam<arma::mat>("test"));
   CheckMatrices(inputData, concat);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

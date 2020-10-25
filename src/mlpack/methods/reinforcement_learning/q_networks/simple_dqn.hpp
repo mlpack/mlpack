@@ -24,10 +24,15 @@ namespace rl {
 using namespace mlpack::ann;
 
 /**
+ * @tparam OutputLayerType The output layer type of the network.
+ * @tparam InitType The initialization type used for the network.
  * @tparam NetworkType The type of network used for simple dqn.
  */
-template <typename NetworkType = FFN<MeanSquaredError<>,
-                                    GaussianInitialization>>
+template<
+  typename OutputLayerType = MeanSquaredError<>,
+  typename InitType = GaussianInitialization,
+  typename NetworkType = FFN<OutputLayerType, InitType>
+>
 class SimpleDQN
 {
  public:
@@ -45,13 +50,17 @@ class SimpleDQN
    * @param h2 Number of neurons in hiddenlayer-2.
    * @param outputDim Number of neurons in output layer.
    * @param isNoisy Specifies whether the network needs to be of type noisy.
+   * @param init Specifies the initialization rule for the network.
+   * @param outputLayer Specifies the output layer type for network.
    */
   SimpleDQN(const int inputDim,
             const int h1,
             const int h2,
             const int outputDim,
-            const bool isNoisy = false):
-      network(MeanSquaredError<>(), GaussianInitialization(0, 0.001)),
+            const bool isNoisy = false,
+            InitType init = InitType(),
+            OutputLayerType outputLayer = OutputLayerType()):
+      network(outputLayer, init),
       isNoisy(isNoisy)
   {
     network.Add(new Linear<>(inputDim, h1));
@@ -72,8 +81,14 @@ class SimpleDQN
     }
   }
 
-  SimpleDQN(NetworkType network, const bool isNoisy = false):
-      network(std::move(network)),
+  /**
+   * Construct an instance of SimpleDQN class from a pre-constructed network.
+   *
+   * @param network The network to be used by SimpleDQN class.
+   * @param isNoisy Specifies whether the network needs to be of type noisy.
+   */
+  SimpleDQN(NetworkType& network, const bool isNoisy = false):
+      network(network),
       isNoisy(isNoisy)
   { /* Nothing to do here. */ }
 

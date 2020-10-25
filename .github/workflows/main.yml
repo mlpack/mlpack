@@ -1,0 +1,160 @@
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  release:
+    types: [published, created, edited]
+name: mlpack.mlpack
+
+jobs:
+  cancel:
+    name: 'Cancel Previous Builds'
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'mlpack/mlpack' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Get all workflow ids and set to env variable
+        run: echo ::set-env name=WORKFLOW_IDS_TO_CANCEL::$(curl https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows -s | jq -r '.workflows | map(.id|tostring) | join(",")')
+
+      - uses: styfle/cancel-workflow-action@0.5.0
+        with:
+          workflow_id: ${{ env.WORKFLOW_IDS_TO_CANCEL }}
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+
+  jobR:
+    name: mlpack R tarball
+    if: ${{ github.repository == 'mlpack/mlpack' }}
+    runs-on: ubuntu-20.04
+
+    outputs:
+      r_bindings: ${{ steps.mlpack_version.outputs.mlpack_r_package }}
+
+    steps:
+        - uses: actions/checkout@v2
+
+        - name: Extract mlpack version
+          id: mlpack_version
+          run: |
+            MLPACK_VERSION_MAJOR=$(grep -i ".*#define MLPACK_VERSION_MAJOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+            MLPACK_VERSION_MINOR=$(grep -i ".*#define MLPACK_VERSION_MINOR.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+            MLPACK_VERSION_PATCH=$(grep -i ".*#define MLPACK_VERSION_PATCH.*" src/mlpack/core/util/version.hpp | grep -o "[0-9]*")
+            MLPACK_VERSION_VALUE=${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}
+            echo ::set-output name=mlpack_r_package::$(echo mlpack_"$MLPACK_VERSION_VALUE".tar.gz)
+
+        - uses: r-lib/actions/setup-r@master
+          with:
+            r-version: release
+
+        - name: Query dependencies
+          run: |
+            cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
+            Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
+
+        - name: Cache R packages
+          if: runner.os != 'Windows'
+          uses: actions/cache@v1
+          with:
+            path: ${{ env.R_LIBS_USER }}
+            key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
+            restore-keys: ${{ runner.os }}-r-release-
+
+        - name: Install Build Dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev
+            curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
+            cmake . && make && sudo make install && cd ..
+
+        - name: Install R-bindings dependencies
+          run: |
+            remotes::install_deps(dependencies = TRUE)
+            remotes::install_cran("roxygen2")
+          shell: Rscript {0}
+
+        - name: CMake
+          run: |
+            mkdir build
+            cd build && cmake -DDEBUG=OFF -DPROFILE=OFF -DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=ON ..
+
+        - name: Build
+          run: |
+            cd build && make -j2
+
+        - name: Run tests via ctest
+          run: |
+            cd build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
+
+        - name: Upload R packages
+          uses: actions/upload-artifact@v2
+          with:
+              name: mlpack_r_tarball
+              path: build/src/mlpack/bindings/R/${{ steps.mlpack_version.outputs.mlpack_r_package }}
+
+  R-CMD-check:
+    needs: jobR
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.name }}
+    if: ${{ github.repository == 'mlpack/mlpack' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {os: windows-latest, r: '4.0', name: 'Windows R'}
+        - {os: macOS-latest, r: 'release', name: 'macOS R'}
+        - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest", name: 'Linux R'}
+
+
+    env:
+      MAKEFLAGS: "-j 2"
+      R_BUILD_ARGS: "--no-build-vignettes"
+      R_CHECK_ARGS: "--no-build-vignettes"
+      _R_CHECK_FORCE_SUGGESTS: 0
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RSPM: ${{ matrix.config.rspm }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: mlpack_r_tarball
+
+      - uses: r-lib/actions/setup-r@master
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      - uses: r-lib/actions/setup-pandoc@master
+
+      - name: Query dependencies
+        run: Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE), 'depends.Rds')"
+
+      - name: Cache R packages
+        if: runner.os != 'Windows'
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
+          restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
+
+      - name: Install dependencies
+        run: |
+          remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
+          remotes::install_cran("rcmdcheck")
+        shell: Rscript {0}
+
+      - name: Check
+        run: Rscript -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'warning', check_dir = 'check')"
+
+      - name: Upload check results
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+          path: |
+            check/mlpack.Rcheck/00check.log
+            check/mlpack.Rcheck/00install.out

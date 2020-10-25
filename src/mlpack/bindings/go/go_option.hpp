@@ -41,7 +41,7 @@ class GoOption
  public:
   /**
    * Construct a GoOption object.  When constructed, it will register itself
-   * with CLI. The testName parameter is not used and added for compatibility
+   * with IO. The testName parameter is not used and added for compatibility
    * reasons.
    *
    * @param defaultValue Default value this parameter will be initialized to
@@ -67,7 +67,7 @@ class GoOption
            const bool noTranspose = false,
            const std::string& /*testName*/ = "")
   {
-    // Create the ParamData object to give to CLI.
+    // Create the ParamData object to give to IO.
     util::ParamData data;
 
     data.desc = description;
@@ -117,7 +117,7 @@ class GoOption
     IO::GetSingleton().functionMap[data.tname]["GetType"] = &GetType<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
-    // import more than one .so that uses CLI, so we have to keep the options
+    // import more than one .so that uses IO, so we have to keep the options
     // separate.  programName is a global variable from mlpack_main.hpp.
     IO::Add(std::move(data));
     if (identifier != "verbose" /*&& identifier != "copy_all_inputs"*/)

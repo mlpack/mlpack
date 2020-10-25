@@ -12,7 +12,7 @@
 #include "print_docs.hpp"
 
 #include <mlpack/core/util/io.hpp>
-#include <mlpack/core/util/program_doc.hpp>
+#include <mlpack/core/util/binding_details.hpp>
 #include "binding_info.hpp"
 #include "print_doc_functions.hpp"
 
@@ -45,7 +45,7 @@ void PrintHeaders(const std::string& bindingName,
 void PrintDocs(const std::string& bindingName,
                const vector<string>& languages)
 {
-  ProgramDoc& programDoc = BindingInfo::GetProgramDoc(bindingName);
+  BindingDetails& doc = BindingInfo::GetBindingDetails(bindingName);
 
   IO::RestoreSettings(bindingName);
 
@@ -64,7 +64,7 @@ void PrintDocs(const std::string& bindingName,
 
   // Next, print the logical name of the binding (that's known by
   // ProgramInfo).
-  cout << "#### " << programDoc.programName << endl;
+  cout << "#### " << doc.programName << endl;
   cout << endl;
 
   for (size_t i = 0; i < languages.size(); ++i)
@@ -78,7 +78,7 @@ void PrintDocs(const std::string& bindingName,
   }
   cout << endl;
 
-  cout << programDoc.shortDocumentation << " ";
+  cout << doc.shortDescription << " ";
   for (size_t i = 0; i < languages.size(); ++i)
   {
     cout << "[Detailed documentation](#" << languages[i] << "_"
@@ -166,15 +166,31 @@ void PrintDocs(const std::string& bindingName,
     }
     cout << endl;
 
-    // Next, iterate through the list of output options.
-    cout << "### Output options" << endl;
-    cout << endl;
-    string outputInfo = PrintOutputOptionInfo();
-    if (outputInfo.size() > 0)
-      cout << outputInfo << endl;
-    cout << endl;
-    cout << "| ***name*** | ***type*** | ***description*** |" << endl;
-    cout << "|------------|------------|-------------------|" << endl;
+    // Determine if there are any output options, to see if we need
+    // to print the header of the output options table.
+    bool hasOutputOptions = false;
+    for (map<string, ParamData>::iterator it = parameters.begin();
+        it != parameters.end(); ++it)
+    {
+      if (!it->second.input)
+      {
+        hasOutputOptions = true;
+        break;
+      }
+    }
+
+    if (hasOutputOptions)
+    {    
+      // Next, iterate through the list of output options.
+      cout << "### Output options" << endl;
+      cout << endl;
+      string outputInfo = PrintOutputOptionInfo();
+      if (outputInfo.size() > 0)
+        cout << outputInfo << endl;
+      cout << endl;
+      cout << "| ***name*** | ***type*** | ***description*** |" << endl;
+      cout << "|------------|------------|-------------------|" << endl;
+    }
     for (map<string, ParamData>::iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
@@ -213,37 +229,44 @@ void PrintDocs(const std::string& bindingName,
     cout << "{: #" << languages[i] << "_" << bindingName
         << "_detailed-documentation }" << endl;
     cout << endl;
-    string doc = boost::replace_all_copy(programDoc.documentation(),
-                                         "|", "\\|");
-    cout << doc << endl;
-    cout << endl;
+    string desc = boost::replace_all_copy(doc.longDescription(),
+                                          "|", "\\|");
+    cout << desc << endl << endl;
 
+    if (doc.example.size() > 0)
+      cout << "### Example" << endl;
+    for (size_t j = 0; j < doc.example.size(); ++j)
+    {
+      string eg = boost::replace_all_copy(doc.example[j](),
+                                          "|", "\\|");
+      cout << eg << endl << endl;
+    }
     cout << "### See also" << endl;
     cout << endl;
-    for (size_t j = 0; j < programDoc.seeAlso.size(); ++j)
+    for (size_t j = 0; j < doc.seeAlso.size(); ++j)
     {
       cout << " - " << "[";
       // We need special processing if the user has specified a binding name
       // starting with @ (i.e., '@kfn' or similar).
-      if (programDoc.seeAlso[j].first[0] == '@')
-        cout << GetBindingName(programDoc.seeAlso[j].first.substr(1));
+      if (doc.seeAlso[j].first[0] == '@')
+        cout << GetBindingName(doc.seeAlso[j].first.substr(1));
       else
-        cout << programDoc.seeAlso[j].first;
+        cout << doc.seeAlso[j].first;
       cout << "](";
 
       // We need special handling of Doxygen information.
-      if (programDoc.seeAlso[j].second.substr(0, 8) == "@doxygen")
+      if (doc.seeAlso[j].second.substr(0, 8) == "@doxygen")
       {
-        cout << DOXYGEN_PREFIX << programDoc.seeAlso[j].second.substr(9);
+        cout << DOXYGEN_PREFIX << doc.seeAlso[j].second.substr(9);
       }
-      else if (programDoc.seeAlso[j].second[0] == '#')
+      else if (doc.seeAlso[j].second[0] == '#')
       {
         cout << "#" << languages[i] << "_"
-            << programDoc.seeAlso[j].second.substr(1);
+            << doc.seeAlso[j].second.substr(1);
       }
       else
       {
-        cout << programDoc.seeAlso[j].second;
+        cout << doc.seeAlso[j].second;
       }
 
       cout << ")" << endl;

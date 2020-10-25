@@ -39,6 +39,18 @@
   #define M_PI 3.141592653589793238462643383279
 #endif
 
+// MLPACK_COUT_STREAM is used to change the default stream for printing
+// purpose.
+#if !defined(MLPACK_COUT_STREAM)
+ #define MLPACK_COUT_STREAM std::cout
+#endif
+
+// MLPACK_CERR_STREAM is used to change the stream for printing warnings
+// and errors.
+#if !defined(MLPACK_CERR_STREAM)
+ #define MLPACK_CERR_STREAM std::cerr
+#endif
+
 // Give ourselves a nice way to force functions to be inline if we need.
 #define force_inline
 #if defined(__GNUG__) && !defined(DEBUG)

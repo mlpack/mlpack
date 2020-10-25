@@ -7,42 +7,9 @@
 #  * PROGRAM_MAIN_FILE: the file containing the mlpackMain() function.
 #  * TYPES_FILE: file to append types to
 #
-# We need to parse the main file and find any PARAM_MODEL_* lines.
 function(append_type TYPES_FILE PROGRAM_NAME PROGRAM_MAIN_FILE)
-  file(READ "${PROGRAM_MAIN_FILE}" MAIN_FILE)
-
-  # Grab all "PARAM_MODEL_IN(Model,", "PARAM_MODEL_IN_REQ(Model,",
-  # "PARAM_MODEL_OUT(Model,".
-  string(REGEX MATCHALL "PARAM_MODEL_IN\\([A-Za-z_<>]*," MODELS_IN
-      "${MAIN_FILE}")
-  string(REGEX MATCHALL "PARAM_MODEL_IN_REQ\\([A-Za-z_<>]*," MODELS_IN_REQ
-      "${MAIN_FILE}")
-  string(REGEX MATCHALL "PARAM_MODEL_OUT\\([A-Za-z_]*," MODELS_OUT "${MAIN_FILE}")
-
-  string(REGEX REPLACE "PARAM_MODEL_IN\\(" "" MODELS_IN_STRIP1 "${MODELS_IN}")
-  string(REGEX REPLACE "," "" MODELS_IN_STRIP2 "${MODELS_IN_STRIP1}")
-  string(REGEX REPLACE "[<>,]" "" MODELS_IN_SAFE_STRIP2 "${MODELS_IN_STRIP1}")
-
-  string(REGEX REPLACE "PARAM_MODEL_IN_REQ\\(" "" MODELS_IN_REQ_STRIP1
-      "${MODELS_IN_REQ}")
-  string(REGEX REPLACE "," "" MODELS_IN_REQ_STRIP2 "${MODELS_IN_REQ_STRIP1}")
-  string(REGEX REPLACE "[<>,]" "" MODELS_IN_REQ_SAFE_STRIP2
-      "${MODELS_IN_REQ_STRIP1}")
-
-  string(REGEX REPLACE "PARAM_MODEL_OUT\\(" "" MODELS_OUT_STRIP1 "${MODELS_OUT}")
-  string(REGEX REPLACE "," "" MODELS_OUT_STRIP2 "${MODELS_OUT_STRIP1}")
-  string(REGEX REPLACE "[<>,]" "" MODELS_OUT_SAFE_STRIP2 "${MODELS_OUT_STRIP1}")
-
-  set(MODEL_TYPES ${MODELS_IN_STRIP2} ${MODELS_IN_REQ_STRIP2}
-      ${MODELS_OUT_STRIP2})
-  set(MODEL_SAFE_TYPES ${MODELS_IN_SAFE_STRIP2} ${MODELS_IN_REQ_SAFE_STRIP2}
-      ${MODELS_OUT_SAFE_STRIP2})
-  if (MODEL_TYPES)
-    list(REMOVE_DUPLICATES MODEL_TYPES)
-  endif ()
-  if (MODEL_SAFE_TYPES)
-    list(REMOVE_DUPLICATES MODEL_SAFE_TYPES)
-  endif ()
+  include("${CMAKE_SOURCE_DIR}/CMake/StripType.cmake")
+  strip_type("${PROGRAM_MAIN_FILE}")
 
   # Now, generate the definitions of the functions we need.
   set(MODEL_PTR_DEFNS "")

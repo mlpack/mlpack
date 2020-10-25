@@ -29,17 +29,17 @@ mlpack and dependencies in Release Mode).
 @code
  - C:\boost\boost_1_71_0\lib\native\include
  - C:\mlpack\armadillo-9.800.3\include
- - C:\mlpack\mlpack-3.2.2\build\include
+ - C:\mlpack\mlpack-3.4.1\build\include
 @endcode
 - Under Linker > Input > Additional Dependencies add:
 @code
- - C:\mlpack\mlpack-3.2.2\build\Debug\mlpack.lib
+ - C:\mlpack\mlpack-3.4.1\build\Debug\mlpack.lib
  - C:\boost\boost_1_71_0\lib64-msvc-14.2\libboost_serialization-vc142-mt-gd-x64-1_71.lib
 @endcode
 - Under Build Events > Post-Build Event > Command Line add:
 @code
- - xcopy /y "C:\mlpack\mlpack-3.2.2\build\Debug\mlpack.dll" $(OutDir)
- - xcopy /y "C:\mlpack\mlpack-3.2.2\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
+ - xcopy /y "C:\mlpack\mlpack-3.4.1\build\Debug\mlpack.dll" $(OutDir)
+ - xcopy /y "C:\mlpack\mlpack-3.4.1\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
 @endcode
 
 @note Recent versions of Visual Studio set "Conformance Mode" enabled by default. This causes some issues with
@@ -94,7 +94,7 @@ copy "mlpack/tests/data/german.csv" and paste into a new "data" folder in your p
 mat dataset;
 bool loaded = mlpack::data::Load("data/german.csv", dataset);
 if (!loaded)
-	return -1;
+  return -1;
 @endcode
 
 Then we need to extract the labels from the last dimension of the dataset and remove the
@@ -121,7 +121,7 @@ const size_t numTrees = 10;
 RandomForest<GiniGain, RandomDimensionSelect> rf;
 
 rf = RandomForest<GiniGain, RandomDimensionSelect>(dataset, labels,
-	numClasses, numTrees, minimumLeafSize);
+    numClasses, numTrees, minimumLeafSize);
 @endcode
 
 Now that the training is completed, we quickly compute the training accuracy:
@@ -143,7 +143,7 @@ to assess the quality of the trained model.
 @code
 const size_t k = 10;
 KFoldCV<RandomForest<GiniGain, RandomDimensionSelect>, Accuracy> cv(k, 
-	dataset, labels, numClasses);
+    dataset, labels, numClasses);
 double cvAcc = cv.Evaluate(numTrees, minimumLeafSize);
 cout << "\nKFoldCV Accuracy: " << cvAcc;
 @endcode
@@ -188,12 +188,16 @@ Finally, the ultimate goal is to classify a new sample using the previously trai
 Random Forest classifier provides both predictions and probabilities, we obtain both.
 
 @code
-mat sample("2 12 2 13 1 2 2 1 3 24 3 1 1 1 1 1 0 1 0 1 0 0 0");
+// Create a test sample containing only one point.  Because Armadillo is
+// column-major, this matrix has one column (one point) and the number of rows
+// is equal to the dimensionality of the point (23).
+mat sample("2; 12; 2; 13; 1; 2; 2; 1; 3; 24; 3; 1; 1; 1; 1; 1; 0; 1; 0; 1;"
+    " 0; 0; 0");
 mat probabilities;
 rf.Classify(sample, predictions, probabilities);
 u64 result = predictions.at(0);
 cout << "\nClassification result: " << result << " , Probabilities: " <<
-		probabilities.at(0) << "/" << probabilities.at(1);
+    probabilities.at(0) << "/" << probabilities.at(1);
 @endcode
 
 @section sample_app_conclussion Final thoughts

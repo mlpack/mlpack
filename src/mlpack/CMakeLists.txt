@@ -54,7 +54,7 @@ target_link_libraries(mlpack ${MLPACK_LIBRARIES})
 
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 3.3
+  VERSION 3.4
   SOVERSION 3
 )
 
@@ -125,69 +125,13 @@ string(REGEX REPLACE ".*#define MLPACK_VERSION_PATCH [\"]?([0-9x]+)[\"]?.*"
 set(PACKAGE_VERSION
   "${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}")
 
-# If we are building Python bindings, we have to configure setup.py but only
-# after we've recursed into methods/.
-if (BUILDING_PYTHON_BINDINGS)
+post_python_bindings()
+post_julia_setup()
+post_go_setup()
 
-  get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      PROPERTY INCLUDE_DIRECTORIES)
-  add_custom_target(python_configure
-      COMMAND ${CMAKE_COMMAND}
-          -D SETUP_PY_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
-          -D SETUP_PY_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
-          -D PACKAGE_VERSION="${PACKAGE_VERSION}"
-          -D Boost_SERIALIZATION_LIBRARY="${Boost_SERIALIZATION_LIBRARY_RELEASE}"
-          -D Boost_LIBRARY_DIRS="${Boost_LIBRARY_DIRS}"
-          -D ARMADILLO_LIBRARIES="${ARMADILLO_LIBRARIES}"
-          -D MLPACK_LIBRARY=$<TARGET_LINKER_FILE:mlpack>
-          -D MLPACK_LIBDIR=$<TARGET_LINKER_FILE_DIR:mlpack>
-          -D MLPACK_PYXS="${MLPACK_PYXS}"
-          -D OpenMP_CXX_FLAGS="${OpenMP_CXX_FLAGS}"
-          -D DISABLE_CFLAGS="${DISABLE_CFLAGS}"
-          -D CYTHON_INCLUDE_DIRECTORIES="${CYTHON_INCLUDE_DIRECTORIES}"
-          -D CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-          -D OUTPUT_DIR=${CMAKE_BINARY_DIR}
-          -P "${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/ConfigureSetup.cmake"
-      BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
-      COMMENT "Configuring setup.py...")
-  add_dependencies(python_configure python_copy)
-  add_dependencies(python_configured python_configure)
-
-  # Append the package version to __init__.py after all the imports are loaded.
-  file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
-  "__version__='${PACKAGE_VERSION}'\n")
-endif ()
-
-# If we are building Julia bindings, we have to end the 'module' declaration in
-# mlpack.jl
-if (BUILD_JULIA_BINDINGS)
-  file(APPEND
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
-      "\nend\ninclude(\"functions.jl\")\ninclude(\"serialization.jl\")\nend\n")
-endif ()
-
-
-# If we are building Go bindings, we have to end the 'module' declaration in
-# models.go
-if (BUILD_GO_BINDINGS)
-  file(APPEND
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/models.go"
-      "*/\n"
-      "import \"C\"\n\n"
-      "import (\n"
-      "  \"runtime\"\n"
-      "  \"unsafe\"\n"
-      ")\n\n")
-
-  include("${CMAKE_SOURCE_DIR}/CMake/go/AppendModel.cmake")
-  # Read list content.
-  get_property(MODELS GLOBAL PROPERTY GO_MODELS)
-  foreach (models IN LISTS MODELS)
-    append_model(
-        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/models.go"
-         ${models})
-  endforeach()
-endif()
+# If we are building R-bindings, we have to run some setup after we
+# recurse into methods/.  If not, this macro is empty.
+post_r_setup()
 
 # If we are building Markdown documentation, we have to run some setup after we
 # recurse into methods/.  If not, this function is empty.

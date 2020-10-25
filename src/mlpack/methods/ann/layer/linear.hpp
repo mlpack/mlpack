@@ -52,6 +52,18 @@ class Linear
          const size_t outSize,
          RegularizerType regularizer = RegularizerType());
 
+  //! Copy constructor.
+  Linear(const Linear& layer);
+
+  //! Move constructor.
+  Linear(Linear&&);
+
+  //! Copy assignment operator.
+  Linear& operator=(const Linear& layer);
+
+  //! Move assignment operator.
+  Linear& operator=(Linear&& layer);
+
   /*
    * Reset the layer parameter.
    */
@@ -124,8 +136,21 @@ class Linear
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the weight of the layer.
+  OutputDataType const& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  OutputDataType& Weight() { return weight; }
+
+  //! Get the bias of the layer.
+  OutputDataType const& Bias() const { return bias; }
   //! Modify the bias weights of the layer.
-  arma::mat& Bias() { return bias; }
+  OutputDataType& Bias() { return bias; }
+
+  //! Get the size of the weights.
+  size_t WeightSize() const
+  {
+    return (inSize * outSize) + outSize;
+  }
 
   /**
    * Serialize the layer
