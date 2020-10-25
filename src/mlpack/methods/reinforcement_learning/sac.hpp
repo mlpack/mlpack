@@ -100,19 +100,9 @@ class SAC
    * object, you can directly pass the parameter, as the constructor takes
    * a reference. This avoids unnecessary copy.
    *
-   * @param environment Reinforcement learning task.
+   * @param other SAC object to copy.
    */
   SAC(const SAC& other);
-
-  /**
-   * Delete copy constructor.
-   */
-  SAC(SAC const&) = delete;
-
-  /**
-   * Enable move constructor by default.
-   */
-  SAC(SAC&&) = default;
 
   /**
     * Clean memory.
