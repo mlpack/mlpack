@@ -144,7 +144,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
  * Checking two options of specifying responses (extra row in train matrix and
  * extra parameter) and ensuring that predictions are the same.
  */
-TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRResponsesRepresentationTest",
+TEST_CASE_METHOD(LogisticRegressionTestFixture,
+                 "LRResponsesRepresentationTest",
                  "[LogisticRegressionMainTest][BindingTests]")
 {
   arma::mat trainX1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
@@ -308,7 +309,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRWrongDimOfTestData2",
 /**
   * Ensuring that training responses contain only two classes (0 or 1).
  **/
-TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRTrainWithMoreThanTwoClasses",
+TEST_CASE_METHOD(LogisticRegressionTestFixture, 
+                 "LRTrainWithMoreThanTwoClasses",
                  "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 8;
@@ -333,7 +335,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRTrainWithMoreThanTwoClasses",
 /**
   * Ensuring that max iteration for optimizers is non negative.
  **/
-TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRNonNegativeMaxIterationTest",
+TEST_CASE_METHOD(LogisticRegressionTestFixture, 
+                "LRNonNegativeMaxIterationTest",
                  "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
@@ -453,7 +456,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRMaxIterationsChangeTest",
   // which ensures Max Iteration changes the output model.
   // arma::all function checks that each element of the vector is equal to zero.
   if(arma::all((parameters1-parameters2) == 0))
-    FAIL("Parameter(Max Iteration) has no effect on the output");
+    FAIL("parameters1 and parameters2 are equal.
+         Parameter(Max Iteration) has no effect on the output");
 }
 
 /**
@@ -503,7 +507,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRLambdaChangeTest",
   // which ensures lambda changes the output model.
   // arma::all function checks that each element of the vector is equal to zero.
   if(arma::all((parameters1-parameters2) == 0))
-    FAIL("Parameter(lambda) has no effect on the output");
+    FAIL("parameters1 and parameters2 are equal.
+         Parameter(lambda) has no effect on the output");
 }
 
 /**
@@ -555,7 +560,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRStepSizeChangeTest",
   // which ensures Step Size changes the output model.
   // arma::all function checks that each element of the vector is equal to zero.
   if(arma::all((parameters1-parameters2) == 0))
-    FAIL("Parameter(Step Size) has no effect on the output");
+    FAIL("parameters1 and parameters2 are equal.
+         Parameter(Step Size) has no effect on the output");
 }
 
 /**
@@ -607,7 +613,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LROptimizerChangeTest",
   // ensures that different optimizer converge to different results.
   // arma::all function checks that each element of the vector is equal to zero.
   if(arma::all((parameters1-parameters2) == 0))
-    FAIL("Parameter(Step Size) has no effect on the output");
+    FAIL("parameters1 and parameters2 are equal.
+         Parameter(Step Size) has no effect on the output");
 }
 
 /**
