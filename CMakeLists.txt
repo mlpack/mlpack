@@ -356,7 +356,14 @@ endif()
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
-set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
+
+
+if(CMAKE_CROSSCOMPILING)
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OPENBLAS_LIBRARIES} /usr/aarch64-linux-gnu/lib64/libgfortran.a)
+else()
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARY})
+endif()
+
 
 # Find stb_image.h and stb_image_write.h.
 find_package(StbImage)
