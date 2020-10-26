@@ -160,6 +160,9 @@ class BatchNorm
   //! Get the average parameter.
   bool Average() const { return average; }
 
+  //! Get size of weights.
+  size_t WeightSize() const { return 2 * size; }
+
   /**
    * Serialize the layer
    */
