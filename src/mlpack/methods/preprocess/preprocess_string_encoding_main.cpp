@@ -2,7 +2,7 @@
  * @file preprocess_string_encoding_main.cpp
  * @author Jeffin Sam
  *
- * A CLI executable to encode string dataset.
+ * A IO executable to encode string dataset.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -11,19 +11,26 @@
  */
 
 #include "mlpack/methods/preprocess/preprocess_string_util.hpp"
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/string_encoding.hpp>
 #include <mlpack/core/data/tokenizers/split_by_any_of.hpp>
 #include <mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp>
 #include <mlpack/core/data/string_encoding_policies/bag_of_words_encoding_policy.hpp>
 #include <mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp>
 
-PROGRAM_INFO("preprocess_string_encoding",
-    // Short description.
+
+// Program Name.
+BINDING_NAME("preprocess_string_encoding");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A utility to encode string data. This utility can encode string using "
-    "DictionaryEncoding, BagOfWordsEncoding and TfIdfEncoding methods.",
-    // Long description.
+    "DictionaryEncoding, BagOfWordsEncoding and TfIdfEncoding methods.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes a dataset and the dimension and arguments and "
     "encodes string dataset according to arguments given."
     "\n\n"
@@ -34,19 +41,22 @@ PROGRAM_INFO("preprocess_string_encoding",
     " Following arguments may be given " + PRINT_PARAM_STRING("encoding_type") +
     " to encode the dataset using a specific encoding type and " + " Also the "
     "dimension which contains the string dataset " +
-    PRINT_PARAM_STRING("dimension") + "."
-    "\n\n"
+    PRINT_PARAM_STRING("dimension") + ".");
+
+// Example.
+BINDING_EXAMPLE(
     "So, a simple example where we want to encode string dataset " +
     PRINT_DATASET("X") + ", which is having string data in its 3 Column,"
     " using DictionaryEncoding as encoding type."
     "\n\n" +
     PRINT_CALL("preprocess_string", "actual_dataset", "X",
-        "preprocess_dataset", "X", "dimension", 3, "encoding_type",
-        "DictionaryEncoding") +
-    "\n\n",
-    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
-    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
-    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
+    "preprocess_dataset", "X", "dimension", 3, "encoding_type",
+    "DictionaryEncoding"));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
+BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
 
 PARAM_STRING_IN_REQ("actual_dataset", "File containing the reference dataset.",
     "t");
@@ -126,11 +136,11 @@ static void mlpackMain()
 {
   // Parse command line options.
   // Extracting the filename
-  const string filename = CLI::GetParam<string>("actual_dataset");
+  const string filename = IO::GetParam<string>("actual_dataset");
   string columnDelimiter;
-  if (CLI::HasParam("column_delimiter"))
+  if (IO::HasParam("column_delimiter"))
   {
-    columnDelimiter = CLI::GetParam<string>("column_delimiter");
+    columnDelimiter = IO::GetParam<string>("column_delimiter");
     // Allow only 3 delimiters.
     RequireParamValue<string>("column_delimiter", [](const string del)
         { return del == "\t" || del == "," || del == " "; }, true,
@@ -140,7 +150,7 @@ static void mlpackMain()
     columnDelimiter = data::ColumnDelimiterType(filename);
 
   // Parsing the given dimensions.
-  vector<string> dimensionsParam = CLI::GetParam<vector<string>>("dimensions");
+  vector<string> dimensionsParam = IO::GetParam<vector<string>>("dimensions");
   vector<size_t> dimensions = data::GetColumnIndices(dimensionsParam);
   vector<vector<string>> dataset = data::CreateDataset(filename,
       columnDelimiter[0]);
@@ -165,18 +175,18 @@ static void mlpackMain()
   }
 
   unordered_map<size_t , arma::mat> encodedResult;
-  const string delimiters = CLI::GetParam<string> ("delimiter");
+  const string delimiters = IO::GetParam<string> ("delimiter");
   data::SplitByAnyOf tokenizer(delimiters);
 
 
-  if (CLI::HasParam("encoding_type"))
+  if (IO::HasParam("encoding_type"))
   {
     RequireParamValue<string>("encoding_type", [](const string et)
         { return et == "DictionaryEncoding" || et == "BagOfWordsEncoding"
         || et == "TfIdfEncoding"; }, true, "Encoding Type should be either"
         " BagOfWordsEncoding or DictionaryEncoding or TfIdfEncoding ");
   }
-  const string& encodingType = CLI::GetParam<string>("encoding_type");
+  const string& encodingType = IO::GetParam<string>("encoding_type");
   arma::mat output;
   using TokenType = data::SplitByAnyOf::TokenType;
   for (auto& column : nonNumericInput)
@@ -199,8 +209,8 @@ static void mlpackMain()
     else
     {
       // Tfidf Encoding.
-      const bool smoothIdf = CLI::GetParam<bool>("smooth_idf");
-      if (CLI::HasParam("tfidf_encoding_type"))
+      const bool smoothIdf = IO::GetParam<bool>("smooth_idf");
+      if (IO::HasParam("tfidf_encoding_type"))
       {
         RequireParamValue<string>("tfidf_encoding_type", [](const string et)
             { return et == "RawCount" || et == "Binary" || et == "SublinearTf"
@@ -208,7 +218,7 @@ static void mlpackMain()
             " either RawCount, Binary, SublinearTf or TermFrequency ");
       }
       const string tfidfEncodingType =
-          CLI::GetParam<string>("tfidf_encoding_type");
+          IO::GetParam<string>("tfidf_encoding_type");
       using TfTypes = data::TfIdfEncodingPolicy::TfTypes;
       if ("RawCount" == tfidfEncodingType)
       {
@@ -241,7 +251,7 @@ static void mlpackMain()
       }
     }
   }
-  const string outputFilename = CLI::GetParam<string>("preprocess"
+  const string outputFilename = IO::GetParam<string>("preprocess"
       "_dataset");
   WriteOutput(outputFilename, dataset, columnDelimiter,
        dimensions, encodedResult);
