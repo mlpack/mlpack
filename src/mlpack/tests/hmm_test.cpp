@@ -1061,6 +1061,8 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
 
   // Test loglikelihood calculation in an incremental way.
   // It simulates the case where we have a stream of data.
+  // In this case the accumulation of the log scales factor to calculate
+  // the logkielihood value is done outside of the loop
   {
     double loglikelihood = 0;
     arma::vec forwardLogProb;
