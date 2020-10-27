@@ -308,7 +308,8 @@ class HMM
   double EmissionLogScaleFactor(const arma::vec& emissionLogProb,
                        arma::vec& forwardLogProb) const;
   /**
-   * Compute the log-likelihood of the given emission probability up to time t
+   * Compute the log-likelihood of the given emission probability up to time t,
+   * storing the result in logLikelihood.
    * This is meant for incremental or streaming computation of the
    * log-likelihood of a sequence. For the first data point, provide an empty
    * forwardLogProb vector.
@@ -341,7 +342,8 @@ class HMM
   double LogScaleFactor(const arma::vec &data,
                        arma::vec& forwardLogProb) const;
   /**
-   * Compute the log-likelihood of the given data up to time t
+   * Compute the log-likelihood of the given data up to time t, storing the
+   * result in logLikelihood.
    * This is meant for incremental or streaming computation of the
    * log-likelihood of a sequence. For the first data point, provide an empty
    * forwardLogProb vector.
