@@ -1,6 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
   * HMM: calculate likelihood for data stream with/without pre-calculated emission probability
+
+### mlpack 3.4.2
+###### 2020-10-26
   * Added Mean Absolute Percentage Error.
 
   * Added Softmin activation function as layer in ann/layer.
