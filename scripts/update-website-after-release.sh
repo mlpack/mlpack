@@ -51,8 +51,9 @@ sed --in-place 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g
 sed --in-place 's/Version [0-9]\.[0-9]\.[0-9]/Version '$MAJOR'.'$MINOR'.'$PATCH'/g' html/index.html;
 sed --in-place 's/[0-9]\.[0-9]\.[0-9]/'$MAJOR'.'$MINOR'.'$PATCH'/g' html/getstarted.html;
 sed --in-place 's/[0-9]\.[0-9]\.[0-9]/'$MAJOR'.'$MINOR'.'$PATCH'/g' html/config/install.md;
+git add html/index.html html/getstarted.html html/config/install.md;
 
-git commit -m "Update links to latest stable version."
+git commit -m "Update links to latest stable version.";
 
 git add files/mlpack-$MAJOR.$MINOR.$PATCH.tar.gz;
 git commit -m "Release version $MAJOR.$MINOR.$PATCH.";
