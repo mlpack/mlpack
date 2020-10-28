@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # This script is used to update the website after an mlpack release is made.
 # Push access to the mlpack.org website repository is needed.  Generally, this
