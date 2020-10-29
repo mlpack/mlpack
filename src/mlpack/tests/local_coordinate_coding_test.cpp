@@ -151,7 +151,7 @@ TEST_CASE("LocalCoordinateCodingSerializationTest",
   // Check the parameters, too.
 
   REQUIRE(lcc.Atoms() == lccXml.Atoms());
-  REQUIRE(lcc.Atoms() == lccText.Atoms());
+  REQUIRE(lcc.Atoms() == lccJson.Atoms());
   REQUIRE(lcc.Atoms() == lccBinary.Atoms());
 
   REQUIRE(lcc.Tolerance() == Approx(lccXml.Tolerance()).epsilon(1e-7));
@@ -159,11 +159,11 @@ TEST_CASE("LocalCoordinateCodingSerializationTest",
   REQUIRE(lcc.Tolerance() == Approx(lccBinary.Tolerance()).epsilon(1e-7));
 
   REQUIRE(lcc.Lambda() == Approx(lccXml.Lambda()).epsilon(1e-7));
-  REQUIRE(lcc.Lambda() == Approx(lccText.Lambda()).epsilon(1e-7));
+  REQUIRE(lcc.Lambda() == Approx(lccJson.Lambda()).epsilon(1e-7));
   REQUIRE(lcc.Lambda() == Approx(lccBinary.Lambda()).epsilon(1e-7));
 
   REQUIRE(lcc.MaxIterations() == lccXml.MaxIterations());
-  REQUIRE(lcc.MaxIterations() == lccText.MaxIterations());
+  REQUIRE(lcc.MaxIterations() == lccJson.MaxIterations());
   REQUIRE(lcc.MaxIterations() == lccBinary.MaxIterations());
 }
 
