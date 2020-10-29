@@ -151,10 +151,10 @@ class DatasetMapper
    * Serialize the dataset information.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(types);
-    ar & BOOST_SERIALIZATION_NVP(maps);
+    ar(CEREAL_NVP(types));
+    ar(CEREAL_NVP(maps));
   }
 
   //! Return the policy of the mapper.

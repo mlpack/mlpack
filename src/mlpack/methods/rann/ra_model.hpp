@@ -352,7 +352,7 @@ class RAModel
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   //! Expose the dataset.
   const arma::mat& Dataset() const;

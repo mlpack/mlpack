@@ -21,21 +21,20 @@ namespace regression {
  * Serialize the Bayesian linear regression model.
  */
 template<typename Archive>
-void BayesianLinearRegression::serialize(Archive& ar,
-                                         const unsigned int /* version */)
+void BayesianLinearRegression::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(centerData);
-  ar & BOOST_SERIALIZATION_NVP(scaleData);
-  ar & BOOST_SERIALIZATION_NVP(nIterMax);
-  ar & BOOST_SERIALIZATION_NVP(tol);
-  ar & BOOST_SERIALIZATION_NVP(dataOffset);
-  ar & BOOST_SERIALIZATION_NVP(dataScale);
-  ar & BOOST_SERIALIZATION_NVP(responsesOffset);
-  ar & BOOST_SERIALIZATION_NVP(alpha);
-  ar & BOOST_SERIALIZATION_NVP(beta);
-  ar & BOOST_SERIALIZATION_NVP(gamma);
-  ar & BOOST_SERIALIZATION_NVP(omega);
-  ar & BOOST_SERIALIZATION_NVP(matCovariance);
+  ar(CEREAL_NVP(centerData));
+  ar(CEREAL_NVP(scaleData));
+  ar(CEREAL_NVP(nIterMax));
+  ar(CEREAL_NVP(tol));
+  ar(CEREAL_NVP(dataOffset));
+  ar(CEREAL_NVP(dataScale));
+  ar(CEREAL_NVP(responsesOffset));
+  ar(CEREAL_NVP(alpha));
+  ar(CEREAL_NVP(beta));
+  ar(CEREAL_NVP(gamma));
+  ar(CEREAL_NVP(omega));
+  ar(CEREAL_NVP(matCovariance));
 }
 
 } // namespace regression

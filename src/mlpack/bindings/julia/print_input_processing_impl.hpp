@@ -27,6 +27,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)

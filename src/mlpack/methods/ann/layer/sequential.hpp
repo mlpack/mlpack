@@ -188,7 +188,7 @@ class Sequential
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Parameter which indicates if the modules should be exposed.
@@ -259,25 +259,6 @@ using Residual = Sequential<
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the Sequential class.
-namespace boost {
-namespace serialization {
-
-template <
-    typename InputDataType,
-    typename OutputDataType,
-    bool Residual,
-    typename... CustomLayers
->
-struct version<mlpack::ann::Sequential<
-    InputDataType, OutputDataType, Residual, CustomLayers...>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "sequential_impl.hpp"

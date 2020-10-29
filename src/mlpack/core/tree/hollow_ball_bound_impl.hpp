@@ -427,21 +427,20 @@ template<typename TMetricType, typename ElemType>
 template<typename Archive>
 void HollowBallBound<TMetricType, ElemType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(radii);
-  ar & BOOST_SERIALIZATION_NVP(center);
-  ar & BOOST_SERIALIZATION_NVP(hollowCenter);
-
-  if (Archive::is_loading::value)
+  ar(CEREAL_NVP(radii));
+  ar(CEREAL_NVP(center));
+  ar(CEREAL_NVP(hollowCenter));
+  ar(CEREAL_POINTER(metric));
+  if (cereal::is_loading<Archive>())
   {
     // If we're loading, delete the local metric since we'll have a new one.
     if (ownsMetric)
       delete metric;
-  }
 
-  ar & BOOST_SERIALIZATION_NVP(metric);
-  ar & BOOST_SERIALIZATION_NVP(ownsMetric);
+    ownsMetric = true;
+  }
 }
 
 } // namespace bound

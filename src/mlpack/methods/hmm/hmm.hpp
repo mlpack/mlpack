@@ -357,16 +357,13 @@ class HMM
    * Load the object.
    */
   template<typename Archive>
-  void load(Archive& ar, const unsigned int version);
+  void load(Archive& ar, const uint32_t version);
 
   /**
    * Save the object.
    */
   template<typename Archive>
-  void save(Archive& ar, const unsigned int version) const;
-
-  BOOST_SERIALIZATION_SPLIT_MEMBER();
-
+  void save(Archive& ar, const uint32_t version) const;
 
  protected:
   // Helper functions.

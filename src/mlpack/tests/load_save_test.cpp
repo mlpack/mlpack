@@ -343,7 +343,7 @@ TEST_CASE("SaveSparseTSVTest", "[LoadSaveTest]")
 }
 
 /**
- * Make sure a TSV is saved correctly for a sparse matrix
+ * Make sure a TXT is saved correctly for a sparse matrix
  */
 TEST_CASE("SaveSparseTXTTest", "[LoadSaveTest]")
 {
@@ -1252,8 +1252,8 @@ class TestInner
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(c);
-    ar & BOOST_SERIALIZATION_NVP(s);
+    ar(CEREAL_NVP(c));
+    ar(CEREAL_NVP(s));
   }
 
   // Public members for testing.
@@ -1269,10 +1269,10 @@ class Test
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(x);
-    ar & BOOST_SERIALIZATION_NVP(y);
-    ar & BOOST_SERIALIZATION_NVP(ina);
-    ar & BOOST_SERIALIZATION_NVP(inb);
+    ar(CEREAL_NVP(x));
+    ar(CEREAL_NVP(y));
+    ar(CEREAL_NVP(ina));
+    ar(CEREAL_NVP(inb));
   }
 
   // Public members for testing.
@@ -1329,16 +1329,16 @@ TEST_CASE("LoadXMLTest", "[LoadSaveTest]")
 /**
  * Make sure we can load and save.
  */
-TEST_CASE("LoadTextTest", "[LoadSaveTest]")
+TEST_CASE("LoadJsonTest", "[LoadSaveTest]")
 {
   Test x(10, 12);
 
-  REQUIRE(data::Save("test.txt", "x", x, false) == true);
+  REQUIRE(data::Save("test.json", "x", x, false) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.txt", "x", y, false) == true);
+  REQUIRE(data::Load("test.json", "x", y, false) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
