@@ -90,7 +90,7 @@ using namespace std;
 static void WriteOutput(const string& outputFilename,
                         const vector<vector<string>>& dataset,
                         const string& columnDelimiter,
-                        const unordered_set<size_t>& dimensions,
+                        const vector<size_t>& dimensions,
                         const unordered_map<size_t, arma::mat>& encodedResult)
 {
   ofstream fout(outputFilename, ios::trunc);
@@ -151,7 +151,7 @@ static void mlpackMain()
 
   // Parsing the given dimensions.
   vector<string> dimensionsParam = IO::GetParam<vector<string>>("dimensions");
-  vector<size_t> dimensions = data::GetColumnIndices(dimensionsParam);
+  const vector<size_t> dimensions = data::GetColumnIndices(dimensionsParam);
   vector<vector<string>> dataset = data::CreateDataset(filename,
       columnDelimiter[0]);
 
@@ -189,7 +189,7 @@ static void mlpackMain()
   const string& encodingType = IO::GetParam<string>("encoding_type");
   arma::mat output;
   using TokenType = data::SplitByAnyOf::TokenType;
-  for (auto& column : nonNumericInput)
+  for (auto& column : textInput)
   {
     if (encodingType == "DictionaryEncoding")
     {
