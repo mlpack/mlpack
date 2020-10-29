@@ -470,13 +470,13 @@ TEST_CASE("StringEncodingDictionarySerialization", "[StringEncodingTest]")
     }
   }
 
-  DictionaryType xmlDictionary, textDictionary, binaryDictionary;
+  DictionaryType xmlDictionary, jsonDictionary, binaryDictionary;
 
-  SerializeObjectAll(dictionary, xmlDictionary, textDictionary,
+  SerializeObjectAll(dictionary, xmlDictionary, jsonDictionary,
       binaryDictionary);
 
   CheckDictionaries(dictionary, xmlDictionary);
-  CheckDictionaries(dictionary, textDictionary);
+  CheckDictionaries(dictionary, jsonDictionary);
   CheckDictionaries(dictionary, binaryDictionary);
 }
 
@@ -494,20 +494,20 @@ TEST_CASE("SplitByAnyOfDictionaryEncodingSerialization", "[StringEncodingTest]")
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
-  EncoderType xmlEncoder, textEncoder, binaryEncoder;
-  arma::mat xmlOutput, textOutput, binaryOutput;
+  EncoderType xmlEncoder, jsonEncoder, binaryEncoder;
+  arma::mat xmlOutput, jsonOutput, binaryOutput;
 
-  SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
+  SerializeObjectAll(encoder, xmlEncoder, jsonEncoder, binaryEncoder);
 
   CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
-  CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), jsonEncoder.Dictionary());
   CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
 
   xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
-  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
+  jsonEncoder.Encode(stringEncodingInput, jsonOutput, tokenizer);
   binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
 
-  CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
+  CheckMatrices(output, xmlOutput, jsonOutput, binaryOutput);
 }
 
 /**
@@ -524,20 +524,20 @@ TEST_CASE("CharExtractDictionaryEncodingSerialization", "[StringEncodingTest]")
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
-  EncoderType xmlEncoder, textEncoder, binaryEncoder;
-  arma::mat xmlOutput, textOutput, binaryOutput;
+  EncoderType xmlEncoder, jsonEncoder, binaryEncoder;
+  arma::mat xmlOutput, jsonOutput, binaryOutput;
 
-  SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
+  SerializeObjectAll(encoder, xmlEncoder, jsonEncoder, binaryEncoder);
 
   CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
-  CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), jsonEncoder.Dictionary());
   CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
 
   xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
-  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
+  jsonEncoder.Encode(stringEncodingInput, jsonOutput, tokenizer);
   binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
 
-  CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
+  CheckMatrices(output, xmlOutput, jsonOutput, binaryOutput);
 }
 
 /**
@@ -1408,18 +1408,18 @@ TEST_CASE("SplitByAnyOfTfIdfEncodingSerialization", "[StringEncodingTest]")
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
-  EncoderType xmlEncoder, textEncoder, binaryEncoder;
-  arma::mat xmlOutput, textOutput, binaryOutput;
+  EncoderType xmlEncoder, jsonEncoder, binaryEncoder;
+  arma::mat xmlOutput, jsonOutput, binaryOutput;
 
-  SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
+  SerializeObjectAll(encoder, xmlEncoder, jsonEncoder, binaryEncoder);
 
   CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
-  CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), jsonEncoder.Dictionary());
   CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
 
   xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
-  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
+  jsonEncoder.Encode(stringEncodingInput, jsonOutput, tokenizer);
   binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
 
-  CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
+  CheckMatrices(output, xmlOutput, jsonOutput, binaryOutput);
 }

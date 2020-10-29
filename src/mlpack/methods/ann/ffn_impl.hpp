@@ -23,8 +23,6 @@
 #include "visitor/set_input_height_visitor.hpp"
 #include "visitor/set_input_width_visitor.hpp"
 
-#include <boost/serialization/variant.hpp>
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -541,44 +539,27 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename Archive>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int version)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(width);
-  ar & BOOST_SERIALIZATION_NVP(height);
+  ar(CEREAL_NVP(parameter));
+  ar(CEREAL_NVP(width));
+  ar(CEREAL_NVP(height));
 
-  // Early versions used the currentInput member, which is now no longer needed.
-  if (version < 2)
-  {
-    arma::mat currentInput; // Temporary matrix to output.
-    ar & BOOST_SERIALIZATION_NVP(currentInput);
-  }
-
-  // Earlier versions of the FFN code did not serialize whether or not the model
-  // was reset.
-  if (version > 0)
-  {
-    ar & BOOST_SERIALIZATION_NVP(reset);
-  }
+  ar(CEREAL_NVP(reset));
 
   // Be sure to clear other layers before loading.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     std::for_each(network.begin(), network.end(),
         boost::apply_visitor(deleteVisitor));
     network.clear();
   }
 
-  ar & BOOST_SERIALIZATION_NVP(network);
+  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
 
   // If we are loading, we need to initialize the weights.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
-    // The behavior in earlier versions was to always assume the weights needed
-    // to be reset.
-    if (version == 0)
-      reset = false;
-
     size_t offset = 0;
     for (size_t i = 0; i < network.size(); ++i)
     {

@@ -554,12 +554,12 @@ template<typename Archive>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 BinarySpaceTree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
     BinarySpaceTree() // Create an empty BinarySpaceTree.
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
   // can serialize from it.
-  ar >> BOOST_SERIALIZATION_NVP(*this);
+  ar(CEREAL_NVP(*this));
 }
 
 /**
@@ -1032,7 +1032,7 @@ UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate)
     boundToUpdate |= dataset->cols(begin, begin + count - 1);
 }
 
-// Default constructor (private), for boost::serialization.
+// Default constructor (private), for cereal.
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -1065,10 +1065,10 @@ template<typename MetricType,
              class SplitType>
 template<typename Archive>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-    serialize(Archive& ar, const unsigned int /* version */)
+    serialize(Archive& ar, const uint32_t /* version */)
 {
   // If we're loading, and we have children, they need to be deleted.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
       delete left;
@@ -1082,32 +1082,57 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     right = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(begin);
-  ar & BOOST_SERIALIZATION_NVP(count);
-  ar & BOOST_SERIALIZATION_NVP(bound);
-  ar & BOOST_SERIALIZATION_NVP(stat);
+  ar(CEREAL_NVP(begin));
+  ar(CEREAL_NVP(count));
+  ar(CEREAL_NVP(bound));
+  ar(CEREAL_NVP(stat));
 
-  ar & BOOST_SERIALIZATION_NVP(parentDistance);
-  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
-  ar & BOOST_SERIALIZATION_NVP(dataset);
+  ar(CEREAL_NVP(parentDistance));
+  ar(CEREAL_NVP(furthestDescendantDistance));
 
-  // Save children last; otherwise boost::serialization gets confused.
+  // Save children last.
   bool hasLeft = (left != NULL);
   bool hasRight = (right != NULL);
+  bool hasParent = (parent != NULL);
 
-  ar & BOOST_SERIALIZATION_NVP(hasLeft);
-  ar & BOOST_SERIALIZATION_NVP(hasRight);
+  ar(CEREAL_NVP(hasLeft));
+  ar(CEREAL_NVP(hasRight));
+  ar(CEREAL_NVP(hasParent));
   if (hasLeft)
-    ar & BOOST_SERIALIZATION_NVP(left);
+    ar(CEREAL_POINTER(left));
   if (hasRight)
-    ar & BOOST_SERIALIZATION_NVP(right);
+    ar(CEREAL_POINTER(right));
+  if (!hasParent)
+  {
+    MatType*& datasetTemp = const_cast<MatType*&>(dataset);
+    ar(CEREAL_POINTER(datasetTemp));
+  }
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
       left->parent = this;
     if (right)
       right->parent = this;
+  }
+  // If we are the root, we need to restore the dataset pointer throughout
+  if (!hasParent)
+  {
+    std::stack<BinarySpaceTree*> stack;
+    if (left)
+      stack.push(left);
+    if (right)
+      stack.push(right);
+    while (!stack.empty())
+    {
+      BinarySpaceTree* node = stack.top();
+      stack.pop();
+      node->dataset = dataset;
+      if (node->left)
+        stack.push(node->left);
+      if (node->right)
+       stack.push(node->right); 
+    }
   }
 }
 

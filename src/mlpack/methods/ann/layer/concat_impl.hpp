@@ -268,22 +268,21 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void Concat<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(model);
-  ar & BOOST_SERIALIZATION_NVP(run);
+  ar(CEREAL_NVP(model));
+  ar(CEREAL_NVP(run));
 
   // Do we have to load or save a model?
   if (model)
   {
     // Clear memory first, if needed.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       std::for_each(network.begin(), network.end(),
           boost::apply_visitor(deleteVisitor));
     }
-
-    ar & BOOST_SERIALIZATION_NVP(network);
+    ar(CEREAL_VECTOR_VARIANT_POINTER(network));
   }
 }
 

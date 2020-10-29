@@ -30,7 +30,7 @@ to build mlpack on Windows, see \ref build_windows (alternatively, you can read
 is based on older versions).
 
 You can download the latest mlpack release from here:
-<a href="https://www.mlpack.org/files/mlpack-3.4.1.tar.gz">mlpack-3.4.1</a>
+<a href="https://www.mlpack.org/files/mlpack-3.4.2.tar.gz">mlpack-3.4.2</a>
 
 @section build_simple Simple Linux build instructions
 
@@ -38,9 +38,9 @@ Assuming all dependencies are installed in the system, you can run the commands
 below directly to build and install mlpack.
 
 @code
-$ wget https://www.mlpack.org/files/mlpack-3.4.1.tar.gz
-$ tar -xvzpf mlpack-3.4.1.tar.gz
-$ mkdir mlpack-3.4.1/build && cd mlpack-3.4.1/build
+$ wget https://www.mlpack.org/files/mlpack-3.4.2.tar.gz
+$ tar -xvzpf mlpack-3.4.2.tar.gz
+$ mkdir mlpack-3.4.2/build && cd mlpack-3.4.2/build
 $ cmake ../
 $ make -j4  # The -j is the number of cores you want to use for a build.
 $ sudo make install
@@ -65,8 +65,8 @@ configure mlpack.
 First we should unpack the mlpack source and create a build directory.
 
 @code
-$ tar -xvzpf mlpack-3.4.1.tar.gz
-$ cd mlpack-3.4.1
+$ tar -xvzpf mlpack-3.4.2.tar.gz
+$ cd mlpack-3.4.2
 $ mkdir build
 @endcode
 
@@ -78,8 +78,8 @@ mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
  - Armadillo >= 8.400.0 (with LAPACK support)
- - Boost (math_c99, serialization, unit_test_framework, heap,
-          spirit) >= 1.58
+ - Boost (math_c99, unit_test_framework, heap, spirit) >= 1.58
+ - cereal >= 1.1.2
  - ensmallen >= 2.10.0 (will be downloaded if not found)
 
 In addition, mlpack has the following optional dependencies:
@@ -99,7 +99,7 @@ In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be
 installed through apt:
 
 @code
-# apt-get install libboost-math-dev libboost-test-dev libboost-serialization-dev
+# apt-get install libboost-math-dev libboost-test-dev libcereal-dev
   libarmadillo-dev binutils-dev python3-pandas python3-numpy cython3
   python3-setuptools
 @endcode
@@ -124,7 +124,7 @@ On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 @code
 # dnf install boost-devel boost-test boost-math armadillo-devel binutils-devel 
   python3-Cython python3-setuptools python3-numpy python3-pandas ensmallen-devel 
-  stbi-devel
+  stbi-devel cereal-devel
 @endcode
 
 (It's also possible to use python3 packages from the package manager---mlpack

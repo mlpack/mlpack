@@ -304,18 +304,18 @@ TEST_CASE("FastMKSSerializationTest", "[FastMKSTest]")
 
   SerializeObjectAll(f, fXml, fText, fBinary);
 
-  arma::mat kernels, xmlKernels, textKernels, binaryKernels;
-  arma::Mat<size_t> indices, xmlIndices, textIndices, binaryIndices;
+  arma::mat kernels, xmlKernels, jsonKernels, binaryKernels;
+  arma::Mat<size_t> indices, xmlIndices, jsonIndices, binaryIndices;
 
   arma::mat querySet = arma::randu<arma::mat>(5, 100);
 
   f.Search(querySet, 5, indices, kernels);
   fXml.Search(querySet, 5, xmlIndices, xmlKernels);
-  fText.Search(querySet, 5, textIndices, textKernels);
+  fText.Search(querySet, 5, jsonIndices, jsonKernels);
   fBinary.Search(querySet, 5, binaryIndices, binaryKernels);
 
-  CheckMatrices(indices, xmlIndices, textIndices, binaryIndices);
-  CheckMatrices(kernels, xmlKernels, textKernels, binaryKernels);
+  CheckMatrices(indices, xmlIndices, jsonIndices, binaryIndices);
+  CheckMatrices(kernels, xmlKernels, jsonKernels, binaryKernels);
 }
 
 // Test serialization with a polynomial kernel.
@@ -326,8 +326,8 @@ TEST_CASE("PolynomialSerializationTest", "[FastMKSTest]")
 
   FastMKS<PolynomialKernel> f(dataset, *pk);
 
-  arma::mat kernels, xmlKernels, textKernels, binaryKernels;
-  arma::Mat<size_t> indices, xmlIndices, textIndices, binaryIndices;
+  arma::mat kernels, xmlKernels, jsonKernels, binaryKernels;
+  arma::Mat<size_t> indices, xmlIndices, jsonIndices, binaryIndices;
 
   arma::mat querySet = arma::randu<arma::mat>(5, 100);
   f.Search(querySet, 5, indices, kernels);
@@ -341,11 +341,11 @@ TEST_CASE("PolynomialSerializationTest", "[FastMKSTest]")
   SerializeObjectAll(f, fXml, fText, fBinary);
 
   fXml.Search(querySet, 5, xmlIndices, xmlKernels);
-  fText.Search(querySet, 5, textIndices, textKernels);
+  fText.Search(querySet, 5, jsonIndices, jsonKernels);
   fBinary.Search(querySet, 5, binaryIndices, binaryKernels);
 
-  CheckMatrices(indices, xmlIndices, textIndices, binaryIndices);
-  CheckMatrices(kernels, xmlKernels, textKernels, binaryKernels);
+  CheckMatrices(indices, xmlIndices, jsonIndices, binaryIndices);
+  CheckMatrices(kernels, xmlKernels, jsonKernels, binaryKernels);
 }
 
 // Make sure that we get an exception if we try to build the wrong FastMKSModel.

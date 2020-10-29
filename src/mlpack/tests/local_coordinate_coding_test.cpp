@@ -135,20 +135,21 @@ TEST_CASE("LocalCoordinateCodingSerializationTest",
   mat codes;
   lcc.Encode(Y, codes);
 
-  LocalCoordinateCoding lccXml(50, 0.1), lccText(12, 0.0), lccBinary(0, 0.0);
-  SerializeObjectAll(lcc, lccXml, lccText, lccBinary);
+  LocalCoordinateCoding lccXml(50, 0.1), lccJson(12, 0.0), lccBinary(0, 0.0);
+  SerializeObjectAll(lcc, lccXml, lccJson, lccBinary);
 
-  CheckMatrices(lcc.Dictionary(), lccXml.Dictionary(), lccText.Dictionary(),
+  CheckMatrices(lcc.Dictionary(), lccXml.Dictionary(), lccJson.Dictionary(),
       lccBinary.Dictionary());
 
-  mat xmlCodes, textCodes, binaryCodes;
+  mat xmlCodes, jsonCodes, binaryCodes;
   lccXml.Encode(Y, xmlCodes);
-  lccText.Encode(Y, textCodes);
+  lccJson.Encode(Y, jsonCodes);
   lccBinary.Encode(Y, binaryCodes);
 
-  CheckMatrices(codes, xmlCodes, textCodes, binaryCodes);
+  CheckMatrices(codes, xmlCodes, jsonCodes, binaryCodes);
 
   // Check the parameters, too.
+
   REQUIRE(lcc.Atoms() == lccXml.Atoms());
   REQUIRE(lcc.Atoms() == lccText.Atoms());
   REQUIRE(lcc.Atoms() == lccBinary.Atoms());

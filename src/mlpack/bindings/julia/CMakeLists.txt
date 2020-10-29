@@ -109,8 +109,8 @@ if (BUILD_JULIA_BINDINGS)
       "\"\"\"\n"
       "    serialize_bin(stream::IO, model)\n"
       "\n"
-      "Serialize an mlpack model `model` in the binary boost::serialization\n"
-      "format to the given `stream`.  Example:\n"
+      "Serialize an mlpack model `model` in the binary cereal format to the \n"
+      "given `stream`.  Example:\n"
       "\n"
       "```julia\n"
       "_, model, _, _ = mlpack.logistic_regression(training=x, labels=y)\n"
@@ -134,10 +134,10 @@ if (BUILD_JULIA_BINDINGS)
       "lr_model = mlpack.deserialize_bin(stream, LogisticRegression)\n"
       "```\n"
       "\n"
-      "Only use this if you have saved the model in the boost::serialization\n"
-      "binary format using `serialize_bin()` or an mlpack binding in another\n"
-      "language!  If you used `Serialization.serialize()` to serialize your\n"
-      "model, then use `Serialization.deserialize()` to deserialize it.\n"
+      "Only use this if you have saved the model in the cereal binary format \n"
+      "using `serialize_bin()` or an mlpack binding in another language!  If \n"
+      "you used `Serialization.serialize()` to serialize your model, then use\n"
+      "`Serialization.deserialize()` to deserialize it.\n"
       "\n"
       "Then, the returned model can be passed to appropriate mlpack functions\n"
       "for machine learning tasks.\n"
@@ -197,9 +197,9 @@ if (BUILD_JULIA_BINDINGS)
           -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_${name}.cpp
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
           -DMLPACK_JL_LIB_SUFFIX=${CMAKE_SHARED_LIBRARY_SUFFIX}
-          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake
+          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/generate_jl.cpp.in
-              ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake)
+              ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
 
   add_executable(generate_jl_${name}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_${name}.cpp
