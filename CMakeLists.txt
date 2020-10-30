@@ -444,7 +444,6 @@ set(Boost_ADDITIONAL_VERSIONS
 set(Boost_NO_BOOST_CMAKE 1)
 find_package(Boost "${BOOST_VERSION}"
     COMPONENTS
-      unit_test_framework
     REQUIRED
 )
 

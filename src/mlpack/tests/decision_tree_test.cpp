@@ -17,7 +17,7 @@
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 
 #include "catch.hpp"
-#include "serialization.hpp"
+#include "serialization_catch.hpp"
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
@@ -776,7 +776,7 @@ TEST_CASE("CategoricalBuildTestWithWeight", "[DecisionTreeTest]")
 /**
  * Make sure that when we ask for a decision stump, we get one.
  */
-TEST_CASE("DecisionStumpTest", "[DecisionTreeTest]")
+TEST_CASE("DTDecisionStumpTest", "[DecisionTreeTest]")
 {
   // Use a random dataset.
   arma::mat dataset(10, 1000, arma::fill::randu);

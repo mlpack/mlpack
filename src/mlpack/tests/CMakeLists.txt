@@ -1,45 +1,5 @@
 # mlpack test executable.
 add_executable(mlpack_test
-  callback_test.cpp
-  drusilla_select_test.cpp
-  emst_test.cpp
-  fastmks_test.cpp
-  facilities_test.cpp
-  hpt_test.cpp
-  hyperplane_test.cpp
-  init_rules_test.cpp
-  linear_svm_test.cpp
-  local_coordinate_coding_test.cpp
-  log_test.cpp
-  logistic_regression_test.cpp
-  lsh_test.cpp
-  matrix_completion_test.cpp
-  maximal_inputs_test.cpp
-  mlpack_test.cpp
-  mock_categorical_data.hpp
-  q_learning_test.cpp
-  qdafn_test.cpp
-  random_test.cpp
-  serialization.cpp
-  serialization.hpp
-  serialization_test.cpp
-  termination_policy_test.cpp
-  test_function_tools.hpp
-  test_tools.hpp
-  timer_test.cpp
-  union_find_test.cpp
-  main_tests/det_test.cpp
-  main_tests/emst_test.cpp
-  main_tests/fastmks_test.cpp
-  main_tests/linear_svm_test.cpp
-  main_tests/local_coordinate_coding_test.cpp
-  main_tests/logistic_regression_test.cpp
-  main_tests/lsh_test.cpp
-  main_tests/perceptron_test.cpp
-  main_tests/test_helper.hpp
-)
-
-add_executable(mlpack_catch_test
   activation_functions_test.cpp
   adaboost_test.cpp
   akfn_test.cpp
@@ -57,6 +17,7 @@ add_executable(mlpack_catch_test
   bias_svd_test.cpp
   binarize_test.cpp
   block_krylov_svd_test.cpp
+  callback_test.cpp
   cf_test.cpp
   cli_binding_test.cpp
   convolutional_network_test.cpp
@@ -97,6 +58,7 @@ add_executable(mlpack_catch_test
   math_test.cpp
   metric_test.cpp
   mean_shift_test.cpp
+  mock_categorical_data.hpp
   nbc_test.cpp
   nca_test.cpp
   nmf_test.cpp
@@ -122,6 +84,7 @@ add_executable(mlpack_catch_test
   scaling_test.cpp
   serialization_catch.cpp
   serialization_catch.hpp
+  serialization_test.cpp
   sfinae_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
@@ -135,6 +98,7 @@ add_executable(mlpack_catch_test
   svd_incremental_test.cpp
   svdplusplus_test.cpp
   test_catch_tools.hpp
+  test_function_tools.hpp
   tree_test.cpp
   tree_traits_test.cpp
   ub_tree_test.cpp
@@ -191,26 +155,11 @@ target_link_libraries(mlpack_test
   ${COMPILER_SUPPORT_LIBRARIES}
 )
 
-target_link_libraries(mlpack_catch_test
-  mlpack
-  ${ARMADILLO_LIBRARIES}
-  ${BOOST_LIBRARIES}
-  ${COMPILER_SUPPORT_LIBRARIES}
-)
-
 set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../core.hpp")
-set_target_properties(mlpack_catch_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../core.hpp")
 cotire(mlpack_test)
-cotire(mlpack_catch_test)
 
 # Copy test data into right place.
 add_custom_command(TARGET mlpack_test
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/
-      ${PROJECT_BINARY_DIR}
-)
-
-add_custom_command(TARGET mlpack_catch_test
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/
       ${PROJECT_BINARY_DIR}
@@ -225,46 +174,3 @@ add_custom_command(TARGET mlpack_test
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test_label.tar.bz2
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
-
-# The list of long running parallel tests
-set(parallel_tests
-  "LocalCoordinateCodingTest;"
-  "LogisticRegressionTest;"
-  "LinearSVMTest")
-
-# Add tests to the testing framework
-# Get the list of sources from the test target
-get_target_property(test_sources mlpack_test SOURCES)
-
-# Go through the list of test sources and parse the test suite name
-foreach(test_file ${test_sources})
-  # Regex for parsing files with AUTO_TEST_SUITE
-  file(STRINGS ${test_file} test_suite REGEX "BOOST_AUTO_TEST_SUITE\\(.*")
-  if(NOT "${test_suite}" STREQUAL "")
-    # Get the substring of test_suite within brackets in test_name
-    string(REGEX MATCH "\\(.*\\)" test_name ${test_suite})
-    # Get the substring excluding the brackets, by calculating the indices
-    string(LENGTH ${test_name} end_idx)
-    math(EXPR end_idx "${end_idx} - 2")
-    string(SUBSTRING ${test_name} "1" ${end_idx} test)
-    # Add the test to the testing tool, test is the name of the test suite
-    add_test(NAME ${test} COMMAND mlpack_test -t ${test} WORKING_DIRECTORY
-      ${CMAKE_BINARY_DIR})
-  endif()
-  # Regex for parsing files with FIXTURE_TEST_SUITE similarly
-  file(STRINGS ${test_file} test_suite REGEX "BOOST_FIXTURE_TEST_SUITE\\(.*,")
-  if(NOT "${test_suite}" STREQUAL "")
-    # Get the substring of test_suite within brackets and comma in test_name
-    string(REGEX MATCH "\\(.*," test_name ${test_suite})
-    string(LENGTH ${test_name} end_idx)
-    math(EXPR end_idx "${end_idx} - 2")
-    string(SUBSTRING ${test_name} "1" ${end_idx} test)
-    add_test(NAME ${test} COMMAND mlpack_test -t ${test} WORKING_DIRECTORY
-      ${CMAKE_BINARY_DIR})
-  endif()
-endforeach()
-
-add_test(NAME "catch_test" COMMAND mlpack_catch_test WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-
-# Use RUN_SERIAL for long running parallel tests
-set_tests_properties(${parallel_tests} PROPERTIES RUN_SERIAL TRUE)
