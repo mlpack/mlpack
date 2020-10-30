@@ -137,7 +137,7 @@ setup(name='mlpack',
       cmdclass={ 'build_ext': build_ext },
       ext_modules = modules,
       setup_requires=['cython', 'pytest-runner'],
-      tests_require=['pytest>3;python_version>"3.4"', 'pytest>3,<=4.6;python_version<="3.4"',
+      tests_require=['pytest>3,<6.1.2;python_version>"3.4"', 'pytest>3,<6.1.2,<=4.6;python_version<="3.4"',
                      'more-itertools>=4.0.0,<6.0.0;python_version<="2.7"',
                      'more-itertools>=4.0.0;python_version>"2.7"'],
       zip_safe = False)
