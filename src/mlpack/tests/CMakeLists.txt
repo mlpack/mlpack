@@ -174,3 +174,5 @@ add_custom_command(TARGET mlpack_test
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test_label.tar.bz2
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
+
+add_test(NAME "catch_test" COMMAND mlpack_test WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
