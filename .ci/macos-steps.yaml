@@ -19,6 +19,7 @@ steps:
     if [ "$(binding)" == "python" ]; then
       pip install --upgrade pip
       pip install cython numpy pandas zipp configparser
+      pip install 'pytest>=3,<6.1.2' --force-reinstall
     fi
 
     if [ "a$(julia.version)" != "a" ]; then
