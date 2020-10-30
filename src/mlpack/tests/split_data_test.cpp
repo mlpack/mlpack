@@ -221,7 +221,7 @@ TEST_CASE("ZeroRatioStratifiedSplitData", "[SplitDataTest]")
   mat input(2, 15);
   input.randu();
 
-  // Set the lables to 5 0s and 10 1s.
+  // Set the labels to 5 0s and 10 1s.
   const Row<size_t> labels = { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
   const double test_ratio = 0;
 
@@ -240,7 +240,7 @@ TEST_CASE("TotalRatioStratifiedSplitData", "[SplitDataTest]")
   mat input(2, 15);
   input.randu();
 
-  // Set the lables to 5 0s and 10 1s.
+  // Set the labels to 5 0s and 10 1s.
   const Row<size_t> labels = { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
   const double test_ratio = 1;
 
@@ -259,7 +259,7 @@ TEST_CASE("StratifiedSplitDataResultTest", "[SplitDataTest]")
   mat input(5, 24);
   input.randu();
 
-  // Set the lables to 4 0s, 8 1s and 12 2s.
+  // Set the labels to 4 0s, 8 1s and 12 2s.
   const Row<size_t> labels = { 0, 0, 0, 0,
                                1, 1, 1, 1, 1, 1, 1, 1,
                                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
@@ -304,8 +304,8 @@ TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
   three_label.fill(3);
 
   Row<size_t> labels = arma::join_rows(zero_label, one_label);
-  labels = arma::join_rows(labels,two_label);
-  labels = arma::join_rows(labels,three_label);
+  labels = arma::join_rows(labels, two_label);
+  labels = arma::join_rows(labels, three_label);
   const double test_ratio = 0.3;
 
   const auto value = Split(input, labels, test_ratio, false, true);

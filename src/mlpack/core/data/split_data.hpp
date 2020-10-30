@@ -63,44 +63,43 @@ void StratifiedSplit(const arma::Mat<T>& input,
   /**
    * Basic idea:
    * Let us say we have to stratify a dataset based on labels:
-   * 0 0 0 0 0 1 1 1 1 1 1 (5 0s, 6 1s)
+   * 0 0 0 0 0 (5 0s)
+   * 1 1 1 1 1 1 1 1 1 1 1 (11 1s)
    *
-   * Let our test ratio be 0.2:
-   * We visit each label and keep the count of each label in our unordered map
+   * Let our test ratio be 0.2.
+   * Then, the number of 0 labels in our test set = floor(5 * 0.2) = 1.
+   * The number of 1 labels in our test set = floor(11 * 0.2) = 2.
    *
-   * Whenever we encounter a label, we calculate the floored values of
-   * current_count * test_ratio --- labelMap[label] * testRatio and
-   * current_count+1 * test_ratio --- (labelMap[label] + 1) * testRatio
+   * In our first pass over the dataset,
+   * we visit each label and keep the count of each label in our unordered map.
    *
-   * If there is a difference in counts, then we add to our test set
+   * We then take a second pass over the dataset.
+   * We now maintain an additional unordered map to hold the label counts in
+   * our test set.
    *
-   * Considering our example
-   * 0 -- train set ( 0 * 0.2 == 1 * 0.2 ) (After floor)
-   * 0 -- train set ( 1 * 0.2 == 2 * 0.2 ) (After floor)
-   * 0 -- train set ( 2 * 0.2 == 3 * 0.2 ) (After floor)
-   * 0 -- train set ( 3 * 0.2 == 4 * 0.2 ) (After floor)
-   * 0 -- test set  ( 4 * 0.2 <  5 * 0.2 ) (After floor)
+   * In this pass, when we encounter a label we check the test set map for
+   * the count of this label in the test set.
+   * If this count is less than the required number of labels in the test set,
+   * we add the data to the test set and increment the label count in the map.
+   * If this count is equal to or more than the required count in the test set,
+   * we add this data to the train set.
    *
-   * 1 -- train set ( 0 * 0.2 == 1 * 0.2 ) (After floor)
-   * 1 -- train set ( 1 * 0.2 == 2 * 0.2 ) (After floor)
-   * 1 -- train set ( 2 * 0.2 == 3 * 0.2 ) (After floor)
-   * 1 -- train set ( 3 * 0.2 == 4 * 0.2 ) (After floor)
-   * 1 -- test set  ( 4 * 0.2 <  5 * 0.2 ) (After floor)
-   * 1 -- train set ( 5 * 0.2 == 6 * 0.2 ) (After floor)
+   * Based on the above steps, we get the following labels in the split set:
+   * Train set (4 0s, 9 1s)
+   * 0 0 0 0
+   * 1 1 1 1 1 1 1 1 1
    *
-   * Finally
-   * train set,
-   * 0 0 0 0 1 1 1 1 1 (4 0s, 5 1s)
-   *
-   * test set,
-   * 0 1
+   * Test set (1 0s, 2 1s)
+   * 0
+   * 1 1
    */
-  arma::uvec indices;
-  indices.set_size(inputLabel.n_cols);
-
   size_t trainIdx = 0;
-  size_t testIdx = inputLabel.n_cols - 1;
+  size_t testIdx = 0;
+  size_t trainSize = 0;
+  size_t testSize = 0;
+
   std::unordered_map<U, size_t> labelMap;
+  std::unordered_map<U, size_t> testLabelMap;
 
   arma::uvec order =
       arma::linspace<arma::uvec>(0, input.n_cols - 1, input.n_cols);
@@ -110,40 +109,39 @@ void StratifiedSplit(const arma::Mat<T>& input,
     order = arma::shuffle(order);
   }
 
-  for (auto i: order)
+  for (arma::uword i : order)
   {
-    auto label = inputLabel[i];
-
-    if (floor(labelMap[label] * testRatio) ==
-        floor((labelMap[label] + 1) * testRatio))
-    {
-      indices[trainIdx] = i;
-      trainIdx += 1;
-    }
-    else
-    {
-      indices[testIdx] = i;
-      testIdx -= 1;
-    }
+    U label = inputLabel[i];
     labelMap[label] += 1;
   }
 
-  const size_t testSize = indices.n_rows - trainIdx;
-  const size_t trainSize = indices.n_rows - testSize;
+  for (std::pair<U, size_t> countPair : labelMap)
+  {
+      testSize += floor(countPair.second * testRatio);
+      trainSize += countPair.second - floor(countPair.second * testRatio);
+  }
+
   trainData.set_size(input.n_rows, trainSize);
   testData.set_size(input.n_rows, testSize);
   trainLabel.set_size(trainSize);
   testLabel.set_size(testSize);
 
-  if (trainSize > 0)
+  for (arma::uword i : order)
   {
-    trainData = input.cols(indices.subvec(0, trainIdx - 1));
-    trainLabel = inputLabel.cols(indices.subvec(0, trainIdx - 1));
-  }
-  if (trainSize < input.n_cols)
-  {
-    testData = input.cols(indices.subvec(trainIdx, indices.n_rows - 1));
-    testLabel = inputLabel.cols(indices.subvec(trainIdx, indices.n_rows - 1));
+    U label = inputLabel[i];
+    if (testLabelMap[label] < floor(labelMap[label] * testRatio))
+    {
+      testLabelMap[label] += 1;
+      testData.col(testIdx) = input.col(i);
+      testLabel[testIdx] = inputLabel[i];
+      testIdx += 1;
+    }
+    else
+    {
+      trainData.col(trainIdx) = input.col(i);
+      trainLabel[trainIdx] = inputLabel[i];
+      trainIdx += 1;
+    }
   }
 }
 
@@ -299,7 +297,8 @@ void Split(const arma::Mat<T>& input,
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *     sample is visited in linear order. (Default true).
  * @param stratifyData If true, the train and test splits are stratified
- *     according to input labels
+ *     so that the ratio of each class in the training and test sets is the same
+ *     as in the original dataset.
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */

@@ -70,19 +70,8 @@ BINDING_EXAMPLE(
         "test", "X_test", "test_labels", "y_test"));
 
 BINDING_EXAMPLE(
-    "There is an option to stratify the dataset according to the labels." +
-    PRINT_PARAM_STRING("stratify_data") + " option to stratify the data;"
-    "an example to stratify the data is" +
-    "\n\n" +
-    "If we had a dataset " + PRINT_DATASET("X") + " and associated labels " +
-    PRINT_DATASET("y") + ", and we wanted to stratify these into " +
-    PRINT_DATASET("X_train") + ", " + PRINT_DATASET("y_train") + ", " +
-    PRINT_DATASET("X_test") + ", and " + PRINT_DATASET("y_test") + ", with 30% "
-    "of the data in the test set, we could run"
-    "\n\n" +
-    PRINT_CALL("preprocess_split", "input", "X", "input_labels", "y",
-        "test_ratio", 0.3, "training", "X_train", "training_labels", "y_train",
-        "test", "X_test", "test_labels", "y_test", "stratify_data", true));
+    "To maintain the ratio of each class in the train and test sets, the" +
+    PRINT_PARAM_STRING("stratify_data") + " option can be used.");
 
 // See also...
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
@@ -166,8 +155,11 @@ static void mlpackMain()
         IO::GetParam<arma::Mat<size_t>>("input_labels");
     arma::Row<size_t> labelsRow = labels.row(0);
 
+    Timer::Start("splitting_data");
     const auto value =
         data::Split(data, labelsRow, testRatio, !shuffleData, stratifyData);
+    Timer::Stop("splitting_data");
+
     Log::Info << "Training data contains "
         << get<0>(value).n_cols << " points." << endl;
     Log::Info << "Test data contains "
@@ -186,7 +178,10 @@ static void mlpackMain()
   }
   else // We have no labels, so just split the dataset.
   {
+    Timer::Start("splitting_data");
     const auto value = data::Split(data, testRatio, !shuffleData);
+    Timer::Stop("splitting_data");
+
     Log::Info << "Training data contains " << get<0>(value).n_cols << " points."
         << endl;
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
