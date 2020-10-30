@@ -155,7 +155,7 @@ TEST_CASE("LocalCoordinateCodingSerializationTest",
   REQUIRE(lcc.Atoms() == lccBinary.Atoms());
 
   REQUIRE(lcc.Tolerance() == Approx(lccXml.Tolerance()).epsilon(1e-7));
-  REQUIRE(lcc.Tolerance() == Approx(lccText.Tolerance()).epsilon(1e-7));
+  REQUIRE(lcc.Tolerance() == Approx(lccJson.Tolerance()).epsilon(1e-7));
   REQUIRE(lcc.Tolerance() == Approx(lccBinary.Tolerance()).epsilon(1e-7));
 
   REQUIRE(lcc.Lambda() == Approx(lccXml.Lambda()).epsilon(1e-7));
