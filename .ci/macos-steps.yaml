@@ -22,7 +22,7 @@ steps:
     fi
 
     if [ "a$(julia.version)" != "a" ]; then
-      brew cask install julia
+      brew cask install julia@1.5.1
     fi
 
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
