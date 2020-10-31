@@ -43,7 +43,6 @@ struct LogisticRegressionTestFixture
   }
 };
 
-
 /**
   * Ensuring that absence of training data is checked.
  **/

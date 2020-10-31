@@ -46,7 +46,6 @@ struct EMSTTestFixture
  * Make sure that Output has 3 Dimensions and
  * check the number of output edges.
  */
-
 TEST_CASE_METHOD(EMSTTestFixture, "EMSTOutputDimensionTest",
                  "[EMSTMainTest][BindingTests]")
 {
