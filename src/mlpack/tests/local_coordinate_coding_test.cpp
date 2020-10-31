@@ -49,7 +49,8 @@ void VerifyCorrectness(const vec& beta, const vec& errCorr, double lambda)
 }
 
 
-TEST_CASE("LocalCoordinateCodingTestCodingStep", "[LocalCoordinateCodingTest]")
+TEST_CASE("LocalCoordinateCodingTestCodingStep",
+          "[LocalCoordinateCodingTest]")
 {
   double lambda1 = 0.1;
   uword nAtoms = 10;
@@ -85,7 +86,7 @@ TEST_CASE("LocalCoordinateCodingTestCodingStep", "[LocalCoordinateCodingTest]")
   }
 }
 
-TEST_CASE("LocalCoordinateCodingTestDictionaryStep", 
+TEST_CASE("LocalCoordinateCodingTestDictionaryStep",
           "[LocalCoordinateCodingTest]")
 {
   const double tol = 0.1;
@@ -122,7 +123,7 @@ TEST_CASE("LocalCoordinateCodingTestDictionaryStep",
   REQUIRE(norm(grad, "fro") == Approx(0.0).margin(tol));
 }
 
-TEST_CASE("LocalCoordinateCodingSerializationTest", 
+TEST_CASE("LocalCoordinateCodingSerializationTest",
           "[LocalCoordinateCodingTest]")
 {
   mat X = randu<mat>(100, 100);
@@ -171,7 +172,7 @@ TEST_CASE("LocalCoordinateCodingSerializationTest",
  * Test that LocalCoordinateCoding::Train() returns finite final objective
  * value.
  */
-TEST_CASE("LocalCoordinateCodingTrainReturnObjective", 
+TEST_CASE("LocalCoordinateCodingTrainReturnObjective",
           "[LocalCoordinateCodingTest]")
 {
   double lambda1 = 0.1;

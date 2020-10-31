@@ -58,7 +58,7 @@ TEST_CASE("DiscreteUniformRandomTest", "[RandomTest]")
 
     for (size_t i = 0; i < count.size(); ++i)
     {
-      REQUIRE(1.0 / (hiExclusive - lo) - count[i] * 1.0 / iterations == 
+      REQUIRE(1.0 / (hiExclusive - lo) - count[i] * 1.0 / iterations ==
           Approx(0.0).margin(0.15));
     }
   }
@@ -89,7 +89,7 @@ TEST_CASE("WeightedRandomTest", "[RandomTest]")
 
     for (size_t i = 0; i < weightSet.size(); ++i)
     {
-      REQUIRE(weightSet[i] - count[i] * 1.0 / iterations == 
+      REQUIRE(weightSet[i] - count[i] * 1.0 / iterations ==
           Approx(0.0).margin(0.15));
     }
   }

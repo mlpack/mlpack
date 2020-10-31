@@ -37,15 +37,15 @@ TEST_CASE("LogisticRegressionFunctionEvaluate", "[LogisticRegressionTest]")
   // These were hand-calculated using Octave.
   REQUIRE(lrf.Evaluate(arma::rowvec("1 1 1")) ==
      Approx(7.0562141665).epsilon(1e-7));
-  REQUIRE(lrf.Evaluate(arma::rowvec("0 0 0")) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("0 0 0")) ==
       Approx(2.0794415417).epsilon(1e-7));
-  REQUIRE(lrf.Evaluate(arma::rowvec("-1 -1 -1")) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("-1 -1 -1")) ==
       Approx(8.0562141665).epsilon(1e-7));
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -40 -40")) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -40 -40")) ==
       Approx(0.0).margin(1e-7));
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -80 0")) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -80 0")) ==
       Approx(0.0).margin(1e-7));
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -100 20")) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -100 20")) ==
       Approx(0.0).margin(1e-7));
 }
 
@@ -96,7 +96,7 @@ TEST_CASE("LogisticRegressionFunctionRandomEvaluate",
 /**
  * Test regularization for the LogisticRegressionFunction Evaluate() function.
  */
-TEST_CASE("LogisticRegressionFunctionRegularizationEvaluate", 
+TEST_CASE("LogisticRegressionFunctionRegularizationEvaluate",
           "[LogisticRegressionTest]")
 {
   const size_t points = 5000;
@@ -199,46 +199,46 @@ TEST_CASE("LogisticRegressionSeparableEvaluate", "[LogisticRegressionTest]")
       0.0 /* no regularization */);
 
   // These were hand-calculated using Octave.
-  REQUIRE(lrf.Evaluate(arma::rowvec("1 1 1"), 0, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("1 1 1"), 0, 1) ==
       Approx(4.85873516e-2).epsilon(1e-7));
-  REQUIRE(lrf.Evaluate(arma::rowvec("1 1 1"), 1, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("1 1 1"), 1, 1) ==
       Approx(6.71534849e-3).epsilon(1e-7));
-  REQUIRE(lrf.Evaluate(arma::rowvec("1 1 1"), 2, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("1 1 1"), 2, 1) ==
       Approx(7.00091146645).epsilon(1e-7));
 
-  REQUIRE(lrf.Evaluate(arma::rowvec("0 0 0"), 0, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("0 0 0"), 0, 1) ==
       Approx(0.6931471805).epsilon(1e-7));
-  REQUIRE(lrf.Evaluate(arma::rowvec("0 0 0"), 1, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("0 0 0"), 1, 1) ==
       Approx(0.6931471805).epsilon(1e-7));
-  REQUIRE(lrf.Evaluate(arma::rowvec("0 0 0"), 2, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("0 0 0"), 2, 1) ==
       Approx(0.6931471805).epsilon(1e-7));
 
-  REQUIRE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 0, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 0, 1) ==
       Approx(3.0485873516).epsilon(1e-7));
-  REQUIRE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 1, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 1, 1) ==
       Approx(5.0067153485).epsilon(1e-7));
-  REQUIRE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 2, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("-1 -1 -1"), 2, 1) ==
       Approx(9.1146645377e-4).epsilon(1e-7));
 
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -40 -40"), 0, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -40 -40"), 0, 1) ==
       Approx(0.0).margin(1e-5));
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -40 -40"), 1, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -40 -40"), 1, 1) ==
       Approx(0.0).margin(1e-5));
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -40 -40"), 2, 1) == 
-      Approx(0.0).margin(1e-5));
-
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -80 0"), 0, 1) == 
-      Approx(0.0).margin(1e-5));
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -80 0"), 1, 1) == 
-      Approx(0.0).margin(1e-5));
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -80 0"), 2, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -40 -40"), 2, 1) ==
       Approx(0.0).margin(1e-5));
 
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -100 20"), 0, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -80 0"), 0, 1) ==
       Approx(0.0).margin(1e-5));
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -100 20"), 1, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -80 0"), 1, 1) ==
       Approx(0.0).margin(1e-5));
-  REQUIRE(lrf.Evaluate(arma::rowvec("200 -100 20"), 2, 1) == 
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -80 0"), 2, 1) ==
+      Approx(0.0).margin(1e-5));
+
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -100 20"), 0, 1) ==
+      Approx(0.0).margin(1e-5));
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -100 20"), 1, 1) ==
+      Approx(0.0).margin(1e-5));
+  REQUIRE(lrf.Evaluate(arma::rowvec("200 -100 20"), 2, 1) ==
       Approx(0.0).margin(1e-5));
 }
 
@@ -246,7 +246,7 @@ TEST_CASE("LogisticRegressionSeparableEvaluate", "[LogisticRegressionTest]")
  * Test regularization for the separable LogisticRegressionFunction Evaluate()
  * function.
  */
-TEST_CASE("LogisticRegressionFunctionRegularizationSeparableEvaluate", 
+TEST_CASE("LogisticRegressionFunctionRegularizationSeparableEvaluate",
           "[LogisticRegressionTest]")
 {
   const size_t points = 5000;
@@ -295,7 +295,7 @@ TEST_CASE("LogisticRegressionFunctionRegularizationSeparableEvaluate",
 /**
  * Test separable gradient of the LogisticRegressionFunction.
  */
-TEST_CASE("LogisticRegressionFunctionSeparableGradient", 
+TEST_CASE("LogisticRegressionFunctionSeparableGradient",
           "[LogisticRegressionTest]")
 {
   // Very simple fake dataset.
@@ -372,7 +372,7 @@ TEST_CASE("LogisticRegressionFunctionSeparableGradient",
 /**
  * Test Gradient() function when regularization is used.
  */
-TEST_CASE("LogisticRegressionFunctionRegularizationGradient", 
+TEST_CASE("LogisticRegressionFunctionRegularizationGradient",
           "[LogisticRegressionTest]")
 {
   const size_t points = 5000;
@@ -427,7 +427,7 @@ TEST_CASE("LogisticRegressionFunctionRegularizationGradient",
 
       REQUIRE(gradient[j] + smallRegTerm == Approx(smallRegGradient[j]).
           epsilon(1e-7));
-      REQUIRE(gradient[j] + bigRegTerm == 
+      REQUIRE(gradient[j] + bigRegTerm ==
           Approx(bigRegGradient[j]).epsilon(1e-7));
     }
   }
@@ -436,7 +436,7 @@ TEST_CASE("LogisticRegressionFunctionRegularizationGradient",
 /**
  * Test separable Gradient() function when regularization is used.
  */
-TEST_CASE("LogisticRegressionFunctionRegularizationSeparableGradient", 
+TEST_CASE("LogisticRegressionFunctionRegularizationSeparableGradient",
           "[LogisticRegressionTest]")
 {
   const size_t points = 2000;
@@ -494,7 +494,7 @@ TEST_CASE("LogisticRegressionFunctionRegularizationSeparableGradient",
 
         REQUIRE(gradient[j] + smallRegTerm == Approx(smallRegGradient[j]).
             epsilon(1e-7));
-        REQUIRE(gradient[j] + bigRegTerm == 
+        REQUIRE(gradient[j] + bigRegTerm ==
             Approx(bigRegGradient[j]).epsilon(1e-7));
       }
     }
@@ -549,7 +549,7 @@ TEST_CASE("LogisticRegressionSGDSimpleTest", "[LogisticRegressionTest]")
 }
 
 // Test training of logistic regression on a simple dataset with regularization.
-TEST_CASE("LogisticRegressionLBFGSRegularizationSimpleTest", 
+TEST_CASE("LogisticRegressionLBFGSRegularizationSimpleTest",
           "[LogisticRegressionTest]")
 {
   // Very simple fake dataset.
@@ -573,7 +573,7 @@ TEST_CASE("LogisticRegressionLBFGSRegularizationSimpleTest",
 
 // Test training of logistic regression on a simple dataset using SGD with
 // regularization.
-TEST_CASE("LogisticRegressionSGDRegularizationSimpleTest", 
+TEST_CASE("LogisticRegressionSGDRegularizationSimpleTest",
           "[LogisticRegressionTest]")
 {
   // Very simple fake dataset.
@@ -801,7 +801,7 @@ TEST_CASE("LogisticRegressionSparseLBFGSTest", "[LogisticRegressionTest]")
 
   REQUIRE(lr.Parameters().n_elem == lrSparse.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
-    REQUIRE(lr.Parameters()[i] == 
+    REQUIRE(lr.Parameters()[i] ==
         Approx(lrSparse.Parameters()[i]).epsilon(1e-5));
 }
 
@@ -831,7 +831,7 @@ TEST_CASE("LogisticRegressionSparseSGDTest", "[LogisticRegressionTest]")
 
   REQUIRE(lr.Parameters().n_elem == lrSparse.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
-    REQUIRE(lr.Parameters()[i] == 
+    REQUIRE(lr.Parameters()[i] ==
         Approx(lrSparse.Parameters()[i]).epsilon(1e-5));
 }
 
@@ -883,7 +883,7 @@ TEST_CASE("ClassifyTest", "[LogisticRegressionTest]")
  * Test that single-point classification gives the same results as multi-point
  * classification.
  */
-TEST_CASE("LogisticRegressionSinglePointClassifyTest", 
+TEST_CASE("LogisticRegressionSinglePointClassifyTest",
           "[LogisticRegressionTest]")
 {
   // Generate a two-Gaussian dataset.
@@ -976,7 +976,7 @@ TEST_CASE("ClassifyProbabilitiesTest", "[LogisticRegressionTest]")
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    REQUIRE(probabilities(0, i) + probabilities(1, i) == 
+    REQUIRE(probabilities(0, i) + probabilities(1, i) ==
         Approx(1.0).epsilon(1e-7));
 
     // 10% tolerance.

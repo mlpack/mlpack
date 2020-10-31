@@ -871,7 +871,10 @@ TEST_CASE("LinearSVMSparseLBFGSTest", "[LinearSVMTest]")
 
   REQUIRE(lr.Parameters().n_elem == lrSparse.Parameters().n_elem);
   for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
-    REQUIRE(lr.Parameters()[i] == Approx(lrSparse.Parameters()[i]).epsilon(5e-6));
+  {
+    REQUIRE(lr.Parameters()[i] == Approx(lrSparse.Parameters()[i]).
+        epsilon(5e-6));
+  }
 }
 
 /**
