@@ -330,7 +330,7 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeLambdaTest",
 /**
  * Ensuring that number of classes for optimizers is non negative.
  */
-TEST_CASE_METHOD(LinearSVMTestFixture, 
+TEST_CASE_METHOD(LinearSVMTestFixture,
                  "LinearSVMNonNegativeNumberOfClassesTest",
                  "[LinearSVMMainTest][BindingTests]")
 {
