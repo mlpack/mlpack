@@ -23,7 +23,7 @@ template<typename InputDataType, typename OutputDataType>
 Add<InputDataType, OutputDataType>::Add(const size_t outSize) :
     outSize(outSize)
 {
-  weights.set_size(outSize, 1);
+  weights.set_size(WeightSize(), 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
