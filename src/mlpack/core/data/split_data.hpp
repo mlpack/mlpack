@@ -14,7 +14,6 @@
 #define MLPACK_CORE_DATA_SPLIT_DATA_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <unordered_map>
 
 namespace mlpack {
 namespace data {
@@ -71,14 +70,14 @@ void StratifiedSplit(const arma::Mat<T>& input,
    * The number of 1 labels in our test set = floor(11 * 0.2) = 2.
    *
    * In our first pass over the dataset,
-   * we visit each label and keep the count of each label in our unordered map.
+   * We visit each label and keep count of each label in our 'labelMap' uvec.
    *
    * We then take a second pass over the dataset.
-   * We now maintain an additional unordered map to hold the label counts in
-   * our test set.
+   * We now maintain an additional uvec 'testLabelMap' to hold the label counts
+   * of our test set.
    *
-   * In this pass, when we encounter a label we check the test set map for
-   * the count of this label in the test set.
+   * In this pass, when we encounter a label we check the 'testLabelMap' uvec
+   * for the count of this label in the test set.
    * If this count is less than the required number of labels in the test set,
    * we add the data to the test set and increment the label count in the map.
    * If this count is equal to or more than the required count in the test set,
@@ -97,9 +96,12 @@ void StratifiedSplit(const arma::Mat<T>& input,
   size_t testIdx = 0;
   size_t trainSize = 0;
   size_t testSize = 0;
+  arma::uvec labelMap;
+  arma::uvec testLabelMap;
+  U maxLabel = inputLabel.max();
 
-  std::unordered_map<U, size_t> labelMap;
-  std::unordered_map<U, size_t> testLabelMap;
+  labelMap.zeros(maxLabel+1);
+  testLabelMap.zeros(maxLabel+1);
 
   arma::uvec order =
       arma::linspace<arma::uvec>(0, input.n_cols - 1, input.n_cols);
@@ -115,10 +117,10 @@ void StratifiedSplit(const arma::Mat<T>& input,
     labelMap[label] += 1;
   }
 
-  for (std::pair<U, size_t> countPair : labelMap)
+  for (arma::uword labelCount : labelMap)
   {
-      testSize += floor(countPair.second * testRatio);
-      trainSize += countPair.second - floor(countPair.second * testRatio);
+      testSize += floor(labelCount * testRatio);
+      trainSize += labelCount - floor(labelCount * testRatio);
   }
 
   trainData.set_size(input.n_rows, trainSize);
