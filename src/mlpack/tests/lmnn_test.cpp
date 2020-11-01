@@ -335,7 +335,7 @@ TEST_CASE("LMNNSeparableEvaluateWithGradientTest", "[LMNNTest]")
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 5, gradient, 1);
 
-  REQUIRE(objective == Approx( 1.576).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
   REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
   REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
