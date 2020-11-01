@@ -206,13 +206,20 @@ TEST_CASE("ExhaustiveSyntheticTest", "[RangeSearchTest]")
     // Neighbors of point 10.
     REQUIRE(sortedOutput[newFromOld[10]].size() == 4);
     REQUIRE(sortedOutput[newFromOld[10]][0].second == newFromOld[9]);
-    REQUIRE(sortedOutput[newFromOld[10]][0].first == Approx(0.10).epsilon(1e-7));
-    REQUIRE(sortedOutput[newFromOld[10]][1].second == newFromOld[3]);
-    REQUIRE(sortedOutput[newFromOld[10]][1].first == Approx(0.25).epsilon(1e-7));
-    REQUIRE(sortedOutput[newFromOld[10]][2].second == newFromOld[8]);
-    REQUIRE(sortedOutput[newFromOld[10]][2].first == Approx(0.55).epsilon(1e-7));
-    REQUIRE(sortedOutput[newFromOld[10]][3].second == newFromOld[1]);
-    REQUIRE(sortedOutput[newFromOld[10]][3].first == Approx(0.65).epsilon(1e-7));
+    REQUIRE(sortedOutput[newFromOld[10]][0].first ==
+        Approx(0.10).epsilon(1e-7));
+    REQUIRE(sortedOutput[newFromOld[10]][1].second ==
+        newFromOld[3]);
+    REQUIRE(sortedOutput[newFromOld[10]][1].first ==
+        Approx(0.25).epsilon(1e-7));
+    REQUIRE(sortedOutput[newFromOld[10]][2].second ==
+        newFromOld[8]);
+    REQUIRE(sortedOutput[newFromOld[10]][2].first ==
+        Approx(0.55).epsilon(1e-7));
+    REQUIRE(sortedOutput[newFromOld[10]][3].second ==
+        newFromOld[1]);
+    REQUIRE(sortedOutput[newFromOld[10]][3].first ==
+        Approx(0.65).epsilon(1e-7));
 
     // Now do it again with a different range: [sqrt(0.5) 1.0].
     if (rs->ReferenceTree())
@@ -433,13 +440,20 @@ TEST_CASE("ExhaustiveSyntheticTest", "[RangeSearchTest]")
     // Neighbors of point 10.
     REQUIRE(sortedOutput[newFromOld[10]].size() == 4);
     REQUIRE(sortedOutput[newFromOld[10]][0].second == newFromOld[5]);
-    REQUIRE(sortedOutput[newFromOld[10]][0].first == Approx(1.22).epsilon(1e-7));
-    REQUIRE(sortedOutput[newFromOld[10]][1].second == newFromOld[7]);
-    REQUIRE(sortedOutput[newFromOld[10]][1].first == Approx(2.30).epsilon(1e-7));
-    REQUIRE(sortedOutput[newFromOld[10]][2].second == newFromOld[6]);
-    REQUIRE(sortedOutput[newFromOld[10]][2].first == Approx(3.00).epsilon(1e-7));
-    REQUIRE(sortedOutput[newFromOld[10]][3].second == newFromOld[4]);
-    REQUIRE(sortedOutput[newFromOld[10]][3].first == Approx(4.05).epsilon(1e-7));
+    REQUIRE(sortedOutput[newFromOld[10]][0].first ==
+        Approx(1.22).epsilon(1e-7));
+    REQUIRE(sortedOutput[newFromOld[10]][1].second ==
+        newFromOld[7]);
+    REQUIRE(sortedOutput[newFromOld[10]][1].first ==
+        Approx(2.30).epsilon(1e-7));
+    REQUIRE(sortedOutput[newFromOld[10]][2].second ==
+        newFromOld[6]);
+    REQUIRE(sortedOutput[newFromOld[10]][2].first ==
+        Approx(3.00).epsilon(1e-7));
+    REQUIRE(sortedOutput[newFromOld[10]][3].second ==
+        newFromOld[4]);
+    REQUIRE(sortedOutput[newFromOld[10]][3].first ==
+        Approx(4.05).epsilon(1e-7));
 
     // Clean the memory.
     delete rs;

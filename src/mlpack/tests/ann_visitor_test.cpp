@@ -106,7 +106,7 @@ TEST_CASE("WeightSizeVisitorTestForLinearLayer", "[ANNVisitorTest]")
 TEST_CASE("WeightSizeVisitorTestForConcatLayer", "[ANNVisitorTest]")
 {
   LayerTypes<> concatLayer = new Concat<>();
-  
+
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(), concatLayer);
 
   CheckCorrectnessOfWeightSize(concatLayer);
@@ -151,12 +151,12 @@ TEST_CASE("WeightSizeVisitorTestForAtrousConvolutionLayer", "[ANNVisitorTest]")
   size_t randomKernelWidth = arma::randi(arma::distr_param(1, 100));
   size_t randomKernelHeight = arma::randi(arma::distr_param(1, 100));
 
-  LayerTypes<> atrousConvLayer = new AtrousConvolution<>(randomInSize, randomOutSize,
-      randomKernelWidth, randomKernelHeight);
+  LayerTypes<> atrousConvLayer = new AtrousConvolution<>(randomInSize,
+      randomOutSize, randomKernelWidth, randomKernelHeight);
 
   size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
       atrousConvLayer);
- 
+
   CheckCorrectnessOfWeightSize(atrousConvLayer);
 }
 

@@ -32,7 +32,7 @@ MeanAbsolutePercentageError<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     const TargetType& target)
 {
-  InputType loss = arma::abs((input - target) / target); 
+  InputType loss = arma::abs((input - target) / target);
   return arma::accu(loss) * (100 / target.n_cols);
 }
 
@@ -43,7 +43,7 @@ void MeanAbsolutePercentageError<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     OutputType& output)
 
-{ 
+{
   output = (((arma::conv_to<arma::mat>::from(input < target) * -2) + 1) /
       target) * (100 / target.n_cols) ;
 }

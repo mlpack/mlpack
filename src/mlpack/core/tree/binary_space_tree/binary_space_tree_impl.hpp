@@ -1131,7 +1131,7 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
       if (node->left)
         stack.push(node->left);
       if (node->right)
-       stack.push(node->right); 
+       stack.push(node->right);
     }
   }
 }

@@ -5,7 +5,7 @@
  * Implementation of is_loading function.
  *
  * This implementation provides backward compatibilty with older
- * version of cereal that does not have Archive::is_loading struct. 
+ * version of cereal that does not have Archive::is_loading struct.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -28,11 +28,12 @@ struct is_cereal_archive
 {
   // Archive::is_loading is not implemented yet, so we can use std::is_same<>
   // to check if it is a loading archive.
-  constexpr static bool value = std::is_same<Archive, cereal::BinaryInputArchive>::value ||
-//#if (BINDING_TYPE != BINDING_TYPE_R)
-    std::is_same<Archive, cereal::JSONInputArchive>::value ||
-//#endif
-    std::is_same<Archive, cereal::XMLInputArchive>::value;
+  constexpr static bool value = std::is_same<Archive,
+      cereal::BinaryInputArchive>::value ||
+// #if (BINDING_TYPE != BINDING_TYPE_R)
+      std::is_same<Archive, cereal::JSONInputArchive>::value ||
+// #endif
+      std::is_same<Archive, cereal::XMLInputArchive>::value;
 };
 
 template<typename Archive>
@@ -40,7 +41,7 @@ bool is_loading(
     const typename std::enable_if<
         is_cereal_archive<Archive>::value, Archive>::type* = 0)
 {
-  return true; 
+  return true;
 }
 
 template<typename Archive>

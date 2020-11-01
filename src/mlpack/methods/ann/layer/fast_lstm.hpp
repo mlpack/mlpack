@@ -165,7 +165,7 @@ class FastLSTM
   size_t OutSize() const { return outSize; }
 
   //! Get the size of the weight matrix.
-  size_t WeightSize() const 
+  size_t WeightSize() const
   {
     return 4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize;
   }

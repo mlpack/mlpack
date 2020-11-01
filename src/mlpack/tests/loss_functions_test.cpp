@@ -201,7 +201,7 @@ TEST_CASE("KLDivergenceMeanTest", "[LossFunctionsTest]")
   target = arma::exp(arma::mat("2 1 1 1 1 1 1 1 1 1"));
 
   loss = module.Forward(input, target);
-  REQUIRE(loss == Approx(-1.1 ).epsilon(1e-5));
+  REQUIRE(loss == Approx(-1.1).epsilon(1e-5));
 
   // Test the Backward function.
   module.Backward(input, target, output);
@@ -846,7 +846,8 @@ TEST_CASE("SoftMarginLossTest", "[LossFunctionsTest]")
 
   // Test the Backward function.
   module1.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(arma::accu(output)) == Approx(-1.48227).epsilon(1e-3));
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(-1.48227).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
@@ -865,7 +866,8 @@ TEST_CASE("SoftMarginLossTest", "[LossFunctionsTest]")
 
   // Test the Backward function.
   module2.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(arma::accu(output)) == Approx(-0.164697).epsilon(1e-3));
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(-0.164697).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
@@ -885,7 +887,7 @@ TEST_CASE("MeanAbsolutePercentageErrorTest", "[LossFunctionsTest]")
   // Test the Forward function. Loss should be 95.625.
   // Loss value calculated manually.
   double loss = module.Forward(input,target);
-  REQUIRE(loss == Approx(95.625).epsilon(1e-1)); 
+  REQUIRE(loss == Approx(95.625).epsilon(1e-1));
 
   // Test the Backward function.
   module.Backward(input, target, output);

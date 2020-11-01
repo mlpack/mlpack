@@ -606,7 +606,7 @@ void CheckSoftminDerivativeCorrect(const arma::colvec input,
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
-  } 
+  }
 
 }
 
