@@ -71,12 +71,12 @@ class ImageInfo
   size_t& Quality() { return quality; }
 
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(width);
-    ar & BOOST_SERIALIZATION_NVP(channels);
-    ar & BOOST_SERIALIZATION_NVP(height);
-    ar & BOOST_SERIALIZATION_NVP(quality);
+    ar(CEREAL_NVP(width));
+    ar(CEREAL_NVP(channels));
+    ar(CEREAL_NVP(height));
+    ar(CEREAL_NVP(quality));
   }
 
  private:

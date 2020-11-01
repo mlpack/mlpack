@@ -42,4 +42,8 @@
 // To suppress warnings related to core/util/arma_util.hpp.
 #define MLPACK_CORE_UTIL_ARMA_CONFIG_HPP
 
+// Undefine macro due to macro collision.
+#undef Realloc
+#undef Free
+
 #endif

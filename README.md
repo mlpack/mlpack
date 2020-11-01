@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.4.1.tar.gz">current stable version (3.4.1)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.4.2.tar.gz">current stable version (3.4.2)</a>
   </em>
 </p>
 
@@ -101,10 +101,10 @@ Citations are beneficial for the growth and improvement of mlpack.
 mlpack has the following dependencies:
 
       Armadillo      >= 8.400.0
-      Boost (math_c99, unit_test_framework, serialization,
-             spirit) >= 1.58.0
+      Boost (math_c99, unit_test_framework, spirit) >= 1.58.0
       CMake          >= 3.2.2
       ensmallen      >= 2.10.0
+      cereal         >= 1.1.2
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
@@ -134,6 +134,7 @@ installed with these R packages.
      RcppEnsmallen >= 0.2.10.0
      BH >= 1.58
      roxygen2
+     Rcereal >= 1.1.2
 
 If the STB library headers are available, image loading support will be
 compiled.
@@ -152,7 +153,7 @@ on Ubuntu, you can install mlpack with the following command:
 
 Note: Older Ubuntu versions may not have the most recent version of mlpack
 available---for instance, at the time of this writing, Ubuntu 16.04 only has
-mlpack 3.4.1 available.  Options include upgrading your Ubuntu version, finding
+mlpack 3.4.2 available.  Options include upgrading your Ubuntu version, finding
 a PPA or other non-official sources, or installing with a manual build.
 
 There are some useful pages to consult in addition to this section:

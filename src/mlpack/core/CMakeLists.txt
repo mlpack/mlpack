@@ -2,6 +2,7 @@
 set(DIRS
   arma_extend
   boost_backport
+  cereal
   cv
   data
   dists

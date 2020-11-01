@@ -1203,14 +1203,14 @@ TEST_CASE("MultipleSerializationTest", "[HoeffdingTreeTest]")
   // Now serialize the shallow tree into the deep tree.
   std::ostringstream oss;
   {
-    boost::archive::binary_oarchive boa(oss);
-    boa << BOOST_SERIALIZATION_NVP(shallowTree);
+    cereal::BinaryOutputArchive boa(oss);
+    boa(CEREAL_NVP(shallowTree));
   }
 
   std::istringstream iss(oss.str());
   {
-    boost::archive::binary_iarchive bia(iss);
-    bia >> BOOST_SERIALIZATION_NVP(deepTree);
+    cereal::BinaryInputArchive bia(iss);
+    bia(CEREAL_NVP(deepTree));
   }
 
   // Now do some classification and make sure the results are the same.
@@ -1412,7 +1412,7 @@ TEST_CASE("HoeffdingTreeModelSerializationTest", "[HoeffdingTreeTest]")
   // sure we get reasonable results.
   for (size_t i = 0; i < 4; ++i)
   {
-    HoeffdingTreeModel m, xmlM, textM, binaryM;
+    HoeffdingTreeModel m, xmlM, jsonM, binaryM;
     switch (i)
     {
       case 0:
@@ -1439,28 +1439,28 @@ TEST_CASE("HoeffdingTreeModelSerializationTest", "[HoeffdingTreeTest]")
         100);
 
     // Now make sure the performance is reasonable.
-    arma::Row<size_t> predictions, predictionsXml, predictionsText,
+    arma::Row<size_t> predictions, predictionsXml, predictionsJson,
         predictionsBinary;
-    arma::rowvec probabilities, probabilitiesXml, probabilitiesText,
+    arma::rowvec probabilities, probabilitiesXml, probabilitiesJson,
         probabilitiesBinary;
 
-    SerializeObjectAll(m, xmlM, textM, binaryM);
+    SerializeObjectAll(m, xmlM, jsonM, binaryM);
 
     // Get predictions for all.
     m.Classify(dataset, predictions, probabilities);
     xmlM.Classify(dataset, predictionsXml, probabilitiesXml);
-    textM.Classify(dataset, predictionsText, probabilitiesText);
+    jsonM.Classify(dataset, predictionsJson, probabilitiesJson);
     binaryM.Classify(dataset, predictionsBinary, probabilitiesBinary);
 
     for (size_t i = 0; i < 3000; ++i)
     {
       // Check consistency of predictions and probabilities.
       REQUIRE(predictions[i] == predictionsXml[i]);
-      REQUIRE(predictions[i] == predictionsText[i]);
+      REQUIRE(predictions[i] == predictionsJson[i]);
       REQUIRE(predictions[i] == predictionsBinary[i]);
 
       REQUIRE(probabilities[i] == Approx(probabilitiesXml[i]).epsilon(1e-7));
-      REQUIRE(probabilities[i] == Approx(probabilitiesText[i]).epsilon(1e-7));
+      REQUIRE(probabilities[i] == Approx(probabilitiesJson[i]).epsilon(1e-7));
       REQUIRE(probabilities[i] == Approx(probabilitiesBinary[i]).epsilon(1e-7));
     }
   }

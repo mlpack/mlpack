@@ -957,9 +957,9 @@ TEST_CASE_METHOD(IOTestDestroyer, "UnmappedParamTest",
   argv[3] = "-M";
   argv[4] = "file2.csv";
   argv[5] = "-k";
-  argv[6] = "kernel.txt";
+  argv[6] = "kernel.json";
   argv[7] = "-K";
-  argv[8] = "kernel2.txt";
+  argv[8] = "kernel2.json";
 
   int argc = 9;
 
@@ -973,11 +973,11 @@ TEST_CASE_METHOD(IOTestDestroyer, "UnmappedParamTest",
   REQUIRE(IO::GetPrintableParam<arma::mat>("matrix2") ==
       "'file2.csv' (0x0 matrix)");
   REQUIRE(IO::GetPrintableParam<GaussianKernel*>("kernel") ==
-      "kernel.txt");
+      "kernel.json");
   REQUIRE(IO::GetPrintableParam<GaussianKernel*>("kernel2") ==
-      "kernel2.txt");
+      "kernel2.json");
 
-  remove("kernel.txt");
+  remove("kernel.json");
 }
 
 /**
@@ -993,7 +993,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "IOSerializationTest", "[IOTest]")
   const char* argv[3];
   argv[0] = "./test";
   argv[1] = "--kernel_file";
-  argv[2] = "kernel.txt";
+  argv[2] = "kernel.json";
 
   int argc = 3;
 
@@ -1024,7 +1024,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "IOSerializationTest", "[IOTest]")
   delete gk2;
 
   // Now remove the file we made.
-  remove("kernel.txt");
+  remove("kernel.json");
 }
 
 /**

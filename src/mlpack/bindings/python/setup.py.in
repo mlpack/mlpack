@@ -40,8 +40,7 @@ library_dirs = list(filter(None, ['${MLPACK_LIBDIR}'] +
 # We'll link with the exact paths to each library using extra_objects, instead
 # of linking with 'libraries' and 'library_dirs', because of differences in
 # Windows and Linux linking behavior.
-libraries = ['${MLPACK_LIBRARY}',
-             '${Boost_SERIALIZATION_LIBRARY}'] + \
+libraries = ['${MLPACK_LIBRARY}'] + \
              '${ARMADILLO_LIBRARIES}'.split(' ')
 
 # Potentially faulty assumption: we can always link against libraries directly
