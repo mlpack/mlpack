@@ -886,12 +886,13 @@ TEST_CASE("MeanAbsolutePercentageErrorTest", "[LossFunctionsTest]")
 
   // Test the Forward function. Loss should be 95.625.
   // Loss value calculated manually.
-  double loss = module.Forward(input,target);
+  double loss = module.Forward(input, target);
   REQUIRE(loss == Approx(95.625).epsilon(1e-1));
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(arma::accu(output)) == Approx(-105.625).epsilon(1e-3));
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(-105.625).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);

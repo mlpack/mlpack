@@ -81,7 +81,6 @@ TEST_CASE("NaiveBayesClassifierTest", "[NBCTest]")
   {
     for (size_t j = 0; j < testResProbs.n_rows; ++j)
     {
-
       REQUIRE(testResProbs(j, i) + 0.0001 ==
           Approx(calcProbs(j, i) + 0.0001).epsilon(0.0001));
     }

@@ -45,7 +45,7 @@ void MeanAbsolutePercentageError<InputDataType, OutputDataType>::Backward(
 
 {
   output = (((arma::conv_to<arma::mat>::from(input < target) * -2) + 1) /
-      target) * (100 / target.n_cols) ;
+      target) * (100 / target.n_cols);
 }
 
 template<typename InputDataType, typename OutputDataType>

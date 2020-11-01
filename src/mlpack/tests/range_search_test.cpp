@@ -280,9 +280,11 @@ TEST_CASE("ExhaustiveSyntheticTest", "[RangeSearchTest]")
     // Neighbors of point 10.
     REQUIRE(sortedOutput[newFromOld[10]].size() == 2);
     REQUIRE(sortedOutput[newFromOld[10]][0].second == newFromOld[2]);
-    REQUIRE(sortedOutput[newFromOld[10]][0].first == Approx(0.85).epsilon(1e-7));
+    REQUIRE(sortedOutput[newFromOld[10]][0].first ==
+        Approx(0.85).epsilon(1e-7));
     REQUIRE(sortedOutput[newFromOld[10]][1].second == newFromOld[0]);
-    REQUIRE(sortedOutput[newFromOld[10]][1].first == Approx(0.95).epsilon(1e-7));
+    REQUIRE(sortedOutput[newFromOld[10]][1].first ==
+        Approx(0.95).epsilon(1e-7));
 
     // Now do it again with a different range: [1.0 inf].
     if (rs->ReferenceTree())
@@ -1056,7 +1058,7 @@ TEST_CASE("DualBallTreeTest2", "[RangeSearchTest]")
       {
         REQUIRE(kdSorted[i][j].second == ballSorted[i][j].second);
         REQUIRE(kdSorted[i][j].first ==
-            Approx(ballSorted[i][j].first).epsilon (1e-7));
+            Approx(ballSorted[i][j].first).epsilon(1e-7));
       }
     }
   }

@@ -120,7 +120,7 @@ TEST_CASE("LMNNInitialPointTest", "[LMNNTest]")
     for (int col = 0; col < 5; col++)
     {
       if (row == col)
-        REQUIRE(initialPoint(row, col) == Approx( 1.0).epsilon(1e-7));
+        REQUIRE(initialPoint(row, col) == Approx(1.0).epsilon(1e-7));
       else
         REQUIRE(initialPoint(row, col) == Approx(0.0).margin(1e-5));
     }
@@ -207,8 +207,8 @@ TEST_CASE("LMNNSeparableObjectiveTest", "[LMNNTest]")
 
   // Result calculated by hand.
   arma::mat coordinates = arma::eye<arma::mat>(2, 2);
-  REQUIRE(lmnnfn.Evaluate(coordinates, 0, 1) == Approx( 1.576).epsilon(1e-7));
-  REQUIRE(lmnnfn.Evaluate(coordinates, 1, 1) == Approx( 1.576).epsilon(1e-7));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 0, 1) == Approx(1.576).epsilon(1e-7));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 1, 1) == Approx(1.576).epsilon(1e-7));
   REQUIRE(lmnnfn.Evaluate(coordinates, 2, 1) == Approx(1.576).epsilon(1e-7));
   REQUIRE(lmnnfn.Evaluate(coordinates, 3, 1) == Approx(1.576).epsilon(1e-7));
   REQUIRE(lmnnfn.Evaluate(coordinates, 4, 1) == Approx(1.576).epsilon(1e-7));
@@ -326,21 +326,21 @@ TEST_CASE("LMNNSeparableEvaluateWithGradientTest", "[LMNNTest]")
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 4, gradient, 1);
 
-  REQUIRE(objective == Approx( 1.576).epsilon(1e-7));
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 5, gradient, 1);
 
   REQUIRE(objective == Approx( 1.576).epsilon(1e-7));
 
-  REQUIRE(gradient(0, 0) == Approx( -0.048).epsilon(1e-7));
-  REQUIRE(gradient(0, 1) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 0) == Approx( 0.0).epsilon(1e-7));
-  REQUIRE(gradient(1, 1) == Approx( 2.0).epsilon(1e-7));
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 }
 
 // Check that final objective value using SGD optimizer is optimal.
@@ -450,7 +450,7 @@ TEST_CASE("LMNNAccuracyTest", "[LMNNTest]")
   REQUIRE(initAccuracy < finalAccuracy);
 
   // Since this is a very simple dataset final accuracy should be around 100%.
-  REQUIRE(finalAccuracy == Approx( 100.0).epsilon(1e-7));
+  REQUIRE(finalAccuracy == Approx(100.0).epsilon(1e-7));
 }
 
 // Check that accuracy while learning square distance matrix is the same as when
