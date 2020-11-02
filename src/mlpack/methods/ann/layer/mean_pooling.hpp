@@ -140,6 +140,9 @@ class MeanPooling
   bool Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
+  
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 0; }
 
   /**
    * Serialize the layer.
