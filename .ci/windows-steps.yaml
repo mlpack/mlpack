@@ -187,7 +187,7 @@ steps:
         obj/x64/Release/Product.wixobj `
         obj\x64\Release\fragment.wixobj `
         -out ./bin/x64/Release/mlpack-%INSTALL_VERSION%.msi `
-        -loc mlpack-localization.wxl
+        -loc mlpack-localization.wxl `
         -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll"
   displayName: 'Build MSI Windows installer'
 
