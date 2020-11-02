@@ -16,7 +16,7 @@ jobs:
           CLI11_RELEASE_VERSION=$(jq -r ".tag_name" <<< "$CLI11_RELEASE_JSON" | tr -d v)
           echo ::set-output name=release_tag::$(echo $CLI11_RELEASE_VERSION)
           # Extract out version information from git repository
-          CLI11_VERSION_VALUE=$(grep -i ".*#define CLI11_VERSION \".*" src/mlpack/bindings/cli/third_party/CLI/CLI11.hpp | grep -Po '\d.\d.\d')
+          CLI11_VERSION_VALUE=$(grep -i ".*#define CLI11_VERSION.*" src/mlpack/bindings/cli/third_party/CLI/CLI11.hpp | grep -Po "(\d+\.)+\d+")
           # Set the current release tag
           echo ::set-output name=current_tag::$(echo $CLI11_VERSION_VALUE)
 
