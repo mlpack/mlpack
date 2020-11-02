@@ -29,7 +29,7 @@ template<typename InputType, typename OutputType>
 void Softmin<InputDataType, OutputDataType>::Forward(
     const InputType& input,
     OutputType& output)
-{ 
+{
   InputType softminInput = arma::exp(-(input.each_row() -
       arma::min(input, 0)));
   output = softminInput.each_row() / sum(softminInput, 0);
@@ -53,7 +53,7 @@ void Softmin<InputDataType, OutputDataType>::serialize(
 {
   // Nothing to do here.
 }
-                                             
+
 } // namespace ann
 } // namespace mlpack
 

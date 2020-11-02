@@ -573,7 +573,7 @@ void CheckSoftminActivationCorrect(const arma::colvec input,
 
   // Test the activation function using the entire vector as input.
   arma::colvec activations;
-  softmin.Forward(input,activations);
+  softmin.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
     REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
@@ -606,8 +606,7 @@ void CheckSoftminDerivativeCorrect(const arma::colvec input,
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
     REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
-  } 
-
+  }
 }
 
 /**

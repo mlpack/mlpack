@@ -1518,7 +1518,8 @@ TEST_CASE("DiagonalGaussianUnbiasedEstimatorTest", "[DistributionTest]")
  * the weighted mean and covariance reduce to the unweighted sample mean and
  * covariance.
  */
-TEST_CASE("DiagonalGaussianWeightedParametersReductionTest", "[DistributionTest]")
+TEST_CASE("DiagonalGaussianWeightedParametersReductionTest",
+          "[DistributionTest]")
 {
   arma::vec mean("2.5 1.5 8.2 3.1");
   arma::vec cov("1.2 3.1 8.3 4.3");
