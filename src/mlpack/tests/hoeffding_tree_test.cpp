@@ -173,7 +173,8 @@ TEST_CASE("HoeffdingInformationGainBadSplitTest", "[HoeffdingTreeTest]")
   counts(1, 0) = 5;
   counts(1, 1) = 5;
 
-  REQUIRE(HoeffdingInformationGain::Evaluate(counts) == Approx(0.0).margin(1e-10));
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) ==
+      Approx(0.0).margin(1e-10));
 }
 
 /**
@@ -216,7 +217,8 @@ TEST_CASE("HoeffdingInformationGainZeroTest", "[HoeffdingTreeTest]")
   // When nothing has been seen, the information gain should be zero.
   arma::Mat<size_t> counts = arma::zeros<arma::Mat<size_t>>(10, 10);
 
-  REQUIRE(HoeffdingInformationGain::Evaluate(counts) == Approx(0.0).margin(1e-10));
+  REQUIRE(HoeffdingInformationGain::Evaluate(counts) ==
+      Approx(0.0).margin(1e-10));
 }
 
 /**
@@ -225,14 +227,22 @@ TEST_CASE("HoeffdingInformationGainZeroTest", "[HoeffdingTreeTest]")
  */
 TEST_CASE("HoeffdingInformationGainRangeTest", "[HoeffdingTreeTest]")
 {
-  REQUIRE(HoeffdingInformationGain::Range(1) == Approx(0).epsilon(1e-7));
-  REQUIRE(HoeffdingInformationGain::Range(2) == Approx(1.0).epsilon(1e-7));
-  REQUIRE(HoeffdingInformationGain::Range(3) == Approx(1.5849625).epsilon(1e-7));
-  REQUIRE(HoeffdingInformationGain::Range(4) == Approx(2).epsilon(1e-7));
-  REQUIRE(HoeffdingInformationGain::Range(5) == Approx(2.32192809).epsilon(1e-7));
-  REQUIRE(HoeffdingInformationGain::Range(10) == Approx(3.32192809).epsilon(1e-7));
-  REQUIRE(HoeffdingInformationGain::Range(100) == Approx(6.64385619).epsilon(1e-7));
-  REQUIRE(HoeffdingInformationGain::Range(1000) == Approx(9.96578428).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(1) ==
+      Approx(0).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(2) ==
+      Approx(1.0).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(3) ==
+      Approx(1.5849625).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(4) ==
+      Approx(2).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(5) ==
+      Approx(2.32192809).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(10) ==
+      Approx(3.32192809).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(100) ==
+      Approx(6.64385619).epsilon(1e-7));
+  REQUIRE(HoeffdingInformationGain::Range(1000) ==
+      Approx(9.96578428).epsilon(1e-7));
 }
 
 /**
