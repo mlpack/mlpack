@@ -44,7 +44,7 @@ jobs:
         python.version: '2.7'
       Python:
         binding: 'python'
-        python.version: '3.7'
+        python.version: '3.8'
         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=ON -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
       Julia:
         python.version: '2.7'
