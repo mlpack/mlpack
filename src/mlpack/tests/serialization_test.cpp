@@ -282,9 +282,12 @@ void CheckTrees(TreeType& tree,
   }
 
   // Check that the parent distance is the same.
-  REQUIRE(tree.ParentDistance() == Approx(xmlTree.ParentDistance()).epsilon(1e-10));
-  REQUIRE(tree.ParentDistance() == Approx(jsonTree.ParentDistance()).epsilon(1e-10));
-  REQUIRE(tree.ParentDistance() == Approx(binaryTree.ParentDistance()).epsilon(1e-10));
+  REQUIRE(tree.ParentDistance() ==
+      Approx(xmlTree.ParentDistance()).epsilon(1e-10));
+  REQUIRE(tree.ParentDistance() ==
+      Approx(jsonTree.ParentDistance()).epsilon(1e-10));
+  REQUIRE(tree.ParentDistance() ==
+      Approx(binaryTree.ParentDistance()).epsilon(1e-10));
 
   // Check that the furthest descendant distance is the same.
     REQUIRE(tree.FurthestDescendantDistance() ==
@@ -729,9 +732,12 @@ TEST_CASE("DETTest", "[SerializationTest]")
     }
     else
     {
-      REQUIRE(node->SplitValue() == Approx(xmlNode->SplitValue()).epsilon(1e-10));
-      REQUIRE(node->SplitValue() == Approx(binaryNode->SplitValue()).epsilon(1e-10));
-      REQUIRE(node->SplitValue() == Approx(jsonNode->SplitValue()).epsilon(1e-10));
+      REQUIRE(node->SplitValue() ==
+          Approx(xmlNode->SplitValue()).epsilon(1e-10));
+      REQUIRE(node->SplitValue() ==
+          Approx(binaryNode->SplitValue()).epsilon(1e-10));
+      REQUIRE(node->SplitValue() ==
+          Approx(jsonNode->SplitValue()).epsilon(1e-10));
     }
 
     if (std::abs(node->LogNegError()) < 1e-5)
@@ -742,24 +748,29 @@ TEST_CASE("DETTest", "[SerializationTest]")
     }
     else
     {
-      REQUIRE(node->LogNegError() == Approx(xmlNode->LogNegError()).epsilon(1e-10));
-      REQUIRE(node->LogNegError() == Approx(binaryNode->LogNegError()).epsilon(1e-10));
-      REQUIRE(node->LogNegError() == Approx(jsonNode->LogNegError()).epsilon(1e-10));
+      REQUIRE(node->LogNegError() ==
+          Approx(xmlNode->LogNegError()).epsilon(1e-10));
+      REQUIRE(node->LogNegError() ==
+          Approx(binaryNode->LogNegError()).epsilon(1e-10));
+      REQUIRE(node->LogNegError() ==
+          Approx(jsonNode->LogNegError()).epsilon(1e-10));
     }
 
     if (std::abs(node->SubtreeLeavesLogNegError()) < 1e-5)
     {
       REQUIRE(xmlNode->SubtreeLeavesLogNegError() == Approx(0.0).margin(1e-5));
-      REQUIRE(binaryNode->SubtreeLeavesLogNegError() == Approx(0.0).margin(1e-5));
-      REQUIRE(jsonNode->SubtreeLeavesLogNegError() == Approx(0.0).margin(1e-5));
+      REQUIRE(binaryNode->SubtreeLeavesLogNegError() ==
+          Approx(0.0).margin(1e-5));
+      REQUIRE(jsonNode->SubtreeLeavesLogNegError() ==
+          Approx(0.0).margin(1e-5));
     }
     else
     {
-      REQUIRE(node->SubtreeLeavesLogNegError() == 
+      REQUIRE(node->SubtreeLeavesLogNegError() ==
           Approx(xmlNode->SubtreeLeavesLogNegError()).epsilon(1e-7));
-      REQUIRE(node->SubtreeLeavesLogNegError() == 
+      REQUIRE(node->SubtreeLeavesLogNegError() ==
           Approx(binaryNode->SubtreeLeavesLogNegError()).epsilon(1e-7));
-      REQUIRE(node->SubtreeLeavesLogNegError() == 
+      REQUIRE(node->SubtreeLeavesLogNegError() ==
           Approx(jsonNode->SubtreeLeavesLogNegError()).epsilon(1e-7));
     }
 
@@ -776,7 +787,8 @@ TEST_CASE("DETTest", "[SerializationTest]")
     else
     {
       REQUIRE(node->Ratio() == Approx(xmlNode->Ratio()).epsilon(1e-10));
-      REQUIRE(node->Ratio() == Approx(binaryNode->Ratio()).epsilon(1e-10));
+      REQUIRE(node->Ratio() ==
+          Approx(binaryNode->Ratio()).epsilon(1e-10));
       REQUIRE(node->Ratio() == Approx(jsonNode->Ratio()).epsilon(1e-10));
     }
 
@@ -789,8 +801,10 @@ TEST_CASE("DETTest", "[SerializationTest]")
     else
     {
       REQUIRE(node->LogVolume() == Approx(xmlNode->LogVolume()).epsilon(1e-10));
-      REQUIRE(node->LogVolume() == Approx(binaryNode->LogVolume()).epsilon(1e-10));
-      REQUIRE(node->LogVolume() == Approx(jsonNode->LogVolume()).epsilon(1e-10));
+      REQUIRE(node->LogVolume() ==
+          Approx(binaryNode->LogVolume()).epsilon(1e-10));
+      REQUIRE(node->LogVolume() ==
+          Approx(jsonNode->LogVolume()).epsilon(1e-10));
     }
 
     if (node->Left() == NULL)
@@ -843,9 +857,12 @@ TEST_CASE("DETTest", "[SerializationTest]")
     }
     else
     {
-      REQUIRE(node->AlphaUpper() == Approx(xmlNode->AlphaUpper()).epsilon(1e-10));
-      REQUIRE(node->AlphaUpper() == Approx(binaryNode->AlphaUpper()).epsilon(1e-10));
-      REQUIRE(node->AlphaUpper() == Approx(jsonNode->AlphaUpper()).epsilon(1e-10));
+      REQUIRE(node->AlphaUpper() ==
+          Approx(xmlNode->AlphaUpper()).epsilon(1e-10));
+      REQUIRE(node->AlphaUpper() ==
+          Approx(binaryNode->AlphaUpper()).epsilon(1e-10));
+      REQUIRE(node->AlphaUpper() ==
+          Approx(jsonNode->AlphaUpper()).epsilon(1e-10));
     }
 
     REQUIRE(node->MaxVals().n_elem == xmlNode->MaxVals().n_elem);
@@ -861,9 +878,12 @@ TEST_CASE("DETTest", "[SerializationTest]")
       }
       else
       {
-        REQUIRE(node->MaxVals()[i] == Approx(xmlNode->MaxVals()[i]).epsilon(1e-10));
-        REQUIRE(node->MaxVals()[i] == Approx(binaryNode->MaxVals()[i]).epsilon(1e-10));
-        REQUIRE(node->MaxVals()[i] == Approx(jsonNode->MaxVals()[i]).epsilon(1e-10));
+        REQUIRE(node->MaxVals()[i] ==
+            Approx(xmlNode->MaxVals()[i]).epsilon(1e-10));
+        REQUIRE(node->MaxVals()[i] ==
+            Approx(binaryNode->MaxVals()[i]).epsilon(1e-10));
+        REQUIRE(node->MaxVals()[i] ==
+            Approx(jsonNode->MaxVals()[i]).epsilon(1e-10));
       }
     }
 
@@ -880,9 +900,12 @@ TEST_CASE("DETTest", "[SerializationTest]")
       }
       else
       {
-        REQUIRE(node->MinVals()[i] == Approx(xmlNode->MinVals()[i]).epsilon(1e-10));
-        REQUIRE(node->MinVals()[i] == Approx(binaryNode->MinVals()[i]).epsilon(1e-10));
-        REQUIRE(node->MinVals()[i] == Approx(jsonNode->MinVals()[i]).epsilon(1e-10));
+        REQUIRE(node->MinVals()[i] ==
+            Approx(xmlNode->MinVals()[i]).epsilon(1e-10));
+        REQUIRE(node->MinVals()[i] ==
+            Approx(binaryNode->MinVals()[i]).epsilon(1e-10));
+        REQUIRE(node->MinVals()[i] ==
+            Approx(jsonNode->MinVals()[i]).epsilon(1e-10));
       }
     }
   }
@@ -918,15 +941,17 @@ TEST_CASE("NaiveBayesSerializationTest", "[SerializationTest]")
     REQUIRE(nbc.Means()[i] == Approx(jsonNbc.Means()[i]).epsilon(1e-10));
     REQUIRE(nbc.Means()[i] == Approx(binaryNbc.Means()[i]).epsilon(1e-10));
   }
-
   REQUIRE(nbc.Variances().n_elem == xmlNbc.Variances().n_elem);
   REQUIRE(nbc.Variances().n_elem == jsonNbc.Variances().n_elem);
   REQUIRE(nbc.Variances().n_elem == binaryNbc.Variances().n_elem);
   for (size_t i = 0; i < nbc.Variances().n_elem; ++i)
   {
-    REQUIRE(nbc.Variances()[i] == Approx(xmlNbc.Variances()[i]).epsilon(1e-10));
-    REQUIRE(nbc.Variances()[i] == Approx(jsonNbc.Variances()[i]).epsilon(1e-10));
-    REQUIRE(nbc.Variances()[i] == Approx(binaryNbc.Variances()[i]).epsilon(1e-10));
+    REQUIRE(nbc.Variances()[i] ==
+        Approx(xmlNbc.Variances()[i]).epsilon(1e-10));
+    REQUIRE(nbc.Variances()[i] ==
+        Approx(jsonNbc.Variances()[i]).epsilon(1e-10));
+    REQUIRE(nbc.Variances()[i] ==
+        Approx(binaryNbc.Variances()[i]).epsilon(1e-10));
   }
 
   REQUIRE(nbc.Probabilities().n_elem ==
@@ -937,7 +962,6 @@ TEST_CASE("NaiveBayesSerializationTest", "[SerializationTest]")
       binaryNbc.Probabilities().n_elem);
   for (size_t i = 0; i < nbc.Probabilities().n_elem; ++i)
   {
-
     REQUIRE(nbc.Probabilities()[i] ==
         Approx(xmlNbc.Probabilities()[i]).epsilon(1e-7));
     REQUIRE(nbc.Probabilities()[i] ==
