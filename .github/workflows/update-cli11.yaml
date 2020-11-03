@@ -11,13 +11,13 @@ jobs:
       - name: Get Latest CLI11 Tagged Release
         id: cli11-header
         run: |
-          # Ping version information upstream
+          # Ping version information upstream.
           CLI11_RELEASE_JSON=$(curl -sL https://api.github.com/repos/CLIUtils/CLI11/releases/latest)
           CLI11_RELEASE_VERSION=$(jq -r ".tag_name" <<< "$CLI11_RELEASE_JSON" | tr -d v)
           echo ::set-output name=release_tag::$(echo $CLI11_RELEASE_VERSION)
-          # Extract out version information from git repository
+          # Extract out version information from git repository.
           CLI11_VERSION_VALUE=$(grep -i ".*#define CLI11_VERSION.*" src/mlpack/bindings/cli/third_party/CLI/CLI11.hpp | grep -Po "(\d+\.)+\d+")
-          # Set the current release tag
+          # Set the current release tag.
           echo ::set-output name=current_tag::$(echo $CLI11_VERSION_VALUE)
 
       - name: Update CLI11
@@ -28,7 +28,7 @@ jobs:
         run: |
           # Delete the CLI11.hpp.
           rm -f src/mlpack/bindings/cli/third_party/CLI/CLI11.hpp
-          # Download the release
+          # Download the release.
           curl -sL https://github.com/CLIUtils/CLI11/releases/latest/download/CLI11.hpp -o src/mlpack/bindings/cli/third_party/CLI/CLI11.hpp
 
       - name: Create Pull Request For CLI11

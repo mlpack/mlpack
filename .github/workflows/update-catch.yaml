@@ -11,17 +11,17 @@ jobs:
       - name: Get Latest Catch Tagged Release
         id: catch-header
         run: |
-          # Ping version information upstream
+          # Ping version information upstream.
           CATCH_RELEASE_JSON=$(curl -sL https://api.github.com/repos/catchorg/Catch2/releases/latest)
           CATCH_RELEASE_VERSION=$(jq -r ".tag_name" <<< "$CATCH_RELEASE_JSON" | tr -d v)
           echo ::set-output name=release_tag::$(echo $CATCH_RELEASE_VERSION)
-          # Extract out version information from git repository
+          # Extract out version information from git repository.
           CATCH_VERSION_MAJOR=$(grep -i ".*#define CATCH_VERSION_MAJOR.*" src/mlpack/tests/catch.hpp | grep -o "[0-9]*")
           CATCH_VERSION_MINOR=$(grep -i ".*#define CATCH_VERSION_MINOR.*" src/mlpack/tests/catch.hpp | grep -o "[0-9]*")
           CATCH_VERSION_PATCH=$(grep -i ".*#define CATCH_VERSION_PATCH.*" src/mlpack/tests/catch.hpp | grep -o "[0-9]*")
-          # Combine values to match release tag information
+          # Combine values to match release tag information.
           CATCH_VERSION_VALUE=${CATCH_VERSION_MAJOR}.${CATCH_VERSION_MINOR}.${CATCH_VERSION_PATCH}
-          # Set the current release tag
+          # Set the current release tag.
           echo ::set-output name=current_tag::$(echo $CATCH_VERSION_VALUE)
 
       - name: Update Catch
@@ -32,7 +32,7 @@ jobs:
         run: |
           # Delete the catch.hpp.
           rm -f src/mlpack/tests/catch.hpp
-          # Download the release
+          # Download the release.
           curl -sL https://github.com/catchorg/Catch2/releases/latest/download/catch.hpp -o src/mlpack/tests/catch.hpp
 
       - name: Create Pull Request For Catch
