@@ -21,9 +21,11 @@ steps:
       pip install cython numpy pandas zipp configparser
     fi
 
-    if [ "a$(julia.version)" != "a" ]; then
-      brew cask install julia@1.5.1
-    fi
+    # Install Julia manually.
+    wget https://julialang-s3.julialang.org/bin/mac/x64/1.5/julia-1.5.2-mac64.dmg
+    sudo hdiutil mount julia-1.5.2-mac64.dmg
+    sudo cp -R /Volumes/julia-1.5.2-mac64/julia-1.5.2-mac64.app /Applications
+    sudo ln -s /Applications/julia-1.5.2-mac64.app/Contents/Resources/julia/bin/julia /usr/local/bin/julia
 
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
   displayName: 'Install Build Dependencies'
