@@ -176,14 +176,21 @@ steps:
     dir
     type fragment.wxs
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `
+        -dProjectFileName=mlpack-win-installer.wixproj `
+        -dProjectName=mlpack-win-installer `
+        -dProjectPath=mlpack-win-installer.wixproj `
         -out obj/x64/Release/Product.wixobj `
         Product.wxs
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `
+        -dProjectFileName=mlpack-win-installer.wixproj `
+        -dProjectName=mlpack-win-installer `
+        -dProjectPath=mlpack-win-installer.wixproj `
         -out obj/x64/Release/fragment.wixobj `
         fragment.wxs
     dir
     & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\light.exe' `
         -b SourceDir `
+        mlpack-win-installer.wixproj `
         obj/x64/Release/Product.wixobj `
         obj\x64\Release\fragment.wixobj `
         -out ./bin/x64/Release/mlpack-%INSTALL_VERSION%.msi `
