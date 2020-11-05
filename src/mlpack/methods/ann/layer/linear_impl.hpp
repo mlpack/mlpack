@@ -38,7 +38,7 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
     outSize(outSize),
     regularizer(regularizer)
 {
-  weights.set_size(outSize * inSize + outSize, 1);
+  weights.set_size(WeightSize(), 1);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -70,7 +70,7 @@ template<typename InputDataType, typename OutputDataType,
 Linear<InputDataType, OutputDataType, RegularizerType>&
 Linear<InputDataType, OutputDataType, RegularizerType>::
 operator=(const Linear& layer)
-{ 
+{
   if (this != &layer)
   {
     inSize = layer.inSize;
@@ -86,7 +86,7 @@ template<typename InputDataType, typename OutputDataType,
 Linear<InputDataType, OutputDataType, RegularizerType>&
 Linear<InputDataType, OutputDataType, RegularizerType>::
 operator=(Linear&& layer)
-{ 
+{
   if (this != &layer)
   {
     inSize = layer.inSize;

@@ -6,7 +6,7 @@
  * Implementation of is_saving function.
  *
  * This implementation provides backward compatibilty with older
- * version of cereal that does not have Archive::is_saving struct. 
+ * version of cereal that does not have Archive::is_saving struct.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -29,11 +29,12 @@ struct is_cereal_archive_saving
 {
   // Archive::is_saving is not implemented yet, so we can use std::is_same<>
   // to check if it is a loading archive.
-  constexpr static bool value = std::is_same<Archive, cereal::BinaryOutputArchive>::value ||
-//#if (BINDING_TYPE != BINDING_TYPE_R)
-    std::is_same<Archive, cereal::JSONOutputArchive>::value ||
-//#endif
-    std::is_same<Archive, cereal::XMLOutputArchive>::value;
+  constexpr static bool value = std::is_same<Archive,
+      cereal::BinaryOutputArchive>::value ||
+// #if (BINDING_TYPE != BINDING_TYPE_R)
+      std::is_same<Archive, cereal::JSONOutputArchive>::value ||
+// #endif
+      std::is_same<Archive, cereal::XMLOutputArchive>::value;
 };
 
 template<typename Archive>
@@ -41,7 +42,7 @@ bool is_saving(
     const typename std::enable_if<
         is_cereal_archive_saving<Archive>::value, Archive>::type* = 0)
 {
-  return true; 
+  return true;
 }
 
 template<typename Archive>

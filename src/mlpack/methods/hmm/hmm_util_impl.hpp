@@ -41,14 +41,25 @@ void LoadHMMAndPerformAction(const std::string& modelFile,
 {
   const std::string extension = data::Extension(modelFile);
   if (extension == "xml")
-    LoadHMMAndPerformActionHelper<ActionType, cereal::XMLInputArchive>(modelFile, x);
+  {
+    LoadHMMAndPerformActionHelper<ActionType, cereal::XMLInputArchive>(
+        modelFile, x);
+  }
   else if (extension == "bin")
-    LoadHMMAndPerformActionHelper<ActionType, cereal::BinaryInputArchive>(modelFile, x);
+  {
+    LoadHMMAndPerformActionHelper<ActionType, cereal::BinaryInputArchive>(
+        modelFile, x);
+  }
   else if (extension == "json")
-    LoadHMMAndPerformActionHelper<ActionType, cereal::JSONInputArchive>(modelFile, x);
+  {
+    LoadHMMAndPerformActionHelper<ActionType, cereal::JSONInputArchive>(
+        modelFile, x);
+  }
   else
+  {
     Log::Fatal << "Unknown extension '" << extension << "' for HMM model file "
         << "(known: 'xml', 'json', 'bin')." << std::endl;
+  }
 }
 
 template<typename ActionType,
