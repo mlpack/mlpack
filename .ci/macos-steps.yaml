@@ -24,8 +24,8 @@ steps:
     # Install Julia manually.
     wget https://julialang-s3.julialang.org/bin/mac/x64/1.5/julia-1.5.2-mac64.dmg
     sudo hdiutil mount julia-1.5.2-mac64.dmg
-    sudo cp -R /Volumes/julia-1.5.2-mac64/julia-1.5.2-mac64.app /Applications
-    sudo ln -s /Applications/julia-1.5.2-mac64.app/Contents/Resources/julia/bin/julia /usr/local/bin/julia
+    sudo cp -R /Volumes/Julia-1.5.2/Julia-1.5.2.app /Applications
+    sudo ln -s /Applications/Julia-1.5.2.app/Contents/Resources/julia/bin/julia /usr/local/bin/julia
 
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
   displayName: 'Install Build Dependencies'
