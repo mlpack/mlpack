@@ -26,6 +26,7 @@ steps:
     sudo hdiutil mount julia-1.5.2-mac64.dmg
     ls /Volumes/Julia-1.5.2/Julia-1.5.app/
     sudo cp -R /Volumes/Julia-1.5.2/Julia-1.5.app /Applications
+    ls -l /usr/local/bin/
     sudo ln -s /Applications/Julia-1.5.app/Contents/Resources/julia/bin/julia /usr/local/bin/julia
 
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
