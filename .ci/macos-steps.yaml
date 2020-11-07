@@ -24,6 +24,7 @@ steps:
     # Install Julia manually.
     wget https://julialang-s3.julialang.org/bin/mac/x64/1.5/julia-1.5.2-mac64.dmg
     sudo hdiutil mount julia-1.5.2-mac64.dmg
+    ls /Volumes/Julia-1.5.2/
     sudo cp -R /Volumes/Julia-1.5.2/Julia-1.5.2.app /Applications
     sudo ln -s /Applications/Julia-1.5.2.app/Contents/Resources/julia/bin/julia /usr/local/bin/julia
 
