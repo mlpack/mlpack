@@ -11,6 +11,15 @@
 # http://www.opensource.org/licenses/BSD-3-Clause for more information.
 import sys
 
+'''
+#we can use any one of the following line to print the Python Version:
+print(str(sys.version_info.major) + '.'+str(sys.version_info.minor))
+
+#or
+
+str(sys.version)
+'''
+
 print(sys.argv[1] + \
       '/lib/python' + \
       str(sys.version_info.major) + \
