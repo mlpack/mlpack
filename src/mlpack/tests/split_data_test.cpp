@@ -289,7 +289,7 @@ TEST_CASE("StratifiedSplitDataResultTest", "[SplitDataTest]")
  */
 TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
 {
-  mat input(3,480);
+  mat input(3, 480);
   input.randu();
 
   // 256 0s, 128 1s, 64 2s and 32 3s.
