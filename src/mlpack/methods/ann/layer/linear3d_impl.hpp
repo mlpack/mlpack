@@ -42,6 +42,62 @@ Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear3D(
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
+Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear3D(
+    const Linear3D& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    weights(layer.weights),
+    regularizer(layer.regularizer)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear3D(
+    Linear3D&& layer) :
+    inSize(0),
+    outSize(0),
+    weights(std::move(layer.weights)),
+    regularizer(std::move(layer.regularizer));
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear3D<InputDataType, OutputDataType, RegularizerType>&
+Linear3D<InputDataType, OutputDataType, RegularizerType>::
+operator=(const Linear3D& layer)
+{
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = layer.weights;
+    regularizer = layer.regularizer;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear3D<InputDataType, OutputDataType, RegularizerType>&
+Linear3D<InputDataType, OutputDataType, RegularizerType>::
+operator=(Linear3D&& layer)
+P
+  if (this != &layer)
+  {
+    inSize = 0;
+    outSize = 0;
+    weights = std::move(layer.weights);
+    regularizer = std::move(layer.regularizer);
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 void Linear3D<InputDataType, OutputDataType, RegularizerType>::Reset()
 {
   typedef typename arma::Mat<typename OutputDataType::elem_type> MatType;
