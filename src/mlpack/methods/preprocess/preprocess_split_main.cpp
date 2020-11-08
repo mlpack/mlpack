@@ -131,7 +131,6 @@ static void mlpackMain()
   {
     ReportIgnoredParam({{ "input_labels", true }}, "training_labels");
     ReportIgnoredParam({{ "input_labels", true }}, "test_labels");
-    ReportIgnoredParam("stratify_data", "input_labels is not provided");
   }
 
   // Check test_ratio.
