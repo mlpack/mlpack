@@ -159,51 +159,15 @@ steps:
     {
       $env:INSTALL_VERSION = $env:MLPACK_VERSION;
     }
+
     # Build the MSI installer.
-    dir
-    cd dist\win-installer\mlpack-win-installer
-    dir
-    & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe' dir SourceDir `
-        -dr INSTALLFOLDER `
-        -ag `
-        -cg DynamicFragment `
-        -ke `
-        -srd `
-        -sreg `
-        -sfrag `
-        -nologo `
-        -out fragment.wxs
-    dir SourceDir
-    dir
-    type fragment.wxs
-    & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\candle.exe' `
-        -dHarvestPath=.\SourceDir\ `
-        -dConfiguration=Release `
-        -dOutDir=bin\x64\Release\ `
-        -dPlatform=x64 `
-        -dProjectDir=. `
-        -dProjectExt=.wixproj `
-        -dProjectFileName=mlpack-win-installer.wixproj `
-        -dProjectName=mlpack-win-installer `
-        -dProjectPath=mlpack-win-installer.wixproj `
-        -dTargetDir=.\bin\x64\Release\ `
-        -dTargetExt=.msi `
-        -dTargetFileName=mlpack-windows.msi `
-        -dTargetName=mlpack-windows `
-        -dTargetPath=.\bin\x64\Release\mlpack-windows.msi `
-        -out obj/x64/Release/ `
-        -arch x64 `
-        -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll" `
-        Product.wxs fragment.wxs
-    dir
-    & 'C:\Program Files (x86)\WiX Toolset v3.11\bin\light.exe' `
-        -b SourceDir `
-        mlpack-win-installer.wixproj `
-        obj/x64/Release/Product.wixobj `
-        obj\x64\Release\fragment.wixobj `
-        -out ./bin/x64/Release/mlpack-%INSTALL_VERSION%.msi `
-        -loc mlpack-localization.wxl `
-        -ext "C:\Program Files (x86)\WiX Toolset v3.11\bin\\WixUIExtension.dll"
+    dir 'C:\Program Files (x86)\'
+    dir 'C:\Program Files (x86)\MSBuild\'
+    & 'C:\Program Files (x86)\MSBuild\15.0\Bin\MSBuild.exe' `
+        -t:rebuild
+        -p:Configuration=Release `
+        -p:TreatWarningsAsErrors=True `
+        mlpack-win-installer.wixproj
   displayName: 'Build MSI Windows installer'
 
 # Publish artifacts to Azure Pipelines

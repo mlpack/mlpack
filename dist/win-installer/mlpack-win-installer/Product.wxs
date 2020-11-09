@@ -2,47 +2,39 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <!-- 1) DO NOT CHANGE the product GUID! It is forever -->
   <!-- 2) %MLPACK_VERSION env var is set by .appveyor.yml -->
-	<Product Id="02A00C77-197D-4E91-B7D9-5836220E92E9"
-           UpgradeCode="6C2D7EC0-6F10-40CB-9703-1DC160A62662"
-           Name="mlpack"
-           Language="1033"
-           Version="$(env.MLPACK_VERSION)" 
-           Manufacturer="mlpack">
-		
-        <Package InstallerVersion="200"
-             Description="mlpack Windows Installer"
-             Compressed="yes" 
-             InstallScope="perMachine"
-             Platform="x64"/>
+  <Product Id="02A00C77-197D-4E91-B7D9-5836220E92E9"
+       UpgradeCode="6C2D7EC0-6F10-40CB-9703-1DC160A62662"
+       Name="mlpack"
+       Language="1033"
+       Version="$(env.MLPACK_VERSION)" 
+       Manufacturer="mlpack">
+    <Package InstallerVersion="200"
+         Description="mlpack Windows Installer"
+         Compressed="yes" 
+         InstallScope="perMachine"
+         Platform="x64"/>
 
-        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-		
-        <MediaTemplate EmbedCab="yes"/>
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes"/>
 
-		<Feature Id="ProductFeature" Title="mlpackWindows" Level="1">
-			<ComponentGroupRef Id="ProductComponents" />
-		</Feature>
-        <Property Id="MLPACK_VERSION">$(env.MLPACK_VERSION)</Property>
-        <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
-        <WixVariable Id="WixUILicenseRtf" Value="..\staging\license.rtf"/>
-        <WixVariable Id="WixUIBannerBmp" Value="..\res\banner.jpg"/>
-        <WixVariable Id="WixUIDialogBmp" Value="..\res\dialog_white.jpg"/>
-        <UIRef Id="WixUI_InstallDir" />
-	</Product>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder" Name="PFiles">
+        <Directory Id="INSTALLDIR" Name="mlpack">
+          <Directory Id="SourcesDir" />
+        </Directory>
+      </Directory>
+    </Directory>
 
-	<Fragment>
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFiles64Folder">
-				<Directory Id="INSTALLFOLDER" Name="mlpack" />
-			</Directory>
-		</Directory>
-	</Fragment>
+    <Feature Id="ProductFeature" Title="mlpackWindows" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="Sources" />
+    </Feature>
 
-	<Fragment>
-		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-           <!-- This references the list of mlpack files automatically generated using Heat (see .wixproj BeforeBuild Target) -->
-           <ComponentGroupRef Id="HeatGenerated"/>
-		</ComponentGroup>
-	</Fragment>
-
+    <Property Id="MLPACK_VERSION">$(env.MLPACK_VERSION)</Property>
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <WixVariable Id="WixUILicenseRtf" Value="..\staging\license.rtf"/>
+    <WixVariable Id="WixUIBannerBmp" Value="..\res\banner.jpg"/>
+    <WixVariable Id="WixUIDialogBmp" Value="..\res\dialog_white.jpg"/>
+    <UIRef Id="WixUI_InstallDir" />
+  </Product>
 </Wix>
