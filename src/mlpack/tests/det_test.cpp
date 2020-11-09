@@ -324,7 +324,7 @@ TEST_CASE("TestComputeValue", "[DETTest]")
   q1 = {4, 2, 2};
   q2 = {5, 0.25, 6};
   q3 = {5, 3, 7};
-  q4 = {2, 3, 3;
+  q4 = {2, 3, 3};
 
   arma::Col<size_t> oTest(5);
   oTest = {0, 1, 2, 3, 4};
@@ -428,7 +428,7 @@ TEST_CASE("TestSparseComputeValue", "[DETTest]")
   q1d = {4, 2, 2};
   q2d = {5, 0.25, 6};
   q3d = {5, 3, 7};
-  q4d = {2, 3, 3;
+  q4d = {2, 3, 3};
 
   arma::sp_mat testData(realData);
   arma::sp_vec q1(q1d), q2(q2d), q3(q3d), q4(q4d);
