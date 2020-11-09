@@ -47,9 +47,9 @@ BOOST_AUTO_TEST_CASE(AssertSizesTest)
 BOOST_AUTO_TEST_CASE(PairwiseDistanceTest)
 {
   arma::mat X;
-  X << 0 << 1 << 1 << 0 << 0 << arma::endr
-    << 0 << 1 << 2 << 0 << 0 << arma::endr
-    << 1 << 1 << 3 << 2 << 0 << arma::endr;
+  X = { {0, 1, 1, 0, 0},
+        {0, 1, 2, 0, 0},
+        {1, 1, 3, 2, 0} };
   metric::EuclideanDistance metric;
   arma::mat dist = PairwiseDistances(X, metric);
   BOOST_REQUIRE_EQUAL(dist(0, 0), 0);

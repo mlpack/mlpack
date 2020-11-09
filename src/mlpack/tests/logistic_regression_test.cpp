@@ -1011,9 +1011,9 @@ BOOST_AUTO_TEST_CASE(ConstructionThenTraining)
   arma::mat myMatrix;
 
   // Four points, three dimensions.
-  myMatrix << 0.555950 << 0.274690 << 0.540605 << 0.798938 << arma::endr
-           << 0.948014 << 0.973234 << 0.216504 << 0.883152 << arma::endr
-           << 0.023787 << 0.675382 << 0.231751 << 0.450332 << arma::endr;
+  myMatrix = { {0.555950, 0.274690, 0.540605, 0.798938},
+               {0.948014, 0.973234, 0.216504, 0.883152},
+               {0.023787, 0.675382, 0.231751, 0.450332} };
 
   arma::Row<size_t> myTargets("1 0 1 0");
 

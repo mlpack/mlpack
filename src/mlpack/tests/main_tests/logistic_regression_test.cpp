@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(LRNoTrainingData)
 {
   arma::Row<size_t> trainY;
   // 10 responses.
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr;
+  trainY = {0, 1, 0, 1, 1, 1, 0, 1, 0, 0};
 
   SetInputParam("labels", std::move(trainY));
 
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   arma::Row<size_t> trainY;
   // 10 responses.
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr;
+  trainY = {0, 1, 0, 1, 1, 1, 0, 1, 0, 0};
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   SetInputParam("training", std::move(trainX));
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
   arma::Row<size_t> trainY; // Response vector with wrong size.
 
   // 8 responses - incorrect size.
-  trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << arma::endr;
+  trainY = {0, 0, 1, 0, 1, 1, 1, 0};
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr;
+  trainY = {0, 1, 0, 1, 1, 1, 0, 1, 0, 0};
 
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfTestData)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr;
+  trainY = {0, 1, 0, 1, 1, 1, 0, 1, 0, 0};
 
   // Test data with wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D-1, N);
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfTestData2)
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   arma::Row<size_t> trainY;
   // 10 responses
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr;
+  trainY = {0, 1, 0, 1, 1, 1, 0, 1, 0, 0};
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE(LRTrainWithMoreThanTwoClasses)
   arma::Row<size_t> trainY;
 
   // 8 responses containing more than two classes.
-  trainY << 0 << 1 << 0 << 1 << 2 << 1 << 3 << 1 << arma::endr;
+  trainY = {0, 1, 0, 1, 2, 1, 3, 1};
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeMaxIterationTest)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << arma::endr;
+  trainY = {0, 1, 0, 1, 1, 1, 0, 1, 0, 0};
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeStepSizeTest)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr;
+  trainY = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeToleranceTest)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 1 << 1 << 0 << 1 << 0 << 0 << 0 << 1 << 0 << 1 << arma::endr;
+  trainY = {1, 1, 0, 1, 0, 0, 0, 1, 0, 1};
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -405,7 +405,7 @@ BOOST_AUTO_TEST_CASE(LRMaxIterationsChangeTest)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 1 << 0 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr;
+  trainY = {1, 0, 0, 1, 0, 1, 0, 1, 0, 1};
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
@@ -454,7 +454,7 @@ BOOST_AUTO_TEST_CASE(LRLambdaChangeTest)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 1 << 0 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr;
+  trainY = {1, 0, 0, 1, 0, 1, 0, 1, 0, 1};
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
@@ -503,7 +503,7 @@ BOOST_AUTO_TEST_CASE(LRStepSizeChangeTest)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 1 << 0 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr;
+  trainY = {1, 0, 0, 1, 0, 1, 0, 1, 0, 1};
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
@@ -554,7 +554,7 @@ BOOST_AUTO_TEST_CASE(LROptimizerChangeTest)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 1 << 0 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr;
+  trainY = {1, 0, 0, 1, 0, 1, 0, 1, 0, 1};
 
   SetInputParam("training", trainX);
   SetInputParam("labels", trainY);
@@ -606,7 +606,7 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 1 << 0 << 0 << 1 << 0 << 1 << 0 << 1 << 0 << 1 << arma::endr;
+  trainY = {1, 0, 0, 1, 0, 1, 0, 1, 0, 1};
 
   arma::mat testX = arma::randu<arma::mat>(D, M);
 

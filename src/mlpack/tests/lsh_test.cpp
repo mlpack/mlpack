@@ -39,16 +39,16 @@ void GetPointset(const size_t N, arma::mat& rdata)
   arma::mat c4(d, N / 4, arma::fill::randu);
 
   arma::colvec offset1;
-  offset1 << 0 << arma::endr
-          << 3 << arma::endr;
+  offset1 = { {0},
+              {3} };
 
   arma::colvec offset2;
-  offset2 << 3 << arma::endr
-          << 3 << arma::endr;
+  offset2 = { {3},
+  	      {3} };
 
   arma::colvec offset4;
-  offset4 << 3 << arma::endr
-          << 0 << arma::endr;
+  offset4 = { {3},
+              {0} };
 
   // Spread points in plane.
   for (size_t p = 0; p < N / 4; ++p)
@@ -589,12 +589,14 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
 
   // Construct q1 so it is hashed directly under C2.
   arma::mat q1;
-  q1 << 3.9 << arma::endr << 2.99;
+  q1 = { {3.9},
+         {2.99} };
   q1 -= offsets;
 
   // Construct q2 so it is hashed near the center of C2.
   arma::mat q2;
-  q2 << 3.6 << arma::endr << 3.6;
+  q2 = { {3.6},
+         {3.6} };
   q2 -= offsets;
 
   arma::Mat<size_t> neighbors;
@@ -689,12 +691,11 @@ BOOST_AUTO_TEST_CASE(RecallTestPartiallyCorrect)
   // be 0 but recall should not be.
   arma::Mat<size_t> q2;
   q2.set_size(k, numQueries);
-  q2 <<
-    2 << arma::endr <<
-    3 << arma::endr <<
-    4 << arma::endr <<
-    6 << arma::endr <<
-    7 << arma::endr;
+  q2 = { {2},
+         {3},
+         {4},
+         {6},
+         {7} };
 
   BOOST_REQUIRE_CLOSE(LSHSearch<>::ComputeRecall(base, q2), 0.6, 0.0001);
 }

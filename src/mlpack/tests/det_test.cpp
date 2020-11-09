@@ -40,9 +40,9 @@ TEST_CASE("TestGetMaxMinVals", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   DTree<arma::mat> tree(testData);
 
@@ -81,11 +81,11 @@ TEST_CASE("TestWithinRange", "[DETTest]")
   DTree<arma::mat> testDTree(maxVals, minVals, 5);
 
   arma::vec testQuery(3);
-  testQuery << 4.5 << 2.5 << 2;
+  testQuery = {4.5, 2.5, 2};
 
   REQUIRE(testDTree.WithinRange(testQuery) == true);
 
-  testQuery << 8.5 << 2.5 << 2;
+  testQuery = {8.5, 2.5, 2};
 
   REQUIRE(testDTree.WithinRange(testQuery) == false);
 }
@@ -94,9 +94,9 @@ TEST_CASE("TestFindSplit", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   DTree<arma::mat> testDTree(testData);
 
@@ -124,14 +124,14 @@ TEST_CASE("TestSplitData", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   DTree<arma::mat> testDTree(testData);
 
   arma::Col<size_t> oTest(5);
-  oTest << 1 << 2 << 3 << 4 << 5;
+  oTest = {1, 2, 3, 4, 5};
 
   size_t splitDim = 2;
   double trueSplitVal = 5.5;
@@ -152,10 +152,10 @@ TEST_CASE("TestSparseFindSplit", "[DETTest]")
 {
   arma::mat realData(4, 7);
 
-  realData << .0 << 4 << 5 << 7 << 0 << 5 << 0 << arma::endr
-           << .0 << 5 << 0 << 0 << 1 << 7 << 1 << arma::endr
-           << .0 << 5 << 6 << 7 << 1 << 0 << 8 << arma::endr
-           << -1 << 2 << 5 << 0 << 0 << 0 << 0 << arma::endr;
+  realData = { {.0, 4, 5, 7, 0, 5, 0},
+               {.0, 5, 0, 0, 1, 7, 1},
+               {.0, 5, 6, 7, 1, 0, 8},
+               {-1, 2, 5, 0, 0, 0, 0} };
 
   arma::sp_mat testData(realData);
 
@@ -186,17 +186,17 @@ TEST_CASE("TestSparseSplitData", "[DETTest]")
 {
   arma::mat realData(4, 7);
 
-  realData << .0 << 4 << 5 << 7 << 0 << 5 << 0 << arma::endr
-           << .0 << 5 << 0 << 0 << 1 << 7 << 1 << arma::endr
-           << .0 << 5 << 6 << 7 << 1 << 0 << 8 << arma::endr
-           << -1 << 2 << 5 << 0 << 0 << 0 << 0 << arma::endr;
+  realData = { {.0, 4, 5, 7, 0, 5, 0},
+               {.0, 5, 0, 0, 1, 7, 1},
+               {.0, 5, 6, 7, 1, 0, 8},
+               {-1, 2, 5, 0, 0, 0, 0} };
 
   arma::sp_mat testData(realData);
 
   DTree<arma::sp_mat> testDTree(testData);
 
   arma::Col<size_t> oTest(7);
-  oTest << 1 << 2 << 3 << 4 << 5 << 6 << 7;
+  oTest = {1, 2, 3, 4, 5, 6, 7};
 
   size_t splitDim = 1;
   double trueSplitVal = .5;
@@ -223,12 +223,12 @@ TEST_CASE("TestGrow", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   arma::Col<size_t> oTest(5);
-  oTest << 0 << 1 << 2 << 3 << 4;
+  oTest = {0, 1, 2, 3, 4};
 
   double rootError, lError, rError, rlError, rrError;
 
@@ -289,12 +289,12 @@ TEST_CASE("TestPruneAndUpdate", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   arma::Col<size_t> oTest(5);
-  oTest << 0 << 1 << 2 << 3 << 4;
+  oTest = {0, 1, 2, 3, 4};
   DTree<arma::mat> testDTree(testData);
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
   alpha = testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
@@ -315,19 +315,19 @@ TEST_CASE("TestComputeValue", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   arma::vec q1(3), q2(3), q3(3), q4(3);
 
-  q1 << 4 << 2 << 2;
-  q2 << 5 << 0.25 << 6;
-  q3 << 5 << 3 << 7;
-  q4 << 2 << 3 << 3;
+  q1 = {4, 2, 2};
+  q2 = {5, 0.25, 6};
+  q3 = {5, 3, 7};
+  q4 = {2, 3, 3;
 
   arma::Col<size_t> oTest(5);
-  oTest << 0 << 1 << 2 << 3 << 4;
+  oTest = {0, 1, 2, 3, 4};
 
   DTree<arma::mat> testDTree(testData);
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
@@ -355,9 +355,9 @@ TEST_CASE("TestVariableImportance", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   double rootError, lError, rError, rlError, rrError;
 
@@ -370,7 +370,7 @@ TEST_CASE("TestVariableImportance", "[DETTest]")
   rrError = -1.0 * exp(2 * log(2.0 / 5.0) - (log(6.5) + log(4.0) + log(2.5)));
 
   arma::Col<size_t> oTest(5);
-  oTest << 0 << 1 << 2 << 3 << 4;
+  oTest = {0, 1, 2, 3, 4};
 
   DTree<arma::mat> testDTree(testData);
   testDTree.Grow(testData, oTest, false, 2, 1);
@@ -390,14 +390,14 @@ TEST_CASE("TestSparsePruneAndUpdate", "[DETTest]")
 {
   arma::mat realData(3, 5);
 
-  realData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  realData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   arma::sp_mat testData(realData);
 
   arma::Col<size_t> oTest(5);
-  oTest << 0 << 1 << 2 << 3 << 4;
+  oTest = {0, 1, 2, 3, 4};
 
   DTree<arma::sp_mat> testDTree(testData);
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
@@ -419,22 +419,22 @@ TEST_CASE("TestSparseComputeValue", "[DETTest]")
 {
   arma::mat realData(3, 5);
 
-  realData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  realData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   arma::vec q1d(3), q2d(3), q3d(3), q4d(3);
 
-  q1d << 4 << 2 << 2;
-  q2d << 5 << 0.25 << 6;
-  q3d << 5 << 3 << 7;
-  q4d << 2 << 3 << 3;
+  q1d = {4, 2, 2};
+  q2d = {5, 0.25, 6};
+  q3d = {5, 3, 7};
+  q4d = {2, 3, 3;
 
   arma::sp_mat testData(realData);
   arma::sp_vec q1(q1d), q2(q2d), q3(q3d), q4(q4d);
 
   arma::Col<size_t> oTest(5);
-  oTest << 0 << 1 << 2 << 3 << 4;
+  oTest = {0, 1, 2, 3, 4};
 
   DTree<arma::sp_mat> testDTree(testData);
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
@@ -465,9 +465,9 @@ TEST_CASE("TestTagTree", "[DETTest]")
 {
   MatType testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-            << 5 << 0 << 1 << 7 << 1 << arma::endr
-            << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   DTree<>* testDTree = new DTree<>(&testData);
 
@@ -478,9 +478,9 @@ TEST_CASE("TestFindBucket", "[DETTest]")
 {
   MatType testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-            << 5 << 0 << 1 << 7 << 1 << arma::endr
-            << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   DTree<>* testDTree = new DTree<>(&testData);
 
@@ -510,13 +510,13 @@ TEST_CASE("CopyConstructorAndOperatorTest", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   // Construct another DTree for testing the children.
   arma::Col<size_t> oTest(5);
-  oTest << 0 << 1 << 2 << 3 << 4;
+  oTest = {0, 1, 2, 3, 4};
 
   DTree<arma::mat> *testDTree = new DTree<arma::mat>(testData);
   testDTree->Grow(testData, oTest, false, 2, 1);
@@ -622,13 +622,13 @@ TEST_CASE("MoveConstructorTest", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   // Construct another DTree for testing the children.
   arma::Col<size_t> oTest(5);
-  oTest << 0 << 1 << 2 << 3 << 4;
+  oTest = {0, 1, 2, 3, 4};
 
   DTree<arma::mat> *testDTree = new DTree<arma::mat>(testData);
   testDTree->Grow(testData, oTest, false, 2, 1);
@@ -705,13 +705,13 @@ TEST_CASE("MoveOperatorTest", "[DETTest]")
 {
   arma::mat testData(3, 5);
 
-  testData << 4 << 5 << 7 << 3 << 5 << arma::endr
-           << 5 << 0 << 1 << 7 << 1 << arma::endr
-           << 5 << 6 << 7 << 1 << 8 << arma::endr;
+  testData = { {4, 5, 7, 3, 5},
+               {5, 0, 1, 7, 1},
+               {5, 6, 7, 1, 8} };
 
   // Construct another DTree for testing the children.
   arma::Col<size_t> oTest(5);
-  oTest << 0 << 1 << 2 << 3 << 4;
+  oTest = {0, 1, 2, 3, 4};
 
   DTree<arma::mat> *testDTree = new DTree<arma::mat>(testData);
   testDTree->Grow(testData, oTest, false, 2, 1);
