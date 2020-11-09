@@ -163,7 +163,7 @@ TEST_CASE("FullConvolution2DTest", "[ConvolutionTest]")
             {2, 3, 4, 1} };
 
   filter = { {1, 0, -1},
-             {1, 1, 1}
+             {1, 1, 1},
              {-1, 0, 1} };
 
   output = { {1, 2, 2, 2, -3, -4},
