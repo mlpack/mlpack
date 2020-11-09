@@ -26,7 +26,7 @@ To keep overhead minimal, mlpack's teams and roles are simple: there is only
 the [Committers](https://github.com/orgs/mlpack/teams/contributors) team, and
 the [NumFOCUS leadership team](TODO:link).
 
-Members of the Committers team have commit access to all mlpack repositories
+Members of the Committers team have committted access to all mlpack repositories
 and help guide the development directions and goals of mlpack.  Committers
 should be familiar with the [contribution
 process](https://github.com/mlpack/mlpack/blob/master/CONTRIBUTING.md) and
