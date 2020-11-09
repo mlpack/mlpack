@@ -183,7 +183,7 @@ TEST_CASE("MultiClassSplit", "[DecisionStumpTest]")
   const size_t inpBucketSize = 3;
 
   mat trainingData;
-  trainingData , = {-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+  trainingData = {-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                     10};
 
   // No need to normalize labels here.
