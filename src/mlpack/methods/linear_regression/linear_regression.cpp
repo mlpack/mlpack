@@ -73,7 +73,9 @@ double LinearRegression::Train(const arma::mat& predictors,
   if (weights.n_elem > 0)
   {
     p = p * diagmat(sqrt(weights));
-    r = sqrt(weights) % responses;
+    //r = sqrt(weights) % responses;
+     r = sqrtl(weights) % responses;  // % operator works on integers only
+    
   }
 
   // Convert to this form:
