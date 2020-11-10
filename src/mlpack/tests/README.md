@@ -10,7 +10,7 @@ This directory contains code and data used to test all the algorithms and functi
 
 ## Add tests 
 
-We have a rich test suite, consisting of almost 2000 test and still counting. So it is suggested to add tests when:
+We have a rich test suite, consisting of almost 2000 tests (and still counting). It is suggested to add tests when:
 
 - Adding new functionality.
 - Fixing regressions and bugs.
@@ -21,11 +21,11 @@ To build the test suite you can simply run `make mlpack_test`.
 
 ## To run Tests
 
-We use `Catch2` to write our tests, to run all tests, you can simply run:
+We use `Catch2` to write our tests. To run all tests, you can simply run:
 
 `./bin/mlpack_test`
 
-Also to run all tests in a particular file you can run:
+To run all tests in a particular file you can run:
 
 `./bin/mlpack_test "[testname]"`
 
