@@ -279,7 +279,6 @@ class TransposedConvolution
   {
     return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
   }
-  
   /**
    * Serialize the layer.
    */
