@@ -51,7 +51,14 @@ class AdaptiveMaxPooling
    * @param outputShape A two-value tuple indicating width and height of the output.
    */
   AdaptiveMaxPooling(const std::tuple<size_t, size_t>& outputShape);
-
+  // Copy Constructor
+  AdaptiveMaxPooling(const AdaptiveMaxPooling& layer);
+  // Move Constructor
+  AdaptiveMaxPooling(AdaptiveMaxPooling&&);
+  // Copy assignment operator
+  AdaptiveMaxPooling& operator=(const AdaptivrMaxPooling& layer);
+  // Move assignment operator
+  AdaptiveMaxPooling& operatot = (AdaptiveMaxPooling && layer);
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

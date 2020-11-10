@@ -33,6 +33,50 @@ AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
   // Nothing to do here.
 }
 
+template<typename InputDataType, typename OutputDataType>
+AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(const AdaptiveMaxPooling& layer) :
+  outputWidth(layer.outputWidth),
+  outputHeight(layer.outputHeight)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(AdaptiveMaxPooling&& layer) :
+  outputWidth(0),	// Decide what values to put here
+  outputHeight(0) // Decide what values to put here
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+AdaptiveMaxPooling<InputDataType, OutputDataType>&
+AdaptiveMaxPooling<InputDataType, OutputDataType>::
+operator=(const AdaptiveMaxPooling& layer)
+{
+  if (this != &layer)
+  {
+    outputWidth = layer.outputWidth;
+    outputHeight = layer.outputHeight;
+  }
+
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
+AdaptiveMaxPooling<InputDataType, OutputDataType>&
+AdaptiveMaxPooling<InputDataType, OutputDataType>::
+operator=(const AdaptiveMaxPooling&& layer)
+{
+  if (this != &layer)
+  {
+    outputWidth = std::move(layer.outputWidth);
+    outputHeight = std::move(layer.outputHeight);
+  }
+
+  return *this;
+}
+
 template <typename InputDataType, typename OutputDataType>
 AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
     const std::tuple<size_t, size_t>& outputShape):
