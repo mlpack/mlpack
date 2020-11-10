@@ -135,7 +135,6 @@ class NoisyLinear
 
   //! Get size of weights.
   size_t WeightSize() const { return (outSize * inSize + outSize) * 2; }
-  
   /**
    * Serialize the layer
    */
