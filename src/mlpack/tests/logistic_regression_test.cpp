@@ -859,7 +859,7 @@ TEST_CASE("ClassifyTest", "[LogisticRegressionTest]")
 
   // Now train a logistic regression object on it.
   LogisticRegression<> lr(data.n_rows, 0.5);
-  lr.Train<> (data, responses);
+  lr.Train<>(data, responses);
 
   // Create a test set.
   for (size_t i = 0; i < 500; ++i)
