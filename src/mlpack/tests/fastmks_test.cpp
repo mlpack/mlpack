@@ -154,8 +154,10 @@ TEST_CASE("SparseFastMKSTest", "[FastMKSTest]")
     for (size_t j = 0; j < sparseIndices.n_rows; ++j)
     {
       if (std::abs(sparseKernels(j, i)) > 1e-15)
+      {
         REQUIRE(sparseKernels(j, i) ==
             Approx(denseKernels(j, i)).epsilon(1e-7));
+      }
       else
         REQUIRE(denseKernels(j, i) == Approx(0.0).margin(1e-15));
       REQUIRE(sparseIndices(j, i) == denseIndices(j, i));
@@ -205,8 +207,10 @@ TEST_CASE("SparsePolynomialFastMKSTest", "[FastMKSTest]")
     for (size_t j = 0; j < sparseIndices.n_rows; ++j)
     {
       if (std::abs(sparseKernels(j, i)) > 1e-15)
+      {
         REQUIRE(sparseKernels(j, i) ==
             Approx(denseKernels(j, i)).epsilon(1e-7));
+      }
       else
         REQUIRE(denseKernels(j, i) == Approx(0.0).margin(1e-15));
       REQUIRE(sparseIndices(j, i) == denseIndices(j, i));
