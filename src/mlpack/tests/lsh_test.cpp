@@ -39,16 +39,16 @@ void GetPointset(const size_t N, arma::mat& rdata)
   arma::mat c4(d, N / 4, arma::fill::randu);
 
   arma::colvec offset1;
-  offset1 = { {0},
-              {3} };
+  offset1 = { { 0 },
+              { 3 } };
 
   arma::colvec offset2;
-  offset2 = { {3},
-  	      {3} };
+  offset2 = { { 3 },
+  	      { 3 } };
 
   arma::colvec offset4;
-  offset4 = { {3},
-              {0} };
+  offset4 = { { 3 },
+              { 0 } };
 
   // Spread points in plane.
   for (size_t p = 0; p < N / 4; ++p)
@@ -132,8 +132,8 @@ BOOST_AUTO_TEST_CASE(NumTablesTest)
     fail = false;
 
     const int lSize = 6; // Number of runs.
-    const int lValue[] = {1, 8, 16, 32, 64, 128}; // Number of tables.
-    double lValueRecall[lSize] = {0.0}; // Recall of each LSH run.
+    const int lValue[] = { 1, 8, 16, 32, 64, 128 }; // Number of tables.
+    double lValueRecall[lSize] = { 0.0 }; // Recall of each LSH run.
 
     for (size_t l = 0; l < lSize; ++l)
     {
@@ -198,8 +198,8 @@ BOOST_AUTO_TEST_CASE(HashWidthTest)
   arma::mat groundDistances;
   knn.Search(qdata, k, groundTruth, groundDistances);
   const int hSize = 7; // Number of runs.
-  const double hValue[] = {0.1, 0.5, 1, 5, 10, 50, 500}; // Hash width.
-  double hValueRecall[hSize] = {0.0}; // Recall of each run.
+  const double hValue[] = { 0.1, 0.5, 1, 5, 10, 50, 500 }; // Hash width.
+  double hValueRecall[hSize] = { 0.0 }; // Recall of each run.
 
   for (size_t h = 0; h < hSize; ++h)
   {
@@ -260,8 +260,8 @@ BOOST_AUTO_TEST_CASE(NumProjTest)
 
   // LSH test parameters for numProj.
   const int pSize = 5; // Number of runs.
-  const int pValue[] = {1, 10, 20, 50, 100}; // Number of projections.
-  double pValueRecall[pSize] = {0.0}; // Recall of each run.
+  const int pValue[] = { 1, 10, 20, 50, 100 }; // Number of projections.
+  double pValueRecall[pSize] = { 0.0 }; // Recall of each run.
 
   for (size_t p = 0; p < pSize; ++p)
   {
@@ -490,7 +490,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
   const size_t repetitions = 5; // Train five objects.
 
   const size_t probeTrials = 5;
-  const size_t numProbes[probeTrials] = {0, 1, 2, 3, 4};
+  const size_t numProbes[probeTrials] = { 0, 1, 2, 3, 4 };
 
   // Algorithm parameters.
   const int k = 4;

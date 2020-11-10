@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE(PerceptronReTrainWithWrongClasses)
   arma::Row<size_t> labelsX2;
 
   // 10 responses.
-  labelsX2 = {0, 1, 4, 1, 2, 1, 0, 3, 3, 0};
+  labelsX2 = { 0, 1, 4, 1, 2, 1, 0, 3, 3, 0 };
 
   // Last column of trainX2 contains the class labels.
   SetInputParam("training", std::move(trainX2));
@@ -334,7 +334,7 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY = {0 , 1, 0, 1, 1, 1, 0, 1, 0, 0};
+  trainY = { 0 , 1, 0, 1, 1, 1, 0, 1, 0, 0 };
 
   // Test data with wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D-3, M);
@@ -361,7 +361,7 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongResponseSizeTest)
   arma::Row<size_t> trainY; // Response vector with wrong size.
 
   // 8 responses.
-  trainY = {0, 0, 1, 0, 1, 1, 1, 0};
+  trainY = { 0, 0, 1, 0, 1, 1, 1, 0 };
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -395,7 +395,7 @@ BOOST_AUTO_TEST_CASE(PerceptronNoResponsesTest)
 BOOST_AUTO_TEST_CASE(PerceptronNoTrainingDataTest)
 {
   arma::Row<size_t> trainY;
-  trainY = {1, 1, 0, 1, 0, 0};
+  trainY = { 1, 1, 0, 1, 0, 0 };
 
   SetInputParam("labels", std::move(trainY));
 
@@ -418,7 +418,7 @@ BOOST_AUTO_TEST_CASE(PerceptronWrongDimOfTestData2)
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY = {0, 1, 0, 1, 1, 1, 0, 1, 0, 0};
+  trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));

@@ -110,16 +110,16 @@ TEST_CASE("SimpleWeightUpdateInstanceWeight", "[PerceptronTest]")
 TEST_CASE("And", "[PerceptronTest]")
 {
   mat trainData;
-  trainData = { {0, 1, 1, 0},
-                {1, 0, 1, 0} };
+  trainData = { { 0, 1, 1, 0 },
+                { 1, 0, 1, 0 } };
   Mat<size_t> labels;
-  labels = {0, 0, 1, 0};
+  labels = { 0, 0, 1, 0 };
 
   Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
-  testData = { {0, 1, 1, 0},
-               {1, 0, 1, 0} };
+  testData = { { 0, 1, 1, 0 },
+               { 1, 0, 1, 0 } };
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
@@ -135,17 +135,17 @@ TEST_CASE("And", "[PerceptronTest]")
 TEST_CASE("Or", "[PerceptronTest]")
 {
   mat trainData;
-  trainData = { {0, 1, 1, 0},
-                {1, 0, 1, 0} };
+  trainData = { { 0, 1, 1, 0 },
+                { 1, 0, 1, 0 } };
 
   Mat<size_t> labels;
-  labels = {1, 1, 1, 0};
+  labels = { 1, 1, 1, 0 };
 
   Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
-  testData = { {0, 1, 1, 0},
-               {1, 0, 1, 0} };
+  testData = { { 0, 1, 1, 0 },
+               { 1, 0, 1, 0 } };
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
@@ -162,17 +162,17 @@ TEST_CASE("Or", "[PerceptronTest]")
 TEST_CASE("Random3", "[PerceptronTest]")
 {
   mat trainData;
-  trainData = { {0, 1, 1, 4, 5, 4, 1, 2, 1},
-                {1, 0, 1, 1, 1, 2, 4, 5, 4} };
+  trainData = { { 0, 1, 1, 4, 5, 4, 1, 2, 1 },
+                { 1, 0, 1, 1, 1, 2, 4, 5, 4 } };
 
   Mat<size_t> labels;
-  labels = {0, 0, 0, 1, 1, 1, 2, 2, 2};
+  labels = { 0, 0, 0, 1, 1, 1, 2, 2, 2 };
 
   Perceptron<> p(trainData, labels.row(0), 3, 1000);
 
   mat testData;
-  testData = { {0, 1, 1},
-               {1, 0, 1} };
+  testData = { { 0, 1, 1 },
+               { 1, 0, 1 } };
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
@@ -187,17 +187,17 @@ TEST_CASE("Random3", "[PerceptronTest]")
 TEST_CASE("TwoPoints", "[PerceptronTest]")
 {
   mat trainData;
-  trainData = { {0, 1},
-                {1, 0} };
+  trainData = { { 0, 1 },
+                { 1, 0 } };
 
   Mat<size_t> labels;
-  labels = {0, 1};
+  labels = { 0, 1 };
 
   Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
-  testData = { {0, 1},
-               {1, 0} };
+  testData = { { 0, 1 },
+               { 1, 0 } };
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
@@ -212,17 +212,17 @@ TEST_CASE("TwoPoints", "[PerceptronTest]")
 TEST_CASE("NonLinearlySeparableDataset", "[PerceptronTest]")
 {
   mat trainData;
-  trainData = { {1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8},
-                {1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2} };
+  trainData = { { 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2 } };
 
   Mat<size_t> labels;
-  labels = {0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1};
+  labels = { 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1 };
 
   Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
-  testData = { {3, 4, 5, 6},
-               {3, 2.3, 1.7, 1.5} };
+  testData = { { 3,   4,   5,   6 },
+               { 3, 2.3, 1.7, 1.5 } };
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
@@ -235,11 +235,11 @@ TEST_CASE("NonLinearlySeparableDataset", "[PerceptronTest]")
 TEST_CASE("SecondaryConstructor", "[PerceptronTest]")
 {
   mat trainData;
-  trainData = { {1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8},
-                {1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2} };
+  trainData = { { 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2 } };
 
   Mat<size_t> labels;
-  labels = {0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1};
+  labels = { 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1 };
 
   Perceptron<> p1(trainData, labels.row(0), 2, 1000);
 

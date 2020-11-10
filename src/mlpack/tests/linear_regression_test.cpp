@@ -73,8 +73,8 @@ TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]")
 TEST_CASE("ComputeErrorTest", "[LinearRegressionTest]")
 {
   arma::mat predictors;
-  predictors = { {0, 1, 2, 4, 8, 16},
-                 {16, 8, 4, 2, 1, 0} };
+  predictors = { {  0, 1, 2, 4, 8, 16 },
+                 { 16, 8, 4, 2, 1,  0 } };
   arma::rowvec responses = "0 2 4 3 8 8";
 
   // http://www.mlpack.org/trac/ticket/298
@@ -92,8 +92,8 @@ TEST_CASE("ComputeErrorPerfectFitTest", "[LinearRegressionTest]")
 {
   // Linear regression should perfectly model this dataset.
   arma::mat predictors;
-  predictors = { {0, 1, 2, 1, 6, 2},
-                 {0, 1, 2, 2, 2, 6} };
+  predictors = { { 0, 1, 2, 1, 6, 2 },
+                 { 0, 1, 2, 2, 2, 6 } };
   arma::rowvec responses = "0 2 4 3 8 8";
 
   LinearRegression lr(predictors, responses);

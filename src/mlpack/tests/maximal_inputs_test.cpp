@@ -53,10 +53,10 @@ BOOST_AUTO_TEST_CASE(ColumnToBlocksEvaluate)
   ctb.Transform(CreateMaximalInput(), output);
 
   arma::mat matlabResults;
-  matlabResults = { {-1, -1, -1, -1, -1, -1, -1},
-                    {-1, -1, -0.42857, -1, 0.14286, 0.71429, -1},
-                    {-1, -0.71429, -0.14286, -1, 0.42857, 1, -1},
-                    {-1, -1, -1, -1, -1, -1, -1} };
+  matlabResults = { { -1,       -1,       -1, -1,      -1,      -1, -1 },
+                    { -1,       -1, -0.42857, -1, 0.14286, 0.71429, -1 },
+                    { -1, -0.71429, -0.14286, -1, 0.42857,       1, -1 },
+                    { -1,       -1,       -1, -1,      -1,      -1, -1 } };
 
   TestResults(output, matlabResults);
 }
@@ -71,10 +71,12 @@ BOOST_AUTO_TEST_CASE(ColumnToBlocksChangeBlockSize)
   ctb.Transform(CreateMaximalInput(), output);
 
   arma::mat matlabResults;
-  matlabResults = { {-3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3},
-                    {-3, -1, -0.71429, -0.42857, -0.14286, -3, 0.14286,
-                     0.42857, 0.71429, 1, -3},
-                    {-3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3} };
+  matlabResults = { { -3, -3,       -3,       -3,       -3, -3,      -3,
+                          -3,      -3, -3, -3 },
+                    { -3, -1, -0.71429, -0.42857, -0.14286, -3, 0.14286,
+                     0.42857, 0.71429,  1, -3 },
+                    { -3, -3,       -3,       -3,       -3, -3,      -3,
+                          -3,      -3, -3, -3 } };
 
   TestResults(output, matlabResults);
 }

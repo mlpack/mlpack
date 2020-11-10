@@ -124,17 +124,17 @@ TEST_CASE("ValidConvolution2DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input = { {1, 2, 3, 4},
-            {4, 1, 2, 3},
-            {3, 4, 1, 2},
-            {2, 3, 4, 1} };
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter = { {1, 0, -1},
-             {0, 1, 0},
-             {-1, 0, 1} };
+  filter = { {  1, 0, -1 },
+             {  0, 1,  0 },
+             { -1, 0,  1 } };
 
-  output = { {-3, -2},
-             {8, -3} };
+  output = { { -3, -2 },
+             {  8, -3 } };
 
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<ValidConvolution> >(input, filter,
@@ -157,21 +157,21 @@ TEST_CASE("FullConvolution2DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input = { {1, 2, 3, 4},
-            {4, 1, 2, 3},
-            {3, 4, 1, 2},
-            {2, 3, 4, 1} };
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter = { {1, 0, -1},
-             {1, 1, 1},
-             {-1, 0, 1} };
+  filter = { {  1, 0, -1 },
+             {  1, 1,  1 },
+             { -1, 0,  1 } };
 
-  output = { {1, 2, 2, 2, -3, -4},
-             {5, 4, 4, 11, 5, 1},
-             {6, 7, 3, 2, 7, 5},
-             {1, 9, 12, 3, 1, 4},
-             {-1, 1, 11, 10, 6, 3},
-             {-2, -3, -2, 2, 4, 1} };
+  output = { {  1,  2,  2,  2, -3, -4 },
+             {  5,  4,  4, 11,  5,  1 },
+             {  6,  7,  3,  2,  7,  5 },
+             {  1,  9, 12,  3,  1,  4 },
+             { -1,  1, 11, 10,  6,  3 },
+             { -2, -3, -2,  2,  4,  1 } };
 
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
@@ -194,17 +194,17 @@ TEST_CASE("ValidConvolution3DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input = { {1, 2, 3, 4},
-            {4, 1, 2, 3},
-            {3, 4, 1, 2},
-            {2, 3, 4, 1} };
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter = { {1, 0, -1},
-             {0, 1, 0},
-             {-1, 0, 1} };
+  filter = { {  1, 0, -1 },
+             {  0, 1,  0 },
+             { -1, 0,  1 } };
 
-  output = { {-3, -2},
-             {8, -3} };
+  output = { { -3, -2 },
+             {  8, -3 } };
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
@@ -239,21 +239,21 @@ TEST_CASE("FullConvolution3DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input = { {1, 2, 3, 4},
-            {4, 1, 2, 3},
-            {3, 4, 1, 2},
-            {2, 3, 4, 1} };
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter = { {1, 0, -1},
-             {1, 1, 1},
-             {-1, 0, 1} };
+  filter = { {  1, 0, -1 },
+             {  1, 1,  1 },
+             { -1, 0,  1 } };
 
-  output = { {1, 2, 2, 2, -3, -4},
-             {5, 4, 4, 11, 5, 1},
-             {6, 7, 3, 2, 7, 5},
-             {1, 9, 12, 3, 1, 4},
-             {-1, 1, 11, 10, 6, 3},
-             {-2, -3, -2, 2, 4, 1} };
+  output = { {  1,  2,  2,  2, -3, -4 },
+             {  5,  4,  4, 11,  5,  1 },
+             {  6,  7,  3,  2,  7,  5 },
+             {  1,  9, 12,  3,  1,  4 },
+             { -1,  1, 11, 10,  6,  3 },
+             { -2, -3, -2,  2,  4,  1 } };
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
@@ -289,17 +289,17 @@ TEST_CASE("ValidConvolutionBatchTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input = { {1, 2, 3, 4},
-            {4, 1, 2, 3},
-            {3, 4, 1, 2},
-            {2, 3, 4, 1} };
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter = { {1, 0, -1},
-             {0, 1, 0},
-             {-1, 0, 1} };
+  filter = { {  1, 0, -1 },
+             {  0, 1,  0 },
+             { -1, 0,  1 } };
 
-  output = { {-3, -2},
-             {8, -3} };
+  output = { { -3, -2 },
+             {  8, -3 } };
 
   arma::cube filterCube(filter.n_rows, filter.n_cols, 2);
   filterCube.slice(0) = filter;
@@ -331,21 +331,21 @@ TEST_CASE("FullConvolutionBatchTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input = { {1, 2, 3, 4},
-            {4, 1, 2, 3},
-            {3, 4, 1, 2},
-            {2, 3, 4, 1} };
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter = { {1, 0, -1},
-             {1, 1, 1},
-             {-1, 0, 1} };
+  filter = { {  1, 0, -1 },
+             {  1, 1,  1 },
+             { -1, 0,  1 } };
 
-  output = { {1, 2, 2, 2, -3, -4},
-             {5, 4, 4, 11, 5, 1},
-             {6, 7, 3, 2, 7, 5},
-             {1, 9, 12, 3, 1, 4},
-             {-1, 1, 11, 10, 6, 3},
-             {-2, -3, -2, 2, 4, 1} };
+  output = { {  1,  2,  2,  2, -3, -4 },
+             {  5,  4,  4, 11,  5,  1 },
+             {  6,  7,  3,  2,  7,  5 },
+             {  1,  9, 12,  3,  1,  4 },
+             { -1,  1, 11, 10,  6,  3 },
+             { -2, -3, -2,  2,  4,  1 } };
 
   arma::cube filterCube(filter.n_rows, filter.n_cols, 2);
   filterCube.slice(0) = filter;
