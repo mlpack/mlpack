@@ -274,6 +274,12 @@ class TransposedConvolution
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
 
+  //! Get the size of the weight matrix.
+  size_t WeightSize() const
+  {
+    return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
+  }
+  
   /**
    * Serialize the layer.
    */
