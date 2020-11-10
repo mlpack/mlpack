@@ -43,7 +43,7 @@ NoisyLinear<InputDataType, OutputDataType>::NoisyLinear(
     inSize(inSize),
     outSize(outSize)
 {
-  weights.set_size((outSize * inSize + outSize) * 2, 1);
+  weights.set_size(WeightSize(), 1);
   weightEpsilon.set_size(outSize, inSize);
   biasEpsilon.set_size(outSize, 1);
 }

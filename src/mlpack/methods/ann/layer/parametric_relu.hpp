@@ -119,6 +119,9 @@ class PReLU
   //! Modify the non zero gradient.
   double& Alpha() { return alpha(0); }
 
+  //! Get size of weights.
+  size_t WeightSize() const { return 1; }
+
   /**
    * Serialize the layer.
    */

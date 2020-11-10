@@ -133,6 +133,9 @@ class NoisyLinear
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
 
+  //! Get size of weights.
+  size_t WeightSize() const { return (outSize * inSize + outSize) * 2; }
+  
   /**
    * Serialize the layer
    */
