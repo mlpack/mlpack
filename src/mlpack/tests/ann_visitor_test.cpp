@@ -197,10 +197,10 @@ TEST_CASE("WeightSizeVisitorTestForTransposedConvLayer", "[ANNVisitorTest]")
   size_t randomKernelWidth = arma::randi(arma::distr_param(1, 100));
   size_t randomKernelHeight = arma::randi(arma::distr_param(1, 100));
 
-  LayerTypes<> transposedConvLayer = new TransposedConvolution<>(randomInSize, 
+  LayerTypes<> transposedConvLayer = new TransposedConvolution<>(randomInSize,
   randomOutSize, randomKernelWidth, randomKernelHeight);
 
-  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(), 
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
   transposedConvLayer);
 
   CheckCorrectnessOfWeightSize(transposedConvLayer);
@@ -214,10 +214,10 @@ TEST_CASE("WeightSizeVisitorTestForNoisyLinearLayer", "[ANNVisitorTest]")
   size_t randomInSize = arma::randi(arma::distr_param(1, 100));
   size_t randomOutSize = arma::randi(arma::distr_param(1, 100));
 
-  LayerTypes<> noisyLinearLayer = new NoisyLinear<>(randomInSize, 
+  LayerTypes<> noisyLinearLayer = new NoisyLinear<>(randomInSize,
   randomOutSize);
 
-  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(), 
+  size_t weightSize = boost::apply_visitor(WeightSizeVisitor(),
   noisyLinearLayer);
 
   CheckCorrectnessOfWeightSize(noisyLinearLayer);
