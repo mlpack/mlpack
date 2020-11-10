@@ -59,7 +59,7 @@ that the contributor already knows how to do that. Be there to lend a helping
 hand in case of need.
 
 Since there can sometimes be a lot more pull requests being opened than
-reviewed, we highly encourage everyone to review each others pull request
+reviewed, we highly encourage everyone to review each other's pull request
 keeping in mind all the above mentioned points.
 
 Let's welcome new contributors with ❤️.
