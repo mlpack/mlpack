@@ -46,7 +46,7 @@ template<typename InputDataType, typename OutputDataType>
 AdaptiveMaxPooling<InputDataType, OutputDataType>::
 AdaptiveMaxPooling(AdaptiveMaxPooling&& layer) :
   outputWidth(0),
-  outputHeight(0) 
+  outputHeight(0)
 {
   // Nothing to do here.
 }
