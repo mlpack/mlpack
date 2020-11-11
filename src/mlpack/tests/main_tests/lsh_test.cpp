@@ -19,8 +19,8 @@ static const std::string testName = "LSH";
 #include "test_helper.hpp"
 #include <mlpack/methods/lsh/lsh_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -41,12 +41,11 @@ struct LSHTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(LSHMainTest, LSHTestFixture);
-
 /**
  * Check that output neighbors and distances have valid dimensions.
  */
-BOOST_AUTO_TEST_CASE(LSHOutputDimensionTest)
+TEST_CASE_METHOD(LSHTestFixture, "LSHOutputDimensionTest",
+                 "[LSHMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
@@ -56,20 +55,20 @@ BOOST_AUTO_TEST_CASE(LSHOutputDimensionTest)
   mlpackMain();
 
   // Check the neighbors matrix has 6 points for each of the 100 input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows, 6);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols,
-                      100);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows == 6);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols == 100);
 
   // Check the distances matrix has 6 points for each of the 100 input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_rows, 6);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_cols, 100);
+  REQUIRE(IO::GetParam<arma::mat>("distances").n_rows == 6);
+  REQUIRE(IO::GetParam<arma::mat>("distances").n_cols == 100);
 }
 
 /**
  * Ensure that bucket_size, second_hash_size & number of nearest neighbors
  * are always positive.
  */
-BOOST_AUTO_TEST_CASE(LSHParamValidityTest)
+TEST_CASE_METHOD(LSHTestFixture, "LSHParamValidityTest",
+                 "[LSHMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
@@ -80,7 +79,7 @@ BOOST_AUTO_TEST_CASE(LSHParamValidityTest)
   SetInputParam("bucket_size", (int) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   bindings::tests::CleanMemory();
@@ -92,7 +91,7 @@ BOOST_AUTO_TEST_CASE(LSHParamValidityTest)
   SetInputParam("second_hash_size", (int) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   bindings::tests::CleanMemory();
@@ -103,14 +102,15 @@ BOOST_AUTO_TEST_CASE(LSHParamValidityTest)
   SetInputParam("k", (int) -2);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Make sure only one of reference data or pre-trained model is passed.
  */
-BOOST_AUTO_TEST_CASE(LSHModelValidityTest)
+TEST_CASE_METHOD(LSHTestFixture, "LSHModelValidityTest",
+                 "[LSHMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
@@ -122,14 +122,15 @@ BOOST_AUTO_TEST_CASE(LSHModelValidityTest)
   SetInputParam("input_model", IO::GetParam<LSHSearch<>*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check learning process using different tables.
  */
-BOOST_AUTO_TEST_CASE(LSHDiffTablesTest)
+TEST_CASE_METHOD(LSHTestFixture, "LSHDiffTablesTest",
+                 "[LSHMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
@@ -155,16 +156,17 @@ BOOST_AUTO_TEST_CASE(LSHDiffTablesTest)
 
   // Check that initial outputs and final outputs using two models are
   // different.
-  BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
-  BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+  REQUIRE(arma::accu(neighbors ==
+      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+  REQUIRE(arma::accu(distances ==
+      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
  * Check learning process using different projections.
  */
-BOOST_AUTO_TEST_CASE(LSHDiffProjectionsTest)
+TEST_CASE_METHOD(LSHTestFixture, "LSHDiffProjectionsTest",
+                 "[LSHMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
@@ -190,16 +192,17 @@ BOOST_AUTO_TEST_CASE(LSHDiffProjectionsTest)
 
   // Check that initial outputs and final outputs using two models are
   // different.
-  BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
-  BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+  REQUIRE(arma::accu(neighbors ==
+      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+  REQUIRE(arma::accu(distances ==
+      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
  * Check learning process using different hash_width.
  */
-BOOST_AUTO_TEST_CASE(LSHDiffHashWidthTest)
+TEST_CASE_METHOD(LSHTestFixture, "LSHDiffHashWidthTest",
+                 "[LSHMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
@@ -225,16 +228,17 @@ BOOST_AUTO_TEST_CASE(LSHDiffHashWidthTest)
 
   // Check that initial outputs and final outputs using two models are
   // different.
-  BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
-  BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+  REQUIRE(arma::accu(neighbors ==
+      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+  REQUIRE(arma::accu(distances ==
+      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
  * Check learning process using different num_probes.
  */
-BOOST_AUTO_TEST_CASE(LSHDiffNumProbesTest)
+TEST_CASE_METHOD(LSHTestFixture, "LSHDiffNumProbesTest",
+                 "[LSHMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
   arma::mat query = arma::randu<arma::mat>(5, 40);
@@ -260,16 +264,17 @@ BOOST_AUTO_TEST_CASE(LSHDiffNumProbesTest)
 
   // Check that initial outputs and final outputs using two models are
   // different.
-  BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
-  BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+  REQUIRE(arma::accu(neighbors ==
+      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+  REQUIRE(arma::accu(distances ==
+      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
  * Check learning process using different second_hash_size.
  */
-BOOST_AUTO_TEST_CASE(LSHDiffSecondHashSizeTest)
+TEST_CASE_METHOD(LSHTestFixture, "LSHDiffSecondHashSizeTest",
+                 "[LSHMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
@@ -295,16 +300,17 @@ BOOST_AUTO_TEST_CASE(LSHDiffSecondHashSizeTest)
 
   // Check that initial outputs and final outputs using two models are
   // different.
-  BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
-  BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+  REQUIRE(arma::accu(neighbors ==
+      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+  REQUIRE(arma::accu(distances ==
+      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
  * Check learning process using different bucket sizes.
  */
-BOOST_AUTO_TEST_CASE(LSHDiffBucketSizeTest)
+TEST_CASE_METHOD(LSHTestFixture, "LSHDiffBucketSizeTest",
+                 "[LSHMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
@@ -330,16 +336,17 @@ BOOST_AUTO_TEST_CASE(LSHDiffBucketSizeTest)
 
   // Check that initial outputs and final outputs using the two models are
   // different.
-  BOOST_REQUIRE_LT(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")), neighbors.n_elem);
-  BOOST_REQUIRE_LT(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")), distances.n_elem);
+  REQUIRE(arma::accu(neighbors ==
+      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+  REQUIRE(arma::accu(distances ==
+      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
  * Check that saved model can be reused again.
  */
-BOOST_AUTO_TEST_CASE(LSHModelReuseTest)
+TEST_CASE_METHOD(LSHTestFixture, "LSHModelReuseTest",
+                 "[LSHMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
   arma::mat query = arma::randu<arma::mat>(5, 40);
@@ -369,7 +376,8 @@ BOOST_AUTO_TEST_CASE(LSHModelReuseTest)
 /**
  * Make sure true_neighbors have valid dimensions.
  */
-BOOST_AUTO_TEST_CASE(LSHModelTrueNighborsDimTest)
+TEST_CASE_METHOD(LSHTestFixture, "LSHModelTrueNighborsDimTest",
+                 "[LSHMainTest][BindingTests]")
 {
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
@@ -381,8 +389,6 @@ BOOST_AUTO_TEST_CASE(LSHModelTrueNighborsDimTest)
   SetInputParam("k", (int) 6);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-
-BOOST_AUTO_TEST_SUITE_END();
