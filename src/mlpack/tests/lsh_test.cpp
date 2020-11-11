@@ -44,7 +44,7 @@ void GetPointset(const size_t N, arma::mat& rdata)
 
   arma::colvec offset2;
   offset2 = { { 3 },
-  	      { 3 } };
+              { 3 } };
 
   arma::colvec offset4;
   offset4 = { { 3 },
