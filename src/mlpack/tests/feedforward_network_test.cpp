@@ -201,7 +201,7 @@ TEST_CASE("CheckCopyMovingAdaptiveMaxPoolingNetworkTest",
     0,  // Padding height.
     28, // Input width.
     28);  // Input height.
-  
+
   // Add first ReLU.
   modelOne.Add<LeakyReLU<>>();
 
