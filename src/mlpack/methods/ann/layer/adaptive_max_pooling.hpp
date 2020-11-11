@@ -56,9 +56,9 @@ class AdaptiveMaxPooling
   // Move Constructor
   AdaptiveMaxPooling(AdaptiveMaxPooling&&);
   // Copy assignment operator
-  AdaptiveMaxPooling& operator=(const AdaptivrMaxPooling& layer);
+  AdaptiveMaxPooling& operator=(const AdaptiveMaxPooling& layer);     
   // Move assignment operator
-  AdaptiveMaxPooling& operatot = (AdaptiveMaxPooling && layer);
+  AdaptiveMaxPooling& operator = (AdaptiveMaxPooling&& layer);
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
