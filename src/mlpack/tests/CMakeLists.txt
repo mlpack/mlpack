@@ -30,13 +30,20 @@ add_executable(mlpack_test
   decision_tree_test.cpp
   det_test.cpp
   distribution_test.cpp
-  gmm_test.cpp
-  hmm_test.cpp
+  drusilla_select_test.cpp
+  emst_test.cpp
+  facilities_test.cpp
+  fastmks_test.cpp
   feedforward_network_test.cpp
   gan_test.cpp
+  gmm_test.cpp
+  hmm_test.cpp
+  hpt_test.cpp
   hoeffding_tree_test.cpp
+  hyperplane_test.cpp
   image_load_test.cpp
   imputation_test.cpp
+  init_rules_test.cpp
   io_test.cpp
   kde_test.cpp
   kernel_pca_test.cpp
@@ -52,10 +59,17 @@ add_executable(mlpack_test
   lin_alg_test.cpp
   linear_regression_test.cpp
   lmnn_test.cpp
+  linear_svm_test.cpp
   load_save_test.cpp
+  local_coordinate_coding_test.cpp
+  logistic_regression_test.cpp
+  log_test.cpp
   loss_functions_test.cpp
+  lsh_test.cpp
   main.cpp
   math_test.cpp
+  matrix_completion_test.cpp
+  maximal_inputs_test.cpp
   metric_test.cpp
   mean_shift_test.cpp
   mock_categorical_data.hpp
@@ -69,9 +83,12 @@ add_executable(mlpack_test
   perceptron_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp
+  qdafn_test.cpp
   quic_svd_test.cpp
+  q_learning_test.cpp
   radical_test.cpp
   random_forest_test.cpp
+  random_test.cpp
   randomized_svd_test.cpp
   range_search_test.cpp
   rbm_network_test.cpp
@@ -97,14 +114,25 @@ add_executable(mlpack_test
   svd_batch_test.cpp
   svd_incremental_test.cpp
   svdplusplus_test.cpp
+  termination_policy_test.cpp
   test_catch_tools.hpp
   test_function_tools.hpp
+  timer_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
   ub_tree_test.cpp
+  union_find_test.cpp
   vantage_point_tree_test.cpp
   wgan_test.cpp
   main_tests/adaboost_test.cpp
+  main_tests/approx_kfn_test.cpp
+  main_tests/bayesian_linear_regression_test.cpp
+  main_tests/cf_test.cpp
+  main_tests/dbscan_test.cpp
+  main_tests/decision_stump_test.cpp
+  main_tests/decision_tree_test.cpp
+  main_tests/emst_test.cpp
+  main_tests/fastmks_test.cpp
   main_tests/gmm_generate_test.cpp
   main_tests/gmm_probability_test.cpp
   main_tests/gmm_train_test.cpp
@@ -113,12 +141,6 @@ add_executable(mlpack_test
   main_tests/hmm_test_utils.hpp
   main_tests/hmm_train_test.cpp
   main_tests/hmm_viterbi_test.cpp
-  main_tests/approx_kfn_test.cpp
-  main_tests/bayesian_linear_regression_test.cpp
-  main_tests/cf_test.cpp
-  main_tests/dbscan_test.cpp
-  main_tests/decision_stump_test.cpp
-  main_tests/decision_tree_test.cpp
   main_tests/hoeffding_tree_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/kde_test.cpp
@@ -129,11 +151,16 @@ add_executable(mlpack_test
   main_tests/krann_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/lmnn_test.cpp
+  main_tests/linear_svm_test.cpp
+  main_tests/local_coordinate_coding_test.cpp
+  main_tests/logistic_regression_test.cpp
+  main_tests/lsh_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
   main_tests/nca_test.cpp
   main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
+  main_tests/perceptron_test.cpp
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_imputer_test.cpp
   main_tests/preprocess_one_hot_encode_test.cpp
