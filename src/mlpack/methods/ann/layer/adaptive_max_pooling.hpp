@@ -56,7 +56,7 @@ class AdaptiveMaxPooling
   // Move Constructor
   AdaptiveMaxPooling(AdaptiveMaxPooling&&);
   // Copy assignment operator
-  AdaptiveMaxPooling& operator=(const AdaptiveMaxPooling& layer);     
+  AdaptiveMaxPooling& operator=(const AdaptiveMaxPooling& layer);
   // Move assignment operator
   AdaptiveMaxPooling& operator = (AdaptiveMaxPooling&& layer);
   /**
