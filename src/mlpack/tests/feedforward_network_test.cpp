@@ -190,8 +190,8 @@ TEST_CASE("CheckCopyMovingAdaptiveMaxPoolingNetworkTest", "[FeedForwardNetworkTe
   model.Add<Linear<>>(16 * 4 * 4, 10);
   model.Add<LogSoftMax<>>();
 
-  FFN<NegativeLogLikelihood<>, RandomInitialization> model1;
-  model1.Add<Convolution<>>(1,  // Number of input activation maps.
+  FFN<NegativeLogLikelihood<>, RandomInitialization> modelOne;
+  modelOne.Add<Convolution<>>(1,  // Number of input activation maps.
     6,  // Number of output activation maps.
     5,  // Filter width.
     5,  // Filter height.
@@ -204,22 +204,22 @@ TEST_CASE("CheckCopyMovingAdaptiveMaxPoolingNetworkTest", "[FeedForwardNetworkTe
     );
 
   // Add first ReLU.
-  model1.Add<LeakyReLU<>>();
+  modelOne.Add<LeakyReLU<>>();
 
   // Add first pooling layer. Pools over 2x2 fields in the input.
-  model1.Add<AdaptiveMaxPooling<>>(2, // Width of field.
+  modelOne.Add<AdaptiveMaxPooling<>>(2, // Width of field.
     2, // Height of field.
     2, // Stride along width.
     2, // Stride along height.
     true);
-  model1.Add<Linear<>>(16 * 4 * 4, 10);
-  model1.Add<LogSoftMax<>>();
+  modelOne.Add<Linear<>>(16 * 4 * 4, 10);
+  modelOne.Add<LogSoftMax<>>();
 
   // Checking copy constructor
   CheckCopyFunction<>(model, trainData, trainLabels, 1);
 
   // Checking move constructor
-  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
+  CheckMoveFunction<>(modelOne, trainData, trainLabels, 1);
 }
 
 /**
