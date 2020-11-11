@@ -211,15 +211,15 @@ TEST_CASE("LinearRegressionTest", "[LinearRegressionTest]")
   responses.randn(800);
 
   LinearRegression lr(data, responses, 0.05); // Train the model.
-  LinearRegression xmlLr, textLr, binaryLr;
+  LinearRegression xmlLr, jsonLr, binaryLr;
 
-  SerializeObjectAll(lr, xmlLr, textLr, binaryLr);
+  SerializeObjectAll(lr, xmlLr, jsonLr, binaryLr);
 
   REQUIRE(lr.Lambda() == Approx(xmlLr.Lambda()).epsilon(1e-10));
-  REQUIRE(lr.Lambda() == Approx(textLr.Lambda()).epsilon(1e-10));
+  REQUIRE(lr.Lambda() == Approx(jsonLr.Lambda()).epsilon(1e-10));
   REQUIRE(lr.Lambda() == Approx(binaryLr.Lambda()).epsilon(1e-10));
 
-  CheckMatrices(lr.Parameters(), xmlLr.Parameters(), textLr.Parameters(),
+  CheckMatrices(lr.Parameters(), xmlLr.Parameters(), jsonLr.Parameters(),
       binaryLr.Parameters());
 }
 

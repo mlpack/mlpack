@@ -3,7 +3,7 @@
  * @author Ryan Curtin
  *
  * Define the formats that can be used by mlpack's Load() and Save() mechanisms
- * via boost::serialization.
+ * via cereal.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -16,11 +16,11 @@
 namespace mlpack {
 namespace data {
 
-//! Define the formats we can read through boost::serialization.
+//! Define the formats we can read through cereal.
 enum format
 {
   autodetect,
-  text,
+  json,
   xml,
   binary
 };

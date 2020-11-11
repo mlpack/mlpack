@@ -350,7 +350,7 @@ class NSModel
 
   //! Serialize the neighbor search model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   //! Expose the dataset.
   const arma::mat& Dataset() const;
@@ -406,10 +406,6 @@ class NSModel
 
 } // namespace neighbor
 } // namespace mlpack
-
-//! Set the serialization version of the NSModel class.
-BOOST_TEMPLATE_CLASS_VERSION(template<typename SortPolicy>,
-    mlpack::neighbor::NSModel<SortPolicy>, 1);
 
 // Include implementation.
 #include "ns_model_impl.hpp"

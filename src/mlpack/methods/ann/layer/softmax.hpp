@@ -72,6 +72,9 @@ class Softmax
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 0; }
+
   //! Get the delta.
   InputDataType& Delta() const { return delta; }
   //! Modify the delta.
@@ -81,7 +84,7 @@ class Softmax
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& /* ar */, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

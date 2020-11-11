@@ -682,8 +682,8 @@ mlpack models.  These could be used, for instance, to allow the user to save a
 trained model (like a linear regression model) or load an input model.  The
 first parameter to the @c PARAM_MODEL_IN() or @c PARAM_MODEL_OUT() macro should
 be the C++ type of the model to be serialized; this type @b must have a function
-<tt>template<typename Archive> void Serialize(Archive&, const unsigned int)</tt>
-(i.e. the type must be serializable via mlpack's boost::serialization shim).
+<tt>template<typename Archive> void serialize(Archive&)</tt>
+(i.e. the type must be serializable via cereal).
 For example, to allow a user to specify an input model of type
 `LinearRegression`, the follow definition could be used:
 

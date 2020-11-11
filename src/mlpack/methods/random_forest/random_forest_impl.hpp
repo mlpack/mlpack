@@ -421,21 +421,21 @@ void RandomForest<
     NumericSplitType,
     CategoricalSplitType,
     ElemType
->::serialize(Archive& ar, const unsigned int /* version */)
+>::serialize(Archive& ar, const uint32_t /* version */)
 {
   size_t numTrees;
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     trees.clear();
   else
     numTrees = trees.size();
 
-  ar & BOOST_SERIALIZATION_NVP(numTrees);
+  ar(CEREAL_NVP(numTrees));
 
   // Allocate space if needed.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     trees.resize(numTrees);
 
-  ar & BOOST_SERIALIZATION_NVP(trees);
+  ar(CEREAL_NVP(trees));
 }
 
 template<

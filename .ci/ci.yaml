@@ -59,24 +59,24 @@ jobs:
   steps:
   - template: macos-steps.yaml
 
-- job: WindowsVS15
-  timeoutInMinutes: 360
-  displayName: Windows VS15
-  pool:
-    vmImage: vs2017-win2016
-  strategy:
-    matrix:
-      Plain:
-        CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
-        python.version: '2.7'
-        CMakeGenerator: '-G "Visual Studio 15 2017 Win64"'
-        MSBuildVersion: '15.0'
-        ArchiveNoLibs: 'mlpack-windows-vs15-no-libs.zip'
-        ArchiveLibs: 'mlpack-windows-vs15.zip'
-        ArchiveTests: 'mlpack_test-vs15.xml'
+# - job: WindowsVS15
+#   timeoutInMinutes: 360
+#   displayName: Windows VS15
+#   pool:
+#     vmImage: vs2017-win2016
+#   strategy:
+#     matrix:
+#       Plain:
+#         CMakeArgs: '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
+#         python.version: '2.7'
+#         CMakeGenerator: '-G "Visual Studio 15 2017 Win64"'
+#         MSBuildVersion: '15.0'
+#         ArchiveNoLibs: 'mlpack-windows-vs15-no-libs.zip'
+#         ArchiveLibs: 'mlpack-windows-vs15.zip'
+#         ArchiveTests: 'mlpack_test-vs15.xml'
 
-  steps:
-  - template: windows-steps.yaml
+#   steps:
+#   - template: windows-steps.yaml
 
 - job: WindowsVS16
   timeoutInMinutes: 360

@@ -58,8 +58,7 @@ using namespace mlpack::ann;
 
 using namespace arma;
 using namespace boost;
-using namespace boost::archive;
-using namespace boost::serialization;
+using namespace cereal;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE(SerializationTest);
@@ -164,22 +163,22 @@ BOOST_AUTO_TEST_CASE(BallBoundTest)
   b.Center().randu();
   b.Radius() = 14.0;
 
-  BallBound<> xmlB, textB, binaryB;
+  BallBound<> xmlB, jsonB, binaryB;
 
-  SerializeObjectAll(b, xmlB, textB, binaryB);
+  SerializeObjectAll(b, xmlB, jsonB, binaryB);
 
   // Check the dimensionality.
   BOOST_REQUIRE_EQUAL(b.Dim(), xmlB.Dim());
-  BOOST_REQUIRE_EQUAL(b.Dim(), textB.Dim());
+  BOOST_REQUIRE_EQUAL(b.Dim(), jsonB.Dim());
   BOOST_REQUIRE_EQUAL(b.Dim(), binaryB.Dim());
 
   // Check the radius.
   BOOST_REQUIRE_CLOSE(b.Radius(), xmlB.Radius(), 1e-8);
-  BOOST_REQUIRE_CLOSE(b.Radius(), textB.Radius(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.Radius(), jsonB.Radius(), 1e-8);
   BOOST_REQUIRE_CLOSE(b.Radius(), binaryB.Radius(), 1e-8);
 
   // Now check the vectors.
-  CheckMatrices(b.Center(), xmlB.Center(), textB.Center(), binaryB.Center());
+  CheckMatrices(b.Center(), xmlB.Center(), jsonB.Center(), binaryB.Center());
 }
 
 BOOST_AUTO_TEST_CASE(MahalanobisBallBoundTest)
@@ -189,20 +188,20 @@ BOOST_AUTO_TEST_CASE(MahalanobisBallBoundTest)
   b.Radius() = 14.0;
   b.Metric().Covariance().randu(100, 100);
 
-  BallBound<MahalanobisDistance<>, arma::vec> xmlB, textB, binaryB;
+  BallBound<MahalanobisDistance<>, arma::vec> xmlB, jsonB, binaryB;
 
-  SerializeObjectAll(b, xmlB, textB, binaryB);
+  SerializeObjectAll(b, xmlB, jsonB, binaryB);
 
   // Check the radius.
   BOOST_REQUIRE_CLOSE(b.Radius(), xmlB.Radius(), 1e-8);
-  BOOST_REQUIRE_CLOSE(b.Radius(), textB.Radius(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.Radius(), jsonB.Radius(), 1e-8);
   BOOST_REQUIRE_CLOSE(b.Radius(), binaryB.Radius(), 1e-8);
 
   // Check the vectors.
-  CheckMatrices(b.Center(), xmlB.Center(), textB.Center(), binaryB.Center());
+  CheckMatrices(b.Center(), xmlB.Center(), jsonB.Center(), binaryB.Center());
   CheckMatrices(b.Metric().Covariance(),
                 xmlB.Metric().Covariance(),
-                textB.Metric().Covariance(),
+                jsonB.Metric().Covariance(),
                 binaryB.Metric().Covariance());
 }
 
@@ -214,13 +213,13 @@ BOOST_AUTO_TEST_CASE(HRectBoundTest)
   points = points.t();
   b |= points; // [0.0, 5.0]; [1.1, 2.2];
 
-  HRectBound<> xmlB, textB, binaryB;
+  HRectBound<> xmlB, jsonB, binaryB;
 
-  SerializeObjectAll(b, xmlB, textB, binaryB);
+  SerializeObjectAll(b, xmlB, jsonB, binaryB);
 
   // Check the dimensionality.
   BOOST_REQUIRE_EQUAL(b.Dim(), xmlB.Dim());
-  BOOST_REQUIRE_EQUAL(b.Dim(), textB.Dim());
+  BOOST_REQUIRE_EQUAL(b.Dim(), jsonB.Dim());
   BOOST_REQUIRE_EQUAL(b.Dim(), binaryB.Dim());
 
   // Check the bounds.
@@ -228,22 +227,22 @@ BOOST_AUTO_TEST_CASE(HRectBoundTest)
   {
     BOOST_REQUIRE_CLOSE(b[i].Lo(), xmlB[i].Lo(), 1e-8);
     BOOST_REQUIRE_CLOSE(b[i].Hi(), xmlB[i].Hi(), 1e-8);
-    BOOST_REQUIRE_CLOSE(b[i].Lo(), textB[i].Lo(), 1e-8);
-    BOOST_REQUIRE_CLOSE(b[i].Hi(), textB[i].Hi(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Lo(), jsonB[i].Lo(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Hi(), jsonB[i].Hi(), 1e-8);
     BOOST_REQUIRE_CLOSE(b[i].Lo(), binaryB[i].Lo(), 1e-8);
     BOOST_REQUIRE_CLOSE(b[i].Hi(), binaryB[i].Hi(), 1e-8);
   }
 
   // Check the minimum width.
   BOOST_REQUIRE_CLOSE(b.MinWidth(), xmlB.MinWidth(), 1e-8);
-  BOOST_REQUIRE_CLOSE(b.MinWidth(), textB.MinWidth(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.MinWidth(), jsonB.MinWidth(), 1e-8);
   BOOST_REQUIRE_CLOSE(b.MinWidth(), binaryB.MinWidth(), 1e-8);
 }
 
 template<typename TreeType>
 void CheckTrees(TreeType& tree,
                 TreeType& xmlTree,
-                TreeType& textTree,
+                TreeType& jsonTree,
                 TreeType& binaryTree)
 {
   const typename TreeType::Mat* dataset = &tree.Dataset();
@@ -253,48 +252,48 @@ void CheckTrees(TreeType& tree,
   {
     CheckMatrices(*dataset,
                   xmlTree.Dataset(),
-                  textTree.Dataset(),
+                  jsonTree.Dataset(),
                   binaryTree.Dataset());
 
     // Also ensure that the other parents are null too.
     BOOST_REQUIRE_EQUAL(xmlTree.Parent(), (TreeType*) NULL);
-    BOOST_REQUIRE_EQUAL(textTree.Parent(), (TreeType*) NULL);
+    BOOST_REQUIRE_EQUAL(jsonTree.Parent(), (TreeType*) NULL);
     BOOST_REQUIRE_EQUAL(binaryTree.Parent(), (TreeType*) NULL);
   }
 
   // Make sure the number of children is the same.
   BOOST_REQUIRE_EQUAL(tree.NumChildren(), xmlTree.NumChildren());
-  BOOST_REQUIRE_EQUAL(tree.NumChildren(), textTree.NumChildren());
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), jsonTree.NumChildren());
   BOOST_REQUIRE_EQUAL(tree.NumChildren(), binaryTree.NumChildren());
 
   // Make sure the number of descendants is the same.
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), xmlTree.NumDescendants());
-  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), textTree.NumDescendants());
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), jsonTree.NumDescendants());
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), binaryTree.NumDescendants());
 
   // Make sure the number of points is the same.
   BOOST_REQUIRE_EQUAL(tree.NumPoints(), xmlTree.NumPoints());
-  BOOST_REQUIRE_EQUAL(tree.NumPoints(), textTree.NumPoints());
+  BOOST_REQUIRE_EQUAL(tree.NumPoints(), jsonTree.NumPoints());
   BOOST_REQUIRE_EQUAL(tree.NumPoints(), binaryTree.NumPoints());
 
   // Check that each point is the same.
   for (size_t i = 0; i < tree.NumPoints(); ++i)
   {
     BOOST_REQUIRE_EQUAL(tree.Point(i), xmlTree.Point(i));
-    BOOST_REQUIRE_EQUAL(tree.Point(i), textTree.Point(i));
+    BOOST_REQUIRE_EQUAL(tree.Point(i), jsonTree.Point(i));
     BOOST_REQUIRE_EQUAL(tree.Point(i), binaryTree.Point(i));
   }
 
   // Check that the parent distance is the same.
   BOOST_REQUIRE_CLOSE(tree.ParentDistance(), xmlTree.ParentDistance(), 1e-8);
-  BOOST_REQUIRE_CLOSE(tree.ParentDistance(), textTree.ParentDistance(), 1e-8);
+  BOOST_REQUIRE_CLOSE(tree.ParentDistance(), jsonTree.ParentDistance(), 1e-8);
   BOOST_REQUIRE_CLOSE(tree.ParentDistance(), binaryTree.ParentDistance(), 1e-8);
 
   // Check that the furthest descendant distance is the same.
   BOOST_REQUIRE_CLOSE(tree.FurthestDescendantDistance(),
       xmlTree.FurthestDescendantDistance(), 1e-8);
   BOOST_REQUIRE_CLOSE(tree.FurthestDescendantDistance(),
-      textTree.FurthestDescendantDistance(), 1e-8);
+      jsonTree.FurthestDescendantDistance(), 1e-8);
   BOOST_REQUIRE_CLOSE(tree.FurthestDescendantDistance(),
       binaryTree.FurthestDescendantDistance(), 1e-8);
 
@@ -302,7 +301,7 @@ void CheckTrees(TreeType& tree,
   BOOST_REQUIRE_CLOSE(tree.MinimumBoundDistance(),
       xmlTree.MinimumBoundDistance(), 1e-8);
   BOOST_REQUIRE_CLOSE(tree.MinimumBoundDistance(),
-      textTree.MinimumBoundDistance(), 1e-8);
+      jsonTree.MinimumBoundDistance(), 1e-8);
   BOOST_REQUIRE_CLOSE(tree.MinimumBoundDistance(),
       binaryTree.MinimumBoundDistance(), 1e-8);
 
@@ -311,15 +310,15 @@ void CheckTrees(TreeType& tree,
   {
     // Check that the child dataset is the same.
     BOOST_REQUIRE_EQUAL(&xmlTree.Dataset(), &xmlTree.Child(i).Dataset());
-    BOOST_REQUIRE_EQUAL(&textTree.Dataset(), &textTree.Child(i).Dataset());
+    BOOST_REQUIRE_EQUAL(&jsonTree.Dataset(), &jsonTree.Child(i).Dataset());
     BOOST_REQUIRE_EQUAL(&binaryTree.Dataset(), &binaryTree.Child(i).Dataset());
 
     // Make sure the parent link is right.
     BOOST_REQUIRE_EQUAL(xmlTree.Child(i).Parent(), &xmlTree);
-    BOOST_REQUIRE_EQUAL(textTree.Child(i).Parent(), &textTree);
+    BOOST_REQUIRE_EQUAL(jsonTree.Child(i).Parent(), &jsonTree);
     BOOST_REQUIRE_EQUAL(binaryTree.Child(i).Parent(), &binaryTree);
 
-    CheckTrees(tree.Child(i), xmlTree.Child(i), textTree.Child(i),
+    CheckTrees(tree.Child(i), xmlTree.Child(i), jsonTree.Child(i),
         binaryTree.Child(i));
   }
 }
@@ -332,15 +331,15 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeTest)
   TreeType tree(data);
 
   TreeType* xmlTree;
-  TreeType* textTree;
+  TreeType* jsonTree;
   TreeType* binaryTree;
 
-  SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
+  SerializePointerObjectAll(&tree, xmlTree, jsonTree, binaryTree);
 
-  CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
+  CheckTrees(tree, *xmlTree, *jsonTree, *binaryTree);
 
   delete xmlTree;
-  delete textTree;
+  delete jsonTree;
   delete binaryTree;
 }
 
@@ -354,12 +353,12 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeOverwriteTest)
   arma::mat otherData;
   otherData.randu(5, 50);
   TreeType xmlTree(otherData);
-  TreeType textTree(xmlTree);
+  TreeType jsonTree(xmlTree);
   TreeType binaryTree(xmlTree);
 
-  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+  SerializeObjectAll(tree, xmlTree, jsonTree, binaryTree);
 
-  CheckTrees(tree, xmlTree, textTree, binaryTree);
+  CheckTrees(tree, xmlTree, jsonTree, binaryTree);
 }
 
 BOOST_AUTO_TEST_CASE(CoverTreeTest)
@@ -371,49 +370,49 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
   TreeType tree(data);
 
   TreeType* xmlTree;
-  TreeType* textTree;
+  TreeType* jsonTree;
   TreeType* binaryTree;
 
-  SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
+  SerializePointerObjectAll(&tree, xmlTree, jsonTree, binaryTree);
 
-  CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
+  CheckTrees(tree, *xmlTree, *jsonTree, *binaryTree);
 
   // Also check a few other things.
-  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  std::stack<TreeType*> stack, xmlStack, jsonStack, binaryStack;
   stack.push(&tree);
   xmlStack.push(xmlTree);
-  textStack.push(textTree);
+  jsonStack.push(jsonTree);
   binaryStack.push(binaryTree);
   while (!stack.empty())
   {
     TreeType* node = stack.top();
     TreeType* xmlNode = xmlStack.top();
-    TreeType* textNode = textStack.top();
+    TreeType* jsonNode = jsonStack.top();
     TreeType* binaryNode = binaryStack.top();
     stack.pop();
     xmlStack.pop();
-    textStack.pop();
+    jsonStack.pop();
     binaryStack.pop();
 
     BOOST_REQUIRE_EQUAL(node->Scale(), xmlNode->Scale());
-    BOOST_REQUIRE_EQUAL(node->Scale(), textNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), jsonNode->Scale());
     BOOST_REQUIRE_EQUAL(node->Scale(), binaryNode->Scale());
 
     BOOST_REQUIRE_CLOSE(node->Base(), xmlNode->Base(), 1e-5);
-    BOOST_REQUIRE_CLOSE(node->Base(), textNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), jsonNode->Base(), 1e-5);
     BOOST_REQUIRE_CLOSE(node->Base(), binaryNode->Base(), 1e-5);
 
     for (size_t i = 0; i < node->NumChildren(); ++i)
     {
       stack.push(&node->Child(i));
       xmlStack.push(&xmlNode->Child(i));
-      textStack.push(&textNode->Child(i));
+      jsonStack.push(&jsonNode->Child(i));
       binaryStack.push(&binaryNode->Child(i));
     }
   }
 
   delete xmlTree;
-  delete textTree;
+  delete jsonTree;
   delete binaryTree;
 }
 
@@ -428,43 +427,43 @@ BOOST_AUTO_TEST_CASE(CoverTreeOverwriteTest)
   arma::mat otherData;
   otherData.randu(5, 50);
   TreeType xmlTree(otherData);
-  TreeType textTree(xmlTree);
+  TreeType jsonTree(xmlTree);
   TreeType binaryTree(xmlTree);
 
-  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+  SerializeObjectAll(tree, xmlTree, jsonTree, binaryTree);
 
-  CheckTrees(tree, xmlTree, textTree, binaryTree);
+  CheckTrees(tree, xmlTree, jsonTree, binaryTree);
 
   // Also check a few other things.
-  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  std::stack<TreeType*> stack, xmlStack, jsonStack, binaryStack;
   stack.push(&tree);
   xmlStack.push(&xmlTree);
-  textStack.push(&textTree);
+  jsonStack.push(&jsonTree);
   binaryStack.push(&binaryTree);
   while (!stack.empty())
   {
     TreeType* node = stack.top();
     TreeType* xmlNode = xmlStack.top();
-    TreeType* textNode = textStack.top();
+    TreeType* jsonNode = jsonStack.top();
     TreeType* binaryNode = binaryStack.top();
     stack.pop();
     xmlStack.pop();
-    textStack.pop();
+    jsonStack.pop();
     binaryStack.pop();
 
     BOOST_REQUIRE_EQUAL(node->Scale(), xmlNode->Scale());
-    BOOST_REQUIRE_EQUAL(node->Scale(), textNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), jsonNode->Scale());
     BOOST_REQUIRE_EQUAL(node->Scale(), binaryNode->Scale());
 
     BOOST_REQUIRE_CLOSE(node->Base(), xmlNode->Base(), 1e-5);
-    BOOST_REQUIRE_CLOSE(node->Base(), textNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), jsonNode->Base(), 1e-5);
     BOOST_REQUIRE_CLOSE(node->Base(), binaryNode->Base(), 1e-5);
 
     for (size_t i = 0; i < node->NumChildren(); ++i)
     {
       stack.push(&node->Child(i));
       xmlStack.push(&xmlNode->Child(i));
-      textStack.push(&textNode->Child(i));
+      jsonStack.push(&jsonNode->Child(i));
       binaryStack.push(&binaryNode->Child(i));
     }
   }
@@ -478,50 +477,50 @@ BOOST_AUTO_TEST_CASE(RectangleTreeTest)
   TreeType tree(data);
 
   TreeType* xmlTree;
-  TreeType* textTree;
+  TreeType* jsonTree;
   TreeType* binaryTree;
 
-  SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
+  SerializePointerObjectAll(&tree, xmlTree, jsonTree, binaryTree);
 
-  CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
+  CheckTrees(tree, *xmlTree, *jsonTree, *binaryTree);
 
   // Check a few other things too.
-  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  std::stack<TreeType*> stack, xmlStack, jsonStack, binaryStack;
   stack.push(&tree);
   xmlStack.push(xmlTree);
-  textStack.push(textTree);
+  jsonStack.push(jsonTree);
   binaryStack.push(binaryTree);
   while (!stack.empty())
   {
     // Check more things...
     TreeType* node = stack.top();
     TreeType* xmlNode = xmlStack.top();
-    TreeType* textNode = textStack.top();
+    TreeType* jsonNode = jsonStack.top();
     TreeType* binaryNode = binaryStack.top();
     stack.pop();
     xmlStack.pop();
-    textStack.pop();
+    jsonStack.pop();
     binaryStack.pop();
 
     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
-    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), jsonNode->MaxLeafSize());
     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), binaryNode->MaxLeafSize());
 
     BOOST_REQUIRE_EQUAL(node->MinLeafSize(), xmlNode->MinLeafSize());
-    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), textNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), jsonNode->MinLeafSize());
     BOOST_REQUIRE_EQUAL(node->MinLeafSize(), binaryNode->MinLeafSize());
 
     BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), xmlNode->MaxNumChildren());
-    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), textNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), jsonNode->MaxNumChildren());
     BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), binaryNode->MaxNumChildren());
 
     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), xmlNode->MinNumChildren());
-    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), textNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), jsonNode->MinNumChildren());
     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), binaryNode->MinNumChildren());
   }
 
   delete xmlTree;
-  delete textTree;
+  delete jsonTree;
   delete binaryTree;
 }
 
@@ -535,45 +534,45 @@ BOOST_AUTO_TEST_CASE(RectangleTreeOverwriteTest)
   arma::mat otherData;
   otherData.randu(5, 50);
   TreeType xmlTree(otherData);
-  TreeType textTree(otherData);
-  TreeType binaryTree(textTree);
+  TreeType jsonTree(otherData);
+  TreeType binaryTree(jsonTree);
 
-  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+  SerializeObjectAll(tree, xmlTree, jsonTree, binaryTree);
 
-  CheckTrees(tree, xmlTree, textTree, binaryTree);
+  CheckTrees(tree, xmlTree, jsonTree, binaryTree);
 
   // Check a few other things too.
-  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  std::stack<TreeType*> stack, xmlStack, jsonStack, binaryStack;
   stack.push(&tree);
   xmlStack.push(&xmlTree);
-  textStack.push(&textTree);
+  jsonStack.push(&jsonTree);
   binaryStack.push(&binaryTree);
   while (!stack.empty())
   {
     // Check more things...
     TreeType* node = stack.top();
     TreeType* xmlNode = xmlStack.top();
-    TreeType* textNode = textStack.top();
+    TreeType* jsonNode = jsonStack.top();
     TreeType* binaryNode = binaryStack.top();
     stack.pop();
     xmlStack.pop();
-    textStack.pop();
+    jsonStack.pop();
     binaryStack.pop();
 
     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
-    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), jsonNode->MaxLeafSize());
     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), binaryNode->MaxLeafSize());
 
     BOOST_REQUIRE_EQUAL(node->MinLeafSize(), xmlNode->MinLeafSize());
-    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), textNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), jsonNode->MinLeafSize());
     BOOST_REQUIRE_EQUAL(node->MinLeafSize(), binaryNode->MinLeafSize());
 
     BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), xmlNode->MaxNumChildren());
-    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), textNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), jsonNode->MaxNumChildren());
     BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), binaryNode->MaxNumChildren());
 
     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), xmlNode->MinNumChildren());
-    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), textNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), jsonNode->MinNumChildren());
     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), binaryNode->MinNumChildren());
   }
 }
@@ -645,16 +644,16 @@ BOOST_AUTO_TEST_CASE(KNNTest)
   // Now run nearest neighbor and make sure the results are the same.
   arma::mat querySet = arma::randu<arma::mat>(5, 1000);
 
-  arma::mat distances, xmlDistances, textDistances, binaryDistances;
-  arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
+  arma::mat distances, xmlDistances, jsonDistances, binaryDistances;
+  arma::Mat<size_t> neighbors, xmlNeighbors, jsonNeighbors, binaryNeighbors;
 
   knn.Search(querySet, 5, neighbors, distances);
   knnXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
-  knnText.Search(querySet, 5, textNeighbors, textDistances);
+  knnText.Search(querySet, 5, jsonNeighbors, jsonDistances);
   knnBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
 
-  CheckMatrices(distances, xmlDistances, textDistances, binaryDistances);
-  CheckMatrices(neighbors, xmlNeighbors, textNeighbors, binaryNeighbors);
+  CheckMatrices(distances, xmlDistances, jsonDistances, binaryDistances);
+  CheckMatrices(neighbors, xmlNeighbors, jsonNeighbors, binaryNeighbors);
 }
 
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
@@ -689,15 +688,15 @@ BOOST_AUTO_TEST_CASE(DETTest)
   DTreeX tree(dataset);
 
   arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
-  DTreeX xmlTree, binaryTree, textTree(otherDataset);
+  DTreeX xmlTree, binaryTree, jsonTree(otherDataset);
 
-  SerializeObjectAll(tree, xmlTree, binaryTree, textTree);
+  SerializeObjectAll(tree, xmlTree, binaryTree, jsonTree);
 
-  std::stack<DTreeX*> stack, xmlStack, binaryStack, textStack;
+  std::stack<DTreeX*> stack, xmlStack, binaryStack, jsonStack;
   stack.push(&tree);
   xmlStack.push(&xmlTree);
   binaryStack.push(&binaryTree);
-  textStack.push(&textTree);
+  jsonStack.push(&jsonTree);
 
   while (!stack.empty())
   {
@@ -705,57 +704,57 @@ BOOST_AUTO_TEST_CASE(DETTest)
     DTreeX* node = stack.top();
     DTreeX* xmlNode = xmlStack.top();
     DTreeX* binaryNode = binaryStack.top();
-    DTreeX* textNode = textStack.top();
+    DTreeX* jsonNode = jsonStack.top();
 
     stack.pop();
     xmlStack.pop();
     binaryStack.pop();
-    textStack.pop();
+    jsonStack.pop();
 
     // Check that all the members are the same.
     BOOST_REQUIRE_EQUAL(node->Start(), xmlNode->Start());
     BOOST_REQUIRE_EQUAL(node->Start(), binaryNode->Start());
-    BOOST_REQUIRE_EQUAL(node->Start(), textNode->Start());
+    BOOST_REQUIRE_EQUAL(node->Start(), jsonNode->Start());
 
     BOOST_REQUIRE_EQUAL(node->End(), xmlNode->End());
     BOOST_REQUIRE_EQUAL(node->End(), binaryNode->End());
-    BOOST_REQUIRE_EQUAL(node->End(), textNode->End());
+    BOOST_REQUIRE_EQUAL(node->End(), jsonNode->End());
 
     BOOST_REQUIRE_EQUAL(node->SplitDim(), xmlNode->SplitDim());
     BOOST_REQUIRE_EQUAL(node->SplitDim(), binaryNode->SplitDim());
-    BOOST_REQUIRE_EQUAL(node->SplitDim(), textNode->SplitDim());
+    BOOST_REQUIRE_EQUAL(node->SplitDim(), jsonNode->SplitDim());
 
     if (std::abs(node->SplitValue()) < 1e-5)
     {
       BOOST_REQUIRE_SMALL(xmlNode->SplitValue(), 1e-5);
       BOOST_REQUIRE_SMALL(binaryNode->SplitValue(), 1e-5);
-      BOOST_REQUIRE_SMALL(textNode->SplitValue(), 1e-5);
+      BOOST_REQUIRE_SMALL(jsonNode->SplitValue(), 1e-5);
     }
     else
     {
       BOOST_REQUIRE_CLOSE(node->SplitValue(), xmlNode->SplitValue(), 1e-5);
       BOOST_REQUIRE_CLOSE(node->SplitValue(), binaryNode->SplitValue(), 1e-5);
-      BOOST_REQUIRE_CLOSE(node->SplitValue(), textNode->SplitValue(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->SplitValue(), jsonNode->SplitValue(), 1e-5);
     }
 
     if (std::abs(node->LogNegError()) < 1e-5)
     {
       BOOST_REQUIRE_SMALL(xmlNode->LogNegError(), 1e-5);
       BOOST_REQUIRE_SMALL(binaryNode->LogNegError(), 1e-5);
-      BOOST_REQUIRE_SMALL(textNode->LogNegError(), 1e-5);
+      BOOST_REQUIRE_SMALL(jsonNode->LogNegError(), 1e-5);
     }
     else
     {
       BOOST_REQUIRE_CLOSE(node->LogNegError(), xmlNode->LogNegError(), 1e-5);
       BOOST_REQUIRE_CLOSE(node->LogNegError(), binaryNode->LogNegError(), 1e-5);
-      BOOST_REQUIRE_CLOSE(node->LogNegError(), textNode->LogNegError(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->LogNegError(), jsonNode->LogNegError(), 1e-5);
     }
 
     if (std::abs(node->SubtreeLeavesLogNegError()) < 1e-5)
     {
       BOOST_REQUIRE_SMALL(xmlNode->SubtreeLeavesLogNegError(), 1e-5);
       BOOST_REQUIRE_SMALL(binaryNode->SubtreeLeavesLogNegError(), 1e-5);
-      BOOST_REQUIRE_SMALL(textNode->SubtreeLeavesLogNegError(), 1e-5);
+      BOOST_REQUIRE_SMALL(jsonNode->SubtreeLeavesLogNegError(), 1e-5);
     }
     else
     {
@@ -764,129 +763,129 @@ BOOST_AUTO_TEST_CASE(DETTest)
       BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
           binaryNode->SubtreeLeavesLogNegError(), 1e-5);
       BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
-          textNode->SubtreeLeavesLogNegError(), 1e-5);
+          jsonNode->SubtreeLeavesLogNegError(), 1e-5);
     }
 
     BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), xmlNode->SubtreeLeaves());
     BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), binaryNode->SubtreeLeaves());
-    BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), textNode->SubtreeLeaves());
+    BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), jsonNode->SubtreeLeaves());
 
     if (std::abs(node->Ratio()) < 1e-5)
     {
       BOOST_REQUIRE_SMALL(xmlNode->Ratio(), 1e-5);
       BOOST_REQUIRE_SMALL(binaryNode->Ratio(), 1e-5);
-      BOOST_REQUIRE_SMALL(textNode->Ratio(), 1e-5);
+      BOOST_REQUIRE_SMALL(jsonNode->Ratio(), 1e-5);
     }
     else
     {
       BOOST_REQUIRE_CLOSE(node->Ratio(), xmlNode->Ratio(), 1e-5);
       BOOST_REQUIRE_CLOSE(node->Ratio(), binaryNode->Ratio(), 1e-5);
-      BOOST_REQUIRE_CLOSE(node->Ratio(), textNode->Ratio(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->Ratio(), jsonNode->Ratio(), 1e-5);
     }
 
     if (std::abs(node->LogVolume()) < 1e-5)
     {
       BOOST_REQUIRE_SMALL(xmlNode->LogVolume(), 1e-5);
       BOOST_REQUIRE_SMALL(binaryNode->LogVolume(), 1e-5);
-      BOOST_REQUIRE_SMALL(textNode->LogVolume(), 1e-5);
+      BOOST_REQUIRE_SMALL(jsonNode->LogVolume(), 1e-5);
     }
     else
     {
       BOOST_REQUIRE_CLOSE(node->LogVolume(), xmlNode->LogVolume(), 1e-5);
       BOOST_REQUIRE_CLOSE(node->LogVolume(), binaryNode->LogVolume(), 1e-5);
-      BOOST_REQUIRE_CLOSE(node->LogVolume(), textNode->LogVolume(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->LogVolume(), jsonNode->LogVolume(), 1e-5);
     }
 
     if (node->Left() == NULL)
     {
       BOOST_REQUIRE(xmlNode->Left() == NULL);
       BOOST_REQUIRE(binaryNode->Left() == NULL);
-      BOOST_REQUIRE(textNode->Left() == NULL);
+      BOOST_REQUIRE(jsonNode->Left() == NULL);
     }
     else
     {
       BOOST_REQUIRE(xmlNode->Left() != NULL);
       BOOST_REQUIRE(binaryNode->Left() != NULL);
-      BOOST_REQUIRE(textNode->Left() != NULL);
+      BOOST_REQUIRE(jsonNode->Left() != NULL);
 
       // Push children onto stack.
       stack.push(node->Left());
       xmlStack.push(xmlNode->Left());
       binaryStack.push(binaryNode->Left());
-      textStack.push(textNode->Left());
+      jsonStack.push(jsonNode->Left());
     }
 
     if (node->Right() == NULL)
     {
       BOOST_REQUIRE(xmlNode->Right() == NULL);
       BOOST_REQUIRE(binaryNode->Right() == NULL);
-      BOOST_REQUIRE(textNode->Right() == NULL);
+      BOOST_REQUIRE(jsonNode->Right() == NULL);
     }
     else
     {
       BOOST_REQUIRE(xmlNode->Right() != NULL);
       BOOST_REQUIRE(binaryNode->Right() != NULL);
-      BOOST_REQUIRE(textNode->Right() != NULL);
+      BOOST_REQUIRE(jsonNode->Right() != NULL);
 
       // Push children onto stack.
       stack.push(node->Right());
       xmlStack.push(xmlNode->Right());
       binaryStack.push(binaryNode->Right());
-      textStack.push(textNode->Right());
+      jsonStack.push(jsonNode->Right());
     }
 
     BOOST_REQUIRE_EQUAL(node->Root(), xmlNode->Root());
     BOOST_REQUIRE_EQUAL(node->Root(), binaryNode->Root());
-    BOOST_REQUIRE_EQUAL(node->Root(), textNode->Root());
+    BOOST_REQUIRE_EQUAL(node->Root(), jsonNode->Root());
 
     if (std::abs(node->AlphaUpper()) < 1e-5)
     {
       BOOST_REQUIRE_SMALL(xmlNode->AlphaUpper(), 1e-5);
       BOOST_REQUIRE_SMALL(binaryNode->AlphaUpper(), 1e-5);
-      BOOST_REQUIRE_SMALL(textNode->AlphaUpper(), 1e-5);
+      BOOST_REQUIRE_SMALL(jsonNode->AlphaUpper(), 1e-5);
     }
     else
     {
       BOOST_REQUIRE_CLOSE(node->AlphaUpper(), xmlNode->AlphaUpper(), 1e-5);
       BOOST_REQUIRE_CLOSE(node->AlphaUpper(), binaryNode->AlphaUpper(), 1e-5);
-      BOOST_REQUIRE_CLOSE(node->AlphaUpper(), textNode->AlphaUpper(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->AlphaUpper(), jsonNode->AlphaUpper(), 1e-5);
     }
 
     BOOST_REQUIRE_EQUAL(node->MaxVals().n_elem, xmlNode->MaxVals().n_elem);
     BOOST_REQUIRE_EQUAL(node->MaxVals().n_elem, binaryNode->MaxVals().n_elem);
-    BOOST_REQUIRE_EQUAL(node->MaxVals().n_elem, textNode->MaxVals().n_elem);
+    BOOST_REQUIRE_EQUAL(node->MaxVals().n_elem, jsonNode->MaxVals().n_elem);
     for (size_t i = 0; i < node->MaxVals().n_elem; ++i)
     {
       if (std::abs(node->MaxVals()[i]) < 1e-5)
       {
         BOOST_REQUIRE_SMALL(xmlNode->MaxVals()[i], 1e-5);
         BOOST_REQUIRE_SMALL(binaryNode->MaxVals()[i], 1e-5);
-        BOOST_REQUIRE_SMALL(textNode->MaxVals()[i], 1e-5);
+        BOOST_REQUIRE_SMALL(jsonNode->MaxVals()[i], 1e-5);
       }
       else
       {
         BOOST_REQUIRE_CLOSE(node->MaxVals()[i], xmlNode->MaxVals()[i], 1e-5);
         BOOST_REQUIRE_CLOSE(node->MaxVals()[i], binaryNode->MaxVals()[i], 1e-5);
-        BOOST_REQUIRE_CLOSE(node->MaxVals()[i], textNode->MaxVals()[i], 1e-5);
+        BOOST_REQUIRE_CLOSE(node->MaxVals()[i], jsonNode->MaxVals()[i], 1e-5);
       }
     }
 
     BOOST_REQUIRE_EQUAL(node->MinVals().n_elem, xmlNode->MinVals().n_elem);
     BOOST_REQUIRE_EQUAL(node->MinVals().n_elem, binaryNode->MinVals().n_elem);
-    BOOST_REQUIRE_EQUAL(node->MinVals().n_elem, textNode->MinVals().n_elem);
+    BOOST_REQUIRE_EQUAL(node->MinVals().n_elem, jsonNode->MinVals().n_elem);
     for (size_t i = 0; i < node->MinVals().n_elem; ++i)
     {
       if (std::abs(node->MinVals()[i]) < 1e-5)
       {
         BOOST_REQUIRE_SMALL(xmlNode->MinVals()[i], 1e-5);
         BOOST_REQUIRE_SMALL(binaryNode->MinVals()[i], 1e-5);
-        BOOST_REQUIRE_SMALL(textNode->MinVals()[i], 1e-5);
+        BOOST_REQUIRE_SMALL(jsonNode->MinVals()[i], 1e-5);
       }
       else
       {
         BOOST_REQUIRE_CLOSE(node->MinVals()[i], xmlNode->MinVals()[i], 1e-5);
         BOOST_REQUIRE_CLOSE(node->MinVals()[i], binaryNode->MinVals()[i], 1e-5);
-        BOOST_REQUIRE_CLOSE(node->MinVals()[i], textNode->MinVals()[i], 1e-5);
+        BOOST_REQUIRE_CLOSE(node->MinVals()[i], jsonNode->MinVals()[i], 1e-5);
       }
     }
   }
@@ -910,40 +909,40 @@ BOOST_AUTO_TEST_CASE(NaiveBayesSerializationTest)
   NaiveBayesClassifier<> nbc(dataset, labels, 2);
 
   // Initialize some empty Naive Bayes classifiers.
-  NaiveBayesClassifier<> xmlNbc(0, 0), textNbc(0, 0), binaryNbc(0, 0);
-  SerializeObjectAll(nbc, xmlNbc, textNbc, binaryNbc);
+  NaiveBayesClassifier<> xmlNbc(0, 0), jsonNbc(0, 0), binaryNbc(0, 0);
+  SerializeObjectAll(nbc, xmlNbc, jsonNbc, binaryNbc);
 
   BOOST_REQUIRE_EQUAL(nbc.Means().n_elem, xmlNbc.Means().n_elem);
-  BOOST_REQUIRE_EQUAL(nbc.Means().n_elem, textNbc.Means().n_elem);
+  BOOST_REQUIRE_EQUAL(nbc.Means().n_elem, jsonNbc.Means().n_elem);
   BOOST_REQUIRE_EQUAL(nbc.Means().n_elem, binaryNbc.Means().n_elem);
   for (size_t i = 0; i < nbc.Means().n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(nbc.Means()[i], xmlNbc.Means()[i], 1e-5);
-    BOOST_REQUIRE_CLOSE(nbc.Means()[i], textNbc.Means()[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(nbc.Means()[i], jsonNbc.Means()[i], 1e-5);
     BOOST_REQUIRE_CLOSE(nbc.Means()[i], binaryNbc.Means()[i], 1e-5);
   }
 
   BOOST_REQUIRE_EQUAL(nbc.Variances().n_elem, xmlNbc.Variances().n_elem);
-  BOOST_REQUIRE_EQUAL(nbc.Variances().n_elem, textNbc.Variances().n_elem);
+  BOOST_REQUIRE_EQUAL(nbc.Variances().n_elem, jsonNbc.Variances().n_elem);
   BOOST_REQUIRE_EQUAL(nbc.Variances().n_elem, binaryNbc.Variances().n_elem);
   for (size_t i = 0; i < nbc.Variances().n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(nbc.Variances()[i], xmlNbc.Variances()[i], 1e-5);
-    BOOST_REQUIRE_CLOSE(nbc.Variances()[i], textNbc.Variances()[i], 1e-5);
+    BOOST_REQUIRE_CLOSE(nbc.Variances()[i], jsonNbc.Variances()[i], 1e-5);
     BOOST_REQUIRE_CLOSE(nbc.Variances()[i], binaryNbc.Variances()[i], 1e-5);
   }
 
   BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
       xmlNbc.Probabilities().n_elem);
   BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
-      textNbc.Probabilities().n_elem);
+      jsonNbc.Probabilities().n_elem);
   BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
       binaryNbc.Probabilities().n_elem);
   for (size_t i = 0; i < nbc.Probabilities().n_elem; ++i)
   {
     BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], xmlNbc.Probabilities()[i],
         1e-5);
-    BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], textNbc.Probabilities()[i],
+    BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], jsonNbc.Probabilities()[i],
         1e-5);
     BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], binaryNbc.Probabilities()[i],
         1e-5);
@@ -971,24 +970,24 @@ BOOST_AUTO_TEST_CASE(RASearchTest)
   // Now run nearest neighbor and make sure the results are the same.
   arma::mat querySet = arma::randu<arma::mat>(5, 100);
 
-  arma::mat distances, xmlDistances, textDistances, binaryDistances;
-  arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
+  arma::mat distances, xmlDistances, jsonDistances, binaryDistances;
+  arma::Mat<size_t> neighbors, xmlNeighbors, jsonNeighbors, binaryNeighbors;
 
   KNN knn(dataset); // Exact search.
   knn.Search(querySet, 10, neighbors, distances);
   krannXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
-  krannText.Search(querySet, 5, textNeighbors, textDistances);
+  krannText.Search(querySet, 5, jsonNeighbors, jsonDistances);
   krannBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
 
   BOOST_REQUIRE_EQUAL(xmlNeighbors.n_rows, 5);
   BOOST_REQUIRE_EQUAL(xmlNeighbors.n_cols, 100);
-  BOOST_REQUIRE_EQUAL(textNeighbors.n_rows, 5);
-  BOOST_REQUIRE_EQUAL(textNeighbors.n_cols, 100);
+  BOOST_REQUIRE_EQUAL(jsonNeighbors.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(jsonNeighbors.n_cols, 100);
   BOOST_REQUIRE_EQUAL(binaryNeighbors.n_rows, 5);
   BOOST_REQUIRE_EQUAL(binaryNeighbors.n_cols, 100);
 
   size_t xmlCorrect = 0;
-  size_t textCorrect = 0;
+  size_t jsonCorrect = 0;
   size_t binaryCorrect = 0;
   for (size_t i = 0; i < xmlNeighbors.n_cols; ++i)
   {
@@ -999,8 +998,8 @@ BOOST_AUTO_TEST_CASE(RASearchTest)
       {
         if (neighbors(k, i) == xmlNeighbors(j, i))
           xmlCorrect++;
-        if (neighbors(k, i) == textNeighbors(j, i))
-          textCorrect++;
+        if (neighbors(k, i) == jsonNeighbors(j, i))
+          jsonCorrect++;
         if (neighbors(k, i) == binaryNeighbors(j, i))
           binaryCorrect++;
       }
@@ -1010,7 +1009,7 @@ BOOST_AUTO_TEST_CASE(RASearchTest)
   // We need 95% of these to be correct.
   BOOST_REQUIRE_GT(xmlCorrect, 95 * 5);
   BOOST_REQUIRE_GT(binaryCorrect, 95 * 5);
-  BOOST_REQUIRE_GT(textCorrect, 95 * 5);
+  BOOST_REQUIRE_GT(jsonCorrect, 95 * 5);
 }
 
 /**
@@ -1026,44 +1025,44 @@ BOOST_AUTO_TEST_CASE(LSHTest)
   LSHSearch<> lsh(referenceData, 5, 10); // Arbitrary chosen parameters.
 
   LSHSearch<> xmlLsh;
-  arma::mat textData = arma::randu<arma::mat>(5, 50);
-  LSHSearch<> textLsh(textData, 4, 5);
+  arma::mat jsonData = arma::randu<arma::mat>(5, 50);
+  LSHSearch<> jsonLsh(jsonData, 4, 5);
   LSHSearch<> binaryLsh(referenceData, 15, 2);
 
   // Now serialize.
-  SerializeObjectAll(lsh, xmlLsh, textLsh, binaryLsh);
+  SerializeObjectAll(lsh, xmlLsh, jsonLsh, binaryLsh);
 
   // Check what we can about the serialized objects.
   BOOST_REQUIRE_EQUAL(lsh.NumProjections(), xmlLsh.NumProjections());
-  BOOST_REQUIRE_EQUAL(lsh.NumProjections(), textLsh.NumProjections());
+  BOOST_REQUIRE_EQUAL(lsh.NumProjections(), jsonLsh.NumProjections());
   BOOST_REQUIRE_EQUAL(lsh.NumProjections(), binaryLsh.NumProjections());
   for (size_t i = 0; i < lsh.NumProjections(); ++i)
   {
     CheckMatrices(lsh.Projections().slice(i), xmlLsh.Projections().slice(i),
-        textLsh.Projections().slice(i), binaryLsh.Projections().slice(i));
+        jsonLsh.Projections().slice(i), binaryLsh.Projections().slice(i));
   }
 
   CheckMatrices(lsh.ReferenceSet(), xmlLsh.ReferenceSet(),
-      textLsh.ReferenceSet(), binaryLsh.ReferenceSet());
-  CheckMatrices(lsh.Offsets(), xmlLsh.Offsets(), textLsh.Offsets(),
+      jsonLsh.ReferenceSet(), binaryLsh.ReferenceSet());
+  CheckMatrices(lsh.Offsets(), xmlLsh.Offsets(), jsonLsh.Offsets(),
       binaryLsh.Offsets());
   CheckMatrices(lsh.SecondHashWeights(), xmlLsh.SecondHashWeights(),
-      textLsh.SecondHashWeights(), binaryLsh.SecondHashWeights());
+      jsonLsh.SecondHashWeights(), binaryLsh.SecondHashWeights());
 
   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), xmlLsh.BucketSize());
-  BOOST_REQUIRE_EQUAL(lsh.BucketSize(), textLsh.BucketSize());
+  BOOST_REQUIRE_EQUAL(lsh.BucketSize(), jsonLsh.BucketSize());
   BOOST_REQUIRE_EQUAL(lsh.BucketSize(), binaryLsh.BucketSize());
 
   BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
       xmlLsh.SecondHashTable().size());
   BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
-      textLsh.SecondHashTable().size());
+      jsonLsh.SecondHashTable().size());
   BOOST_REQUIRE_EQUAL(lsh.SecondHashTable().size(),
       binaryLsh.SecondHashTable().size());
 
   for (size_t i = 0; i < lsh.SecondHashTable().size(); ++i)
   CheckMatrices(lsh.SecondHashTable()[i], xmlLsh.SecondHashTable()[i],
-      textLsh.SecondHashTable()[i], binaryLsh.SecondHashTable()[i]);
+      jsonLsh.SecondHashTable()[i], binaryLsh.SecondHashTable()[i]);
 }
 
 // Make sure serialization works for the decision stump.
@@ -1087,18 +1086,18 @@ BOOST_AUTO_TEST_CASE(DecisionStumpTest)
   arma::Row<size_t> otherLabels = arma::randu<arma::Row<size_t>>(100);
   DecisionStump<> xmlDs(otherData, otherLabels, 2, 3);
 
-  DecisionStump<> textDs;
+  DecisionStump<> jsonDs;
   DecisionStump<> binaryDs(trainingData, labels, 4, 10);
 
-  SerializeObjectAll(ds, xmlDs, textDs, binaryDs);
+  SerializeObjectAll(ds, xmlDs, jsonDs, binaryDs);
 
   // Make sure that everything is the same about the new decision stumps.
   BOOST_REQUIRE_EQUAL(ds.SplitDimension(), xmlDs.SplitDimension());
-  BOOST_REQUIRE_EQUAL(ds.SplitDimension(), textDs.SplitDimension());
+  BOOST_REQUIRE_EQUAL(ds.SplitDimension(), jsonDs.SplitDimension());
   BOOST_REQUIRE_EQUAL(ds.SplitDimension(), binaryDs.SplitDimension());
 
-  CheckMatrices(ds.Split(), xmlDs.Split(), textDs.Split(), binaryDs.Split());
-  CheckMatrices(ds.BinLabels(), xmlDs.BinLabels(), textDs.BinLabels(),
+  CheckMatrices(ds.Split(), xmlDs.Split(), jsonDs.Split(), binaryDs.Split());
+  CheckMatrices(ds.BinLabels(), xmlDs.BinLabels(), jsonDs.BinLabels(),
       binaryDs.BinLabels());
 }
 
@@ -1118,25 +1117,25 @@ BOOST_AUTO_TEST_CASE(LARSTest)
 
   // Now, serialize.
   LARS xmlLars(false, 0.5, 0.0), binaryLars(true, 1.0, 0.0),
-      textLars(false, 0.1, 0.1);
+      jsonLars(false, 0.1, 0.1);
 
-  // Train textLars.
-  arma::mat textX = arma::randn(25, 150);
-  arma::vec textBeta = arma::randn(25, 1);
-  arma::rowvec textY = textBeta.t() * textX;
-  arma::vec textBetaOpt;
-  textLars.Train(textX, textY, textBetaOpt);
+  // Train jsonLars.
+  arma::mat jsonX = arma::randn(25, 150);
+  arma::vec jsonBeta = arma::randn(25, 1);
+  arma::rowvec jsonY = jsonBeta.t() * jsonX;
+  arma::vec jsonBetaOpt;
+  jsonLars.Train(jsonX, jsonY, jsonBetaOpt);
 
-  SerializeObjectAll(lars, xmlLars, binaryLars, textLars);
+  SerializeObjectAll(lars, xmlLars, binaryLars, jsonLars);
 
   // Now, check that predictions are the same.
-  arma::rowvec pred, xmlPred, textPred, binaryPred;
+  arma::rowvec pred, xmlPred, jsonPred, binaryPred;
   lars.Predict(X, pred);
   xmlLars.Predict(X, xmlPred);
-  textLars.Predict(X, textPred);
+  jsonLars.Predict(X, jsonPred);
   binaryLars.Predict(X, binaryPred);
 
-  CheckMatrices(pred, xmlPred, textPred, binaryPred);
+  CheckMatrices(pred, xmlPred, jsonPred, binaryPred);
 }
 
 /**
@@ -1153,16 +1152,16 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitTest)
     split.Train(mlpack::math::Random(), mlpack::math::RandInt(3));
 
   HoeffdingNumericSplit<GiniImpurity> xmlSplit(5);
-  HoeffdingNumericSplit<GiniImpurity> textSplit(7);
+  HoeffdingNumericSplit<GiniImpurity> jsonSplit(7);
   for (size_t i = 0; i < 200; ++i)
-    textSplit.Train(mlpack::math::Random() + 3, 0);
+    jsonSplit.Train(mlpack::math::Random() + 3, 0);
   HoeffdingNumericSplit<GiniImpurity> binarySplit(2);
 
-  SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
+  SerializeObjectAll(split, xmlSplit, jsonSplit, binarySplit);
 
   // Ensure that everything is the same.
   BOOST_REQUIRE_EQUAL(split.Bins(), xmlSplit.Bins());
-  BOOST_REQUIRE_EQUAL(split.Bins(), textSplit.Bins());
+  BOOST_REQUIRE_EQUAL(split.Bins(), jsonSplit.Bins());
   BOOST_REQUIRE_EQUAL(split.Bins(), binarySplit.Bins());
 
   double bestSplit, secondBestSplit;
@@ -1172,7 +1171,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitTest)
   BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
   BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
 
-  textSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+  jsonSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
   BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
   BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
 
@@ -1180,22 +1179,22 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitTest)
   BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
   BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
 
-  arma::Col<size_t> children, xmlChildren, textChildren, binaryChildren;
-  NumericSplitInfo<double> splitInfo, xmlSplitInfo, textSplitInfo,
+  arma::Col<size_t> children, xmlChildren, jsonChildren, binaryChildren;
+  NumericSplitInfo<double> splitInfo, xmlSplitInfo, jsonSplitInfo,
       binarySplitInfo;
 
   split.Split(children, splitInfo);
   xmlSplit.Split(xmlChildren, xmlSplitInfo);
   binarySplit.Split(binaryChildren, binarySplitInfo);
-  textSplit.Split(textChildren, textSplitInfo);
+  jsonSplit.Split(jsonChildren, jsonSplitInfo);
 
   BOOST_REQUIRE_EQUAL(children.size(), xmlChildren.size());
-  BOOST_REQUIRE_EQUAL(children.size(), textChildren.size());
+  BOOST_REQUIRE_EQUAL(children.size(), jsonChildren.size());
   BOOST_REQUIRE_EQUAL(children.size(), binaryChildren.size());
   for (size_t i = 0; i < children.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(children[i], xmlChildren[i]);
-    BOOST_REQUIRE_EQUAL(children[i], textChildren[i]);
+    BOOST_REQUIRE_EQUAL(children[i], jsonChildren[i]);
     BOOST_REQUIRE_EQUAL(children[i], binaryChildren[i]);
   }
 
@@ -1206,7 +1205,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitTest)
     BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(random),
                         xmlSplitInfo.CalculateDirection(random));
     BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(random),
-                        textSplitInfo.CalculateDirection(random));
+                        jsonSplitInfo.CalculateDirection(random));
     BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(random),
                         binarySplitInfo.CalculateDirection(random));
   }
@@ -1226,22 +1225,22 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBeforeBinningTest)
     split.Train(mlpack::math::Random(), mlpack::math::RandInt(3));
 
   HoeffdingNumericSplit<GiniImpurity> xmlSplit(5);
-  HoeffdingNumericSplit<GiniImpurity> textSplit(7);
+  HoeffdingNumericSplit<GiniImpurity> jsonSplit(7);
   for (size_t i = 0; i < 200; ++i)
-    textSplit.Train(mlpack::math::Random() + 3, 0);
+    jsonSplit.Train(mlpack::math::Random() + 3, 0);
   HoeffdingNumericSplit<GiniImpurity> binarySplit(2);
 
-  SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
+  SerializeObjectAll(split, xmlSplit, jsonSplit, binarySplit);
 
   // Ensure that everything is the same.
   BOOST_REQUIRE_EQUAL(split.Bins(), xmlSplit.Bins());
-  BOOST_REQUIRE_EQUAL(split.Bins(), textSplit.Bins());
+  BOOST_REQUIRE_EQUAL(split.Bins(), jsonSplit.Bins());
   BOOST_REQUIRE_EQUAL(split.Bins(), binarySplit.Bins());
 
   double baseBestSplit, baseSecondBestSplit;
   double bestSplit, secondBestSplit;
   split.EvaluateFitnessFunction(baseBestSplit, baseSecondBestSplit);
-  textSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+  jsonSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
 
   BOOST_REQUIRE_SMALL(baseBestSplit, 1e-5);
   BOOST_REQUIRE_SMALL(baseSecondBestSplit, 1e-5);
@@ -1271,14 +1270,14 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitTest)
 
   HoeffdingCategoricalSplit<GiniImpurity> xmlSplit(3, 7);
   HoeffdingCategoricalSplit<GiniImpurity> binarySplit(4, 11);
-  HoeffdingCategoricalSplit<GiniImpurity> textSplit(2, 2);
+  HoeffdingCategoricalSplit<GiniImpurity> jsonSplit(2, 2);
   for (size_t i = 0; i < 10; ++i)
-    textSplit.Train(mlpack::math::RandInt(2), mlpack::math::RandInt(2));
+    jsonSplit.Train(mlpack::math::RandInt(2), mlpack::math::RandInt(2));
 
-  SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
+  SerializeObjectAll(split, xmlSplit, jsonSplit, binarySplit);
 
   BOOST_REQUIRE_EQUAL(split.MajorityClass(), xmlSplit.MajorityClass());
-  BOOST_REQUIRE_EQUAL(split.MajorityClass(), textSplit.MajorityClass());
+  BOOST_REQUIRE_EQUAL(split.MajorityClass(), jsonSplit.MajorityClass());
   BOOST_REQUIRE_EQUAL(split.MajorityClass(), binarySplit.MajorityClass());
 
   double bestSplit, secondBestSplit;
@@ -1289,7 +1288,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitTest)
   BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
   BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
 
-  textSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
+  jsonSplit.EvaluateFitnessFunction(bestSplit, secondBestSplit);
   BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
   BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
 
@@ -1297,21 +1296,21 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitTest)
   BOOST_REQUIRE_CLOSE(bestSplit, baseBestSplit, 1e-5);
   BOOST_REQUIRE_SMALL(secondBestSplit, 1e-10);
 
-  arma::Col<size_t> children, xmlChildren, textChildren, binaryChildren;
+  arma::Col<size_t> children, xmlChildren, jsonChildren, binaryChildren;
   CategoricalSplitInfo splitInfo(1); // I don't care about this.
 
   split.Split(children, splitInfo);
   xmlSplit.Split(xmlChildren, splitInfo);
   binarySplit.Split(binaryChildren, splitInfo);
-  textSplit.Split(textChildren, splitInfo);
+  jsonSplit.Split(jsonChildren, splitInfo);
 
   BOOST_REQUIRE_EQUAL(children.size(), xmlChildren.size());
-  BOOST_REQUIRE_EQUAL(children.size(), textChildren.size());
+  BOOST_REQUIRE_EQUAL(children.size(), jsonChildren.size());
   BOOST_REQUIRE_EQUAL(children.size(), binaryChildren.size());
   for (size_t i = 0; i < children.size(); ++i)
   {
     BOOST_REQUIRE_EQUAL(children[i], xmlChildren[i]);
-    BOOST_REQUIRE_EQUAL(children[i], textChildren[i]);
+    BOOST_REQUIRE_EQUAL(children[i], jsonChildren[i]);
     BOOST_REQUIRE_EQUAL(children[i], binaryChildren[i]);
   }
 }
@@ -1350,21 +1349,21 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeBeforeSplitTest)
     binarySplit.Train(arma::Col<size_t>("1 0"), 1);
   }
 
-  HoeffdingTree<> textSplit(wrongInfo, 11, 0.75, 1000, 1);
+  HoeffdingTree<> jsonSplit(wrongInfo, 11, 0.75, 1000, 1);
 
-  SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
+  SerializeObjectAll(split, xmlSplit, jsonSplit, binarySplit);
 
   BOOST_REQUIRE_EQUAL(split.SplitDimension(), xmlSplit.SplitDimension());
   BOOST_REQUIRE_EQUAL(split.SplitDimension(), binarySplit.SplitDimension());
-  BOOST_REQUIRE_EQUAL(split.SplitDimension(), textSplit.SplitDimension());
+  BOOST_REQUIRE_EQUAL(split.SplitDimension(), jsonSplit.SplitDimension());
 
   BOOST_REQUIRE_EQUAL(split.MajorityClass(), xmlSplit.MajorityClass());
   BOOST_REQUIRE_EQUAL(split.MajorityClass(), binarySplit.MajorityClass());
-  BOOST_REQUIRE_EQUAL(split.MajorityClass(), textSplit.MajorityClass());
+  BOOST_REQUIRE_EQUAL(split.MajorityClass(), jsonSplit.MajorityClass());
 
   BOOST_REQUIRE_EQUAL(split.SplitCheck(), xmlSplit.SplitCheck());
   BOOST_REQUIRE_EQUAL(split.SplitCheck(), binarySplit.SplitCheck());
-  BOOST_REQUIRE_EQUAL(split.SplitCheck(), textSplit.SplitCheck());
+  BOOST_REQUIRE_EQUAL(split.SplitCheck(), jsonSplit.SplitCheck());
 }
 
 /**
@@ -1403,30 +1402,30 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeAfterSplitTest)
   binarySplit.Train(arma::vec("0.3 0.4 1 0.6 0.7"), 0);
   binarySplit.Train(arma::vec("-0.3 0.0 0 0.7 0.8"), 1);
 
-  HoeffdingTree<> textSplit(wrongInfo, 11, 0.75, 1000, 1);
+  HoeffdingTree<> jsonSplit(wrongInfo, 11, 0.75, 1000, 1);
 
-  SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
+  SerializeObjectAll(split, xmlSplit, jsonSplit, binarySplit);
 
   BOOST_REQUIRE_EQUAL(split.SplitDimension(), xmlSplit.SplitDimension());
   BOOST_REQUIRE_EQUAL(split.SplitDimension(), binarySplit.SplitDimension());
-  BOOST_REQUIRE_EQUAL(split.SplitDimension(), textSplit.SplitDimension());
+  BOOST_REQUIRE_EQUAL(split.SplitDimension(), jsonSplit.SplitDimension());
 
   // If splitting has already happened, then SplitCheck() should return 0.
   BOOST_REQUIRE_EQUAL(split.SplitCheck(), 0);
   BOOST_REQUIRE_EQUAL(split.SplitCheck(), xmlSplit.SplitCheck());
   BOOST_REQUIRE_EQUAL(split.SplitCheck(), binarySplit.SplitCheck());
-  BOOST_REQUIRE_EQUAL(split.SplitCheck(), textSplit.SplitCheck());
+  BOOST_REQUIRE_EQUAL(split.SplitCheck(), jsonSplit.SplitCheck());
 
   BOOST_REQUIRE_EQUAL(split.MajorityClass(), xmlSplit.MajorityClass());
   BOOST_REQUIRE_EQUAL(split.MajorityClass(), binarySplit.MajorityClass());
-  BOOST_REQUIRE_EQUAL(split.MajorityClass(), textSplit.MajorityClass());
+  BOOST_REQUIRE_EQUAL(split.MajorityClass(), jsonSplit.MajorityClass());
 
   BOOST_REQUIRE_EQUAL(split.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")),
       xmlSplit.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")));
   BOOST_REQUIRE_EQUAL(split.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")),
       binarySplit.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")));
   BOOST_REQUIRE_EQUAL(split.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")),
-      textSplit.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")));
+      jsonSplit.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")));
 }
 
 BOOST_AUTO_TEST_CASE(EmptyHoeffdingTreeTest)
@@ -1437,14 +1436,14 @@ BOOST_AUTO_TEST_CASE(EmptyHoeffdingTreeTest)
   HoeffdingTree<> tree(info, 2);
   HoeffdingTree<> xmlTree(info, 3);
   HoeffdingTree<> binaryTree(info, 4);
-  HoeffdingTree<> textTree(info, 5);
+  HoeffdingTree<> jsonTree(info, 5);
 
-  SerializeObjectAll(tree, xmlTree, binaryTree, textTree);
+  SerializeObjectAll(tree, xmlTree, binaryTree, jsonTree);
 
   BOOST_REQUIRE_EQUAL(tree.NumChildren(), 0);
   BOOST_REQUIRE_EQUAL(xmlTree.NumChildren(), 0);
   BOOST_REQUIRE_EQUAL(binaryTree.NumChildren(), 0);
-  BOOST_REQUIRE_EQUAL(textTree.NumChildren(), 0);
+  BOOST_REQUIRE_EQUAL(jsonTree.NumChildren(), 0);
 }
 
 /**
@@ -1483,17 +1482,17 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
   HoeffdingTree<> xmlTree(xmlInfo, 1);
   data::DatasetInfo binaryInfo(5);
   HoeffdingTree<> binaryTree(binaryInfo, 6);
-  data::DatasetInfo textInfo(7);
-  HoeffdingTree<> textTree(textInfo, 100);
+  data::DatasetInfo jsonInfo(7);
+  HoeffdingTree<> jsonTree(jsonInfo, 100);
 
-  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+  SerializeObjectAll(tree, xmlTree, jsonTree, binaryTree);
 
   BOOST_REQUIRE_EQUAL(tree.NumChildren(), xmlTree.NumChildren());
-  BOOST_REQUIRE_EQUAL(tree.NumChildren(), textTree.NumChildren());
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), jsonTree.NumChildren());
   BOOST_REQUIRE_EQUAL(tree.NumChildren(), binaryTree.NumChildren());
 
   BOOST_REQUIRE_EQUAL(tree.SplitDimension(), xmlTree.SplitDimension());
-  BOOST_REQUIRE_EQUAL(tree.SplitDimension(), textTree.SplitDimension());
+  BOOST_REQUIRE_EQUAL(tree.SplitDimension(), jsonTree.SplitDimension());
   BOOST_REQUIRE_EQUAL(tree.SplitDimension(), binaryTree.SplitDimension());
 
   for (size_t i = 0; i < tree.NumChildren(); ++i)
@@ -1501,12 +1500,12 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
     BOOST_REQUIRE_EQUAL(tree.Child(i).NumChildren(), 0);
     BOOST_REQUIRE_EQUAL(xmlTree.Child(i).NumChildren(), 0);
     BOOST_REQUIRE_EQUAL(binaryTree.Child(i).NumChildren(), 0);
-    BOOST_REQUIRE_EQUAL(textTree.Child(i).NumChildren(), 0);
+    BOOST_REQUIRE_EQUAL(jsonTree.Child(i).NumChildren(), 0);
 
     BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
         xmlTree.Child(i).SplitDimension());
     BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
-        textTree.Child(i).SplitDimension());
+        jsonTree.Child(i).SplitDimension());
     BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
         binaryTree.Child(i).SplitDimension());
   }
@@ -1631,6 +1630,45 @@ BOOST_AUTO_TEST_CASE(BayesianLinearRegressionTest)
   binaryBlr.Predict(matX, binaryPred);
 
   CheckMatrices(pred, xmlPred, textPred, binaryPred);
+}
+
+/**
+ * Test the cereal array wrapper on an empty array.
+ */
+class TestStruct
+{
+ public:
+  TestStruct() : mem(NULL), len(0) { }
+
+  template<typename Archive>
+  void serialize(Archive& ar)
+  {
+    ar(cereal::make_array(mem, len));
+  }
+
+  int* mem;
+  size_t len;
+};
+
+BOOST_AUTO_TEST_CASE(CerealEmptyArrayWrapperTest)
+{
+  TestStruct t;
+  // Manually change the values in the other ones.
+  TestStruct xmlT, jsonT, binaryT;
+  xmlT.mem = new int[10];
+  xmlT.len = 10;
+  jsonT.mem = new int[5];
+  jsonT.len = 5;
+
+  SerializeObjectAll(t, xmlT, binaryT, jsonT);
+
+  // Ensure that all the results are correct.
+  BOOST_REQUIRE(xmlT.mem == (int*) NULL);
+  BOOST_REQUIRE_EQUAL(xmlT.len, 0);
+  BOOST_REQUIRE(binaryT.mem == (int*) NULL);
+  BOOST_REQUIRE_EQUAL(binaryT.len, 0);
+  BOOST_REQUIRE(jsonT.mem == (int*) NULL);
+  BOOST_REQUIRE_EQUAL(jsonT.len, 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
