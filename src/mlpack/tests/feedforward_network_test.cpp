@@ -157,7 +157,7 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
  * Check whether copying and moving network with AdaptiveMaxPooling is working or not.
  */
 
-TEST_CASE("CheckCopyMovingAdaptiveMaxPoolingNetworkTest", 
+TEST_CASE("CheckCopyMovingAdaptiveMaxPoolingNetworkTest",
           "[FeedForwardNetworkTest]")
 {
   arma::mat trainData;
@@ -177,7 +177,6 @@ TEST_CASE("CheckCopyMovingAdaptiveMaxPoolingNetworkTest",
     0,  // Padding height.
     28, // Input width.
     28);  // Input height.
-    
 
   // Add first ReLU.
   model.Add<LeakyReLU<>>();
@@ -202,8 +201,7 @@ TEST_CASE("CheckCopyMovingAdaptiveMaxPoolingNetworkTest",
     0,  // Padding height.
     28, // Input width.
     28);  // Input height.
-    
-
+  
   // Add first ReLU.
   modelOne.Add<LeakyReLU<>>();
 
