@@ -161,6 +161,16 @@ steps:
     }
 
     # Build the MSI installer.
+    dir 'C:\Program Files (x86)\'
+    dir 'C:\Program Files (x86)\Microsoft Visual Studio\'
+    dir 'C:\Program Files (x86)\Microsoft Visual Studio\2019\'
+    dir 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\'
+    dir 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\'
+    dir 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\'
+    dir 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\'
+    dir 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\'
+    dir 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\'
+    dir 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\'
     dir 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\'
     & 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe' `
         -t:rebuild
