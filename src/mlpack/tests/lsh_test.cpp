@@ -589,14 +589,12 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
 
   // Construct q1 so it is hashed directly under C2.
   arma::mat q1;
-  q1 << 3.9 << arma::endr
-     << 2.99 << arma::endr;
+  q1 = arma::mat( { 3.9, 2.99 } ).t();
   q1 -= offsets;
 
   // Construct q2 so it is hashed near the center of C2.
   arma::mat q2;
-  q2 << 3.6 << arma::endr
-     << 3.6 << arma::endr;
+  q2 = arma::mat( { 3.6, 3.6 } );
   q2 -= offsets;
 
   arma::Mat<size_t> neighbors;

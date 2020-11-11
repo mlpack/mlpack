@@ -23,9 +23,9 @@ using namespace mlpack::data;
 TEST_CASE("BinarizeOneDimension", "[BinarizeTest]")
 {
   mat input;
-  input = { {1, 2, 3},
-            {4, 5, 6}, // this row will be tested
-            {7, 8, 9} };
+  input = { { 1, 2, 3 },
+            { 4, 5, 6 }, // this row will be tested
+            { 7, 8, 9 } };
 
   mat output;
   const double threshold = 5.0;
