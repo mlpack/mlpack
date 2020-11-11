@@ -24,6 +24,110 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType,
+typename... CustomLayers>
+AddMerge<InputDataType, OutputDataType, CustomLayers...>::
+AddMerge(const AddMerge& layer) :
+model(layer.model),
+run(layer.run)
+{
+  // Nothing to do here
+}
+
+template<typename InputDataType, typename OutputDataType,
+typename... CustomLayers>
+AddMerge<InputDataType, OutputDataType, CustomLayers...>::
+AddMerge(const AddMerge&& layer) :
+model(false),
+run(true)
+{
+  // Nothing to do here
+}
+
+template<typename InputDataType, typename OutputDataType,
+typename... CustomLayers>
+AddMerge<InputDataType, OutputDataType, CustomLayers...>&
+AddMerge<InputDataType, OutputDataType, CustomLayers...>::
+operator=(const AddMerge& layer)
+{
+  if (this != &layer)
+  {
+    model = layer.model;
+    run = layer.run;
+  }
+
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+typename... CustomLayers>
+AddMerge<InputDataType, OutputDataType, CustomLayers...>&
+AddMerge<InputDataType, OutputDataType, CustomLayers...>::
+operator=(AddMerge&& layer)
+{
+  if (this != &layer)
+  {
+    model = std::move(layer.model);
+    run = std::move(layer.run);
+  }
+
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+  typename... CustomLayers>
+  AddMerge<InputDataType, OutputDataType, CustomLayers...>::
+  AddMerge(const AddMerge& layer) :
+  model(layer.model),
+  run(layer.run),
+  ownsLayers(layer.ownsLayers)
+{
+  // Nothing to do here
+}
+
+template<typename InputDataType, typename OutputDataType,
+  typename... CustomLayers>
+  AddMerge<InputDataType, OutputDataType, CustomLayers...>::
+  AddMerge(const AddMerge&& layer) :
+  model(false),
+  run(true),
+  ownsLayers(true)
+{
+  // Nothing to do here
+}
+
+template<typename InputDataType, typename OutputDataType,
+  typename... CustomLayers>
+  AddMerge<InputDataType, OutputDataType, CustomLayers...>&
+  AddMerge<InputDataType, OutputDataType, CustomLayers...>::
+  operator=(const AddMerge& layer)
+{
+  if (this != &layer)
+  {
+    model = layer.model;
+    run = layer.run;
+    ownsLayers = layer.ownsLayers;
+  }
+
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+  typename... CustomLayers>
+  AddMerge<InputDataType, OutputDataType, CustomLayers...>&
+  AddMerge<InputDataType, OutputDataType, CustomLayers...>::
+  operator=(AddMerge&& layer)
+{
+  if (this != &layer)
+  {
+    model = std::move(layer.model);
+    run = std::move(layer.run);
+    ownsLayers = std::move(layer.ownsLayers);
+  }
+
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
     const bool model, const bool run) :
