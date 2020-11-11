@@ -34,8 +34,7 @@ AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
 }
 
 template<typename InputDataType, typename OutputDataType>
-AdaptiveMaxPooling<InputDataType, OutputDataType>::
-AdaptiveMaxPooling(const AdaptiveMaxPooling& layer) :
+AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(const AdaptiveMaxPooling& layer) :
   outputWidth(layer.outputWidth),
   outputHeight(layer.outputHeight)
 {
@@ -43,10 +42,9 @@ AdaptiveMaxPooling(const AdaptiveMaxPooling& layer) :
 }
 
 template<typename InputDataType, typename OutputDataType>
-AdaptiveMaxPooling<InputDataType, OutputDataType>::
-AdaptiveMaxPooling(AdaptiveMaxPooling&& layer) :
-  outputWidth(0),
-  outputHeight(0)
+AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(AdaptiveMaxPooling&& layer) :
+  outputWidth(0),	// Decide what values to put here
+  outputHeight(0) // Decide what values to put here
 {
   // Nothing to do here.
 }
@@ -68,7 +66,7 @@ operator=(const AdaptiveMaxPooling& layer)
 template<typename InputDataType, typename OutputDataType>
 AdaptiveMaxPooling<InputDataType, OutputDataType>&
 AdaptiveMaxPooling<InputDataType, OutputDataType>::
-operator=(const AdaptiveMaxPooling&& layer)
+operator=(AdaptiveMaxPooling&& layer)
 {
   if (this != &layer)
   {
