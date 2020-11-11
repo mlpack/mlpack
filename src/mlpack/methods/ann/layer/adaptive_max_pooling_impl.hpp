@@ -66,7 +66,7 @@ operator=(const AdaptiveMaxPooling& layer)
 template<typename InputDataType, typename OutputDataType>
 AdaptiveMaxPooling<InputDataType, OutputDataType>&
 AdaptiveMaxPooling<InputDataType, OutputDataType>::
-operator=(const AdaptiveMaxPooling&& layer)
+operator=(AdaptiveMaxPooling&& layer)
 {
   if (this != &layer)
   {

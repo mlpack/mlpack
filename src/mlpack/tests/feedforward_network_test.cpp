@@ -154,6 +154,75 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 }
 
 /**
+ * Check whether copying and moving network with AdaptiveMaxPooling is working or not.
+ */
+
+TEST_CASE("CheckCopyMovingAdaptiveMaxPoolingNetworkTest", "[FeedForwardNetworkTest]")
+{
+  arma::mat trainData;
+  data::Load("mnist_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> model;
+  model.Add<Convolution<>>(1,  // Number of input activation maps.
+    6,  // Number of output activation maps.
+    5,  // Filter width.
+    5,  // Filter height.
+    1,  // Stride along width.
+    1,  // Stride along height.
+    0,  // Padding width.
+    0,  // Padding height.
+    28, // Input width.
+    28  // Input height.
+    );
+
+  // Add first ReLU.
+  model.Add<LeakyReLU<>>();
+
+  // Add first pooling layer. Pools over 2x2 fields in the input.
+  model.Add<AdaptiveMaxPooling<>>(2, // Width of field.
+    2, // Height of field.
+    2, // Stride along width.
+    2, // Stride along height.
+    true);
+  model.Add<Linear<>>(16 * 4 * 4, 10);
+  model.Add<LogSoftMax<>>();
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization> model1;
+  model1.Add<Convolution<>>(1,  // Number of input activation maps.
+    6,  // Number of output activation maps.
+    5,  // Filter width.
+    5,  // Filter height.
+    1,  // Stride along width.
+    1,  // Stride along height.
+    0,  // Padding width.
+    0,  // Padding height.
+    28, // Input width.
+    28  // Input height.
+    );
+
+  // Add first ReLU.
+  model1.Add<LeakyReLU<>>();
+
+  // Add first pooling layer. Pools over 2x2 fields in the input.
+  model1.Add<AdaptiveMaxPooling<>>(2, // Width of field.
+    2, // Height of field.
+    2, // Stride along width.
+    2, // Stride along height.
+    true);
+  model1.Add<Linear<>>(16 * 4 * 4, 10);
+  model1.Add<LogSoftMax<>>();
+
+  // Checking copy constructor
+  CheckCopyFunction<>(model, trainData, trainLabels, 1);
+
+  // Checking move constructor
+  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
+}
+
+/**
  * Train the vanilla network on a larger dataset.
  */
 TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
