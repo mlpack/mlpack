@@ -20,6 +20,9 @@ namespace data {
 
 /**
  * Given an input dataset and labels, stratify into a training set and test set.
+ * It is recommended to have the input labels between the range [0, n) where n
+ * is the number of different labels. The NormalizeLabels() function in
+ * mlpack::data can be used for this.
  * Example usage below. This overload places the stratified dataset into the
  * four output parameters given (trainData, testData, trainLabel,
  * and testLabel).
@@ -70,16 +73,16 @@ void StratifiedSplit(const arma::Mat<T>& input,
    * The number of 1 labels in our test set = floor(11 * 0.2) = 2.
    *
    * In our first pass over the dataset,
-   * We visit each label and keep count of each label in our 'labelMap' uvec.
+   * We visit each label and keep count of each label in our 'labelCounts' uvec.
    *
    * We then take a second pass over the dataset.
-   * We now maintain an additional uvec 'testLabelMap' to hold the label counts
-   * of our test set.
+   * We now maintain an additional uvec 'testLabelCounts' to hold the label
+   * counts of our test set.
    *
-   * In this pass, when we encounter a label we check the 'testLabelMap' uvec
+   * In this pass, when we encounter a label we check the 'testLabelCounts' uvec
    * for the count of this label in the test set.
    * If this count is less than the required number of labels in the test set,
-   * we add the data to the test set and increment the label count in the map.
+   * we add the data to the test set and increment the label count in the uvec.
    * If this count is equal to or more than the required count in the test set,
    * we add this data to the train set.
    *
@@ -96,31 +99,30 @@ void StratifiedSplit(const arma::Mat<T>& input,
   size_t testIdx = 0;
   size_t trainSize = 0;
   size_t testSize = 0;
-  arma::uvec labelMap;
-  arma::uvec testLabelMap;
+  arma::uvec labelCounts;
+  arma::uvec testLabelCounts;
   U maxLabel = inputLabel.max();
 
-  labelMap.zeros(maxLabel+1);
-  testLabelMap.zeros(maxLabel+1);
+  labelCounts.zeros(maxLabel+1);
+  testLabelCounts.zeros(maxLabel+1);
 
   arma::uvec order =
       arma::linspace<arma::uvec>(0, input.n_cols - 1, input.n_cols);
+
+  for (arma::uword i : order)
+  {
+    ++labelCounts[inputLabel[i]];
+  }
 
   if (shuffleData)
   {
     order = arma::shuffle(order);
   }
 
-  for (arma::uword i : order)
+  for (arma::uword labelCount : labelCounts)
   {
-    U label = inputLabel[i];
-    labelMap[label] += 1;
-  }
-
-  for (arma::uword labelCount : labelMap)
-  {
-      testSize += floor(labelCount * testRatio);
-      trainSize += labelCount - floor(labelCount * testRatio);
+    testSize += floor(labelCount * testRatio);
+    trainSize += labelCount - floor(labelCount * testRatio);
   }
 
   trainData.set_size(input.n_rows, trainSize);
@@ -131,9 +133,9 @@ void StratifiedSplit(const arma::Mat<T>& input,
   for (arma::uword i : order)
   {
     U label = inputLabel[i];
-    if (testLabelMap[label] < floor(labelMap[label] * testRatio))
+    if (testLabelCounts[label] < floor(labelCounts[label] * testRatio))
     {
-      testLabelMap[label] += 1;
+      testLabelCounts[label] += 1;
       testData.col(testIdx) = input.col(i);
       testLabel[testIdx] = inputLabel[i];
       testIdx += 1;
