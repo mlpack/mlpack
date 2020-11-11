@@ -1018,7 +1018,7 @@ TEST_CASE("GammaDistributionLogProbabilityTest", "[DistributionTest]")
   const arma::vec a3("2.0 3.1"), b3("0.9 1.4");
   arma::mat x3(2, 2);
   x3 = { { 2.0, 2.94 },
-  	 { 2.0, 2.94 } };
+         { 2.0, 2.94 } };
   arma::vec logprob3;
 
   // Expect that the 2-dimensional distribution returns the product of the
