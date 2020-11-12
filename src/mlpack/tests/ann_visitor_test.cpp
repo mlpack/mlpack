@@ -201,8 +201,6 @@ TEST_CASE("WeightSizeVisitorTestForTransposedConvLayer", "[ANNVisitorTest]")
       randomOutSize, randomKernelWidth, randomKernelHeight);
 
   CheckCorrectnessOfWeightSize(transposedConvLayer);
-
-  delete transposedConvLayer;
 }
 
 /**
@@ -217,6 +215,4 @@ TEST_CASE("WeightSizeVisitorTestForNoisyLinearLayer", "[ANNVisitorTest]")
       randomOutSize);
 
   CheckCorrectnessOfWeightSize(noisyLinearLayer);
-
-  delete noisyLinearLayer;
 }
