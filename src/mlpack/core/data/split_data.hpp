@@ -109,14 +109,14 @@ void StratifiedSplit(const arma::Mat<T>& input,
   arma::uvec order =
       arma::linspace<arma::uvec>(0, input.n_cols - 1, input.n_cols);
 
-  for (arma::uword i : order)
-  {
-    ++labelCounts[inputLabel[i]];
-  }
-
   if (shuffleData)
   {
     order = arma::shuffle(order);
+  }
+
+  for (U label : inputLabel)
+  {
+    ++labelCounts[label];
   }
 
   for (arma::uword labelCount : labelCounts)
