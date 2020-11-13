@@ -10,19 +10,14 @@ steps:
 - powershell: |
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
     nuget install boost -o $(Agent.ToolsDirectory) -Version 1.60.0
-    nuget install boost_unit_test_framework-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
-    nuget install boost_program_options-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_random-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
-    nuget install boost_serialization-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_math_c99-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
+    nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory)
 
     mkdir -p $(Agent.ToolsDirectory)/boost_libs
-    cp $(Agent.ToolsDirectory)/boost_program_options-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
     cp $(Agent.ToolsDirectory)/boost_math_c99-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
     cp $(Agent.ToolsDirectory)/boost_random-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
-    cp $(Agent.ToolsDirectory)/boost_serialization-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
-    cp $(Agent.ToolsDirectory)/boost_unit_test_framework-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
   displayName: 'Fetch build dependencies'
 
 # Configure armadillo
@@ -66,6 +61,7 @@ steps:
     -DARMADILLO_LIBRARY="..\armadillo-8.400.0\Release\armadillo.lib" `
     -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.60.0.0\lib\native\include `
     -DBOOST_LIBRARYDIR=$(Agent.ToolsDirectory)\boost_libs `
+    -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\unofficial-flayan-cereal.1.2.2\build\native\include `
     -DBUILD_JULIA_BINDINGS=OFF `
     -DCMAKE_BUILD_TYPE=Release ..
   displayName: 'Configure mlpack'
@@ -78,8 +74,6 @@ steps:
     msbuildVersion: $(MSBuildVersion)
     configuration: 'Release'
     msbuildArchitecture: 'x64'
-    platform: 'x64'
-    msbuildArguments: /m /p:BuildInParallel=true
     maximumCpuCount: false
     clean: false
   displayName: 'Build mlpack'
@@ -94,7 +88,7 @@ steps:
 # Run tests via ctest.
 - bash: |
     cd build
-    CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release .
+    CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test -C Release . -j1
   displayName: 'Run tests via ctest'
 
 # Copy artifacts

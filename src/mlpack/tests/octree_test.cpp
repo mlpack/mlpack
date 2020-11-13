@@ -334,15 +334,15 @@ TEST_CASE("OctreeSerializationTest", "[OctreeTest]")
 
   Octree<>* xmlTree;
   Octree<>* binaryTree;
-  Octree<>* textTree;
+  Octree<>* jsonTree;
 
-  SerializePointerObjectAll(&t, xmlTree, binaryTree, textTree);
+  SerializePointerObjectAll(&t, xmlTree, binaryTree, jsonTree);
 
   CheckSameNode(t, *xmlTree);
   CheckSameNode(t, *binaryTree);
-  CheckSameNode(t, *textTree);
+  CheckSameNode(t, *jsonTree);
 
   delete xmlTree;
   delete binaryTree;
-  delete textTree;
+  delete jsonTree;
 }

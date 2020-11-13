@@ -9,25 +9,22 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
-
 #include <mlpack/core.hpp>
 #include <mlpack/methods/approx_kfn/qdafn.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+
+#include "catch.hpp"
+#include "serialization_catch.hpp"
 
 using namespace std;
 using namespace arma;
 using namespace mlpack;
 using namespace mlpack::neighbor;
 
-BOOST_AUTO_TEST_SUITE(QDAFNTest);
-
 /**
  * With one reference point, make sure that is the one that is returned.
  */
-BOOST_AUTO_TEST_CASE(QDAFNTrivialTest)
+TEST_CASE("QDAFNTrivialTest", "[QDAFNTest]")
 {
   arma::mat refSet(5, 1);
   refSet.randu();
@@ -43,17 +40,17 @@ BOOST_AUTO_TEST_CASE(QDAFNTrivialTest)
   qdafn.Search(querySet, 1, neighbors, distances);
 
   // Check sizes.
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 5);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 5);
+  REQUIRE(neighbors.n_rows == 1);
+  REQUIRE(neighbors.n_cols == 5);
+  REQUIRE(distances.n_rows == 1);
+  REQUIRE(distances.n_cols == 5);
 
   for (size_t i = 0; i < 5; ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighbors[i], 0);
+    REQUIRE(neighbors[i] == 0);
     const double dist = metric::EuclideanDistance::Evaluate(querySet.col(i),
         refSet.col(0));
-    BOOST_REQUIRE_CLOSE(distances[i], dist, 1e-5);
+    REQUIRE(distances[i] == Approx(dist).epsilon(1e-7));
   }
 }
 
@@ -62,7 +59,7 @@ BOOST_AUTO_TEST_CASE(QDAFNTrivialTest)
  * distance within 10% of the actual true furthest neighbor distance at least
  * 70% of the time.
  */
-BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
+TEST_CASE("QDAFNUniformSet", "[QDAFNTest]")
 {
   arma::mat uniformSet = arma::randu<arma::mat>(25, 1000);
 
@@ -80,10 +77,10 @@ BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
 
   qdafn.Search(uniformSet, 1, qdafnNeighbors, qdafnDistances);
 
-  BOOST_REQUIRE_EQUAL(qdafnNeighbors.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(qdafnNeighbors.n_cols, 1000);
-  BOOST_REQUIRE_EQUAL(qdafnDistances.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(qdafnDistances.n_cols, 1000);
+  REQUIRE(qdafnNeighbors.n_rows == 1);
+  REQUIRE(qdafnNeighbors.n_cols == 1000);
+  REQUIRE(qdafnDistances.n_rows == 1);
+  REQUIRE(qdafnDistances.n_cols == 1000);
 
   size_t successes = 0;
   for (size_t i = 0; i < 999; ++i)
@@ -99,18 +96,18 @@ BOOST_AUTO_TEST_CASE(QDAFNUniformSet)
       }
     }
 
-    BOOST_REQUIRE_NE(trueIndex, 999);
+    REQUIRE(trueIndex != 999);
     if (0.9 * trueDistances(0, i) <= qdafnDistances(0, i))
       ++successes;
   }
 
-  BOOST_REQUIRE_GE(successes, 695);
+  REQUIRE(successes >= 695);
 }
 
 /**
  * Make sure that more than one valid neighbor is returned when k > 1.
  */
-BOOST_AUTO_TEST_CASE(QDAFNMultipleNeighbors)
+TEST_CASE("QDAFNMultipleNeighbors", "[QDAFNTest]")
 {
   arma::mat uniformSet = arma::randu<arma::mat>(25, 1000);
 
@@ -128,26 +125,26 @@ BOOST_AUTO_TEST_CASE(QDAFNMultipleNeighbors)
 
   qdafn.Search(uniformSet, 3, qdafnNeighbors, qdafnDistances);
 
-  BOOST_REQUIRE_EQUAL(qdafnNeighbors.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(qdafnNeighbors.n_cols, 1000);
-  BOOST_REQUIRE_EQUAL(qdafnDistances.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(qdafnDistances.n_cols, 1000);
+  REQUIRE(qdafnNeighbors.n_rows == 3);
+  REQUIRE(qdafnNeighbors.n_cols == 1000);
+  REQUIRE(qdafnDistances.n_rows == 3);
+  REQUIRE(qdafnDistances.n_cols == 1000);
 
   // We expect to find a neighbor for each point.
   for (size_t i = 0; i < 999; ++i)
   {
-    BOOST_REQUIRE_LT(qdafnNeighbors(0, i), 1000);
-    BOOST_REQUIRE_LT(qdafnNeighbors(1, i), 1000);
-    BOOST_REQUIRE_LT(qdafnNeighbors(2, i), 1000);
-    BOOST_REQUIRE_NE(qdafnNeighbors(0, i), qdafnNeighbors(1, i));
-    BOOST_REQUIRE_NE(qdafnNeighbors(0, i), qdafnNeighbors(2, i));
+    REQUIRE(qdafnNeighbors(0, i) < 1000);
+    REQUIRE(qdafnNeighbors(1, i) < 1000);
+    REQUIRE(qdafnNeighbors(2, i) < 1000);
+    REQUIRE(qdafnNeighbors(0, i) != qdafnNeighbors(1, i));
+    REQUIRE(qdafnNeighbors(0, i) != qdafnNeighbors(2, i));
   }
 }
 
 /**
  * Test re-training method.
  */
-BOOST_AUTO_TEST_CASE(RetrainTest)
+TEST_CASE("RetrainTest", "[QDAFNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(25, 500);
   arma::mat newDataset = arma::randu<arma::mat>(15, 600);
@@ -156,18 +153,18 @@ BOOST_AUTO_TEST_CASE(RetrainTest)
 
   qdafn.Train(newDataset, 10, 50);
 
-  BOOST_REQUIRE_EQUAL(qdafn.NumProjections(), 10);
+  REQUIRE(qdafn.NumProjections() == 10);
   for (size_t i = 0; i < 10; ++i)
   {
-    BOOST_REQUIRE_EQUAL(qdafn.CandidateSet(i).n_rows, 15);
-    BOOST_REQUIRE_EQUAL(qdafn.CandidateSet(i).n_cols, 50);
+    REQUIRE(qdafn.CandidateSet(i).n_rows == 15);
+    REQUIRE(qdafn.CandidateSet(i).n_cols == 50);
   }
 }
 
 /**
  * Test serialization of QDAFN.
  */
-BOOST_AUTO_TEST_CASE(SerializationTest)
+TEST_CASE("QDAFNSerializationTest", "[QDAFNTest]")
 {
   // Use a random dataset.
   arma::mat dataset = arma::randu<arma::mat>(15, 300);
@@ -185,47 +182,47 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   SerializeObjectAll(qdafn, qdafnXml, qdafnText, qdafnBinary);
 
   // Check that the tables are all the same.
-  BOOST_REQUIRE_EQUAL(qdafnXml.NumProjections(), qdafn.NumProjections());
-  BOOST_REQUIRE_EQUAL(qdafnText.NumProjections(), qdafn.NumProjections());
-  BOOST_REQUIRE_EQUAL(qdafnBinary.NumProjections(), qdafn.NumProjections());
+  REQUIRE(qdafnXml.NumProjections() == qdafn.NumProjections());
+  REQUIRE(qdafnText.NumProjections() == qdafn.NumProjections());
+  REQUIRE(qdafnBinary.NumProjections() == qdafn.NumProjections());
 
   for (size_t i = 0; i < qdafn.NumProjections(); ++i)
   {
-    BOOST_REQUIRE_EQUAL(qdafnXml.CandidateSet(i).n_rows,
+    REQUIRE(qdafnXml.CandidateSet(i).n_rows ==
         qdafn.CandidateSet(i).n_rows);
-    BOOST_REQUIRE_EQUAL(qdafnText.CandidateSet(i).n_rows,
+    REQUIRE(qdafnText.CandidateSet(i).n_rows ==
         qdafn.CandidateSet(i).n_rows);
-    BOOST_REQUIRE_EQUAL(qdafnBinary.CandidateSet(i).n_rows,
+    REQUIRE(qdafnBinary.CandidateSet(i).n_rows ==
         qdafn.CandidateSet(i).n_rows);
 
-    BOOST_REQUIRE_EQUAL(qdafnXml.CandidateSet(i).n_cols,
+    REQUIRE(qdafnXml.CandidateSet(i).n_cols ==
         qdafn.CandidateSet(i).n_cols);
-    BOOST_REQUIRE_EQUAL(qdafnText.CandidateSet(i).n_cols,
+    REQUIRE(qdafnText.CandidateSet(i).n_cols ==
         qdafn.CandidateSet(i).n_cols);
-    BOOST_REQUIRE_EQUAL(qdafnBinary.CandidateSet(i).n_cols,
+    REQUIRE(qdafnBinary.CandidateSet(i).n_cols ==
         qdafn.CandidateSet(i).n_cols);
 
     for (size_t j = 0; j < qdafn.CandidateSet(i).n_elem; ++j)
     {
       if (std::abs(qdafn.CandidateSet(i)[j]) < 1e-5)
       {
-        BOOST_REQUIRE_SMALL(qdafnXml.CandidateSet(i)[j], 1e-5);
-        BOOST_REQUIRE_SMALL(qdafnText.CandidateSet(i)[j], 1e-5);
-        BOOST_REQUIRE_SMALL(qdafnBinary.CandidateSet(i)[j], 1e-5);
+        REQUIRE(qdafnXml.CandidateSet(i)[j] == Approx(0.0).margin(1e-5));
+        REQUIRE(qdafnText.CandidateSet(i)[j] == Approx(0.0).margin(1e-5));
+        REQUIRE(qdafnBinary.CandidateSet(i)[j] == Approx(0.0).margin(1e-5));
       }
       else
       {
         const double value = qdafn.CandidateSet(i)[j];
-        BOOST_REQUIRE_CLOSE(qdafnXml.CandidateSet(i)[j], value, 1e-5);
-        BOOST_REQUIRE_CLOSE(qdafnText.CandidateSet(i)[j], value, 1e-5);
-        BOOST_REQUIRE_CLOSE(qdafnBinary.CandidateSet(i)[j], value, 1e-5);
+        REQUIRE(qdafnXml.CandidateSet(i)[j] == Approx(value).epsilon(1e-7));
+        REQUIRE(qdafnText.CandidateSet(i)[j] == Approx(value).epsilon(1e-7));
+        REQUIRE(qdafnBinary.CandidateSet(i)[j] == Approx(value).epsilon(1e-7));
       }
     }
   }
 }
 
 // Make sure QDAFN works with sparse data.
-BOOST_AUTO_TEST_CASE(SparseTest)
+TEST_CASE("QDAFNSparseTest", "[QDAFNTest]")
 {
   arma::sp_mat dataset;
   dataset.sprandu(200, 1000, 0.3);
@@ -239,10 +236,8 @@ BOOST_AUTO_TEST_CASE(SparseTest)
   arma::mat distances;
   sparse.Search(dataset, 3, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 1000);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 1000);
+  REQUIRE(neighbors.n_rows == 3);
+  REQUIRE(neighbors.n_cols == 1000);
+  REQUIRE(distances.n_rows == 3);
+  REQUIRE(distances.n_cols == 1000);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -2,19 +2,13 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   bernoulli.hpp
-  boost_backport_serialization.hpp
   detail/bernoulli_details.hpp
   detail/polygamma.hpp
   detail/unchecked_bernoulli.hpp
   math_fwd.hpp
   policy.hpp
-  unordered_collections_load_imp.hpp
-  unordered_collections_save_imp.hpp
-  vector.hpp
   string_view.hpp
   string_view_fwd.hpp
-  collections_load_imp.hpp
-  collections_save_imp.hpp
   boost_backport_string_view.hpp
 )
 

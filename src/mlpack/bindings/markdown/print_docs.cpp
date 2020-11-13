@@ -180,7 +180,7 @@ void PrintDocs(const std::string& bindingName,
     }
 
     if (hasOutputOptions)
-    {    
+    {
       // Next, iterate through the list of output options.
       cout << "### Output options" << endl;
       cout << endl;

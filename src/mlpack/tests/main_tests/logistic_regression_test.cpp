@@ -20,7 +20,8 @@ static const std::string testName = "LogisticRegression";
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -42,13 +43,12 @@ struct LogisticRegressionTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(LogisticRegressionMainTest,
-                         LogisticRegressionTestFixture);
-
 /**
   * Ensuring that absence of training data is checked.
  **/
-BOOST_AUTO_TEST_CASE(LRNoTrainingData)
+TEST_CASE_METHOD(LogisticRegressionTestFixture,
+                 "LogisticRegressionLRNoTrainingData",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   arma::Row<size_t> trainY;
   // 10 responses.
@@ -58,14 +58,16 @@ BOOST_AUTO_TEST_CASE(LRNoTrainingData)
 
   // Training data is not provided. Should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that absence of responses is checked.
  */
-BOOST_AUTO_TEST_CASE(LRNoResponses)
+TEST_CASE_METHOD(LogisticRegressionTestFixture,
+                 "LogisticRegressionLRNoResponses",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 1;
@@ -76,14 +78,15 @@ BOOST_AUTO_TEST_CASE(LRNoResponses)
   // Labels to the training data is not provided. It should throw
   // a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Checking that that size and dimensionality of prediction is correct.
  */
-BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRPridictionSizeCheck",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -107,14 +110,16 @@ BOOST_AUTO_TEST_CASE(LRPridictionSizeCheck)
       IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Output predictions size must match the test data set size.
-  BOOST_REQUIRE_EQUAL(testY.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(testY.n_cols, M);
+  REQUIRE(testY.n_rows == 1);
+  REQUIRE(testY.n_cols == M);
 }
 
 /**
   * Ensuring that the response size is checked.
  **/
-BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
+TEST_CASE_METHOD(LogisticRegressionTestFixture,
+                 "LogisticRegressionLRWrongResponseSizeTest",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int D = 3;
   constexpr int N = 10;
@@ -130,7 +135,7 @@ BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
 
   // Labels with incorrect size. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -138,7 +143,9 @@ BOOST_AUTO_TEST_CASE(LRWrongResponseSizeTest)
  * Checking two options of specifying responses (extra row in train matrix and
  * extra parameter) and ensuring that predictions are the same.
  */
-BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
+TEST_CASE_METHOD(LogisticRegressionTestFixture,
+                 "LRResponsesRepresentationTest",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   arma::mat trainX1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
   arma::mat testX({{4.0, 5.0}, {1.0, 6.0}});
@@ -174,15 +181,16 @@ BOOST_AUTO_TEST_CASE(LRResponsesRepresentationTest)
       IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
-  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
-                                  testY2.begin(), testY2.end());
+  CheckMatrices(testY1, testY2);
 }
 
 /**
  * Check that model can saved / loaded and used. Ensuring that results are the
  * same.
  */
-BOOST_AUTO_TEST_CASE(LRModelReload)
+TEST_CASE_METHOD(LogisticRegressionTestFixture,
+                 "LogisticRegressionLRModelReload",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -226,14 +234,14 @@ BOOST_AUTO_TEST_CASE(LRModelReload)
       IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions must be equal.
-  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
-                                  testY2.begin(), testY2.end());
+  CheckMatrices(testY1, testY2);
 }
 
 /**
   * Checking for dimensionality of the test data set.
  **/
-BOOST_AUTO_TEST_CASE(LRWrongDimOfTestData)
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRWrongDimOfTestData",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 4;
@@ -253,14 +261,15 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfTestData)
 
   // Dimensionality of test data is wrong. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that test data dimensionality is checked when model is loaded.
  */
-BOOST_AUTO_TEST_CASE(LRWrongDimOfTestData2)
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRWrongDimOfTestData2",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -292,14 +301,16 @@ BOOST_AUTO_TEST_CASE(LRWrongDimOfTestData2)
 
   // Test data dimensionality is wrong. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
   * Ensuring that training responses contain only two classes (0 or 1).
  **/
-BOOST_AUTO_TEST_CASE(LRTrainWithMoreThanTwoClasses)
+TEST_CASE_METHOD(LogisticRegressionTestFixture,
+                 "LRTrainWithMoreThanTwoClasses",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 8;
   constexpr int D = 2;
@@ -316,14 +327,16 @@ BOOST_AUTO_TEST_CASE(LRTrainWithMoreThanTwoClasses)
   // Training data contains more than two classes. It should throw
   // a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
   * Ensuring that max iteration for optimizers is non negative.
  **/
-BOOST_AUTO_TEST_CASE(LRNonNegativeMaxIterationTest)
+TEST_CASE_METHOD(LogisticRegressionTestFixture,
+                "LRNonNegativeMaxIterationTest",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -340,14 +353,15 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeMaxIterationTest)
 
   // Maximum iterations is negative. It should a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
   * Ensuring that step size for optimizer is non negative.
  **/ 
-BOOST_AUTO_TEST_CASE(LRNonNegativeStepSizeTest)
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRNonNegativeStepSizeTest",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 2;
@@ -365,14 +379,15 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeStepSizeTest)
 
   // Step size for optimizer is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
   * Ensuring that tolerance is non negative.
  **/
-BOOST_AUTO_TEST_CASE(LRNonNegativeToleranceTest)
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRNonNegativeToleranceTest",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -389,14 +404,15 @@ BOOST_AUTO_TEST_CASE(LRNonNegativeToleranceTest)
 
   // Tolerance is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
   * Ensuring changing Maximum number of iterations changes the output model.
  **/
-BOOST_AUTO_TEST_CASE(LRMaxIterationsChangeTest)
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRMaxIterationsChangeTest",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -438,14 +454,18 @@ BOOST_AUTO_TEST_CASE(LRMaxIterationsChangeTest)
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures Max Iteration changes the output model.
   // arma::all function checks that each element of the vector is equal to zero.
-  BOOST_REQUIRE_MESSAGE(!arma::all((parameters1-parameters2) == 0),
-                        "Parameter(Max Iteration) has no effect on the output");
+  if (arma::all((parameters1-parameters2) == 0))
+  {
+    FAIL("parameters1 and parameters2 are equal. \
+         Parameter(Max Iteration) has no effect on the output");
+  }
 }
 
 /**
   * Ensuring that lambda has some effects on the output.
  **/
-BOOST_AUTO_TEST_CASE(LRLambdaChangeTest)
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRLambdaChangeTest",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 4;
@@ -487,14 +507,18 @@ BOOST_AUTO_TEST_CASE(LRLambdaChangeTest)
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures lambda changes the output model.
   // arma::all function checks that each element of the vector is equal to zero.
-  BOOST_REQUIRE_MESSAGE(!arma::all((parameters1-parameters2) == 0),
-                        "Parameter(lambda) has no effect on the output");
+  if (arma::all((parameters1-parameters2) == 0))
+  {
+    FAIL("parameters1 and parameters2 are equal. \
+         Parameter(lambda) has no effect on the output");
+  }
 }
 
 /**
   * Ensuring that Step size has some effects on the output.
  **/
-BOOST_AUTO_TEST_CASE(LRStepSizeChangeTest)
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRStepSizeChangeTest",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -538,14 +562,18 @@ BOOST_AUTO_TEST_CASE(LRStepSizeChangeTest)
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures Step Size changes the output model.
   // arma::all function checks that each element of the vector is equal to zero.
-  BOOST_REQUIRE_MESSAGE(!arma::all((parameters1-parameters2) == 0),
-                        "Parameter(Step Size) has no effect on the output");
+  if (arma::all((parameters1-parameters2) == 0))
+  {
+    FAIL("parameters1 and parameters2 are equal. \
+         Parameter(Step Size) has no effect on the output");
+  }
 }
 
 /**
   * Ensuring that lbfgs optimizer converges to a different result than sgd.
  **/
-BOOST_AUTO_TEST_CASE(LROptimizerChangeTest)
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LROptimizerChangeTest",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -589,14 +617,18 @@ BOOST_AUTO_TEST_CASE(LROptimizerChangeTest)
   // Check that the parameters (parameters1 and parameters2) are not equal which
   // ensures that different optimizer converge to different results.
   // arma::all function checks that each element of the vector is equal to zero.
-  BOOST_REQUIRE_MESSAGE(!arma::all((parameters1-parameters2) == 0),
-                        "Parameter(Step Size) has no effect on the output");
+  if (arma::all((parameters1-parameters2) == 0))
+  {
+    FAIL("parameters1 and parameters2 are equal. \
+         Parameter(Step Size) has no effect on the output");
+  }
 }
 
 /**
   * Ensuring decision_boundary parameter does something.
  **/
-BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRDecisionBoundaryTest",
+                 "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -640,7 +672,7 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
       IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Check that the output changed when the decision boundary moved.
-  BOOST_REQUIRE_GT(arma::accu(output1 != output2), 0);
+  REQUIRE(arma::accu(output1 != output2) > 0);
 }
 
 /**
@@ -651,7 +683,8 @@ BOOST_AUTO_TEST_CASE(LRDecisionBoundaryTest)
 // the new parameter 'predictions' give the same output
 // This test case will be removed in mlpack 4
 // when the deprecated parameter: 'output' is removed
-BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest){
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LROPtionConsistencyTest",
+                 "[LogisticRegressionMainTest][BindingTests]"){
   // Some data for training and testing
   arma::mat trainX1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
   arma::mat testX({{4.0, 5.0}, {1.0, 6.0}});
@@ -671,8 +704,7 @@ BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest){
       std::move(IO::GetParam<arma::Row<size_t>>("output"));
 
   // Both solutions must be equal.
-  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
-                                  testY2.begin(), testY2.end());
+  CheckMatrices(testY1, testY2);
 }
 
 /**
@@ -683,7 +715,8 @@ BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest){
 // 'output_probabilities' and the new parameter 'probabilities' give the same
 // output. This test case will be removed in mlpack 4
 // when the deprecated parameter: 'output_probabilities' is removed
-BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest2){
+TEST_CASE_METHOD(LogisticRegressionTestFixture, "LROPtionConsistencyTest2",
+                 "[LogisticRegressionMainTest][BindingTests]"){
   // Some data for training and testing
   arma::mat trainX1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
   arma::mat testX({{4.0, 5.0}, {1.0, 6.0}});
@@ -703,8 +736,5 @@ BOOST_AUTO_TEST_CASE(LROPtionConsistencyTest2){
       std::move(IO::GetParam<arma::mat>("probabilities"));
 
   // Both solutions must be equal.
-  BOOST_REQUIRE_EQUAL_COLLECTIONS(testY1.begin(), testY1.end(),
-                                  testY2.begin(), testY2.end());
+  CheckMatrices(testY1, testY2);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

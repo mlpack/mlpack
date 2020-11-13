@@ -22,6 +22,7 @@ option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 set(ARMADILLO_VERSION "8.400.0")
 set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
+set(CEREAL_VERSION "1.1.2")
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -140,7 +141,7 @@ set(COMPILER_SUPPORT_LIBRARIES "")
 
 # If we are using MSVC, we need /bigobj.
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zm400")
 endif ()
 
 # If we are using MINGW, we need sections and big-obj, otherwise we create too
@@ -353,7 +354,6 @@ else ()
   set(STB_AVAILABLE "1")
 endif ()
 
-
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
@@ -413,6 +413,9 @@ else ()
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 endif ()
 
+find_package(cereal "${CEREAL_VERSION}" REQUIRED)
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
+
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
@@ -441,8 +444,6 @@ set(Boost_ADDITIONAL_VERSIONS
 set(Boost_NO_BOOST_CMAKE 1)
 find_package(Boost "${BOOST_VERSION}"
     COMPONENTS
-      unit_test_framework
-      serialization
     REQUIRED
 )
 

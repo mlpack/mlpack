@@ -160,11 +160,14 @@ class MaxPooling
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
  /**

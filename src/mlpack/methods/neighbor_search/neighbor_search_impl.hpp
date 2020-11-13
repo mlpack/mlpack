@@ -940,28 +940,27 @@ template<typename SortPolicy,
 template<typename Archive>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   // Serialize preferences for search.
-  ar & BOOST_SERIALIZATION_NVP(searchMode);
-  ar & BOOST_SERIALIZATION_NVP(treeNeedsReset);
+  ar(CEREAL_NVP(searchMode));
+  ar(CEREAL_NVP(treeNeedsReset));
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
   if (searchMode == NAIVE_MODE)
   {
     // Delete the current reference set, if necessary and if we are loading.
-    if (Archive::is_loading::value && referenceSet)
+    if (cereal::is_loading<Archive>() && referenceSet)
     {
       delete referenceSet;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceSet);
-    ar & BOOST_SERIALIZATION_NVP(metric);
+    ar(CEREAL_POINTER(const_cast<MatType*&>(referenceSet)));
+    ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (referenceTree)
         delete referenceTree;
@@ -973,17 +972,17 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
   else
   {
     // Delete the current reference tree, if necessary and if we are loading.
-    if (Archive::is_loading::value && referenceTree)
+    if (cereal::is_loading<Archive>() && referenceTree)
     {
       delete referenceTree;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceTree);
-    ar & BOOST_SERIALIZATION_NVP(oldFromNewReferences);
+    ar(CEREAL_POINTER(referenceTree));
+    ar(CEREAL_NVP(oldFromNewReferences));
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       referenceSet = &referenceTree->Dataset();
       metric = referenceTree->Metric(); // Get the metric from the tree.
@@ -991,7 +990,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
   }
 
   // Reset base cases and scores.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     baseCases = 0;
     scores = 0;
