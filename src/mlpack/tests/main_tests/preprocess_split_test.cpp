@@ -52,8 +52,10 @@ TEST_CASE_METHOD(PreprocessSplitTestFixture, "PreprocessSplitDimensionTest",
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  data::Load("vc2.csv", inputData);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   // Store size of input dataset.
   int inputSize  = inputData.n_cols;
@@ -92,7 +94,8 @@ TEST_CASE_METHOD(
 {
   // Load custom dataset.
   arma::mat inputData;
-  data::Load("vc2.csv", inputData);
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
 
   // Store size of input dataset.
   int inputSize  = inputData.n_cols;
@@ -121,8 +124,10 @@ TEST_CASE_METHOD(PreprocessSplitTestFixture, "PreprocessSplitTestRatioTest",
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  data::Load("vc2.csv", inputData);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   // Input custom data points and labels.
   SetInputParam("input", std::move(inputData));
@@ -145,8 +150,10 @@ TEST_CASE_METHOD(
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  data::Load("vc2.csv", inputData);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   // Store size of input dataset.
   int inputSize = inputData.n_cols;
@@ -179,8 +186,10 @@ TEST_CASE_METHOD(
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  data::Load("vc2.csv", inputData);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
 
   // Store size of input dataset.
   int inputSize = inputData.n_cols;
@@ -211,7 +220,8 @@ TEST_CASE_METHOD(
 {
   // Load custom dataset.
   arma::mat inputData;
-  data::Load("vc2.csv", inputData);
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
 
   // Store size of input dataset.
   int inputSize  = inputData.n_cols;
@@ -233,4 +243,135 @@ TEST_CASE_METHOD(
   arma::mat concat = arma::join_rows(IO::GetParam<arma::mat>("training"),
       IO::GetParam<arma::mat>("test"));
   CheckMatrices(inputData, concat);
+}
+
+/**
+ * Check that if test size is 0 then train consist of whole input data when
+ * stratifying.
+ */
+TEST_CASE_METHOD(
+    PreprocessSplitTestFixture, "PreprocessStratifiedSplitZeroTestRatioTest",
+    "[PreprocessSplitMainTest][BindingTests]")
+{
+  // Load custom dataset.
+  arma::mat inputData;
+  arma::Mat<size_t> labels;
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
+
+  // Store size of input dataset.
+  int inputSize = inputData.n_cols;
+  int labelSize = labels.n_cols;
+
+  // Input custom data points and labels.
+  SetInputParam("input", std::move(inputData));
+  SetInputParam("input_labels", std::move(labels));
+
+  SetInputParam("test_ratio", (double) 0.0);
+  SetInputParam("stratify_data", true);
+
+  mlpackMain();
+
+  // Now check that the output has desired dimensions.
+  REQUIRE(IO::GetParam<arma::mat>("training").n_cols == inputSize);
+  REQUIRE(IO::GetParam<arma::mat>("test").n_cols == 0);
+
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols ==
+      labelSize);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols == 0);
+}
+
+/**
+ * Check that if test size is 1 then test consist of whole input data when
+ * stratifying.
+ */
+TEST_CASE_METHOD(
+    PreprocessSplitTestFixture, "PreprocessStratifiedSplitUnityTestRatioTest",
+    "[PreprocessSplitMainTest][BindingTests]")
+{
+  // Load custom dataset.
+  arma::mat inputData;
+  arma::Mat<size_t> labels;
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
+
+  // Store size of input dataset.
+  int inputSize = inputData.n_cols;
+  int labelSize = labels.n_cols;
+
+  // Input custom data points and labels.
+  SetInputParam("input", std::move(inputData));
+  SetInputParam("input_labels", std::move(labels));
+
+  SetInputParam("test_ratio", (double) 1.0);
+  SetInputParam("stratify_data", true);
+
+  mlpackMain();
+
+  // Now check that the output has desired dimensions.
+  REQUIRE(IO::GetParam<arma::mat>("training").n_cols == 0);
+  REQUIRE(IO::GetParam<arma::mat>("test").n_cols == inputSize);
+
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols == 0);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols == labelSize);
+}
+
+/**
+ * Checking label wise counts to ensure data is stratified when passing the
+ * stratify_data param.
+ *
+ * The vc2 dataset labels file contains 40 0s, 100 1s, and 67 2s.
+ * Considering a test ratio of 0.3,
+ * Number of 0s in the test set lables =  12 ( floor(40 * 0.3) = floor(12) ).
+ * Number of 1s in the test set labels =  30 ( floor(100 * 0.3) = floor(30) ).
+ * Number of 2s in the test set labels =  20 ( floor(67 * 0.3) = floor(20.1) ).
+ * Total points in the test set = 62 ( 12 + 30 + 20 ).
+ */
+TEST_CASE_METHOD(
+    PreprocessSplitTestFixture, "PreprocessStratifiedSplitTest",
+    "[PreprocessSplitMainTest][BindingTests]")
+{
+  // Load custom dataset.
+  arma::mat inputData;
+  arma::Mat<size_t> labels;
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Unable to load label dataset vc2_labels.txt!");
+
+  // Store size of input dataset.
+  int inputSize = inputData.n_cols;
+  int labelSize = labels.n_cols;
+
+  // Input custom data points and labels.
+  SetInputParam("input", std::move(inputData));
+  SetInputParam("input_labels", std::move(labels));
+
+  SetInputParam("test_ratio", (double) 0.3);
+  SetInputParam("stratify_data", true);
+
+  mlpackMain();
+
+  // Now check that the output has desired dimensions.
+  REQUIRE(IO::GetParam<arma::mat>("training").n_cols == 145);
+  REQUIRE(IO::GetParam<arma::mat>("test").n_cols == 62);
+
+  // Checking for specific label counts in the output.
+  REQUIRE(static_cast<uvec>(find(
+      IO::GetParam<arma::Mat<size_t>>("training_labels") == 0)).n_rows == 28);
+  REQUIRE(static_cast<uvec>(find(
+      IO::GetParam<arma::Mat<size_t>>("training_labels") == 1)).n_rows == 70);
+  REQUIRE(static_cast<uvec>(find(
+      IO::GetParam<arma::Mat<size_t>>("training_labels") == 2)).n_rows == 47);
+
+  REQUIRE(static_cast<uvec>(find(
+      IO::GetParam<arma::Mat<size_t>>("test_labels") == 0)).n_rows == 12);
+  REQUIRE(static_cast<uvec>(find(
+      IO::GetParam<arma::Mat<size_t>>("test_labels") == 1)).n_rows == 30);
+  REQUIRE(static_cast<uvec>(find(
+      IO::GetParam<arma::Mat<size_t>>("test_labels") == 2)).n_rows == 20);
 }
