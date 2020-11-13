@@ -4076,7 +4076,6 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
              {  5.05166,  7.29812,   6.7797  },
              {  3.323614, 2.2867,    10.4086 },
              {  5.05166,  1.7683,    6.7797  } };
-   
   CheckMatrices(result, deterministicOutput, 1e-1);
 
   // Check correctness by updating the running mean and variance again.
