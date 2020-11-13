@@ -2692,7 +2692,6 @@ TEST_CASE("LayerNormTest", "[ANNLayerTest]")
   result.clear();
 
   output = model.Mean();
- 
   result = { 4.9000, 3.233 };
   CheckMatrices(output, result, 1e-1);
   result.clear();
