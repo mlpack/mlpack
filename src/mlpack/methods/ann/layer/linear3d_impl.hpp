@@ -59,7 +59,7 @@ Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear3D(
     inSize(0),
     outSize(0),
     weights(std::move(layer.weights)),
-    regularizer(std::move(layer.regularizer));
+    regularizer(std::move(layer.regularizer))
 {
   // Nothing to do here.
 }
@@ -85,7 +85,7 @@ template<typename InputDataType, typename OutputDataType,
 Linear3D<InputDataType, OutputDataType, RegularizerType>&
 Linear3D<InputDataType, OutputDataType, RegularizerType>::
 operator=(Linear3D&& layer)
-P
+{
   if (this != &layer)
   {
     inSize = 0;
