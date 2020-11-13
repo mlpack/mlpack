@@ -343,10 +343,6 @@ TEST_CASE_METHOD(
   if (!data::Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
-  // Store size of input dataset.
-  int inputSize = inputData.n_cols;
-  int labelSize = labels.n_cols;
-
   // Input custom data points and labels.
   SetInputParam("input", std::move(inputData));
   SetInputParam("input_labels", std::move(labels));
