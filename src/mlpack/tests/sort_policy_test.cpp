@@ -107,7 +107,7 @@ TEST_CASE("NnsNodeToNodeDistance", "[SortPolicyTest]")
   utility[0] = 0.5;
   nodeTwo.Bound() |= utility;
 
-  REQUIRE(NearestNeighborSort::BestNodeToNodeDistance(&nodeOne, &nodeTwo) == 
+  REQUIRE(NearestNeighborSort::BestNodeToNodeDistance(&nodeOne, &nodeTwo) ==
       Approx(0.0).margin(1e-5));
 }
 
@@ -146,7 +146,7 @@ TEST_CASE("NnsPointToNodeDistance", "[SortPolicyTest]")
   // And now when the point is inside the bound.
   point[0] = 0.5;
 
-  REQUIRE(NearestNeighborSort::BestPointToNodeDistance(point, &node) == 
+  REQUIRE(NearestNeighborSort::BestPointToNodeDistance(point, &node) ==
       Approx(0.0).margin(1e-5));
 }
 

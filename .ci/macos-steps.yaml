@@ -14,7 +14,7 @@ steps:
     set -e
     sudo xcode-select --switch /Applications/Xcode_12.2.app/Contents/Developer
     unset BOOST_ROOT
-    brew install openblas armadillo boost
+    brew install openblas armadillo boost cereal
 
     if [ "$(binding)" == "python" ]; then
       pip install --upgrade pip

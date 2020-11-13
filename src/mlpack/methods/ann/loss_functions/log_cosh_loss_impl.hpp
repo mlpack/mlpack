@@ -49,9 +49,9 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void LogCoshLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(a);
+  ar(CEREAL_NVP(a));
 }
 
 } // namespace ann

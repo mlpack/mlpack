@@ -138,18 +138,18 @@ TEST_CASE("SaveImageMatAPITest", "[ImageLoadTest]")
 TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
 {
   data::ImageInfo info(5, 5, 3, 90);
-  data::ImageInfo xmlInfo, textInfo, binaryInfo;
+  data::ImageInfo xmlInfo, jsonInfo, binaryInfo;
 
-  SerializeObjectAll(info, xmlInfo, textInfo, binaryInfo);
+  SerializeObjectAll(info, xmlInfo, jsonInfo, binaryInfo);
 
   REQUIRE(info.Width() == xmlInfo.Width());
   REQUIRE(info.Height() == xmlInfo.Height());
   REQUIRE(info.Channels() == xmlInfo.Channels());
   REQUIRE(info.Quality() == xmlInfo.Quality());
-  REQUIRE(info.Width() == textInfo.Width());
-  REQUIRE(info.Height() == textInfo.Height());
-  REQUIRE(info.Channels() == textInfo.Channels());
-  REQUIRE(info.Quality() == textInfo.Quality());
+  REQUIRE(info.Width() == jsonInfo.Width());
+  REQUIRE(info.Height() == jsonInfo.Height());
+  REQUIRE(info.Channels() == jsonInfo.Channels());
+  REQUIRE(info.Quality() == jsonInfo.Quality());
   REQUIRE(info.Width() == binaryInfo.Width());
   REQUIRE(info.Height() == binaryInfo.Height());
   REQUIRE(info.Channels() == binaryInfo.Channels());
