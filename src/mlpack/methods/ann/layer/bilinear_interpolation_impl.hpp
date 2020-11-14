@@ -176,13 +176,13 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void BilinearInterpolation<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inRowSize);
-  ar & BOOST_SERIALIZATION_NVP(inColSize);
-  ar & BOOST_SERIALIZATION_NVP(outRowSize);
-  ar & BOOST_SERIALIZATION_NVP(outColSize);
-  ar & BOOST_SERIALIZATION_NVP(depth);
+  ar(CEREAL_NVP(inRowSize));
+  ar(CEREAL_NVP(inColSize));
+  ar(CEREAL_NVP(outRowSize));
+  ar(CEREAL_NVP(outColSize));
+  ar(CEREAL_NVP(depth));
 }
 
 } // namespace ann

@@ -60,10 +60,10 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void HardTanH<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(maxValue);
-  ar & BOOST_SERIALIZATION_NVP(minValue);
+  ar(CEREAL_NVP(maxValue));
+  ar(CEREAL_NVP(minValue));
 }
 
 } // namespace ann

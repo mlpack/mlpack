@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+
+### mlpack 3.4.2
+###### 2020-10-26
   * Added Mean Absolute Percentage Error.
 
   * Added Softmin activation function as layer in ann/layer.

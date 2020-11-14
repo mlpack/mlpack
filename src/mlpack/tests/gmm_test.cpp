@@ -552,16 +552,16 @@ TEST_CASE("GMMLoadSaveTest", "[GMMTest]")
   // Save the GMM.
   {
     std::ofstream ofs("test-gmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP(gmm);
+    cereal::XMLOutputArchive ar(ofs);
+    ar(CEREAL_NVP(gmm));
   }
 
   // Load the GMM.
   GMM gmm2;
   {
     std::ifstream ifs("test-gmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
-    ar >> BOOST_SERIALIZATION_NVP(gmm2);
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("gmm", gmm2));
   }
 
   // Remove clutter.
@@ -1206,16 +1206,16 @@ TEST_CASE("DiagonalGMMLoadSaveTest", "[GMMTest]")
   // Save the gmm.
   {
     std::ofstream ofs("test-diagonal-gmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP(gmm);
+    cereal::XMLOutputArchive ar(ofs);
+    ar(cereal::make_nvp("gmm", gmm));
   }
 
   // Load the gmm into gmm2.
   DiagonalGMM gmm2;
   {
     std::ifstream ifs("test-diagonal-gmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
-    ar >> BOOST_SERIALIZATION_NVP(gmm2);
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("gmm", gmm2));
   }
 
   // Remove clutter.

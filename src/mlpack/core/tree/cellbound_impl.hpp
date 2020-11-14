@@ -982,25 +982,16 @@ template<typename MetricType, typename ElemType>
 template<typename Archive>
 void CellBound<MetricType, ElemType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  // Allocate memory for the bounds, if necessary.
-  if (Archive::is_loading::value)
-  {
-    if (bounds)
-      delete[] bounds;
-    bounds = new math::RangeType<ElemType>[dim];
-  }
-
-  auto boundsArray = boost::serialization::make_array(bounds, dim);
-  ar & BOOST_SERIALIZATION_NVP(boundsArray);
-  ar & BOOST_SERIALIZATION_NVP(minWidth);
-  ar & BOOST_SERIALIZATION_NVP(loBound);
-  ar & BOOST_SERIALIZATION_NVP(hiBound);
-  ar & BOOST_SERIALIZATION_NVP(numBounds);
-  ar & BOOST_SERIALIZATION_NVP(loAddress);
-  ar & BOOST_SERIALIZATION_NVP(hiAddress);
-  ar & BOOST_SERIALIZATION_NVP(metric);
+  ar(CEREAL_POINTER_ARRAY(bounds, dim));
+  ar(CEREAL_NVP(minWidth));
+  ar(CEREAL_NVP(loBound));
+  ar(CEREAL_NVP(hiBound));
+  ar(CEREAL_NVP(numBounds));
+  ar(CEREAL_NVP(loAddress));
+  ar(CEREAL_NVP(hiAddress));
+  ar(CEREAL_NVP(metric));
 }
 
 } // namespace bound

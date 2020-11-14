@@ -98,14 +98,14 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void SpatialDropout<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(size);
-  ar & BOOST_SERIALIZATION_NVP(ratio);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(inputSize);
-  ar & BOOST_SERIALIZATION_NVP(reset);
-  ar & BOOST_SERIALIZATION_NVP(deterministic);
+  ar(CEREAL_NVP(size));
+  ar(CEREAL_NVP(ratio));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(inputSize));
+  ar(CEREAL_NVP(reset));
+  ar(CEREAL_NVP(deterministic));
 
   // Reset scale.
   scale = 1.0 / (1.0 - ratio);

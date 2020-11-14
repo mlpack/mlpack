@@ -227,25 +227,25 @@ void BatchNorm<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void BatchNorm<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(size);
+  ar(CEREAL_NVP(size));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     weights.set_size(size + size, 1);
     loading = false;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(eps);
-  ar & BOOST_SERIALIZATION_NVP(gamma);
-  ar & BOOST_SERIALIZATION_NVP(beta);
-  ar & BOOST_SERIALIZATION_NVP(count);
-  ar & BOOST_SERIALIZATION_NVP(averageFactor);
-  ar & BOOST_SERIALIZATION_NVP(momentum);
-  ar & BOOST_SERIALIZATION_NVP(average);
-  ar & BOOST_SERIALIZATION_NVP(runningMean);
-  ar & BOOST_SERIALIZATION_NVP(runningVariance);
+  ar(CEREAL_NVP(eps));
+  ar(CEREAL_NVP(gamma));
+  ar(CEREAL_NVP(beta));
+  ar(CEREAL_NVP(count));
+  ar(CEREAL_NVP(averageFactor));
+  ar(CEREAL_NVP(momentum));
+  ar(CEREAL_NVP(average));
+  ar(CEREAL_NVP(runningMean));
+  ar(CEREAL_NVP(runningVariance));
 }
 
 } // namespace ann
