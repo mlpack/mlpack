@@ -43,12 +43,12 @@ class MeanSquaredError
    * Computes the mean squared error function.
    *
    * @param prediction Predictions used for evaluating the specified loss
-   * function.
+   *     function.
    * @param target The target vector.
    */
   template<typename PredictionType, typename TargetType>
   typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                        const TargetType& target);
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
