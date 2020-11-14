@@ -47,7 +47,7 @@ TEST_CASE("BinerizeAll", "[BinarizeTest]")
 {
   mat input;
   input = { { 1, 2, 3 },
-            { 4, 5, 6 }, // this row will be tested
+            { 4, 5, 6 }, // This row will be tested.
             { 7, 8, 9 } };
 
   mat output;

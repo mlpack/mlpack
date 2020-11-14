@@ -71,12 +71,10 @@ BOOST_AUTO_TEST_CASE(ColumnToBlocksChangeBlockSize)
   ctb.Transform(CreateMaximalInput(), output);
 
   arma::mat matlabResults;
-  matlabResults = { { -3, -3,       -3,       -3,       -3, -3,      -3,
-                          -3,      -3, -3, -3 },
+  matlabResults = { { -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3 },
                     { -3, -1, -0.71429, -0.42857, -0.14286, -3, 0.14286,
                      0.42857, 0.71429,  1, -3 },
-                    { -3, -3,       -3,       -3,       -3, -3,      -3,
-                          -3,      -3, -3, -3 } };
+                    { -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3 } };
 
   TestResults(output, matlabResults);
 }

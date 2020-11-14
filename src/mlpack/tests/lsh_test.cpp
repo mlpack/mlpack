@@ -689,11 +689,7 @@ BOOST_AUTO_TEST_CASE(RecallTestPartiallyCorrect)
   // be 0 but recall should not be.
   arma::Mat<size_t> q2;
   q2.set_size(k, numQueries);
-  q2 << 2 << arma::endr
-     << 3 << arma::endr
-     << 4 << arma::endr
-     << 6 << arma::endr
-     << 7 << arma::endr;
+  q2 = arma::mat({ 2, 3, 4, 6, 7 }).t();
 
   BOOST_REQUIRE_CLOSE(LSHSearch<>::ComputeRecall(base, q2), 0.6, 0.0001);
 }
