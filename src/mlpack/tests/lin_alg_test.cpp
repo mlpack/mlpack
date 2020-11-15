@@ -91,7 +91,8 @@ TEST_CASE("TestOrthogonalize", "[LinAlgTest]")
   // Generate a random matrix; then, orthogonalize it and test if it's
   // orthogonal.
   mat tmp, orth;
-  data::Load("fake.csv", tmp);
+  if (!data::Load("fake.csv", tmp)) 
+    FAIL("Unable to load data fake.csv"); 
   Orthogonalize(tmp, orth);
 
   // test orthogonality

@@ -117,8 +117,10 @@ BOOST_AUTO_TEST_CASE(NumTablesTest)
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata, true)) 
+    FAIL("Unable to load data rainSe"); 
+  if (!data::Load(testSet, qdata, true)) 
+    FAIL("Unable to load data estSe"); 
 
   // Run classic knn on reference data.
   KNN knn(rdata);
@@ -189,8 +191,10 @@ BOOST_AUTO_TEST_CASE(HashWidthTest)
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata, true)) 
+    FAIL("Unable to load data rainSe"); 
+  if (!data::Load(testSet, qdata, true)) 
+    FAIL("Unable to load data estSe"); 
 
   // Run classic knn on reference data.
   KNN knn(rdata);
@@ -249,8 +253,10 @@ BOOST_AUTO_TEST_CASE(NumProjTest)
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata, true)) 
+    FAIL("Unable to load data rainSe"); 
+  if (!data::Load(testSet, qdata, true)) 
+    FAIL("Unable to load data estSe"); 
 
   // Run classic knn on reference data.
   KNN knn(rdata);
@@ -309,8 +315,10 @@ BOOST_AUTO_TEST_CASE(RecallTest)
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata, true)) 
+    FAIL("Unable to load data rainSe"); 
+  if (!data::Load(testSet, qdata, true)) 
+    FAIL("Unable to load data estSe"); 
 
   // Run classic knn on reference data.
   KNN knn(rdata);
@@ -504,8 +512,10 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata, true)) 
+    FAIL("Unable to load data rainSe"); 
+  if (!data::Load(testSet, qdata, true)) 
+    FAIL("Unable to load data estSe"); 
 
   // Add a slight amount of noise to the dataset, so that we don't end up with
   // points that have the same distance (hopefully).
@@ -782,8 +792,10 @@ BOOST_AUTO_TEST_CASE(ParallelBichromatic)
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata, true)) 
+    FAIL("Unable to load data rainSe"); 
+  if (!data::Load(testSet, qdata, true)) 
+    FAIL("Unable to load data estSe"); 
 
   // Where to store neighbors and distances
   arma::Mat<size_t> sequentialNeighbors;
@@ -821,7 +833,8 @@ BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
   // Read iris training data as reference and query set.
   const string trainSet = "iris_train.csv";
   arma::mat rdata;
-  data::Load(trainSet, rdata, true);
+  if (!data::Load(trainSet, rdata, true)) 
+    FAIL("Unable to load data rainSe"); 
 
   // Where to store neighbors and distances
   arma::Mat<size_t> sequentialNeighbors;
@@ -938,8 +951,10 @@ BOOST_AUTO_TEST_CASE(SparseLSHTest)
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata, true)) 
+    FAIL("Unable to load data rainSe"); 
+  if (!data::Load(testSet, qdata, true)) 
+    FAIL("Unable to load data estSe"); 
 
   // Run on dense data.
   LSHSearch<> denseLSH(

@@ -111,8 +111,10 @@ TEST_CASE("CholeskySingularityTest", "[LARSTest]")
   arma::mat X;
   arma::mat Y;
 
-  data::Load("lars_dependent_x.csv", X);
-  data::Load("lars_dependent_y.csv", Y);
+  if (!data::Load("lars_dependent_x.csv", X)) 
+    FAIL("Unable to load data lars_dependent_x.csv"); 
+  if (!data::Load("lars_dependent_y.csv", Y)) 
+    FAIL("Unable to load data lars_dependent_y.csv"); 
 
   arma::rowvec y = Y.row(0);
 
@@ -135,8 +137,10 @@ TEST_CASE("NoCholeskySingularityTest", "[LARSTest]")
   arma::mat X;
   arma::mat Y;
 
-  data::Load("lars_dependent_x.csv", X);
-  data::Load("lars_dependent_y.csv", Y);
+  if (!data::Load("lars_dependent_x.csv", X)) 
+    FAIL("Unable to load data lars_dependent_x.csv"); 
+  if (!data::Load("lars_dependent_y.csv", Y)) 
+    FAIL("Unable to load data lars_dependent_y.csv"); 
 
   arma::rowvec y = Y.row(0);
 
@@ -357,8 +361,10 @@ TEST_CASE("LARSTrainReturnCorrelation", "[LARSTest]")
   arma::mat X;
   arma::mat Y;
 
-  data::Load("lars_dependent_x.csv", X);
-  data::Load("lars_dependent_y.csv", Y);
+  if (!data::Load("lars_dependent_x.csv", X)) 
+    FAIL("Unable to load data lars_dependent_x.csv"); 
+  if (!data::Load("lars_dependent_y.csv", Y)) 
+    FAIL("Unable to load data lars_dependent_y.csv"); 
 
   arma::rowvec y = Y.row(0);
 
@@ -403,8 +409,10 @@ TEST_CASE("LARSTestComputeError", "[LARSTest]")
   arma::mat X;
   arma::mat Y;
 
-  data::Load("lars_dependent_x.csv", X);
-  data::Load("lars_dependent_y.csv", Y);
+  if (!data::Load("lars_dependent_x.csv", X)) 
+    FAIL("Unable to load data lars_dependent_x.csv"); 
+  if (!data::Load("lars_dependent_y.csv", Y)) 
+    FAIL("Unable to load data lars_dependent_y.csv"); 
 
   arma::rowvec y = Y.row(0);
 
@@ -427,8 +435,10 @@ TEST_CASE("LARSCopyConstructorTest", "[LARSTest]")
   arma::rowvec targets;
 
   // Load training input and predictions for testing.
-  data::Load("lars_dependent_x.csv", features);
-  data::Load("lars_dependent_y.csv", Y);
+  if (!data::Load("lars_dependent_x.csv", features)) 
+    FAIL("Unable to load data lars_dependent_x.csv"); 
+  if (!data::Load("lars_dependent_y.csv", Y)) 
+    FAIL("Unable to load data lars_dependent_y.csv"); 
   targets = Y.row(0);
 
   // Check if the copy is accessible even after deleting the pointer to the

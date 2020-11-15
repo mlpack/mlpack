@@ -85,8 +85,8 @@ TEST_CASE("WrongExtensionCorrectLoad", "[LoadSaveTest]")
 
   // Now reload through our interface.
   REQUIRE(
-      data::Load("test_file.csv", test, false, true, arma::arma_binary)
-      == true);
+    data::Load("test_file.csv", test, false, true, arma::arma_binary)
+    == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1414,8 +1414,10 @@ TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest]")
   {
     arma::mat one, two;
     DatasetInfo info;
-    data::Load(testFiles[i], one);
-    data::Load(testFiles[i], two, info);
+  if (!data::Load(testFiles[i], one)) 
+    FAIL("Unable to load data estFiles[i"); 
+  if (!data::Load(testFiles[i], two, info)) 
+    FAIL("Unable to load data estFiles[i"); 
 
     // Check that the matrices contain the same information.
     REQUIRE(one.n_elem == two.n_elem);
@@ -1454,8 +1456,10 @@ TEST_CASE("NontransposedCSVDatasetInfoLoad", "[LoadSaveTest]")
   {
     arma::mat one, two;
     DatasetInfo info;
-    data::Load(testFiles[i], one, true, false); // No transpose.
-    data::Load(testFiles[i], two, info, true, false);
+  if (!data::Load(testFiles[i], one, true, false)) 
+    FAIL("Unable to load data estFiles[i"); 
+  if (!data::Load(testFiles[i], two, info, true, false)) 
+    FAIL("Unable to load data estFiles[i"); 
 
     // Check that the matrices contain the same information.
     REQUIRE(one.n_elem == two.n_elem);
@@ -1494,7 +1498,8 @@ TEST_CASE("CategoricalCSVLoadTest00", "[LoadSaveTest]")
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test.csv", matrix, info);
+  if (!data::Load("test.csv", matrix, info)) 
+    FAIL("Unable to load data test.csv"); 
 
   REQUIRE(matrix.n_cols == 7);
   REQUIRE(matrix.n_rows == 3);
@@ -1551,7 +1556,8 @@ TEST_CASE("CategoricalCSVLoadTest01", "[LoadSaveTest]")
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test.csv", matrix, info, true);
+  if (!data::Load("test.csv", matrix, info, true)) 
+    FAIL("Unable to load data test.csv"); 
 
   REQUIRE(matrix.n_cols == 4);
   REQUIRE(matrix.n_rows == 3);
@@ -1596,7 +1602,8 @@ TEST_CASE("CategoricalCSVLoadTest02", "[LoadSaveTest]")
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test.csv", matrix, info, true);
+  if (!data::Load("test.csv", matrix, info, true)) 
+    FAIL("Unable to load data test.csv"); 
 
   REQUIRE(matrix.n_cols == 4);
   REQUIRE(matrix.n_rows == 3);
@@ -1640,7 +1647,8 @@ TEST_CASE("CategoricalCSVLoadTest03", "[LoadSaveTest]")
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test.csv", matrix, info, true);
+  if (!data::Load("test.csv", matrix, info, true)) 
+    FAIL("Unable to load data test.csv"); 
 
   REQUIRE(matrix.n_cols == 4);
   REQUIRE(matrix.n_rows == 3);
@@ -1684,7 +1692,8 @@ TEST_CASE("CategoricalCSVLoadTest04", "[LoadSaveTest]")
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test.csv", matrix, info, true);
+  if (!data::Load("test.csv", matrix, info, true)) 
+    FAIL("Unable to load data test.csv"); 
 
   REQUIRE(matrix.n_cols == 4);
   REQUIRE(matrix.n_rows == 3);
@@ -1731,7 +1740,8 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest00", "[LoadSaveTest]")
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test.csv", matrix, info, true, false); // No transpose.
+  if (!data::Load("test.csv", matrix, info, true, false)) 
+    FAIL("Unable to load data test.csv"); 
 
   REQUIRE(matrix.n_cols == 3);
   REQUIRE(matrix.n_rows == 7);
@@ -1820,7 +1830,8 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest01", "[LoadSaveTest]")
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test.csv", matrix, info, true, false); // No transpose.
+  if (!data::Load("test.csv", matrix, info, true, false)) 
+    FAIL("Unable to load data test.csv"); 
 
   REQUIRE(matrix.n_cols == 3);
   REQUIRE(matrix.n_rows == 4);
@@ -1865,7 +1876,8 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest02", "[LoadSaveTest]")
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test.csv", matrix, info, true, false); // No transpose.
+  if (!data::Load("test.csv", matrix, info, true, false)) 
+    FAIL("Unable to load data test.csv"); 
 
   REQUIRE(matrix.n_cols == 3);
   REQUIRE(matrix.n_rows == 4);
@@ -1910,7 +1922,8 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest03", "[LoadSaveTest]")
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test.csv", matrix, info, true, false); // No transpose.
+  if (!data::Load("test.csv", matrix, info, true, false)) 
+    FAIL("Unable to load data test.csv"); 
 
   REQUIRE(matrix.n_cols == 3);
   REQUIRE(matrix.n_rows == 4);
@@ -1955,7 +1968,8 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest04", "[LoadSaveTest]")
     // Load the test CSV.
     arma::umat matrix;
     DatasetInfo info;
-    data::Load("test.csv", matrix, info, true, false); // No transpose.
+  if (!data::Load("test.csv", matrix, info, true, false)) 
+    FAIL("Unable to load data test.csv"); 
 
     REQUIRE(matrix.n_cols == 3);
     REQUIRE(matrix.n_rows == 4);
@@ -2003,7 +2017,8 @@ TEST_CASE("HarderKeonTest", "[LoadSaveTest]")
   // Load transposed.
   arma::mat dataset;
   data::DatasetInfo info;
-  data::Load("test.csv", dataset, info, true, true);
+  if (!data::Load("test.csv", dataset, info, true, true)) 
+    FAIL("Unable to load data test.csv"); 
 
   REQUIRE(dataset.n_rows == 5);
   REQUIRE(dataset.n_cols == 4);
@@ -2017,7 +2032,8 @@ TEST_CASE("HarderKeonTest", "[LoadSaveTest]")
 
   // Now load non-transposed.
   data::DatasetInfo ntInfo;
-  data::Load("test.csv", dataset, ntInfo, true, false);
+  if (!data::Load("test.csv", dataset, ntInfo, true, false)) 
+    FAIL("Unable to load data test.csv"); 
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 5);
@@ -2052,7 +2068,8 @@ TEST_CASE("SimpleARFFTest", "[LoadSaveTest]")
 
   arma::mat dataset;
   DatasetInfo info;
-  data::Load("test.arff", dataset, info);
+  if (!data::Load("test.arff", dataset, info)) 
+    FAIL("Unable to load data test.arff"); 
 
   REQUIRE(info.Dimensionality() == 2);
   REQUIRE(info.Type(0) == Datatype::numeric);
@@ -2093,7 +2110,8 @@ TEST_CASE("SimpleARFFCategoricalTest", "[LoadSaveTest]")
 
   arma::mat dataset;
   DatasetInfo info;
-  data::Load("test.arff", dataset, info);
+  if (!data::Load("test.arff", dataset, info)) 
+    FAIL("Unable to load data test.arff"); 
 
   REQUIRE(info.Dimensionality() == 3);
 
@@ -2152,7 +2170,8 @@ TEST_CASE("HarderARFFTest", "[LoadSaveTest]")
 
   arma::mat dataset;
   DatasetInfo info;
-  data::Load("test.arff", dataset, info);
+  if (!data::Load("test.arff", dataset, info)) 
+    FAIL("Unable to load data test.arff"); 
 
   REQUIRE(info.Dimensionality() == 5);
 

@@ -191,7 +191,8 @@ TEST_CASE("OneHotEncodingDatasetinfoTest", "[OneHotEncodingTest]")
   // Load the test CSV.
   arma::umat matrix;
   DatasetInfo info;
-  data::Load("test.csv", matrix, info);
+  if (!data::Load("test.csv", matrix, info)) 
+    FAIL("Unable to load data test.csv"); 
   arma::umat output;
   data::OneHotEncoding(matrix, output, info);
   REQUIRE(output.n_cols == 7);

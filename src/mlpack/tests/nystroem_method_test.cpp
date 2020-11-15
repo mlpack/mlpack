@@ -146,7 +146,8 @@ TEST_CASE("GermanTest", "[NystroemMethodTest]")
 {
   // Load the dataset.
   arma::mat dataset;
-  data::Load("german.csv", dataset, true);
+  if (!data::Load("german.csv", dataset, true)) 
+    FAIL("Unable to load data german.csv"); 
 
   // These are our tolerance bounds.
   double results[5] = { 32.0, 20.0, 15.0, 12.0, 9.0 };

@@ -466,7 +466,8 @@ TEST_CASE("KFNSingleCoverTreeTest", "[KFNTest]")
 TEST_CASE("KFNDualCoverTreeTest", "[KFNTest]")
 {
   arma::mat dataset;
-  data::Load("test_data_3_1000.csv", dataset);
+  if (!data::Load("test_data_3_1000.csv", dataset)) 
+    FAIL("Unable to load data test_data_3_1000.csv"); 
 
   KFN tree(dataset);
 
@@ -538,7 +539,8 @@ TEST_CASE("KFNSingleBallTreeTest", "[KFNTest]")
 TEST_CASE("KFNDualBallTreeTest", "[KFNTest]")
 {
   arma::mat dataset;
-  data::Load("test_data_3_1000.csv", dataset);
+  if (!data::Load("test_data_3_1000.csv", dataset)) 
+    FAIL("Unable to load data test_data_3_1000.csv"); 
 
   KFN tree(dataset);
 
