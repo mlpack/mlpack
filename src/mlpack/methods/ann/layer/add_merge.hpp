@@ -57,7 +57,6 @@ class AddMerge
    * @param ownsLayers Delete the layers when this is deallocated.
    */
   AddMerge(const bool model, const bool run, const bool ownsLayers);
-  
   //! Destructor to release allocated memory.
   ~AddMerge();
 
