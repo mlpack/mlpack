@@ -108,7 +108,7 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
   // Load the dataset.
   arma::mat trainData;
   if (!data::Load("thyroid_train.csv", trainData, true)) 
-    FAIL("Unable to load data thyroid_train.csv"); 
+    FAIL("Cannot load dataset thyroid_train.csv"); 
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
@@ -155,6 +155,7 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 }
 
 /**
+<<<<<<< HEAD
  * Check whether copying and moving network with AdaptiveMaxPooling is working or not.
  */
 
@@ -163,7 +164,7 @@ TEST_CASE("CheckCopyMovingAdaptiveMaxPoolingNetworkTest",
 {
   arma::mat trainData;
   if (!data::Load("mnist_train.csv", trainData, true)) 
-    FAIL("Unable to load data mnist_train.csv"); 
+    FAIL("Cannot load dataset mnist_train.csv"); 
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
@@ -224,6 +225,8 @@ TEST_CASE("CheckCopyMovingAdaptiveMaxPoolingNetworkTest",
 }
 
 /**
+=======
+>>>>>>> b998a965a101c2d8855c16f877c306c27e875a63
  * Train the vanilla network on a larger dataset.
  */
 TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
@@ -231,14 +234,14 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   // Load the dataset.
   arma::mat trainData;
   if (!data::Load("thyroid_train.csv", trainData, true)) 
-    FAIL("Unable to load data thyroid_train.csv"); 
+    FAIL("Cannot load dataset thyroid_train.csv"); 
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat testData;
   if (!data::Load("thyroid_test.csv", testData, true)) 
-    FAIL("Unable to load data thyroid_test.csv"); 
+    FAIL("Cannot load dataset thyroid_test.csv"); 
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -380,14 +383,14 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   // Load the dataset.
   arma::mat trainData;
   if (!data::Load("thyroid_train.csv", trainData, true)) 
-    FAIL("Unable to load data thyroid_train.csv"); 
+    FAIL("Cannot load dataset thyroid_train.csv"); 
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat testData;
   if (!data::Load("thyroid_test.csv", testData, true)) 
-    FAIL("Unable to load data thyroid_test.csv"); 
+    FAIL("Cannot load dataset thyroid_test.csv"); 
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -483,14 +486,14 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   // Load the dataset.
   arma::mat trainData;
   if (!data::Load("thyroid_train.csv", trainData, true)) 
-    FAIL("Unable to load data thyroid_train.csv"); 
+    FAIL("Cannot load dataset thyroid_train.csv"); 
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat testData;
   if (!data::Load("thyroid_test.csv", testData, true)) 
-    FAIL("Unable to load data thyroid_test.csv"); 
+    FAIL("Cannot load dataset thyroid_test.csv"); 
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -574,14 +577,14 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   // Load the dataset.
   arma::mat trainData;
   if (!data::Load("thyroid_train.csv", trainData, true)) 
-    FAIL("Unable to load data thyroid_train.csv"); 
+    FAIL("Cannot load dataset thyroid_train.csv"); 
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat testData;
   if (!data::Load("thyroid_test.csv", testData, true)) 
-    FAIL("Unable to load data thyroid_test.csv"); 
+    FAIL("Cannot load dataset thyroid_test.csv"); 
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -625,14 +628,14 @@ TEST_CASE("CustomLayerTest", "[FeedForwardNetworkTest]")
   // Load the dataset.
   arma::mat trainData;
   if (!data::Load("thyroid_train.csv", trainData, true)) 
-    FAIL("Unable to load data thyroid_train.csv"); 
+    FAIL("Cannot load dataset thyroid_train.csv"); 
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat testData;
   if (!data::Load("thyroid_test.csv", testData, true)) 
-    FAIL("Unable to load data thyroid_test.csv"); 
+    FAIL("Cannot load dataset thyroid_test.csv"); 
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -706,14 +709,14 @@ TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
   // Load the dataset.
   arma::mat trainData;
   if (!data::Load("thyroid_train.csv", trainData, true)) 
-    FAIL("Unable to load data thyroid_train.csv"); 
+    FAIL("Cannot load dataset thyroid_train.csv"); 
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat testData;
   if (!data::Load("thyroid_test.csv", testData, true)) 
-    FAIL("Unable to load data thyroid_test.csv"); 
+    FAIL("Cannot load dataset thyroid_test.csv"); 
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -778,14 +781,14 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   // Load the dataset.
   arma::mat trainData;
   if (!data::Load("thyroid_train.csv", trainData, true)) 
-    FAIL("Unable to load data thyroid_train.csv"); 
+    FAIL("Cannot load dataset thyroid_train.csv"); 
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat testData;
   if (!data::Load("thyroid_test.csv", testData, true)) 
-    FAIL("Unable to load data thyroid_test.csv"); 
+    FAIL("Cannot load dataset thyroid_test.csv"); 
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
