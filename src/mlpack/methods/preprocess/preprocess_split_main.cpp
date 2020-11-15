@@ -69,6 +69,10 @@ BINDING_EXAMPLE(
         "test_ratio", 0.3, "training", "X_train", "training_labels", "y_train",
         "test", "X_test", "test_labels", "y_test"));
 
+BINDING_EXAMPLE(
+    "To maintain the ratio of each class in the train and test sets, the" +
+    PRINT_PARAM_STRING("stratify_data") + " option can be used.");
+
 // See also...
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
 BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
@@ -90,6 +94,7 @@ PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
 
 PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
 PARAM_FLAG("no_shuffle", "Avoid shuffling and splitting the data.", "S");
+PARAM_FLAG("stratify_data", "Stratify the data according to labels", "z")
 
 using namespace mlpack;
 using namespace mlpack::data;
@@ -102,6 +107,7 @@ static void mlpackMain()
   // Parse command line options.
   const double testRatio = IO::GetParam<double>("test_ratio");
   const bool shuffleData = IO::GetParam<bool>("no_shuffle");
+  const bool stratifyData = IO::GetParam<bool>("stratify_data");
 
   if (IO::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(std::time(NULL));
@@ -148,11 +154,15 @@ static void mlpackMain()
         IO::GetParam<arma::Mat<size_t>>("input_labels");
     arma::Row<size_t> labelsRow = labels.row(0);
 
-    const auto value = data::Split(data, labelsRow, testRatio, !shuffleData);
-    Log::Info << "Training data contains " << get<0>(value).n_cols << " points."
-        << endl;
-    Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
-        << endl;
+    Timer::Start("splitting_data");
+    const auto value =
+        data::Split(data, labelsRow, testRatio, !shuffleData, stratifyData);
+    Timer::Stop("splitting_data");
+
+    Log::Info << "Training data contains "
+        << get<0>(value).n_cols << " points." << endl;
+    Log::Info << "Test data contains "
+        << get<1>(value).n_cols << " points." << endl;
 
     if (IO::HasParam("training"))
       IO::GetParam<arma::mat>("training") = std::move(get<0>(value));
@@ -167,7 +177,10 @@ static void mlpackMain()
   }
   else // We have no labels, so just split the dataset.
   {
+    Timer::Start("splitting_data");
     const auto value = data::Split(data, testRatio, !shuffleData);
+    Timer::Stop("splitting_data");
+
     Log::Info << "Training data contains " << get<0>(value).n_cols << " points."
         << endl;
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
