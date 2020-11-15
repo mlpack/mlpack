@@ -49,7 +49,6 @@ class AddMerge
    * @param run Call the Forward/Backward method before the output is merged.
    */
   AddMerge(const bool model = false, const bool run = true);
-  
   /**
    * Create the AddMerge object using the specified parameters.
    *
