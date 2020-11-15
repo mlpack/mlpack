@@ -805,9 +805,9 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
   arma::mat dataset;
   arma::Row<size_t> labels;
   if (!data::Load("vc2.csv", dataset))
-    FAIL("Unable to load data vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
   if (!data::Load("vc2_labels.txt", labels))
-    FAIL("Unable to load data vc2_labels.txt!");
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
@@ -833,9 +833,9 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
   arma::mat testData;
   arma::Row<size_t> testLabels;
   if (!data::Load("vc2_test.csv", testData))
-    FAIL("Unable to load data vc2_test.csv!");
+    FAIL("Cannot load test dataset vc2_test.csv!");
   if (!data::Load("vc2_test_labels.txt", testLabels))
-    FAIL("Unable to load data vc2_test_labels.txt!");
+    FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
   d.Classify(testData, predictions);
@@ -918,9 +918,9 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
   arma::mat dataset;
   arma::Row<size_t> labels;
   if (!data::Load("vc2.csv", dataset))
-    FAIL("Unable to load data vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
   if (!data::Load("vc2_labels.txt", labels))
-    FAIL("Unable to load vc2_labels.txt!");
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
@@ -946,9 +946,9 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
   arma::mat testData;
   arma::Row<size_t> testLabels;
   if (!data::Load("vc2_test.csv", testData))
-    FAIL("Unable to load data vc2_test.csv!");
+    FAIL("Cannot load test dataset vc2_test.csv!");
   if (!data::Load("vc2_test_labels.txt", testLabels))
-    FAIL("Unable to load data vc2_test_labels.txt!");
+    FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
   d.Classify(testData, predictions);
@@ -1108,9 +1108,9 @@ TEST_CASE("NumClassesTest", "[DecisionTreeTest]")
   arma::mat dataset;
   arma::Row<size_t> labels;
   if (!data::Load("vc2.csv", dataset))
-    FAIL("Unable to load data vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
   if (!data::Load("vc2_labels.txt", labels))
-    FAIL("Unable to load data vc2_labels.txt!");
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> dt(dataset, labels, 3);
 
@@ -1240,9 +1240,9 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
   arma::mat dataset;
   arma::Row<size_t> labels;
   if (!data::Load("vc2.csv", dataset))
-    FAIL("Unable to load data vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
   if (!data::Load("vc2_labels.txt", labels))
-    FAIL("Unable to load data vc2_labels.txt!");
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> d(dataset, labels, 3, 10, 1e-7, 1);
 

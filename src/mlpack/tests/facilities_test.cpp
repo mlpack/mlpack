@@ -28,11 +28,11 @@ TEST_CASE("AssertSizesTest", "[FacilitiesTest]")
   // Load the dataset.
   arma::mat dataset;
   if (!data::Load("iris_train.csv", dataset))
-    FAIL("Unable to load data iris_train.csv!");
+    FAIL("Cannot load test dataset iris_train.csv!");
   // Load the labels.
   arma::Row<size_t> labels;
   if (!data::Load("iris_test_labels.csv", labels))
-    FAIL("Unable to load data iris_test_labels.csv!");
+    FAIL("Cannot load test dataset iris_test_labels.csv!");
 
   REQUIRE_THROWS_AS(
     AssertSizes(dataset, labels, "test"), std::invalid_argument);
