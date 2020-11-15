@@ -92,7 +92,7 @@ TEST_CASE("TestOrthogonalize", "[LinAlgTest]")
   // orthogonal.
   mat tmp, orth;
   if (!data::Load("fake.csv", tmp)) 
-    FAIL("Unable to load data fake.csv"); 
+    FAIL("Cannot load dataset fake.csv"); 
   Orthogonalize(tmp, orth);
 
   // test orthogonality

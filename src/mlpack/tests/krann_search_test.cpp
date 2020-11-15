@@ -36,15 +36,15 @@ TEST_CASE("NaiveGuaranteeTest", "[KRANNTest]")
   arma::mat queryData;
 
   if (!data::Load("rann_test_r_3_900.csv", refData, true)) 
-    FAIL("Unable to load data rann_test_r_3_900.csv"); 
+    FAIL("Cannot load dataset rann_test_r_3_900.csv"); 
   if (!data::Load("rann_test_q_3_100.csv", queryData, true)) 
-    FAIL("Unable to load data rann_test_q_3_100.csv"); 
+    FAIL("Cannot load dataset rann_test_q_3_100.csv"); 
 
   RASearch<> rsRann(refData, true, false, 1.0);
 
   arma::mat qrRanks;
   if (!data::Load("rann_test_qr_ranks.csv", qrRanks, true, false)) 
-    FAIL("Unable to load data rann_test_qr_ranks.csv"); 
+    FAIL("Cannot load dataset rann_test_qr_ranks.csv"); 
 
   size_t numRounds = 1000;
   arma::Col<size_t> numSuccessRounds(queryData.n_cols);
@@ -92,9 +92,9 @@ TEST_CASE("SingleTreeSearch", "[KRANNTest]")
   arma::mat queryData;
 
   if (!data::Load("rann_test_r_3_900.csv", refData, true)) 
-    FAIL("Unable to load data rann_test_r_3_900.csv"); 
+    FAIL("Cannot load dataset rann_test_r_3_900.csv"); 
   if (!data::Load("rann_test_q_3_100.csv", queryData, true)) 
-    FAIL("Unable to load data rann_test_q_3_100.csv"); 
+    FAIL("Cannot load dataset rann_test_q_3_100.csv"); 
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
   // (rank error of 3).
@@ -106,7 +106,7 @@ TEST_CASE("SingleTreeSearch", "[KRANNTest]")
   // The relative ranks for the given query reference pair
   arma::Mat<size_t> qrRanks;
   if (!data::Load("rann_test_qr_ranks.csv", qrRanks, true, false)) 
-    FAIL("Unable to load data rann_test_qr_ranks.csv"); 
+    FAIL("Cannot load dataset rann_test_qr_ranks.csv"); 
 
   size_t numRounds = 1000;
   arma::Col<size_t> numSuccessRounds(queryData.n_cols);
@@ -154,9 +154,9 @@ TEST_CASE("DualTreeSearch", "[KRANNTest]")
   arma::mat queryData;
 
   if (!data::Load("rann_test_r_3_900.csv", refData, true)) 
-    FAIL("Unable to load data rann_test_r_3_900.csv"); 
+    FAIL("Cannot load dataset rann_test_r_3_900.csv"); 
   if (!data::Load("rann_test_q_3_100.csv", queryData, true)) 
-    FAIL("Unable to load data rann_test_q_3_100.csv"); 
+    FAIL("Cannot load dataset rann_test_q_3_100.csv"); 
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
   // (rank error of 3).
@@ -167,7 +167,7 @@ TEST_CASE("DualTreeSearch", "[KRANNTest]")
 
   arma::Mat<size_t> qrRanks;
   if (!data::Load("rann_test_qr_ranks.csv", qrRanks, true, false)) 
-    FAIL("Unable to load data rann_test_qr_ranks.csv"); 
+    FAIL("Cannot load dataset rann_test_qr_ranks.csv"); 
 
   size_t numRounds = 1000;
   arma::Col<size_t> numSuccessRounds(queryData.n_cols);
@@ -284,9 +284,9 @@ TEST_CASE("SingleCoverTreeTest", "[KRANNTest]")
   arma::mat queryData;
 
   if (!data::Load("rann_test_r_3_900.csv", refData, true)) 
-    FAIL("Unable to load data rann_test_r_3_900.csv"); 
+    FAIL("Cannot load dataset rann_test_r_3_900.csv"); 
   if (!data::Load("rann_test_q_3_100.csv", queryData, true)) 
-    FAIL("Unable to load data rann_test_q_3_100.csv"); 
+    FAIL("Cannot load dataset rann_test_q_3_100.csv"); 
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
   // (rank error of 3).
@@ -301,7 +301,7 @@ TEST_CASE("SingleCoverTreeTest", "[KRANNTest]")
   // The relative ranks for the given query reference pair.
   arma::Mat<size_t> qrRanks;
   if (!data::Load("rann_test_qr_ranks.csv", qrRanks, true, false)) 
-    FAIL("Unable to load data rann_test_qr_ranks.csv"); 
+    FAIL("Cannot load dataset rann_test_qr_ranks.csv"); 
 
   size_t numRounds = 100;
   arma::Col<size_t> numSuccessRounds(queryData.n_cols);
@@ -348,9 +348,9 @@ TEST_CASE("DualCoverTreeTest", "[KRANNTest]")
   arma::mat queryData;
 
   if (!data::Load("rann_test_r_3_900.csv", refData, true)) 
-    FAIL("Unable to load data rann_test_r_3_900.csv"); 
+    FAIL("Cannot load dataset rann_test_r_3_900.csv"); 
   if (!data::Load("rann_test_q_3_100.csv", queryData, true)) 
-    FAIL("Unable to load data rann_test_q_3_100.csv"); 
+    FAIL("Cannot load dataset rann_test_q_3_100.csv"); 
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
   // (rank error of 3).
@@ -369,7 +369,7 @@ TEST_CASE("DualCoverTreeTest", "[KRANNTest]")
 
   arma::Mat<size_t> qrRanks;
   if (!data::Load("rann_test_qr_ranks.csv", qrRanks, true, false)) 
-    FAIL("Unable to load data rann_test_qr_ranks.csv"); 
+    FAIL("Cannot load dataset rann_test_qr_ranks.csv"); 
 
   size_t numRounds = 100;
   arma::Col<size_t> numSuccessRounds(queryData.n_cols);
@@ -420,9 +420,9 @@ TEST_CASE("SingleBallTreeTest", "[KRANNTest]")
   arma::mat queryData;
 
   if (!data::Load("rann_test_r_3_900.csv", refData, true)) 
-    FAIL("Unable to load data rann_test_r_3_900.csv"); 
+    FAIL("Cannot load dataset rann_test_r_3_900.csv"); 
   if (!data::Load("rann_test_q_3_100.csv", queryData, true)) 
-    FAIL("Unable to load data rann_test_q_3_100.csv"); 
+    FAIL("Cannot load dataset rann_test_q_3_100.csv"); 
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
   // (rank error of 3).
@@ -439,7 +439,7 @@ TEST_CASE("SingleBallTreeTest", "[KRANNTest]")
   // The relative ranks for the given query reference pair.
   arma::Mat<size_t> qrRanks;
   if (!data::Load("rann_test_qr_ranks.csv", qrRanks, true, false)) 
-    FAIL("Unable to load data rann_test_qr_ranks.csv"); 
+    FAIL("Cannot load dataset rann_test_qr_ranks.csv"); 
 
   size_t numRounds = 30;
   arma::Col<size_t> numSuccessRounds(queryData.n_cols);
@@ -486,9 +486,9 @@ TEST_CASE("DualBallTreeTest", "[KRANNTest]")
   arma::mat queryData;
 
   if (!data::Load("rann_test_r_3_900.csv", refData, true)) 
-    FAIL("Unable to load data rann_test_r_3_900.csv"); 
+    FAIL("Cannot load dataset rann_test_r_3_900.csv"); 
   if (!data::Load("rann_test_q_3_100.csv", queryData, true)) 
-    FAIL("Unable to load data rann_test_q_3_100.csv"); 
+    FAIL("Cannot load dataset rann_test_q_3_100.csv"); 
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
   // (rank error of 3).
@@ -507,7 +507,7 @@ TEST_CASE("DualBallTreeTest", "[KRANNTest]")
 
   arma::Mat<size_t> qrRanks;
   if (!data::Load("rann_test_qr_ranks.csv", qrRanks, true, false)) 
-    FAIL("Unable to load data rann_test_qr_ranks.csv"); 
+    FAIL("Cannot load dataset rann_test_qr_ranks.csv"); 
 
   size_t numRounds = 1000;
   arma::Col<size_t> numSuccessRounds(queryData.n_cols);
@@ -645,9 +645,9 @@ TEST_CASE("RAModelTest", "[KRANNTest]")
 
   arma::mat queryData, referenceData;
   if (!data::Load("rann_test_r_3_900.csv", referenceData, true)) 
-    FAIL("Unable to load data rann_test_r_3_900.csv"); 
+    FAIL("Cannot load dataset rann_test_r_3_900.csv"); 
   if (!data::Load("rann_test_q_3_100.csv", queryData, true)) 
-    FAIL("Unable to load data rann_test_q_3_100.csv"); 
+    FAIL("Cannot load dataset rann_test_q_3_100.csv"); 
 
   // Build all the possible models.
   KNNModel models[20];
@@ -674,7 +674,7 @@ TEST_CASE("RAModelTest", "[KRANNTest]")
 
   arma::Mat<size_t> qrRanks;
   if (!data::Load("rann_test_qr_ranks.csv", qrRanks, true, false)) 
-    FAIL("Unable to load data rann_test_qr_ranks.csv"); 
+    FAIL("Cannot load dataset rann_test_qr_ranks.csv"); 
 
   for (size_t j = 0; j < 3; ++j)
   {

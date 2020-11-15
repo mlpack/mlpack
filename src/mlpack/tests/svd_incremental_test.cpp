@@ -99,7 +99,7 @@ TEST_CASE("SVDIncompleteIncrementalRegularizationTest", "[SVDIncrementalTest]")
 {
   mat dataset;
   if (!data::Load("GroupLensSmall.csv", dataset)) 
-    FAIL("Unable to load data GroupLensSmall.csv"); 
+    FAIL("Cannot load dataset GroupLensSmall.csv"); 
 
   // Generate list of locations for batch insert constructor for sparse
   // matrices.

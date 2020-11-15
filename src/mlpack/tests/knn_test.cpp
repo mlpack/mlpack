@@ -795,7 +795,7 @@ TEST_CASE("KNNDualCoverTreeTest", "[KNNTest]")
 {
   arma::mat dataset;
   if (!data::Load("test_data_3_1000.csv", dataset)) 
-    FAIL("Unable to load data test_data_3_1000.csv"); 
+    FAIL("Cannot load dataset test_data_3_1000.csv"); 
 
   KNN tree(dataset);
 
@@ -867,7 +867,7 @@ TEST_CASE("KNNDualBallTreeTest", "[KNNTest]")
 {
   arma::mat dataset;
   if (!data::Load("test_data_3_1000.csv", dataset)) 
-    FAIL("Unable to load data test_data_3_1000.csv"); 
+    FAIL("Cannot load dataset test_data_3_1000.csv"); 
 
   KNN tree(dataset);
 

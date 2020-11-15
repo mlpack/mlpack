@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
   // Load the edges.
   arma::mat edges;
   if (!data::Load("johnson8-4-4.csv", edges, true)) 
-    FAIL("Unable to load data johnson8-4-4.csv"); 
+    FAIL("Cannot load dataset johnson8-4-4.csv"); 
 
   // The LRSDP itself and the initial point.
   arma::mat coordinates;
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
   // Load the edges.
   arma::mat edges;
   if (!data::Load("erdosrenyi-n100.csv", edges, true)) 
-    FAIL("Unable to load data erdosrenyi-n100.csv"); 
+    FAIL("Cannot load dataset erdosrenyi-n100.csv"); 
 
   arma::sp_mat laplacian;
   CreateSparseGraphLaplacian(edges, laplacian);
@@ -224,9 +224,9 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
 
   // read the unknown matrix X and the measurement matrices A_i in
   if (!data::Load("sensing_X.csv", Xorig, true, false)) 
-    FAIL("Unable to load data sensing_X.csv"); 
+    FAIL("Cannot load dataset sensing_X.csv"); 
   if (!data::Load("sensing_A.csv", A, true, false)) 
-    FAIL("Unable to load data sensing_A.csv"); 
+    FAIL("Cannot load dataset sensing_A.csv"); 
 
   const size_t m = Xorig.n_rows;
   const size_t n = Xorig.n_cols;
@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE(Keller4LovaszThetaSDP)
   // Load the edges.
   arma::mat edges;
   if (!data::Load("keller4.csv", edges, true)) 
-    FAIL("Unable to load data keller4.csv"); 
+    FAIL("Cannot load dataset keller4.csv"); 
 
   // The LRSDP itself and the initial point.
   arma::mat coordinates;

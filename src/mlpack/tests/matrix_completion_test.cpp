@@ -38,9 +38,9 @@ BOOST_AUTO_TEST_CASE(UniformMatrixCompletionSDP)
   arma::umat indices;
 
   if (!data::Load("completion_X.csv", Xorig, true, false)) 
-    FAIL("Unable to load data completion_X.csv"); 
+    FAIL("Cannot load dataset completion_X.csv"); 
   if (!data::Load("completion_indices.csv", indices, true, false)) 
-    FAIL("Unable to load data completion_indices.csv"); 
+    FAIL("Cannot load dataset completion_indices.csv"); 
 
   values.set_size(indices.n_cols);
   for (size_t i = 0; i < indices.n_cols; ++i)

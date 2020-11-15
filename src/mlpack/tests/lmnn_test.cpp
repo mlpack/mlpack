@@ -700,9 +700,9 @@ TEST_CASE("LMNNFunctionGradientTest3", "[LMNNTest]")
   arma::mat dataset;
   arma::Row<size_t> labels;
   if (!data::Load("iris.csv", dataset)) 
-    FAIL("Unable to load data iris.csv"); 
+    FAIL("Cannot load dataset iris.csv"); 
   if (!data::Load("iris_labels.txt", labels)) 
-    FAIL("Unable to load data iris_labels.txt"); 
+    FAIL("Cannot load dataset iris_labels.txt"); 
 
   LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
 
@@ -719,9 +719,9 @@ TEST_CASE("LMNNFunctionGradientTest4", "[LMNNTest]")
   arma::mat dataset;
   arma::Row<size_t> labels;
   if (!data::Load("iris.csv", dataset)) 
-    FAIL("Unable to load data iris.csv"); 
+    FAIL("Cannot load dataset iris.csv"); 
   if (!data::Load("iris_labels.txt", labels)) 
-    FAIL("Unable to load data iris_labels.txt"); 
+    FAIL("Cannot load dataset iris_labels.txt"); 
 
   LMNNFunction<> lmnnfn(dataset, labels, 1, 0.6, 1);
 

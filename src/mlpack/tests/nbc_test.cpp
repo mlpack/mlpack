@@ -27,9 +27,9 @@ TEST_CASE("NaiveBayesClassifierTest", "[NBCTest]")
 
   arma::mat trainData, trainRes, calcMat;
   if (!data::Load(trainFilename, trainData, true)) 
-    FAIL("Unable to load data rainFilenam"); 
+    FAIL("Cannot load dataset trainSet.csv"); 
   if (!data::Load(trainResultFilename, trainRes, true)) 
-    FAIL("Unable to load data rainResultFilenam"); 
+    FAIL("Cannot load dataset trainRes.csv"); 
 
   // Get the labels out.
   arma::Row<size_t> labels(trainData.n_cols);
@@ -69,11 +69,11 @@ TEST_CASE("NaiveBayesClassifierTest", "[NBCTest]")
   arma::Row<size_t> calcVec;
   arma::mat calcProbs;
   if (!data::Load(testFilename, testData, true)) 
-    FAIL("Unable to load data estFilenam"); 
+    FAIL("Cannot load dataset testSet.csv"); 
   if (!data::Load(testResultFilename, testRes, true)) 
-    FAIL("Unable to load data estResultFilenam"); 
+    FAIL("Cannot load dataset testRes.csv"); 
   if (!data::Load(testResultProbsFilename, testResProbs, true)) 
-    FAIL("Unable to load data estResultProbsFilenam"); 
+    FAIL("Cannot load dataset testResProbs.csv"); 
 
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
 
@@ -98,16 +98,16 @@ TEST_CASE("NaiveBayesClassifierIncrementalTest", "[NBCTest]")
 {
   const char* trainFilename = "trainSet.csv";
   const char* testFilename = "testSet.csv";
-  const char* trainResultFilename = "trainRes.csv";
+  const char* trainResultFilename = "trainSet.csv";
   const char* testResultFilename = "testRes.csv";
   const char* testResultProbsFilename = "testResProbs.csv";
   size_t classes = 2;
 
   arma::mat trainData, trainRes, calcMat;
   if (!data::Load(trainFilename, trainData, true)) 
-    FAIL("Unable to load data rainFilenam"); 
+    FAIL("Cannot load dataset trainSet.csv"); 
   if (!data::Load(trainResultFilename, trainRes, true)) 
-    FAIL("Unable to load data rainResultFilenam"); 
+    FAIL("Cannot load dataset trainSet.csv"); 
 
   // Get the labels out.
   arma::Row<size_t> labels(trainData.n_cols);
@@ -147,11 +147,11 @@ TEST_CASE("NaiveBayesClassifierIncrementalTest", "[NBCTest]")
   arma::Row<size_t> calcVec;
   arma::mat calcProbs;
   if (!data::Load(testFilename, testData, true)) 
-    FAIL("Unable to load data estFilenam"); 
+    FAIL("Cannot load dataset testSet.csv"); 
   if (!data::Load(testResultFilename, testRes, true)) 
-    FAIL("Unable to load data estResultFilenam"); 
+    FAIL("Cannot load dataset testRes.csv"); 
   if (!data::Load(testResultProbsFilename, testResProba, true)) 
-    FAIL("Unable to load data estResultProbsFilenam"); 
+    FAIL("Cannot load dataset testResProbs.csv"); 
 
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
 
@@ -181,9 +181,9 @@ TEST_CASE("SeparateTrainTest", "[NBCTest]")
 
   arma::mat trainData, trainRes, calcMat;
   if (!data::Load(trainFilename, trainData, true)) 
-    FAIL("Unable to load data rainFilenam"); 
+    FAIL("Cannot load dataset trainSet.csv"); 
   if (!data::Load(trainResultFilename, trainRes, true)) 
-    FAIL("Unable to load data rainResultFilenam"); 
+    FAIL("Cannot load dataset trainRes.csv"); 
 
   // Get the labels out.
   arma::Row<size_t> labels(trainData.n_cols);
@@ -241,9 +241,9 @@ TEST_CASE("SeparateTrainIncrementalTest", "[NBCTest]")
 
   arma::mat trainData, trainRes, calcMat;
   if (!data::Load(trainFilename, trainData, true)) 
-    FAIL("Unable to load data rainFilenam"); 
+    FAIL("Cannot load dataset trainSet.csv"); 
   if (!data::Load(trainResultFilename, trainRes, true)) 
-    FAIL("Unable to load data rainResultFilenam"); 
+    FAIL("Cannot load dataset trainRes.csv"); 
 
   // Get the labels out.
   arma::Row<size_t> labels(trainData.n_cols);
@@ -301,9 +301,9 @@ TEST_CASE("SeparateTrainIndividualIncrementalTest", "[NBCTest]")
 
   arma::mat trainData, trainRes, calcMat;
   if (!data::Load(trainFilename, trainData, true)) 
-    FAIL("Unable to load data rainFilenam"); 
+    FAIL("Cannot load dataset trainSet.csv"); 
   if (!data::Load(trainResultFilename, trainRes, true)) 
-    FAIL("Unable to load data rainResultFilenam"); 
+    FAIL("Cannot load dataset trainRes.csv"); 
 
   // Get the labels out.
   arma::Row<size_t> labels(trainData.n_cols);
@@ -373,9 +373,9 @@ TEST_CASE("NaiveBayesClassifierHighDimensionsTest", "[NBCTest]")
   arma::mat trainData;
   arma::Row<size_t> trainLabels;
   if (!data::Load(trainFilename, trainData, true)) 
-    FAIL("Unable to load data rainFilenam"); 
+    FAIL("Cannot load dataset nbc_high_dim_train.csv"); 
   if (!data::Load(trainLabelsFileName, trainLabels, true)) 
-    FAIL("Unable to load data rainLabelsFileNam"); 
+    FAIL("Cannot load dataset nbc_high_dim_train_labels.csv"); 
 
   // Initialize and train a NBC model.
   NaiveBayesClassifier<> nbcTest(trainData, trainLabels, classes);
@@ -385,9 +385,9 @@ TEST_CASE("NaiveBayesClassifierHighDimensionsTest", "[NBCTest]")
   arma::Row<size_t> testLabels;
   arma::Row<size_t> calcVec;
   if (!data::Load(testFilename, testData, true)) 
-    FAIL("Unable to load data estFilenam"); 
+    FAIL("Cannot load dataset nbc_high_dim_test.csv"); 
   if (!data::Load(testLabelsFilename, testLabels, true)) 
-    FAIL("Unable to load data estLabelsFilenam"); 
+    FAIL("Cannot load dataset nbc_high_dim_test_labels.csv"); 
 
   // Classify observations in the test dataset. To use Classify() method with
   // a parameter for probabilities of predictions, we pass 'calcProbs' to the

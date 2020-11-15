@@ -22,7 +22,7 @@ TEST_CASE("Radical_Test_Radical3D", "[RadicalTest]")
 {
   mat matX;
   if (!data::Load("data_3d_mixed.txt", matX)) 
-    FAIL("Unable to load data data_3d_mixed.txt"); 
+    FAIL("Cannot load dataset data_3d_mixed.txt"); 
 
   Radical rad(0.175, 5, 100, matX.n_rows - 1);
 
@@ -41,7 +41,7 @@ TEST_CASE("Radical_Test_Radical3D", "[RadicalTest]")
 
   mat matS;
   if (!data::Load("data_3d_ind.txt", matS)) 
-    FAIL("Unable to load data data_3d_ind.txt"); 
+    FAIL("Cannot load dataset data_3d_ind.txt"); 
   rad.DoRadical(matS, matY, matW);
 
   matYT = trans(matY);

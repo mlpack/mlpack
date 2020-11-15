@@ -414,7 +414,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputColParamTest",
   // Now load the vector back and make sure it was saved correctly.
   arma::vec dataset2;
   if (!data::Load("test.csv", dataset2)) 
-    FAIL("Unable to load data test.csv"); 
+    FAIL("Cannot load dataset test.csv"); 
 
   REQUIRE(dataset.n_rows == dataset2.n_rows);
   for (size_t i = 0; i < dataset.n_elem; ++i)
@@ -463,7 +463,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedColParamTest",
   // Now load the vector back and make sure it was saved correctly.
   arma::Col<size_t> dataset2;
   if (!data::Load("test.csv", dataset2)) 
-    FAIL("Unable to load data test.csv"); 
+    FAIL("Cannot load dataset test.csv"); 
 
   REQUIRE(dataset.n_rows == dataset2.n_rows);
   for (size_t i = 0; i < dataset.n_elem; ++i)
@@ -512,7 +512,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputRowParamTest",
   // Now load the row vector back and make sure it was saved correctly.
   arma::rowvec dataset2;
   if (!data::Load("test.csv", dataset2)) 
-    FAIL("Unable to load data test.csv"); 
+    FAIL("Cannot load dataset test.csv"); 
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
   for (size_t i = 0; i < dataset.n_elem; ++i)
@@ -560,7 +560,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputUnsignedRowParamTest", "[IOTest]")
   // Now load the row vector back and make sure it was saved correctly.
   arma::Row<size_t> dataset2;
   if (!data::Load("test.csv", dataset2)) 
-    FAIL("Unable to load data test.csv"); 
+    FAIL("Cannot load dataset test.csv"); 
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
   for (size_t i = 0; i < dataset.n_elem; ++i)
@@ -789,7 +789,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixParamTest",
   // Now load the matrix back and make sure it was saved correctly.
   arma::mat dataset2;
   if (!data::Load("test.csv", dataset2)) 
-    FAIL("Unable to load data test.csv"); 
+    FAIL("Cannot load dataset test.csv"); 
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
   REQUIRE(dataset.n_rows == dataset2.n_rows);
@@ -839,7 +839,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixNoTransposeParamTest",
   // Now load the matrix back and make sure it was saved correctly.
   arma::mat dataset2;
   if (!data::Load("test.csv", dataset2, true, false)) 
-    FAIL("Unable to load data test.csv"); 
+    FAIL("Cannot load dataset test.csv"); 
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
   REQUIRE(dataset.n_rows == dataset2.n_rows);
