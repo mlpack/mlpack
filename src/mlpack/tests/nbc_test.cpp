@@ -98,7 +98,7 @@ TEST_CASE("NaiveBayesClassifierIncrementalTest", "[NBCTest]")
 {
   const char* trainFilename = "trainSet.csv";
   const char* testFilename = "testSet.csv";
-  const char* trainResultFilename = "trainSet.csv";
+  const char* trainResultFilename = "trainRes.csv";
   const char* testResultFilename = "testRes.csv";
   const char* testResultProbsFilename = "testResProbs.csv";
   size_t classes = 2;

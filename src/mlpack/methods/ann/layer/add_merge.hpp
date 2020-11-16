@@ -49,6 +49,7 @@ class AddMerge
    * @param run Call the Forward/Backward method before the output is merged.
    */
   AddMerge(const bool model = false, const bool run = true);
+
   /**
    * Create the AddMerge object using the specified parameters.
    *
@@ -57,6 +58,7 @@ class AddMerge
    * @param ownsLayers Delete the layers when this is deallocated.
    */
   AddMerge(const bool model, const bool run, const bool ownsLayers);
+
   //! Destructor to release allocated memory.
   ~AddMerge();
 

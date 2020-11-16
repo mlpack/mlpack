@@ -30,12 +30,12 @@ using namespace mlpack::ann;
  */
 template<typename MatType = arma::mat, typename ModelType>
 void TestNetwork(ModelType& model,
-  MatType& trainData,
-  MatType& trainLabels,
-  MatType& testData,
-  MatType& testLabels,
-  const size_t maxEpochs,
-  const double classificationErrorThreshold)
+                  MatType& trainData,
+                  MatType& trainLabels,
+                  MatType& testData,
+                  MatType& testLabels,
+                  const size_t maxEpochs,
+                  const double classificationErrorThreshold)
 {
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   model.Train(trainData, trainLabels, opt);
@@ -47,7 +47,7 @@ void TestNetwork(ModelType& model,
   for (size_t i = 0; i < predictionTemp.n_cols; ++i)
   {
     prediction(i) = arma::as_scalar(arma::find(
-      arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
   }
 
   size_t correct = arma::accu(prediction == testLabels);
@@ -58,9 +58,9 @@ void TestNetwork(ModelType& model,
 // network1 should be allocated with `new`, and trained on some data.
 template<typename MatType = arma::mat, typename ModelType>
 void CheckCopyFunction(ModelType* network1,
-  MatType& trainData,
-  MatType& trainLabels,
-  const size_t maxEpochs)
+                        MatType& trainData,
+                        MatType& trainLabels,
+                        const size_t maxEpochs)
 {
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   network1->Train(trainData, trainLabels, opt);
@@ -81,9 +81,9 @@ void CheckCopyFunction(ModelType* network1,
 // network1 should be allocated with `new`, and trained on some data.
 template<typename MatType = arma::mat, typename ModelType>
 void CheckMoveFunction(ModelType* network1,
-  MatType& trainData,
-  MatType& trainLabels,
-  const size_t maxEpochs)
+                        MatType& trainData,
+                        MatType& trainLabels,
+                        const size_t maxEpochs)
 {
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   network1->Train(trainData, trainLabels, opt);
@@ -135,13 +135,13 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
    * +-----+       +-----+
    */
 
-  FFN<NegativeLogLikelihood<> >* model = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
   model->Add<Linear<> >(trainData.n_rows, 8);
   model->Add<SigmoidLayer<> >();
   model->Add<Linear<> >(8, 3);
   model->Add<LogSoftMax<> >();
 
-  FFN<NegativeLogLikelihood<> >* model1 = new FFN<NegativeLogLikelihood<> >;
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
   model1->Add<Linear<> >(trainData.n_rows, 8);
   model1->Add<SigmoidLayer<> >();
   model1->Add<Linear<> >(8, 3);
@@ -248,12 +248,12 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
 
   ens::VanillaUpdate opt;
   model.ResetParameters();
-#if ENS_VERSION_MAJOR == 1
-  opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
-#else
-  ens::VanillaUpdate::Policy<arma::mat, arma::mat> optPolicy(opt,
-    model.Parameters().n_rows, model.Parameters().n_cols);
-#endif
+  #if ENS_VERSION_MAJOR == 1
+    opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
+  #else
+    ens::VanillaUpdate::Policy<arma::mat, arma::mat> optPolicy(opt,
+        model.Parameters().n_rows, model.Parameters().n_cols);
+  #endif
   double stepSize = 0.01;
   size_t batchSize = 10;
 
@@ -266,30 +266,30 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
     while (batchStart < dataset.n_cols)
     {
       size_t batchEnd = std::min(batchStart + batchSize,
-        (size_t)dataset.n_cols);
+          (size_t) dataset.n_cols);
       arma::mat currentData = dataset.cols(batchStart, batchEnd - 1);
       arma::mat currentLabels = labels.cols(batchStart, batchEnd - 1);
       arma::mat currentResuls;
       model.Forward(currentData, currentResuls);
       arma::mat gradients;
       model.Backward(currentData, currentLabels, gradients);
-#if ENS_VERSION_MAJOR == 1
-      opt.Update(model.Parameters(), stepSize, gradients);
-#else
-      optPolicy.Update(model.Parameters(), stepSize, gradients);
-#endif
-      batchStart = batchEnd;
+      #if ENS_VERSION_MAJOR == 1
+            opt.Update(model.Parameters(), stepSize, gradients);
+      #else
+            optPolicy.Update(model.Parameters(), stepSize, gradients);
+      #endif
+            batchStart = batchEnd;
 
       arma::mat prediction = arma::zeros<arma::mat>(1, currentResuls.n_cols);
 
       for (size_t i = 0; i < currentResuls.n_cols; ++i)
       {
         prediction(i) = arma::as_scalar(arma::find(
-          arma::max(currentResuls.col(i)) == currentResuls.col(i), 1)) + 1;
+            arma::max(currentResuls.col(i)) == currentResuls.col(i), 1)) + 1;
       }
 
       size_t correct = arma::accu(prediction == currentLabels);
-      error(1 - (double)correct / batchSize);
+      error(1 - (double) correct / batchSize);
     }
     Log::Debug << "Current training error: " << error.mean() << std::endl;
     iteration++;
@@ -323,27 +323,27 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
 
-  /*
-   * Construct a feed forward network with trainData.n_rows input nodes,
-   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-   * network structure looks like:
-   *
-   *  Input         Hidden        Dropout      Output
-   *  Layer         Layer         Layer        Layer
-   * +-----+       +-----+       +-----+       +-----+
-   * |     |       |     |       |     |       |     |
-   * |     +------>|     +------>|     +------>|     |
-   * |     |     +>|     |       |     |       |     |
-   * +-----+     | +--+--+       +-----+       +-----+
-   *             |
-   *  Bias       |
-   *  Layer      |
-   * +-----+     |
-   * |     |     |
-   * |     +-----+
-   * |     |
-   * +-----+
-   */
+ /*
+  * Construct a feed forward network with trainData.n_rows input nodes,
+  * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+  * network structure looks like:
+  *
+  *  Input         Hidden        Dropout      Output
+  *  Layer         Layer         Layer        Layer
+  * +-----+       +-----+       +-----+       +-----+
+  * |     |       |     |       |     |       |     |
+  * |     +------>|     +------>|     +------>|     |
+  * |     |     +>|     |       |     |       |     |
+  * +-----+     | +--+--+       +-----+       +-----+
+  *             |
+  *  Bias       |
+  *  Layer      |
+  * +-----+     |
+  * |     |     |
+  * |     +-----+
+  * |     |
+  * +-----+   
+  */  
 
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);
@@ -544,7 +544,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   jsonModel.Predict(testData, binaryPredictions);
 
   CheckMatrices(predictions, xmlPredictions, jsonPredictions,
-    binaryPredictions);
+      binaryPredictions);
 }
 
 /**
@@ -610,9 +610,9 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 
   // Forward pass only through the Add module.
   model.Forward(input,
-    output,
-    1 /* Index of the Add module */,
-    1 /* Index of the Add module */);
+                output,
+                1 /* Index of the Add module */,
+                1 /* Index of the Add module */);
 
   // As we only forward pass through Add module, input and output should
   // differ by a matrix of ones.
@@ -620,9 +620,9 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 
   // Forward pass only through the Add module and the LinearNoBias module.
   model.Forward(input,
-    output,
-    1 /* Index of the Add module */,
-    2 /* Index of the LinearNoBias module */);
+                output,
+                1 /* Index of the Add module */,
+                2 /* Index of the LinearNoBias module */);
 
   // As we only forward pass through Add module followed by the LinearNoBias
   // module, output should be a matrix of 20s.(output = weight * input)
