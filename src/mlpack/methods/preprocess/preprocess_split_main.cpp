@@ -71,7 +71,10 @@ BINDING_EXAMPLE(
 
 BINDING_EXAMPLE(
     "To maintain the ratio of each class in the train and test sets, the" +
-    PRINT_PARAM_STRING("stratify_data") + " option can be used.");
+    PRINT_PARAM_STRING("stratify_data") + " option can be used."
+    "\n\n" +
+    PRINT_CALL("preprocess_split", "input", "X", "training", "X_train", "test",
+        "X_test", "test_ratio", 0.4, "stratify_data", true));
 
 // See also...
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
