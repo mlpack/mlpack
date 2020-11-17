@@ -284,7 +284,7 @@ static void mlpackMain()
       // Now train.
       Timer::Start("training");
       p->P().MaxIterations() = maxIterations;
-      p->P().Train(trainingData, labels.t(), numClasses);
+      p->P().Train(trainingData, labels, numClasses);
       Timer::Stop("training");
     }
   }
