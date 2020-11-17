@@ -310,9 +310,11 @@ macro (post_r_setup)
   set(R_SRC_FILES ${R_SRC_HPP_FILES} ${R_SRC_CPP_FILES})
 
   # In Case of R_Bindings Move all of these header to <package>/src/cereal/.
-  # Collect all header and source files in the library.
-  file(GLOB_RECURSE RCEREAL_SRC_H_FILES RELATIVE "${CEREAL_INCLUDE_DIR}" ${CEREAL_INCLUDE_DIR}/cereal/*.h)
-  file(GLOB_RECURSE RCEREAL_SRC_HPP_FILES RELATIVE "${CEREAL_INCLUDE_DIR}" ${CEREAL_INCLUDE_DIR}/cereal/*.hpp)
+  # Collect all header files in the library.
+  file(GLOB_RECURSE RCEREAL_SRC_H_FILES RELATIVE "${CEREAL_INCLUDE_DIR}"
+       "${CEREAL_INCLUDE_DIR}/cereal/*.h")
+  file(GLOB_RECURSE RCEREAL_SRC_HPP_FILES RELATIVE "${CEREAL_INCLUDE_DIR}"
+       "${CEREAL_INCLUDE_DIR}/cereal/*.hpp")
   set(RCEREAL_SRC_FILES ${RCEREAL_SRC_HPP_FILES} ${RCEREAL_SRC_H_FILES})
 
   # First we have to create that directory though.
