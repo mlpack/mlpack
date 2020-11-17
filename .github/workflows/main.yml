@@ -12,7 +12,7 @@ name: mlpack.mlpack
 
 jobs:
   cancel:
-    name: 'Cancel Previous Builds Test'
+    name: 'Cancel Previous Builds'
     if: "github.repository == 'mlpack/mlpack' && !startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
     runs-on: ubuntu-latest
     timeout-minutes: 3
