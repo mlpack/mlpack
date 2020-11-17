@@ -309,8 +309,10 @@ macro (post_r_setup)
   file(GLOB_RECURSE R_SRC_CPP_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" *.cpp)
   set(R_SRC_FILES ${R_SRC_HPP_FILES} ${R_SRC_CPP_FILES})
 
-  # In Case of R_Bindings Move all of these header to <package>/src/cereal/.
-  # Collect all header files in the library.
+  # In case of R_Bindings we are copying all of these header to
+  # <package>/src/cereal/ because the currently-packaged version
+  # of Rcereal throws warnings on CRAN.
+  # Collect all header files in the cereal folder.
   file(GLOB_RECURSE RCEREAL_SRC_H_FILES RELATIVE "${CEREAL_INCLUDE_DIR}"
        "${CEREAL_INCLUDE_DIR}/cereal/*.h")
   file(GLOB_RECURSE RCEREAL_SRC_HPP_FILES RELATIVE "${CEREAL_INCLUDE_DIR}"
