@@ -1415,9 +1415,18 @@ TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest]")
     arma::mat one, two;
     DatasetInfo info;
   if (!data::Load(testFiles[i], one)) 
-    FAIL("Cannot load dataset"); 
+  {
+    std::string message = "Cannot load dataset ";
+    message.append(testFiles[i]);
+    FAIL(message);
+  }
+
   if (!data::Load(testFiles[i], two, info)) 
-    FAIL("Cannot load dataset"); 
+  {
+    std::string message = "Cannot load dataset ";
+    message.append(testFiles[i]);
+    FAIL(message);
+  }
 
     // Check that the matrices contain the same information.
     REQUIRE(one.n_elem == two.n_elem);
@@ -1456,10 +1465,19 @@ TEST_CASE("NontransposedCSVDatasetInfoLoad", "[LoadSaveTest]")
   {
     arma::mat one, two;
     DatasetInfo info;
-  if (!data::Load(testFiles[i], one, true, false)) 
-    FAIL("Cannot load dataset"); 
-  if (!data::Load(testFiles[i], two, info, true, false)) 
-    FAIL("Cannot load dataset"); 
+    if (!data::Load(testFiles[i], one, true, false))
+    {
+      std::string message = "Cannot load dataset ";
+      message.append(testFiles[i]);
+      FAIL(message);
+    }
+
+    if (!data::Load(testFiles[i], two, info, true, false)) 
+    {
+      std::string message = "Cannot load dataset ";
+      message.append(testFiles[i]);
+      FAIL(message);
+    }
 
     // Check that the matrices contain the same information.
     REQUIRE(one.n_elem == two.n_elem);
