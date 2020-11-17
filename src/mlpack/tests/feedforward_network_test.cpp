@@ -31,11 +31,11 @@ using namespace mlpack::ann;
 template<typename MatType = arma::mat, typename ModelType>
 void TestNetwork(ModelType& model,
                  MatType& trainData,
-                  MatType& trainLabels,
-                  MatType& testData,
-                  MatType& testLabels,
-                  const size_t maxEpochs,
-                  const double classificationErrorThreshold)
+                 MatType& trainLabels,
+                 MatType& testData,
+                 MatType& testLabels,
+                 const size_t maxEpochs,
+                 const double classificationErrorThreshold)
 {
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   model.Train(trainData, trainLabels, opt);
@@ -59,8 +59,8 @@ void TestNetwork(ModelType& model,
 template<typename MatType = arma::mat, typename ModelType>
 void CheckCopyFunction(ModelType* network1,
                        MatType& trainData,
-                        MatType& trainLabels,
-                        const size_t maxEpochs)
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
 {
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   network1->Train(trainData, trainLabels, opt);
@@ -82,8 +82,8 @@ void CheckCopyFunction(ModelType* network1,
 template<typename MatType = arma::mat, typename ModelType>
 void CheckMoveFunction(ModelType* network1,
                        MatType& trainData,
-                        MatType& trainLabels,
-                        const size_t maxEpochs)
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
 {
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
   network1->Train(trainData, trainLabels, opt);
@@ -251,7 +251,7 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
   #if ENS_VERSION_MAJOR == 1
   opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
   #else
-    ens::VanillaUpdate::Policy<arma::mat, arma::mat> optPolicy(opt,
+  ens::VanillaUpdate::Policy<arma::mat, arma::mat> optPolicy(opt,
       model.Parameters().n_rows, model.Parameters().n_cols);
   #endif
   double stepSize = 0.01;
@@ -274,11 +274,11 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
       arma::mat gradients;
       model.Backward(currentData, currentLabels, gradients);
       #if ENS_VERSION_MAJOR == 1
-            opt.Update(model.Parameters(), stepSize, gradients);
+      opt.Update(model.Parameters(), stepSize, gradients);
       #else
-            optPolicy.Update(model.Parameters(), stepSize, gradients);
+      optPolicy.Update(model.Parameters(), stepSize, gradients);
       #endif
-            batchStart = batchEnd;
+      batchStart = batchEnd;
 
       arma::mat prediction = arma::zeros<arma::mat>(1, currentResuls.n_cols);
 
@@ -342,8 +342,8 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   * |     |     |
   * |     +-----+
   * |     |
-  * +-----+   
-  */  
+  * +-----+
+  */
 
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);
