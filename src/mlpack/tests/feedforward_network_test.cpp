@@ -30,7 +30,7 @@ using namespace mlpack::ann;
  */
 template<typename MatType = arma::mat, typename ModelType>
 void TestNetwork(ModelType& model,
-                  MatType& trainData,
+                 MatType& trainData,
                   MatType& trainLabels,
                   MatType& testData,
                   MatType& testLabels,
