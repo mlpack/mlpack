@@ -730,4 +730,3 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
   model.Train(trainData, trainLabels, opt);
 }
-
