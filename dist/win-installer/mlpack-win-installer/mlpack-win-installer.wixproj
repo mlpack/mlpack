@@ -33,10 +33,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
-    <HarvestDirectory Include="SourceDir" SuppressRegistry=true>
+    <HarvestDirectory Include="SourceDir">
       <DirectoryRefId>SourcesDir</DirectoryRefId>
       <ComponentGroupName>Sources</ComponentGroupName>
       <PreprocessorVariable>var.SourcesDir</PreprocessorVariable>
+      <SuppressRegistry>true</SuppressRegistry>
     </HarvestDirectory>
     <WixExtension Include="WixUIExtension">
       <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
