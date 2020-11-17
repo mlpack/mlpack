@@ -252,7 +252,7 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
   opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
   #else
     ens::VanillaUpdate::Policy<arma::mat, arma::mat> optPolicy(opt,
-        model.Parameters().n_rows, model.Parameters().n_cols);
+      model.Parameters().n_rows, model.Parameters().n_cols);
   #endif
   double stepSize = 0.01;
   size_t batchSize = 10;
