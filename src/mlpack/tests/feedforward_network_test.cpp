@@ -249,7 +249,7 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
   ens::VanillaUpdate opt;
   model.ResetParameters();
   #if ENS_VERSION_MAJOR == 1
-    opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
+  opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
   #else
     ens::VanillaUpdate::Policy<arma::mat, arma::mat> optPolicy(opt,
         model.Parameters().n_rows, model.Parameters().n_cols);
