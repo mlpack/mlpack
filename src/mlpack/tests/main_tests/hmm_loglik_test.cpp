@@ -50,7 +50,8 @@ TEST_CASE_METHOD(HMMLoglikTestFixture, "HMMLoglikOutputNegativeTest",
 {
   // Load data to train a discrete HMM model with.
   arma::mat inp;
-  data::Load("obs1.csv", inp);
+  if (!data::Load("obs1.csv", inp))
+    FAIL("Cannot load dataset obs1.csv");
   std::vector<arma::mat> trainSeq = {inp};
 
   // Initialize and train an HMM model.

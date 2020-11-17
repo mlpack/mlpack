@@ -323,27 +323,27 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
 
- /*
-  * Construct a feed forward network with trainData.n_rows input nodes,
-  * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-  * network structure looks like:
-  *
-  *  Input         Hidden        Dropout      Output
-  *  Layer         Layer         Layer        Layer
-  * +-----+       +-----+       +-----+       +-----+
-  * |     |       |     |       |     |       |     |
-  * |     +------>|     +------>|     +------>|     |
-  * |     |     +>|     |       |     |       |     |
-  * +-----+     | +--+--+       +-----+       +-----+
-  *             |
-  *  Bias       |
-  *  Layer      |
-  * +-----+     |
-  * |     |     |
-  * |     +-----+
-  * |     |
-  * +-----+
-  */
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Dropout      Output
+   *  Layer         Layer         Layer        Layer
+   * +-----+       +-----+       +-----+       +-----+
+   * |     |       |     |       |     |       |     |
+   * |     +------>|     +------>|     +------>|     |
+   * |     |     +>|     |       |     |       |     |
+   * +-----+     | +--+--+       +-----+       +-----+
+   *             |
+   *  Bias       |
+   *  Layer      |
+   * +-----+     |
+   * |     |     |
+   * |     +-----+
+   * |     |
+   * +-----+
+   */
 
   FFN<NegativeLogLikelihood<> > model;
   model.Add<Linear<> >(trainData.n_rows, 8);
@@ -730,3 +730,4 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
   model.Train(trainData, trainLabels, opt);
 }
+

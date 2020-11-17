@@ -52,7 +52,8 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  data::Load("preprocess_imputer_test.csv", inputData);
+  if (!data::Load("preprocess_imputer_test.csv", inputData))
+    FAIL("Cannot load dataset preprocess_imputer_test.csv");
 
   arma::mat outputData;
 
@@ -71,7 +72,8 @@ TEST_CASE_METHOD(
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(IO::GetParam<std::string>("output_file"), outputData);
+  if (!data::Load(IO::GetParam<std::string>("output_file"), outputData))
+    FAIL("Cannot load output_file");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
@@ -84,7 +86,8 @@ TEST_CASE_METHOD(
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(IO::GetParam<std::string>("output_file"), outputData);
+  if (!data::Load(IO::GetParam<std::string>("output_file"), outputData))
+    FAIL("Cannot Load output_file");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
@@ -98,7 +101,8 @@ TEST_CASE_METHOD(
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(IO::GetParam<std::string>("output_file"), outputData);
+  if (!data::Load(IO::GetParam<std::string>("output_file"), outputData))
+    FAIL("Cannot Load output_file");
   REQUIRE(outputData.n_cols == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
@@ -112,7 +116,8 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  data::Load("preprocess_imputer_test.csv", inputData);
+  if (!data::Load("preprocess_imputer_test.csv", inputData))
+    FAIL("Cannot load dataset preprocess_imputer_test.csv");
 
   // Store size of input dataset.
   size_t inputSize  = inputData.n_cols;
@@ -140,7 +145,8 @@ TEST_CASE_METHOD(
 
   // Now check that the output has desired dimensions.
   arma::mat outputData;
-  data::Load(IO::GetParam<std::string>("output_file"), outputData);
+  if (!data::Load(IO::GetParam<std::string>("output_file"), outputData))
+    FAIL("Cannot load output_file");
   REQUIRE(outputData.n_cols + countNaN == inputSize);
   REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
@@ -154,7 +160,8 @@ TEST_CASE_METHOD(
 {
   // Load synthetic dataset.
   arma::mat inputData;
-  data::Load("preprocess_imputer_test.csv", inputData);
+  if (!data::Load("preprocess_imputer_test.csv", inputData))
+    FAIL("Cannot load dataset preprocess_imputer_test.csv");
 
   // Input custom data points and labels.
   SetInputParam("input_file", (std::string) "preprocess_imputer_test.csv");

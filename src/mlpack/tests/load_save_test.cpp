@@ -84,9 +84,8 @@ TEST_CASE("WrongExtensionCorrectLoad", "[LoadSaveTest]")
   REQUIRE(testTrans.quiet_save("test_file.csv", arma::arma_binary) == true);
 
   // Now reload through our interface.
-  REQUIRE(
-    data::Load("test_file.csv", test, false, true, arma::arma_binary)
-    == true);
+  REQUIRE(data::Load(
+      "test_file.csv", test, false, true, arma::arma_binary) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1414,19 +1413,19 @@ TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest]")
   {
     arma::mat one, two;
     DatasetInfo info;
-  if (!data::Load(testFiles[i], one)) 
-  {
-    std::string message = "Cannot load dataset ";
-    message.append(testFiles[i]);
-    FAIL(message);
-  }
+    if (!data::Load(testFiles[i], one)) 
+    {
+      std::string message = "Cannot load dataset ";
+      message.append(testFiles[i]);
+      FAIL(message);
+    }
 
-  if (!data::Load(testFiles[i], two, info)) 
-  {
-    std::string message = "Cannot load dataset ";
-    message.append(testFiles[i]);
-    FAIL(message);
-  }
+    if (!data::Load(testFiles[i], two, info)) 
+    {
+      std::string message = "Cannot load dataset ";
+      message.append(testFiles[i]);
+      FAIL(message);
+    }
 
     // Check that the matrices contain the same information.
     REQUIRE(one.n_elem == two.n_elem);
