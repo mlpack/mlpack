@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
-    <HarvestDirectory Include="SourceDir">
+    <HarvestDirectory Include="SourceDir" SuppressRegistry=true>
       <DirectoryRefId>SourcesDir</DirectoryRefId>
       <ComponentGroupName>Sources</ComponentGroupName>
       <PreprocessorVariable>var.SourcesDir</PreprocessorVariable>
