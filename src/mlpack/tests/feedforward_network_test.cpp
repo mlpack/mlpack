@@ -58,7 +58,7 @@ void TestNetwork(ModelType& model,
 // network1 should be allocated with `new`, and trained on some data.
 template<typename MatType = arma::mat, typename ModelType>
 void CheckCopyFunction(ModelType* network1,
-                        MatType& trainData,
+                       MatType& trainData,
                         MatType& trainLabels,
                         const size_t maxEpochs)
 {
