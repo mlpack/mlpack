@@ -19,7 +19,7 @@ jobs:
     steps:
     - uses: rokroskar/workflow-run-cleanup-action@master
       env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        GITHUB_TOKEN: "${{ secrets.MLPACK_GITHUB_ACTIONS }}"
   jobR:
     name: mlpack R tarball
     if: ${{ github.repository == 'mlpack/mlpack' }}
