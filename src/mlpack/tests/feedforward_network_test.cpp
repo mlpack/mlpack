@@ -544,7 +544,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   jsonModel.Predict(testData, binaryPredictions);
 
   CheckMatrices(predictions, xmlPredictions, jsonPredictions,
-                  binaryPredictions);
+      binaryPredictions)
 }
 
 /**
