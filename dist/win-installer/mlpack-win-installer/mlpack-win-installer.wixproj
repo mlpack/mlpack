@@ -29,7 +29,7 @@
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <DefineConstants>HarvestPath=.\SourceDir</DefineConstants>
+    <DefineConstants>HarvestPath=.\SourceDir;SourcesDir=SourceDir</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
