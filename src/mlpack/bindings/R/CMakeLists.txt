@@ -375,6 +375,9 @@ macro (post_r_setup)
   string(REGEX REPLACE
       "\n#ifdef __GNUC__\n#pragma GCC diagnostic push\n#pragma GCC diagnostic ignored \"-Wconversion\"\n#endif\n"
       "" CEREAL_BASE64 "${CEREAL_BASE64}")
+  string(REGEX REPLACE
+      "#ifdef __GNUC__\n#pragma GCC diagnostic pop\n#endif"
+      "" CEREAL_BASE64 "${CEREAL_BASE64}")
   file(WRITE ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/cereal/external/base64.hpp "${CEREAL_BASE64}")
 
   # Then configure 'mlpack.h.in' using ${R_SRC}.
