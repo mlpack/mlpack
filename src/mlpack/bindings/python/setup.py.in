@@ -34,7 +34,7 @@ else:
 # directories with a (valid) space in the name will be given to us as '\ '; so,
 # in order to split these right, we first convert all spaces to ';', then
 # convert '\;' back to ' ', then split on ';'.
-library_dirs = list(filter(None, ['${MLPACK_LIBDIR}']))
+library_dirs = ['${MLPACK_LIBDIR}']
 
 # We'll link with the exact paths to each library using extra_objects, instead
 # of linking with 'libraries' and 'library_dirs', because of differences in
