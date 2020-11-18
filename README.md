@@ -134,7 +134,6 @@ installed with these R packages.
      RcppEnsmallen >= 0.2.10.0
      BH >= 1.58
      roxygen2
-     Rcereal >= 1.1.2
 
 If the STB library headers are available, image loading support will be
 compiled.
