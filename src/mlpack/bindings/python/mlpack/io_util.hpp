@@ -24,9 +24,6 @@ namespace util {
  *
  * This function exists to work around Cython's lack of support for lvalue
  * references.
- *
- * @param identifier Name of parameter.
- * @param value Value to set parameter to.
  */
 template<typename T>
 inline void SetParam(const std::string& identifier, T& value)

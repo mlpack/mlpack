@@ -96,7 +96,7 @@ class TfIdfEncodingPolicy
    *
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param datasetSize The number of strings in the input dataset.
-   * @param * (maxNumTokens) The maximum number of tokens in the strings of the
+   * @param size_t (maxNumTokens) The maximum number of tokens in the strings of the
    *                     input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
@@ -119,7 +119,7 @@ class TfIdfEncodingPolicy
    *
    * @param output Output matrix to store the encoded results.
    * @param datasetSize The number of strings in the input dataset.
-   * @param * (maxNumTokens) The maximum number of tokens in the strings of the
+   * @param size_t (maxNumTokens) The maximum number of tokens in the strings of the
    *                     input dataset (not used).
    * @param dictionarySize The size of the dictionary.
    */
@@ -142,7 +142,7 @@ class TfIdfEncodingPolicy
    * @param output Output matrix to store the encoded results (sp_mat or mat).
    * @param value The encoded token.
    * @param line The line number at which the encoding is performed.
-   * @param * (index) The token index in the line.
+   * @param size_t (index) The token index in the line.
    */
   template<typename MatType>
   void Encode(MatType& output,
@@ -174,7 +174,7 @@ class TfIdfEncodingPolicy
    * @param output Output matrix to store the encoded results.
    * @param value The encoded token.
    * @param line The line number at which the encoding is performed.
-   * @param * (index) The token index in the line.
+   * @param size_t (index) The token index in the line.
    */
   template<typename ElemType>
   void Encode(std::vector<std::vector<ElemType>>& output,

@@ -39,7 +39,7 @@ class NoNormalization
   /**
    * Do nothing.
    *
-   * @param * (user) User ID.
+   * @param size_t (user) User ID.
    * @param * (item) Item ID.
    * @param rating Computed rating before denormalization.
    */

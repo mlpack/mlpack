@@ -64,7 +64,7 @@ class SVDIncompleteIncrementalLearning
    * to 0, so the input matrix and rank are not used.
    *
    * @param * (dataset) Input matrix to be factorized.
-   * @param * (rank) of factorization
+   * @param size_t (rank) of factorization
    */
   template<typename MatType>
   void Initialize(const MatType& /* dataset */, const size_t /* rank */)

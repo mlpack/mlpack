@@ -96,7 +96,7 @@ class OverallMeanNormalization
   /**
    * Denormalize computed rating by adding mean.
    *
-   * @param * (user) User ID.
+   * @param size_t (user) User ID.
    * @param * (item) Item ID.
    * @param rating Computed rating before denormalization.
    */

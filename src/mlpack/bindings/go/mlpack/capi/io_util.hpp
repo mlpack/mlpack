@@ -21,14 +21,11 @@ namespace util {
 
 /**
  * Set the parameter to the given value.
- *
- * @param identifier Name of parameter.
- * @param value Value to set parameter to.
  */
 template<typename T>
 inline void SetParam(const std::string& identifier, T& value)
 {
-  IO::GetParam<T>(identifier) = std::move(value);
+  IO::GetParam<T>(identifierIn) = std::move(value);
 }
 
 /**

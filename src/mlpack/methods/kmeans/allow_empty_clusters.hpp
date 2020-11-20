@@ -41,7 +41,7 @@ class AllowEmptyClusters
    *      of the iteration.
    * @param * (clusterCounts) Number of points in each cluster.
    * @param * (metric) The Metric to use.
-   * @param * (iteration) Number of iteration.
+   * @param size_t (iteration) Number of iteration.
    *
    * @return Number of points changed (0).
    */

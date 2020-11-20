@@ -29,7 +29,7 @@ class NaiveKernelRule
    * @param transformedData Matrix to output results into.
    * @param eigval KPCA eigenvalues will be written to this vector.
    * @param eigvec KPCA eigenvectors will be written to this matrix.
-   * @param * (rank) Rank to be used for matrix approximation.
+   * @param size_t (rank) Rank to be used for matrix approximation.
    * @param kernel Kernel to be used for computation.
    */
   static void ApplyKernelMatrix(const arma::mat& data,

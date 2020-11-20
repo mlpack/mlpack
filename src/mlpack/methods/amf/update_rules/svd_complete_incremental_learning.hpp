@@ -67,7 +67,7 @@ class SVDCompleteIncrementalLearning
    * are unnecessary; we are only setting the current element index to 0.
    *
    * @param * (dataset) Input matrix to be factorized.
-   * @param * (rank) Rank of factorization.
+   * @param size_t (rank) Rank of factorization.
    */
   void Initialize(const MatType& /* dataset */, const size_t /* rank */)
   {

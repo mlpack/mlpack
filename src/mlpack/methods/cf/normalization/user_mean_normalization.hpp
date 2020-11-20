@@ -124,7 +124,7 @@ class UserMeanNormalization
    * Denormalize computed rating by adding user mean.
    *
    * @param user User ID.
-   * @param * (item) Item ID.
+   * @param size_t (item) Item ID.
    * @param rating Computed rating before denormalization.
    */
   double Denormalize(const size_t user,

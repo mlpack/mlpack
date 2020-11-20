@@ -55,7 +55,7 @@ class AverageInterpolation
    * @param weights Resulting interpolation weights. The size of weights should
    *     be set to the number of neighbors before calling GetWeights().
    * @param * (decomposition) Decomposition object.
-   * @param * (queryUser) Queried user.
+   * @param size_t (queryUser) Queried user.
    * @param neighbors Neighbors of queried user.
    * @param * (similarities) Similarites between query user and neighbors.
    * @param * (cleanedData) Sparse rating matrix.

@@ -108,7 +108,7 @@ class ZScoreNormalization
   /**
    * Denormalize computed rating by adding mean and multiplying stddev.
    *
-   * @param * (user) User ID.
+   * @param size_t (user) User ID.
    * @param * (item) Item ID.
    * @param rating Computed rating before denormalization.
    */

@@ -21,30 +21,30 @@ namespace mlpack {
 namespace regression {
 
 /**
- * A Bayesian approach to the maximum likelihood estimation of the parameters 
- * \f$ \omega \f$ of the linear regression model. The Complexity is governed by 
- * the addition of a gaussian isotropic prior of precision \f$ \alpha \f$ over 
- * \f$ \omega \f$:  
+ * A Bayesian approach to the maximum likelihood estimation of the parameters
+ * \f$ \omega \f$ of the linear regression model. The Complexity is governed by
+ * the addition of a gaussian isotropic prior of precision \f$ \alpha \f$ over
+ * \f$ \omega \f$:
  *
  * \f[
  * p(\omega|\alpha) = \mathcal{N}(\omega|0, \alpha^{-1}I)
  * \f]
- * 
- * The optimization procedure calculates the posterior distribution of 
- * \f$ \omega \f$ knowing the data by maximizing an approximation of the log 
- * marginal likelihood derived from a type II maximum likelihood approximation. 
+ *
+ * The optimization procedure calculates the posterior distribution of
+ * \f$ \omega \f$ knowing the data by maximizing an approximation of the log
+ * marginal likelihood derived from a type II maximum likelihood approximation.
  * The determination of \f$ alpha \f$ and of the noise precision \f$ beta \f$
- * is part of the optimization process, leading to an automatic determination of 
- * w. The model being entirely based on probabilty distributions, uncertainties 
+ * is part of the optimization process, leading to an automatic determination of
+ * w. The model being entirely based on probabilty distributions, uncertainties
  * are available and easly computed for both the parameters and the predictions.
  *
- * The advantage over linear regression and ridge regression is that the 
+ * The advantage over linear regression and ridge regression is that the
  * regularization is determined from all the training data alone without any
- * require to an hold out method. 
+ * require to an hold out method.
  *
- * The code below is an implementation of the maximization of the evidence 
+ * The code below is an implementation of the maximization of the evidence
  * function described in the section 3.5.2 of the C.Bishop book, Pattern
- * Recognition and Machine Learning.  
+ * Recognition and Machine Learning.
  *
  * @code
  * @article{MacKay91bayesianinterpolation,
@@ -60,36 +60,36 @@ namespace regression {
  * @code
  * @book{Bishop:2006:PRM:1162264,
  *   author = {Bishop, Christopher M.},
- *   title = {Pattern Recognition and Machine Learning (Information Science 
+ *   title = {Pattern Recognition and Machine Learning (Information Science
  *            and Statistics)},
  *   chapter = {3}
  *   year = {2006},
  *   isbn = {0387310738},
  *   publisher = {Springer-Verlag},
  *   address = {Berlin, Heidelberg},
- * } 
+ * }
  * @endcode
- *   
+ *
  * Example of use:
  *
  * @code
  * arma::mat xTrain; // Train data matrix. Column-major.
  * arma::rowvec yTrain; // Train target values.
- 
+
  * // Train the model. Regularization strength is optimally tunned with the
  * // training data alone by applying the Train method.
  * BayesianLinearRegression estimator(); // Instanciate the estimator with default option.
  * estimator.Train(xTrain, yTrain);
- 
+
  * // Prediction on test points.
  * arma::mat xTest; // Test data matrix. Column-major.
  * arma::rowvec predictions;
- 
+
  * estimator.Predict(xTest, prediction);
- 
+
  * arma::rowvec yTest; // Test target values.
  * estimator.RMSE(xTest, yTest); // Evaluate using the RMSE score.
- 
+
  * // Compute the standard deviations of the predictions.
  * arma::rowvec stds;
  * estimator.Predict(xTest, responses, stds)
@@ -108,8 +108,8 @@ class BayesianLinearRegression
    * @param scaleData Whether or not scale the data according to the
    *    standard deviation of each feature.
    * @param nIterMax Maximum number of iterations for convergency.
-   * @param tol Level from which the solution is considered sufficientlly 
-   *    stable.  
+   * @param tol Level from which the solution is considered sufficientlly
+   *    stable.
    */
   BayesianLinearRegression(const bool centerData = true,
                            const bool scaleData = false,
@@ -119,7 +119,7 @@ class BayesianLinearRegression
   /**
    * Run BayesianLinearRegression. The input matrix (like all mlpack matrices) should be
    * column-major -- each column is an observation and each row is a dimension.
-   * 
+   *
    * @param data Column-major input data, dim(P, N).
    * @param responses A vector of targets, dim(N).
    * @return Root mean squared error.
@@ -133,13 +133,12 @@ class BayesianLinearRegression
    *
    * @param points The data points to apply the model.
    * @param predictions y, Contains the  predicted values on completion.
-   * @return Root mean squared error computed on the train set.
    */
   void Predict(const arma::mat& points,
                arma::rowvec& predictions) const;
 
   /**
-   * Predict \f$y_{i}\f$ and the standard deviation of the predictive posterior 
+   * Predict \f$y_{i}\f$ and the standard deviation of the predictive posterior
    * distribution for each data point in the given data matrix, using the
    * currently-trained Bayesian Ridge estimator.
    *
@@ -163,7 +162,7 @@ class BayesianLinearRegression
               const arma::rowvec& responses) const;
 
   /**
-   * Get the solution vector. 
+   * Get the solution vector.
    *
    * @return omega Solution vector.
    */
@@ -187,7 +186,7 @@ class BayesianLinearRegression
 
   /**
    * Get the estimated variance. Train() must be called before.
-   *   
+   *
    * @return 1.0 / \f$ \beta \f$
    */
   double Variance() const { return 1.0 / Beta(); }
@@ -200,7 +199,7 @@ class BayesianLinearRegression
   const arma::colvec& DataOffset() const { return dataOffset; }
 
   /**
-   * Get the vector of standard deviations computed on the features over the 
+   * Get the vector of standard deviations computed on the features over the
    * training points.
    *
    * @return dataOffset

@@ -91,7 +91,7 @@ class XTreeAuxiliaryInformation
    * returns false the RectangleTree performs its default behavior.
    *
    * @param * (node) The node in which the point is being inserted.
-   * @param * (point) The global number of the point being inserted.
+   * @param size_t (point) The global number of the point being inserted.
    */
   bool HandlePointInsertion(TreeType* /* node */, const size_t /* point */)
   {
@@ -124,7 +124,7 @@ class XTreeAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    * @param * (node) The node from which the point is being deleted.
-   * @param * (localIndex) The local index of the point being deleted.
+   * @param size_t (localIndex) The local index of the point being deleted.
    */
   bool HandlePointDeletion(TreeType* /* node */ , const size_t /* localIndex */)
   {
@@ -138,7 +138,7 @@ class XTreeAuxiliaryInformation
    * information does that, then the method should return true; if the method
    * returns false the RectangleTree performs its default behavior.
    * @param * (node) The node from which the node is being deleted.
-   * @param * (nodeIndex) The local index of the node being deleted.
+   * @param size_t (nodeIndex) The local index of the node being deleted.
    */
   bool HandleNodeRemoval(TreeType* /* node */ , const size_t /* nodeIndex */)
   {
