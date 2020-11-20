@@ -45,29 +45,30 @@ class MarginRankingLoss
   /**
    * Computes the Margin Ranking Loss function.
    * 
-   * @param input Concatenation of the two inputs for evaluating the specified
-   * function.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
    * @param target The label vector which contains values of -1 or 1.
    */
-  template<typename InputType, typename TargetType>
-  typename InputType::elem_type Forward(const InputType& input,
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
                                         const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param input The propagated concatenated input activation.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
    * @param target The label vector which contains -1 or 1 values.
-   * @param output The calculated error.
+   * @param loss The calculated error.
    */
   template <
-    typename InputType,
+    typename PredictionType,
     typename TargetType,
-    typename OutputType
+    typename LossType
   >
-  void Backward(const InputType& input,
+  void Backward(const PredictionType& prediction,
                 const TargetType& target,
-                OutputType& output);
+                LossType& loss);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
