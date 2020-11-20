@@ -34,9 +34,9 @@ class BinaryNumericSplitInfo
 
   //! Serialize the split (save/load the split points).
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(splitPoint);
+    ar(CEREAL_NVP(splitPoint));
   }
 
  private:

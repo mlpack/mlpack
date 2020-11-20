@@ -24,7 +24,7 @@ using namespace mlpack::metric;
 using namespace mlpack::tree;
 using namespace mlpack::kernel;
 
-using namespace boost::serialization;
+using namespace cereal;
 
 // Brute force gaussian KDE.
 template <typename KernelType>

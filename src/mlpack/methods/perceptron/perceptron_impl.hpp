@@ -199,13 +199,13 @@ template<typename LearnPolicy,
 template<typename Archive>
 void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // We just need to serialize the maximum number of iterations, the weights,
   // and the biases.
-  ar & BOOST_SERIALIZATION_NVP(maxIterations);
-  ar & BOOST_SERIALIZATION_NVP(weights);
-  ar & BOOST_SERIALIZATION_NVP(biases);
+  ar(CEREAL_NVP(maxIterations));
+  ar(CEREAL_NVP(weights));
+  ar(CEREAL_NVP(biases));
 }
 
 } // namespace perceptron

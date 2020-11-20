@@ -8,6 +8,9 @@
 #define BINDING_TYPE BINDING_TYPE_R
 #include <${INCLUDE_FILE}>
 
+#define Realloc(p,n,t) (t *) R_chk_realloc( (void *)(p), (R_SIZE_T)((n) * sizeof(t)) )
+#define Free(p)        (R_chk_free( (void *)(p) ), (p) = NULL)
+
 // [[Rcpp::export]]
 void ${PROGRAM_NAME}_mlpackMain()
 {

@@ -10,8 +10,8 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 #include <mlpack/methods/lsh/lsh_search.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
@@ -87,8 +87,6 @@ void GetQueries(arma::mat& qdata)
   qdata.col(1) = q2;
 }
 
-BOOST_AUTO_TEST_SUITE(LSHTest);
-
 /**
  * Test: Run LSH with varying number of tables, keeping all other parameters
  * constant. Compute the recall, i.e. the number of reported neighbors that
@@ -99,7 +97,7 @@ BOOST_AUTO_TEST_SUITE(LSHTest);
  * This produces false negatives, so we attempt the test numTries times and
  * only declare failure if all of them fail.
  */
-BOOST_AUTO_TEST_CASE(NumTablesTest)
+TEST_CASE("NumTablesTest", "[LSHTest]")
 {
   // kNN and LSH parameters (use LSH default parameters).
   const int k = 4;
@@ -161,7 +159,7 @@ BOOST_AUTO_TEST_CASE(NumTablesTest)
       break; // If test passes one time, it is sufficient.
   }
 
-  BOOST_REQUIRE(fail == false);
+  REQUIRE(fail == false);
 }
 
 /**
@@ -172,7 +170,7 @@ BOOST_AUTO_TEST_CASE(NumTablesTest)
  * will increase recall. Epsilon ensures that if noise lightly affects the
  * projections, the test will not fail.
  */
-BOOST_AUTO_TEST_CASE(HashWidthTest)
+TEST_CASE("HashWidthTest", "[LSHTest]")
 {
   // kNN and LSH parameters (use LSH default parameters).
   const int k = 4;
@@ -220,7 +218,7 @@ BOOST_AUTO_TEST_CASE(HashWidthTest)
     hValueRecall[h] = LSHSearch<>::ComputeRecall(lshNeighbors, groundTruth);
 
     if (h > 0)
-      BOOST_REQUIRE_GE(hValueRecall[h], hValueRecall[h - 1] - epsilon);
+      REQUIRE(hValueRecall[h] >= hValueRecall[h - 1] - epsilon);
   }
 }
 
@@ -232,7 +230,7 @@ BOOST_AUTO_TEST_CASE(HashWidthTest)
  * projections per table will decrease recall. Epsilon ensures that if noise
  * lightly affects the projections, the test will not fail.
  */
-BOOST_AUTO_TEST_CASE(NumProjTest)
+TEST_CASE("NumProjTest", "[LSHTest]")
 {
   // kNN and LSH parameters (use LSH default parameters).
   const int k = 4;
@@ -283,7 +281,7 @@ BOOST_AUTO_TEST_CASE(NumProjTest)
 
     // Don't check the first run; only check that increasing P decreases recall.
     if (p > 0)
-      BOOST_REQUIRE_LE(pValueRecall[p] - epsilon, pValueRecall[p - 1]);
+      REQUIRE(pValueRecall[p] - epsilon < pValueRecall[p - 1]);
   }
 }
 
@@ -297,7 +295,7 @@ BOOST_AUTO_TEST_CASE(NumProjTest)
  * to be very low. Set the threshold very high (recall <= 25%) to make sure
  * that a test fail means bad implementation.
  */
-BOOST_AUTO_TEST_CASE(RecallTest)
+TEST_CASE("RecallTest", "[LSHTest]")
 {
   // kNN and LSH parameters (use LSH default parameters).
   const int k = 4;
@@ -339,7 +337,7 @@ BOOST_AUTO_TEST_CASE(RecallTest)
       lshNeighborsExp, groundTruth);
 
   // This run should have recall higher than the threshold.
-  BOOST_REQUIRE_GE(recallExp, recallThreshExp);
+  REQUIRE(recallExp >= recallThreshExp);
 
   // Cheap LSH run.
   const int hChp = 1; // Small first-level hash width.
@@ -362,7 +360,7 @@ BOOST_AUTO_TEST_CASE(RecallTest)
       groundTruth);
 
   // This run should have recall lower than the threshold.
-  BOOST_REQUIRE_LE(recallChp, recallThreshChp);
+  REQUIRE(recallChp <= recallThreshChp);
 }
 
 /**
@@ -374,7 +372,7 @@ BOOST_AUTO_TEST_CASE(RecallTest)
  * located around (0, 0) and q2 in cluster 2 located around (3, 3). After the
  * projection, q1 should have neighbors in C3 and C4 and q2 in C1 and C2.
  */
-BOOST_AUTO_TEST_CASE(DeterministicMerge)
+TEST_CASE("DeterministicMerge", "[LSHTest]")
 {
   const size_t N = 40; // Must be divisible by 4 to create 4 clusters properly.
   arma::mat rdata;
@@ -411,13 +409,13 @@ BOOST_AUTO_TEST_CASE(DeterministicMerge)
     // cluster 4. Clusters 3 and 4 have points 20:39, so only neighbors among
     // those should be found.
     q = 0;
-    BOOST_REQUIRE_GE(neighbors(j, q), N / 2);
+    REQUIRE(neighbors(j, q) >= N / 2);
 
     // Query 2 is in cluster 2, which under this projection was merged with
     // cluster 1. Clusters 1 and 2 have points 0:19, so only neighbors among
     // those should be found.
     q = 1;
-    BOOST_REQUIRE_LT(neighbors(j, q), N / 2);
+    REQUIRE(neighbors(j, q) < N / 2);
   }
 }
 
@@ -430,7 +428,7 @@ BOOST_AUTO_TEST_CASE(DeterministicMerge)
  * a success if, after the projection, q1 should have neighbors in c3 and q2
  * in c2.
  */
-BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
+TEST_CASE("DeterministicNoMerge", "[LSHTest]")
 {
   const size_t N = 40;
   arma::mat rdata;
@@ -467,13 +465,13 @@ BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
 
     // Query 1 is in cluster 3, which is points 20:29.
     q = 0;
-    BOOST_REQUIRE_LT(neighbors(j, q), 3 * N / 4);
-    BOOST_REQUIRE_GE(neighbors(j, q), N / 2);
+    REQUIRE(neighbors(j, q) < 3 * N / 4);
+    REQUIRE(neighbors(j, q) >= N / 2);
 
     // Query 2 is in cluster 2, which is points 10:19.
     q = 1;
-    BOOST_REQUIRE_LT(neighbors(j, q), N / 2);
-    BOOST_REQUIRE_GE(neighbors(j, q), N / 4);
+    REQUIRE(neighbors(j, q) < N / 2);
+    REQUIRE(neighbors(j, q) >= N / 4);
   }
 }
 
@@ -483,7 +481,7 @@ BOOST_AUTO_TEST_CASE(DeterministicNoMerge)
  * with increasing number of probes. Also require that at least a few times
  * there's some increase in recall.
  */
-BOOST_AUTO_TEST_CASE(MultiprobeTest)
+TEST_CASE("MultiprobeTest", "[LSHTest]")
 {
   // Test parameters.
   const double epsilonIncrease = 0.01;
@@ -541,7 +539,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
       if (p > 0)
       {
         // More probes should at the very least not lower recall...
-        BOOST_REQUIRE_GE(recall, prevRecall);
+        REQUIRE(recall >= prevRecall);
 
         // ... and should ideally increase it a bit.
         if (recall > prevRecall + epsilonIncrease)
@@ -550,7 +548,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
       }
     }
   }
-  BOOST_REQUIRE(foundIncrease);
+  REQUIRE(foundIncrease);
 }
 
 /**
@@ -562,7 +560,7 @@ BOOST_AUTO_TEST_CASE(MultiprobeTest)
  * 2) q1 should have neighbors only from C2 with 1 additional probe.
  * 3) q2 should have all neighbors found with 3 additional probes.
  */
-BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
+TEST_CASE("MultiprobeDeterministicTest", "[LSHTest]")
 {
   // Generate known deterministic clusters of points.
   const size_t N = 40;
@@ -602,27 +600,27 @@ BOOST_AUTO_TEST_CASE(MultiprobeDeterministicTest)
 
   // Test that q1 simple search comes up empty.
   lshTest.Search(q1, k, neighbors, distances);
-  BOOST_REQUIRE(arma::all(neighbors.col(0) == N));
+  REQUIRE(arma::all(neighbors.col(0) == N));
 
   // Test that q1 search with 1 additional probe returns some C2 points.
   lshTest.Search(q1, k, neighbors, distances, 0, 1);
-  BOOST_REQUIRE(arma::all(
+  REQUIRE(arma::all(
         (neighbors.col(0) == N) ||
         ((neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2))));
 
   // Test that q2 simple search returns some C2 points.
   lshTest.Search(q2, k, neighbors, distances);
-  BOOST_REQUIRE(arma::all(
+  REQUIRE(arma::all(
       (neighbors.col(0) == N) ||
       ((neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2))));
 
   // Test that q2 with 3 additional probes returns all C2 points.
   lshTest.Search(q2, k, neighbors, distances, 0, 3);
-  BOOST_REQUIRE(arma::all(
+  REQUIRE(arma::all(
       (neighbors.col(0) >= N / 4) && (neighbors.col(0) < N / 2)));
 }
 
-BOOST_AUTO_TEST_CASE(LSHTrainTest)
+TEST_CASE("LSHTrainTest", "[LSHTest]")
 {
   // This is a not very good test that simply checks that the re-trained LSH
   // model operates on the correct dimensionality and returns the correct number
@@ -640,17 +638,17 @@ BOOST_AUTO_TEST_CASE(LSHTrainTest)
 
   lsh.Search(queryData, 3, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 200);
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 200);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
+  REQUIRE(neighbors.n_cols == 200);
+  REQUIRE(neighbors.n_rows == 3);
+  REQUIRE(distances.n_cols == 200);
+  REQUIRE(distances.n_rows == 3);
 }
 
 /**
  * Test: this verifies ComputeRecall works correctly by providing two identical
  * vectors and requiring that Recall is equal to 1.
  */
-BOOST_AUTO_TEST_CASE(RecallTestIdentical)
+TEST_CASE("RecallTestIdentical", "[LSHTest]")
 {
   const size_t k = 5; // 5 nearest neighbors
   const size_t numQueries = 1;
@@ -665,7 +663,7 @@ BOOST_AUTO_TEST_CASE(RecallTestIdentical)
   q1.set_size(k, numQueries);
   q1.col(0) = arma::linspace< arma::Col<size_t> >(1, k, k);
 
-  BOOST_REQUIRE_EQUAL(LSHSearch<>::ComputeRecall(base, q1), 1);
+  REQUIRE(LSHSearch<>::ComputeRecall(base, q1) == 1);
 }
 
 /**
@@ -674,7 +672,7 @@ BOOST_AUTO_TEST_CASE(RecallTestIdentical)
  * how the recall and accuracy metrics differ - accuracy in this case would be
  * 0, recall should not be
  */
-BOOST_AUTO_TEST_CASE(RecallTestPartiallyCorrect)
+TEST_CASE("RecallTestPartiallyCorrect", "[LSHTest]")
 {
   const size_t k = 5; // 5 nearest neighbors
   const size_t numQueries = 1;
@@ -696,13 +694,13 @@ BOOST_AUTO_TEST_CASE(RecallTestPartiallyCorrect)
     6 << arma::endr <<
     7 << arma::endr;
 
-  BOOST_REQUIRE_CLOSE(LSHSearch<>::ComputeRecall(base, q2), 0.6, 0.0001);
+  REQUIRE(LSHSearch<>::ComputeRecall(base, q2) == Approx(0.6).epsilon(1e-6));
 }
 
 /**
  * Test: If given a completely wrong vector, ComputeRecall should return 0
  */
-BOOST_AUTO_TEST_CASE(RecallTestIncorrect)
+TEST_CASE("RecallTestIncorrect", "[LSHTest]")
 {
   const size_t k = 5; // 5 nearest neighbors
   const size_t numQueries = 1;
@@ -716,14 +714,14 @@ BOOST_AUTO_TEST_CASE(RecallTestIncorrect)
   q3.set_size(k, numQueries);
   q3.col(0) = arma::linspace< arma::Col<size_t> >(k + 1, 2 * k, k);
 
-  BOOST_REQUIRE_EQUAL(LSHSearch<>::ComputeRecall(base, q3), 0);
+  REQUIRE(LSHSearch<>::ComputeRecall(base, q3) == 0);
 }
 
 /**
  * Test: If given a vector of wrong shape, ComputeRecall should throw an
  * exception.
  */
-BOOST_AUTO_TEST_CASE(RecallTestException)
+TEST_CASE("RecallTestException", "[LSHTest]")
 {
   const size_t k = 5; // 5 nearest neighbors
   const size_t numQueries = 1;
@@ -736,11 +734,11 @@ BOOST_AUTO_TEST_CASE(RecallTestException)
   arma::Mat<size_t> q4;
   q4.set_size(2 * k, numQueries);
 
-  BOOST_REQUIRE_THROW(LSHSearch<>::ComputeRecall(base, q4),
+  REQUIRE_THROWS_AS(LSHSearch<>::ComputeRecall(base, q4),
       std::invalid_argument);
 }
 
-BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
+TEST_CASE("LSHTestEmptyConstructorTest", "[LSHTest]")
 {
   // If we create an empty LSH model and then call Search(), it should throw an
   // exception.
@@ -749,7 +747,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
   arma::mat dataset = arma::randu<arma::mat>(5, 50);
   arma::mat distances;
   arma::Mat<size_t> neighbors;
-  BOOST_REQUIRE_THROW(lsh.Search(dataset, 2, neighbors, distances),
+  REQUIRE_THROWS_AS(lsh.Search(dataset, 2, neighbors, distances),
       std::invalid_argument);
 
   // Now, train.
@@ -757,10 +755,10 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
 
   lsh.Search(dataset, 3, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 50);
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 50);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
+  REQUIRE(neighbors.n_cols == 50);
+  REQUIRE(neighbors.n_rows == 3);
+  REQUIRE(distances.n_cols == 50);
+  REQUIRE(distances.n_rows == 3);
 }
 
 // These two tests are only compiled if the user has specified OpenMP to be
@@ -770,7 +768,7 @@ BOOST_AUTO_TEST_CASE(EmptyConstructorTest)
  * Test: This test verifies that parallel query processing returns correct
  * results for the bichromatic search.
  */
-BOOST_AUTO_TEST_CASE(ParallelBichromatic)
+TEST_CASE("ParallelBichromatic", "[LSHTest]")
 {
   // kNN and LSH parameters (use LSH default parameters).
   const int k = 4;
@@ -804,14 +802,14 @@ BOOST_AUTO_TEST_CASE(ParallelBichromatic)
   // Require both have same results
   double recall = LSHSearch<>::ComputeRecall(
       sequentialNeighbors, parallelNeighbors);
-  BOOST_REQUIRE_EQUAL(recall, 1);
+  REQUIRE(recall == 1);
 }
 
 /**
  * Test: This test verifies that parallel query processing returns correct
  * results for the monochromatic search.
  */
-BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
+TEST_CASE("ParallelMonochromatic", "[LSHTest]")
 {
   // kNN and LSH parameters.
   const int k = 4;
@@ -842,12 +840,12 @@ BOOST_AUTO_TEST_CASE(ParallelMonochromatic)
   // Require both have same results.
   double recall = LSHSearch<>::ComputeRecall(
       sequentialNeighbors, parallelNeighbors);
-  BOOST_REQUIRE_EQUAL(recall, 1);
+  REQUIRE(recall == 1);
 }
 #endif
 
 // Test the copy constructor and the copy operator.
-BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
+TEST_CASE("LSHTestCopyConstructorAndOperatorTest", "[LSHTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(10, 1000);
 
@@ -872,7 +870,7 @@ BOOST_AUTO_TEST_CASE(CopyConstructorAndOperatorTest)
 }
 
 // Test the move constructor.
-BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+TEST_CASE("LSHTestMoveConstructorTest", "[LSHTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(10, 1000);
 
@@ -895,7 +893,7 @@ BOOST_AUTO_TEST_CASE(MoveConstructorTest)
 }
 
 // Test the move operator.
-BOOST_AUTO_TEST_CASE(MoveOperatorTest)
+TEST_CASE("LSHTestMoveOperatorTest", "[LSHTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(10, 1000);
 
@@ -923,7 +921,7 @@ BOOST_AUTO_TEST_CASE(MoveOperatorTest)
  * sparse---the idea is to test that the class works correctly when the type is
  * arma::sp_mat.
  */
-BOOST_AUTO_TEST_CASE(SparseLSHTest)
+TEST_CASE("SparseLSHTest", "[LSHTest]")
 {
   // kNN and LSH parameters (use LSH default parameters).
   const int k = 5;
@@ -969,20 +967,18 @@ BOOST_AUTO_TEST_CASE(SparseLSHTest)
   arma::mat sparseDistances;
   sparseLSH.Search(sparseQData, k, sparseNeighbors, sparseDistances);
 
-  BOOST_REQUIRE_EQUAL(denseNeighbors.n_rows, sparseNeighbors.n_rows);
-  BOOST_REQUIRE_EQUAL(denseNeighbors.n_cols, sparseNeighbors.n_cols);
-  BOOST_REQUIRE_EQUAL(denseDistances.n_rows, sparseDistances.n_rows);
-  BOOST_REQUIRE_EQUAL(denseDistances.n_cols, sparseDistances.n_cols);
+  REQUIRE(denseNeighbors.n_rows == sparseNeighbors.n_rows);
+  REQUIRE(denseNeighbors.n_cols == sparseNeighbors.n_cols);
+  REQUIRE(denseDistances.n_rows == sparseDistances.n_rows);
+  REQUIRE(denseDistances.n_cols == sparseDistances.n_cols);
 
   // Make sure that sparse LSH distances aren't garbage.
   for (size_t i = 0; i < sparseNeighbors.n_elem; ++i)
   {
-    BOOST_REQUIRE_GE(sparseNeighbors[i], 0);
-    BOOST_REQUIRE_LT(sparseNeighbors[i], rdata.n_cols);
-    BOOST_REQUIRE_GE(sparseDistances[i], 0.0);
-    BOOST_REQUIRE(!std::isinf(sparseDistances[i]));
-    BOOST_REQUIRE(!std::isnan(sparseDistances[i]));
+    REQUIRE(sparseNeighbors[i] >= 0);
+    REQUIRE(sparseNeighbors[i] < rdata.n_cols);
+    REQUIRE(sparseDistances[i] >= 0.0);
+    REQUIRE(!std::isinf(sparseDistances[i]));
+    REQUIRE(!std::isnan(sparseDistances[i]));
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

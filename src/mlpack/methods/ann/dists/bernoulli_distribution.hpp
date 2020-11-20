@@ -114,13 +114,13 @@ class BernoulliDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
     // We just need to serialize each of the members.
-    ar & BOOST_SERIALIZATION_NVP(probability);
-    ar & BOOST_SERIALIZATION_NVP(logits);
-    ar & BOOST_SERIALIZATION_NVP(applyLogistic);
-    ar & BOOST_SERIALIZATION_NVP(eps);
+    ar(CEREAL_NVP(probability));
+    ar(CEREAL_NVP(logits));
+    ar(CEREAL_NVP(applyLogistic));
+    ar(CEREAL_NVP(eps));
   }
 
  private:

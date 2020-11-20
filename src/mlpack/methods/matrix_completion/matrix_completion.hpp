@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 
 #include <ensmallen.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace matrix_completion {

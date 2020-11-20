@@ -19,22 +19,13 @@ namespace bindings {
 namespace markdown {
 
 /**
- * Return false, because the type is not serializable.
+ * Return false, because the type is not serializable.  This includes Armadillo
+ * types, which we say aren't serializable (in this context) because they aren't
+ * mlpack models.
  */
 template<typename T>
 bool IsSerializable(
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0)
-{
-  return false;
-}
-
-/**
- * Return false, because even though the type is serializable, it is an
- * Armadillo type not an mlpack model.
- */
-template<typename T>
-bool IsSerializable(
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   return false;
 }
