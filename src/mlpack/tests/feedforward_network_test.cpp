@@ -208,7 +208,6 @@ TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
   CheckMoveFunction<>(model1, trainData, trainLabels, 1);
 }
 
-
 /**
  * Train the vanilla network on a larger dataset.
  */
@@ -771,4 +770,3 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
   model.Train(trainData, trainLabels, opt);
 }
-
