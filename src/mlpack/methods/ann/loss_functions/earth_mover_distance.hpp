@@ -47,7 +47,7 @@ class EarthMoverDistance
    */
   template<typename PredictionType, typename TargetType>
   typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                        const TargetType& target);
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
