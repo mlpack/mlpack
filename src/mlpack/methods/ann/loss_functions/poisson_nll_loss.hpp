@@ -55,12 +55,13 @@ class PoissonNLLLoss
   /**
    * Computes the Poisson negative log likelihood Loss.
    *
-   * @param input Input data used for evaluating the specified function.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
    * @param target The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
    */
-  template<typename InputType, typename TargetType>
-  typename InputDataType::elem_type Forward(const InputType& input,
+  template<typename PredictionType, typename TargetType>
+  typename InputDataType::elem_type Forward(const PredictionType& prediction,
                                             const TargetType& target);
 
   /**
@@ -69,15 +70,16 @@ class PoissonNLLLoss
    * It expects a class index, in the range between 1 and the number of classes,
    * as target when calling the Forward function.
    *
-   * @param input The propagated input activation.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
    * @param target The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
-   * @param output The calculated error.
+   * @param loss The calculated error.
    */
-  template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType& input,
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
                 const TargetType& target,
-                OutputType& output);
+                LossType& loss);
 
   //! Get the input parameter.
   InputDataType& InputParameter() const { return inputParameter; }
