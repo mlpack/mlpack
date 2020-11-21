@@ -5,6 +5,7 @@ on:
     - cron:  '0 10 1/16 * *'
 jobs:
   updateCLI11:
+    if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
