@@ -9,6 +9,7 @@
     <OutputName>mlpack-windows</OutputName>
     <OutputType>Package</OutputType>
     <Name>mlpack-win-installer</Name>
+    <DefineConstants>HarvestPath=.\SourceDir;SourceDir=SourceDir</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -28,24 +29,18 @@
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
-  <PropertyGroup>
-    <DefineConstants>HarvestPath=.\SourceDir;SourcesDir=SourceDir</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
     <HarvestDirectory Include="SourceDir">
-      <DirectoryRefId>SourcesDir</DirectoryRefId>
-      <ComponentGroupName>Sources</ComponentGroupName>
-      <PreprocessorVariable>var.SourcesDir</PreprocessorVariable>
+      <DirectoryRefId>SourceDir</DirectoryRefId>
+      <ComponentGroupName>SourceDir</ComponentGroupName>
+      <PreprocessorVariable>var.SourceDir</PreprocessorVariable>
       <SuppressRegistry>true</SuppressRegistry>
     </HarvestDirectory>
     <WixExtension Include="WixUIExtension">
       <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
       <Name>WixUIExtension</Name>
     </WixExtension>
-  </ItemGroup>
-  <ItemGroup>
-
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
