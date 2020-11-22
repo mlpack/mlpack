@@ -50,7 +50,7 @@ NoisyLinear<InputDataType, OutputDataType>::NoisyLinear(
 
 template<typename InputDataType, typename OutputDataType>
 NoisyLinear<InputDataType, OutputDataType>::NoisyLinear(
-  NoisyLinear&& layer) :
+    NoisyLinear&& layer) :
     inSize(std::move(layer.inSize)),
     outSize(std::move(layer.outSize)),
     weights(std::move(layer.weights))
