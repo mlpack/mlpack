@@ -79,7 +79,8 @@ template<typename InputDataType, typename OutputDataType>
 NoisyLinear<InputDataType, OutputDataType>&
 NoisyLinear<InputDataType, OutputDataType>::operator=(NoisyLinear&& layer)
 {
-  if(this != &layer) {
+  if (this != &layer)
+  {
     inSize = std::move(layer.inSize);
     layer.inSize = 0;
     outSize = std::move(layer.outSize);
