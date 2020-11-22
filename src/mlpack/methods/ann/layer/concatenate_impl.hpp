@@ -25,7 +25,6 @@ Concatenate<InputDataType, OutputDataType>::Concatenate()
   // Nothing to do here.
 }
 
-//! Copy constructor
 template<typename InputDataType, typename OutputDataType>
 Concatenate<InputDataType, OutputDataType>::Concatenate(const Concatenate& layer) : 
   inRows(layer.inRows),
@@ -33,10 +32,9 @@ Concatenate<InputDataType, OutputDataType>::Concatenate(const Concatenate& layer
   delta(layer.delta),
   concat(layer.concat)
 {
-  // Nothing to to here
+  // Nothing to to here.
 }
 
-//! Move constructor
 template<typename InputDataType, typename OutputDataType>
 Concatenate<InputDataType, OutputDataType>::Concatenate(Concatenate&& layer) : 
   inRows(std::move(layer.inRows)),
@@ -44,7 +42,7 @@ Concatenate<InputDataType, OutputDataType>::Concatenate(Concatenate&& layer) :
   delta(std::move(layer.delta)),
   concat(std::move(layer.concat))
 {
-  // Nothing to do here
+  // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>

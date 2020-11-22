@@ -158,24 +158,24 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
  */
 TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 {
-  // Create training input by 5x5 matrix
+  // Create training input by 5x5 matrix.
   arma::mat input = arma::randu(10,1);
-  // Create training output by 1 matrix
+  // Create training output by 1 matrix.
   arma::mat output = arma::mat("1");
 
-  // Check copying constructor
+  // Check copying constructor.
   FFN<NegativeLogLikelihood<>> *model1 = new FFN<NegativeLogLikelihood<>>();
   model1->Predictors() = input;
   model1->Responses() = output;
   model1->Add<IdentityLayer<>>();
   model1->Add<Linear<>>(10, 5);
 
-  // Create concatenate layer
+  // Create concatenate layer.
   arma::mat concatMatrix = arma::ones(5, 1);
   Concatenate<>* concatLayer = new Concatenate<>();
   concatLayer->Concat() = concatMatrix;
 
-  // Add concatenate layer to the current network
+  // Add concatenate layer to the current network.
   model1->Add(concatLayer);
   model1->Add<Linear<> >(10, 5);
   model1->Add<LogSoftMax<>>();
@@ -183,18 +183,18 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   // Check whether copy constructor is working or not.
   CheckCopyFunction<>(model1, input, output, 1);
 
-  // check moving constructor
+  // check moving constructor.
   FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
   model2->Predictors() = input;
   model2->Responses() = output;
   model2->Add<IdentityLayer<>>();
   model2->Add<Linear<>>(10, 5);
 
-  // Create new concat layer
+  // Create new concat layer.
   Concatenate<>* concatLayer2 = new Concatenate<>();
   concatLayer2->Concat() = concatMatrix;
 
-  // Add concatenate layer to the current network
+  // Add concatenate layer to the current network.
   model2->Add(concatLayer2);
   model2->Add<Linear<> >(10, 5);
   model2->Add<LogSoftMax<>>();

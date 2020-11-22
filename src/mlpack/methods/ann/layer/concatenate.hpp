@@ -41,16 +41,16 @@ class Concatenate
    */
   Concatenate();
 
-  //! Copy constructor
+  //! Copy constructor.
   Concatenate(const Concatenate& layer);
 
-  //! Move constructor
+  //! Move constructor.
   Concatenate(Concatenate&& layer);
 
-  //! Copy operator constructor
+  //! Copy operator constructor.
   Concatenate& operator=(const Concatenate& layer);
 
-  //! move operator constructor
+  //! move operator constructor.
   Concatenate& operator=(Concatenate&& layer);
 
   /**
