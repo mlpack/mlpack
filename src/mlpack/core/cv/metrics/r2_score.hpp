@@ -80,7 +80,7 @@ template<> class R2Score<true>
    * @param data Column-major data containing test items.
    * @param responses Ground truth (correct) target values for the test items,
    *     should be either a row vector or a column-major matrix.
-   * @return calculated R2 Score.
+   * @return calculated Ajusted R2 Score.
    */
   template<typename MLAlgorithm, typename DataType, typename ResponsesType>
   static double Evaluate(MLAlgorithm& model,
