@@ -154,6 +154,41 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 }
 
 /**
+ * Noisy Linear layer constructor test.
+ */
+TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
+{
+  // Create training input by 5x5 matrix
+  arma::mat input = arma::randu(10,1);
+  // Create training output by 1 matrix
+  arma::mat output = arma::mat("1");
+
+  // Check copying constructor
+  FFN<NegativeLogLikelihood<>> *model1 = new FFN<NegativeLogLikelihood<>>();
+  model1->Predictors() = input;
+  model1->Responses() = output;
+  model1->Add<IdentityLayer<>>();
+  model1->Add<NoisyLinear<>>(10, 5);
+  model1->Add<Linear<> >(5, 1);
+  model1->Add<LogSoftMax<>>();
+  
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model1, input, output, 1);
+
+  // Check moving constructor
+  FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
+  model2->Predictors() = input;
+  model2->Responses() = output;
+  model2->Add<IdentityLayer<>>();
+  model2->Add<NoisyLinear<>>(10, 5);
+  model2->Add<Linear<> >(5, 1);
+  model2->Add<LogSoftMax<>>();
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model2, input, output, 1);
+}
+
+/**
  * Train the vanilla network on a larger dataset.
  */
 TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
