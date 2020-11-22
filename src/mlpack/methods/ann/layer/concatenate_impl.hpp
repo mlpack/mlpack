@@ -25,6 +25,62 @@ Concatenate<InputDataType, OutputDataType>::Concatenate()
   // Nothing to do here.
 }
 
+//! Copy constructor
+template<typename InputDataType, typename OutputDataType>
+Concatenate<InputDataType, OutputDataType>::Concatenate(const Concatenate& layer) : 
+  inRows(layer.inRows),
+  weights(layer.weights),
+  delta(layer.delta),
+  concat(layer.concat)
+{
+  // Nothing to to here
+}
+
+//! Move constructor
+template<typename InputDataType, typename OutputDataType>
+Concatenate<InputDataType, OutputDataType>::Concatenate(Concatenate&& layer) : 
+  inRows(std::move(layer.inRows)),
+  weights(std::move(layer.weights)),
+  delta(std::move(layer.delta)),
+  concat(std::move(layer.concat))
+{
+  // Nothing to do here
+}
+
+template<typename InputDataType, typename OutputDataType>
+Concatenate<InputDataType, OutputDataType>&
+Concatenate<InputDataType, OutputDataType>::
+operator=(const Concatenate& layer)
+{
+  if (this != &layer) 
+  {
+    inRows = layer.inRows;
+    weights = layer.weights;
+    delta = layer.delta;
+    concat = layer.concat;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
+Concatenate<InputDataType, OutputDataType>&
+Concatenate<InputDataType, OutputDataType>::
+operator=(Concatenate&& layer)
+{
+  if (this != &layer) 
+  {
+    inRows = std::move(layer.inRows);
+    layer.inRows = 0;
+    weights = std::move(layer.weights);
+    layer.weights = nullptr;
+    delta = std::move(layer.delta);
+    layer.delta = nullptr;
+    concat = std::move(layer.concat);
+    layer.concat = nullptr;
+  }
+  return *this;
+}
+
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Concatenate<InputDataType, OutputDataType>::Forward(
