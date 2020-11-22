@@ -65,7 +65,8 @@ template<typename InputDataType, typename OutputDataType>
 NoisyLinear<InputDataType, OutputDataType>&
 NoisyLinear<InputDataType, OutputDataType>::operator=(NoisyLinear const& layer)
 {
-  if(this != &layer) {
+  if( this != &layer)
+  {
     inSize = layer.inSize;
     outSize = layer.outSize;
     weights = layer.weights;
