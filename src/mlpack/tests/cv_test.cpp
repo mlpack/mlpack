@@ -187,7 +187,7 @@ TEST_CASE("R2ScoreTest", "[CVTest]")
 
   double expectedR2 = 0.99999779;
 
-  REQUIRE(R2Score::Evaluate(lr, data, responses)
+  REQUIRE(R2Score<false>::Evaluate(lr, data, responses)
           == Approx(expectedR2).epsilon(1e-7));
 }
 
@@ -208,7 +208,7 @@ TEST_CASE("AdjR2ScoreTest", "[CVTest]")
   
   //Theoretically Adjusted R squared should be equal 1
   double expAdjR2 = 1;
-  REQUIRE(std::abs(R2Score::Evaluate(lr, X, y) - expAdjR2)
+  REQUIRE(std::abs(R2Score<true>::Evaluate(lr, X, Y) - expAdjR2)
           <= 1e-7);
 }
 

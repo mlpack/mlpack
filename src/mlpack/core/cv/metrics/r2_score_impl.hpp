@@ -16,10 +16,9 @@ namespace mlpack {
 namespace cv {
 
 template<typename MLAlgorithm, typename DataType, typename ResponsesType>
-double R2Score::Evaluate(MLAlgorithm& model,
+double R2Score<false>::Evaluate(MLAlgorithm& model,
                          const DataType& data,
-                         const ResponsesType& responses,
-                         const bool adjR2)
+                         const ResponsesType& responses)
 {
   if (data.n_cols != responses.n_cols)
   {
@@ -46,16 +45,45 @@ double R2Score::Evaluate(MLAlgorithm& model,
   // Handling undefined R2 Score when both denominator and numerator is 0.0.
   if (residualSumSquared == 0.0)
     return totalSumSquared ? 1.0 : DBL_MIN;
-  // Returning adjusted R-squared.
-  if (adjR2)
+ 
+  // Returning R-squared
+  return 1 - residualSumSquared / totalSumSquared;
+}
+
+template<typename MLAlgorithm, typename DataType, typename ResponsesType>
+  double R2Score<true>::Evaluate(MLAlgorithm& model,
+                           const DataType& data,
+                           const ResponsesType& responses)
   {
+    if (data.n_cols != responses.n_cols)
+    {
+      std::ostringstream oss;
+      oss << "R2Score::Evaluate(): number of points (" << data.n_cols << ") "
+          << "does not match number of responses (" << responses.n_cols << ")!"
+          << std::endl;
+      throw std::invalid_argument(oss.str());
+    }
+
+    ResponsesType predictedResponses;
+    // Taking Predicted Output from the model.
+    model.Predict(data, predictedResponses);
+    // Mean value of response.
+    double meanResponses = arma::mean(responses);
+
+    // Calculate the numerator i.e. residual sum of squares.
+    double residualSumSquared = arma::accu(arma::square(responses -
+        predictedResponses));
+
+    // Calculate the denominator i.e.total sum of squares.
+    double totalSumSquared = arma::accu(arma::square(responses - meanResponses));
+
+    // Handling undefined R2 Score when both denominator and numerator is 0.0.
+    if (residualSumSquared == 0.0)
+      return totalSumSquared ? 1.0 : DBL_MIN;
+    // Returning adjusted R-squared.
     double rsq = 1 - (residualSumSquared / totalSumSquared);
     return (1 - ((1 - rsq) * ((data.n_cols - 1) / (data.n_cols - data.n_rows - 1))));
   }
- 
-    // Returning R-squared
-  return 1 - residualSumSquared / totalSumSquared;
-}
 
 } // namespace cv
 } // namespace mlpack

@@ -43,7 +43,10 @@ namespace cv {
  * For example, a model having R2Score = 0.85, explains 85 \% variability of
  * the response data around its mean.
  */
-class R2Score
+
+template<bool adjustedR2> class R2Score;
+
+template<> class R2Score<false>
 {
  public:
   /**
@@ -53,15 +56,36 @@ class R2Score
    * @param data Column-major data containing test items.
    * @param responses Ground truth (correct) target values for the test items,
    *     should be either a row vector or a column-major matrix.
-   * @param adjR2 Boolean value which specifies whether to calculate adjusted
-   *    R2 or not
    * @return calculated R2 Score.
    */
   template<typename MLAlgorithm, typename DataType, typename ResponsesType>
   static double Evaluate(MLAlgorithm& model,
                          const DataType& data,
-                         const ResponsesType& responses,
-                         const bool adjR2 = false);
+                         const ResponsesType& responses);
+
+  /**
+   * Information for hyper-parameter tuning code. It indicates that we want
+   * to maximize the measurement.
+   */
+  static const bool NeedsMinimization = false;
+};
+
+template<> class R2Score<true>
+{
+ public:
+  /**
+   * Run prediction and calculate the Adjusted R squared error.
+   *
+   * @param model A regression model.
+   * @param data Column-major data containing test items.
+   * @param responses Ground truth (correct) target values for the test items,
+   *     should be either a row vector or a column-major matrix.
+   * @return calculated R2 Score.
+   */
+  template<typename MLAlgorithm, typename DataType, typename ResponsesType>
+  static double Evaluate(MLAlgorithm& model,
+                         const DataType& data,
+                         const ResponsesType& responses);
 
   /**
    * Information for hyper-parameter tuning code. It indicates that we want
