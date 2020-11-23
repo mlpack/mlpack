@@ -1,7 +1,7 @@
 #ifndef MLPACK_CORE_DATA_DATA_PRE_PROCESSING_IMPL_HPP
 #define MLPACK_CORE_DATA_DATA_PRE_PROCESSING_IMPL_HPP
 
-#include "data.hpp"
+#include "pre_processing.hpp"
 
 namespace mlpack {
 namespace data {
