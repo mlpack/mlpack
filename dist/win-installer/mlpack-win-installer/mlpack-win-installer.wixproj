@@ -9,21 +9,24 @@
     <OutputName>mlpack-windows</OutputName>
     <OutputType>Package</OutputType>
     <Name>mlpack-win-installer</Name>
+    <DefineSolutionProperties>false</DefineSolutionProperties>
     <DefineConstants>HarvestPath=.\SourceDir;SourceDir=SourceDir</DefineConstants>
+    <WixTargetsPath Condition=" '$(WixTargetsPath' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <VerboseOutput>true</VerboseOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug</DefineConstants>
+    <DefineConstants>Debug;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <DefineConstants>Debug</DefineConstants>
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
