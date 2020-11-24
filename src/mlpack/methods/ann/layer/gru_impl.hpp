@@ -98,7 +98,7 @@ GRU<InputDataType, OutputDataType>::GRU(GRU&& layer) :
   // Nothing to do here.
 }
 
-// Copy operator definition
+// Copy operator definition.
 template <typename InputDataType, typename OutputDataType>
 GRU<InputDataType, OutputDataType>&
   GRU<InputDataType, OutputDataType>::operator=(const GRU& layer)
