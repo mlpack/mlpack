@@ -85,7 +85,7 @@ GRU<InputDataType, OutputDataType>::GRU(
   weights(layer.weights)
 
 {
-  // Nothing to do here
+  // Nothing to do here.
 }
 
 // Move Constructor definition
