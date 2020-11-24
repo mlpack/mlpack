@@ -114,8 +114,7 @@ GRU<InputDataType, OutputDataType>&
   return *this;
 }
 
-// Move operator definition
-
+// Move operator definition.
 template <typename InputDataType, typename OutputDataType>
 GRU<InputDataType, OutputDataType>&
   GRU<InputDataType, OutputDataType>::operator=(GRU&& layer)
