@@ -30,8 +30,6 @@ class FrozenLake
   class State
   {
    public:
-
-    //! TODO: Do we actually need a default constructor?
     State()
     { 
       // Nothing to do here.
@@ -43,7 +41,6 @@ class FrozenLake
       nCols(nCols),
       curRow(0),
       curCol(0)
-      // boardDescription(boardDescription)
     {
       // Nothing to do here.
     }
@@ -54,49 +51,44 @@ class FrozenLake
       nCols(other.nCols),
       curRow(other.curRow),
       curCol(other.curCol)
-      // boardDescription(other.boardDescription)
     {
       // Nothing to do here.
     }
 
     //! Move constructor.
     State(State&& other) :
-      nRows(std::move(other.nRows)),
-      nCols(std::move(other.nCols)),
-      curRow(std::move(other.curRow)),
-      curCol(std::move(other.curCol))
-      // boardDescription(std::move(other.boardDescription))
+      nRows(other.nRows),
+      nCols(other.nCols),
+      curRow(other.curRow),
+      curCol(other.curCol)
     {
-      other.nRows = 0;
-      other.nCols = 0;
-      other.curRow = 0;
-      other.curCol = 0;
-      // other.boardDescription = nullptr;
+      // Nothing to do here.
     }
 
-    //! Copy constructor.
+    //! Operator= copy constructor.
     State& operator=(State const& other)
     {
-      nRows = other.nRows;
-      nCols = other.nCols;
-      curRow = other.curRow;
-      curCol = other.curCol;
-      // boardDescription = other.boardDescription;
+      if (this != &other)
+      {
+        nRows = other.nRows;
+        nCols = other.nCols;
+        curRow = other.curRow;
+        curCol = other.curCol;
+      }
+      return *this;
     }
 
-    //! Copy constructor.
+    //! Operator= move constructor.
     State& operator=(State&& other)
     {
-      nRows = std::move(other.nRows);
-      nCols = std::move(other.nCols);
-      curRow = std::move(other.curRow);
-      curCol = std::move(other.curCol);
-      // boardDescription = std::move(other.boardDescription);
-      other.nRows = 0;
-      other.nCols = 0;
-      other.curRow = 0;
-      other.curCol = 0;
-      // other.boardDescription = nullptr;
+      if (this != &other)
+      {
+        nRows = other.nRows;
+        nCols = other.nCols;
+        curRow = other.curRow;
+        curCol = other.curCol;
+      }
+      return *this;
     }
 
     //! Get nRows.
@@ -120,26 +112,11 @@ class FrozenLake
     //! Get state representation.
     size_t GetState() const {return nCols * curRow + curCol;}
 
-    //! Set newPosition
-    // static arma::Mat<char>& newBoardDescription(
-    //   arma::Mat<char>& currentBoard, 
-    //   size_t const row, 
-    //   size_t const col)
-    // {
-    //   //! TODO: Do we actually need to set the board position?
-    //   // or do we just need to keep track of the current wor and column?
-    // }
-
-
-    //! Get the current description of the board.
-    // arma::Mat<char> Description() const {return boardDescription;}
-
    private:
     size_t nRows;
     size_t nCols;
     size_t curRow;
     size_t curCol;
-    // arma::Mat<char> boardDescription;
   };
 
   /**
@@ -167,7 +144,6 @@ class FrozenLake
     maxSteps(maxSteps),
     nRows(nRows),
     nCols(nCols)
-    // platformRate(platformRate)
   { 
     // Preprocess platform rate
     this->platformRate = std::min(platformRate, 1.0);
@@ -185,36 +161,21 @@ class FrozenLake
     size_t newRow = state.CurRow();
     size_t newCol = state.CurCol();
 
-    //! TODO: Figure out whether to copy or move pointer.
-    // Copy will cost space and time, but move will modify the current data 
-    //    in place, so it's a burden that the user want to store history.
-
-    // Move state to the next state pointer
-    // nextState = std::move(state);
-
     // Copy the state to the next state.
     nextState = state;
     
     // Calculate new row and col.
     if (action.action == Action::actions::Left)
-    {
       newCol = std::max(nextState.CurCol() - 1, (unsigned long) 0);
-    }
     else if (action.action == Action::actions::Down)
-    {
       newRow = std::min(nextState.CurRow() + 1, nRows - 1);
-    }
     else if (action.action == Action::actions::Right)
-    {
       newCol = std::min(nextState.CurCol() + 1, nCols - 1);
-    }
     else if (action.action == Action::actions::Up)
-    {
       newRow = std::max(nextState.CurRow() - 1, (unsigned long) 0);
-    }
-
+    
     // Update states by setting new current row and column, 
-    //    and manually set the description of board
+    //    and manually set the description of board.
     nextState.CurRow() = newRow;
     nextState.CurCol() = newCol;
 
@@ -224,16 +185,17 @@ class FrozenLake
     // Reward agent if it reached the goal.
     if (done && maxSteps != 0 && newRow == nRows - 1 && 
         newCol == nCols - 1)
-      return 1;
-    else if (done && boardDescription(newRow, newCol) == 'H')
-      return -1;
+      return 1.0;
+    else if (done && boardDescription[newRow][newCol] == 'H')
+      return -1.0;
+
     // Reward 0 otherwise.
-    return 0;
+    return 0.0;
   }
 
   /**
-   * Dynamics of Frozen Lake. Get reward based on current state and current.
-   * action.
+   * Dynamics of Frozen Lake. Get reward based on current 
+   * state and current action.
    *
    * @param state The current state.
    * @param action The current action.
@@ -246,7 +208,8 @@ class FrozenLake
   }
 
   /**
-   * Initial state representation is the current position at (0, 0) and a new random bord is created.
+   * Initial state representation is the current position at (0, 0) 
+   * and a new random bord is created.
    *
    * @return Initial state for each episode.
    */
@@ -254,6 +217,25 @@ class FrozenLake
   {
     stepsPerformed = 0;
     boardDescription = generateRandomBoard();
+    // Log::Info << boardDescription;
+    return State(nRows, nCols);
+  }
+
+  /**
+   * Initial state representation is the current position at (0, 0) 
+   * and a new random bord is created.
+   * @param  board: The board of that the user want to initialize to.
+   * @param  nRows: Number of rows of the board.
+   * @param  nCols: Number of columns of the board.
+   * @return the State in which the number of rows and columns are 
+   * limited to nRows and nCols, respectively.
+   */
+  State InitialSample(std::vector<std::vector<char>> board, size_t nRows, size_t nCols)
+  {
+    stepsPerformed = 0;
+    this->nRows = nRows;
+    this->nCols = nCols;
+    boardDescription = board;
     return State(nRows, nCols);
   }
 
@@ -264,22 +246,24 @@ class FrozenLake
    * @return true if state is a terminal state, otherwise false.
    */
   bool IsTerminal(const State& state) const
-  {
+  { 
+    // printBoard(boardDescription, nRows, nCols);
+    // Log::Info << "this turn moved: " << boardDescription[state.CurRow()][state.CurCol()] << "\n";
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
       Log::Info << "Episode terminated due to the maximum number of steps"
-          "being taken.";
+          "being taken.\n";
       return true;
     }
     // else if (state.Description()(std::vector<int> t{state.CurRow(), state.CurCol()}) == 'H')
-    else if (boardDescription(state.CurRow(), state.CurCol()) == 'H')
+    else if (boardDescription[state.CurRow()][state.CurCol()] == 'H')
     {
-      Log::Info << "Episode terminated due to agent falling in the hole.";
+      Log::Info << "Episode terminated due to agent falling in the hole.\n";
       return true;
     }
-    else if (boardDescription(state.CurRow(), state.CurCol()) == 'G')
+    else if (boardDescription[state.CurRow()][state.CurCol()] == 'G')
     {
-      Log::Info << "Episode terminated, agent reached the goal.";
+      Log::Info << "Episode terminated, agent reached the goal.\n";
       return true;
     }
     return false;
@@ -294,77 +278,114 @@ class FrozenLake
   //! Set the maximum number of steps allowed.
   size_t& MaxSteps() { return maxSteps; }
 
-  //! Get the board description
-  arma::Mat<char> Description() const {return boardDescription;}
+  //! Get the board description.
+  std::vector<std::vector<char>> Description() const {return boardDescription;}
+
+  //! Set the board description.
+  std::vector<std::vector<char>>& Description() {return boardDescription;}
 
  private:
 
   /**
-   * @brief  
-   * @note   
-   * @param  nRows: 
-   * @param  nCols: 
-   * @param  platformRate: 
-   * @retval 
+   * This is an utility function that help generate random board. 
+   * @return board: a 2D array of characters that hold the board description. 
    */
-  arma::Mat<char> generateRandomBoard()
+  std::vector<std::vector<char>> generateRandomBoard()
   {
-    // Actual code here
-    //! TODO: Write the implementation for the generate random board.
     bool valid = false;
-    arma::Mat<char> Board;
+    std::vector<std::vector<char>> Board;
+    //! TODO: Tentative, implement max step to control whether
+    //    the we can never generate a possible board.
     while (!valid)
     {
-      // Randomly choose tiles in the board (discrete random distribution)
-      size_t length = nRows * nCols;
-      
-      // This code is taken from stack overflow
-      std::vector<char> vec(length);
-      const std::vector<char> samples{ 'F', 'H' };
-      const std::vector<double> probabilities{ platformRate, 1 - platformRate };
-      std::default_random_engine generator;
-      std::discrete_distribution<int> distribution(probabilities.begin(), probabilities.end());
-      std::vector<int> indices(vec.size());
-      std::generate(indices.begin(), indices.end(), [&generator, &distribution]() { return distribution(generator); });
-      std::transform(indices.begin(), indices.end(), vec.begin(), [&samples](int index) { return samples[index]; });
-
-      arma::Row<char> candidateBoard(vec);
-      candidateBoard.reshape(nRows, nCols);
-      candidateBoard(0, 0) = 'S';
-      candidateBoard(nRows - 1, nCols - 1) = 'G';
-      Board = candidateBoard;
-      valid = dfsHelper(candidateBoard);
+      // Randomly choose tiles in the board (discrete random distribution).
+      Board = genBoardHelper(nRows, nCols, platformRate);
+      valid = dfsHelper(Board, nRows, nCols);
     }
     return Board;
   }
 
-  bool dfsHelper(arma::Mat<char> candidateBoard)
+  /**
+   * Perform depth-firsth search to see if the board has a solution or not. 
+   * @param  candidateBoard: the board description.
+   * @param  nRows: number of rows.
+   * @param  nCols: number of columns.
+   * @return true if there is a solution, false otherwise. 
+   */
+  static bool dfsHelper(std::vector<std::vector<char>> candidateBoard, size_t nRows, size_t nCols)
   {
-    bool visited[nRows][nCols];
-    std::stack<std::array<size_t, 2>> path;
-    path.push({0, 0});
+    bool visited[nRows][nCols] = {{false}};
+    std::vector<std::array<size_t, 2>> path;
+    path.push_back({0, 0});
     while (!path.empty())
     {
-      std::array<size_t, 2> node = path.top();
-      path.pop();
-      if (!visited[node[0]][node[1]])
+      auto node = path.back();
+      path.pop_back();
+
+      visited[node[0]][node[1]] = true;
+      int directions[4][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+      for (auto direction : directions)
       {
-        visited[node[0]][node[1]] = true;
-        int directions[4][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-        for (auto direction : directions)
+        size_t r_new = direction[0] + node[0];
+        size_t c_new = direction[1] + node[1];
+        if (!visited[r_new][c_new])
         {
-          size_t r_new = direction[0] + node[0];
-          size_t c_new = direction[1] + node[1];
-          if (r_new < 0 or r_new >= nRows || c_new < 0 or c_new >= nCols)
+          if (r_new >= nRows || c_new >= nCols)
               continue;
-          if (candidateBoard(r_new, c_new) == 'G')
+          if (candidateBoard[r_new][c_new] == 'G')
               return true;
-          if (candidateBoard(r_new, c_new) != 'H')
-              path.push({r_new, c_new});
+          if (candidateBoard[r_new][c_new] != 'H')
+              path.push_back({r_new, c_new});
         }
       }
     }
     return false;
+  }
+
+  /**
+   * Perform random distribution.
+   * @param  m: number of rows.
+   * @param  n: number of columns.
+   * @return a 2d array that describes the game board. 
+   */
+  std::vector<std::vector<char>> genBoardHelper (size_t nRows, size_t nCols, double platformRate)
+  {
+    std::vector<char> board[nRows];
+    for (size_t i = 0; i < nRows; i++)
+    {
+      for (size_t j = 0; j < nCols; j++)
+      {
+        auto r = arma::randu();
+        if (r < 1 - platformRate)
+          board[i].push_back('H');
+        else
+          board[i].push_back('F');
+      }
+    }
+    board[0][0] = 'S';
+    board[nRows - 1][nCols - 1] = 'G';
+
+    std::vector<std::vector<char>> returnedBoard(board, board + nRows);
+    return returnedBoard;
+  }
+
+  /**
+   * Utilities function to print board description. 
+   * @param  board: the board description.
+   * @param  nRows: number of rows in the board.
+   * @param  nCols: number of columns in the board.
+   */
+  static void printBoard(std::vector<std::vector<char>> board, size_t nRows, size_t nCols)
+  {
+    for (size_t i = 0; i < nRows; i++) 
+    {
+      for (size_t j = 0; j < nCols; j++)
+      {
+        Log::Info << board[i][j] << " ";
+      }
+      Log::Info << "\n";
+    }
+    Log::Info << "\n";
   }
 
   //! Locally-stored maximum number of steps.
@@ -373,16 +394,20 @@ class FrozenLake
   //! Locally-stored number of steps performed.
   size_t stepsPerformed;
 
+  //! Locally-stored number of rows of the board.
   size_t nRows;
 
+  //! Locally-stored number of columns of the board.
   size_t nCols;
 
+  //! Locally-stored the probability of how many 
+  //  platform (walkable) tile exists.
   double platformRate;
 
-  arma::Mat<char> boardDescription;
+  //! Locally-stored the board description.
+  std::vector<std::vector<char>> boardDescription;
 
 };
-
 } // namespace rl
 } // namespace mlpack
 
