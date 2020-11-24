@@ -78,11 +78,11 @@ GRU<InputDataType, OutputDataType>::GRU(
 
 // Copy Constructor definition
 template <typename InputDataType, typename OutputDataType>
-GRU<InputDataType, OutputDataType>::GRU(
-  const GRU& layer) : inSize(layer.inSize),
-  outSize(layer.outSize),
-  rho(layer.rho),
-  weights(layer.weights)
+GRU<InputDataType, OutputDataType>::GRU(const GRU& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    weights(layer.weights)
 
 {
   // Nothing to do here.
