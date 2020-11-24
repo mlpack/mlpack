@@ -47,10 +47,10 @@ class Concatenate
   //! Move constructor.
   Concatenate(Concatenate&& layer);
 
-  //! Copy operator constructor.
+  //! Operator= copy constructor.
   Concatenate& operator=(const Concatenate& layer);
 
-  //! move operator constructor.
+  //! Operator= move constructor.
   Concatenate& operator=(Concatenate&& layer);
 
   /**
