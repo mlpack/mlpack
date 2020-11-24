@@ -52,7 +52,7 @@ class NoisyLinear
   NoisyLinear(NoisyLinear&&);
 
   //! Operator= copy constructor.
-  NoisyLinear& operator=(NoisyLinear const& layer);
+  NoisyLinear& operator=(const NoisyLinear& layer);
 
   //! Operator= move constructor.
   NoisyLinear& operator=(NoisyLinear&& layer);
