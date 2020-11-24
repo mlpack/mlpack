@@ -90,12 +90,11 @@ GRU<InputDataType, OutputDataType>::GRU(const GRU& layer) :
 
 // Move Constructor definition
 template <typename InputDataType, typename OutputDataType>
-GRU<InputDataType, OutputDataType>::GRU(
-  GRU&& layer) : inSize(std::move(layer.inSize)),
-  outSize(std::move(layer.outSize)),
-  rho(std::move(layer.rho)),
-  weights(std::move(layer.weights))
-
+GRU<InputDataType, OutputDataType>::GRU(GRU&& layer) :
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
+    rho(std::move(layer.rho)),
+    weights(std::move(layer.weights))
 {
   // Nothing to do here.
 }
