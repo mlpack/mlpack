@@ -20,6 +20,7 @@
 #include <mlpack/methods/reinforcement_learning/environment/continuous_double_pole_cart.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/pendulum.hpp>
+#include <mlpack/methods/reinforcement_learning/environment/frozen_lake.hpp>
 #include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
 #include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
 
@@ -285,4 +286,104 @@ TEST_CASE("GreedyPolicyTest", "[RLComponentsTest]")
   CartPole::Action action = policy.Sample(actionValue);
   REQUIRE(actionValue[action.action] ==
       Approx(actionValue.max()).epsilon(1e-7));
+}
+
+/**
+ * Construct a Frozen Lake instance and check if the main routine
+ * work as it should be.
+ */
+TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
+{
+  /**
+   * The board and the winning solution will look like this:
+   *          S   F   H   F 
+   *          |
+   *          F   H   F   F 
+   *          | 
+   *          F---F---F   F 
+   *                  |
+   *          F   F   F---G 
+   * 
+   * Similarly, the board and the failing solution will look like this:
+   *          S   F   H   F 
+   *          |
+   *          F   H---F   F 
+   *          |       |
+   *          F---F---F   F 
+   *                  
+   *          F   F   F   G 
+   */
+  // Action definitions
+  FrozenLake::Action goDown;
+  goDown.action = FrozenLake::Action::actions::Down;
+  FrozenLake::Action goUp;
+  goUp.action = FrozenLake::Action::actions::Up;
+  FrozenLake::Action goLeft;
+  goLeft.action = FrozenLake::Action::actions::Left;
+  FrozenLake::Action goRight;
+  goRight.action = FrozenLake::Action::actions::Right;
+  
+  // Static board definition.
+  std::vector<std::vector<char>> sampleBoard {{'S','F','H','F'},
+                                              {'F','H','F','F'},
+                                              {'F','F','F','F'},
+                                              {'F','F','F','G'}};
+
+  // Task 1 checks the case that the agent makes it to the goal,
+  //  receiving 1.0 as the reward.
+  FrozenLake task1 = FrozenLake();
+  FrozenLake::State state1 = task1.InitialSample(sampleBoard, 4, 4);
+  task1.Sample(state1, goDown, state1);
+  task1.Sample(state1, goDown, state1);
+  task1.Sample(state1, goRight, state1);
+  task1.Sample(state1, goRight, state1);
+  task1.Sample(state1, goDown, state1);
+  double reward1 = task1.Sample(state1, goRight, state1);
+
+  // Reward must be 1.0 as the agent reaches the goal.
+  REQUIRE(reward1 == 1.0);
+  // As the agent reaches the goal, the game must end.
+  REQUIRE(task1.IsTerminal(state1));
+
+  // Task 2 checks the case where the agent does not
+  //  complete the game by reaching the max number of steps.
+  FrozenLake task2 = FrozenLake();
+  FrozenLake::State state2 = task2.InitialSample(sampleBoard, 4, 4);
+  task2.MaxSteps() = 10;
+  double reward2;
+  while (!task2.IsTerminal(state2))
+    reward2 = task2.Sample(state2, goDown, state2);
+
+  // Check if the number of steps performed is the same as 
+  //  the maximum allowed.
+  REQUIRE(task2.StepsPerformed() == 10);
+  REQUIRE(reward2 == 0.0);
+  
+  // Task 3 checks the case where the agent fall into a hole.
+  //  and recieved -1.0 as a reward.
+  FrozenLake task3 = FrozenLake();
+  FrozenLake::State state3 = task3.InitialSample(sampleBoard, 4, 4);
+  task3.Sample(state3, goDown, state3);
+  task3.Sample(state3, goDown, state3);
+  task3.Sample(state3, goRight, state3);
+  task3.Sample(state3, goRight, state3);
+  task3.Sample(state3, goUp, state3);
+  double reward3 = task3.Sample(state3, goLeft, state3);
+
+  // Reward must be -1.0 as the agent fall into a hole.
+  REQUIRE(reward3 == -1.0);
+  // As the agent fall into the hole, the game must end.
+  REQUIRE(task3.IsTerminal(state3));
+
+  // Task 4 checks the case with random board.
+  FrozenLake task4 = FrozenLake();
+  FrozenLake::State state4 = task4.InitialSample();
+  while (!task4.IsTerminal(state4))
+  { 
+    task4.Sample(state4, goDown, state4);
+  }
+  REQUIRE(task4.IsTerminal(state4));
+
+  // Other checks.
+  REQUIRE(4 == static_cast<size_t>(FrozenLake::Action::size));
 }
