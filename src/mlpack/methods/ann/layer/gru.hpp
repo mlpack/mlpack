@@ -75,7 +75,7 @@ class GRU
   // Copy Constructor
   GRU(const GRU& layer);
 
-  // Move Constructor
+  // Move constructor.
   GRU(GRU&&);
 
   // Copy assignment operator.
