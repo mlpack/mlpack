@@ -9,6 +9,7 @@ set(SOURCES
   continuous_double_pole_cart.hpp
   acrobot.hpp
   pendulum.hpp
+  frozen_lake.hpp
   reward_clipping.hpp
 )
 
