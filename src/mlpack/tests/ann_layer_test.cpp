@@ -1485,6 +1485,64 @@ TEST_CASE("ForwardGRULayerTest", "[ANNLayerTest]")
 }
 
 /**
+ * Check whether copying of GRU layer is working or not.
+ */
+TEST_CASE("CheckCopyGRUTest", "[ANNLayerTest]")
+{
+  // Initilizing two GRU layers.
+  GRU<> layer1(1, 2, 3);
+  GRU<> layer2();
+
+  // Provide input of all ones.
+  arma::mat input1 = arma::ones(3, 1);
+
+  // Declaring two ouput matrices for each layer.
+  arma::mat output1;
+  arma::mat output2;
+
+  // Forward pass through layer1.
+  layer1.Forward(input, output1);
+  layer2 = layer1;
+
+  // Freeing up layer1 to prevent memory leaks.
+  delete layer1;
+
+  // Forward pass through layer2.
+  layer2.Forward(input, output2);
+
+  CheckMatrices(output1, output2);
+}
+
+/**
+ * Check whether moving of GRU layer is working or not.
+ */
+TEST_CASE("CheckMovingGRUTest", "[ANNLayerTest]")
+{
+  // Initilizing two GRU layers.
+  GRU<> layer1(1, 2, 3);
+  GRU<> layer2();
+
+  // Provide input of all ones.
+  arma::mat input1 = arma::ones(3, 1);
+
+  // Declaring two ouput matrices for each layer.
+  arma::mat output1;
+  arma::mat output2;
+
+  // Forward pass through layer1.
+  layer1.Forward(input, output1);
+  layer2(std::move(*layer1));
+
+  // Freeing up layer1 to prevent memory leaks.
+  delete layer1;
+
+  // Forward pass through layer2.
+  layer2.Forward(input, output2);
+
+  CheckMatrices(output1, output2);
+}
+
+/**
  * Simple concat module test.
  */
 TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
