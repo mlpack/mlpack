@@ -73,7 +73,7 @@ class GRU
       const size_t rho = std::numeric_limits<size_t>::max());
 
   // Copy Constructor
-  GRU(const GRU &layer);
+  GRU(const GRU& layer);
 
   // Move Constructor
   GRU(GRU &&);
