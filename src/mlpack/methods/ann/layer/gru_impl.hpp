@@ -118,8 +118,7 @@ GRU<InputDataType, OutputDataType>&
 
 template <typename InputDataType, typename OutputDataType>
 GRU<InputDataType, OutputDataType>&
-  GRU<InputDataType, OutputDataType>::
-  operator=(GRU&& layer)
+  GRU<InputDataType, OutputDataType>::operator=(GRU&& layer)
 {
   if (this != &layer)
   {
