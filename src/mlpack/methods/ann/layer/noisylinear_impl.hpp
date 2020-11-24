@@ -63,7 +63,7 @@ NoisyLinear<InputDataType, OutputDataType>::NoisyLinear(
 
 template<typename InputDataType, typename OutputDataType>
 NoisyLinear<InputDataType, OutputDataType>&
-NoisyLinear<InputDataType, OutputDataType>::operator=(NoisyLinear const& layer)
+NoisyLinear<InputDataType, OutputDataType>::operator=(const NoisyLinear& layer)
 {
   if (this != &layer)
   {
