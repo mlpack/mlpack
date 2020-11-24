@@ -79,7 +79,7 @@ class GRU
   GRU(GRU &&);
 
   // Copy assignment operator
-  GRU &operator=(const GRU &layer);
+  GRU &operator=(const GRU& layer);
 
   // Move assignment operator
   GRU &operator=(GRU&& layer);
