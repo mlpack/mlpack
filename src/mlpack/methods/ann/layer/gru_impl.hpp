@@ -101,8 +101,7 @@ GRU<InputDataType, OutputDataType>::GRU(GRU&& layer) :
 // Copy operator definition
 template <typename InputDataType, typename OutputDataType>
 GRU<InputDataType, OutputDataType>&
-  GRU<InputDataType, OutputDataType>::
-  operator=(const GRU& layer)
+  GRU<InputDataType, OutputDataType>::operator=(const GRU& layer)
 {
   if (this != &layer)
   {
