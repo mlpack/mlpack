@@ -83,7 +83,6 @@ GRU<InputDataType, OutputDataType>::GRU(const GRU& layer) :
     outSize(layer.outSize),
     rho(layer.rho),
     weights(layer.weights)
-
 {
   // Nothing to do here.
 }
