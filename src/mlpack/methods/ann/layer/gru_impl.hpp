@@ -97,7 +97,7 @@ GRU<InputDataType, OutputDataType>::GRU(
   weights(std::move(layer.weights))
 
 {
-  // Nothing to do here
+  // Nothing to do here.
 }
 
 // Copy operator definition
