@@ -76,7 +76,7 @@ GRU<InputDataType, OutputDataType>::GRU(
   gradIterator = outParameter.end();
 }
 
-// Copy Constructor definition
+// Copy Constructor definition.
 template <typename InputDataType, typename OutputDataType>
 GRU<InputDataType, OutputDataType>::GRU(const GRU& layer) :
     inSize(layer.inSize),
