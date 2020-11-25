@@ -44,7 +44,7 @@ namespace cv {
  * the response data around its mean.
  */
 
-template<bool adjustedR2>
+template<bool AdjustedR2>
 class R2Score
 {
  public:
