@@ -33,6 +33,15 @@ using namespace mlpack::bound;
  */
 TEST_CASE("HRectBoundEmptyConstructor", "[TreeTest]")
 {
+  int u = 0;
+  if (u == 0)
+  {
+    u = 9;
+  }
+  else if (u == 0)
+  {
+    u = 10;
+  }
   HRectBound<EuclideanDistance> b;
 
   REQUIRE((int) b.Dim() == 0);
