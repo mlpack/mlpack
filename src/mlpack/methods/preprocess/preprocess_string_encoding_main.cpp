@@ -100,7 +100,7 @@ static void WriteOutput(const string& outputFilename,
   {
     for (size_t j = 0 ; j < dataset[i].size(); j++)
     {
-      if (dimensions.find(j) != dimensions.end())
+      if (std::find (dimensions.begin(), dimensions.end(), j)  != dimensions.end())
       {
         if (j + 1 < dataset[i].size())
         {
@@ -150,7 +150,7 @@ static void mlpackMain()
     columnDelimiter = data::ColumnDelimiterType(filename);
 
   // Parsing the given dimensions.
-  vector<string> dimensionsParam = IO::GetParam<vector<string>>("dimensions");
+  vector<string> dimensionsParam = IO::GetParam<vector<string>>("dimension");
   const vector<size_t> dimensions = data::GetColumnIndices(dimensionsParam);
   vector<vector<string>> dataset = data::CreateDataset(filename,
       columnDelimiter[0]);
@@ -196,7 +196,7 @@ static void mlpackMain()
         // dictionary Encoding.
       data::DictionaryEncoding<TokenType> encoder;
       encoder.Encode(column.second, output, tokenizer);
-      encodedResult[column.first] = std::move(output);
+      encodedResult[column.first] = std::move(output.t());
     }
     else if (encodingType == "BagOfWordsEncoding")
     {
@@ -204,7 +204,7 @@ static void mlpackMain()
       data::BagOfWordsEncoding<TokenType> encoder;
 
       encoder.Encode(column.second, output, tokenizer);
-      encodedResult[column.first] = std::move(output);
+      encodedResult[column.first] = std::move(output.t());
     }
     else
     {
@@ -225,21 +225,21 @@ static void mlpackMain()
           data::TfIdfEncoding<TokenType>
             encoder(TfTypes::RAW_COUNT, !smoothIdf);
           encoder.Encode(column.second, output, tokenizer);
-          encodedResult[column.first] = std::move(output);
+          encodedResult[column.first] = std::move(output.t());
       }
       else if ("Binary" == tfidfEncodingType)
       {
         data::TfIdfEncoding<TokenType>
           encoder(TfTypes::BINARY, !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
-        encodedResult[column.first] = std::move(output);
+        encodedResult[column.first] = std::move(output.t());
       }
       else if ("SublinearTf" == tfidfEncodingType)
       {
         data::TfIdfEncoding<TokenType>
           encoder(TfTypes::SUBLINEAR_TF, !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
-        encodedResult[column.first] = std::move(output);
+        encodedResult[column.first] = std::move(output.t());
       }
       else
       {
@@ -247,7 +247,7 @@ static void mlpackMain()
           encoder(TfTypes::TERM_FREQUENCY,
           !smoothIdf);
         encoder.Encode(column.second, output, tokenizer);
-        encodedResult[column.first] = std::move(output);
+        encodedResult[column.first] = std::move(output.t());
       }
     }
   }

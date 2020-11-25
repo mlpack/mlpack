@@ -18,8 +18,8 @@ static const std::string testName = "PreprocessEncodingString";
 #include <mlpack/methods/preprocess/preprocess_string_encoding_main.cpp>
 
 #include "test_helper.hpp"
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 using namespace std;
@@ -49,9 +49,12 @@ void CreateFile(vector<vector<InputType> >& input,
   ofstream file(filename);
   for (auto& row : input)
   {
-    for (auto& colum : row)
+    for (int i = 0 ; i < row.size(); i++)
     {
-      file << colum << columnDelimiter;
+      if (i != row.size() - 1)
+        file << row[i] << columnDelimiter;
+      else
+        file << row[i];
     }
     file << "\n";
   }
@@ -74,7 +77,7 @@ struct PreprocessEncodingStringTestFixture
   PreprocessEncodingStringTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
     CreateFile(stringEncodingInput, "string_test.txt", "\t");
   }
 
@@ -82,17 +85,16 @@ struct PreprocessEncodingStringTestFixture
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
     remove("string_test.txt");
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(PreprocessEncodingStringMainTest,
-                         PreprocessEncodingStringTestFixture);
 /**
  * Check for Dictionary encoding Type.
  */
-BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
+TEST_CASE_METHOD(PreprocessEncodingStringTestFixture, "MainDictionaryEncodingTest",
+                "[PreprocessEncodingStringMainTest][BindingTests]")
 {
   vector<vector<size_t>> stringencodeddata = {
     {  5, 7, 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,  0,
@@ -112,8 +114,8 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CompareFiles("output_preprocess_string_encoded_test.txt",
-      "preprocess_string_encoded_test.txt"), true);
+  REQUIRE(CompareFiles("output_preprocess_string_encoded_test.txt",
+      "preprocess_string_encoded_test.txt") == true);
   remove("output_preprocess_string_encoded_test.txt");
   remove("preprocess_string_encoded_test.txt");
 }
@@ -121,15 +123,16 @@ BOOST_AUTO_TEST_CASE(DictionaryEncodingTest)
 /**
  * Check for Bag Of Words encoding type.
  */
-BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
+TEST_CASE_METHOD(PreprocessEncodingStringTestFixture, "MainBagOfWordsEncodingTest",
+                "[PreprocessEncodingStringMainTest][BindingTests]")
 {
   vector<vector<size_t>> stringencodeddata = {
-    {  5, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    {  10, 12, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1,
-       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {  9, 19, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+    { 5, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 10, 12, 0, 1, 0, 0, 0, 2, 0, 0, 3, 3, 0, 0, 0, 3, 0, 0, 1, 1, 1, 3, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 9, 19, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
   };
   CreateFile(stringencodeddata, "preprocess_string_encoded_test.txt", "\t");
   SetInputParam<string>("actual_dataset", "string_test.txt");
@@ -141,8 +144,8 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CompareFiles("output_preprocess_string_encoded_test.txt",
-      "preprocess_string_encoded_test.txt"), true);
+  REQUIRE(CompareFiles("output_preprocess_string_encoded_test.txt",
+      "preprocess_string_encoded_test.txt") == true);
   remove("output_preprocess_string_encoded_test.txt");
   remove("preprocess_string_encoded_test.txt");
 }
@@ -150,7 +153,8 @@ BOOST_AUTO_TEST_CASE(BagOfWordsEncodingTest)
 /**
  * Check for Tf-Idf encoding type.
  */
-BOOST_AUTO_TEST_CASE(TfIdfEncodingTest)
+TEST_CASE_METHOD(PreprocessEncodingStringTestFixture, "MainTfIdfEncodingTest",
+                "[PreprocessEncodingStringMainTest][BindingTests]")
 {
   vector<vector<double>> stringencodeddata = {
     {  5, 7, 1.28768207245178, 1.28768207245178, 1.69314718055995,
@@ -182,8 +186,8 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingTest)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CompareFiles("output_preprocess_string_encoded_test.txt",
-      "preprocess_string_encoded_test.txt"), true);
+  REQUIRE(CompareFiles("output_preprocess_string_encoded_test.txt",
+      "preprocess_string_encoded_test.txt") == true);
   remove("output_preprocess_string_encoded_test.txt");
   remove("preprocess_string_encoded_test.txt");
 }
@@ -191,7 +195,8 @@ BOOST_AUTO_TEST_CASE(TfIdfEncodingTest)
 /**
  * Invalid row or dimension number throws error.
  */
-BOOST_AUTO_TEST_CASE(InvalidDimesnionTest)
+TEST_CASE_METHOD(PreprocessEncodingStringTestFixture, "InvalidDimesnionTest",
+                "[PreprocessEncodingStringMainTest][BindingTests]")
 {
   vector<vector<size_t>> stringencodeddata = {
     {  5, 7, 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,  0,
@@ -210,7 +215,7 @@ BOOST_AUTO_TEST_CASE(InvalidDimesnionTest)
   SetInputParam<string>("delimiter", " .,\"");
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   remove("output_preprocess_string_encoded_test.txt");
@@ -220,7 +225,8 @@ BOOST_AUTO_TEST_CASE(InvalidDimesnionTest)
 /**
  * Check wether invalid encoding type throws error.
  */
-BOOST_AUTO_TEST_CASE(InvalidEncodingTest)
+TEST_CASE_METHOD(PreprocessEncodingStringTestFixture, "InvalidEncodingTest",
+                "[PreprocessEncodingStringMainTest][BindingTests]")
 {
   vector<vector<size_t>> stringencodeddata = {
     {  5, 7, 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,  0,
@@ -239,7 +245,7 @@ BOOST_AUTO_TEST_CASE(InvalidEncodingTest)
   SetInputParam<string>("delimiter", " .,\"");
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   remove("output_preprocess_string_encoded_test.txt");
@@ -249,7 +255,8 @@ BOOST_AUTO_TEST_CASE(InvalidEncodingTest)
 /**
  * Check whether passing of extra option doesn't effect results.
  */
-BOOST_AUTO_TEST_CASE(ExtraOptionTest)
+TEST_CASE_METHOD(PreprocessEncodingStringTestFixture, "ExtraOptionTest",
+                "[PreprocessEncodingStringMainTest][BindingTests]")
 {
   vector<vector<size_t>> stringencodeddata = {
     {  5, 7, 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,  0,
@@ -270,8 +277,8 @@ BOOST_AUTO_TEST_CASE(ExtraOptionTest)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CompareFiles("output_preprocess_string_encoded_test.txt",
-      "preprocess_string_encoded_test.txt"), true);
+  REQUIRE(CompareFiles("output_preprocess_string_encoded_test.txt",
+      "preprocess_string_encoded_test.txt") == true);
   remove("output_preprocess_string_encoded_test.txt");
   remove("preprocess_string_encoded_test.txt");
 }
@@ -279,7 +286,8 @@ BOOST_AUTO_TEST_CASE(ExtraOptionTest)
 /**
  * Check whther smooth_idf really makes a different
  */
-BOOST_AUTO_TEST_CASE(SmoothIdfTest)
+TEST_CASE_METHOD(PreprocessEncodingStringTestFixture, "SmoothIdfTest",
+                "[PreprocessEncodingStringMainTest][BindingTests]")
 {
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
@@ -301,16 +309,18 @@ BOOST_AUTO_TEST_CASE(SmoothIdfTest)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CompareFiles("output_no_smooth_idf_encoded_test.txt",
-      "output_smooth_idf_string_encoded_test.txt"), false);
+  REQUIRE(CompareFiles("output_no_smooth_idf_encoded_test.txt",
+      "output_smooth_idf_string_encoded_test.txt") == false);
   remove("output_no_smooth_idf_string_encoded_test.txt");
   remove("output_no_smooth_idf_encoded_test.txt");
+  remove("output_smooth_idf_string_encoded_test.txt");
 }
 
 /**
  * Check whether two different encoding gives two different output.
  */
-BOOST_AUTO_TEST_CASE(DifferentEncodingTest)
+TEST_CASE_METHOD(PreprocessEncodingStringTestFixture, "DifferentEncodingTest",
+                "[PreprocessEncodingStringMainTest][BindingTests]")
 {
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
@@ -330,8 +340,8 @@ BOOST_AUTO_TEST_CASE(DifferentEncodingTest)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CompareFiles("output_dictionary_encdoing_test.txt",
-      "output_bow_encoding_string_encoded_test.txt"), false);
+  REQUIRE(CompareFiles("output_dictionary_encdoing_test.txt",
+      "output_bow_encoding_string_encoded_test.txt") == false);
   remove("output_bow_encoding_string_encoded_test.txt");
   remove("output_dictionary_encdoing_test.txt");
 }
@@ -339,7 +349,8 @@ BOOST_AUTO_TEST_CASE(DifferentEncodingTest)
 /**
  * Check whether two different Tf-Idf type gives two differnet ouput.
  */
-BOOST_AUTO_TEST_CASE(DifferenTfIdfTest)
+TEST_CASE_METHOD(PreprocessEncodingStringTestFixture, "DifferenTfIdfTest",
+                "[PreprocessEncodingStringMainTest][BindingTests]")
 {
   SetInputParam<string>("actual_dataset", "string_test.txt");
   SetInputParam<string>("preprocess_dataset",
@@ -360,8 +371,8 @@ BOOST_AUTO_TEST_CASE(DifferenTfIdfTest)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CompareFiles("output_sublinear_tf_encoding_test.txt",
-      "output_raw_count_encdoing_string_encoded_test.txt"), false);
+  REQUIRE(CompareFiles("output_sublinear_tf_encoding_test.txt",
+      "output_raw_count_encdoing_string_encoded_test.txt") == false);
   remove("output_sublinear_tf_encoding_test.txt");
   remove("output_raw_count_encdoing_string_encoded_test.txt");
 }
@@ -369,7 +380,8 @@ BOOST_AUTO_TEST_CASE(DifferenTfIdfTest)
 /**
  * Check whether invaid Tf-Idf type thrwows an error.
  */
-BOOST_AUTO_TEST_CASE(InvalidTfIdfTypeEncodingTest)
+TEST_CASE_METHOD(PreprocessEncodingStringTestFixture, "InvalidTfIdfTypeEncodingTest",
+                "[PreprocessEncodingStringMainTest][BindingTests]")
 {
   vector<vector<double>> stringencodeddata = {
     {  5, 7, 1.28768207245178, 1.28768207245178, 1.69314718055995,
@@ -401,11 +413,9 @@ BOOST_AUTO_TEST_CASE(InvalidTfIdfTypeEncodingTest)
   SetInputParam<string>("tfidf_encoding_type", "invalidetfidftype");
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   remove("output_preprocess_string_encoded_test.txt");
   remove("preprocess_string_encoded_test.txt");
 }
-
-BOOST_AUTO_TEST_SUITE_END();
