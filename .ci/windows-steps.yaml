@@ -130,20 +130,20 @@ steps:
     }
     try {
       (Add-Type -AssemblyName System.IO.Compression.FileSystem);
-      [System.IO.Compression.ZipFile]::ExtractToDirectory('dist\win-installer\jenkinsdoc.zip', 'dist\win-installer\mlpack-win-installer\SourceDir\doc')
+      [System.IO.Compression.ZipFile]::ExtractToDirectory('dist\win-installer\jenkinsdoc.zip', 'dist\win-installer\mlpack-win-installer\Sources\doc')
     }
     catch{Write-Output "Unable to add doc to installer, skipping!"}
     # Preparing installer staging.
-    mkdir dist\win-installer\mlpack-win-installer\SourceDir\lib
-    cp build\Release\*.lib dist\win-installer\mlpack-win-installer\SourceDir\lib\
-    cp build\Release\*.exp dist\win-installer\mlpack-win-installer\SourceDir\lib\
-    cp build\Release\*.dll dist\win-installer\mlpack-win-installer\SourceDir\
-    cp build\Release\*.exe dist\win-installer\mlpack-win-installer\SourceDir\
-    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\mlpack-win-installer\SourceDir\
-    cp $(Agent.ToolsDirectory)\boost_libs\boost_unit_test_framework-vc*.dll dist\win-installer\mlpack-win-installer\SourceDir\
-    cp build\include\mlpack dist\win-installer\mlpack-win-installer\SourceDir -recurse
-    cp doc\examples dist\win-installer\mlpack-win-installer\SourceDir -recurse
-    cp src\mlpack\tests\data\german.csv dist\win-installer\mlpack-win-installer\SourceDir\examples\sample-ml-app\sample-ml-app\data\
+    mkdir dist\win-installer\mlpack-win-installer\Sources\lib
+    cp build\Release\*.lib dist\win-installer\mlpack-win-installer\Sources\lib\
+    cp build\Release\*.exp dist\win-installer\mlpack-win-installer\Sources\lib\
+    cp build\Release\*.dll dist\win-installer\mlpack-win-installer\Sources\
+    cp build\Release\*.exe dist\win-installer\mlpack-win-installer\Sources\
+    cp $(Agent.ToolsDirectory)\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll dist\win-installer\mlpack-win-installer\Sources\
+    cp $(Agent.ToolsDirectory)\boost_libs\boost_unit_test_framework-vc*.dll dist\win-installer\mlpack-win-installer\Sources\
+    cp build\include\mlpack dist\win-installer\mlpack-win-installer\Sources -recurse
+    cp doc\examples dist\win-installer\mlpack-win-installer\Sources -recurse
+    cp src\mlpack\tests\data\german.csv dist\win-installer\mlpack-win-installer\Sources\examples\sample-ml-app\sample-ml-app\data\
     # Check current git version or mlpack version.
     $ver = (Get-Content "src\mlpack\core\util\version.hpp" | where {$_ -like "*MLPACK_VERSION*"});
     $env:MLPACK_VERSION += $ver[0].substring($ver[0].length - 1, 1) + '.';
@@ -163,7 +163,7 @@ steps:
     # Build the MSI installer.
     cd dist\win-installer\mlpack-win-installer
     dir
-    cd SourceDir
+    cd Sources
     dir
     cd ..
     & 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe' `

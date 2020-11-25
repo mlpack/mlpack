@@ -20,13 +20,13 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder" Name="PFiles">
         <Directory Id="INSTALLDIR" Name="mlpack">
-          <Directory Id="SourceDir" />
+          <Directory Id="Sources" />
         </Directory>
       </Directory>
     </Directory>
 
     <Feature Id="ProductFeature" Title="mlpackWindows" ConfigurableDirectory="INSTALLDIR" Level="1">
-      <ComponentGroupRef Id="SourceDir" />
+      <ComponentGroupRef Id="Sources" />
     </Feature>
 
     <Property Id="MLPACK_VERSION">$(env.MLPACK_VERSION)</Property>
