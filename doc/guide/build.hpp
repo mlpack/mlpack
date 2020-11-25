@@ -179,6 +179,8 @@ The full list of options mlpack allows:
  - JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
  - BUILD_MARKDOWN_BINDINGS=(ON/OFF): Build Markdown bindings for website
        documentation (default OFF)
+ - BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
+       (default ON)
  - MATHJAX=(ON/OFF): use MathJax for generated Doxygen documentation (default
        OFF)
  - FORCE_CXX11=(ON/OFF): assume that the compiler supports C++11 instead of
