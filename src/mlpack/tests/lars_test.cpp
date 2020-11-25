@@ -227,7 +227,7 @@ TEST_CASE("PredictRowMajorTest", "[LARSTest]")
 /**
  * Make sure that if we train twice, there is no issue.
  */
-TEST_CASE("RetrainTest", "[LARSTest]")
+TEST_CASE("LARSRetrainTest", "[LARSTest]")
 {
   arma::mat origX;
   arma::rowvec origY;

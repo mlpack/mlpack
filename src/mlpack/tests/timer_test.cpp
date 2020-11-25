@@ -20,18 +20,15 @@
 
 #include <mlpack/core.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
-
-BOOST_AUTO_TEST_SUITE(TimerTest);
 
 /**
  * We should be able to start and then stop a timer multiple times and it should
  * save the value.
  */
-BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
+TEST_CASE("MultiRunTimerTest", "[TimerTest]")
 {
   Timer::EnableTiming();
   Timer::Start("test_timer");
@@ -47,7 +44,7 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 
   Timer::Stop("test_timer");
 
-  BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 10000);
+  REQUIRE(Timer::Get("test_timer").count() >= 10000);
 
   // Restart it.
   Timer::Start("test_timer");
@@ -60,7 +57,7 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 
   Timer::Stop("test_timer");
 
-  BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 20000);
+  REQUIRE(Timer::Get("test_timer").count() >= 20000);
 
   // Just one more time, for good measure...
   Timer::Start("test_timer");
@@ -73,32 +70,32 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 
   Timer::Stop("test_timer");
 
-  BOOST_REQUIRE_GE(Timer::Get("test_timer").count(), 40000);
+  REQUIRE(Timer::Get("test_timer").count() >= 40000);
   Timer::DisableTiming();
 }
 
-BOOST_AUTO_TEST_CASE(TwiceStopTimerTest)
+TEST_CASE("TwiceStopTimerTest", "[TimerTest]")
 {
   Timer::EnableTiming();
   Timer::Start("test_timer");
   Timer::Stop("test_timer");
 
-  BOOST_REQUIRE_THROW(Timer::Stop("test_timer"), std::runtime_error);
+  REQUIRE_THROWS_AS(Timer::Stop("test_timer"), std::runtime_error);
 
   Timer::DisableTiming();
 }
 
-BOOST_AUTO_TEST_CASE(TwiceStartTimerTest)
+TEST_CASE("TwiceStartTimerTest", "[TimerTest]")
 {
   Timer::EnableTiming();
   Timer::Start("test_timer");
 
-  BOOST_REQUIRE_THROW(Timer::Start("test_timer"), std::runtime_error);
+  REQUIRE_THROWS_AS(Timer::Start("test_timer"), std::runtime_error);
   Timer::Stop("test_timer");
   Timer::DisableTiming();
 }
 
-BOOST_AUTO_TEST_CASE(MultithreadTimerTest)
+TEST_CASE("MultithreadTimerTest", "[TimerTest]")
 {
   Timer::EnableTiming();
   // Make three different threads all start a timer then stop a timer.
@@ -128,10 +125,10 @@ BOOST_AUTO_TEST_CASE(MultithreadTimerTest)
   // If we made it this far without a problem, then the multithreaded part has
   // worked.  Next we ensure that the total timer time is counting multiple
   // threads.
-  BOOST_REQUIRE(Timer::Get("thread_timer") > std::chrono::microseconds(50000));
+  REQUIRE(Timer::Get("thread_timer") > std::chrono::microseconds(50000));
 }
 
-BOOST_AUTO_TEST_CASE(DisabledTimingTest)
+TEST_CASE("DisabledTimingTest", "[TimerTest]")
 {
   // It should be disabled by default but let's be paranoid.
   Timer::DisableTiming();
@@ -144,7 +141,5 @@ BOOST_AUTO_TEST_CASE(DisabledTimingTest)
   #endif
   Timer::Stop("test_timer");
 
-  BOOST_REQUIRE(Timer::Get("test_timer") == std::chrono::microseconds(0));
+  REQUIRE(Timer::Get("test_timer") == std::chrono::microseconds(0));
 }
-
-BOOST_AUTO_TEST_SUITE_END();

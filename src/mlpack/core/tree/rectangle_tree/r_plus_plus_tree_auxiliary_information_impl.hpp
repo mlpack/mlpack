@@ -127,9 +127,9 @@ template<typename TreeType>
 template<typename Archive>
 void RPlusPlusTreeAuxiliaryInformation<TreeType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(outerBound);
+  ar(CEREAL_NVP(outerBound));
 }
 
 } // namespace tree

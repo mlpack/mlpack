@@ -1078,16 +1078,16 @@ TEST_CASE("GMMHMMLoadSaveTest", "[HMMTest]")
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP(hmm);
+    cereal::XMLOutputArchive ar(ofs);
+    ar(CEREAL_NVP(hmm));
   }
 
   // Load the HMM.
   HMM<GMM> hmm2(3, GMM(4, 3));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
-    ar >> BOOST_SERIALIZATION_NVP(hmm2);
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.
@@ -1144,16 +1144,16 @@ TEST_CASE("GaussianHMMLoadSaveTest", "[HMMTest]")
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP(hmm);
+    cereal::XMLOutputArchive ar(ofs);
+    ar(cereal::make_nvp("hmm", hmm));
   }
 
   // Load the HMM.
   HMM<GaussianDistribution> hmm2(3, GaussianDistribution(2));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
-    ar >> BOOST_SERIALIZATION_NVP(hmm2);
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.
@@ -1208,16 +1208,16 @@ TEST_CASE("DiscreteHMMLoadSaveTest", "[HMMTest]")
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP(hmm);
+    cereal::XMLOutputArchive ar(ofs);
+    ar(cereal::make_nvp("hmm", hmm));
   }
 
   // Load the HMM.
   HMM<DiscreteDistribution> hmm2(3, DiscreteDistribution(3));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
-    ar >> BOOST_SERIALIZATION_NVP(hmm2);
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.
@@ -1812,16 +1812,16 @@ TEST_CASE("DiagonalGMMHMMLoadSaveTest", "[HMMTest]")
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP(hmm);
+    cereal::XMLOutputArchive ar(ofs);
+    ar(cereal::make_nvp("hmm", hmm));
   }
 
   // Load the HMM.
   HMM<DiagonalGMM> hmm2(3, DiagonalGMM(4, 3));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
-    ar >> BOOST_SERIALIZATION_NVP(hmm2);
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.

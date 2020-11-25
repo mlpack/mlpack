@@ -18,7 +18,6 @@
 #include <mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp>
 #include <mlpack/core/data/string_encoding_policies/bag_of_words_encoding_policy.hpp>
 #include <mlpack/core/data/string_encoding_policies/tf_idf_encoding_policy.hpp>
-#include <boost/test/unit_test.hpp>
 #include <memory>
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
@@ -269,7 +268,8 @@ TEST_CASE("DictionaryEncodingIndividualCharactersTest", "[StringEncodingTest]")
  * Test the one pass modification of the dictionary encoding algorithm
  * in case of individual character encoding.
  */
-TEST_CASE("OnePassDictionaryEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("OnePassDictionaryEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   std::vector<string> input = {
     "GACCA",
@@ -470,13 +470,13 @@ TEST_CASE("StringEncodingDictionarySerialization", "[StringEncodingTest]")
     }
   }
 
-  DictionaryType xmlDictionary, textDictionary, binaryDictionary;
+  DictionaryType xmlDictionary, jsonDictionary, binaryDictionary;
 
-  SerializeObjectAll(dictionary, xmlDictionary, textDictionary,
+  SerializeObjectAll(dictionary, xmlDictionary, jsonDictionary,
       binaryDictionary);
 
   CheckDictionaries(dictionary, xmlDictionary);
-  CheckDictionaries(dictionary, textDictionary);
+  CheckDictionaries(dictionary, jsonDictionary);
   CheckDictionaries(dictionary, binaryDictionary);
 }
 
@@ -494,20 +494,20 @@ TEST_CASE("SplitByAnyOfDictionaryEncodingSerialization", "[StringEncodingTest]")
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
-  EncoderType xmlEncoder, textEncoder, binaryEncoder;
-  arma::mat xmlOutput, textOutput, binaryOutput;
+  EncoderType xmlEncoder, jsonEncoder, binaryEncoder;
+  arma::mat xmlOutput, jsonOutput, binaryOutput;
 
-  SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
+  SerializeObjectAll(encoder, xmlEncoder, jsonEncoder, binaryEncoder);
 
   CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
-  CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), jsonEncoder.Dictionary());
   CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
 
   xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
-  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
+  jsonEncoder.Encode(stringEncodingInput, jsonOutput, tokenizer);
   binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
 
-  CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
+  CheckMatrices(output, xmlOutput, jsonOutput, binaryOutput);
 }
 
 /**
@@ -524,25 +524,25 @@ TEST_CASE("CharExtractDictionaryEncodingSerialization", "[StringEncodingTest]")
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
-  EncoderType xmlEncoder, textEncoder, binaryEncoder;
-  arma::mat xmlOutput, textOutput, binaryOutput;
+  EncoderType xmlEncoder, jsonEncoder, binaryEncoder;
+  arma::mat xmlOutput, jsonOutput, binaryOutput;
 
-  SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
+  SerializeObjectAll(encoder, xmlEncoder, jsonEncoder, binaryEncoder);
 
   CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
-  CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), jsonEncoder.Dictionary());
   CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
 
   xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
-  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
+  jsonEncoder.Encode(stringEncodingInput, jsonOutput, tokenizer);
   binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
 
-  CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
+  CheckMatrices(output, xmlOutput, jsonOutput, binaryOutput);
 }
 
 /**
  * Test the Bag of Words encoding algorithm.
- */ 
+ */
 TEST_CASE("BagOfWordsEncodingTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
@@ -617,7 +617,7 @@ TEST_CASE("BagOfWordsEncodingTest", "[StringEncodingTest]")
 
 /**
  * Test the Bag of Words encoding algorithm. The output is saved into a vector.
- */ 
+ */
 TEST_CASE("VectorBagOfWordsEncodingTest", "[StringEncodingTest]")
 {
   using DictionaryType = StringEncodingDictionary<boost::string_view>;
@@ -684,7 +684,8 @@ TEST_CASE("BagOfWordsEncodingIndividualCharactersTest", "[StringEncodingTest]")
  * Test the Bag of Words encoding algorithm in case of individual
  * characters encoding. The output type is vector<vector<size_t>>.
  */
-TEST_CASE("VectorBagOfWordsEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("VectorBagOfWordsEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   std::vector<string> input = {
     "GACCA",
@@ -861,7 +862,8 @@ TEST_CASE("VectorRawCountSmoothIdfEncodingTest", "[StringEncodingTest]")
  * raw count term frequency type and the smooth inverse document frequency type.
  * These parameters are the default ones.
  */
-TEST_CASE("RawCountSmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("RawCountSmoothIdfEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -942,7 +944,8 @@ TEST_CASE("RawCountSmoothIdfEncodingIndividualCharactersTest", "[StringEncodingT
  * These parameters are the default ones. The output type is
  * vector<vector<double>>.
  */
-TEST_CASE("VectorRawCountSmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("VectorRawCountSmoothIdfEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   std::vector<string> input = {
     "GACCA",
@@ -1068,7 +1071,8 @@ TEST_CASE("VectorTfIdfRawCountEncodingTest", "[StringEncodingTest]")
  * raw count term frequency type and the non-smooth inverse document frequency
  * type.
  */
-TEST_CASE("RawCountTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("RawCountTfIdfEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1099,7 +1103,8 @@ TEST_CASE("RawCountTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest]
  * raw count term frequency type and the non-smooth inverse document frequency
  * type. The output type is vector<vector<double>>.
  */
-TEST_CASE("VectorRawCountTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("VectorRawCountTfIdfEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   std::vector<string> input = {
     "GACCA",
@@ -1129,7 +1134,8 @@ TEST_CASE("VectorRawCountTfIdfEncodingIndividualCharactersTest", "[StringEncodin
  * Test the Tf-Idf encoding algorithm for individual characters with the
  * binary term frequency type and the smooth inverse document frequency type.
  */
-TEST_CASE("BinarySmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("BinarySmoothIdfEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1160,7 +1166,8 @@ TEST_CASE("BinarySmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTes
  * binary term frequency type and the smooth inverse document frequency type.
  * The output type is vector<vector<double>>.
  */
-TEST_CASE("VectorBinarySmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("VectorBinarySmoothIdfEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   std::vector<string> input = {
     "GACCA",
@@ -1222,7 +1229,8 @@ TEST_CASE("BinaryTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
  * sublinear term frequency type and the smooth inverse document frequency
  * type.
  */
-TEST_CASE("SublinearSmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("SublinearSmoothIdfEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1254,7 +1262,8 @@ TEST_CASE("SublinearSmoothIdfEncodingIndividualCharactersTest", "[StringEncoding
  * sublinear term frequency type and the non-smooth inverse document frequency
  * type.
  */
-TEST_CASE("SublinearTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("SublinearTfIdfEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1286,7 +1295,8 @@ TEST_CASE("SublinearTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest
  * standard term frequency type and the smooth inverse document frequency
  * type.
  */
-TEST_CASE("TermFrequencySmoothIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("TermFrequencySmoothIdfEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1367,7 +1377,8 @@ TEST_CASE("TermFrequencySmoothIdfEncodingIndividualCharactersTest", "[StringEnco
  * standard term frequency type and the non-smooth inverse document frequency
  * type.
  */
-TEST_CASE("TermFrequencyTfIdfEncodingIndividualCharactersTest", "[StringEncodingTest]")
+TEST_CASE("TermFrequencyTfIdfEncodingIndividualCharactersTest",
+          "[StringEncodingTest]")
 {
   vector<string> input = {
     "GACCA",
@@ -1408,18 +1419,18 @@ TEST_CASE("SplitByAnyOfTfIdfEncodingSerialization", "[StringEncodingTest]")
 
   encoder.Encode(stringEncodingInput, output, tokenizer);
 
-  EncoderType xmlEncoder, textEncoder, binaryEncoder;
-  arma::mat xmlOutput, textOutput, binaryOutput;
+  EncoderType xmlEncoder, jsonEncoder, binaryEncoder;
+  arma::mat xmlOutput, jsonOutput, binaryOutput;
 
-  SerializeObjectAll(encoder, xmlEncoder, textEncoder, binaryEncoder);
+  SerializeObjectAll(encoder, xmlEncoder, jsonEncoder, binaryEncoder);
 
   CheckDictionaries(encoder.Dictionary(), xmlEncoder.Dictionary());
-  CheckDictionaries(encoder.Dictionary(), textEncoder.Dictionary());
+  CheckDictionaries(encoder.Dictionary(), jsonEncoder.Dictionary());
   CheckDictionaries(encoder.Dictionary(), binaryEncoder.Dictionary());
 
   xmlEncoder.Encode(stringEncodingInput, xmlOutput, tokenizer);
-  textEncoder.Encode(stringEncodingInput, textOutput, tokenizer);
+  jsonEncoder.Encode(stringEncodingInput, jsonOutput, tokenizer);
   binaryEncoder.Encode(stringEncodingInput, binaryOutput, tokenizer);
 
-  CheckMatrices(output, xmlOutput, textOutput, binaryOutput);
+  CheckMatrices(output, xmlOutput, jsonOutput, binaryOutput);
 }

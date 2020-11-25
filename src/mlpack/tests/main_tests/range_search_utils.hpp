@@ -18,15 +18,15 @@
 #include "../catch.hpp"
 
 /**
- * Convert a model to a string using the text_oarchive of boost::serialization.
+ * Convert a model to a string using the text_oarchive of cereal.
  *
  * @param model RSModel to be converted to string.
  */
 inline std::string ModelToString(RSModel* model)
 {
   std::ostringstream oss;
-  boost::archive::text_oarchive oa(oss);
-  oa << model;
+  cereal::JSONOutputArchive oa(oss);
+  oa(CEREAL_POINTER(model));
   return oss.str();
 }
 
