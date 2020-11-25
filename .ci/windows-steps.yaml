@@ -191,7 +191,7 @@ steps:
   displayName: 'Publish artifacts test results'
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: 'dist\win-installer\mlpack-win-installer\bin\x64\Release\*.msi'
+    pathtoPublish: 'dist\win-installer\mlpack-win-installer\bin\Release\*.msi'
     artifactName: mlpack-windows-installer
   displayName: 'Publish Windows MSI installer'
 

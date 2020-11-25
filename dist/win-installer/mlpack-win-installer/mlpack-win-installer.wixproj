@@ -12,7 +12,6 @@
     <DefineSolutionProperties>false</DefineSolutionProperties>
     <DefineConstants>SourceDir=.\Sources</DefineConstants>
     <WixTargetsPath Condition=" '$(WixTargetsPath' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
-    <VerboseOutput>true</VerboseOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
