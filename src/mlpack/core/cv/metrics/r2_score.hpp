@@ -44,43 +44,18 @@ namespace cv {
  * the response data around its mean.
  */
 
-template<bool adjustedR2> class R2Score;
-
-template<> class R2Score<false>
+template<bool adjustedR2>
+class R2Score
 {
  public:
   /**
-   * Run prediction and calculate the R squared error.
+   * Run prediction and calculate the R squared or Adjusted R sauared error.
    *
    * @param model A regression model.
    * @param data Column-major data containing test items.
    * @param responses Ground truth (correct) target values for the test items,
    *     should be either a row vector or a column-major matrix.
    * @return calculated R2 Score.
-   */
-  template<typename MLAlgorithm, typename DataType, typename ResponsesType>
-  static double Evaluate(MLAlgorithm& model,
-                         const DataType& data,
-                         const ResponsesType& responses);
-
-  /**
-   * Information for hyper-parameter tuning code. It indicates that we want
-   * to maximize the measurement.
-   */
-  static const bool NeedsMinimization = false;
-};
-
-template<> class R2Score<true>
-{
- public:
-  /**
-   * Run prediction and calculate the Adjusted R squared error.
-   *
-   * @param model A regression model.
-   * @param data Column-major data containing test items.
-   * @param responses Ground truth (correct) target values for the test items,
-   *     should be either a row vector or a column-major matrix.
-   * @return calculated Ajusted R2 Score.
    */
   template<typename MLAlgorithm, typename DataType, typename ResponsesType>
   static double Evaluate(MLAlgorithm& model,
