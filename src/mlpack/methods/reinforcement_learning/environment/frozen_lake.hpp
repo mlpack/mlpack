@@ -203,7 +203,7 @@ class FrozenLake
       newRow = std::max(nextState.CurRow() - 1, (unsigned long) 0);
     
     // Update states by setting new current row and column, 
-    //    and manually set the description of board.
+    // and manually set the description of board.
     nextState.CurRow() = newRow;
     nextState.CurCol() = newCol;
 
