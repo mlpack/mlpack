@@ -1,5 +1,6 @@
-### mlpack ?.?.?
-###### ????-??-??
+### mlpack 3.4.2
+###### 2020-11-26
+  * Add Adjusted R squared functionality to R2Score::Evalute (#2624)
 
 ### mlpack 3.4.1
 ###### 2020-09-07
