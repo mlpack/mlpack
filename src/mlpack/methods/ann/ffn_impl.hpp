@@ -14,7 +14,6 @@
 
 // In case it hasn't been included yet.
 #include "ffn.hpp"
-#include <iostream>
 #include "visitor/forward_visitor.hpp"
 #include "visitor/backward_visitor.hpp"
 #include "visitor/deterministic_set_visitor.hpp"
