@@ -51,10 +51,13 @@ NoisyLinear<InputDataType, OutputDataType>::NoisyLinear(
 template<typename InputDataType, typename OutputDataType>
 NoisyLinear<InputDataType, OutputDataType>::NoisyLinear(
     NoisyLinear&& layer) :
-    inSize(layer.inSize),
-    outSize(layer.outSize),
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
     weights(std::move(layer.weights))
 {
+  layer.inSize = 0;
+  layer.outSize = 0;
+  layer.weights = nullptr;
   Reset();
 }
 
@@ -78,9 +81,12 @@ NoisyLinear<InputDataType, OutputDataType>::operator=(NoisyLinear&& layer)
 {
   if (this != &layer)
   {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
+    inSize = std::move(layer.inSize);
+    layer.inSize = 0;
+    outSize = std::move(layer.outSize);
+    layer.outSize = 0;
     weights = std::move(layer.weights);
+    layer.weights = nullptr;
     Reset();
   }
   return *this;
