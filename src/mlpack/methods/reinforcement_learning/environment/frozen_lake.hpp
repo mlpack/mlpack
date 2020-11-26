@@ -5,8 +5,6 @@
  * This file is an implementation of Frozen Lake task:
  * https://gym.openai.com/envs/FrozenLake-v0/
  *
- * TODO: provide an option to use dynamics directly from OpenAI gym.
- *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -22,7 +20,7 @@ namespace mlpack {
 namespace rl {
 
 /**
- * Implementation of Cart Pole task.
+ * Implementation of Frozen Lake task.
  */
 class FrozenLake
 {
@@ -30,12 +28,18 @@ class FrozenLake
   class State
   {
    public:
-    State()
-    { 
-      // Nothing to do here.
-    }
+    // State()
+    // { 
+    //   // Nothing to do here.
+    // }
 
-    // Initialize a new state with current row and column at 0.
+    /**
+     * Construct a state instance from given data. Initialize the
+     * current position to the top left of the environment board.
+     * 
+     * @param nRows The height of the environment board.
+     * @param nCols The width of the environment board.
+     */ 
     State(size_t nRows, size_t nCols) : 
       nRows(nRows),
       nCols(nCols),
@@ -91,31 +95,38 @@ class FrozenLake
       return *this;
     }
 
-    //! Get nRows.
+    //! Get the height of the environment board.
     size_t NumRows() const {return nRows;}
 
-    //! Get nCol.
+    //! Get the width of the environment board.
     size_t NumCols() const {return nCols;}
 
-    //! Get current row.
+    //! Get the current row-position of the player.
     size_t CurRow() const {return curRow;}
 
-    //! Get current col.
+    //! Get the current column-position of the player.
     size_t CurCol() const {return curCol;}
 
-    //! Set current row.
+    //! Set the current row-position of the player.
     size_t& CurRow() {return curRow;}
 
-    //! Set current col.
+    //! Set the current column-position of the player.
     size_t& CurCol() {return curCol;}
 
-    //! Get state representation.
+    //! Get the state representation.
     size_t GetState() const {return nCols * curRow + curCol;}
 
    private:
+    //! Locally-stored the height of the environment board.
     size_t nRows;
+
+    //! Locally-stored the width of the environment board.
     size_t nCols;
+
+    //! Locally-stored the current row-position of the player.
     size_t curRow;
+
+    //! Locally-stored the current column-position of the player.
     size_t curCol;
   };
 
@@ -136,21 +147,39 @@ class FrozenLake
     static const size_t size = 4;
   };
 
-  //! Constructor.
-  FrozenLake(size_t const& maxSteps=200,
-              size_t const& nRows=4,
-              size_t const& nCols=4,
-              double const& platformRate=0.8) : 
+  /**
+   * Construct a Frozen Lake instance using the given constants.
+   * 
+   * @param maxSteps the maximum number of steps that the agent can
+   *    make. Default to 200.
+   * @param nRows the height of the environment board. Default to 4.
+   * @param nCols the width of the environment board. Default to 4.
+   * @param platformRate The probability of platform (walkable) tile
+   *    distribution. Default to 0.8.
+   */ 
+  FrozenLake(size_t const maxSteps=200,
+             size_t const nRows=4,
+             size_t const nCols=4,
+             double const platformRate=0.8) : 
     maxSteps(maxSteps),
     nRows(nRows),
     nCols(nCols)
   { 
-    // Preprocess platform rate
+    // Pre-process platform rate
     this->platformRate = std::min(platformRate, 1.0);
     this->platformRate = std::max(platformRate, 0.0);
   }
 
-  //  Step function
+  /**
+   * Dynamics of Frozen Lake instance. Get reward and next state based on current
+   * state and current action.
+   * 
+   * @param state The current state.
+   * @param action The current action.
+   * @param nextState The next state.
+   * @return reward, 1.0 if the agent step into a goal, -1.0 if the agent step
+   *    into a hole, 0.0 otherwise.
+   */
   double Sample(const State& state,
                 const Action& action,
                 State& nextState)
@@ -158,13 +187,12 @@ class FrozenLake
     // Update the number of steps performed.
     stepsPerformed++;
 
-    size_t newRow = state.CurRow();
-    size_t newCol = state.CurCol();
-
     // Copy the state to the next state.
     nextState = state;
     
-    // Calculate new row and col.
+    // Calculate new position.
+    size_t newRow = state.CurRow();
+    size_t newCol = state.CurCol();
     if (action.action == Action::actions::Left)
       newCol = std::max(nextState.CurCol() - 1, (unsigned long) 0);
     else if (action.action == Action::actions::Down)
@@ -199,7 +227,8 @@ class FrozenLake
    *
    * @param state The current state.
    * @param action The current action.
-   * @return reward, it's always 1.0.
+   * @return reward, 1.0 if the agent step into a goal, -1.0 if the agent step
+   *    into a hole, 0.0 otherwise.
    */
   double Sample(const State& state, const Action& action)
   {
@@ -209,7 +238,7 @@ class FrozenLake
 
   /**
    * Initial state representation is the current position at (0, 0) 
-   * and a new random bord is created.
+   * and a new random environment board is created.
    *
    * @return Initial state for each episode.
    */
@@ -217,18 +246,18 @@ class FrozenLake
   {
     stepsPerformed = 0;
     boardDescription = generateRandomBoard();
-    // Log::Info << boardDescription;
     return State(nRows, nCols);
   }
 
   /**
    * Initial state representation is the current position at (0, 0) 
    * and a new random bord is created.
-   * @param  board: The board of that the user want to initialize to.
-   * @param  nRows: Number of rows of the board.
-   * @param  nCols: Number of columns of the board.
-   * @return the State in which the number of rows and columns are 
-   * limited to nRows and nCols, respectively.
+   * 
+   * @param board The environment board of that the user want to initialize to.
+   * @param nRows The height of the environment board.
+   * @param nCols The width of the environment board.
+   * @return A state in which the height and width of the environment board are 
+   *    limited to nRows and nCols, respectively.
    */
   State InitialSample(std::vector<std::vector<char>> board, size_t nRows, size_t nCols)
   {
@@ -255,7 +284,6 @@ class FrozenLake
           "being taken.\n";
       return true;
     }
-    // else if (state.Description()(std::vector<int> t{state.CurRow(), state.CurCol()}) == 'H')
     else if (boardDescription[state.CurRow()][state.CurCol()] == 'H')
     {
       Log::Info << "Episode terminated due to agent falling in the hole.\n";
@@ -285,10 +313,14 @@ class FrozenLake
   std::vector<std::vector<char>>& Description() {return boardDescription;}
 
  private:
-
   /**
-   * This is an utility function that help generate random board. 
-   * @return board: a 2D array of characters that hold the board description. 
+   * Utility function that helps generate random environment board.
+   * 
+   * @return board, a 2D array of characters that hold the board description.
+   *    'S' is the Start Tile, the starting position of the agent.
+   *    'G' is the Goal Tile, the agent can walk into a goal tile to win.
+   *    'F' is a Frozen Tile, the agent can walk on it.
+   *    'H' is a Hole Tile, the agent can fall into it and the game ends.
    */
   std::vector<std::vector<char>> generateRandomBoard()
   {
@@ -306,10 +338,12 @@ class FrozenLake
   }
 
   /**
-   * Perform depth-firsth search to see if the board has a solution or not. 
-   * @param  candidateBoard: the board description.
-   * @param  nRows: number of rows.
-   * @param  nCols: number of columns.
+   * Perform depth-firsth search to see if the environment board has 
+   * a solution or not.
+   * 
+   * @param candidateBoard: the environment board description.
+   * @param nRows: the height of the environment board.
+   * @param nCols: the width of the environment board.
    * @return true if there is a solution, false otherwise. 
    */
   static bool dfsHelper(std::vector<std::vector<char>> candidateBoard, size_t nRows, size_t nCols)
@@ -343,10 +377,15 @@ class FrozenLake
   }
 
   /**
-   * Perform random distribution.
-   * @param  m: number of rows.
-   * @param  n: number of columns.
-   * @return a 2d array that describes the game board. 
+   * Perform random distribution of tile in the environment board. There are 4 type of tile:
+   * 'S' is the Start Tile, the starting position of the agent.
+   * 'G' is the Goal Tile, the agent can walk into a goal tile to win.
+   * 'F' is a Frozen Tile, the agent can walk on it.
+   * 'H' is a Hole Tile, the agent can fall into it and the game ends.
+   * 
+   * @param m the height of the environment board.
+   * @param n the width of the environment board.
+   * @return a 2d array that describes the environment board. 
    */
   std::vector<std::vector<char>> genBoardHelper (size_t nRows, size_t nCols, double platformRate)
   {
@@ -371,9 +410,10 @@ class FrozenLake
 
   /**
    * Utilities function to print board description. 
-   * @param  board: the board description.
-   * @param  nRows: number of rows in the board.
-   * @param  nCols: number of columns in the board.
+   * 
+   * @param board the environment board's description.
+   * @param nRows the height of the environment board.
+   * @param nCols the width of the environment board.
    */
   static void printBoard(std::vector<std::vector<char>> board, size_t nRows, size_t nCols)
   {
@@ -394,17 +434,17 @@ class FrozenLake
   //! Locally-stored number of steps performed.
   size_t stepsPerformed;
 
-  //! Locally-stored number of rows of the board.
+  //! Locally-stored height of the environment board.
   size_t nRows;
 
-  //! Locally-stored number of columns of the board.
+  //! Locally-stored width of the environment board.
   size_t nCols;
 
   //! Locally-stored the probability of how many 
   //  platform (walkable) tile exists.
   double platformRate;
 
-  //! Locally-stored the board description.
+  //! Locally-stored the environment board description.
   std::vector<std::vector<char>> boardDescription;
 
 };
