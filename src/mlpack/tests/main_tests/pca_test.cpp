@@ -19,8 +19,7 @@ static const std::string testName = "PrincipalComponentAnalysis";
 #include "test_helper.hpp"
 #include <mlpack/methods/pca/pca_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -41,12 +40,11 @@ struct PCATestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(PCAMainTest, PCATestFixture);
-
 /**
  * Make sure that if we ask for a dataset in 3 dimensions back, we get it.
  */
-BOOST_AUTO_TEST_CASE(PCADimensionTest)
+TEST_CASE_METHOD(PCATestFixture, "PCADimensionTest",
+                 "[PCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -57,15 +55,16 @@ BOOST_AUTO_TEST_CASE(PCADimensionTest)
   mlpackMain();
 
   // Now check that the output has 3 dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 3);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 5);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 3);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 5);
 }
 
 /**
  * Ensure that if we retain all variance, we get back a matrix with the same
  * dimensionality.
  */
-BOOST_AUTO_TEST_CASE(PCAVarRetainTest)
+TEST_CASE_METHOD(PCATestFixture, "PCAVarRetainTest",
+                 "[PCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(4, 5);
 
@@ -77,14 +76,15 @@ BOOST_AUTO_TEST_CASE(PCAVarRetainTest)
   mlpackMain();
 
   // Check that the output has 5 dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 4);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 5);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 4);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 5);
 }
 
 /**
  * Ensure that if we retain no variance, we get back no dimensions.
  */
-BOOST_AUTO_TEST_CASE(PCANoVarRetainTest)
+TEST_CASE_METHOD(PCATestFixture, "PCANoVarRetainTest",
+                 "[PCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -96,14 +96,15 @@ BOOST_AUTO_TEST_CASE(PCANoVarRetainTest)
   mlpackMain();
 
   // Check that the output has 1 dimensions.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("output").n_cols, 5);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 5);
 }
 
 /**
  * Check that we can't specify an invalid new dimensionality.
  */
-BOOST_AUTO_TEST_CASE(PCATooHighNewDimensionalityTest)
+TEST_CASE_METHOD(PCATestFixture, "PCATooHighNewDimensionalityTest",
+                 "[PCAMainTest][BindingTests]")
 {
   arma::mat x = arma::randu<arma::mat>(5, 5);
 
@@ -111,8 +112,6 @@ BOOST_AUTO_TEST_CASE(PCATooHighNewDimensionalityTest)
   SetInputParam("new_dimensionality", (int) 7); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-
-BOOST_AUTO_TEST_SUITE_END();

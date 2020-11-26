@@ -311,14 +311,14 @@ TEST_CASE("GaussianKernelTest", "[KernelTest]")
 TEST_CASE("GaussianKernelSerializationTest", "[KernelTest]")
 {
   GaussianKernel gk(0.5);
-  GaussianKernel xmlGk(1.5), textGk, binaryGk(15.0);
+  GaussianKernel xmlGk(1.5), jsonGk, binaryGk(15.0);
 
   // Serialize the kernels.
-  SerializeObjectAll(gk, xmlGk, textGk, binaryGk);
+  SerializeObjectAll(gk, xmlGk, jsonGk, binaryGk);
 
   REQUIRE(gk.Bandwidth() == Approx(0.5).epsilon(1e-7));
   REQUIRE(xmlGk.Bandwidth() == Approx(0.5).epsilon(1e-7));
-  REQUIRE(textGk.Bandwidth() == Approx(0.5).epsilon(1e-7));
+  REQUIRE(jsonGk.Bandwidth() == Approx(0.5).epsilon(1e-7));
   REQUIRE(binaryGk.Bandwidth() == Approx(0.5).epsilon(1e-7));
 }
 

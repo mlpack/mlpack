@@ -681,20 +681,20 @@ void HMM<Distribution>::ConvertToLogSpace() const
 //! Serialize the HMM.
 template<typename Distribution>
 template<typename Archive>
-void HMM<Distribution>::load(Archive& ar, const unsigned int /* version */)
+void HMM<Distribution>::load(Archive& ar, const uint32_t /* version */)
 {
   arma::mat transition;
   arma::vec initial;
-  ar & BOOST_SERIALIZATION_NVP(dimensionality);
-  ar & BOOST_SERIALIZATION_NVP(tolerance);
-  ar & BOOST_SERIALIZATION_NVP(transition);
-  ar & BOOST_SERIALIZATION_NVP(initial);
+  ar(CEREAL_NVP(dimensionality));
+  ar(CEREAL_NVP(tolerance));
+  ar(CEREAL_NVP(transition));
+  ar(CEREAL_NVP(initial));
 
   // Now serialize each emission.  If we are loading, we must resize the vector
   // of emissions correctly.
   emission.resize(transition.n_rows);
   // Load the emissions; generate the correct name for each one.
-  ar & BOOST_SERIALIZATION_NVP(emission);
+  ar(CEREAL_NVP(emission));
 
   logTransition = log(transition);
   logInitial = log(initial);
@@ -706,15 +706,15 @@ void HMM<Distribution>::load(Archive& ar, const unsigned int /* version */)
 template<typename Distribution>
 template<typename Archive>
 void HMM<Distribution>::save(Archive& ar,
-                             const unsigned int /* version */) const
+                             const uint32_t /* version */) const
 {
   arma::mat transition = exp(logTransition);
   arma::vec initial = exp(logInitial);
-  ar & BOOST_SERIALIZATION_NVP(dimensionality);
-  ar & BOOST_SERIALIZATION_NVP(tolerance);
-  ar & BOOST_SERIALIZATION_NVP(transition);
-  ar & BOOST_SERIALIZATION_NVP(initial);
-  ar & BOOST_SERIALIZATION_NVP(emission);
+  ar(CEREAL_NVP(dimensionality));
+  ar(CEREAL_NVP(tolerance));
+  ar(CEREAL_NVP(transition));
+  ar(CEREAL_NVP(initial));
+  ar(CEREAL_NVP(emission));
 }
 
 } // namespace hmm

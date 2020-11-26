@@ -17,11 +17,13 @@ option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
+option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
 # Set minimum library version required by mlpack.
 set(ARMADILLO_VERSION "8.400.0")
 set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
+set(CEREAL_VERSION "1.1.2")
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -140,7 +142,7 @@ set(COMPILER_SUPPORT_LIBRARIES "")
 
 # If we are using MSVC, we need /bigobj.
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zm400")
 endif ()
 
 # If we are using MINGW, we need sections and big-obj, otherwise we create too
@@ -353,7 +355,6 @@ else ()
   set(STB_AVAILABLE "1")
 endif ()
 
-
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
@@ -413,6 +414,9 @@ else ()
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 endif ()
 
+find_package(cereal "${CEREAL_VERSION}" REQUIRED)
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
+
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
@@ -441,8 +445,6 @@ set(Boost_ADDITIONAL_VERSIONS
 set(Boost_NO_BOOST_CMAKE 1)
 find_package(Boost "${BOOST_VERSION}"
     COMPONENTS
-      unit_test_framework
-      serialization
     REQUIRED
 )
 
@@ -568,6 +570,7 @@ add_custom_target(mlpack_arma_config ALL
     COMMAND ${CMAKE_COMMAND}
         -D ARMADILLO_INCLUDE_DIR="${ARMADILLO_INCLUDE_DIR}"
         -D OPENMP_FOUND="${OPENMP_FOUND}"
+        -D CMAKE_SIZEOF_VOID_P="${CMAKE_SIZEOF_VOID_P}"
         -P CMake/CreateArmaConfigInfo.cmake
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Updating arma_config.hpp (if necessary)")
@@ -615,43 +618,45 @@ add_dependencies(mlpack_headers mlpack_arma_config)
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
-find_package(Doxygen)
-if (DOXYGEN_FOUND)
-  if (MATHJAX)
-    find_package(MathJax)
-    if (NOT MATHJAX_FOUND)
-      message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
-          "Be careful, formulas will not be shown without the internet.")
+if (BUILD_DOCS)
+  find_package(Doxygen)
+  if (DOXYGEN_FOUND)
+    if (MATHJAX)
+      find_package(MathJax)
+      if (NOT MATHJAX_FOUND)
+        message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
+            "Be careful, formulas will not be shown without the internet.")
+      endif ()
     endif ()
+    # Preprocess the Doxyfile.  This is done before 'make doc'.
+    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
+        PRE_BUILD
+        COMMAND ${CMAKE_COMMAND}
+            -D DESTDIR=${CMAKE_BINARY_DIR}
+            -D MATHJAX="${MATHJAX}"
+            -D MATHJAX_FOUND="${MATHJAX_FOUND}"
+            -D MATHJAX_PATH="${MATHJAX_PATH}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
+        COMMENT "Creating Doxyfile to generate Doxygen documentation"
+    )
+
+    # Generate documentation.
+    add_custom_target(doc
+        COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
+        DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+        COMMENT "Generating API documentation with Doxygen"
+    )
+
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+        COMPONENT doc
+        OPTIONAL
+    )
   endif ()
-  # Preprocess the Doxyfile.  This is done before 'make doc'.
-  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
-      PRE_BUILD
-      COMMAND ${CMAKE_COMMAND}
-          -D DESTDIR=${CMAKE_BINARY_DIR}
-          -D MATHJAX="${MATHJAX}"
-          -D MATHJAX_FOUND="${MATHJAX_FOUND}"
-          -D MATHJAX_PATH="${MATHJAX_PATH}"
-          -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
-      COMMENT "Creating Doxyfile to generate Doxygen documentation"
-  )
-
-  # Generate documentation.
-  add_custom_target(doc
-      COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
-      DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
-      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-      COMMENT "Generating API documentation with Doxygen"
-  )
-
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
-      DESTINATION "${CMAKE_INSTALL_DOCDIR}"
-      COMPONENT doc
-      OPTIONAL
-  )
-endif ()
+endif()
 
 # Create the pkg-config file, if we have pkg-config.
 find_package(PkgConfig)

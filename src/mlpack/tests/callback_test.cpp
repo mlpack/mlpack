@@ -24,7 +24,7 @@
 #include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
 #include <mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -34,18 +34,18 @@ using namespace mlpack::metric;
 using namespace mlpack::nca;
 using namespace mlpack::distribution;
 
-BOOST_AUTO_TEST_SUITE(CallbackTest);
-
 /**
  * Test a FFN model with PrintLoss callback.
  */
-BOOST_AUTO_TEST_CASE(FFNCallbackTest)
+TEST_CASE("FFNCallbackTest", "[CallbackTest]")
 {
   arma::mat data;
   arma::mat labels;
 
-  data::Load("lab1.csv", data, true);
-  data::Load("lab3.csv", labels, true);
+  if (!data::Load("lab1.csv", data, true))
+    FAIL("Cannot load test dataset lab1.csv!");
+  if (!data::Load("lab3.csv", labels, true))
+    FAIL("Cannot load test dataset lab3.csv!");
 
   FFN<MeanSquaredError<>, RandomInitialization> model;
 
@@ -57,19 +57,21 @@ BOOST_AUTO_TEST_CASE(FFNCallbackTest)
   std::stringstream stream;
   model.Train(data, labels, ens::PrintLoss(stream));
 
-  BOOST_REQUIRE_GT(stream.str().length(), 0);
+  REQUIRE(stream.str().length() > 0);
 }
 
 /**
  * Test a FFN model with PrintLoss callback and optimizer parameter.
  */
-BOOST_AUTO_TEST_CASE(FFNWithOptimizerCallbackTest)
+TEST_CASE("FFNWithOptimizerCallbackTest", "[CallbackTest]")
 {
   arma::mat data;
   arma::mat labels;
 
-  data::Load("lab1.csv", data, true);
-  data::Load("lab3.csv", labels, true);
+  if (!data::Load("lab1.csv", data, true))
+    FAIL("Cannot load test dataset lab1.csv!");
+  if (!data::Load("lab3.csv", labels, true))
+    FAIL("Cannot load test dataset lab3.csv!");
 
   FFN<MeanSquaredError<>, RandomInitialization> model;
 
@@ -82,13 +84,13 @@ BOOST_AUTO_TEST_CASE(FFNWithOptimizerCallbackTest)
   ens::StandardSGD opt(0.1, 1, 5);
   model.Train(data, labels, opt, ens::PrintLoss(stream));
 
-  BOOST_REQUIRE_GT(stream.str().length(), 0);
+  REQUIRE(stream.str().length() > 0);
 }
 
 /**
  * Test a RNN model with PrintLoss callback.
  */
-BOOST_AUTO_TEST_CASE(RNNCallbackTest)
+TEST_CASE("RNNCallbackTest", "[CallbackTest]")
 {
   const size_t rho = 5;
   arma::cube input = arma::randu(1, 1, 5);
@@ -108,13 +110,13 @@ BOOST_AUTO_TEST_CASE(RNNCallbackTest)
   std::stringstream stream;
   model.Train(input, target, ens::PrintLoss(stream));
 
-  BOOST_REQUIRE_GT(stream.str().length(), 0);
+  REQUIRE(stream.str().length() > 0);
 }
 
 /**
  * Test a RNN model with PrintLoss callback and optimizer parameter.
  */
-BOOST_AUTO_TEST_CASE(RNNWithOptimizerCallbackTest)
+TEST_CASE("RNNWithOptimizerCallbackTest", "[CallbackTest]")
 {
   const size_t rho = 5;
   arma::cube input = arma::randu(1, 1, 5);
@@ -135,13 +137,13 @@ BOOST_AUTO_TEST_CASE(RNNWithOptimizerCallbackTest)
   ens::StandardSGD opt(0.1, 1, 5);
   model.Train(input, target, opt, ens::PrintLoss(stream));
 
-  BOOST_REQUIRE_GT(stream.str().length(), 0);
+  REQUIRE(stream.str().length() > 0);
 }
 
 /**
  * Test Logistic regression implementation with PrintLoss callback.
  */
-BOOST_AUTO_TEST_CASE(LRWithOptimizerCallback)
+TEST_CASE("LRWithOptimizerCallback", "[CallbackTest]")
 {
   arma::mat data("1 2 3;"
                  "1 2 3");
@@ -153,13 +155,13 @@ BOOST_AUTO_TEST_CASE(LRWithOptimizerCallback)
   logisticRegression.Train<ens::StandardSGD>(data, responses, sgd,
                                              ens::PrintLoss(stream));
 
-  BOOST_REQUIRE_GT(stream.str().length(), 0);
+  REQUIRE(stream.str().length() > 0);
 }
 
 /**
  * Test LMNN implementation with ProgressBar callback.
  */
-BOOST_AUTO_TEST_CASE(LMNNWithOptimizerCallback)
+TEST_CASE("LMNNWithOptimizerCallback", "[CallbackTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -172,13 +174,13 @@ BOOST_AUTO_TEST_CASE(LMNNWithOptimizerCallback)
   std::stringstream stream;
 
   lmnn.LearnDistance(outputMatrix, ens::ProgressBar(70, stream));
-  BOOST_REQUIRE_GT(stream.str().length(), 0);
+  REQUIRE(stream.str().length() > 0);
 }
 
 /**
  * Test NCA implementation with ProgressBar callback.
  */
-BOOST_AUTO_TEST_CASE(NCAWithOptimizerCallback)
+TEST_CASE("NCAWithOptimizerCallback", "[CallbackTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat data = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -191,13 +193,13 @@ BOOST_AUTO_TEST_CASE(NCAWithOptimizerCallback)
   std::stringstream stream;
 
   nca.LearnDistance(outputMatrix, ens::ProgressBar(70, stream));
-  BOOST_REQUIRE_GT(stream.str().length(), 0);
+  REQUIRE(stream.str().length() > 0);
 }
 
 /**
  * Test softmax_regression implementation with PrintLoss callback.
  */
-BOOST_AUTO_TEST_CASE(SRWithOptimizerCallback)
+TEST_CASE("SRWithOptimizerCallback", "[CallbackTest]")
 {
   const size_t points = 1000;
   const size_t inputSize = 3;
@@ -227,13 +229,13 @@ BOOST_AUTO_TEST_CASE(SRWithOptimizerCallback)
   SoftmaxRegression sr(data, labels, numClasses, lambda);
   sr.Train(data, labels, numClasses, sgd, ens::ProgressBar(70, stream));
 
-  BOOST_REQUIRE_GT(stream.str().length(), 0);
+  REQUIRE(stream.str().length() > 0);
 }
 
 /*
  * Tests the RBM Implementation with PrintLoss callback.
  */
-BOOST_AUTO_TEST_CASE(RBMCallbackTest)
+TEST_CASE("RBMCallbackTest", "[CallbackTest]")
 {
   // Normalised dataset.
   int hiddenLayerSize = 10;
@@ -255,15 +257,15 @@ BOOST_AUTO_TEST_CASE(RBMCallbackTest)
 
   // Call the train function with printloss callback.
   double objVal = model.Train(msgd, ens::ProgressBar(70, stream));
-  BOOST_REQUIRE(!std::isnan(objVal));
-  BOOST_REQUIRE_GT(stream.str().length(), 0);
+  REQUIRE(!std::isnan(objVal));
+  REQUIRE(stream.str().length() > 0);
 }
 
 /**
  * Tests the SparseAutoencoder implementation with
  * StoreBestCoordinates callback.
  */
-BOOST_AUTO_TEST_CASE(SparseAutoencodeCallbackTest)
+TEST_CASE("SparseAutoencodeCallbackTest", "[CallbackTest]")
 {
   // Simple fake dataset.
   arma::mat data1("0.1 0.2 0.3 0.4 0.5;"
@@ -275,7 +277,5 @@ BOOST_AUTO_TEST_CASE(SparseAutoencodeCallbackTest)
   ens::L_BFGS optimizer(5, 100);
   ens::StoreBestCoordinates<arma::mat> cb;
   mlpack::nn::SparseAutoencoder encoder2(data1, 5, 1, 0, 0, 0 , optimizer, cb);
-  BOOST_REQUIRE_GT(cb.BestObjective(), 0);
+  REQUIRE(cb.BestObjective() > 0);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

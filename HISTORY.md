@@ -1,6 +1,19 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Add Adjusted R squared functionality to R2Score::Evaluate (#2624)
+  * Add Adjusted R squared functionality to R2Score::Evaluate (#2624).
+
+  * Added an implementation to Stratify Data (#2671).
+
+  * Add `BUILD_DOCS` CMake option to control whether Doxygen documentation is
+    built (default ON) (#2730).
+
+### mlpack 3.4.2
+###### 2020-10-26
+  * Added Mean Absolute Percentage Error.
+
+  * Added Softmin activation function as layer in ann/layer.
+
+  * Fix spurious ARMA_64BIT_WORD compilation warnings on 32-bit systems (#2665).
 
 ### mlpack 3.4.1
 ###### 2020-09-07

@@ -166,15 +166,31 @@ void PrintDocs(const std::string& bindingName,
     }
     cout << endl;
 
-    // Next, iterate through the list of output options.
-    cout << "### Output options" << endl;
-    cout << endl;
-    string outputInfo = PrintOutputOptionInfo();
-    if (outputInfo.size() > 0)
-      cout << outputInfo << endl;
-    cout << endl;
-    cout << "| ***name*** | ***type*** | ***description*** |" << endl;
-    cout << "|------------|------------|-------------------|" << endl;
+    // Determine if there are any output options, to see if we need
+    // to print the header of the output options table.
+    bool hasOutputOptions = false;
+    for (map<string, ParamData>::iterator it = parameters.begin();
+        it != parameters.end(); ++it)
+    {
+      if (!it->second.input)
+      {
+        hasOutputOptions = true;
+        break;
+      }
+    }
+
+    if (hasOutputOptions)
+    {
+      // Next, iterate through the list of output options.
+      cout << "### Output options" << endl;
+      cout << endl;
+      string outputInfo = PrintOutputOptionInfo();
+      if (outputInfo.size() > 0)
+        cout << outputInfo << endl;
+      cout << endl;
+      cout << "| ***name*** | ***type*** | ***description*** |" << endl;
+      cout << "|------------|------------|-------------------|" << endl;
+    }
     for (map<string, ParamData>::iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {

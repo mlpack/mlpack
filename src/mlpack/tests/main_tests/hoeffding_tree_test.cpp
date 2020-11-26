@@ -18,8 +18,8 @@ static const std::string testName = "HoeffdingTree";
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree_main.cpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace data;
@@ -41,27 +41,25 @@ struct HoeffdingTreeTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(HoeffdingTreeMainTest,
-                         HoeffdingTreeTestFixture);
-
 /**
  * Check that number of output points and
  * number of input points are equal.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingTreeOutputDimensionTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeOutputDimensionTest",
+                 "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
   DatasetInfo info;
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
@@ -75,36 +73,34 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_cols,
-      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::mat>("probabilities").n_rows, 1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 1);
 }
 
 /**
  * Check that number of output points and number
  * of input points are equal for categorical dataset.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingTreeCategoricalOutputDimensionTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture,
+                 "HoeffdingTreeCategoricalOutputDimensionTest",
+                 "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
   DatasetInfo info;
   if (!data::Load("braziltourism.arff", inputData, info))
-    BOOST_FAIL("Cannot load train dataset braziltourism.arff!");
+    FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
   if (!data::Load("braziltourism_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for braziltourism_labels.txt");
+    FAIL("Cannot load labels for braziltourism_labels.txt");
 
   arma::mat testData;
   if (!data::Load("braziltourism_test.arff", testData, info))
-    BOOST_FAIL("Cannot load test dataset braziltourism_test.arff!");
+    FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   size_t testSize = testData.n_cols;
 
@@ -118,36 +114,33 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeCategoricalOutputDimensionTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Row<size_t>>
-      ("predictions").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_cols,
-      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::mat>("probabilities").n_rows, 1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 1);
 }
 
 /**
  * Check whether providing labels explicitly and extracting from last
  * dimension give the same output.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeLabelLessTest",
+                 "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
   DatasetInfo info;
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Append labels to the training set.
   inputData.resize(inputData.n_rows+1, inputData.n_cols);
@@ -165,17 +158,13 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_cols,
-      testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::mat>("probabilities").n_rows, 1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 1);
 
   // Reset passed parameters.
   IO::GetSingleton().Parameters()["training"].wasPassed = false;
@@ -199,16 +188,12 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::mat>("probabilities").n_cols, testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::mat>("probabilities").n_rows, 1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 1);
 
   // Check that initial and current predictions are same.
   CheckMatrices(
@@ -220,20 +205,21 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeLabelLessTest)
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelReuseTest",
+                 "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
   DatasetInfo info;
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
 
@@ -257,7 +243,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
   IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input trained model.
   SetInputParam("test", std::make_tuple(info, testData));
@@ -267,15 +253,12 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::mat>("probabilities").n_cols, testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("probabilities").n_rows, 1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 1);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
@@ -287,20 +270,21 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelReuseTest)
 /**
  * Ensure that saved model trained on categorical dataset can be used again.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelCategoricalReuseTest",
+                 "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
   DatasetInfo info;
   if (!data::Load("braziltourism.arff", inputData, info))
-    BOOST_FAIL("Cannot load train dataset braziltourism.arff!");
+    FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
   if (!data::Load("braziltourism_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for braziltourism_labels.txt");
+    FAIL("Cannot load labels for braziltourism_labels.txt");
 
   arma::mat testData;
   if (!data::Load("braziltourism_test.arff", testData, info))
-    BOOST_FAIL("Cannot load test dataset braziltourism_test.arff!");
+    FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   size_t testSize = testData.n_cols;
 
@@ -324,7 +308,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
   probabilities = std::move(IO::GetParam<arma::mat>("probabilities"));
 
   if (!data::Load("braziltourism_test.arff", testData, info))
-    BOOST_FAIL("Cannot load test dataset braziltourism_test.arff!");
+    FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   // Input trained model.
   SetInputParam("test", std::make_tuple(info, testData));
@@ -334,16 +318,12 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
   mlpackMain();
 
   // Check that number of output points are equal to number of input points.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Row<size_t>>("predictions").n_cols, testSize);
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::mat>("probabilities").n_cols, testSize);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals 1 for probabilities and predictions.
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::Row<size_t>>("predictions").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(
-      IO::GetParam<arma::mat>("probabilities").n_rows, 1);
+  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 1);
 
   // Check that initial predictions and predictions using saved model are same.
   CheckMatrices(
@@ -355,21 +335,22 @@ BOOST_AUTO_TEST_CASE(HoeffdingModelCategoricalReuseTest)
 /**
  * Ensure that small min_samples creates larger model.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMinSamplesTest",
+                 "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
   DatasetInfo info;
   int nodes;
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -395,13 +376,13 @@ BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
   bindings::tests::CleanMemory();
 
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -416,29 +397,29 @@ BOOST_AUTO_TEST_CASE(HoeffdingMinSamplesTest)
   mlpackMain();
 
   // Check that small min_samples creates larger model.
-  BOOST_REQUIRE_LT(
-      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(),
+  REQUIRE((IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes() <
       nodes);
 }
 
 /**
  * Ensure that large max_samples creates smaller model.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMaxSamplesTest",
+                 "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
   DatasetInfo info;
   int nodes;
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -464,13 +445,13 @@ BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
   bindings::tests::CleanMemory();
 
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -485,28 +466,29 @@ BOOST_AUTO_TEST_CASE(HoeffdingMaxSamplesTest)
   mlpackMain();
 
   // Check that large max_samples creates smaller model.
-  BOOST_REQUIRE_LT(nodes,
+  REQUIRE(nodes <
       (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
  * Ensure that small confidence value creates larger model.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingConfidenceTest",
+                 "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
   DatasetInfo info;
   int nodes;
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -531,13 +513,13 @@ BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
   bindings::tests::CleanMemory();
 
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -551,28 +533,29 @@ BOOST_AUTO_TEST_CASE(HoeffdingConfidenceTest)
 
   mlpackMain();
   // Check that higher confidence creates smaller tree.
-  BOOST_REQUIRE_LT(nodes,
+  REQUIRE(nodes <
       (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
  * Ensure that large number of passes creates larger model.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingPassesTest",
+                 "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
   DatasetInfo info;
   int nodes;
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -597,13 +580,13 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
   bindings::tests::CleanMemory();
 
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -618,27 +601,29 @@ BOOST_AUTO_TEST_CASE(HoeffdingPassesTest)
   mlpackMain();
 
   // Check that model with larger number of passes has greater number of nodes.
-  BOOST_REQUIRE_LT(nodes,
+  REQUIRE(nodes <
       (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
 /**
  * Ensure that the root node has 2 children when splitting strategy is binary.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingBinarySplittingStrategyTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture,
+                 "HoeffdingBinarySplittingStrategyTest",
+                 "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
   DatasetInfo info;
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -655,28 +640,30 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinarySplittingStrategyTest)
   mlpackMain();
 
   // Check that number of children is 2.
-  BOOST_REQUIRE_EQUAL(
-      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes()-1, 2);
+  REQUIRE(
+      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes() - 1 == 2);
 }
 
 /**
  * Ensure that the number of children varies with varying 'bins' in domingos.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture,
+                 "HoeffdingDomingosSplittingStrategyTest",
+                 "[HoeffdingTreeMainTest][BindingTest]")
 {
   arma::mat inputData;
   DatasetInfo info;
   int nodes;
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -705,13 +692,13 @@ BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
   bindings::tests::CleanMemory();
 
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -727,30 +714,31 @@ BOOST_AUTO_TEST_CASE(HoeffdingDomingosSplittingStrategyTest)
   mlpackMain();
 
   // Check that both models have different number of nodes.
-  BOOST_CHECK_NE(
-      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), nodes);
+  CHECK((IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes() !=
+      nodes);
 }
 
 /**
  * Ensure that the model doesn't split if observations before binning
  * is greater than total number of samples passed.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingBinningTest)
+TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingBinningTest",
+                 "[HoeffdingTreeMainTest][BindingTests]")
 {
   arma::mat inputData;
   arma::mat modData;
   arma::Row<size_t> modLabels;
   DatasetInfo info;
   if (!data::Load("vc2.csv", inputData, info))
-    BOOST_FAIL("Cannot load train dataset vc2.csv!");
+    FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
   if (!data::Load("vc2_labels.txt", labels))
-    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+    FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
   if (!data::Load("vc2_test.csv", testData, info))
-    BOOST_FAIL("Cannot load test dataset vc2.csv!");
+    FAIL("Cannot load test dataset vc2.csv!");
 
   modData = inputData.cols(0, 49);
   modLabels = labels.cols(0, 49);
@@ -772,8 +760,6 @@ BOOST_AUTO_TEST_CASE(HoeffdingBinningTest)
   mlpackMain();
 
   // Check that no splitting has happened.
-  BOOST_REQUIRE_EQUAL(
-      (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes(), 1);
+  REQUIRE((IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes()
+      == 1);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
