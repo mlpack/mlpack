@@ -14,7 +14,7 @@
 
 // In case it hasn't been included yet.
 #include "ffn.hpp"
-
+#include <iostream>
 #include "visitor/forward_visitor.hpp"
 #include "visitor/backward_visitor.hpp"
 #include "visitor/deterministic_set_visitor.hpp"
@@ -22,6 +22,7 @@
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/set_input_height_visitor.hpp"
 #include "visitor/set_input_width_visitor.hpp"
+#include "visitor/input_shape_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -48,6 +49,33 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::~FFN()
 {
   std::for_each(network.begin(), network.end(),
       boost::apply_visitor(deleteVisitor));
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::CheckInputShape(
+    size_t inputShape, std::string functionName)
+{
+  for (size_t l=0; l<network.size(); ++l)
+  {
+    size_t layerInShape = boost::apply_visitor(InShapeVisitor(), network[l]);
+    if (layerInShape == 0)
+    {
+      continue;
+    }
+    else if (layerInShape == inputShape)
+    {
+      break;
+    }
+    else
+    {
+      std::string estr = "FFN<>::" + functionName + ": "; 
+                  estr += "the first layer of the network expects ";
+                  estr += std::to_string(layerInShape) + " elements, ";
+                  estr += "but the input has " + std::to_string(inputShape) + " rows! ";
+      throw std::logic_error(estr);
+    }
+  }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
@@ -109,6 +137,8 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks)
 {
+  CheckInputShape(predictors.n_rows, "Train()");
+
   ResetData(std::move(predictors), std::move(responses));
 
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
@@ -131,6 +161,8 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::mat responses,
     CallbackTypes&&... callbacks)
 {
+  CheckInputShape(predictors.n_rows, "Train()");
+
   ResetData(std::move(predictors), std::move(responses));
 
   OptimizerType optimizer;
@@ -217,6 +249,8 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::mat predictors, arma::mat& results)
 {
+  CheckInputShape(predictors.n_rows, "Predict()");
+
   if (parameter.is_empty())
     ResetParameters();
 
@@ -250,6 +284,8 @@ template<typename PredictorsType, typename ResponsesType>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     const PredictorsType& predictors, const ResponsesType& responses)
 {
+  CheckInputShape(predictors.n_rows, "Evaluate()");
+
   if (parameter.is_empty())
     ResetParameters();
 

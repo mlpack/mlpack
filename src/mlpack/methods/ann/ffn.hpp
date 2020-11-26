@@ -24,6 +24,7 @@
 #include "visitor/weight_size_visitor.hpp"
 #include "visitor/copy_visitor.hpp"
 #include "visitor/loss_visitor.hpp"
+#include "visitor/input_shape_visitor.hpp"
 
 #include "init_rules/network_init.hpp"
 
@@ -323,6 +324,14 @@ class FFN
   const arma::mat& Predictors() const { return predictors; }
   //! Modify the matrix of data points (predictors).
   arma::mat& Predictors() { return predictors; }
+
+  /**
+   * Check wether the input size is consistent with the layer requirements.
+   * 
+   * @param inputShape shape of the input
+   * @param functionName function that checks the input size
+   */  
+  void CheckInputShape(size_t inputShape, std::string functionName);
 
   /**
    * Reset the module infomration (weights/parameters).
