@@ -29,6 +29,11 @@ class FrozenLake
   {
    public:
     /**
+     * Default constructor.
+     */
+    State() {/** Nothing to do here. */}
+
+    /**
      * Construct a state instance from given data. Initialize the
      * current position to the top left of the environment board.
      * 
