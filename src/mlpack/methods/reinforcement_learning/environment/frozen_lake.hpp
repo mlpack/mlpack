@@ -145,7 +145,7 @@ class FrozenLake
     nRows(nRows),
     nCols(nCols)
   { 
-    // Preprocess platform rate
+    // Preprocess platform rate.
     this->platformRate = std::min(platformRate, 1.0);
     this->platformRate = std::max(platformRate, 0.0);
   }
