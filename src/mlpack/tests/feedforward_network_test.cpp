@@ -186,8 +186,8 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
 
   // Check whether move constructor is working or not.
   CheckMoveFunction<>(model2, input, output, 1);
- * Check whether copying and moving network with dropout is working or not.
- */
+}
+
 TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
