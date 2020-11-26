@@ -217,6 +217,8 @@ Options are specified with the -D flag.  The allowed options include:
     STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
        STB image library
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
+    BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
+       (default ON)
 
 Other tools can also be used to configure CMake, but those are not documented
 here.  See [this section of the build guide](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html#build_config)
