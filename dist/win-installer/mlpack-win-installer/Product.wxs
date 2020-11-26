@@ -30,7 +30,7 @@
     </Feature>
 
     <Property Id="MLPACK_VERSION">$(env.MLPACK_VERSION)</Property>
-    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
     <WixVariable Id="WixUILicenseRtf" Value="..\staging\license.rtf"/>
     <WixVariable Id="WixUIBannerBmp" Value="..\res\banner.jpg"/>
     <WixVariable Id="WixUIDialogBmp" Value="..\res\dialog_white.jpg"/>
