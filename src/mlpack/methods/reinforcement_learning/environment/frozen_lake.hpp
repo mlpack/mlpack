@@ -150,7 +150,7 @@ class FrozenLake
     this->platformRate = std::max(platformRate, 0.0);
   }
 
-  //  Step function
+  // Step function
   double Sample(const State& state,
                 const Action& action,
                 State& nextState)
