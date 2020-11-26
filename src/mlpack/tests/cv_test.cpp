@@ -212,7 +212,6 @@ TEST_CASE("AdjR2ScoreTest", "[CVTest]")
           <= 1e-7);
 }
 
-
 /**
  * Test the mean squared error with matrix responses.
  */

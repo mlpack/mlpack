@@ -18,8 +18,8 @@ namespace cv {
 template<bool AdjustedR2>
 template<typename MLAlgorithm, typename DataType, typename ResponsesType>
 double R2Score<AdjustedR2>::Evaluate(MLAlgorithm& model,
-                         const DataType& data,
-                         const ResponsesType& responses)
+                                     const DataType& data,
+                                     const ResponsesType& responses)
 {
   if (data.n_cols != responses.n_cols)
   {
@@ -50,7 +50,8 @@ double R2Score<AdjustedR2>::Evaluate(MLAlgorithm& model,
       return totalSumSquared ? 1.0 : DBL_MIN;
     // Returning adjusted R-squared.
     double rsq = 1 - (residualSumSquared / totalSumSquared);
-    return (1 - ((1 - rsq) * ((data.n_cols - 1) / (data.n_cols - data.n_rows - 1))));
+    return (1 - ((1 - rsq) * ((data.n_cols - 1) /
+        (data.n_cols - data.n_rows - 1))));
   }
   else
   {
