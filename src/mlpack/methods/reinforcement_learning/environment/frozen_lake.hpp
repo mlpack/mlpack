@@ -28,11 +28,6 @@ class FrozenLake
   class State
   {
    public:
-    // State()
-    // { 
-    //   // Nothing to do here.
-    // }
-
     /**
      * Construct a state instance from given data. Initialize the
      * current position to the top left of the environment board.
@@ -117,16 +112,16 @@ class FrozenLake
     size_t GetState() const {return nCols * curRow + curCol;}
 
    private:
-    //! Locally-stored the height of the environment board.
+    //! Locally-stored height of the environment board.
     size_t nRows;
 
-    //! Locally-stored the width of the environment board.
+    //! Locally-stored width of the environment board.
     size_t nCols;
 
-    //! Locally-stored the current row-position of the player.
+    //! Locally-stored current row-position of the agent.
     size_t curRow;
 
-    //! Locally-stored the current column-position of the player.
+    //! Locally-stored current column-position of the agent.
     size_t curCol;
   };
 
@@ -269,15 +264,13 @@ class FrozenLake
   }
 
   /**
-   * This function checks if the cart has reached the terminal state.
+   * This function checks if the agent has reached the terminal state.
    *
    * @param state The desired state.
    * @return true if state is a terminal state, otherwise false.
    */
   bool IsTerminal(const State& state) const
   { 
-    // printBoard(boardDescription, nRows, nCols);
-    // Log::Info << "this turn moved: " << boardDescription[state.CurRow()][state.CurCol()] << "\n";
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
       Log::Info << "Episode terminated due to the maximum number of steps"
@@ -387,7 +380,7 @@ class FrozenLake
    * @param n the width of the environment board.
    * @return a 2d array that describes the environment board. 
    */
-  std::vector<std::vector<char>> genBoardHelper (size_t nRows, size_t nCols, double platformRate)
+  std::vector<std::vector<char>> genBoardHelper(size_t nRows, size_t nCols, double platformRate)
   {
     std::vector<char> board[nRows];
     for (size_t i = 0; i < nRows; i++)

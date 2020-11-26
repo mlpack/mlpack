@@ -313,7 +313,8 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
    *                  
    *          F   F   F   G 
    */
-  // Action definitions
+
+  // Action definitions.
   FrozenLake::Action goDown;
   goDown.action = FrozenLake::Action::actions::Down;
   FrozenLake::Action goUp;
@@ -330,7 +331,7 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
                                               {'F','F','F','G'}};
 
   // Task 1 checks the case that the agent makes it to the goal,
-  //  receiving 1.0 as the reward.
+  // receiving 1.0 as the reward.
   FrozenLake task1 = FrozenLake();
   FrozenLake::State state1 = task1.InitialSample(sampleBoard, 4, 4);
   task1.Sample(state1, goDown, state1);
@@ -346,7 +347,7 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
   REQUIRE(task1.IsTerminal(state1));
 
   // Task 2 checks the case where the agent does not
-  //  complete the game by reaching the max number of steps.
+  // complete the game by reaching the max number of steps.
   FrozenLake task2 = FrozenLake();
   FrozenLake::State state2 = task2.InitialSample(sampleBoard, 4, 4);
   task2.MaxSteps() = 10;
@@ -355,12 +356,12 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
     reward2 = task2.Sample(state2, goDown, state2);
 
   // Check if the number of steps performed is the same as 
-  //  the maximum allowed.
+  // the maximum allowed.
   REQUIRE(task2.StepsPerformed() == 10);
   REQUIRE(reward2 == 0.0);
   
   // Task 3 checks the case where the agent fall into a hole.
-  //  and recieved -1.0 as a reward.
+  // and recieved -1.0 as a reward.
   FrozenLake task3 = FrozenLake();
   FrozenLake::State state3 = task3.InitialSample(sampleBoard, 4, 4);
   task3.Sample(state3, goDown, state3);
