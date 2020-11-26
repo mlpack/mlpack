@@ -66,10 +66,10 @@ namespace math {
  * @code
  * // This matrix has two columns.
  * arma::mat input;
- * input << -1.0000 << 0.1429 << arma::endr
- *       << -0.7143 << 0.4286 << arma::endr
- *       << -0.4286 << 0.7143 << arma::endr
- *       << -0.1429 << 1.0000 << arma::endr;
+ * input = { { -1.0000, 0.1429 },
+ *           { -0.7143, 0.4286 },
+ *           { -0.4286, 0.7143 },
+ *           { -0.1429, 1.0000 } };
  *
  * arma::mat output;
  * ColumnsToBlocks ctb(1, 2);

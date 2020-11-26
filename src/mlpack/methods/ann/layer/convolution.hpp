@@ -207,10 +207,10 @@ class Convolution
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size.
+  //! Get the number of input maps.
   size_t InputSize() const { return inSize; }
 
-  //! Get the output size.
+  //! Get the number of output maps.
   size_t OutputSize() const { return outSize; }
 
   //! Get the kernel width.
