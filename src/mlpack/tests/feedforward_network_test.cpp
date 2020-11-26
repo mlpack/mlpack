@@ -154,7 +154,7 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 }
 
 /**
- * Noisy Linear layer constructor test.
+ * Check whether copying and moving of Noisy Linear layer is working or not.
  */
 TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
 {
@@ -188,6 +188,9 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
   CheckMoveFunction<>(model2, input, output, 1);
 }
 
+/**
+ * Check whether copying and moving of Dropout network is working or not.
+ */
 TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
