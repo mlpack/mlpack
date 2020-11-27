@@ -147,13 +147,6 @@ If you prefer to use cmake GUI, follow these instructions:
       following variables and reconfigure:
       - Name: `BOOST_INCLUDEDIR`; type `PATH`; value `C:/boost/`
       - Name: `BOOST_LIBRARYDIR`; type `PATH`; value `C:/boost/lib64-msvc-14.2`
-    - If Boost is still not found, try adding the following variables and
-      reconfigure:
-      - Name: `Boost_INCLUDE_DIR`; type `PATH`; value `C:/boost/`
-      - Name: `Boost_SERIALIZATION_LIBRARY_DEBUG`; type `FILEPATH`; value should be `C:/boost/lib64-msvc-14.2/boost_serialization-vc142-mt-gd-x64-1_71.lib`
-      - Name: `Boost_SERIALIZATION_LIBRARY_RELEASE`; type `FILEPATH`; value should be `C:/boost/lib64-msvc-14.2/boost_serialization-vc142-mt-x64-1_71.lib`
-      - Name: `Boost_UNIT_TEST_FRAMEWORK_LIBRARY_DEBUG`; type `FILEPATH`; value should be `C:/boost/lib64-msvc-14.2/boost_unit_test_framework-vc142-mt-gd-x64-1_71.lib`
-      - Name: `Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE`; type `FILEPATH`; value should be `C:/boost/lib64-msvc-14.2/boost_unit_test_framework-vc142-mt-x64-1_71.lib`
     - Once CMake has configured successfully, hit "Generate" to create the `.sln` file.
 
 @section build_windows_additional_information Additional Information
