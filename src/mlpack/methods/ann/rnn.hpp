@@ -303,6 +303,14 @@ class RNN
   arma::cube& Predictors() { return predictors; }
 
   /**
+   * Check wether the input shape is consistent with the layer requirements.
+   * 
+   * @param inputShape shape of the input
+   * @param functionName function that checks the input size
+   */  
+  void CheckInputShape(size_t inputShape, std::string functionName);
+
+  /**
    * Reset the state of the network.  This ensures that all internally-held
    * gradients are set to 0, all memory cells are reset, and the parameters
    * matrix is the right size.

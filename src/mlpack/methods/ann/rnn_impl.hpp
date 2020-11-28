@@ -62,6 +62,33 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::~RNN()
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::CheckInputShape(
+    size_t inputShape, std::string functionName)
+{
+  for (size_t l=0; l<network.size(); ++l)
+  {
+    size_t layerInShape = boost::apply_visitor(InShapeVisitor(), network[l]);
+    if (layerInShape == 0)
+    {
+      continue;
+    }
+    else if (layerInShape == inputShape)
+    {
+      break;
+    }
+    else
+    {
+      std::string estr = "RNN<>::" + functionName + ": "; 
+                  estr += "the first layer of the network expects ";
+                  estr += std::to_string(layerInShape) + " elements, ";
+                  estr += "but the input has " + std::to_string(inputShape) + " rows! ";
+      throw std::logic_error(estr);
+    }
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 template<typename OptimizerType>
 typename std::enable_if<
       HasMaxIterations<OptimizerType, size_t&(OptimizerType::*)()>
@@ -104,6 +131,8 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
+  CheckInputShape(predictors.n_rows, "Train()");
+
   numFunctions = responses.n_cols;
 
   this->predictors = std::move(predictors);
@@ -148,6 +177,8 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube responses,
     CallbackTypes&&... callbacks)
 {
+  CheckInputShape(predictors.n_rows, "Train()");
+
   numFunctions = responses.n_cols;
 
   this->predictors = std::move(predictors);
@@ -180,6 +211,8 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::cube predictors, arma::cube& results, const size_t batchSize)
 {
+  CheckInputShape(predictors.n_rows, "Train()");
+
   ResetCells();
 
   if (parameter.is_empty())
