@@ -18,6 +18,7 @@
 #include "visitor/delta_visitor.hpp"
 #include "visitor/output_parameter_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
+#include "visitor/input_shape_visitor.hpp"
 
 #include "init_rules/network_init.hpp"
 

@@ -24,6 +24,7 @@
 #include "visitor/gradient_set_visitor.hpp"
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/weight_set_visitor.hpp"
+#include "visitor/input_shape_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

@@ -171,6 +171,11 @@ class LSTM
   //! Get the number of output units.
   size_t OutSize() const { return outSize; }
 
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer
    */
