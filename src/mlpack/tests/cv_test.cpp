@@ -192,12 +192,12 @@ TEST_CASE("R2ScoreTest", "[CVTest]")
 }
 
 /**
- * Test the Adjusted R squared metric
+ * Test the Adjusted R squared metric.
  */
 TEST_CASE("AdjR2ScoreTest", "[CVTest]")
 {
   // Making two variables that define the linear function is
-  // f(x1, x2) = x1 + x2
+  // f(x1, x2) = x1 + x2.
   arma::mat X;
   X << 1 << 2 << 3 << 4 << 5 << 6 << arma::endr
     << 2 << 3 << 4 << 5 << 6 << 7 << arma::endr;
@@ -206,7 +206,7 @@ TEST_CASE("AdjR2ScoreTest", "[CVTest]")
   
   LinearRegression lr(X, Y);
   
-  //Theoretically Adjusted R squared should be equal 1
+  // Theoretically Adjusted R squared should be equal 1
   double expAdjR2 = 1;
   REQUIRE(std::abs(R2Score<true>::Evaluate(lr, X, Y) - expAdjR2)
           <= 1e-7);
