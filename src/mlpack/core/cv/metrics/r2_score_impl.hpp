@@ -43,11 +43,12 @@ double R2Score<AdjustedR2>::Evaluate(MLAlgorithm& model,
   // Calculate the denominator i.e.total sum of squares.
   double totalSumSquared = arma::accu(arma::square(responses - meanResponses));
 
+  // Handling undefined R2 Score when both denominator and numerator is 0.0.
+  if (residualSumSquared == 0.0)
+    return totalSumSquared ? 1.0 : DBL_MIN;
+
   if (AdjustedR2)
   {
-    // Handling undefined R2 Score when both denominator and numerator is 0.0.
-    if (residualSumSquared == 0.0)
-      return totalSumSquared ? 1.0 : DBL_MIN;
     // Returning adjusted R-squared.
     double rsq = 1 - (residualSumSquared / totalSumSquared);
     return (1 - ((1 - rsq) * ((data.n_cols - 1) /
