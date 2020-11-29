@@ -19,6 +19,7 @@
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/copy_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
+#include "../visitor/input_shape_visitor.hpp"
 
 #include "layer_types.hpp"
 #include "add_merge.hpp"
@@ -138,6 +139,9 @@ class Recurrent
 
   //! Get the number of steps to backpropagate through time.
   size_t const& Rho() const { return rho; }
+
+  //! Get the shape of the input.
+  size_t InputShape() const;
 
   /**
    * Serialize the layer

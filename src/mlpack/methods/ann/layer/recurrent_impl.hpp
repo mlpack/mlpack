@@ -20,6 +20,7 @@
 #include "../visitor/backward_visitor.hpp"
 #include "../visitor/gradient_visitor.hpp"
 #include "../visitor/gradient_zero_visitor.hpp"
+#include "../visitor/input_shape_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -124,6 +125,36 @@ Recurrent<InputDataType, OutputDataType, CustomLayers...>::Recurrent(
   this->network.push_back(mergeModule);
   this->network.push_back(feedbackModule);
   this->network.push_back(recurrentModule);
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+size_t Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() const
+{
+  size_t inputShapeStartModule = boost::apply_visitor(InShapeVisitor(), startModule);
+  size_t inputShapeInputModule = boost::apply_visitor(InShapeVisitor(), inputModule);
+  size_t inputShapeFeedbackModule = boost::apply_visitor(InShapeVisitor(), feedbackModule);
+  size_t inputShapeTransferModule = boost::apply_visitor(InShapeVisitor(), transferModule);
+
+  if (inputShapeStartModule != 0)
+    return inputShapeStartModule;
+  else
+  {
+    if (inputShapeInputModule != 0)
+      return inputShapeInputModule;
+    else
+    {
+      if (inputShapeFeedbackModule != 0)
+        return inputShapeFeedbackModule;
+      else
+      {
+        if (inputShapeTransferModule != 0)
+          return inputShapeTransferModule;
+        else
+          return 0;
+      }
+    }
+  }
 }
 
 template<typename InputDataType, typename OutputDataType,
