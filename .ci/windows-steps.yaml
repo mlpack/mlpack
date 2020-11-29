@@ -159,10 +159,6 @@ steps:
 
     # Build the MSI installer.
     cd dist\win-installer\mlpack-win-installer
-    dir
-    cd Sources
-    dir
-    cd ..
     & 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe' `
         -t:rebuild `
         -p:Configuration=Release `
