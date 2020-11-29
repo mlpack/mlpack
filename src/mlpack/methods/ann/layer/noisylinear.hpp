@@ -130,6 +130,12 @@ class NoisyLinear
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   //! Modify the bias weights of the layer.
   arma::mat& Bias() { return bias; }
 
