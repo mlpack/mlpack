@@ -1431,7 +1431,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType,
   {
     MatType*& datasetTemp = const_cast<MatType*&>(dataset);
     ar(CEREAL_POINTER(datasetTemp));
-  } 
+  }
 
   ar(CEREAL_NVP(points));
   ar(CEREAL_NVP(auxiliaryInfo));

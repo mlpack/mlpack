@@ -33,7 +33,7 @@ Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
     run(run),
     channels(1)
 {
-  parameters.set_size(0, 0);
+  weights.set_size(0, 0);
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -49,7 +49,7 @@ Concat<InputDataType, OutputDataType, CustomLayers...>::Concat(
     model(model),
     run(run)
 {
-  parameters.set_size(0, 0);
+  weights.set_size(0, 0);
 
   // Parameters to help calculate the number of channels.
   size_t oldColSize = 1, newColSize = 1;

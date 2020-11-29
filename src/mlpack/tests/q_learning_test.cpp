@@ -35,15 +35,12 @@
 #include <ensmallen.hpp>
 #include <numeric>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace ens;
 using namespace mlpack::rl;
-
-BOOST_AUTO_TEST_SUITE(QLearningTest);
 
 template<typename AgentType>
 bool testAgent(AgentType& agent,
@@ -97,7 +94,7 @@ bool testAgent(AgentType& agent,
 }
 
 //! Test DQN in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
+TEST_CASE("CartPoleWithDQN", "[QLearningTest]")
 {
   // Set up the network.
   SimpleDQN<> network(4, 128, 128, 2);
@@ -122,12 +119,12 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQN)
   bool converged = testAgent<decltype(agent)>(agent, 40, 1000);
 
   // To check if the action returned by the agent is not nan and is finite.
-  BOOST_REQUIRE(std::isfinite(double(agent.Action().action)));
-  BOOST_REQUIRE(converged);
+  REQUIRE(std::isfinite(double(agent.Action().action)));
+  REQUIRE(converged);
 }
 
 //! Test DQN in Cart Pole task with Prioritized Replay.
-BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
+TEST_CASE("CartPoleWithDQNPrioritizedReplay", "[QLearningTest]")
 {
   // Set up the network.
   SimpleDQN<> network(4, 128, 128, 2);
@@ -146,11 +143,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDQNPrioritizedReplay)
       agent(config, network, policy, replayMethod);
 
   bool converged = testAgent<decltype(agent)>(agent, 45, 1000);
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test Double DQN in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
+TEST_CASE("CartPoleWithDoubleDQN", "[QLearningTest]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights. If this works 1 of 4 times, I'm fine
@@ -178,11 +175,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDoubleDQN)
     if (converged)
       break;
   }
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test DQN in Acrobot task.
-BOOST_AUTO_TEST_CASE(AcrobotWithDQN)
+TEST_CASE("AcrobotWithDQN", "[QLearningTest]")
 {
   // We will allow three trials, although it would be very uncommon for the test
   // to use more than one.
@@ -208,11 +205,11 @@ BOOST_AUTO_TEST_CASE(AcrobotWithDQN)
     if (converged)
       break;
   }
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test DQN in Mountain Car task.
-BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
+TEST_CASE("MountainCarWithDQN", "[QLearningTest]")
 {
   // We will allow five trials total.
   bool converged = false;
@@ -238,11 +235,11 @@ BOOST_AUTO_TEST_CASE(MountainCarWithDQN)
     if (converged)
       break;
   }
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test DQN in DoublePoleCart task.
-BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
+TEST_CASE("DoublePoleCartWithDQN", "[QLearningTest]")
 {
   bool converged = false;
   // We will allow four trials total.
@@ -300,11 +297,11 @@ BOOST_AUTO_TEST_CASE(DoublePoleCartWithDQN)
     if (converged)
       break;
   }
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test Dueling DQN in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
+TEST_CASE("CartPoleWithDuelingDQN", "[QLearningTest]")
 {
   // Set up the network.
   DuelingDQN<> network(4, 128, 64, 2);
@@ -322,11 +319,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQN)
       agent(config, network, policy, replayMethod);
 
   bool converged = testAgent<decltype(agent)>(agent, 45, 2000);
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test Dueling DQN in Cart Pole task with Prioritized Replay.
-BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
+TEST_CASE("CartPoleWithDuelingDQNPrioritizedReplay", "[QLearningTest]")
 {
   // Set up the network.
   DuelingDQN<> network(4, 128, 64, 2);
@@ -345,11 +342,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDQNPrioritizedReplay)
       agent(config, network, policy, replayMethod);
 
   bool converged = testAgent<decltype(agent)>(agent, 50, 2000);
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test Noisy DQN in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithNoisyDQN)
+TEST_CASE("CartPoleWithNoisyDQN", "[QLearningTest]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -377,11 +374,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNoisyDQN)
     if (converged)
       break;
   }
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test Dueling-Double-Noisy DQN in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDoubleNoisyDQN)
+TEST_CASE("CartPoleWithDuelingDoubleNoisyDQN", "[QLearningTest]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -410,11 +407,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithDuelingDoubleNoisyDQN)
     if (converged)
       break;
   }
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test N-step DQN in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithNStepDQN)
+TEST_CASE("CartPoleWithNStepDQN", "[QLearningTest]")
 {
   // Set up the network.
   SimpleDQN<> network(4, 128, 128, 2);
@@ -437,11 +434,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNStepDQN)
       agent(config, network, policy, replayMethod);
 
   bool converged = testAgent<decltype(agent)>(agent, 50, 1000);
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test N-step Prioritized DQN in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithNStepPrioritizedDQN)
+TEST_CASE("CartPoleWithNStepPrioritizedDQN", "[QLearningTest]")
 {
   // Set up the network.
   SimpleDQN<> network(4, 128, 128, 2);
@@ -465,11 +462,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithNStepPrioritizedDQN)
       agent(config, network, policy, replayMethod);
 
   bool converged = testAgent<decltype(agent)>(agent, 50, 1000);
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test Categorical DQN in Cart Pole task.
-BOOST_AUTO_TEST_CASE(CartPoleWithCategoricalDQN)
+TEST_CASE("CartPoleWithCategoricalDQN", "[QLearningTest]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations.
@@ -504,11 +501,11 @@ BOOST_AUTO_TEST_CASE(CartPoleWithCategoricalDQN)
     if (converged)
       break;
   }
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! Test SAC on Pendulum task.
-BOOST_AUTO_TEST_CASE(PendulumWithSAC)
+TEST_CASE("PendulumWithSAC", "[QLearningTest]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -545,11 +542,11 @@ BOOST_AUTO_TEST_CASE(PendulumWithSAC)
     if (converged)
       break;
   }
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
 
 //! A test to ensure SAC works with multiple actions in action space.
-BOOST_AUTO_TEST_CASE(SACForMultipleActions)
+TEST_CASE("SACForMultipleActions", "[QLearningTest]")
 {
   ContinuousActionEnv::State::dimension = 3;
   ContinuousActionEnv::Action::size = 4;
@@ -586,8 +583,7 @@ BOOST_AUTO_TEST_CASE(SACForMultipleActions)
   agent.SelectAction();
 
   // Test to check if the action dimension given by the agent is correct.
-  BOOST_REQUIRE_EQUAL(agent.Action().action.size(),
-                      ContinuousActionEnv::Action::size);
+  REQUIRE(agent.Action().action.size() == ContinuousActionEnv::Action::size);
 
   replayMethod.Store(agent.State(), agent.Action(), 1, agent.State(), 1, 0.99);
   agent.TotalSteps()++;
@@ -595,5 +591,3 @@ BOOST_AUTO_TEST_CASE(SACForMultipleActions)
   // If the agent is able to reach till this point of the test, it is assured
   // that the agent can handle multiple actions in continuous space.
 }
-
-BOOST_AUTO_TEST_SUITE_END();

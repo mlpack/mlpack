@@ -10,7 +10,6 @@ steps:
 - powershell: |
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
     nuget install boost -o $(Agent.ToolsDirectory) -Version 1.60.0
-    nuget install boost_unit_test_framework-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_random-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_math_c99-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
@@ -19,7 +18,6 @@ steps:
     mkdir -p $(Agent.ToolsDirectory)/boost_libs
     cp $(Agent.ToolsDirectory)/boost_math_c99-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
     cp $(Agent.ToolsDirectory)/boost_random-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
-    cp $(Agent.ToolsDirectory)/boost_unit_test_framework-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
   displayName: 'Fetch build dependencies'
 
 # Configure armadillo

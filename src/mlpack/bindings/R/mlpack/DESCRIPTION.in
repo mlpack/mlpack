@@ -15,8 +15,7 @@ Imports: Rcpp (>= 0.12.12)
 LinkingTo: Rcpp,
            RcppArmadillo (>= @RcppArmadillo_Version@),
            BH (>= @BH_Version@),
-           RcppEnsmallen (>= @RcppEnsmallen_Version@),
-           Rcereal (>= @Rcereal_Version@)
+           RcppEnsmallen (>= @RcppEnsmallen_Version@)
 Suggests: testthat (>= 2.1.0)
 URL: https://www.mlpack.org/doc/mlpack-@PACKAGE_VERSION@/r_documentation.html,
      https://github.com/mlpack/mlpack

@@ -108,7 +108,7 @@ template<typename Archive>
 void DropConnect<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-   // Delete the old network first, if needed.
+  // Delete the old network first, if needed.
   if (cereal::is_loading<Archive>())
   {
     boost::apply_visitor(DeleteVisitor(), baseLayer);

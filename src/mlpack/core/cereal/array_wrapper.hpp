@@ -21,7 +21,7 @@
 
 namespace cereal {
 
-/** 
+/**
  * This class is used as a shim for cereal to be able to serialize a raw pointer array.
  */
 template<class T>
@@ -84,7 +84,7 @@ ArrayWrapper<T> make_array(T*& t, S& s)
  * @param T C Style array.
  * @param S Size of the array.
  */
-#define CEREAL_POINTER_ARRAY(T,S) cereal::make_array(T, S)
+#define CEREAL_POINTER_ARRAY(T, S) cereal::make_array(T, S)
 
 } // namespace cereal
 

@@ -795,7 +795,8 @@ TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixParamTest",
   remove("test.csv");
 }
 
-TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixNoTransposeParamTest", "[IOTest]")
+TEST_CASE_METHOD(IOTestDestroyer, "OutputMatrixNoTransposeParamTest",
+                "[IOTest]")
 {
   AddRequiredCLIOptions();
 

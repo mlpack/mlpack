@@ -32,9 +32,12 @@ template<typename T>
 struct HasSerializeFunction
 {
   template<typename C>
-  using NonStaticSerialize = void(C::*)(cereal::XMLOutputArchive&, const uint32_t version);
+  using NonStaticSerialize = void(C::*)(cereal::XMLOutputArchive&,
+      const uint32_t version);
+
   template<typename /* C */>
-  using StaticSerialize = void(*)(cereal::XMLOutputArchive&, const uint32_t version);
+  using StaticSerialize = void(*)(cereal::XMLOutputArchive&,
+      const uint32_t version);
 
   static const bool value = HasSerializeCheck<T, NonStaticSerialize>::value ||
                             HasSerializeCheck<T, StaticSerialize>::value;

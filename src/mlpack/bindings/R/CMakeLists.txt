@@ -23,7 +23,6 @@ if (BUILD_R_BINDINGS)
   set(RcppArmadillo_Version "0.${ARMADILLO_VERSION}")
   set(RcppEnsmallen_Version "0.${ENSMALLEN_VERSION}")
   set(BH_Version "${BOOST_VERSION}")
-  set(Rcereal_Version "${CEREAL_VERSION}")
 
   # Import find_r_module.
   include(${CMAKE_SOURCE_DIR}/CMake/FindRModule.cmake)
@@ -55,22 +54,18 @@ if (BUILD_R_BINDINGS)
   if (NOT R_TESTTHAT)
     set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - testthat")
   endif ()
-  find_r_module(Rcereal "${Rcereal_Version}")
-  if (NOT R_RCEREAL)
-    set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - Rcereal")
-  endif ()
 
   ## We need to check here if R and other dependencies is even available, as
   ## it is require to build R-bindings.
   if (FORCE_BUILD_R_BINDINGS)
     if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN
-        OR NOT R_BH OR NOT R_ROXYGEN2 OR NOT R_TESTTHAT OR NOT R_RCEREAL)
+        OR NOT R_BH OR NOT R_ROXYGEN2 OR NOT R_TESTTHAT)
       unset(BUILD_R_BINDINGS CACHE)
       message(FATAL_ERROR "Could not Build R Bindings, Following modules are not available:${R_NOT_FOUND_MSG}")
     endif()
   else ()
     if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN
-        OR NOT R_BH OR NOT R_ROXYGEN2 OR NOT R_TESTTHAT OR NOT R_RCEREAL)
+        OR NOT R_BH OR NOT R_ROXYGEN2 OR NOT R_TESTTHAT)
       unset(BUILD_R_BINDINGS CACHE)
       not_found_return("Not building R bindings, Following modules are not available:${R_NOT_FOUND_MSG}")
     endif()
@@ -314,6 +309,16 @@ macro (post_r_setup)
   file(GLOB_RECURSE R_SRC_CPP_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" *.cpp)
   set(R_SRC_FILES ${R_SRC_HPP_FILES} ${R_SRC_CPP_FILES})
 
+  # In case of R_Bindings we are copying all of these header to
+  # <package>/src/cereal/ because the currently-packaged version
+  # of Rcereal throws warnings on CRAN.
+  # Collect all header files in the cereal folder.
+  file(GLOB_RECURSE RCEREAL_SRC_H_FILES RELATIVE "${CEREAL_INCLUDE_DIR}"
+       "${CEREAL_INCLUDE_DIR}/cereal/*.h")
+  file(GLOB_RECURSE RCEREAL_SRC_HPP_FILES RELATIVE "${CEREAL_INCLUDE_DIR}"
+       "${CEREAL_INCLUDE_DIR}/cereal/*.hpp")
+  set(RCEREAL_SRC_FILES ${RCEREAL_SRC_HPP_FILES} ${RCEREAL_SRC_H_FILES})
+
   # First we have to create that directory though.
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E
@@ -338,7 +343,7 @@ macro (post_r_setup)
   foreach(r_src_file ${R_SRC_FILES})
     if ("${r_src_file}" MATCHES "methods/" OR
         "${r_src_file}" MATCHES "core/" OR
-        "${r_src_file}" MATCHES "bindings/util" )
+        "${r_src_file}" MATCHES "bindings/util")
       execute_process(
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
           ${CMAKE_CURRENT_SOURCE_DIR}/${r_src_file}
@@ -355,6 +360,25 @@ macro (post_r_setup)
 
     endif()
   endforeach()
+
+  # Copy cereal headers for R-bindings.
+  foreach(rcereal_src_file ${RCEREAL_SRC_FILES})
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CEREAL_INCLUDE_DIR}/${rcereal_src_file}
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${rcereal_src_file}
+    )
+  endforeach()
+
+  # Resolve gcc Warnings.
+  file(READ ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/cereal/external/base64.hpp CEREAL_BASE64)
+  string(REGEX REPLACE
+      "\n#ifdef __GNUC__\n#pragma GCC diagnostic push\n#pragma GCC diagnostic ignored \"-Wconversion\"\n#endif\n"
+      "" CEREAL_BASE64 "${CEREAL_BASE64}")
+  string(REGEX REPLACE
+      "#ifdef __GNUC__\n#pragma GCC diagnostic pop\n#endif"
+      "" CEREAL_BASE64 "${CEREAL_BASE64}")
+  file(WRITE ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/cereal/external/base64.hpp "${CEREAL_BASE64}")
 
   # Then configure 'mlpack.h.in' using ${R_SRC}.
   configure_file(
