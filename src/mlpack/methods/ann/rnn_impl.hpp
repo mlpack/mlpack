@@ -211,7 +211,7 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::cube predictors, arma::cube& results, const size_t batchSize)
 {
-  CheckInputShape(predictors.n_rows, "Train()");
+  CheckInputShape(predictors.n_rows, "Predict()");
 
   ResetCells();
 
