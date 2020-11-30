@@ -169,6 +169,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
  *                testData, trainLabel, testLabel, 0.3);
  * @endcode
  *
+ * @tparam LabelsType Type of input labels. It must be arma::Mat or arma::row.
  * @param input Input dataset to split.
  * @param inputLabel Input labels to split.
  * @param trainData Matrix to store training data into.
@@ -179,13 +180,15 @@ void StratifiedSplit(const arma::Mat<T>& input,
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *       sample is visited in linear order. (Default true.)
  */
-template<typename T, typename U>
+template<typename T, typename LabelsType,
+         typename = std::enable_if_t<arma::is_Row<LabelsType>::value ||
+                          arma::is_Mat_only<LabelsType>::value> >
 void Split(const arma::Mat<T>& input,
-           const arma::Row<U>& inputLabel,
+           const LabelsType& inputLabel,
            arma::Mat<T>& trainData,
            arma::Mat<T>& testData,
-           arma::Row<U>& trainLabel,
-           arma::Row<U>& testLabel,
+           LabelsType& trainLabel,
+           LabelsType& testLabel,
            const double testRatio,
            const bool shuffleData = true)
 {
@@ -295,6 +298,7 @@ void Split(const arma::Mat<T>& input,
  * auto splitResult = Split(input, label, 0.2);
  * @endcode
  *
+ * @tparam LabelsType Type of input labels. It must be arma::Mat or arma::row.
  * @param input Input dataset to split.
  * @param inputLabel Input labels to split.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
@@ -306,18 +310,20 @@ void Split(const arma::Mat<T>& input,
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */
-template<typename T, typename U>
-std::tuple<arma::Mat<T>, arma::Mat<T>, arma::Row<U>, arma::Row<U>>
+template<typename T, typename LabelsType,
+         typename = std::enable_if_t<arma::is_Row<LabelsType>::value ||
+                          arma::is_Mat_only<LabelsType>::value> >
+std::tuple<arma::Mat<T>, arma::Mat<T>, LabelsType, LabelsType>
 Split(const arma::Mat<T>& input,
-      const arma::Row<U>& inputLabel,
+      const LabelsType& inputLabel,
       const double testRatio,
       const bool shuffleData = true,
       const bool stratifyData = false)
 {
   arma::Mat<T> trainData;
   arma::Mat<T> testData;
-  arma::Row<U> trainLabel;
-  arma::Row<U> testLabel;
+  LabelsType trainLabel;
+  LabelsType testLabel;
 
   if (stratifyData)
   {
