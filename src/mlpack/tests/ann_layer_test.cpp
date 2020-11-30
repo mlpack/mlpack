@@ -31,51 +31,6 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 
-// network1 should be allocated with `new`, and trained on some data.
-template<typename MatType = arma::mat, typename ModelType>
-void CheckCopyFunction(ModelType* network1,
-                       MatType& trainData,
-                       MatType& trainLabels,
-                       const size_t maxEpochs)
-{
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
-  network1->Train(trainData, trainLabels, opt);
-
-  arma::mat predictions1;
-  network1->Predict(trainData, predictions1);
-  FFN<> network2;
-  network2 = *network1;
-  delete network1;
-
-  // Deallocating all of network1's memory, so that
-  // if network2 is trying to use any of that memory.
-  arma::mat predictions2;
-  network2.Predict(trainData, predictions2);
-  CheckMatrices(predictions1, predictions2);
-}
-
-// network1 should be allocated with `new`, and trained on some data.
-template<typename MatType = arma::mat, typename ModelType>
-void CheckMoveFunction(ModelType* network1,
-                       MatType& trainData,
-                       MatType& trainLabels,
-                       const size_t maxEpochs)
-{
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
-  network1->Train(trainData, trainLabels, opt);
-
-  arma::mat predictions1;
-  network1->Predict(trainData, predictions1);
-  FFN<> network2(std::move(*network1));
-  delete network1;
-
-  // Deallocating all of network1's memory, so that
-  // if network2 is trying to use any of that memory.
-  arma::mat predictions2;
-  network2.Predict(trainData, predictions2);
-  CheckMatrices(predictions1, predictions2);
-}
-
 /**
  * Simple add module test.
  */
