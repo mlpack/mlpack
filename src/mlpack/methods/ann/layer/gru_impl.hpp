@@ -120,7 +120,7 @@ GRU<InputDataType, OutputDataType>&
 {
   if (this != &layer)
   {
-    inSize = layer.inSize;
+    inSize = std::move(layer.inSize);
     outSize = layer.outSize;
     rho = std::move(layer.rho);
     weights = std::move(layer.weights);
