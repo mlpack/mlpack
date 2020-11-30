@@ -21,21 +21,21 @@ class TestPythonBinding(unittest.TestCase):
   This class tests the basic functionality of the Python bindings.
   """
 
-  # def testRunBindingCorrectly(self):
-  #   """
-  #   Test that when we run the binding correctly (with correct input parameters),
-  #   we get the expected output.
-  #   """
-  #   output = test_python_binding(string_in='hello',
-  #                                int_in=12,
-  #                                double_in=4.0,
-  #                                mat_req_in=[[1.0]],
-  #                                col_req_in=[1.0],
-  #                                flag1=True)
+  def testRunBindingCorrectly(self):
+    """
+    Test that when we run the binding correctly (with correct input parameters),
+    we get the expected output.
+    """
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
+                                 flag1=True)
 
-  #   self.assertEqual(output['string_out'], 'hello2')
-  #   self.assertEqual(output['int_out'], 13)
-  #   self.assertEqual(output['double_out'], 5.0)
+    self.assertEqual(output['string_out'], 'hello2')
+    self.assertEqual(output['int_out'], 13)
+    self.assertEqual(output['double_out'], 5.0)
 
   # def testRunBindingNoFlag(self):
   #   """
