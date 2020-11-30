@@ -1518,9 +1518,8 @@ TEST_CASE("CheckCopyGRUTest", "[ANNLayerTest]")
  */
 TEST_CASE("CheckMovingGRUTest", "[ANNLayerTest]")
 {
-  // Initilizing two GRU layers.
+  // Initilizing the orignal GRU layer.
   GRU<> layer1(1, 2, 3);
-  GRU<> layer2();
 
   // Provide input of all ones.
   arma::mat input1 = arma::ones(3, 1);
@@ -1531,7 +1530,9 @@ TEST_CASE("CheckMovingGRUTest", "[ANNLayerTest]")
 
   // Forward pass through layer1.
   layer1.Forward(input, output1);
-  layer2(std::move(*layer1));
+
+  // Initilizing second GRU layer.
+  GRU<> layer2(std::move(*layer1));
 
   // Freeing up layer1 to prevent memory leaks.
   delete layer1;
