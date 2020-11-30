@@ -1184,6 +1184,65 @@ TEST_CASE("FastLSTMLayerParametersTest", "[ANNLayerTest]")
 }
 
 /**
+ * Check whether copying and moving network with FastLSTM is working or not.
+ */
+ TEST_CASE("CheckCopyFastLSTMTest", "[ANNLayerTest]")
+ {
+   std::cout << "Starting copy test" << std::endl;
+   arma::cube input = arma::randu(1, 1, 5);
+   arma::cube target = arma::ones(1, 1, 5);
+   const size_t rho = 5;
+
+   RNN<NegativeLogLikelihood<> > *model1 = new RNN<NegativeLogLikelihood<> >(rho);
+   model1->Predictors() = input;
+   model1->Responses() = target;
+   model1->Add<Linear<> >(1, 10);
+   model1->Add<FastLSTM<> >(10, 3, rho);
+   model1->Add<LogSoftMax<> >();
+
+   ens::StandardSGD opt(0.1, 1, 5, -100, false);
+   std::cout << "Before Training Model" << std::endl;
+   model1->Train(input, target, opt);
+   std::cout << "After Training" << std::endl;
+
+   arma::cube predictions1;
+   model1->Predict(input, predictions1);
+
+   std::cout << "After model1 predict" << std::endl;
+
+   RNN<> model2(rho);
+   model2 = *model1;
+   delete model1;
+
+   arma::cube predictions2;
+   std::cout << "After model1 delete" << std::endl;
+   model2.Predict(input, predictions2);
+   std::cout << "After model2 predictions" << std::endl;
+   CheckMatrices(predictions1, predictions2);
+   // FastLSTM<> *layer1 = new FastLSTM<>(1,2,3);
+   // FastLSTM<> layer2();
+   //
+   // // Provide input of all ones.
+   // arma::mat input = arma::ones(3, 1);
+   //
+   // // Declaring two ouput matrices for each layer.
+   // arma::mat output1;
+   // arma::mat output2;
+   //
+   // // Forward pass through layer1.
+   // layer1->Forward(input, output1);
+   // layer2 = *layer1;
+   //
+   // // Freeing up layer1 to prevent memory leaks.
+   // delete layer1;
+   //
+   // // Forward pass through layer2.
+   // layer2.Forward(input, output2);
+   //
+   // CheckMatrices(output1, output2);
+ }
+
+/**
  * Testing the overloaded Forward() of the LSTM layer, for retrieving the cell
  * state. Besides output, the overloaded function provides read access to cell
  * state of the LSTM layer.

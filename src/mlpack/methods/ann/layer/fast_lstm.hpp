@@ -73,6 +73,18 @@ class FastLSTM
   //! Create the Fast LSTM object.
   FastLSTM();
 
+  //! Copy Constructor
+  FastLSTM(const FastLSTM& layer);
+
+  //! Move Constructor
+  FastLSTM(FastLSTM&& layer);
+
+  //! Copy assignment operator
+  FastLSTM& operator=(const FastLSTM& layer);
+
+  //! Move assignment operator
+  FastLSTM& operator=(FastLSTM&& layer);
+
   /**
    * Create the Fast LSTM layer object using the specified parameters.
    *

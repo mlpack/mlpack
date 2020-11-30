@@ -46,6 +46,60 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
 }
 
 template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>::FastLSTM(const FastLSTM& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    weights(layer.weights)
+{
+  // Nothing to do here.
+  std::cout << "Trying to copy fast LSTM layer" << std::endl;
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>::FastLSTM(FastLSTM&& layer) :
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
+    rho(std::move(layer.rho)),
+    weights(std::move(layer.weights))
+{
+  // Nothing to do here.
+  std::cout << "Trying to move fast LSTM layer" << std::endl;
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>&
+FastLSTM<InputDataType, OutputDataType>::operator=(const FastLSTM& layer)
+{
+  std::cout << "Trying to copy fast LSTM layer" << std::endl;
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    rho = layer.rho;
+    weights = layer.weights;
+  }
+  std::cout << "Copied layer and returned" << std::endl;
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>&
+FastLSTM<InputDataType, OutputDataType>::operator=(FastLSTM&& layer)
+{
+  std::cout << "Trying to move fast LSTM layer" << std::endl;
+  if (this != &layer)
+  {
+    inSize = std::move(layer.inSize);
+    outSize = std::move(layer.outSize);
+    rho = std::move(layer.rho);
+    weights = std::move(layer.weights);
+  }
+  std::cout << "Moved and returned" << std::endl;
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
 void FastLSTM<InputDataType, OutputDataType>::Reset()
 {
   // Set the weight parameter for the input to gate layer (linear layer) using
