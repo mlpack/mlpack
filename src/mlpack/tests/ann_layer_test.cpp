@@ -31,6 +31,52 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::cube, typename ModelType>
+void CheckRNNCopyFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  arma::cube predictions1;
+  arma::cube predictions2;
+  ens::StandardSGD opt(0.1, 1, 5, -100, false);
+
+  network1->Train(trainData, trainLabels, opt);
+  network1->Predict(trainData, predictions1);
+
+  RNN<> network2 = *network1;
+  delete network1;
+
+  // Deallocating all of network1's memory, so that
+  // if network2 is trying to use any of that memory.
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::cube, typename ModelType>
+void CheckRNNMoveFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  arma::cube predictions1;
+  arma::cube predictions2;
+  ens::StandardSGD opt(0.1, 1, 5, -100, false);
+
+  network1->Train(trainData, trainLabels, opt);
+  network1->Predict(trainData, predictions1);
+
+  RNN<> network2(std::move(*network1));
+  delete network1;
+
+  // Deallocating all of network1's memory, so that
+  // if network2 is trying to use any of that memory.
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
 /**
  * Simple add module test.
  */
@@ -1186,63 +1232,33 @@ TEST_CASE("FastLSTMLayerParametersTest", "[ANNLayerTest]")
 /**
  * Check whether copying and moving network with FastLSTM is working or not.
  */
-TEST_CASE("CheckCopyFastLSTMTest", "[ANNLayerTest]")
-{
- arma::cube input = arma::randu(1, 1, 5);
- arma::cube target = arma::ones(1, 1, 5);
- const size_t rho = 5;
-
- RNN<NegativeLogLikelihood<> > *model1 =
-    new RNN<NegativeLogLikelihood<> >(rho);
- model1->Predictors() = input;
- model1->Responses() = target;
- model1->Add<Linear<> >(1, 10);
- model1->Add<FastLSTM<> >(10, 3, rho);
- model1->Add<LogSoftMax<> >();
-
- ens::StandardSGD opt(0.1, 1, 5, -100, false);
- model1->Train(input, target, opt);
-
- arma::cube predictions1;
- model1->Predict(input, predictions1);
-
- RNN<> model2() = *model1;
- delete model1;
-
- arma::cube predictions2;
- model2.Predict(input, predictions2);
- CheckMatrices(predictions1, predictions2);
-}
-
- /**
-  * Check whether copying and moving network with FastLSTM is working or not.
-  */
-TEST_CASE("CheckMoveFastLSTMTest", "[ANNLayerTest]")
+TEST_CASE("CheckCopyMoveFastLSTMTest", "[ANNLayerTest]")
 {
   arma::cube input = arma::randu(1, 1, 5);
   arma::cube target = arma::ones(1, 1, 5);
   const size_t rho = 5;
 
   RNN<NegativeLogLikelihood<> > *model1 =
-      new RNN<NegativeLogLikelihood<> >(rho);
+    new RNN<NegativeLogLikelihood<> >(rho);
   model1->Predictors() = input;
   model1->Responses() = target;
   model1->Add<Linear<> >(1, 10);
   model1->Add<FastLSTM<> >(10, 3, rho);
   model1->Add<LogSoftMax<> >();
 
-  ens::StandardSGD opt(0.1, 1, 5, -100, false);
-  model1->Train(input, target, opt);
+  RNN<NegativeLogLikelihood<> > *model2 =
+     new RNN<NegativeLogLikelihood<> >(rho);
+  model2->Predictors() = input;
+  model2->Responses() = target;
+  model2->Add<Linear<> >(1, 10);
+  model2->Add<FastLSTM<> >(10, 3, rho);
+  model2->Add<LogSoftMax<> >();
 
-  arma::cube predictions1;
-  model1->Predict(input, predictions1);
-
-  RNN<> model2(std::move(*model1));
-  delete model1;
-
-  arma::cube predictions2;
-  model2.Predict(input, predictions2);
-  CheckMatrices(predictions1, predictions2);
+  // Check whether copy constructor is working or not.
+  CheckRNNCopyFunction<>(model1, input, target, 1);
+  
+  // Check whether move constructor is working or not.
+  CheckRNNMoveFunction<>(model2, input, target, 1);
 }
 
 /**
