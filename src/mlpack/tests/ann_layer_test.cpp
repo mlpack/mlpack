@@ -31,6 +31,51 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::mat, typename ModelType>
+void CheckCopyFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  network1->Train(trainData, trainLabels, opt);
+
+  arma::mat predictions1;
+  network1->Predict(trainData, predictions1);
+  FFN<> network2;
+  network2 = *network1;
+  delete network1;
+
+  // Deallocating all of network1's memory, so that
+  // if network2 is trying to use any of that memory.
+  arma::mat predictions2;
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::mat, typename ModelType>
+void CheckMoveFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, maxEpochs * trainData.n_cols, -1);
+  network1->Train(trainData, trainLabels, opt);
+
+  arma::mat predictions1;
+  network1->Predict(trainData, predictions1);
+  FFN<> network2(std::move(*network1));
+  delete network1;
+
+  // Deallocating all of network1's memory, so that
+  // if network2 is trying to use any of that memory.
+  arma::mat predictions2;
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
 /**
  * Simple add module test.
  */
@@ -1186,61 +1231,64 @@ TEST_CASE("FastLSTMLayerParametersTest", "[ANNLayerTest]")
 /**
  * Check whether copying and moving network with FastLSTM is working or not.
  */
- TEST_CASE("CheckCopyFastLSTMTest", "[ANNLayerTest]")
- {
-   std::cout << "Starting copy test" << std::endl;
-   arma::cube input = arma::randu(1, 1, 5);
-   arma::cube target = arma::ones(1, 1, 5);
-   const size_t rho = 5;
+TEST_CASE("CheckCopyFastLSTMTest", "[ANNLayerTest]")
+{
+ arma::cube input = arma::randu(1, 1, 5);
+ arma::cube target = arma::ones(1, 1, 5);
+ const size_t rho = 5;
 
-   RNN<NegativeLogLikelihood<> > *model1 = new RNN<NegativeLogLikelihood<> >(rho);
-   model1->Predictors() = input;
-   model1->Responses() = target;
-   model1->Add<Linear<> >(1, 10);
-   model1->Add<FastLSTM<> >(10, 3, rho);
-   model1->Add<LogSoftMax<> >();
+ RNN<NegativeLogLikelihood<> > *model1 =
+    new RNN<NegativeLogLikelihood<> >(rho);
+ model1->Predictors() = input;
+ model1->Responses() = target;
+ model1->Add<Linear<> >(1, 10);
+ model1->Add<FastLSTM<> >(10, 3, rho);
+ model1->Add<LogSoftMax<> >();
 
-   ens::StandardSGD opt(0.1, 1, 5, -100, false);
-   std::cout << "Before Training Model" << std::endl;
-   model1->Train(input, target, opt);
-   std::cout << "After Training" << std::endl;
+ ens::StandardSGD opt(0.1, 1, 5, -100, false);
+ model1->Train(input, target, opt);
 
-   arma::cube predictions1;
-   model1->Predict(input, predictions1);
+ arma::cube predictions1;
+ model1->Predict(input, predictions1);
 
-   std::cout << "After model1 predict" << std::endl;
+ RNN<> model2() = *model1;
+ delete model1;
 
-   RNN<> model2(rho);
-   model2 = *model1;
-   delete model1;
+ arma::cube predictions2;
+ model2.Predict(input, predictions2);
+ CheckMatrices(predictions1, predictions2);
+}
 
-   arma::cube predictions2;
-   std::cout << "After model1 delete" << std::endl;
-   model2.Predict(input, predictions2);
-   std::cout << "After model2 predictions" << std::endl;
-   CheckMatrices(predictions1, predictions2);
-   // FastLSTM<> *layer1 = new FastLSTM<>(1,2,3);
-   // FastLSTM<> layer2();
-   //
-   // // Provide input of all ones.
-   // arma::mat input = arma::ones(3, 1);
-   //
-   // // Declaring two ouput matrices for each layer.
-   // arma::mat output1;
-   // arma::mat output2;
-   //
-   // // Forward pass through layer1.
-   // layer1->Forward(input, output1);
-   // layer2 = *layer1;
-   //
-   // // Freeing up layer1 to prevent memory leaks.
-   // delete layer1;
-   //
-   // // Forward pass through layer2.
-   // layer2.Forward(input, output2);
-   //
-   // CheckMatrices(output1, output2);
- }
+ /**
+  * Check whether copying and moving network with FastLSTM is working or not.
+  */
+TEST_CASE("CheckMoveFastLSTMTest", "[ANNLayerTest]")
+{
+  arma::cube input = arma::randu(1, 1, 5);
+  arma::cube target = arma::ones(1, 1, 5);
+  const size_t rho = 5;
+
+  RNN<NegativeLogLikelihood<> > *model1 =
+      new RNN<NegativeLogLikelihood<> >(rho);
+  model1->Predictors() = input;
+  model1->Responses() = target;
+  model1->Add<Linear<> >(1, 10);
+  model1->Add<FastLSTM<> >(10, 3, rho);
+  model1->Add<LogSoftMax<> >();
+
+  ens::StandardSGD opt(0.1, 1, 5, -100, false);
+  model1->Train(input, target, opt);
+
+  arma::cube predictions1;
+  model1->Predict(input, predictions1);
+
+  RNN<> model2(std::move(*model1));
+  delete model1;
+
+  arma::cube predictions2;
+  model2.Predict(input, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
 
 /**
  * Testing the overloaded Forward() of the LSTM layer, for retrieving the cell
