@@ -37,58 +37,58 @@ class TestPythonBinding(unittest.TestCase):
     self.assertEqual(output['int_out'], 13)
     self.assertEqual(output['double_out'], 5.0)
 
-  # def testRunBindingNoFlag(self):
-  #   """
-  #   If we forget the mandatory flag, we should get wrong results.
-  #   """
-  #   output = test_python_binding(string_in='hello',
-  #                                int_in=12,
-  #                                double_in=4.0,
-  #                                mat_req_in=[[1.0]],
-  #                                col_req_in=[1.0])
+  def testRunBindingNoFlag(self):
+    """
+    If we forget the mandatory flag, we should get wrong results.
+    """
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0])
 
-  #   self.assertNotEqual(output['string_out'], 'hello2')
-  #   self.assertNotEqual(output['int_out'], 13)
-  #   self.assertNotEqual(output['double_out'], 5.0)
+    self.assertNotEqual(output['string_out'], 'hello2')
+    self.assertNotEqual(output['int_out'], 13)
+    self.assertNotEqual(output['double_out'], 5.0)
 
-  # def testRunBindingWrongString(self):
-  #   """
-  #   If we give the wrong string, we should get wrong results.
-  #   """
-  #   output = test_python_binding(string_in='goodbye',
-  #                                int_in=12,
-  #                                double_in=4.0,
-  #                                mat_req_in=[[1.0]],
-  #                                col_req_in=[1.0],
-  #                                flag1=True)
+  def testRunBindingWrongString(self):
+    """
+    If we give the wrong string, we should get wrong results.
+    """
+    output = test_python_binding(string_in='goodbye',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
+                                 flag1=True)
 
-  #   self.assertNotEqual(output['string_out'], 'hello2')
+    self.assertNotEqual(output['string_out'], 'hello2')
 
-  # def testRunBindingWrongInt(self):
-  #   """
-  #   If we give the wrong int, we should get wrong results.
-  #   """
-  #   output = test_python_binding(string_in='hello',
-  #                                int_in=15,
-  #                                double_in=4.0,
-  #                                mat_req_in=[[1.0]],
-  #                                col_req_in=[1.0],
-  #                                flag1=True)
+  def testRunBindingWrongInt(self):
+    """
+    If we give the wrong int, we should get wrong results.
+    """
+    output = test_python_binding(string_in='hello',
+                                 int_in=15,
+                                 double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
+                                 flag1=True)
 
-  #   self.assertNotEqual(output['int_out'], 13)
+    self.assertNotEqual(output['int_out'], 13)
 
-  # def testRunBindingWrongDouble(self):
-  #   """
-  #   If we give the wrong double, we should get wrong results.
-  #   """
-  #   output = test_python_binding(string_in='hello',
-  #                                int_in=12,
-  #                                double_in=2.0,
-  #                                mat_req_in=[[1.0]],
-  #                                col_req_in=[1.0],
-  #                                flag1=True)
+  def testRunBindingWrongDouble(self):
+    """
+    If we give the wrong double, we should get wrong results.
+    """
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=2.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
+                                 flag1=True)
 
-  #   self.assertNotEqual(output['double_out'], 5.0)
+    self.assertNotEqual(output['double_out'], 5.0)
 
   # def testRunBadFlag(self):
   #   """
