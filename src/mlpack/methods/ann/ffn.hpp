@@ -326,7 +326,7 @@ class FFN
   arma::mat& Predictors() { return predictors; }
 
   /**
-   * Check wether the input shape is consistent with the layer requirements.
+   * Check whether the input shape is consistent with the layer requirements.
    * 
    * @param inputShape shape of the input
    * @param functionName function that checks the input size
