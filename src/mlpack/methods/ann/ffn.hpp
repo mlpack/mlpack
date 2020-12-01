@@ -331,7 +331,7 @@ class FFN
    * @param inputShape Dhape of the input
    * @param functionName Function that checks the input size
    */  
-  void CheckInputShape(size_t inputShape, std::string functionName);
+  void CheckInputShape(const size_t inputShape, const std::string& functionName);
 
   /**
    * Reset the module infomration (weights/parameters).
