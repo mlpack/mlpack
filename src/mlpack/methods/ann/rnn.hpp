@@ -18,7 +18,6 @@
 #include "visitor/delta_visitor.hpp"
 #include "visitor/output_parameter_visitor.hpp"
 #include "visitor/reset_visitor.hpp"
-#include "visitor/input_shape_visitor.hpp"
 
 #include "init_rules/network_init.hpp"
 
@@ -301,14 +300,6 @@ class RNN
   const arma::cube& Predictors() const { return predictors; }
   //! Modify the matrix of data points (predictors).
   arma::cube& Predictors() { return predictors; }
-
-  /**
-   * Check wether the input shape is consistent with the layer requirements.
-   * 
-   * @param inputShape shape of the input
-   * @param functionName function that checks the input size
-   */  
-  void CheckInputShape(const size_t inputShape, const std::string& functionName);
 
   /**
    * Reset the state of the network.  This ensures that all internally-held
