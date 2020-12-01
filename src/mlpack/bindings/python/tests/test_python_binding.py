@@ -90,46 +90,46 @@ class TestPythonBinding(unittest.TestCase):
 
     self.assertNotEqual(output['double_out'], 5.0)
 
-  # def testRunBadFlag(self):
-  #   """
-  #   If we give the second flag, this should fail.
-  #   """
-  #   output = test_python_binding(string_in='hello',
-  #                                int_in=12,
-  #                                double_in=4.0,
-  #                                mat_req_in=[[1.0]],
-  #                                col_req_in=[1.0],
-  #                                flag1=True,
-  #                                flag2=True)
+  def testRunBadFlag(self):
+    """
+    If we give the second flag, this should fail.
+    """
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
+                                 flag1=True,
+                                 flag2=True)
 
-  #   self.assertNotEqual(output['string_out'], 'hello2')
-  #   self.assertNotEqual(output['int_out'], 13)
-  #   self.assertNotEqual(output['double_out'], 5.0)
+    self.assertNotEqual(output['string_out'], 'hello2')
+    self.assertNotEqual(output['int_out'], 13)
+    self.assertNotEqual(output['double_out'], 5.0)
 
-  # def testNumpyMatrix(self):
-  #   """
-  #   The matrix we pass in, we should get back with the third dimension doubled
-  #   and the fifth forgotten.
-  #   """
-  #   x = np.random.rand(100, 5);
-  #   z = copy.deepcopy(x)
+  def testNumpyMatrix(self):
+    """
+    The matrix we pass in, we should get back with the third dimension doubled
+    and the fifth forgotten.
+    """
+    x = np.random.rand(100, 5);
+    z = copy.deepcopy(x)
 
-  #   output = test_python_binding(string_in='hello',
-  #                                int_in=12,
-  #                                double_in=4.0,
-  #                                mat_req_in=[[1.0]],
-  #                                col_req_in=[1.0],
-  #                                matrix_in=z)
+    output = test_python_binding(string_in='hello',
+                                 int_in=12,
+                                 double_in=4.0,
+                                 mat_req_in=[[1.0]],
+                                 col_req_in=[1.0],
+                                 matrix_in=z)
 
-  #   self.assertEqual(output['matrix_out'].shape[0], 100)
-  #   self.assertEqual(output['matrix_out'].shape[1], 4)
-  #   self.assertEqual(output['matrix_out'].dtype, np.double)
-  #   for i in [0, 1, 3]:
-  #     for j in range(100):
-  #       self.assertEqual(x[j, i], output['matrix_out'][j, i])
+    self.assertEqual(output['matrix_out'].shape[0], 100)
+    self.assertEqual(output['matrix_out'].shape[1], 4)
+    self.assertEqual(output['matrix_out'].dtype, np.double)
+    for i in [0, 1, 3]:
+      for j in range(100):
+        self.assertEqual(x[j, i], output['matrix_out'][j, i])
 
-  #   for j in range(100):
-  #     self.assertEqual(2 * x[j, 2], output['matrix_out'][j, 2])
+    for j in range(100):
+      self.assertEqual(2 * x[j, 2], output['matrix_out'][j, 2])
 
   # def testNumpyMatrixForceCopy(self):
   #   """
