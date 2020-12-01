@@ -328,8 +328,8 @@ class FFN
   /**
    * Check whether the input shape is consistent with the layer requirements.
    * 
-   * @param inputShape shape of the input
-   * @param functionName function that checks the input size
+   * @param inputShape Dhape of the input
+   * @param functionName Function that checks the input size
    */  
   void CheckInputShape(size_t inputShape, std::string functionName);
 
