@@ -54,7 +54,7 @@ FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::~FFN()
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::CheckInputShape(
-    size_t inputShape, std::string functionName)
+    const size_t inputShape, const std::string& functionName)
 {
   for (size_t l=0; l<network.size(); ++l)
   {

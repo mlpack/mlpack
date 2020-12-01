@@ -308,7 +308,7 @@ class RNN
    * @param inputShape shape of the input
    * @param functionName function that checks the input size
    */  
-  void CheckInputShape(size_t inputShape, std::string functionName);
+  void CheckInputShape(const size_t inputShape, const std::string& functionName);
 
   /**
    * Reset the state of the network.  This ensures that all internally-held
