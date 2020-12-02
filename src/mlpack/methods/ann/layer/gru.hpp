@@ -155,6 +155,12 @@ class GRU
   //! Get the number of output units.
   size_t OutSize() const { return outSize; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const 
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer
    */
