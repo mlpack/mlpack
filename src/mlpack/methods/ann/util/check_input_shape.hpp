@@ -40,7 +40,7 @@ void CheckInputShape(T network, const size_t inputShape,
       std::string estr = functionName + ": "; 
                   estr += "the first layer of the network expects ";
                   estr += std::to_string(layerInShape) + " elements, ";
-                  estr += "but the input has " + std::to_string(inputShape) + " rows! ";
+                  estr += "but the input has " + std::to_string(inputShape) + " dimensions! ";
       throw std::logic_error(estr);
     }
   }
