@@ -136,6 +136,7 @@ size_t Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() c
   size_t inputShapeFeedbackModule = boost::apply_visitor(InShapeVisitor(), feedbackModule);
   size_t inputShapeTransferModule = boost::apply_visitor(InShapeVisitor(), transferModule);
 
+  // Return the size of the first module that we have.
   if (inputShapeStartModule != 0)
     return inputShapeStartModule;
   else
