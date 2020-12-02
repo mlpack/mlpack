@@ -21,7 +21,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */{
 
 template<typename T>
-void CheckInputShape(T network, const size_t inputShape, 
+void CheckInputShape(const T& network, const size_t inputShape, 
                      const std::string& functionName)
 {
   for (size_t l=0; l<network.size(); ++l)
