@@ -262,7 +262,7 @@ class Convolution
   //! Get the shape of the input.
   size_t InputShape() const
   {
-    return inputHeight*inputWidth*inSize;
+    return inputHeight * inputWidth * inSize;
   }
 
   /**
