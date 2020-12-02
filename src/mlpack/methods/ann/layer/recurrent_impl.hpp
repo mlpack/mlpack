@@ -139,18 +139,25 @@ size_t Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() c
   // Return the size of the first module that we have.
   if (inputShapeStartModule != 0)
     return inputShapeStartModule;
+  // If first module does not have any weights.
   else
   {
+    // Return the size of the second module we have.
     if (inputShapeInputModule != 0)
       return inputShapeInputModule;
+    // If second module does not have any weights.
     else
     {
+      // Return the size of the third module we have.
       if (inputShapeFeedbackModule != 0)
         return inputShapeFeedbackModule;
+      // If the third module does not have any weights.
       else
       {
+        // Return the size of the fourth module we have
         if (inputShapeTransferModule != 0)
           return inputShapeTransferModule;
+        // If the fourth module does not have any weights.
         else
           return 0;
       }
