@@ -71,11 +71,6 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
         network.network[i]));
     boost::apply_visitor(resetVisitor, this->network.back());
   }
-  ResetCells();
-  if (parameter.is_empty())
-  {
-    ResetParameters();
-  }
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
