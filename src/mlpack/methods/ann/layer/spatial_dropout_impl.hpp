@@ -51,6 +51,9 @@ template<typename eT>
 void SpatialDropout<InputDataType, OutputDataType>::Forward(
   const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
+  Log::Assert(input.n_rows % size == 0, "Input features must be divisible \
+      by feature maps.");
+
   if (!reset)
   {
     batchSize = input.n_cols;
