@@ -76,8 +76,11 @@ class RNN
   //! Move constructor.
   RNN(RNN&&);
 
-  //! Copy/move assignment operator.
-  RNN& operator = (RNN);
+  //! Copy assignment operator.
+  RNN& operator=(const RNN&);
+
+  //! Move assignment operator
+  RNN& operator=(RNN&&);
 
   //! Destructor to release allocated memory.
   ~RNN();

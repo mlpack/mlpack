@@ -40,7 +40,7 @@ void CheckRNNCopyFunction(ModelType* network1,
 {
   arma::cube predictions1;
   arma::cube predictions2;
-  ens::StandardSGD opt(0.1, 1, maxEpochs * trainData.n_cols, -100, false);
+  ens::StandardSGD opt(0.1, 1, maxEpochs * trainData.n_slices, -100, false);
 
   network1->Train(trainData, trainLabels, opt);
   network1->Predict(trainData, predictions1);
@@ -48,8 +48,8 @@ void CheckRNNCopyFunction(ModelType* network1,
   RNN<> network2 = *network1;
   delete network1;
 
-  // Deallocating all of network1's memory, so that
-  // if network2 is trying to use any of that memory.
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
   network2.Predict(trainData, predictions2);
   CheckMatrices(predictions1, predictions2);
 }
@@ -63,7 +63,7 @@ void CheckRNNMoveFunction(ModelType* network1,
 {
   arma::cube predictions1;
   arma::cube predictions2;
-  ens::StandardSGD opt(0.1, 1, maxEpochs * trainData.n_cols, -100, false);
+  ens::StandardSGD opt(0.1, 1, maxEpochs * trainData.n_slices, -100, false);
 
   network1->Train(trainData, trainLabels, opt);
   network1->Predict(trainData, predictions1);
@@ -71,8 +71,8 @@ void CheckRNNMoveFunction(ModelType* network1,
   RNN<> network2(std::move(*network1));
   delete network1;
 
-  // Deallocating all of network1's memory, so that
-  // if network2 is trying to use any of that memory.
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
   network2.Predict(trainData, predictions2);
   CheckMatrices(predictions1, predictions2);
 }
@@ -1239,16 +1239,13 @@ TEST_CASE("CheckCopyMoveFastLSTMTest", "[ANNLayerTest]")
   const size_t rho = 5;
 
   RNN<NegativeLogLikelihood<> > *model1 =
-    new RNN<NegativeLogLikelihood<> >(rho);
+      new RNN<NegativeLogLikelihood<> >(rho);
   model1->Predictors() = input;
   model1->Responses() = target;
   model1->Add<IdentityLayer<> >();
   model1->Add<Linear<> >(1, 10);
   model1->Add<FastLSTM<> >(10, 3, rho);
   model1->Add<LogSoftMax<> >();
-
-  // Check whether copy constructor is working or not.
-  CheckRNNCopyFunction<>(model1, input, target, 1);
 
   RNN<NegativeLogLikelihood<> > *model2 =
      new RNN<NegativeLogLikelihood<> >(rho);
@@ -1258,6 +1255,9 @@ TEST_CASE("CheckCopyMoveFastLSTMTest", "[ANNLayerTest]")
   model2->Add<Linear<> >(1, 10);
   model2->Add<FastLSTM<> >(10, 3, rho);
   model2->Add<LogSoftMax<> >();
+
+  // Check whether copy constructor is working or not.
+  CheckRNNCopyFunction<>(model1, input, target, 1);
 
   // Check whether move constructor is working or not.
   CheckRNNMoveFunction<>(model2, input, target, 1);
