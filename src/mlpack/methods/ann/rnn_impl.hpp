@@ -87,9 +87,10 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
     single(std::move(network.single)),
     parameter(std::move(network.parameter)),
     numFunctions(std::move(network.numFunctions)),
-    deterministic(std::move(network.deterministic))
+    deterministic(std::move(network.deterministic)),
+    network(std::move(network.network))
 {
-  this->network = std::move(network.network);
+  // Nothing to do here.
 }
 
 template<typename OutputLayerType, typename InitializationRuleType,
