@@ -70,7 +70,8 @@ class SpecificRandomInitialization
 TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  if (data::Load("GroupLensSmall.csv", dataset))
+    FAIL("Cannot load dataset GroupLensSmall.csv!");
 
   // Generate list of locations for batch insert constructor for sparse
   // matrices.
@@ -117,7 +118,8 @@ TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]")
 TEST_CASE("SVDBatchRegularizationTest", "[SVDBatchTest]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  if (data::Load("GroupLensSmall.csv", dataset))
+    FAIL("Cannot load dataset GroupLensSmall.csv!");
 
   // Generate list of locations for batch insert constructor for sparse
   // matrices.
