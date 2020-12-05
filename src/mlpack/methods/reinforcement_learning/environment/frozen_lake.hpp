@@ -409,9 +409,9 @@ class FrozenLake
   /**
    * Utilities function to print board description. 
    * 
-   * @param board the environment board's description.
-   * @param nRows the height of the environment board.
-   * @param nCols the width of the environment board.
+   * @param board Environment board's description.
+   * @param nRows Height of the environment board.
+   * @param nCols Width of the environment board.
    */
   static void printBoard(std::vector<std::vector<char>> board, size_t nRows, size_t nCols)
   {
