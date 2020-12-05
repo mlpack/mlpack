@@ -325,7 +325,7 @@ class FrozenLake
     bool valid = false;
     std::vector<std::vector<char>> Board;
     //! TODO: Tentative, implement max step to control whether
-    //    the we can never generate a possible board.
+    // the we can never generate a possible board.
     while (!valid)
     {
       // Randomly choose tiles in the board (discrete random distribution).
