@@ -381,8 +381,8 @@ class FrozenLake
    * 'F' is a Frozen Tile, the agent can walk on it.
    * 'H' is a Hole Tile, the agent can fall into it and the game ends.
    * 
-   * @param m the height of the environment board.
-   * @param n the width of the environment board.
+   * @param m Height of the environment board.
+   * @param n Width of the environment board.
    * @return a 2d array that describes the environment board. 
    */
   std::vector<std::vector<char>> genBoardHelper(size_t nRows, size_t nCols, double platformRate)
