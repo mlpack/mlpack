@@ -271,7 +271,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   // Check whether copy constructor is working or not.
   CheckCopyFunction<>(model1, input, output, 1);
 
-  // check moving constructor.
+  // Check moving constructor.
   FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
   model2->Predictors() = input;
   model2->Responses() = output;
