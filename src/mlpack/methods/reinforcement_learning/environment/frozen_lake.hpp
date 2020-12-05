@@ -152,8 +152,8 @@ class FrozenLake
    * 
    * @param maxSteps the maximum number of steps that the agent can
    *    make. Default to 200.
-   * @param nRows the height of the environment board. Default to 4.
-   * @param nCols the width of the environment board. Default to 4.
+   * @param nRows Height of the environment board. Default to 4.
+   * @param nCols Width of the environment board. Default to 4.
    * @param platformRate The probability of platform (walkable) tile
    *    distribution. Default to 0.8.
    */ 
