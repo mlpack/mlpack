@@ -154,6 +154,94 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 }
 
 /**
+ * Check whether copying and moving network with linear3d is working or not.
+ */
+TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Output
+   *  Layer         Layer         Layer
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |     +>|     |     +>|     |
+   * +-----+     | +--+--+     | +-----+
+   *             |             |
+   *  Bias       |  Bias       |
+   *  Layer      |  Layer      |
+   * +-----+     | +-----+     |
+   * |     |     | |     |     |
+   * |     +-----+ |     +-----+
+   * |     |       |     |
+   * +-----+       +-----+
+   */
+
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<Linear<> >(trainData.n_rows, 8);
+  model->Add<SigmoidLayer<> >();
+  model->Add<Linear3D<> >(8, 3);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  model1->Add<Linear<> >(trainData.n_rows, 8);
+  model1->Add<SigmoidLayer<> >();
+  model1->Add<Linear3D<> >(8, 3);
+  model1->Add<LogSoftMax<> >();
+
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model, trainData, trainLabels, 1);
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
+}
+
+/**
+ * Check whether copying and moving of Noisy Linear layer is working or not.
+ */
+TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
+{
+  // Create training input by 5x5 matrix.
+  arma::mat input = arma::randu(10,1);
+  // Create training output by 1 matrix.
+  arma::mat output = arma::mat("1");
+
+  // Check copying constructor.
+  FFN<NegativeLogLikelihood<>> *model1 = new FFN<NegativeLogLikelihood<>>();
+  model1->Predictors() = input;
+  model1->Responses() = output;
+  model1->Add<IdentityLayer<>>();
+  model1->Add<NoisyLinear<>>(10, 5);
+  model1->Add<Linear<> >(5, 1);
+  model1->Add<LogSoftMax<>>();
+  
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model1, input, output, 1);
+
+  // Check moving constructor.
+  FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
+  model2->Predictors() = input;
+  model2->Responses() = output;
+  model2->Add<IdentityLayer<>>();
+  model2->Add<NoisyLinear<>>(10, 5);
+  model2->Add<Linear<> >(5, 1);
+  model2->Add<LogSoftMax<>>();
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model2, input, output, 1);
+}
+
+/**
  * Check whether copying and moving of concatenate layer is working or not.
  */
 TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
@@ -179,7 +267,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   model1->Add(concatLayer);
   model1->Add<Linear<> >(10, 5);
   model1->Add<LogSoftMax<>>();
-  
+
   // Check whether copy constructor is working or not.
   CheckCopyFunction<>(model1, input, output, 1);
 
@@ -204,7 +292,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 }
 
 /**
- * Check whether copying and moving network with dropout is working or not.
+ * Check whether copying and moving of Dropout network is working or not.
  */
 TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
 {
