@@ -339,9 +339,9 @@ class FrozenLake
    * Perform depth-firsth search to see if the environment board has 
    * a solution or not.
    * 
-   * @param candidateBoard: the environment board description.
-   * @param nRows: the height of the environment board.
-   * @param nCols: the width of the environment board.
+   * @param candidateBoard Environment board description.
+   * @param nRows Height of the environment board.
+   * @param nCols Width of the environment board.
    * @return true if there is a solution, false otherwise. 
    */
   static bool dfsHelper(std::vector<std::vector<char>> candidateBoard, size_t nRows, size_t nCols)
