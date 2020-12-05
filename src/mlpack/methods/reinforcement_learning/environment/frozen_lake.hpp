@@ -37,8 +37,8 @@ class FrozenLake
      * Construct a state instance from given data. Initialize the
      * current position to the top left of the environment board.
      * 
-     * @param nRows The height of the environment board.
-     * @param nCols The width of the environment board.
+     * @param nRows Height of the environment board.
+     * @param nCols Width of the environment board.
      */ 
     State(size_t nRows, size_t nCols) : 
       nRows(nRows),
@@ -253,9 +253,9 @@ class FrozenLake
    * Initial state representation is the current position at (0, 0) 
    * and a new random bord is created.
    * 
-   * @param board The environment board of that the user want to initialize to.
-   * @param nRows The height of the environment board.
-   * @param nCols The width of the environment board.
+   * @param board Environment board of that the user want to initialize to.
+   * @param nRows Height of the environment board.
+   * @param nCols Width of the environment board.
    * @return A state in which the height and width of the environment board are 
    *    limited to nRows and nCols, respectively.
    */
@@ -325,7 +325,7 @@ class FrozenLake
     bool valid = false;
     std::vector<std::vector<char>> Board;
     //! TODO: Tentative, implement max step to control whether
-    // the we can never generate a possible board.
+    // we can never generate a possible board.
     while (!valid)
     {
       // Randomly choose tiles in the board (discrete random distribution).
@@ -346,7 +346,8 @@ class FrozenLake
    */
   static bool dfsHelper(std::vector<std::vector<char>> candidateBoard, size_t nRows, size_t nCols)
   {
-    bool visited[nRows][nCols] = {{false}};
+    arma::Mat<short> visited(nRows, nCols);
+    visited.fill(0);
     std::vector<std::array<size_t, 2>> path;
     path.push_back({0, 0});
     while (!path.empty())
@@ -354,13 +355,13 @@ class FrozenLake
       auto node = path.back();
       path.pop_back();
 
-      visited[node[0]][node[1]] = true;
+      visited(node[0],node[1]) = 1;
       int directions[4][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
       for (auto direction : directions)
       {
         size_t r_new = direction[0] + node[0];
         size_t c_new = direction[1] + node[1];
-        if (!visited[r_new][c_new])
+        if (!visited(r_new, c_new))
         {
           if (r_new >= nRows || c_new >= nCols)
               continue;
