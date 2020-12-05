@@ -31,7 +31,14 @@ class FrozenLake
     /**
      * Default constructor.
      */
-    State() {/** Nothing to do here. */}
+    State() :
+      height(0),
+      width(0),
+      curRow(0),
+      curCol(0)
+    {
+      // Nothing to do here.
+    }
 
     /**
      * Construct a state instance from given data. Initialize the
@@ -161,6 +168,7 @@ class FrozenLake
              size_t const height=4,
              size_t const width=4,
              double const platformRate=0.8) : 
+    stepsPerformed(0),
     maxSteps(maxSteps),
     height(height),
     width(width)
