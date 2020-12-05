@@ -37,12 +37,12 @@ class FrozenLake
      * Construct a state instance from given data. Initialize the
      * current position to the top left of the environment board.
      * 
-     * @param nRows Height of the environment board.
-     * @param nCols Width of the environment board.
+     * @param height Height of the environment board.
+     * @param width Width of the environment board.
      */ 
-    State(size_t nRows, size_t nCols) : 
-      nRows(nRows),
-      nCols(nCols),
+    State(size_t height, size_t width) : 
+      height(height),
+      width(width),
       curRow(0),
       curCol(0)
     {
@@ -51,8 +51,8 @@ class FrozenLake
 
     //! Copy constructor.
     State(State const& other) :
-      nRows(other.nRows),
-      nCols(other.nCols),
+      height(other.height),
+      width(other.width),
       curRow(other.curRow),
       curCol(other.curCol)
     {
@@ -61,8 +61,8 @@ class FrozenLake
 
     //! Move constructor.
     State(State&& other) :
-      nRows(other.nRows),
-      nCols(other.nCols),
+      height(other.height),
+      width(other.width),
       curRow(other.curRow),
       curCol(other.curCol)
     {
@@ -74,8 +74,8 @@ class FrozenLake
     {
       if (this != &other)
       {
-        nRows = other.nRows;
-        nCols = other.nCols;
+        height = other.height;
+        width = other.width;
         curRow = other.curRow;
         curCol = other.curCol;
       }
@@ -87,8 +87,8 @@ class FrozenLake
     {
       if (this != &other)
       {
-        nRows = other.nRows;
-        nCols = other.nCols;
+        height = other.height;
+        width = other.width;
         curRow = other.curRow;
         curCol = other.curCol;
       }
@@ -96,10 +96,10 @@ class FrozenLake
     }
 
     //! Get the height of the environment board.
-    size_t NumRows() const {return nRows;}
+    size_t NumRows() const {return height;}
 
     //! Get the width of the environment board.
-    size_t NumCols() const {return nCols;}
+    size_t NumCols() const {return width;}
 
     //! Get the current row-position of the player.
     size_t CurRow() const {return curRow;}
@@ -114,14 +114,14 @@ class FrozenLake
     size_t& CurCol() {return curCol;}
 
     //! Get the state representation.
-    size_t GetState() const {return nCols * curRow + curCol;}
+    size_t GetState() const {return width * curRow + curCol;}
 
    private:
     //! Locally-stored height of the environment board.
-    size_t nRows;
+    size_t height;
 
     //! Locally-stored width of the environment board.
-    size_t nCols;
+    size_t width;
 
     //! Locally-stored current row-position of the agent.
     size_t curRow;
@@ -152,18 +152,18 @@ class FrozenLake
    * 
    * @param maxSteps the maximum number of steps that the agent can
    *    make. Default to 200.
-   * @param nRows Height of the environment board. Default to 4.
-   * @param nCols Width of the environment board. Default to 4.
+   * @param height Height of the environment board. Default to 4.
+   * @param width Width of the environment board. Default to 4.
    * @param platformRate The probability of platform (walkable) tile
    *    distribution. Default to 0.8.
    */ 
   FrozenLake(size_t const maxSteps=200,
-             size_t const nRows=4,
-             size_t const nCols=4,
+             size_t const height=4,
+             size_t const width=4,
              double const platformRate=0.8) : 
     maxSteps(maxSteps),
-    nRows(nRows),
-    nCols(nCols)
+    height(height),
+    width(width)
   { 
     // Pre-process platform rate
     this->platformRate = std::min(platformRate, 1.0);
@@ -196,9 +196,9 @@ class FrozenLake
     if (action.action == Action::actions::Left)
       newCol = std::max(nextState.CurCol() - 1, (unsigned long) 0);
     else if (action.action == Action::actions::Down)
-      newRow = std::min(nextState.CurRow() + 1, nRows - 1);
+      newRow = std::min(nextState.CurRow() + 1, height - 1);
     else if (action.action == Action::actions::Right)
-      newCol = std::min(nextState.CurCol() + 1, nCols - 1);
+      newCol = std::min(nextState.CurCol() + 1, width - 1);
     else if (action.action == Action::actions::Up)
       newRow = std::max(nextState.CurRow() - 1, (unsigned long) 0);
     
@@ -211,8 +211,8 @@ class FrozenLake
     bool done = IsTerminal(nextState);
 
     // Reward agent if it reached the goal.
-    if (done && maxSteps != 0 && newRow == nRows - 1 && 
-        newCol == nCols - 1)
+    if (done && maxSteps != 0 && newRow == height - 1 && 
+        newCol == width - 1)
       return 1.0;
     else if (done && boardDescription[newRow][newCol] == 'H')
       return -1.0;
@@ -246,7 +246,7 @@ class FrozenLake
   {
     stepsPerformed = 0;
     boardDescription = generateRandomBoard();
-    return State(nRows, nCols);
+    return State(height, width);
   }
 
   /**
@@ -254,18 +254,18 @@ class FrozenLake
    * and a new random bord is created.
    * 
    * @param board Environment board of that the user want to initialize to.
-   * @param nRows Height of the environment board.
-   * @param nCols Width of the environment board.
+   * @param height Height of the environment board.
+   * @param width Width of the environment board.
    * @return A state in which the height and width of the environment board are 
-   *    limited to nRows and nCols, respectively.
+   *    limited to height and width, respectively.
    */
-  State InitialSample(std::vector<std::vector<char>> board, size_t nRows, size_t nCols)
+  State InitialSample(std::vector<std::vector<char>> board, size_t height, size_t width)
   {
     stepsPerformed = 0;
-    this->nRows = nRows;
-    this->nCols = nCols;
+    this->height = height;
+    this->width = width;
     boardDescription = board;
-    return State(nRows, nCols);
+    return State(height, width);
   }
 
   /**
@@ -329,8 +329,8 @@ class FrozenLake
     while (!valid)
     {
       // Randomly choose tiles in the board (discrete random distribution).
-      Board = genBoardHelper(nRows, nCols, platformRate);
-      valid = dfsHelper(Board, nRows, nCols);
+      Board = genBoardHelper(height, width, platformRate);
+      valid = dfsHelper(Board, height, width);
     }
     return Board;
   }
@@ -340,13 +340,13 @@ class FrozenLake
    * a solution or not.
    * 
    * @param candidateBoard Environment board description.
-   * @param nRows Height of the environment board.
-   * @param nCols Width of the environment board.
+   * @param height Height of the environment board.
+   * @param width Width of the environment board.
    * @return true if there is a solution, false otherwise. 
    */
-  static bool dfsHelper(std::vector<std::vector<char>> candidateBoard, size_t nRows, size_t nCols)
+  static bool dfsHelper(std::vector<std::vector<char>> candidateBoard, size_t height, size_t width)
   {
-    arma::Mat<short> visited(nRows, nCols);
+    arma::Mat<short> visited(height, width);
     visited.fill(0);
     std::vector<std::array<size_t, 2>> path;
     path.push_back({0, 0});
@@ -363,7 +363,7 @@ class FrozenLake
         size_t c_new = direction[1] + node[1];
         if (!visited(r_new, c_new))
         {
-          if (r_new >= nRows || c_new >= nCols)
+          if (r_new >= height || c_new >= width)
               continue;
           if (candidateBoard[r_new][c_new] == 'G')
               return true;
@@ -386,12 +386,12 @@ class FrozenLake
    * @param n Width of the environment board.
    * @return a 2d array that describes the environment board. 
    */
-  std::vector<std::vector<char>> genBoardHelper(size_t nRows, size_t nCols, double platformRate)
+  std::vector<std::vector<char>> genBoardHelper(size_t height, size_t width, double platformRate)
   {
-    std::vector<char> board[nRows];
-    for (size_t i = 0; i < nRows; i++)
+    std::vector<char> board[height];
+    for (size_t i = 0; i < height; i++)
     {
-      for (size_t j = 0; j < nCols; j++)
+      for (size_t j = 0; j < width; j++)
       {
         auto r = arma::randu();
         if (r < 1 - platformRate)
@@ -401,9 +401,9 @@ class FrozenLake
       }
     }
     board[0][0] = 'S';
-    board[nRows - 1][nCols - 1] = 'G';
+    board[height - 1][width - 1] = 'G';
 
-    std::vector<std::vector<char>> returnedBoard(board, board + nRows);
+    std::vector<std::vector<char>> returnedBoard(board, board + height);
     return returnedBoard;
   }
 
@@ -411,14 +411,14 @@ class FrozenLake
    * Utilities function to print board description. 
    * 
    * @param board Environment board's description.
-   * @param nRows Height of the environment board.
-   * @param nCols Width of the environment board.
+   * @param height Height of the environment board.
+   * @param width Width of the environment board.
    */
-  static void printBoard(std::vector<std::vector<char>> board, size_t nRows, size_t nCols)
+  static void printBoard(std::vector<std::vector<char>> board, size_t height, size_t width)
   {
-    for (size_t i = 0; i < nRows; i++) 
+    for (size_t i = 0; i < height; i++) 
     {
-      for (size_t j = 0; j < nCols; j++)
+      for (size_t j = 0; j < width; j++)
       {
         Log::Info << board[i][j] << " ";
       }
@@ -434,10 +434,10 @@ class FrozenLake
   size_t stepsPerformed;
 
   //! Locally-stored height of the environment board.
-  size_t nRows;
+  size_t height;
 
   //! Locally-stored width of the environment board.
-  size_t nCols;
+  size_t width;
 
   //! Locally-stored the probability of how many 
   //  platform (walkable) tile exists.
