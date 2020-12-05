@@ -71,8 +71,8 @@ void CheckCopyFunction(ModelType* network1,
   network2 = *network1;
   delete network1;
 
-  // Deallocating all of network1's memory, so that
-  // if network2 is trying to use any of that memory.
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
   arma::mat predictions2;
   network2.Predict(trainData, predictions2);
   CheckMatrices(predictions1, predictions2);
@@ -93,8 +93,8 @@ void CheckMoveFunction(ModelType* network1,
   FFN<> network2(std::move(*network1));
   delete network1;
 
-  // Deallocating all of network1's memory, so that
-  // if network2 is trying to use any of that memory.
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
   arma::mat predictions2;
   network2.Predict(trainData, predictions2);
   CheckMatrices(predictions1, predictions2);
@@ -224,7 +224,7 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
   model1->Add<NoisyLinear<>>(10, 5);
   model1->Add<Linear<> >(5, 1);
   model1->Add<LogSoftMax<>>();
-  
+
   // Check whether copy constructor is working or not.
   CheckCopyFunction<>(model1, input, output, 1);
 
