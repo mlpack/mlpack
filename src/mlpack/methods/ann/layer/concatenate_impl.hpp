@@ -57,6 +57,7 @@ operator=(const Concatenate& layer)
     delta = layer.delta;
     concat = layer.concat;
   }
+
   return *this;
 }
 
