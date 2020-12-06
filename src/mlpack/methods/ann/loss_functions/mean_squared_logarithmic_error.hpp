@@ -1,5 +1,5 @@
 /**
- * @file mean_squared_logarithmic_error.hpp
+ * @file methods/ann/loss_functions/mean_squared_logarithmic_error.hpp
  * @author Saksham Rastogi
  *
  * Definition of the mean squared logarithmic error function.
@@ -45,7 +45,8 @@ class MeanSquaredLogarithmicError
    * @param target The target vector.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, const TargetType&& target);
+  typename InputType::elem_type Forward(const InputType& input,
+                                        const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -55,9 +56,9 @@ class MeanSquaredLogarithmicError
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  void Backward(const InputType& input,
+                const TargetType& target,
+                OutputType& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -68,7 +69,7 @@ class MeanSquaredLogarithmicError
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored output parameter object.

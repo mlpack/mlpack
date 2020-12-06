@@ -1,5 +1,5 @@
 /**
- * @file parametric_relu.hpp
+ * @file methods/ann/layer/parametric_relu.hpp
  * @author Prasanna Patil
  *
  * Definition of PReLU layer first introduced in the,
@@ -51,7 +51,7 @@ class PReLU
    * alpha in the range 0 to 1. Default (alpha = 0.03). This parameter
    * is trainable.
    *
-   * @param alpha Non zero gradient
+   * @param userAlpha Non zero gradient
    */
   PReLU(const double userAlpha = 0.03);
 
@@ -68,7 +68,7 @@ class PReLU
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -80,7 +80,7 @@ class PReLU
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& gy, DataType&& g);
+  void Backward(const DataType& input, const DataType& gy, DataType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -90,9 +90,9 @@ class PReLU
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return alpha; }
@@ -123,7 +123,7 @@ class PReLU
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

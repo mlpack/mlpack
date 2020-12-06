@@ -1,5 +1,5 @@
 /*
- * @file ksinit_test.cpp
+ * @file tests/ksinit_test.cpp
  * @author Praveen Ch
  *
  * Tests the working of Kathirvalavakumar Subavathi Initialization for a
@@ -10,8 +10,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
 */
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 #include <mlpack/core.hpp>
 
@@ -23,8 +22,6 @@
 
 using namespace mlpack;
 using namespace mlpack::ann;
-
-BOOST_AUTO_TEST_SUITE(KSInitialization);
 
 /**
  * Train and evaluate a vanilla network with the specified initialisation
@@ -226,7 +223,7 @@ void AvgCrossValidation(arma::mat& dataset,
 /*
  * Kathirvalavakumar Subavathi Initialization test case for the Iris Dataset.
  */
-BOOST_AUTO_TEST_CASE(IrisDataset)
+TEST_CASE("IrisDataset", "[KSInitialization]")
 {
   double trainErrorThreshold = 0.01;
   double validationErrorThreshold = 0.01;
@@ -265,14 +262,14 @@ BOOST_AUTO_TEST_CASE(IrisDataset)
     ++numFails;
   }
 
-  BOOST_REQUIRE_LE(numFails, 4);
+  REQUIRE(numFails <= 4);
 }
 
 /*
  * Kathirvalavakumar Subavathi Initialization Test case for
  * the Non Linear Function Approximation Problem.
  */
-BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
+TEST_CASE("NonLinearFunctionApproximation", "[KSInitialization]")
 {
   double trainErrorThreshold = 0.0045;
   double validationErrorThreshold = 0.0045;
@@ -326,7 +323,5 @@ BOOST_AUTO_TEST_CASE(NonLinearFunctionApproximation)
     ++numFails;
   }
 
-  BOOST_REQUIRE_LE(numFails, 4);
+  REQUIRE(numFails <= 4);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

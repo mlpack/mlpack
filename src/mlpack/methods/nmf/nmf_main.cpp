@@ -1,5 +1,5 @@
 /**
- * @file nmf_main.cpp
+ * @file methods/nmf/nmf_main.cpp
  * @author Mohan Rajendran
  *
  * Main executable to run NMF.
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/amf/amf.hpp>
@@ -27,12 +27,16 @@ using namespace mlpack::amf;
 using namespace mlpack::util;
 using namespace std;
 
-// Document program.
-PROGRAM_INFO("Non-negative Matrix Factorization",
-    // Short description.
+// Program Name.
+BINDING_NAME("Non-negative Matrix Factorization");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of non-negative matrix factorization.  This can be used "
-    "to decompose an input dataset into two low-rank non-negative components.",
-    // Long description.
+    "to decompose an input dataset into two low-rank non-negative components.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs non-negative matrix factorization on the given "
     "dataset, storing the resulting decomposed matrices in the specified "
     "files.  For an input dataset V, NMF decomposes V into two matrices W "
@@ -57,25 +61,29 @@ PROGRAM_INFO("Non-negative Matrix Factorization",
     "The maximum number of iterations is specified with " +
     PRINT_PARAM_STRING("max_iterations") + ", and the minimum residue "
     "required for algorithm termination is specified with the " +
-    PRINT_PARAM_STRING("min_residue") + " parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("min_residue") + " parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to run NMF on the input matrix " + PRINT_DATASET("V") + " "
     "using the 'multdist' update rules with a rank-10 decomposition and "
     "storing the decomposed matrices into " + PRINT_DATASET("W") + " and " +
     PRINT_DATASET("H") + ", the following command could be used: "
     "\n\n" +
     PRINT_CALL("nmf", "input", "V", "w", "W", "h", "H", "rank", 10,
-        "update_rules", "multdist"),
-    SEE_ALSO("@cf", "#cf"),
-    SEE_ALSO("Alternating matrix factorization tutorial",
-        "@doxygen/amftutorial.html"),
-    SEE_ALSO("Non-negative matrix factorization on Wikipedia",
-        "https://en.wikipedia.org/wiki/Non-negative_matrix_factorization"),
-    SEE_ALSO("Algorithms for non-negative matrix factorization (pdf)",
+        "update_rules", "multdist"));
+
+// See also...
+BINDING_SEE_ALSO("@cf", "#cf");
+BINDING_SEE_ALSO("Alternating matrix factorization tutorial",
+        "@doxygen/amftutorial.html");
+BINDING_SEE_ALSO("Non-negative matrix factorization on Wikipedia",
+        "https://en.wikipedia.org/wiki/Non-negative_matrix_factorization");
+BINDING_SEE_ALSO("Algorithms for non-negative matrix factorization (pdf)",
         "http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-"
-        "factorization.pdf"),
-    SEE_ALSO("mlpack::amf::AMF C++ class documentation",
-        "@doxygen/classmlpack_1_1amf_1_1AMF.html"));
+        "factorization.pdf");
+BINDING_SEE_ALSO("mlpack::amf::AMF C++ class documentation",
+        "@doxygen/classmlpack_1_1amf_1_1AMF.html");
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform NMF on.", "i");
@@ -105,13 +113,13 @@ void LoadInitialWH(const bool bindingTransposed, arma::mat& w, arma::mat& h)
   // from amf.Apply() as H, and vice versa.
   if (bindingTransposed)
   {
-    w = CLI::GetParam<arma::mat>("initial_h");
-    h = CLI::GetParam<arma::mat>("initial_w");
+    w = IO::GetParam<arma::mat>("initial_h");
+    h = IO::GetParam<arma::mat>("initial_w");
   }
   else
   {
-    h = CLI::GetParam<arma::mat>("initial_h");
-    w = CLI::GetParam<arma::mat>("initial_w");
+    h = IO::GetParam<arma::mat>("initial_h");
+    w = IO::GetParam<arma::mat>("initial_w");
   }
 }
 
@@ -120,13 +128,13 @@ void SaveWH(const bool bindingTransposed, arma::mat&& w, arma::mat&& h)
   // The same transposition applies when saving.
   if (bindingTransposed)
   {
-    CLI::GetParam<arma::mat>("w") = std::move(h);
-    CLI::GetParam<arma::mat>("h") = std::move(w);
+    IO::GetParam<arma::mat>("w") = std::move(h);
+    IO::GetParam<arma::mat>("h") = std::move(w);
   }
   else
   {
-    CLI::GetParam<arma::mat>("h") = std::move(h);
-    CLI::GetParam<arma::mat>("w") = std::move(w);
+    IO::GetParam<arma::mat>("h") = std::move(h);
+    IO::GetParam<arma::mat>("w") = std::move(w);
   }
 }
 
@@ -136,8 +144,8 @@ void ApplyFactorization(const arma::mat& V,
                         arma::mat& W,
                         arma::mat& H)
 {
-  const size_t maxIterations = CLI::GetParam<int>("max_iterations");
-  const double minResidue = CLI::GetParam<double>("min_residue");
+  const size_t maxIterations = IO::GetParam<int>("max_iterations");
+  const double minResidue = IO::GetParam<double>("min_residue");
 
   SimpleResidueTermination srt(minResidue, maxIterations);
 
@@ -145,7 +153,7 @@ void ApplyFactorization(const arma::mat& V,
   // BINDING_MATRIX_TRANSPOSED macro, which will be 'true' or 'false'.
   arma::mat initialW, initialH;
   LoadInitialWH(BINDING_MATRIX_TRANSPOSED, initialW, initialH);
-  if (CLI::HasParam("initial_w") && CLI::HasParam("initial_h"))
+  if (IO::HasParam("initial_w") && IO::HasParam("initial_h"))
   {
     // Initialize W and H with given matrices
     GivenInitialization ginit = GivenInitialization(initialW, initialH);
@@ -154,7 +162,7 @@ void ApplyFactorization(const arma::mat& V,
         UpdateRuleType> amf(srt, ginit);
     amf.Apply(V, r, W, H);
   }
-  else if (CLI::HasParam("initial_w"))
+  else if (IO::HasParam("initial_w"))
   {
     // Merge GivenInitialization and RandomInitialization rules
     // to initialize W with the given matrix, and H with random noise
@@ -168,7 +176,7 @@ void ApplyFactorization(const arma::mat& V,
         UpdateRuleType> amf(srt, minit);
     amf.Apply(V, r, W, H);
   }
-  else if (CLI::HasParam("initial_h"))
+  else if (IO::HasParam("initial_h"))
   {
     // Merge GivenInitialization and RandomInitialization rules
     // to initialize H with the given matrix, and W with random noise
@@ -195,14 +203,14 @@ void ApplyFactorization(const arma::mat& V,
 static void mlpackMain()
 {
   // Initialize random seed.
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
   // Gather parameters.
-  const size_t r = CLI::GetParam<int>("rank");
-  const string updateRules = CLI::GetParam<string>("update_rules");
+  const size_t r = IO::GetParam<int>("rank");
+  const string updateRules = IO::GetParam<string>("update_rules");
 
   // Validate parameters.
   RequireParamValue<int>("rank", [](int x) { return x > 0; }, true,
@@ -214,7 +222,7 @@ static void mlpackMain()
 
   RequireAtLeastOnePassed({ "h", "w" }, false, "no output will be saved");
 
-  arma::mat V = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat V = std::move(IO::GetParam<arma::mat>("input"));
 
   arma::mat W;
   arma::mat H;

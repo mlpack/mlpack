@@ -1,5 +1,5 @@
 /**
- * @file training_config.hpp
+ * @file methods/reinforcement_learning/training_config.hpp
  * @author Shangtong Zhang
  *
  * This file is the implementation of TrainingConfig class,
@@ -22,10 +22,19 @@ class TrainingConfig
   TrainingConfig() :
       numWorkers(1),
       updateInterval(1),
-      stepLimit(0),
+      targetNetworkSyncInterval(100),
+      stepLimit(200),
       explorationSteps(1),
+      stepSize(0.01),
+      discount(0.99),
       gradientLimit(40),
-      doubleQLearning(false)
+      doubleQLearning(false),
+      noisyQLearning(false),
+      isCategorical(false),
+      atomSize(51),
+      vMin(0),
+      vMax(200),
+      rho(0.005)
   { /* Nothing to do here. */ }
 
   TrainingConfig(
@@ -37,7 +46,13 @@ class TrainingConfig
       double stepSize,
       double discount,
       double gradientLimit,
-      bool doubleQLearning) :
+      bool doubleQLearning,
+      bool noisyQLearning,
+      bool isCategorical,
+      size_t atomSize,
+      double vMin,
+      double vMax,
+      double rho) :
       numWorkers(numWorkers),
       updateInterval(updateInterval),
       targetNetworkSyncInterval(targetNetworkSyncInterval),
@@ -46,7 +61,13 @@ class TrainingConfig
       stepSize(stepSize),
       discount(discount),
       gradientLimit(gradientLimit),
-      doubleQLearning(doubleQLearning)
+      doubleQLearning(doubleQLearning),
+      noisyQLearning(noisyQLearning),
+      isCategorical(isCategorical),
+      atomSize(atomSize),
+      vMin(vMin),
+      vMax(vMax),
+      rho(rho)
   { /* Nothing to do here. */ }
 
   //! Get the amount of workers.
@@ -97,6 +118,36 @@ class TrainingConfig
   bool DoubleQLearning() const { return doubleQLearning; }
   //! Modify the indicator of double q-learning.
   bool& DoubleQLearning() { return doubleQLearning; }
+
+  //! Get the indicator of noisy q-learning.
+  bool NoisyQLearning() const { return noisyQLearning; }
+  //! Modify the indicator of double q-learning.
+  bool& NoisyQLearning() { return noisyQLearning; }
+
+  //! Get the indicator of categorical q-learning.
+  bool IsCategorical() const { return isCategorical; }
+  //! Modify the indicator of categorical q-learning.
+  bool& IsCategorical() { return isCategorical; }
+
+  //! Get the number of atoms.
+  size_t AtomSize() const { return atomSize; }
+  //! Modify the number of atoms.
+  size_t& AtomSize() { return atomSize; }
+
+  //! Get the minimum value for support.
+  double VMin() const { return vMin; }
+  //! Modify the minimum value for support.
+  double& VMin() { return vMin; }
+
+  //! Get the maximum value for support.
+  double VMax() const { return vMax; }
+  //! Modify the maximum value for support.
+  double& VMax() { return vMax; }
+
+  //! Get the rho value for sac.
+  double Rho() const { return rho; }
+  //! Modify the rho value for sac.
+  double& Rho() { return rho; }
 
  private:
   /**
@@ -155,6 +206,42 @@ class TrainingConfig
    * This is valid only for q-learning agent.
    */
   bool doubleQLearning;
+
+  /**
+   * Locally-stored indicator for noisy q-learning.
+   * This is valid only for q-learning agent.
+   */
+  bool noisyQLearning;
+
+  /**
+   * Locally-stored indicator for categorical q-learning.
+   * This is valid only for q-learning agent.
+   */
+  bool isCategorical;
+
+  /**
+   * Locally-stored number of atoms to be used.
+   * This is valid only for categorical q-network.
+   */
+  size_t atomSize;
+
+  /**
+   * Locally-stored minimum value of support.
+   * This is valid only for categorical q-network.
+   */
+  double vMin;
+
+  /**
+   * Locally-stored maximum value of support.
+   * This is valid only for categorical q-network.
+   */
+  double vMax;
+
+  /**
+   * Locally-stored parameter for softly updating q networks.
+   * This is valid only for Soft Actor-Critic.
+   */
+  double rho;
 };
 
 } // namespace rl

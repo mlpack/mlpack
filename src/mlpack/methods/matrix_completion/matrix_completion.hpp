@@ -1,5 +1,5 @@
 /**
- * @file matrix_completion.hpp
+ * @file methods/matrix_completion/matrix_completion.hpp
  * @author Stephen Tu
  *
  * A thin wrapper around nuclear norm minimization to solve
@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 
 #include <ensmallen.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace matrix_completion {

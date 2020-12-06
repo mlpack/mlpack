@@ -1,5 +1,5 @@
 /**
- * @file regression_interpolation.hpp
+ * @file methods/cf/interpolation_policies/regression_interpolation.hpp
  * @author Wenhao Huang
  *
  * Definition of RegressionInterpolation class.
@@ -19,7 +19,7 @@ namespace cf {
 
 /**
  * Implementation of regression-based interpolation method. Predicting a user's
- * rating \f$ r_{iu} \f$ by it's neighbors' ratings can be regarded as solving 
+ * rating \f$ r_{iu} \f$ by it's neighbors' ratings can be regarded as solving
  * linear regression of \f$ r_{iu} \f$ on \f$ r_{iv} \f$, where v are u's
  * neighbors.
  *
@@ -87,7 +87,7 @@ class RegressionInterpolation
    * @param decomposition Decomposition object.
    * @param queryUser Queried user.
    * @param neighbors Neighbors of queried user.
-   * @param similarities Similarites between query user and neighbors.
+   * @param * (similarities) Similarities between query user and neighbors.
    * @param cleanedData Sparse rating matrix.
    */
   template <typename VectorType,
@@ -126,11 +126,11 @@ class RegressionInterpolation
       return;
     }
 
-    for (size_t i = 0; i < neighborNum; i++)
+    for (size_t i = 0; i < neighborNum; ++i)
     {
       // Calculate coefficient.
       arma::vec iPrediction;
-      for (size_t j = i; j < neighborNum; j++)
+      for (size_t j = i; j < neighborNum; ++j)
       {
         if (a(neighbors(i), neighbors(j)) != 0)
         {

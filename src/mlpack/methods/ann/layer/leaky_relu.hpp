@@ -1,5 +1,5 @@
 /**
- * @file leaky_relu.hpp
+ * @file methods/ann/layer/leaky_relu.hpp
  * @author Dhawal Arora
  *
  * Definition of LeakyReLU layer first introduced in the acoustic model,
@@ -61,7 +61,7 @@ class LeakyReLU
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -73,7 +73,7 @@ class LeakyReLU
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& gy, DataType&& g);
+  void Backward(const DataType& input, const DataType& gy, DataType& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -94,7 +94,7 @@ class LeakyReLU
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

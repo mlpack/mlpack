@@ -1,5 +1,5 @@
 /**
- * @file print_type_doc_impl.hpp
+ * @file bindings/julia/print_type_doc_impl.hpp
  * @author Ryan Curtin
  *
  * Print documentation for a given type.
@@ -23,7 +23,7 @@ namespace julia {
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::disable_if<util::IsStdVector<T>>::type*,
     const typename boost::disable_if<data::HasSerialize<T>>::type*,
@@ -62,7 +62,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type*)
 {
   if (std::is_same<T, std::vector<int>>::value)
@@ -84,7 +84,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
   if (std::is_same<typename T::elem_type, double>::value)
@@ -109,15 +109,15 @@ std::string PrintTypeDoc(
     if (T::is_col || T::is_row)
     {
       return "A 1-d vector-like containing `Int` data (elements should be "
-          "greater than or equal to 0).  Could be an `Array{Int64, 1}`, an "
-          "`Array{Int64, 2}` with one dimension of size 1, or anything "
-          "convertible to `Array{Int64, 1}`.";
+          "greater than or equal to 0).  Could be an `Array{Int, 1}`, an "
+          "`Array{Int, 2}` with one dimension of size 1, or anything "
+          "convertible to `Array{Int, 1}`.";
     }
     else
     {
       return "A 2-d matrix-like containing `Int` data (elements should be "
-          "greater than or equal to 0).  Could be an `Array{Int64, 2}` or a "
-          "`DataFrame` or anything convertible to an `Array{Int64, 2}`.  It is "
+          "greater than or equal to 0).  Could be an `Array{Int, 2}` or a "
+          "`DataFrame` or anything convertible to an `Array{Int, 2}`.  It is "
           "expected that each row of the matrix corresponds to a data point, "
           "unless `points_are_rows` is set to `false` when calling mlpack "
           "bindings.";
@@ -134,7 +134,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
@@ -152,14 +152,18 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {
-  return "An mlpack model pointer.  This type holds a pointer to C++ memory "
-      "containing the mlpack model.  Note that this means the mlpack model "
-      "itself cannot be easily inspected in Julia.  However, the pointer can "
-      "be passed to subsequent calls to mlpack functions.";
+  return "An mlpack model pointer.  `<Model>` refers to the type of model that "
+      "is being stored, so, e.g., for `CF()`, the type will be `CFModel`. "
+      "This type holds a pointer to C++ memory containing the mlpack model.  "
+      "Note that this means the mlpack model itself cannot be easily inspected "
+      "in Julia.  However, the pointer can be passed to subsequent calls to "
+      "mlpack functions, and can be serialized and deserialized via either the "
+      "`Serialization` package, or the `mlpack.serialize_bin()` and "
+      "`mlpack.deserialize_bin()` functions.";
 }
 
 } // namespace julia

@@ -1,5 +1,5 @@
 /**
- * @file scaling_model.hpp
+ * @file methods/preprocess/scaling_model.hpp
  * @author Jeffin Sam
  *
  * A serializable Scaling model, used by the main program.
@@ -87,9 +87,9 @@ class ScalingModel
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (minmaxscale)
         delete minmaxscale;
@@ -112,22 +112,22 @@ class ScalingModel
       zcascale = NULL;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(scalerType);
-    ar & BOOST_SERIALIZATION_NVP(epsilon);
-    ar & BOOST_SERIALIZATION_NVP(minValue);
-    ar & BOOST_SERIALIZATION_NVP(maxValue);
+    ar(CEREAL_NVP(scalerType));
+    ar(CEREAL_NVP(epsilon));
+    ar(CEREAL_NVP(minValue));
+    ar(CEREAL_NVP(maxValue));
     if (scalerType == ScalerTypes::MIN_MAX_SCALER)
-      ar & BOOST_SERIALIZATION_NVP(minmaxscale);
+      ar(CEREAL_POINTER(minmaxscale));
     else if (scalerType == ScalerTypes::MEAN_NORMALIZATION)
-      ar & BOOST_SERIALIZATION_NVP(meanscale);
+      ar(CEREAL_POINTER(meanscale));
     else if (scalerType == ScalerTypes::MAX_ABS_SCALER)
-      ar & BOOST_SERIALIZATION_NVP(maxabsscale);
+      ar(CEREAL_POINTER(maxabsscale));
     else if (scalerType == ScalerTypes::STANDARD_SCALER)
-      ar & BOOST_SERIALIZATION_NVP(standardscale);
+      ar(CEREAL_POINTER(standardscale));
     else if (scalerType == ScalerTypes::PCA_WHITENING)
-      ar & BOOST_SERIALIZATION_NVP(pcascale);
+      ar(CEREAL_POINTER(pcascale));
     else if (scalerType == ScalerTypes::ZCA_WHITENING)
-      ar & BOOST_SERIALIZATION_NVP(zcascale);
+      ar(CEREAL_POINTER(zcascale));
   }
 };
 

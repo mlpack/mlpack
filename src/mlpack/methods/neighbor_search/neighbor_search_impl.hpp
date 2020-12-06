@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search_impl.hpp
+ * @file methods/neighbor_search/neighbor_search_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of Neighbor-Search class to perform all-nearest-neighbors on
@@ -511,9 +511,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // Create the traverser.
       tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
-      // Set the value of minBaseCases.
-      traverser.MinBaseCases() = k;
-
       // Now have it traverse for each point.
       for (size_t i = 0; i < querySet.n_cols; ++i)
         traverser.Traverse(i, *referenceTree);
@@ -542,13 +539,13 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       neighbors.set_size(k, querySet.n_cols);
       distances.set_size(k, querySet.n_cols);
 
-      for (size_t i = 0; i < distances.n_cols; i++)
+      for (size_t i = 0; i < distances.n_cols; ++i)
       {
         // Map distances (copy a column).
         distances.col(oldFromNewQueries[i]) = distancePtr->col(i);
 
         // Map indices of neighbors.
-        for (size_t j = 0; j < distances.n_rows; j++)
+        for (size_t j = 0; j < distances.n_rows; ++j)
         {
           neighbors(j, oldFromNewQueries[i]) =
               oldFromNewReferences[(*neighborPtr)(j, i)];
@@ -583,8 +580,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       neighbors.set_size(k, querySet.n_cols);
 
       // Map indices of neighbors.
-      for (size_t i = 0; i < neighbors.n_cols; i++)
-        for (size_t j = 0; j < neighbors.n_rows; j++)
+      for (size_t i = 0; i < neighbors.n_cols; ++i)
+        for (size_t j = 0; j < neighbors.n_rows; ++j)
           neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
       // Finished with temporary matrix.
@@ -669,8 +666,8 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
     neighbors.set_size(k, querySet.n_cols);
 
     // Map indices of neighbors.
-    for (size_t i = 0; i < neighbors.n_cols; i++)
-      for (size_t j = 0; j < neighbors.n_rows; j++)
+    for (size_t i = 0; i < neighbors.n_cols; ++i)
+      for (size_t j = 0; j < neighbors.n_rows; ++j)
         neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
     // Finished with temporary matrix.
@@ -819,9 +816,6 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
       // Create the traverser.
       tree::GreedySingleTreeTraverser<Tree, RuleType> traverser(rules);
 
-      // Set the value of minBaseCases.
-      traverser.MinBaseCases() = k;
-
       // Now have it traverse for each point.
       for (size_t i = 0; i < referenceSet->n_cols; ++i)
         traverser.Traverse(i, *referenceTree);
@@ -886,7 +880,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::EffectiveError(
   double effectiveError = 0;
   size_t numCases = 0;
 
-  for (size_t i = 0; i < foundDistances.n_elem; i++)
+  for (size_t i = 0; i < foundDistances.n_elem; ++i)
   {
     if (realDistances(i) != 0 &&
         foundDistances(i) != SortPolicy::WorstDistance())
@@ -946,28 +940,27 @@ template<typename SortPolicy,
 template<typename Archive>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
 DualTreeTraversalType, SingleTreeTraversalType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   // Serialize preferences for search.
-  ar & BOOST_SERIALIZATION_NVP(searchMode);
-  ar & BOOST_SERIALIZATION_NVP(treeNeedsReset);
+  ar(CEREAL_NVP(searchMode));
+  ar(CEREAL_NVP(treeNeedsReset));
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
   if (searchMode == NAIVE_MODE)
   {
     // Delete the current reference set, if necessary and if we are loading.
-    if (Archive::is_loading::value && referenceSet)
+    if (cereal::is_loading<Archive>() && referenceSet)
     {
       delete referenceSet;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceSet);
-    ar & BOOST_SERIALIZATION_NVP(metric);
+    ar(CEREAL_POINTER(const_cast<MatType*&>(referenceSet)));
+    ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (referenceTree)
         delete referenceTree;
@@ -979,17 +972,17 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
   else
   {
     // Delete the current reference tree, if necessary and if we are loading.
-    if (Archive::is_loading::value && referenceTree)
+    if (cereal::is_loading<Archive>() && referenceTree)
     {
       delete referenceTree;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceTree);
-    ar & BOOST_SERIALIZATION_NVP(oldFromNewReferences);
+    ar(CEREAL_POINTER(referenceTree));
+    ar(CEREAL_NVP(oldFromNewReferences));
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       referenceSet = &referenceTree->Dataset();
       metric = referenceTree->Metric(); // Get the metric from the tree.
@@ -997,7 +990,7 @@ DualTreeTraversalType, SingleTreeTraversalType>::serialize(
   }
 
   // Reset base cases and scores.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     baseCases = 0;
     scores = 0;

@@ -1,5 +1,5 @@
 /**
- * @file ip_metric.hpp
+ * @file core/metrics/ip_metric.hpp
  * @author Ryan Curtin
  *
  * Inner product induced metric.  If given a kernel function, this gives the
@@ -66,7 +66,7 @@ class IPMetric
 
   //! Serialize the metric.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   //! The kernel we are using.

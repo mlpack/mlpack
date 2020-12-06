@@ -1,5 +1,5 @@
 /**
- * @file constant_impl.hpp
+ * @file methods/ann/layer/constant_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Constant class, which outputs a constant value given
@@ -33,7 +33,7 @@ Constant<InputDataType, OutputDataType>::Constant(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void Constant<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   if (inSize == 0)
   {
@@ -46,7 +46,7 @@ void Constant<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void Constant<InputDataType, OutputDataType>::Backward(
-    const DataType&& /* input */, DataType&& /* gy */, DataType&& g)
+    const DataType& /* input */, const DataType& /* gy */, DataType& g)
 {
   g = arma::zeros<DataType>(inSize, 1);
 }
@@ -54,9 +54,9 @@ void Constant<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Constant<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(constantOutput);
+  ar(CEREAL_NVP(constantOutput));
 }
 
 } // namespace ann

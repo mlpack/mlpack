@@ -1,5 +1,5 @@
 /**
- * @file cauchy_kernel.hpp
+ * @file core/kernels/cauchy_kernel.hpp
  * @author Tommi Laivamaa
  *
  * Implementation of the Cauchy kernel (CauchyKernel),
@@ -72,9 +72,9 @@ class CauchyKernel
    * Serialize the kernel.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(bandwidth);
+    ar(CEREAL_NVP(bandwidth));
   }
 
  private:

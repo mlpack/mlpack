@@ -1,9 +1,9 @@
 /**
- * @file lmetric.hpp
+ * @file core/metrics/lmetric.hpp
  * @author Ryan Curtin
  *
  * Generalized L-metric, allowing both squared distances to be returned as well
- * as non-squared distances.  The squared distances are faster to compute.
+ * as non-squared distances. The squared distances are faster to compute.
  *
  * This also gives several convenience typedefs for commonly used L-metrics.
  *
@@ -63,7 +63,7 @@ template<int TPower, bool TTakeRoot = true>
 class LMetric
 {
  public:
-  /***
+  /**
    * Default constructor does nothing, but is required to satisfy the Metric
    * policy.
    */
@@ -85,7 +85,7 @@ class LMetric
 
   //! Serialize the metric (nothing to do).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 
   //! The power of the metric.
   static const int Power = TPower;

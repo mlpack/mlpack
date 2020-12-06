@@ -1,5 +1,5 @@
 /**
- * @file gan_impl.hpp
+ * @file methods/ann/gan/gan_impl.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -19,7 +19,6 @@
 #include <mlpack/methods/ann/init_rules/network_init.hpp>
 #include <mlpack/methods/ann/visitor/output_parameter_visitor.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
-#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
 namespace ann /** Artifical Neural Network.  */ {
@@ -258,28 +257,27 @@ GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
   currentTarget = arma::mat(responses.memptr() + i, 1, batchSize, false,
       false);
 
-  discriminator.Forward(std::move(currentInput));
+  discriminator.Forward(currentInput);
   double res = discriminator.outputLayer.Forward(
-      std::move(boost::apply_visitor(
+      boost::apply_visitor(
       outputParameterVisitor,
-      discriminator.network.back())), std::move(currentTarget));
+      discriminator.network.back()), currentTarget);
 
   noise.imbue( [&]() { return noiseFunction();} );
-  generator.Forward(std::move(noise));
+  generator.Forward(noise);
 
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
-  discriminator.Forward(std::move(predictors.cols(numFunctions,
-      numFunctions + batchSize - 1)));
+  discriminator.Forward(predictors.cols(numFunctions,
+      numFunctions + batchSize - 1));
   responses.cols(numFunctions, numFunctions + batchSize - 1) =
       arma::zeros(1, batchSize);
 
   currentTarget = arma::mat(responses.memptr() + numFunctions,
       1, batchSize, false, false);
   res += discriminator.outputLayer.Forward(
-      std::move(boost::apply_visitor(
-      outputParameterVisitor,
-      discriminator.network.back())), std::move(currentTarget));
+      boost::apply_visitor(outputParameterVisitor,
+      discriminator.network.back()), currentTarget);
 
   return res;
 }
@@ -341,7 +339,7 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
       i, gradientDiscriminator, batchSize);
 
   noise.imbue( [&]() { return noiseFunction();} );
-  generator.Forward(std::move(noise));
+  generator.Forward(noise);
   predictors.cols(numFunctions, numFunctions + batchSize - 1) =
       boost::apply_visitor(outputParameterVisitor, generator.network.back());
   responses.cols(numFunctions, numFunctions + batchSize - 1) =
@@ -358,14 +356,20 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     // Pass the error from Discriminator to Generator.
     responses.cols(numFunctions, numFunctions + batchSize - 1) =
         arma::ones(1, batchSize);
-    discriminator.Gradient(discriminator.parameter, numFunctions,
-        noiseGradientDiscriminator, batchSize);
+
+    discriminator.outputLayer.Backward(
+        boost::apply_visitor(outputParameterVisitor,
+        discriminator.network.back()), discriminator.responses.cols(
+        numFunctions, numFunctions + batchSize - 1), discriminator.error);
+    discriminator.Backward();
+
     generator.error = boost::apply_visitor(deltaVisitor,
         discriminator.network[1]);
 
     generator.Predictors() = noise;
+    generator.Backward();
     generator.ResetGradients(gradientGenerator);
-    generator.Gradient(generator.parameter, 0, gradientGenerator, batchSize);
+    generator.Gradient(generator.Predictors().cols(0, batchSize - 1));
 
     gradientGenerator *= multiplier;
   }
@@ -419,18 +423,18 @@ template<
   typename PolicyType
 >
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::Forward(
-    arma::mat&& input)
+    const arma::mat& input)
 {
   if (parameter.is_empty())
   {
     Reset();
   }
 
-  generator.Forward(std::move(input));
+  generator.Forward(input);
   arma::mat ganOutput = boost::apply_visitor(outputParameterVisitor,
       generator.network.back());
 
-  discriminator.Forward(std::move(ganOutput));
+  discriminator.Forward(ganOutput);
 }
 
 template<
@@ -453,7 +457,7 @@ Predict(arma::mat input, arma::mat& output)
     ResetDeterministic();
   }
 
-  Forward(std::move(input));
+  Forward(input);
 
   output = boost::apply_visitor(outputParameterVisitor,
       discriminator.network.back());
@@ -482,16 +486,16 @@ template<
 >
 template<typename Archive>
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
-serialize(Archive& ar, const unsigned int /* version */)
+serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(generator);
-  ar & BOOST_SERIALIZATION_NVP(discriminator);
-  ar & BOOST_SERIALIZATION_NVP(reset);
-  ar & BOOST_SERIALIZATION_NVP(genWeights);
-  ar & BOOST_SERIALIZATION_NVP(discWeights);
+  ar(CEREAL_NVP(parameter));
+  ar(CEREAL_NVP(generator));
+  ar(CEREAL_NVP(discriminator));
+  ar(CEREAL_NVP(reset));
+  ar(CEREAL_NVP(genWeights));
+  ar(CEREAL_NVP(discWeights));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // Share the parameters between the network.
     generator.Parameters() = arma::mat(parameter.memptr(), genWeights, 1, false,
@@ -502,8 +506,8 @@ serialize(Archive& ar, const unsigned int /* version */)
     size_t offset = 0;
     for (size_t i = 0; i < generator.network.size(); ++i)
     {
-      offset += boost::apply_visitor(WeightSetVisitor(std::move(
-          generator.parameter), offset), generator.network[i]);
+      offset += boost::apply_visitor(WeightSetVisitor(
+          generator.parameter, offset), generator.network[i]);
 
       boost::apply_visitor(resetVisitor, generator.network[i]);
     }
@@ -511,8 +515,8 @@ serialize(Archive& ar, const unsigned int /* version */)
     offset = 0;
     for (size_t i = 0; i < discriminator.network.size(); ++i)
     {
-      offset += boost::apply_visitor(WeightSetVisitor(std::move(
-          discriminator.parameter), offset), discriminator.network[i]);
+      offset += boost::apply_visitor(WeightSetVisitor(
+          discriminator.parameter, offset), discriminator.network[i]);
 
       boost::apply_visitor(resetVisitor, discriminator.network[i]);
     }

@@ -1,5 +1,5 @@
 /**
- * @file unmap.cpp
+ * @file methods/neighbor_search/unmap.cpp
  * @author Ryan Curtin
  *
  * Auxiliary function to unmap neighbor search results.

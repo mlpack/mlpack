@@ -1,5 +1,5 @@
 /**
- * @file regularized_svd_function.hpp
+ * @file methods/regularized_svd/regularized_svd_function.hpp
  * @author Siddharth Agrawal
  *
  * An implementation of the RegularizedSVDFunction class.
@@ -133,6 +133,10 @@ class RegularizedSVDFunction
 } // namespace svd
 } // namespace mlpack
 
+/**
+ * @cond NO_DOXYGEN
+ */
+
 namespace ens {
 
   /**
@@ -154,6 +158,10 @@ namespace ens {
       arma::mat& parameters);
 
 } // namespace ens
+
+/**
+ * @endcond
+ */
 
 #include "regularized_svd_function_impl.hpp"
 

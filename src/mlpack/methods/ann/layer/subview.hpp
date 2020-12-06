@@ -1,5 +1,5 @@
 /**
- * @file subview.hpp
+ * @file methods/ann/layer/subview.hpp
  * @author Haritha Nair
  *
  * Definition of the Subview class, which modifies the input as necessary.
@@ -66,7 +66,7 @@ class Subview
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input, OutputType&& output)
+  void Forward(const InputType& input, OutputType& output)
   {
     size_t batchSize = input.n_cols / inSize;
 
@@ -86,7 +86,7 @@ class Subview
     if ((input.n_rows != ((endRow - beginRow + 1) *
         (endCol - beginCol + 1))) || (input.n_cols != batchSize))
     {
-      for (size_t i = 0; i < batchSize; i++)
+      for (size_t i = 0; i < batchSize; ++i)
       {
         output.col(i) = arma::vectorise(
             input.submat(beginRow, batchBegin, endRow, batchEnd));
@@ -107,14 +107,14 @@ class Subview
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g)
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g)
   {
     g = gy;
   }
@@ -129,17 +129,40 @@ class Subview
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the width of each sample.
+  size_t InSize() const { return inSize; }
+
+  //! Get the starting row index of subview vector or matrix.
+  size_t const& BeginRow() const { return beginRow; }
+  //! Modify the width of each sample.
+  size_t& BeginRow() { return beginRow; }
+
+  //! Get the ending row index of subview vector or matrix.
+  size_t const& EndRow() const { return endRow; }
+  //! Modify the width of each sample.
+  size_t& EndRow() { return endRow; }
+
+  //! Get the width of each sample.
+  size_t const& BeginCol() const { return beginCol; }
+  //! Modify the width of each sample.
+  size_t& BeginCol() { return beginCol; }
+
+  //! Get the ending column index of subview vector or matrix.
+  size_t const& EndCol() const { return endCol; }
+  //! Modify the width of each sample.
+  size_t& EndCol() { return endCol; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(inSize);
-    ar & BOOST_SERIALIZATION_NVP(beginRow);
-    ar & BOOST_SERIALIZATION_NVP(endRow);
-    ar & BOOST_SERIALIZATION_NVP(beginCol);
-    ar & BOOST_SERIALIZATION_NVP(endCol);
+    ar(CEREAL_NVP(inSize));
+    ar(CEREAL_NVP(beginRow));
+    ar(CEREAL_NVP(endRow));
+    ar(CEREAL_NVP(beginCol));
+    ar(CEREAL_NVP(endCol));
   }
 
  private:

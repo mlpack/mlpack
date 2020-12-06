@@ -1,5 +1,5 @@
 /**
- * @file max_abs_scaler.hpp
+ * @file core/data/scaler_methods/max_abs_scaler.hpp
  * @author Jeffin Sam
  *
  * MaxAbsScaler class to scale features.
@@ -101,11 +101,11 @@ class MaxAbsScaler
   const arma::vec& Scale() const { return scale; }
 
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(itemMin);
-    ar & BOOST_SERIALIZATION_NVP(itemMax);
-    ar & BOOST_SERIALIZATION_NVP(scale);
+    ar(CEREAL_NVP(itemMin));
+    ar(CEREAL_NVP(itemMax));
+    ar(CEREAL_NVP(scale));
   }
  private:
   // Vector which holds minimum of each feature.

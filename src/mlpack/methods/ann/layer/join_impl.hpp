@@ -1,5 +1,5 @@
 /**
- * @file join_impl.hpp
+ * @file methods/ann/layer/join_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Join module.
@@ -29,7 +29,7 @@ Join<InputDataType, OutputDataType>::Join() :
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void Join<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   inSizeRows = input.n_rows;
   inSizeCols = input.n_cols;
@@ -39,21 +39,22 @@ void Join<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Join<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
-  g = arma::mat(gy.memptr(), inSizeRows, inSizeCols, false, false);
+  g = arma::mat(((arma::Mat<eT>&) gy).memptr(), inSizeRows, inSizeCols, false,
+      false);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Join<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSizeRows);
-  ar & BOOST_SERIALIZATION_NVP(inSizeCols);
+  ar(CEREAL_NVP(inSizeRows));
+  ar(CEREAL_NVP(inSizeCols));
 }
 
 } // namespace ann

@@ -1,5 +1,5 @@
 /**
- * @file fastmks_model.hpp
+ * @file methods/fastmks/fastmks_model.hpp
  * @author Ryan Curtin
  *
  * A utility struct to contain all the possible FastMKS models.
@@ -126,7 +126,7 @@ class FastMKSModel
    * Serialize the model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The type of kernel we are using.

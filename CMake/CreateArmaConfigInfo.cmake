@@ -10,34 +10,10 @@ else()
   set(OLD_FILE_CONTENTS "")
 endif()
 
-# If we are using Armadillo 5+, ARMA_64BIT_WORD is implicitly enabled.
-set(ARMA_HAS_64BIT_WORD 0) # This may be unnecessary.
-if(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
-  # ARMA_64BIT_WORD is only set if we are on a 64-bit system.
-  if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(ARMA_HAS_64BIT_WORD 1)
-  else ()
-    set(ARMA_HAS_64BIT_WORD 0)
-  endif ()
+if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+  set(ARMA_HAS_64BIT_WORD 0)
 else()
-  # Otherwise, we'll need to open the config.hpp we are using and inspect the
-  # setting of ARMA_64BIT_WORD.
-  if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-    file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp"
-        ARMA_CONFIG)
-
-    # Extract ARMA_64BIT_WORD.
-    string(REGEX MATCH
-        "[\r\n][ ]*#define ARMA_64BIT_WORD"
-        ARMA_HAS_64BIT_WORD_PRE
-        "${ARMA_CONFIG}")
-
-    string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
-  else()
-    # Assumes ARMA_64BIT_WORD is not set.
-    message(WARNING "Armadillo configuration file
-        (${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
-  endif()
+  set(ARMA_HAS_64BIT_WORD 1)
 endif()
 
 # Now use the value we gathered to generate the new file contents.
@@ -89,6 +65,4 @@ if(NOT "${OLD_FILE_CONTENTS}" STREQUAL "${NEW_FILE_CONTENTS}")
   file(WRITE "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp"
       "${NEW_FILE_CONTENTS}")
 endif()
-
-
 

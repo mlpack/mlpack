@@ -1,5 +1,5 @@
 /**
- * @file parse_command_line.hpp
+ * @file bindings/cli/parse_command_line.hpp
  * @author Ryan Curtin
  * @author Matthew Amidon
  *
@@ -14,8 +14,9 @@
 #define MLPACK_BINDINGS_CLI_PARSE_COMMAND_LINE_HPP
 
 #include <mlpack/core.hpp>
-#include <boost/program_options.hpp>
 #include "print_help.hpp"
+
+#include "third_party/CLI/CLI11.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -34,111 +35,65 @@ PARAM_FLAG("version", "Display the version of mlpack.", "V");
  */
 void ParseCommandLine(int argc, char** argv)
 {
-  // First, we need to build the boost::program_options variables for parsing.
-  using namespace boost::program_options;
-  options_description desc;
-  variables_map vmap;
+  // First, we need to build the CLI11 variables for parsing.
+  CLI::App app;
+  app.set_help_flag();
 
   // Go through list of options in order to add them.
-  std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
-  typedef std::map<std::string, util::ParamData>::const_iterator IteratorType;
-  std::map<std::string, std::string> boostNameMap;
-  for (IteratorType it = parameters.begin(); it != parameters.end(); ++it)
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  using ItType = std::map<std::string, util::ParamData>::iterator;
+
+  for (ItType it = parameters.begin(); it != parameters.end(); ++it)
   {
     // Add the parameter to desc.
-    const util::ParamData& d = it->second;
-    CLI::GetSingleton().functionMap[d.tname]["AddToPO"](d, NULL,
-        (void*) &desc);
-
-    // Generate the name the user passes on the command line.
-    std::string boostName;
-    CLI::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
-        (void*) &boostName);
-    boostNameMap[boostName] = d.name;
+    util::ParamData& d = it->second;
+    IO::GetSingleton().functionMap[d.tname]["AddToCLI11"](d, NULL, (void*)
+        &app);
   }
 
   // Mark that we did parsing.
-  CLI::GetSingleton().didParse = true;
+  IO::GetSingleton().didParse = true;
 
   // Parse the command line, then place the values in the right place.
   try
   {
-    basic_parsed_options<char> bpo(parse_command_line(argc, argv, desc));
-
-    // Iterate over all the options, looking for duplicate parameters.  If we
-    // find any, remove the duplicates.  Note that vector options can have
-    // duplicates, so we check for those with max_tokens().
-    for (size_t i = 0; i < bpo.options.size(); ++i)
+    try
     {
-      for (size_t j = i + 1; j < bpo.options.size(); ++j)
-      {
-        if ((bpo.options[i].string_key == bpo.options[j].string_key) &&
-            (desc.find(bpo.options[i].string_key,
-                       false).semantic()->max_tokens() <= 1))
-        {
-          // If a duplicate is found, check to see if either one has a value.
-          if (bpo.options[i].value.size() == 0 &&
-              bpo.options[j].value.size() == 0)
-          {
-            // If neither has a value, we'll consider it a duplicate flag and
-            // remove the duplicate.  It's important to not break out of this
-            // loop because there might be another duplicate later on in the
-            // vector.
-            bpo.options.erase(bpo.options.begin() + j);
-            --j; // Fix the index.
-          }
-          else
-          {
-            // If one or both has a value, produce an error and politely
-            // terminate.  We pull the name from the original_tokens, rather
-            // than from the string_key, because the string_key is the parameter
-            // after aliases have been expanded.
-            Log::Fatal << "\"" << bpo.options[j].original_tokens[0] << "\" is "
-                << "defined multiple times." << std::endl;
-          }
-        }
-      }
+      app.parse(argc, argv);
     }
-
-    store(bpo, vmap);
+    catch (const CLI::ArgumentMismatch& err)
+    {
+      Log::Fatal << "An option is defined multiple times: "
+                 << app.exit(err) << std::endl;
+    }
+    catch (const CLI::OptionNotFound& onf)
+    {
+      Log::Fatal << "Required option --" << app.exit(onf) << "!" << std::endl;
+    }
+    catch (const CLI::ParseError& pe)
+    {
+      Log::Fatal << app.exit(pe) << std::endl;
+    }
   }
   catch (std::exception& ex)
   {
-    Log::Fatal << "Caught exception from parsing command line: " << ex.what()
-        << std::endl;
+    Log::Fatal << "Caught exception from parsing command line: "
+      << ex.what() << std::endl;
   }
-
-  // Now iterate through the filled vmap, and overwrite default values with
-  // anything that's found on the command line.
-  for (variables_map::iterator i = vmap.begin(); i != vmap.end(); ++i)
-  {
-    // There is not a possibility of an unknown option, since
-    // boost::program_options would have already thrown an exception.  Because
-    // some names may be mapped, we have to look through each ParamData object
-    // and get its boost name.
-    const std::string identifier = boostNameMap[i->first];
-    util::ParamData& param = parameters[identifier];
-    param.wasPassed = true;
-    CLI::GetSingleton().functionMap[param.tname]["SetParam"](param,
-        (void*) &vmap[i->first].value(), NULL);
-  }
-
-  // Flush the buffer, make sure changes are propagated to vmap.
-  notify(vmap);
 
   // If the user specified any of the default options (--help, --version, or
   // --info), handle those.
 
   // --version is prioritized over --help.
-  if (CLI::HasParam("version"))
+  if (IO::HasParam("version"))
   {
-    std::cout << CLI::GetSingleton().ProgramName() << ": part of "
+    std::cout << IO::GetSingleton().ProgramName() << ": part of "
         << util::GetVersion() << "." << std::endl;
     exit(0); // Don't do anything else.
   }
 
   // Default help message.
-  if (CLI::HasParam("help"))
+  if (IO::HasParam("help"))
   {
     Log::Info.ignoreInput = false;
     PrintHelp();
@@ -146,10 +101,10 @@ void ParseCommandLine(int argc, char** argv)
   }
 
   // Info on a specific parameter.
-  if (CLI::HasParam("info"))
+  if (IO::HasParam("info"))
   {
     Log::Info.ignoreInput = false;
-    std::string str = CLI::GetParam<std::string>("info");
+    std::string str = IO::GetParam<std::string>("info");
 
     // The info node should always be there, but the user may not have specified
     // anything.
@@ -168,7 +123,7 @@ void ParseCommandLine(int argc, char** argv)
   // if we have not compiled in debugging mode.
   Log::Debug << "Compiled with debugging symbols." << std::endl;
 
-  if (CLI::HasParam("verbose"))
+  if (IO::HasParam("verbose"))
   {
     // Give [INFO ] output.
     Log::Info.ignoreInput = false;
@@ -178,16 +133,18 @@ void ParseCommandLine(int argc, char** argv)
   for (std::map<std::string, util::ParamData>::const_iterator iter =
        parameters.begin(); iter != parameters.end(); ++iter)
   {
-    const util::ParamData d = iter->second;
+    util::ParamData d = iter->second;
     if (d.required)
     {
-      const std::string boostName;
-      CLI::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
-          (void*) &boostName);
+      // CLI11 expects the parameter name to have "--" prepended.
+      std::string cliName;
+      IO::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
+          (void*) &cliName);
+      cliName = "--" + cliName;
 
-      if (!vmap.count(boostName))
+      if (!app.count(cliName))
       {
-        Log::Fatal << "Required option --" << boostName << " is undefined."
+        Log::Fatal << "Required option " << cliName << " is undefined."
             << std::endl;
       }
     }

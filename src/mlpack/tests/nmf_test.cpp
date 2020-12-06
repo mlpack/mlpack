@@ -1,5 +1,5 @@
 /**
- * @file nmf_test.cpp
+ * @file tests/nmf_test.cpp
  * @author Mohan Rajendran
  *
  * Test file for NMF class.
@@ -17,10 +17,7 @@
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-
-BOOST_AUTO_TEST_SUITE(NMFTest);
+#include "catch.hpp"
 
 using namespace std;
 using namespace arma;
@@ -31,7 +28,7 @@ using namespace mlpack::amf;
  * Check the if the product of the calculated factorization is close to the
  * input matrix. Default case.
  */
-BOOST_AUTO_TEST_CASE(NMFDefaultTest)
+TEST_CASE("NMFDefaultTest", "[NMFTest]")
 {
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
@@ -44,15 +41,15 @@ BOOST_AUTO_TEST_CASE(NMFDefaultTest)
   mat wh = w * h;
 
   // Make sure reconstruction error is not too high.  5.0% tolerance.
-  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.05);
+  REQUIRE(arma::norm(v - wh, "fro") / arma::norm(v, "fro") ==
+      Approx(0.0).margin(0.05));
 }
 
 /**
  * Check the if the product of the calculated factorization is close to the
  * input matrix. Random Acol initialization distance minimization update.
  */
-BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
+TEST_CASE("NMFAcolDistTest", "[NMFTest]")
 {
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
@@ -65,15 +62,15 @@ BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
 
   mat wh = w * h;
 
-  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.015);
+  REQUIRE(arma::norm(v - wh, "fro") / arma::norm(v, "fro") ==
+      Approx(0.0).margin(0.15));
 }
 
 /**
  * Check the if the product of the calculated factorization is close to the
  * input matrix. Random initialization divergence minimization update.
  */
-BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
+TEST_CASE("NMFRandomDivTest", "[NMFTest]")
 {
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
@@ -102,7 +99,7 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
     }
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 /**
@@ -110,7 +107,7 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
  * input matrix.  This uses the random initialization and alternating least
  * squares update rule.
  */
-BOOST_AUTO_TEST_CASE(NMFALSTest)
+TEST_CASE("NMFALSTest", "[NMFTest]")
 {
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
@@ -127,8 +124,8 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
   // Make sure reconstruction error is not too high.  9% tolerance.  It seems
   // like ALS doesn't converge to results that are as good.  It also seems to be
   // particularly sensitive to initial conditions.
-  BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.09);
+  REQUIRE(arma::norm(v - wh, "fro") / arma::norm(v, "fro") ==
+      Approx(0.0).margin(0.09));
 }
 
 /**
@@ -136,7 +133,7 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
  * input matrix, with a sparse input matrix. Random Acol initialization,
  * distance minimization update.
  */
-BOOST_AUTO_TEST_CASE(SparseNMFAcolDistTest)
+TEST_CASE("SparseNMFAcolDistTest", "[NMFTest]")
 {
   // We have to ensure that the residues aren't NaNs.  This can happen when a
   // matrix is created with all zeros in a column or row.
@@ -179,8 +176,8 @@ BOOST_AUTO_TEST_CASE(SparseNMFAcolDistTest)
   }
 
   // Make sure the results are about equal for the W and H matrices.
-  BOOST_REQUIRE_SMALL(arma::norm(vp - dvp, "fro") / arma::norm(vp, "fro"),
-      1e-5);
+  REQUIRE(arma::norm(vp - dvp, "fro") / arma::norm(vp, "fro") ==
+      Approx(0.0).margin(1e-5));
 }
 
 /**
@@ -188,7 +185,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFAcolDistTest)
  * input matrix, with a sparse input matrix.  This uses the random
  * initialization and alternating least squares update rule.
  */
-BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
+TEST_CASE("SparseNMFALSTest", "[NMFTest]")
 {
   // We have to ensure that the residues aren't NaNs.  This can happen when a
   // matrix is created with all zeros in a column or row.
@@ -197,40 +194,50 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
 
   mat vp, dvp; // Resulting matrices.
 
-  while (sparseResidue != sparseResidue && denseResidue != denseResidue)
+  bool success = false;
+  for (size_t trial = 0; trial < 3; ++trial)
   {
-    mat w, h;
-    sp_mat v;
-    v.sprandu(10, 10, 0.3);
-    // Ensure there is at least one nonzero element in every row and column.
-    for (size_t i = 0; i < 10; ++i)
-      v(i, i) += 1e-5;
-    mat dv(v); // Make a dense copy.
-    mat dw, dh;
-    size_t r = 5;
+    while (sparseResidue != sparseResidue && denseResidue != denseResidue)
+    {
+      mat w, h;
+      sp_mat v;
+      v.sprandu(10, 10, 0.3);
+      // Ensure there is at least one nonzero element in every row and column.
+      for (size_t i = 0; i < 10; ++i)
+        v(i, i) += 1e-5;
+      mat dv(v); // Make a dense copy.
+      mat dw, dh;
+      size_t r = 5;
 
-    // Get an initialization.
-    arma::mat iw, ih;
-    RandomAcolInitialization<>::Initialize(v, r, iw, ih);
-    GivenInitialization g(std::move(iw), std::move(ih));
+      // Get an initialization.
+      arma::mat iw, ih;
+      RandomAcolInitialization<>::Initialize(v, r, iw, ih);
+      GivenInitialization g(std::move(iw), std::move(ih));
 
-    SimpleResidueTermination srt(1e-10, 10000);
-    AMF<SimpleResidueTermination, GivenInitialization, NMFALSUpdate> nmf(srt,
-        g);
-    nmf.Apply(v, r, w, h);
-    nmf.Apply(dv, r, dw, dh);
+      SimpleResidueTermination srt(1e-10, 10000);
+      AMF<SimpleResidueTermination, GivenInitialization, NMFALSUpdate> nmf(srt,
+          g);
+      nmf.Apply(v, r, w, h);
+      nmf.Apply(dv, r, dw, dh);
 
-    // Reconstruct matrices.
-    vp = w * h; // In general vp won't be sparse.
-    dvp = dw * dh;
+      // Reconstruct matrices.
+      vp = w * h; // In general vp won't be sparse.
+      dvp = dw * dh;
 
-    denseResidue = arma::norm(v - vp, "fro");
-    sparseResidue = arma::norm(dv - dvp, "fro");
+      denseResidue = arma::norm(v - vp, "fro");
+      sparseResidue = arma::norm(dv - dvp, "fro");
+    }
+
+    // Make sure the results are about equal for the W and H matrices.
+    const double relDiff = arma::norm(vp - dvp, "fro") / arma::norm(vp, "fro");
+    if (relDiff < 1e-5)
+    {
+      success = true;
+      break;
+    }
   }
 
-  // Make sure the results are about equal for the W and H matrices.
-  BOOST_REQUIRE_SMALL(arma::norm(vp - dvp, "fro") / arma::norm(vp, "fro"),
-      1e-5);
+  REQUIRE(success == true);
 }
 
 /**
@@ -238,7 +245,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
  * Default Case.
  * Random Acol initilization and distance minimization update.
  */
-BOOST_AUTO_TEST_CASE(NonNegNMFDefaultTest)
+TEST_CASE("NonNegNMFDefaultTest", "[NMFTest]")
 {
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
@@ -248,15 +255,15 @@ BOOST_AUTO_TEST_CASE(NonNegNMFDefaultTest)
   AMF<> nmf;
   nmf.Apply(v, r, w, h);
 
-  BOOST_REQUIRE(arma::all(arma::vectorise(w) >= 0)
-      && arma::all(arma::vectorise(h) >= 0));
+  REQUIRE((arma::all(arma::vectorise(w) >= 0)
+      && arma::all(arma::vectorise(h) >= 0)));
 }
 
 /**
  * Check if all elements in W and H are non-negative.
  * Random initialization divergence minimization update.
  */
-BOOST_AUTO_TEST_CASE(NonNegNMFRandomDivTest)
+TEST_CASE("NonNegNMFRandomDivTest", "[NMFTest]")
 {
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
@@ -270,15 +277,15 @@ BOOST_AUTO_TEST_CASE(NonNegNMFRandomDivTest)
       NMFMultiplicativeDivergenceUpdate> nmf(srt);
   nmf.Apply(v, r, w, h);
 
-  BOOST_REQUIRE(arma::all(arma::vectorise(w) >= 0)
-      && arma::all(arma::vectorise(h) >= 0));
+  REQUIRE((arma::all(arma::vectorise(w) >= 0)
+      && arma::all(arma::vectorise(h) >= 0)));
 }
 
 /**
  * Check if all elements in W and H are non-negative.
  * Random initialization, alternating least squares update.
  */
-BOOST_AUTO_TEST_CASE(NonNegNMFALSTest)
+TEST_CASE("NonNegNMFALSTest", "[NMFTest]")
 {
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
@@ -291,8 +298,6 @@ BOOST_AUTO_TEST_CASE(NonNegNMFALSTest)
       NMFALSUpdate> nmf(srt);
   nmf.Apply(v, r, w, h);
 
-  BOOST_REQUIRE(arma::all(arma::vectorise(w) >= 0)
-      && arma::all(arma::vectorise(h) >= 0));
+  REQUIRE((arma::all(arma::vectorise(w) >= 0)
+      && arma::all(arma::vectorise(h) >= 0)));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

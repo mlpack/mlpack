@@ -1,5 +1,5 @@
 /**
- * @file bias_set_visitor_impl.hpp
+ * @file methods/ann/visitor/bias_set_visitor_impl.hpp
  * @author Toshal Agrawal
  *
  * Implementation of the Bias() function layer abstraction.
@@ -19,8 +19,8 @@ namespace mlpack {
 namespace ann {
 
 //! BiasSetVisitor visitor class.
-inline BiasSetVisitor::BiasSetVisitor(arma::mat&& weight, const size_t offset) :
-    weight(std::move(weight)),
+inline BiasSetVisitor::BiasSetVisitor(arma::mat& weight, const size_t offset) :
+    weight(weight),
     offset(offset)
 {
   /* Nothing to do here. */
@@ -57,7 +57,7 @@ BiasSetVisitor::LayerSize(T* layer) const
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
     modelOffset += boost::apply_visitor(BiasSetVisitor(
-        std::move(weight), modelOffset + offset), layer->Model()[i]);
+        weight, modelOffset + offset), layer->Model()[i]);
   }
 
   return modelOffset;
@@ -89,7 +89,7 @@ BiasSetVisitor::LayerSize(T* layer) const
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
     modelOffset += boost::apply_visitor(BiasSetVisitor(
-        std::move(weight), modelOffset + offset), layer->Model()[i]);
+        weight, modelOffset + offset), layer->Model()[i]);
   }
 
   return modelOffset;

@@ -1,5 +1,5 @@
 /**
- * @file convolution_test.cpp
+ * @file tests/convolution_test.cpp
  * @author Shangtong Zhang
  * @author Marcus Edel
  *
@@ -17,13 +17,12 @@
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "serialization_catch.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
-
-BOOST_AUTO_TEST_SUITE(ConvolutionTest);
 
 /*
  * Implementation of the convolution function test.
@@ -46,13 +45,13 @@ void Convolution2DMethodTest(const arma::mat input,
   // Check the output dimension.
   bool b = (convOutput.n_rows == output.n_rows) &&
       (convOutput.n_cols == output.n_cols);
-  BOOST_REQUIRE_EQUAL(b, 1);
+  REQUIRE(b == 1);
 
   const double* outputPtr = output.memptr();
   const double* convOutputPtr = convOutput.memptr();
 
-  for (size_t i = 0; i < output.n_elem; i++, outputPtr++, convOutputPtr++)
-    BOOST_REQUIRE_CLOSE(*outputPtr, *convOutputPtr, 1e-3);
+  for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
 }
 
 /*
@@ -77,13 +76,13 @@ void Convolution3DMethodTest(const arma::cube input,
   bool b = (convOutput.n_rows == output.n_rows) &&
       (convOutput.n_cols == output.n_cols &&
       convOutput.n_slices == output.n_slices);
-  BOOST_REQUIRE_EQUAL(b, 1);
+  REQUIRE(b == 1);
 
   const double* outputPtr = output.memptr();
   const double* convOutputPtr = convOutput.memptr();
 
-  for (size_t i = 0; i < output.n_elem; i++, outputPtr++, convOutputPtr++)
-    BOOST_REQUIRE_CLOSE(*outputPtr, *convOutputPtr, 1e-3);
+  for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
 }
 
 /*
@@ -109,33 +108,33 @@ void ConvolutionMethodBatchTest(const arma::mat input,
   bool b = (convOutput.n_rows == output.n_rows) &&
       (convOutput.n_cols == output.n_cols &&
       convOutput.n_slices == output.n_slices);
-  BOOST_REQUIRE_EQUAL(b, 1);
+  REQUIRE(b == 1);
 
   const double* outputPtr = output.memptr();
   const double* convOutputPtr = convOutput.memptr();
 
-  for (size_t i = 0; i < output.n_elem; i++, outputPtr++, convOutputPtr++)
-    BOOST_REQUIRE_CLOSE(*outputPtr, *convOutputPtr, 1e-3);
+  for (size_t i = 0; i < output.n_elem; ++i, outputPtr++, convOutputPtr++)
+    REQUIRE(*outputPtr == Approx(*convOutputPtr).epsilon(1e-5));
 }
 
 /**
  * Test the convolution (valid) methods.
  */
-BOOST_AUTO_TEST_CASE(ValidConvolution2DTest)
+TEST_CASE("ValidConvolution2DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 0 << 1 << 0 << arma::endr
-         << -1 << 0 << 1;
+  filter = { {  1, 0, -1 },
+             {  0, 1,  0 },
+             { -1, 0,  1 } };
 
-  output << -3 << -2 << arma::endr
-         << 8 << -3;
+  output = { { -3, -2 },
+             {  8, -3 } };
 
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<ValidConvolution> >(input, filter,
@@ -154,25 +153,25 @@ BOOST_AUTO_TEST_CASE(ValidConvolution2DTest)
 /**
  * Test the convolution (full) methods.
  */
-BOOST_AUTO_TEST_CASE(FullConvolution2DTest)
+TEST_CASE("FullConvolution2DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 1 << 1 << 1 << arma::endr
-         << -1 << 0 << 1;
+  filter = { {  1, 0, -1 },
+             {  1, 1,  1 },
+             { -1, 0,  1 } };
 
-  output << 1 << 2 << 2 << 2 << -3 << -4 << arma::endr
-         << 5 << 4 << 4 << 11 << 5 << 1 << arma::endr
-         << 6 << 7 << 3 << 2 << 7 << 5 << arma::endr
-         << 1 << 9 << 12 << 3 << 1 << 4 << arma::endr
-         << -1 << 1 << 11 << 10 << 6 << 3 << arma::endr
-         << -2 << -3 << -2 << 2 << 4 << 1;
+  output = { {  1,  2,  2,  2, -3, -4 },
+             {  5,  4,  4, 11,  5,  1 },
+             {  6,  7,  3,  2,  7,  5 },
+             {  1,  9, 12,  3,  1,  4 },
+             { -1,  1, 11, 10,  6,  3 },
+             { -2, -3, -2,  2,  4,  1 } };
 
   // Perform the naive convolution approach.
   Convolution2DMethodTest<NaiveConvolution<FullConvolution> >(input, filter,
@@ -191,21 +190,21 @@ BOOST_AUTO_TEST_CASE(FullConvolution2DTest)
 /**
  * Test the convolution (valid) methods using 3rd order tensors.
  */
-BOOST_AUTO_TEST_CASE(ValidConvolution3DTest)
+TEST_CASE("ValidConvolution3DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 0 << 1 << 0 << arma::endr
-         << -1 << 0 << 1;
+  filter = { {  1, 0, -1 },
+             {  0, 1,  0 },
+             { -1, 0,  1 } };
 
-  output << -3 << -2 << arma::endr
-         << 8 << -3;
+  output = { { -3, -2 },
+             {  8, -3 } };
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
@@ -236,25 +235,25 @@ BOOST_AUTO_TEST_CASE(ValidConvolution3DTest)
 /**
  * Test the convolution (full) methods using 3rd order tensors.
  */
-BOOST_AUTO_TEST_CASE(FullConvolution3DTest)
+TEST_CASE("FullConvolution3DTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 1 << 1 << 1 << arma::endr
-         << -1 << 0 << 1;
+  filter = { {  1, 0, -1 },
+             {  1, 1,  1 },
+             { -1, 0,  1 } };
 
-  output << 1 << 2 << 2 << 2 << -3 << -4 << arma::endr
-         << 5 << 4 << 4 << 11 << 5 << 1 << arma::endr
-         << 6 << 7 << 3 << 2 << 7 << 5 << arma::endr
-         << 1 << 9 << 12 << 3 << 1 << 4 << arma::endr
-         << -1 << 1 << 11 << 10 << 6 << 3 << arma::endr
-         << -2 << -3 << -2 << 2 << 4 << 1;
+  output = { {  1,  2,  2,  2, -3, -4 },
+             {  5,  4,  4, 11,  5,  1 },
+             {  6,  7,  3,  2,  7,  5 },
+             {  1,  9, 12,  3,  1,  4 },
+             { -1,  1, 11, 10,  6,  3 },
+             { -2, -3, -2,  2,  4,  1 } };
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
@@ -286,21 +285,21 @@ BOOST_AUTO_TEST_CASE(FullConvolution3DTest)
  * Test the convolution (valid) methods using dense matrix as input and a 3rd
  * order tensors as filter and output (batch modus).
  */
-BOOST_AUTO_TEST_CASE(ValidConvolutionBatchTest)
+TEST_CASE("ValidConvolutionBatchTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 0 << 1 << 0 << arma::endr
-         << -1 << 0 << 1;
+  filter = { {  1, 0, -1 },
+             {  0, 1,  0 },
+             { -1, 0,  1 } };
 
-  output << -3 << -2 << arma::endr
-         << 8 << -3;
+  output = { { -3, -2 },
+             {  8, -3 } };
 
   arma::cube filterCube(filter.n_rows, filter.n_cols, 2);
   filterCube.slice(0) = filter;
@@ -328,25 +327,25 @@ BOOST_AUTO_TEST_CASE(ValidConvolutionBatchTest)
  * Test the convolution (full) methods using dense matrix as input and a 3rd
  * order tensors as filter and output (batch modus).
  */
-BOOST_AUTO_TEST_CASE(FullConvolutionBatchTest)
+TEST_CASE("FullConvolutionBatchTest", "[ConvolutionTest]")
 {
   // Generate dataset for convolution function tests.
   arma::mat input, filter, output;
-  input << 1 << 2 << 3 << 4 << arma::endr
-        << 4 << 1 << 2 << 3 << arma::endr
-        << 3 << 4 << 1 << 2 << arma::endr
-        << 2 << 3 << 4 << 1;
+  input = { { 1, 2, 3, 4 },
+            { 4, 1, 2, 3 },
+            { 3, 4, 1, 2 },
+            { 2, 3, 4, 1 } };
 
-  filter << 1 << 0 << -1 << arma::endr
-         << 1 << 1 << 1 << arma::endr
-         << -1 << 0 << 1;
+  filter = { {  1, 0, -1 },
+             {  1, 1,  1 },
+             { -1, 0,  1 } };
 
-  output << 1 << 2 << 2 << 2 << -3 << -4 << arma::endr
-         << 5 << 4 << 4 << 11 << 5 << 1 << arma::endr
-         << 6 << 7 << 3 << 2 << 7 << 5 << arma::endr
-         << 1 << 9 << 12 << 3 << 1 << 4 << arma::endr
-         << -1 << 1 << 11 << 10 << 6 << 3 << arma::endr
-         << -2 << -3 << -2 << 2 << 4 << 1;
+  output = { {  1,  2,  2,  2, -3, -4 },
+             {  5,  4,  4, 11,  5,  1 },
+             {  6,  7,  3,  2,  7,  5 },
+             {  1,  9, 12,  3,  1,  4 },
+             { -1,  1, 11, 10,  6,  3 },
+             { -2, -3, -2,  2,  4,  1 } };
 
   arma::cube filterCube(filter.n_rows, filter.n_cols, 2);
   filterCube.slice(0) = filter;
@@ -369,5 +368,3 @@ BOOST_AUTO_TEST_CASE(FullConvolutionBatchTest)
   ConvolutionMethodBatchTest<SVDConvolution<FullConvolution> >(input,
       filterCube, outputCube);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

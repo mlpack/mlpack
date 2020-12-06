@@ -1,5 +1,5 @@
 /**
- * @file linear_kernel.hpp
+ * @file core/kernels/linear_kernel.hpp
  * @author Wei Guan
  * @author James Cline
  * @author Ryan Curtin
@@ -57,7 +57,7 @@ class LinearKernel
 
   //! Serialize the kernel (it has no members... do nothing).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace kernel

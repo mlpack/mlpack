@@ -1,5 +1,5 @@
 /**
- * @file kl_divergence.hpp
+ * @file methods/ann/loss_functions/kl_divergence.hpp
  * @author Dakshit Agrawal
  *
  * Definition of the Kullback–Leibler Divergence error function.
@@ -60,7 +60,8 @@ class KLDivergence
    * @param target Target data to compare with.
    */
   template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, const TargetType&& target);
+  typename InputType::elem_type Forward(const InputType& input,
+                                        const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
@@ -70,9 +71,9 @@ class KLDivergence
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  void Backward(const InputType& input,
+                const TargetType& target,
+                OutputType& output);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -88,7 +89,7 @@ class KLDivergence
    * Serialize the loss function
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored output parameter object.

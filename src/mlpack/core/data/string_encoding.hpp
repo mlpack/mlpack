@@ -1,5 +1,5 @@
 /**
- * @file string_encoding.hpp
+ * @file core/data/string_encoding.hpp
  * @author Jeffin Sam
  * @author Mikhail Lozhnikov
  *
@@ -24,7 +24,8 @@ namespace data {
 
 /**
  * The class translates a set of strings into numbers using various encoding
- * algorithms.
+ * algorithms. The encoder writes data either in the column-major order or
+ * in the row-major order depending on the output data type.
  *
  * @tparam EncodingPolicyType Type of the encoding algorithm itself.
  * @tparam DictionaryType Type of the dictionary.
@@ -90,11 +91,17 @@ class StringEncoding
   void Clear();
 
   /**
-   * Encode the given text and write the result to the given output.
+   * Encode the given text and write the result to the given output. The encoder
+   * writes data in the column-major order or in the row-major order depending
+   * on the output data type.
+   *
+   * If the output type is either arma::mat or arma::sp_mat then the function
+   * writes it in the column-major order. If the output type is 2D std::vector
+   * then the function writes it in the row major order.
    *
    * @tparam OutputType Type of the output container. The function supports
    *                    the following types: arma::mat, arma::sp_mat,
-   *                    std::vector<std::vector<size_t>>.
+   *                    std::vector<std::vector<>>.
    * @tparam TokenizerType Type of the tokenizer.
    *
    * @param input Corpus of text to encode.
@@ -127,16 +134,21 @@ class StringEncoding
    * Serialize the class to the given archive.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /**
    * A helper function to encode the given text and write the result to
-   * the given output.
+   * the given output. The encoder writes data in the column-major order or
+   * in the row-major order depending on the output data type.
+   *
+   * If the output type is either arma::mat or arma::sp_mat then the function
+   * writes it in the column-major order. If the output type is 2D std::vector
+   * then the function writes it in the row major order.
    *
    * @tparam OutputType Type of the output container. The function supports
    *                    the following types: arma::mat, arma::sp_mat,
-   *                    std::vector<std::vector<size_t>>.
+   *                    std::vector<std::vector<>>.
    * @tparam TokenizerType Type of the tokenizer.
    * @tparam PolicyType The type of the encoding policy. It has to be
    *                    equal to EncodingPolicyType.
@@ -153,9 +165,7 @@ class StringEncoding
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
    *    token is empty.
    */
-  template<typename OutputType,
-           typename TokenizerType,
-           typename PolicyType>
+  template<typename OutputType, typename TokenizerType, typename PolicyType>
   void EncodeHelper(const std::vector<std::string>& input,
                     OutputType& output,
                     const TokenizerType& tokenizer,
@@ -164,11 +174,13 @@ class StringEncoding
   /**
    * A helper function to encode the given text and write the result to
    * the given output. This is an optimized overload for policies that support
-   * the one pass encoding algorithm.
+   * the one pass encoding algorithm. The encoder writes data in the row-major
+   * order.
    *
    * @tparam TokenizerType Type of the tokenizer.
    * @tparam PolicyType The type of the encoding policy. It has to be
    *                    equal to EncodingPolicyType.
+   * @tparam ElemType Type of the output values.
    *
    * @param input Corpus of text to encode.
    * @param output Output container to store the result.
@@ -182,9 +194,9 @@ class StringEncoding
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
    *    token is empty.
    */
-  template<typename TokenizerType, typename PolicyType>
+  template<typename TokenizerType, typename PolicyType, typename ElemType>
   void EncodeHelper(const std::vector<std::string>& input,
-                    std::vector<std::vector<size_t>>& output,
+                    std::vector<std::vector<ElemType>>& output,
                     const TokenizerType& tokenizer,
                     PolicyType& policy,
                     typename std::enable_if<StringEncodingPolicyTraits<

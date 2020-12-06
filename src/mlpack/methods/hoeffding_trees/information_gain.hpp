@@ -1,5 +1,5 @@
 /**
- * @file information_gain.hpp
+ * @file methods/hoeffding_trees/information_gain.hpp
  * @author Ryan Curtin
  *
  * An implementation of information gain, which can be used in place of Gini
@@ -16,7 +16,7 @@
 namespace mlpack {
 namespace tree {
 
-class InformationGain
+class HoeffdingInformationGain
 {
  public:
   /**

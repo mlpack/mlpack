@@ -1,5 +1,5 @@
 /**
- * @file import_decl.hpp
+ * @file bindings/python/import_decl.hpp
  * @author Ryan Curtin
  *
  * For a serializable model, print the class import.
@@ -24,7 +24,7 @@ namespace python {
  */
 template<typename T>
 void ImportDecl(
-    const util::ParamData& d,
+    util::ParamData& d,
     const size_t indent,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
@@ -51,7 +51,7 @@ void ImportDecl(
  */
 template<typename T>
 void ImportDecl(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const size_t /* indent */,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0)
@@ -64,7 +64,7 @@ void ImportDecl(
  */
 template<typename T>
 void ImportDecl(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const size_t /* indent */,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
@@ -76,11 +76,11 @@ void ImportDecl(
  * non-serializable type.
  *
  * @param d Parameter info struct.
- * @param input Pointer to size_t indicating indent.
- * @param output Unused parameter.
+ * @param indent Pointer to size_t indicating indent.
+ * @param * (output) Unused parameter.
  */
 template<typename T>
-void ImportDecl(const util::ParamData& d,
+void ImportDecl(util::ParamData& d,
                 const void* indent,
                 void* /* output */)
 {

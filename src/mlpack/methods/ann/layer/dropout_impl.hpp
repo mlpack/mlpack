@@ -1,5 +1,5 @@
 /**
- * @file dropout_impl.hpp
+ * @file methods/ann/layer/dropout_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Dropout class, which implements a regularizer that
@@ -30,10 +30,58 @@ Dropout<InputDataType, OutputDataType>::Dropout(
 }
 
 template<typename InputDataType, typename OutputDataType>
+Dropout<InputDataType, OutputDataType>::Dropout(
+    const Dropout& layer) :
+    ratio(layer.ratio),
+    scale(layer.scale),
+    deterministic(layer.deterministic)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+Dropout<InputDataType, OutputDataType>::Dropout(
+    const Dropout&& layer) :
+    ratio(std::move(layer.ratio)),
+    scale(std::move(scale)),
+    deterministic(std::move(deterministic))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+Dropout<InputDataType, OutputDataType>&
+Dropout<InputDataType, OutputDataType>::
+operator=(const Dropout& layer)
+{
+  if (this != &layer)
+  {
+    ratio = layer.ratio;
+    scale = layer.scale;
+    deterministic = layer.deterministic;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
+Dropout<InputDataType, OutputDataType>&
+Dropout<InputDataType, OutputDataType>::
+operator=(Dropout&& layer)
+{
+  if (this != &layer)
+  {
+    ratio = std::move(layer.ratio);
+    scale = std::move(layer.scale);
+    deterministic = std::move(layer.deterministic);
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dropout<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input,
-    arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input,
+    arma::Mat<eT>& output)
 {
   // The dropout mask will not be multiplied in the deterministic mode
   // (during testing).
@@ -54,9 +102,9 @@ void Dropout<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Dropout<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   g = gy % mask * scale;
 }
@@ -65,9 +113,9 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Dropout<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(ratio);
+  ar(CEREAL_NVP(ratio));
 
   // Reset scale.
   scale = 1.0 / (1.0 - ratio);

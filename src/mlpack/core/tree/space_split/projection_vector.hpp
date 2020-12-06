@@ -1,5 +1,5 @@
 /**
- * @file projection_vector.hpp
+ * @file core/tree/space_split/projection_vector.hpp
  * @author Marcos Pividori
  *
  * Definition of ProjVector and AxisParallelProjVector.
@@ -78,9 +78,9 @@ class AxisParallelProjVector
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(dim);
+    ar(CEREAL_NVP(dim));
   };
 };
 
@@ -142,9 +142,9 @@ class ProjVector
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(projVect);
+    ar(CEREAL_NVP(projVect));
   };
 };
 

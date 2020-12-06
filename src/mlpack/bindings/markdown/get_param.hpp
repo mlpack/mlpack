@@ -1,5 +1,5 @@
 /**
- * @file get_param.hpp
+ * @file bindings/markdown/get_param.hpp
  * @author Ryan Curtin
  *
  * Get a parameter for a Markdown binding.
@@ -23,7 +23,7 @@ namespace markdown {
  * special handling is necessary.
  */
 template<typename T>
-void GetParam(const util::ParamData& d,
+void GetParam(util::ParamData& d,
               const void* /* input */,
               void* output)
 {

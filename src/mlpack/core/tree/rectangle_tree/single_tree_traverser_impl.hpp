@@ -1,5 +1,5 @@
 /**
- * @file single_tree_traverser_impl.hpp
+ * @file core/tree/rectangle_tree/single_tree_traverser_impl.hpp
  * @author Andrew Wells
  *
  * A class for traversing rectangle type trees with a given set of rules
@@ -52,7 +52,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   // If we reach a leaf node, we need to run the base case.
   if (referenceNode.IsLeaf())
   {
-    for (size_t i = 0; i < referenceNode.Count(); i++)
+    for (size_t i = 0; i < referenceNode.Count(); ++i)
       rule.BaseCase(queryIndex, referenceNode.Point(i));
 
     return;
@@ -61,7 +61,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   // This is not a leaf node so we sort the children of this node by their
   // scores.
   std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
-  for (size_t i = 0; i < referenceNode.NumChildren(); i++)
+  for (size_t i = 0; i < referenceNode.NumChildren(); ++i)
   {
     nodesAndScores[i].node = &(referenceNode.Child(i));
     nodesAndScores[i].score = rule.Score(queryIndex, *nodesAndScores[i].node);
@@ -71,7 +71,7 @@ SingleTreeTraverser<RuleType>::Traverse(
 
   // Now iterate through them starting with the best and stopping when we reach
   // one that isn't good enough.
-  for (size_t i = 0; i < referenceNode.NumChildren(); i++)
+  for (size_t i = 0; i < referenceNode.NumChildren(); ++i)
   {
     if (rule.Rescore(queryIndex, *nodesAndScores[i].node,
         nodesAndScores[i].score) != DBL_MAX)

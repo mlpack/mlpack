@@ -1,5 +1,5 @@
 /**
- * @file adaboost.hpp
+ * @file methods/adaboost/adaboost.hpp
  * @author Udit Saxena
  *
  * The AdaBoost class.  AdaBoost is a boosting algorithm, meaning that it
@@ -90,8 +90,9 @@ class AdaBoost
    *
    * @param data Input data.
    * @param labels Corresponding labels.
+   * @param numClasses The number of classes.
    * @param iterations Number of boosting rounds.
-   * @param tol The tolerance for change in values of rt.
+   * @param tolerance The tolerance for change in values of rt.
    * @param other Weak learner that has already been initialized.
    */
   AdaBoost(const MatType& data,
@@ -137,7 +138,10 @@ class AdaBoost
    *
    * @param data Dataset to train on.
    * @param labels Labels for each point in the dataset.
+   * @param numClasses The number of classes.
    * @param learner Learner to use for training.
+   * @param iterations Number of boosting rounds.
+   * @param tolerance The tolerance for change in values of rt.
    * @return The upper bound for training error.
    */
   double Train(const MatType& data,
@@ -174,7 +178,7 @@ class AdaBoost
    * Serialize the AdaBoost model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The number of classes in the model.
@@ -190,19 +194,6 @@ class AdaBoost
 
 } // namespace adaboost
 } // namespace mlpack
-
-//! Set the serialization version of the adaboost class.
-namespace boost {
-namespace serialization {
-
-template<typename WeakLearnerType, typename MatType>
-struct version<mlpack::adaboost::AdaBoost<WeakLearnerType, MatType>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "adaboost_impl.hpp"

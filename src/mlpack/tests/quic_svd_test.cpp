@@ -1,5 +1,5 @@
 /**
- * @file quic_svd_test.cpp
+ * @file tests/quic_svd_test.cpp
  * @author Siddharth Agrawal
  *
  * Test file for QUIC-SVD class.
@@ -13,17 +13,14 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/quic_svd/quic_svd.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-
-BOOST_AUTO_TEST_SUITE(QUICSVDTest);
+#include "catch.hpp"
 
 using namespace mlpack;
 
 /**
  * The reconstruction error of the obtained SVD should be small.
  */
-BOOST_AUTO_TEST_CASE(QUICSVDReconstructionError)
+TEST_CASE("QUICSVDReconstructionError", "[QUICSVDTest]")
 {
   // Load the dataset.
   arma::mat dataset;
@@ -49,13 +46,13 @@ BOOST_AUTO_TEST_CASE(QUICSVDReconstructionError)
       ++successes;
   }
 
-  BOOST_REQUIRE_GT(successes, 0);
+  REQUIRE(successes > 0);
 }
 
 /**
  * The singular value error of the obtained SVD should be small.
  */
-BOOST_AUTO_TEST_CASE(QUICSVDSingularValueError)
+TEST_CASE("QUICSVDSingularValueError", "[QUICSVDTest]")
 {
   arma::mat U = arma::randn<arma::mat>(3, 20);
   arma::mat V = arma::randn<arma::mat>(10, 3);
@@ -80,10 +77,10 @@ BOOST_AUTO_TEST_CASE(QUICSVDSingularValueError)
 
   // The sigular value error should be small.
   double error = arma::norm(s1 - s3);
-  BOOST_REQUIRE_SMALL(error, 0.1);
+  REQUIRE(error == Approx(0.0).margin(0.1));
 }
 
-BOOST_AUTO_TEST_CASE(QUICSVDSameDimensionTest)
+TEST_CASE("QUICSVDSameDimensionTest", "[QUICSVDTest]")
 {
   arma::mat dataset = arma::randn<arma::mat>(10, 10);
 
@@ -91,5 +88,3 @@ BOOST_AUTO_TEST_CASE(QUICSVDSameDimensionTest)
   arma::mat u, v, sigma;
   svd::QUIC_SVD quicsvd(dataset, u, v, sigma);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -1,5 +1,5 @@
-/***
- * @file mahalanobis_distance_impl.hpp
+/**
+ * @file core/metrics/mahalanobis_distance_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the Mahalanobis distance.
@@ -51,9 +51,9 @@ double MahalanobisDistance<true>::Evaluate(const VecTypeA& a,
 template<bool TakeRoot>
 template<typename Archive>
 void MahalanobisDistance<TakeRoot>::serialize(Archive& ar,
-                                              const unsigned int /* version */)
+                                              const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(covariance);
+  ar(CEREAL_NVP(covariance));
 }
 
 } // namespace metric

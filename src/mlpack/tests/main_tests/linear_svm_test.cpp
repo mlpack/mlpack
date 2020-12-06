@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_test.cpp
+ * @file tests/main_tests/linear_svm_test.cpp
  * @author Yashwant Singh Parihar
  *
  * Test mlpackMain() of logistic_regression_main.cpp
@@ -20,8 +20,8 @@ static const std::string testName = "LinearSVM";
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -31,53 +31,52 @@ struct LinearSVMTestFixture
   LinearSVMTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~LinearSVMTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
-
-BOOST_FIXTURE_TEST_SUITE(LinearSVMMainTest,
-                         LinearSVMTestFixture);
 
 /**
  * Ensure that trainingSet are necessarily passed when training.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMNoTrainingData)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNoTrainingData",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("labels", std::move(trainLabels));
 
   // Training data is not provided. Should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Checking that that size and dimensionality of prediction is correct.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMOutputDimensionTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMOutputDimensionTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+    FAIL("Cannot load test dataset iris_test.csv!");
 
   size_t testSize = testData.n_cols;
 
@@ -90,32 +89,33 @@ BOOST_AUTO_TEST_CASE(LinearSVMOutputDimensionTest)
 
   // Get the output predictions of the test data.
   const arma::Row<size_t>& testLabels =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Output predictions size must match the test data set size.
-  BOOST_REQUIRE_EQUAL(testLabels.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(testLabels.n_cols, testSize);
+  REQUIRE(testLabels.n_rows == 1);
+  REQUIRE(testLabels.n_cols == testSize);
 }
 
 /**
  * Ensuring that the labels size is checked.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMCheckLabelsSizeTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckLabelsSizeTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("vc2_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset vc2_labels.txt!");
+    FAIL("Cannot load test dataset vc2_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
 
   // Labels with incorrect size. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -123,7 +123,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMCheckLabelsSizeTest)
  * Checking two options of specifying labels (extra row in train matrix and
  * extra parameter) and ensuring that predictions are the same.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMLabelsRepresentationTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMLabelsRepresentationTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
   arma::mat testData({{4.0, 5.0}, {1.0, 6.0}});
@@ -137,12 +138,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMLabelsRepresentationTest)
 
   // Get the output.
   const arma::Row<size_t> testLabels1 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+      std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   // Now train by providing labels as extra parameter.
   arma::mat trainData2({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}});
@@ -158,7 +159,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMLabelsRepresentationTest)
 
   // get the output
   const arma::Row<size_t>& testLabels2 =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
   CheckMatrices(testLabels1, testLabels2);
@@ -167,19 +168,20 @@ BOOST_AUTO_TEST_CASE(LinearSVMLabelsRepresentationTest)
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMModelReuseTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMModelReuseTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+    FAIL("Cannot load test dataset iris_test.csv!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -190,15 +192,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMModelReuseTest)
 
   // Get the output model obtained from training.
   LinearSVMModel* model =
-      CLI::GetParam<LinearSVMModel*>("output_model");
+      IO::GetParam<LinearSVMModel*>("output_model");
   // Get the output.
   const arma::Row<size_t>& testLabels1 =
-      std::move(CLI::GetParam<arma::Row<size_t>>("predictions"));
+      std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
 
   // Reset the data passed.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["test"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["test"].wasPassed = false;
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testData));
@@ -208,7 +210,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMModelReuseTest)
 
   // Get the output.
   const arma::Row<size_t>& testLabels2 =
-      CLI::GetParam<arma::Row<size_t>>("predictions");
+      IO::GetParam<arma::Row<size_t>>("predictions");
 
   // Both solutions should be equal.
   CheckMatrices(testLabels1, testLabels2);
@@ -217,41 +219,43 @@ BOOST_AUTO_TEST_CASE(LinearSVMModelReuseTest)
 /**
  * Checking for dimensionality of the test data set.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMCheckDimOfTestData)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckDimOfTestData",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   // Dimensionality of trainingSet is trainData.n_rows - 1 because labels are
   // not provided.
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+    FAIL("Cannot load test dataset iris_test.csv!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("test", std::move(testData));
 
   // Dimensionality of test data is wrong. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that test data dimensionality is checked when model is loaded.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMCheckDimOfTestData2)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMCheckDimOfTestData2",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   // Dimensionality of trainingSet is trainData.n_rows - 1 because labels are
   // not provided.
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+    FAIL("Cannot load test dataset iris_test.csv!");
 
   SetInputParam("training", std::move(trainData));
 
@@ -260,33 +264,34 @@ BOOST_AUTO_TEST_CASE(LinearSVMCheckDimOfTestData2)
 
   // Get the output model obtained from training.
   LinearSVMModel* model =
-      CLI::GetParam<LinearSVMModel*>("output_model");
+      IO::GetParam<LinearSVMModel*>("output_model");
 
   // Reset the data passed.
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["labels"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testData));
 
   // Test data dimensionality is wrong. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that max iteration for optimizers is non negative.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeMaxIterationTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeMaxIterationTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -294,22 +299,23 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeMaxIterationTest)
 
   // Maximum iterations is negative. It should a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that lambda for optimizers is non negative.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeLambdaTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeLambdaTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -317,22 +323,24 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeLambdaTest)
 
   // Lambda is negative. It should a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that number of classes for optimizers is non negative.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeNumberOfClassesTest)
+TEST_CASE_METHOD(LinearSVMTestFixture,
+                 "LinearSVMNonNegativeNumberOfClassesTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -340,22 +348,23 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeNumberOfClassesTest)
 
   // Number of classes is negative. It should a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that tolerance is non negative.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeToleranceTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeToleranceTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -363,22 +372,23 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeToleranceTest)
 
   // Tolerance is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that delta is non negative.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeDeltaTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeDeltaTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -386,22 +396,23 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeDeltaTest)
 
   // Delta is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that epochs is non negative.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeEpochsTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeEpochsTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -409,14 +420,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeEpochsTest)
 
   // Epochs is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
- * Ensuring that number classes must not be zero.
+ * Ensuring that number classes must not be one.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMZeroNumberOfClassesTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMZeroNumberOfClassesTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData = "2 0 0;"
                         "0 0 0;"
@@ -429,47 +441,49 @@ BOOST_AUTO_TEST_CASE(LinearSVMZeroNumberOfClassesTest)
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
 
-  // Number of classes for optimizer is zero.
+  // Number of classes for optimizer is only one.
   // It should throw a invalid_argument error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);
+  REQUIRE_THROWS_AS(mlpackMain(), std::invalid_argument);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that Optimizer must be correct.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMOptimizerTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMOptimizerTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
   SetInputParam("optimizer", std::string("hello"));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring changing Maximum number of iterations changes the output model.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffMaxIterationsTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
@@ -481,12 +495,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -498,7 +512,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -507,15 +521,16 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffMaxIterationsTest)
 /**
  * Ensuring that lambda has some effects on the output.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMDiffLambdaTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffLambdaTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
@@ -527,12 +542,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffLambdaTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -544,7 +559,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffLambdaTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -553,15 +568,16 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffLambdaTest)
 /**
  * Ensuring that delta has some effects on the output.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffDeltaTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
@@ -573,12 +589,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -590,7 +606,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -599,15 +615,16 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffDeltaTest)
 /**
  * Ensuring that no_intercept has some effects on the output.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", trainData);
   SetInputParam("labels", trainLabels);
@@ -618,12 +635,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -635,7 +652,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -645,7 +662,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTest)
  * Ensuring that no_intercept has some effects on the output
  * when the optimizer is 'psgd'.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTestWithPsgd)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffInterceptTestWithPsgd",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData = "2 0 0;"
                         "0 0 0;"
@@ -669,12 +687,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTestWithPsgd)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -691,7 +709,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTestWithPsgd)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -700,15 +718,16 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffInterceptTestWithPsgd)
 /**
  * Ensuring that step size for optimizer is non negative.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeStepSizeTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMNonNegativeStepSizeTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData;
   if (!data::Load("iris.csv", trainData))
-    BOOST_FAIL("Cannot load test dataset iris.csv!");
+    FAIL("Cannot load test dataset iris.csv!");
 
   arma::Row<size_t> trainLabels;
   if (!data::Load("iris_labels.txt", trainLabels))
-    BOOST_FAIL("Cannot load test dataset iris_labels.txt!");
+    FAIL("Cannot load test dataset iris_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -717,14 +736,15 @@ BOOST_AUTO_TEST_CASE(LinearSVMNonNegativeStepSizeTest)
 
   // Step size for optimizer is negative. It should throw a runtime error.
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensuring that epochs has some effects on the output.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffEpochsTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData = "2 0 0;"
                         "0 0 0;"
@@ -749,12 +769,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -771,7 +791,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -780,7 +800,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffEpochsTest)
 /**
  * Ensuring that Step size has some effects on the output.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffStepSizeTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData = "2 0 0;"
                         "0 0 0;"
@@ -806,12 +827,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -829,7 +850,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -838,7 +859,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffStepSizeTest)
 /**
  * Ensuring that tolerance has some effects on the output.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffToleranceTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData = "2 0 0;"
                         "0 0 0;"
@@ -864,12 +886,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -887,7 +909,7 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
@@ -896,7 +918,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffToleranceTest)
 /**
  * Ensuring that lbfgs optimizer converges to a different result than psgd.
  */
-BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
+TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMDiffOptimizerTest",
+                 "[LinearSVMMainTest][BindingTests]")
 {
   arma::mat trainData = "2 0 0;"
                         "0 0 0;"
@@ -916,12 +939,12 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
 
   // Get the parameters of the output model obtained after first training.
   const arma::mat parameters1 = std::move(
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters());
 
   // Reset the settings.
   bindings::tests::CleanMemory();
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 
   SetInputParam("training", std::move(trainData));
   SetInputParam("labels", std::move(trainLabels));
@@ -937,11 +960,8 @@ BOOST_AUTO_TEST_CASE(LinearSVMDiffOptimizerTest)
 
   // Get the parameters of the output model obtained after second training.
   const arma::mat& parameters2 =
-      CLI::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
+      IO::GetParam<LinearSVMModel*>("output_model")->svm.Parameters();
 
   // Both solutions should be not equal.
   CheckMatricesNotEqual(parameters1, parameters2);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
-

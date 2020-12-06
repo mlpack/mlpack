@@ -1,5 +1,5 @@
 /**
- * @file hyperbolic_tangent_kernel.hpp
+ * @file core/kernels/hyperbolic_tangent_kernel.hpp
  * @author Ajinkya Kale <kaleajinkya@gmail.com>
  *
  * Implementation of the hyperbolic tangent kernel.
@@ -74,10 +74,10 @@ class HyperbolicTangentKernel
 
   //! Serialize the kernel.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(scale);
-    ar & BOOST_SERIALIZATION_NVP(offset);
+    ar(CEREAL_NVP(scale));
+    ar(CEREAL_NVP(offset));
   }
 
  private:

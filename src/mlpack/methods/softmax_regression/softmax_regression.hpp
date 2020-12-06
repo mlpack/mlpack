@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression.hpp
+ * @file methods/softmax_regression/softmax_regression.hpp
  * @author Siddharth Agrawal
  *
  * An implementation of softmax regression.
@@ -80,7 +80,6 @@ class SoftmaxRegression
    * @tparam OptimizerType Desired optimizer type.
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
-   * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
    * @param optimizer Desired optimizer.
    * @param lambda L2-regularization constant.
@@ -103,7 +102,6 @@ class SoftmaxRegression
    * @tparam CallbackTypes Types of Callback Functions.
    * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
-   * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
    * @param fitIntercept add intercept term or not.
@@ -151,7 +149,7 @@ class SoftmaxRegression
    */
   void Classify(const arma::mat& dataset,
                 arma::Row<size_t>& labels,
-                arma::mat& probabilites) const;
+                arma::mat& probabilities) const;
 
   /**
    * Classify the given points, returning class probabilities for each point.
@@ -234,12 +232,12 @@ class SoftmaxRegression
    * Serialize the SoftmaxRegression model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(parameters);
-    ar & BOOST_SERIALIZATION_NVP(numClasses);
-    ar & BOOST_SERIALIZATION_NVP(lambda);
-    ar & BOOST_SERIALIZATION_NVP(fitIntercept);
+    ar(CEREAL_NVP(parameters));
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(lambda));
+    ar(CEREAL_NVP(fitIntercept));
   }
 
  private:

@@ -1,5 +1,5 @@
 /**
- * @file load.hpp
+ * @file core/data/load.hpp
  * @author Ryan Curtin
  *
  * Load an Armadillo matrix from file.  This is necessary because Armadillo does
@@ -28,19 +28,58 @@ namespace data /** Functions to load and save matrices and models. */ {
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
  * will transpose the matrix at load time (unless the transpose parameter is set
+ * to false).
+ *
+ * The supported types of files are the same as found in Armadillo:
+ *
+ *  - CSV (arma::csv_ascii), denoted by .csv, or optionally .txt
+ *  - TSV (arma::raw_ascii), denoted by .tsv, .csv, or .txt
+ *  - ASCII (arma::raw_ascii), denoted by .json
+ *  - Armadillo ASCII (arma::arma_ascii), also denoted by .txt
+ *  - PGM (arma::pgm_binary), denoted by .pgm
+ *  - PPM (arma::ppm_binary), denoted by .ppm
+ *  - Raw binary (arma::raw_binary), denoted by .bin
+ *  - Armadillo binary (arma::arma_binary), denoted by .bin
+ *  - HDF5 (arma::hdf5_binary), denoted by .hdf, .hdf5, .h5, or .he5
+ *
+ * By default, this function will try to automatically determine the type of
+ * file to load based on its extension and by inspecting the file.  If you know
+ * the file type and want to specify it manually, override the default
+ * `inputLoadType` parameter with the correct type above (e.g.
+ * `arma::csv_ascii`.)
+ *
+ * If the parameter 'fatal' is set to true, a std::runtime_error exception will
+ * be thrown if the matrix does not load successfully.  The parameter
+ * 'transpose' controls whether or not the matrix is transposed after loading.
+ * In most cases, because data is generally stored in a row-major format and
+ * mlpack requires column-major matrices, this should be left at its default
+ * value of 'true'.
+ *
+ * @param filename Name of file to load.
+ * @param matrix Matrix to load contents of file into.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @param transpose If true, transpose the matrix after loading (default true).
+ * @param inputLoadType Used to determine the type of file to load (default arma::auto_detect).
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          const bool fatal = false,
+          const bool transpose = true,
+          const arma::file_type inputLoadType = arma::auto_detect);
+
+/**
+ * Loads a sparse matrix from file, using arma::coord_ascii format.  This
+ * will transpose the matrix at load time (unless the transpose parameter is set
  * to false).  If the filetype cannot be determined, an error will be given.
  *
  * The supported types of files are the same as found in Armadillo:
  *
- *  - CSV (csv_ascii), denoted by .csv, or optionally .txt
- *  - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
- *  - ASCII (raw_ascii), denoted by .txt
- *  - Armadillo ASCII (arma_ascii), also denoted by .txt
- *  - PGM (pgm_binary), denoted by .pgm
- *  - PPM (ppm_binary), denoted by .ppm
+ *  - TSV (coord_ascii), denoted by .tsv or .txt
+ *  - TXT (coord_ascii), denoted by .txt
  *  - Raw binary (raw_binary), denoted by .bin
  *  - Armadillo binary (arma_binary), denoted by .bin
- *  - HDF5, denoted by .hdf, .hdf5, .h5, or .he5
  *
  * If the file extension is not one of those types, an error will be given.
  * This is preferable to Armadillo's default behavior of loading an unknown
@@ -54,14 +93,14 @@ namespace data /** Functions to load and save matrices and models. */ {
  * value of 'true'.
  *
  * @param filename Name of file to load.
- * @param matrix Matrix to load contents of file into.
+ * @param matrix Sparse matrix to load contents of file into.
  * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix after loading.
+ * @param transpose If true, transpose the matrix after loading (default true).
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
 bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
+          arma::SpMat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true);
 
@@ -75,31 +114,68 @@ bool Load(const std::string& filename,
 extern template bool Load<int>(const std::string&,
                                arma::Mat<int>&,
                                const bool,
-                               const bool);
+                               const bool,
+                               const arma::file_type);
 
 // size_t and uword should be one of these three typedefs.
 extern template bool Load<unsigned int>(const std::string&,
                                         arma::Mat<unsigned int>&,
                                         const bool,
-                                        const bool);
+                                        const bool,
+                                        const arma::file_type);
 
 extern template bool Load<unsigned long>(const std::string&,
                                          arma::Mat<unsigned long>&,
                                          const bool,
-                                         const bool);
+                                         const bool,
+                                         const arma::file_type);
 
 extern template bool Load<unsigned long long>(const std::string&,
                                               arma::Mat<unsigned long long>&,
                                               const bool,
-                                              const bool);
+                                              const bool,
+                                              const arma::file_type);
 
 extern template bool Load<float>(const std::string&,
                                  arma::Mat<float>&,
                                  const bool,
-                                 const bool);
+                                 const bool,
+                                 const arma::file_type);
 
 extern template bool Load<double>(const std::string&,
                                   arma::Mat<double>&,
+                                  const bool,
+                                  const bool,
+                                  const arma::file_type);
+
+extern template bool Load<int>(const std::string&,
+                               arma::Mat<int>&,
+                               const bool,
+                               const bool,
+                               const arma::file_type);
+
+extern template bool Load<unsigned int>(const std::string&,
+                                        arma::SpMat<unsigned int>&,
+                                        const bool,
+                                        const bool);
+
+extern template bool Load<unsigned long>(const std::string&,
+                                         arma::SpMat<unsigned long>&,
+                                         const bool,
+                                         const bool);
+
+extern template bool Load<unsigned long long>(const std::string&,
+                                              arma::SpMat<unsigned long long>&,
+                                              const bool,
+                                              const bool);
+
+extern template bool Load<float>(const std::string&,
+                                 arma::SpMat<float>&,
+                                 const bool,
+                                 const bool);
+
+extern template bool Load<double>(const std::string&,
+                                  arma::SpMat<double>&,
                                   const bool,
                                   const bool);
 
@@ -130,7 +206,7 @@ extern template bool Load<double>(const std::string&,
  * be thrown if the matrix does not load successfully.
  *
  * @param filename Name of file to load.
- * @param colvec Column vector to load contents of file into.
+ * @param vec Column vector to load contents of file into.
  * @param fatal If an error should be reported as fatal (default false).
  * @return Boolean value indicating success or failure of load.
  */
@@ -162,7 +238,7 @@ bool Load(const std::string& filename,
  * be thrown if the matrix does not load successfully.
  *
  * @param filename Name of file to load.
- * @param colvec Column vector to load contents of file into.
+ * @param rowvec Row vector to load contents of file into.
  * @param fatal If an error should be reported as fatal (default false).
  * @return Boolean value indicating success or failure of load.
  */
@@ -262,14 +338,14 @@ extern template bool Load<double, IncrementPolicy>(
  * is used and the filetype cannot be determined, an error will be given.
  *
  * The supported types of files are the same as what is supported by the
- * boost::serialization library:
+ * cereal library:
  *
- *  - text, denoted by .txt
+ *  - json, denoted by .json
  *  - xml, denoted by .xml
  *  - binary, denoted by .bin
  *
  * The format parameter can take any of the values in the 'format' enum:
- * 'format::autodetect', 'format::text', 'format::xml', and 'format::binary'.
+ * 'format::autodetect', 'format::json', 'format::xml', and 'format::binary'.
  * The autodetect functionality operates on the file extension (so, "file.txt"
  * would be autodetected as text).
  *
@@ -291,7 +367,6 @@ bool Load(const std::string& filename,
 /**
  * Image load/save interfaces.
  */
-#ifdef HAS_STB
 
 /**
  * Load the image file into the given matrix.
@@ -300,15 +375,13 @@ bool Load(const std::string& filename,
  * @param matrix Matrix to load the image into.
  * @param info An object of ImageInfo class.
  * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true);
+          const bool fatal = false);
 
 /**
  * Load the image file into the given matrix.
@@ -317,17 +390,19 @@ bool Load(const std::string& filename,
  * @param matrix Matrix to save the image from.
  * @param info An object of ImageInfo class.
  * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           ImageInfo& info,
-          const bool fatal = false,
-          const bool transpose = true);
+          const bool fatal = false);
 
-#endif // HAS_STB.
+// Implementation found in load_image.cpp.
+bool LoadImage(const std::string& filename,
+               arma::Mat<unsigned char>& matrix,
+               ImageInfo& info,
+               const bool fatal = false);
 
 } // namespace data
 } // namespace mlpack

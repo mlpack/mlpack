@@ -1,5 +1,5 @@
 /**
- * @file fastmks_test.cpp
+ * @file tests/main_tests/fastmks_test.cpp
  * @author Yashwant Singh
  * @author Prabhat Sharma
  *
@@ -20,8 +20,8 @@ static const std::string testName = "FastMaxKernelSearch";
 #include "test_helper.hpp"
 #include <mlpack/methods/fastmks/fastmks_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -31,24 +31,23 @@ struct FastMKSTestFixture
   FastMKSTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~FastMKSTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
-
-BOOST_FIXTURE_TEST_SUITE(FastMKSMainTest, FastMKSTestFixture);
 
 /*
  * Check that we can't provide reference and query matrices
  * with different dimensions.
  */
-BOOST_AUTO_TEST_CASE(FastMKSEqualDimensionTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSEqualDimensionTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -65,7 +64,7 @@ BOOST_AUTO_TEST_CASE(FastMKSEqualDimensionTest)
   SetInputParam("k", (int) 4);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);
+  REQUIRE_THROWS_AS(mlpackMain(), std::invalid_argument);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -73,7 +72,8 @@ BOOST_AUTO_TEST_CASE(FastMKSEqualDimensionTest)
  * Check that we can't specify an invalid k when only reference
  * matrix is given.
  */
-BOOST_AUTO_TEST_CASE(FastMKSInvalidKTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSInvalidKTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 50 points in 3 dimensions.
   arma::mat referenceData(3, 50, arma::fill::randu);
@@ -83,14 +83,15 @@ BOOST_AUTO_TEST_CASE(FastMKSInvalidKTest)
   SetInputParam("k", (int) 51); // Invalid
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);
+  REQUIRE_THROWS_AS(mlpackMain(), std::invalid_argument);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that when k is specified, it must be greater than 0.
  */
-BOOST_AUTO_TEST_CASE(FastMKSZeroKTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSZeroKTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   arma::mat referenceData(3, 50, arma::fill::randu);
 
@@ -98,7 +99,7 @@ BOOST_AUTO_TEST_CASE(FastMKSZeroKTest)
   SetInputParam("k", (int) 0); // Invalid when reference is specified.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -106,7 +107,8 @@ BOOST_AUTO_TEST_CASE(FastMKSZeroKTest)
  * Check that we can't specify an invalid k when both reference
  * and query matrices are given.
  */
-BOOST_AUTO_TEST_CASE(FastMKSInvalidKQueryDataTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSInvalidKQueryDataTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 50 points in 3 dimensions.
   arma::mat referenceData(3, 50, arma::fill::randu);
@@ -119,14 +121,15 @@ BOOST_AUTO_TEST_CASE(FastMKSInvalidKQueryDataTest)
   SetInputParam("k", (int) 51);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);
+  REQUIRE_THROWS_AS(mlpackMain(), std::invalid_argument);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass both input_model and reference matrix.
  */
-BOOST_AUTO_TEST_CASE(FastMKSRefModelTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSRefModelTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -137,21 +140,22 @@ BOOST_AUTO_TEST_CASE(FastMKSRefModelTest)
 
   mlpackMain();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
   SetInputParam("reference", std::move(referenceData));
   // Input pre-trained model.
   SetInputParam("input_model",
-      std::move(CLI::GetParam<FastMKSModel*>("output_model")));
+      std::move(IO::GetParam<FastMKSModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid kernel.
  */
-BOOST_AUTO_TEST_CASE(FastMKSInvalidKernelTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSInvalidKernelTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -163,7 +167,7 @@ BOOST_AUTO_TEST_CASE(FastMKSInvalidKernelTest)
   SetInputParam("kernel", std::move(kernelName)); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -171,7 +175,8 @@ BOOST_AUTO_TEST_CASE(FastMKSInvalidKernelTest)
  * Make sure that dimensions of the indices and kernel
  * matrices are correct given a value of k.
  */
-BOOST_AUTO_TEST_CASE(FastMKSOutputDimensionTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSOutputDimensionTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -183,20 +188,19 @@ BOOST_AUTO_TEST_CASE(FastMKSOutputDimensionTest)
   mlpackMain();
 
   // Check the indices matrix has 10 points for each input point.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-      ("indices").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::Mat<size_t>>
-      ("indices").n_cols, 100);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("indices").n_rows == 10);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("indices").n_cols == 100);
 
   // Check the kernel matrix has 10 points for each input point.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("kernels").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("kernels").n_cols, 100);
+  REQUIRE(IO::GetParam<arma::mat>("kernels").n_rows == 10);
+  REQUIRE(IO::GetParam<arma::mat>("kernels").n_cols == 100);
 }
 
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(FastMKSModelReuseTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSModelReuseTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -212,13 +216,13 @@ BOOST_AUTO_TEST_CASE(FastMKSModelReuseTest)
   arma::Mat<size_t> indices;
   arma::mat kernel;
   FastMKSModel* output_model;
-  indices = std::move(CLI::GetParam<arma::Mat<size_t>>("indices"));
-  kernel = std::move(CLI::GetParam<arma::mat>("kernels"));
-  output_model = std::move(CLI::GetParam<FastMKSModel*>("output_model"));
+  indices = std::move(IO::GetParam<arma::Mat<size_t>>("indices"));
+  kernel = std::move(IO::GetParam<arma::mat>("kernels"));
+  output_model = std::move(IO::GetParam<FastMKSModel*>("output_model"));
 
   // Reset passed parameters.
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["query"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["query"].wasPassed = false;
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("input_model", output_model);
@@ -228,15 +232,16 @@ BOOST_AUTO_TEST_CASE(FastMKSModelReuseTest)
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  CheckMatrices(indices, CLI::GetParam<arma::Mat<size_t>>("indices"));
-  CheckMatrices(kernel, CLI::GetParam<arma::mat>("kernels"));
+  CheckMatrices(indices, IO::GetParam<arma::Mat<size_t>>("indices"));
+  CheckMatrices(kernel, IO::GetParam<arma::mat>("kernels"));
 }
 
 /*
  * Ensure that reference dataset gives the same result when passed as
  * a query dataset
  */
-BOOST_AUTO_TEST_CASE(FastMKSQueryRefTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSQueryRefTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -249,13 +254,13 @@ BOOST_AUTO_TEST_CASE(FastMKSQueryRefTest)
 
   arma::Mat<size_t> indices;
   arma::mat kernel;
-  indices = std::move(CLI::GetParam<arma::Mat<size_t>>("indices"));
-  kernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  indices = std::move(IO::GetParam<arma::Mat<size_t>>("indices"));
+  kernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["query"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["query"].wasPassed = false;
 
 
   SetInputParam("reference", referenceData);
@@ -264,15 +269,16 @@ BOOST_AUTO_TEST_CASE(FastMKSQueryRefTest)
   mlpackMain();
 
   CheckMatrices(indices,
-      CLI::GetParam<arma::Mat<size_t>>("indices"));
+      IO::GetParam<arma::Mat<size_t>>("indices"));
   CheckMatrices(kernel,
-      CLI::GetParam<arma::mat>("kernels"));
+      IO::GetParam<arma::mat>("kernels"));
 }
 
 /*
  * Ensure that naive mode returns the same result as tree mode.
  */
-BOOST_AUTO_TEST_CASE(FastMKSNaiveModeTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSNaiveModeTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -285,13 +291,13 @@ BOOST_AUTO_TEST_CASE(FastMKSNaiveModeTest)
 
   arma::Mat<size_t> indices;
   arma::mat kernel;
-  indices = std::move(CLI::GetParam<arma::Mat<size_t>>("indices"));
-  kernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  indices = std::move(IO::GetParam<arma::Mat<size_t>>("indices"));
+  kernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["k"].wasPassed = false;
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
@@ -301,15 +307,16 @@ BOOST_AUTO_TEST_CASE(FastMKSNaiveModeTest)
   mlpackMain();
 
   CheckMatrices(indices,
-      CLI::GetParam<arma::Mat<size_t>>("indices"));
+      IO::GetParam<arma::Mat<size_t>>("indices"));
   CheckMatrices(kernel,
-      CLI::GetParam<arma::mat>("kernels"));
+      IO::GetParam<arma::mat>("kernels"));
 }
 
 /*
  * Ensure that single-tree search returns the same result as dual-tree search.
  */
-BOOST_AUTO_TEST_CASE(FastMKSTreeTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSTreeTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -322,13 +329,13 @@ BOOST_AUTO_TEST_CASE(FastMKSTreeTest)
 
   arma::Mat<size_t> indices;
   arma::mat kernel;
-  indices = std::move(CLI::GetParam<arma::Mat<size_t>>("indices"));
-  kernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  indices = std::move(IO::GetParam<arma::Mat<size_t>>("indices"));
+  kernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["k"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
@@ -337,16 +344,17 @@ BOOST_AUTO_TEST_CASE(FastMKSTreeTest)
   mlpackMain();
 
   CheckMatrices(indices,
-      CLI::GetParam<arma::Mat<size_t>>("indices"));
+      IO::GetParam<arma::Mat<size_t>>("indices"));
   CheckMatrices(kernel,
-      CLI::GetParam<arma::mat>("kernels"));
+      IO::GetParam<arma::mat>("kernels"));
 }
 
 /*
  * Ensure that we get almost same results in cover tree search mode when
  * different basis is specified.
  */
-BOOST_AUTO_TEST_CASE(FastMKSBasisTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSBasisTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -360,13 +368,13 @@ BOOST_AUTO_TEST_CASE(FastMKSBasisTest)
 
   arma::Mat<size_t> indices;
   arma::mat kernel;
-  indices = std::move(CLI::GetParam<arma::Mat<size_t>>("indices"));
-  kernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  indices = std::move(IO::GetParam<arma::Mat<size_t>>("indices"));
+  kernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["k"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["k"].wasPassed = false;
 
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
@@ -376,8 +384,8 @@ BOOST_AUTO_TEST_CASE(FastMKSBasisTest)
 
   arma::Mat<size_t> newindices;
   arma::mat newkernel;
-  newindices = std::move(CLI::GetParam<arma::Mat<size_t>>("indices"));
-  newkernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  newindices = std::move(IO::GetParam<arma::Mat<size_t>>("indices"));
+  newkernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   CheckMatrices(indices, newindices);
   CheckMatrices(kernel, newkernel);
@@ -386,7 +394,8 @@ BOOST_AUTO_TEST_CASE(FastMKSBasisTest)
 /**
  * Check that we can't specify base less than 1.
  */
-BOOST_AUTO_TEST_CASE(FastMKSBaseTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSBaseTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -397,14 +406,15 @@ BOOST_AUTO_TEST_CASE(FastMKSBaseTest)
   SetInputParam("base", 0.0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::invalid_argument);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Ensure that different kernels returns different results.
  */
-BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSKernelTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   std::string kerneltypes[] = {"polynomial", "cosine", "gaussian",
       "epanechnikov", "triangular", "hyptan"};
@@ -418,7 +428,7 @@ BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
   // For Hyptan Kernel
   arma::mat inputData;
   if (!data::Load("data_3d_mixed.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset data_3d_ind.txt!");
+    FAIL("Cannot load test dataset data_3d_ind.txt!");
 
   arma::Mat<size_t> indicesCompare;
   arma::mat kernelsCompare;
@@ -427,7 +437,7 @@ BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
   arma::mat kernels;
 
   // Looping over all the kernels
-  for (size_t i = 0; i < nofkerneltypes; i++)
+  for (size_t i = 0; i < nofkerneltypes; ++i)
   {
     if (kerneltypes[i] == "hyptan")
     {
@@ -448,29 +458,33 @@ BOOST_AUTO_TEST_CASE(FastMKSKernelTest)
     if (i == 0)
     {
       indicesCompare =
-         std::move(CLI::GetParam<arma::Mat<size_t>>("indices"));
-      kernelsCompare = std::move(CLI::GetParam<arma::mat>("kernels"));
+         std::move(IO::GetParam<arma::Mat<size_t>>("indices"));
+      kernelsCompare = std::move(IO::GetParam<arma::mat>("kernels"));
     }
     else
     {
-      indices = std::move(CLI::GetParam<arma::Mat<size_t>>("indices"));
-      kernels = std::move(CLI::GetParam<arma::mat>("kernels"));
+      indices = std::move(IO::GetParam<arma::Mat<size_t>>("indices"));
+      kernels = std::move(IO::GetParam<arma::mat>("kernels"));
 
       CheckMatricesNotEqual(indicesCompare, indices);
       CheckMatricesNotEqual(kernelsCompare, kernels);
     }
 
     // Reset passed parameters.
-    CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-    CLI::GetSingleton().Parameters()["query"].wasPassed = false;
-    CLI::GetSingleton().Parameters()["kernel"].wasPassed = false;
+    IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+    IO::GetSingleton().Parameters()["query"].wasPassed = false;
+    IO::GetSingleton().Parameters()["kernel"].wasPassed = false;
+
+    if (i != nofkerneltypes - 1)
+      bindings::tests::CleanMemory();
   }
 }
 
 /**
  * Ensure that offset affects the final result of polynomial and hyptan kernel.
  */
-BOOST_AUTO_TEST_CASE(FastMKSOffsetTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSOffsetTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -483,12 +497,14 @@ BOOST_AUTO_TEST_CASE(FastMKSOffsetTest)
   mlpackMain();
 
   arma::mat polyKernel;
-  polyKernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  polyKernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["offset"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["offset"].wasPassed = false;
+  IO::GetParam<FastMKSModel*>("input_model") = NULL;
+  IO::GetParam<FastMKSModel*>("output_model") = NULL;
 
   SetInputParam("reference", referenceData);
   SetInputParam("offset", 4.0);
@@ -496,17 +512,19 @@ BOOST_AUTO_TEST_CASE(FastMKSOffsetTest)
   mlpackMain();
 
   CheckMatricesNotEqual(polyKernel,
-      CLI::GetParam<arma::mat>("kernels"));
+      IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
   arma::mat inputData;
   if (!data::Load("data_3d_mixed.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset data_3d_ind.txt!");
+    FAIL("Cannot load test dataset data_3d_ind.txt!");
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["kernel"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["offset"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["kernel"].wasPassed = false;
+  IO::GetSingleton().Parameters()["offset"].wasPassed = false;
+  IO::GetParam<FastMKSModel*>("input_model") = NULL;
+  IO::GetParam<FastMKSModel*>("output_model") = NULL;
 
   SetInputParam("reference", inputData);
   SetInputParam("kernel", (std::string)"hyptan");
@@ -515,25 +533,28 @@ BOOST_AUTO_TEST_CASE(FastMKSOffsetTest)
   mlpackMain();
 
   arma::mat hyptanKernel;
-  hyptanKernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  hyptanKernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["offset"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["offset"].wasPassed = false;
+  IO::GetParam<FastMKSModel*>("input_model") = NULL;
+  IO::GetParam<FastMKSModel*>("output_model") = NULL;
 
   SetInputParam("reference", inputData);
   SetInputParam("offset", 4.0);
   mlpackMain();
 
   CheckMatricesNotEqual(hyptanKernel,
-      CLI::GetParam<arma::mat>("kernels"));
+      IO::GetParam<arma::mat>("kernels"));
 }
 
 /**
  * Ensure that degree affects the final result of polynomial kernel.
  */
-BOOST_AUTO_TEST_CASE(FastMKSDegreeTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSDegreeTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -546,12 +567,12 @@ BOOST_AUTO_TEST_CASE(FastMKSDegreeTest)
   mlpackMain();
 
   arma::mat polyKernel;
-  polyKernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  polyKernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["degree"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["degree"].wasPassed = false;
 
   SetInputParam("reference", referenceData);
   SetInputParam("degree", 4.0);
@@ -559,17 +580,18 @@ BOOST_AUTO_TEST_CASE(FastMKSDegreeTest)
   mlpackMain();
 
   CheckMatricesNotEqual(polyKernel,
-      CLI::GetParam<arma::mat>("kernels"));
+      IO::GetParam<arma::mat>("kernels"));
 }
 
 /**
  * Ensure that scale affects the final result of hyptan kernel.
  */
-BOOST_AUTO_TEST_CASE(FastMKSScaleTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSScaleTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("data_3d_mixed.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset data_3d_ind.txt!");
+    FAIL("Cannot load test dataset data_3d_ind.txt!");
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", inputData);
@@ -580,12 +602,12 @@ BOOST_AUTO_TEST_CASE(FastMKSScaleTest)
   mlpackMain();
 
   arma::mat hyptanKernel;
-  hyptanKernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  hyptanKernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["scale"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["scale"].wasPassed = false;
 
   SetInputParam("reference", inputData);
   SetInputParam("scale", 1.5);
@@ -593,14 +615,15 @@ BOOST_AUTO_TEST_CASE(FastMKSScaleTest)
   mlpackMain();
 
   CheckMatricesNotEqual(hyptanKernel,
-      CLI::GetParam<arma::mat>("kernels"));
+      IO::GetParam<arma::mat>("kernels"));
 }
 
 /**
  * Ensure that bandwidth affects the final result of Gaussian, Epanechnikov, and
  * triangular kernel.
  */
-BOOST_AUTO_TEST_CASE(FastMKSBandwidthTest)
+TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSBandwidthTest",
+                 "[FastMKSMainTest][BindingTests]")
 {
   // 100 points in 3 dimensions.
   arma::mat referenceData(3, 100, arma::fill::randu);
@@ -614,25 +637,25 @@ BOOST_AUTO_TEST_CASE(FastMKSBandwidthTest)
   mlpackMain();
 
   arma::mat gaussianKernel;
-  gaussianKernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  gaussianKernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["bandwidth"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["bandwidth"].wasPassed = false;
 
   SetInputParam("reference", referenceData);
   SetInputParam("bandwidth", 4.0);
 
   mlpackMain();
   CheckMatricesNotEqual(gaussianKernel,
-      CLI::GetParam<arma::mat>("kernels"));
+      IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["bandwidth"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["kernel"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["bandwidth"].wasPassed = false;
+  IO::GetSingleton().Parameters()["kernel"].wasPassed = false;
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
@@ -642,25 +665,25 @@ BOOST_AUTO_TEST_CASE(FastMKSBandwidthTest)
   mlpackMain();
 
   arma::mat epanKernel;
-  epanKernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  epanKernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["bandwidth"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["bandwidth"].wasPassed = false;
 
   SetInputParam("reference", referenceData);
   SetInputParam("bandwidth", 4.0);
 
   mlpackMain();
   CheckMatricesNotEqual(epanKernel,
-       CLI::GetParam<arma::mat>("kernels"));
+       IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["bandwidth"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["kernel"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["bandwidth"].wasPassed = false;
+  IO::GetSingleton().Parameters()["kernel"].wasPassed = false;
 
   // Random input, some k <= number of reference points.
   SetInputParam("reference", referenceData);
@@ -670,12 +693,12 @@ BOOST_AUTO_TEST_CASE(FastMKSBandwidthTest)
   mlpackMain();
 
   arma::mat triKernel;
-  triKernel = std::move(CLI::GetParam<arma::mat>("kernels"));
+  triKernel = std::move(IO::GetParam<arma::mat>("kernels"));
 
   bindings::tests::CleanMemory();
 
-  CLI::GetSingleton().Parameters()["reference"].wasPassed = false;
-  CLI::GetSingleton().Parameters()["bandwidth"].wasPassed = false;
+  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  IO::GetSingleton().Parameters()["bandwidth"].wasPassed = false;
 
   SetInputParam("reference", referenceData);
   SetInputParam("bandwidth", 4.0);
@@ -683,7 +706,5 @@ BOOST_AUTO_TEST_CASE(FastMKSBandwidthTest)
   mlpackMain();
 
   CheckMatricesNotEqual(triKernel,
-      CLI::GetParam<arma::mat>("kernels"));
+      IO::GetParam<arma::mat>("kernels"));
 }
-
-BOOST_AUTO_TEST_SUITE_END();

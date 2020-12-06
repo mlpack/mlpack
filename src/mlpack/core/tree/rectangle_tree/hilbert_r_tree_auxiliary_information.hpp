@@ -1,5 +1,5 @@
 /**
- * @file hilbert_r_tree_auxiliary_information.hpp
+ * @file core/tree/rectangle_tree/hilbert_r_tree_auxiliary_information.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the HilbertRTreeAuxiliaryInformation class,
@@ -139,7 +139,7 @@ class HilbertRTreeAuxiliaryInformation
    * Serialize the information.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 };
 
 } // namespace tree

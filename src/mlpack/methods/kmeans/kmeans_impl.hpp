@@ -1,5 +1,5 @@
 /**
- * @file kmeans_impl.hpp
+ * @file methods/kmeans/kmeans_impl.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ryan Curtin
  *
@@ -222,7 +222,7 @@ Cluster(const MatType& data,
 
     // If we are not allowing empty clusters, then check that all of our
     // clusters have points.
-    for (size_t i = 0; i < counts.n_elem; i++)
+    for (size_t i = 0; i < counts.n_elem; ++i)
     {
       if (counts[i] == 0)
       {
@@ -321,7 +321,7 @@ Cluster(const MatType& data,
     double minDistance = std::numeric_limits<double>::infinity();
     size_t closestCluster = centroids.n_cols; // Invalid value.
 
-    for (size_t j = 0; j < centroids.n_cols; j++)
+    for (size_t j = 0; j < centroids.n_cols; ++j)
     {
       const double distance = metric.Evaluate(data.col(i), centroids.col(j));
 
@@ -347,12 +347,12 @@ void KMeans<MetricType,
             InitialPartitionPolicy,
             EmptyClusterPolicy,
             LloydStepType,
-            MatType>::serialize(Archive& ar, const unsigned int /* version */)
+            MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(maxIterations);
-  ar & BOOST_SERIALIZATION_NVP(metric);
-  ar & BOOST_SERIALIZATION_NVP(partitioner);
-  ar & BOOST_SERIALIZATION_NVP(emptyClusterAction);
+  ar(CEREAL_NVP(maxIterations));
+  ar(CEREAL_NVP(metric));
+  ar(CEREAL_NVP(partitioner));
+  ar(CEREAL_NVP(emptyClusterAction));
 }
 
 } // namespace kmeans

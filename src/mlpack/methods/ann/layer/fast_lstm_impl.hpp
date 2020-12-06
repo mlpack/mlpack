@@ -1,5 +1,5 @@
 /**
- * @file fast_lstm_impl.hpp
+ * @file methods/ann/layer/fast_lstm_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Fast LSTM class, which implements a fast lstm network
@@ -42,8 +42,7 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
 {
   // Weights for: input to gate layer (4 * outsize * inSize + 4 * outsize)
   // and output to gate (4 * outSize).
-  weights.set_size(
-      4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize, 1);
+  weights.set_size(WeightSize(), 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -112,7 +111,7 @@ void FastLSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void FastLSTM<InputDataType, OutputDataType>::Forward(
-    InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   // Check if the batch size changed, the number of cols is defines the input
   // batch size.
@@ -128,9 +127,11 @@ void FastLSTM<InputDataType, OutputDataType>::Forward(
       forwardStep, forwardStep + batchStep);
   gate.cols(forwardStep, forwardStep + batchStep).each_col() += input2GateBias;
 
-  FastSigmoid(std::move(
-      gate.submat(0, forwardStep, 3 * outSize - 1, forwardStep + batchStep)),
-      std::move(gateActivation.cols(forwardStep, forwardStep + batchStep)));
+  arma::subview<double> sigmoidOut = gateActivation.cols(forwardStep,
+      forwardStep + batchStep);
+  FastSigmoid(
+      gate.submat(0, forwardStep, 3 * outSize - 1, forwardStep + batchStep),
+      sigmoidOut);
 
   stateActivation.cols(forwardStep, forwardStep + batchStep) = arma::tanh(
       gate.submat(3 * outSize, forwardStep, 4 * outSize - 1,
@@ -178,14 +179,20 @@ void FastLSTM<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void FastLSTM<InputDataType, OutputDataType>::Backward(
-  const InputType&& /* input */, ErrorType&& gy, GradientType&& g)
+  const InputType& /* input */, const ErrorType& gy, GradientType& g)
 {
+  ErrorType gyLocal;
   if (gradientStepIdx > 0)
   {
-    gy += output2GateWeight.t() * prevError;
+    gyLocal = gy + output2GateWeight.t() * prevError;
+  }
+  else
+  {
+    gyLocal = ErrorType(((ErrorType&) gy).memptr(), gy.n_rows, gy.n_cols, false,
+        false);
   }
 
-  cellActivationError = gy % gateActivation.submat(outSize,
+  cellActivationError = gyLocal % gateActivation.submat(outSize,
       backwardStep - batchStep, 2 * outSize - 1, backwardStep) %
       (1 - arma::pow(cellActivation.cols(backwardStep - batchStep,
       backwardStep), 2));
@@ -225,7 +232,7 @@ void FastLSTM<InputDataType, OutputDataType>::Backward(
 
   prevError.submat(outSize, 0, 2 * outSize - 1, batchStep) =
       cellActivation.cols(backwardStep - batchStep,
-      backwardStep) % gy % gateActivation.submat(
+      backwardStep) % gyLocal % gateActivation.submat(
        outSize, backwardStep - batchStep, 2 * outSize - 1, backwardStep) %
       (1.0 - gateActivation.submat(
       outSize, backwardStep - batchStep, 2 * outSize - 1, backwardStep));
@@ -244,7 +251,9 @@ void FastLSTM<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename ErrorType, typename GradientType>
 void FastLSTM<InputDataType, OutputDataType>::Gradient(
-    InputType&& input, ErrorType&& /* error */, GradientType&& gradient)
+    const InputType& input,
+    const ErrorType& /* error */,
+    GradientType& gradient)
 {
   // Gradient of the input to gate layer.
   gradient.submat(0, 0, input2GateWeight.n_elem - 1, 0) =
@@ -271,27 +280,27 @@ void FastLSTM<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void FastLSTM<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(weights);
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
-  ar & BOOST_SERIALIZATION_NVP(rho);
-  ar & BOOST_SERIALIZATION_NVP(bpttSteps);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(batchStep);
-  ar & BOOST_SERIALIZATION_NVP(forwardStep);
-  ar & BOOST_SERIALIZATION_NVP(backwardStep);
-  ar & BOOST_SERIALIZATION_NVP(gradientStep);
-  ar & BOOST_SERIALIZATION_NVP(gradientStepIdx);
-  ar & BOOST_SERIALIZATION_NVP(cell);
-  ar & BOOST_SERIALIZATION_NVP(stateActivation);
-  ar & BOOST_SERIALIZATION_NVP(gateActivation);
-  ar & BOOST_SERIALIZATION_NVP(gate);
-  ar & BOOST_SERIALIZATION_NVP(cellActivation);
-  ar & BOOST_SERIALIZATION_NVP(forgetGateError);
-  ar & BOOST_SERIALIZATION_NVP(prevError);
-  ar & BOOST_SERIALIZATION_NVP(outParameter);
+  ar(CEREAL_NVP(weights));
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(rho));
+  ar(CEREAL_NVP(bpttSteps));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(batchStep));
+  ar(CEREAL_NVP(forwardStep));
+  ar(CEREAL_NVP(backwardStep));
+  ar(CEREAL_NVP(gradientStep));
+  ar(CEREAL_NVP(gradientStepIdx));
+  ar(CEREAL_NVP(cell));
+  ar(CEREAL_NVP(stateActivation));
+  ar(CEREAL_NVP(gateActivation));
+  ar(CEREAL_NVP(gate));
+  ar(CEREAL_NVP(cellActivation));
+  ar(CEREAL_NVP(forgetGateError));
+  ar(CEREAL_NVP(prevError));
+  ar(CEREAL_NVP(outParameter));
 }
 
 } // namespace ann

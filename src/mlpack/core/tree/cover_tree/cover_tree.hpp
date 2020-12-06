@@ -1,5 +1,5 @@
 /**
- * @file cover_tree.hpp
+ * @file core/tree/cover_tree/cover_tree.hpp
  * @author Ryan Curtin
  *
  * Definition of CoverTree, which can be used in place of the BinarySpaceTree.
@@ -113,6 +113,7 @@ class CoverTree
    *
    * @param dataset Reference to the dataset to build a tree on.
    * @param base Base to use during tree building (default 2.0).
+   * @param metric Metric to use (default NULL).
    */
   CoverTree(const MatType& dataset,
             const ElemType base = 2.0,
@@ -183,6 +184,7 @@ class CoverTree
    * @param farSetSize Size of the far set; may be modified (if this node uses
    *     any points in the far set).
    * @param usedSetSize The number of points used will be added to this number.
+   * @param metric Metric to use (default NULL).
    */
   CoverTree(const MatType& dataset,
             const ElemType base,
@@ -253,12 +255,12 @@ class CoverTree
   CoverTree& operator=(CoverTree&& other);
 
   /**
-   * Create a cover tree from a boost::serialization archive.
+   * Create a cover tree from a cereal archive.
    */
   template<typename Archive>
   CoverTree(
       Archive& ar,
-      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
+      const typename std::enable_if_t<cereal::is_loading<Archive>()>* = 0);
 
   /**
    * Delete this cover tree node and its children.
@@ -550,21 +552,21 @@ class CoverTree
  protected:
   /**
    * A default constructor.  This is meant to only be used with
-   * boost::serialization, which is allowed with the friend declaration below.
+   * cereal, which is allowed with the friend declaration below.
    * This does not return a valid tree!  This method must be protected, so that
    * the serialization shim can work with the default constructor.
    */
   CoverTree();
 
   //! Friend access is given for the default constructor.
-  friend class boost::serialization::access;
+  friend class cereal::access;
 
  public:
   /**
    * Serialize the tree.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   size_t DistanceComps() const { return distanceComps; }
   size_t& DistanceComps() { return distanceComps; }

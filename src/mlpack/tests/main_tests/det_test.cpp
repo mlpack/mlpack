@@ -20,8 +20,8 @@ static const std::string testName = "DET";
 #include "test_helper.hpp"
 #include <mlpack/methods/det/det_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -31,32 +31,31 @@ struct DETTestFixture
   DETTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~DETTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
-
-BOOST_FIXTURE_TEST_SUITE(DETMainTest, DETTestFixture);
 
 /**
  * Check that number of output training_set_estimates and number of input data
  * points are equal.
  */
-BOOST_AUTO_TEST_CASE(DETOutputDimensionTest)
+TEST_CASE_METHOD(DETTestFixture, "DETOutputDimensionTest",
+                "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", trainingData);
@@ -65,26 +64,26 @@ BOOST_AUTO_TEST_CASE(DETOutputDimensionTest)
   mlpackMain();
 
   // Check the training_set_estimates has 100 points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training_set_estimates").n_rows,
-                      1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("training_set_estimates").n_cols,
-                      trainingData.n_cols);
+  REQUIRE(IO::GetParam<arma::mat>("training_set_estimates").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("training_set_estimates").n_cols ==
+          trainingData.n_cols);
 
   // Check the test_set_estimates has 40 points.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test_set_estimates").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("test_set_estimates").n_cols,
-                      testData.n_cols);
+  REQUIRE(IO::GetParam<arma::mat>("test_set_estimates").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("test_set_estimates").n_cols ==
+          testData.n_cols);
 }
 
 /**
  * Ensure that max_leaf_size & min_leaf_size are always positive and number of
  * folds is always non-negative.
  */
-BOOST_AUTO_TEST_CASE(DETParamBoundTest)
+TEST_CASE_METHOD(DETTestFixture, "DETParamBoundTest",
+                "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   // Test for max_leaf_size.
 
@@ -92,7 +91,7 @@ BOOST_AUTO_TEST_CASE(DETParamBoundTest)
   SetInputParam("max_leaf_size", (int) 0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   bindings::tests::CleanMemory();
@@ -103,7 +102,7 @@ BOOST_AUTO_TEST_CASE(DETParamBoundTest)
   SetInputParam("min_leaf_size", (int) 0);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   bindings::tests::CleanMemory();
@@ -114,22 +113,23 @@ BOOST_AUTO_TEST_CASE(DETParamBoundTest)
   SetInputParam("folds", (int) -1);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that saved model can be reused again.
  */
-BOOST_AUTO_TEST_CASE(DETModelReuseTest)
+TEST_CASE_METHOD(DETTestFixture, "DETModelReuseTest",
+                "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", std::move(trainingData));
@@ -138,36 +138,37 @@ BOOST_AUTO_TEST_CASE(DETModelReuseTest)
   mlpackMain();
 
   arma::mat trainingSetEstimates =
-      CLI::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = CLI::GetParam<arma::mat>("test_set_estimates");
+      IO::GetParam<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = IO::GetParam<arma::mat>("test_set_estimates");
 
-  CLI::GetSingleton().Parameters()["training"].wasPassed = false;
+  IO::GetSingleton().Parameters()["training"].wasPassed = false;
 
-  SetInputParam("input_model", CLI::GetParam<DTree<>*>("output_model"));
+  SetInputParam("input_model", IO::GetParam<DTree<>*>("output_model"));
   SetInputParam("test", std::move(testData));
 
   mlpackMain();
 
   // Check that initial estimates and final estimate using saved model are same.
   CheckMatrices(trainingSetEstimates,
-                CLI::GetParam<arma::mat>("training_set_estimates"));
+                IO::GetParam<arma::mat>("training_set_estimates"));
   CheckMatrices(testSetEstimates,
-                CLI::GetParam<arma::mat>("test_set_estimates"));
+                IO::GetParam<arma::mat>("test_set_estimates"));
 }
 
 /**
  * Check that number of output variable importance values equals number of
  * features in input data.
  */
-BOOST_AUTO_TEST_CASE(DETViDimensionTest)
+TEST_CASE_METHOD(DETTestFixture, "DETViDimensionTest",
+                "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   size_t testRows = testData.n_rows;
 
@@ -178,42 +179,44 @@ BOOST_AUTO_TEST_CASE(DETViDimensionTest)
   mlpackMain();
 
   // Check the number of output points equals number of input features.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("vi").n_rows, 1);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("vi").n_cols, testRows);
+  REQUIRE(IO::GetParam<arma::mat>("vi").n_rows == 1);
+  REQUIRE(IO::GetParam<arma::mat>("vi").n_cols == testRows);
 }
 
 /**
  * Make sure only one of training data or pre-trained model is passed.
  */
-BOOST_AUTO_TEST_CASE(DETModelValidityTest)
+TEST_CASE_METHOD(DETTestFixture, "DETModelValidityTest",
+                "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("training", std::move(trainingData));
 
   mlpackMain();
 
-  SetInputParam("input_model", CLI::GetParam<DTree<>*>("output_model"));
+  SetInputParam("input_model", IO::GetParam<DTree<>*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check learning process using different min_leaf_size.
  */
-BOOST_AUTO_TEST_CASE(DETDiffMinLeafTest)
+TEST_CASE_METHOD(DETTestFixture, "DETDiffMinLeafTest",
+                "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", trainingData);
@@ -222,8 +225,8 @@ BOOST_AUTO_TEST_CASE(DETDiffMinLeafTest)
   mlpackMain();
 
   arma::mat trainingSetEstimates =
-      CLI::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = CLI::GetParam<arma::mat>("test_set_estimates");
+      IO::GetParam<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = IO::GetParam<arma::mat>("test_set_estimates");
 
   bindings::tests::CleanMemory();
 
@@ -237,27 +240,28 @@ BOOST_AUTO_TEST_CASE(DETDiffMinLeafTest)
 
   // Check that initial estimates and final estimates using two models are
   // different.
-  BOOST_REQUIRE_LT(arma::accu(trainingSetEstimates ==
-      CLI::GetParam<arma::mat>("training_set_estimates")),
+  REQUIRE(arma::accu(trainingSetEstimates ==
+      IO::GetParam<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
-  BOOST_REQUIRE_LT(arma::accu(testSetEstimates ==
-      CLI::GetParam<arma::mat>("test_set_estimates")),
+  REQUIRE(arma::accu(testSetEstimates ==
+      IO::GetParam<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }
 
 /**
  * Check learning process using different max_leaf_size.
  */
-BOOST_AUTO_TEST_CASE(DETDiffMaxLeafTest)
+TEST_CASE_METHOD(DETTestFixture, "DETDiffMaxLeafTest",
+                "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", trainingData);
@@ -266,8 +270,8 @@ BOOST_AUTO_TEST_CASE(DETDiffMaxLeafTest)
   mlpackMain();
 
   arma::mat trainingSetEstimates =
-      CLI::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = CLI::GetParam<arma::mat>("test_set_estimates");
+      IO::GetParam<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = IO::GetParam<arma::mat>("test_set_estimates");
 
   bindings::tests::CleanMemory();
 
@@ -281,27 +285,28 @@ BOOST_AUTO_TEST_CASE(DETDiffMaxLeafTest)
 
   // Check that initial estimates and final estimates using two models are
   // different.
-  BOOST_REQUIRE_LT(arma::accu(trainingSetEstimates ==
-      CLI::GetParam<arma::mat>("training_set_estimates")),
+  REQUIRE(arma::accu(trainingSetEstimates ==
+      IO::GetParam<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
-  BOOST_REQUIRE_LT(arma::accu(testSetEstimates ==
-      CLI::GetParam<arma::mat>("test_set_estimates")),
+  REQUIRE(arma::accu(testSetEstimates ==
+      IO::GetParam<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }
 
 /**
  * Check learning process using different number of folds.
  */
-BOOST_AUTO_TEST_CASE(DETDiffFoldsTest)
+TEST_CASE_METHOD(DETTestFixture, "DETDiffFoldsTest",
+                "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", trainingData);
@@ -310,8 +315,8 @@ BOOST_AUTO_TEST_CASE(DETDiffFoldsTest)
   mlpackMain();
 
   arma::mat trainingSetEstimates =
-      CLI::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = CLI::GetParam<arma::mat>("test_set_estimates");
+      IO::GetParam<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = IO::GetParam<arma::mat>("test_set_estimates");
 
   bindings::tests::CleanMemory();
 
@@ -325,27 +330,28 @@ BOOST_AUTO_TEST_CASE(DETDiffFoldsTest)
 
   // Check that initial estimates and final estimates using two models are
   // different.
-  BOOST_REQUIRE_LT(arma::accu(trainingSetEstimates ==
-      CLI::GetParam<arma::mat>("training_set_estimates")),
+  REQUIRE(arma::accu(trainingSetEstimates ==
+      IO::GetParam<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
-  BOOST_REQUIRE_LT(arma::accu(testSetEstimates ==
-      CLI::GetParam<arma::mat>("test_set_estimates")),
+  REQUIRE(arma::accu(testSetEstimates ==
+      IO::GetParam<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }
 
 /**
  * Check learning process by bypassing pruning step.
  */
-BOOST_AUTO_TEST_CASE(DETSkipPruningTest)
+TEST_CASE_METHOD(DETTestFixture, "DETSkipPruningTest",
+                "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
   if (!data::Load("iris.csv", trainingData))
-    BOOST_FAIL("Unable to load dataset iris.csv!");
+    FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
   if (!data::Load("iris_test.csv", testData))
-    BOOST_FAIL("Unable to load dataset iris_test.csv!");
+    FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
   SetInputParam("training", trainingData);
@@ -354,8 +360,8 @@ BOOST_AUTO_TEST_CASE(DETSkipPruningTest)
   mlpackMain();
 
   arma::mat trainingSetEstimates =
-      CLI::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = CLI::GetParam<arma::mat>("test_set_estimates");
+      IO::GetParam<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = IO::GetParam<arma::mat>("test_set_estimates");
 
   bindings::tests::CleanMemory();
 
@@ -369,13 +375,11 @@ BOOST_AUTO_TEST_CASE(DETSkipPruningTest)
 
   // Check that initial estimates and final estimates using two models are
   // different.
-  BOOST_REQUIRE_LT(arma::accu(trainingSetEstimates ==
-      CLI::GetParam<arma::mat>("training_set_estimates")),
+  REQUIRE(arma::accu(trainingSetEstimates ==
+      IO::GetParam<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
-  BOOST_REQUIRE_LT(arma::accu(testSetEstimates ==
-      CLI::GetParam<arma::mat>("test_set_estimates")),
+  REQUIRE(arma::accu(testSetEstimates ==
+      IO::GetParam<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -1,5 +1,5 @@
 /**
- * @file ip_metric_impl.hpp
+ * @file core/metrics/ip_metric_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the IPMetric.
@@ -49,8 +49,8 @@ IPMetric<KernelType>::~IPMetric()
 
 template<typename KernelType>
 IPMetric<KernelType>::IPMetric(const IPMetric& other) :
-  kernel(other.kernel),
-  kernelOwner(other.kernelOwner)
+  kernel(new KernelType(*other.kernel)),
+  kernelOwner(true)
 {
   // Nothing to do.
 }
@@ -85,14 +85,18 @@ inline typename Vec1Type::elem_type IPMetric<KernelType>::Evaluate(
 template<typename KernelType>
 template<typename Archive>
 void IPMetric<KernelType>::serialize(Archive& ar,
-                                     const unsigned int /* version */)
+                                     const uint32_t /* version */)
 {
   // If we're loading, we need to allocate space for the kernel, and we will own
   // the kernel.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
+  {
+    if (kernelOwner)
+      delete kernel;
     kernelOwner = true;
+  }
 
-  ar & BOOST_SERIALIZATION_NVP(kernel);
+  ar(CEREAL_POINTER(kernel));
 }
 
 // A specialization for the linear kernel, which actually just turns out to be

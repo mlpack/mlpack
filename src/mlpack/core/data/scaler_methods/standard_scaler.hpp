@@ -1,5 +1,5 @@
 /**
- * @file standard_scaler.hpp
+ * @file core/data/scaler_methods/standard_scaler.hpp
  * @author Jeffin Sam
  *
  * StandardScaler class to scale features.
@@ -99,10 +99,10 @@ class StandardScaler
   const arma::vec& ItemStdDev() const { return itemStdDev; }
 
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(itemMean);
-    ar & BOOST_SERIALIZATION_NVP(itemStdDev);
+    ar(CEREAL_NVP(itemMean));
+    ar(CEREAL_NVP(itemStdDev));
   }
 
  private:

@@ -1,5 +1,5 @@
 /**
- * @file cf_impl.hpp
+ * @file methods/cf/cf_impl.hpp
  * @author Mudit Raj Gupta
  * @author Sumedh Ghaisas
  *
@@ -210,7 +210,7 @@ GetRecommendations(const size_t numRecs,
   // time and we don't want to repeat the initialization process in each loop.
   InterpolationPolicy interpolation(cleanedData);
 
-  for (size_t i = 0; i < users.n_elem; i++)
+  for (size_t i = 0; i < users.n_elem; ++i)
   {
     // First, calculate the weighted sum of neighborhood values.
     arma::vec ratings;
@@ -355,7 +355,7 @@ Predict(const arma::Mat<size_t>& combinations,
 
   // Calculate interpolation weights.
   InterpolationPolicy interpolation(cleanedData);
-  for (size_t i = 0; i < users.n_elem; i++)
+  for (size_t i = 0; i < users.n_elem; ++i)
   {
     interpolation.GetWeights(weights.col(i), decomposition, users[i],
         neighborhood.col(i), similarities.col(i), cleanedData);
@@ -427,15 +427,15 @@ template<typename DecompositionPolicy,
 template<typename Archive>
 void CFType<DecompositionPolicy,
             NormalizationType>::
-serialize(Archive& ar, const unsigned int /* version */)
+serialize(Archive& ar, const uint32_t /* version */)
 {
   // This model is simple; just serialize all the members. No special handling
   // required.
-  ar & BOOST_SERIALIZATION_NVP(numUsersForSimilarity);
-  ar & BOOST_SERIALIZATION_NVP(rank);
-  ar & BOOST_SERIALIZATION_NVP(decomposition);
-  ar & BOOST_SERIALIZATION_NVP(cleanedData);
-  ar & BOOST_SERIALIZATION_NVP(normalization);
+  ar(CEREAL_NVP(numUsersForSimilarity));
+  ar(CEREAL_NVP(rank));
+  ar(CEREAL_NVP(decomposition));
+  ar(CEREAL_NVP(cleanedData));
+  ar(CEREAL_NVP(normalization));
 }
 
 } // namespace cf

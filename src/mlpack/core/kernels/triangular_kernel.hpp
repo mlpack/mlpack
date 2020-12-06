@@ -1,5 +1,5 @@
 /**
- * @file triangular_kernel.hpp
+ * @file core/kernels/triangular_kernel.hpp
  * @author Ryan Curtin
  *
  * Definition and implementation of the trivially simple triangular kernel.
@@ -93,9 +93,9 @@ class TriangularKernel
 
   //! Serialize the kernel.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(bandwidth);
+    ar(CEREAL_NVP(bandwidth));
   }
 
  private:

@@ -1,5 +1,5 @@
 /**
- * @file ra_search_impl.hpp
+ * @file methods/rann/ra_search_impl.hpp
  * @author Parikshit Ram
  *
  * Implementation of RASearch class to perform rank-approximate
@@ -379,13 +379,13 @@ Search(const MatType& querySet,
       neighbors.set_size(k, querySet.n_cols);
       distances.set_size(k, querySet.n_cols);
 
-      for (size_t i = 0; i < distances.n_cols; i++)
+      for (size_t i = 0; i < distances.n_cols; ++i)
       {
         // Map distances (copy a column).
         distances.col(oldFromNewQueries[i]) = distancePtr->col(i);
 
         // Map indices of neighbors.
-        for (size_t j = 0; j < distances.n_rows; j++)
+        for (size_t j = 0; j < distances.n_rows; ++j)
         {
           neighbors(j, oldFromNewQueries[i]) =
               oldFromNewReferences[(*neighborPtr)(j, i)];
@@ -420,8 +420,8 @@ Search(const MatType& querySet,
       neighbors.set_size(k, querySet.n_cols);
 
       // Map indices of neighbors.
-      for (size_t i = 0; i < neighbors.n_cols; i++)
-        for (size_t j = 0; j < neighbors.n_rows; j++)
+      for (size_t i = 0; i < neighbors.n_cols; ++i)
+        for (size_t j = 0; j < neighbors.n_rows; ++j)
           neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
       // Finished with temporary matrix.
@@ -481,8 +481,8 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
     neighbors.set_size(k, querySet.n_cols);
 
     // Map indices of neighbors.
-    for (size_t i = 0; i < neighbors.n_cols; i++)
-      for (size_t j = 0; j < neighbors.n_rows; j++)
+    for (size_t i = 0; i < neighbors.n_cols; ++i)
+      for (size_t j = 0; j < neighbors.n_rows; ++j)
         neighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
 
     // Finished with temporary matrix.
@@ -593,7 +593,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::ResetQueryTree(
   queryNode->Stat().Bound() = SortPolicy::WorstDistance();
   queryNode->Stat().NumSamplesMade() = 0;
 
-  for (size_t i = 0; i < queryNode->NumChildren(); i++)
+  for (size_t i = 0; i < queryNode->NumChildren(); ++i)
     ResetQueryTree(&queryNode->Child(i));
 }
 
@@ -605,36 +605,34 @@ template<typename SortPolicy,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   // Serialize preferences for search.
-  ar & BOOST_SERIALIZATION_NVP(naive);
-  ar & BOOST_SERIALIZATION_NVP(singleMode);
+  ar(CEREAL_NVP(naive));
+  ar(CEREAL_NVP(singleMode));
 
-  ar & BOOST_SERIALIZATION_NVP(tau);
-  ar & BOOST_SERIALIZATION_NVP(alpha);
-  ar & BOOST_SERIALIZATION_NVP(sampleAtLeaves);
-  ar & BOOST_SERIALIZATION_NVP(firstLeafExact);
-  ar & BOOST_SERIALIZATION_NVP(singleSampleLimit);
+  ar(CEREAL_NVP(tau));
+  ar(CEREAL_NVP(alpha));
+  ar(CEREAL_NVP(sampleAtLeaves));
+  ar(CEREAL_NVP(firstLeafExact));
+  ar(CEREAL_NVP(singleSampleLimit));
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
   if (naive)
   {
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (setOwner && referenceSet)
         delete referenceSet;
 
       setOwner = true;
     }
-
-    ar & BOOST_SERIALIZATION_NVP(referenceSet);
-    ar & BOOST_SERIALIZATION_NVP(metric);
+    ar(CEREAL_POINTER(const_cast<MatType*&>(referenceSet)));
+    ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (treeOwner && referenceTree)
         delete referenceTree;
@@ -647,7 +645,7 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
   else
   {
     // Delete the current reference tree, if necessary and if we are loading.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (treeOwner && referenceTree)
         delete referenceTree;
@@ -656,12 +654,12 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::serialize(
       treeOwner = true;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceTree);
-    ar & BOOST_SERIALIZATION_NVP(oldFromNewReferences);
+    ar(CEREAL_POINTER(referenceTree));
+    ar(CEREAL_NVP(oldFromNewReferences));
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (setOwner && referenceSet)
         delete referenceSet;

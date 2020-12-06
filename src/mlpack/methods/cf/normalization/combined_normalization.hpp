@@ -1,5 +1,5 @@
 /**
- * @file combined_normalization.hpp
+ * @file methods/cf/normalization/combined_normalization.hpp
  * @author Wenhao Huang
  *
  * CombinedNormalization is a class template for performing a sequence of data
@@ -102,7 +102,7 @@ class CombinedNormalization
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version)
+  void serialize(Archive& ar, const uint32_t version)
   {
     SequenceSerialize<0, Archive>(ar, version);
   }
@@ -184,12 +184,12 @@ class CombinedNormalization
       int I, /* Which normalization in tuple to serialize */
       typename Archive,
       typename = std::enable_if_t<(I < std::tuple_size<TupleType>::value)>>
-  void SequenceSerialize(Archive& ar, const unsigned int version)
+  void SequenceSerialize(Archive& ar, const uint32_t version)
   {
     std::string tagName = "normalization_";
     tagName += std::to_string(I);
-    ar & boost::serialization::make_nvp(
-        tagName.c_str(), std::get<I>(normalizations));
+    ar(cereal::make_nvp(
+        tagName.c_str(), std::get<I>(normalizations)));
     SequenceSerialize<I + 1, Archive>(ar, version);
   }
 
@@ -199,7 +199,7 @@ class CombinedNormalization
       typename Archive,
       typename = std::enable_if_t<(I >= std::tuple_size<TupleType>::value)>,
       typename = void>
-  void SequenceSerialize(Archive& /* ar */, const unsigned int /* version */)
+  void SequenceSerialize(Archive& /* ar */, const uint32_t /* version */)
   { }
 };
 

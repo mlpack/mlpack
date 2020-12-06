@@ -1,5 +1,5 @@
 /**
- * @file maximal_inputs_test.cpp
+ * @file tests/maximal_inputs_test.cpp
  * @author Ngap Wei Tham
  *
  * Test the MaximalInputs and ColumnsToBlocks functions.
@@ -13,16 +13,15 @@
 #include <mlpack/core/math/columns_to_blocks.hpp>
 #include <mlpack/methods/sparse_autoencoder/maximal_inputs.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 
 arma::mat CreateMaximalInput()
 {
   arma::mat w1(2, 4);
-  w1 << 0 << 1 << 2 << 3 << arma::endr
-     << 4 << 5 << 6 << 7;
+  w1 = { {0, 1, 2, 3},
+         {4, 5, 6, 7} };
 
   arma::mat input(5, 5);
   input.submat(0, 0, 1, 3) = w1;
@@ -35,35 +34,31 @@ arma::mat CreateMaximalInput()
 
 void TestResults(const arma::mat&actualResult, const arma::mat& expectResult)
 {
-  BOOST_REQUIRE_EQUAL(expectResult.n_rows, actualResult.n_rows);
-  BOOST_REQUIRE_EQUAL(expectResult.n_cols, actualResult.n_cols);
+  REQUIRE(expectResult.n_rows == actualResult.n_rows);
+  REQUIRE(expectResult.n_cols == actualResult.n_cols);
 
   for (size_t i = 0; i != expectResult.n_elem; ++i)
   {
-    BOOST_REQUIRE_CLOSE(expectResult[i], actualResult[i], 1e-2);
+    REQUIRE(expectResult[i] == Approx(actualResult[i]).epsilon(1e-4));
   }
 }
 
-BOOST_AUTO_TEST_SUITE(MaximalInputsTest);
-
-BOOST_AUTO_TEST_CASE(ColumnToBlocksEvaluate)
+TEST_CASE("ColumnToBlocksEvaluate", "[MaximalInputsTest]")
 {
   arma::mat output;
   mlpack::math::ColumnsToBlocks ctb(1, 2);
   ctb.Transform(CreateMaximalInput(), output);
 
   arma::mat matlabResults;
-  matlabResults << -1 << -1 << -1 << -1 << -1 << -1 << -1 << arma::endr
-                << -1 << -1<< -0.42857 << -1 << 0.14286 << 0.71429 << -1
-                    << arma::endr
-                << -1 << -0.71429 << -0.14286 << -1 << 0.42857 << 1 << -1
-                    << arma::endr
-                << -1 << -1 << -1 << -1 << -1 << -1 << -1;
+  matlabResults = { { -1,       -1,       -1, -1,      -1,      -1, -1 },
+                    { -1,       -1, -0.42857, -1, 0.14286, 0.71429, -1 },
+                    { -1, -0.71429, -0.14286, -1, 0.42857,       1, -1 },
+                    { -1,       -1,       -1, -1,      -1,      -1, -1 } };
 
   TestResults(output, matlabResults);
 }
 
-BOOST_AUTO_TEST_CASE(ColumnToBlocksChangeBlockSize)
+TEST_CASE("ColumnToBlocksChangeBlockSize", "[MaximalInputsTest]")
 {
   arma::mat output;
   mlpack::math::ColumnsToBlocks ctb(1, 2);
@@ -73,14 +68,10 @@ BOOST_AUTO_TEST_CASE(ColumnToBlocksChangeBlockSize)
   ctb.Transform(CreateMaximalInput(), output);
 
   arma::mat matlabResults;
-  matlabResults<< -3 << -3 << -3 << -3 << -3
-               << -3 << -3 << -3 << -3 << -3 << -3 << arma::endr
-               << -3 << -1 << -0.71429 << -0.42857 << -0.14286
-               << -3 << 0.14286 << 0.42857 << 0.71429 << 1 << -3 << arma::endr
-               << -3 << -3 << -3 << -3 << -3 << -3 << -3 << -3 << -3 << -3
-                  << -3 << arma::endr;
+  matlabResults = { { -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3 },
+                    { -3, -1, -0.71429, -0.42857, -0.14286, -3, 0.14286,
+                     0.42857, 0.71429,  1, -3 },
+                    { -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3 } };
 
   TestResults(output, matlabResults);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

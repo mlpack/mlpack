@@ -1,12 +1,11 @@
 /**
- * @file hardshrink.hpp
+ * @file methods/ann/layer/hardshrink.hpp
  * @author Lakshya Ojha
  *
  * Same as soft thresholding, if its amplitude is smaller than a predefined
- * threshold, it will be set to zero (kill), otherwise it will be kept 
- * unchanged.
- * In order to promote sparsity and to improve the approximation, the hard
- * thresholding method is used as an alternative.
+ * threshold, it will be set to zero (kill), otherwise it will be kept
+ * unchanged. In order to promote sparsity and to improve the approximation,
+ * the hard thresholding method is used as an alternative.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -21,25 +20,23 @@
 namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
- /**
+/**
  * Hard Shrink operator is defined as,
- * @f{eqnarray*}{
- * f(x) &=& \left\{
- *   \begin{array}{lr}
+ *
+ * \f{eqnarray*}{
+ *   f(x) &=& \begin{cases}
  *     x  & : x >  lambda \\
  *     x  & : x < -lambda \\
- *     0  & : otherwise
- *   \end{array} \\
- * \right.
- * f'(x) &=& \left\{
- *   \begin{array}{lr}
+ *     0  & : otherwise.
+ *   \end{cases} \\
+ *   f'(x) &=& \begin{cases}
  *     1 & : x >  lambda \\
  *     1 & : x < -lambda \\
- *     0 & : otherwise
- *   \end{array}
- * \right.
- * @f}
- * lambda is set to 0.5 by default.
+ *     0 & : otherwise.
+ *   \end{cases}
+ * \f}
+ *
+ * \f$\lambda\f$ is set to 0.5 by default.
  */
 template <
     typename InputDataType = arma::mat,
@@ -48,9 +45,9 @@ template <
 class HardShrink
 {
  public:
-/**
+  /**
    * Create HardShrink object using specified hyperparameter lambda.
-   * 
+   *
    * @param lambda Is calculated by multiplying the
    * 		    noise level sigma of the input(noisy image) and a
    * 		    coefficient 'a' which is one of the training parameters.
@@ -61,26 +58,26 @@ class HardShrink
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
-   * 
+   *
    * @param input Input data used for evaluating the Hard Shrink function.
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
-   * 
+   *
    * @param input The propagated input activation f(x).
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input,
-                DataType&& gy,
-                DataType&& g);
+  void Backward(const DataType& input,
+                DataType& gy,
+                DataType& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -101,7 +98,7 @@ class HardShrink
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

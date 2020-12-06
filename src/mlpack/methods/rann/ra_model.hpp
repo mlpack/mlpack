@@ -1,5 +1,5 @@
 /**
- * @file ra_model.hpp
+ * @file methods/rann/ra_model.hpp
  * @author Ryan Curtin
  *
  * This is a model for rank-approximate nearest neighbor search.  It provides an
@@ -352,7 +352,7 @@ class RAModel
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   //! Expose the dataset.
   const arma::mat& Dataset() const;

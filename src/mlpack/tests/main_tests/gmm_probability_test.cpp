@@ -1,5 +1,5 @@
 /**
- * @file gmm_probability_test.cpp
+ * @file tests/main_tests/gmm_probability_test.cpp
  * @author Yashwant Singh
  *
  * Test mlpackMain() of gmm_probability_main.cpp.
@@ -20,8 +20,7 @@ static const std::string testName = "GmmProbability";
 
 #include "test_helper.hpp"
 
-#include <boost/test/unit_test.hpp>
-
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -31,26 +30,25 @@ struct GmmProbabilityTestFixture
   GmmProbabilityTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~GmmProbabilityTestFixture()
   {
     // Clear the settings.
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
 void ResetGmmProbabilitySetting()
 {
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 }
 
-BOOST_FIXTURE_TEST_SUITE(GmmProbabilityMainTest, GmmProbabilityTestFixture);
-
 // Checking the input and output dimensionality.
-BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
+TEST_CASE_METHOD(GmmProbabilityTestFixture, "GmmProbabilityDimensionality",
+                 "[GmmProbabilityMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -64,9 +62,6 @@ BOOST_AUTO_TEST_CASE(GmmProbabilityDimensionality)
 
   mlpackMain();
 
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_cols, 5);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<arma::mat>("output").n_rows, 1);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 5);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 1);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
-

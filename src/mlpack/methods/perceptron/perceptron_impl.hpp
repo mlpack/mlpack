@@ -1,5 +1,5 @@
 /**
- * @file perceptron_impl.hpp
+ * @file methods/perceptron/perceptron_impl.hpp
  * @author Udit Saxena
  *
  * Implementation of Perceptron class.
@@ -110,7 +110,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   arma::uword maxIndex = 0;
 
   // Could probably be faster if done in batch.
-  for (size_t i = 0; i < test.n_cols; i++)
+  for (size_t i = 0; i < test.n_cols; ++i)
   {
     tempLabelMat = weights.t() * test.col(i) + biases;
     tempLabelMat.max(maxIndex);
@@ -159,11 +159,11 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
   {
     // This outer loop is for each iteration, and we use the 'converged'
     // variable for noting whether or not convergence has been reached.
-    i++;
+    ++i;
     converged = true;
 
     // Now this inner loop is for going through the dataset in each iteration.
-    for (j = 0; j < data.n_cols; j++)
+    for (j = 0; j < data.n_cols; ++j)
     {
       // Multiply for each variable and check whether the current weight vector
       // correctly classifies this.
@@ -199,13 +199,13 @@ template<typename LearnPolicy,
 template<typename Archive>
 void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // We just need to serialize the maximum number of iterations, the weights,
   // and the biases.
-  ar & BOOST_SERIALIZATION_NVP(maxIterations);
-  ar & BOOST_SERIALIZATION_NVP(weights);
-  ar & BOOST_SERIALIZATION_NVP(biases);
+  ar(CEREAL_NVP(maxIterations));
+  ar(CEREAL_NVP(weights));
+  ar(CEREAL_NVP(biases));
 }
 
 } // namespace perceptron

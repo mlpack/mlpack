@@ -1,5 +1,5 @@
 /**
- * @file ra_model_impl.hpp
+ * @file methods/rann/ra_model_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the RAModel class.
@@ -15,7 +15,6 @@
 // In case it hasn't been included yet.
 #include "ra_model.hpp"
 #include <mlpack/core/math/random_basis.hpp>
-#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -334,20 +333,20 @@ RAModel<SortPolicy>::~RAModel()
 template<typename SortPolicy>
 template<typename Archive>
 void RAModel<SortPolicy>::serialize(Archive& ar,
-                                    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(treeType);
-  ar & BOOST_SERIALIZATION_NVP(randomBasis);
-  ar & BOOST_SERIALIZATION_NVP(q);
+  ar(CEREAL_NVP(treeType));
+  ar(CEREAL_NVP(randomBasis));
+  ar(CEREAL_NVP(q));
 
   // This should never happen, but just in case, be clean with memory.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     boost::apply_visitor(DeleteVisitor(), raSearch);
   }
 
   // We only need to serialize one of the kRANN objects.
-  ar & BOOST_SERIALIZATION_NVP(raSearch);
+  ar(CEREAL_VARIANT_POINTER(raSearch));
 }
 
 template<typename SortPolicy>

@@ -1,5 +1,5 @@
 /**
- * @file range_search_impl.hpp
+ * @file methods/range_search/range_search_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the RangeSearch class.
@@ -390,7 +390,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
       distances.clear();
       distances.resize(querySet.n_cols);
 
-      for (size_t i = 0; i < distances.size(); i++)
+      for (size_t i = 0; i < distances.size(); ++i)
       {
         // Map distances (copy a column).
         const size_t queryMapping = oldFromNewQueries[i];
@@ -398,7 +398,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
         // Copy each neighbor individually, because we need to map it.
         neighbors[queryMapping].resize(distances[queryMapping].size());
-        for (size_t j = 0; j < distances[queryMapping].size(); j++)
+        for (size_t j = 0; j < distances[queryMapping].size(); ++j)
           neighbors[queryMapping][j] =
               oldFromNewReferences[(*neighborPtr)[i][j]];
       }
@@ -433,10 +433,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
       neighbors.clear();
       neighbors.resize(querySet.n_cols);
 
-      for (size_t i = 0; i < neighbors.size(); i++)
+      for (size_t i = 0; i < neighbors.size(); ++i)
       {
         neighbors[i].resize((*neighborPtr)[i].size());
-        for (size_t j = 0; j < neighbors[i].size(); j++)
+        for (size_t j = 0; j < neighbors[i].size(); ++j)
           neighbors[i][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
       }
 
@@ -505,10 +505,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     neighbors.clear();
     neighbors.resize(querySet.n_cols);
 
-    for (size_t i = 0; i < neighbors.size(); i++)
+    for (size_t i = 0; i < neighbors.size(); ++i)
     {
       neighbors[i].resize((*neighborPtr)[i].size());
-      for (size_t j = 0; j < neighbors[i].size(); j++)
+      for (size_t j = 0; j < neighbors[i].size(); ++j)
         neighbors[i][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
     }
 
@@ -598,7 +598,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     distances.clear();
     distances.resize(referenceSet->n_cols);
 
-    for (size_t i = 0; i < distances.size(); i++)
+    for (size_t i = 0; i < distances.size(); ++i)
     {
       // Map distances (copy a column).
       const size_t refMapping = oldFromNewReferences[i];
@@ -606,7 +606,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
       // Copy each neighbor individually, because we need to map it.
       neighbors[refMapping].resize(distances[refMapping].size());
-      for (size_t j = 0; j < distances[refMapping].size(); j++)
+      for (size_t j = 0; j < distances[refMapping].size(); ++j)
       {
         neighbors[refMapping][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
       }
@@ -625,15 +625,14 @@ template<typename MetricType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void RangeSearch<MetricType, MatType, TreeType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   // Serialize preferences for search.
-  ar & BOOST_SERIALIZATION_NVP(naive);
-  ar & BOOST_SERIALIZATION_NVP(singleMode);
+  ar(CEREAL_NVP(naive));
+  ar(CEREAL_NVP(singleMode));
 
   // Reset base cases and scores if we are loading.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     baseCases = 0;
     scores = 0;
@@ -643,17 +642,17 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
   // serialize the tree.
   if (naive)
   {
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (referenceSet)
         delete referenceSet;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceSet);
-    ar & BOOST_SERIALIZATION_NVP(metric);
+    ar(CEREAL_POINTER(const_cast<MatType*&>(referenceSet)));
+    ar(CEREAL_NVP(metric));
 
     // If we are loading, set the tree to NULL and clean up memory if necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (treeOwner && referenceTree)
         delete referenceTree;
@@ -666,7 +665,7 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
   else
   {
     // Delete the current reference tree, if necessary and if we are loading.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (treeOwner && referenceTree)
         delete referenceTree;
@@ -675,12 +674,12 @@ void RangeSearch<MetricType, MatType, TreeType>::serialize(
       treeOwner = true;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceTree);
-    ar & BOOST_SERIALIZATION_NVP(oldFromNewReferences);
+    ar(CEREAL_POINTER(referenceTree));
+    ar(CEREAL_NVP(oldFromNewReferences));
 
     // If we are loading, set the dataset accordingly and clean up memory if
     // necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       referenceSet = &referenceTree->Dataset();
       metric = referenceTree->Metric(); // Get the metric from the tree.

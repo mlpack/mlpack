@@ -1,5 +1,5 @@
 /**
- * @file get_printable_type_impl.hpp
+ * @file bindings/python/get_printable_type_impl.hpp
  * @author Ryan Curtin
  *
  * Template metaprogramming to return the string representation of the Python
@@ -21,7 +21,7 @@ namespace python {
 
 template<typename T>
 inline std::string GetPrintableType(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<T>>::type*,
     const typename boost::disable_if<data::HasSerialize<T>>::type*,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
@@ -33,7 +33,7 @@ inline std::string GetPrintableType(
 
 template<>
 inline std::string GetPrintableType<int>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<int>>::type*,
     const typename boost::disable_if<data::HasSerialize<int>>::type*,
     const typename boost::disable_if<arma::is_arma_type<int>>::type*,
@@ -45,7 +45,7 @@ inline std::string GetPrintableType<int>(
 
 template<>
 inline std::string GetPrintableType<double>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<double>>::type*,
     const typename boost::disable_if<data::HasSerialize<double>>::type*,
     const typename boost::disable_if<arma::is_arma_type<double>>::type*,
@@ -57,7 +57,7 @@ inline std::string GetPrintableType<double>(
 
 template<>
 inline std::string GetPrintableType<std::string>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<std::string>>::type*,
     const typename boost::disable_if<data::HasSerialize<std::string>>::type*,
     const typename boost::disable_if<arma::is_arma_type<std::string>>::type*,
@@ -69,7 +69,7 @@ inline std::string GetPrintableType<std::string>(
 
 template<>
 inline std::string GetPrintableType<size_t>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<size_t>>::type*,
     const typename boost::disable_if<data::HasSerialize<size_t>>::type*,
     const typename boost::disable_if<arma::is_arma_type<size_t>>::type*,
@@ -81,7 +81,7 @@ inline std::string GetPrintableType<size_t>(
 
 template<>
 inline std::string GetPrintableType<bool>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<bool>>::type*,
     const typename boost::disable_if<data::HasSerialize<bool>>::type*,
     const typename boost::disable_if<arma::is_arma_type<bool>>::type*,
@@ -93,7 +93,7 @@ inline std::string GetPrintableType<bool>(
 
 template<typename T>
 inline std::string GetPrintableType(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::enable_if<util::IsStdVector<T>>::type*,
     const typename boost::disable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type*)
@@ -103,7 +103,7 @@ inline std::string GetPrintableType(
 
 template<typename T>
 inline std::string GetPrintableType(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::enable_if<arma::is_arma_type<T>>::type*,
     const typename boost::disable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type*)
@@ -126,7 +126,7 @@ inline std::string GetPrintableType(
 
 template<typename T>
 inline std::string GetPrintableType(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type*)
 {
@@ -135,7 +135,7 @@ inline std::string GetPrintableType(
 
 template<typename T>
 inline std::string GetPrintableType(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*,
     const typename boost::disable_if<std::is_same<T,

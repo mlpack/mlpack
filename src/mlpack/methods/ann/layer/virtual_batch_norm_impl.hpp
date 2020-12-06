@@ -1,5 +1,5 @@
 /**
- * @file virtual_batch_norm_impl.hpp
+ * @file methods/ann/layer/virtual_batch_norm_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of the VirtualBatchNorm layer.
@@ -65,7 +65,7 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void VirtualBatchNorm<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   inputParameter = input;
   arma::mat inputMean = arma::mean(input, 1);
@@ -90,7 +90,7 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void VirtualBatchNorm<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
 
@@ -115,9 +115,9 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void VirtualBatchNorm<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& /* input */,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   gradient.set_size(size + size, 1);
 
@@ -132,19 +132,19 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void VirtualBatchNorm<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(size);
+  ar(CEREAL_NVP(size));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     weights.set_size(size + size, 1);
     loading = false;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(eps);
-  ar & BOOST_SERIALIZATION_NVP(gamma);
-  ar & BOOST_SERIALIZATION_NVP(beta);
+  ar(CEREAL_NVP(eps));
+  ar(CEREAL_NVP(gamma));
+  ar(CEREAL_NVP(beta));
 }
 
 } // namespace ann

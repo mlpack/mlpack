@@ -1,5 +1,5 @@
 /**
- * @file binary_numeric_split_impl.hpp
+ * @file methods/hoeffding_trees/binary_numeric_split_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the BinaryNumericSplit class.
@@ -172,11 +172,11 @@ template<typename FitnessFunction, typename ObservationType>
 template<typename Archive>
 void BinaryNumericSplit<FitnessFunction, ObservationType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // Serialize.
-  ar & BOOST_SERIALIZATION_NVP(sortedElements);
-  ar & BOOST_SERIALIZATION_NVP(classCounts);
+  ar(CEREAL_NVP(sortedElements));
+  ar(CEREAL_NVP(classCounts));
 }
 
 

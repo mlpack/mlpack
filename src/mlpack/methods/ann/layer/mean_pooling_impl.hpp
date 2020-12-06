@@ -1,5 +1,5 @@
 /**
- * @file mean_pooling_impl.hpp
+ * @file methods/ann/layer/mean_pooling_impl.hpp
  * @author Marcus Edel
  * @author Nilay Jain
  *
@@ -54,11 +54,11 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MeanPooling<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   batchSize = input.n_cols;
   inSize = input.n_elem / (inputWidth * inputHeight * batchSize);
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&&>(input).memptr(),
+  inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
       inputWidth, inputHeight, batchSize * inSize, false, false);
 
   if (floor)
@@ -97,12 +97,12 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void MeanPooling<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>&& /* input */,
-  arma::Mat<eT>&& gy,
-  arma::Mat<eT>&& g)
+  const arma::Mat<eT>& /* input */,
+  const arma::Mat<eT>& gy,
+  arma::Mat<eT>& g)
 {
-  arma::cube mappedError = arma::cube(gy.memptr(), outputWidth,
-      outputHeight, outSize, false, false);
+  arma::cube mappedError = arma::cube(((arma::Mat<eT>&) gy).memptr(),
+      outputWidth, outputHeight, outSize, false, false);
 
   gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices);
@@ -119,18 +119,18 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(kernelWidth);
-  ar & BOOST_SERIALIZATION_NVP(kernelHeight);
-  ar & BOOST_SERIALIZATION_NVP(strideWidth);
-  ar & BOOST_SERIALIZATION_NVP(strideHeight);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(floor);
-  ar & BOOST_SERIALIZATION_NVP(inputWidth);
-  ar & BOOST_SERIALIZATION_NVP(inputHeight);
-  ar & BOOST_SERIALIZATION_NVP(outputWidth);
-  ar & BOOST_SERIALIZATION_NVP(outputHeight);
+  ar(CEREAL_NVP(kernelWidth));
+  ar(CEREAL_NVP(kernelHeight));
+  ar(CEREAL_NVP(strideWidth));
+  ar(CEREAL_NVP(strideHeight));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(floor));
+  ar(CEREAL_NVP(inputWidth));
+  ar(CEREAL_NVP(inputHeight));
+  ar(CEREAL_NVP(outputWidth));
+  ar(CEREAL_NVP(outputHeight));
 }
 
 } // namespace ann

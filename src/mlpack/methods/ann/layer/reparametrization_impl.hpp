@@ -1,5 +1,5 @@
 /**
- * @file reparametrization_impl.hpp
+ * @file methods/ann/layer/reparametrization_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the Reparametrization layer class which samples from a
@@ -50,7 +50,7 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Reparametrization<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   if (input.n_rows != 2 * latentSize)
   {
@@ -74,7 +74,7 @@ void Reparametrization<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Reparametrization<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   SoftplusFunction::Deriv(preStdDev, g);
 
@@ -90,11 +90,11 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Reparametrization<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(latentSize);
-  ar & BOOST_SERIALIZATION_NVP(stochastic);
-  ar & BOOST_SERIALIZATION_NVP(includeKl);
+  ar(CEREAL_NVP(latentSize));
+  ar(CEREAL_NVP(stochastic));
+  ar(CEREAL_NVP(includeKl));
 }
 
 } // namespace ann

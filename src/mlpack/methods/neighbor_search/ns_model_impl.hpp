@@ -1,5 +1,5 @@
 /**
- * @file ns_model_impl.hpp
+ * @file methods/neighbor_search/ns_model_impl.hpp
  * @author Ryan Curtin
  *
  * This is a model for nearest or furthest neighbor search.  It is useful in
@@ -17,8 +17,6 @@
 
 // In case it hasn't been included yet.
 #include "ns_model.hpp"
-
-#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
 namespace neighbor {
@@ -358,25 +356,20 @@ NSModel<SortPolicy>::~NSModel()
 //! Serialize the kNN model.
 template<typename SortPolicy>
 template<typename Archive>
-void NSModel<SortPolicy>::serialize(Archive& ar, const unsigned int version)
+void NSModel<SortPolicy>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(treeType);
-  // Backward compatibility: older versions of NSModel didn't include these
-  // parameters.
-  if (version > 0)
-  {
-    ar & BOOST_SERIALIZATION_NVP(leafSize);
-    ar & BOOST_SERIALIZATION_NVP(tau);
-    ar & BOOST_SERIALIZATION_NVP(rho);
-  }
-  ar & BOOST_SERIALIZATION_NVP(randomBasis);
-  ar & BOOST_SERIALIZATION_NVP(q);
+  ar(CEREAL_NVP(treeType));
+  ar(CEREAL_NVP(leafSize));
+  ar(CEREAL_NVP(tau));
+  ar(CEREAL_NVP(rho));
+  ar(CEREAL_NVP(randomBasis));
+  ar(CEREAL_NVP(q));
 
   // This should never happen, but just in case, be clean with memory.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     boost::apply_visitor(DeleteVisitor(), nSearch);
 
-  ar & BOOST_SERIALIZATION_NVP(nSearch);
+  ar(CEREAL_VARIANT_POINTER(nSearch));
 }
 
 //! Expose the dataset.

@@ -1,5 +1,5 @@
 /**
- * @file sequential.hpp
+ * @file methods/ann/layer/sequential.hpp
  * @author Marcus Edel
  *
  * Definition of the Sequential class, which acts as a feed-forward fully
@@ -18,6 +18,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "../visitor/delete_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_height_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
@@ -78,6 +79,21 @@ class Sequential
    */
   Sequential(const bool model = true);
 
+  /**
+   * Create the Sequential object using the specified parameters.
+   *
+   * @param model Expose all the network modules.
+   * @param ownsLayers If true, then this module will delete its layers when
+   *      deallocated.
+   */
+  Sequential(const bool model, const bool ownsLayers);
+
+  //! Copy constructor.
+  Sequential(const Sequential& layer);
+
+  //! Copy assignment operator.
+  Sequential& operator = (const Sequential& layer);
+
   //! Destroy the Sequential object.
   ~Sequential();
 
@@ -89,21 +105,21 @@ class Sequential
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -113,9 +129,9 @@ class Sequential
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& /* gradient */);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& /* gradient */);
 
   /*
    * Add a new module to the model.
@@ -131,11 +147,6 @@ class Sequential
    * @param layer The Layer to be added to the model.
    */
   void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
-
-  /*
-   * Destroy all the modules added to the Sequential object.
-   */
-  void DeleteModules();
 
   //! Return the model modules.
   std::vector<LayerTypes<CustomLayers...> >& Model()
@@ -177,7 +188,7 @@ class Sequential
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Parameter which indicates if the modules should be exposed.
@@ -222,11 +233,17 @@ class Sequential
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
 
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
+
   //! The input width.
   size_t width;
 
   //! The input height.
   size_t height;
+
+  //! Whether we are responsible for deleting the layers held in this module.
+  bool ownsLayers;
 }; // class Sequential
 
 /*

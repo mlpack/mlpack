@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_split_impl.hpp
+ * @file methods/hoeffding_trees/hoeffding_tree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the HoeffdingTree class.
@@ -96,7 +96,8 @@ HoeffdingTree<
                      categoricalSplitIn,
                  const NumericSplitType<FitnessFunction>& numericSplitIn,
                  std::unordered_map<size_t, std::pair<size_t, size_t>>*
-                     dimensionMappingsIn) :
+                     dimensionMappingsIn,
+                 const bool copyDatasetInfo) :
     dimensionMappings((dimensionMappingsIn != NULL) ? dimensionMappingsIn :
         new std::unordered_map<size_t, std::pair<size_t, size_t>>()),
     ownsMappings(dimensionMappingsIn == NULL),
@@ -105,8 +106,9 @@ HoeffdingTree<
     maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
     minSamples(minSamples),
-    datasetInfo(new data::DatasetInfo(datasetInfo)),
-    ownsInfo(true),
+    datasetInfo(copyDatasetInfo ? new data::DatasetInfo(datasetInfo) :
+        &datasetInfo),
+    ownsInfo(copyDatasetInfo),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
     majorityClass(0),
@@ -208,7 +210,18 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
 {
   // Copy each of the children.
   for (size_t i = 0; i < other.children.size(); ++i)
+  {
     children.push_back(new HoeffdingTree(*other.children[i]));
+
+    // Delete copied datasetInfo and dimension mappings.
+    delete children[i]->datasetInfo;
+    children[i]->datasetInfo = this->datasetInfo;
+    children[i]->ownsInfo = false;
+
+    delete children[i]->dimensionMappings;
+    children[i]->dimensionMappings = this->dimensionMappings;
+    children[i]->ownsMappings = false;
+  }
 }
 
 template<typename FitnessFunction,
@@ -744,7 +757,7 @@ void HoeffdingTree<
       children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
           successProbability, maxSamples, checkInterval, minSamples,
           CategoricalSplitType<FitnessFunction>(0, numClasses),
-          numericSplits[0], dimensionMappings));
+          numericSplits[0], dimensionMappings, false));
     }
     else if (numericSplits.size() == 0)
     {
@@ -752,14 +765,14 @@ void HoeffdingTree<
       children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
           successProbability, maxSamples, checkInterval, minSamples,
           categoricalSplits[0], NumericSplitType<FitnessFunction>(numClasses),
-          dimensionMappings));
+          dimensionMappings, false));
     }
     else
     {
       // Pass both splits that we already have.
       children.push_back(new HoeffdingTree(*datasetInfo, numClasses,
           successProbability, maxSamples, checkInterval, minSamples,
-          categoricalSplits[0], numericSplits[0], dimensionMappings));
+          categoricalSplits[0], numericSplits[0], dimensionMappings, false));
     }
 
     children[i]->MajorityClass() = childMajorities[i];
@@ -780,22 +793,23 @@ void HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::serialize(Archive& ar, const unsigned int /* version */)
+>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(splitDimension);
+  ar(CEREAL_NVP(splitDimension));
 
   // Clear memory for the mappings if necessary.
-  if (Archive::is_loading::value && ownsMappings && dimensionMappings)
+  if (cereal::is_loading<Archive>() && ownsMappings && dimensionMappings)
     delete dimensionMappings;
 
-  ar & BOOST_SERIALIZATION_NVP(dimensionMappings);
+  ar(CEREAL_POINTER(dimensionMappings));
 
   // Special handling for const object.
   data::DatasetInfo* d = NULL;
-  if (Archive::is_saving::value)
+  if (cereal::is_saving<Archive>())
     d = const_cast<data::DatasetInfo*>(datasetInfo);
-  ar & BOOST_SERIALIZATION_NVP(d);
-  if (Archive::is_loading::value)
+  ar(CEREAL_POINTER(d));
+
+  if (cereal::is_loading<Archive>())
   {
     if (datasetInfo && ownsInfo)
       delete datasetInfo;
@@ -810,22 +824,22 @@ void HoeffdingTree<
     children.clear();
   }
 
-  ar & BOOST_SERIALIZATION_NVP(majorityClass);
-  ar & BOOST_SERIALIZATION_NVP(majorityProbability);
+  ar(CEREAL_NVP(majorityClass));
+  ar(CEREAL_NVP(majorityProbability));
 
   // Depending on whether or not we have split yet, we may need to save
   // different things.
   if (splitDimension == size_t(-1))
   {
     // We have not yet split.  So we have to serialize the splits.
-    ar & BOOST_SERIALIZATION_NVP(numSamples);
-    ar & BOOST_SERIALIZATION_NVP(numClasses);
-    ar & BOOST_SERIALIZATION_NVP(maxSamples);
-    ar & BOOST_SERIALIZATION_NVP(successProbability);
+    ar(CEREAL_NVP(numSamples));
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(maxSamples));
+    ar(CEREAL_NVP(successProbability));
 
     // Serialize the splits, but not if we haven't seen any samples yet (in
     // which case we can just reinitialize).
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       // Re-initialize all of the splits.
       numericSplits.clear();
@@ -852,29 +866,30 @@ void HoeffdingTree<
       return;
 
     // Serialize numeric splits.
-    ar & BOOST_SERIALIZATION_NVP(numericSplits);
+    ar(CEREAL_NVP(numericSplits));
 
     // Serialize categorical splits.
-    ar & BOOST_SERIALIZATION_NVP(categoricalSplits);
+    ar(CEREAL_NVP(categoricalSplits));
   }
   else
   {
     // We have split, so we only need to save the split and the children.
     if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
-      ar & BOOST_SERIALIZATION_NVP(categoricalSplit);
+      ar(CEREAL_NVP(categoricalSplit));
     else
-      ar & BOOST_SERIALIZATION_NVP(numericSplit);
+      ar(CEREAL_NVP(numericSplit));
 
     // Serialize the children, because we have split.
-    ar & BOOST_SERIALIZATION_NVP(children);
+      ar(CEREAL_VECTOR_POINTER(children));
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       for (size_t i = 0; i < children.size(); ++i)
       {
         // The child doesn't actually own its own DatasetInfo.  We do.  The same
         // applies for the dimension mappings.
-        children[i]->ownsInfo = false;
+        if (children[i]->datasetInfo == datasetInfo)
+          children[i]->ownsInfo = false;
         children[i]->ownsMappings = false;
       }
 

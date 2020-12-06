@@ -1,5 +1,5 @@
 /**
- * @file string_encoding_impl.hpp
+ * @file core/data/string_encoding_impl.hpp
  * @author Jeffin Sam
  * @author Mikhail Lozhnikov
  *
@@ -107,10 +107,12 @@ EncodeHelper(const std::vector<std::string>& input,
 {
   size_t numColumns = 0;
 
+  policy.Reset();
+
   // The first pass adds the extracted tokens to the dictionary.
-  for (const std::string& line : input)
+  for (size_t i = 0; i < input.size(); ++i)
   {
-    boost::string_view strView(line);
+    boost::string_view strView(input[i]);
     auto token = tokenizer(strView);
 
     static_assert(
@@ -127,16 +129,19 @@ EncodeHelper(const std::vector<std::string>& input,
       if (!dictionary.HasToken(token))
         dictionary.AddToken(std::move(token));
 
+      policy.PreprocessToken(i, numTokens, dictionary.Value(token));
+
       token = tokenizer(strView);
       numTokens++;
     }
+
     numColumns = std::max(numColumns, numTokens);
   }
 
   policy.InitMatrix(output, input.size(), numColumns, dictionary.Size());
 
   // The second pass writes the encoded values to the output.
-  for (size_t i = 0; i < input.size(); i++)
+  for (size_t i = 0; i < input.size(); ++i)
   {
     boost::string_view strView(input[i]);
     auto token = tokenizer(strView);
@@ -152,18 +157,20 @@ EncodeHelper(const std::vector<std::string>& input,
 }
 
 template<typename EncodingPolicyType, typename DictionaryType>
-template<typename TokenizerType, typename PolicyType>
+template<typename TokenizerType, typename PolicyType, typename ElemType>
 void StringEncoding<EncodingPolicyType, DictionaryType>::
 EncodeHelper(const std::vector<std::string>& input,
-             std::vector<std::vector<size_t>>& output,
+             std::vector<std::vector<ElemType>>& output,
              const TokenizerType& tokenizer,
              PolicyType& policy,
              typename std::enable_if<StringEncodingPolicyTraits<
                  PolicyType>::onePassEncoding>::type*)
 {
+  policy.Reset();
+
   // The loop below extracts the tokens and writes the encoded values
   // at once.
-  for (size_t i = 0; i < input.size(); i++)
+  for (size_t i = 0; i < input.size(); ++i)
   {
     boost::string_view strView(input[i]);
     auto token = tokenizer(strView);
@@ -192,10 +199,10 @@ EncodeHelper(const std::vector<std::string>& input,
 template<typename EncodingPolicyType, typename DictionaryType>
 template<typename Archive>
 void StringEncoding<EncodingPolicyType, DictionaryType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(encodingPolicy);
-  ar & BOOST_SERIALIZATION_NVP(dictionary);
+  ar(CEREAL_NVP(encodingPolicy));
+  ar(CEREAL_NVP(dictionary));
 }
 
 } // namespace data

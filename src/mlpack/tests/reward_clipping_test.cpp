@@ -1,5 +1,5 @@
 /**
- * @file reward_clipping_test.hpp
+ * @file tests/reward_clipping_test.cpp
  * @author Shashank Shekhar
  *
  * Test for the reward clipping wrapper for reinforcement learning environments.
@@ -13,6 +13,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/reinforcement_learning/environment/mountain_car.hpp>
+#include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/continuous_mountain_car.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
 #include <mlpack/methods/reinforcement_learning/environment/acrobot.hpp>
@@ -29,18 +30,16 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace ens;
 using namespace mlpack::rl;
 
-BOOST_AUTO_TEST_SUITE(RewardClippingTest);
 
 // Test checking that reward clipping works with vanilla update.
-BOOST_AUTO_TEST_CASE(ClippedRewardTest)
+TEST_CASE("ClippedRewardTest", "[RewardClippingTest]")
 {
   Pendulum task;
   RewardClipping<Pendulum> rewardClipping(task, -2.0, +2.0);
@@ -50,12 +49,12 @@ BOOST_AUTO_TEST_CASE(ClippedRewardTest)
   action.action[0] = mlpack::math::Random(-1.0, 1.0);
   double reward = rewardClipping.Sample(state, action);
 
-  BOOST_REQUIRE(reward <= 2.0);
-  BOOST_REQUIRE(reward >= -2.0);
+  REQUIRE(reward <= 2.0);
+  REQUIRE(reward >= -2.0);
 }
 
 //! Test DQN in Acrobot task.
-BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
+TEST_CASE("RewardClippedAcrobotWithDQN", "[RewardClippingTest]")
 {
   // We will allow three trials, although it would be very uncommon for the test
   // to use more than one.
@@ -63,13 +62,7 @@ BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
   for (size_t trial = 0; trial < 3; ++trial)
   {
     // Set up the network.
-    FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
-        GaussianInitialization(0, 0.001));
-    model.Add<Linear<>>(4, 64);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(64, 32);
-    model.Add<ReLULayer<>>();
-    model.Add<Linear<>>(32, 3);
+    SimpleDQN<> model(4, 64, 32, 3);
 
     // Set up the policy and replay method.
     GreedyPolicy<RewardClipping<Acrobot>> policy(1.0, 1000, 0.1, 0.99);
@@ -93,8 +86,8 @@ BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
     // Set up DQN agent.
     QLearning<decltype(rewardClipping), decltype(model), AdamUpdate,
               decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy),
-        std::move(replayMethod), std::move(update), std::move(rewardClipping));
+        agent(config, model, policy, replayMethod, std::move(update),
+        std::move(rewardClipping));
 
     arma::running_stat<double> averageReturn;
     size_t episodes = 0;
@@ -134,7 +127,5 @@ BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
       break;
   }
 
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

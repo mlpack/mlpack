@@ -1,5 +1,5 @@
 /**
- * @file add_merge.hpp
+ * @file methods/ann/layer/add_merge.hpp
  * @author Marcus Edel
  *
  * Definition of the AddMerge module which accumulates the output of the given
@@ -50,6 +50,15 @@ class AddMerge
    */
   AddMerge(const bool model = false, const bool run = true);
 
+  /**
+   * Create the AddMerge object using the specified parameters.
+   *
+   * @param model Expose all the network modules.
+   * @param run Call the Forward/Backward method before the output is merged.
+   * @param ownsLayers Delete the layers when this is deallocated.
+   */
+  AddMerge(const bool model, const bool run, const bool ownsLayers);
+
   //! Destructor to release allocated memory.
   ~AddMerge();
 
@@ -57,39 +66,39 @@ class AddMerge
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
-   * @param input Input data used for evaluating the specified function.
+   * @param * (input) Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& /* input */, OutputType&& output);
+  void Forward(const InputType& /* input */, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /**
    * This is the overload of Backward() that runs only a specific layer with
    * the given input.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
-   * @param The index of the layer to run.
+   * @param index The index of the layer to run.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g,
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g,
                 const size_t index);
 
   /*
@@ -100,9 +109,9 @@ class AddMerge
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient);
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   /*
    * This is the overload of Gradient() that runs a specific layer with the
@@ -114,9 +123,9 @@ class AddMerge
    * @param The index of the layer to run.
    */
   template<typename eT>
-  void Gradient(arma::Mat<eT>&& input,
-                arma::Mat<eT>&& error,
-                arma::Mat<eT>&& gradient,
+  void Gradient(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient,
                 const size_t index);
 
   /*
@@ -174,7 +183,7 @@ class AddMerge
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Parameter which indicates if the modules should be exposed.
@@ -184,8 +193,9 @@ class AddMerge
   //! before merging the output.
   bool run;
 
-  //! We need this to know whether we should delete the layer in the destructor.
-  bool ownsLayer;
+  //! We need this to know whether we should delete the internally-held layers
+  //! in the destructor.
+  bool ownsLayers;
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;

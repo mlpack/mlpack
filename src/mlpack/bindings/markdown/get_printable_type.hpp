@@ -1,5 +1,5 @@
 /**
- * @file get_printable_type.hpp
+ * @file bindings/markdown/get_printable_type.hpp
  * @author Ryan Curtin
  *
  * Get the printable type of the parameter.  This depends on
@@ -18,6 +18,8 @@
 #include <mlpack/bindings/cli/get_printable_type.hpp>
 #include <mlpack/bindings/python/get_printable_type.hpp>
 #include <mlpack/bindings/julia/get_printable_type.hpp>
+#include <mlpack/bindings/go/get_printable_type.hpp>
+#include <mlpack/bindings/R/get_printable_type.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -28,7 +30,7 @@ namespace markdown {
  * depends on the current setting of BindingInfo::Language().
  */
 template<typename T>
-void GetPrintableType(const util::ParamData& data,
+void GetPrintableType(util::ParamData& data,
                       const void* /* input */,
                       void* output)
 {
@@ -47,6 +49,16 @@ void GetPrintableType(const util::ParamData& data,
     *((std::string*) output) =
         julia::GetPrintableType<typename std::remove_pointer<T>::type>(data);
   }
+  else if (BindingInfo::Language() == "go")
+  {
+    *((std::string*) output) =
+        go::GetPrintableType<typename std::remove_pointer<T>::type>(data);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    *((std::string*) output) =
+        r::GetPrintableType<typename std::remove_pointer<T>::type>(data);
+  }
   else
   {
     throw std::invalid_argument("GetPrintableType(): unknown "
@@ -59,7 +71,7 @@ void GetPrintableType(const util::ParamData& data,
  * setting of BindingInfo::Language().
  */
 template<typename T>
-std::string GetPrintableType(const util::ParamData& data)
+std::string GetPrintableType(util::ParamData& data)
 {
   std::string output;
   GetPrintableType<T>(data, (void*) NULL, (void*) &output);

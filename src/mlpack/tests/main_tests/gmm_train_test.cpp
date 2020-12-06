@@ -1,5 +1,5 @@
 /**
- * @file gmm_train_test.cpp
+ * @file tests/main_tests/gmm_train_test.cpp
  * @author Yashwant Singh
  *
  * Test mlpackMain() of gmm_train_main.cpp.
@@ -20,8 +20,8 @@ static const std::string testName = "GmmTrain";
 #include "test_helper.hpp"
 #include <mlpack/methods/gmm/gmm_train_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../catch.hpp"
+#include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
@@ -31,21 +31,21 @@ struct GmmTrainTestFixture
   GmmTrainTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~GmmTrainTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
 
 void ResetGmmTrainSetting()
 {
-  CLI::ClearSettings();
-  CLI::RestoreSettings(testName);
+  IO::ClearSettings();
+  IO::RestoreSettings(testName);
 }
 
 inline bool CheckDifferent(GMM* gmm1, GMM* gmm2)
@@ -74,10 +74,9 @@ inline bool CheckDifferent(GMM* gmm1, GMM* gmm2)
   return different;
 }
 
-BOOST_FIXTURE_TEST_SUITE(GmmTrainMainTest, GmmTrainTestFixture);
-
 // To check if the gaussian is positive or not.
-BOOST_AUTO_TEST_CASE(GmmTrainValidGaussianTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainValidGaussianTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -85,7 +84,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainValidGaussianTest)
   SetInputParam("gaussians", 0); // Invalid
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -93,7 +92,8 @@ BOOST_AUTO_TEST_CASE(GmmTrainValidGaussianTest)
   * To check if the number of gaussians in the output model is same as
   * that of input gaussian parameter or not.
  **/
-BOOST_AUTO_TEST_CASE(GmmTrainOutputModelGaussianTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainOutputModelGaussianTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -103,12 +103,13 @@ BOOST_AUTO_TEST_CASE(GmmTrainOutputModelGaussianTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
-  BOOST_REQUIRE_EQUAL(gmm->Gaussians(), (int) 2);
+  GMM* gmm = IO::GetParam<GMM*>("output_model");
+  REQUIRE(gmm->Gaussians() == (int) 2);
 }
 
 // Max iterations must be positive.
-BOOST_AUTO_TEST_CASE(GmmTrainMaxIterationsTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainMaxIterationsTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -118,12 +119,13 @@ BOOST_AUTO_TEST_CASE(GmmTrainMaxIterationsTest)
   SetInputParam("max_iterations", (int)-1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 // Ensure that Trials must be greater than 0.
-BOOST_AUTO_TEST_CASE(GmmTrainPositiveTrialsTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPositiveTrialsTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -132,12 +134,13 @@ BOOST_AUTO_TEST_CASE(GmmTrainPositiveTrialsTest)
   SetInputParam("trials", (int) 0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 // Checking that percentage is between 0 and 1.
-BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GMMRefinedStartPercentageTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -146,16 +149,17 @@ BOOST_AUTO_TEST_CASE(RefinedStartPercentageTest)
 
   Log::Fatal.ignoreInput = true;
   SetInputParam("percentage", (double) 2.0); // Invalid
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 
   SetInputParam("percentage", (double) -1.0); // Invalid
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 
   Log::Fatal.ignoreInput = false;
 }
 
 // Samplings must be positive.
-BOOST_AUTO_TEST_CASE(GmmTrainSamplings)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplings",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -164,12 +168,13 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplings)
   SetInputParam("samplings", (int) 0); // Invalid
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 // Number of gaussians in the model trained from input model.
-BOOST_AUTO_TEST_CASE(GmmTrainNumberOfGaussian)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainNumberOfGaussian",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -178,23 +183,24 @@ BOOST_AUTO_TEST_CASE(GmmTrainNumberOfGaussian)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = IO::GetParam<GMM*>("output_model");
 
   SetInputParam("input_model", gmm);
 
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
 
   SetInputParam("input", std::move(inputData));
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
 
-  BOOST_REQUIRE_EQUAL(gmm1->Gaussians(), (int) 2);
+  REQUIRE(gmm1->Gaussians() == (int) 2);
 }
 
 // Making sure that enabling no_force_positive doesn't crash.
-BOOST_AUTO_TEST_CASE(GmmTrainNoForcePositiveTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainNoForcePositiveTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -204,27 +210,28 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoForcePositiveTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = IO::GetParam<GMM*>("output_model");
 
   SetInputParam("input_model", gmm);
 
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
 
   SetInputParam("input", std::move(inputData));
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
 
-  BOOST_REQUIRE_EQUAL(gmm1->Gaussians(), (int) 1);
+  REQUIRE(gmm1->Gaussians() == (int) 1);
 }
 
 // Ensure that Noise affects the final result.
-BOOST_AUTO_TEST_CASE(GmmTrainNoiseTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainNoiseTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("data_3d_mixed.txt", inputData))
-    BOOST_FAIL("Unable to load train dataset data_3d_mixed.txt!");
+    FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   math::FixedRandomSeed();
 
@@ -234,7 +241,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoiseTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = IO::GetParam<GMM*>("output_model");
 
   ResetGmmTrainSetting();
 
@@ -246,13 +253,16 @@ BOOST_AUTO_TEST_CASE(GmmTrainNoiseTest)
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
 
-  BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
+  REQUIRE(CheckDifferent(gmm, gmm1));
+
+  delete gmm;
 }
 
 // Ensure that Trials affects the final result.
-BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainTrialsTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(10, 1000, arma::fill::randu);
 
@@ -273,7 +283,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 
     mlpackMain();
 
-    GMM* gmm = std::move(CLI::GetParam<GMM*>("output_model"));
+    GMM* gmm = IO::GetParam<GMM*>("output_model");
 
     ResetGmmTrainSetting();
 
@@ -287,21 +297,24 @@ BOOST_AUTO_TEST_CASE(GmmTrainTrialsTest)
 
     mlpackMain();
 
-    GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+    GMM* gmm1 = IO::GetParam<GMM*>("output_model");
 
     success = CheckDifferent(gmm, gmm1);
+
+    delete gmm;
+
     if (success)
       break;
 
-    delete gmm;
     bindings::tests::CleanMemory();
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 // Ensure that the maximum number of iterations affects the result.
-BOOST_AUTO_TEST_CASE(GmmTrainDiffMaxIterationsTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffMaxIterationsTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 150, arma::fill::randu);
 
@@ -315,7 +328,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiffMaxIterationsTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = IO::GetParam<GMM*>("output_model");
 
   ResetGmmTrainSetting();
 
@@ -329,13 +342,16 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiffMaxIterationsTest)
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
 
-  BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
+  REQUIRE(CheckDifferent(gmm, gmm1));
+
+  delete gmm;
 }
 
 // Ensure that the maximum number of k-means iterations affects the result.
-BOOST_AUTO_TEST_CASE(GmmTrainDiffKmeansMaxIterationsTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffKmeansMaxIterationsTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 150, arma::fill::randu);
 
@@ -356,7 +372,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiffKmeansMaxIterationsTest)
 
     mlpackMain();
 
-    GMM* gmm = CLI::GetParam<GMM*>("output_model");
+    GMM* gmm = IO::GetParam<GMM*>("output_model");
 
     ResetGmmTrainSetting();
 
@@ -370,27 +386,31 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiffKmeansMaxIterationsTest)
 
     mlpackMain();
 
-    GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+    GMM* gmm1 = IO::GetParam<GMM*>("output_model");
 
     ResetGmmTrainSetting();
 
     success = CheckDifferent(gmm, gmm1);
+
+    delete gmm;
+    delete gmm1;
+
     if (success)
       break;
 
-    delete gmm;
     bindings::tests::CleanMemory();
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 // Ensure that Percentage affects the final result when refined_start is true.
-BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPercentageTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("data_3d_mixed.txt", inputData))
-    BOOST_FAIL("Unable to load train dataset data_3d_mixed.txt!");
+    FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 2);
@@ -402,7 +422,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = IO::GetParam<GMM*>("output_model");
 
   ResetGmmTrainSetting();
 
@@ -416,17 +436,20 @@ BOOST_AUTO_TEST_CASE(GmmTrainPercentageTest)
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
 
-  BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
+  REQUIRE(CheckDifferent(gmm, gmm1));
+
+  delete gmm;
 }
 
 // Ensure that Sampling affects the final result when refined_start is true.
-BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplingsTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("data_3d_mixed.txt", inputData))
-    BOOST_FAIL("Unable to load train dataset data_3d_mixed.txt!");
+    FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 8);
@@ -438,7 +461,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = IO::GetParam<GMM*>("output_model");
 
   ResetGmmTrainSetting();
 
@@ -452,17 +475,20 @@ BOOST_AUTO_TEST_CASE(GmmTrainSamplingsTest)
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
 
-  BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
+  REQUIRE(CheckDifferent(gmm, gmm1));
+
+  delete gmm;
 }
 
 // Ensure that tolerance affects the final result.
-BOOST_AUTO_TEST_CASE(GmmTrainToleranceTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainToleranceTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData;
   if (!data::Load("data_3d_mixed.txt", inputData))
-    BOOST_FAIL("Unable to load train dataset data_3d_mixed.txt!");
+    FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   SetInputParam("input", inputData);
   SetInputParam("gaussians", (int) 2);
@@ -472,7 +498,7 @@ BOOST_AUTO_TEST_CASE(GmmTrainToleranceTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = IO::GetParam<GMM*>("output_model");
 
   ResetGmmTrainSetting();
 
@@ -484,13 +510,16 @@ BOOST_AUTO_TEST_CASE(GmmTrainToleranceTest)
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
 
-  BOOST_REQUIRE(CheckDifferent(gmm, gmm1));
+  REQUIRE(CheckDifferent(gmm, gmm1));
+
+  delete gmm;
 }
 
 // Ensure that saved model can be used again.
-BOOST_AUTO_TEST_CASE(GmmTrainModelReuseTest)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainModelReuseTest",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -499,33 +528,34 @@ BOOST_AUTO_TEST_CASE(GmmTrainModelReuseTest)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = IO::GetParam<GMM*>("output_model");
 
   SetInputParam("input_model", gmm);
 
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
 
   SetInputParam("input", inputData);
 
   mlpackMain();
 
-  GMM* gmm1 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm1 = IO::GetParam<GMM*>("output_model");
 
   SetInputParam("input_model", gmm1);
 
-  CLI::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
 
   SetInputParam("input", std::move(inputData));
 
   mlpackMain();
 
-  GMM* gmm2 = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm2 = IO::GetParam<GMM*>("output_model");
 
-  BOOST_REQUIRE_EQUAL(gmm1, gmm2);
+  REQUIRE(gmm1 == gmm2);
 }
 
 // Ensure that Gmm's covariances are diagonal when diagonal_covariance is true.
-BOOST_AUTO_TEST_CASE(GmmTrainDiagCovariance)
+TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiagCovariance",
+                 "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData(5, 10, arma::fill::randu);
 
@@ -535,18 +565,16 @@ BOOST_AUTO_TEST_CASE(GmmTrainDiagCovariance)
 
   mlpackMain();
 
-  GMM* gmm = CLI::GetParam<GMM*>("output_model");
+  GMM* gmm = IO::GetParam<GMM*>("output_model");
 
   arma::uvec sortedIndices = sort_index(gmm->Weights());
 
-  for (size_t k = 0; k < sortedIndices.n_elem; k++)
+  for (size_t k = 0; k < sortedIndices.n_elem; ++k)
   {
     arma::mat diagCov(gmm->Component(sortedIndices[k]).Covariance());
-      for (size_t i = 0; i < diagCov.n_rows; i++)
-        for (size_t j = 0; j < diagCov.n_cols; j++)
+      for (size_t i = 0; i < diagCov.n_rows; ++i)
+        for (size_t j = 0; j < diagCov.n_cols; ++j)
           if (i != j && diagCov(i, j) != (double) 0)
-            BOOST_FAIL("Covariance is not diagonal");
+            FAIL("Covariance is not diagonal");
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

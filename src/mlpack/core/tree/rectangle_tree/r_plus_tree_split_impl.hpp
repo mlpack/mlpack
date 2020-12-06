@@ -1,5 +1,5 @@
 /**
- * @file r_plus_tree_split_impl.hpp
+ * @file core/tree/rectangle_tree/r_plus_tree_split_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of class (RPlusTreeSplit) to split a RectangleTree.
@@ -100,7 +100,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
   TreeType* parent = tree->Parent();
   size_t i = 0;
   while (parent->children[i] != tree)
-    i++;
+    ++i;
 
   assert(i < parent->NumChildren());
 
@@ -170,7 +170,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
   TreeType* parent = tree->Parent();
   size_t i = 0;
   while (parent->children[i] != tree)
-    i++;
+    ++i;
 
   assert(i < parent->NumChildren());
 
@@ -216,7 +216,7 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNodeAlongPartition(
   }
 
   // Insert points into the corresponding subtree.
-  for (size_t i = 0; i < tree->NumPoints(); i++)
+  for (size_t i = 0; i < tree->NumPoints(); ++i)
   {
     if (tree->Dataset().col(tree->Point(i))[cutAxis] <= cut)
     {
@@ -254,7 +254,7 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitNonLeafNodeAlongPartition(
   tree->AuxiliaryInfo().SplitAuxiliaryInfo(treeOne, treeTwo, cutAxis, cut);
 
   // Insert children into the corresponding subtree.
-  for (size_t i = 0; i < tree->NumChildren(); i++)
+  for (size_t i = 0; i < tree->NumChildren(); ++i)
   {
     TreeType* child = tree->children[i];
     int policy = SplitPolicyType::GetSplitPolicy(*child, cutAxis, cut);
@@ -313,7 +313,7 @@ AddFakeNodes(const TreeType* tree, TreeType* emptyTree)
   size_t numDescendantNodes = tree->TreeDepth() - 1;
 
   TreeType* node = emptyTree;
-  for (size_t i = 0; i < numDescendantNodes; i++)
+  for (size_t i = 0; i < numDescendantNodes; ++i)
   {
     TreeType* child = new TreeType(node);
     node->children[node->NumChildren()++] = child;
@@ -342,7 +342,7 @@ PartitionNode(const TreeType* node, size_t& minCutAxis,
   minCutAxis = node->Bound().Dim();
 
   // Find the sweep with a minimal cost.
-  for (size_t k = 0; k < node->Bound().Dim(); k++)
+  for (size_t k = 0; k < node->Bound().Dim(); ++k)
   {
     typename TreeType::ElemType cut;
     SweepCostType cost;

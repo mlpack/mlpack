@@ -1,5 +1,5 @@
 /**
- * @file copy_visitor.hpp
+ * @file methods/ann/visitor/copy_visitor.hpp
  * @author Shangtong Zhang
  *
  * This file provides an abstraction for copy between layers.

@@ -1,5 +1,5 @@
 /**
- * @file hoeffding_numeric_split.hpp
+ * @file methods/hoeffding_trees/hoeffding_numeric_split.hpp
  * @author Ryan Curtin
  *
  * A numeric feature split for Hoeffding trees.  This is a very simple
@@ -121,7 +121,7 @@ class HoeffdingNumericSplit
 
   //! Serialize the object.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Before binning, this holds the points we have seen so far.

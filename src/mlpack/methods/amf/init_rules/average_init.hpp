@@ -1,5 +1,5 @@
 /**
- * @file average_init.hpp
+ * @file methods/amf/init_rules/average_init.hpp
  * @author Sumedh Ghaisas
  *
  * Initialization rule for Alternating Matrix Factorization.
@@ -119,7 +119,7 @@ class AverageInitialization
 
   //! Serialize the object (in this case, there is nothing to do).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace amf

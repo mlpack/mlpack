@@ -5,6 +5,10 @@ set(SOURCES
   add_impl.hpp
   add_merge.hpp
   add_merge_impl.hpp
+  adaptive_max_pooling.hpp
+  adaptive_max_pooling_impl.hpp
+  adaptive_mean_pooling.hpp
+  adaptive_mean_pooling_impl.hpp
   alpha_dropout.hpp
   alpha_dropout_impl.hpp
   atrous_convolution.hpp
@@ -67,12 +71,18 @@ set(SOURCES
   mean_pooling_impl.hpp
   minibatch_discrimination.hpp
   minibatch_discrimination_impl.hpp
+  multihead_attention_impl.hpp
+  multihead_attention.hpp
   multiply_constant.hpp
   multiply_constant_impl.hpp
   multiply_merge.hpp
   multiply_merge_impl.hpp
+  noisylinear.hpp
+  noisylinear_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
+  positional_encoding.hpp
+  positional_encoding_impl.hpp
   recurrent.hpp
   recurrent_impl.hpp
   recurrent_attention.hpp
@@ -81,10 +91,16 @@ set(SOURCES
   reinforce_normal_impl.hpp
   reparametrization.hpp
   reparametrization_impl.hpp
+  radial_basis_function.hpp
+  radial_basis_function_impl.hpp
   select.hpp
   select_impl.hpp
   sequential.hpp
   sequential_impl.hpp
+  softmax_impl.hpp
+  softmax.hpp
+  spatial_dropout.hpp
+  spatial_dropout_impl.hpp
   subview.hpp
   transposed_convolution.hpp
   transposed_convolution_impl.hpp
@@ -96,6 +112,12 @@ set(SOURCES
   weight_norm_impl.hpp
   hardshrink.hpp
   hardshrink_impl.hpp
+  celu.hpp
+  celu_impl.hpp
+  softshrink.hpp
+  softshrink_impl.hpp
+  softmin.hpp
+  softmin_impl.hpp
 )
 
 # Add directory name to sources.

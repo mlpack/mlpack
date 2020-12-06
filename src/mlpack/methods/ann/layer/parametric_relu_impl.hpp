@@ -1,5 +1,5 @@
 /**
- * @file parametric_relu_impl.hpp
+ * @file methods/ann/layer/parametric_relu_impl.hpp
  * @author Prasanna Patil
  *
  * Definition of PReLU layer first introduced in the,
@@ -39,7 +39,7 @@ void PReLU<InputDataType, OutputDataType>::Reset()
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void PReLU<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   output = input;
   arma::uvec negative = arma::find(input < 0);
@@ -49,11 +49,11 @@ void PReLU<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void PReLU<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+    const DataType& input, const DataType& gy, DataType& g)
 {
   DataType derivative;
   derivative.set_size(arma::size(input));
-  for (size_t i = 0; i < input.n_elem; i++)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     derivative(i) = (input(i) >= 0) ? 1 : alpha(0);
   }
@@ -64,8 +64,9 @@ void PReLU<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void PReLU<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   if (gradient.n_elem == 0)
   {
@@ -80,9 +81,9 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void PReLU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar(CEREAL_NVP(alpha));
 }
 
 } // namespace ann

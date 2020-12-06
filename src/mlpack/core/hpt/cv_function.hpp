@@ -1,5 +1,5 @@
 /**
- * @file cv_function.hpp
+ * @file core/hpt/cv_function.hpp
  * @author Kirill Mishchenko
  *
  * A cross-validation wrapper for optimizers.
@@ -55,7 +55,7 @@ class CVFunction
    *     derivatives (by the definition). This value is going to be used when it
    *     is greater than the increase calculated with the rules described in the
    *     documentation for the relativeDelta parameter.
-   * @param BoundArgs Arguments that should be passed into the Evaluate method
+   * @param args Arguments that should be passed into the Evaluate method
    *     of the CVType object but are not going to be passed into the Evaluate
    *     method of this object.
    */

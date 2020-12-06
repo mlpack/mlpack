@@ -330,39 +330,46 @@ mlpack's image saving/loading functionality is based on [stb/](https://github.co
 
 Image utilities supports loading and saving of images.
 
-It supports filetypes "jpg", "png", "tga","bmp", "psd", "gif", "hdr", "pic", "pnm" for loading and "jpg", "png", "tga", "bmp", "hdr" for saving.
+It supports filetypes "jpg", "png", "tga", "bmp", "psd", "gif", "hdr", "pic",
+"pnm" for loading and "jpg", "png", "tga", "bmp", "hdr" for saving.
 
-The datatype associated is unsigned char to support RGB values in the range 1-255. To feed data into the network typecast of `arma::Mat` may be required. Images are stored in matrix as (width * height * channels, NumberOfImages). Therefore imageMatrix.col(0) would be the first image if images are loaded in imageMatrix.
+The datatype associated is unsigned char to support RGB values in the range
+1-255. To feed data into the network typecast of `arma::Mat` may be required.
+Images are stored in the matrix as (width * height * channels, NumberOfImages).
+Therefore @c imageMatrix.col(0) would be the first image if images are loaded in
+@c imageMatrix.
 
 @section imageinfo_api_imagetut Accessing Metadata of Images: ImageInfo
 
 ImageInfo class contains the metadata of the images.
 @code
 ImageInfo(const size_t width,
-            const size_t height,
-            const size_t channels);
+          const size_t height,
+          const size_t channels,
+          const size_t quality = 90);
 @endcode
-Other public memebers include:
-  - flipVertical Flip the image vertical upon loading.
-  - quality Compression of the image if saved as jpg (0-100).
+
+The @c quality member denotes the compression of the image if it is saved as
+`jpg`; it takes values from 0 to 100.
 
 @section load_api_imagetut Loading Images in C++
 
-
 Standalone loading of images.
+
 @code
-   template<typename eT>
-   bool Load(const std::string& filename,
-             arma::Mat<eT>& matrix,
-             ImageInfo& info,
-             const bool fatal,
-             const bool transpose);
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal);
 @endcode
 
-Loading a test image. It also fills up the ImageInfo class object.
+The example below loads a test image. It also fills up the ImageInfo class
+object.
+
 @code
 data::ImageInfo info;
-data::Load("test_image.png", matrix, info, false, true);
+data::Load("test_image.png", matrix, info, false);
 @endcode
 
 ImageInfo requires height, width, number of channels of the image.
@@ -377,18 +384,17 @@ More than one image can be loaded into the same matrix.
 Loading multiple images:
 
 @code
-   template<typename eT>
-   bool Load(const std::vector<std::string>& files,
-             arma::Mat<eT>& matrix,
-             ImageInfo& info,
-             const bool fatal,
-             const bool transpose);
+template<typename eT>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          ImageInfo& info,
+          const bool fatal);
 @endcode
 
 @code
-  data::ImageInfo info;
-  std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
-  data::load(files, matrix, info, false, true);
+data::ImageInfo info;
+std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
+data::Load(files, matrix, info, false);
 @endcode
 
 @section save_api_imagetut Saving Images in C++
@@ -441,11 +447,11 @@ Multiple images are saved according to the vector of filenames specified.
 
 @section formatmodels Loading and saving models
 
-Using \c boost::serialization, mlpack is able to load and save machine learning
+Using \c cereal, mlpack is able to load and save machine learning
 models with ease.  These models can currently be saved in three formats:
 
  - binary (.bin); this is not human-readable, but it is small
- - text (.txt); this is sort of human-readable and relatively small
+ - json (.json); this is sort of human-readable and relatively small
  - xml (.xml); this is human-readable but very verbose and large
 
 The type of file to save is determined by the given file extension, as with the
@@ -465,7 +471,7 @@ options; for more information, see the documentation for each program
 
 @section formatmodelscpp Loading and saving models in C++
 
-mlpack uses the \c boost::serialization library internally to perform loading
+mlpack uses the \c cereal library internally to perform loading
 and saving of models, and provides convenience overloads of mlpack::data::Load()
 and mlpack::data::Save() to load and save these models.
 
@@ -473,13 +479,12 @@ To be serializable, a class must implement the method
 
 \code
 template<typename Archive>
-void serialize(Archive& ar, const unsigned int version);
+void serialize(Archive& ar);
 \endcode
 
 \note
 For more information on this method and how it works, see the
-boost::serialization documentation at
-http://www.boost.org/libs/serialization/doc/.
+cereal documentation at https://uscilab.github.io/cereal/index.html.
 
 \note
 Examples of serialize() methods can be found in most classes; one fairly
@@ -497,11 +502,11 @@ mlpack::math::Range object.
 \code
 // Create range and save it.
 mlpack::math::Range r(0.0, 5.0);
-mlpack::data::Save("range.txt", "range", r);
+mlpack::data::Save("range.json", "range", r);
 
 // Load into new range.
 mlpack::math::Range newRange;
-mlpack::data::Load("range.txt", "range", newRange);
+mlpack::data::Load("range.json", "range", newRange);
 \endcode
 
 It is important to be sure that you load the appropriate type; if you save, for

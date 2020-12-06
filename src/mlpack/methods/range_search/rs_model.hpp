@@ -1,5 +1,5 @@
 /**
- * @file rs_model.hpp
+ * @file methods/range_search/rs_model.hpp
  * @author Ryan Curtin
  *
  * This is a model for range search.  It is useful in that it provides an easy
@@ -20,6 +20,7 @@
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/octree.hpp>
 #include <boost/variant.hpp>
+
 #include "range_search.hpp"
 
 namespace mlpack {
@@ -300,7 +301,7 @@ class RSModel
 
   //! Serialize the range search model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   //! Expose the dataset.
   const arma::mat& Dataset() const;

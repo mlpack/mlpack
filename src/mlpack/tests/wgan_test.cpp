@@ -1,5 +1,5 @@
 /**
- * @file wgan_test.cpp
+ * @file tests/wgan_test.cpp
  * @author Shikhar Jaiswal
  *
  * Tests the WGAN network.
@@ -20,9 +20,9 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-#include "serialization.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
+#include "serialization_catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -30,14 +30,12 @@ using namespace mlpack::math;
 using namespace mlpack::regression;
 using namespace std::placeholders;
 
-BOOST_AUTO_TEST_SUITE(WGANNetworkTest);
-
 /*
  * Tests the standard WGAN implementation on the MNIST dataset.
  * It's not viable to train on bigger parameters due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
  */
-BOOST_AUTO_TEST_CASE(WGANMNISTTest)
+TEST_CASE("WGANMNISTTest", "[WGANNetworkTest]")
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 5;
@@ -131,7 +129,7 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
   double objVal = wgan.Train(trainData, optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 
   // Generate samples.
   Log::Info << "Sampling..." << std::endl;
@@ -139,7 +137,7 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
 
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
@@ -198,7 +196,7 @@ BOOST_AUTO_TEST_CASE(WGANMNISTTest)
  * It's not viable to train on bigger parameters due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
  */
-BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
+TEST_CASE("WGANGPMNISTTest", "[WGANNetworkTest]")
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 5;
@@ -293,7 +291,7 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
   double objVal = wganGP.Train(trainData, optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 
   // Generate samples.
   Log::Info << "Sampling..." << std::endl;
@@ -301,7 +299,7 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
 
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
@@ -327,7 +325,7 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
   wganGP.Predict(noise, orgPredictions);
 
   GAN<FFN<EarthMoverDistance<> >, GaussianInitialization,
-      std::function<double()>, WGANGP> wganGPText(generator, discriminator,
+      std::function<double()>, WGANGP> wganGPJson(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
@@ -341,18 +339,16 @@ BOOST_AUTO_TEST_CASE(WGANGPMNISTTest)
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
-  SerializeObjectAll(wganGP, wganGPXml, wganGPText, wganGPBinary);
+  SerializeObjectAll(wganGP, wganGPXml, wganGPJson, wganGPBinary);
 
-  arma::mat predictions, xmlPredictions, textPredictions, binaryPredictions;
+  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
   wganGP.Predict(noise, predictions);
   wganGPXml.Predict(noise, xmlPredictions);
-  wganGPText.Predict(noise, textPredictions);
+  wganGPJson.Predict(noise, jsonPredictions);
   wganGPBinary.Predict(noise, binaryPredictions);
 
   CheckMatrices(orgPredictions, predictions);
   CheckMatrices(orgPredictions, xmlPredictions);
-  CheckMatrices(orgPredictions, textPredictions);
+  CheckMatrices(orgPredictions, jsonPredictions);
   CheckMatrices(orgPredictions, binaryPredictions);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

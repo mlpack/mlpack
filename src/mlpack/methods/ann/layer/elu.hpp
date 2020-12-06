@@ -1,9 +1,9 @@
 /**
- * @file elu.hpp
+ * @file methods/ann/layer/elu.hpp
  * @author Vivek Pal
  * @author Dakshit Agrawal
  *
- * Definition of the ELU activation function as descibed by Djork-Arne Clevert,
+ * Definition of the ELU activation function as described by Djork-Arne Clevert,
  * Thomas Unterthiner and Sepp Hochreiter.
  *
  * Definition of the SELU function as introduced by
@@ -56,7 +56,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   title   = {Fast and Accurate Deep Network Learning by Exponential Linear
  *              Units (ELUs)},
  *   journal = {CoRR},
- *   year    = {2015}
+ *   year    = {2015},
+ *   url     = {https://arxiv.org/abs/1511.07289}
  * }
  * @endcode
  *
@@ -86,7 +87,8 @@ namespace ann /** Artificial Neural Network. */ {
  *              Andreas Mayr},
  *   title   = {Self-Normalizing Neural Networks},
  *   journal = {Advances in Neural Information Processing Systems},
- *   year    = {2017}
+ *   year    = {2017},
+ *   url = {https://arxiv.org/abs/1706.02515}
  * }
  * @endcode
  *
@@ -134,7 +136,7 @@ class ELU
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(const InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -146,7 +148,7 @@ class ELU
    * @param g The calculated gradient.
    */
   template<typename DataType>
-  void Backward(const DataType&& input, DataType&& gy, DataType&& g);
+  void Backward(const DataType& input, const DataType& gy, DataType& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -163,6 +165,11 @@ class ELU
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
+  //! Get the value of deterministic parameter.
+  bool Deterministic() const { return deterministic; }
+  //! Modify the value of deterministic parameter.
+  bool& Deterministic() { return deterministic; }
+
   //! Get the lambda parameter.
   double const& Lambda() const { return lambda; }
 
@@ -170,7 +177,7 @@ class ELU
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

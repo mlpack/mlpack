@@ -1,5 +1,5 @@
 /**
- * @file discrete_hilbert_value.hpp
+ * @file core/tree/rectangle_tree/discrete_hilbert_value.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the DiscreteHilbertValue class, a class that calculates
@@ -280,7 +280,7 @@ class DiscreteHilbertValue
 
  public:
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 };
 
 } // namespace tree

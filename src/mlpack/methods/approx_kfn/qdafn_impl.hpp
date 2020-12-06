@@ -1,5 +1,5 @@
 /**
- * @file qdafn_impl.hpp
+ * @file methods/approx_kfn/qdafn_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of QDAFN class methods.
@@ -139,12 +139,7 @@ void QDAFN<MatType>::Search(const MatType& querySet,
       const double dist = mlpack::metric::EuclideanDistance::Evaluate(
           querySet.col(q), candidateSet[p.second].col(tableIndex));
 
-      // Is this neighbor good enough to insert into the results?
-      if (dist > resultsQueue.top().first)
-      {
-        resultsQueue.pop();
-        resultsQueue.push(std::make_pair(dist, sIndices(tableIndex, p.second)));
-      }
+      resultsQueue.push(std::make_pair(dist, sIndices(tableIndex, p.second)));
 
       // Now (line 14) get the next element and insert into the queue.  Do this
       // by adjusting the previous value.  Don't insert anything if we are at
@@ -159,29 +154,44 @@ void QDAFN<MatType>::Search(const MatType& querySet,
       }
     }
 
-    // Extract the results.
-    for (size_t j = 1; j <= k; ++j)
+    // Extract the results and deduplicate them.
+    size_t extracted = 1;
+    neighbors(0, q) = resultsQueue.top().second;
+    distances(0, q) = resultsQueue.top().first;
+    resultsQueue.pop();
+
+    while (!resultsQueue.empty())
     {
-      neighbors(k - j, q) = resultsQueue.top().second;
-      distances(k - j, q) = resultsQueue.top().first;
+      if (extracted == k)
+        break;
+
+      std::pair<double, size_t> result = resultsQueue.top();
       resultsQueue.pop();
+
+      // Avoid inserting any duplicates.
+      if (neighbors(extracted - 1, q) != result.second)
+      {
+        neighbors(extracted, q) = resultsQueue.top().second;
+        distances(extracted, q) = resultsQueue.top().first;
+        ++extracted;
+      }
     }
   }
 }
 
 template<typename MatType>
 template<typename Archive>
-void QDAFN<MatType>::serialize(Archive& ar, const unsigned int /* version */)
+void QDAFN<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(l);
-  ar & BOOST_SERIALIZATION_NVP(m);
-  ar & BOOST_SERIALIZATION_NVP(lines);
-  ar & BOOST_SERIALIZATION_NVP(projections);
-  ar & BOOST_SERIALIZATION_NVP(sIndices);
-  ar & BOOST_SERIALIZATION_NVP(sValues);
-  if (Archive::is_loading::value)
+  ar(CEREAL_NVP(l));
+  ar(CEREAL_NVP(m));
+  ar(CEREAL_NVP(lines));
+  ar(CEREAL_NVP(projections));
+  ar(CEREAL_NVP(sIndices));
+  ar(CEREAL_NVP(sValues));
+  if (cereal::is_loading<Archive>())
     candidateSet.clear();
-  ar & BOOST_SERIALIZATION_NVP(candidateSet);
+  ar(CEREAL_NVP(candidateSet));
 }
 
 } // namespace neighbor

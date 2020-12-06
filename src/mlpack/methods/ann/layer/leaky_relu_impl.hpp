@@ -1,5 +1,5 @@
 /**
- * @file leaky_relu_impl.hpp
+ * @file methods/ann/layer/leaky_relu_impl.hpp
  * @author Dhawal Arora
  *
  * Implementation of LeakyReLU layer first introduced in the acoustic model,
@@ -30,7 +30,7 @@ LeakyReLU<InputDataType, OutputDataType>::LeakyReLU(
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void LeakyReLU<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   output = arma::max(input, alpha * input);
 }
@@ -38,11 +38,11 @@ void LeakyReLU<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void LeakyReLU<InputDataType, OutputDataType>::Backward(
-    const DataType&& input, DataType&& gy, DataType&& g)
+    const DataType& input, const DataType& gy, DataType& g)
 {
   DataType derivative;
   derivative.set_size(arma::size(input));
-  for (size_t i = 0; i < input.n_elem; i++)
+  for (size_t i = 0; i < input.n_elem; ++i)
     derivative(i) = (input(i) >= 0) ? 1 : alpha;
 
   g = gy % derivative;
@@ -52,9 +52,9 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void LeakyReLU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar(CEREAL_NVP(alpha));
 }
 
 } // namespace ann

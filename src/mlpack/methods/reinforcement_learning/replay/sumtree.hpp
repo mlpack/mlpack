@@ -1,5 +1,5 @@
 /**
- * @file sumtree.hpp
+ * @file methods/reinforcement_learning/replay/sumtree.hpp
  * @author Xiaohong
  *
  * This file is an implementation of sumtree. Based on:
@@ -74,7 +74,7 @@ class SumTree
    */
   void BatchUpdate(const arma::ucolvec& indices, const arma::Col<T>& data)
   {
-    for (size_t i = 0; i < indices.n_rows; i++)
+    for (size_t i = 0; i < indices.n_rows; ++i)
     {
       element[indices[i] + capacity] = data[i];
     }

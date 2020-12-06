@@ -1,5 +1,5 @@
 /**
- * @file hmm.hpp
+ * @file methods/hmm/hmm.hpp
  * @author Ryan Curtin
  * @author Tran Quoc Long
  * @author Michael Fox
@@ -162,7 +162,6 @@ class HMM
    * Train() can be called multiple times with different sequences; each time it
    * is called, it uses the current parameters of the HMM as a starting point
    * for training.
-   * @endnote
    *
    * @param dataSeq Vector of observation sequences.
    * @return Log-likelihood of state sequence.
@@ -184,7 +183,6 @@ class HMM
    * Train() can be called multiple times with different sequences; each time it
    * is called, it uses the current parameters of the HMM as a starting point
    * for training.
-   * @endnote
    *
    * @param dataSeq Vector of observation sequences.
    * @param stateSeq Vector of state sequences, corresponding to each
@@ -201,13 +199,13 @@ class HMM
    * of the most probable sequence is returned.
    *
    * @param dataSeq Sequence of observations.
-   * @param stateProb Matrix in which the log probabilities of each state at
+   * @param stateLogProb Matrix in which the log probabilities of each state at
    *    each time interval will be stored.
-   * @param forwardProb Matrix in which the forward log probabilities of each
+   * @param forwardLogProb Matrix in which the forward log probabilities of each
    *    state at each time interval will be stored.
-   * @param backwardProb Matrix in which the backward log probabilities of each
+   * @param backwardLogProb Matrix in which the backward log probabilities of each
    *    state at each time interval will be stored.
-   * @param scales Vector in which the log of scaling factors at each time
+   * @param logScales Vector in which the log of scaling factors at each time
    *    interval will be stored.
    * @return Log-likelihood of most likely state sequence.
    */
@@ -359,16 +357,13 @@ class HMM
    * Load the object.
    */
   template<typename Archive>
-  void load(Archive& ar, const unsigned int version);
+  void load(Archive& ar, const uint32_t version);
 
   /**
    * Save the object.
    */
   template<typename Archive>
-  void save(Archive& ar, const unsigned int version) const;
-
-  BOOST_SERIALIZATION_SPLIT_MEMBER();
-
+  void save(Archive& ar, const uint32_t version) const;
 
  protected:
   // Helper functions.
@@ -379,8 +374,8 @@ class HMM
    * states and columns equal to the number of observations.
    *
    * @param dataSeq Data sequence to compute probabilities for.
-   * @param scales Vector in which scaling factors will be saved.
-   * @param forwardProb Matrix in which forward probabilities will be saved.
+   * @param logScales Vector in which scaling factors will be saved.
+   * @param forwardLogProb Matrix in which forward probabilities will be saved.
    */
   void Forward(const arma::mat& dataSeq,
                arma::vec& logScales,
@@ -394,8 +389,8 @@ class HMM
    * columns equal to the number of observations.
    *
    * @param dataSeq Data sequence to compute probabilities for.
-   * @param scales Vector of scaling factors.
-   * @param backwardProb Matrix in which backward probabilities will be saved.
+   * @param logScales Vector of scaling factors.
+   * @param backwardLogProb Matrix in which backward probabilities will be saved.
    */
   void Backward(const arma::mat& dataSeq,
                 const arma::vec& logScales,

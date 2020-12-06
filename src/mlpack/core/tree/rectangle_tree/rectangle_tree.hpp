@@ -1,5 +1,5 @@
 /**
- * @file rectangle_tree.hpp
+ * @file core/tree/rectangle_tree/rectangle_tree.hpp
  * @author Andrew Wells
  *
  * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree,
@@ -173,6 +173,7 @@ class RectangleTree
    *
    * @param other The tree to be copied.
    * @param deepCopy If false, the children are not recursively copied.
+   * @param newParent Set a new parent as applicable, default NULL.
    */
   RectangleTree(const RectangleTree& other,
                 const bool deepCopy = true,
@@ -200,12 +201,12 @@ class RectangleTree
   RectangleTree& operator=(RectangleTree&& other);
 
   /**
-   * Construct the tree from a boost::serialization archive.
+   * Construct the tree from a cereal archive.
    */
   template<typename Archive>
   RectangleTree(
       Archive& ar,
-      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
+      const typename std::enable_if_t<cereal::is_loading<Archive>()>* = 0);
 
   /**
    * Deletes this node, deallocating the memory for the children and calling
@@ -566,14 +567,14 @@ class RectangleTree
  protected:
   /**
    * A default constructor.  This is meant to only be used with
-   * boost::serialization, which is allowed with the friend declaration below.
+   * cereal, which is allowed with the friend declaration below.
    * This does not return a valid tree!  This method must be protected, so that
    * the serialization shim can work with the default constructor.
    */
   RectangleTree();
 
   //! Friend access is given for the default constructor.
-  friend class boost::serialization::access;
+  friend class cereal::access;
 
   //! Give friend access for DescentType.
   friend DescentType;
@@ -595,6 +596,8 @@ class RectangleTree
    * @param usePoint True if we use the optimized version of the algorithm that
    *      is possible when we now what point was deleted.  False otherwise (eg.
    *      if we deleted a node instead of a point).
+   * @param relevels The levels that have been reinserted to on this top level
+   *      insertion.
    */
   void CondenseTree(const arma::vec& point,
                     std::vector<bool>& relevels,
@@ -612,7 +615,7 @@ class RectangleTree
   /**
    * Shrink the bound object of this node for the removal of a child node.
    *
-   * @param bound The HRectBound<>& of the bound that was removed to reqire this
+   * @param changedBound The HRectBound<>& of the bound that was removed to reqire this
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
@@ -627,7 +630,7 @@ class RectangleTree
    * Serialize the tree.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 };
 
 } // namespace tree
