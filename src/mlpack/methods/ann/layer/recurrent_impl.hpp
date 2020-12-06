@@ -136,40 +136,40 @@ size_t Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() c
   {
     return inputShapeStartModule;
     // If input shape of first module is 0
+  else
+  {
+    // Return input shape of the second module that we have.
+    const size_t inputShapeInputModule = boost::apply_visitor(InShapeVisitor(), inputModule);
+    if (inputShapeInputModule != 0)
+    {
+      return inputShapeInputModule;
+      // If the input shape of second module is 0
     else
     {
-      // Return input shape of the second module that we have.
-      const size_t inputShapeInputModule = boost::apply_visitor(InShapeVisitor(), inputModule);
-      if (inputShapeInputModule != 0)
+      // Return input shape of the third module that we have.
+      const size_t inputShapeFeedbackModule = boost::apply_visitor(InShapeVisitor(), 
+                                                                   feedbackModule);
+      if (inputShapeFeedbackModule != 0)
       {
-        return inputShapeInputModule;
-        // If the input shape of second module is 0
-        else
+        return inputShapeFeedbackModule;
+        // If the input shape of the third module is 0
+      else
+      {
+        // Return the shape of the fourth module that we have.
+        const size_t inputShapeTransferModule = boost::apply_visitor(InShapeVisitor(),
+                                                                     transferModule);
+        if (inputShapeTransferModule != 0)
         {
-          // Return input shape of the third module that we have.
-          const size_t inputShapeFeedbackModule = boost::apply_visitor(InShapeVisitor(), 
-                                                                       feedbackModule);
-          if (inputShapeFeedbackModule != 0)
-          {
-            return inputShapeFeedbackModule;
-            // If the input shape of the third module is 0
-            else
-            {
-              // Return the shape of the fourth module that we have.
-              const size_t inputShapeTransferModule = boost::apply_visitor(InShapeVisitor(),
-                                                                           transferModule);
-              if (inputShapeTransferModule != 0)
-              {
-                return inputShapeTransferModule;
-              }
-              // If the input shape of the fourth module is 0.
-              else
-                return 0;
-            }
-          }
+          return inputShapeTransferModule;
         }
+        // If the input shape of the fourth module is 0.
+        else
+          return 0;
+      }
       }
     }
+    }
+  }
   }
 }
 
