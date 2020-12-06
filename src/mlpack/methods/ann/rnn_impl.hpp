@@ -53,6 +53,50 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
 
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
+RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
+    const RNN& network) :
+    rho(network.rho),
+    outputLayer(network.outputLayer),
+    initializeRule(network.initializeRule),
+    inputSize(network.inputSize),
+    outputSize(network.outputSize),
+    targetSize(network.targetSize),
+    reset(network.reset),
+    single(network.single),
+    parameter(network.parameter),
+    numFunctions(network.numFunctions),
+    deterministic(network.deterministic)
+{
+  for (size_t i = 0; i < network.network.size(); ++i)
+  {
+    this->network.push_back(boost::apply_visitor(copyVisitor,
+        network.network[i]));
+    boost::apply_visitor(resetVisitor, this->network.back());
+  }
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
+RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
+    RNN&& network) :
+    rho(std::move(network.rho)),
+    outputLayer(std::move(network.outputLayer)),
+    initializeRule(std::move(network.initializeRule)),
+    inputSize(std::move(network.inputSize)),
+    outputSize(std::move(network.outputSize)),
+    targetSize(std::move(network.targetSize)),
+    reset(std::move(network.reset)),
+    single(std::move(network.single)),
+    parameter(std::move(network.parameter)),
+    numFunctions(std::move(network.numFunctions)),
+    deterministic(std::move(network.deterministic)),
+    network(std::move(network.network))
+{
+  // Nothing to do here.
+}
+
+template<typename OutputLayerType, typename InitializationRuleType,
+         typename... CustomLayers>
 RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::~RNN()
 {
   for (LayerTypes<CustomLayers...>& layer : network)

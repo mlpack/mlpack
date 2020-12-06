@@ -289,7 +289,6 @@ endif()
 #   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
-#   BOOST_LIBRARYDIR - library directory for Boost
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
@@ -443,31 +442,11 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost "${BOOST_VERSION}"
-    COMPONENTS
-    REQUIRED
-)
-
-link_directories(${Boost_LIBRARY_DIRS})
-
-# In Visual Studio, automatic linking is performed, so we don't need to worry
-# about it.  Clear the list of libraries to link against and let Visual Studio
-# handle it.
-if (MSVC)
-  link_directories(${Boost_LIBRARY_DIRS})
-  set(CMAKE_MSVCIDE_RUN_PATH ${CMAKE_MSVCIDE_RUN_PATH} ${Boost_LIBRARY_DIRS})
-  message("boost lib dirs ${Boost_LIBRARY_DIRS}")
-  set(Boost_LIBRARIES "")
-endif ()
+find_package(Boost "${BOOST_VERSION}")
 
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${Boost_LIBRARIES})
-set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
-
-# For Boost testing framework (will have no effect on non-testing executables).
-# This specifies to Boost that we are dynamically linking to the Boost test
-# library.
-add_definitions(-DBOOST_TEST_DYN_LINK)
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES})
+set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS})
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
 # to compile with OpenMP are returned and added and the HAS_OPENMP definition

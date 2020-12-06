@@ -46,6 +46,90 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
 }
 
 template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>::FastLSTM(const FastLSTM& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    forwardStep(layer.forwardStep),
+    backwardStep(layer.backwardStep),
+    gradientStep(layer.gradientStep),
+    weights(layer.weights),
+    batchSize(layer.batchSize),
+    batchStep(layer.batchStep),
+    gradientStepIdx(layer.gradientStepIdx),
+    grad(layer.grad),
+    rhoSize(layer.rho),
+    bpttSteps(layer.bpttSteps)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>::FastLSTM(FastLSTM&& layer) :
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
+    rho(std::move(layer.rho)),
+    forwardStep(std::move(layer.forwardStep)),
+    backwardStep(std::move(layer.backwardStep)),
+    gradientStep(std::move(layer.gradientStep)),
+    weights(std::move(layer.weights)),
+    batchSize(std::move(layer.batchSize)),
+    batchStep(std::move(layer.batchStep)),
+    gradientStepIdx(std::move(layer.gradientStepIdx)),
+    grad(std::move(layer.grad)),
+    rhoSize(std::move(layer.rho)),
+    bpttSteps(std::move(layer.bpttSteps))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>&
+FastLSTM<InputDataType, OutputDataType>::operator=(const FastLSTM& layer)
+{
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    rho = layer.rho;
+    forwardStep = layer.forwardStep;
+    backwardStep = layer.backwardStep;
+    gradientStep = layer.gradientStep;
+    weights = layer.weights;
+    batchSize = layer.batchSize;
+    batchStep = layer.batchStep;
+    gradientStepIdx = layer.gradientStepIdx;
+    grad = layer.grad;
+    rhoSize = layer.rho;
+    bpttSteps = layer.bpttSteps;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>&
+FastLSTM<InputDataType, OutputDataType>::operator=(FastLSTM&& layer)
+{
+  if (this != &layer)
+  {
+    inSize = std::move(layer.inSize);
+    outSize = std::move(layer.outSize);
+    rho = std::move(layer.rho);
+    forwardStep = std::move(layer.forwardStep);
+    backwardStep = std::move(layer.backwardStep);
+    gradientStep = std::move(layer.gradientStep);
+    weights = std::move(layer.weights);
+    batchSize = std::move(layer.batchSize);
+    batchStep = std::move(layer.batchStep);
+    gradientStepIdx = std::move(layer.gradientStepIdx);
+    grad = std::move(layer.grad);
+    rhoSize = std::move(layer.rho);
+    bpttSteps = std::move(layer.bpttSteps);
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
 void FastLSTM<InputDataType, OutputDataType>::Reset()
 {
   // Set the weight parameter for the input to gate layer (linear layer) using
