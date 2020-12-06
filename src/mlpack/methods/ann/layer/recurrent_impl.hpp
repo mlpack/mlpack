@@ -135,7 +135,8 @@ size_t Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() c
   if (inputShapeStartModule != 0)
   {
     return inputShapeStartModule;
-    // If input shape of first module is 0
+  }
+  // If input shape of first module is 0
   else
   {
     // Return input shape of the second module that we have.
@@ -143,7 +144,8 @@ size_t Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() c
     if (inputShapeInputModule != 0)
     {
       return inputShapeInputModule;
-      // If the input shape of second module is 0
+    // If the input shape of second module is 0
+    }
     else
     {
       // Return input shape of the third module that we have.
@@ -152,7 +154,8 @@ size_t Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() c
       if (inputShapeFeedbackModule != 0)
       {
         return inputShapeFeedbackModule;
-        // If the input shape of the third module is 0
+      // If the input shape of the third module is 0
+      }
       else
       {
         // Return the shape of the fourth module that we have.
@@ -166,10 +169,7 @@ size_t Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() c
         else
           return 0;
       }
-      }
     }
-    }
-  }
   }
 }
 
