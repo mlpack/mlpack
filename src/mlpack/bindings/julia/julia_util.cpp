@@ -347,6 +347,9 @@ size_t IO_GetParamUMatCols(const char* paramName)
 size_t* IO_GetParamUMat(const char* paramName)
 {
   arma::Mat<size_t>& mat = IO::GetParam<arma::Mat<size_t>>(paramName);
+
+  // Are we using preallocated memory?  If so we have to handle this more
+  // carefully.
   if (mat.n_elem <= arma::arma_config::mat_prealloc)
   {
     // Copy the memory to something that we can give back to Julia.
@@ -415,6 +418,9 @@ size_t IO_GetParamUColRows(const char* paramName)
 size_t* IO_GetParamUCol(const char* paramName)
 {
   arma::Col<size_t>& vec = IO::GetParam<arma::Col<size_t>>(paramName);
+
+  // Are we using preallocated memory?  If so we have to handle this more
+  // carefully.
   if (vec.n_elem <= arma::arma_config::mat_prealloc)
   {
     // Copy the memory to something we can give back to Julia.
@@ -483,6 +489,9 @@ size_t IO_GetParamURowCols(const char* paramName)
 size_t* IO_GetParamURow(const char* paramName)
 {
   arma::Row<size_t>& vec = IO::GetParam<arma::Row<size_t>>(paramName);
+
+  // Are we using preallocated memory?  If so we have to handle this more
+  // carefully.
   if (vec.n_elem <= arma::arma_config::mat_prealloc)
   {
     // Copy the memory to something we can give back to Julia.
