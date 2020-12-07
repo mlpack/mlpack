@@ -1,6 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * HMM: calculate likelihood for data stream with/without pre-calculated emission probability
+  * HMM: add functions to calculate likelihood for data stream with/without
+    pre-calculated emission probability (#2142).
 
 ### mlpack 3.4.2
 ###### 2020-10-26
