@@ -570,7 +570,7 @@ double HMM<Distribution>::EmissionLogLikelihood(
  */
 template<typename Distribution>
 double HMM<Distribution>::LogScaleFactor(const arma::vec &data,
-                                        arma::vec& forwardLogProb) const
+                                         arma::vec& forwardLogProb) const
 {
   arma::vec emissionLogProb(logTransition.n_rows);
 
