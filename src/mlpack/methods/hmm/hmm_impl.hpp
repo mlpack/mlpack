@@ -649,7 +649,7 @@ void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
  */
 template<typename Distribution>
 arma::vec HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
-                                double& logScales) const
+                                         double& logScales) const
 {
   // Our goal is to calculate the forward probabilities:
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
