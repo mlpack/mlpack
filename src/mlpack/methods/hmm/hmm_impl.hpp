@@ -725,8 +725,8 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   arma::vec emissionLogProb(logTransition.n_rows);
   for (size_t state = 0; state < logTransition.n_rows; state++)
   {
-        emissionLogProb(state) =
-                emission[state].LogProbability(dataSeq.unsafe_col(0));
+    emissionLogProb(state) =
+        emission[state].LogProbability(dataSeq.unsafe_col(0));
   }
 
   forwardLogProb.col(0) = ForwardAtT0(emissionLogProb, logScales(0));
