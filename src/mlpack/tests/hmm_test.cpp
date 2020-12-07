@@ -800,7 +800,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
     emission.Covariance(cov.at(i));
   }
 
-  //100 2D observations
+  // 100 2D observations.
   arma::mat obs = {
       {
           -0.0424, -0.0395, -0.0336, -0.0294, -0.0299, -0.032, -0.0289, -0.0148,
