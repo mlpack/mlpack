@@ -315,7 +315,8 @@ class HMM
    *
    * @param emissionLogProb emission probability at time t.
    * @param logLikelihood Log-likelihood of the given sequence of emission
-   * probability up to time t-1
+   *     probability up to time t-1.  This will be overwritten with the log-likelihood
+   *     of the given emission probability up to time t.
    * @param forwardLogProb Vector in which forward probabilities will be saved.
    *     Passing forwardLogProb as an empty vector indicates the start of the
    *     sequence (i.e. time t=0).
