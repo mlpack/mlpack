@@ -586,8 +586,8 @@ double HMM<Distribution>::LogScaleFactor(const arma::vec &data,
  * Compute the log-likelihood of the given data up to time t
  */
 template<typename Distribution>
-double HMM<Distribution>::LogLikelihood(const arma::vec &data,
-                                        double &logLikelihood,
+double HMM<Distribution>::LogLikelihood(const arma::vec& data,
+                                        double& logLikelihood,
                                         arma::vec& forwardLogProb) const
 {
   bool isStartOfSeq = forwardLogProb.empty();
