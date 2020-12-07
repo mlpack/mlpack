@@ -1040,7 +1040,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
   
   const double loglikelihoodRef = -2734.43;
 
-  //test loglikelihood calculation for the whole data
+  // Test log-likelihood calculation for the whole data.
   {
     const double loglikelihood = hmm.LogLikelihood(obs);
     REQUIRE(loglikelihood == Approx(loglikelihoodRef).epsilon(1e-3));
