@@ -653,8 +653,6 @@ arma::vec HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
 {
   // Our goal is to calculate the forward probabilities:
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
-
-
   ConvertToLogSpace();
 
   arma::vec forwardLogProb(logTransition.n_rows);
