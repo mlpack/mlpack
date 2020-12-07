@@ -299,7 +299,6 @@ class HMM
    * forwardLogProb vector.
    *
    * @param emissionLogProb emission probability at time t.
-   * probability up to time t-1
    * @param forwardLogProb Vector in which forward probabilities will be saved.
    *     Passing forwardLogProb as an empty vector indicates the start of the
    *     sequence (i.e. time t=0).
