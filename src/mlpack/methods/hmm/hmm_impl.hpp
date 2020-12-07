@@ -552,9 +552,9 @@ double HMM<Distribution>::EmissionLogScaleFactor(
  */
 template<typename Distribution>
 double HMM<Distribution>::EmissionLogLikelihood(
-                                        const arma::vec& emissionLogProb,
-                                        double &logLikelihood,
-                                        arma::vec& forwardLogProb) const
+    const arma::vec& emissionLogProb,
+    double& logLikelihood,
+    arma::vec& forwardLogProb) const
 {
     bool isStartOfSeq = forwardLogProb.empty();
     double curLogScale = EmissionLogScaleFactor(emissionLogProb,
