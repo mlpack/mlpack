@@ -353,8 +353,8 @@ class HMM
    * @param logLikelihood Log-likelihood of the given sequence of data
    *     up to time t-1.
    * @param forwardLogProb Vector in which forward probabilities will be saved.
-   * Passing forwardLogProb as an empty vector indicates the start of sequence
-   * or time t=0
+   *     Passing forwardLogProb as an empty vector indicates the start of the
+   *     sequence (i.e. time t=0).
    * @return Log-likelihood of the given sequence of data up to time t.
    */
   double LogLikelihood(const arma::vec &data,
