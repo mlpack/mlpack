@@ -535,7 +535,7 @@ double HMM<Distribution>::EmissionLogScaleFactor(
     double curLogScale;
     if (forwardLogProb.empty())
     {
-      // start of sequence or time t=0
+      // We are at the start of the sequence (i.e. time t=0).
       forwardLogProb = ForwardAtT0(emissionLogProb, curLogScale);
     }
     else
