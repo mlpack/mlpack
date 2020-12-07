@@ -529,8 +529,8 @@ double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq) const
  */
 template<typename Distribution>
 double HMM<Distribution>::EmissionLogScaleFactor(
-                                        const arma::vec& emissionLogProb,
-                                        arma::vec& forwardLogProb) const
+    const arma::vec& emissionLogProb,
+    arma::vec& forwardLogProb) const
 {
     double curLogScale;
     if (forwardLogProb.empty())
