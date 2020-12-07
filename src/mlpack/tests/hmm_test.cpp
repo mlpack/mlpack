@@ -835,7 +835,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
   };
   
   //100 pre-calculated emission probabilities each for 10 states
-  std::vector<arma::vec> emissionProb={
+  std::vector<arma::vec> emissionProb = {
     { -2.7301e+03, 1.7874e+00, -1.9428e+00, -3.6365e+00, -4.0397e-01, 
             -1.5115e-01, -1.0328e+00, -1.1071e+00, 5.2876e-01, -1.0643e-01 },
     { -2.3684e+03, 1.8059e+00, -2.2058e+00, -4.0514e+00, -5.0935e-01,
