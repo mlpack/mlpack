@@ -1,6 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * HMM: add functions to calculate likelihood for data stream with/without pre-calculated emission probability (#2142).
+
+  * HMM: add functions to calculate likelihood for data stream with/without
+    pre-calculated emission probability (#2142).
 
   * Added an implementation to Stratify Data (#2671).
 

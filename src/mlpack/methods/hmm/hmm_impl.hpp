@@ -529,13 +529,13 @@ double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq) const
  */
 template<typename Distribution>
 double HMM<Distribution>::EmissionLogScaleFactor(
-                                        const arma::vec& emissionLogProb,
-                                        arma::vec& forwardLogProb) const
+    const arma::vec& emissionLogProb,
+    arma::vec& forwardLogProb) const
 {
     double curLogScale;
     if (forwardLogProb.empty())
     {
-      // start of sequence or time t=0
+      // We are at the start of the sequence (i.e. time t=0).
       forwardLogProb = ForwardAtT0(emissionLogProb, curLogScale);
     }
     else
@@ -552,9 +552,9 @@ double HMM<Distribution>::EmissionLogScaleFactor(
  */
 template<typename Distribution>
 double HMM<Distribution>::EmissionLogLikelihood(
-                                        const arma::vec& emissionLogProb,
-                                        double &logLikelihood,
-                                        arma::vec& forwardLogProb) const
+    const arma::vec& emissionLogProb,
+    double& logLikelihood,
+    arma::vec& forwardLogProb) const
 {
     bool isStartOfSeq = forwardLogProb.empty();
     double curLogScale = EmissionLogScaleFactor(emissionLogProb,
@@ -570,7 +570,7 @@ double HMM<Distribution>::EmissionLogLikelihood(
  */
 template<typename Distribution>
 double HMM<Distribution>::LogScaleFactor(const arma::vec &data,
-                                        arma::vec& forwardLogProb) const
+                                         arma::vec& forwardLogProb) const
 {
   arma::vec emissionLogProb(logTransition.n_rows);
 
@@ -586,8 +586,8 @@ double HMM<Distribution>::LogScaleFactor(const arma::vec &data,
  * Compute the log-likelihood of the given data up to time t
  */
 template<typename Distribution>
-double HMM<Distribution>::LogLikelihood(const arma::vec &data,
-                                        double &logLikelihood,
+double HMM<Distribution>::LogLikelihood(const arma::vec& data,
+                                        double& logLikelihood,
                                         arma::vec& forwardLogProb) const
 {
   bool isStartOfSeq = forwardLogProb.empty();
@@ -649,12 +649,10 @@ void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
  */
 template<typename Distribution>
 arma::vec HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
-                                double& logScales) const
+                                         double& logScales) const
 {
   // Our goal is to calculate the forward probabilities:
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
-
-
   ConvertToLogSpace();
 
   arma::vec forwardLogProb(logTransition.n_rows);
@@ -669,7 +667,7 @@ arma::vec HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
   // Normalize probability.
   logScales = math::AccuLog(forwardLogProb);
   if (std::isfinite(logScales))
-   forwardLogProb -= logScales;
+    forwardLogProb -= logScales;
 
   return forwardLogProb;
 }
@@ -685,7 +683,6 @@ arma::vec HMM<Distribution>::ForwardAtTn(const arma::vec& emissionLogProb,
   // Our goal is to calculate the forward probabilities:
   //  P(X_k | o_{1:k}) for all possible states X_k, for each time point k.
 
-
   arma::vec forwardLogProb(logTransition.n_rows);
   forwardLogProb.fill(-std::numeric_limits<double>::infinity());
   // Now compute the probabilities for each successive observation.
@@ -699,7 +696,7 @@ arma::vec HMM<Distribution>::ForwardAtTn(const arma::vec& emissionLogProb,
   // Normalize probability.
   logScales = math::AccuLog(forwardLogProb);
   if (std::isfinite(logScales))
-   forwardLogProb -= logScales;
+    forwardLogProb -= logScales;
 
   return forwardLogProb;
 }
@@ -728,8 +725,8 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   arma::vec emissionLogProb(logTransition.n_rows);
   for (size_t state = 0; state < logTransition.n_rows; state++)
   {
-        emissionLogProb(state) =
-                emission[state].LogProbability(dataSeq.unsafe_col(0));
+    emissionLogProb(state) =
+        emission[state].LogProbability(dataSeq.unsafe_col(0));
   }
 
   forwardLogProb.col(0) = ForwardAtT0(emissionLogProb, logScales(0));

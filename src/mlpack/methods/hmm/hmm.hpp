@@ -299,14 +299,13 @@ class HMM
    * forwardLogProb vector.
    *
    * @param emissionLogProb emission probability at time t.
-   * probability up to time t-1
    * @param forwardLogProb Vector in which forward probabilities will be saved.
-   * Passing forwardLogProb as an empty vector indicates the start of sequence
-   * or time t=0
+   *     Passing forwardLogProb as an empty vector indicates the start of the
+   *     sequence (i.e. time t=0).
    * @return Log scale factor of the given sequence of emission at time t.
    */
   double EmissionLogScaleFactor(const arma::vec& emissionLogProb,
-                       arma::vec& forwardLogProb) const;
+                               arma::vec& forwardLogProb) const;
   /**
    * Compute the log-likelihood of the given emission probability up to time t,
    * storing the result in logLikelihood.
@@ -316,31 +315,33 @@ class HMM
    *
    * @param emissionLogProb emission probability at time t.
    * @param logLikelihood Log-likelihood of the given sequence of emission
-   * probability up to time t-1
+   *     probability up to time t-1.  This will be overwritten with the log-likelihood
+   *     of the given emission probability up to time t.
    * @param forwardLogProb Vector in which forward probabilities will be saved.
-   * Passing forwardLogProb as an empty vector indicates the start of sequence
-   * or time t=0
+   *     Passing forwardLogProb as an empty vector indicates the start of the
+   *     sequence (i.e. time t=0).
    * @return Log-likelihood of the given sequence of emission up to time t.
    */
   double EmissionLogLikelihood(const arma::vec& emissionLogProb,
-                       double &logLikelihood,
-                       arma::vec& forwardLogProb) const;
+                               double &logLikelihood,
+                               arma::vec& forwardLogProb) const;
   /**
    * Compute the log of the scaling factor of the given data at time t.
-   * To calculate the log-likelihood for the whole sequence, accumulate log
-   * scale over the entire sequence.
+   * To calculate the log-likelihood for the whole sequence, accumulate the
+   * log scale factor (the return value of this function) over the entire
+   * sequence.
    * This is meant for incremental or streaming computation of the
    * log-likelihood of a sequence. For the first data point, provide an empty
    * forwardLogProb vector.
    *
    * @param data observation at time t.
    * @param forwardLogProb Vector in which forward probabilities will be saved.
-   * Passing forwardLogProb as an empty vector indicates the start of sequence
-   * or time t=0
+   *     Passing forwardLogProb as an empty vector indicates the start of the
+   *     sequence (i.e. time t=0).
    * @return Log scale factor of the given sequence of data up at time t.
    */
   double LogScaleFactor(const arma::vec &data,
-                       arma::vec& forwardLogProb) const;
+                        arma::vec& forwardLogProb) const;
   /**
    * Compute the log-likelihood of the given data up to time t, storing the
    * result in logLikelihood.
@@ -350,10 +351,10 @@ class HMM
    *
    * @param data observation at time t.
    * @param logLikelihood Log-likelihood of the given sequence of data
-   * up to time t-1
+   *     up to time t-1.
    * @param forwardLogProb Vector in which forward probabilities will be saved.
-   * Passing forwardLogProb as an empty vector indicates the start of sequence
-   * or time t=0
+   *     Passing forwardLogProb as an empty vector indicates the start of the
+   *     sequence (i.e. time t=0).
    * @return Log-likelihood of the given sequence of data up to time t.
    */
   double LogLikelihood(const arma::vec &data,

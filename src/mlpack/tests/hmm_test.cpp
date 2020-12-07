@@ -800,7 +800,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
     emission.Covariance(cov.at(i));
   }
 
-  //100 2D observations
+  // 100 2D observations.
   arma::mat obs = {
       {
           -0.0424, -0.0395, -0.0336, -0.0294, -0.0299, -0.032, -0.0289, -0.0148,
@@ -835,7 +835,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
   };
   
   //100 pre-calculated emission probabilities each for 10 states
-  std::vector<arma::vec> emissionProb={
+  std::vector<arma::vec> emissionProb = {
     { -2.7301e+03, 1.7874e+00, -1.9428e+00, -3.6365e+00, -4.0397e-01, 
             -1.5115e-01, -1.0328e+00, -1.1071e+00, 5.2876e-01, -1.0643e-01 },
     { -2.3684e+03, 1.8059e+00, -2.2058e+00, -4.0514e+00, -5.0935e-01,
@@ -1040,7 +1040,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
   
   const double loglikelihoodRef = -2734.43;
 
-  //test loglikelihood calculation for the whole data
+  // Test log-likelihood calculation for the whole data.
   {
     const double loglikelihood = hmm.LogLikelihood(obs);
     REQUIRE(loglikelihood == Approx(loglikelihoodRef).epsilon(1e-3));
@@ -1062,7 +1062,7 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
   // Test loglikelihood calculation in an incremental way.
   // It simulates the case where we have a stream of data.
   // In this case the accumulation of the log scales factor to calculate
-  // the logkielihood value is done outside of the loop
+  // the log-likelihood value is done outside of the loop
   {
     double loglikelihood = 0;
     arma::vec forwardLogProb;
