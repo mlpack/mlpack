@@ -336,8 +336,8 @@ class HMM
    *
    * @param data observation at time t.
    * @param forwardLogProb Vector in which forward probabilities will be saved.
-   * Passing forwardLogProb as an empty vector indicates the start of sequence
-   * or time t=0
+   *     Passing forwardLogProb as an empty vector indicates the start of the
+   *     sequence (i.e. time t=0).
    * @return Log scale factor of the given sequence of data up at time t.
    */
   double LogScaleFactor(const arma::vec &data,
