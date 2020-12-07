@@ -323,8 +323,8 @@ class HMM
    * @return Log-likelihood of the given sequence of emission up to time t.
    */
   double EmissionLogLikelihood(const arma::vec& emissionLogProb,
-                       double &logLikelihood,
-                       arma::vec& forwardLogProb) const;
+                               double &logLikelihood,
+                               arma::vec& forwardLogProb) const;
   /**
    * Compute the log of the scaling factor of the given data at time t.
    * To calculate the log-likelihood for the whole sequence, accumulate log
