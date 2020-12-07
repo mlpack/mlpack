@@ -667,7 +667,7 @@ arma::vec HMM<Distribution>::ForwardAtT0(const arma::vec& emissionLogProb,
   // Normalize probability.
   logScales = math::AccuLog(forwardLogProb);
   if (std::isfinite(logScales))
-   forwardLogProb -= logScales;
+    forwardLogProb -= logScales;
 
   return forwardLogProb;
 }
