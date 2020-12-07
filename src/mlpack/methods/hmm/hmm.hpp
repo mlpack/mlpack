@@ -327,8 +327,9 @@ class HMM
                                arma::vec& forwardLogProb) const;
   /**
    * Compute the log of the scaling factor of the given data at time t.
-   * To calculate the log-likelihood for the whole sequence, accumulate log
-   * scale over the entire sequence.
+   * To calculate the log-likelihood for the whole sequence, accumulate the
+   * log scale factor (the return value of this function) over the entire
+   * sequence.
    * This is meant for incremental or streaming computation of the
    * log-likelihood of a sequence. For the first data point, provide an empty
    * forwardLogProb vector.
