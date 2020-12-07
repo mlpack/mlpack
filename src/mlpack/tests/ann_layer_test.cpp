@@ -31,6 +31,52 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::cube, typename ModelType>
+void CheckRNNCopyFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  arma::cube predictions1;
+  arma::cube predictions2;
+  ens::StandardSGD opt(0.1, 1, maxEpochs * trainData.n_slices, -100, false);
+
+  network1->Train(trainData, trainLabels, opt);
+  network1->Predict(trainData, predictions1);
+
+  RNN<> network2 = *network1;
+  delete network1;
+
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::cube, typename ModelType>
+void CheckRNNMoveFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  arma::cube predictions1;
+  arma::cube predictions2;
+  ens::StandardSGD opt(0.1, 1, maxEpochs * trainData.n_slices, -100, false);
+
+  network1->Train(trainData, trainLabels, opt);
+  network1->Predict(trainData, predictions1);
+
+  RNN<> network2(std::move(*network1));
+  delete network1;
+
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
 /**
  * Simple add module test.
  */
@@ -1181,6 +1227,40 @@ TEST_CASE("FastLSTMLayerParametersTest", "[ANNLayerTest]")
   REQUIRE(layer1.InSize() == layer2.InSize());
   REQUIRE(layer1.OutSize() == layer2.OutSize());
   REQUIRE(layer1.Rho() == layer2.Rho());
+}
+
+/**
+ * Check whether copying and moving network with FastLSTM is working or not.
+ */
+TEST_CASE("CheckCopyMoveFastLSTMTest", "[ANNLayerTest]")
+{
+  arma::cube input = arma::randu(1, 1, 5);
+  arma::cube target = arma::ones(1, 1, 5);
+  const size_t rho = 5;
+
+  RNN<NegativeLogLikelihood<> > *model1 =
+      new RNN<NegativeLogLikelihood<> >(rho);
+  model1->Predictors() = input;
+  model1->Responses() = target;
+  model1->Add<IdentityLayer<> >();
+  model1->Add<Linear<> >(1, 10);
+  model1->Add<FastLSTM<> >(10, 3, rho);
+  model1->Add<LogSoftMax<> >();
+
+  RNN<NegativeLogLikelihood<> > *model2 =
+     new RNN<NegativeLogLikelihood<> >(rho);
+  model2->Predictors() = input;
+  model2->Responses() = target;
+  model2->Add<IdentityLayer<> >();
+  model2->Add<Linear<> >(1, 10);
+  model2->Add<FastLSTM<> >(10, 3, rho);
+  model2->Add<LogSoftMax<> >();
+
+  // Check whether copy constructor is working or not.
+  CheckRNNCopyFunction<>(model1, input, target, 1);
+
+  // Check whether move constructor is working or not.
+  CheckRNNMoveFunction<>(model2, input, target, 1);
 }
 
 /**
@@ -3419,20 +3499,20 @@ void ANNLayerSerializationTest(LayerType& layer)
   model.Predict(input, originalOutput);
 
   // Now serialize the model.
-  FFN<NegativeLogLikelihood<>, ann::RandomInitialization> xmlModel, textModel,
+  FFN<NegativeLogLikelihood<>, ann::RandomInitialization> xmlModel, jsonModel,
       binaryModel;
-  SerializeObjectAll(model, xmlModel, textModel, binaryModel);
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
   // Ensure that predictions are the same.
-  arma::mat modelOutput, xmlOutput, textOutput, binaryOutput;
+  arma::mat modelOutput, xmlOutput, jsonOutput, binaryOutput;
   model.Predict(input, modelOutput);
   xmlModel.Predict(input, xmlOutput);
-  textModel.Predict(input, textOutput);
+  jsonModel.Predict(input, jsonOutput);
   binaryModel.Predict(input, binaryOutput);
 
   CheckMatrices(originalOutput, modelOutput, 1e-5);
   CheckMatrices(originalOutput, xmlOutput, 1e-5);
-  CheckMatrices(originalOutput, textOutput, 1e-5);
+  CheckMatrices(originalOutput, jsonOutput, 1e-5);
   CheckMatrices(originalOutput, binaryOutput, 1e-5);
 }
 

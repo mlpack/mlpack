@@ -101,10 +101,10 @@ Citations are beneficial for the growth and improvement of mlpack.
 mlpack has the following dependencies:
 
       Armadillo      >= 8.400.0
-      Boost (math_c99, unit_test_framework, serialization,
-             spirit) >= 1.58.0
+      Boost (math_c99, spirit) >= 1.58.0
       CMake          >= 3.2.2
       ensmallen      >= 2.10.0
+      cereal         >= 1.1.2
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
@@ -217,6 +217,8 @@ Options are specified with the -D flag.  The allowed options include:
     STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
        STB image library
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
+    BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
+       (default ON)
 
 Other tools can also be used to configure CMake, but those are not documented
 here.  See [this section of the build guide](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html#build_config)

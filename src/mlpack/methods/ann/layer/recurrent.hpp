@@ -2,8 +2,7 @@
  * @file methods/ann/layer/recurrent.hpp
  * @author Marcus Edel
  *
- * Definition of the LinearLayer class also known as fully-connected layer or
- * affine transformation.
+ * Definition of the Recurrent class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -143,7 +142,7 @@ class Recurrent
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delete visitor module object.

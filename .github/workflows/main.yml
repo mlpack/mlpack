@@ -11,20 +11,6 @@ on:
 name: mlpack.mlpack
 
 jobs:
-  cancel:
-    name: 'Cancel Previous Builds'
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'mlpack/mlpack' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    steps:
-      - name: Get all workflow ids and set to env variable
-        run: echo ::set-env name=WORKFLOW_IDS_TO_CANCEL::$(curl https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows -s | jq -r '.workflows | map(.id|tostring) | join(",")')
-
-      - uses: styfle/cancel-workflow-action@0.5.0
-        with:
-          workflow_id: ${{ env.WORKFLOW_IDS_TO_CANCEL }}
-          access_token: ${{ secrets.GITHUB_TOKEN }}
-
   jobR:
     name: mlpack R tarball
     if: ${{ github.repository == 'mlpack/mlpack' }}
@@ -65,7 +51,7 @@ jobs:
         - name: Install Build Dependencies
           run: |
             sudo apt-get update
-            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev
+            sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev libcereal-dev
             curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
             cmake . && make && sudo make install && cd ..
 

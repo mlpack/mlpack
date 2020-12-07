@@ -270,7 +270,7 @@ class LARS
    * Serialize the LARS model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   /**
    * Compute cost error of the given data matrix using the

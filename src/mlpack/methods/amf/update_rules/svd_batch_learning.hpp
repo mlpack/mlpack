@@ -166,14 +166,14 @@ class SVDBatchLearning
 
   //! Serialize the SVDBatch object.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(u);
-    ar & BOOST_SERIALIZATION_NVP(kw);
-    ar & BOOST_SERIALIZATION_NVP(kh);
-    ar & BOOST_SERIALIZATION_NVP(momentum);
-    ar & BOOST_SERIALIZATION_NVP(mW);
-    ar & BOOST_SERIALIZATION_NVP(mH);
+    ar(CEREAL_NVP(u));
+    ar(CEREAL_NVP(kw));
+    ar(CEREAL_NVP(kh));
+    ar(CEREAL_NVP(momentum));
+    ar(CEREAL_NVP(mW));
+    ar(CEREAL_NVP(mH));
   }
 
  private:

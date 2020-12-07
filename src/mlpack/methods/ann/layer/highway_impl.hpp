@@ -216,10 +216,10 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void Highway<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   // If loading, delete the old layers and set size for weights.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (LayerTypes<CustomLayers...>& layer : network)
     {
@@ -228,8 +228,8 @@ void Highway<InputDataType, OutputDataType, CustomLayers...>::serialize(
     weights.set_size(inSize * inSize + inSize, 1);
   }
 
-  ar & BOOST_SERIALIZATION_NVP(model);
-  ar & BOOST_SERIALIZATION_NVP(network);
+  ar(CEREAL_NVP(model));
+  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
 }
 
 } // namespace ann

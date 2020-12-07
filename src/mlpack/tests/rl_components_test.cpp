@@ -196,7 +196,7 @@ TEST_CASE("DoublePoleCartTest", "[RLComponentsTest]")
 }
 
 /**
- * Constructs a ContinuousDoublePoleCart instance and check if the main 
+ * Constructs a ContinuousDoublePoleCart instance and check if the main
  * routine works as it should be.
  */
 TEST_CASE("ContinuousDoublePoleCartTest", "[RLComponentsTest]")
@@ -285,5 +285,4 @@ TEST_CASE("GreedyPolicyTest", "[RLComponentsTest]")
   CartPole::Action action = policy.Sample(actionValue);
   REQUIRE(actionValue[action.action] ==
       Approx(actionValue.max()).epsilon(1e-7));
-
 }

@@ -453,7 +453,8 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentTreeType",
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal
-  CHECK(output_model->TreeType() == 0);
+  const bool check = output_model->TreeType() == 0;
+  CHECK(check == true);
   CHECK(IO::GetParam<RANNModel*>("output_model")->TreeType() ==
       8);
   delete output_model;
@@ -491,7 +492,8 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentSingleSampleLimit",
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  CHECK( IO::GetParam<RANNModel*>("output_model")->SingleSampleLimit() == (int) 15);
+  CHECK(IO::GetParam<RANNModel*>("output_model")->SingleSampleLimit() ==
+      (int) 15);
   CHECK(output_model->SingleSampleLimit() == (int) 20);
   delete output_model;
 }

@@ -203,17 +203,17 @@ class SVDPlusPlusPolicy
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(maxIterations);
-    ar & BOOST_SERIALIZATION_NVP(alpha);
-    ar & BOOST_SERIALIZATION_NVP(lambda);
-    ar & BOOST_SERIALIZATION_NVP(w);
-    ar & BOOST_SERIALIZATION_NVP(h);
-    ar & BOOST_SERIALIZATION_NVP(p);
-    ar & BOOST_SERIALIZATION_NVP(q);
-    ar & BOOST_SERIALIZATION_NVP(y);
-    ar & BOOST_SERIALIZATION_NVP(implicitData);
+    ar(CEREAL_NVP(maxIterations));
+    ar(CEREAL_NVP(alpha));
+    ar(CEREAL_NVP(lambda));
+    ar(CEREAL_NVP(w));
+    ar(CEREAL_NVP(h));
+    ar(CEREAL_NVP(p));
+    ar(CEREAL_NVP(q));
+    ar(CEREAL_NVP(y));
+    ar(CEREAL_NVP(implicitData));
   }
 
  private:

@@ -1,6 +1,11 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * HMM: calculate likelihood for data stream with/without pre-calculated emission probability
+  * HMM: add functions to calculate likelihood for data stream with/without pre-calculated emission probability (#2142).
+
+  * Added an implementation to Stratify Data (#2671).
+
+  * Add `BUILD_DOCS` CMake option to control whether Doxygen documentation is
+    built (default ON) (#2730).
 
 ### mlpack 3.4.2
 ###### 2020-10-26

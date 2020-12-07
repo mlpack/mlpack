@@ -54,6 +54,18 @@ class Linear3D
            const size_t outSize,
            RegularizerType regularizer = RegularizerType());
 
+  //! Copy constructor.
+  Linear3D(const Linear3D& layer);
+
+  //! Move constructor.
+  Linear3D(Linear3D&&);
+
+  //! Copy assignment operator.
+  Linear3D& operator=(const Linear3D& layer);
+
+  //! Move assignment operator.
+  Linear3D& operator=(Linear3D&& layer);
+
   /*
    * Reset the layer parameter.
    */
@@ -140,7 +152,7 @@ class Linear3D
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

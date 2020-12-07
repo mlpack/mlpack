@@ -200,15 +200,15 @@ DecisionStump<MatType>::DecisionStump(const DecisionStump<>& other,
 template<typename MatType>
 template<typename Archive>
 void DecisionStump<MatType>::serialize(Archive& ar,
-                                       const unsigned int /* version */)
+                                       const uint32_t /* version */)
 {
   // This is straightforward; just serialize all of the members of the class.
   // None need special handling.
-  ar & BOOST_SERIALIZATION_NVP(numClasses);
-  ar & BOOST_SERIALIZATION_NVP(bucketSize);
-  ar & BOOST_SERIALIZATION_NVP(splitDimension);
-  ar & BOOST_SERIALIZATION_NVP(split);
-  ar & BOOST_SERIALIZATION_NVP(binLabels);
+  ar(CEREAL_NVP(numClasses));
+  ar(CEREAL_NVP(bucketSize));
+  ar(CEREAL_NVP(splitDimension));
+  ar(CEREAL_NVP(split));
+  ar(CEREAL_NVP(binLabels));
 }
 
 /**

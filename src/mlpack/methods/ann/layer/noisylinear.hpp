@@ -48,6 +48,15 @@ class NoisyLinear
   //! Copy constructor.
   NoisyLinear(const NoisyLinear&);
 
+  //! Move constructor.
+  NoisyLinear(NoisyLinear&&);
+
+  //! Operator= copy constructor.
+  NoisyLinear& operator=(const NoisyLinear& layer);
+
+  //! Operator= move constructor.
+  NoisyLinear& operator=(NoisyLinear&& layer);
+
   /*
    * Reset the layer parameter.
    */
@@ -137,7 +146,7 @@ class NoisyLinear
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

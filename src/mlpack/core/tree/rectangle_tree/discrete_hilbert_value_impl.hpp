@@ -522,13 +522,13 @@ template<typename TreeElemType>
 template<typename Archive>
 void DiscreteHilbertValue<TreeElemType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(localHilbertValues);
-  ar & BOOST_SERIALIZATION_NVP(ownsLocalHilbertValues);
-  ar & BOOST_SERIALIZATION_NVP(numValues);
-  ar & BOOST_SERIALIZATION_NVP(valueToInsert);
-  ar & BOOST_SERIALIZATION_NVP(ownsValueToInsert);
+  ar(CEREAL_POINTER(localHilbertValues));
+  ar(CEREAL_NVP(ownsLocalHilbertValues));
+  ar(CEREAL_NVP(numValues));
+  ar(CEREAL_POINTER(valueToInsert));
+  ar(CEREAL_NVP(ownsValueToInsert));
 }
 
 } // namespace tree
