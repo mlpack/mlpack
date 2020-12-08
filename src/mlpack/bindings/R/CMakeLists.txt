@@ -154,6 +154,9 @@ if (BUILD_R_BINDINGS)
           "${CONTRIBUTOR_FILTERED}")
       if (NOT CONTRIBUTOR_LAST_NAME)
         set (CONTRIBUTOR_LAST_NAME "")
+      else ()
+        string(REGEX REPLACE "^[^ ]* (.*)$" "\\1" CONTRIBUTOR_LAST_NAME
+            "${CONTRIBUTOR_FILTERED}")
       endif ()
 
       # Skip anyone already listed as an author.
