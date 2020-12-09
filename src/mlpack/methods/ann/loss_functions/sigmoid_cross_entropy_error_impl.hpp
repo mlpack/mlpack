@@ -28,31 +28,31 @@ SigmoidCrossEntropyError<InputDataType, OutputDataType>
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-inline typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+inline typename PredictionType::elem_type
 SigmoidCrossEntropyError<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  typedef typename InputType::elem_type ElemType;
+  typedef typename PredictionType::elem_type ElemType;
   ElemType maximum = 0;
-  for (size_t i = 0; i < input.n_elem; ++i)
+  for (size_t i = 0; i < prediction.n_elem; ++i)
   {
-    maximum += std::max(input[i], 0.0) +
-        std::log(1 + std::exp(-std::abs(input[i])));
+    maximum += std::max(prediction[i], 0.0) +
+        std::log(1 + std::exp(-std::abs(prediction[i])));
   }
 
-  return maximum - arma::accu(input % target);
+  return maximum - arma::accu(prediction % target);
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 inline void SigmoidCrossEntropyError<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output = 1.0 / (1.0 + arma::exp(-input)) - target;
+  loss = 1.0 / (1.0 + arma::exp(-prediction)) - target;
 }
 
 template<typename InputDataType, typename OutputDataType>
