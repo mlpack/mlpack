@@ -59,13 +59,18 @@ void PrintParamDefn(
   // import ...<Type>
   //
   // function IOGetParam<Type>(paramName::String)
-  //   <Type>(ccall((:IOGetParam<Type>Ptr, <programName>Library),
+  //   <Type>(ccall((:IO_GetParam<Type>Ptr, <programName>Library),
   //       Ptr{Nothing}, (Cstring,), paramName))
   // end
   //
   // function IOSetParam<Type>(paramName::String, model::<Type>)
-  //   ccall((:IOSetParam<Type>Ptr, <programName>Library), Nothing,
+  //   ccall((:IO_SetParam<Type>Ptr, <programName>Library), Nothing,
   //       (Cstring, Ptr{Nothing}), paramName, model.ptr)
+  // end
+  //
+  // function Delete<Type>(ptr::Ptr{Nothing})
+  //   ccall((:Delete<Type>Ptr, <programName>Library), Nothing,
+  //       (Ptr{Nothing},), ptr)
   // end
   //
   // function serialize<Type>(stream::IO, model::<Type>)
@@ -108,6 +113,15 @@ void PrintParamDefn(
   std::cout << "  ccall((:IO_SetParam" << type << "Ptr, "
       << programName << "Library), Nothing, (Cstring, "
       << "Ptr{Nothing}), paramName, model.ptr)" << std::endl;
+  std::cout << "end" << std::endl;
+  std::cout << std::endl;
+
+  // Next, Delete<Type>().
+  std::cout << "# Delete an instantiated model pointer." << std::endl;
+  std::cout << "function Delete" << type << "(ptr::Ptr{Nothing})"
+      << std::endl;
+  std::cout << "  ccall((:Delete" << type << "Ptr, " << programName
+      << "Library), Nothing, (Ptr{Nothing},), ptr)" << std::endl;
   std::cout << "end" << std::endl;
   std::cout << std::endl;
 
