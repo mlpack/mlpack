@@ -49,6 +49,14 @@ class Data {
     Data(std::string file_path);
 
     /**
+     * Construtor for Data class
+     * Takes a predefined arma::mat
+     * Takes a predefined header list
+     * Users will only be ble to add numeric fields
+     */
+    Data(arma::mat m, arma::field<std::string> header);
+    
+    /**
      * Get information about the dataset
      * Type of data(current implementation is not final)
      * Index Range
@@ -86,7 +94,7 @@ class Data {
     void valueCounts(int colNumber);
 
     /**
-     * For printing only numeric values 
+     * For printing arma mat of only numeric values 
      */
     void getNumericData();
 	};

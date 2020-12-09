@@ -31,19 +31,28 @@ Data::Data(std::string file_path)
   {
     path = file_path;
     data.load(arma::csv_name(path, headers, arma::csv_opts::trans));
-    mlpack::data::Load(path, data, true);
+    //mlpack::data::Load(path, data, true);
     data = data.submat(0, 1, data.n_rows - 1, data.n_cols - 1);
     numericData = data;
     getNumericAttributes();
   }
 
+Data::Data(arma::mat m, arma::field<std::string> userHeaders)
+{
+  headers = userHeaders;
+  data = m.t();
+  numericData = data;
+  getNumericAttributes();
+}
+
 void Data:: Info()
   {
     // Returns Index range, list of headers
     std::cout << typeid(data).name() << std::endl;
-    std::cout << "Index Range: " << data.n_cols << std::endl;
+    std::cout << "Index Range: " << data.n_rows << std::endl;
     std::cout << "Numeric Attributes: " << numericData.n_rows << std::endl;
-    std::cout << "Non-numeric Attributes: " << headers.n_rows - numericData.n_rows << std::endl;
+    std::cout << "Non-numeric Attributes: " << (headers.n_cols * headers.n_rows) - numericData.n_rows 
+              <<  std::endl;
     std::cout << "Data Dimensions (total " << data.n_rows << "):" << std::endl;
     for (int i = 0; i < headers.size(); i++)
     {
@@ -63,6 +72,13 @@ bool Data::isDigits(const std::string& str)
 
 void Data::getNumericAttributes()
 {
+  if (path == "")
+  {
+    for (auto i : headers)
+      numericAttributes.push_back(true);
+    return;
+  }
+
   std::fstream fin;
   fin.open(path, std::ios::in);
   std::string line, word, temp;
