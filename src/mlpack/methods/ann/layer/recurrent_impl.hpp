@@ -136,7 +136,7 @@ size_t Recurrent<InputDataType, OutputDataType, CustomLayers...>::InputShape() c
   {
     return inputShapeStartModule;
   }
-  // If input shape of first module is 0
+  // If input shape of first module is 0.
   else
   {
     // Return input shape of the second module that we have.
