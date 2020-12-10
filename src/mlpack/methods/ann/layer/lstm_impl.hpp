@@ -24,6 +24,94 @@ LSTM<InputDataType, OutputDataType>::LSTM()
   // Nothing to do here.
 }
 
+template<typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::LSTM(
+    const LSTM& layer) : 
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    forwardStep(layer.forwardStep),
+    backwardStep(layer.backwardStep),
+    gradientStep(layer.gradientStep),
+    weights(layer.weights),
+    batchSize(layer.batchSize),
+    batchStep(layer.batchStep),
+    gradientStepIdx(layer.gradientStepIdx),
+    rhoSize(layer.rho),
+    bpttSteps(layer.bpttSteps)
+{
+  // Nothing to do here.
+  std::cout << "LSTM Constructor \n"; 
+}
+
+template<typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::LSTM(
+    LSTM&& layer) : 
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
+    rho(std::move(layer.rho)),
+    forwardStep(std::move(layer.forwardStep)),
+    backwardStep(std::move(layer.backwardStep)),
+    gradientStep(std::move(layer.gradientStep)),
+    weights(std::move(layer.weights)),
+    batchSize(std::move(layer.batchSize)),
+    batchStep(std::move(layer.batchStep)),
+    gradientStepIdx(std::move(layer.gradientStepIdx)),
+    rhoSize(std::move(layer.rho)),
+    bpttSteps(std::move(layer.bpttSteps))
+{
+  // Nothing to do here.
+  std::cout << "LSTM Constructor \n"; 
+}
+
+template <typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>& 
+LSTM<InputDataType, OutputDataType> :: operator=(const LSTM& layer)
+{
+    if(this != &layer)
+    {
+        inSize = layer.inSize;
+        outSize = layer.outSize;
+        rho = layer.rho;
+        forwardStep = layer.forwardStep;
+        backwardStep = layer.backwardStep;
+        gradientStep = layer.gradientStep;
+        weights = layer.weights;
+        batchSize = layer.batchSize;
+        batchStep = layer.batchStep;
+        gradientStepIdx = layer.gradientStepIdx;
+        grad = layer.grad;
+        rhoSize = layer.rho;
+        bpttSteps = layer.bpttSteps;
+        std::cout << "LSTM Constructor \n"; 
+    }
+    return *this; 
+}
+
+template <typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>& 
+LSTM<InputDataType, OutputDataType> :: operator=(LSTM&& layer)
+{
+    if(this != &layer)
+    {
+        inSize = std::move(layer.inSize);
+        outSize = std::move(layer.outSize);
+        rho = std::move(layer.rho);
+        forwardStep = std::move(layer.forwardStep);
+        backwardStep = std::move(layer.backwardStep);
+        gradientStep = std::move(layer.gradientStep);
+        weights = std::move(layer.weights);
+        batchSize = std::move(layer.batchSize);
+        batchStep = std::move(layer.batchStep);
+        gradientStepIdx = std::move(layer.gradientStepIdx);
+        grad = std::move(layer.grad);
+        rhoSize = std::move(layer.rho);
+        bpttSteps = std::move(layer.bpttSteps);
+        std::cout << "LSTM Constructor \n"; 
+    }
+    return *this; 
+}
+
 template <typename InputDataType, typename OutputDataType>
 LSTM<InputDataType, OutputDataType>::LSTM(
     const size_t inSize, const size_t outSize, const size_t rho) :

@@ -1264,6 +1264,40 @@ TEST_CASE("CheckCopyMoveFastLSTMTest", "[ANNLayerTest]")
 }
 
 /**
+ * Check whether copying and moving network with LSTM is working or not.
+ */
+TEST_CASE("CheckCopyMoveLSTMTest", "[ANNLayerTest]")
+{
+  arma::cube input = arma::randu(1, 1, 5);
+  arma::cube target = arma::ones(1, 1, 5);
+  const size_t rho = 5;
+
+  RNN<NegativeLogLikelihood<> > *model1 =
+      new RNN<NegativeLogLikelihood<> >(rho);
+  model1->Predictors() = input;
+  model1->Responses() = target;
+  model1->Add<IdentityLayer<> >();
+  model1->Add<Linear<> >(1, 10);
+  model1->Add<LSTM<> >(10, 3, rho);
+  model1->Add<LogSoftMax<> >();
+
+  RNN<NegativeLogLikelihood<> > *model2 =
+     new RNN<NegativeLogLikelihood<> >(rho);
+  model2->Predictors() = input;
+  model2->Responses() = target;
+  model2->Add<IdentityLayer<> >();
+  model2->Add<Linear<> >(1, 10);
+  model2->Add<LSTM<> >(10, 3, rho);
+  model2->Add<LogSoftMax<> >();
+
+  // Check whether copy constructor is working or not.
+  CheckRNNCopyFunction<>(model1, input, target, 1);
+
+  // Check whether move constructor is working or not.
+  CheckRNNMoveFunction<>(model2, input, target, 1);
+}
+
+/**
  * Testing the overloaded Forward() of the LSTM layer, for retrieving the cell
  * state. Besides output, the overloaded function provides read access to cell
  * state of the LSTM layer.
