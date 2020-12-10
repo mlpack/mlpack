@@ -1567,61 +1567,37 @@ TEST_CASE("ForwardGRULayerTest", "[ANNLayerTest]")
 /**
  * Check whether copying of GRU layer is working or not.
  */
-TEST_CASE("CheckCopyGRUTest", "[ANNLayerTest]")
+TEST_CASE("CheckCopyMoveGRUTest", "[ANNLayerTest]")
 {
-  // Initilizing two GRU layers.
-  GRU<> layer1(1, 2, 3);
-  GRU<> layer2();
+  arma::cube input = arma::randu(1, 1, 5);
+  arma::cube output = arma::ones(1, 1, 5);
+  const size_t rho = 3;
 
-  // Provide input of all ones.
-  arma::mat input1 = arma::ones(3, 1);
+  RNN<NegativeLogLikelihood<> > *model1 =
+      new RNN<NegativeLogLikelihood<> >(rho);
+  model1->Predictors() = input;
+  model1->Responses() = target;
+  model1->Add<IdentityLayer<> >();
+  model1->Add<Linear<> >(1, 10);
+  model1->Add<GRU<> >(10, 3, rho);
+  model1->Add<LogSoftMax<> >();
 
-  // Declaring two ouput matrices for each layer.
-  arma::mat output1;
-  arma::mat output2;
+  RNN<NegativeLogLikelihood<> > *model2 =
+      new RNN<NegativeLogLikelihood<> >(rho);
+  model1->Predictors() = input;
+  model1->Responses() = target;
+  model1->Add<IdentityLayer<> >();
+  model1->Add<Linear<> >(1, 10);
+  model1->Add<GRU<> >(10, 3, rho);
+  model1->Add<LogSoftMax<> >();
 
-  // Forward pass through layer1.
-  layer1.Forward(input, output1);
-  layer2 = layer1;
+  // Check whether copy constructor is working or not.
+  CheckRNNCopyFunction<>(model1, input, target, 1);
 
-  // Freeing up layer1 to prevent memory leaks.
-  delete layer1;
-
-  // Forward pass through layer2.
-  layer2.Forward(input, output2);
-
-  CheckMatrices(output1, output2);
+  // Check whether move constructor is working or not.
+  CheckRNNMoveFunction<>(model2, input, target, 1);
 }
 
-/**
- * Check whether moving of GRU layer is working or not.
- */
-TEST_CASE("CheckMovingGRUTest", "[ANNLayerTest]")
-{
-  // Initilizing the orignal GRU layer.
-  GRU<> layer1(1, 2, 3);
-
-  // Provide input of all ones.
-  arma::mat input1 = arma::ones(3, 1);
-
-  // Declaring two ouput matrices for each layer.
-  arma::mat output1;
-  arma::mat output2;
-
-  // Forward pass through layer1.
-  layer1.Forward(input, output1);
-
-  // Initilizing second GRU layer.
-  GRU<> layer2(std::move(*layer1));
-
-  // Freeing up layer1 to prevent memory leaks.
-  delete layer1;
-
-  // Forward pass through layer2.
-  layer2.Forward(input, output2);
-
-  CheckMatrices(output1, output2);
-}
 
 /**
  * Simple concat module test.
