@@ -1576,7 +1576,7 @@ TEST_CASE("CheckCopyMoveGRUTest", "[ANNLayerTest]")
   RNN<NegativeLogLikelihood<> > *model1 =
       new RNN<NegativeLogLikelihood<> >(rho);
   model1->Predictors() = input;
-  model1->Responses() = target;
+  model1->Responses() = output;
   model1->Add<IdentityLayer<> >();
   model1->Add<Linear<> >(1, 10);
   model1->Add<GRU<> >(10, 3, rho);
@@ -1585,17 +1585,17 @@ TEST_CASE("CheckCopyMoveGRUTest", "[ANNLayerTest]")
   RNN<NegativeLogLikelihood<> > *model2 =
       new RNN<NegativeLogLikelihood<> >(rho);
   model1->Predictors() = input;
-  model1->Responses() = target;
+  model1->Responses() = output;
   model1->Add<IdentityLayer<> >();
   model1->Add<Linear<> >(1, 10);
   model1->Add<GRU<> >(10, 3, rho);
   model1->Add<LogSoftMax<> >();
 
   // Check whether copy constructor is working or not.
-  CheckRNNCopyFunction<>(model1, input, target, 1);
+  CheckRNNCopyFunction<>(model1, input, output, 1);
 
   // Check whether move constructor is working or not.
-  CheckRNNMoveFunction<>(model2, input, target, 1);
+  CheckRNNMoveFunction<>(model2, input, output, 1);
 }
 
 
