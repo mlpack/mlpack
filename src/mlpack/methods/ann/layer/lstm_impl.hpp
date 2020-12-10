@@ -41,7 +41,6 @@ LSTM<InputDataType, OutputDataType>::LSTM(
     bpttSteps(layer.bpttSteps)
 {
   // Nothing to do here.
-  std::cout << "LSTM Constructor \n"; 
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -61,7 +60,6 @@ LSTM<InputDataType, OutputDataType>::LSTM(
     bpttSteps(std::move(layer.bpttSteps))
 {
   // Nothing to do here.
-  std::cout << "LSTM Constructor \n"; 
 }
 
 template <typename InputDataType, typename OutputDataType>
@@ -83,7 +81,6 @@ LSTM<InputDataType, OutputDataType> :: operator=(const LSTM& layer)
         grad = layer.grad;
         rhoSize = layer.rho;
         bpttSteps = layer.bpttSteps;
-        std::cout << "LSTM Constructor \n"; 
     }
     return *this; 
 }
@@ -107,7 +104,6 @@ LSTM<InputDataType, OutputDataType> :: operator=(LSTM&& layer)
         grad = std::move(layer.grad);
         rhoSize = std::move(layer.rho);
         bpttSteps = std::move(layer.bpttSteps);
-        std::cout << "LSTM Constructor \n"; 
     }
     return *this; 
 }
