@@ -929,7 +929,7 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   testData.shed_row(testData.n_rows - 1);
 
   FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
-  // Purposely putting wrong input shape so that error is thrown
+  // Purposely putting wrong input shape so that error is thrown.
   model.Add<Linear<> >(trainData.n_rows - 3, 8);
   model.Add<CustomLayer<> >();
   model.Add<Linear<> >(8, 3);
