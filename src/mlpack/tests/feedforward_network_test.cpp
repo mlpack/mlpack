@@ -944,5 +944,5 @@ TEST_CASE("CheckInputShapeTest", "[FeedForwardNetworkTest]")
 
   REQUIRE_THROWS_MATCHES(model.Train(trainData, trainLabels, opt),
   						 std::logic_error,
-  						 Message(expectedMsg));
+  						 Catch::Matchers::Message(expectedMsg));
 }

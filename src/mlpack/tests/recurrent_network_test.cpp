@@ -931,5 +931,5 @@ TEST_CASE("CheckInputShapeTest", "[RecurrentNetworkTest]")
 
   REQUIRE_THROWS_MATCHES(model.Train(input, labels, opt),
   						 std::logic_error,
-  						 Message(expectedMsg));
+  						Catch::Matchers::Message(expectedMsg));
 }
