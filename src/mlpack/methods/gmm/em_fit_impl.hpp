@@ -156,7 +156,7 @@ Estimate(const arma::mat& observations,
 
     // Calculate the new values for omega using the updated conditional
     // probabilities.
-    weights = arma::exp(probRowSums - log(observations.n_cols));
+    weights = arma::exp(probRowSums - log(1.0 * observations.n_cols));
 
     // Update values of l; calculate new log-likelihood.
     lOld = l;
