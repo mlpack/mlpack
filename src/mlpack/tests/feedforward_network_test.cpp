@@ -935,7 +935,7 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   model.Add<Linear<> >(8, 3);
   model.Add<LogSoftMax<> >();
 
-  std::string expectedMsg = "FFN<>::Train: ";
+  std::string expectedMsg = "FFN<>::Train(): ";
   		 	  expectedMsg += "the first layer of the network expects ";
   		 	  expectedMsg += std::to_string(trainData.n_rows - 3) + " elements, ";
   		 	  expectedMsg += "but the input has " + std::to_string(trainData.n_rows) + " dimensions! ";

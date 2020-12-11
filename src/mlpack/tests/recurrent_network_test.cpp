@@ -922,7 +922,7 @@ TEST_CASE("RNNCheckInputShapeTest", "[RecurrentNetworkTest]")
   model.Add<Linear<> >(4, 10);
   model.Add<LogSoftMax<> >();
 
-  std::string expectedMsg = "RNN<>::Train: ";
+  std::string expectedMsg = "RNN<>::Train(): ";
               expectedMsg += "the first layer of the network expects ";
               expectedMsg += std::to_string(3) + " elements, ";
               expectedMsg += "but the input has " + std::to_string(1) + " dimensions! ";
