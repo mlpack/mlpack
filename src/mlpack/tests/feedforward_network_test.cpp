@@ -913,7 +913,7 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
  * Test to see if an exception is thrown when input with
  * wrong shape is provided to a FFN.
  */
-TEST_CASE("CheckInputShapeTest", "[FeedForwardNetworkTest]")
+TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;

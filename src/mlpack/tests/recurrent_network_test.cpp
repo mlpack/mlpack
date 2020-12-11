@@ -873,7 +873,7 @@ TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
  * Test to make sure that an error is thrown when input with
  * wrong input shape is provided to a RNN.
  */
-TEST_CASE("CheckInputShapeTest", "[RecurrentNetworkTest]")
+TEST_CASE("RNNCheckInputShapeTest", "[RecurrentNetworkTest]")
 {
   const size_t rho = 10;
 
