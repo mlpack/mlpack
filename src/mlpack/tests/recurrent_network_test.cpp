@@ -930,6 +930,5 @@ TEST_CASE("RNNCheckInputShapeTest", "[RecurrentNetworkTest]")
   StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
 
   REQUIRE_THROWS_MATCHES(model.Train(input, labels, opt),
-  						 std::logic_error,
-  						Catch::Matchers::Message(expectedMsg));
+      std::logic_error, Catch::Matchers::Message(expectedMsg));
 }
