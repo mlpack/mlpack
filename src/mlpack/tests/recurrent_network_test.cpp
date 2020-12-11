@@ -925,7 +925,7 @@ TEST_CASE("CheckInputShapeTest", "[RecurrentNetworkTest]")
   std::string expectedMsg = "RNN<>::Train: ";
               expectedMsg += "the first layer of the network expects ";
               expectedMsg += std::to_string(3) + " elements, ";
-              expectedMsg += "but the input shape has " + std::to_string(1) + " dimensions! "
+              expectedMsg += "but the input shape has " + std::to_string(1) + " dimensions! ";
 
   StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
 
