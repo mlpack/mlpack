@@ -938,7 +938,7 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   std::string expectedMsg = "FFN<>::Train: ";
   		 	  expectedMsg += "the first layer of the network expects ";
   		 	  expectedMsg += std::to_string(trainData.n_rows - 3) + " elements, ";
-  		 	  expectedMsg += "but the input shape has " + std::to_string(trainData.n_rows) + " dimensions! ";
+  		 	  expectedMsg += "but the input has " + std::to_string(trainData.n_rows) + " dimensions! ";
 
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
 
