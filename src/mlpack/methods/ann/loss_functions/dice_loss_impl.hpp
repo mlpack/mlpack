@@ -26,27 +26,27 @@ DiceLoss<InputDataType, OutputDataType>::DiceLoss(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type DiceLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
-    const TargetType& target)
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type DiceLoss<InputDataType, OutputDataType>
+    ::Forward(const PredictionType& prediction,
+              const TargetType& target)
 {
-  return 1 - ((2 * arma::accu(target % input) + smooth) /
+  return 1 - ((2 * arma::accu(target % prediction) + smooth) /
     (arma::accu(target % target) + arma::accu(
-    input % input) + smooth));
+    prediction % prediction) + smooth));
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void DiceLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output = -2 * (target * (arma::accu(input % input) +
-    arma::accu(target % target) + smooth) - input *
-    (2 * arma::accu(target % input) + smooth)) / std::pow(
-    arma::accu(target % target) + arma::accu(input % input)
+  loss = -2 * (target * (arma::accu(prediction % prediction) +
+    arma::accu(target % target) + smooth) - prediction *
+    (2 * arma::accu(target % prediction) + smooth)) / std::pow(
+    arma::accu(target % target) + arma::accu(prediction % prediction)
     + smooth, 2.0);
 }
 

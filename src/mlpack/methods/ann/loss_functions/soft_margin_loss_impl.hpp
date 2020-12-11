@@ -26,35 +26,35 @@ SoftMarginLoss(const bool reduction) : reduction(reduction)
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 SoftMarginLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+    const PredictionType& prediction, const TargetType& target)
 {
-  InputType loss = arma::log(1 + arma::exp(-target % input));
-  typename InputType::elem_type lossSum = arma::accu(loss);
+  PredictionType loss = arma::log(1 + arma::exp(-target % prediction));
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
     return lossSum;
 
-  return lossSum / input.n_elem;
+  return lossSum / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void SoftMarginLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output.set_size(size(input));
-  InputType temp = arma::exp(-target % input);
-  InputType numerator = -target % temp;
-  InputType denominator = 1 + temp;
-  output = numerator / denominator;
+  loss.set_size(size(prediction));
+  PredictionType temp = arma::exp(-target % prediction);
+  PredictionType numerator = -target % temp;
+  PredictionType denominator = 1 + temp;
+  loss = numerator / denominator;
 
   if (!reduction)
-    output = output / input.n_elem;
+    loss = loss / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
