@@ -395,7 +395,7 @@ class RASearch
 
   //! For access to mappings when building models.
   template<typename SortPol>
-  friend class TrainVisitor;
+  friend class RATrainVisitor;
 }; // class RASearch
 
 } // namespace neighbor
