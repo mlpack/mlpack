@@ -615,7 +615,7 @@ TEST_CASE("SingleTreeVsNaive", "[RangeSearchTest]")
  * Ensure that dual tree range search with cover trees works by comparing
  * with the kd-tree implementation.
  */
-TEST_CASE("CoverTreeTest", "[RangeSearchTest]")
+TEST_CASE("RSCoverTreeTest", "[RangeSearchTest]")
 {
   arma::mat data;
   data.randu(8, 1000); // 1000 points in 8 dimensions.

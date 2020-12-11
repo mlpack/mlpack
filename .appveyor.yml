@@ -5,8 +5,6 @@ environment:
   boost_math_c99-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
   BOOST_RANDOM : "C:/projects/mlpack/\
   boost_random-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
-  BOOST_UNIT_TEST : "C:/projects/mlpack/\
-  boost_unit_test_framework-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
   ARMADILLO_DOWNLOAD : "https://data.kurg.org/armadillo-8.400.0.tar.xz"
   ARMADILLO_LIBRARY : "C:/projects/mlpack/armadillo-8.400.0/\
   build/Debug/armadillo.lib"
@@ -33,9 +31,6 @@ os: Visual Studio 2019
 install:
   - ps: nuget install boost -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: >
-      nuget install boost_unit_test_framework-vc140
-      -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
-  - ps: >
       nuget install boost_random-vc140
       -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: >
@@ -51,7 +46,6 @@ build_script:
   - mkdir boost_libs
   - ps: cp ${env:BOOST_MATH} C:\projects\mlpack\boost_libs\
   - ps: cp ${env:BOOST_RANDOM} C:\projects\mlpack\boost_libs\
-  - ps: cp ${env:BOOST_UNIT_TEST} C:\projects\mlpack\boost_libs\
   - echo TEST_ARMA is %ARMADILLO_DOWNLOAD%
   - >
     appveyor DownloadFile %ARMADILLO_DOWNLOAD%
@@ -77,7 +71,6 @@ build_script:
     -DARMADILLO_LIBRARY:FILEPATH=%ARMADILLO_LIBRARY%
     -DCEREAL_INCLUDE_DIR="C:/projects/mlpack/unofficial-flayan-cereal.1.2.2/build/native/include"
     -DBOOST_INCLUDEDIR:PATH=%BOOST_INCLUDE%
-    -DBOOST_LIBRARYDIR:PATH="C:/projects/mlpack/boost_libs"
     -DDEBUG=OFF
     -DPROFILE=OFF
     -DBUILD_PYTHON_BINDINGS=OFF
@@ -126,9 +119,6 @@ build_script:
       C:\projects\mlpack\dist\win-installer\staging\
   - ps: >
       cp C:\projects\mlpack\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll
-      C:\projects\mlpack\dist\win-installer\staging\
-  - ps: >
-      cp C:\projects\mlpack\boost_libs\boost_unit_test_framework-vc*.dll
       C:\projects\mlpack\dist\win-installer\staging\
   - ps: >
       cp C:\projects\mlpack\build\include\mlpack

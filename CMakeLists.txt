@@ -17,6 +17,7 @@ option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
+option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
 # Set minimum library version required by mlpack.
 set(ARMADILLO_VERSION "8.400.0")
@@ -288,7 +289,6 @@ endif()
 #   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
-#   BOOST_LIBRARYDIR - library directory for Boost
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
@@ -442,32 +442,11 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost "${BOOST_VERSION}"
-    COMPONENTS
-      unit_test_framework
-    REQUIRED
-)
-
-link_directories(${Boost_LIBRARY_DIRS})
-
-# In Visual Studio, automatic linking is performed, so we don't need to worry
-# about it.  Clear the list of libraries to link against and let Visual Studio
-# handle it.
-if (MSVC)
-  link_directories(${Boost_LIBRARY_DIRS})
-  set(CMAKE_MSVCIDE_RUN_PATH ${CMAKE_MSVCIDE_RUN_PATH} ${Boost_LIBRARY_DIRS})
-  message("boost lib dirs ${Boost_LIBRARY_DIRS}")
-  set(Boost_LIBRARIES "")
-endif ()
+find_package(Boost "${BOOST_VERSION}")
 
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${Boost_LIBRARIES})
-set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
-
-# For Boost testing framework (will have no effect on non-testing executables).
-# This specifies to Boost that we are dynamically linking to the Boost test
-# library.
-add_definitions(-DBOOST_TEST_DYN_LINK)
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES})
+set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS})
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
 # to compile with OpenMP are returned and added and the HAS_OPENMP definition
@@ -618,43 +597,45 @@ add_dependencies(mlpack_headers mlpack_arma_config)
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
-find_package(Doxygen)
-if (DOXYGEN_FOUND)
-  if (MATHJAX)
-    find_package(MathJax)
-    if (NOT MATHJAX_FOUND)
-      message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
-          "Be careful, formulas will not be shown without the internet.")
+if (BUILD_DOCS)
+  find_package(Doxygen)
+  if (DOXYGEN_FOUND)
+    if (MATHJAX)
+      find_package(MathJax)
+      if (NOT MATHJAX_FOUND)
+        message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
+            "Be careful, formulas will not be shown without the internet.")
+      endif ()
     endif ()
+    # Preprocess the Doxyfile.  This is done before 'make doc'.
+    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
+        PRE_BUILD
+        COMMAND ${CMAKE_COMMAND}
+            -D DESTDIR=${CMAKE_BINARY_DIR}
+            -D MATHJAX="${MATHJAX}"
+            -D MATHJAX_FOUND="${MATHJAX_FOUND}"
+            -D MATHJAX_PATH="${MATHJAX_PATH}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
+        COMMENT "Creating Doxyfile to generate Doxygen documentation"
+    )
+
+    # Generate documentation.
+    add_custom_target(doc
+        COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
+        DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+        COMMENT "Generating API documentation with Doxygen"
+    )
+
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+        COMPONENT doc
+        OPTIONAL
+    )
   endif ()
-  # Preprocess the Doxyfile.  This is done before 'make doc'.
-  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
-      PRE_BUILD
-      COMMAND ${CMAKE_COMMAND}
-          -D DESTDIR=${CMAKE_BINARY_DIR}
-          -D MATHJAX="${MATHJAX}"
-          -D MATHJAX_FOUND="${MATHJAX_FOUND}"
-          -D MATHJAX_PATH="${MATHJAX_PATH}"
-          -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
-      COMMENT "Creating Doxyfile to generate Doxygen documentation"
-  )
-
-  # Generate documentation.
-  add_custom_target(doc
-      COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
-      DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
-      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-      COMMENT "Generating API documentation with Doxygen"
-  )
-
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
-      DESTINATION "${CMAKE_INSTALL_DOCDIR}"
-      COMPONENT doc
-      OPTIONAL
-  )
-endif ()
+endif()
 
 # Create the pkg-config file, if we have pkg-config.
 find_package(PkgConfig)

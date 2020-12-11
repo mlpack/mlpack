@@ -17,7 +17,7 @@
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 
 #include "catch.hpp"
-#include "serialization.hpp"
+#include "serialization_catch.hpp"
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
@@ -776,7 +776,7 @@ TEST_CASE("CategoricalBuildTestWithWeight", "[DecisionTreeTest]")
 /**
  * Make sure that when we ask for a decision stump, we get one.
  */
-TEST_CASE("DecisionStumpTest", "[DecisionTreeTest]")
+TEST_CASE("DTDecisionStumpTest", "[DecisionTreeTest]")
 {
   // Use a random dataset.
   arma::mat dataset(10, 1000, arma::fill::randu);
@@ -804,8 +804,10 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
@@ -830,8 +832,10 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  data::Load("vc2_test.csv", testData);
-  data::Load("vc2_test_labels.txt", testLabels);
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Cannot load test dataset vc2_test.csv!");
+  if (!data::Load("vc2_test_labels.txt", testLabels))
+    FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
   d.Classify(testData, predictions);
@@ -913,8 +917,10 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
@@ -939,8 +945,10 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  data::Load("vc2_test.csv", testData);
-  data::Load("vc2_test_labels.txt", testLabels);
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Cannot load test dataset vc2_test.csv!");
+  if (!data::Load("vc2_test_labels.txt", testLabels))
+    FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
   d.Classify(testData, predictions);
@@ -1099,8 +1107,10 @@ TEST_CASE("NumClassesTest", "[DecisionTreeTest]")
   // Load a dataset to train with.
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> dt(dataset, labels, 3);
 
@@ -1229,8 +1239,10 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> d(dataset, labels, 3, 10, 1e-7, 1);
 
