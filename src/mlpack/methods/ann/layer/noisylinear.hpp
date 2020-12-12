@@ -48,6 +48,15 @@ class NoisyLinear
   //! Copy constructor.
   NoisyLinear(const NoisyLinear&);
 
+  //! Move constructor.
+  NoisyLinear(NoisyLinear&&);
+
+  //! Operator= copy constructor.
+  NoisyLinear& operator=(const NoisyLinear& layer);
+
+  //! Operator= move constructor.
+  NoisyLinear& operator=(NoisyLinear&& layer);
+
   /*
    * Reset the layer parameter.
    */

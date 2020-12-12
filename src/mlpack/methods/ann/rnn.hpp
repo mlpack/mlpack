@@ -70,6 +70,18 @@ class RNN
       OutputLayerType outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
 
+  //! Copy constructor.
+  RNN(const RNN&);
+
+  //! Move constructor.
+  RNN(RNN&&);
+
+  //! Copy assignment operator.
+  RNN& operator=(const RNN&);
+
+  //! Move assignment operator
+  RNN& operator=(RNN&&);
+
   //! Destructor to release allocated memory.
   ~RNN();
 
@@ -411,6 +423,9 @@ class RNN
 
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;
+
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
 
   //! Locally-stored reset visitor.
   ResetVisitor resetVisitor;

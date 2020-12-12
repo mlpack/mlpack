@@ -2,6 +2,9 @@
 ###### ????-??-??
   * Added an implementation to Stratify Data (#2671).
 
+  * Add `BUILD_DOCS` CMake option to control whether Doxygen documentation is
+    built (default ON) (#2730).
+
   * Add Triplet Margin Loss function (#2762).
 
 ### mlpack 3.4.2
