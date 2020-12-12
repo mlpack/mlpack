@@ -17,7 +17,7 @@
 #include <mlpack/methods/ann/ffn.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 #include <mlpack/core/dists/regression_distribution.hpp>
 #include <mlpack/core/tree/ballbound.hpp>
