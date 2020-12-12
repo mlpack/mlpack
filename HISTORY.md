@@ -2,6 +2,8 @@
 ###### ????-??-??
   * Added an implementation to Stratify Data (#2671).
 
+  * Add Triplet Margin Loss function (#2762).
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.
