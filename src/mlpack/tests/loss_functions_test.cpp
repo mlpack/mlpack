@@ -902,7 +902,7 @@ TEST_CASE("MeanAbsolutePercentageErrorTest", "[LossFunctionsTest]")
 /*
  * Simple test for the Triplet Margin Loss function.
  */
-BOOST_AUTO_TEST_CASE(TripletMarginLossTest)
+TEST_CASE("TripletMarginLossTest")
 {
   arma::mat anchor, positive, negative;
   arma::mat input, target, output;
@@ -917,7 +917,7 @@ BOOST_AUTO_TEST_CASE(TripletMarginLossTest)
   input = { {2, 3, 5}, {10, 12, 13} };
 
   double error = module.Forward(input, negative);
-  BOOST_REQUIRE_EQUAL(error, 66);
+  REQUIRE(error == 66);
 
   // Test the Backward function.
   module.Backward(input, negative, output);
@@ -925,8 +925,8 @@ BOOST_AUTO_TEST_CASE(TripletMarginLossTest)
   // output = 2 * (negative - positive) / anchor.n_cols,
   // output * nofColumns / 2 + positive should be equal to negative.
   CheckMatrices(negative, output * output.n_cols / 2 + positive);
-  BOOST_REQUIRE_EQUAL(output.n_rows, anchor.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, anchor.n_cols);
+  REQUIRE(output.n_rows == anchor.n_rows);
+  REQUIRE(output.n_cols == anchor.n_cols);
 
   // Test the error function on a single input.
   anchor = arma::mat("4");
@@ -938,13 +938,11 @@ BOOST_AUTO_TEST_CASE(TripletMarginLossTest)
   input[1] = 7;
 
   error = module.Forward(input, negative);
-  BOOST_REQUIRE_EQUAL(error, 1.0);
+  REQUIRE(error == 1.0);
 
   // Test the Backward function on a single input.
   module.Backward(input, negative, output);
   // Test whether the output is negative.
-  BOOST_REQUIRE_EQUAL(arma::accu(output), -12);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 1);
+  REQUIRE(arma::accu(output) == -12);
+  REQUIRE(output.n_elem == 1);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
