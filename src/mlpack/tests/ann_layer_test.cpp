@@ -4089,33 +4089,33 @@ TEST_CASE("CheckCopyMoveAdaptiveMeanPooling", "[ANNLayerTest]")
 
   // Output-Size should be 2 x 2.
   // Square output.  
-  AdaptiveMaxPooling<> layer1(2, 2);
+  AdaptiveMeanPooling<> layer1(2, 2);
   layer1.InputHeight() = 3;
   layer1.InputWidth() = 4;
   
   // For copy Constructor
-  AdaptiveMaxPooling<> layer2 = layer1;
+  AdaptiveMeanPooling<> layer2 = layer1;
 
 	layer2.Forward(input, output);
 	layer2.Backward(input, output, delta);
 
   // Calculated using torch.nn.AdaptiveAvgPool2d().
-  REQUIRE(arma::accu(output) == 2.25);
-  REQUIRE(output.n_elem == 9);
+  REQUIRE(arma::accu(output) == 19.75);
+  REQUIRE(output.n_elem == 4);
   REQUIRE(output.n_cols == 1);
-  REQUIRE(arma::accu(delta) == 1.5);
+  REQUIRE(arma::accu(delta) == 7.0);
 
 	// For move Constructor
-  AdaptiveMaxPooling<> layer3 = std::move(layer1);
+  AdaptiveMeanPooling<> layer3 = std::move(layer1);
 
   layer3.Forward(input, output);
   layer3.Backward(input, output, delta);
 
   // Calculated using torch.nn.AdaptiveAvgPool2d().
-  REQUIRE(arma::accu(output) == 2.25);
-  REQUIRE(output.n_elem == 9);
+  REQUIRE(arma::accu(output) == 19.75);
+  REQUIRE(output.n_elem == 4);
   REQUIRE(output.n_cols == 1);
-  REQUIRE(arma::accu(delta) == 1.5);
+  REQUIRE(arma::accu(delta) == 7.0);
 }
 
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
