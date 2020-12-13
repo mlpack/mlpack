@@ -1,5 +1,6 @@
 /**
  * @file input_shape_visitor.hpp
+ * @author Khizir Siddiqui
  * @author Nippun Sharma
  *
  * This file provides an abstraction for the InputShape() function for

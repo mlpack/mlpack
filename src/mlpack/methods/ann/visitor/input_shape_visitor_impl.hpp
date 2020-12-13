@@ -1,5 +1,6 @@
 /**
  * @file input_shape_visitor_impl.hpp
+ * @author Khizir Siddiqui
  * @author Nippun Sharma
  *
  * Implementation of the InputShape() function layer abstraction.
