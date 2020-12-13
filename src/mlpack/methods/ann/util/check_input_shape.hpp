@@ -1,5 +1,6 @@
 /**
  * @file check_input_shape.hpp
+ * @author Khizir Siddiqui
  * @author Nippun Sharma
  * 
  * Definition of the CheckInputShape() function that checks
