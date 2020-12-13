@@ -916,8 +916,8 @@ TEST_CASE("TripletMarginLossTest")
 
   input = { {2, 3, 5}, {10, 12, 13} };
 
-  double error = module.Forward(input, negative);
-  REQUIRE(error == 66);
+  double loss = module.Forward(input, negative);
+  REQUIRE(loss == 66);
 
   // Test the Backward function.
   module.Backward(input, negative, output);
@@ -928,7 +928,7 @@ TEST_CASE("TripletMarginLossTest")
   REQUIRE(output.n_rows == anchor.n_rows);
   REQUIRE(output.n_cols == anchor.n_cols);
 
-  // Test the error function on a single input.
+  // Test the loss function on a single input.
   anchor = arma::mat("4");
   positive = arma::mat("7");
   negative = arma::mat("1");
@@ -937,8 +937,8 @@ TEST_CASE("TripletMarginLossTest")
   input[0] = 4;
   input[1] = 7;
 
-  error = module.Forward(input, negative);
-  REQUIRE(error == 1.0);
+  loss = module.Forward(input, negative);
+  REQUIRE(loss == 1.0);
 
   // Test the Backward function on a single input.
   module.Backward(input, negative, output);
