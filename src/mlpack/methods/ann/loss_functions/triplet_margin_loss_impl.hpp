@@ -26,33 +26,33 @@ TripletMarginLoss<InputDataType, OutputDataType>::TripletMarginLoss(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 TripletMarginLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  InputType anchor = input.submat(0, 0, input.n_rows / 2 - 1, input.n_cols - 1);
-  InputType positive = input.submat(input.n_rows / 2, 0, input.n_rows - 1,
-      input.n_cols - 1);
+  PredictionType anchor = prediction.submat(0, 0, prediction.n_rows / 2 - 1, prediction.n_cols - 1);
+  PredictionType positive = prediction.submat(prediction.n_rows / 2, 0, prediction.n_rows - 1,
+      prediction.n_cols - 1);
   return std::max(0.0, arma::accu(arma::pow(anchor - positive, 2)) -
       arma::accu(arma::pow(anchor - target, 2)) + margin) / anchor.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template <
-    typename InputType,
+    typename PredictionType,
     typename TargetType,
-    typename OutputType
+    typename LossType
 >
 void TripletMarginLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  InputType positive = input.submat(input.n_rows / 2, 0, input.n_rows - 1,
-      input.n_cols - 1);
-  output = 2 * (target - positive) / target.n_cols;
+  PredictionType positive = prediction.submat(prediction.n_rows / 2, 0, prediction.n_rows - 1,
+      prediction.n_cols - 1);
+  loss = 2 * (target - positive) / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
