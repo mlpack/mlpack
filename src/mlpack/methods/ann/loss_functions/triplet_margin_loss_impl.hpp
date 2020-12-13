@@ -1,6 +1,7 @@
 /**
- * @file triplet_margin_loss_impl.hpp
+ * @file methods/ann/loss_functions/triplet_margin_loss_impl.hpp
  * @author Prince Gupta
+ * @author Ayush Singh
  *
  * Implementation of the Triplet Margin Loss function.
  *
