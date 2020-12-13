@@ -46,6 +46,18 @@ class AdaptiveMeanPooling
   AdaptiveMeanPooling(const size_t outputWidth,
                       const size_t outputHeight);
 
+  //! Copy constructor.
+  AdaptiveMeanPooling(const AdaptiveMeanPooling& layer);
+
+  //! Move constructor.
+  AdaptiveMeanPooling(AdaptiveMeanPooling&&);
+
+  //! Copy assignment operator.
+  AdaptiveMeanPooling& operator=(const AdaptiveMeanPooling& layer);
+
+  //! Move assignment operator.
+  AdaptiveMeanPooling& operator=(AdaptiveMeanPooling&& layer);
+
   /**
    * Create the AdaptiveMeanPooling object.
    *

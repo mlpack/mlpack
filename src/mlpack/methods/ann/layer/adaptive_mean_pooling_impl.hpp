@@ -33,6 +33,56 @@ AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling(
   // Nothing to do here.
 }
 
+template<typename InputDataType, typename OutputDataType>
+AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling(
+    const AdaptiveMeanPooling& layer) : 
+    outputHeight(layer.outputHeight),
+    outputWidth(layer.outputWidth),
+    reset(layer.reset),
+    poolingLayer(layer.poolingLayer)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling(
+    AdaptiveMeanPooling&& layer) : 
+    outputHeight(std::move(layer.outputHeight)),
+    outputWidth(std::move(layer.outputWidth)),
+    reset(std::move(layer.reset)),
+    poolingLayer(std::move(layer.poolingLayer))
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+AdaptiveMeanPooling<InputDataType, OutputDataType>& 
+AdaptiveMeanPooling<InputDataType, OutputDataType> :: operator=(const AdaptiveMeanPooling& layer)
+{
+  if (this != &layer)
+  {
+    outputHeight = layer.outputHeight;
+    outputWidth = layer.outputWidth;
+    reset = layer.reset;
+    poolingLayer = layer.poolingLayer;
+  }
+  return *this; 
+}
+
+template <typename InputDataType, typename OutputDataType>
+AdaptiveMeanPooling<InputDataType, OutputDataType>& 
+AdaptiveMeanPooling<InputDataType, OutputDataType> :: operator=(AdaptiveMeanPooling&& layer)
+{
+  if (this != &layer)
+  {
+    outputHeight = std::move(layer.outputHeight);
+    outputWidth = std::move(layer.outputWidth);
+    reset = std::move(layer.reset);
+    poolingLayer = std::move(layer.poolingLayer);
+  }
+  return *this; 
+}
+
 template <typename InputDataType, typename OutputDataType>
 AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling(
     const std::tuple<size_t, size_t>& outputShape):
