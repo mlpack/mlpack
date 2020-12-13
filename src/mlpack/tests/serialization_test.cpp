@@ -1682,7 +1682,7 @@ TEST_CASE("CerealEmptyArrayWrapperTest", "[SerializationTest]")
   jsonT.mem = new int[5];
   jsonT.len = 5;
 
-  SerializeObjectAll(t, xmlT, binaryT, jsonT);
+  SerializeObjectAll(t, xmlT, jsonT, binaryT);
 
   // Ensure that all the results are correct.
   REQUIRE(xmlT.mem == (int*) NULL);

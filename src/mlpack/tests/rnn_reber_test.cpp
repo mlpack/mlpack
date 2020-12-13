@@ -179,7 +179,6 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
     else if (c == 'P' && state == 1)
     {
       numPs++;
-      state = 1;
     }
     else if (c == 'T' && state == 1)
     {
@@ -206,7 +205,6 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
     else if (c == 'P' && state == 5)
     {
       numPs--;
-      state = 5;
     }
   }
 

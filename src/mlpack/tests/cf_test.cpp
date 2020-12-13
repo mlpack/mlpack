@@ -346,7 +346,7 @@ void TrainWithCoordinateList(DecompositionPolicy& decomposition)
 {
   arma::mat randomData(3, 100);
   randomData.row(0) = arma::linspace<arma::rowvec>(0, 99, 100);
-  randomData.row(1) = arma::linspace<arma::rowvec>(0, 99, 100);
+  randomData.row(1) = randomData.row(0);
   randomData.row(2).fill(3);
   CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 30);
 
