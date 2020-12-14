@@ -138,6 +138,7 @@ Copyright:
   Copyright 2020, Nippun Sharma <inbox.nippun@gmail.com>
   Copyright 2020, Rishabh Garg <rishabhgarg108@gmail.com>
   Copyright 2020, Sudhakar Brar <dxhrmhall1449@tutanota.com>
+  Copyright 2020, Prakash  Choure<prakshchoure2002@gmail.com>
   Copyright 2020, Alex Nguyen <alexvn.edu@gmail.com>
 
 License: BSD-3-clause
