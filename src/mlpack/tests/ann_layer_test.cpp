@@ -4377,6 +4377,43 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
   REQUIRE(arma::accu(output) == 4156);
 }
 
+TEST_CASE("CopyMoveConvolution", "[ANNLayerTest]")
+{
+  arma::mat input, output;
+
+  // The input test matrix is of the form 3 x 2 x 4 x 1 where
+  // number of images are 3 and number of feature maps are 2.
+  input = arma::mat(8, 3);
+  input << 1 << 446 << 42 << arma::endr
+      << 2 << 16 << 63 << arma::endr
+      << 3 << 13 << 63 << arma::endr
+      << 4 << 21 << 21 << arma::endr
+      << 1 << 13 << 11 << arma::endr
+      << 32 << 45 << 42 << arma::endr
+      << 22 << 16 << 63 << arma::endr
+      << 32 << 13 << 42 << arma::endr;
+
+  Convolution<> layer1(2, 4, 1, 1, 1, 1, 0, 0, 4, 1);
+  layer1.Reset();
+
+  // Set weights to 1.0 and bias to 0.0.
+  layer1.Parameters().zeros();
+  arma::mat weight(2 * 4, 1);
+  weight.fill(1.0);
+  layer1.Parameters().submat(arma::span(0, 2 * 4 - 1), arma::span()) = weight;
+
+  Convolution<> layer2 = layer1; 
+  Convolution<> layer3 = std::move(layer1); 
+
+  layer2.Forward(input, output);
+  // Value already calculated
+  REQUIRE(arma::accu(output) == 4108);
+  
+  layer3.Forward(input, output);
+  // Value already calculated
+  REQUIRE(arma::accu(output) == 4108);
+}
+
 TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
 {
   FFN<> module;
