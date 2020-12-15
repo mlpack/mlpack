@@ -1,5 +1,5 @@
 /**
- * @file check_input_shape.hpp
+ * @file methods/ann/util/check_input_shape.hpp 
  * @author Khizir Siddiqui
  * @author Nippun Sharma
  * 
