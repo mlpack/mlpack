@@ -14,7 +14,6 @@
 
 // In case it hasn't yet been included.
 #include "convolution.hpp"
-using namespace std; 
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
