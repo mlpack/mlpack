@@ -1,5 +1,5 @@
 /**
- * @file tests/serialization_catch.cpp
+ * @file tests/serialization.cpp
  * @author Ryan Curtin
  *
  * Miscellaneous utility functions for serialization tests.
@@ -9,7 +9,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 #include "catch.hpp"
 
 namespace mlpack {
