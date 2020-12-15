@@ -4072,11 +4072,11 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
  */
 TEST_CASE("CheckCopyMoveAdaptiveMeanPooling", "[ANNLayerTest]")
 {
-	// For rectangular input.
-	arma::mat input = arma::mat(12, 1);
-	arma::mat output, delta;
+  // For rectangular input.
+  arma::mat input = arma::mat(12, 1);
+  arma::mat output, delta;
 
-	input.zeros();
+  input.zeros();
   input(0) = 1;
   input(1) = 2;
   input(2) = 3;
@@ -4092,12 +4092,12 @@ TEST_CASE("CheckCopyMoveAdaptiveMeanPooling", "[ANNLayerTest]")
   AdaptiveMeanPooling<> layer1(2, 2);
   layer1.InputHeight() = 3;
   layer1.InputWidth() = 4;
-  
+
   // For copy Constructor
   AdaptiveMeanPooling<> layer2 = layer1;
 
-	layer2.Forward(input, output);
-	layer2.Backward(input, output, delta);
+  layer2.Forward(input, output);
+  layer2.Backward(input, output, delta);
 
   // Calculated using torch.nn.AdaptiveAvgPool2d().
   REQUIRE(arma::accu(output) == 19.75);
@@ -4105,7 +4105,7 @@ TEST_CASE("CheckCopyMoveAdaptiveMeanPooling", "[ANNLayerTest]")
   REQUIRE(output.n_cols == 1);
   REQUIRE(arma::accu(delta) == 7.0);
 
-	// For move Constructor
+  // For move Constructor
   AdaptiveMeanPooling<> layer3 = std::move(layer1);
 
   layer3.Forward(input, output);
