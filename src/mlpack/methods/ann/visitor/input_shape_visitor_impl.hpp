@@ -1,5 +1,5 @@
 /**
- * @file input_shape_visitor_impl.hpp
+ * @file methods/ann/visitor/input_shape_visitor_impl.hpp
  * @author Khizir Siddiqui
  * @author Nippun Sharma
  *
