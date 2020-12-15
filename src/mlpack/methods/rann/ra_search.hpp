@@ -40,7 +40,7 @@ namespace neighbor {
 
 // Forward declaration.
 template<typename SortPolicy>
-class TrainVisitor;
+class RATrainVisitor;
 
 /**
  * The RASearch class: This class provides a generic manner to perform
