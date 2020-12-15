@@ -14,6 +14,7 @@
 
 // In case it hasn't yet been included.
 #include "convolution.hpp"
+using namespace std; 
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -164,16 +165,16 @@ Convolution<
     padHBottom(layer.padHBottom),
     padHTop(layer.padHTop),
     weights(layer.weights),
+    weight(layer.weight),
+    bias(layer.bias),
     inputWidth(layer.inputWidth),
     inputHeight(layer.inputHeight),
     outputWidth(layer.outputWidth),
-    outputHeight(layer.outputHeight),
-    padding(layer.padding)
+    outputHeight(layer.outputHeight)
 {
-  std::cout << "1\n"; 
-  // Nothing to do here.
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
-
+  
 template<    
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
@@ -200,14 +201,14 @@ Convolution<
     padHBottom(std::move(layer.padHBottom)),
     padHTop(std::move(layer.padHTop)),
     weights(std::move(layer.weights)),
+    weight(std::move(layer.weight)),
+    bias(std::move(layer.bias)),
     inputWidth(std::move(layer.inputWidth)),
     inputHeight(std::move(layer.inputHeight)),
     outputWidth(std::move(layer.outputWidth)),
-    outputHeight(std::move(layer.outputHeight)),
-    padding(std::move(layer.padding))
+    outputHeight(std::move(layer.outputHeight))
 {
-  std::cout << "2\n"; 
-  // Nothing to do here.
+  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template<    
@@ -243,14 +244,15 @@ Convolution<
     padWLeft = layer.padWLeft; 
     padWRight = layer.padWRight; 
     padHBottom = layer.padHBottom; 
-    padHTop = layer.padHTop; 
-    weights = layer.weights; 
+    padHTop = layer.padHTop;
+    weights = layer.weights;  
+    weight = layer.weight;
+    bias = layer.bias; 
     inputWidth = layer.inputWidth; 
     inputHeight = layer.inputHeight; 
     outputWidth = layer.outputWidth;
     outputHeight = layer.outputHeight;
-    padding = layer.padding; 
-    std::cout << "3\n"; 
+    padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
   }
   return *this; 
 }
@@ -288,14 +290,15 @@ Convolution<
     padWLeft = std::move(layer.padWLeft); 
     padWRight = std::move(layer.padWRight); 
     padHBottom = std::move(layer.padHBottom); 
-    padHTop = std::move(layer.padHTop); 
-    weights = std::move(layer.weights); 
+    padHTop = std::move(layer.padHTop);
+    weights = std::move(layer.weights);  
+    weight = std::move(layer.weight);
+    bias = std::move(layer.bias);
     inputWidth = std::move(layer.inputWidth);
     inputHeight = std::move(layer.inputHeight); 
     outputWidth = std::move(layer.outputWidth); 
     outputHeight = std::move(layer.outputHeight); 
-    padding = std::move(layer.padding); 
-    std::cout << "4\n"; 
+    padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
   }
   return *this; 
 }

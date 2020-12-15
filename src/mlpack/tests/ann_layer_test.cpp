@@ -4395,23 +4395,18 @@ TEST_CASE("CopyMoveConvolution", "[ANNLayerTest]")
 
   Convolution<> layer1(2, 4, 1, 1, 1, 1, 0, 0, 4, 1);
   layer1.Reset();
-
-  // Set weights to 1.0 and bias to 0.0.
-  layer1.Parameters().zeros();
-  arma::mat weight(2 * 4, 1);
-  weight.fill(1.0);
-  layer1.Parameters().submat(arma::span(0, 2 * 4 - 1), arma::span()) = weight;
+  layer1.Parameters().fill(1.0);
 
   Convolution<> layer2 = layer1; 
   Convolution<> layer3 = std::move(layer1); 
 
   layer2.Forward(input, output);
   // Value already calculated
-  REQUIRE(arma::accu(output) == 4108);
-  
+  REQUIRE(arma::accu(output) == 4156);
+
   layer3.Forward(input, output);
   // Value already calculated
-  REQUIRE(arma::accu(output) == 4108);
+  REQUIRE(arma::accu(output) == 4156);
 }
 
 TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
