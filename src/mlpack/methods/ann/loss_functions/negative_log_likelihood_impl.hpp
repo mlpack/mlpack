@@ -38,7 +38,7 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
     Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,
         "Target class out of range.");
 
-    output -= input(target(i), i);
+    output -= prediction(target(i), i);
   }
 
   return output;
@@ -57,7 +57,7 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
     Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,
         "Target class out of range.");
 
-    output(target(i), i) = -1;
+    loss(target(i), i) = -1;
   }
 }
 
