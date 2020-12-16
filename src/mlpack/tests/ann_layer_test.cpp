@@ -4384,14 +4384,14 @@ TEST_CASE("CopyMoveConvolution", "[ANNLayerTest]")
   // The input test matrix is of the form 3 x 2 x 4 x 1 where
   // number of images are 3 and number of feature maps are 2.
   input = arma::mat(8, 3);
-  input = { {1, 446, 42}, 
-		      	{2, 16, 63}, 
-		     		{3, 13, 63}, 
-		      	{4, 21, 21},
-		      	{1, 13, 11}, 
-		      	{32, 45, 42}, 
-		      	{22, 16, 63},
-		      	{32, 13, 42} };
+  input = { {1, 446, 42},
+            {2, 16, 63},
+            {3, 13, 63},
+            {4, 21, 21},
+            {1, 13, 11},
+            {32, 45, 42},
+            {22, 16, 63},
+            {32, 13, 42} };
 
   Convolution<> layer1(2, 4, 1, 1, 1, 1, 0, 0, 4, 1);
   layer1.Reset();
