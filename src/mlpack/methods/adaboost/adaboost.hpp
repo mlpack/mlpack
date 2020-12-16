@@ -71,8 +71,7 @@ namespace adaboost {
  * @endcode
  *
  * For more information on and examples of weak learners, see
- * perceptron::Perceptron<> and 
- tree::ID3DecisionStump.
+ * perceptron::Perceptron<> and tree::ID3DecisionStump.
  *
  * @tparam MatType Data matrix type (i.e. arma::mat or arma::sp_mat).
  * @tparam WeakLearnerType Type of weak learner to use.
