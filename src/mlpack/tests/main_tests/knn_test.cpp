@@ -20,8 +20,8 @@ static const std::string testName = "K-NearestNeighborsSearch";
 #include "test_helper.hpp"
 #include <mlpack/methods/neighbor_search/knn_main.cpp>
 
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 using namespace mlpack;
 
@@ -42,13 +42,12 @@ struct KNNTestFixture
   }
 };
 
-BOOST_FIXTURE_TEST_SUITE(KNNMainTest, KNNTestFixture);
-
 /*
  * Check that we can't provide reference and query matrices
  * with different dimensions.
  */
-BOOST_AUTO_TEST_CASE(KNNEqualDimensionTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNEqualDimensionTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -65,7 +64,7 @@ BOOST_AUTO_TEST_CASE(KNNEqualDimensionTest)
   SetInputParam("k", (int) 10);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -73,7 +72,8 @@ BOOST_AUTO_TEST_CASE(KNNEqualDimensionTest)
  * Check that we can't specify an invalid k when only reference
  * matrix is given.
  */
-BOOST_AUTO_TEST_CASE(KNNInvalidKTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidKTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidKTest)
   SetInputParam("k", (int) 101);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
   IO::GetSingleton().Parameters()["k"].wasPassed = false;
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidKTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) -1); // Invalid.
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -99,7 +99,8 @@ BOOST_AUTO_TEST_CASE(KNNInvalidKTest)
  * Check that we can't specify an invalid k when both reference
  * and query matrices are given.
  */
-BOOST_AUTO_TEST_CASE(KNNInvalidKQueryDataTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidKQueryDataTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -113,14 +114,15 @@ BOOST_AUTO_TEST_CASE(KNNInvalidKQueryDataTest)
   SetInputParam("k", (int) 101);
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /**
  * Check that we can't specify a negative leaf size.
  */
-BOOST_AUTO_TEST_CASE(KNNLeafSizeTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNLeafSizeTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -130,14 +132,15 @@ BOOST_AUTO_TEST_CASE(KNNLeafSizeTest)
   SetInputParam("leaf_size", (int) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass both input_model and reference matrix.
  */
-BOOST_AUTO_TEST_CASE(KNNRefModelTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNRefModelTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -153,14 +156,15 @@ BOOST_AUTO_TEST_CASE(KNNRefModelTest)
       std::move(IO::GetParam<KNNModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid tree type.
  */
-BOOST_AUTO_TEST_CASE(KNNInvalidTreeTypeTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidTreeTypeTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -171,14 +175,15 @@ BOOST_AUTO_TEST_CASE(KNNInvalidTreeTypeTest)
   SetInputParam("tree_type", (string) "min-rp"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid algorithm.
  */
-BOOST_AUTO_TEST_CASE(KNNInvalidAlgoTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidAlgoTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -189,14 +194,15 @@ BOOST_AUTO_TEST_CASE(KNNInvalidAlgoTest)
   SetInputParam("algorithm", (string) "triple_tree"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid value of epsilon.
  */
-BOOST_AUTO_TEST_CASE(KNNInvalidEpsilonTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidEpsilonTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -207,14 +213,15 @@ BOOST_AUTO_TEST_CASE(KNNInvalidEpsilonTest)
   SetInputParam("epsilon", (double) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid value of tau.
  */
-BOOST_AUTO_TEST_CASE(KNNInvalidTauTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidTauTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -225,14 +232,15 @@ BOOST_AUTO_TEST_CASE(KNNInvalidTauTest)
   SetInputParam("tau", (double) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
 /*
  * Check that we can't pass an invalid value of rho.
  */
-BOOST_AUTO_TEST_CASE(KNNInvalidRhoTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNInvalidRhoTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -245,7 +253,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidRhoTest)
   SetInputParam("rho", (double) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
 
   // Reset passed parameters.
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -254,7 +262,7 @@ BOOST_AUTO_TEST_CASE(KNNInvalidRhoTest)
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("rho", (double) 1.5); // Invalid.
 
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -262,7 +270,8 @@ BOOST_AUTO_TEST_CASE(KNNInvalidRhoTest)
  * Make sure that dimensions of the neighbors and distances matrices are correct
  * given a value of k.
  */
-BOOST_AUTO_TEST_CASE(KNNOutputDimensionTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNOutputDimensionTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -274,20 +283,19 @@ BOOST_AUTO_TEST_CASE(KNNOutputDimensionTest)
   mlpackMain();
 
   // Check the neighbors matrix has 10 points for each input point.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>
-      ("neighbors").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::Mat<size_t>>
-      ("neighbors").n_cols, 100);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows == 10);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols == 100);
 
   // Check the distances matrix has 10 points for each input point.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_rows, 10);
-  BOOST_REQUIRE_EQUAL(IO::GetParam<arma::mat>("distances").n_cols, 100);
+  REQUIRE(IO::GetParam<arma::mat>("distances").n_rows == 10);
+  REQUIRE(IO::GetParam<arma::mat>("distances").n_cols == 100);
 }
 
 /**
  * Ensure that saved model can be used again.
  */
-BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNModelReuseTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -329,7 +337,8 @@ BOOST_AUTO_TEST_CASE(KNNModelReuseTest)
  * Ensure that changing the value of tau gives us different greedy
  * spill tree results.
  */
-BOOST_AUTO_TEST_CASE(KNNDifferentTauTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNDifferentTauTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(6, 1000); // 1000 points in 6 dimensions.
@@ -368,7 +377,8 @@ BOOST_AUTO_TEST_CASE(KNNDifferentTauTest)
  * Ensure that changing the value of rho gives us different greedy
  * spill tree results.
  */
-BOOST_AUTO_TEST_CASE(KNNDifferentRhoTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNDifferentRhoTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
@@ -408,7 +418,8 @@ BOOST_AUTO_TEST_CASE(KNNDifferentRhoTest)
  * Ensure that changing the value of epslion gives us different
  * approximate KNN results.
  */
-BOOST_AUTO_TEST_CASE(KNNDifferentEpsilonTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNDifferentEpsilonTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
@@ -445,7 +456,8 @@ BOOST_AUTO_TEST_CASE(KNNDifferentEpsilonTest)
  * Ensure that we get same results on running twice in dual-tree mode
  * search mode when random_basis is specified.
  */
-BOOST_AUTO_TEST_CASE(KNNRandomBasisTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNRandomBasisTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 1000); // 1000 points in 3 dimensions.
@@ -462,8 +474,7 @@ BOOST_AUTO_TEST_CASE(KNNRandomBasisTest)
   arma::mat distances;
   neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(IO::GetParam<arma::mat>("distances"));
-  BOOST_REQUIRE_EQUAL(IO::GetParam<KNNModel*>("output_model")->RandomBasis(),
-      true);
+  REQUIRE(IO::GetParam<KNNModel*>("output_model")->RandomBasis() == true);
 
   bindings::tests::CleanMemory();
 
@@ -476,15 +487,15 @@ BOOST_AUTO_TEST_CASE(KNNRandomBasisTest)
 
   CheckMatrices(neighbors, IO::GetParam<arma::Mat<size_t>>("neighbors"));
   CheckMatrices(distances, IO::GetParam<arma::mat>("distances"));
-  BOOST_REQUIRE_EQUAL(IO::GetParam<KNNModel*>("output_model")->RandomBasis(),
-      false);
+  REQUIRE(IO::GetParam<KNNModel*>("output_model")->RandomBasis() == false);
 }
 
 /*
  * Ensure that the program runs successfully when we pass true_neighbors
  * and/or true_distances and fails when those matrices have the wrong shape.
  */
-BOOST_AUTO_TEST_CASE(KNNTrueNeighborDistanceTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNTrueNeighborDistanceTest",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -509,7 +520,7 @@ BOOST_AUTO_TEST_CASE(KNNTrueNeighborDistanceTest)
   SetInputParam("true_distances", distances);
   SetInputParam("epsilon", (double) 0.5);
 
-  BOOST_REQUIRE_NO_THROW(mlpackMain());
+  REQUIRE_NOTHROW(mlpackMain());
 
   // True output matrices have incorrect shape.
   arma::Mat<size_t> dummyNeighbors;
@@ -526,7 +537,7 @@ BOOST_AUTO_TEST_CASE(KNNTrueNeighborDistanceTest)
   SetInputParam("true_distances", std::move(dummyDistances));
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -534,7 +545,8 @@ BOOST_AUTO_TEST_CASE(KNNTrueNeighborDistanceTest)
  * Ensure that different search algorithms give same result.
  * We do not consider greedy because it is an approximate algorithm.
  */
-BOOST_AUTO_TEST_CASE(KNNAllAlgorithmsTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNAllAlgorithmsTest",
+                 "[KNNMainTest][BindingTests]")
 {
   string algorithms[] = {"dual_tree", "naive", "single_tree"};
   const int nofalgorithms = 3;
@@ -592,7 +604,8 @@ BOOST_AUTO_TEST_CASE(KNNAllAlgorithmsTest)
 /*
  * Ensure that different tree types give same result.
  */
-BOOST_AUTO_TEST_CASE(KNNAllTreeTypesTest)
+TEST_CASE_METHOD(KNNTestFixture, "KNNAllTreeTypesTest",
+                 "[KNNMainTest][BindingTests]")
 {
   // Not including spill for now.
   string treetypes[] = {"kd", "vp", "rp", "max-rp", "ub", "cover", "r",
@@ -653,7 +666,8 @@ BOOST_AUTO_TEST_CASE(KNNAllTreeTypesTest)
 /**
   * Ensure that different leaf sizes give different results.
  */
-BOOST_AUTO_TEST_CASE(KNNDifferentLeafSizes)
+TEST_CASE_METHOD(KNNTestFixture, "KNNDifferentLeafSizes",
+                 "[KNNMainTest][BindingTests]")
 {
   arma::mat referenceData;
   referenceData.randu(3, 100); // 100 points in 3 dimensions.
@@ -680,10 +694,7 @@ BOOST_AUTO_TEST_CASE(KNNDifferentLeafSizes)
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  BOOST_CHECK_EQUAL(output_model->LeafSize(), (int) 1);
-  BOOST_CHECK_EQUAL(IO::GetParam<KNNModel*>("output_model")->LeafSize(),
-    (int) 10);
+  REQUIRE(output_model->LeafSize() == (int) 1);
+  REQUIRE(IO::GetParam<KNNModel*>("output_model")->LeafSize() == (int) 10);
   delete output_model;
 }
-
-BOOST_AUTO_TEST_SUITE_END();

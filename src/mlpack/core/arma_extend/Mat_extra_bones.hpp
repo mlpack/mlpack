@@ -8,10 +8,6 @@
 // Written by Conrad Sanderson - http://conradsanderson.id.au
 // Written by Ryan Curtin
 
-//! Add a serialization operator.
-template<typename Archive>
-void serialize(Archive& ar, const unsigned int version);
-
 /**
  * These will help us refer the proper vector / column types, only with
  * specifying the matrix type we want to use.
@@ -20,7 +16,3 @@ void serialize(Archive& ar, const unsigned int version);
 typedef Col<elem_type>   vec_type;
 typedef Col<elem_type>   col_type;
 typedef Row<elem_type>   row_type;
-
-/*
- * Add row_col_iterator and row_col_const_iterator to arma::Mat.
- */

@@ -19,6 +19,7 @@
 #include <mlpack/bindings/python/get_printable_type.hpp>
 #include <mlpack/bindings/julia/get_printable_type.hpp>
 #include <mlpack/bindings/go/get_printable_type.hpp>
+#include <mlpack/bindings/R/get_printable_type.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -52,6 +53,11 @@ void GetPrintableType(util::ParamData& data,
   {
     *((std::string*) output) =
         go::GetPrintableType<typename std::remove_pointer<T>::type>(data);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    *((std::string*) output) =
+        r::GetPrintableType<typename std::remove_pointer<T>::type>(data);
   }
   else
   {

@@ -26,33 +26,33 @@ CrossEntropyError<InputDataType, OutputDataType>::CrossEntropyError(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 CrossEntropyError<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  return -arma::accu(target % arma::log(input + eps) +
-      (1. - target) % arma::log(1. - input + eps));
+  return -arma::accu(target % arma::log(prediction + eps) +
+      (1. - target) % arma::log(1. - prediction + eps));
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void CrossEntropyError<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output = (1. - target) / (1. - input + eps) - target / (input + eps);
+  loss = (1. - target) / (1. - prediction + eps) - target / (prediction + eps);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void CrossEntropyError<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(eps);
+  ar(CEREAL_NVP(eps));
 }
 
 } // namespace ann

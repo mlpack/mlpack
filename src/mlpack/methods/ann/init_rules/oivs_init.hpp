@@ -92,6 +92,20 @@ class OivsInitialization
   }
 
   /**
+   * Initialize the elements of the specified weight matrix with the oivs method.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W)
+  {
+    RandomInitialization randomInit(-gamma, gamma);
+    randomInit.Initialize(W);
+
+    W = (b / (k  * W.n_rows)) * arma::sqrt(W + 1);
+  }
+
+  /**
    * Initialize the elements of the specified weight 3rd order tensor with the
    * oivs method.
    *
@@ -106,10 +120,27 @@ class OivsInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    W = arma::Cube<eT>(rows, cols, slices);
+    if (W.is_empty())
+      W.set_size(rows, cols, slices);
 
     for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
+  }
+
+  /**
+   * Initialize the elements of the specified weight 3rd order tensor with the
+   * oivs method.
+   *
+   * @param W 3rd order tensor to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT>& W)
+  {
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty cube." << std::endl;
+
+    for (size_t i = 0; i < W.n_slices; ++i)
+      Initialize(W.slice(i));
   }
 
  private:

@@ -10,41 +10,8 @@
 #  * JULIA_CPP_IN: path of the julia_method.cpp.in file.
 #  * JULIA_CPP_OUT: name of the output .cpp file.
 #
-# We need to parse the main file and find any PARAM_MODEL_* lines.
-file(READ "${PROGRAM_MAIN_FILE}" MAIN_FILE)
-
-# Grab all "PARAM_MODEL_IN(Model,", "PARAM_MODEL_IN_REQ(Model,",
-# "PARAM_MODEL_OUT(Model,".
-string(REGEX MATCHALL "PARAM_MODEL_IN\\([A-Za-z_<>]*," MODELS_IN
-    "${MAIN_FILE}")
-string(REGEX MATCHALL "PARAM_MODEL_IN_REQ\\([A-Za-z_<>]*," MODELS_IN_REQ
-    "${MAIN_FILE}")
-string(REGEX MATCHALL "PARAM_MODEL_OUT\\([A-Za-z_]*," MODELS_OUT "${MAIN_FILE}")
-
-string(REGEX REPLACE "PARAM_MODEL_IN\\(" "" MODELS_IN_STRIP1 "${MODELS_IN}")
-string(REGEX REPLACE "," "" MODELS_IN_STRIP2 "${MODELS_IN_STRIP1}")
-string(REGEX REPLACE "[<>,]" "" MODELS_IN_SAFE_STRIP2 "${MODELS_IN_STRIP1}")
-
-string(REGEX REPLACE "PARAM_MODEL_IN_REQ\\(" "" MODELS_IN_REQ_STRIP1
-    "${MODELS_IN_REQ}")
-string(REGEX REPLACE "," "" MODELS_IN_REQ_STRIP2 "${MODELS_IN_REQ_STRIP1}")
-string(REGEX REPLACE "[<>,]" "" MODELS_IN_REQ_SAFE_STRIP2
-    "${MODELS_IN_REQ_STRIP1}")
-
-string(REGEX REPLACE "PARAM_MODEL_OUT\\(" "" MODELS_OUT_STRIP1 "${MODELS_OUT}")
-string(REGEX REPLACE "," "" MODELS_OUT_STRIP2 "${MODELS_OUT_STRIP1}")
-string(REGEX REPLACE "[<>,]" "" MODELS_OUT_SAFE_STRIP2 "${MODELS_OUT_STRIP1}")
-
-set(MODEL_TYPES ${MODELS_IN_STRIP2} ${MODELS_IN_REQ_STRIP2}
-    ${MODELS_OUT_STRIP2})
-set(MODEL_SAFE_TYPES ${MODELS_IN_SAFE_STRIP2} ${MODELS_IN_REQ_SAFE_STRIP2}
-    ${MODELS_OUT_SAFE_STRIP2})
-if (MODEL_TYPES)
-  list(REMOVE_DUPLICATES MODEL_TYPES)
-endif ()
-if (MODEL_SAFE_TYPES)
-  list(REMOVE_DUPLICATES MODEL_SAFE_TYPES)
-endif ()
+include("${SOURCE_DIR}/CMake/StripType.cmake")
+strip_type("${PROGRAM_MAIN_FILE}")
 
 # Now, generate the definitions of the functions we need.
 set(MODEL_PTR_DEFNS "")
@@ -88,9 +55,9 @@ char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length)
 {
   std::ostringstream oss;
   {
-    boost::archive::binary_oarchive oa(oss);
+    cereal::BinaryOutputArchive oa(oss);
     ${MODEL_TYPE}* model = (${MODEL_TYPE}*) ptr;
-    oa << boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\", model);
+    oa(CEREAL_POINTER(model));
   }
 
   *length = oss.str().length();
@@ -105,16 +72,16 @@ char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length)
 // Deserialize a ${MODEL_TYPE} pointer.
 void* Deserialize${MODEL_SAFE_TYPE}Ptr(const char* buffer, const size_t length)
 {
-  ${MODEL_TYPE}* t = new ${MODEL_TYPE}();
+  ${MODEL_TYPE}* model = new ${MODEL_TYPE}();
 
   std::istringstream iss(std::string(buffer, length));
   {
-    boost::archive::binary_iarchive ia(iss);
-    ia >> boost::serialization::make_nvp(\"${MODEL_SAFE_TYPE}\", t);
+    cereal::BinaryInputArchive ia(iss);
+    ia(CEREAL_POINTER(model));
   }
 
   // Julia will be responsible for freeing this.
-  return (void*) t;
+  return (void*) model;
 }
 ")
   endforeach ()

@@ -12,7 +12,7 @@
 #ifndef MLPACK_BINDINGS_JULIA_PRINT_INPUT_PROCESSING_IMPL_HPP
 #define MLPACK_BINDINGS_JULIA_PRINT_INPUT_PROCESSING_IMPL_HPP
 
-#include "strip_type.hpp"
+#include <mlpack/bindings/util/strip_type.hpp>
 #include "get_julia_type.hpp"
 
 namespace mlpack {
@@ -27,6 +27,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
@@ -135,7 +136,7 @@ void PrintInputProcessing(
   }
 
   std::string indent(extraIndent + 2, ' ');
-  std::string type = StripType(d.cppType);
+  std::string type = util::StripType(d.cppType);
   std::cout << indent << functionName << "_internal.IOSetParam" << type
       << "(\"" << d.name << "\", convert("
       << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "

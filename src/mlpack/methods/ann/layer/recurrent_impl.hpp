@@ -2,8 +2,7 @@
  * @file methods/ann/layer/recurrent_impl.hpp
  * @author Marcus Edel
  *
- * Implementation of the LinearLayer class also known as fully-connected layer
- * or affine transformation.
+ * Implementation of the Recurrent class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -256,10 +255,10 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   // Clean up memory, if we are loading.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // Clear old things, if needed.
     boost::apply_visitor(DeleteVisitor(), recurrentModule);
@@ -268,15 +267,15 @@ void Recurrent<InputDataType, OutputDataType, CustomLayers...>::serialize(
     network.clear();
   }
 
-  ar & BOOST_SERIALIZATION_NVP(startModule);
-  ar & BOOST_SERIALIZATION_NVP(inputModule);
-  ar & BOOST_SERIALIZATION_NVP(feedbackModule);
-  ar & BOOST_SERIALIZATION_NVP(transferModule);
-  ar & BOOST_SERIALIZATION_NVP(rho);
-  ar & BOOST_SERIALIZATION_NVP(ownsLayer);
+  ar(CEREAL_VARIANT_POINTER(startModule));
+  ar(CEREAL_VARIANT_POINTER(inputModule));
+  ar(CEREAL_VARIANT_POINTER(feedbackModule));
+  ar(CEREAL_VARIANT_POINTER(transferModule));
+  ar(CEREAL_NVP(rho));
+  ar(CEREAL_NVP(ownsLayer));
 
   // Set up the network.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     initialModule = new Sequential<>();
     mergeModule = new AddMerge<>(false, false, false);

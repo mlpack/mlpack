@@ -14,8 +14,8 @@
 #include <mlpack/methods/neighbor_search/ns_model.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/example_tree.hpp>
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "test_catch_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::neighbor;
@@ -23,20 +23,18 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::bound;
 
-BOOST_AUTO_TEST_SUITE(AKNNTest);
-
 /**
  * Test the dual-tree nearest-neighbors method with different values for
  * epsilon. This uses both a query and reference dataset.
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(ApproxVsExact1)
+TEST_CASE("AKNNApproxVsExact1", "[AKNNTest]")
 {
   arma::mat dataset;
 
   if (!data::Load("test_data_3_1000.csv", dataset))
-    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);
   arma::Mat<size_t> neighborsExact;
@@ -84,12 +82,12 @@ BOOST_AUTO_TEST_CASE(ApproxVsExact1)
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(ApproxVsExact2)
+TEST_CASE("AKNNApproxVsExact2", "[AKNNTest]")
 {
   arma::mat dataset;
 
   if (!data::Load("test_data_3_1000.csv", dataset))
-    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);
   arma::Mat<size_t> neighborsExact;
@@ -111,12 +109,12 @@ BOOST_AUTO_TEST_CASE(ApproxVsExact2)
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(SingleTreeApproxVsExact)
+TEST_CASE("AKNNSingleTreeApproxVsExact", "[AKNNTest]")
 {
   arma::mat dataset;
 
   if (!data::Load("test_data_3_1000.csv", dataset))
-    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);
   arma::Mat<size_t> neighborsExact;
@@ -138,7 +136,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeApproxVsExact)
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
+TEST_CASE("AKNNSingleCoverTreeTest", "[AKNNTest]")
 {
   arma::mat dataset;
   dataset.randu(75, 1000); // 75 dimensional, 1000 points.
@@ -168,10 +166,11 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
+TEST_CASE("AKNNDualCoverTreeTest", "[AKNNTest]")
 {
   arma::mat dataset;
-  data::Load("test_data_3_1000.csv", dataset);
+  if (!data::Load("test_data_3_1000.csv", dataset))
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);
   arma::Mat<size_t> neighborsExact;
@@ -195,7 +194,7 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
+TEST_CASE("AKNNSingleBallTreeTest", "[AKNNTest]")
 {
   arma::mat dataset;
   dataset.randu(50, 300); // 50 dimensional, 300 points.
@@ -222,10 +221,11 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(DualBallTreeTest)
+TEST_CASE("AKNNDualBallTreeTest", "[AKNNTest]")
 {
   arma::mat dataset;
-  data::Load("test_data_3_1000.csv", dataset);
+  if (!data::Load("test_data_3_1000.csv", dataset))
+    FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);
   arma::Mat<size_t> neighborsExact;
@@ -249,7 +249,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
  *
  * Errors are produced if the results are not according to relative error.
  */
-BOOST_AUTO_TEST_CASE(SingleSpillTreeTest)
+TEST_CASE("AKNNSingleSpillTreeTest", "[AKNNTest]")
 {
   arma::mat dataset;
   dataset.randu(50, 300); // 50 dimensional, 300 points.
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(SingleSpillTreeTest)
 /**
  * Make sure sparse nearest neighbors works with kd trees.
  */
-BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
+TEST_CASE("AKNNSparseKNNKDTreeTest", "[AKNNTest]")
 {
   // The dimensionality of these datasets must be high so that the probability
   // of a completely empty point is very low.  In this case, with dimensionality
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE(SparseKNNKDTreeTest)
  * Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
  * results.
  */
-BOOST_AUTO_TEST_CASE(KNNModelTest)
+TEST_CASE("AKNNModelTest", "[AKNNTest]")
 {
   typedef NSModel<NearestNeighborSort> KNNModel;
 
@@ -385,12 +385,12 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
       models[i].Search(std::move(queryCopy), 3, neighborsApprox,
           distancesApprox);
 
-      BOOST_REQUIRE_EQUAL(neighborsApprox.n_rows, neighborsExact.n_rows);
-      BOOST_REQUIRE_EQUAL(neighborsApprox.n_cols, neighborsExact.n_cols);
-      BOOST_REQUIRE_EQUAL(neighborsApprox.n_elem, neighborsExact.n_elem);
-      BOOST_REQUIRE_EQUAL(distancesApprox.n_rows, distancesExact.n_rows);
-      BOOST_REQUIRE_EQUAL(distancesApprox.n_cols, distancesExact.n_cols);
-      BOOST_REQUIRE_EQUAL(distancesApprox.n_elem, distancesExact.n_elem);
+      REQUIRE(neighborsApprox.n_rows == neighborsExact.n_rows);
+      REQUIRE(neighborsApprox.n_cols == neighborsExact.n_cols);
+      REQUIRE(neighborsApprox.n_elem == neighborsExact.n_elem);
+      REQUIRE(distancesApprox.n_rows == distancesExact.n_rows);
+      REQUIRE(distancesApprox.n_cols == distancesExact.n_cols);
+      REQUIRE(distancesApprox.n_elem == distancesExact.n_elem);
       for (size_t k = 0; k < distancesApprox.n_elem; ++k)
         REQUIRE_RELATIVE_ERR(distancesApprox[k], distancesExact[k], 0.05);
     }
@@ -401,7 +401,7 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
  * Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
  * results, in the case where the reference set is the same as the query set.
  */
-BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
+TEST_CASE("AKNNModelMonochromaticTest", "[AKNNTest]")
 {
   typedef NSModel<NearestNeighborSort> KNNModel;
 
@@ -460,16 +460,14 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
 
       models[i].Search(3, neighborsApprox, distancesApprox);
 
-      BOOST_REQUIRE_EQUAL(neighborsApprox.n_rows, neighborsExact.n_rows);
-      BOOST_REQUIRE_EQUAL(neighborsApprox.n_cols, neighborsExact.n_cols);
-      BOOST_REQUIRE_EQUAL(neighborsApprox.n_elem, neighborsExact.n_elem);
-      BOOST_REQUIRE_EQUAL(distancesApprox.n_rows, distancesExact.n_rows);
-      BOOST_REQUIRE_EQUAL(distancesApprox.n_cols, distancesExact.n_cols);
-      BOOST_REQUIRE_EQUAL(distancesApprox.n_elem, distancesExact.n_elem);
+      REQUIRE(neighborsApprox.n_rows == neighborsExact.n_rows);
+      REQUIRE(neighborsApprox.n_cols == neighborsExact.n_cols);
+      REQUIRE(neighborsApprox.n_elem == neighborsExact.n_elem);
+      REQUIRE(distancesApprox.n_rows == distancesExact.n_rows);
+      REQUIRE(distancesApprox.n_cols == distancesExact.n_cols);
+      REQUIRE(distancesApprox.n_elem == distancesExact.n_elem);
       for (size_t k = 0; k < distancesApprox.n_elem; ++k)
         REQUIRE_RELATIVE_ERR(distancesApprox[k], distancesExact[k], 0.05);
     }
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

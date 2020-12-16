@@ -76,6 +76,18 @@ class LSTM
        const size_t outSize,
        const size_t rho = std::numeric_limits<size_t>::max());
 
+  //! Copy constructor.
+  LSTM(const LSTM& layer);
+
+  //! Move constructor.
+  LSTM(LSTM&&);
+
+  //! Copy assignment operator.
+  LSTM& operator=(const LSTM& layer);
+
+  //! Move assignment operator.
+  LSTM& operator=(LSTM&& layer);
+
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -175,7 +187,7 @@ class LSTM
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

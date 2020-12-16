@@ -3,6 +3,8 @@
 set(SOURCES
   dataset_mapper.hpp
   dataset_mapper_impl.hpp
+  detect_file_type.hpp
+  detect_file_type.cpp
   extension.hpp
   format.hpp
   has_serialize.hpp
@@ -23,7 +25,6 @@ set(SOURCES
   save.hpp
   save_impl.hpp
   save_image.cpp
-  serialization_template_version.hpp
   split_data.hpp
   imputer.hpp
   binarize.hpp

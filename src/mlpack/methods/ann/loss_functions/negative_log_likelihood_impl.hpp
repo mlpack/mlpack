@@ -25,17 +25,17 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::NegativeLogLikelihood()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  typedef typename InputType::elem_type ElemType;
+  typedef typename PredictionType::elem_type ElemType;
   ElemType output = 0;
-  for (size_t i = 0; i < input.n_cols; ++i)
+  for (size_t i = 0; i < prediction.n_cols; ++i)
   {
-    Log::Assert(target(i) >= 0 && target(i) < input.n_rows,
+    Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,
         "Target class out of range.");
 
     output -= input(target(i), i);
@@ -45,16 +45,16 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
-      const InputType& input,
+      const PredictionType& prediction,
       const TargetType& target,
-      OutputType& output)
+      LossType& loss)
 {
-  output = arma::zeros<OutputType>(input.n_rows, input.n_cols);
-  for (size_t i = 0; i < input.n_cols; ++i)
+  loss = arma::zeros<LossType>(prediction.n_rows, prediction.n_cols);
+  for (size_t i = 0; i < prediction.n_cols; ++i)
   {
-    Log::Assert(target(i) >= 0 && target(i) < input.n_rows,
+    Log::Assert(target(i) >= 0 && target(i) < prediction.n_rows,
         "Target class out of range.");
 
     output(target(i), i) = -1;
@@ -64,8 +64,7 @@ void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
-    const unsigned int /* version */)
+    Archive& /* ar */, const uint32_t /* version */)
 {
   // Nothing to do here.
 }

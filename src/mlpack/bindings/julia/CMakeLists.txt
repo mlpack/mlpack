@@ -7,6 +7,16 @@ macro (not_found_return message)
   return()
 endmacro ()
 
+macro (post_julia_setup)
+  # If we are building Julia bindings, we have to end the 'module' declaration in
+  # mlpack.jl.
+  if (BUILD_JULIA_BINDINGS)
+    file(APPEND
+        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
+        "\nend\ninclude(\"functions.jl\")\ninclude(\"serialization.jl\")\nend\n")
+  endif ()
+endmacro ()
+
 # If we are not supposed to make Julia bindings, define the macro so it does
 # nothing and leave this file.
 if (NOT BUILD_JULIA_BINDINGS)
@@ -99,8 +109,8 @@ if (BUILD_JULIA_BINDINGS)
       "\"\"\"\n"
       "    serialize_bin(stream::IO, model)\n"
       "\n"
-      "Serialize an mlpack model `model` in the binary boost::serialization\n"
-      "format to the given `stream`.  Example:\n"
+      "Serialize an mlpack model `model` in the binary cereal format to the \n"
+      "given `stream`.  Example:\n"
       "\n"
       "```julia\n"
       "_, model, _, _ = mlpack.logistic_regression(training=x, labels=y)\n"
@@ -124,10 +134,10 @@ if (BUILD_JULIA_BINDINGS)
       "lr_model = mlpack.deserialize_bin(stream, LogisticRegression)\n"
       "```\n"
       "\n"
-      "Only use this if you have saved the model in the boost::serialization\n"
-      "binary format using `serialize_bin()` or an mlpack binding in another\n"
-      "language!  If you used `Serialization.serialize()` to serialize your\n"
-      "model, then use `Serialization.deserialize()` to deserialize it.\n"
+      "Only use this if you have saved the model in the cereal binary format \n"
+      "using `serialize_bin()` or an mlpack binding in another language!  If \n"
+      "you used `Serialization.serialize()` to serialize your model, then use\n"
+      "`Serialization.deserialize()` to deserialize it.\n"
       "\n"
       "Then, the returned model can be passed to appropriate mlpack functions\n"
       "for machine learning tasks.\n"
@@ -150,6 +160,7 @@ if (BUILD_JULIA_BINDINGS)
       COMMAND ${CMAKE_COMMAND}
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+          -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DJULIA_H_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.h.in
           -DJULIA_H_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/julia_${name}.h
           -DJULIA_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_method.cpp.in
@@ -186,9 +197,9 @@ if (BUILD_JULIA_BINDINGS)
           -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_${name}.cpp
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
           -DMLPACK_JL_LIB_SUFFIX=${CMAKE_SHARED_LIBRARY_SUFFIX}
-          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake
+          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/generate_jl.cpp.in
-              ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake)
+              ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
 
   add_executable(generate_jl_${name}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_${name}.cpp
@@ -210,8 +221,7 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc_impl.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_model_type_import.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/strip_type.hpp)
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp)
   target_link_libraries(generate_jl_${name} mlpack ${MLPACK_LIBRARIES})
   set_target_properties(generate_jl_${name} PROPERTIES
       COMPILE_FLAGS "-DBINDING_TYPE=BINDING_TYPE_JL"

@@ -498,7 +498,7 @@ class KDEModel
 
   //! Serialize the KDE model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
   //! Get the bandwidth of the kernel.
   double Bandwidth() const { return bandwidth; }
@@ -607,9 +607,6 @@ class KDEModel
 
 } // namespace kde
 } // namespace mlpack
-
-//! Set the serialization version of the KDEModel class.
-BOOST_TEMPLATE_CLASS_VERSION(template<>, mlpack::kde::KDEModel, 1);
 
 #include "kde_model_impl.hpp"
 

@@ -22,28 +22,39 @@
 #include <mlpack/core/data/imputation_methods/custom_imputation.hpp>
 #include <mlpack/core/data/imputation_methods/listwise_deletion.hpp>
 
-PROGRAM_INFO("Impute Data",
-    // Short description.
+// Program Name.
+BINDING_NAME("Impute Data");
+
+// Short description.
+BINDING_SHORT_DESC(
     "This utility provides several imputation strategies for missing data. "
     "Given a dataset with missing values, this can impute according to several "
-    "strategies, including user-defined values.",
-    // Long description.
+    "strategies, including user-defined values.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes a dataset and converts a user-defined missing variable "
     "to another to provide more meaningful analysis."
     "\n\n"
     "The program does not modify the original file, but instead makes a "
     "separate file to save the output data; You can save the output by "
-    "specifying the file name with --output_file (-o)."
-    "\n\n"
+    "specifying the file name with" + PRINT_PARAM_STRING("output_file") + ".");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, if we consider 'NULL' in dimension 0 to be a missing "
     "variable and want to delete whole row containing the NULL in the "
-    "column-wise dataset, and save the result to result.csv, we could run"
-    "\n\n"
-    "$ mlpack_preprocess_imputer -i dataset.csv -o result.csv -m NULL -d 0 \n"
-    "> -s listwise_deletion",
-    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
-    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
-    SEE_ALSO("@preprocess_split", "#preprocess_split"));
+    "column-wise" + PRINT_DATASET("dataset") + ", and save the result to " +
+    PRINT_DATASET("result") + ", we could run :"
+    "\n\n" +
+    PRINT_CALL("mlpack_preprocess_imputer", "input_file", "dataset",
+        "output_file", "result", "missing_value", "NULL", "dimension", "0",
+        "strategy", "listwise_deletion"));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
+BINDING_SEE_ALSO("@preprocess_split", "#preprocess_split");
 
 PARAM_STRING_IN_REQ("input_file", "File containing data.", "i");
 PARAM_STRING_OUT("output_file", "File to save output into.", "o");
