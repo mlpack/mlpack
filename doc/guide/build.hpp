@@ -233,7 +233,8 @@ src/mlpack/CMakeFiles/mlpack.dir/core/optimizers/aug_lagrangian/aug_lagrangian_t
 @endcode
 
 It's often useful to specify \c -jN to the \c make command, which will build on
-\c N processor cores.  That can accelerate the build significantly.
+\c N processor cores. That can accelerate the build significantly. Sometimes
+using many cores may exhaust the memory so choose accordingly.
 
 You can specify individual components which you want to build, if you do not
 want to build everything in the library:
@@ -249,11 +250,37 @@ suite.  You can build this component with
 $ make mlpack_test
 @endcode
 
-and then run all of the tests, or an individual test suite:
+We use Catch2 to write our tests
+To run all tests, you can simply run:
 
 @code
-$ bin/mlpack_test
-$ bin/mlpack_test -t KNNTest
+$ ./bin/mlpack_test
+@endcode
+
+To run all tests in a particular file you can run:
+
+@code
+$ ./bin/mlpack_test "[testname]"
+@endcode
+
+where testname is the name of the test suite. 
+For example to run all collaborative filtering tests implemented in cv_test.cpp you can run:
+
+@code
+./bin/mlpack_test "[CVTest]"
+@endcode
+
+Now similarly you can run all the binding related tests using:
+
+@code
+./bin/mlpack_test "[BindingTests]"
+@endcode
+
+To run a single test, you can explicitly provide the name of the test, for example, 
+to run BinaryClassificationMetricsTest implemented in cv_test.cpp you can run the following:
+
+@code
+./bin/mlpack_test BinaryClassificationMetricsTest
 @endcode
 
 If the build fails and you cannot figure out why, register an account on Github
