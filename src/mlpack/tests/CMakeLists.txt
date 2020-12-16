@@ -98,8 +98,8 @@ add_executable(mlpack_test
   reward_clipping_test.cpp
   rl_components_test.cpp
   scaling_test.cpp
-  serialization_catch.cpp
-  serialization_catch.hpp
+  serialization.cpp
+  serialization.hpp
   serialization_test.cpp
   sfinae_test.cpp
   softmax_regression_test.cpp

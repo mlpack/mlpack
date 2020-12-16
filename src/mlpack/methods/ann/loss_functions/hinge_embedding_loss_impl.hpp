@@ -26,25 +26,25 @@ HingeEmbeddingLoss<InputDataType, OutputDataType>::HingeEmbeddingLoss()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 HingeEmbeddingLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
   TargetType temp = target - (target == 0);
-  return (arma::accu(arma::max(1-input % temp, 0.))) / target.n_elem;
+  return (arma::accu(arma::max(1 - prediction % temp, 0.))) / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
   TargetType temp = target - (target == 0);
-  output = (input < 1 / temp) % -temp;
+  loss = (prediction < 1 / temp) % -temp;
 }
 
 template<typename InputDataType, typename OutputDataType>

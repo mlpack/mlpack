@@ -17,7 +17,7 @@
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;

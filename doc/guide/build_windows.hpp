@@ -9,8 +9,13 @@
 
 @section build_windows_intro Introduction
 
-This tutorial will show you how to build mlpack for Windows from source, so you can
-later create your own C++ applications. Before you try building mlpack, you may
+This tutorial will show you how to build mlpack for Windows from source, so
+you can later create your own C++ applications, using two different ways:
+
+  - Using CMake to generate an intermeditate Visual Studio solution (`.sln`).
+  - @ref build_visual_studio_cmake_integration "Use Visual Studio's CMake integration to directly build from the `CMakeLists`."
+
+Before you try building mlpack, you may
 want to install mlpack using vcpkg for Windows. If you don't want to install
 using vcpkg, skip this section and continue with the build tutorial.
 
@@ -78,6 +83,23 @@ system environment variables or manually set the PATH before running CMake)
 - Click on OpenBlas and check the mlpack project, then click Install
 - Once it has finished installing, close Visual Studio
 
+<b> Building OpenBLAS from Source </b>
+
+Unfortunately, the support for building `LAPACK` and `BLAS` on Windows is quite poor, due to the need for Fortran
+compiler and libraries. The easiest method to get the necessary `BLAS/LAPACK` libraries built on Windows is to
+compile OpenBLAS with LLVM's `clang-cl` and `flang` to produce the required static library (`.lib`) files 
+compatible with the MSVC compiler. A comprehensive guide on the
+<a href="https://github.com/xianyi/OpenBLAS/wiki/How-to-use-OpenBLAS-in-Microsoft-Visual-Studio">compilation
+of OpenBLAS for Windows can be found here</a>.
+
+One could always download prebuilt `LAPACK` and `BLAS` libraries for Windows. However, there are few official
+sources, and some of those libraries may require further `dll`s at runtime which may not be available in your
+system.
+
+It you choose to build `OpenBLAS` from source, make sure that `LAPACK` functions are also built. Finally, make
+sure that the `openblas.lib` library is linked in your `Armadillo` build (see below), as well as the library 
+path used for the CMake options `BLAS_LIBRARIES` and `LAPACK_LIBRARIES` in the mlpack CMake project.
+
 <b> Boost Dependency </b>
 
 You can either get Boost via NuGet or you can download the prebuilt Windows binaries separately.
@@ -110,7 +132,7 @@ compiler version, check if the Visual Studio compiler and Windows SDK are instal
 - Build > Build Solution
 - Once it has successfully finished, close Visual Studio
 
-@section build_windows_mlpack Building mlpack
+@section build_windows_mlpack Building mlpack with CMake-Generated Solution
 
 - Create a "build" directory into "C:\mlpack\mlpack\"
 - You can generate the project using either cmake via command line or GUI. If you prefer to use GUI, refer to the \ref build_windows_appendix "appendix"
@@ -128,6 +150,96 @@ cmake -G "Visual Studio 16 2019" -A x64 -DBLAS_LIBRARIES:FILEPATH="C:/mlpack/mlp
 - Once it has sucessfully finished, you will find the library files you need in: "C:\mlpack\mlpack\build\Debug" (or "C:\mlpack\mlpack\build\Release" if you changed to Release mode)
 
 You are ready to create your first application, take a look at the @ref sample_ml_app "Sample C++ ML App"
+
+@section build_visual_studio_cmake_integration Building mlpack with Visual Studio's CMake Integration
+
+This project can be directly built from the `CMakeLists.txt` with the latest version of MS Visual Studio,
+given you have CMake integration via the
+<a href="https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-160">C++ 
+CMake tools for Windows</a>. To open the CMake project with Visual Studio, select File->Open->CMake
+in the top menu, followed by selecting the root `CMakeLists.txt` located in mlpack's root directory.
+
+In order to allow Visual Studio to configure the CMake project, the CMake configuration json will have 
+to be edited to provide the <a href="https://github.com/mlpack/mlpack#3-dependencies">relevant options
+shown in the `README`</a> needed to find all the dependencies. The options that you
+must provide to Visual Studio's CMake are:
+
+  - `ARMADILLO_INCLUDE_DIR`
+  - `ARMADILLO_LIBRARY`
+  - `BOOST_ROOT`
+  - `CEREAL_INCLUDE_DIR`
+  - `BLAS_LIBRARIES`
+  - `LAPACK_LIBRARIES`
+
+The CMake configuration json can be editted in Visual Studio by right clicking the root `CMakeLists.txt`
+in the project view, selecting <b>CMake settings for mlpack</b> and finally clicking on <b>edit JSON</b>.
+Adding a new CMake option can be done by adding object fields with the following format to the variables
+array in the `CMakeSettings.json`:
+
+@code
+{
+    "name": "options_name_string",
+    "value": "options_value_string",
+    "type" : "{BOOL|FILEPATH|PATH|STRING}"
+}
+@endcode
+
+Here is a full example of the `CMakeSettings.json`file:
+
+@code
+{
+  "configurations": [
+    {
+      "name": "x64-Debug (default)",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "variables": [
+        {
+          "name": "ARMADILLO_INCLUDE_DIR",
+          "value": "PATH/TO/CPP/DEPENDENCY/armadillo-10.1.2/include",
+          "type": "PATH"
+        },
+        {
+          "name": "ARMADILLO_LIBBRARY",
+          "value": "PATH/TO/CPP/DEPENDENCY/armadillo-10.1.2/lib/armadillo.lib",
+          "type": "PATH"
+        },
+        {
+          "name": "CEREAL_INCLUDE_DIR",
+          "value": "PATH/TO/CPP/DEPENDENCY/cereal-1.3.0/include",
+          "type": "PATH"
+        },
+        {
+          "name": "BUILD_ROOT",
+          "value": "PATH/TO/CPP/DEPENDENCY/boost_1_66_0",
+          "type": "PATH"
+        },
+        {
+          "name": "BOOST_INCLUDEDIR",
+          "value": "PATH/TO/CPP/DEPENDENCY/boost_1_66_0",
+          "type": "PATH"
+        },
+        {
+          "name": "BLAS_LIBRARIES",
+          "value": "PATH/TO/CPP/DEPENDENCY/OpenBLAS/lib/openblas.lib",
+          "type": "PATH"
+        },
+        {
+          "name": "LAPACK_LIBRARIES",
+          "value": "PATH/TO/CPP/DEPENDENCY/OpenBLAS/lib/openblas.lib",
+          "type": "PATH"
+        }
+      ]
+    }
+  ]
+}
+@endcode
 
 @section build_windows_appendix Appendix
 
