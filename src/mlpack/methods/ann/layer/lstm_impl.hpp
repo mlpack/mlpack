@@ -145,36 +145,25 @@ void LSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
   gradientStep = batchSize * size - 1;
 
   const size_t rhoBatchSize = size * batchSize;
-  if (inputGate.is_empty() || inputGate.n_cols < rhoBatchSize)
-  {
-    inputGate.set_size(outSize, rhoBatchSize);
-    forgetGate.set_size(outSize, rhoBatchSize);
-    hiddenLayer.set_size(outSize, rhoBatchSize);
-    outputGate.set_size(outSize, rhoBatchSize);
 
-    inputGateActivation.set_size(outSize, rhoBatchSize);
-    forgetGateActivation.set_size(outSize, rhoBatchSize);
-    outputGateActivation.set_size(outSize, rhoBatchSize);
-    hiddenLayerActivation.set_size(outSize, rhoBatchSize);
+  // Make sure all of the different matrices we will use to hold parameters are
+  // at least as large as we need.
+  inputGate.set_size(outSize, rhoBatchSize);
+  forgetGate.set_size(outSize, rhoBatchSize);
+  hiddenLayer.set_size(outSize, rhoBatchSize);
+  outputGate.set_size(outSize, rhoBatchSize);
 
-    cellActivation.set_size(outSize, rhoBatchSize);
-    prevError.set_size(4 * outSize, batchSize);
+  inputGateActivation.set_size(outSize, rhoBatchSize);
+  forgetGateActivation.set_size(outSize, rhoBatchSize);
+  outputGateActivation.set_size(outSize, rhoBatchSize);
+  hiddenLayerActivation.set_size(outSize, rhoBatchSize);
 
-    if (cell.is_empty())
-    {
-      cell = arma::zeros(outSize, size * batchSize);
-      outParameter = arma::zeros<OutputDataType>(
-          outSize, (size + 1) * batchSize);
-    }
-    else
-    {
-      // To preserve the leading zeros, recreate the object according to given
-      // size specifications, while preserving the elements as well as the
-      // layout of the elements.
-      cell.resize(outSize, size * batchSize);
-      outParameter.resize(outSize, (size + 1) * batchSize);
-    }
-  }
+  cellActivation.set_size(outSize, rhoBatchSize);
+  prevError.set_size(4 * outSize, batchSize);
+
+  // Now reset recurrent values to 0.
+  cell.zeros(outSize, size * batchSize);
+  outParameter.zeros(outSize, (size + 1) * batchSize);
 }
 
 template<typename InputDataType, typename OutputDataType>
