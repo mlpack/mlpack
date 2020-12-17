@@ -1571,7 +1571,7 @@ TEST_CASE("CheckCopyMoveGRUTest", "[ANNLayerTest]")
 {
   arma::cube input = arma::randu(1, 1, 5);
   arma::cube output = arma::ones(1, 1, 5);
-  const size_t rho = 3;
+  const size_t rho = 5;
 
   RNN<NegativeLogLikelihood<> > *model1 =
       new RNN<NegativeLogLikelihood<> >(rho);
