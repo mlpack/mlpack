@@ -25,7 +25,7 @@ template<typename T>
 void CheckInputShape(const T& network, const size_t inputShape, 
                      const std::string& functionName)
 {
-  for (size_t l=0; l<network.size(); ++l)
+  for (size_t l = 0; l < network.size(); ++l)
   {
     size_t layerInShape = boost::apply_visitor(InShapeVisitor(), network[l]);
     if (layerInShape == 0)
