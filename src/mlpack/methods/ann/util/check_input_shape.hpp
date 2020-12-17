@@ -38,10 +38,9 @@ void CheckInputShape(const T& network, const size_t inputShape,
     }
     else
     {
-      std::string estr = functionName + ": "; 
-                  estr += "the first layer of the network expects ";
-                  estr += std::to_string(layerInShape) + " elements, ";
-                  estr += "but the input has " + std::to_string(inputShape) + " dimensions! ";
+      std::string estr = functionName + ": the first layer of the network " +
+          "expects " + std::to_string(layerInShape) + " elements, but the " +
+          "input has " + std::to_string(inputShape) + " dimensions!";
       throw std::logic_error(estr);
     }
   }
