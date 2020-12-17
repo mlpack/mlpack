@@ -130,6 +130,11 @@ class Reparametrization
   //! Get the value of the beta hyperparameter.
   double Beta() const { return beta; }
 
+  size_t InputShape() const
+  {
+    return 2 * latentSize;
+  }
+
   /**
    * Serialize the layer
    */

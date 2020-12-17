@@ -21,6 +21,7 @@
 #include "../visitor/gradient_visitor.hpp"
 #include "../visitor/set_input_height_visitor.hpp"
 #include "../visitor/set_input_width_visitor.hpp"
+#include "../visitor/input_shape_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -92,6 +93,25 @@ Sequential<
     for (LayerTypes<CustomLayers...>& layer : network)
       boost::apply_visitor(deleteVisitor, layer);
   }
+}
+
+template<typename InputDataType, typename OutputDataType, bool Residual,
+         typename... CustomLayers>
+template<typename eT>
+size_t Sequential(InputDataType, OutputDataType, Residual, CustomLayers...)::
+InputShape() const
+{
+  size_t inputShape = 0;
+
+  for (size_t l = 0; l < network.size(); ++l)
+  {
+    if (inputShape == 0)
+      inputShape = boost::apply_visitor(InShapeVisitor(), network[l]);
+    else
+      break;
+  }
+
+  return inputShape;
 }
 
 template<typename InputDataType, typename OutputDataType, bool Residual,
