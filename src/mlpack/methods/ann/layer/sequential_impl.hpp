@@ -97,7 +97,6 @@ Sequential<
 
 template<typename InputDataType, typename OutputDataType, bool Residual,
          typename... CustomLayers>
-template<typename eT>
 size_t Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
 InputShape() const
 {
