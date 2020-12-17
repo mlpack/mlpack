@@ -119,9 +119,9 @@ class BilinearInterpolation
   size_t& InDepth() { return depth; }
 
   //! Get the shape of the input.
-  size_t WeightSize() const
+  size_t InputShape() const
   {
-    return InRowSize;
+    return inRowSize;
   }
 
   /**
