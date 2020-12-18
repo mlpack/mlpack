@@ -250,7 +250,7 @@ suite.  You can build this component with
 $ make mlpack_test
 @endcode
 
-We use Catch2 to write our tests
+We use <a href="https://github.com/catchorg/Catch2">Catch2</a> to write our tests.
 To run all tests, you can simply run:
 
 @code
