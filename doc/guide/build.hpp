@@ -276,7 +276,7 @@ Now similarly you can run all the binding related tests using:
 ./bin/mlpack_test "[BindingTests]"
 @endcode
 
-To run a single test, you can explicitly provide the name of the test, for example, 
+To run a single test, you can explicitly provide the name of the test; for example, 
 to run BinaryClassificationMetricsTest implemented in cv_test.cpp you can run the following:
 
 @code
