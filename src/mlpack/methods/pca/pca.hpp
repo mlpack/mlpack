@@ -68,7 +68,7 @@ class PCA
   void Apply(const arma::mat& data,
              arma::mat& transformedData,
              arma::vec& eigVal);
-/**
+  /**
    * Apply Principal Component Analysis to the provided data set. It is safe
    * to pass the same matrix reference for both data and transformedData.
    * @param data Data matrix.
