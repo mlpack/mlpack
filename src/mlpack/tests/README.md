@@ -43,4 +43,4 @@ To run a single test, you can explicitly provide the name of the test, for examp
 
 `./bin/mlpack_test BinaryClassificationMetricsTest`
 
-Catch2 provides many other features like filter, checkout the [Catch2 reference section](https://github.com/catchorg) - for more details.
+Catch2 provides many other features like filter, checkout the [Catch2 reference section](https://github.com/catchorg/Catch2/blob/devel/docs/Readme.md#top) - for more details.
