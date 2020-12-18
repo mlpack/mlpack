@@ -114,6 +114,9 @@ class AdaptiveMaxPooling
   //! Get the output size.
   size_t OutputSize() const { return poolingLayer.OutputSize(); }
 
+	//! Get the size of the weights.
+	size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */
