@@ -264,10 +264,10 @@ $ ./bin/mlpack_test "[testname]"
 @endcode
 
 where testname is the name of the test suite. 
-For example to run all collaborative filtering tests implemented in cv_test.cpp you can run:
+For example to run all collaborative filtering tests implemented in cf_test.cpp you can run:
 
 @code
-./bin/mlpack_test "[CVTest]"
+./bin/mlpack_test "[CFTest]"
 @endcode
 
 Now similarly you can run all the binding related tests using:
