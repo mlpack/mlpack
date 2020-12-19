@@ -94,7 +94,31 @@ TEST_CASE("ConfusionMatrixTest", "[CVTest]")
   REQUIRE(output(1, 0) == 2);
   REQUIRE(output(1, 1) == 3);
 }
+/**
+ * Test for confusion matrix which outputs percentages.
+ */
+TEST_CASE("ConfusionMatrixPercentageTest", "[CVTest]")
+{
+  // Labels that will be considered as "ground truth".
+  arma::Row<size_t> labels("0 0 1 0 0  1 0 1 0 1");
 
+  // Predicted labels.
+  arma::Row<size_t> predictedLabels("0 0 0 0 0  1 1 1 1 1");
+  // Confusion matrix storing percentages
+  arma::Mat<double> output;
+  // numClasses argument has been set to three to test divide by zero error.
+  data::ConfusionMatrixPercentage(predictedLabels, labels, output, 3);
+  double result00 = 400.0/6.0;
+  double result01 = 100.0/4.0;
+  double result10 = 200.0/6.0;
+  double result11 = 300.0/4.0;
+  double result21 = 0.0;
+  REQUIRE(output(0, 0) == Approx(result00).epsilon(1e-7));
+  REQUIRE(output(0, 1) == Approx(result01).epsilon(1e-7));
+  REQUIRE(output(1, 0) == Approx(result10).epsilon(1e-7));
+  REQUIRE(output(1, 1) == Approx(result11).epsilon(1e-7));
+  REQUIRE(output(2, 1) == Approx(result21).epsilon(1e-7));
+}
 /**
  * Test metrics for multiclass classification.
  */

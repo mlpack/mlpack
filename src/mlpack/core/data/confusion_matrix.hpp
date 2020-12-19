@@ -45,16 +45,34 @@ namespace data {
  * represents the predicted classes and column index represents the actual
  * class.
  *
- * @param predictors Vector of data points.
- * @param responses The measured data for each point.
+ * @param predictedClasses Vector of predicted classes for each data point.
+ * @param actualClasses Vector of actual classes for each data point.
  * @param output Matrix which is represented as confusion matrix.
  * @param numClasses Number of classes.
  */
 template<typename eT>
-void ConfusionMatrix(const arma::Row<size_t> predictors,
-                     const arma::Row<size_t> responses,
+void ConfusionMatrix(const arma::Row<size_t> predictedClasses,
+                     const arma::Row<size_t> actualClasses,
                      arma::Mat<eT>& output,
                      const size_t numClasses);
+
+/**
+ * Each value in this confusion matrix represent a percentage. The element at 
+ * (row, col)  represents the percentage of data points which were of category 'col' type 
+ * being predicted as 'row' type. 
+ * Note: here row index represents the predicted classes and column index represents 
+ * the actual class. 
+ * 
+ * @param predictedClasses Vector of predicted classes for each data point.
+ * @param actualClasses Vector of actual classes for each data point.
+ * @param output Matrix which is represented as confusion matrix.
+ * @param numClasses Number of classes.
+ */
+template<typename eT>
+void ConfusionMatrixPercentage(const arma::Row<size_t> predictedClasses,
+                                const arma::Row<size_t> actualClasses,
+                                arma::Mat<eT>& output, 
+                                const size_t numClasses);
 
 } // namespace data
 } // namespace mlpack

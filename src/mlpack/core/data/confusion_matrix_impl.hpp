@@ -47,16 +47,46 @@ namespace data {
  * class.
  */
 template<typename eT>
-void ConfusionMatrix(const arma::Row<size_t> predictors,
-                     const arma::Row<size_t> responses,
+void ConfusionMatrix(const arma::Row<size_t> predictedClasses,
+                     const arma::Row<size_t> actualClasses,
                      arma::Mat<eT>& output,
                      const size_t numClasses)
 {
   // Loop over the actual labels and predicted labels and add the count.
   output = arma::zeros<arma::Mat<eT> >(numClasses, numClasses);
-  for (size_t i = 0; i < predictors.n_elem; ++i)
+  for (size_t i = 0; i < predictedClasses.n_elem; ++i)
   {
-    output.at(predictors[i], responses[i])++;
+    output.at(predictedClasses[i], actualClasses[i])++;
+  }
+}
+
+/**
+ * This method calculates the percentages for each of the matrix cell where row
+ * index represents predicted class and column index represents actual class.
+ */
+template<typename eT>
+void ConfusionMatrixPercentage(const arma::Row<size_t> predictedClasses,
+                               const arma::Row<size_t> actualClasses,
+                               arma::Mat<eT>& output,
+                               const size_t numClasses)
+{
+  // Loop over the actual labels and predicted labels and add the count.
+  output = arma::zeros<arma::Mat<eT> >(numClasses, numClasses);
+  // Count the total number of data points for each of the actual classes.
+  arma::Row<double> counts(numClasses, arma::fill::zeros);
+  for (size_t i = 0; i < predictedClasses.n_elem; ++i)
+  {
+    output.at(predictedClasses[i], actualClasses[i])++;
+    counts.at(actualClasses[i])++;
+  }
+  for (size_t i = 0; i < numClasses; ++i)
+  {
+    for (size_t j = 0; j < numClasses; ++j)
+    {
+      if (counts[j] > 0)
+        output.at(i, j) /= counts[j];
+      output.at(i, j) *= 100.0;
+    }
   }
 }
 
