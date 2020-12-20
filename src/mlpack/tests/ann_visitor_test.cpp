@@ -186,3 +186,15 @@ TEST_CASE("WeightSizeVisitorTestForBatchNormLayer", "[ANNVisitorTest]")
   LayerTypes<> batchNorm = new BatchNorm<>(randomSize);
   CheckCorrectnessOfWeightSize(batchNorm);
 }
+
+/**
+ * Test that WeightSizeVisitor works properly for LSTM layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForLSTMLayer", "[ANNVisitorTest]")
+{
+  size_t randomInSize = arma::randi(arma::distr_param(1, 100));
+  size_t randomOutSize = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> lstm = new LSTM<>(randomInSize, randomOutSize);
+  CheckCorrectnessOfWeightSize(lstm);
+}
