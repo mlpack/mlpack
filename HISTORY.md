@@ -5,6 +5,8 @@
   * Add `BUILD_DOCS` CMake option to control whether Doxygen documentation is
     built (default ON) (#2730).
 
+  * Add finalizers to Julia binding model types to fix memory handling (#2756).
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.

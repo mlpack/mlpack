@@ -29,6 +29,8 @@ if (${NUM_MODEL_TYPES} GREATER 0)
 void* IO_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName);
 // Set the pointer to a ${MODEL_TYPE} parameter.
 void IO_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr);
+// Delete a ${MODEL_TYPE} pointer.
+void Delete${MODEL_SAFE_TYPE}Ptr(void* ptr);
 // Serialize a ${MODEL_TYPE} pointer.
 char* Serialize${MODEL_SAFE_TYPE}Ptr(void* ptr, size_t* length);
 // Deserialize a ${MODEL_TYPE} pointer.
@@ -48,6 +50,13 @@ void IO_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr)
 {
   IO::GetParam<${MODEL_TYPE}*>(paramName) = (${MODEL_TYPE}*) ptr;
   IO::SetPassed(paramName);
+}
+
+// Delete a ${MODEL_TYPE} pointer.
+void Delete${MODEL_SAFE_TYPE}Ptr(void* ptr)
+{
+  ${MODEL_TYPE}* modelPtr = (${MODEL_TYPE}*) ptr;
+  delete modelPtr;
 }
 
 // Serialize a ${MODEL_TYPE} pointer.
