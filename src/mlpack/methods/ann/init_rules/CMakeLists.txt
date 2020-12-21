@@ -1,18 +1,18 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  const_init.hpp
-  gaussian_init.hpp
-  he_init.hpp
-  init_rules_traits.hpp
-  kathirvalavakumar_subavathi_init.hpp
-  lecun_normal_init.hpp
+  # const_init.hpp
+  # gaussian_init.hpp
+  # he_init.hpp
+  # init_rules_traits.hpp
+  # kathirvalavakumar_subavathi_init.hpp
+  # lecun_normal_init.hpp
   network_init.hpp
-  nguyen_widrow_init.hpp
-  oivs_init.hpp
-  orthogonal_init.hpp
+  # nguyen_widrow_init.hpp
+  # oivs_init.hpp
+  # orthogonal_init.hpp
   random_init.hpp
-  glorot_init.hpp
+  # glorot_init.hpp
 )
 
 # Add directory name to sources.

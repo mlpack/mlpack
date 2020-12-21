@@ -16,7 +16,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
 
-#include "layer_types.hpp"
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -35,7 +35,7 @@ template <
     typename OutputDataType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class Linear
+class Linear : public Layer<InputDataType, OutputDataType>
 {
  public:
   //! Create the Linear object.
@@ -76,8 +76,7 @@ class Linear
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const arma::mat& input, arma::mat& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -88,10 +87,9 @@ class Linear
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const arma::mat& /* input */,
+                const arma::mat& gy,
+                arma::mat& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -100,10 +98,9 @@ class Linear
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const arma::mat& input,
+                const arma::mat& error,
+                arma::mat& gradient);
 
   //! Get the parameters.
   OutputDataType const& Parameters() const { return weights; }

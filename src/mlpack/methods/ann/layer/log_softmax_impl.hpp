@@ -25,9 +25,8 @@ LogSoftMax<InputDataType, OutputDataType>::LogSoftMax()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename OutputType>
 void LogSoftMax<InputDataType, OutputDataType>::Forward(
-    const InputType& input, OutputType& output)
+    const arma::mat& input, arma::mat& output)
 {
   arma::mat maxInput = arma::repmat(arma::max(input), input.n_rows, 1);
   output = (maxInput - input);
@@ -62,11 +61,10 @@ void LogSoftMax<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
 void LogSoftMax<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+    const arma::mat& input,
+    const arma::mat& gy,
+    arma::mat& g)
 {
   g = arma::exp(input) + gy;
 }

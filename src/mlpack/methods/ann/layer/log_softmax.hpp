@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LOG_SOFTMAX_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -33,7 +34,7 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class LogSoftMax
+class LogSoftMax : public Layer<InputDataType, OutputDataType>
 {
  public:
   /**
@@ -48,8 +49,7 @@ class LogSoftMax
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const arma::mat& input, arma::mat& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -60,18 +60,17 @@ class LogSoftMax
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const arma::mat& input,
+                const arma::mat& gy,
+                arma::mat& g);
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  InputDataType& Delta() const { return delta; }
+  InputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   InputDataType& Delta() { return delta; }
 
