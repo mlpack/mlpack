@@ -17,7 +17,7 @@
 #include <mlpack/methods/ann/ffn.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 #include <mlpack/core/dists/regression_distribution.hpp>
 #include <mlpack/core/tree/ballbound.hpp>
@@ -1682,7 +1682,7 @@ TEST_CASE("CerealEmptyArrayWrapperTest", "[SerializationTest]")
   jsonT.mem = new int[5];
   jsonT.len = 5;
 
-  SerializeObjectAll(t, xmlT, binaryT, jsonT);
+  SerializeObjectAll(t, xmlT, jsonT, binaryT);
 
   // Ensure that all the results are correct.
   REQUIRE(xmlT.mem == (int*) NULL);

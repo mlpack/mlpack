@@ -377,3 +377,20 @@ end
 
   Filesystem.rm("model.bin")
 end
+
+# Ensure that we don't accidentally free a model multiple times.
+@testset "TestMultipleModelDealloc" begin
+  _, _, _, _, _, _, model, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello", build_model=true)
+
+  begin
+    for i = 1:100
+      out = test_julia_binding(4.0, 12, "hello", model_in=model,
+          duplicate_model=true)
+    end
+  end
+
+  # This should free the other models.  It's likely to crash if a model might be
+  # freed multiple times.
+  GC.gc()
+end
