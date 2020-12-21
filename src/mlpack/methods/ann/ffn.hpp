@@ -15,21 +15,11 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "visitor/delete_visitor.hpp"
-#include "visitor/delta_visitor.hpp"
-#include "visitor/output_height_visitor.hpp"
-#include "visitor/output_parameter_visitor.hpp"
-#include "visitor/output_width_visitor.hpp"
-#include "visitor/reset_visitor.hpp"
-#include "visitor/weight_size_visitor.hpp"
-#include "visitor/copy_visitor.hpp"
-#include "visitor/loss_visitor.hpp"
-
 #include "init_rules/network_init.hpp"
 
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <ensmallen.hpp>
 
@@ -294,17 +284,17 @@ class FFN
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
+  //void Add(Layer layer) { network.push_back(layer); }
 
   //! Get the network model.
-  const std::vector<LayerTypes<CustomLayers...> >& Model() const
+  const std::vector<Layer<arma::mat, arma::mat>*>& Model() const
   {
     return network;
   }
   //! Modify the network model.  Be careful!  If you change the structure of the
   //! network or parameters for layers, its state may become invalid, so be sure
   //! to call ResetParameters() afterwards.
-  std::vector<LayerTypes<CustomLayers...> >& Model() { return network; }
+  //std::vector<Layer>& Model() { return network; }
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
@@ -450,7 +440,7 @@ class FFN
   bool reset;
 
   //! Locally-stored model modules.
-  std::vector<LayerTypes<CustomLayers...> > network;
+  std::vector<Layer<arma::mat, arma::mat>*> network;
 
   //! The matrix of data points (predictors).
   arma::mat predictors;
@@ -467,30 +457,6 @@ class FFN
   //! The current error for the backward pass.
   arma::mat error;
 
-  //! Locally-stored delta visitor.
-  DeltaVisitor deltaVisitor;
-
-  //! Locally-stored output parameter visitor.
-  OutputParameterVisitor outputParameterVisitor;
-
-  //! Locally-stored weight size visitor.
-  WeightSizeVisitor weightSizeVisitor;
-
-  //! Locally-stored output width visitor.
-  OutputWidthVisitor outputWidthVisitor;
-
-  //! Locally-stored output height visitor.
-  OutputHeightVisitor outputHeightVisitor;
-
-  //! Locally-stored loss visitor
-  LossVisitor lossVisitor;
-
-  //! Locally-stored reset visitor.
-  ResetVisitor resetVisitor;
-
-  //! Locally-stored delete visitor.
-  DeleteVisitor deleteVisitor;
-
   //! The current evaluation mode (training or testing).
   bool deterministic;
 
@@ -506,17 +472,6 @@ class FFN
   //! Locally-stored gradient parameter.
   arma::mat gradient;
 
-  //! Locally-stored copy visitor
-  CopyVisitor<CustomLayers...> copyVisitor;
-
-  // The GAN class should have access to internal members.
-  template<
-    typename Model,
-    typename InitializerType,
-    typename NoiseType,
-    typename PolicyType
-  >
-  friend class GAN;
 }; // class FFN
 
 } // namespace ann

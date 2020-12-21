@@ -25,14 +25,11 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::NegativeLogLikelihood()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename PredictionType, typename TargetType>
-typename PredictionType::elem_type
-NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
-    const PredictionType& prediction,
-    const TargetType& target)
+double NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
+    const arma::mat& prediction,
+    const arma::mat& target)
 {
-  typedef typename PredictionType::elem_type ElemType;
-  ElemType output = 0;
+  double output = 0;
   for (size_t i = 0; i < prediction.n_cols; ++i)
   {
     size_t currentTarget = target(i) - 1;

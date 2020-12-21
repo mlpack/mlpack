@@ -24,11 +24,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU(
-    const double alpha) : userAlpha(alpha)
+FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU()
 {
   this->alpha.set_size(1, 1);
-  this->alpha(0) = userAlpha;
+  this->alpha(0) = 0;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -39,17 +38,15 @@ void FlexibleReLU<InputDataType, OutputDataType>::Reset()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename OutputType>
 void FlexibleReLU<InputDataType, OutputDataType>::Forward(
-    const InputType& input, OutputType& output)
+    const arma::mat& input, arma::mat& output)
 {
   output = arma::clamp(input, 0.0, DBL_MAX) + alpha(0);
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
 void FlexibleReLU<InputDataType, OutputDataType>::Backward(
-    const DataType& input, const DataType& gy, DataType& g)
+    const arma::mat& input, const arma::mat& gy, arma::mat& g)
 {
   //! Compute the first derivative of FlexibleReLU function.
   g = gy % arma::clamp(arma::sign(input), 0.0, 1.0);

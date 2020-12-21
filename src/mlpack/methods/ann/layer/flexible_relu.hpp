@@ -17,6 +17,7 @@
 #define MLPACK_METHODS_ANN_LAYER_FLEXIBLERELU_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /**Artificial Neural Network*/ {
@@ -56,7 +57,7 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class FlexibleReLU
+class FlexibleReLU : public Layer<InputDataType, OutputDataType>
 {
  public:
   /**
@@ -69,7 +70,7 @@ class FlexibleReLU
    * @param alpha Parameter for adjusting the range of the relu function.
    *
    */
-  FlexibleReLU(const double alpha = 0);
+  FlexibleReLU();
 
   /**
    * Reset the layer parameter.
@@ -83,8 +84,7 @@ class FlexibleReLU
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const arma::mat& input, arma::mat& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -95,8 +95,7 @@ class FlexibleReLU
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename DataType>
-  void Backward(const DataType& input, const DataType& gy, DataType& g);
+  void Backward(const arma::mat& input, const arma::mat& gy, arma::mat& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.

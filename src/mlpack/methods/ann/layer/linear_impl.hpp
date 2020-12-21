@@ -108,9 +108,8 @@ void Linear<InputDataType, OutputDataType, RegularizerType>::Reset()
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
-template<typename eT>
 void Linear<InputDataType, OutputDataType, RegularizerType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+    const arma::mat& input, arma::mat& output)
 {
   output = weight * input;
   output.each_col() += bias;
@@ -118,20 +117,18 @@ void Linear<InputDataType, OutputDataType, RegularizerType>::Forward(
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
-template<typename eT>
 void Linear<InputDataType, OutputDataType, RegularizerType>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+    const arma::mat& /* input */, const arma::mat& gy, arma::mat& g)
 {
   g = weight.t() * gy;
 }
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
-template<typename eT>
 void Linear<InputDataType, OutputDataType, RegularizerType>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
+    const arma::mat& input,
+    const arma::mat& error,
+    arma::mat& gradient)
 {
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
       error * input.t());
