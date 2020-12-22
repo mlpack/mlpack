@@ -7,6 +7,8 @@
 
   * Add Triplet Margin Loss function (#2762).
 
+  * Add finalizers to Julia binding model types to fix memory handling (#2756).
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.

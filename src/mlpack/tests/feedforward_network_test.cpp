@@ -19,7 +19,7 @@
 #include <ensmallen.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 #include "custom_layer.hpp"
 
 using namespace mlpack;
