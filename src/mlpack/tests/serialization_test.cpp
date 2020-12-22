@@ -36,7 +36,6 @@
 #include <mlpack/methods/naive_bayes/naive_bayes_classifier.hpp>
 #include <mlpack/methods/rann/ra_search.hpp>
 #include <mlpack/methods/lsh/lsh_search.hpp>
-#include <mlpack/methods/decision_stump/decision_stump.hpp>
 #include <mlpack/methods/lars/lars.hpp>
 #include <mlpack/methods/bayesian_linear_regression/bayesian_linear_regression.hpp>
 #include <mlpack/methods/ann/rbm/rbm.hpp>
@@ -52,7 +51,6 @@ using namespace mlpack::perceptron;
 using namespace mlpack::regression;
 using namespace mlpack::naive_bayes;
 using namespace mlpack::neighbor;
-using namespace mlpack::decision_stump;
 using namespace mlpack::ann;
 
 using namespace arma;
@@ -1085,42 +1083,6 @@ TEST_CASE("LSHTest", "[SerializationTest]")
   for (size_t i = 0; i < lsh.SecondHashTable().size(); ++i)
   CheckMatrices(lsh.SecondHashTable()[i], xmlLsh.SecondHashTable()[i],
       jsonLsh.SecondHashTable()[i], binaryLsh.SecondHashTable()[i]);
-}
-
-// Make sure serialization works for the decision stump.
-TEST_CASE("DecisionStumpTest", "[SerializationTest]")
-{
-  // Generate dataset.
-  arma::mat trainingData = arma::randu<arma::mat>(4, 100);
-  arma::Row<size_t> labels(100);
-  for (size_t i = 0; i < 25; ++i)
-    labels[i] = 0;
-  for (size_t i = 25; i < 50; ++i)
-    labels[i] = 3;
-  for (size_t i = 50; i < 75; ++i)
-    labels[i] = 1;
-  for (size_t i = 75; i < 100; ++i)
-    labels[i] = 2;
-
-  DecisionStump<> ds(trainingData, labels, 4, 3);
-
-  arma::mat otherData = arma::randu<arma::mat>(3, 100);
-  arma::Row<size_t> otherLabels = arma::randu<arma::Row<size_t>>(100);
-  DecisionStump<> xmlDs(otherData, otherLabels, 2, 3);
-
-  DecisionStump<> jsonDs;
-  DecisionStump<> binaryDs(trainingData, labels, 4, 10);
-
-  SerializeObjectAll(ds, xmlDs, jsonDs, binaryDs);
-
-  // Make sure that everything is the same about the new decision stumps.
-  REQUIRE(ds.SplitDimension() == xmlDs.SplitDimension());
-  REQUIRE(ds.SplitDimension() == jsonDs.SplitDimension());
-  REQUIRE(ds.SplitDimension() == binaryDs.SplitDimension());
-
-  CheckMatrices(ds.Split(), xmlDs.Split(), jsonDs.Split(), binaryDs.Split());
-  CheckMatrices(ds.BinLabels(), xmlDs.BinLabels(), jsonDs.BinLabels(),
-      binaryDs.BinLabels());
 }
 
 // Make sure serialization works for LARS.
