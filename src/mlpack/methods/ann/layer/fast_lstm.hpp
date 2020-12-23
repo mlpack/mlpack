@@ -182,6 +182,12 @@ class FastLSTM
     return 4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize;
   }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer
    */

@@ -176,6 +176,11 @@ class MultiheadAttention
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
+  size_t InputShape() const
+  {
+    return embedDim * (tgtSeqLen + 2 * srcSeqLen);
+  }
+
  private:
   //! Element Type of the input.
   typedef typename OutputDataType::elem_type ElemType;

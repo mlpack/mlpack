@@ -868,3 +868,66 @@ TEST_CASE("LargeRhoValueRnnTest", "[RecurrentNetworkTest]")
   model.Train(inputs[0], targets[0], opt);
   INFO("Training over");
 }
+
+/**
+ * Test to make sure that an error is thrown when input with
+ * wrong input shape is provided to a RNN.
+ */
+TEST_CASE("RNNCheckInputShapeTest", "[RecurrentNetworkTest]")
+{
+  const size_t rho = 10;
+
+  // Generate 12 (2 * 6) noisy sines. A single sine contains rho
+  // points/features.
+  arma::cube input;
+  arma::mat labelsTemp;
+  GenerateNoisySines(input, labelsTemp, rho, 6);
+
+  arma::cube labels = arma::zeros<arma::cube>(1, labelsTemp.n_cols, rho);
+  for (size_t i = 0; i < labelsTemp.n_cols; ++i)
+  {
+    const int value = arma::as_scalar(arma::find(
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+    labels.tube(0, i).fill(value);
+  }
+
+  /**
+   * Construct a network with 1 input unit, 4 hidden units and 10 output
+   * units. The hidden layer is connected to itself. The network structure
+   * looks like:
+   *
+   *  Input         Hidden        Output
+   * Layer(1)      Layer(4)      Layer(10)
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |    ..>|     |       |     |
+   * +-----+    .  +--+--+       +-----+
+   *            .     .
+   *            .     .
+   *            .......
+   */
+  Add<> add(4);
+  // Purposely providing wrong input shape of 3.
+  // The correct input shape is 1.
+  Linear<> lookup(3, 4);
+  SigmoidLayer<> sigmoidLayer;
+  Linear<> linear(4, 4);
+  Recurrent<>* recurrent = new Recurrent<>(add, lookup, linear,
+      sigmoidLayer, rho);
+
+  RNN<> model(rho);
+  model.Add<IdentityLayer<> >();
+  model.Add(recurrent);
+  model.Add<Linear<> >(4, 10);
+  model.Add<LogSoftMax<> >();
+
+  std::string expectedMsg = "RNN<>::Train(): ";
+              expectedMsg += "the first layer of the network expects ";
+              expectedMsg += std::to_string(3) + " elements, ";
+              expectedMsg += "but the input has " + std::to_string(1) + " dimensions! ";
+
+  StandardSGD opt(0.1, 1, input.n_cols /* 1 epoch */, -100);
+
+  REQUIRE_THROWS_AS(model.Train(input, labels, opt), std::logic_error);
+}

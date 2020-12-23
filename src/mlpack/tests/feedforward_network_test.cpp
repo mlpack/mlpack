@@ -908,3 +908,39 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
   model.Train(trainData, trainLabels, opt);
 }
+
+/**
+ * Test to see if an exception is thrown when input with
+ * wrong shape is provided to a FFN.
+ */
+TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
+  // Purposely putting wrong input shape so that error is thrown.
+  model.Add<Linear<> >(trainData.n_rows - 3, 8);
+  model.Add<CustomLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  std::string expectedMsg = "FFN<>::Train(): ";
+              expectedMsg += "the first layer of the network expects ";
+              expectedMsg += std::to_string(trainData.n_rows - 3) + " elements, ";
+              expectedMsg += "but the input has " + std::to_string(trainData.n_rows) + " dimensions! ";
+
+  ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
+
+  REQUIRE_THROWS_AS(model.Train(trainData, trainLabels, opt), std::logic_error);
+}
