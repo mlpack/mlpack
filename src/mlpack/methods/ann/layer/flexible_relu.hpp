@@ -3,10 +3,9 @@
  * @author Aarush Gupta
  * @author Manthan-R-Sheth
  *
- * Definition of FlexibleReLU layer as described by
- * Suo Qiu, Xiangmin Xu and Bolun Cai in
- * "FReLU: Flexible Rectified Linear Units for Improving Convolutional
- * Neural Networks", 2018
+ * Definition of the FlexibleReLU layer as described by Suo Qiu, Xiangmin Xu and
+ * Bolun Cai in "FReLU: Flexible Rectified Linear Units for Improving
+ * Convolutional Neural Networks".
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -17,6 +16,7 @@
 #define MLPACK_METHODS_ANN_LAYER_FLEXIBLERELU_HPP
 
 #include <mlpack/prereqs.hpp>
+
 #include "layer.hpp"
 
 namespace mlpack {
@@ -48,32 +48,28 @@ namespace ann /**Artificial Neural Network*/ {
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mar,
- *         arma::sp_mat or arma::cube)
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube)
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *     cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *     to also be in this type. The type also allows the computation and weight
+ *     type to differ from the input type (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class FlexibleReLU : public Layer<InputDataType, OutputDataType>
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class FlexibleReLUType : public Layer<InputType, OutputType>
 {
  public:
   /**
+   * Create the FlexibleReLU object using the specified alpha parameter.
+   * The trainable alpha parameter controls the range of the ReLU function.
+   * (Default alpha = 0).
    *
-   * Create the FlexibleReLU object using the specified parameters.
-   * The non zero parameter can be adjusted by specifying the parameter
-   * alpha which controls the range of the relu function. (Default alpha = 0)
-   * This parameter is trainable.
-   *
-   * @param alpha Parameter for adjusting the range of the relu function.
-   *
+   * @param alpha Parameter to adjust the range of the ReLU function.
    */
-  FlexibleReLU();
+  FlexibleReLUType(const double alpha = 0);
 
   /**
-   * Reset the layer parameter.
+   * Reset the layer parameter (alpha). The method is called to
+   * assign the allocated memory to the learnable layer parameter.
    */
   void Reset();
 
@@ -84,7 +80,7 @@ class FlexibleReLU : public Layer<InputDataType, OutputDataType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const arma::mat& input, arma::mat& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -95,7 +91,7 @@ class FlexibleReLU : public Layer<InputDataType, OutputDataType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const arma::mat& input, const arma::mat& gy, arma::mat& g);
+  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -104,34 +100,18 @@ class FlexibleReLU : public Layer<InputDataType, OutputDataType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return alpha; }
+  OutputType const& Parameters() const { return alpha; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return alpha; }
+  OutputType& Parameters() { return alpha; }
 
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta;}
-
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
-
-  //! Get the parameter controlling the range of the relu function.
+  //! Get the parameter controlling the range of the ReLU function.
   double const& Alpha() const { return alpha; }
-  //! Modify the parameter controlling the range of the relu function.
+  //! Modify the parameter controlling the range of the ReLU function.
   double& Alpha() { return alpha; }
 
   /**
@@ -141,21 +121,17 @@ class FlexibleReLU : public Layer<InputDataType, OutputDataType>
   void serialize(Archive& ar, const uint32_t /* version*/);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Parameter object.
-  OutputDataType alpha;
+  OutputType alpha;
 
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
-  //! Parameter controlling the range of the rectifier function
+  //! Parameter controlling the range of the ReLU function.
   double userAlpha;
-}; // class FlexibleReLU
+}; // class FlexibleReLUType
+
+// Convenience typedefs.
+
+// Standard flexible ReLU layer.
+typedef FlexibleReLUType<arma::mat, arma::mat> FlexibleReLU;
 
 } // namespace ann
 } // namespace mlpack

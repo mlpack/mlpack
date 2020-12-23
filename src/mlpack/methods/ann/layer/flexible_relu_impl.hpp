@@ -18,59 +18,57 @@
 #define MLPACK_METHODS_ANN_LAYER_FLEXIBLERELU_IMPL_HPP
 
 #include "flexible_relu.hpp"
-#include<algorithm>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-FlexibleReLU<InputDataType, OutputDataType>::FlexibleReLU()
+template<typename InputType, typename OutputType>
+FlexibleReLUType<InputType, OutputType>::FlexibleReLUType(const double alpha) :
+    userAlpha(alpha)
 {
   this->alpha.set_size(1, 1);
-  this->alpha(0) = 0;
+  this->alpha(0) = userAlpha;
 }
 
-template<typename InputDataType, typename OutputDataType>
-void FlexibleReLU<InputDataType, OutputDataType>::Reset()
+template<typename InputType, typename OutputType>
+void FlexibleReLUType<InputType, OutputType>::Reset()
 {
-  //! Set value of alpha to the one given by user.
+  alpha = arma::mat(alpha.memptr(), 1, 1, false, false);
+
+  // Set value of alpha to the one given by user.
   alpha(0) = userAlpha;
 }
 
-template<typename InputDataType, typename OutputDataType>
-void FlexibleReLU<InputDataType, OutputDataType>::Forward(
-    const arma::mat& input, arma::mat& output)
+template<typename InputType, typename OutputType>
+void FlexibleReLUType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   output = arma::clamp(input, 0.0, DBL_MAX) + alpha(0);
 }
 
-template<typename InputDataType, typename OutputDataType>
-void FlexibleReLU<InputDataType, OutputDataType>::Backward(
-    const arma::mat& input, const arma::mat& gy, arma::mat& g)
+template<typename InputType, typename OutputType>
+void FlexibleReLUType<InputType, OutputType>::Backward(
+    const InputType& input, const OutputType& gy, OutputType& g)
 {
-  //! Compute the first derivative of FlexibleReLU function.
+  // Compute the first derivative of FlexibleReLU function.
   g = gy % arma::clamp(arma::sign(input), 0.0, 1.0);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void FlexibleReLU<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
+template<typename InputType, typename OutputType>
+void FlexibleReLUType<InputType, OutputType>::Gradient(
+    const InputType& input,
+    const OutputType& error,
+    OutputType& gradient)
 {
   if (gradient.n_elem == 0)
-  {
     gradient.set_size(1, 1);
-  }
 
   gradient(0) = arma::accu(error) / input.n_cols;
 }
 
-
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void FlexibleReLU<InputDataType, OutputDataType>::serialize(
+void FlexibleReLUType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version*/)
 {
