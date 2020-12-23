@@ -31,12 +31,14 @@ namespace ann /** Artificial Neural Network. */ {
  * is assumed to be an input sample of given batch.
  *
  * @tparam InputType The type of the layer's inputs. The layer automatically
- *     cast inputs to this type (default: arma::mat).
+ *    cast inputs to this type (Default: arma::mat).
  * @tparam OutputType The type of the computation which also causes the output
  *    to also be in this type. The type also allows the computation and weight
- *    type to differ from the input type (default: arma::mat).
+ *    type to differ from the input type (Default: arma::mat).
+ * @tparam RegularizerType Type of the regularizer to be used (Default no
+ *    regularizer).
  */
-template <
+template<
     typename InputType = arma::mat,
     typename OutputType = arma::mat,
     typename RegularizerType = NoRegularizer
@@ -73,7 +75,7 @@ class LinearType: public Layer<InputType, OutputType>
 
   /**
    * Reset the layer parameter (weights and bias). The method is called to
-   * assigned the allocated memory to the internal lanear yer parameters like.
+   * assign the allocated memory to the internal learnable parameters.
    */
   void Reset();
 
@@ -120,26 +122,6 @@ class LinearType: public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the input parameter.
-  InputType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
   //! Get the input size.
   size_t InputSize() const { return inSize; }
 
@@ -182,21 +164,9 @@ class LinearType: public Layer<InputType, OutputType>
   //! Locally-stored bias term parameters.
   OutputType bias;
 
-  //! Locally-stored input parameter object.
-  InputType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
-}; // class Linear
+}; // class LinearType
 
 // Convenience typedefs.
 
