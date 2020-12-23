@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LOG_SOFTMAX_HPP
 
 #include <mlpack/prereqs.hpp>
+
 #include "layer.hpp"
 
 namespace mlpack {
@@ -25,22 +26,20 @@ namespace ann /** Artificial Neural Network. */ {
  * (NegativeLogLikelihoodLayer), which expects that the input contains
  * log-probabilities for each class.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *    cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *    to also be in this type. The type also allows the computation and weight
+ *    type to differ from the input type (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class LogSoftMax : public Layer<InputDataType, OutputDataType>
+template <typename InputType = arma::mat, typename OutputType = arma::mat>
+class LogSoftMaxType : public Layer<InputType, OutputType>
 {
  public:
   /**
-   * Create the LogSoftmax object.
+   * Create the LogSoftmax layer.
    */
-  LogSoftMax();
+  LogSoftMaxType();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -49,7 +48,7 @@ class LogSoftMax : public Layer<InputDataType, OutputDataType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const arma::mat& input, arma::mat& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -60,33 +59,17 @@ class LogSoftMax : public Layer<InputDataType, OutputDataType>
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const arma::mat& input,
-                const arma::mat& gy,
-                arma::mat& g);
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  InputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  InputDataType& Delta() { return delta; }
-
-  /**
-   * Serialize the layer.
-   */
-  template<typename Archive>
-  void serialize(Archive& /* ar */, const uint32_t /* version */);
+  void Backward(const InputType& input,
+                const OutputType& gy,
+                OutputType& g);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
+}; // class LogSoftmaxType
 
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-}; // class LogSoftmax
+// Convenience typedefs.
+
+// Standard Linear layer using no regularization.
+typedef LogSoftMaxType<arma::mat, arma::mat> LogSoftMax;
 
 } // namespace ann
 } // namespace mlpack
