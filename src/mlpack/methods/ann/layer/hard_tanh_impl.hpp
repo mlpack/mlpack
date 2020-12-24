@@ -18,8 +18,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-HardTanH<InputDataType, OutputDataType>::HardTanH(
+template<typename InputType, typename OutputType>
+HardTanHType<InputType, OutputType>::HardTanHType(
     const double maxValue,
     const double minValue) :
     maxValue(maxValue),
@@ -28,9 +28,8 @@ HardTanH<InputDataType, OutputDataType>::HardTanH(
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void HardTanH<InputDataType, OutputDataType>::Forward(
+void HardTanHType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   output = input;
@@ -41,10 +40,9 @@ void HardTanH<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
-void HardTanH<InputDataType, OutputDataType>::Backward(
-    const DataType& input, const DataType& gy, DataType& g)
+template<typename InputType, typename OutputType>
+void HardTanHType<InputType, OutputType>::Backward(
+    const InputType& input, const OutputType& gy, OutputType& g)
 {
   g = gy;
   for (size_t i = 0; i < input.n_elem; ++i)
@@ -56,9 +54,9 @@ void HardTanH<InputDataType, OutputDataType>::Backward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void HardTanH<InputDataType, OutputDataType>::serialize(
+void HardTanHType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
