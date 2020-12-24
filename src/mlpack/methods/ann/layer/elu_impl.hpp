@@ -26,8 +26,8 @@ namespace ann /** Artificial Neural Network. */ {
 
 // This constructor is called for SELU activation function.  The values of
 // alpha and lambda are constant for normalized inputs.
-template<typename InputDataType, typename OutputDataType>
-ELU<InputDataType, OutputDataType>::ELU() :
+template<typename InputType, typename OutputType>
+ELUType<InputType, OutputType>::ELUType() :
     alpha(1.6732632423543774),
     lambda(1.0507009873554802),
     deterministic(false)
@@ -35,10 +35,10 @@ ELU<InputDataType, OutputDataType>::ELU() :
   // Nothing to do here.
 }
 
-// This constructor is called for ELU activation function.  The value of lambda
-// is fixed and equal to 1.  'alpha' is a hyperparameter.
-template<typename InputDataType, typename OutputDataType>
-ELU<InputDataType, OutputDataType>::ELU(const double alpha) :
+// This constructor is called for ELU activation function. The value of lambda
+// is fixed and equal to 1. 'alpha' is a hyperparameter.
+template<typename InputType, typename OutputType>
+ELUType<InputType, OutputType>::ELUType(const double alpha) :
     alpha(alpha),
     lambda(1),
     deterministic(false)
@@ -46,45 +46,39 @@ ELU<InputDataType, OutputDataType>::ELU(const double alpha) :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void ELU<InputDataType, OutputDataType>::Forward(
+void ELUType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output = arma::ones<OutputDataType>(arma::size(input));
+  output = arma::ones<OutputType>(arma::size(input));
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     if (input(i) < DBL_MAX)
     {
-      output(i) = (input(i) > 0) ? lambda * input(i) : lambda *
-          alpha * (std::exp(input(i)) - 1);
+      output(i) = (input(i) > 0) ? lambda * input(i) : lambda * alpha *
+          (std::exp(input(i)) - 1);
     }
   }
 
-    if (!deterministic)
-    {
-      derivative.set_size(arma::size(input));
-      for (size_t i = 0; i < input.n_elem; ++i)
-      {
-        derivative(i) = (input(i) > 0) ? lambda : output(i) +
-            lambda * alpha;
-      }
-    }
+  if (!deterministic)
+  {
+    derivative.set_size(arma::size(input));
+    for (size_t i = 0; i < input.n_elem; ++i)
+      derivative(i) = (input(i) > 0) ? lambda : output(i) + lambda * alpha;
+  }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
-void ELU<InputDataType, OutputDataType>::Backward(
-    const DataType& /* input */, const DataType& gy, DataType& g)
+template<typename InputType, typename OutputType>
+void ELUType<InputType, OutputType>::Backward(
+    const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   g = gy % derivative;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void ELU<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
-    const uint32_t /* version */)
+void ELUType<InputType, OutputType>::serialize(
+    Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(alpha));
   ar(CEREAL_NVP(lambda));
