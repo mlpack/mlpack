@@ -168,13 +168,13 @@ class ELUType : public Layer<InputType, OutputType>
 
  private:
   //! Locally stored first derivative of the activation function.
-  arma::mat derivative;
+  OutputType derivative;
 
   //! ELU Hyperparameter (0 < alpha)
   //! SELU parameter fixed to 1.6732632423543774 for normalized inputs.
   double alpha;
 
-  //! Lambda Parameter used for multiplication of ELU function.
+  //! Lambda parameter used for multiplication of ELU function.
   //! For ELU activation function, lambda = 1.
   //! For SELU activation function, lambda = 1.0507009873554802 for normalized
   //! inputs.
