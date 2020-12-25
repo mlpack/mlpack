@@ -26,6 +26,8 @@ set(OPENBLAS_LIBRARIES "" CACHE STRING "Path for OpenBlas library.")
 if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
 elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
+  execute_process(COMMAND bash -c ../../board/download_openblas.sh
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
   include(board/flags-config.cmake)
   flags(${BOARD_NAME})
 endif()
@@ -310,14 +312,14 @@ endif()
 # Remove support for older 32bit system, if we need to have 32bit system
 # Since we are cross compiling, We will download it into the deps folder,
 if (CMAKE_CROSSCOMPILING)
-  file(DOWNLOAD https://deac-fra.dl.sourceforge.net/project/arma/armadillo-10.1.0.tar.xz
-        "${CMAKE_BINARY_DIR}/deps/armadillo-10.1.0.tar.xz"
+  file(DOWNLOAD https://freefr.dl.sourceforge.net/project/arma/armadillo-10.1.2.tar.xz
+        "${CMAKE_BINARY_DIR}/deps/armadillo-10.1.2.tar.xz"
         STATUS ARMADILLO_DOWNLOAD_STATUS_LIST LOG ARMADILLO_DOWNLOAD_LOG
         SHOW_PROGRESS)
   list(GET ARMADILLO_DOWNLOAD_STATUS_LIST 0 ARMADILLO_DOWNLOAD_STATUS)
   if (ARMADILLO_DOWNLOAD_STATUS EQUAL 0)
     execute_process(COMMAND ${CMAKE_COMMAND} -E
-        tar xf "${CMAKE_BINARY_DIR}/deps/armadillo-10.1.0.tar.xz"
+        tar xf "${CMAKE_BINARY_DIR}/deps/armadillo-10.1.2.tar.xz"
         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
 
     # Get the name of the directory.

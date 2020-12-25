@@ -32,8 +32,7 @@ and some of these will be deleted.
 ------------------------------------------------------------------------------------------------------
 
 ## Dependencies download script
-A shell script will download all dependencies for mlpack, and cross-compile non
-header dependencies if necessary.
+A shell script will download OpenBLAS dependency for mlpack, and cross-compile it.
 
 [comment]:#(
 
