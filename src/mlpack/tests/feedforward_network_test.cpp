@@ -106,18 +106,18 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   {
     auto start = std::chrono::steady_clock::now();
     FFN<> model;
-    model.Add<Linear<> >(trainData.n_rows, 128);
-    model.Add<FlexibleReLU<> >();
-    model.Add<Linear<> >(128, 256);
-    model.Add<Linear<> >(256, 256);
-    model.Add<Linear<> >(256, 256);
-    model.Add<Linear<> >(256, 256);
-    model.Add<Linear<> >(256, 512);
-    model.Add<Linear<> >(512, 2048);
-    model.Add<Linear<> >(2048, 512);
-    model.Add<Linear<> >(512, 8);
-    model.Add<Linear<> >(8, 3);
-    model.Add<LogSoftMax<> >();
+    model.Add<Linear>(trainData.n_rows, 128);
+    model.Add<FlexibleReLU>();
+    model.Add<Linear>(128, 256);
+    model.Add<Linear>(256, 256);
+    model.Add<Linear>(256, 256);
+    model.Add<Linear>(256, 256);
+    model.Add<Linear>(256, 512);
+    model.Add<Linear>(512, 2048);
+    model.Add<Linear>(2048, 512);
+    model.Add<Linear>(512, 8);
+    model.Add<Linear>(8, 3);
+    model.Add<LogSoftMax>();
 
     // Vanilla neural net with logistic activation function.
     // Because 92% of the patients are not hyperthyroid the neural

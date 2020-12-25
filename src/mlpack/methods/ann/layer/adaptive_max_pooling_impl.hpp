@@ -25,7 +25,7 @@ AdaptiveMaxPoolingType<InputType, OutputType>::AdaptiveMaxPoolingType()
 }
 
 template <typename InputType, typename OutputType>
-AdaptiveMaxPoolingTypeType<InputType, OutputType>::AdaptiveMaxPoolingType(
+AdaptiveMaxPoolingType<InputType, OutputType>::AdaptiveMaxPoolingType(
     const size_t outputWidth,
     const size_t outputHeight) :
     AdaptiveMaxPoolingType(std::tuple<size_t, size_t>(outputWidth, outputHeight))

@@ -57,7 +57,6 @@ void AdaptiveMeanPoolingType<InputType, OutputType>::Forward(
 }
 
 template<typename InputType, typename OutputType>
-template<typename eT>
 void AdaptiveMeanPoolingType<InputType, OutputType>::Backward(
   const InputType& input,
   const OutputType& gy,

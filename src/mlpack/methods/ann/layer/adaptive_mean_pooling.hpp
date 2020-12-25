@@ -16,6 +16,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include "layer.hpp"
+#include "mean_pooling.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -132,7 +133,7 @@ class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
   }
 
   //! Locally stored MeanPooling Object.
-  MeanPooling<InputType, OutputDataType> poolingLayer;
+  MeanPooling<InputType, OutputType> poolingLayer;
 
   //! Locally-stored output width.
   size_t outputWidth;

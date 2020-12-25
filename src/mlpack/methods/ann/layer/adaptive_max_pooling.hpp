@@ -15,6 +15,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include "layer.hpp"
+#include "max_pooling.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -131,7 +132,7 @@ class AdaptiveMaxPoolingType : public Layer<InputType, OutputType>
   }
 
   //! Locally stored MaxPooling Object.
-  MaxPooling<InputDataType, OutputDataType> poolingLayer;
+  MaxPooling<InputType, OutputType> poolingLayer;
 
   //! Locally-stored output width.
   size_t outputWidth;

@@ -62,7 +62,7 @@ class Layer
    /**
     * Default deconstructor.
     */
-   ~Layer() { /* Nothing to do here */ }
+   virtual ~Layer() { /* Nothing to do here */ }
 
   /**
    * Takes an input object, and computes the corresponding output of the layer.
