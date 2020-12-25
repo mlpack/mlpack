@@ -18,23 +18,23 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling()
+template<typename InputType, typename OutputType>
+AdaptiveMeanPoolingType<InputType, OutputType>::AdaptiveMeanPoolingType()
 {
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling(
+template <typename InputType, typename OutputType>
+AdaptiveMeanPoolingType<InputType, OutputType>::AdaptiveMeanPoolingType(
     const size_t outputWidth,
     const size_t outputHeight) :
-    AdaptiveMeanPooling(std::tuple<size_t, size_t>(outputWidth, outputHeight))
+    AdaptiveMeanPoolingType(std::tuple<size_t, size_t>(outputWidth, outputHeight))
 {
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling(
+template <typename InputType, typename OutputType>
+AdaptiveMeanPoolingType<InputType, OutputType>::AdaptiveMeanPoolingType(
     const std::tuple<size_t, size_t>& outputShape):
     outputWidth(std::get<0>(outputShape)),
     outputHeight(std::get<1>(outputShape)),
@@ -43,10 +43,9 @@ AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling(
   poolingLayer = ann::MeanPooling<>(0, 0);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void AdaptiveMeanPooling<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void AdaptiveMeanPoolingType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   if (!reset)
   {
@@ -57,19 +56,19 @@ void AdaptiveMeanPooling<InputDataType, OutputDataType>::Forward(
   poolingLayer.Forward(input, output);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename eT>
-void AdaptiveMeanPooling<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>& input,
-  const arma::Mat<eT>& gy,
-  arma::Mat<eT>& g)
+void AdaptiveMeanPoolingType<InputType, OutputType>::Backward(
+  const InputType& input,
+  const OutputType& gy,
+  OutputType& g)
 {
   poolingLayer.Backward(input, gy, g);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void AdaptiveMeanPooling<InputDataType, OutputDataType>::serialize(
+void AdaptiveMeanPoolingType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
