@@ -13,7 +13,8 @@
 #define MLPACK_METHODS_ANN_LAYER_ADAPTIVE_MAX_POOLING_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "layer_types.hpp"
+
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -21,20 +22,17 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of the AdaptiveMaxPooling layer.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *    cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the layer's Outputs. The layer automatically
+ *    cast inputs to this type (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class AdaptiveMaxPooling
+template <typename InputType = arma::mat, typename OutputType = arma::mat>
+class AdaptiveMaxPoolingType : public Layer<InputType, OutputType>
 {
  public:
   //! Create the AdaptiveMaxPooling object.
-  AdaptiveMaxPooling();
+  AdaptiveMaxPoolingType();
 
   /**
    * Create the AdaptiveMaxPooling object.
@@ -42,7 +40,7 @@ class AdaptiveMaxPooling
    * @param outputWidth Width of the output.
    * @param outputHeight Height of the output.
    */
-  AdaptiveMaxPooling(const size_t outputWidth,
+  AdaptiveMaxPoolingType(const size_t outputWidth,
                      const size_t outputHeight);
 
   /**
@@ -50,7 +48,7 @@ class AdaptiveMaxPooling
    *
    * @param outputShape A two-value tuple indicating width and height of the output.
    */
-  AdaptiveMaxPooling(const std::tuple<size_t, size_t>& outputShape);
+  AdaptiveMaxPoolingType(const std::tuple<size_t, size_t>& outputShape);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -59,8 +57,7 @@ class AdaptiveMaxPooling
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -71,22 +68,9 @@ class AdaptiveMaxPooling
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
-
-  //! Get the output parameter.
-  const OutputDataType& OutputParameter() const
-  { return poolingLayer.OutputParameter(); }
-
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return poolingLayer.OutputParameter(); }
-
-  //! Get the delta.
-  const OutputDataType& Delta() const { return poolingLayer.Delta(); }
-  //! Modify the delta.
-  OutputDataType& Delta() { return poolingLayer.Delta(); }
+  void Backward(const InputType& input,
+                const OutputType& gy,
+                OutputType& g);
 
   //! Get the input width.
   size_t InputWidth() const { return poolingLayer.InputWidth(); }
@@ -157,7 +141,12 @@ class AdaptiveMaxPooling
 
   //! Locally-stored reset parameter used to initialize the layer once.
   bool reset;
-}; // class AdaptiveMaxPooling
+}; // class AdaptiveMaxPoolingType
+
+// Convenience typedefs.
+
+// Standard Adaptive max pooling layer.
+typedef AdaptiveMaxPoolingType<arma::mat, arma::mat> AdaptiveMaxPooling;
 
 } // namespace ann
 } // namespace mlpack

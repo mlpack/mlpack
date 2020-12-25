@@ -18,23 +18,23 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling()
+template<typename InputType, typename OutputType>
+AdaptiveMaxPoolingType<InputType, OutputType>::AdaptiveMaxPoolingType()
 {
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
+template <typename InputType, typename OutputType>
+AdaptiveMaxPoolingTypeType<InputType, OutputType>::AdaptiveMaxPoolingType(
     const size_t outputWidth,
     const size_t outputHeight) :
-    AdaptiveMaxPooling(std::tuple<size_t, size_t>(outputWidth, outputHeight))
+    AdaptiveMaxPoolingType(std::tuple<size_t, size_t>(outputWidth, outputHeight))
 {
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
+template <typename InputType, typename OutputType>
+AdaptiveMaxPoolingType<InputType, OutputType>::AdaptiveMaxPoolingType(
     const std::tuple<size_t, size_t>& outputShape):
     outputWidth(std::get<0>(outputShape)),
     outputHeight(std::get<1>(outputShape)),
@@ -43,10 +43,9 @@ AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
   poolingLayer = ann::MaxPooling<>(0, 0);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void AdaptiveMaxPooling<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void AdaptiveMaxPoolingType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   if (!reset)
   {
@@ -57,19 +56,18 @@ void AdaptiveMaxPooling<InputDataType, OutputDataType>::Forward(
   poolingLayer.Forward(input, output);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void AdaptiveMaxPooling<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>& input,
-  const arma::Mat<eT>& gy,
-  arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void AdaptiveMaxPoolingType<InputType, OutputType>::Backward(
+  const InputType& input,
+  const OutputType& gy,
+  OutputType& g)
 {
   poolingLayer.Backward(input, gy, g);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void AdaptiveMaxPooling<InputDataType, OutputDataType>::serialize(
+void AdaptiveMaxPoolingType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
