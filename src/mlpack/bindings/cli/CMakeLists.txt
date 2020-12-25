@@ -63,6 +63,7 @@ if (BUILD_CLI_EXECUTABLES)
     ${ARMADILLO_LIBRARIES}
     ${COMPILER_SUPPORT_LIBRARIES}
   )
+  endif()
   # Make sure that we set BINDING_TYPE to cli so the command-line program is
   # compiled with the correct int main() call.
   set_target_properties(mlpack_${name} PROPERTIES COMPILE_FLAGS
