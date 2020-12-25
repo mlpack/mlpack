@@ -124,7 +124,7 @@ class MultiheadAttention
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   //! Get the target sequence length.
   size_t TgtSeqLen() const { return tgtSeqLen; }
@@ -175,6 +175,11 @@ class MultiheadAttention
   OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
+
+  size_t InputShape() const
+  {
+    return embedDim * (tgtSeqLen + 2 * srcSeqLen);
+  }
 
  private:
   //! Element Type of the input.

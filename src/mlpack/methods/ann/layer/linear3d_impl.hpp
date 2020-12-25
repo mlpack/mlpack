@@ -42,6 +42,62 @@ Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear3D(
 
 template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
+Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear3D(
+    const Linear3D& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    weights(layer.weights),
+    regularizer(layer.regularizer)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear3D<InputDataType, OutputDataType, RegularizerType>::Linear3D(
+    Linear3D&& layer) :
+    inSize(0),
+    outSize(0),
+    weights(std::move(layer.weights)),
+    regularizer(std::move(layer.regularizer))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear3D<InputDataType, OutputDataType, RegularizerType>&
+Linear3D<InputDataType, OutputDataType, RegularizerType>::
+operator=(const Linear3D& layer)
+{
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = layer.weights;
+    regularizer = layer.regularizer;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear3D<InputDataType, OutputDataType, RegularizerType>&
+Linear3D<InputDataType, OutputDataType, RegularizerType>::
+operator=(Linear3D&& layer)
+{
+  if (this != &layer)
+  {
+    inSize = 0;
+    outSize = 0;
+    weights = std::move(layer.weights);
+    regularizer = std::move(layer.regularizer);
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
 void Linear3D<InputDataType, OutputDataType, RegularizerType>::Reset()
 {
   typedef typename arma::Mat<typename OutputDataType::elem_type> MatType;
@@ -161,14 +217,14 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 template<typename Archive>
 void Linear3D<InputDataType, OutputDataType, RegularizerType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(outSize));
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     weights.set_size(outSize * inSize + outSize, 1);
 }
 

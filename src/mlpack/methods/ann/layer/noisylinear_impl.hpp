@@ -43,9 +43,53 @@ NoisyLinear<InputDataType, OutputDataType>::NoisyLinear(
     inSize(inSize),
     outSize(outSize)
 {
-  weights.set_size((outSize * inSize + outSize) * 2, 1);
+  weights.set_size(WeightSize(), 1);
   weightEpsilon.set_size(outSize, inSize);
   biasEpsilon.set_size(outSize, 1);
+}
+
+template<typename InputDataType, typename OutputDataType>
+NoisyLinear<InputDataType, OutputDataType>::NoisyLinear(
+    NoisyLinear&& layer) :
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
+    weights(std::move(layer.weights))
+{
+  layer.inSize = 0;
+  layer.outSize = 0;
+  layer.weights = nullptr;
+  Reset();
+}
+
+template<typename InputDataType, typename OutputDataType>
+NoisyLinear<InputDataType, OutputDataType>&
+NoisyLinear<InputDataType, OutputDataType>::operator=(const NoisyLinear& layer)
+{
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = layer.weights;
+    Reset();
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
+NoisyLinear<InputDataType, OutputDataType>&
+NoisyLinear<InputDataType, OutputDataType>::operator=(NoisyLinear&& layer)
+{
+  if (this != &layer)
+  {
+    inSize = std::move(layer.inSize);
+    layer.inSize = 0;
+    outSize = std::move(layer.outSize);
+    layer.outSize = 0;
+    weights = std::move(layer.weights);
+    layer.weights = nullptr;
+    Reset();
+  }
+  return *this;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -129,14 +173,14 @@ void NoisyLinear<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void NoisyLinear<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(outSize));
 
   // This is inefficient, but we have to allocate this memory so that
   // WeightSetVisitor gets the right size.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     weights.set_size((outSize * inSize + outSize) * 2, 1);
 }
 

@@ -22,7 +22,7 @@
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -325,7 +325,7 @@ TEST_CASE("WGANGPMNISTTest", "[WGANNetworkTest]")
   wganGP.Predict(noise, orgPredictions);
 
   GAN<FFN<EarthMoverDistance<> >, GaussianInitialization,
-      std::function<double()>, WGANGP> wganGPText(generator, discriminator,
+      std::function<double()>, WGANGP> wganGPJson(generator, discriminator,
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
@@ -339,16 +339,16 @@ TEST_CASE("WGANGPMNISTTest", "[WGANNetworkTest]")
       gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
-  SerializeObjectAll(wganGP, wganGPXml, wganGPText, wganGPBinary);
+  SerializeObjectAll(wganGP, wganGPXml, wganGPJson, wganGPBinary);
 
-  arma::mat predictions, xmlPredictions, textPredictions, binaryPredictions;
+  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
   wganGP.Predict(noise, predictions);
   wganGPXml.Predict(noise, xmlPredictions);
-  wganGPText.Predict(noise, textPredictions);
+  wganGPJson.Predict(noise, jsonPredictions);
   wganGPBinary.Predict(noise, binaryPredictions);
 
   CheckMatrices(orgPredictions, predictions);
   CheckMatrices(orgPredictions, xmlPredictions);
-  CheckMatrices(orgPredictions, textPredictions);
+  CheckMatrices(orgPredictions, jsonPredictions);
   CheckMatrices(orgPredictions, binaryPredictions);
 }

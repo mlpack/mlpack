@@ -18,7 +18,7 @@
 
 #include <ensmallen.hpp>
 
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 #include "catch.hpp"
 #include "test_catch_tools.hpp"
 

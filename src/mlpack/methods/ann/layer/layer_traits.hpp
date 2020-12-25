@@ -120,6 +120,10 @@ HAS_MEM_FUNC(Bias, HasBiasCheck);
 // we can use with SFINAE to catch when a type has a MaxIterations() function.
 HAS_MEM_FUNC(MaxIterations, HasMaxIterations);
 
+// This gives us a HasInShapeCheck<T> type we can use with SFINAE to catch when
+// a type has a function named InputShape.
+HAS_ANY_METHOD_FORM(InputShape, HasInputShapeCheck);
+
 } // namespace ann
 } // namespace mlpack
 

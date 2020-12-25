@@ -664,23 +664,12 @@ template<typename MetricType, typename ElemType>
 template<typename Archive>
 void HRectBound<MetricType, ElemType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(dim);
-
-  // Allocate memory for the bounds, if necessary.
-  if (Archive::is_loading::value)
-  {
-    if (bounds)
-      delete[] bounds;
-    bounds = new math::RangeType<ElemType>[dim];
-  }
-
   // We can't serialize a raw array directly, so wrap it.
-  auto boundsArray = boost::serialization::make_array(bounds, dim);
-  ar & BOOST_SERIALIZATION_NVP(boundsArray);
-  ar & BOOST_SERIALIZATION_NVP(minWidth);
-  ar & BOOST_SERIALIZATION_NVP(metric);
+  ar(CEREAL_POINTER_ARRAY(bounds, dim));
+  ar(CEREAL_NVP(minWidth));
+  ar(CEREAL_NVP(metric));
 }
 
 } // namespace bound

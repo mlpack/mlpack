@@ -130,11 +130,16 @@ class Reparametrization
   //! Get the value of the beta hyperparameter.
   double Beta() const { return beta; }
 
+  size_t InputShape() const
+  {
+    return 2 * latentSize;
+  }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of output units.

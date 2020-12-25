@@ -37,7 +37,7 @@
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::cf;
@@ -46,7 +46,8 @@ using namespace std;
 // Get train and test datasets.
 static void GetDatasets(arma::mat& dataset, arma::mat& savedCols)
 {
-  data::Load("GroupLensSmall.csv", dataset);
+  if (!data::Load("GroupLensSmall.csv", dataset))
+    FAIL("Cannot load test dataset GroupLensSmall.csv!");
   savedCols.set_size(3, 50);
 
   // Save the columns we've removed.
@@ -101,7 +102,8 @@ void GetRecommendationsAllUsers()
 
   // Load GroupLens data.
   arma::mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  if (!data::Load("GroupLensSmall.csv", dataset))
+    FAIL("Cannot load test dataset GroupLensSamll.csv!");
 
   CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 30);
 
@@ -138,7 +140,8 @@ void GetRecommendationsQueriedUser()
 
   // Load GroupLens data.
   arma::mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  if (!data::Load("GroupLensSmall.csv", dataset))
+    FAIL("Cannot load test dataset GroupLensSmall.csv!");
 
   CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 30);
 
@@ -343,7 +346,7 @@ void TrainWithCoordinateList(DecompositionPolicy& decomposition)
 {
   arma::mat randomData(3, 100);
   randomData.row(0) = arma::linspace<arma::rowvec>(0, 99, 100);
-  randomData.row(1) = arma::linspace<arma::rowvec>(0, 99, 100);
+  randomData.row(1) = randomData.row(0);
   randomData.row(2).fill(3);
   CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 30);
 
@@ -427,7 +430,8 @@ void Serialization()
   DecompositionPolicy decomposition;
   // Load a dataset to train on.
   arma::mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  if (!data::Load("GroupLensSmall.csv", dataset))
+    FAIL("Cannot load test dataset GroupLensSmall.csv!");
 
   arma::sp_mat cleanedData;
   CFType<DecompositionPolicy,

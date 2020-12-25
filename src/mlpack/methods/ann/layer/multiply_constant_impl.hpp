@@ -45,9 +45,9 @@ void MultiplyConstant<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MultiplyConstant<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(scalar);
+  ar(CEREAL_NVP(scalar));
 }
 
 } // namespace ann

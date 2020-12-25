@@ -16,7 +16,7 @@
 #include <mlpack/core/tree/rectangle_tree.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kde;
@@ -24,7 +24,7 @@ using namespace mlpack::metric;
 using namespace mlpack::tree;
 using namespace mlpack::kernel;
 
-using namespace boost::serialization;
+using namespace cereal;
 
 // Brute force gaussian KDE.
 template <typename KernelType>

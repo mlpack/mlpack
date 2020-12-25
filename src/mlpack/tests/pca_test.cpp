@@ -316,7 +316,8 @@ TEST_CASE("PCAScalingTest", "[PCATest]")
   // zero.  There is noise, of course...
   REQUIRE(std::abs(eigvec(0, 0)) == Approx(sqrt(2) / 2).epsilon(0.0035));
   REQUIRE(std::abs(eigvec(1, 0)) == Approx(sqrt(2) / 2).epsilon(0.0035));
-  REQUIRE(eigvec(2, 0) == Approx(0.0).margin(0.1)); // Large tolerance for noise.
+  // Large tolerance for noise.
+  REQUIRE(eigvec(2, 0) == Approx(0.0).margin(0.1));
 
   // The second component should be focused almost entirely in the third
   // dimension.
@@ -328,7 +329,8 @@ TEST_CASE("PCAScalingTest", "[PCATest]")
   // the first (plus tolerance).
   REQUIRE(std::abs(eigvec(0, 0)) == Approx(sqrt(2) / 2).epsilon(0.0035));
   REQUIRE(std::abs(eigvec(1, 0)) == Approx(sqrt(2) / 2).epsilon(0.0035));
-  REQUIRE(eigvec(2, 0) == Approx(0.0).margin(0.1)); // Large tolerance for noise.
+  // Large tolerance for noise.
+  REQUIRE(eigvec(2, 0) == Approx(0.0).margin(0.1));
 
   // The eigenvalues should sum to three.
   REQUIRE(accu(eigval) == Approx(3.0).epsilon(0.001));

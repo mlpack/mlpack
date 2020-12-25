@@ -13,7 +13,7 @@
 #include <mlpack/methods/random_forest/random_forest.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
 #include "mock_categorical_data.hpp"
@@ -348,21 +348,21 @@ TEST_CASE("RandomForestSerializationTest", "[RandomForestTest]")
   arma::mat beforeProbabilities;
   rf.Classify(dataset, beforePredictions, beforeProbabilities);
 
-  RandomForest<> xmlForest, textForest, binaryForest;
+  RandomForest<> xmlForest, jsonForest, binaryForest;
   binaryForest.Train(dataset, labels, 3, 3, 5, 1);
-  SerializeObjectAll(rf, xmlForest, textForest, binaryForest);
+  SerializeObjectAll(rf, xmlForest, jsonForest, binaryForest);
 
   // Now check that we get the same results serializing other things.
-  arma::Row<size_t> xmlPredictions, textPredictions, binaryPredictions;
-  arma::mat xmlProbabilities, textProbabilities, binaryProbabilities;
+  arma::Row<size_t> xmlPredictions, jsonPredictions, binaryPredictions;
+  arma::mat xmlProbabilities, jsonProbabilities, binaryProbabilities;
 
   xmlForest.Classify(dataset, xmlPredictions, xmlProbabilities);
-  textForest.Classify(dataset, textPredictions, textProbabilities);
+  jsonForest.Classify(dataset, jsonPredictions, jsonProbabilities);
   binaryForest.Classify(dataset, binaryPredictions, binaryProbabilities);
 
-  CheckMatrices(beforePredictions, xmlPredictions, textPredictions,
+  CheckMatrices(beforePredictions, xmlPredictions, jsonPredictions,
       binaryPredictions);
-  CheckMatrices(beforeProbabilities, xmlProbabilities, textProbabilities,
+  CheckMatrices(beforeProbabilities, xmlProbabilities, jsonProbabilities,
       binaryProbabilities);
 }
 

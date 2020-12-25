@@ -23,7 +23,7 @@
 #include "visitor/set_input_height_visitor.hpp"
 #include "visitor/set_input_width_visitor.hpp"
 
-#include <boost/serialization/variant.hpp>
+#include "util/check_input_shape.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -111,6 +111,10 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
+                                                              predictors.n_rows, 
+                                                              "FFN<>::Train()");
+
   ResetData(std::move(predictors), std::move(responses));
 
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
@@ -133,6 +137,10 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::mat responses,
     CallbackTypes&&... callbacks)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
+                                                              predictors.n_rows, 
+                                                              "FFN<>::Train()");
+
   ResetData(std::move(predictors), std::move(responses));
 
   OptimizerType optimizer;
@@ -219,6 +227,10 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::mat predictors, arma::mat& results)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
+                                                              predictors.n_rows, 
+                                                              "FFN<>::Predict()");
+
   if (parameter.is_empty())
     ResetParameters();
 
@@ -252,6 +264,10 @@ template<typename PredictorsType, typename ResponsesType>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     const PredictorsType& predictors, const ResponsesType& responses)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
+                                                              predictors.n_rows, 
+                                                              "FFN<>::Evaluate()");
+
   if (parameter.is_empty())
     ResetParameters();
 
@@ -541,44 +557,27 @@ template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 template<typename Archive>
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int version)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(width);
-  ar & BOOST_SERIALIZATION_NVP(height);
+  ar(CEREAL_NVP(parameter));
+  ar(CEREAL_NVP(width));
+  ar(CEREAL_NVP(height));
 
-  // Early versions used the currentInput member, which is now no longer needed.
-  if (version < 2)
-  {
-    arma::mat currentInput; // Temporary matrix to output.
-    ar & BOOST_SERIALIZATION_NVP(currentInput);
-  }
-
-  // Earlier versions of the FFN code did not serialize whether or not the model
-  // was reset.
-  if (version > 0)
-  {
-    ar & BOOST_SERIALIZATION_NVP(reset);
-  }
+  ar(CEREAL_NVP(reset));
 
   // Be sure to clear other layers before loading.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     std::for_each(network.begin(), network.end(),
         boost::apply_visitor(deleteVisitor));
     network.clear();
   }
 
-  ar & BOOST_SERIALIZATION_NVP(network);
+  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
 
   // If we are loading, we need to initialize the weights.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
-    // The behavior in earlier versions was to always assume the weights needed
-    // to be reset.
-    if (version == 0)
-      reset = false;
-
     size_t offset = 0;
     for (size_t i = 0; i < network.size(); ++i)
     {
