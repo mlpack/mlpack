@@ -11,9 +11,9 @@
  */
 
 #include <mlpack/core.hpp>
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
 #include "serialization.hpp"
+#include "test_catch_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::data;
@@ -21,18 +21,17 @@ using namespace std;
 
 #ifdef HAS_STB // Compile this only if stb is present.
 
-BOOST_AUTO_TEST_SUITE(ImageLoadTest);
-
 /**
  * Test if an image with an unsupported extension throws an expected
  * exception.
  */
-BOOST_AUTO_TEST_CASE(LoadInvalidExtensionFile)
+TEST_CASE("LoadInvalidExtensionFile", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
+
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(data::Load("invalidExtendion.p4ng", matrix, info,
+  REQUIRE_THROWS_AS(data::Load("invalidExtendion.p4ng", matrix, info,
       true),  std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -40,38 +39,39 @@ BOOST_AUTO_TEST_CASE(LoadInvalidExtensionFile)
 /**
  * Test that the image is loaded correctly into the matrix using the API.
  */
-BOOST_AUTO_TEST_CASE(LoadImageAPITest)
+TEST_CASE("LoadImageAPITest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
-  BOOST_REQUIRE(data::Load("test_image.png", matrix, info, false) == true);
+
+  REQUIRE(data::Load("test_image.png", matrix, info, false) == true);
   // width * height * channels.
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3);
-  BOOST_REQUIRE_EQUAL(info.Height(), 50);
-  BOOST_REQUIRE_EQUAL(info.Width(), 50);
-  BOOST_REQUIRE_EQUAL(info.Channels(), 3);
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, 1);
+  REQUIRE(matrix.n_rows == 50 * 50 * 3);
+  REQUIRE(info.Height() == 50);
+  REQUIRE(info.Width() == 50);
+  REQUIRE(info.Channels() == 3);
+  REQUIRE(matrix.n_cols == 1);
 }
 
 /**
  * Test if the image is saved correctly using API.
  */
-BOOST_AUTO_TEST_CASE(SaveImageAPITest)
+TEST_CASE("SaveImageAPITest", "[ImageLoadTest]")
 {
   data::ImageInfo info(5, 5, 3, 90);
 
   arma::Mat<unsigned char> im1;
   size_t dimension = info.Width() * info.Height() * info.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
-  BOOST_REQUIRE(data::Save("APITest.bmp", im1, info, false) == true);
+  REQUIRE(data::Save("APITest.bmp", im1, info, false) == true);
 
   arma::Mat<unsigned char> im2;
-  BOOST_REQUIRE(data::Load("APITest.bmp", im2, info, false) == true);
+  REQUIRE(data::Load("APITest.bmp", im2, info, false) == true);
 
-  BOOST_REQUIRE_EQUAL(im1.n_cols, im2.n_cols);
-  BOOST_REQUIRE_EQUAL(im1.n_rows, im2.n_rows);
+  REQUIRE(im1.n_cols == im2.n_cols);
+  REQUIRE(im1.n_rows == im2.n_rows);
   for (size_t i = 0; i < im1.n_elem; ++i)
-    BOOST_REQUIRE_EQUAL(im1[i], im2[i]);
+    REQUIRE(im1[i] == im2[i]);
   remove("APITest.bmp");
 }
 
@@ -79,15 +79,14 @@ BOOST_AUTO_TEST_CASE(SaveImageAPITest)
  * Test if an image with a wrong dimesion throws an expected
  * exception while saving.
  */
-BOOST_AUTO_TEST_CASE(SaveImageWrongInfo)
+TEST_CASE("SaveImageWrongInfo", "[ImageLoadTest]")
 {
   data::ImageInfo info(5, 5, 3, 90);
 
   arma::Mat<unsigned char> im1;
-  size_t dimension = info.Width() * info.Height() * info.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(data::Save("APITest.bmp", im1, info, false),
+  REQUIRE_THROWS_AS(data::Save("APITest.bmp", im1, info, false),
       std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
@@ -96,24 +95,24 @@ BOOST_AUTO_TEST_CASE(SaveImageWrongInfo)
  * Test that the image is loaded correctly into the matrix using the API
  * for vectors.
  */
-BOOST_AUTO_TEST_CASE(LoadVectorImageAPITest)
+TEST_CASE("LoadVectorImageAPITest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   data::ImageInfo info;
   std::vector<std::string> files = {"test_image.png", "test_image.png"};
-  BOOST_REQUIRE(data::Load(files, matrix, info, false) == true);
+  REQUIRE(data::Load(files, matrix, info, false) == true);
   // width * height * channels.
-  BOOST_REQUIRE_EQUAL(matrix.n_rows, 50 * 50 * 3);
-  BOOST_REQUIRE_EQUAL(info.Height(), 50);
-  BOOST_REQUIRE_EQUAL(info.Width(), 50);
-  BOOST_REQUIRE_EQUAL(info.Channels(), 3);
-  BOOST_REQUIRE_EQUAL(matrix.n_cols, 2);
+  REQUIRE(matrix.n_rows == 50 * 50 * 3);
+  REQUIRE(info.Height() == 50);
+  REQUIRE(info.Width() == 50);
+  REQUIRE(info.Channels() == 3);
+  REQUIRE(matrix.n_cols == 2);
 }
 
 /**
  * Test if the image is saved correctly using API for arma mat.
  */
-BOOST_AUTO_TEST_CASE(SaveImageMatAPITest)
+TEST_CASE("SaveImageMatAPITest", "[ImageLoadTest]")
 {
   data::ImageInfo info(5, 5, 3);
 
@@ -121,42 +120,40 @@ BOOST_AUTO_TEST_CASE(SaveImageMatAPITest)
   size_t dimension = info.Width() * info.Height() * info.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
   arma::mat input = arma::conv_to<arma::mat>::from(im1);
-  BOOST_REQUIRE(Save("APITest.bmp", input, info, false) == true);
+  REQUIRE(Save("APITest.bmp", input, info, false) == true);
 
   arma::mat output;
-  BOOST_REQUIRE(Load("APITest.bmp", output, info, false) == true);
+  REQUIRE(Load("APITest.bmp", output, info, false) == true);
 
-  BOOST_REQUIRE_EQUAL(input.n_cols, output.n_cols);
-  BOOST_REQUIRE_EQUAL(input.n_rows, output.n_rows);
+  REQUIRE(input.n_cols == output.n_cols);
+  REQUIRE(input.n_rows == output.n_rows);
   for (size_t i = 0; i < input.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(input[i], output[i], 1e-5);
+    REQUIRE(input[i] == Approx(output[i]).epsilon(1e-7));
   remove("APITest.bmp");
 }
 
 /**
  * Serialization test for the ImageInfo class.
  */
-BOOST_AUTO_TEST_CASE(ImageInfoSerialization)
+TEST_CASE("ImageInfoSerialization", "[ImageLoadTest]")
 {
   data::ImageInfo info(5, 5, 3, 90);
-  data::ImageInfo xmlInfo, textInfo, binaryInfo;
+  data::ImageInfo xmlInfo, jsonInfo, binaryInfo;
 
-  SerializeObjectAll(info, xmlInfo, textInfo, binaryInfo);
+  SerializeObjectAll(info, xmlInfo, jsonInfo, binaryInfo);
 
-  BOOST_REQUIRE_EQUAL(info.Width(), xmlInfo.Width());
-  BOOST_REQUIRE_EQUAL(info.Height(), xmlInfo.Height());
-  BOOST_REQUIRE_EQUAL(info.Channels(), xmlInfo.Channels());
-  BOOST_REQUIRE_EQUAL(info.Quality(), xmlInfo.Quality());
-  BOOST_REQUIRE_EQUAL(info.Width(), textInfo.Width());
-  BOOST_REQUIRE_EQUAL(info.Height(), textInfo.Height());
-  BOOST_REQUIRE_EQUAL(info.Channels(), textInfo.Channels());
-  BOOST_REQUIRE_EQUAL(info.Quality(), textInfo.Quality());
-  BOOST_REQUIRE_EQUAL(info.Width(), binaryInfo.Width());
-  BOOST_REQUIRE_EQUAL(info.Height(), binaryInfo.Height());
-  BOOST_REQUIRE_EQUAL(info.Channels(), binaryInfo.Channels());
-  BOOST_REQUIRE_EQUAL(info.Quality(), binaryInfo.Quality());
+  REQUIRE(info.Width() == xmlInfo.Width());
+  REQUIRE(info.Height() == xmlInfo.Height());
+  REQUIRE(info.Channels() == xmlInfo.Channels());
+  REQUIRE(info.Quality() == xmlInfo.Quality());
+  REQUIRE(info.Width() == jsonInfo.Width());
+  REQUIRE(info.Height() == jsonInfo.Height());
+  REQUIRE(info.Channels() == jsonInfo.Channels());
+  REQUIRE(info.Quality() == jsonInfo.Quality());
+  REQUIRE(info.Width() == binaryInfo.Width());
+  REQUIRE(info.Height() == binaryInfo.Height());
+  REQUIRE(info.Channels() == binaryInfo.Channels());
+  REQUIRE(info.Quality() == binaryInfo.Quality());
 }
-
-BOOST_AUTO_TEST_SUITE_END();
 
 #endif // HAS_STB.

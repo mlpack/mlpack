@@ -111,11 +111,14 @@ class CELU
   //! Modify the value of deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
+  //! Get size of weights.
+  size_t WeightSize() { return 0; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

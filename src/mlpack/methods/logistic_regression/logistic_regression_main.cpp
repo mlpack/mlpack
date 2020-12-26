@@ -22,12 +22,17 @@ using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::util;
 
-PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
-    // Short description.
+// Program Name.
+BINDING_NAME("L2-regularized Logistic Regression and Prediction");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of L2-regularized logistic regression for two-class "
     "classification.  Given labeled data, a model can be trained and saved for "
-    "future use; or, a pre-trained model can be used to classify new points.",
-    // Long description.
+    "future use; or, a pre-trained model can be used to classify new points.");
+
+// Long description.
+BINDING_LONG_DESC(
     "An implementation of L2-regularized logistic regression using either the "
     "L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the "
     "regression problem"
@@ -92,8 +97,11 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "\n\n"
     "This implementation of logistic regression does not support the general "
     "multi-class case but instead only the two-class case.  Any labels must "
-    "be either 0 or 1.  For more classes, see the softmax_regression program."
-    "\n\n"
+    "be either 0 or 1.  For more classes, see the softmax_regression "
+    "program.");
+
+// Example.
+BINDING_EXAMPLE(
     "As an example, to train a logistic regression model on the data '" +
     PRINT_DATASET("data") + "' with labels '" + PRINT_DATASET("labels") + "' "
     "with L2 regularization of 0.1, saving the model to '" +
@@ -107,13 +115,16 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     PRINT_DATASET("predictions") + "', the following command may be used: "
     "\n\n" +
     PRINT_CALL("logistic_regression", "input_model", "lr_model", "test", "test",
-        "output", "predictions"),
-    SEE_ALSO("@softmax_regression", "#softmax_regression"),
-    SEE_ALSO("@random_forest", "#random_forest"),
-    SEE_ALSO("Logistic regression on Wikipedia",
-        "https://en.wikipedia.org/wiki/Logistic_regression"),
-    SEE_ALSO("mlpack::regression::LogisticRegression C++ class documentation",
-        "@doxygen/classmlpack_1_1regression_1_1LogisticRegression.html"));
+        "output", "predictions"));
+
+// See also...
+BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
+BINDING_SEE_ALSO("@random_forest", "#random_forest");
+BINDING_SEE_ALSO("Logistic regression on Wikipedia",
+        "https://en.wikipedia.org/wiki/Logistic_regression");
+BINDING_SEE_ALSO("mlpack::regression::LogisticRegression C++ class "
+        "documentation",
+        "@doxygen/classmlpack_1_1regression_1_1LogisticRegression.html");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "

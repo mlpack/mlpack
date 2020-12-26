@@ -15,8 +15,7 @@
 #include <mlpack/methods/nca/nca.hpp>
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::metric;
@@ -27,13 +26,11 @@ using namespace ens;
 // Tests for the SoftmaxErrorFunction
 //
 
-BOOST_AUTO_TEST_SUITE(NCATest);
-
 /**
  * The Softmax error function should return the identity matrix as its initial
  * point.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxInitialPoint)
+TEST_CASE("SoftmaxInitialPoint", "[NCATesT]")
 {
   // Cheap fake dataset.
   arma::mat data;
@@ -50,9 +47,9 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialPoint)
     for (int col = 0; col < 5; col++)
     {
       if (row == col)
-        BOOST_REQUIRE_CLOSE(initialPoint(row, col), 1.0, 1e-5);
+        REQUIRE(initialPoint(row, col) == Approx(1.0).epsilon(1e-7));
       else
-        BOOST_REQUIRE_SMALL(initialPoint(row, col), 1e-5);
+        REQUIRE(initialPoint(row, col) == Approx(0.0).margin(1e-5));
     }
   }
 }
@@ -61,7 +58,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialPoint)
  * On a simple fake dataset, ensure that the initial function evaluation is
  * correct.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxInitialEvaluation)
+TEST_CASE("SoftmaxInitialEvaluation", "[NCATesT]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -75,14 +72,14 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialEvaluation)
   // Result painstakingly calculated by hand by rcurtin (recorded forever in his
   // notebook).  As a result of lack of precision of the by-hand result, the
   // tolerance is fairly high.
-  BOOST_REQUIRE_CLOSE(objective, -1.5115, 0.01);
+  REQUIRE(objective == Approx(-1.5115).epsilon(0.0001));
 }
 
 /**
  * On a simple fake dataset, ensure that the initial gradient evaluation is
  * correct.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxInitialGradient)
+TEST_CASE("SoftmaxInitialGradient", "[NCATesT]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -98,17 +95,17 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialGradient)
   // Results painstakingly calculated by hand by rcurtin (recorded forever in
   // his notebook).  As a result of lack of precision of the by-hand result, the
   // tolerance is fairly high.
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.089766, 0.05);
-  BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
-  BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 1.63823, 0.01);
+  REQUIRE(gradient(0, 0) == Approx(-0.089766).epsilon(0.0005));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(1, 1) == Approx(1.63823).epsilon(0.0001));
 }
 
 /**
  * On optimally separated datasets, ensure that the objective function is
  * optimal (equal to the negative number of points).
  */
-BOOST_AUTO_TEST_CASE(SoftmaxOptimalEvaluation)
+TEST_CASE("SoftmaxOptimalEvaluation", "[NCATesT]")
 {
   // Simple optimal dataset.
   arma::mat data           = " 500  500 -500 -500;"
@@ -121,13 +118,13 @@ BOOST_AUTO_TEST_CASE(SoftmaxOptimalEvaluation)
 
   // Use a very close tolerance for optimality; we need to be sure this function
   // gives optimal results correctly.
-  BOOST_REQUIRE_CLOSE(objective, -4.0, 1e-10);
+  REQUIRE(objective == Approx(-4.0).epsilon(1e-12));
 }
 
 /**
  * On optimally separated datasets, ensure that the gradient is zero.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxOptimalGradient)
+TEST_CASE("SoftmaxOptimalGradient", "[NCATesT]")
 {
   // Simple optimal dataset.
   arma::mat data           = " 500  500 -500 -500;"
@@ -139,16 +136,16 @@ BOOST_AUTO_TEST_CASE(SoftmaxOptimalGradient)
   arma::mat gradient;
   sef.Gradient(arma::eye<arma::mat>(2, 2), gradient);
 
-  BOOST_REQUIRE_SMALL(gradient(0, 0), 1e-5);
-  BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
-  BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
-  BOOST_REQUIRE_SMALL(gradient(1, 1), 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(1, 1) == Approx(0.0).margin(1e-5));
 }
 
 /**
  * Ensure the separable objective function is right.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxSeparableObjective)
+TEST_CASE("SoftmaxSeparableObjective", "[NCATesT]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -161,18 +158,18 @@ BOOST_AUTO_TEST_CASE(SoftmaxSeparableObjective)
   // his notebook).  As a result of lack of precision of the by-hand result, the
   // tolerance is fairly high.
   arma::mat coordinates = arma::eye<arma::mat>(2, 2);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 0, 1), -0.22480, 0.01);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 1, 1), -0.30613, 0.01);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 2, 1), -0.22480, 0.01);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 3, 1), -0.22480, 0.01);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 4, 1), -0.30613, 0.01);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 5, 1), -0.22480, 0.01);
+  REQUIRE(sef.Evaluate(coordinates, 0, 1) == Approx(-0.22480).epsilon(0.0001));
+  REQUIRE(sef.Evaluate(coordinates, 1, 1) == Approx(-0.30613).epsilon(0.0001));
+  REQUIRE(sef.Evaluate(coordinates, 2, 1) == Approx(-0.22480).epsilon(0.0001));
+  REQUIRE(sef.Evaluate(coordinates, 3, 1) == Approx(-0.22480).epsilon(0.0001));
+  REQUIRE(sef.Evaluate(coordinates, 4, 1) == Approx(-0.30613).epsilon(0.0001));
+  REQUIRE(sef.Evaluate(coordinates, 5, 1) == Approx(-0.22480).epsilon(0.0001));
 }
 
 /**
  * Ensure the optimal separable objective function is right.
  */
-BOOST_AUTO_TEST_CASE(OptimalSoftmaxSeparableObjective)
+TEST_CASE("OptimalSoftmaxSeparableObjective", "[NCATesT]")
 {
   // Simple optimal dataset.
   arma::mat data           = " 500  500 -500 -500;"
@@ -185,16 +182,16 @@ BOOST_AUTO_TEST_CASE(OptimalSoftmaxSeparableObjective)
 
   // Use a very close tolerance for optimality; we need to be sure this function
   // gives optimal results correctly.
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 0, 1), -1.0, 1e-10);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 1, 1), -1.0, 1e-10);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 2, 1), -1.0, 1e-10);
-  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 3, 1), -1.0, 1e-10);
+  REQUIRE(sef.Evaluate(coordinates, 0, 1) == Approx(-1.0).epsilon(1e-12));
+  REQUIRE(sef.Evaluate(coordinates, 1, 1) == Approx(-1.0).epsilon(1e-12));
+  REQUIRE(sef.Evaluate(coordinates, 2, 1) == Approx(-1.0).epsilon(1e-12));
+  REQUIRE(sef.Evaluate(coordinates, 3, 1) == Approx(-1.0).epsilon(1e-12));
 }
 
 /**
  * Ensure the separable gradient is right.
  */
-BOOST_AUTO_TEST_CASE(SoftmaxSeparableGradient)
+TEST_CASE("SoftmaxSeparableGradient", "[NCATesT]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -208,45 +205,45 @@ BOOST_AUTO_TEST_CASE(SoftmaxSeparableGradient)
 
   sef.Gradient(coordinates, 0, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * -0.0101707, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), -2.0 * -0.0101707, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.14359, 0.01);
+  REQUIRE(gradient(0, 0) == Approx(-2.0 * 0.0069708).epsilon(0.0001));
+  REQUIRE(gradient(0, 1) == Approx(-2.0 * -0.0101707).epsilon(0.0001));
+  REQUIRE(gradient(1, 0) == Approx(-2.0 * -0.0101707).epsilon(0.0001));
+  REQUIRE(gradient(1, 1) == Approx(-2.0 * -0.14359).epsilon(0.0001));
 
   sef.Gradient(coordinates, 1, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.008496, 0.01);
-  BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
-  BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.12238, 0.01);
+  REQUIRE(gradient(0, 0) == Approx(-2.0 * 0.008496).epsilon(0.0001));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(1, 1) == Approx(-2.0 * -0.12238).epsilon(0.0001));
 
   sef.Gradient(coordinates, 2, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * 0.0101707, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), -2.0 * 0.0101707, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.1435886, 0.01);
+  REQUIRE(gradient(0, 0) == Approx(-2.0 * 0.0069708).epsilon(0.0001));
+  REQUIRE(gradient(0, 1) == Approx(-2.0 * 0.0101707).epsilon(0.0001));
+  REQUIRE(gradient(1, 0) == Approx(-2.0 * 0.0101707).epsilon(0.0001));
+  REQUIRE(gradient(1, 1) == Approx(-2.0 * -0.1435886).epsilon(0.0001));
 
   sef.Gradient(coordinates, 3, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * 0.0101707, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), -2.0 * 0.0101707, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.1435886, 0.01);
+  REQUIRE(gradient(0, 0) == Approx(-2.0 * 0.0069708).epsilon(0.0001));
+  REQUIRE(gradient(0, 1) == Approx(-2.0 * 0.0101707).epsilon(0.0001));
+  REQUIRE(gradient(1, 0) == Approx(-2.0 * 0.0101707).epsilon(0.0001));
+  REQUIRE(gradient(1, 1) == Approx(-2.0 * -0.1435886).epsilon(0.0001));
 
   sef.Gradient(coordinates, 4, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.008496, 0.01);
-  BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
-  BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.12238, 0.01);
+  REQUIRE(gradient(0, 0) == Approx(-2.0 * 0.008496).epsilon(0.0001));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(1, 1) == Approx(-2.0 * -0.12238).epsilon(0.0001));
 
   sef.Gradient(coordinates, 5, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * -0.0101707, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), -2.0 * -0.0101707, 0.01);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.1435886, 0.01);
+  REQUIRE(gradient(0, 0) == Approx(-2.0 * 0.0069708).epsilon(0.0001));
+  REQUIRE(gradient(0, 1) == Approx(-2.0 * -0.0101707).epsilon(0.0001));
+  REQUIRE(gradient(1, 0) == Approx(-2.0 * -0.0101707).epsilon(0.0001));
+  REQUIRE(gradient(1, 1) == Approx(-2.0 * -0.1435886).epsilon(0.0001));
 }
 
 //
@@ -257,7 +254,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxSeparableGradient)
  * On our simple dataset, ensure that the NCA algorithm fully separates the
  * points.
  */
-BOOST_AUTO_TEST_CASE(NCASGDSimpleDataset)
+TEST_CASE("NCASGDSimpleDataset", "[NCATesT]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -283,15 +280,15 @@ BOOST_AUTO_TEST_CASE(NCASGDSimpleDataset)
   sef.Gradient(outputMatrix, finalGradient);
 
   // finalObj must be less than initObj.
-  BOOST_REQUIRE_LT(finalObj, initObj);
+  REQUIRE(finalObj < initObj);
   // Verify that final objective is optimal.
-  BOOST_REQUIRE_CLOSE(finalObj, -6.0, 0.005);
+  REQUIRE(finalObj == Approx(-6.0).epsilon(0.00005));
   // The solution is not unique, so the best we can do is ensure the gradient
   // norm is close to 0.
-  BOOST_REQUIRE_LT(arma::norm(finalGradient, 2), 1e-4);
+  REQUIRE(arma::norm(finalGradient, 2) < 1e-4);
 }
 
-BOOST_AUTO_TEST_CASE(NCALBFGSSimpleDataset)
+TEST_CASE("NCALBFGSSimpleDataset", "[NCATesT]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat data           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -314,12 +311,10 @@ BOOST_AUTO_TEST_CASE(NCALBFGSSimpleDataset)
   sef.Gradient(outputMatrix, finalGradient);
 
   // finalObj must be less than initObj.
-  BOOST_REQUIRE_LT(finalObj, initObj);
+  REQUIRE(finalObj < initObj);
   // Verify that final objective is optimal.
-  BOOST_REQUIRE_CLOSE(finalObj, -6.0, 1e-5);
+  REQUIRE(finalObj == Approx(-6.0).epsilon(1e-7));
   // The solution is not unique, so the best we can do is ensure the gradient
   // norm is close to 0.
-  BOOST_REQUIRE_LT(arma::norm(finalGradient, 2), 1e-6);
+  REQUIRE(arma::norm(finalGradient, 2) < 1e-6);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -71,7 +71,7 @@ namespace adaboost {
  * @endcode
  *
  * For more information on and examples of weak learners, see
- * perceptron::Perceptron<> and decision_stump::DecisionStump<>.
+ * perceptron::Perceptron<> and tree::ID3DecisionStump.
  *
  * @tparam MatType Data matrix type (i.e. arma::mat or arma::sp_mat).
  * @tparam WeakLearnerType Type of weak learner to use.
@@ -177,7 +177,7 @@ class AdaBoost
    * Serialize the AdaBoost model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The number of classes in the model.
@@ -193,19 +193,6 @@ class AdaBoost
 
 } // namespace adaboost
 } // namespace mlpack
-
-//! Set the serialization version of the adaboost class.
-namespace boost {
-namespace serialization {
-
-template<typename WeakLearnerType, typename MatType>
-struct version<mlpack::adaboost::AdaBoost<WeakLearnerType, MatType>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "adaboost_impl.hpp"

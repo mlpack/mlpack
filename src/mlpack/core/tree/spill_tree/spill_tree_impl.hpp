@@ -34,7 +34,7 @@ SpillTree(
     left(NULL),
     right(NULL),
     parent(NULL),
-    count(0),
+    count(data.n_cols),
     pointsIndex(NULL),
     overlappingNode(false),
     hyperplane(),
@@ -71,7 +71,7 @@ SpillTree(
     left(NULL),
     right(NULL),
     parent(NULL),
-    count(0),
+    count(data.n_cols),
     pointsIndex(NULL),
     overlappingNode(false),
     hyperplane(),
@@ -109,7 +109,7 @@ SpillTree(
     left(NULL),
     right(NULL),
     parent(parent),
-    count(0),
+    count(points.n_elem),
     pointsIndex(NULL),
     overlappingNode(false),
     hyperplane(),
@@ -392,12 +392,12 @@ template<typename Archive>
 SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
 SpillTree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
     SpillTree() // Create an empty SpillTree.
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
   // can serialize from it.
-  ar >> BOOST_SERIALIZATION_NVP(*this);
+  ar(CEREAL_NVP(*this));
 }
 
 /**
@@ -680,15 +680,16 @@ template<typename MetricType,
 inline size_t SpillTree<MetricType, StatisticType, MatType, HyperplaneType,
     SplitType>::Descendant(const size_t index) const
 {
-  if (IsLeaf())
+  if (IsLeaf() || overlappingNode)
     return (*pointsIndex)[index];
-  size_t num = left->NumDescendants();
+
+  // If this is not a leaf and not an overlapping node, then determine whether
+  // we should get the descendant from the left or the right node.
+  const size_t num = left->NumDescendants();
   if (index < num)
     return left->Descendant(index);
-  if (right)
+  else
     return right->Descendant(index - num);
-  // This should never happen.
-  return (size_t() - 1);
 }
 
 /**
@@ -733,7 +734,6 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   {
     pointsIndex = new arma::Col<size_t>();
     pointsIndex->swap(points);
-    count = pointsIndex->n_elem;
     return; // We can't split this.
   }
 
@@ -745,7 +745,6 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   {
     pointsIndex = new arma::Col<size_t>();
     pointsIndex->swap(points);
-    count = pointsIndex->n_elem;
     return; // We can't split this.
   }
 
@@ -753,16 +752,23 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   // Split the node.
   overlappingNode = SplitPoints(tau, rho, points, leftPoints, rightPoints);
 
-  // We don't need the information in points, so lets clean it.
-  arma::Col<size_t>().swap(points);
+  if (overlappingNode)
+  {
+    // If the node is overlapping, we have to keep track of which points are
+    // held in the node.
+    pointsIndex = new arma::Col<size_t>();
+    pointsIndex->swap(points);
+  }
+  else
+  {
+    // Otherwise, we don't need the information in points, so let's clean it.
+    arma::Col<size_t>().swap(points);
+  }
 
   // Now we will recursively split the children by calling their constructors
   // (which perform this splitting process).
   left = new SpillTree(this, leftPoints, tau, maxLeafSize, rho);
   right = new SpillTree(this, rightPoints, tau, maxLeafSize, rho);
-
-  // Update count number, to represent the number of descendant points.
-  count = left->NumDescendants() + right->NumDescendants();
 
   // Calculate parent distances for those two nodes.
   arma::vec center, leftCenter, rightCenter;
@@ -822,14 +828,25 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     // Perform the actual splitting considering the overlapping buffer.  Points
     // with projection value in the range (-tau, tau) are included in both,
     // leftPoints and rightPoints.
+    const size_t leftUnique = points.n_elem - right - leftFrontier;
+    const size_t overlap = leftFrontier + rightFrontier;
+
     leftPoints.resize(left + rightFrontier);
     rightPoints.resize(right + leftFrontier);
-    for (size_t i = 0, rc = 0, lc = 0; i < points.n_elem; ++i)
+    for (size_t i = 0, rc = overlap, lc = 0, rf = 0, lf = leftUnique;
+         i < points.n_elem; ++i)
     {
-      if (projections[i] < tau || projections[i] <= 0)
+      // We put any points in the frontier should come last in the left node,
+      // and first in the right node.  (This ordering is not required.)
+      if (projections[i] < -tau)
         leftPoints[lc++] = points[i];
-      if (projections[i] > -tau)
+      else if (projections[i] < tau)
+        leftPoints[lf++] = points[i];
+
+      if (projections[i] > tau)
         rightPoints[rc++] = points[i];
+      else if (projections[i] > -tau)
+        rightPoints[rf++] = points[i];
     }
     // Return true, because it is a overlapping node.
     return true;
@@ -852,7 +869,7 @@ bool SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
   return false;
 }
 
-// Default constructor (private), for boost::serialization.
+// Default constructor (private), for cereal.
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -887,10 +904,10 @@ template<typename MetricType,
              class SplitType>
 template<typename Archive>
 void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
-    serialize(Archive& ar, const unsigned int /* version */)
+    serialize(Archive& ar, const uint32_t /* version */)
 {
   // If we're loading, and we have children, they need to be deleted.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
       delete left;
@@ -904,33 +921,38 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     right = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(count);
-  ar & BOOST_SERIALIZATION_NVP(pointsIndex);
-  ar & BOOST_SERIALIZATION_NVP(overlappingNode);
-  ar & BOOST_SERIALIZATION_NVP(hyperplane);
-  ar & BOOST_SERIALIZATION_NVP(bound);
-  ar & BOOST_SERIALIZATION_NVP(stat);
-  ar & BOOST_SERIALIZATION_NVP(parent);
-  ar & BOOST_SERIALIZATION_NVP(parentDistance);
-  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
-  ar & BOOST_SERIALIZATION_NVP(dataset);
-
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
+  {
     localDataset = true;
+  }
+  ar(CEREAL_NVP(count));
+  ar(CEREAL_POINTER(pointsIndex));
+  ar(CEREAL_NVP(overlappingNode));
+  ar(CEREAL_NVP(hyperplane));
+  ar(CEREAL_NVP(bound));
+  ar(CEREAL_NVP(stat));
+  ar(CEREAL_NVP(parentDistance));
+  ar(CEREAL_NVP(furthestDescendantDistance));
+  // Force a non-const pointer.
+  MatType*& datasetPtr = const_cast<MatType*&>(dataset);
 
-  // Save children last; otherwise boost::serialization gets confused.
+  // Save children last; otherwise cereal gets confused.
   bool hasLeft = (left != NULL);
   bool hasRight = (right != NULL);
+  bool hasParent = (parent != NULL);
 
-  ar & BOOST_SERIALIZATION_NVP(hasLeft);
-  ar & BOOST_SERIALIZATION_NVP(hasRight);
+  ar(CEREAL_NVP(hasLeft));
+  ar(CEREAL_NVP(hasRight));
+  ar(CEREAL_NVP(hasParent));
 
   if (hasLeft)
-    ar & BOOST_SERIALIZATION_NVP(left);
+    ar(CEREAL_POINTER(left));
   if (hasRight)
-    ar & BOOST_SERIALIZATION_NVP(right);
+    ar(CEREAL_POINTER(right));
+  if (!hasParent)
+    ar(CEREAL_POINTER(datasetPtr));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
     {
@@ -941,6 +963,26 @@ void SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
     {
       right->parent = this;
       right->localDataset = false;
+    }
+  }
+
+  // If we are the root, we need to restore the dataset pointer throughout
+  if (!hasParent)
+  {
+    std::stack<SpillTree*> stack;
+    if (left)
+      stack.push(left);
+    if (right)
+      stack.push(right);
+    while (!stack.empty())
+    {
+      SpillTree* node = stack.top();
+      stack.pop();
+      node->dataset = dataset;
+      if (node->left)
+        stack.push(node->left);
+      if (node->right)
+       stack.push(node->right);
     }
   }
 }

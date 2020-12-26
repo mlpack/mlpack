@@ -165,9 +165,9 @@ class Concat
   }
 
   //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return parameters; }
+  const arma::mat& Parameters() const { return weights; }
   //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return parameters; }
+  arma::mat& Parameters() { return weights; }
 
   //! Get the value of run parameter.
   bool Run() const { return run; }
@@ -196,11 +196,14 @@ class Concat
   //! Get the axis of concatenation.
   size_t const& ConcatAxis() const { return axis; }
 
+  //! Get the size of the weight matrix.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& ar,  const uint32_t /* version */);
 
  private:
   //! Parameter which indicates the input size of modules.
@@ -225,8 +228,8 @@ class Concat
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;
 
-  //! Locally-stored model parameters.
-  arma::mat parameters;
+  //! Locally-stored model weights.
+  OutputDataType weights;
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;

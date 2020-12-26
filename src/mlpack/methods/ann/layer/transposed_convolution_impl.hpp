@@ -124,8 +124,7 @@ TransposedConvolution<
     outputWidth(outputWidth),
     outputHeight(outputHeight)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
+  weights.set_size(WeightSize(), 1);
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
   util::ToLower(paddingType, paddingTypeLow);
@@ -449,39 +448,27 @@ void TransposedConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::serialize(
-    Archive& ar, const unsigned int version)
+>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(kernelWidth);
-  ar & BOOST_SERIALIZATION_NVP(kernelHeight);
-  ar & BOOST_SERIALIZATION_NVP(strideWidth);
-  ar & BOOST_SERIALIZATION_NVP(strideHeight);
-  if (version == 0)
-  {
-    // These are now stored in paddingForward and paddingBackward.
-    size_t padWidth, padHeight;
-    ar & BOOST_SERIALIZATION_NVP(padWidth);
-    ar & BOOST_SERIALIZATION_NVP(padHeight);
-  }
-  ar &BOOST_SERIALIZATION_NVP(padWLeft);
-  ar &BOOST_SERIALIZATION_NVP(padWRight);
-  ar &BOOST_SERIALIZATION_NVP(padHBottom);
-  ar &BOOST_SERIALIZATION_NVP(padHTop);
-  ar & BOOST_SERIALIZATION_NVP(inputWidth);
-  ar & BOOST_SERIALIZATION_NVP(inputHeight);
-  ar & BOOST_SERIALIZATION_NVP(outputWidth);
-  ar & BOOST_SERIALIZATION_NVP(outputHeight);
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(kernelWidth));
+  ar(CEREAL_NVP(kernelHeight));
+  ar(CEREAL_NVP(strideWidth));
+  ar(CEREAL_NVP(strideHeight));
+  ar(CEREAL_NVP(padWLeft));
+  ar(CEREAL_NVP(padWRight));
+  ar(CEREAL_NVP(padHBottom));
+  ar(CEREAL_NVP(padHTop));
+  ar(CEREAL_NVP(inputWidth));
+  ar(CEREAL_NVP(inputHeight));
+  ar(CEREAL_NVP(outputWidth));
+  ar(CEREAL_NVP(outputHeight));
+  ar(CEREAL_NVP(paddingForward));
+  ar(CEREAL_NVP(paddingBackward));
 
-  if (version > 0)
-  {
-    ar & BOOST_SERIALIZATION_NVP(paddingForward);
-    ar & BOOST_SERIALIZATION_NVP(paddingBackward);
-  }
-
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
         1);
@@ -491,6 +478,7 @@ void TransposedConvolution<
     aH = (outputHeight + kernelHeight - totalPadHeight - 2) % strideHeight;
   }
 }
+
 template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
@@ -522,13 +510,6 @@ void TransposedConvolution<
   padWRight = totalVerticalPadding - totalVerticalPadding / 2;
   padHTop = totalHorizontalPadding / 2;
   padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
-
-  // If Padding is negative throw a fatal error.
-  if (totalHorizontalPadding < 0 || totalVerticalPadding < 0)
-  {
-    Log::Fatal << "The output width / output height is not possible given "
-               << "same padding for the layer." << std::endl;
-  }
 }
 
 } // namespace ann

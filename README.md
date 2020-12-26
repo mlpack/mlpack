@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.2.2.tar.gz">current stable version (3.2.2)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.4.2.tar.gz">current stable version (3.4.2)</a>
   </em>
 </p>
 
@@ -32,7 +32,7 @@ bindings to other languages.  It is meant to be a machine learning analog to
 LAPACK, and aims to implement a wide array of machine learning methods and
 functions as a "swiss army knife" for machine learning researchers.  In addition
 to its powerful C++ interface, mlpack also provides command-line programs,
-Python bindings, and Julia bindings.
+Python bindings, Julia bindings, Go bindings and R bindings.
 
 [//]: # (numfocus-fiscal-sponsor-attribution)
 
@@ -101,10 +101,10 @@ Citations are beneficial for the growth and improvement of mlpack.
 mlpack has the following dependencies:
 
       Armadillo      >= 8.400.0
-      Boost (math_c99, unit_test_framework, serialization,
-             spirit) >= 1.58.0
+      Boost (math_c99, spirit) >= 1.58.0
       CMake          >= 3.2.2
       ensmallen      >= 2.10.0
+      cereal         >= 1.1.2
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
@@ -121,6 +121,20 @@ following Python packages are installed:
 If you would like to build the Julia bindings, make sure that Julia >= 1.3.0 is
 installed.
 
+If you would like to build the Go bindings, make sure that Go >= 1.11.0 is
+installed with this package:
+
+     Gonum
+
+If you would like to build the R bindings, make sure that R >= 4.0 is
+installed with these R packages.
+
+     Rcpp >= 0.12.12
+     RcppArmadillo >= 0.8.400.0
+     RcppEnsmallen >= 0.2.10.0
+     BH >= 1.58
+     roxygen2
+
 If the STB library headers are available, image loading support will be
 compiled.
 
@@ -132,13 +146,17 @@ This document discusses how to build mlpack from source. These build directions
 will work for any Linux-like shell environment (for example Ubuntu, macOS,
 FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
 and so it may be easier to use the package manager for your system.  For example, 
-on Ubuntu, you can install mlpack with the following command:
+on Ubuntu, you can install the mlpack library and command-line executables (e.g.
+mlpack_pca, mlpack_kmeans etc.) with the following command:
 
-    $ sudo apt-get install libmlpack-dev
+    $ sudo apt-get install libmlpack-dev mlpack-bin
+
+On Fedora or Red Hat (EPEL):
+    $ sudo dnf install mlpack-devel mlpack-bin
 
 Note: Older Ubuntu versions may not have the most recent version of mlpack
 available---for instance, at the time of this writing, Ubuntu 16.04 only has
-mlpack 3.2.2 available.  Options include upgrading your Ubuntu version, finding
+mlpack 3.4.2 available.  Options include upgrading your Ubuntu version, finding
 a PPA or other non-official sources, or installing with a manual build.
 
 There are some useful pages to consult in addition to this section:
@@ -190,6 +208,8 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_GO_BINDINGS=(ON/OFF): whether or not to build Go bindings
     GO_EXECUTABLE=(/path/to/go): Path to specific Go executable
     BUILD_GO_SHLIB=(ON/OFF): whether or not to build shared libraries required by Go bindings
+    BUILD_R_BINDINGS=(ON/OFF): whether or not to build R bindings
+    R_EXECUTABLE=(/path/to/R): Path to specific R executable
     BUILD_TESTS=(ON/OFF): whether or not to build tests
     BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
        static libraries
@@ -201,6 +221,8 @@ Options are specified with the -D flag.  The allowed options include:
     STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
        STB image library
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
+    BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
+       (default ON)
 
 Other tools can also be used to configure CMake, but those are not documented
 here.  See [this section of the build guide](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html#build_config)

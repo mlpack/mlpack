@@ -2,8 +2,7 @@
  * @file methods/ann/layer/recurrent.hpp
  * @author Marcus Edel
  *
- * Definition of the LinearLayer class also known as fully-connected layer or
- * affine transformation.
+ * Definition of the Recurrent class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,6 +18,7 @@
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/copy_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
+#include "../visitor/input_shape_visitor.hpp"
 
 #include "layer_types.hpp"
 #include "add_merge.hpp"
@@ -139,11 +139,14 @@ class Recurrent
   //! Get the number of steps to backpropagate through time.
   size_t const& Rho() const { return rho; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const;
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delete visitor module object.

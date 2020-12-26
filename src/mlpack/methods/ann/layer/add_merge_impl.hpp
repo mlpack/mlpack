@@ -150,20 +150,16 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int version)
+    Archive& ar, const uint32_t /* version */)
 {
   // Be sure to clear other layers before loading.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     network.clear();
 
-  ar & BOOST_SERIALIZATION_NVP(network);
-  ar & BOOST_SERIALIZATION_NVP(model);
-  ar & BOOST_SERIALIZATION_NVP(run);
-
-  if (version >= 1)
-    ar & BOOST_SERIALIZATION_NVP(ownsLayers);
-  else if (Archive::is_loading::value)
-    ownsLayers = !model;
+  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
+  ar(CEREAL_NVP(model));
+  ar(CEREAL_NVP(run));
+  ar(CEREAL_NVP(ownsLayers));
 }
 
 } // namespace ann

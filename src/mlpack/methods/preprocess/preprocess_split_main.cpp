@@ -15,11 +15,16 @@
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/data/split_data.hpp>
 
-PROGRAM_INFO("Split Data",
-    // Short description.
+// Program Name.
+BINDING_NAME("Split Data");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A utility to split data into a training and testing dataset.  This can "
-    "also split labels according to the same split.",
-    // Long description.
+    "also split labels according to the same split.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes a dataset and optionally labels and splits them into a "
     "training set and a test set. Before the split, the points in the dataset "
     "are randomly reordered. The percentage of the dataset to be used as the "
@@ -30,13 +35,15 @@ PROGRAM_INFO("Split Data",
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("test") +
     " output parameters."
     "\n\n"
-    "Optionally, labels can be also be split along with the data by specifying "
+    "Optionally, labels can also be split along with the data by specifying "
     "the " + PRINT_PARAM_STRING("input_labels") + " parameter.  Splitting "
     "labels works the same way as splitting the data. The output training and "
     "test labels may be saved with the " +
     PRINT_PARAM_STRING("training_labels") + " and " +
-    PRINT_PARAM_STRING("test_labels") + " output parameters, respectively."
-    "\n\n"
+    PRINT_PARAM_STRING("test_labels") + " output parameters, respectively.");
+
+// Example.
+BINDING_EXAMPLE(
     "So, a simple example where we want to split the dataset " +
     PRINT_DATASET("X") + " into " + PRINT_DATASET("X_train") + " and " +
     PRINT_DATASET("X_test") + " with 60% of the data in the training set and "
@@ -60,10 +67,19 @@ PROGRAM_INFO("Split Data",
     "\n\n" +
     PRINT_CALL("preprocess_split", "input", "X", "input_labels", "y",
         "test_ratio", 0.3, "training", "X_train", "training_labels", "y_train",
-        "test", "X_test", "test_labels", "y_test"),
-    SEE_ALSO("@preprocess_binarize", "#preprocess_binarize"),
-    SEE_ALSO("@preprocess_describe", "#preprocess_describe"),
-    SEE_ALSO("@preprocess_imputer", "#preprocess_imputer"));
+        "test", "X_test", "test_labels", "y_test"));
+
+BINDING_EXAMPLE(
+    "To maintain the ratio of each class in the train and test sets, the" +
+    PRINT_PARAM_STRING("stratify_data") + " option can be used."
+    "\n\n" +
+    PRINT_CALL("preprocess_split", "input", "X", "training", "X_train", "test",
+        "X_test", "test_ratio", 0.4, "stratify_data", true));
+
+// See also...
+BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");
+BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
+BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
 
 // Define parameters for data.
 PARAM_MATRIX_IN_REQ("input", "Matrix containing data.", "i");
@@ -80,7 +96,8 @@ PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
     "the ratio defaults to 0.2", "r", 0.2);
 
 PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
-PARAM_FLAG("no_shuffle", "Avoid shuffling and splitting the data.", "S");
+PARAM_FLAG("no_shuffle", "Avoid shuffling the data before splitting.", "S");
+PARAM_FLAG("stratify_data", "Stratify the data according to labels", "z")
 
 using namespace mlpack;
 using namespace mlpack::data;
@@ -93,6 +110,7 @@ static void mlpackMain()
   // Parse command line options.
   const double testRatio = IO::GetParam<double>("test_ratio");
   const bool shuffleData = IO::GetParam<bool>("no_shuffle");
+  const bool stratifyData = IO::GetParam<bool>("stratify_data");
 
   if (IO::GetParam<int>("seed") == 0)
     mlpack::math::RandomSeed(std::time(NULL));
@@ -123,12 +141,6 @@ static void mlpackMain()
       [](double x) { return x >= 0.0 && x <= 1.0; }, true,
       "test ratio must be between 0.0 and 1.0");
 
-  if (!IO::HasParam("test_ratio")) // If test_ratio is not set, warn the user.
-  {
-    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("test_ratio")
-        << ", so it will be automatically set to 0.2." << endl;
-  }
-
   // Load the data.
   arma::mat& data = IO::GetParam<arma::mat>("input");
 
@@ -139,11 +151,15 @@ static void mlpackMain()
         IO::GetParam<arma::Mat<size_t>>("input_labels");
     arma::Row<size_t> labelsRow = labels.row(0);
 
-    const auto value = data::Split(data, labelsRow, testRatio, !shuffleData);
-    Log::Info << "Training data contains " << get<0>(value).n_cols << " points."
-        << endl;
-    Log::Info << "Test data contains " << get<1>(value).n_cols << " points."
-        << endl;
+    Timer::Start("splitting_data");
+    const auto value =
+        data::Split(data, labelsRow, testRatio, !shuffleData, stratifyData);
+    Timer::Stop("splitting_data");
+
+    Log::Info << "Training data contains "
+        << get<0>(value).n_cols << " points." << endl;
+    Log::Info << "Test data contains "
+        << get<1>(value).n_cols << " points." << endl;
 
     if (IO::HasParam("training"))
       IO::GetParam<arma::mat>("training") = std::move(get<0>(value));
@@ -158,7 +174,10 @@ static void mlpackMain()
   }
   else // We have no labels, so just split the dataset.
   {
+    Timer::Start("splitting_data");
     const auto value = data::Split(data, testRatio, !shuffleData);
+    Timer::Stop("splitting_data");
+
     Log::Info << "Training data contains " << get<0>(value).n_cols << " points."
         << endl;
     Log::Info << "Test data contains " << get<1>(value).n_cols << " points."

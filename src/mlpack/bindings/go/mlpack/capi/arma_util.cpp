@@ -30,7 +30,7 @@ void mlpackToArmaMat(const char* identifier, double* mat,
   // Advanced constructor.
   arma::mat m(mat, row, col, false, true);
 
-  // Set input parameter with corresponding matrix in CLI.
+  // Set input parameter with corresponding matrix in IO.
   SetParam(identifier, m);
 }
 
@@ -45,7 +45,7 @@ void mlpackToArmaUmat(const char* identifier, double* mat,
 
   arma::Mat<size_t> matr = arma::conv_to<arma::Mat<size_t>>::from(m);
 
-  // Set input parameter with corresponding matrix in CLI.
+  // Set input parameter with corresponding matrix in IO.
   SetParam(identifier, matr);
 }
 
@@ -57,7 +57,7 @@ void mlpackToArmaRow(const char* identifier, double* rowvec, const size_t elem)
   // Advanced constructor.
   arma::rowvec m(rowvec, elem, false, true);
 
-  // Set input parameter with corresponding row in CLI.
+  // Set input parameter with corresponding row in IO.
   SetParam(identifier, m);
 }
 
@@ -71,7 +71,7 @@ void mlpackToArmaUrow(const char* identifier, double* rowvec, const size_t elem)
 
   arma::Row<size_t> matr = arma::conv_to<arma::Row<size_t>>::from(m);
 
-  // Set input parameter with corresponding row in CLI.
+  // Set input parameter with corresponding row in IO.
   SetParam(identifier, matr);
 }
 
@@ -83,7 +83,7 @@ void mlpackToArmaCol(const char* identifier, double* colvec, const size_t elem)
   // Advanced constructor.
   arma::colvec m(colvec, elem, false, true);
 
-  // Set input parameter with corresponding column in CLI.
+  // Set input parameter with corresponding column in IO.
   SetParam(identifier, m);
 }
 
@@ -97,7 +97,7 @@ void mlpackToArmaUcol(const char* identifier, double* colvec, const size_t elem)
 
   arma::Col<size_t> matr = arma::conv_to<arma::Col<size_t>>::from(m);
 
-  // Set input parameter with corresponding column in CLI.
+  // Set input parameter with corresponding column in IO.
   SetParam(identifier, matr);
 }
 /**

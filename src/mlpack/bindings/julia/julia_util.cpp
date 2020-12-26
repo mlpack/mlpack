@@ -66,7 +66,7 @@ void IO_SetParamBool(const char* paramName, bool paramValue)
  * Call IO::SetParam<std::vector<std::string>>() to set the length.
  */
 void IO_SetParamVectorStrLen(const char* paramName,
-                              const size_t length)
+                             const size_t length)
 {
   IO::GetParam<std::vector<std::string>>(paramName).clear();
   IO::GetParam<std::vector<std::string>>(paramName).resize(length);
@@ -77,8 +77,8 @@ void IO_SetParamVectorStrLen(const char* paramName,
  * Call IO::SetParam<std::vector<std::string>>() to set an individual element.
  */
 void IO_SetParamVectorStrStr(const char* paramName,
-                              const char* str,
-                              const size_t element)
+                             const char* str,
+                             const size_t element)
 {
   IO::GetParam<std::vector<std::string>>(paramName)[element] =
       std::string(str);
@@ -88,8 +88,8 @@ void IO_SetParamVectorStrStr(const char* paramName,
  * Call IO::SetParam<std::vector<int>>().
  */
 void IO_SetParamVectorInt(const char* paramName,
-                           int* ints,
-                           const size_t length)
+                          int* ints,
+                          const size_t length)
 {
   // Create a std::vector<int> object; unfortunately this requires copying the
   // vector elements.
@@ -106,10 +106,10 @@ void IO_SetParamVectorInt(const char* paramName,
  * Call IO::SetParam<arma::mat>().
  */
 void IO_SetParamMat(const char* paramName,
-                     double* memptr,
-                     const size_t rows,
-                     const size_t cols,
-                     const bool pointsAsRows)
+                    double* memptr,
+                    const size_t rows,
+                    const size_t cols,
+                    const bool pointsAsRows)
 {
   // Create the matrix as an alias.
   arma::mat m(memptr, arma::uword(rows), arma::uword(cols), false, true);
@@ -121,10 +121,10 @@ void IO_SetParamMat(const char* paramName,
  * Call IO::SetParam<arma::Mat<size_t>>().
  */
 void IO_SetParamUMat(const char* paramName,
-                      size_t* memptr,
-                      const size_t rows,
-                      const size_t cols,
-                      const bool pointsAsRows)
+                     size_t* memptr,
+                     const size_t rows,
+                     const size_t cols,
+                     const bool pointsAsRows)
 {
   // Create the matrix as an alias.
   arma::Mat<size_t> m(memptr, arma::uword(rows), arma::uword(cols), false,
@@ -138,8 +138,8 @@ void IO_SetParamUMat(const char* paramName,
  * Call IO::SetParam<arma::rowvec>().
  */
 void IO_SetParamRow(const char* paramName,
-                     double* memptr,
-                     const size_t cols)
+                    double* memptr,
+                    const size_t cols)
 {
   arma::rowvec m(memptr, arma::uword(cols), false, true);
   IO::GetParam<arma::rowvec>(paramName) = std::move(m);
@@ -150,8 +150,8 @@ void IO_SetParamRow(const char* paramName,
  * Call IO::SetParam<arma::Row<size_t>>().
  */
 void IO_SetParamURow(const char* paramName,
-                      size_t* memptr,
-                      const size_t cols)
+                     size_t* memptr,
+                     const size_t cols)
 {
   arma::Row<size_t> m(memptr, arma::uword(cols), false, true);
   IO::GetParam<arma::Row<size_t>>(paramName) = std::move(m);
@@ -162,8 +162,8 @@ void IO_SetParamURow(const char* paramName,
  * Call IO::SetParam<arma::vec>().
  */
 void IO_SetParamCol(const char* paramName,
-                     double* memptr,
-                     const size_t rows)
+                    double* memptr,
+                    const size_t rows)
 {
   arma::vec m(memptr, arma::uword(rows), false, true);
   IO::GetParam<arma::vec>(paramName) = std::move(m);
@@ -174,8 +174,8 @@ void IO_SetParamCol(const char* paramName,
  * Call IO::SetParam<arma::Row<size_t>>().
  */
 void IO_SetParamUCol(const char* paramName,
-                      size_t* memptr,
-                      const size_t rows)
+                     size_t* memptr,
+                     const size_t rows)
 {
   arma::Col<size_t> m(memptr, arma::uword(rows), false, true);
   IO::GetParam<arma::Col<size_t>>(paramName) = std::move(m);
@@ -186,11 +186,11 @@ void IO_SetParamUCol(const char* paramName,
  * Call IO::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
  */
 void IO_SetParamMatWithInfo(const char* paramName,
-                             bool* dimensions,
-                             double* memptr,
-                             const size_t rows,
-                             const size_t cols,
-                             const bool pointsAreRows)
+                            bool* dimensions,
+                            double* memptr,
+                            const size_t rows,
+                            const size_t cols,
+                            const bool pointsAreRows)
 {
   data::DatasetInfo d(pointsAreRows ? cols : rows);
   for (size_t i = 0; i < d.Dimensionality(); ++i)
@@ -203,7 +203,7 @@ void IO_SetParamMatWithInfo(const char* paramName,
   std::get<0>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
   std::get<1>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
-      paramName)) = pointsAreRows ? std::move(m.t()) : std::move(m);
+      paramName)) = pointsAreRows ? m.t() : std::move(m);
   IO::SetPassed(paramName);
 }
 
@@ -316,6 +316,9 @@ double* IO_GetParamMat(const char* paramName)
   else
   {
     arma::access::rw(mat.mem_state) = 1;
+    #if ARMA_VERSION_MAJOR >= 10
+      arma::access::rw(mat.n_alloc) = 0;
+    #endif
     return mat.memptr();
   }
 }
@@ -352,12 +355,14 @@ size_t* IO_GetParamUMat(const char* paramName)
     // Copy the memory to something that we can give back to Julia.
     size_t* newMem = new size_t[mat.n_elem];
     arma::arrayops::copy(newMem, mat.mem, mat.n_elem);
-    // We believe Julia will free it.  Hopefully we are right.
-    return newMem;
+    return newMem; // We believe Julia will free it.  Hopefully we are right.
   }
   else
   {
     arma::access::rw(mat.mem_state) = 1;
+    #if ARMA_VERSION_MAJOR >= 10
+      arma::access::rw(mat.n_alloc) = 0;
+    #endif
     return mat.memptr();
   }
 }
@@ -390,6 +395,9 @@ double* IO_GetParamCol(const char* paramName)
   else
   {
     arma::access::rw(vec.mem_state) = 1;
+    #if ARMA_VERSION_MAJOR >= 10
+      arma::access::rw(vec.n_alloc) = 0;
+    #endif
     return vec.memptr();
   }
 }
@@ -418,12 +426,14 @@ size_t* IO_GetParamUCol(const char* paramName)
     // Copy the memory to something we can give back to Julia.
     size_t* newMem = new size_t[vec.n_elem];
     arma::arrayops::copy(newMem, vec.mem, vec.n_elem);
-    // We believe Julia will free it.  Hopefully we are right.
-    return newMem;
+    return newMem; // We believe Julia will free it.  Hopefully we are right.
   }
   else
   {
     arma::access::rw(vec.mem_state) = 1;
+    #if ARMA_VERSION_MAJOR >= 10
+      arma::access::rw(vec.n_alloc) = 0;
+    #endif
     return vec.memptr();
   }
 }
@@ -456,6 +466,9 @@ double* IO_GetParamRow(const char* paramName)
   else
   {
     arma::access::rw(vec.mem_state) = 1;
+    #if ARMA_VERSION_MAJOR >= 10
+      arma::access::rw(vec.n_alloc) = 0;
+    #endif
     return vec.memptr();
   }
 }
@@ -489,6 +502,9 @@ size_t* IO_GetParamURow(const char* paramName)
   else
   {
     arma::access::rw(vec.mem_state) = 1;
+    #if ARMA_VERSION_MAJOR >= 10
+      arma::access::rw(vec.n_alloc) = 0;
+    #endif
     return vec.memptr();
   }
 }
@@ -547,6 +563,9 @@ double* IO_GetParamMatWithInfoPtr(const char* paramName)
   else
   {
     arma::access::rw(m.mem_state) = 1;
+    #if ARMA_VERSION_MAJOR >= 10
+      arma::access::rw(m.n_alloc) = 0;
+    #endif
     return m.memptr();
   }
 }

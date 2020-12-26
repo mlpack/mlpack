@@ -12,18 +12,15 @@
 #include <mlpack/methods/approx_kfn/drusilla_select.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 #include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::neighbor;
 
-BOOST_AUTO_TEST_SUITE(DrusillaSelectTest);
-
 // If we have a dataset with an extreme outlier, then every point (except that
 // one) should end up with that point as the furthest neighbor candidate.
-BOOST_AUTO_TEST_CASE(DrusillaSelectExtremeOutlierTest)
+TEST_CASE("DrusillaSelectExtremeOutlierTest", "[DrusillaSelectTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
   dataset.col(99) += 100; // Make last column very large.
@@ -36,20 +33,20 @@ BOOST_AUTO_TEST_CASE(DrusillaSelectExtremeOutlierTest)
   arma::Mat<size_t> neighbors;
   ds.Search(dataset.cols(0, 98), 1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 99);
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 99);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 1);
+  REQUIRE(neighbors.n_cols == 99);
+  REQUIRE(neighbors.n_rows == 1);
+  REQUIRE(distances.n_cols == 99);
+  REQUIRE(distances.n_rows == 1);
 
   for (size_t i = 0; i < 99; ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighbors[i], 99);
+    REQUIRE(neighbors[i] == 99);
   }
 }
 
 // If we use only one projection with the number of points equal to what is in
 // the dataset, we should end up with the exact result.
-BOOST_AUTO_TEST_CASE(DrusillaSelectExhaustiveExactTest)
+TEST_CASE("DrusillaSelectExhaustiveExactTest", "[DrusillaSelectTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
 
@@ -64,20 +61,20 @@ BOOST_AUTO_TEST_CASE(DrusillaSelectExhaustiveExactTest)
   KFN kfn(dataset);
   kfn.Search(dataset, 5, neighborsTrue, distancesTrue);
 
-  BOOST_REQUIRE_EQUAL(neighborsTrue.n_cols, neighbors.n_cols);
-  BOOST_REQUIRE_EQUAL(neighborsTrue.n_rows, neighbors.n_rows);
-  BOOST_REQUIRE_EQUAL(distancesTrue.n_cols, distances.n_cols);
-  BOOST_REQUIRE_EQUAL(distancesTrue.n_rows, distances.n_rows);
+  REQUIRE(neighborsTrue.n_cols == neighbors.n_cols);
+  REQUIRE(neighborsTrue.n_rows == neighbors.n_rows);
+  REQUIRE(distancesTrue.n_cols == distances.n_cols);
+  REQUIRE(distancesTrue.n_rows == distances.n_rows);
 
   for (size_t i = 0; i < distances.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighbors[i], neighborsTrue[i]);
-    BOOST_REQUIRE_CLOSE(distances[i], distancesTrue[i], 1e-5);
+    REQUIRE(neighbors[i] == neighborsTrue[i]);
+    REQUIRE(distances[i] == Approx(distancesTrue[i]).epsilon(1e-7));
   }
 }
 
 // Test that we can call Train() after calling the constructor.
-BOOST_AUTO_TEST_CASE(RetrainTest)
+TEST_CASE("DrusillaSelectRetrainTest", "[DrusillaSelectTest]")
 {
   arma::mat firstDataset = arma::randu<arma::mat>(3, 10);
   arma::mat dataset = arma::randu<arma::mat>(3, 200);
@@ -89,14 +86,14 @@ BOOST_AUTO_TEST_CASE(RetrainTest)
   arma::Mat<size_t> neighbors;
   ds.Search(dataset, 1, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 200);
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 1);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 200);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 1);
+  REQUIRE(neighbors.n_cols == 200);
+  REQUIRE(neighbors.n_rows == 1);
+  REQUIRE(distances.n_cols == 200);
+  REQUIRE(distances.n_rows == 1);
 }
 
 // Test serialization.
-BOOST_AUTO_TEST_CASE(SerializationTest)
+TEST_CASE("DrusillaSelectSerializationTest", "[DrusillaSelectTest]")
 {
   // Create a random dataset.
   arma::mat dataset = arma::randu<arma::mat>(3, 100);
@@ -122,34 +119,34 @@ BOOST_AUTO_TEST_CASE(SerializationTest)
   dsText.Search(dataset, 3, neighborsText, distancesText);
   dsBinary.Search(dataset, 3, neighborsBinary, distancesBinary);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, neighborsXml.n_rows);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, neighborsXml.n_cols);
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, neighborsText.n_rows);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, neighborsText.n_cols);
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, neighborsBinary.n_rows);
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, neighborsBinary.n_cols);
+  REQUIRE(neighbors.n_rows == neighborsXml.n_rows);
+  REQUIRE(neighbors.n_cols == neighborsXml.n_cols);
+  REQUIRE(neighbors.n_rows == neighborsText.n_rows);
+  REQUIRE(neighbors.n_cols == neighborsText.n_cols);
+  REQUIRE(neighbors.n_rows == neighborsBinary.n_rows);
+  REQUIRE(neighbors.n_cols == neighborsBinary.n_cols);
 
-  BOOST_REQUIRE_EQUAL(distances.n_rows, distancesXml.n_rows);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, distancesXml.n_cols);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, distancesText.n_rows);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, distancesText.n_cols);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, distancesBinary.n_rows);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, distancesBinary.n_cols);
+  REQUIRE(distances.n_rows == distancesXml.n_rows);
+  REQUIRE(distances.n_cols == distancesXml.n_cols);
+  REQUIRE(distances.n_rows == distancesText.n_rows);
+  REQUIRE(distances.n_cols == distancesText.n_cols);
+  REQUIRE(distances.n_rows == distancesBinary.n_rows);
+  REQUIRE(distances.n_cols == distancesBinary.n_cols);
 
   for (size_t i = 0; i < neighbors.n_elem; ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighbors[i], neighborsXml[i]);
-    BOOST_REQUIRE_EQUAL(neighbors[i], neighborsText[i]);
-    BOOST_REQUIRE_EQUAL(neighbors[i], neighborsBinary[i]);
+    REQUIRE(neighbors[i] == neighborsXml[i]);
+    REQUIRE(neighbors[i] == neighborsText[i]);
+    REQUIRE(neighbors[i] == neighborsBinary[i]);
 
-    BOOST_REQUIRE_CLOSE(distances[i], distancesXml[i], 1e-5);
-    BOOST_REQUIRE_CLOSE(distances[i], distancesText[i], 1e-5);
-    BOOST_REQUIRE_CLOSE(distances[i], distancesBinary[i], 1e-5);
+    REQUIRE(distances[i] == Approx(distancesXml[i]).epsilon(1e-7));
+    REQUIRE(distances[i] == Approx(distancesText[i]).epsilon(1e-7));
+    REQUIRE(distances[i] == Approx(distancesBinary[i]).epsilon(1e-7));
   }
 }
 
 // Make sure we can create the object with a sparse matrix.
-BOOST_AUTO_TEST_CASE(SparseTest)
+TEST_CASE("SparseTest", "[DrusillaSelectTest]")
 {
   arma::sp_mat dataset;
   dataset.sprandu(50, 1000, 0.3);
@@ -161,10 +158,8 @@ BOOST_AUTO_TEST_CASE(SparseTest)
   arma::Mat<size_t> neighbors;
   ds.Search(dataset, 3, neighbors, distances);
 
-  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 1000);
-  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 3);
-  BOOST_REQUIRE_EQUAL(distances.n_cols, 1000);
-  BOOST_REQUIRE_EQUAL(distances.n_rows, 3);
+  REQUIRE(neighbors.n_cols == 1000);
+  REQUIRE(neighbors.n_rows == 3);
+  REQUIRE(distances.n_cols == 1000);
+  REQUIRE(distances.n_rows == 3);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

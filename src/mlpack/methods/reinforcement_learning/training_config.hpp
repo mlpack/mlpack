@@ -32,6 +32,11 @@ class TrainingConfig
       noisyQLearning(false),
       epsilon(0.2),
       actorUpdateStep(1)
+      isCategorical(false),
+      atomSize(51),
+      vMin(0),
+      vMax(200),
+      rho(0.005)
   { /* Nothing to do here. */ }
 
   TrainingConfig(
@@ -44,7 +49,12 @@ class TrainingConfig
       double discount,
       double gradientLimit,
       bool doubleQLearning,
-      bool noisyQLearning) :
+      bool noisyQLearning,
+      bool isCategorical,
+      size_t atomSize,
+      double vMin,
+      double vMax,
+      double rho) :
       numWorkers(numWorkers),
       updateInterval(updateInterval),
       targetNetworkSyncInterval(targetNetworkSyncInterval),
@@ -57,6 +67,11 @@ class TrainingConfig
       noisyQLearning(noisyQLearning),
       epsilon(0.2),
       actorUpdateStep(1)
+      isCategorical(isCategorical),
+      atomSize(atomSize),
+      vMin(vMin),
+      vMax(vMax),
+      rho(rho)
   { /* Nothing to do here. */ }
 
   //! Get the amount of workers.
@@ -122,6 +137,30 @@ class TrainingConfig
   size_t ActorUpdateStep() const { return actorUpdateStep; }
   //! Modify the Actor Network Update Step.
   size_t& ActorUpdateStep() { return actorUpdateStep; }
+  //! Get the indicator of categorical q-learning.
+  bool IsCategorical() const { return isCategorical; }
+  //! Modify the indicator of categorical q-learning.
+  bool& IsCategorical() { return isCategorical; }
+
+  //! Get the number of atoms.
+  size_t AtomSize() const { return atomSize; }
+  //! Modify the number of atoms.
+  size_t& AtomSize() { return atomSize; }
+
+  //! Get the minimum value for support.
+  double VMin() const { return vMin; }
+  //! Modify the minimum value for support.
+  double& VMin() { return vMin; }
+
+  //! Get the maximum value for support.
+  double VMax() const { return vMax; }
+  //! Modify the maximum value for support.
+  double& VMax() { return vMax; }
+
+  //! Get the rho value for sac.
+  double Rho() const { return rho; }
+  //! Modify the rho value for sac.
+  double& Rho() { return rho; }
 
  private:
   /**
@@ -196,6 +235,36 @@ class TrainingConfig
    * the number step of updating the actor network.
    */
   size_t actorUpdateStep;
+
+  /**
+   * Locally-stored indicator for categorical q-learning.
+   * This is valid only for q-learning agent.
+   */
+  bool isCategorical;
+
+  /**
+   * Locally-stored number of atoms to be used.
+   * This is valid only for categorical q-network.
+   */
+  size_t atomSize;
+
+  /**
+   * Locally-stored minimum value of support.
+   * This is valid only for categorical q-network.
+   */
+  double vMin;
+
+  /**
+   * Locally-stored maximum value of support.
+   * This is valid only for categorical q-network.
+   */
+  double vMax;
+
+  /**
+   * Locally-stored parameter for softly updating q networks.
+   * This is valid only for Soft Actor-Critic.
+   */
+  double rho;
 };
 
 } // namespace rl

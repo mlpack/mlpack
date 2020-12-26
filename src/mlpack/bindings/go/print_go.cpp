@@ -11,7 +11,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "print_go.hpp"
-#include "camel_case.hpp"
+#include <mlpack/bindings/util/camel_case.hpp>
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/hyphenate_string.hpp>
 #include <set>
@@ -27,14 +27,14 @@ namespace go {
  * Given a list of parameter definition and program documentation, print a
  * generated .go file to stdout.
  *
- * @param programInfo Documentation for the program.
+ * @param doc Documentation for the program.
  * @param functionName Name of the function (i.e. "pca").
  */
-void PrintGo(const util::ProgramDoc& programInfo,
-              const std::string& functionName)
+void PrintGo(const util::BindingDetails& doc,
+             const std::string& functionName)
 {
   // Restore parameters.
-  IO::RestoreSettings(programInfo.programName);
+  IO::RestoreSettings(doc.programName);
 
   std::map<std::string, util::ParamData>& parameters = IO::Parameters();
   typedef std::map<std::string, util::ParamData>::iterator ParamIter;
@@ -91,7 +91,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
     }
   }
   cout << endl;
-  std::string goFunctionName = CamelCase(functionName, false);
+  std::string goFunctionName = util::CamelCase(functionName, false);
 
   // Print Go method configuration struct.
   cout << "type " << goFunctionName << "OptionalParam struct {"
@@ -124,8 +124,15 @@ void PrintGo(const util::ProgramDoc& programInfo,
 
   // Print the comment describing the function and its parameters.
   cout << "/*" << endl;
-  cout << "  " << HyphenateString(programInfo.documentation(), 2) << endl;
-  cout << endl << endl;
+  cout << "  " << HyphenateString(doc.longDescription(), 2) << endl << endl;
+
+  // Print the examples.
+  for (size_t j = 0; j < doc.example.size(); ++j)
+  {
+    cout << "  " << util::HyphenateString(doc.example[j](), 2) << endl << endl;
+  }
+
+  // Next, print information on the input options.
   cout << "  Input parameters:" << endl;
   cout << endl;
   for (size_t i = 0; i < inputOptions.size(); ++i)
@@ -216,8 +223,7 @@ void PrintGo(const util::ProgramDoc& programInfo,
   cout << "  " << "disableVerbose()" << endl;
 
   // Restore the parameters.
-  cout << "  " << "restoreSettings(\"" << programInfo.programName
-      << "\")" << endl;
+  cout << "  " << "restoreSettings(\"" << doc.programName << "\")" << endl;
   cout << endl;
 
   // Do any input processing.
@@ -269,8 +275,8 @@ void PrintGo(const util::ProgramDoc& programInfo,
     if (i != 0)
       cout << ", ";
 
-    util::ParamData& d = parameters.at(outputOptions[i]);
-    cout << CamelCase(d.name, true);
+    const util::ParamData& d = parameters.at(outputOptions[i]);
+    cout << util::CamelCase(d.name, true);
   }
   cout << endl;
 

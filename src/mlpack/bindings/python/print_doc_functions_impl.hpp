@@ -68,6 +68,28 @@ inline std::string PrintValue(const T& value, bool quotes)
   return oss.str();
 }
 
+/**
+ * Given a vector parameter type, print the corresponding value.
+ */
+template<typename T>
+inline std::string PrintValue(const std::vector<T>& value, bool quotes)
+{
+  std::ostringstream oss;
+  if (quotes)
+    oss << "'";
+  oss << "[";
+  if (value.size() > 0)
+  {
+    oss << value[0];
+    for (size_t i = 1; i < value.size(); ++i)
+      oss << ", " << value[i];
+  }
+  oss << "]";
+  if (quotes)
+    oss << "'";
+  return oss.str();
+}
+
 // Special overload for booleans.
 template<>
 inline std::string PrintValue(const bool& value, bool quotes)
@@ -133,8 +155,8 @@ std::string PrintInputOptions(const std::string& paramName,
   {
     // Unknown parameter!
     throw std::runtime_error("Unknown parameter '" + paramName + "' " +
-        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
-        "declaration.");
+        "encountered while assembling documentation!  Check BINDING_LONG_DESC()"
+        + " and BINDING_EXAMPLE() declaration.");
   }
 
   // Continue recursion.
@@ -172,8 +194,8 @@ std::string PrintOutputOptions(const std::string& paramName,
   {
     // Unknown parameter!
     throw std::runtime_error("Unknown parameter '" + paramName + "' " +
-        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
-        "declaration.");
+        "encountered while assembling documentation!  Check BINDING_LONG_DESC()"
+        + " and BINDING_EXAMPLE() declaration.");
   }
 
   // Continue recursion.

@@ -178,6 +178,16 @@ class TransposedConvolution
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
+  //! Get the weight of the layer.
+  arma::cube const& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  arma::cube& Weight() { return weight; }
+
+  //! Get the bias of the layer.
+  arma::mat const& Bias() const { return bias; }
+  //! Modify the bias of the layer.
+  arma::mat& Bias() { return bias; }
+
   //! Get the input parameter.
   InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
@@ -199,22 +209,22 @@ class TransposedConvolution
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the input width.
-  size_t const& InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  size_t const& InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  size_t const& OutputWidth() const { return outputWidth; }
+  size_t OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  size_t const& OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
@@ -264,14 +274,22 @@ class TransposedConvolution
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
 
-  //! Modify the bias weights of the layer.
-  arma::mat& Bias() { return bias; }
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inputHeight * inputWidth * inSize;
+  }
 
+  //! Get the size of the weight matrix.
+  size_t WeightSize() const
+  {
+    return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
+  }
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /*
@@ -463,28 +481,6 @@ class TransposedConvolution
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the Transposed Convolution class.
-namespace boost {
-namespace serialization {
-
-template<
-    typename ForwardConvolutionRule,
-    typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
->
-struct version<
-    mlpack::ann::TransposedConvolution<ForwardConvolutionRule,
-        BackwardConvolutionRule, GradientConvolutionRule, InputDataType,
-        OutputDataType> >
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "transposed_convolution_impl.hpp"

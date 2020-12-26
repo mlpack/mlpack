@@ -40,7 +40,7 @@ once that is done, it will call \c mlpackMain().
 
 @code
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 // This definition below means we will only compile for the command line.
 #define BINDING_TYPE BINDING_TYPE_CLI
 #include <mlpack/core/util/mlpack_main.hpp>
@@ -117,10 +117,11 @@ Aborted
 These four outputs can be very useful for both providing informational output
 and debugging output for your mlpack program.
 
-@section simplecli Simple IO Example
+@section simpleio Simple IO Example
 
 Through the mlpack::IO object, command-line parameters can be easily added
-with the PROGRAM_INFO, PARAM_INT, PARAM_DOUBLE, PARAM_STRING, and PARAM_FLAG
+with the BINDING_NAME, BINDING_SHORT_DESC, BINDING_LONG_DESC, BINDING_EXAMPLE,
+BINDING_SEE_ALSO, PARAM_INT, PARAM_DOUBLE, PARAM_STRING, and PARAM_FLAG
 macros.
 
 Here is a sample use of those macros, extracted from methods/pca/pca_main.cpp.
@@ -128,26 +129,31 @@ Here is a sample use of those macros, extracted from methods/pca/pca_main.cpp.
 
 @code
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
-// Document program.
-PROGRAM_INFO("Principal Components Analysis",
-    // Short description.
+// Program Name.
+BINDING_NAME("Principal Components Analysis");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of several strategies for principal components analysis "
     "(PCA), a common preprocessing step.  Given a dataset and a desired new "
     "dimensionality, this can reduce the dimensionality of the data using the "
-    "linear transformation determined by PCA.",
-    // Long description.
+    "linear transformation determined by PCA.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs principal components analysis on the given dataset "
     "using the exact, randomized, randomized block Krylov, or QUIC SVD method. "
     "It will transform the data onto its principal components, optionally "
     "performing dimensionality reduction by ignoring the principal components "
-    "with the smallest eigenvalues."
-    // "See also" section for generated documentation.
-    SEE_ALSO("Principal component analysis on Wikipedia",
-        "https://en.wikipedia.org/wiki/Principal_component_analysis"),
-    SEE_ALSO("mlpack::pca::PCA C++ class documentation",
+    "with the smallest eigenvalues.");
+
+// See also...
+BINDING_SEE_ALSO("Principal component analysis on Wikipedia",
+        "https://en.wikipedia.org/wiki/Principal_component_analysis");
+BINDING_SEE_ALSO("mlpack::pca::PCA C++ class documentation",
         "@doxygen/classmlpack_1_1pca_1_1PCA.html"));
 
 // Parameters for program.

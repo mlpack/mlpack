@@ -18,8 +18,15 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::kernel;
 
-PROGRAM_INFO("Julia binding test",
-    "A simple program to test Julia binding functionality.",
+// Program Name.
+BINDING_NAME("Julia binding test");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "A simple program to test Julia binding functionality.");
+
+// Long description.
+BINDING_LONG_DESC(
     "A simple program to test Julia binding functionality.  You can build "
     "mlpack with the BUILD_TESTS option set to off, and this binding will "
     "no longer be built.");
@@ -40,6 +47,8 @@ PARAM_VECTOR_IN(int, "vector_in", "Input vector of numbers.", "");
 PARAM_VECTOR_IN(string, "str_vector_in", "Input vector of strings.", "");
 PARAM_MODEL_IN(GaussianKernel, "model_in", "Input model.", "");
 PARAM_FLAG("build_model", "If true, a model will be returned.", "");
+PARAM_FLAG("duplicate_model", "If true, return the input model as the output "
+    "model.", "");
 
 PARAM_STRING_OUT("string_out", "Output string, will be 'hello2'.", "S");
 PARAM_INT_OUT("int_out", "Output int, will be 13.");
@@ -186,5 +195,12 @@ static void mlpackMain()
   {
     IO::GetParam<double>("model_bw_out") =
         IO::GetParam<GaussianKernel*>("model_in")->Bandwidth() * 2.0;
+  }
+
+  // If requested, duplicate the input model as the output model.
+  if (IO::HasParam("duplicate_model"))
+  {
+    IO::GetParam<GaussianKernel*>("model_out") =
+        IO::GetParam<GaussianKernel*>("model_in");
   }
 }
