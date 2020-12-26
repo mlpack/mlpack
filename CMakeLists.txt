@@ -419,6 +419,7 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.75.0" "1.75"
   "1.74.0" "1.74"
   "1.73.0" "1.73"
   "1.72.0" "1.72"
