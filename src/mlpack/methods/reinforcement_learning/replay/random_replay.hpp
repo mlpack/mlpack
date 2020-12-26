@@ -226,14 +226,6 @@ class RandomReplay
 
   //! Get the number of steps for n-step agent.
   const size_t& NSteps() const { return nSteps; }
-  /**
-   * Clear all the transaction in the buffer.
-   */
-  void Clear()
-  {
-    full = false;
-    position = 0;
-  }
 
  private:
   //! Locally-stored number of examples of each sample.

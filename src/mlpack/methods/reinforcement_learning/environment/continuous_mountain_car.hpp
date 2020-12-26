@@ -86,7 +86,7 @@ class ContinuousMountainCar
   {
     double action[1];
     // Storing degree of freedom
-    int size = 1;
+    const int size = 1;
   };
 
   /**

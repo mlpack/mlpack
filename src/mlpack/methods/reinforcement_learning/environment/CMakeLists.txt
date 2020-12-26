@@ -9,7 +9,6 @@ set(SOURCES
   continuous_double_pole_cart.hpp
   acrobot.hpp
   pendulum.hpp
-  lunarlander.hpp
   reward_clipping.hpp
 )
 
