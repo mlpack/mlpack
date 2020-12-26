@@ -2,7 +2,7 @@
 
 function(flags BOARD_NAME)
   # Set all minimization flags for all platforms
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold -Os -fdata-sections -ffunction-sections -fomit-frame-pointer -fno-unwind-tables -fno-asynchronous-unwind-tables -flto -fvisibility=hidden -fshort-enums -finline-small-functions -findirect-inlining -fno-common")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold -Os -fdata-sections -ffunction-sections -fomit-frame-pointer -fno-unwind-tables -fno-asynchronous-unwind-tables -fvisibility=hidden -fshort-enums -finline-small-functions -findirect-inlining -fno-common") #-flto
 
   # Set the CMAKE CXX flags
   if(BOARD_NAME STREQUAL "rpi0" OR BOARD_NAME STREQUAL "rpi1")
