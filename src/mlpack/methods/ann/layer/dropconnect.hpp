@@ -16,10 +16,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "layer_types.hpp"
-#include "add_merge.hpp"
-#include "linear.hpp"
-#include "sequential.hpp"
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -37,34 +34,32 @@ namespace ann /** Artificial Neural Network. */ {
  * During training you should set deterministic to false and during testing
  * you should set deterministic to true.
  *
- *  For more information, see the following.
+ * For more information, see the following.
  *
  * @code
  * @inproceedings{WanICML2013,
- *   title={Regularization of Neural Networks using DropConnect},
+ *   title     = {Regularization of Neural Networks using DropConnect},
  *   booktitle = {Proceedings of the 30th International Conference on Machine
  *                Learning(ICML - 13)},
- *   author = {Li Wan and Matthew Zeiler and Sixin Zhang and Yann L. Cun and
- *             Rob Fergus},
- *   year = {2013},
- *   url  = {http://proceedings.mlr.press/v28/wan13.pdf}
+ *   author    = {Li Wan and Matthew Zeiler and Sixin Zhang and Yann L. Cun and
+ *                Rob Fergus},
+ *   year      = {2013},
+ *   url       = {http://proceedings.mlr.press/v28/wan13.pdf}
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *     cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *     to also be in this type. The type also allows the computation and weight
+ *     type to differ from the input type (Default: arma::mat).
  */
-template<
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class DropConnect
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class DropConnectType : public Layer<InputType, OutputType>
 {
  public:
   //! Create the DropConnect object.
-  DropConnect();
+  DropConnectType();
 
   /**
    * Creates the DropConnect Layer as a Linear Object that takes input size,
@@ -74,9 +69,9 @@ class DropConnect
    * @param outSize The number of output units.
    * @param ratio The probability of setting a value to zero.
    */
-  DropConnect(const size_t inSize,
-              const size_t outSize,
-              const double ratio = 0.5);
+  DropConnectType(const size_t inSize,
+                  const size_t outSize,
+                  const double ratio = 0.5);
 
   /**
    * Ordinary feed forward pass of the DropConnect layer.
@@ -84,8 +79,7 @@ class DropConnect
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of the DropConnect layer.
@@ -94,10 +88,7 @@ class DropConnect
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -106,39 +97,23 @@ class DropConnect
    * @param error The calculated error.
    * @param * (gradient) The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& /* gradient */);
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the model modules.
-  std::vector<LayerTypes<> >& Model() { return network; }
+  std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Parameters() { return weights; }
 
   //! The value of the deterministic parameter.
   bool Deterministic() const { return deterministic; }
 
   //! Modify the value of the deterministic parameter.
-  bool &Deterministic() { return deterministic; }
+  bool& Deterministic() { return deterministic; }
 
   //! The probability of setting a value to zero.
   double Ratio() const { return ratio; }
@@ -167,32 +142,28 @@ class DropConnect
   double scale;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType weights;
 
   //! Locally-stored mask object.
-  OutputDataType mask;
+  OutputType mask;
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;
 
   //! Denoise mask for the weights.
-  OutputDataType denoise;
+  OutputType denoise;
 
   //! Locally-stored layer module.
-  LayerTypes<> baseLayer;
+  Layer<InputType, OutputType>* baseLayer;
 
   //! Locally-stored network modules.
-  std::vector<LayerTypes<> > network;
+  std::vector<Layer<InputType, OutputType>*> network;
 }; // class DropConnect.
+
+// Convenience typedefs.
+
+// Standard DropConnect layer.
+typedef DropConnectType<arma::mat, arma::mat> DropConnect;
 
 }  // namespace ann
 }  // namespace mlpack

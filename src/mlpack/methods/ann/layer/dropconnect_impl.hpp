@@ -17,18 +17,11 @@
 // In case it hasn't yet been included.
 #include "dropconnect.hpp"
 
-#include "../visitor/delete_visitor.hpp"
-#include "../visitor/forward_visitor.hpp"
-#include "../visitor/backward_visitor.hpp"
-#include "../visitor/gradient_visitor.hpp"
-#include "../visitor/parameters_set_visitor.hpp"
-#include "../visitor/parameters_visitor.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-DropConnect<InputDataType, OutputDataType>::DropConnect() :
+template<typename InputType, typename OutputType>
+DropConnectType<InputType, OutputType>::DropConnectType() :
     ratio(0.5),
     scale(2.0),
     deterministic(true)
@@ -36,83 +29,76 @@ DropConnect<InputDataType, OutputDataType>::DropConnect() :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-DropConnect<InputDataType, OutputDataType>::DropConnect(
+template<typename InputType, typename OutputType>
+DropConnectType<InputType, OutputType>::DropConnectType(
     const size_t inSize,
     const size_t outSize,
     const double ratio) :
     ratio(ratio),
     scale(1.0 / (1 - ratio)),
-    baseLayer(new Linear<InputDataType, OutputDataType>(inSize, outSize))
+    deterministic(false),
+    baseLayer(new LinearType<InputType, OutputType>(inSize, outSize))
 {
   network.push_back(baseLayer);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void DropConnect<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input,
-    arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void DropConnectType<InputType, OutputType>::Forward(
+    const InputType& input,
+    OutputType& output)
 {
   // The DropConnect mask will not be multiplied in the deterministic mode
   // (during testing).
   if (deterministic)
   {
-    boost::apply_visitor(ForwardVisitor(input, output), baseLayer);
+    baseLayer->Forward(input, output);
   }
   else
   {
     // Save weights for denoising.
-    boost::apply_visitor(ParametersVisitor(denoise), baseLayer);
+    denoise = baseLayer->Parameters();
 
     // Scale with input / (1 - ratio) and set values to zero with
     // probability ratio.
-    mask = arma::randu<arma::Mat<eT> >(denoise.n_rows, denoise.n_cols);
+    mask = arma::randu<OutputType>(denoise.n_rows, denoise.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
 
-    arma::mat tmp = denoise % mask;
-    boost::apply_visitor(ParametersSetVisitor(tmp), baseLayer);
-
-    boost::apply_visitor(ForwardVisitor(input, output), baseLayer);
+    baseLayer->Parameters() = denoise % mask;
+    baseLayer->Forward(input, output);
 
     output = output * scale;
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void DropConnect<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void DropConnectType<InputType, OutputType>::Backward(
+    const InputType& input,
+    const OutputType& gy,
+    OutputType& g)
 {
-  boost::apply_visitor(BackwardVisitor(input, gy, g), baseLayer);
+  baseLayer->Backward(input, gy, g);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void DropConnect<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& /* gradient */)
+template<typename InputType, typename OutputType>
+void DropConnectType<InputType, OutputType>::Gradient(
+    const InputType& input,
+    const OutputType& error,
+    OutputType& gradient)
 {
-  boost::apply_visitor(GradientVisitor(input, error),
-      baseLayer);
+  baseLayer->Gradient(input, error, baseLayer->Gradient());
 
   // Denoise the weights.
-  boost::apply_visitor(ParametersSetVisitor(denoise), baseLayer);
+  baseLayer->Parameters() = denoise;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void DropConnect<InputDataType, OutputDataType>::serialize(
+void DropConnectType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   // Delete the old network first, if needed.
   if (cereal::is_loading<Archive>())
-  {
-    boost::apply_visitor(DeleteVisitor(), baseLayer);
-  }
+    delete baseLayer;
 
   ar(CEREAL_NVP(ratio));
   ar(CEREAL_NVP(scale));
