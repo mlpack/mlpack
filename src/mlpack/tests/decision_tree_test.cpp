@@ -774,28 +774,6 @@ TEST_CASE("CategoricalBuildTestWithWeight", "[DecisionTreeTest]")
 }
 
 /**
- * Make sure that when we ask for a decision stump, we get one.
- */
-TEST_CASE("DTDecisionStumpTest", "[DecisionTreeTest]")
-{
-  // Use a random dataset.
-  arma::mat dataset(10, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000);
-  for (size_t i = 0; i < 1000; ++i)
-    labels[i] = i % 3; // 3 classes.
-
-  // Build a decision stump.
-  DecisionTree<GiniGain, BestBinaryNumericSplit, AllCategoricalSplit,
-      AllDimensionSelect, double, true> stump(dataset, labels, 3, 1);
-
-  // Check that it has children.
-  REQUIRE(stump.NumChildren() == 2);
-  // Check that its children doesn't have children.
-  REQUIRE(stump.Child(0).NumChildren() == 0);
-  REQUIRE(stump.Child(1).NumChildren() == 0);
-}
-
-/**
  * Test that we can build a decision tree using weighted data (where the
  * low-weighted data is random noise), and that the tree still builds correctly
  * enough to get good results.

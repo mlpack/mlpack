@@ -33,6 +33,7 @@
 #include <mlpack/methods/ann/loss_functions/l1_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_absolute_percentage_error.hpp>
+#include <mlpack/methods/ann/loss_functions/triplet_margin_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -896,4 +897,52 @@ TEST_CASE("MeanAbsolutePercentageErrorTest", "[LossFunctionsTest]")
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
+}
+
+/*
+ * Simple test for the Triplet Margin Loss function.
+ */
+TEST_CASE("TripletMarginLossTest")
+{
+  arma::mat anchor, positive, negative;
+  arma::mat input, target, output;
+  TripletMarginLoss<> module;
+
+  // Test the Forward function on a user generated input and compare it against
+  // the manually calculated result.
+  anchor = arma::mat("2 3 5");
+  positive = arma::mat("10 12 13");
+  negative = arma::mat("4 5 7");
+
+  input = { {2, 3, 5}, {10, 12, 13} };
+
+  double loss = module.Forward(input, negative);
+  REQUIRE(loss == 66);
+
+  // Test the Backward function.
+  module.Backward(input, negative, output);
+  // According to the used backward formula:
+  // output = 2 * (negative - positive) / anchor.n_cols,
+  // output * nofColumns / 2 + positive should be equal to negative.
+  CheckMatrices(negative, output * output.n_cols / 2 + positive);
+  REQUIRE(output.n_rows == anchor.n_rows);
+  REQUIRE(output.n_cols == anchor.n_cols);
+
+  // Test the loss function on a single input.
+  anchor = arma::mat("4");
+  positive = arma::mat("7");
+  negative = arma::mat("1");
+
+  input = arma::mat(2, 1);
+  input[0] = 4;
+  input[1] = 7;
+
+  loss = module.Forward(input, negative);
+  REQUIRE(loss == 1.0);
+
+  // Test the Backward function on a single input.
+  module.Backward(input, negative, output);
+  // Test whether the output is negative.
+  REQUIRE(arma::accu(output) == -12);
+  REQUIRE(output.n_elem == 1);
 }
