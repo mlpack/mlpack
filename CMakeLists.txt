@@ -21,7 +21,6 @@ option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
 set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
 set(ARMADILLO_INCLUDE_DIR "" CACHE STRING "Path for Armadillo headers.")
-set(OPENBLAS_LIBRARIES "" CACHE STRING "Path for OpenBlas library.")
 set(GFORTRAN_LIBRARY "" CACHE STRING "Path for gfortran library.")
 
 if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
@@ -31,6 +30,23 @@ elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
   include(board/flags-config.cmake)
   flags(${BOARD_NAME})
+
+# This is the only solution I found.
+# We need to download cereal, boost, OpenBlas, we can not use the one
+# already included in the system
+# Armadillo and ensmallen are covered by autodownloader.
+# We can not allow the user to specify the cereal and boost location
+# manually, the user might include the system header if specified /usr/include/
+# this can causes catastrophic unwanted behavior that might requires hours to debug.
+# I am going to stick to this solution now, hopefully we can automate the 
+# new version downloading as Yashwant did.
+# If other solution exists please do not hesitate in proposing them
+
+  set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.9/build/libopenblas.a" CACHE STRING "OpenBlas PATH")
+  set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/cereal-1.3.0/include" CACHE STRING "Cereal header PATH")
+  set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/boost-1_75_0" CACHE STRING "Boost header PATH")
+  message("CEREAL INCLUDE PATH" ${CEREAL_INCLUDE_DIR})
+  message("Boost INCLUDE PATH" ${Boost_INCLUDE_DIR})
 endif()
 
 # Set minimum library version required by mlpack.
