@@ -19,41 +19,37 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-Constant<InputDataType, OutputDataType>::Constant(
+template<typename InputType, typename OutputType>
+ConstantType<InputType, OutputType>::ConstantType(
     const size_t outSize,
     const double scalar) :
     inSize(0),
     outSize(outSize)
 {
-  constantOutput = OutputDataType(outSize, 1);
+  constantOutput = OutputType(outSize, 1);
   constantOutput.fill(scalar);
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void Constant<InputDataType, OutputDataType>::Forward(
+void ConstantType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   if (inSize == 0)
-  {
     inSize = input.n_elem;
-  }
 
   output = constantOutput;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
-void Constant<InputDataType, OutputDataType>::Backward(
-    const DataType& /* input */, const DataType& /* gy */, DataType& g)
+template<typename InputType, typename OutputType>
+void ConstantType<InputType, OutputType>::Backward(
+    const InputType& /* input */, const OutputType& /* gy */, OutputType& g)
 {
-  g = arma::zeros<DataType>(inSize, 1);
+  g = arma::zeros<OutputType>(inSize, 1);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void Constant<InputDataType, OutputDataType>::serialize(
+void ConstantType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(constantOutput));

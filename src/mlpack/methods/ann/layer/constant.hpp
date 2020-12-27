@@ -15,6 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -22,16 +24,14 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the constant layer. The constant layer outputs a given
  * constant value given any input value.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *     cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *     to also be in this type. The type also allows the computation and weight
+ *     type to differ from the input type (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class Constant
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class ConstantType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -41,7 +41,7 @@ class Constant
    * @param outSize The number of output units.
    * @param scalar The constant value used to create the constant output.
    */
-  Constant(const size_t outSize = 0, const double scalar = 0.0);
+  ConstantType(const size_t outSize, const double scalar = 0);
 
   /**
    * Ordinary feed forward pass of a neural network. The forward pass fills the
@@ -50,7 +50,6 @@ class Constant
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -61,27 +60,14 @@ class Constant
    * @param * (gy) The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename DataType>
-  void Backward(const DataType& /* input */,
-                const DataType& /* gy */,
-                DataType& g);
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const InputType& /* input */,
+                const OutputType& /* gy */,
+                OutputType& g);
 
   //! Get the output size.
   size_t OutSize() const { return outSize; }
 
-  /**
-   * Serialize the layer.
-   */
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
@@ -93,14 +79,13 @@ class Constant
   size_t outSize;
 
   //! Locally-stored constant output matrix.
-  OutputDataType constantOutput;
+  OutputType constantOutput;
+}; // class ConstantType
 
-  //! Locally-stored delta object.
-  OutputDataType delta;
+// Convenience typedefs.
 
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-}; // class ConstantLayer
+// Standard HardShrink layer.
+typedef ConstantType<arma::mat, arma::mat> Constant;
 
 } // namespace ann
 } // namespace mlpack

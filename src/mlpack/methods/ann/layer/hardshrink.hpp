@@ -98,7 +98,6 @@ class HardShrinkType : public Layer<InputType, OutputType>
 // Standard HardShrink layer.
 typedef HardShrinkType<arma::mat, arma::mat> HardShrink;
 
-
 } // namespace ann
 } // namespace mlpack
 
