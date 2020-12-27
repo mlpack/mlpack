@@ -20,35 +20,31 @@ namespace ann /** Artificial Neural Network. */ {
 
 // This constructor is called for Soft Shrink activation function.
 // lambda is a hyperparameter.
-template<typename InputDataType, typename OutputDataType>
-SoftShrink<InputDataType, OutputDataType>::SoftShrink(const double lambda) :
+template<typename InputType, typename OutputType>
+SoftShrinkType<InputType, OutputType>::SoftShrinkType(const double lambda) :
     lambda(lambda)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void SoftShrink<InputDataType, OutputDataType>::Forward(
+void SoftShrinkType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   output = (input > lambda) % (input - lambda) + (
     input < -lambda) % (input + lambda);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
-void SoftShrink<InputDataType, OutputDataType>::Backward(
-    const DataType& input, DataType& gy, DataType& g)
+template<typename InputType, typename OutputType>
+void SoftShrinkType<InputType, OutputType>::Backward(
+    const InputType& input, const OutputType& gy, OutputType& g)
 {
-  DataType derivative;
-  derivative = (arma::ones(arma::size(input)) - (input == 0));
-  g = gy % derivative;
+  g = gy % (arma::ones(arma::size(input)) - (input == 0));
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void SoftShrink<InputDataType, OutputDataType>::serialize(
+void SoftShrinkType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

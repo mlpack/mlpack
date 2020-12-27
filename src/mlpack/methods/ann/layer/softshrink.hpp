@@ -18,6 +18,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
@@ -43,26 +45,22 @@ namespace ann /** Artifical Neural Network. */ {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class SoftShrink
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class SoftShrinkType : public Layer<InputType, OutputType>
 {
  public:
   /**
-   * Create Soft Shrink object using specified hyperparameter lambda.
+   * Create SoftShrink object using specified hyperparameter lambda.
    *
    * @param lambda The noise level of an image depends on settings of an
-   *        imaging device. The settings can be used to select appropriate
-   *        parameters for denoising methods. It is proportional to the noise
-   *        level entered by the user.
-   *        And it is calculated by multiplying the
-   *        noise level sigma of the input(noisy image) and a
-   *        coefficient 'a' which is one of the training parameters.
-   *        Default value of lambda is 0.5.
+   *     imaging device. The settings can be used to select appropriate
+   *     parameters for denoising methods. It is proportional to the noise
+   *     level entered by the user. And it is calculated by multiplying the
+   *     noise level sigma of the input(noisy image) and a coefficient 'a'
+   *     which is one of the training parameters. Default value of lambda
+   *     is 0.5.
    */
-  SoftShrink(const double lambda = 0.5);
+  SoftShrinkType(const double lambda = 0.5);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -71,7 +69,6 @@ class SoftShrink
    * @param input Input data used for evaluating the Soft Shrink function.
    * @param output Resulting output activation
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -83,42 +80,26 @@ class SoftShrink
    * @param gy The backpropagated error.
    * @param g The calculated gradient
    */
-  template<typename DataType>
-  void Backward(const DataType& input,
-                DataType& gy,
-                DataType& g);
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
   //! Get the hyperparameter lambda.
   double const& Lambda() const { return lambda; }
   //! Modify the hyperparameter lambda.
   double& Lambda() { return lambda; }
 
-  /**
-   * Serialize the layer.
-   */
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Locally-stored hyperparamater lambda.
   double lambda;
-}; // class SoftShrink
+}; // class SoftShrinkType
+
+// Convenience typedefs.
+
+// Standard SoftShrink layer using no regularization.
+typedef SoftShrinkType<arma::mat, arma::mat> SoftShrink;
 
 } // namespace ann
 } // namespace mlpack
