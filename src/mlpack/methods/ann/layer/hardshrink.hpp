@@ -17,6 +17,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artifical Neural Network. */ {
 
@@ -37,23 +39,25 @@ namespace ann /** Artifical Neural Network. */ {
  * \f}
  *
  * \f$\lambda\f$ is set to 0.5 by default.
- */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class HardShrink
+ *
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *     cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *     to also be in this type. The type also allows the computation and weight
+ *     type to differ from the input type (Default: arma::mat).
+*/
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class HardShrinkType : public Layer<InputType, OutputType>
 {
  public:
   /**
    * Create HardShrink object using specified hyperparameter lambda.
    *
-   * @param lambda Is calculated by multiplying the
-   * 		    noise level sigma of the input(noisy image) and a
-   * 		    coefficient 'a' which is one of the training parameters.
-   * 		    Default value of lambda is 0.5.
+   * @param lambda Is calculated by multiplying the noise level sigma of the
+   *     input(noisy image) and a coefficient 'a' which is one of the training
+   *     parameters. Default value of lambda is 0.5.
    */
-  HardShrink(const double lambda = 0.5);
+  HardShrinkType(const double lambda = 0.5);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -62,7 +66,6 @@ class HardShrink
    * @param input Input data used for evaluating the Hard Shrink function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -74,42 +77,27 @@ class HardShrink
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename DataType>
-  void Backward(const DataType& input,
-                DataType& gy,
-                DataType& g);
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
   //! Get the hyperparameter lambda.
   double const& Lambda() const { return lambda; }
   //! Modify the hyperparameter lambda.
   double& Lambda() { return lambda; }
 
-  /**
-   * Serialize the layer.
-   */
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Locally-stored hyperparameter lambda.
   double lambda;
-}; // class HardShrink
+}; // class HardShrinkType
+
+// Convenience typedefs.
+
+// Standard HardShrink layer using no regularization.
+typedef HardShrinkType<arma::mat, arma::mat> HardShrink;
+
 
 } // namespace ann
 } // namespace mlpack

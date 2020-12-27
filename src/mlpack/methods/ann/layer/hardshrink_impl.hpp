@@ -20,34 +20,30 @@ namespace ann /** Artificial Neural Network. */ {
 
 // This constructor is called for Hard Shrink activation function.
 // 'lambda' is a hyperparameter.
-template<typename InputDataType, typename OutputDataType>
-HardShrink<InputDataType, OutputDataType>::HardShrink(const double lambda) :
+template<typename InputType, typename OutputType>
+HardShrinkType<InputType, OutputType>::HardShrinkType(const double lambda) :
     lambda(lambda)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void HardShrink<InputDataType, OutputDataType>::Forward(
+void HardShrinkType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   output = ((input > lambda) + (input < -lambda)) % input;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
-void HardShrink<InputDataType, OutputDataType>::Backward(
-    const DataType& input, DataType& gy, DataType& g)
+template<typename InputType, typename OutputType>
+void HardShrinkType<InputType, OutputType>::Backward(
+    const InputType& input, const OutputType& gy, OutputType& g)
 {
-  DataType derivative;
-  derivative = (arma::ones(arma::size(input)) - (input == 0));
-  g = gy % derivative;
+  g = gy %  (arma::ones(arma::size(input)) - (input == 0));
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void HardShrink<InputDataType, OutputDataType>::serialize(
+void HardShrinkType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
