@@ -19,15 +19,14 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-Softmax<InputDataType, OutputDataType>::Softmax()
+template<typename InputType, typename OutputType>
+SoftmaxType<InputType, OutputType>::SoftmaxType()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void Softmax<InputDataType, OutputDataType>::Forward(
+void SoftmaxType<InputType, OutputType>::Forward(
     const InputType& input,
     OutputType& output)
 {
@@ -36,19 +35,18 @@ void Softmax<InputDataType, OutputDataType>::Forward(
   output = softmaxInput.each_row() / sum(softmaxInput, 0);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Softmax<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void SoftmaxType<InputType, OutputType>::Backward(
+    const InputType& input,
+    const OutputType& gy,
+    OutputType& g)
 {
   g = input % (gy - arma::repmat(arma::sum(gy % input), input.n_rows, 1));
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void Softmax<InputDataType, OutputDataType>::serialize(
+void SoftmaxType<InputType, OutputType>::serialize(
     Archive& /* ar */,
     const uint32_t /* version */)
 {
