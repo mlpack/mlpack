@@ -15,6 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -22,23 +24,19 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Softmin layer. The Softmin function takes as a input
  * a vector of K real numbers, rescaling them so that the elements of the
  * K-dimensional output vector lie in the range [0, 1] and sum to 1.
- * 
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ *
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *     cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *     to also be in this type. The type also allows the computation and weight
+ *     type to differ from the input type (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class Softmin
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class SoftminType : public Layer<InputType, OutputType>
 {
  public:
-  /**
-   * Create the Softmin object.
-   */
-  Softmin();
+  //! Create the Softmin object.
+  SoftminType();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -47,7 +45,6 @@ class Softmin
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -59,34 +56,18 @@ class Softmin
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  InputDataType& Delta() const { return delta; }
-  //! Modify the delta.
-  InputDataType& Delta() { return delta; }
-
-  /**
-   * Serialize the layer.
-   */
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */);
+}; // class SoftminType
 
- private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
+// Convenience typedefs.
 
-  //! Locally stored output parameter object.
-  OutputDataType outputParameter;
-}; // class Softmin
+// Standard Softmin layer using no regularization.
+typedef SoftminType<arma::mat, arma::mat> Softmin;
+
 
 } // namespace ann
 } // namespace mlpack
