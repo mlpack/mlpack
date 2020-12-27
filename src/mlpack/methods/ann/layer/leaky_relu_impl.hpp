@@ -20,27 +20,25 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-LeakyReLU<InputDataType, OutputDataType>::LeakyReLU(
+template<typename InputType, typename OutputType>
+LeakyReLUType<InputType, OutputType>::LeakyReLUType(
     const double alpha) : alpha(alpha)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void LeakyReLU<InputDataType, OutputDataType>::Forward(
+void LeakyReLUType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   output = arma::max(input, alpha * input);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
-void LeakyReLU<InputDataType, OutputDataType>::Backward(
-    const DataType& input, const DataType& gy, DataType& g)
+template<typename InputType, typename OutputType>
+void LeakyReLUType<InputType, OutputType>::Backward(
+    const InputType& input, const OutputType& gy, OutputType& g)
 {
-  DataType derivative;
+  OutputType derivative;
   derivative.set_size(arma::size(input));
   for (size_t i = 0; i < input.n_elem; ++i)
     derivative(i) = (input(i) >= 0) ? 1 : alpha;
@@ -48,9 +46,9 @@ void LeakyReLU<InputDataType, OutputDataType>::Backward(
   g = gy % derivative;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void LeakyReLU<InputDataType, OutputDataType>::serialize(
+void LeakyReLUType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

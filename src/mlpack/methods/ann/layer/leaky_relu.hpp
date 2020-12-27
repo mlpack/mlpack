@@ -16,6 +16,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -32,16 +34,14 @@ namespace ann /** Artificial Neural Network. */ {
  * \right.
  * @f}
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *     cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *     to also be in this type. The type also allows the computation and weight
+ *     type to differ from the input type (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class LeakyReLU
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class LeakyReLUType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -49,9 +49,9 @@ class LeakyReLU
    * The non zero gradient can be adjusted by specifying the parameter
    * alpha in the range 0 to 1. Default (alpha = 0.03)
    *
-   * @param alpha Non zero gradient
+   * @param alpha Non zero gradient.
    */
-  LeakyReLU(const double alpha = 0.03);
+  LeakyReLUType(const double alpha = 0.03);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -60,7 +60,6 @@ class LeakyReLU
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -72,40 +71,27 @@ class LeakyReLU
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename DataType>
-  void Backward(const DataType& input, const DataType& gy, DataType& g);
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
   //! Get the non zero gradient.
   double const& Alpha() const { return alpha; }
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
-  /**
-   * Serialize the layer.
-   */
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Leakyness Parameter in the range 0 <alpha< 1
   double alpha;
-}; // class LeakyReLU
+}; // class LeakyReLUType
+
+// Convenience typedefs.
+
+// Standard LeakyReLU layer.
+typedef LeakyReLUType<arma::mat, arma::mat> LeakyReLU;
+
 
 } // namespace ann
 } // namespace mlpack

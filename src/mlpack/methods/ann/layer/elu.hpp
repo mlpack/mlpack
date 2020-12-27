@@ -187,10 +187,10 @@ class ELUType : public Layer<InputType, OutputType>
 // Convenience typedefs.
 
 // Standard flexible ReLU layer.
-typedef FlexibleReLUType<arma::mat, arma::mat> ELU;
+typedef ELUType<arma::mat, arma::mat> ELU;
 
 // Standard ELU layer.
-typedef FlexibleReLUType<arma::mat, arma::mat> SELU;
+typedef ELUType<arma::mat, arma::mat> SELU;
 
 } // namespace ann
 } // namespace mlpack

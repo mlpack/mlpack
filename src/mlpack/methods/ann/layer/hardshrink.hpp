@@ -45,7 +45,7 @@ namespace ann /** Artifical Neural Network. */ {
  * @tparam OutputType The type of the computation which also causes the output
  *     to also be in this type. The type also allows the computation and weight
  *     type to differ from the input type (Default: arma::mat).
-*/
+ */
 template<typename InputType = arma::mat, typename OutputType = arma::mat>
 class HardShrinkType : public Layer<InputType, OutputType>
 {
@@ -95,7 +95,7 @@ class HardShrinkType : public Layer<InputType, OutputType>
 
 // Convenience typedefs.
 
-// Standard HardShrink layer using no regularization.
+// Standard HardShrink layer.
 typedef HardShrinkType<arma::mat, arma::mat> HardShrink;
 
 
