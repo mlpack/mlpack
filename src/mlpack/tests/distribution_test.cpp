@@ -20,7 +20,7 @@
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;

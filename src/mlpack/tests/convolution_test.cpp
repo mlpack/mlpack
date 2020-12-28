@@ -17,7 +17,7 @@
 #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 #include "catch.hpp"
 #include "test_catch_tools.hpp"
 

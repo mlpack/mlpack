@@ -148,6 +148,12 @@ class Linear3D
   //! Modify the bias weights of the layer.
   OutputDataType& Bias() { return bias; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer
    */
