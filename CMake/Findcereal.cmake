@@ -35,7 +35,7 @@ if(CEREAL_INCLUDE_DIR)
     set(CEREAL_VERSION_MAJOR 1)
     set(CEREAL_VERSION_MINOR 1)
     set(CEREAL_VERSION_PATCH 2)
-elseif(EXISTS "${CEREAL_INCLUDE_DIR}/cereal/cereal.hpp")
+  elseif(EXISTS "${CEREAL_INCLUDE_DIR}/cereal/cereal.hpp")
 
   set(CEREAL_VERSION_MAJOR 1)
   set(CEREAL_VERSION_MINOR 1)
