@@ -78,7 +78,7 @@ void PrintPYX(const util::BindingDetails& doc,
   cout << "from io cimport SetParam, SetParamPtr, SetParamWithInfo, "
       << "GetParamPtr" << endl;
   cout << "from io cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
-      << "ResetTimers, EnableTimers" << endl;
+      << "ResetTimers, EnableTimers, SanityCheck" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
   cout << "from serialization cimport SerializeIn, SerializeOut" << endl;
   cout << endl;
@@ -206,6 +206,17 @@ void PrintPYX(const util::BindingDetails& doc,
       << "\'bool'!\")" << endl;
   cout << endl;
 
+  // Determine whether or not we have to do a sanity check.
+  cout << "  if isinstance(no_sanity_checks, bool):" << endl;
+  cout << "    if no_sanity_checks:" << endl;
+  cout << "      SetParam[cbool](<const string> 'no_sanity_checks', "
+      << "no_sanity_checks)" << endl;
+  cout << "      IO.SetPassed(<const string> 'no_sanity_checks')" << endl;
+  cout << "  else:" << endl;
+  cout << "    raise TypeError(" <<"\"'no_sanity_checks\' must have type "
+      << "\'bool'!\")" << endl;
+  cout << endl;
+
   // Do any input processing.
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
@@ -223,6 +234,10 @@ void PrintPYX(const util::BindingDetails& doc,
     util::ParamData& d = parameters.at(outputOptions[i]);
     cout << "  IO.SetPassed(<const string> '" << d.name << "')" << endl;
   }
+
+  // Before calling mlpackMain(), we do a sanity check if needed.
+  cout << "  if not IO.GetParam[cbool](<const string> 'no_sanity_checks'):" << endl;
+  cout << "    SanityCheck[arma.Mat[double]](IO.GetParam[arma.Mat[double]](<const string> 'training'))" << endl;
 
   // Call the method.
   cout << "  # Call the mlpack program." << endl;

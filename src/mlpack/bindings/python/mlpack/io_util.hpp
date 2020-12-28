@@ -163,6 +163,16 @@ inline void EnableTimers()
   Timer::EnableTiming();
 }
 
+/**
+ * Sanity Check.
+ */
+template<typename T>
+inline void SanityCheck(T& matrix)
+{
+  if (matrix.has_nan())
+    Log::Fatal << "The input matrix has nan values" << std::endl;
+}
+
 } // namespace util
 } // namespace mlpack
 
