@@ -50,4 +50,4 @@ cdef extern from "<mlpack/bindings/python/mlpack/io_util.hpp>" \
   void DisableBacktrace() nogil except +
   void ResetTimers() nogil except +
   void EnableTimers() nogil except +
-  void SanityCheck[T](T&) nogil except +
+  void SanityChecks() nogil except +

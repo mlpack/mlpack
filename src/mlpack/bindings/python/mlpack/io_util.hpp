@@ -166,11 +166,29 @@ inline void EnableTimers()
 /**
  * Sanity Check.
  */
-template<typename T>
-inline void SanityCheck(T& matrix)
+void SanityChecks()
 {
-  if (matrix.has_nan())
-    Log::Fatal << "The input matrix has nan values" << std::endl;
+  std::map<std::string, util::ParamData>::iterator itr;
+  for (itr = IO::Parameters().begin(); itr != IO::Parameters().end(); ++itr)
+  {
+    std::string paramName = itr->first;
+    std::string paramType = itr->second.cppType;
+    if (paramType == "arma::mat")
+    {
+      if (IO::GetParam<arma::Mat<double>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has nan values." << std::endl;
+    }
+    else if (paramType == "arma::colvec")
+    {
+      if (IO::GetParam<arma::Col<double>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has nan values." << std::endl;
+    }
+    else if (paramType == "arma::rowvec")
+    {
+      if (IO::GetParam<arma::Row<double>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has nan values." << std::endl;
+    }
+  }
 }
 
 } // namespace util
