@@ -14,8 +14,8 @@
 #define MLPACK_METHODS_RL_PPO_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
 
-#include "replay/random_replay.hpp"
 #include "mlpack/methods/ann/activation_functions/tanh_function.hpp"
 #include "mlpack/core/dists/gaussian_distribution.hpp"
 #include "mlpack/methods/ann/dists/normal_distribution.hpp"
@@ -55,9 +55,7 @@ template <
   typename EnvironmentType,
   typename ActorNetworkType,
   typename CriticNetworkType,
-  typename UpdaterType,
-  typename PolicyType,
-  typename ReplayType = RandomReplay<EnvironmentType>
+  typename UpdaterType
 >
 class PPO
 {
@@ -84,8 +82,6 @@ class PPO
   PPO(TrainingConfig& config,
       ActorNetworkType& actor,
       CriticNetworkType& critic,
-      PolicyType& policy,
-      ReplayType& replayMethod,
       UpdaterType updater = UpdaterType(),
       EnvironmentType environment = EnvironmentType());
 
@@ -98,7 +94,7 @@ class PPO
     * Execute a step in an episode.
     * @return Reward for the step.
     */
-  double Step();
+  void SelectAction();
 
   /**
     * Execute an episode.
@@ -130,12 +126,6 @@ class PPO
   //! Locally-stored critic network.
   CriticNetworkType& criticNetwork;
 
-  //! Locally-stored behavior policy.
-  PolicyType& policy;
-
-  //! Locally-stored experience method.
-  ReplayType& replayMethod;
-
   //! Locally-stored updater.
   UpdaterType actorUpdater;
   #if ENS_VERSION_MAJOR >= 2
@@ -159,8 +149,17 @@ class PPO
   //! Locally-stored current state of the agent.
   StateType state;
 
+  //! Locally-stored next state of the agent.
+  StateType nextState;
+
   //! Locally-stored action of the agent.
   ActionType action;
+
+  //! Locally-stored reward of the agent.
+  double reward;
+
+  //! Locally-stored terminal of the agent.
+  bool done;
 
   //! Locally-stored flag indicating training mode or test mode.
   bool deterministic;

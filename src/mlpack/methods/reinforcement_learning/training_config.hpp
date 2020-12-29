@@ -31,7 +31,7 @@ class TrainingConfig
       doubleQLearning(false),
       noisyQLearning(false),
       epsilon(0.2),
-      actorUpdateStep(1)
+      actorUpdateStep(1),
       isCategorical(false),
       atomSize(51),
       vMin(0),
@@ -66,7 +66,7 @@ class TrainingConfig
       doubleQLearning(doubleQLearning),
       noisyQLearning(noisyQLearning),
       epsilon(0.2),
-      actorUpdateStep(1)
+      actorUpdateStep(1),
       isCategorical(isCategorical),
       atomSize(atomSize),
       vMin(vMin),
