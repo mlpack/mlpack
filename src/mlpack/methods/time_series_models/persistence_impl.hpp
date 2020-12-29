@@ -29,8 +29,11 @@ void PersistenceModel::Predict(const InputType& input,
 void PersistenceModel::Predict(const arma::mat& input,
     arma::rowvec& predictions)
 {
+    // Extracting the last column from the input as arma::rowvec.
     arma::colvec temp = input.col(input.n_cols - 1);
-    predictions = Lag(temp, 1);
+    arma::rowvec temp1 = temp.t();
+    
+    predictions = Lag(temp1, 1);
 }
 
 } // namespace ts

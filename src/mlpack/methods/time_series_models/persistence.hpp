@@ -29,7 +29,7 @@ class PersistenceModel
    * Creates a model.
    * 
    */
-  PersistenceModel();
+  PersistenceModel() {};
   
   template<typename InputType>
   void Predict(const InputType& input, arma::rowvec& predictions);
