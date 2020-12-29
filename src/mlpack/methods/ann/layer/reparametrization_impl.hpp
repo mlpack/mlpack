@@ -49,7 +49,7 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
     
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization(
-    const Reparamterization& layer) :
+    const Reparametrization& layer) :
     latentSize(layer.latentSize),
     stochastic(layer.stochastic),
     includeKl(layer.includeKl),
@@ -60,7 +60,7 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
 
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization(
-    Reparamterization&& layer) :
+    Reparametrization&& layer) :
     latentSize(std::move(layer.latentSize)),
     stochastic(std::move(layer.stochastic)),
     includeKl(std::move(layer.includeKl)),
@@ -72,7 +72,7 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>&
 Reparametrization<InputDataType, OutputDataType>::
-opertaor=(const Reparamterization& layer) 
+opertaor=(const Reparametrization& layer) 
 {
        if (this != &layer)
        {
@@ -87,7 +87,7 @@ opertaor=(const Reparamterization& layer)
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>&
 Reparametrization<InputDataType, OutputDataType>::
-opertaor=(Reparamterization&& layer) 
+opertaor=(Reparametrization&& layer) 
 {
        if (this != &layer)
        {
