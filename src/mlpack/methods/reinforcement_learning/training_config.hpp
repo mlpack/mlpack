@@ -31,7 +31,6 @@ class TrainingConfig
       doubleQLearning(false),
       noisyQLearning(false),
       epsilon(0.2),
-      actorUpdateStep(1),
       isCategorical(false),
       atomSize(51),
       vMin(0),
@@ -66,7 +65,6 @@ class TrainingConfig
       doubleQLearning(doubleQLearning),
       noisyQLearning(noisyQLearning),
       epsilon(0.2),
-      actorUpdateStep(1),
       isCategorical(isCategorical),
       atomSize(atomSize),
       vMin(vMin),
@@ -133,10 +131,6 @@ class TrainingConfig
   //! Modify the discount rate for future reward.
   double& Epsilon() { return epsilon; }
 
-  //! Get the Actor Network Update Step.
-  size_t ActorUpdateStep() const { return actorUpdateStep; }
-  //! Modify the Actor Network Update Step.
-  size_t& ActorUpdateStep() { return actorUpdateStep; }
   //! Get the indicator of categorical q-learning.
   bool IsCategorical() const { return isCategorical; }
   //! Modify the indicator of categorical q-learning.
@@ -230,11 +224,6 @@ class TrainingConfig
    * the discount rate for future reward.
    */
   double epsilon;
-
-  /**
-   * the number step of updating the actor network.
-   */
-  size_t actorUpdateStep;
 
   /**
    * Locally-stored indicator for categorical q-learning.
