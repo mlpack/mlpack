@@ -190,13 +190,13 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTes
   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
   model->Add<Linear<> >(trainData.n_rows, 8);
   model->Add<SigmoidLayer<> >();
-  model->Add<Reparametrization<> >(8, 3);
+  model->Add<Reparametrization<> >();
   model->Add<LogSoftMax<> >();
 
   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
   model1->Add<Linear<> >(trainData.n_rows, 8);
   model1->Add<SigmoidLayer<> >();
-  model1->Add<Reparametrization<> >(8, 3);
+  model1->Add<Reparametrization<> >();
   model1->Add<LogSoftMax<> >();
 
   // Check whether copy constructor is working or not.
