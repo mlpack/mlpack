@@ -38,8 +38,10 @@ class BCELoss
    *
    * @param eps The minimum value used for computing logarithms
    *            and denominators in a numerically stable way.
+   * @param reduction Reduction type. If true, it returns the mean of 
+   *                  the loss. Else, it returns the sum.
    */
-  BCELoss(const double eps = 1e-10, const bool reduction = false);
+  BCELoss(const double eps = 1e-10, const bool reduction = true);
 
   /**
    * Computes the cross-entropy function.
@@ -74,6 +76,7 @@ class BCELoss
   double Eps() const { return eps; }
   //! Modify the epsilon.
   double& Eps() { return eps; }
+
   //! Get the reduction.
   bool Reduction() const { return reduction; }
   //! Set the reduction.
@@ -91,6 +94,8 @@ class BCELoss
 
   //! The minimum value used for computing logarithms and denominators
   double eps;
+
+  //! Reduction type. If true, performs mean of loss else sum.
   bool reduction;
 }; // class BCELoss
 
