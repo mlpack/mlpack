@@ -3,7 +3,7 @@
  * @author Rishabh Garg
  *
  * Implementation of the Persistence Model for time series data.
- * 
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -52,7 +52,7 @@ void PersistenceModel::Predict(const InputType& train, const InputType& test,
     
     InputType concat_pred(concat.n_elem);
     Predict(concat, concat_pred);
-    
+
     // Taking the test predictions from all the predictions.
     predictions = concat_pred.tail(test.n_elem);
 }
@@ -63,7 +63,7 @@ void PersistenceModel::Predict(const arma::mat& input,
     // Extracting the last column from the input as arma::rowvec.
     arma::colvec temp = input.col(input.n_cols - 1);
     arma::rowvec temp1 = temp.t();
-    
+
     predictions = Lag(temp1, 1);
 }
 
@@ -72,10 +72,10 @@ void PersistenceModel::Predict(const arma::mat& train, const arma::mat& test,
 {
     // Concatenating train and test.
     arma::mat concat = arma::join_vert(train, test);
-    
+
     arma::rowvec concat_pred(concat.n_rows);
     Predict(concat, concat_pred);
-    
+
     // Taking the test predictions from all the predictions.
     predictions = concat_pred.tail(test.n_rows);
 }
