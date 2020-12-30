@@ -2,7 +2,7 @@
  * @file methods/ann/loss_functions/cross_entropy_error.hpp
  * @author Konstantin Sidorov
  *
- * Definition of the cross-entropy performance function.
+ * Definition of the binary-cross-entropy performance function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,9 +18,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The cross-entropy performance function measures the network's
- * performance according to the cross-entropy
- * between the input and target distributions.
+ * The binary-cross-entropy performance function measures the
+ * Binary Cross Entropy between the target and the output.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -31,16 +30,16 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class CrossEntropyError
+class BCELoss
 {
  public:
   /**
-   * Create the CrossEntropyError object.
+   * Create the BinaryCrossEntropyLoss object.
    *
    * @param eps The minimum value used for computing logarithms
    *            and denominators in a numerically stable way.
    */
-  CrossEntropyError(const double eps = 1e-10);
+  BCELoss(const double eps = 1e-10, const bool reduction = false);
 
   /**
    * Computes the cross-entropy function.
@@ -75,6 +74,10 @@ class CrossEntropyError
   double Eps() const { return eps; }
   //! Modify the epsilon.
   double& Eps() { return eps; }
+  //! Get the reduction.
+  bool Reduction() const { return reduction; }
+  //! Set the reduction.
+  bool& Reduction() { return reduction; }
 
   /**
    * Serialize the layer.
@@ -88,12 +91,13 @@ class CrossEntropyError
 
   //! The minimum value used for computing logarithms and denominators
   double eps;
-}; // class CrossEntropyError
+  bool reduction;
+}; // class BCELoss
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "cross_entropy_error_impl.hpp"
+#include "binary_cross_entropy_loss_impl.hpp"
 
 #endif

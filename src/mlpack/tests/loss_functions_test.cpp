@@ -21,7 +21,7 @@
 #include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
-#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
@@ -268,12 +268,12 @@ TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
 }
 
 /*
- * Simple test for the cross-entropy error performance function.
+ * Simple test for the binary-cross-entropy lossfunction.
  */
-TEST_CASE("SimpleCrossEntropyErrorTest", "[LossFunctionsTest]")
+TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
 {
   arma::mat input1, input2, output, target1, target2;
-  CrossEntropyError<> module(1e-6);
+  BCELoss<> module(1e-6, false);
 
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
