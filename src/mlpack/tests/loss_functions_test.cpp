@@ -272,7 +272,7 @@ TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
  */
 TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
 {
-  arma::mat input1, input2, output, target1, target2;
+  arma::mat input1, input2, input3, output, target1, target2, target3;
   BCELoss<> module1(1e-6, false);
   BCELoss<> module2(1e-6, true);
   // Test the Forward function on a user generator input and compare it against
@@ -281,8 +281,13 @@ TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
   target1 = arma::zeros(1, 8);
   double error1 = module1.Forward(input1, target1);
   REQUIRE(error1 - 8 * std::log(2) == Approx(0.0).margin(2e-5));
-  double error2 = module2.Forward(input1, target1);
-  REQUIRE(error2 - std::log(2) == Approx(0.0).margin(2e-5));
+
+  input2 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5");
+  target2 = arma::zeros(1, 6);
+  input2.reshape(2, 3);
+  target2.reshape(2, 3);
+  double error2 = module2.Forward(input2, target2);
+  REQUIRE(error1 - 3 * std::log(2) == Approx(0.0).margin(2e-5));
 
   input2 = arma::mat("0 1 1 0 1 0 0 1");
   target2 = arma::mat("0 1 1 0 1 0 0 1");
