@@ -82,12 +82,12 @@ GRU<InputDataType, OutputDataType>::GRU(const GRU& layer) :
     inSize(layer.inSize),
     outSize(layer.outSize),
     rho(layer.rho),
-    weights(layer.weights),
     batchSize(layer.batchSize),
     forwardStep(layer.forwardStep),
     backwardStep(layer.backwardStep),
     gradientStep(layer.gradientStep),
-    deterministic(layer.deterministic)
+    deterministic(layer.deterministic),    
+    weights(layer.weights),
 {
   // Nothing to do here.
 }
@@ -98,12 +98,13 @@ GRU<InputDataType, OutputDataType>::GRU(GRU&& layer) :
     inSize(std::move(layer.inSize)),
     outSize(std::move(layer.outSize)),
     rho(std::move(layer.rho)),
-    weights(std::move(layer.weights)),
     batchSize(std::move(layer.batchSize)),
     forwardStep(std::move(layer.forwardStep)),
     backwardStep(std::move(layer.backwardStep)),
     gradientStep(std::move(layer.gradientStep)),
-    deterministic(std::move(layer.deterministic))
+    deterministic(std::move(layer.deterministic)),
+    weights(std::move(layer.weights)),
+
 {
   // Nothing to do here.
 }
@@ -118,13 +119,12 @@ GRU<InputDataType, OutputDataType>&
     inSize = layer.inSize;
     outSize = layer.outSize;
     rho = layer.rho;
-    weights = layer.weights;
     batchSize = layer.batchSize;
     forwardStep = layer.forwardStep;
     backwardStep = layer.backwardStep;
     gradientStep = layer.gradientStep;
     deterministic = layer.deterministic;
-
+    weights = layer.weights;
   }
   return *this;
 }
@@ -139,12 +139,12 @@ GRU<InputDataType, OutputDataType>&
     inSize = std::move(layer.inSize);
     outSize = std::move(layer.outSize);
     rho = std::move(layer.rho);
-    weights = std::move(layer.weights);
     batchSize = std::move(layer.batchSize);
     forwardStep = std::move(layer.forwardStep);
     backwardStep = std::move(layer.backwardStep);
     gradientStep = std::move(layer.gradientStep);
     deterministic = std::move(layer.deterministic);
+    weights = std::move(layer.weights);
   }
   return *this;
 }
