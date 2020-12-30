@@ -2,8 +2,8 @@
  * @file mothods/time_series_models/util/lag.hpp
  * @author Rishabh Garg
  *
- * Implementation of Lag() which returns the lagged feature shifted by a
- * specified period.
+ * Implementation of Lag() which returns the feature shifted by a specified
+ * period.
  * 
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -27,18 +27,18 @@ namespace ts /* Time Series methods. */ {
  * @param k Number of periods to shift (must be a non negative integer).
  */
 template<typename InputType>
-InputType Lag(InputType& input, size_t k) {
+InputType Lag(const InputType& input, size_t k) {
     InputType lag_k(input.n_elem);
     
     if(k == input.n_elem) {
-        Log::Warn << "The value of k is equal to the number of elements in the\
-        input vector. Output vector will contain all NaNs" << std::endl;
+        Log::Warn << "The value of k is equal to the number of elements in the"
+        << " input vector. Output vector will contain all NaNs" << std::endl;
     }
     
     if(k > input.n_elem) {
-        Log::Fatal << "The value of k i.e. " << k << " must be less than or\
-        equal to the number of elements of input vector i.e. " << input.n_elem
-        << "." << std::endl;
+        Log::Fatal << "The value of k i.e. " << k << " must be less than or"
+        << " equal to the number of elements of input vector i.e. "
+        << input.n_elem << "." << std::endl;
     }
     
     // t = 0 to k doesn't have data corresponding to t-k timestamp. So, they
