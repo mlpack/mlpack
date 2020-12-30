@@ -52,7 +52,7 @@ if (BUILD_JULIA_BINDINGS)
 else()
   set(FORCE_BUILD_JULIA_BINDINGS OFF)
 endif()
-option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." OFF)
 
 # Detect whether the user passed BUILD_GO_BINDINGS in order to determine if
 # we should fail if Go isn't found.
@@ -61,7 +61,7 @@ if (BUILD_GO_BINDINGS)
 else()
   set(FORCE_BUILD_GO_BINDINGS OFF)
 endif()
-option(BUILD_GO_BINDINGS "Build Go bindings." ON)
+option(BUILD_GO_BINDINGS "Build Go bindings." OFF)
 
 # If building Go bindings then build go shared libraries.
 if (BUILD_GO_BINDINGS)
@@ -75,7 +75,7 @@ if (BUILD_R_BINDINGS)
 else()
   set(FORCE_BUILD_R_BINDINGS OFF)
 endif()
-option(BUILD_R_BINDINGS "Build R bindings." ON)
+option(BUILD_R_BINDINGS "Build R bindings." OFF)
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
@@ -419,6 +419,7 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.75.0" "1.75"
   "1.74.0" "1.74"
   "1.73.0" "1.73"
   "1.72.0" "1.72"
