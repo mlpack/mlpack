@@ -72,7 +72,7 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>&
 Reparametrization<InputDataType, OutputDataType>::
-opertaor=(const Reparametrization& layer) 
+operator=(const Reparametrization& layer) 
 {
        if (this != &layer)
        {
