@@ -72,13 +72,13 @@ class Reparametrization
                     const bool includeKl = true,
                     const double beta = 1);
     
-  //! Copy Constructor 
+  //! Copy Constructor.
   Reparametrization(const Reparametrization& layer);
     
-  //! Move Constructor 
+  //! Move Constructor.
   Reparametrization(Reparametrization&& layer);
     
-  //! Copy assignment operator 
+  //! Copy assignment operator.
   Reparametrization& operator=(const Reparametrization& layer);
     
   //! Move assignment operator 
