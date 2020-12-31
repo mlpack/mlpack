@@ -1,6 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Disabled all the bindings by default in cmake (#2782).
+  * Add Adjusted R squared functionality to R2Score::Evaluate (#2624).
+
+  * Disabled all the bindings by default in CMake (#2782).
 
   * Added an implementation to Stratify Data (#2671).
 
