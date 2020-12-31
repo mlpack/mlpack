@@ -287,7 +287,7 @@ TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
   input2.reshape(2, 3);
   target2.reshape(2, 3);
   double error2 = module2.Forward(input2, target2);
-  REQUIRE(error1 - std::log(2) == Approx(0.0).margin(2e-5));
+  REQUIRE(error2 - std::log(2) == Approx(0.0).margin(2e-5));
 
   input2 = arma::mat("0 1 1 0 1 0 0 1");
   target2 = arma::mat("0 1 1 0 1 0 0 1");
