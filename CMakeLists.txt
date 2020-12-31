@@ -47,6 +47,7 @@ elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
   set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/boost_1_75_0" CACHE STRING "Boost header PATH")
   message("CEREAL INCLUDE PATH" ${CEREAL_INCLUDE_DIR})
   message("Boost INCLUDE PATH" ${Boost_INCLUDE_DIR})
+  message("GFortran library PATH:" ${GFORTRAN_LIBRARY})
 endif()
 
 # Set minimum library version required by mlpack.
@@ -497,7 +498,10 @@ else ()
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 endif ()
 
-find_package(cereal "${CEREAL_VERSION}" REQUIRED)
+if(NOT CMAKE_CROSSCOMPILING)
+  find_package(cereal "${CEREAL_VERSION}" REQUIRED)
+endif()
+
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 
 # Unfortunately this configuration variable is necessary and will need to be
