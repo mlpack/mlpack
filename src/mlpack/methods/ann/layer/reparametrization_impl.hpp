@@ -87,7 +87,7 @@ opertaor=(const Reparametrization& layer)
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>&
 Reparametrization<InputDataType, OutputDataType>::
-opertaor=(Reparametrization&& layer) 
+operator=(Reparametrization&& layer) 
 {
        if (this != &layer)
        {
