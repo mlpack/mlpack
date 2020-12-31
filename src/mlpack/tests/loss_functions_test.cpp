@@ -306,15 +306,6 @@ TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
   REQUIRE(output.n_rows == input1.n_rows);
   REQUIRE(output.n_cols == input1.n_cols);
 
-  module2.Backward(input1, target1, output);
-  for (double el : output)
-  {
-    // For the 0.5 constant vector we should get 1 / ((1 - 0.5)*8) = 0.25 everywhere.
-    REQUIRE(el - 0.25 == Approx(0.0).margin(5e-6));
-  }
-  REQUIRE(output.n_rows == input1.n_rows);
-  REQUIRE(output.n_cols == input1.n_cols);
-
   module1.Backward(input2, target2, output);
   for (size_t i = 0; i < 8; ++i)
   {
