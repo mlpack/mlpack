@@ -23,6 +23,8 @@
 #include "visitor/set_input_height_visitor.hpp"
 #include "visitor/set_input_width_visitor.hpp"
 
+#include "util/check_input_shape.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -109,6 +111,10 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
       OptimizerType& optimizer,
       CallbackTypes&&... callbacks)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
+                                                              predictors.n_rows, 
+                                                              "FFN<>::Train()");
+
   ResetData(std::move(predictors), std::move(responses));
 
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
@@ -131,6 +137,10 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::mat responses,
     CallbackTypes&&... callbacks)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
+                                                              predictors.n_rows, 
+                                                              "FFN<>::Train()");
+
   ResetData(std::move(predictors), std::move(responses));
 
   OptimizerType optimizer;
@@ -217,6 +227,10 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::mat predictors, arma::mat& results)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
+                                                              predictors.n_rows, 
+                                                              "FFN<>::Predict()");
+
   if (parameter.is_empty())
     ResetParameters();
 
@@ -250,6 +264,10 @@ template<typename PredictorsType, typename ResponsesType>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
     const PredictorsType& predictors, const ResponsesType& responses)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
+                                                              predictors.n_rows, 
+                                                              "FFN<>::Evaluate()");
+
   if (parameter.is_empty())
     ResetParameters();
 

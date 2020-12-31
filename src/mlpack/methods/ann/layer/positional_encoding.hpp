@@ -93,6 +93,11 @@ class PositionalEncoding
   //! Get the positional encoding vector.
   InputDataType const& Encoding() const { return positionalEncoding; }
 
+  size_t InputShape() const
+  {
+    return embedDim * maxSequenceLength;
+  }
+
   /**
    * Serialize the layer
    */

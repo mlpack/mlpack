@@ -29,39 +29,39 @@ HuberLoss<InputDataType, OutputDataType>::HuberLoss(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
-HuberLoss<InputDataType, OutputDataType>::Forward(const InputType& input,
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+HuberLoss<InputDataType, OutputDataType>::Forward(const PredictionType& prediction,
                                                   const TargetType& target)
 {
-  typedef typename InputType::elem_type ElemType;
+  typedef typename PredictionType::elem_type ElemType;
   ElemType loss = 0;
-  for (size_t i = 0; i < input.n_elem; ++i)
+  for (size_t i = 0; i < prediction.n_elem; ++i)
   {
-      const ElemType absError = std::abs(target[i] - input[i]);
+      const ElemType absError = std::abs(target[i] - prediction[i]);
       loss += absError > delta
           ? delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
   }
-  return mean ? loss / input.n_elem : loss;
+  return mean ? loss / prediction.n_elem : loss;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void HuberLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  typedef typename InputType::elem_type ElemType;
+  typedef typename PredictionType::elem_type ElemType;
 
-  output.set_size(size(input));
-  for (size_t i = 0; i < output.n_elem; ++i)
+  loss.set_size(size(prediction));
+  for (size_t i = 0; i < loss.n_elem; ++i)
   {
-    const ElemType absError = std::abs(target[i] - input[i]);
-    output[i] = absError > delta
-        ? - delta * (target[i] - input[i]) / absError : input[i] - target[i];
+    const ElemType absError = std::abs(target[i] - prediction[i]);
+    loss[i] = absError > delta
+        ? - delta * (target[i] - prediction[i]) / absError : prediction[i] - target[i];
     if (mean)
-      output[i] /= output.n_elem;
+      loss[i] /= loss.n_elem;
   }
 }
 

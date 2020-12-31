@@ -73,6 +73,18 @@ class FastLSTM
   //! Create the Fast LSTM object.
   FastLSTM();
 
+  //! Copy Constructor
+  FastLSTM(const FastLSTM& layer);
+
+  //! Move Constructor
+  FastLSTM(FastLSTM&& layer);
+
+  //! Copy assignment operator
+  FastLSTM& operator=(const FastLSTM& layer);
+
+  //! Move assignment operator
+  FastLSTM& operator=(FastLSTM&& layer);
+
   /**
    * Create the Fast LSTM layer object using the specified parameters.
    *
@@ -168,6 +180,12 @@ class FastLSTM
   size_t WeightSize() const
   {
     return 4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize;
+  }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
   }
 
   /**

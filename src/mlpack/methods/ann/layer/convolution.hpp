@@ -259,6 +259,12 @@ class Convolution
     return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
   }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inputHeight * inputWidth * inSize;
+  }
+
   /**
    * Serialize the layer.
    */

@@ -2,11 +2,25 @@
 
 @section build_buildintro Introduction
 
-This document discusses how to build mlpack from source. These build directions 
+This document discusses how to build mlpack from source. These build directions
 will work for any Linux-like shell environment (for example Ubuntu, macOS,
-FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
-and so it may be easier to use the package manager for your system.  For example, 
-on Ubuntu, you can install mlpack with the following command:
+FreeBSD etc). However, mlpack is in the repositories of many Linux distributions
+and so it may be easier to use the package manager for your system.  For example,
+on Ubuntu, you can install the mlpack library and command-line executables (e.g.
+mlpack_pca, mlpack_kmeans, etc.) with the following command:
+
+@code
+$ sudo apt-get install libmlpack-dev mlpack-bin
+@endcode
+
+On Fedora or Red Hat(EPEL):
+
+@code
+$ sudo dnf install mlpack-devel mlpack-bin
+@endcode
+
+For installing only the header files and library for building C++ applications
+on top of mlpack, one could use:
 
 @code
 $ sudo apt-get install libmlpack-dev
@@ -25,7 +39,7 @@ mlpack uses CMake as a build system and allows several flexible build
 configuration options.  One can consult any of numerous CMake tutorials for
 further documentation, but this tutorial should be enough to get mlpack built
 and installed on most Linux and UNIX-like systems (including OS X).  If you want
-to build mlpack on Windows, see \ref build_windows (alternatively, you can read 
+to build mlpack on Windows, see \ref build_windows (alternatively, you can read
 <a href="https://keon.io/mlpack-on-windows/">Keon's excellent tutorial</a> which
 is based on older versions).
 
@@ -78,7 +92,7 @@ mlpack depends on the following libraries, which need to be installed on the
 system and have headers present:
 
  - Armadillo >= 8.400.0 (with LAPACK support)
- - Boost (math_c99, unit_test_framework, heap, spirit) >= 1.58
+ - Boost (math_c99, spirit) >= 1.58
  - cereal >= 1.1.2
  - ensmallen >= 2.10.0 (will be downloaded if not found)
 
@@ -95,11 +109,11 @@ For Python bindings, the following packages are required:
  - pandas >= 0.15.0
  - pytest-runner
 
-In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be 
+In Ubuntu (>= 18.04) and Debian (>= 10) all of these dependencies can be
 installed through apt:
 
 @code
-# apt-get install libboost-math-dev libboost-test-dev libcereal-dev
+# apt-get install libboost-math-dev libcereal-dev
   libarmadillo-dev binutils-dev python3-pandas python3-numpy cython3
   python3-setuptools
 @endcode
@@ -112,18 +126,18 @@ packages:
 # apt-get install libensmallen-dev libstb-dev
 @endcode
 
-@note For older versions of Ubuntu and Debian, Armadillo needs to be built from 
-source as apt installs an older version. So you need to omit 
+@note For older versions of Ubuntu and Debian, Armadillo needs to be built from
+source as apt installs an older version. So you need to omit
 \c libarmadillo-dev from the code snippet above and instead use
 <a href="http://arma.sourceforge.net/download.html">this link</a>
- to download the required file. Extract this file and follow the README in the 
+ to download the required file. Extract this file and follow the README in the
  uncompressed folder to build and install Armadillo.
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via dnf:
 
 @code
-# dnf install boost-devel boost-test boost-math armadillo-devel binutils-devel 
-  python3-Cython python3-setuptools python3-numpy python3-pandas ensmallen-devel 
+# dnf install boost-devel boost-math armadillo-devel binutils-devel
+  python3-Cython python3-setuptools python3-numpy python3-pandas ensmallen-devel
   stbi-devel cereal-devel
 @endcode
 
@@ -219,7 +233,8 @@ src/mlpack/CMakeFiles/mlpack.dir/core/optimizers/aug_lagrangian/aug_lagrangian_t
 @endcode
 
 It's often useful to specify \c -jN to the \c make command, which will build on
-\c N processor cores.  That can accelerate the build significantly.
+\c N processor cores. That can accelerate the build significantly. Sometimes
+using many cores may exhaust the memory so choose accordingly.
 
 You can specify individual components which you want to build, if you do not
 want to build everything in the library:
@@ -235,11 +250,37 @@ suite.  You can build this component with
 $ make mlpack_test
 @endcode
 
-and then run all of the tests, or an individual test suite:
+We use <a href="https://github.com/catchorg/Catch2">Catch2</a> to write our tests.
+To run all tests, you can simply run:
 
 @code
-$ bin/mlpack_test
-$ bin/mlpack_test -t KNNTest
+$ ./bin/mlpack_test
+@endcode
+
+To run all tests in a particular file you can run:
+
+@code
+$ ./bin/mlpack_test "[testname]"
+@endcode
+
+where testname is the name of the test suite. 
+For example to run all collaborative filtering tests implemented in cf_test.cpp you can run:
+
+@code
+./bin/mlpack_test "[CFTest]"
+@endcode
+
+Now similarly you can run all the binding related tests using:
+
+@code
+./bin/mlpack_test "[BindingTests]"
+@endcode
+
+To run a single test, you can explicitly provide the name of the test; for example, 
+to run BinaryClassificationMetricsTest implemented in cv_test.cpp you can run the following:
+
+@code
+./bin/mlpack_test BinaryClassificationMetricsTest
 @endcode
 
 If the build fails and you cannot figure out why, register an account on Github
