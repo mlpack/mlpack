@@ -38,6 +38,9 @@ cdef extern from "<mlpack/core/util/io.hpp>" namespace "mlpack" nogil:
     @staticmethod
     void ClearSettings() nogil except +
 
+	@staticmethod
+	void SanityChecks() nogil except +
+
 cdef extern from "<mlpack/bindings/python/mlpack/io_util.hpp>" \
     namespace "mlpack::util" nogil:
   void SetParam[T](string, T&) nogil except +
@@ -50,4 +53,3 @@ cdef extern from "<mlpack/bindings/python/mlpack/io_util.hpp>" \
   void DisableBacktrace() nogil except +
   void ResetTimers() nogil except +
   void EnableTimers() nogil except +
-  void SanityCheck() nogil except +

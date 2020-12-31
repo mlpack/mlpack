@@ -237,7 +237,7 @@ void PrintPYX(const util::BindingDetails& doc,
 
   // Before calling mlpackMain(), we check input matrices for NaN values if needed.
   cout << "  if IO.GetParam[cbool](<const string> 'check_input_matrices'):" << endl;
-  cout << "    IO.SanityCheck()" << endl;
+  cout << "    IO.SanityChecks()" << endl;
 
   // Call the method.
   cout << "  # Call the mlpack program." << endl;

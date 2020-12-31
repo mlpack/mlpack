@@ -268,9 +268,10 @@ void IO::ClearSettings()
   GetSingleton().functionMap = persistentFunctions;
 }
 
-void IO::SanityCheck()
+void IO::SanityChecks()
 {
   std::map<std::string, util::ParamData>::iterator itr;
+
   for (itr = IO::Parameters().begin(); itr != IO::Parameters().end(); ++itr)
   {
     std::string paramName = itr->first;
