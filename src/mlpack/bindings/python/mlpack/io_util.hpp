@@ -15,7 +15,7 @@
 
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/data/dataset_mapper.hpp>
-
+#include <iostream>
 namespace mlpack {
 namespace util {
 
@@ -166,7 +166,7 @@ inline void EnableTimers()
 /**
  * Sanity Check.
  */
-void SanityChecks()
+void SanityCheck()
 {
   std::map<std::string, util::ParamData>::iterator itr;
   for (itr = IO::Parameters().begin(); itr != IO::Parameters().end(); ++itr)
@@ -178,14 +178,34 @@ void SanityChecks()
       if (IO::GetParam<arma::Mat<double>>(paramName).has_nan())
         Log::Fatal << "The input " << paramName << " has nan values." << std::endl;
     }
+    else if (paramType == "arma::Mat<size_t>")
+    {
+      if (IO::GetParam<arma::Mat<size_t>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has nan values." << std::endl;
+    }
     else if (paramType == "arma::colvec")
     {
       if (IO::GetParam<arma::Col<double>>(paramName).has_nan())
         Log::Fatal << "The input " << paramName << " has nan values." << std::endl;
     }
+    else if (paramType == "arma::Col<size_t>")
+    {
+      if (IO::GetParam<arma::Col<size_t>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has nan values." << std::endl;
+    }
     else if (paramType == "arma::rowvec")
     {
       if (IO::GetParam<arma::Row<double>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has nan values." << std::endl;
+    }
+    else if (paramType == "arma::Row<size_t>")
+    {
+      if (IO::GetParam<arma::Row<size_t>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has nan values." << std::endl;
+    }
+    else if (paramType == "std::tuple<data::DatasetInfo, arma::mat>")
+    {
+      if (std::get<1>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(paramName)).has_nan())
         Log::Fatal << "The input " << paramName << " has nan values." << std::endl;
     }
   }

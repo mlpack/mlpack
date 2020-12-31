@@ -78,7 +78,7 @@ void PrintPYX(const util::BindingDetails& doc,
   cout << "from io cimport SetParam, SetParamPtr, SetParamWithInfo, "
       << "GetParamPtr" << endl;
   cout << "from io cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
-      << "ResetTimers, EnableTimers, SanityChecks" << endl;
+      << "ResetTimers, EnableTimers, SanityCheck" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
   cout << "from serialization cimport SerializeIn, SerializeOut" << endl;
   cout << endl;
@@ -237,7 +237,7 @@ void PrintPYX(const util::BindingDetails& doc,
 
   // Before calling mlpackMain(), we do a sanity check if needed.
   cout << "  if not IO.GetParam[cbool](<const string> 'no_sanity_checks'):" << endl;
-  cout << "    SanityChecks()" << endl;
+  cout << "    SanityCheck()" << endl;
 
   // Call the method.
   cout << "  # Call the mlpack program." << endl;
