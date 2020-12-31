@@ -267,3 +267,49 @@ void IO::ClearSettings()
   GetSingleton().aliases = persistentAliases;
   GetSingleton().functionMap = persistentFunctions;
 }
+
+void IO::SanityCheck()
+{
+  std::map<std::string, util::ParamData>::iterator itr;
+  for (itr = IO::Parameters().begin(); itr != IO::Parameters().end(); ++itr)
+  {
+    std::string paramName = itr->first;
+    std::string paramType = itr->second.cppType;
+    if (paramType == "arma::mat")
+    {
+      if (IO::GetParam<arma::Mat<double>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has NaN values." << std::endl;
+    }
+    else if (paramType == "arma::Mat<size_t>")
+    {
+      if (IO::GetParam<arma::Mat<size_t>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has NaN values." << std::endl;
+    }
+    else if (paramType == "arma::colvec")
+    {
+      if (IO::GetParam<arma::Col<double>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has NaN values." << std::endl;
+    }
+    else if (paramType == "arma::Col<size_t>")
+    {
+      if (IO::GetParam<arma::Col<size_t>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has NaN values." << std::endl;
+    }
+    else if (paramType == "arma::rowvec")
+    {
+      if (IO::GetParam<arma::Row<double>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has NaN values." << std::endl;
+    }
+    else if (paramType == "arma::Row<size_t>")
+    {
+      if (IO::GetParam<arma::Row<size_t>>(paramName).has_nan())
+        Log::Fatal << "The input " << paramName << " has NaN values." << std::endl;
+    }
+    else if (paramType == "std::tuple<data::DatasetInfo, arma::mat>")
+    {
+      if (std::get<1>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(paramName)).has_nan())
+        Log::Fatal << "The input " << paramName << " has NaN values." << std::endl;
+    }
+  }
+}
+

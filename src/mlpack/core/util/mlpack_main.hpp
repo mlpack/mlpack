@@ -230,8 +230,8 @@ PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
     " copied before the method is run.  This is useful for debugging problems "
     "where the input parameters are being modified by the algorithm, but can "
     "slow down the code.", "");
-PARAM_FLAG("no_sanity_checks", "If specified, the input matrix is checked for"
-    " nan values.", "");
+PARAM_FLAG("check_input_matrices", "If specified, the input matrix is checked for"
+    " NaN values; an exception is thrown if any are found.", "");
 
 // Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 

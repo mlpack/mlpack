@@ -285,6 +285,11 @@ class IO
    */
   static void ClearSettings();
 
+  /**
+   * Checks all input matrices for NaN values, if found throws an exception.
+   */
+  static void SanityCheck();
+
  private:
   //! Convenience map from alias values to names.
   std::map<char, std::string> aliases;
