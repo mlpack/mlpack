@@ -4114,7 +4114,6 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
 
   // The input test matrix is of the form 3 x 2 x 4 x 1 where
   // number of images are 3 and number of feature maps are 2.
-  input = arma::mat(8, 3);
   input = { { 1, 446, 42 },
             { 2, 16, 63 },
             { 3, 13, 63 },
@@ -4125,7 +4124,6 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
             { 32, 13, 42 } };
 
   // Output calculated using torch.nn.BatchNorm2d().
-  result = arma::mat(8, 3);
   result = { { -0.4786, 3.2634, -0.1338 },
              { -0.4702, -0.3525, 0.0427 },
              { -0.4618, -0.3777, 0.0427 },
@@ -4180,7 +4178,6 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
   module1.Forward(input, deterministicOutput);
 
   result.clear();
-  result = arma::mat(8, 3);
   result = { { -0.12195, 11.20426, 0.92158 },
              { -0.0965, 0.259824, 1.4560 },
              { -0.071054, 0.183567, 1.45607 },
@@ -4201,7 +4198,6 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
 
   // The input test matrix is of the form 2 x 2 x 3 x 1 where
   // number of images are 2 and number of feature maps are 2.
-  input = arma::mat(6, 2);
   input = { { 12, 443 },
             { 134, 45 },
             { 11, 13 },
