@@ -155,6 +155,7 @@ Convolution<
     const Convolution& layer) : 
     inSize(layer.inSize),
     outSize(layer.outSize),
+    batchSize(layer.batchSize),
     kernelWidth(layer.kernelWidth),
     kernelHeight(layer.kernelHeight),
     strideWidth(layer.strideWidth),
@@ -191,6 +192,7 @@ Convolution<
     Convolution&& layer) : 
     inSize(std::move(layer.inSize)),
     outSize(std::move(layer.outSize)),
+    batchSize(std::move(layer.batchSize)),
     kernelWidth(std::move(layer.kernelWidth)),
     kernelHeight(std::move(layer.kernelHeight)),
     strideWidth(std::move(layer.strideWidth)),

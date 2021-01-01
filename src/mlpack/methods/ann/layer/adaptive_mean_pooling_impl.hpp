@@ -19,7 +19,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling()
+AdaptiveMeanPooling<InputDataType, OutputDataType>::AdaptiveMeanPooling():
+    outputWidth(0),
+    outputHeight(0),
+    reset(false)
 {
   // Nothing to do here.
 }

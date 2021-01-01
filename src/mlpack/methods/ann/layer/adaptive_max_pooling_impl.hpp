@@ -19,7 +19,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling()
+AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling():
+    outputWidth(0),
+    outputHeight(0),
+    reset(false)
 {
   // Nothing to do here.
 }
