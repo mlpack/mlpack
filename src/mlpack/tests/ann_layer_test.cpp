@@ -4318,7 +4318,6 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
 
   // The input test matrix is of the form 3 x 2 x 4 x 1 where
   // number of images are 3 and number of feature maps are 2.
-  input = arma::mat(8, 3);
   input = { { 1, 446, 42 },
             { 2, 16, 63 },
             { 3, 13, 63 },
