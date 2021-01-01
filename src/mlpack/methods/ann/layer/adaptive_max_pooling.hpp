@@ -45,6 +45,18 @@ class AdaptiveMaxPooling
   AdaptiveMaxPooling(const size_t outputWidth,
                      const size_t outputHeight);
 
+  //! Copy constructor.
+  AdaptiveMaxPooling(const AdaptiveMaxPooling& layer);
+
+  //! Move constructor.
+  AdaptiveMaxPooling(AdaptiveMaxPooling&&);
+
+  //! Copy assignment operator.
+  AdaptiveMaxPooling& operator=(const AdaptiveMaxPooling& layer);
+
+  //! Move assignment operator.
+  AdaptiveMaxPooling& operator=(AdaptiveMaxPooling&& layer);
+
   /**
    * Create the AdaptiveMaxPooling object.
    *
