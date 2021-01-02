@@ -39,7 +39,7 @@ cdef extern from "<mlpack/core/util/io.hpp>" namespace "mlpack" nogil:
     void ClearSettings() nogil except +
 
     @staticmethod
-    void SanityChecks() nogil except +
+    void CheckInputMatrices() nogil except +
 
 cdef extern from "<mlpack/bindings/python/mlpack/io_util.hpp>" \
     namespace "mlpack::util" nogil:
