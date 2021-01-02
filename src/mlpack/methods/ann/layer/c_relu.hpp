@@ -14,10 +14,12 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
+
 /**
- *
  * A concatenated ReLU has two outputs, one ReLU and one negative ReLU,
  * concatenated together. In other words, for positive x it produces [x, 0],
  * and for negative x it produces [0, x]. Because it has two outputs,
@@ -38,22 +40,18 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *     cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *     to also be in this type. The type also allows the computation and weight
+ *     type to differ from the input type (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class CReLU
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class CReLUType : public Layer<InputType, OutputType>
 {
  public:
-  /**
-   * Create the CReLU object.
-   */
-  CReLU();
+  //! Create the CReLU object.
+  CReLUType();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -63,7 +61,6 @@ class CReLU
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -75,32 +72,18 @@ class CReLU
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename DataType>
-  void Backward(const DataType& input, const DataType& gy, DataType& g);
+  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
-  /**
-   * Serialize the layer.
-   */
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */);
+}; // class CReLUType
 
- private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
+// Convenience typedefs.
 
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-}; // class CReLU
+// Standard CReLU layer.
+typedef CReLUType<arma::mat, arma::mat> CReLU;
+
 
 } // namespace ann
 } // namespace mlpack

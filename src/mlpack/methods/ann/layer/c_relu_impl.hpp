@@ -18,35 +18,32 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-CReLU<InputDataType, OutputDataType>::CReLU()
+template<typename InputType, typename OutputType>
+CReLUType<InputType, OutputType>::CReLUType()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void CReLU<InputDataType, OutputDataType>::Forward(
+void CReLUType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   output = arma::join_cols(arma::max(input, 0.0 * input), arma::max(
       (-1 * input), 0.0 * input));
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
-void CReLU<InputDataType, OutputDataType>::Backward(
-    const DataType& input, const DataType& gy, DataType& g)
+template<typename InputType, typename OutputType>
+void CReLUType<InputType, OutputType>::Backward(
+    const InputType& input, const OutputType& gy, OutputType& g)
 {
-  DataType temp;
-  temp = gy % (input >= 0.0);
+  OutputType temp = gy % (input >= 0.0);
   g = temp.rows(0, (input.n_rows / 2 - 1)) - temp.rows(input.n_rows / 2,
       (input.n_rows - 1));
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void CReLU<InputDataType, OutputDataType>::serialize(
+void CReLUType<InputType, OutputType>::serialize(
     Archive& /* ar */,
     const uint32_t /* version */)
 {
