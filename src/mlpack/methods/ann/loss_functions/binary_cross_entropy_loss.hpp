@@ -99,12 +99,6 @@ class BCELoss
   bool reduction;
 }; // class BCELoss
 
-} // namespace ann
-} // namespace mlpack
-
-// Include implementation.
-#include "binary_cross_entropy_loss_impl.hpp"
-
 /**
  * Adding alias of BCELoss.
  */
@@ -114,5 +108,11 @@ template <
 >
 using CrossEntropyError = BCELoss<
     InputDataType, OutputDataType>;
+
+} // namespace ann
+} // namespace mlpack
+
+// Include implementation.
+#include "binary_cross_entropy_loss_impl.hpp"
 
 #endif
