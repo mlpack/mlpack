@@ -84,7 +84,6 @@ class CReLUType : public Layer<InputType, OutputType>
 // Standard CReLU layer.
 typedef CReLUType<arma::mat, arma::mat> CReLU;
 
-
 } // namespace ann
 } // namespace mlpack
 

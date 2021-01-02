@@ -18,8 +18,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-CELU<InputDataType, OutputDataType>::CELU(const double alpha) :
+template<typename InputType, typename OutputType>
+CELUType<InputType, OutputType>::CELUType(const double alpha) :
     alpha(alpha),
     deterministic(false)
 {
@@ -30,16 +30,15 @@ CELU<InputDataType, OutputDataType>::CELU(const double alpha) :
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void CELU<InputDataType, OutputDataType>::Forward(
+void CELUType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output = arma::ones<OutputDataType>(arma::size(input));
+  output = arma::ones<OutputType>(arma::size(input));
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (input(i) >= 0) ? input(i) : alpha *
-                (std::exp(input(i) / alpha) - 1);
+        (std::exp(input(i) / alpha) - 1);
   }
 
   if (!deterministic)
@@ -53,17 +52,16 @@ void CELU<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
-void CELU<InputDataType, OutputDataType>::Backward(
-    const DataType& /* input */, const DataType& gy, DataType& g)
+template<typename InputType, typename OutputType>
+void CELUType<InputType, OutputType>::Backward(
+    const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   g = gy % derivative;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void CELU<InputDataType, OutputDataType>::serialize(
+void CELUType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

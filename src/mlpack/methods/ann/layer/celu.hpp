@@ -25,6 +25,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -48,16 +50,14 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * In the deterministic mode, there is no computation of the derivative.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *     cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *     to also be in this type. The type also allows the computation and weight
+ *     type to differ from the input type (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class CELU
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class CELUType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -67,7 +67,7 @@ class CELU
    *
    * @param alpha Scale parameter for the negative factor (default = 1.0).
    */
-  CELU(const double alpha = 1.0);
+  CELUType(const double alpha = 1.0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -76,7 +76,6 @@ class CELU
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -88,18 +87,7 @@ class CELU
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename DataType>
-  void Backward(const DataType& input, const DataType& gy, DataType& g);
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
   //! Get the non zero gradient.
   double const& Alpha() const { return alpha; }
@@ -111,28 +99,25 @@ class CELU
   //! Modify the value of deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
-  /**
-   * Serialize the layer.
-   */
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Locally stored first derivative of the activation function.
-  arma::mat derivative;
+  OutputType derivative;
 
   //! CELU Hyperparameter (alpha > 0).
   double alpha;
 
   //! If true the derivative computation is disabled, see notes above.
   bool deterministic;
-}; // class CELU
+}; // class CELUType
+
+// Convenience typedefs.
+
+// Standard CELU layer.
+typedef CELUType<arma::mat, arma::mat> CELU;
 
 } // namespace ann
 } // namespace mlpack
