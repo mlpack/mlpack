@@ -105,4 +105,14 @@ class BCELoss
 // Include implementation.
 #include "binary_cross_entropy_loss_impl.hpp"
 
+/**
+ * Adding alias of BCELoss.
+ */
+template <
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
+>
+using CrossEntropyError = BCELoss<
+    InputDataType, OutputDataType>;
+
 #endif

@@ -1914,7 +1914,7 @@ TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
         target(targetWord, i) = 1;
       }
 
-      model = new FFN<BCELoss<>, GlorotInitialization>();
+      model = new FFN<BCELoss<>, GlorotInitialization>(BCELoss<>(false));
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<Lookup<> >(vocabSize, embeddingSize);
