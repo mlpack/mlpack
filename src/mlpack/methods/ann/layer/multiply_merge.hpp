@@ -135,6 +135,9 @@ class MultiplyMerge
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */
