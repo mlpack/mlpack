@@ -19,32 +19,30 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
+template<typename InputType, typename OutputType>
+MultiplyConstantType<InputType, OutputType>::MultiplyConstantType(
     const double scalar) : scalar(scalar)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void MultiplyConstant<InputDataType, OutputDataType>::Forward(
+void MultiplyConstantType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   output = input * scalar;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
-void MultiplyConstant<InputDataType, OutputDataType>::Backward(
-    const DataType& /* input */, const DataType& gy, DataType& g)
+template<typename InputType, typename OutputType>
+void MultiplyConstantType<InputType, OutputType>::Backward(
+    const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   g = gy * scalar;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void MultiplyConstant<InputDataType, OutputDataType>::serialize(
+void MultiplyConstantType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(scalar));

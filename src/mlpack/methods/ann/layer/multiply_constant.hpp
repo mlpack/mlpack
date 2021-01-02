@@ -15,6 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -22,22 +24,18 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the multiply constant layer. The multiply constant layer
  * multiplies the input by a (non-learnable) constant.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *     cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *     to also be in this type. The type also allows the computation and weight
+ *     type to differ from the input type (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class MultiplyConstant
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class MultiplyConstantType : public Layer<InputType, OutputType>
 {
  public:
-  /**
-   * Create the MultiplyConstant object.
-   */
-  MultiplyConstant(const double scalar = 1.0);
+  //! Create the MultiplyConstant object.
+  MultiplyConstantType(const double scalar = 1.0);
 
   /**
    * Ordinary feed forward pass of a neural network. Multiply the input with the
@@ -46,7 +44,6 @@ class MultiplyConstant
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -57,40 +54,28 @@ class MultiplyConstant
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename DataType>
-  void Backward(const DataType& /* input */, const DataType& gy, DataType& g);
-
-  //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   //! Get the scalar multiplier.
   double Scalar() const { return scalar; }
   //! Modify the scalar multiplier.
   double& Scalar() { return scalar; }
 
-  /**
-   * Serialize the layer.
-   */
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored constant scalar value.
   double scalar;
+}; // class MultiplyConstantType
 
-  //! Locally-stored delta object.
-  OutputDataType delta;
+// Convenience typedefs.
 
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-}; // class MultiplyConstant
+// Standard MultiplyConstant layer.
+typedef MultiplyConstantType<arma::mat, arma::mat> MultiplyConstant;
 
 } // namespace ann
 } // namespace mlpack
