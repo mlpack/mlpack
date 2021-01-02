@@ -21,24 +21,25 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-PReLU<InputDataType, OutputDataType>::PReLU(
+template<typename InputType, typename OutputType>
+PReLUType<InputType, OutputType>::PReLUType(
     const double userAlpha) : userAlpha(userAlpha)
 {
   alpha.set_size(1, 1);
   alpha(0) = userAlpha;
 }
 
-template<typename InputDataType, typename OutputDataType>
-void PReLU<InputDataType, OutputDataType>::Reset()
+template<typename InputType, typename OutputType>
+void PReLUType<InputType, OutputType>::Reset()
 {
+  alpha = arma::mat(alpha.memptr(), 1, 1, false, false);
+
   //! Set value of alpha to the one given by user.
   alpha(0) = userAlpha;
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void PReLU<InputDataType, OutputDataType>::Forward(
+void PReLUType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   output = input;
@@ -46,40 +47,34 @@ void PReLU<InputDataType, OutputDataType>::Forward(
   output(negative) = input(negative) * alpha(0);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename DataType>
-void PReLU<InputDataType, OutputDataType>::Backward(
-    const DataType& input, const DataType& gy, DataType& g)
+template<typename InputType, typename OutputType>
+void PReLUType<InputType, OutputType>::Backward(
+    const InputType& input, const OutputType& gy, OutputType& g)
 {
-  DataType derivative;
+  OutputType derivative;
   derivative.set_size(arma::size(input));
   for (size_t i = 0; i < input.n_elem; ++i)
-  {
     derivative(i) = (input(i) >= 0) ? 1 : alpha(0);
-  }
 
   g = gy % derivative;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void PReLU<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
+template<typename InputType, typename OutputType>
+void PReLUType<InputType, OutputType>::Gradient(
+    const InputType& input,
+    const OutputType& error,
+    OutputType& gradient)
 {
   if (gradient.n_elem == 0)
-  {
-    gradient = arma::zeros<arma::mat>(1, 1);
-  }
+    gradient = arma::zeros<OutputType>(1, 1);
 
-  arma::mat zeros = arma::zeros<arma::mat>(input.n_rows, input.n_cols);
+  OutputType zeros = arma::zeros<OutputType>(input.n_rows, input.n_cols);
   gradient(0) = arma::accu(error % arma::min(zeros, input)) / input.n_cols;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void PReLU<InputDataType, OutputDataType>::serialize(
+void PReLUType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

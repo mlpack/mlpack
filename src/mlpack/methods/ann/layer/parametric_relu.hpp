@@ -17,6 +17,8 @@
 
 #include <mlpack/prereqs.hpp>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -33,16 +35,14 @@ namespace ann /** Artificial Neural Network. */ {
  * \right.
  * @f}
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *    cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *    to also be in this type. The type also allows the computation and weight
+ *    type to differ from the input type (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class PReLU
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class PReLUType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -53,11 +53,9 @@ class PReLU
    *
    * @param userAlpha Non zero gradient
    */
-  PReLU(const double userAlpha = 0.03);
+  PReLUType(const double userAlpha = 0.03);
 
-  /*
-   * Reset the layer parameter.
-   */
+  //! Reset the layer parameter.
   void Reset();
 
   /**
@@ -67,7 +65,6 @@ class PReLU
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -79,8 +76,7 @@ class PReLU
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename DataType>
-  void Backward(const DataType& input, const DataType& gy, DataType& g);
+  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -89,58 +85,36 @@ class PReLU
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return alpha; }
+  OutputType const& Parameters() const { return alpha; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return alpha; }
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Parameters() { return alpha; }
 
   //! Get the non zero gradient.
   double const& Alpha() const { return alpha(0); }
   //! Modify the non zero gradient.
   double& Alpha() { return alpha(0); }
 
-  /**
-   * Serialize the layer.
-   */
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Leakyness Parameter object.
-  OutputDataType alpha;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType alpha;
 
   //! Leakyness Parameter given by user in the range 0 < alpha < 1.
   double userAlpha;
 }; // class PReLU
+
+// Convenience typedefs.
+
+// Standard PReLU layer.
+typedef PReLUType<arma::mat, arma::mat> PReLU;
 
 } // namespace ann
 } // namespace mlpack
