@@ -206,17 +206,6 @@ void PrintPYX(const util::BindingDetails& doc,
       << "\'bool'!\")" << endl;
   cout << endl;
 
-  // Determine whether or not we have to check input matrices for NaN values.
-  cout << "  if isinstance(check_input_matrices, bool):" << endl;
-  cout << "    if check_input_matrices:" << endl;
-  cout << "      SetParam[cbool](<const string> 'check_input_matrices', "
-      << "check_input_matrices)" << endl;
-  cout << "      IO.SetPassed(<const string> 'check_input_matrices')" << endl;
-  cout << "  else:" << endl;
-  cout << "    raise TypeError(" <<"\"'check_input_matrices\' must have type "
-      << "\'bool'!\")" << endl;
-  cout << endl;
-
   // Do any input processing.
   for (size_t i = 0; i < inputOptions.size(); ++i)
   {
@@ -235,8 +224,14 @@ void PrintPYX(const util::BindingDetails& doc,
     cout << "  IO.SetPassed(<const string> '" << d.name << "')" << endl;
   }
 
+  // Checking the type of check_input_matrices parameter.
+  cout << "  if not isinstance(check_input_matrices, bool):" << endl;
+  cout << "    raise TypeError(" <<"\"'check_input_matrices\' must have type "
+      << "\'bool'!\")" << endl;
+  cout << endl;
+
   // Before calling mlpackMain(), we check input matrices for NaN values if needed.
-  cout << "  if IO.GetParam[cbool](<const string> 'check_input_matrices'):" << endl;
+  cout << "  if check_input_matrices:" << endl;
   cout << "    IO.CheckInputMatrices()" << endl;
 
   // Call the method.
