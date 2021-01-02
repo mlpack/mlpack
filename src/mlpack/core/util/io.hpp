@@ -288,7 +288,7 @@ class IO
   /**
    * Checks all input matrices for NaN values, if found throws an exception.
    */
-  static void SanityChecks();
+  static void CheckInputMatrices();
 
  private:
   //! Convenience map from alias values to names.

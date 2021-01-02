@@ -268,7 +268,7 @@ void IO::ClearSettings()
   GetSingleton().functionMap = persistentFunctions;
 }
 
-void IO::SanityChecks()
+void IO::CheckInputMatrices()
 {
   std::map<std::string, util::ParamData>::iterator itr;
 
