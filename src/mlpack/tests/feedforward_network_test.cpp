@@ -171,8 +171,8 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTes
    */
 
   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
-  model1->Add<Linear<> >(trainData.n_rows, 8);
-  model1->Add<Reparametrization<> >(4,false,true,1);
+  model->Add<Linear<> >(trainData.n_rows, 8);
+  model->Add<Reparametrization<> >(4,false,true,1);
   model->Add<LogSoftMax<> >();
 
   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
