@@ -15,7 +15,7 @@
 
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/data/dataset_mapper.hpp>
-#include <iostream>
+
 namespace mlpack {
 namespace util {
 
