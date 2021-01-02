@@ -31,10 +31,10 @@ TEST_CASE("L1MetricTest", "[MetricTest]")
   b1.randn();
 
   arma::Col<size_t> a2(5);
-  a2 << 1 << 2 << 1 << 0 << 5;
+  a2 = { 1, 2, 1, 0, 5 };
 
   arma::Col<size_t> b2(5);
-  b2 << 2 << 5 << 2 << 0 << 1;
+  b2 = { 2, 5, 2, 0, 1 };
 
   ManhattanDistance lMetric;
 
@@ -57,10 +57,10 @@ TEST_CASE("L2MetricTest", "[MetricTest]")
   b1.randn();
 
   arma::vec a2(5);
-  a2 << 1 << 2 << 1 << 0 << 5;
+  a2 = { 1, 2, 1, 0, 5 };
 
   arma::vec b2(5);
-  b2 << 2 << 5 << 2 << 0 << 1;
+  b2 = { 2, 5, 2, 0, 1 };
 
   EuclideanDistance lMetric;
 
@@ -83,10 +83,10 @@ TEST_CASE("LINFMetricTest", "[MetricTest]")
   b1.randn();
 
   arma::Col<size_t> a2(5);
-  a2 << 1 << 2 << 1 << 0 << 5;
+  a2 = { 1, 2, 1, 0, 5 };
 
   arma::Col<size_t> b2(5);
-  b2 << 2 << 5 << 2 << 0 << 1;
+  b2 = { 2, 5, 2, 0, 1 };
 
   ChebyshevDistance lMetric;
 
@@ -103,34 +103,34 @@ TEST_CASE("LINFMetricTest", "[MetricTest]")
 TEST_CASE("IoUMetricTest", "[MetricTest]")
 {
   arma::vec bbox1(4), bbox2(4);
-  bbox1 << 1 << 2 << 100 << 200;
-  bbox2 << 1 << 2 << 100 << 200;
+  bbox1 = { 1, 2, 100, 200 };
+  bbox2 = { 1, 2, 100, 200 };
   // IoU of same bounding boxes equals 1.0.
   REQUIRE(1.0 == Approx(IoU<>::Evaluate(bbox1, bbox2)).epsilon(1e-6));
 
   // Use coordinate system to represent bounding boxes.
   // Bounding boxes represent {x0, y0, x1, y1}.
-  bbox1 << 39 << 63 << 203 << 112;
-  bbox2 << 54 << 66 << 198 << 114;
+  bbox1 = { 39, 63, 203, 112 };
+  bbox2 = { 54, 66, 198, 114 };
   // Value calculated using Python interpreter.
   REQUIRE(IoU<true>::Evaluate(bbox1, bbox2) ==
       Approx(0.7980093).epsilon(1e-6));
 
-  bbox1 << 31 << 69 << 201 << 125;
-  bbox2 << 18 << 63 << 235 << 135;
+  bbox1 = { 31, 69, 201, 125 };
+  bbox2 = { 18, 63, 235, 135 };
   // Value calculated using Python interpreter.
   REQUIRE(IoU<true>::Evaluate(bbox1, bbox2) ==
       Approx(0.612479577).epsilon(1e-6));
 
   // Use hieght - width representation of bounding boxes.
   // Bounding boxes represent {x0, y0, h, w}.
-  bbox1 << 49 << 75 << 154 << 50;
-  bbox2 << 42 << 78 << 144 << 48;
+  bbox1 = { 49, 75, 154, 50 };
+  bbox2 = { 42, 78, 144, 48 };
   // Value calculated using Python interpreter.
   REQUIRE(IoU<>::Evaluate(bbox1, bbox2) == Approx(0.7898879).epsilon(1e-6));
 
-  bbox1 << 35 << 51 << 161 << 59;
-  bbox2 << 36 << 60 << 144 << 48;
+  bbox1 = { 35, 51, 161, 59 };
+  bbox2 = { 36, 60, 144, 48 };
   // Value calculated using Python interpreter.
   REQUIRE(IoU<>::Evaluate(bbox1, bbox2) == Approx(0.7309670).epsilon(1e-6));
 }
@@ -144,9 +144,9 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
   // Set values of each bounding box.
   // Use coordinate system to represent bounding boxes.
   // Bounding boxes represent {x0, y0, x1, y1}.
-  bbox1 << 0.5 << 0.5 << 41.0 << 31.0;
-  bbox2 << 1.0 << 1.0 << 42.0 << 22.0;
-  bbox3 << 10.0 << 13.0 << 90.0 << 100.0;
+  bbox1 = { 0.5, 0.5, 41.0, 31.0 };
+  bbox2 = { 1.0, 1.0, 42.0, 22.0 };
+  bbox3 = { 10.0, 13.0, 90.0, 100.0 };
 
   // Fill bounding box.
   bbox.insert_cols(0, bbox3);
@@ -155,7 +155,7 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
 
   // Fill confidence scores for each bounding box.
   arma::vec confidenceScores(3);
-  confidenceScores << 0.7 << 0.6 << 0.4;
+  confidenceScores = { 0.7, 0.6, 0.4 };
 
   // Selected bounding box using torchvision.ops.nms().
   desiredBoundingBox.insert_cols(0, bbox3);
@@ -164,7 +164,7 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
   // Selected indices of bounding boxes using
   // torchvision.ops.nms().
   desiredIndices = arma::ucolvec(2);
-  desiredIndices << 0 << 2;
+  desiredIndices = { 0, 2 };
 
   // Evaluate the bounding box.
   NMS<true>::Evaluate(bbox, confidenceScores,
@@ -190,7 +190,7 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
   bbox.insert_cols(0, bbox1);
   bbox.insert_cols(0, bbox2);
   bbox.insert_cols(0, bbox1);
-  confidenceScores << 1.0 << 0.6 << 0.9;
+  confidenceScores = { 1.0, 0.6, 0.9 };
 
   // Output calculated using using torchvision.ops.nms().
   desiredBoundingBox.insert_cols(0, bbox2);
@@ -212,9 +212,9 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
 
   // Use coordinate system to represent bounding boxes.
   // Bounding boxes represent {x0, y0, x1, y1}.
-  bbox1 << 39 << 63 << 203 << 112;
-  bbox2 << 31 << 69 << 201 << 125;
-  bbox3 << 54 << 66 << 198 << 114;
+  bbox1 = { 39, 63, 203, 112 };
+  bbox2 = { 31, 69, 201, 125 };
+  bbox3 = { 54, 66, 198, 114 };
 
   // Fill bounding box.
   bbox.insert_cols(0, bbox3);
@@ -222,7 +222,7 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
   bbox.insert_cols(0, bbox1);
 
   // Fill confidence scores of bounding boxes.
-  confidenceScores << 1.0 << 0.6 << 0.9;
+  confidenceScores = { 1.0, 0.6, 0.9 };
 
   // Selected bounding box using torchvision.ops.nms().
   desiredBoundingBox.insert_cols(0, bbox2);
@@ -245,9 +245,9 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
   // Set values of each bounding box.
   // Use coordinate system to represent bounding boxes.
   // Bounding boxes represent {x0, y0, h, w}.
-  bbox1 << 0.0 << 0.0 << 41.0 << 31.0;
-  bbox2 << 1.0 << 1.0 << 41.0 << 21.0;
-  bbox3 << 10.0 << 13.0 << 80.0 << 87.0;
+  bbox1 = { 0.0, 0.0, 41.0, 31.0 };
+  bbox2 = { 1.0, 1.0, 41.0, 21.0 };
+  bbox3 = { 10.0, 13.0, 80.0, 87.0 };
 
   // Fill bounding box.
   bbox.insert_cols(0, bbox3);
@@ -255,7 +255,7 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
   bbox.insert_cols(0, bbox1);
 
   // Fill confidence scores for each bounding box.
-  confidenceScores << 0.7 << 0.6 << 0.4;
+  confidenceScores = { 0.7, 0.6, 0.4 };
 
   // Selected bounding box using torchvision.ops.nms().
   desiredBoundingBox.insert_cols(0, bbox3);
@@ -277,9 +277,9 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
 
   // Use coordinate system to represent bounding boxes.
   // Bounding boxes represent {x0, y0, h, w}.
-  bbox1 << 39 << 63 << 164 << 49;
-  bbox2 << 31 << 69 << 170 << 56;
-  bbox3 << 54 << 66 << 144 << 48;
+  bbox1 = { 39, 63, 164, 49 };
+  bbox2 = { 31, 69, 170, 56 };
+  bbox3 = { 54, 66, 144, 48 };
 
   // Fill bounding box.
   bbox.insert_cols(0, bbox3);
@@ -287,7 +287,7 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
   bbox.insert_cols(0, bbox1);
 
   // Fill confidence scores of bounding boxes.
-  confidenceScores << 1.0 << 0.6 << 0.4;
+  confidenceScores = { 1.0, 0.6, 0.4 };
 
   // Selected bounding box using torchvision.ops.nms().
   desiredBoundingBox.insert_cols(0, bbox2);
