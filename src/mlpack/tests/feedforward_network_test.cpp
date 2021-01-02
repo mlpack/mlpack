@@ -167,36 +167,17 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTes
 
   /*
    * Construct a feed forward network with trainData.n_rows input nodes,
-   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
-   * network structure looks like:
-   *
-   *  Input         Hidden        Output
-   *  Layer         Layer         Layer
-   * +-----+       +-----+       +-----+
-   * |     |       |     |       |     |
-   * |     +------>|     +------>|     |
-   * |     |     +>|     |     +>|     |
-   * +-----+     | +--+--+     | +-----+
-   *             |             |
-   *  Bias       |  Bias       |
-   *  Layer      |  Layer      |
-   * +-----+     | +-----+     |
-   * |     |     | |     |     |
-   * |     +-----+ |     +-----+
-   * |     |       |     |
-   * +-----+       +-----+
+   * followed by a linear layer and then a reparametrization layer
    */
 
   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
-  model->Add<Linear<> >(trainData.n_rows, 8);
-  model->Add<SigmoidLayer<> >();
-  model->Add<Reparametrization<> >();
+  model1->Add<Linear<> >(trainData.n_rows, 8);
+  model1->Add<Reparametrization<> >(4,false,true,1);
   model->Add<LogSoftMax<> >();
 
   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
   model1->Add<Linear<> >(trainData.n_rows, 8);
-  model1->Add<SigmoidLayer<> >();
-  model1->Add<Reparametrization<> >();
+  model1->Add<Reparametrization<> >(4,false,true,1);
   model1->Add<LogSoftMax<> >();
 
   // Check whether copy constructor is working or not.
