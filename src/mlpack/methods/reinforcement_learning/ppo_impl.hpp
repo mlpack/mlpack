@@ -180,7 +180,7 @@ void PPO<
   
   // since empty loss is used, we give the gradient as input to Backward(),
   // instead of target.
-  arma::mat dLossCritic = - (advantages % actionValues);
+  arma::mat dLossCritic = - (advantages);
   criticNetwork.Backward(sampledStates, dLossCritic, criticGradients);
   #if ENS_VERSION_MAJOR == 1
   criticUpdater.Update(criticNetwork.Parameters(), config.StepSize(),
