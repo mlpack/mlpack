@@ -35,8 +35,8 @@ BCELoss<InputDataType, OutputDataType>::Forward(
   typedef typename PredictionType::elem_type ElemType;
 
   ElemType loss = -arma::accu(target % arma::log(prediction + eps) + 
-      (1. - target) % arma::log(1. - prediction + eps));;
-  if(reduction)
+      (1. - target) % arma::log(1. - prediction + eps));
+  if (reduction)
     loss /= prediction.n_elem;
   return loss;
 }
@@ -49,7 +49,7 @@ void BCELoss<InputDataType, OutputDataType>::Backward(
     LossType& loss)
 {
   loss = (1. - target) / (1. - prediction + eps) - target / (prediction + eps);
-  if(reduction)
+  if (reduction)
     loss /= prediction.n_elem;
 }
 
