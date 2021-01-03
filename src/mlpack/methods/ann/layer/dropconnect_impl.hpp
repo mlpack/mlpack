@@ -83,7 +83,7 @@ template<typename InputType, typename OutputType>
 void DropConnectType<InputType, OutputType>::Gradient(
     const InputType& input,
     const OutputType& error,
-    OutputType& gradient)
+    OutputType& /* gradient */)
 {
   baseLayer->Gradient(input, error, baseLayer->Gradient());
 

@@ -18,8 +18,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-SpatialDropout<InputDataType, OutputDataType>::SpatialDropout() :
+template<typename InputType, typename OutputType>
+SpatialDropoutType<InputType, OutputType>::SpatialDropoutType() :
     size(0),
     ratio(0.5),
     scale(1.0 / (1.0 - ratio)),
@@ -31,8 +31,8 @@ SpatialDropout<InputDataType, OutputDataType>::SpatialDropout() :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-SpatialDropout<InputDataType, OutputDataType>::SpatialDropout(
+template<typename InputType, typename OutputType>
+SpatialDropoutType<InputType, OutputType>::SpatialDropoutType(
     const size_t size,
     const double ratio) :
     size(size),
@@ -46,10 +46,9 @@ SpatialDropout<InputDataType, OutputDataType>::SpatialDropout(
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void SpatialDropout<InputDataType, OutputDataType>::Forward(
-  const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void SpatialDropoutType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   Log::Assert(input.n_rows % size == 0, "Input features must be divisible \
       by feature maps.");
@@ -82,10 +81,9 @@ void SpatialDropout<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void SpatialDropout<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void SpatialDropoutType<InputType, OutputType>::Backward(
+    const InputType& input, const OutputType& gy, OutputType& g)
 {
   g.zeros(arma::size(input));
   arma::cube gyTemp(const_cast<arma::mat&>(gy).memptr(), inputSize, size,
@@ -97,9 +95,9 @@ void SpatialDropout<InputDataType, OutputDataType>::Backward(
     gTemp.slice(n) = gyTemp.slice(n) % mask * scale;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void SpatialDropout<InputDataType, OutputDataType>::serialize(
+void SpatialDropoutType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

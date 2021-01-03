@@ -155,7 +155,7 @@ class NoisyLinearType : public Layer<InputType, OutputType>
 
 // Convenience typedefs.
 
-// Standard Linear layer using no regularization.
+// Standard noisy linear layer.
 typedef NoisyLinearType<arma::mat, arma::mat> NoisyLinear;
 
 } // namespace ann

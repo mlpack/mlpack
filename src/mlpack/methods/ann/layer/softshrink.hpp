@@ -98,7 +98,7 @@ class SoftShrinkType : public Layer<InputType, OutputType>
 
 // Convenience typedefs.
 
-// Standard SoftShrink layer using no regularization.
+// Standard SoftShrink layer.
 typedef SoftShrinkType<arma::mat, arma::mat> SoftShrink;
 
 } // namespace ann

@@ -15,6 +15,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/dists/bernoulli_distribution.hpp>
 
+#include "layer.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -36,27 +38,25 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam InputType The type of the layer's inputs. The layer automatically
+ *     cast inputs to this type (Default: arma::mat).
+ * @tparam OutputType The type of the computation which also causes the output
+ *     to also be in this type. The type also allows the computation and weight
+ *     type to differ from the input type (Default: arma::mat).
  */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-class SpatialDropout
+template<typename InputType = arma::mat, typename OutputType = arma::mat>
+class SpatialDropoutType : public Layer<InputType, OutputType>
 {
  public:
   //! Create the SpatialDropout object.
-  SpatialDropout();
+  SpatialDropoutType();
   /**
    * Create the SpatialDropout object using the specified parameters.
    *
    * @param size The number of channels of each input image.
    * @param ratio The probability of each channel getting dropped.
    */
-  SpatialDropout(const size_t size, const double ratio = 0.5);
+  SpatialDropoutType(const size_t size, const double ratio = 0.5);
 
   /**
    * Ordinary feed forward pass of the SpatialDropout layer.
@@ -64,8 +64,7 @@ class SpatialDropout
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of the SpatialDropout layer.
@@ -74,20 +73,7 @@ class SpatialDropout
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
   //! Get the number of channels.
   size_t Size() const { return size; }
@@ -110,21 +96,13 @@ class SpatialDropout
     scale = 1.0 / (1.0 - ratio);
   }
 
-  /**
-   * Serialize the layer.
-   */
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
   //! Locally-stored mast object.
-  OutputDataType mask;
+  OutputType mask;
 
   //! The number of channels of each input image.
   size_t size;
@@ -147,6 +125,11 @@ class SpatialDropout
   //! If true dropout and scaling are disabled.
   bool deterministic;
 }; // class SpatialDropout
+
+// Convenience typedefs.
+
+// Standard SpatialDropout layer.
+typedef SpatialDropoutType<arma::mat, arma::mat> SpatialDropout;
 
 } // namespace ann
 } // namespace mlpack
