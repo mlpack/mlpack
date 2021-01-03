@@ -142,6 +142,12 @@ class Layer
    */
   virtual void Reset() {}
 
+  //! Get the model modules.
+  virtual std::vector<Layer<InputType, OutputType>*>& Model()
+  {
+    return model;
+  }
+
   //! Get the parameters.
   virtual OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
@@ -167,6 +173,21 @@ class Layer
   //! Modify the gradient.
   virtual OutputType& Gradient() { return gradient; }
 
+  /**
+   * Get the deterministic parameter.
+   *
+   * Mote: during training you should set the deterministic parameter for each
+   * layer to false and during testing you should set deterministic to true.
+   */
+  virtual bool const& Deterministic() const { return deterministic; }
+  /**
+   * Modify the deterministic parameter.
+   *
+   * Mote: during training you should set the deterministic parameter for each
+   * layer to false and during testing you should set deterministic to true.
+   */
+  virtual bool& Deterministic() { return deterministic; }
+
   //! Get the layer loss.
   virtual double Loss() { return 0; }
 
@@ -186,8 +207,14 @@ class Layer
   //! Locally-stored delta object.
   OutputType delta;
 
+  //! If true testing mode otherwise training mode.
+  bool deterministic;
+
   //! Locally-stored gradient object.
   OutputType gradient;
+
+  //! Locally-stored model.
+  std::vector<Layer<InputType, OutputType>*> model;
 };
 
 #endif
