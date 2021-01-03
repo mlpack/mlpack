@@ -19,6 +19,7 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/empty_loss.hpp>
 #include <mlpack/methods/reinforcement_learning/q_learning.hpp>
+#include <mlpack/methods/reinforcement_learning/ppo.hpp>
 #include <mlpack/methods/reinforcement_learning/sac.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
 #include <mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp>
@@ -590,4 +591,39 @@ TEST_CASE("SACForMultipleActions", "[QLearningTest]")
   agent.Update();
   // If the agent is able to reach till this point of the test, it is assured
   // that the agent can handle multiple actions in continuous space.
+}
+
+//! Test PPO Discrete in CartPole task.
+TEST_CASE("CartPoleWithPPODiscrete", "[QLearningTest]")
+{
+  bool converged = false;
+  for (size_t trial = 0; trial < 4; ++trial)
+  {
+    // Set up the actor and critic networks.
+    FFN<EmptyLoss<>, GaussianInitialization> critic(
+        EmptyLoss<>(), GaussianInitialization(0, 1));
+    critic.Add<Linear<>>(4, 128);
+    critic.Add<ReLULayer<>>();
+    critic.Add<Linear<>>(128, 1);
+
+    FFN<EmptyLoss<>, GaussianInitialization> actor(
+        EmptyLoss<>(), GaussianInitialization(0, 1));
+    actor.Add<Linear<>>(4, 128);
+    actor.Add<ReLULayer<>>();
+    actor.Add<Linear<>>(128, 2);
+
+    TrainingConfig config;
+    config.Discount() = 0.99;
+    config.Epsilon() = 0.2;
+    config.StepLimit() = 200;
+
+    // Set up the PPO agent.
+    PPO<CartPole, decltype(actor), decltype(critic), AdamUpdate>
+        agent(config, actor, critic);
+
+    converged = testAgent<decltype(agent)>(agent, 25, 2000, 25);
+    if (converged)
+      break;
+  }
+  REQUIRE(converged);
 }
