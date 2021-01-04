@@ -13,6 +13,9 @@
 
   * Add finalizers to Julia binding model types to fix memory handling (#2756).
 
+  * Add `PYTHON_INSTALL_PREFIX` CMake option to specify installation root for
+    Python bindings.
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.
