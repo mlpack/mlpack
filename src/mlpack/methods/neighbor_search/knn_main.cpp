@@ -261,8 +261,7 @@ static void mlpackMain()
 
     arma::mat referenceSet = std::move(IO::GetParam<arma::mat>("reference"));
 
-    knn->BuildModel(std::move(referenceSet), size_t(lsInt), searchMode,
-        epsilon);
+    knn->BuildModel(std::move(referenceSet), searchMode, epsilon);
   }
   else
   {
