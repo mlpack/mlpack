@@ -74,14 +74,14 @@ Reparametrization<InputDataType, OutputDataType>&
 Reparametrization<InputDataType, OutputDataType>::
 operator=(const Reparametrization& layer) 
 {
-       if (this != &layer)
-       {
-         latentSize = layer.latentSize;
-         stochastic = layer.stochastic;
-         includeKl = layer.includeKl;
-         beta = layer.beta;
-       }
-       return *this;
+  if (this != &layer)
+  {
+    latentSize = layer.latentSize;
+    stochastic = layer.stochastic;
+    includeKl = layer.includeKl;
+    beta = layer.beta;
+  }
+  return *this;
 }
     
 template <typename InputDataType, typename OutputDataType>
@@ -89,14 +89,14 @@ Reparametrization<InputDataType, OutputDataType>&
 Reparametrization<InputDataType, OutputDataType>::
 operator=(Reparametrization&& layer) 
 {
-       if (this != &layer)
-       {
-         latentSize = std::move(layer.latentSize);
-         stochastic = std::move(layer.stochastic);
-         includeKl = std::move(layer.includeKl);
-         beta = std::move(layer.beta);
-       }
-       return *this;
+  if (this != &layer)
+  {
+    latentSize = std::move(layer.latentSize);
+    stochastic = std::move(layer.stochastic);
+    includeKl = std::move(layer.includeKl);
+    beta = std::move(layer.beta);
+  }
+  return *this;
 }
   
     
