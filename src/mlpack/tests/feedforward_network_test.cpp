@@ -167,7 +167,7 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTes
 
   /*
    * Construct a feed forward network with trainData.n_rows input nodes,
-   * followed by a linear layer and then a reparametrization layer
+   * followed by a linear layer and then a reparametrization layer.
    */
 
   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
