@@ -230,7 +230,7 @@ if (BUILD_R_BINDINGS)
   install(CODE
       "execute_process(
          COMMAND R CMD INSTALL mlpack_${PACKAGE_VERSION}.tar.gz
-         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}"
+         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})"
   )
 
   add_dependencies(R r_build)
