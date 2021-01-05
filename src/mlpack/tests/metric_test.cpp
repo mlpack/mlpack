@@ -163,7 +163,6 @@ TEST_CASE("NMSMetricTest", "[MetricTest]")
 
   // Selected indices of bounding boxes using
   // torchvision.ops.nms().
-  desiredIndices = arma::ucolvec(2);
   desiredIndices = { 0, 2 };
 
   // Evaluate the bounding box.
