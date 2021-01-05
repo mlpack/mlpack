@@ -76,9 +76,7 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
 }
     
 /**
- * This is another Overload of apply with only 2 parameteres(data & transformed data)
- * and it will create eigval and eigvec and store the corresponding values  in them
- * as the source of information are first 2 parameters only.
+ * Apply Principal Component Analysis to the provided data set.
  *
  * @param data - Data matrix
  * @param transformedData - Data with PCA applied
