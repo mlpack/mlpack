@@ -177,7 +177,7 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTes
 
   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
   model1->Add<Linear<> >(trainData.n_rows, 8);
-  model1->Add<Reparametrization<> >(4,false,true,1);
+  model1->Add<Reparametrization<> >(4, false, true, 1);
   model1->Add<LogSoftMax<> >();
 
   // Check whether copy constructor is working or not.
