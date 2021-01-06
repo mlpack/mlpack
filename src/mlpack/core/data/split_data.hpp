@@ -169,6 +169,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
  *                testData, trainLabel, testLabel, 0.3);
  * @endcode
  *
+ * @tparam T Type of the elements of the input matrix.
  * @tparam LabelsType Type of input labels. It must be arma::Mat or arma::row.
  * @param input Input dataset to split.
  * @param inputLabel Input labels to split.
@@ -298,6 +299,7 @@ void Split(const arma::Mat<T>& input,
  * auto splitResult = Split(input, label, 0.2);
  * @endcode
  *
+ * @tparam T Type of the elements of the input matrix.
  * @tparam LabelsType Type of input labels. It must be arma::Mat or arma::row.
  * @param input Input dataset to split.
  * @param inputLabel Input labels to split.
