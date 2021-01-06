@@ -64,7 +64,6 @@ inline void CheckFields(const FieldType& a,
     CheckMatrices(a(i), b(i));
 }
 
-
 // Check the values of two cubes.
 inline void CheckMatrices(const arma::cube& a,
                           const arma::cube& b,
