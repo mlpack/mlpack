@@ -55,7 +55,7 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
     includeKl(layer.includeKl),
     beta(layer.beta)
 {
-   //Nothing to do here     
+   // Nothing to do here.
 }
 
 template <typename InputDataType, typename OutputDataType>
