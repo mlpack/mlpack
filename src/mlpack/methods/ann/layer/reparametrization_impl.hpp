@@ -66,7 +66,7 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
     includeKl(std::move(layer.includeKl)),
     beta(std::move(layer.beta))
 {
-   //Nothing to do here     
+   // Nothing to do here.
 }
     
 template <typename InputDataType, typename OutputDataType>
