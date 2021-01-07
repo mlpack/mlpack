@@ -81,7 +81,7 @@ class Reparametrization
   //! Copy assignment operator.
   Reparametrization& operator=(const Reparametrization& layer);
     
-  //! Move assignment operator 
+  //! Move assignment operator.
   Reparametrization& operator=(Reparametrization&& layer);
 
   /**
