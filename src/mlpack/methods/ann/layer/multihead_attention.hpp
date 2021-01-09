@@ -121,7 +121,7 @@ class MultiheadAttention
                 arma::Mat<eT>& gradient);
 
   //! Get the size of the weights.
-  size_t WeightSize() const { return (4 * (embedDim + 1) * embedDim); }
+  size_t WeightSize() const { return 4 * (embedDim + 1) * embedDim; }
 
   /**
    * Serialize the layer.
