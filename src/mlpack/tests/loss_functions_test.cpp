@@ -21,7 +21,7 @@
 #include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
-#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
@@ -268,27 +268,36 @@ TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
 }
 
 /*
- * Simple test for the cross-entropy error performance function.
+ * Simple test for the binary-cross-entropy lossfunction.
  */
-TEST_CASE("SimpleCrossEntropyErrorTest", "[LossFunctionsTest]")
+TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
 {
-  arma::mat input1, input2, output, target1, target2;
-  CrossEntropyError<> module(1e-6);
-
+  arma::mat input1, input2, input3, output, target1, target2, target3;
+  BCELoss<> module1(1e-6, false);
+  BCELoss<> module2(1e-6, true);
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
   target1 = arma::zeros(1, 8);
-  double error1 = module.Forward(input1, target1);
+  double error1 = module1.Forward(input1, target1);
   REQUIRE(error1 - 8 * std::log(2) == Approx(0.0).margin(2e-5));
+
+  input2 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5");
+  target2 = arma::zeros(1, 6);
+  input2.reshape(2, 3);
+  target2.reshape(2, 3);
+  double error2 = module2.Forward(input2, target2);
+  REQUIRE(error2 - std::log(2) == Approx(0.0).margin(2e-5));
 
   input2 = arma::mat("0 1 1 0 1 0 0 1");
   target2 = arma::mat("0 1 1 0 1 0 0 1");
-  double error2 = module.Forward(input2, target2);
-  REQUIRE(error2 == Approx(0.0).margin(1e-5));
+  double error3 = module1.Forward(input2, target2);
+  REQUIRE(error3 == Approx(0.0).margin(1e-5));
+  double error4 = module2.Forward(input2, target2);
+  REQUIRE(error4 == Approx(0.0).margin(1e-5));
 
   // Test the Backward function.
-  module.Backward(input1, target1, output);
+  module1.Backward(input1, target1, output);
   for (double el : output)
   {
     // For the 0.5 constant vector we should get 1 / (1 - 0.5) = 2 everywhere.
@@ -297,7 +306,7 @@ TEST_CASE("SimpleCrossEntropyErrorTest", "[LossFunctionsTest]")
   REQUIRE(output.n_rows == input1.n_rows);
   REQUIRE(output.n_cols == input1.n_cols);
 
-  module.Backward(input2, target2, output);
+  module1.Backward(input2, target2, output);
   for (size_t i = 0; i < 8; ++i)
   {
     double el = output.at(0, i);
