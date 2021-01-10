@@ -19,7 +19,6 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/octree.hpp>
-#include <boost/variant.hpp>
 
 #include "range_search.hpp"
 
@@ -47,17 +46,17 @@ class RSWrapperBase
   virtual ~RSWrapperBase() { }
 
   //! Get the dataset.
-  const arma::mat& Dataset() const = 0;
+  virtual const arma::mat& Dataset() const = 0;
 
   //! Get whether single-tree search is being used.
-  bool SingleMode() const = 0;
+  virtual bool SingleMode() const = 0;
   //! Modify whether single-tree search is being used.
-  bool& SingleMode() = 0;
+  virtual bool& SingleMode() = 0;
 
   //! Get whether naive search is being used.
-  bool Naive() const = 0;
+  virtual bool Naive() const = 0;
   //! Modify whether naive search is being used.
-  bool& Naive() = 0;
+  virtual bool& Naive() = 0;
 
   //! Train the model (build the reference tree if needed).
   virtual void Train(arma::mat&& referenceSet,
@@ -89,7 +88,7 @@ class RSWrapper : public RSWrapperBase
  public:
   //! Create the RSWrapper object.
   RSWrapper(const bool singleMode, const bool naive) :
-      ra(singleMode, naive)
+      rs(singleMode, naive)
   {
     // Nothing else to do.
   }
@@ -182,9 +181,9 @@ class LeafSizeRSWrapper : public RSWrapper<TreeType>
   //! Perform bichromatic search (e.g. search with a separate query set).  This
   //! overload takes the leaf size into account when building the query tree.
   virtual void Search(arma::mat&& querySet,
-                      const size_t k,
-                      arma::Mat<size_t>& neighbors,
-                      arma::mat& distances,
+                      const math::Range& range,
+                      std::vector<std::vector<size_t>>& neighbors,
+                      std::vector<std::vector<double>>& distances,
                       const size_t leafSize);
 
   //! Serialize the RangeSearch model.
@@ -225,25 +224,6 @@ class RSModel
     OCTREE
   };
 
- private:
-  //! The type of tree we are using.
-  TreeTypes treeType;
-  //! (Only used for some tree types.)  The leaf size to use when building a
-  //! tree.
-  size_t leafSize;
-
-  //! If true, we randomly project the data into a new basis before search.
-  bool randomBasis;
-  //! Random projection matrix.
-  arma::mat q;
-
-  /**
-   * rSearch holds an instance of the RangeSearch class for the current
-   * treeType. It is initialized every time BuildModel is executed.
-   */
-  RSWrapperBase* rSearch;
-
- public:
   /**
    * Initialize the RSModel with the given type and whether or not a random
    * basis should be used.
@@ -271,11 +251,16 @@ class RSModel
   /**
    * Copy the given RSModel.
    *
-   * Use std::move to pass in the model if the old copy is no longer needed.
+   * @param other RSModel to copy.
+   */
+  RSModel& operator=(const RSModel& other);
+
+  /**
+   * Take ownership of the given RSModel's data.
    *
    * @param other RSModel to copy.
    */
-  RSModel& operator=(RSModel other);
+  RSModel& operator=(RSModel&& other);
 
   /**
    * Clean memory, if necessary.
@@ -358,6 +343,23 @@ class RSModel
               std::vector<std::vector<double>>& distances);
 
  private:
+  //! The type of tree we are using.
+  TreeTypes treeType;
+  //! (Only used for some tree types.)  The leaf size to use when building a
+  //! tree.
+  size_t leafSize;
+
+  //! If true, we randomly project the data into a new basis before search.
+  bool randomBasis;
+  //! Random projection matrix.
+  arma::mat q;
+
+  /**
+   * rSearch holds an instance of the RangeSearch class for the current
+   * treeType. It is initialized every time BuildModel is executed.
+   */
+  RSWrapperBase* rSearch;
+
   /**
    * Return a string representing the name of the tree.  This is used for
    * logging output.
