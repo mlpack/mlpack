@@ -18,7 +18,6 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/octree.hpp>
-#include <boost/variant.hpp>
 #include "ra_search.hpp"
 
 namespace mlpack {
