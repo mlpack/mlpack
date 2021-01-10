@@ -4,9 +4,9 @@
  *
  * This is a model for nearest or furthest neighbor search.  It is useful in
  * that it provides an easy way to serialize a model, abstracts away the
- * different types of trees, and also (roughly) reflects the NeighborSearch API and
- * automatically directs to the right tree type.  It is meant to be used by the
- * knn and kfn bindings.
+ * different types of trees, and also (roughly) reflects the NeighborSearch API
+ * and automatically directs to the right tree type.  It is meant to be used by
+ * the knn and kfn bindings.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
