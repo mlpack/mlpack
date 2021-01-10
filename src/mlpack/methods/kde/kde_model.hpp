@@ -22,27 +22,10 @@
 #include <mlpack/core.hpp>
 
 // Remaining includes.
-#include <boost/variant.hpp>
 #include "kde.hpp"
 
 namespace mlpack {
 namespace kde {
-
-//! Alias template.
-template<typename KernelType,
-         template<typename TreeMetricType,
-                  typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-using KDEType = KDE<KernelType,
-                    metric::EuclideanDistance,
-                    arma::mat,
-                    TreeType,
-                    TreeType<metric::EuclideanDistance,
-                             kde::KDEStat,
-                             arma::mat>::template DualTreeTraverser,
-                    TreeType<metric::EuclideanDistance,
-                             kde::KDEStat,
-                             arma::mat>::template SingleTreeTraverser>;
 
 /**
  * KernelNormalizer holds a set of methods to normalize estimations applying
@@ -81,284 +64,168 @@ class KernelNormalizer
 };
 
 /**
- * DualMonoKDE computes a Kernel Density Estimation on the given KDEType.
- * It performs a monochromatic KDE.
+ * KDEWrapperBase is a base wrapper class for holding all KDE types supported by
+ * KDEModel.  All KDE type wrappers inheirt from this class, allowing a simple
+ * interface via inheritance for all the different types we want to support.
  */
-class DualMonoKDE : public boost::static_visitor<void>
+class KDEWrapperBase
 {
- private:
-  //! Vector to store the KDE results.
-  arma::vec& estimations;
-
  public:
-  //! Alias template necessary for Visual C++ compiler.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using KDETypeT = KDEType<KernelType, TreeType>;
+  //! Create the KDEWrapperBase object.  The base class does not hold anything,
+  //! so this constructor does nothing.
+  KDEWrapperBase() { }
 
-  //! Default DualMonoKDE on some KDEType.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDETypeT<KernelType, TreeType>* kde) const;
+  //! Create a new KDEWrapperBase that is the same as this one.  This function
+  //! will properly handle polymorphism.
+  virtual KDEWrapperBase* Clone() const = 0;
 
-  // TODO Implement specific cases where a leaf size can be selected.
+  //! Destruct the KDEWrapperBase (nothing to do).
+  virtual ~KDEWrapperBase() { }
 
-  //! DualMonoKDE constructor.
-  DualMonoKDE(arma::vec& estimations);
+  //! Modify the bandwidth of the kernel.
+  virtual void Bandwidth(const double bw) = 0;
+
+  //! Modify the relative error tolerance.
+  virtual void RelativeError(const double relError) = 0;
+
+  //! Modify the absolute error tolerance.
+  virtual void AbsoluteError(const double absError) = 0;
+
+  //! Get whether Monte Carlo search is being used.
+  virtual bool MonteCarlo() const = 0;
+  //! Modify whether Monte Carlo search is being used.
+  virtual bool& MonteCarlo() = 0;
+
+  //! Modify the Monte Carlo probability.
+  virtual void MCProb(const double mcProb) = 0;
+
+  //! Get the Monte Carlo sample size.
+  virtual size_t MCInitialSampleSize() const = 0;
+  //! Modify the Monte Carlo sample size.
+  virtual size_t& MCInitialSampleSize() = 0;
+
+  //! Modify the Monte Carlo entry coefficient.
+  virtual void MCEntryCoef(const double entryCoef) = 0;
+
+  //! Modify the Monte Carlo break coefficient.
+  virtual void MCBreakCoef(const double breakCoef) = 0;
+
+  //! Get the search mode.
+  virtual KDEMode Mode() const = 0;
+  //! Modify the search mode.
+  virtual KDEMode& Mode() = 0;
+
+  //! Train the model (build the tree).
+  virtual void Train(arma::mat&& referenceSet) = 0;
+
+  //! Perform bichromatic KDE (i.e. KDE with a separate query set).
+  virtual void Evaluate(arma::mat&& querySet,
+                        arma::vec& estimates) = 0;
+
+  //! Perform monochromatic KDE (i.e. with the reference set as the query set).
+  virtual void Evaluate(arma::vec& estimates) = 0;
 };
 
 /**
- * DualBiKDE computes a Kernel Density Estimation on the given KDEType.
- * It performs a bichromatic KDE.
+ * KDEWrapper is a wrapper class for all KDE types supported by KDEModel.  It
+ * can be extended with new child classes if new functionality for certain types
+ * is needed.
  */
-class DualBiKDE : public boost::static_visitor<void>
+template<typename KernelType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+class KDEWrapper : public KDEWrapperBase
 {
- private:
-  //! Query set dimensionality.
-  const size_t dimension;
-
-  //! The query set for the KDE.
-  const arma::mat& querySet;
-
-  //! Vector to store the KDE results.
-  arma::vec& estimations;
-
  public:
-  //! Alias template necessary for Visual C++ compiler.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using KDETypeT = KDEType<KernelType, TreeType>;
+  //! Create the KDEWrapper object, initializing the internally-held KDE object.
+  KDEWrapper(const double relError,
+             const double absError,
+             const KernelType& kernel) :
+      kde(relError, absError, kernel)
+  {
+    // Nothing left to do.
+  }
 
-  //! Default DualBiKDE on some KDEType.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDETypeT<KernelType, TreeType>* kde) const;
+  //! Create a new KDEWrapper that is the same as this one.  This function
+  //! will properly handle polymorphism.
+  virtual KDEWrapper* Clone() const { return new KDEWrapper(*this); }
 
-  // TODO Implement specific cases where a leaf size can be selected.
+  //! Destruct the KDEWrapper (nothing to do).
+  virtual ~KDEWrapper() { }
 
-  //! DualBiKDE constructor. Takes ownership of the given querySet.
-  DualBiKDE(arma::mat&& querySet, arma::vec& estimations);
+  //! Modify the bandwidth of the kernel.
+  virtual void Bandwidth(const double bw) { kde.Kernel() = KernelType(bw); }
+
+  //! Modify the relative error tolerance.
+  virtual void RelativeError(const double eps) { kde.RelativeError(eps); }
+
+  //! Modify the absolute error tolerance.
+  virtual void AbsoluteError(const double eps) { kde.AbsoluteError(eps); }
+
+  //! Get whether Monte Carlo search is being used.
+  virtual bool MonteCarlo() const { return kde.MonteCarlo(); }
+  //! Modify whether Monte Carlo search is being used.
+  virtual bool& MonteCarlo() { return kde.MonteCarlo(); }
+
+  //! Modify the Monte Carlo probability.
+  virtual void MCProb(const double mcProb) { kde.MCProb(mcProb); }
+
+  //! Get the Monte Carlo sample size.
+  virtual size_t MCInitialSampleSize() const
+  {
+    return kde.MCInitialSampleSize();
+  }
+  //! Modify the Monte Carlo sample size.
+  virtual size_t& MCInitialSampleSize()
+  {
+    return kde.MCInitialSampleSize();
+  }
+
+  //! Modify the Monte Carlo entry coefficient.
+  virtual void MCEntryCoef(const double e) { kde.MCEntryCoef(e); }
+
+  //! Modify the Monte Carlo break coefficient.
+  virtual void MCBreakCoef(const double b) { kde.MCBreakCoef(b); }
+
+  //! Get the search mode.
+  virtual KDEMode Mode() const { return kde.Mode(); }
+  //! Modify the search mode.
+  virtual KDEMode& Mode() { return kde.Mode(); }
+
+  //! Train the model (build the tree).
+  virtual void Train(arma::mat&& referenceSet);
+
+  //! Perform bichromatic KDE (i.e. KDE with a separate query set).
+  virtual void Evaluate(arma::mat&& querySet,
+                        arma::vec& estimates);
+
+  //! Perform monochromatic KDE (i.e. with the reference set as the query set).
+  virtual void Evaluate(arma::vec& estimates);
+
+  //! Serialize the KDE model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(kde));
+  }
+
+ protected:
+  typedef KDE<KernelType,
+              metric::EuclideanDistance,
+              arma::mat,
+              TreeType> KDEType;
+
+  //! The instantiated KDE object that we are wrapping.
+  KDEType kde;
 };
 
 /**
- * TrainVisitor trains a given KDEType using a reference set.
+ * The KDEModel provides an abstraction for the KDE class, abstracting away the
+ * KernelType and TreeType parameters and allowing those to be specified at
+ * runtime.  This class is written for the sake of the `kde` binding, but it is
+ * not necessarily restricted to that usage.
  */
-class TrainVisitor : public boost::static_visitor<void>
-{
- private:
-  //! The reference set used for training.
-  arma::mat&& referenceSet;
-
- public:
-  //! Default TrainVisitor on some KDEType.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDEType<KernelType, TreeType>* kde) const;
-
-  // TODO Implement specific cases where a leaf size can be selected.
-
-  //! TrainVisitor constructor. Takes ownership of the given referenceSet.
-  TrainVisitor(arma::mat&& referenceSet);
-};
-
-/**
- * BandwidthVisitor modifies the bandwidth of a KDEType kernel.
- */
-class BandwidthVisitor : public boost::static_visitor<void>
-{
- private:
-  //! Relative error tolerance.
-  const double bandwidth;
-
- public:
-  //! Default BandwidthVisitor on some KDEType.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDEType<KernelType, TreeType>* kde) const;
-
-  //! BandwidthVisitor constructor.
-  BandwidthVisitor(const double bandwidth);
-};
-
-/**
- * RelErrorVisitor modifies relative error tolerance for a KDEType.
- */
-class RelErrorVisitor : public boost::static_visitor<void>
-{
- private:
-  //! Relative error tolerance.
-  const double relError;
-
- public:
-  //! Default RelErrorVisitor on some KDEType.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDEType<KernelType, TreeType>* kde) const;
-
-  //! RelErrorVisitor constructor.
-  RelErrorVisitor(const double relError);
-};
-
-/**
- * AbsErrorVisitor modifies absolute error tolerance for a KDEType.
- */
-class AbsErrorVisitor : public boost::static_visitor<void>
-{
- private:
-  //! Absolute error tolerance.
-  const double absError;
-
- public:
-  //! Default AbsErrorVisitor on some KDEType.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDEType<KernelType, TreeType>* kde) const;
-
-  //! AbsErrorVisitor constructor.
-  AbsErrorVisitor(const double absError);
-};
-
-/**
- * MonteCarloVisitor activates or deactivates Monte Carlo for a given KDEType.
- */
-class MonteCarloVisitor : public boost::static_visitor<void>
-{
- private:
-  //! Whether to use Monte Carlo estimations or not.
-  const bool monteCarlo;
-
- public:
-  //! Default MonteCarloVisitor on some KDEType.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDEType<KernelType, TreeType>* kde) const;
-
-  //! MonteCarloVisitor constructor.
-  MonteCarloVisitor(const bool monteCarlo);
-};
-
-/**
- * MCProbabilityVisitor sets the Monte Carlo probability for a given KDEType.
- */
-class MCProbabilityVisitor : public boost::static_visitor<void>
-{
- private:
-  //! Monte Carlo probability.
-  const double probability;
-
- public:
-  //! Default MCProbabilityVisitor on some KDEType.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDEType<KernelType, TreeType>* kde) const;
-
-  //! MCProbabilityVisitor constructor.
-  MCProbabilityVisitor(const double probability);
-};
-
-/**
- * MCSampleSizeVisitor sets the Monte Carlo intial sample size for a given
- * KDEType.
- */
-class MCSampleSizeVisitor : public boost::static_visitor<void>
-{
- private:
-  //! Monte Carlo sample size.
-  const size_t sampleSize;
-
- public:
-  //! Default MCSampleSizeVisitor on some KDEType.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDEType<KernelType, TreeType>* kde) const;
-
-  //! MCSampleSizeVisitor constructor.
-  MCSampleSizeVisitor(const size_t sampleSize);
-};
-
-/**
- * MCEntryCoefVisitor sets the Monte Carlo entry coefficient.
- */
-class MCEntryCoefVisitor : public boost::static_visitor<void>
-{
- private:
-  //! Monte Carlo entry coefficient.
-  const double entryCoef;
-
- public:
-  //! Default MCEntryCoefVisitor on some KDEType.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDEType<KernelType, TreeType>* kde) const;
-
-  //! MCEntryCoefVisitor constructor.
-  MCEntryCoefVisitor(const double entryCoef);
-};
-
-/**
- * MCBreakCoefVisitor sets the Monte Carlo break coefficient.
- */
-class MCBreakCoefVisitor : public boost::static_visitor<void>
-{
- private:
-  //! Monte Carlo break coefficient.
-  const double breakCoef;
-
- public:
-  //! Default MCBreakCoefVisitor on some KDEType.
-  template<typename KernelType,
-           template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(KDEType<KernelType, TreeType>* kde) const;
-
-  //! MCBreakCoefVisitor constructor.
-  MCBreakCoefVisitor(const double breakCoef);
-};
-
-/**
- * ModeVisitor exposes the Mode() method of the KDEType.
- */
-class ModeVisitor : public boost::static_visitor<KDEMode&>
-{
- public:
-  //! Return mode of KDEType instance.
-  template<typename KDEType>
-  KDEMode& operator()(KDEType* kde) const;
-};
-
-class DeleteVisitor : public boost::static_visitor<void>
-{
- public:
-  //! Delete KDEType instance.
-  template<typename KDEType>
-  void operator()(KDEType* kde) const;
-};
-
 class KDEModel
 {
  public:
@@ -413,34 +280,10 @@ class KDEModel
   double mcBreakCoef;
 
   /**
-   * kdeModel holds an instance of each possible combination of KernelType and
-   * TreeType. It is initialized using BuildModel.
+   * kdeModel holds whatever KDE type we are using.  It is initialized using the
+   * `BuildModel()` method.
    */
-  boost::variant<KDEType<kernel::GaussianKernel, tree::KDTree>*,
-                 KDEType<kernel::GaussianKernel, tree::BallTree>*,
-                 KDEType<kernel::GaussianKernel, tree::StandardCoverTree>*,
-                 KDEType<kernel::GaussianKernel, tree::Octree>*,
-                 KDEType<kernel::GaussianKernel, tree::RTree>*,
-                 KDEType<kernel::EpanechnikovKernel, tree::KDTree>*,
-                 KDEType<kernel::EpanechnikovKernel, tree::BallTree>*,
-                 KDEType<kernel::EpanechnikovKernel, tree::StandardCoverTree>*,
-                 KDEType<kernel::EpanechnikovKernel, tree::Octree>*,
-                 KDEType<kernel::EpanechnikovKernel, tree::RTree>*,
-                 KDEType<kernel::LaplacianKernel, tree::KDTree>*,
-                 KDEType<kernel::LaplacianKernel, tree::BallTree>*,
-                 KDEType<kernel::LaplacianKernel, tree::StandardCoverTree>*,
-                 KDEType<kernel::LaplacianKernel, tree::Octree>*,
-                 KDEType<kernel::LaplacianKernel, tree::RTree>*,
-                 KDEType<kernel::SphericalKernel, tree::KDTree>*,
-                 KDEType<kernel::SphericalKernel, tree::BallTree>*,
-                 KDEType<kernel::SphericalKernel, tree::StandardCoverTree>*,
-                 KDEType<kernel::SphericalKernel, tree::Octree>*,
-                 KDEType<kernel::SphericalKernel, tree::RTree>*,
-                 KDEType<kernel::TriangularKernel, tree::KDTree>*,
-                 KDEType<kernel::TriangularKernel, tree::BallTree>*,
-                 KDEType<kernel::TriangularKernel, tree::StandardCoverTree>*,
-                 KDEType<kernel::TriangularKernel, tree::Octree>*,
-                 KDEType<kernel::TriangularKernel, tree::RTree>*> kdeModel;
+  KDEWrapperBase* kdeModel;
 
  public:
   /**
@@ -487,11 +330,16 @@ class KDEModel
   /**
    * Copy the given model.
    *
-   * Use std::move if the object to copy is no longer needed.
-   *
    * @param other KDEModel to copy.
    */
-  KDEModel& operator=(KDEModel other);
+  KDEModel& operator=(const KDEModel& other);
+
+  /**
+   * Take ownership of the contents of the given model.
+   *
+   * @param other KDEModel to take ownership of.
+   */
+  KDEModel& operator=(KDEModel&& other);
 
   //! Destroy the KDEModel object.
   ~KDEModel();
@@ -561,10 +409,10 @@ class KDEModel
   void MCBreakCoefficient(const double newBreakCoef);
 
   //! Get the mode of the model.
-  KDEMode Mode() const;
+  KDEMode Mode() const { return kdeModel->Mode(); }
 
   //! Modify the mode of the model.
-  KDEMode& Mode();
+  KDEMode& Mode() { return kdeModel->Mode(); }
 
   /**
    * Build the KDE model with the given parameters and then trains it with the
