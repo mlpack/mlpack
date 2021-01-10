@@ -27,189 +27,183 @@ namespace mlpack {
 namespace range {
 
 /**
- * Alias template for Range Search.
+ * RSWrapperBase is a base wrapper class for holding all RangeSearch types
+ * supported by RSModel.  All RangeSearch type wrappers inherit from this class,
+ * allowing a simple interface via inheritance for all the different types we
+ * want to support.
+ */
+class RSWrapperBase
+{
+ public:
+  //! Create the RSWrapperBase object.  The base class does not hold anything,
+  //! so this constructor does nothing.
+  RSWrapperBase() { }
+
+  //! Create a new RSWrapperBase that is the same as this one.  This function
+  //! will properly handle polymorphism.
+  virtual RSWrapperBase* Clone() const = 0;
+
+  //! Destruct the RSWrapperBase (nothing to do).
+  virtual ~RSWrapperBase() { }
+
+  //! Get the dataset.
+  const arma::mat& Dataset() const = 0;
+
+  //! Get whether single-tree search is being used.
+  bool SingleMode() const = 0;
+  //! Modify whether single-tree search is being used.
+  bool& SingleMode() = 0;
+
+  //! Get whether naive search is being used.
+  bool Naive() const = 0;
+  //! Modify whether naive search is being used.
+  bool& Naive() = 0;
+
+  //! Train the model (build the reference tree if needed).
+  virtual void Train(arma::mat&& referenceSet,
+                     const size_t leafSize) = 0;
+
+  //! Perform bichromatic range search (i.e. a search with a separate query
+  //! set).
+  virtual void Search(arma::mat&& querySet,
+                      const math::Range& range,
+                      std::vector<std::vector<size_t>>& neighbors,
+                      std::vector<std::vector<double>>& distances,
+                      const size_t leafSize) = 0;
+
+  //! Perform monochromatic range search (i.e. a search with the reference set
+  //! as the query set).
+  virtual void Search(const math::Range& range,
+                      std::vector<std::vector<size_t>>& neighbors,
+                      std::vector<std::vector<double>>& distances) = 0;
+};
+
+/**
+ * RSWrapper is a wrapper class for most RangeSearch types.
  */
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-using RSType = RangeSearch<metric::EuclideanDistance, arma::mat, TreeType>;
-
-/**
- * MonoSearchVisitor executes a monochromatic range search on the given
- * RSType. Range Search is performed on the reference set itself, no querySet.
- */
-class MonoSearchVisitor : public  boost::static_visitor<void>
+class RSWrapper : public RSWrapperBase
 {
- private:
-  //! The range to search for.
-  const math::Range& range;
-  //! Output neighbors.
-  std::vector<std::vector<size_t>>& neighbors;
-  //! Output distances.
-  std::vector<std::vector<double>>& distances;
-
  public:
-  //! Perform monochromatic search with the given RangeSearch object.
-  template<typename RSType>
-  void operator()(RSType* rs) const;
+  //! Create the RSWrapper object.
+  RSWrapper(const bool singleMode, const bool naive) :
+      ra(singleMode, naive)
+  {
+    // Nothing else to do.
+  }
 
-  //! Construct the MonoSearchVisitor with the given parameters.
-  MonoSearchVisitor(const math::Range& range,
-                    std::vector<std::vector<size_t>>& neighbors,
-                    std::vector<std::vector<double>>& distances):
-      range(range),
-      neighbors(neighbors),
-      distances(distances)
-  {};
+  //! Create a new RSWrapper that is the same as this one.  This function
+  //! will properly handle polymorphism.
+  virtual RSWrapper* Clone() const { return new RSWrapper(*this); }
+
+  //! Destruct the RSWrapper (nothing to do).
+  virtual ~RSWrapper() { }
+
+  //! Get the dataset.
+  const arma::mat& Dataset() const { return rs.ReferenceSet(); }
+
+  //! Get whether single-tree search is being used.
+  bool SingleMode() const { return rs.SingleMode(); }
+  //! Modify whether single-tree search is being used.
+  bool& SingleMode() { return rs.SingleMode(); }
+
+  //! Get whether naive search is being used.
+  bool Naive() const { return rs.Naive(); }
+  //! Modify whether naive search is being used.
+  bool& Naive() { return rs.Naive(); }
+
+  //! Train the model (build the reference tree if needed).  This ignores the
+  //! leaf size.
+  virtual void Train(arma::mat&& referenceSet,
+                     const size_t /* leafSize */);
+
+  //! Perform bichromatic range search (i.e. a search with a separate query
+  //! set).  This ignores the leaf size.
+  virtual void Search(arma::mat&& querySet,
+                      const math::Range& range,
+                      std::vector<std::vector<size_t>>& neighbors,
+                      std::vector<std::vector<double>>& distances,
+                      const size_t /* leafSize */);
+
+  //! Perform monochromatic range search (i.e. a search with the reference set
+  //! as the query set).
+  virtual void Search(const math::Range& range,
+                      std::vector<std::vector<size_t>>& neighbors,
+                      std::vector<std::vector<double>>& distances);
+
+  //! Serialize the RangeSearch model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(rs));
+  }
+
+ protected:
+  typedef RangeSearch<metric::EuclideanDistance, arma::mat, TreeType> RSType;
+
+  //! The instantiated RangeSearch object that we are wrapping.
+  RSType rs;
 };
 
 /**
- * BiSearchVisitor executes a bichromatic range search on the given RSType.
- * We use template specialization to differentiate those tree types that
- * accept leafSize as a parameter. In these cases, before doing range search,
- * a query tree with proper leafSize is built from the querySet.
+ * LeafSizeRSWrapper wraps any RangeSearch type that needs to be able to take
+ * the leaf size into account when building trees.  The implementations of
+ * Train() and bichromatic Search() take this leaf size into account.
  */
-class BiSearchVisitor : public boost::static_visitor<void>
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+class LeafSizeRSWrapper : public RSWrapper<TreeType>
 {
- private:
-  //! The query set for the bichromatic search.
-  const arma::mat& querySet;
-  //! Range to search neighbours for.
-  const math::Range& range;
-  //! The result vector for neighbors.
-  std::vector<std::vector<size_t>>& neighbors;
-  //! The result vector for distances.
-  std::vector<std::vector<double>>& distances;
-  //! The number of points in a leaf (for BinarySpaceTrees).
-  const size_t leafSize;
-
-  //! Bichromatic range search on the given RSType considering the leafSize.
-  template<typename RSType>
-  void SearchLeaf(RSType* rs) const;
-
  public:
-  //! Alias template necessary for visual c++ compiler.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using RSTypeT = RSType<TreeType>;
+  //! Construct the LeafSizeRSWrapper by delegating to the RSWrapper
+  //! constructor.
+  LeafSizeRSWrapper(const bool singleMode, const bool naive) :
+      RSWrapper<TreeType>(singleMode, naive)
+  {
+    // Nothing else to do.
+  }
 
-  //! Default Bichromatic range search on the given RSType instance.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(RSTypeT<TreeType>* rs) const;
+  //! Delete the LeafSizeRSWrapper.
+  virtual ~LeafSizeRSWrapper() { }
 
-  //! Bichromatic range search on the given RSType specialized for KDTrees.
-  void operator()(RSTypeT<tree::KDTree>* rs) const;
+  //! Return a copy of the LeafSizeRSWrapper.
+  virtual LeafSizeRSWrapper* Clone() const
+  {
+    return new LeafSizeRSWrapper(*this);
+  }
 
-  //! Bichromatic range search on the given RSType specialized for BallTrees.
-  void operator()(RSTypeT<tree::BallTree>* rs) const;
+  //! Train a model with the given parameters.  This overload uses leafSize.
+  virtual void Train(arma::mat&& referenceSet,
+                     const size_t leafSize);
 
-  //! Bichromatic range search specialized for octrees.
-  void operator()(RSTypeT<tree::Octree>* rs) const;
+  //! Perform bichromatic search (e.g. search with a separate query set).  This
+  //! overload takes the leaf size into account when building the query tree.
+  virtual void Search(arma::mat&& querySet,
+                      const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances,
+                      const size_t leafSize);
 
-  //! Construct the BiSearchVisitor.
-  BiSearchVisitor(const arma::mat& querySet,
-                  const math::Range& range,
-                  std::vector<std::vector<size_t>>& neighbors,
-                  std::vector<std::vector<double>>& distances,
-                  const size_t leafSize);
+  //! Serialize the RangeSearch model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(rs));
+  }
+
+ protected:
+  using RSWrapper<TreeType>::rs;
 };
 
 /**
- * TrainVisitor sets the reference set to a new reference set on the given
- * RSType. We use template specialization to differentiate those tree types that
- * accept leafSize as a parameter. In these cases, a reference tree with proper
- * leafSize is built from the referenceSet.
+ * The RSModel class provides an abstraction for the RangeSearch class,
+ * abstracting away the TreeType parameter and allowing it to be specified at
+ * runtime.  This class is written for the sake of the `range_search` binding,
+ * but is not necessarily restricted to that usage.
  */
-class TrainVisitor : public boost::static_visitor<void>
-{
- private:
-  //! The reference set to use for training.
-  arma::mat&& referenceSet;
-  //! The leaf size, used only by BinarySpaceTree.
-  size_t leafSize;
-  //! Train on the given RsType considering the leafSize.
-  template<typename RSType>
-  void TrainLeaf(RSType* rs) const;
-
- public:
-  //! Alias template necessary for visual c++ compiler.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using RSTypeT = RSType<TreeType>;
-
-  //! Default Train on the given RSType instance.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(RSTypeT<TreeType>* rs) const;
-
-  //! Train on the given RSType specialized for KDTrees.
-  void operator()(RSTypeT<tree::KDTree>* rs) const;
-
-  //! Train on the given RSType specialized for BallTrees.
-  void operator()(RSTypeT<tree::BallTree>* rs) const;
-
-  //! Train specialized for octrees.
-  void operator()(RSTypeT<tree::Octree>* rs) const;
-
-  //! Construct the TrainVisitor object with the given reference set, leafSize
-  TrainVisitor(arma::mat&& referenceSet,
-               const size_t leafSize);
-};
-
-/**
- * ReferenceSetVisitor exposes the referenceSet of the given RSType.
- */
-class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
-{
- public:
-  //! Return the reference set.
-  template<typename RSType>
-  const arma::mat& operator()(RSType* rs) const;
-};
-
-/**
- * DeleteVisitor deletes the given RSType instance.
- */
-class DeleteVisitor : public boost::static_visitor<void>
-{
- public:
-  //! Delete the RSType object.
-  template<typename RSType>
-  void operator()(RSType* rs) const;
-};
-
-/**
- * SingleModeVisitor exposes the SingleMode() method of the given RSType.
- */
-class SingleModeVisitor : public boost::static_visitor<bool&>
-{
- public:
-  /**
-   * Get a reference to the singleMode parameter of the given RangeSeach
-   * object.
-   */
-  template<typename RSType>
-  bool& operator()(RSType* rs) const;
-};
-
-/**
- * NaiveVisitor exposes the Naive() method of the given RSType.
- */
-class NaiveVisitor : public boost::static_visitor<bool&>
-{
- public:
-  /**
-   * Get a reference to the naive parameter of the given RangeSearch object.
-   */
-  template<typename RSType>
-  bool& operator()(RSType* rs) const;
-};
-
 class RSModel
 {
  public:
@@ -232,7 +226,10 @@ class RSModel
   };
 
  private:
+  //! The type of tree we are using.
   TreeTypes treeType;
+  //! (Only used for some tree types.)  The leaf size to use when building a
+  //! tree.
   size_t leafSize;
 
   //! If true, we randomly project the data into a new basis before search.
@@ -243,22 +240,8 @@ class RSModel
   /**
    * rSearch holds an instance of the RangeSearch class for the current
    * treeType. It is initialized every time BuildModel is executed.
-   * We access to the contained value through the visitor classes defined above.
    */
-  boost::variant<RSType<tree::KDTree>*,
-                 RSType<tree::StandardCoverTree>*,
-                 RSType<tree::RTree>*,
-                 RSType<tree::RStarTree>*,
-                 RSType<tree::BallTree>*,
-                 RSType<tree::XTree>*,
-                 RSType<tree::HilbertRTree>*,
-                 RSType<tree::RPlusTree>*,
-                 RSType<tree::RPlusPlusTree>*,
-                 RSType<tree::VPTree>*,
-                 RSType<tree::RPTree>*,
-                 RSType<tree::MaxRPTree>*,
-                 RSType<tree::UBTree>*,
-                 RSType<tree::Octree>*> rSearch;
+  RSWrapperBase* rSearch;
 
  public:
   /**
@@ -304,17 +287,17 @@ class RSModel
   void serialize(Archive& ar, const uint32_t /* version */);
 
   //! Expose the dataset.
-  const arma::mat& Dataset() const;
+  const arma::mat& Dataset() const { return rSearch->Dataset(); }
 
   //! Get whether the model is in single-tree search mode.
-  bool SingleMode() const;
+  bool SingleMode() const { return rSearch->SingleMode(); }
   //! Modify whether the model is in single-tree search mode.
-  bool& SingleMode();
+  bool& SingleMode() { return rSearch->SingleMode(); }
 
   //! Get whether the model is in naive search mode.
-  bool Naive() const;
+  bool Naive() const { return rSearch->Naive(); }
   //! Modify whether the model is in naive search mode.
-  bool& Naive();
+  bool& Naive() { return rSearch->Naive(); }
 
   //! Get the leaf size (applicable to everything but the cover tree).
   size_t LeafSize() const { return leafSize; }
@@ -390,7 +373,7 @@ class RSModel
 } // namespace range
 } // namespace mlpack
 
-// Include implementation (of serialize() and inline functions).
+// Include implementation (of serialize() and templated wrapper classes).
 #include "rs_model_impl.hpp"
 
 #endif
