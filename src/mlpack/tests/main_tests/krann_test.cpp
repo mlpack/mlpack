@@ -192,7 +192,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNRefModelTest",
 
   // Input pre-trained model.
   SetInputParam("input_model",
-      std::move(IO::GetParam<RANNModel*>("output_model")));
+      std::move(IO::GetParam<RAModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
@@ -285,10 +285,10 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNModelReuseTest",
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  RANNModel* output_model;
+  RAModel* output_model;
   neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
   distances = std::move(IO::GetParam<arma::mat>("distances"));
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  output_model = std::move(IO::GetParam<RAModel*>("output_model"));
 
   // Reset passed parameters.
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -324,8 +324,8 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentLeafSizes",
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(IO::GetParam<RAModel*>("output_model"));
 
   // Reset passed parameters.
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -341,7 +341,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentLeafSizes",
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
   CHECK(output_model->LeafSize() == (int) 1);
-  CHECK(IO::GetParam<RANNModel*>("output_model")->LeafSize() == (int) 10);
+  CHECK(IO::GetParam<RAModel*>("output_model")->LeafSize() == (int) 10);
   delete output_model;
 }
 
@@ -361,8 +361,8 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentTau",
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(IO::GetParam<RAModel*>("output_model"));
 
   // Reset the passed parameters.
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -378,7 +378,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentTau",
   // Check that initial output matrices and the output matrices using
   // saved model are equal
   CHECK(output_model->Tau() == (double) 5);
-  CHECK(IO::GetParam<RANNModel*>("output_model")->Tau() ==
+  CHECK(IO::GetParam<RAModel*>("output_model")->Tau() ==
       (double) 10);
   delete output_model;
 }
@@ -399,8 +399,8 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentAlpha",
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(IO::GetParam<RAModel*>("output_model"));
 
   // Reset the passed parameters.
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -416,7 +416,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentAlpha",
   // Check that initial output matrices and the output matrices using
   // saved model are equal
   CHECK(output_model->Alpha() == (double) 0.95);
-  CHECK(IO::GetParam<RANNModel*>("output_model")->Alpha() ==
+  CHECK(IO::GetParam<RAModel*>("output_model")->Alpha() ==
       (double) 0.80);
   delete output_model;
 }
@@ -437,8 +437,8 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentTreeType",
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(IO::GetParam<RAModel*>("output_model"));
 
   // Reset the passed parameters.
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -455,7 +455,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentTreeType",
   // saved model are equal
   const bool check = output_model->TreeType() == 0;
   CHECK(check == true);
-  CHECK(IO::GetParam<RANNModel*>("output_model")->TreeType() ==
+  CHECK(IO::GetParam<RAModel*>("output_model")->TreeType() ==
       8);
   delete output_model;
 }
@@ -476,8 +476,8 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentSingleSampleLimit",
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(IO::GetParam<RAModel*>("output_model"));
 
   // Reset passed parameters.
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -492,7 +492,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentSingleSampleLimit",
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  CHECK(IO::GetParam<RANNModel*>("output_model")->SingleSampleLimit() ==
+  CHECK(IO::GetParam<RAModel*>("output_model")->SingleSampleLimit() ==
       (int) 15);
   CHECK(output_model->SingleSampleLimit() == (int) 20);
   delete output_model;
@@ -514,8 +514,8 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentSampleAtLeaves",
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  RANNModel* output_model;
-  output_model = std::move(IO::GetParam<RANNModel*>("output_model"));
+  RAModel* output_model;
+  output_model = std::move(IO::GetParam<RAModel*>("output_model"));
 
   // Reset passed parameters.
   IO::GetSingleton().Parameters()["reference"].wasPassed = false;
@@ -530,7 +530,7 @@ TEST_CASE_METHOD(KRANNTestFixture, "KRANNDifferentSampleAtLeaves",
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  CHECK(IO::GetParam<RANNModel*>("output_model")->SampleAtLeaves() ==
+  CHECK(IO::GetParam<RAModel*>("output_model")->SampleAtLeaves() ==
       (bool) true);
   CHECK(output_model->SampleAtLeaves() == (bool) false);
   delete output_model;
