@@ -7,7 +7,7 @@ Source:
 
 Files: *
 Copyright:
-  Copyright 2008-2020, Ryan Curtin <ryan@ratml.org>
+  Copyright 2008-2021, Ryan Curtin <ryan@ratml.org>
   Copyright 2008-2013, Bill March <march@gatech.edu>
   Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
   Copyright 2008-2013, Nishant Mehta <niche@cc.gatech.edu>
