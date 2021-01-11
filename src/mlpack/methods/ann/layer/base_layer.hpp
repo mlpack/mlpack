@@ -59,10 +59,10 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     class ActivationFunction = LogisticFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class BaseLayer
+class BaseLayer : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -80,7 +80,6 @@ class BaseLayer
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output)
   {
     ActivationFunction::Fn(input, output);
@@ -95,25 +94,24 @@ class BaseLayer
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g)
+  void Backward(const InputType& input,
+                const OutputType& gy,
+                OutputType& g)
   {
-    arma::Mat<eT> derivative;
+    OutputType derivative;
     ActivationFunction::Deriv(input, derivative);
     g = gy % derivative;
   }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   /**
    * Serialize the layer.
@@ -126,10 +124,10 @@ class BaseLayer
 
  private:
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 }; // class BaseLayer
 
 // Convenience typedefs.
@@ -137,145 +135,157 @@ class BaseLayer
 /**
  * Standard Sigmoid-Layer using the logistic activation function.
  */
-template <
-    class ActivationFunction = LogisticFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using SigmoidLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = LogisticFunction,
+//     typename InputType = arma::mat,
+//     typename OutputType = arma::mat
+// >
+// using SigmoidLayer = BaseLayer<ActivationFunction, InputType, OutputType>;
+typedef BaseLayer<LogisticFunction, arma::mat, arma::mat> SigmoidLayer;
 
 /**
  * Standard Identity-Layer using the identity activation function.
  */
-template <
-    class ActivationFunction = IdentityFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using IdentityLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = IdentityFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using IdentityLayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<IdentityFunction, arma::mat, arma::mat> IdentityLayer;
 
 /**
  * Standard rectified linear unit non-linearity layer.
  */
-template <
-    class ActivationFunction = RectifierFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using ReLULayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = RectifierFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using ReLULayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<RectifierFunction, arma::mat, arma::mat> ReLULayer;
 
 /**
  * Standard hyperbolic tangent layer.
  */
-template <
-    class ActivationFunction = TanhFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using TanHLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = TanhFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using TanHLayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<TanhFunction, arma::mat, arma::mat> TanHLayer;
 
 /**
  * Standard Softplus-Layer using the Softplus activation function.
  */
-template <
-    class ActivationFunction = SoftplusFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using SoftPlusLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = SoftplusFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using SoftPlusLayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<SoftplusFunction, arma::mat, arma::mat> SoftPlusLayer;
 
 /**
  * Standard HardSigmoid-Layer using the HardSigmoid activation function.
  */
-template <
-    class ActivationFunction = HardSigmoidFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using HardSigmoidLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = HardSigmoidFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using HardSigmoidLayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<HardSigmoidFunction, arma::mat, arma::mat> HardSigmoidLayer;
 
 /**
  * Standard Swish-Layer using the Swish activation function.
  */
-template <
-    class ActivationFunction = SwishFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using SwishFunctionLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = SwishFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using SwishFunctionLayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<SwishFunction, arma::mat, arma::mat> SwishFunctionLayer;
 
 /**
  * Standard Mish-Layer using the Mish activation function.
  */
-template <
-    class ActivationFunction = MishFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using MishFunctionLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = MishFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using MishFunctionLayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<MishFunction, arma::mat, arma::mat> MishFunctionLayer;
 
 /**
  * Standard LiSHT-Layer using the LiSHT activation function.
  */
-template <
-    class ActivationFunction = LiSHTFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using LiSHTFunctionLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = LiSHTFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using LiSHTFunctionLayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<LiSHTFunction, arma::mat, arma::mat> LiSHTFunctionLayer;
 
 /**
  * Standard GELU-Layer using the GELU activation function.
  */
-template <
-    class ActivationFunction = GELUFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using GELUFunctionLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = GELUFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using GELUFunctionLayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<GELUFunction, arma::mat, arma::mat> GELUFunctionLayer;
 
 /**
  * Standard Elliot-Layer using the Elliot activation function.
  */
-template <
-    class ActivationFunction = ElliotFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using ElliotFunctionLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = ElliotFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using ElliotFunctionLayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<ElliotFunction, arma::mat, arma::mat> ElliotFunctionLayer;
 
 /**
  * Standard ELiSH-Layer using the ELiSH activation function.
  */
-template <
-    class ActivationFunction = ElishFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using ElishFunctionLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = ElishFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using ElishFunctionLayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<ElishFunction, arma::mat, arma::mat> ElishFunctionLayer;
 
 /**
  * Standard Gaussian-Layer using the Gaussian activation function.
  */
-template <
-    class ActivationFunction = GaussianFunction,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using GaussianFunctionLayer = BaseLayer<
-    ActivationFunction, InputDataType, OutputDataType>;
+// template <
+//     class ActivationFunction = GaussianFunction,
+//     typename InputDataType = arma::mat,
+//     typename OutputDataType = arma::mat
+// >
+// using GaussianFunctionLayer = BaseLayer<
+//     ActivationFunction, InputDataType, OutputDataType>;
+typedef BaseLayer<GaussianFunction, arma::mat, arma::mat> GaussianFunctionLayer;
 
 } // namespace ann
 } // namespace mlpack

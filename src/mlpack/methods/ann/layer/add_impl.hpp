@@ -19,45 +19,42 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-Add<InputDataType, OutputDataType>::Add(const size_t outSize) :
+template<typename InputType, typename OutputType>
+AddType<InputType, OutputType>::AddType(const size_t outSize) :
     outSize(outSize)
 {
   weights.set_size(WeightSize(), 1);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Add<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void AddType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   output = input;
   output.each_col() += weights;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Add<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void AddType<InputType, OutputType>::Backward(
+    const InputType& /* input */,
+    const OutputType& gy,
+    OutputType& g)
 {
   g = gy;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Add<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
+template<typename InputType, typename OutputType>
+void AddType<InputType, OutputType>::Gradient(
+    const InputType& /* input */,
+    const OutputType& error,
+    OutputType& gradient)
 {
   gradient = error;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void Add<InputDataType, OutputDataType>::serialize(
+void AddType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(outSize));

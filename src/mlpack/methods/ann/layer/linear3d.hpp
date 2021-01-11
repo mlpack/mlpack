@@ -14,8 +14,9 @@
 #define MLPACK_METHODS_ANN_LAYER_LINEAR3D_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
+
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -33,15 +34,15 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class Linear3D
+class Linear3DType : public Layer<InputType, OutputType>
 {
  public:
   //! Create the Linear3D object.
-  Linear3D();
+  Linear3DType();
 
   /**
    * Create the Linear3D layer object using the specified number of units.
@@ -50,21 +51,21 @@ class Linear3D
    * @param outSize The number of output units.
    * @param regularizer The regularizer to use, optional.
    */
-  Linear3D(const size_t inSize,
-           const size_t outSize,
-           RegularizerType regularizer = RegularizerType());
+  Linear3DType(const size_t inSize,
+               const size_t outSize,
+               RegularizerType regularizer = RegularizerType());
 
   //! Copy constructor.
-  Linear3D(const Linear3D& layer);
+  Linear3DType(const Linear3DType& layer);
 
   //! Move constructor.
-  Linear3D(Linear3D&&);
+  Linear3DType(Linear3DType&&);
 
   //! Copy assignment operator.
-  Linear3D& operator=(const Linear3D& layer);
+  Linear3DType& operator=(const Linear3DType& layer);
 
   //! Move assignment operator.
-  Linear3D& operator=(Linear3D&& layer);
+  Linear3DType& operator=(Linear3DType&& layer);
 
   /*
    * Reset the layer parameter.
@@ -78,8 +79,7 @@ class Linear3D
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -90,10 +90,9 @@ class Linear3D
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -102,30 +101,29 @@ class Linear3D
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
+  InputType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  InputType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the input size.
   size_t InputSize() const { return inSize; }
@@ -134,19 +132,19 @@ class Linear3D
   size_t OutputSize() const { return outSize; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputType const& Gradient() const { return gradient; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Gradient() { return gradient; }
 
   //! Get the weight of the layer.
-  OutputDataType const& Weight() const { return weight; }
+  OutputType const& Weight() const { return weight; }
   //! Modify the weight of the layer.
-  OutputDataType& Weight() { return weight; }
+  OutputType& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  OutputDataType const& Bias() const { return bias; }
+  OutputType const& Bias() const { return bias; }
   //! Modify the bias weights of the layer.
-  OutputDataType& Bias() { return bias; }
+  OutputType& Bias() { return bias; }
 
   /**
    * Serialize the layer
@@ -162,29 +160,31 @@ class Linear3D
   size_t outSize;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored weight parameters.
-  OutputDataType weight;
+  OutputType weight;
 
   //! Locally-stored bias term parameters.
-  OutputDataType bias;
+  OutputType bias;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType gradient;
 
   //! Locally-stored input parameter object.
-  InputDataType inputParameter;
+  InputType inputParameter;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
 }; // class Linear
+
+typedef Linear3DType<arma::mat, arma::mat, NoRegularizer> Linear3D;
 
 } // namespace ann
 } // namespace mlpack

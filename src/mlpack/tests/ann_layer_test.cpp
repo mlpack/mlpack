@@ -77,108 +77,108 @@ using namespace mlpack::ann;
 //   CheckMatrices(predictions1, predictions2);
 // }
 
-// /**
-//  * Simple add module test.
-//  */
-// TEST_CASE("SimpleAddLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta;
-//   Add<> module(10);
-//   module.Parameters().randu();
+/**
+ * Simple add module test.
+ */
+TEST_CASE("SimpleAddLayerTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta;
+  Add module(10);
+  module.Parameters().randu();
 
-//   // Test the Forward function.
-//   input = arma::zeros(10, 1);
-//   module.Forward(input, output);
-//   REQUIRE(arma::accu(module.Parameters()) == arma::accu(output));
+  // Test the Forward function.
+  input = arma::zeros(10, 1);
+  module.Forward(input, output);
+  REQUIRE(arma::accu(module.Parameters()) == arma::accu(output));
 
-//   // Test the Backward function.
-//   module.Backward(input, output, delta);
-//   REQUIRE(arma::accu(output) == arma::accu(delta));
+  // Test the Backward function.
+  module.Backward(input, output, delta);
+  REQUIRE(arma::accu(output) == arma::accu(delta));
 
-//   // Test the forward function.
-//   input = arma::ones(10, 1);
-//   module.Forward(input, output);
-//   REQUIRE(10 + arma::accu(module.Parameters()) ==
-//       Approx(arma::accu(output)).epsilon(1e-5));
+  // Test the forward function.
+  input = arma::ones(10, 1);
+  module.Forward(input, output);
+  REQUIRE(10 + arma::accu(module.Parameters()) ==
+      Approx(arma::accu(output)).epsilon(1e-5));
 
-//   // Test the backward function.
-//   module.Backward(input, output, delta);
-//   REQUIRE(arma::accu(output) == Approx(arma::accu(delta)).epsilon(1e-5));
-// }
+  // Test the backward function.
+  module.Backward(input, output, delta);
+  REQUIRE(arma::accu(output) == Approx(arma::accu(delta)).epsilon(1e-5));
+}
 
-// /**
-//  * Jacobian add module test.
-//  */
-// TEST_CASE("JacobianAddLayerTest", "[ANNLayerTest]")
-// {
-//   for (size_t i = 0; i < 5; ++i)
-//   {
-//     const size_t elements = math::RandInt(2, 1000);
-//     arma::mat input;
-//     input.set_size(elements, 1);
+/**
+ * Jacobian add module test.
+ */
+TEST_CASE("JacobianAddLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t elements = math::RandInt(2, 1000);
+    arma::mat input;
+    input.set_size(elements, 1);
 
-//     Add<> module(elements);
-//     module.Parameters().randu();
+    Add module(elements);
+    module.Parameters().randu();
 
-//     double error = JacobianTest(module, input);
-//     REQUIRE(error <= 1e-5);
-//   }
-// }
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
 
-// /**
-//  * Add layer numerical gradient test.
-//  */
-// TEST_CASE("GradientAddLayerTest", "[ANNLayerTest]")
-// {
-//   // Add function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::randu(10, 1)),
-//         target(arma::mat("1"))
-//     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
-//       model->Add<IdentityLayer<> >();
-//       model->Add<Linear<> >(10, 10);
-//       model->Add<Add<> >(10);
-//       model->Add<LogSoftMax<> >();
-//     }
+/**
+ * Add layer numerical gradient test.
+ */
+TEST_CASE("GradientAddLayerTest", "[ANNLayerTest]")
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
+    {
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer>();
+      model->Add<Linear>(10, 10);
+      model->Add<Add>(10);
+      model->Add<LogSoftMax>();
+    }
 
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
 
-//     arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-//     arma::mat input, target;
-//   } function;
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
 
-//   REQUIRE(CheckGradient(function) <= 1e-4);
-// }
+  REQUIRE(CheckGradient(function) <= 1e-4);
+}
 
-// /**
-//  * Test that the function that can access the outSize parameter of
-//  * the Add layer works.
-//  */
-// TEST_CASE("AddLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter : outSize.
-//   Add<> layer(7);
+/**
+ * Test that the function that can access the outSize parameter of
+ * the Add layer works.
+ */
+TEST_CASE("AddLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter : outSize.
+  Add layer(7);
 
-//   // Make sure we can get the parameter successfully.
-//   REQUIRE(layer.OutputSize() == 7);
-// }
+  // Make sure we can get the parameter successfully.
+  REQUIRE(layer.OutputSize() == 7);
+}
 
 // /**
 //  * Simple constant module test.
@@ -495,107 +495,107 @@ using namespace mlpack::ann;
 //   REQUIRE(CheckGradient(function) <= 1e-4);
 // }
 
-// /**
-//  * Simple Linear3D layer test.
-//  */
-// TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
-// {
-//   const size_t inSize = 4;
-//   const size_t outSize = 1;
-//   const size_t nPoints = 2;
-//   const size_t batchSize = 1;
-//   arma::mat input, output, delta;
+/**
+ * Simple Linear3D layer test.
+ */
+TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
+{
+  const size_t inSize = 4;
+  const size_t outSize = 1;
+  const size_t nPoints = 2;
+  const size_t batchSize = 1;
+  arma::mat input, output, delta;
 
-//   Linear3D<> module(inSize, outSize);
-//   module.Reset();
-//   module.Parameters().randu();
+  Linear3D module(inSize, outSize);
+  module.Reset();
+  module.Parameters().randu();
 
-//   // Test the Forward function.
-//   input = arma::zeros(inSize * nPoints, batchSize);
-//   module.Forward(input, output);
-//   REQUIRE(arma::accu(module.Bias())
-//       == Approx(arma::accu(output) / (nPoints * batchSize)).epsilon(1e-3));
+  // Test the Forward function.
+  input = arma::zeros(inSize * nPoints, batchSize);
+  module.Forward(input, output);
+  REQUIRE(arma::accu(module.Bias())
+      == Approx(arma::accu(output) / (nPoints * batchSize)).epsilon(1e-3));
 
-//   // Test the Backward function.
-//   module.Backward(input, input, delta);
-//   REQUIRE(arma::accu(delta) == 0);
-// }
+  // Test the Backward function.
+  module.Backward(input, input, delta);
+  REQUIRE(arma::accu(delta) == 0);
+}
 
-// /**
-//  * Jacobian Linear3D module test.
-//  */
-// TEST_CASE("JacobianLinear3DLayerTest", "[ANNLayerTest]")
-// {
-//   for (size_t i = 0; i < 5; ++i)
-//   {
-//     const size_t inSize = math::RandInt(2, 10);
-//     const size_t outSize = math::RandInt(2, 10);
-//     const size_t nPoints = math::RandInt(2, 10);
-//     const size_t batchSize = 1;
+/**
+ * Jacobian Linear3D module test.
+ */
+TEST_CASE("JacobianLinear3DLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inSize = math::RandInt(2, 10);
+    const size_t outSize = math::RandInt(2, 10);
+    const size_t nPoints = math::RandInt(2, 10);
+    const size_t batchSize = 1;
 
-//     arma::mat input;
-//     input.set_size(inSize * nPoints, batchSize);
+    arma::mat input;
+    input.set_size(inSize * nPoints, batchSize);
 
-//     Linear3D<> module(inSize, outSize);
-//     module.Parameters().randu();
+    Linear3D module(inSize, outSize);
+    module.Parameters().randu();
 
-//     double error = JacobianTest(module, input);
-//     REQUIRE(error <= 1e-5);
-//   }
-// }
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
 
-// /**
-//  * Simple Gradient test for Linear3D layer.
-//  */
-// TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
-// {
-//   // Linear function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         inSize(4),
-//         outSize(1),
-//         nPoints(2),
-//         batchSize(4)
-//     {
-//       input = arma::randu(inSize * nPoints, batchSize);
-//       target = arma::zeros(outSize * nPoints, batchSize);
-//       target(0, 0) = 1;
-//       target(0, 3) = 1;
-//       target(1, 1) = 1;
-//       target(1, 2) = 1;
+/**
+ * Simple Gradient test for Linear3D layer.
+ */
+TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        inSize(4),
+        outSize(1),
+        nPoints(2),
+        batchSize(4)
+    {
+      input = arma::randu(inSize * nPoints, batchSize);
+      target = arma::zeros(outSize * nPoints, batchSize);
+      target(0, 0) = 1;
+      target(0, 3) = 1;
+      target(1, 1) = 1;
+      target(1, 2) = 1;
 
-//       model = new FFN<MeanSquaredError<>, RandomInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
-//       model->Add<IdentityLayer<>>();
-//       model->Add<Linear3D<>>(inSize, outSize);
-//     }
+      model = new FFN<MeanSquaredError<>, RandomInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer>();
+      model->Add<Linear3D>(inSize, outSize);
+    }
 
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
 
-//     arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<MeanSquaredError<>, RandomInitialization>* model;
-//     arma::mat input, target;
-//     const size_t inSize;
-//     const size_t outSize;
-//     const size_t nPoints;
-//     const size_t batchSize;
-//   } function;
+    FFN<MeanSquaredError<>, RandomInitialization>* model;
+    arma::mat input, target;
+    const size_t inSize;
+    const size_t outSize;
+    const size_t nPoints;
+    const size_t batchSize;
+  } function;
 
-//   REQUIRE(CheckGradient(function) <= 1e-7);
-// }
+  REQUIRE(CheckGradient(function) <= 1e-7);
+}
 
 // /**
 //  * Simple noisy linear module test.
@@ -1852,115 +1852,115 @@ using namespace mlpack::ann;
 //   REQUIRE(CheckGradient(function) <= 1e-4);
 // }
 
-// /**
-//  * Simple lookup module test.
-//  */
-// TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
-// {
-//   const size_t vocabSize = 10;
-//   const size_t embeddingSize = 2;
-//   const size_t seqLength = 3;
-//   const size_t batchSize = 4;
+/**
+ * Simple lookup module test.
+ */
+TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
+{
+  const size_t vocabSize = 10;
+  const size_t embeddingSize = 2;
+  const size_t seqLength = 3;
+  const size_t batchSize = 4;
 
-//   arma::mat output, input, gy, g, gradient;
+  arma::mat output, input, gy, g, gradient;
 
-//   Lookup<> module(vocabSize, embeddingSize);
-//   module.Parameters().randu();
+  Lookup module(vocabSize, embeddingSize);
+  module.Parameters().randu();
 
-//   // Test the Forward function.
-//   input = arma::zeros(seqLength, batchSize);
-//   for (size_t i = 0; i < input.n_elem; ++i)
-//   {
-//     int token = math::RandInt(1, vocabSize);
-//     input(i) = token;
-//   }
+  // Test the Forward function.
+  input = arma::zeros(seqLength, batchSize);
+  for (size_t i = 0; i < input.n_elem; ++i)
+  {
+    int token = math::RandInt(1, vocabSize);
+    input(i) = token;
+  }
 
-//   module.Forward(input, output);
-//   for (size_t i = 0; i < batchSize; ++i)
-//   {
-//     // The Lookup module uses index - 1 for the cols.
-//     const double outputSum = arma::accu(module.Parameters().cols(
-//         arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
+  module.Forward(input, output);
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    // The Lookup module uses index - 1 for the cols.
+    const double outputSum = arma::accu(module.Parameters().cols(
+        arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
-//     REQUIRE(std::fabs(outputSum - arma::accu(output.col(i))) <= 1e-5);
-//   }
+    REQUIRE(std::fabs(outputSum - arma::accu(output.col(i))) <= 1e-5);
+  }
 
-//   // Test the Gradient function.
-//   arma::mat error = 0.01 * arma::randu(embeddingSize * seqLength, batchSize);
-//   module.Gradient(input, error, gradient);
+  // Test the Gradient function.
+  arma::mat error = 0.01 * arma::randu(embeddingSize * seqLength, batchSize);
+  module.Gradient(input, error, gradient);
 
-//   REQUIRE(std::fabs(arma::accu(error) - arma::accu(gradient)) <= 1e-07);
-// }
+  REQUIRE(std::fabs(arma::accu(error) - arma::accu(gradient)) <= 1e-07);
+}
 
-// /**
-//  * Lookup layer numerical gradient test.
-//  */
-// TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
-// {
-//   // Lookup function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction()
-//     {
-//       input.set_size(seqLength, batchSize);
-//       for (size_t i = 0; i < input.n_elem; ++i)
-//       {
-//         input(i) = math::RandInt(1, vocabSize);
-//       }
-//       target = arma::zeros(vocabSize, batchSize);
-//       for (size_t i = 0; i < batchSize; ++i)
-//       {
-//         const size_t targetWord = math::RandInt(1, vocabSize);
-//         target(targetWord, i) = 1;
-//       }
+/**
+ * Lookup layer numerical gradient test.
+ */
+TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
+{
+  // Lookup function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input.set_size(seqLength, batchSize);
+      for (size_t i = 0; i < input.n_elem; ++i)
+      {
+        input(i) = math::RandInt(1, vocabSize);
+      }
+      target = arma::zeros(vocabSize, batchSize);
+      for (size_t i = 0; i < batchSize; ++i)
+      {
+        const size_t targetWord = math::RandInt(1, vocabSize);
+        target(targetWord, i) = 1;
+      }
 
-//       model = new FFN<CrossEntropyError<>, GlorotInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
-//       model->Add<Lookup<> >(vocabSize, embeddingSize);
-//       model->Add<Linear<> >(embeddingSize * seqLength, vocabSize);
-//       model->Add<Softmax<> >();
-//     }
+      model = new FFN<CrossEntropyError<>, GlorotInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<Lookup>(vocabSize, embeddingSize);
+      model->Add<Linear>(embeddingSize * seqLength, vocabSize);
+      model->Add<Softmax>();
+    }
 
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, batchSize);
-//       model->Gradient(model->Parameters(), 0, gradient, batchSize);
-//       return error;
-//     }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, batchSize);
+      model->Gradient(model->Parameters(), 0, gradient, batchSize);
+      return error;
+    }
 
-//     arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<CrossEntropyError<>, GlorotInitialization>* model;
-//     arma::mat input, target;
+    FFN<CrossEntropyError<>, GlorotInitialization>* model;
+    arma::mat input, target;
 
-//     const size_t seqLength = 10;
-//     const size_t embeddingSize = 8;
-//     const size_t vocabSize = 20;
-//     const size_t batchSize = 4;
-//   } function;
+    const size_t seqLength = 10;
+    const size_t embeddingSize = 8;
+    const size_t vocabSize = 20;
+    const size_t batchSize = 4;
+  } function;
 
-//   REQUIRE(CheckGradient(function) <= 1e-6);
-// }
+  REQUIRE(CheckGradient(function) <= 1e-6);
+}
 
-// /**
-//  * Test that the functions that can access the parameters of the
-//  * Lookup layer work.
-//  */
-// TEST_CASE("LookupLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : vocabSize, embedingSize.
-//   Lookup<> layer(100, 8);
+/**
+ * Test that the functions that can access the parameters of the
+ * Lookup layer work.
+ */
+TEST_CASE("LookupLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter order : vocabSize, embedingSize.
+  Lookup layer(100, 8);
 
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer.VocabSize() == 100);
-//   REQUIRE(layer.EmbeddingSize() == 8);
-// }
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer.VocabSize() == 100);
+  REQUIRE(layer.EmbeddingSize() == 8);
+}
 
 // /**
 //  * Simple LogSoftMax module test.
@@ -2049,71 +2049,71 @@ using namespace mlpack::ann;
 //   REQUIRE(CheckGradient(function) <= 1e-4);
 // }
 
-// /*
-//  * Simple test for the BilinearInterpolation layer
-//  */
-// TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
-// {
-//   // Tested output against tensorflow.image.resize_bilinear()
-//   arma::mat input, output, unzoomedOutput, expectedOutput;
-//   size_t inRowSize = 2;
-//   size_t inColSize = 2;
-//   size_t outRowSize = 5;
-//   size_t outColSize = 5;
-//   size_t depth = 1;
-//   input.zeros(inRowSize * inColSize * depth, 1);
-//   input[0] = 1.0;
-//   input[1] = input[2] = 2.0;
-//   input[3] = 3.0;
-//   BilinearInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize,
-//       depth);
-//   expectedOutput = arma::mat("1.0000 1.4000 1.8000 2.0000 2.0000 \
-//       1.4000 1.8000 2.2000 2.4000 2.4000 \
-//       1.8000 2.2000 2.6000 2.8000 2.8000 \
-//       2.0000 2.4000 2.8000 3.0000 3.0000 \
-//       2.0000 2.4000 2.8000 3.0000 3.0000");
-//   expectedOutput.reshape(25, 1);
-//   layer.Forward(input, output);
-//   CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
+/*
+ * Simple test for the BilinearInterpolation layer
+ */
+TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
+{
+  // Tested output against tensorflow.image.resize_bilinear()
+  arma::mat input, output, unzoomedOutput, expectedOutput;
+  size_t inRowSize = 2;
+  size_t inColSize = 2;
+  size_t outRowSize = 5;
+  size_t outColSize = 5;
+  size_t depth = 1;
+  input.zeros(inRowSize * inColSize * depth, 1);
+  input[0] = 1.0;
+  input[1] = input[2] = 2.0;
+  input[3] = 3.0;
+  BilinearInterpolation layer(inRowSize, inColSize, outRowSize, outColSize,
+      depth);
+  expectedOutput = arma::mat("1.0000 1.4000 1.8000 2.0000 2.0000 \
+      1.4000 1.8000 2.2000 2.4000 2.4000 \
+      1.8000 2.2000 2.6000 2.8000 2.8000 \
+      2.0000 2.4000 2.8000 3.0000 3.0000 \
+      2.0000 2.4000 2.8000 3.0000 3.0000");
+  expectedOutput.reshape(25, 1);
+  layer.Forward(input, output);
+  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
 
-//   expectedOutput = arma::mat("1.0000 1.9000 1.9000 2.8000");
-//   expectedOutput.reshape(4, 1);
-//   layer.Backward(output, output, unzoomedOutput);
-//   CheckMatrices(unzoomedOutput - expectedOutput,
-//       arma::zeros(input.n_rows), 1e-12);
-// }
+  expectedOutput = arma::mat("1.0000 1.9000 1.9000 2.8000");
+  expectedOutput.reshape(4, 1);
+  layer.Backward(output, output, unzoomedOutput);
+  CheckMatrices(unzoomedOutput - expectedOutput,
+      arma::zeros(input.n_rows), 1e-12);
+}
 
-// /**
-//  * Test that the functions that can modify and access the parameters of the
-//  * Bilinear Interpolation layer work.
-//  */
-// TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : inRowSize, inColSize, outRowSize, outColSize, depth.
-//   BilinearInterpolation<> layer1(1, 2, 3, 4, 5);
-//   BilinearInterpolation<> layer2(2, 3, 4, 5, 6);
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Bilinear Interpolation layer work.
+ */
+TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter order : inRowSize, inColSize, outRowSize, outColSize, depth.
+  BilinearInterpolation layer1(1, 2, 3, 4, 5);
+  BilinearInterpolation layer2(2, 3, 4, 5, 6);
 
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer1.InRowSize() == 1);
-//   REQUIRE(layer1.InColSize() == 2);
-//   REQUIRE(layer1.OutRowSize() == 3);
-//   REQUIRE(layer1.OutColSize() == 4);
-//   REQUIRE(layer1.InDepth() == 5);
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer1.InRowSize() == 1);
+  REQUIRE(layer1.InColSize() == 2);
+  REQUIRE(layer1.OutRowSize() == 3);
+  REQUIRE(layer1.OutColSize() == 4);
+  REQUIRE(layer1.InDepth() == 5);
 
-//   // Now modify the parameters to match the second layer.
-//   layer1.InRowSize() = 2;
-//   layer1.InColSize() = 3;
-//   layer1.OutRowSize() = 4;
-//   layer1.OutColSize() = 5;
-//   layer1.InDepth() = 6;
+  // Now modify the parameters to match the second layer.
+  layer1.InRowSize() = 2;
+  layer1.InColSize() = 3;
+  layer1.OutRowSize() = 4;
+  layer1.OutColSize() = 5;
+  layer1.InDepth() = 6;
 
-//   // Now ensure all results are the same.
-//   REQUIRE(layer1.InRowSize() == layer2.InRowSize());
-//   REQUIRE(layer1.InColSize() == layer2.InColSize());
-//   REQUIRE(layer1.OutRowSize() == layer2.OutRowSize());
-//   REQUIRE(layer1.OutColSize() == layer2.OutColSize());
-//   REQUIRE(layer1.InDepth() == layer2.InDepth());
-// }
+  // Now ensure all results are the same.
+  REQUIRE(layer1.InRowSize() == layer2.InRowSize());
+  REQUIRE(layer1.InColSize() == layer2.InColSize());
+  REQUIRE(layer1.OutRowSize() == layer2.OutRowSize());
+  REQUIRE(layer1.OutColSize() == layer2.OutColSize());
+  REQUIRE(layer1.InDepth() == layer2.InDepth());
+}
 
 // /**
 //  * Tests the BatchNorm Layer, compares the layers parameters with

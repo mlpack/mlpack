@@ -19,10 +19,9 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-
-template<typename InputDataType, typename OutputDataType>
-BilinearInterpolation<InputDataType, OutputDataType>::
-BilinearInterpolation():
+template<typename InputType, typename OutputType>
+BilinearInterpolationType<InputType, OutputType>::
+BilinearInterpolationType():
     inRowSize(0),
     inColSize(0),
     outRowSize(0),
@@ -33,9 +32,9 @@ BilinearInterpolation():
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-BilinearInterpolation<InputDataType, OutputDataType>::
-BilinearInterpolation(
+template<typename InputType, typename OutputType>
+BilinearInterpolationType<InputType, OutputType>::
+BilinearInterpolationType(
     const size_t inRowSize,
     const size_t inColSize,
     const size_t outRowSize,
@@ -51,10 +50,9 @@ BilinearInterpolation(
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void BilinearInterpolationType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   batchSize = input.n_cols;
   if (output.is_empty())
@@ -68,7 +66,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
   assert(inRowSize >= 2);
   assert(inColSize >= 2);
 
-  arma::cube inputAsCube(const_cast<arma::Mat<eT>&>(input).memptr(),
+  arma::cube inputAsCube(const_cast<InputType&>(input).memptr(),
       inRowSize, inColSize, depth * batchSize, false, false);
   arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
                           depth * batchSize, false, true);
@@ -111,12 +109,11 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /*input*/,
-    const arma::Mat<eT>& gradient,
-    arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void BilinearInterpolationType<InputType, OutputType>::Backward(
+    const InputType& /*input*/,
+    const OutputType& gradient,
+    OutputType& output)
 {
   if (output.is_empty())
     output.set_size(inRowSize * inColSize * depth, batchSize);
@@ -129,7 +126,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
   assert(outRowSize >= 2);
   assert(outColSize >= 2);
 
-  arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
+  arma::cube gradientAsCube(((OutputType&) gradient).memptr(), outRowSize,
       outColSize, depth * batchSize, false, false);
   arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
                           depth * batchSize, false, true);
@@ -173,9 +170,9 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void BilinearInterpolation<InputDataType, OutputDataType>::serialize(
+void BilinearInterpolationType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(inRowSize));

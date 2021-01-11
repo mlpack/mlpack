@@ -42,7 +42,7 @@ class AdaptiveMaxPoolingType : public Layer<InputType, OutputType>
    * @param outputHeight Height of the output.
    */
   AdaptiveMaxPoolingType(const size_t outputWidth,
-                     const size_t outputHeight);
+                         const size_t outputHeight);
 
   /**
    * Create the AdaptiveMaxPooling object.

@@ -19,8 +19,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template <typename InputDataType, typename OutputDataType>
-Lookup<InputDataType, OutputDataType>::Lookup(
+template <typename InputType, typename OutputDataType>
+LookupType<InputType, OutputDataType>::LookupType(
     const size_t vocabSize,
     const size_t embeddingSize) :
     vocabSize(vocabSize),
@@ -29,10 +29,9 @@ Lookup<InputDataType, OutputDataType>::Lookup(
   weights.set_size(embeddingSize, vocabSize);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Lookup<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void LookupType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   const size_t seqLength = input.n_rows;
   const size_t batchSize = input.n_cols;
@@ -49,27 +48,26 @@ void Lookup<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Lookup<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& /* gy */,
-    arma::Mat<eT>& /* g */)
+template<typename InputType, typename OutputType>
+void LookupType<InputType, OutputType>::Backward(
+    const InputType& /* input */,
+    const OutputType& /* gy */,
+    OutputType& /* g */)
 {
   Log::Fatal << "Lookup cannot be used as an intermediate layer." << std::endl;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Lookup<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
+template<typename InputType, typename OutputType>
+void LookupType<InputType, OutputType>::Gradient(
+    const InputType& input,
+    const OutputType& error,
+    OutputType& gradient)
 {
+  typedef typename arma::Cube<typename OutputType::elem_type> CubeType;
   const size_t seqLength = input.n_rows;
   const size_t batchSize = input.n_cols;
 
-  arma::Cube<eT> errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(),
+  const CubeType errorTemp(const_cast<OutputType&>(error).memptr(),
       embeddingSize, seqLength, batchSize, false, false);
 
   gradient.set_size(arma::size(weights));
@@ -82,9 +80,9 @@ void Lookup<InputDataType, OutputDataType>::Gradient(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void Lookup<InputDataType, OutputDataType>::serialize(
+void LookupType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(vocabSize));

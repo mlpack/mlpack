@@ -14,7 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_LOOKUP_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/layer/layer_traits.hpp>
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /* Artificial Neural Network. */ {
@@ -29,16 +29,16 @@ namespace ann /* Artificial Neural Network. */ {
  * The input shape : (sequenceLength, batchSize).
  * The output shape : (embeddingSize, sequenceLength, batchSize).
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class Lookup
+class LookupType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -47,7 +47,7 @@ class Lookup
    * @param vocabSize The size of the vocabulary.
    * @param embeddingSize The length of each embedding vector.
    */
-  Lookup(const size_t vocabSize = 0, const size_t embeddingSize = 0);
+  LookupType(const size_t vocabSize = 0, const size_t embeddingSize = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -56,8 +56,7 @@ class Lookup
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -68,10 +67,9 @@ class Lookup
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -80,30 +78,29 @@ class Lookup
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputType const& Gradient() const { return gradient; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Gradient() { return gradient; }
 
   //! Get the size of the vocabulary.
   size_t VocabSize() const { return vocabSize; }
@@ -125,21 +122,23 @@ class Lookup
   size_t embeddingSize;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType gradient;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 }; // class Lookup
 
 // Alias for using as embedding layer.
-template<typename MatType = arma::mat>
-using Embedding = Lookup<MatType, MatType>;
+// template<typename MatType = arma::mat>
+// using Embedding = Lookup<MatType, MatType>;
+typedef LookupType<arma::mat, arma::mat> Lookup;
+typedef LookupType<arma::mat, arma::mat> Embedding;
 
 } // namespace ann
 } // namespace mlpack

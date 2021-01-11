@@ -43,7 +43,7 @@ class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
    * @param outputHeight Height of the output.
    */
   AdaptiveMeanPoolingType(const size_t outputWidth,
-                      const size_t outputHeight);
+                          const size_t outputHeight);
 
   /**
    * Create the AdaptiveMeanPooling object.
