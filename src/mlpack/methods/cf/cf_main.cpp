@@ -343,7 +343,7 @@ static void mlpackMain()
     nsType = COSINE_SEARCH;
   else if (IO::GetParam<std::string>("neighbor_search") == "euclidean")
     nsType = EUCLIDEAN_SEARCH;
-  else if (IO::GetParam<std::string>("neighbor_search") == "pearson")
+  else // if (IO::GetParam<std::string>("neighbor_search") == "pearson")
     nsType = PEARSON_SEARCH;
 
   InterpolationTypes interpolationType;
@@ -353,7 +353,7 @@ static void mlpackMain()
     interpolationType = AVERAGE_INTERPOLATION;
   else if (IO::GetParam<std::string>("interpolation") == "regression")
     interpolationType = REGRESSION_INTERPOLATION;
-  else if (IO::GetParam<std::string>("interpolation") == "similarity")
+  else // if (IO::GetParam<std::string>("interpolation") == "similarity")
     interpolationType = SIMILARITY_INTERPOLATION;
 
   if (IO::HasParam("query") || IO::HasParam("all_user_recommendations"))
