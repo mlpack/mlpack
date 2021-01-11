@@ -213,13 +213,13 @@ TEST_CASE_METHOD(CFTestFixture, "CFModelReuseTest",
     IO::GetSingleton().Parameters()["algorithm"].wasPassed = false;
 
     // Reuse the model to get recommendations.
-    int recommendations = 3;
-    const int querySize = 7;
+    size_t recommendations = 3;
+    const size_t querySize = 7;
     Mat<size_t> query =
         arma::linspace<Mat<size_t>>(0, querySize - 1, querySize);
 
     SetInputParam("query", std::move(query));
-    SetInputParam("recommendations", recommendations);
+    SetInputParam("recommendations", int(recommendations));
     SetInputParam("input_model",
         std::move(IO::GetParam<CFModel*>("output_model")));
 
@@ -261,18 +261,21 @@ TEST_CASE_METHOD(CFTestFixture, "CFRankTest",
 {
   mat dataset;
   data::Load("GroupLensSmall.csv", dataset);
-  int rank = 7;
+  size_t rank = 7;
 
   SetInputParam("training", std::move(dataset));
-  SetInputParam("rank", rank);
+  SetInputParam("rank", int(rank));
   SetInputParam("max_iterations", int(10));
   SetInputParam("algorithm", std::string("NMF"));
 
   mlpackMain();
 
   const CFModel* outputModel = IO::GetParam<CFModel*>("output_model");
+  CFType<NMFPolicy, NoNormalization>& cf =
+      dynamic_cast<CFWrapper<NMFPolicy,
+                   NoNormalization>&>(*(outputModel->CF())).CF();
 
-  REQUIRE(outputModel->template CFPtr<NMFPolicy>()->Rank() == rank);
+  REQUIRE(cf.Rank() == rank);
 }
 
 /**
@@ -295,10 +298,13 @@ TEST_CASE_METHOD(CFTestFixture, "CFMinResidueTest",
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  IO::GetParam<CFModel*>("output_model");
+  outputModel = IO::GetParam<CFModel*>("output_model");
   // By default the main program use NMFPolicy.
-  const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
-  const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
+  CFType<NMFPolicy, NoNormalization>& cf =
+      dynamic_cast<CFWrapper<NMFPolicy,
+                   NoNormalization>&>(*(outputModel->CF())).CF();
+  const mat w1 = cf.Decomposition().W();
+  const mat h1 = cf.Decomposition().H();
 
   ResetSettings();
 
@@ -314,15 +320,18 @@ TEST_CASE_METHOD(CFTestFixture, "CFMinResidueTest",
 
   outputModel = IO::GetParam<CFModel*>("output_model");
   // By default the main program use NMFPolicy.
-  const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
-  const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
+  CFType<NMFPolicy, NoNormalization>& cf2 =
+      dynamic_cast<CFWrapper<NMFPolicy,
+                   NoNormalization>&>(*(outputModel->CF())).CF();
+  const mat w2 = cf2.Decomposition().W();
+  const mat h2 = cf2.Decomposition().H();
 
   // The resulting matrices should be different.
   REQUIRE((arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5));
 }
 
 /**
- * Test that itertaion_only_termination is used.
+ * Test that iteration_only_termination is used.
  */
 TEST_CASE_METHOD(CFTestFixture, "CFIterationOnlyTerminationTest",
                 "[CFMainTest][BindingTests]")
@@ -341,10 +350,13 @@ TEST_CASE_METHOD(CFTestFixture, "CFIterationOnlyTerminationTest",
   mlpack::math::FixedRandomSeed();
   mlpackMain();
 
-  outputModel =  IO::GetParam<CFModel*>("output_model");
+  outputModel = IO::GetParam<CFModel*>("output_model");
   // By default, the main program use NMFPolicy.
-  const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
-  const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
+  CFType<NMFPolicy, NoNormalization>& cf =
+      dynamic_cast<CFWrapper<NMFPolicy,
+                   NoNormalization>&>(*(outputModel->CF())).CF();
+  const mat w1 = cf.Decomposition().W();
+  const mat h1 = cf.Decomposition().H();
 
   ResetSettings();
 
@@ -359,8 +371,11 @@ TEST_CASE_METHOD(CFTestFixture, "CFIterationOnlyTerminationTest",
 
   outputModel = IO::GetParam<CFModel*>("output_model");
   // By default, the main program use NMFPolicy.
-  const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
-  const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
+  CFType<NMFPolicy, NoNormalization>& cf2 =
+      dynamic_cast<CFWrapper<NMFPolicy,
+                   NoNormalization>&>(*(outputModel->CF())).CF();
+  const mat w2 = cf2.Decomposition().W();
+  const mat h2 = cf2.Decomposition().H();
 
   // The resulting matrices should be different.
   REQUIRE((arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5));
@@ -387,8 +402,11 @@ TEST_CASE_METHOD(CFTestFixture, "CFMaxIterationsTest",
 
   outputModel =  IO::GetParam<CFModel*>("output_model");
   // By default, the main program use NMFPolicy.
-  const mat w1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
-  const mat h1 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
+  CFType<NMFPolicy, NoNormalization>& cf =
+      dynamic_cast<CFWrapper<NMFPolicy,
+                   NoNormalization>&>(*(outputModel->CF())).CF();
+  const mat w1 = cf.Decomposition().W();
+  const mat h1 = cf.Decomposition().H();
 
   ResetSettings();
 
@@ -403,8 +421,11 @@ TEST_CASE_METHOD(CFTestFixture, "CFMaxIterationsTest",
 
   outputModel = IO::GetParam<CFModel*>("output_model");
   // By default the main program use NMFPolicy.
-  const mat w2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().W();
-  const mat h2 = outputModel->template CFPtr<NMFPolicy>()->Decomposition().H();
+  CFType<NMFPolicy, NoNormalization>& cf2 =
+      dynamic_cast<CFWrapper<NMFPolicy,
+                   NoNormalization>&>(*(outputModel->CF())).CF();
+  const mat w2 = cf2.Decomposition().W();
+  const mat h2 = cf2.Decomposition().H();
 
   // The resulting matrices should be different.
   REQUIRE((arma::norm(w1 - w2) > 1e-5 || arma::norm(h1 - h2) > 1e-5));
