@@ -223,9 +223,11 @@ if (BUILD_R_BINDINGS)
     "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/testthat.R"
   )
 
-  set(LICENSE_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/LICENSE"
-  )
+  # Configure the license file.
+  string(TIMESTAMP LICENSE_YEAR "%Y")
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/mlpack/LICENSE.in"
+                 "${CMAKE_CURRENT_BINARY_DIR}/mlpack/LICENSE")
+
   add_custom_target(r_copy ALL)
 
   # First we have to create all the required directories for copy.
@@ -247,22 +249,22 @@ if (BUILD_R_BINDINGS)
 
   # Copy all necessary files for building package.
   foreach(cpp_file ${CPP_SOURCES})
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${cpp_file}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/)
+    add_custom_command(TARGET r_copy PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
+            ${cpp_file}
+            ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/)
   endforeach()
   foreach(r_file ${R_SOURCES})
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${r_file}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/R/)
+    add_custom_command(TARGET r_copy PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
+            ${r_file}
+            ${CMAKE_CURRENT_BINARY_DIR}/mlpack/R/)
   endforeach()
   foreach(bindings_file ${BINDINGS_SOURCES})
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${bindings_file}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/mlpack/bindings/R)
+    add_custom_command(TARGET r_copy PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
+            ${bindings_file}
+            ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/mlpack/bindings/R)
   endforeach()
   add_custom_command(TARGET r_copy PRE_BUILD
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
@@ -272,10 +274,6 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
           ${R_TESTS_SOURCES}
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests)
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${LICENSE_SOURCES}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack)
   # This file will take care of multiple definition of functions in .cpp files.
   add_custom_command(TARGET r_copy PRE_BUILD
       COMMAND ${CMAKE_COMMAND} ARGS -E touch
