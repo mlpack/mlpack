@@ -13,6 +13,9 @@
 
   * Add finalizers to Julia binding model types to fix memory handling (#2756).
 
+  * Removed `boost::visitor` from model classes for `knn`, `kfn`, `cf`,
+    `range_search`, `krann`, and `kde` bindings (#2803).
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.
