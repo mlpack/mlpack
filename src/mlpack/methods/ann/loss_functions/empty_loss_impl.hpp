@@ -27,21 +27,21 @@ EmptyLoss<InputDataType, OutputDataType>::EmptyLoss()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
+template<typename PredictionType, typename TargetType>
 double EmptyLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& /* input */, const TargetType& /* target */)
+    const PredictionType& /* prediction */, const TargetType& /* target */)
 {
   return 0;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void EmptyLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& /* input */,
+    const PredictionType& /* prediction */,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output = target;
+  loss = target;
 }
 
 } // namespace ann

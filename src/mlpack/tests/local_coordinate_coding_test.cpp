@@ -16,7 +16,7 @@
 #include <mlpack/methods/local_coordinate_coding/lcc.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 using namespace arma;
 using namespace mlpack;

@@ -123,6 +123,12 @@ class LinearNoBias
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer
    */

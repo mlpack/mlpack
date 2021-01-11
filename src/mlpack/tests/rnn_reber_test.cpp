@@ -20,7 +20,7 @@
 #include <mlpack/core/math/random.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 #include "custom_layer.hpp"
 
 using namespace mlpack;
@@ -179,7 +179,6 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
     else if (c == 'P' && state == 1)
     {
       numPs++;
-      state = 1;
     }
     else if (c == 'T' && state == 1)
     {
@@ -206,7 +205,6 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
     else if (c == 'P' && state == 5)
     {
       numPs--;
-      state = 5;
     }
   }
 
