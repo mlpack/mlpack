@@ -126,9 +126,7 @@ void RAModel::serialize(Archive& ar, const uint32_t /* version */)
 
   // This should never happen, but just in case, be clean with memory.
   if (cereal::is_loading<Archive>())
-  {
-    delete raSearch;
-  }
+    InitializeModel(false, false); // Values will be overwritten.
 
   // Avoid polymorphic serialization by explicitly serializing the correct type.
   switch (treeType)

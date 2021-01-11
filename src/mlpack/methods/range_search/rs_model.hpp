@@ -301,6 +301,11 @@ class RSModel
   bool& RandomBasis() { return randomBasis; }
 
   /**
+   * Allocate the memory for the range search model.
+   */
+  void InitializeModel(const bool naive, const bool singleMode);
+
+  /**
    * Build the reference tree on the given dataset with the given parameters.
    * This takes possession of the reference set to avoid a copy.
    *

@@ -95,31 +95,10 @@ RAModel::~RAModel()
   delete raSearch;
 }
 
-void RAModel::BuildModel(arma::mat&& referenceSet,
-                                     const size_t leafSize,
-                                     const bool naive,
-                                     const bool singleMode)
+void RAModel::InitializeModel(const bool naive, const bool singleMode)
 {
-  // Initialize random basis, if necessary.
-  if (randomBasis)
-  {
-    Log::Info << "Creating random basis..." << std::endl;
-    math::RandomBasis(q, referenceSet.n_rows);
-  }
-
   // Clean memory, if necessary.
   delete raSearch;
-
-  this->leafSize = leafSize;
-
-  if (randomBasis)
-    referenceSet = q * referenceSet;
-
-  if (!naive)
-  {
-    Timer::Start("tree_building");
-    Log::Info << "Building reference tree..." << std::endl;
-  }
 
   switch (treeType)
   {
@@ -154,6 +133,32 @@ void RAModel::BuildModel(arma::mat&& referenceSet,
       raSearch = new LeafSizeRAWrapper<tree::Octree>(naive, singleMode);
       break;
   }
+}
+
+void RAModel::BuildModel(arma::mat&& referenceSet,
+                         const size_t leafSize,
+                         const bool naive,
+                         const bool singleMode)
+{
+  // Initialize random basis, if necessary.
+  if (randomBasis)
+  {
+    Log::Info << "Creating random basis..." << std::endl;
+    math::RandomBasis(q, referenceSet.n_rows);
+  }
+
+  this->leafSize = leafSize;
+
+  if (randomBasis)
+    referenceSet = q * referenceSet;
+
+  if (!naive)
+  {
+    Timer::Start("tree_building");
+    Log::Info << "Building reference tree..." << std::endl;
+  }
+
+  InitializeModel(naive, singleMode);
 
   raSearch->Train(std::move(referenceSet), leafSize);
 

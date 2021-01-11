@@ -135,7 +135,7 @@ void KDEModel::serialize(Archive& ar, const uint32_t /* version */)
   }
 
   if (cereal::is_loading<Archive>())
-    delete kdeModel;
+    InitializeModel(); // Values will be overwritten.
 
   // Avoid polymorphism in serialization by serializing directly by the type.
   switch (treeType)

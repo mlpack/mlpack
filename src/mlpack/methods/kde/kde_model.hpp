@@ -415,6 +415,11 @@ class KDEModel
   KDEMode& Mode() { return kdeModel->Mode(); }
 
   /**
+   * Initialize the KDE model.
+   */
+  void InitializeModel();
+
+  /**
    * Build the KDE model with the given parameters and then trains it with the
    * given reference data.
    * Takes possession of the reference set to avoid a copy, so the reference set

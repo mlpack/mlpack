@@ -149,10 +149,10 @@ KDEModel::~KDEModel()
 template<template<typename TreeMetricType,
                   typename TreeMatType,
                   typename TreeStatType> class TreeType>
-KDEWrapperBase* BuildModelHelper(const KDEModel::KernelTypes kernelType,
-                                 const double relError,
-                                 const double absError,
-                                 const double bandwidth)
+KDEWrapperBase* InitializeModelHelper(const KDEModel::KernelTypes kernelType,
+                                      const double relError,
+                                      const double absError,
+                                      const double bandwidth)
 {
   switch (kernelType)
   {
@@ -181,7 +181,7 @@ KDEWrapperBase* BuildModelHelper(const KDEModel::KernelTypes kernelType,
   return NULL;
 }
 
-void KDEModel::BuildModel(arma::mat&& referenceSet)
+void KDEModel::InitializeModel()
 {
   // Clean memory, if necessary.
   delete kdeModel;
@@ -190,30 +190,35 @@ void KDEModel::BuildModel(arma::mat&& referenceSet)
   switch (treeType)
   {
     case KD_TREE:
-      kdeModel = BuildModelHelper<tree::KDTree>(kernelType, relError, absError,
-          bandwidth);
+      kdeModel = InitializeModelHelper<tree::KDTree>(kernelType, relError,
+          absError, bandwidth);
       break;
 
     case BALL_TREE:
-      kdeModel = BuildModelHelper<tree::BallTree>(kernelType, relError,
+      kdeModel = InitializeModelHelper<tree::BallTree>(kernelType, relError,
           absError, bandwidth);
       break;
 
     case COVER_TREE:
-      kdeModel = BuildModelHelper<tree::StandardCoverTree>(kernelType, relError,
-          absError, bandwidth);
+      kdeModel = InitializeModelHelper<tree::StandardCoverTree>(kernelType,
+          relError, absError, bandwidth);
       break;
 
     case OCTREE:
-      kdeModel = BuildModelHelper<tree::Octree>(kernelType, relError, absError,
-          bandwidth);
+      kdeModel = InitializeModelHelper<tree::Octree>(kernelType, relError,
+          absError, bandwidth);
       break;
 
     case R_TREE:
-      kdeModel = BuildModelHelper<tree::RTree>(kernelType, relError, absError,
-          bandwidth);
+      kdeModel = InitializeModelHelper<tree::RTree>(kernelType, relError,
+          absError, bandwidth);
       break;
   }
+}
+
+void KDEModel::BuildModel(arma::mat&& referenceSet)
+{
+  InitializeModel();
 
   // Set whether to use Monte Carlo estimations or not.
   kdeModel->MonteCarlo() = monteCarlo;

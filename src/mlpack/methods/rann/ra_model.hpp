@@ -385,6 +385,9 @@ class RAModel
   //! the model using BuildModel().
   bool& RandomBasis() { return randomBasis; }
 
+  //! Initialize the model's memory.
+  void InitializeModel(const bool naive, const bool singleMode);
+
   //! Build the reference tree.
   void BuildModel(arma::mat&& referenceSet,
                   const size_t leafSize,

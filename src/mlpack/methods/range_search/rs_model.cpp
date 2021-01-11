@@ -98,32 +98,10 @@ RSModel::~RSModel()
   delete rSearch;
 }
 
-void RSModel::BuildModel(arma::mat&& referenceSet,
-                         const size_t leafSize,
-                         const bool naive,
-                         const bool singleMode)
+void RSModel::InitializeModel(const bool naive, const bool singleMode)
 {
-  // Initialize random basis if necessary.
-  if (randomBasis)
-  {
-    Log::Info << "Creating random basis..." << std::endl;
-    math::RandomBasis(q, referenceSet.n_rows);
-  }
-
-  this->leafSize = leafSize;
-
   // Clean memory, if necessary.
   delete rSearch;
-
-  // Do we need to modify the reference set?
-  if (randomBasis)
-    referenceSet = q * referenceSet;
-
-  if (!naive)
-  {
-    Timer::Start("tree_building");
-    Log::Info << "Building reference tree..." << std::endl;
-  }
 
   switch (treeType)
   {
@@ -183,6 +161,33 @@ void RSModel::BuildModel(arma::mat&& referenceSet,
       rSearch = new LeafSizeRSWrapper<tree::Octree>(naive, singleMode);
       break;
   }
+}
+
+void RSModel::BuildModel(arma::mat&& referenceSet,
+                         const size_t leafSize,
+                         const bool naive,
+                         const bool singleMode)
+{
+  // Initialize random basis if necessary.
+  if (randomBasis)
+  {
+    Log::Info << "Creating random basis..." << std::endl;
+    math::RandomBasis(q, referenceSet.n_rows);
+  }
+
+  this->leafSize = leafSize;
+
+  // Do we need to modify the reference set?
+  if (randomBasis)
+    referenceSet = q * referenceSet;
+
+  if (!naive)
+  {
+    Timer::Start("tree_building");
+    Log::Info << "Building reference tree..." << std::endl;
+  }
+
+  InitializeModel(naive, singleMode);
 
   rSearch->Train(std::move(referenceSet), leafSize);
 
