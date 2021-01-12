@@ -286,7 +286,7 @@ class IO
   static void ClearSettings();
 
   /**
-   * Checks all input matrices for NaN and inf values, if found throws an exception.
+   * Checks all input matrices for NaN and inf values, exits if found any.
    */
   static void CheckInputMatrices();
 

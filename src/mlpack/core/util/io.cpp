@@ -293,48 +293,48 @@ void IO::CheckInputMatrices()
       if (IO::GetParam<arma::Mat<size_t>>(paramName).has_nan())
         Log::Fatal << errMsg1 << std::endl;
 
-	  if (IO::GetParam<arma::Mat<size_t>>(paramName).has_inf())
-	  	Log::Fatal << errMsg2 << std::endl;
+      if (IO::GetParam<arma::Mat<size_t>>(paramName).has_inf())
+        Log::Fatal << errMsg2 << std::endl;
     }
     else if (paramType == "arma::colvec")
     {
       if (IO::GetParam<arma::Col<double>>(paramName).has_nan())
         Log::Fatal << errMsg1 << std::endl;
 
-	  if (IO::GetParam<arma::Col<double>>(paramName).has_inf())
-	  	Log::Fatal << errMsg2 << std::endl;
+      if (IO::GetParam<arma::Col<double>>(paramName).has_inf())
+        Log::Fatal << errMsg2 << std::endl;
     }
     else if (paramType == "arma::Col<size_t>")
     {
       if (IO::GetParam<arma::Col<size_t>>(paramName).has_nan())
         Log::Fatal << errMsg1 << std::endl;
 
-	  if (IO::GetParam<arma::Col<size_t>>(paramName).has_inf())
-	  	Log::Fatal << errMsg2 << std::endl;
+      if (IO::GetParam<arma::Col<size_t>>(paramName).has_inf())
+        Log::Fatal << errMsg2 << std::endl;
     }
     else if (paramType == "arma::rowvec")
     {
       if (IO::GetParam<arma::Row<double>>(paramName).has_nan())
         Log::Fatal << errMsg1 << std::endl;
 
-	  if (IO::GetParam<arma::Row<double>>(paramName).has_inf())
-	  	Log::Fatal << errMsg2 << std::endl;
+      if (IO::GetParam<arma::Row<double>>(paramName).has_inf())
+        Log::Fatal << errMsg2 << std::endl;
     }
     else if (paramType == "arma::Row<size_t>")
     {
       if (IO::GetParam<arma::Row<size_t>>(paramName).has_nan())
         Log::Fatal << errMsg1 << std::endl;
 
-	  if (IO::GetParam<arma::Row<size_t>>(paramName).has_inf())
-	  	Log::Fatal << errMsg2 << std::endl;
+      if (IO::GetParam<arma::Row<size_t>>(paramName).has_inf())
+        Log::Fatal << errMsg2 << std::endl;
     }
     else if (paramType == "std::tuple<data::DatasetInfo, arma::mat>")
     {
       if (std::get<1>(IO::GetParam<TupleType>(paramName)).has_nan())
         Log::Fatal << errMsg1 << std::endl;
 
-	  if (std::get<1>(IO::GetParam<TupleType>(paramName)).has_inf())
-	  	Log::Fatal << errMsg2 << std::endl;
+      if (std::get<1>(IO::GetParam<TupleType>(paramName)).has_inf())
+        Log::Fatal << errMsg2 << std::endl;
     }
   }
 }

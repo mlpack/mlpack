@@ -1342,7 +1342,9 @@ class TestPythonBinding(unittest.TestCase):
     NaN values.
     """
     x = np.random.rand(100, 5)
-    x[0][0] = np.nan
+    a = np.random.randint(low=0, high=100)
+    b = np.random.randint(low=0, high=5)
+    x[a][b] = np.nan
     self.assertRaises(RuntimeError,
                       lambda : test_python_binding(string_in="hello",
                                                    int_in=12,
@@ -1358,7 +1360,9 @@ class TestPythonBinding(unittest.TestCase):
     inf values.
     """
     x = np.random.rand(100, 5)
-    x[0][0] = np.inf
+    a = np.random.randint(low=0, high=100)
+    b = np.random.randint(low=0, high=5)
+    x[a][b] = np.inf
     self.assertRaises(RuntimeError,
                       lambda : test_python_binding(string_in="hello",
                                                    int_in=12,

@@ -65,7 +65,7 @@ class PyOption
     data.input = input;
     data.loaded = false;
     // Only "verbose", "copy_all_inputs" and "check_input_matrices"
-    //  will be persistent.
+    // will be persistent.
     if (identifier == "verbose" || identifier == "copy_all_inputs" ||
         identifier == "check_input_matrices")
       data.persistent = true;
