@@ -286,7 +286,7 @@ void IO::CheckInputMatrices()
         Log::Fatal << errMsg1 << std::endl;
 
       if (IO::GetParam<arma::Mat<double>>(paramName).has_inf())
-      	Log::Fatal << errMsg2 << std::endl;
+        Log::Fatal << errMsg2 << std::endl;
     }
     else if (paramType == "arma::Mat<size_t>")
     {
