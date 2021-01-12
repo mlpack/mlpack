@@ -24,34 +24,34 @@ namespace ann /** Artificial Neural Network. */ {
  * concatenates a constant given matrix to the incoming data.
  * Note: Users need to use the Concat() function to provide the concat matrix.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class Concatenate
+class ConcatenateType : public Layer<InputType, OutputType>
 {
  public:
   /**
-   * Create the Concatenate object using the specified number of output units.
+   * Create the ConcatenateType object using the specified number of output units.
    */
-  Concatenate();
+  ConcatenateType(const InputType& concat = InputType());
 
   //! Copy constructor.
-  Concatenate(const Concatenate& layer);
+  ConcatenateType(const ConcatenateType& layer);
 
   //! Move constructor.
-  Concatenate(Concatenate&& layer);
+  ConcatenateType(ConcatenateType&& layer);
 
   //! Operator= copy constructor.
-  Concatenate& operator=(const Concatenate& layer);
+  ConcatenateType& operator=(const ConcatenateType& layer);
 
   //! Operator= move constructor.
-  Concatenate& operator=(Concatenate&& layer);
+  ConcatenateType& operator=(ConcatenateType&& layer);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -60,8 +60,7 @@ class Concatenate
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -72,30 +71,29 @@ class Concatenate
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the concat matrix.
-  OutputDataType const& Concat() const { return concat; }
+  OutputType const& Concat() const { return concat; }
   //! Modify the concat.
-  OutputDataType& Concat() { return concat; }
+  OutputType& Concat() { return concat; }
 
   /**
    * Serialize the layer
@@ -111,17 +109,19 @@ class Concatenate
   size_t inRows;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 
   //! Locally-stored matrix to be concatenated to input.
-  OutputDataType concat;
+  InputType concat;
 }; // class Concatenate
+
+typedef ConcatenateType<arma::mat, arma::mat> Concatenate;
 
 } // namespace ann
 } // namespace mlpack

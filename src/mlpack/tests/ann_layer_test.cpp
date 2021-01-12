@@ -1782,75 +1782,76 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
 //   REQUIRE(CheckGradient(function) <= 1e-4);
 // }
 
-// /**
-//  * Simple concatenate module test.
-//  */
-// TEST_CASE("SimpleConcatenateLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat input = arma::ones(5, 1);
-//   arma::mat output, delta;
+/**
+ * Simple concatenate module test.
+ */
+TEST_CASE("SimpleConcatenateLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input = arma::ones(5, 1);
+  arma::mat output, delta;
 
-//   Concatenate<> module;
-//   module.Concat() = arma::ones(5, 1) * 0.5;
+  Concatenate module;
+  module.Concat() = arma::ones(5, 1) * 0.5;
 
-//   // Test the Forward function.
-//   module.Forward(input, output);
+  // Test the Forward function.
+  module.Forward(input, output);
 
-//   REQUIRE(arma::accu(output) == 7.5);
+  REQUIRE(arma::accu(output) == 7.5);
 
-//   // Test the Backward function.
-//   module.Backward(input, output, delta);
-//   REQUIRE(arma::accu(delta) == 5);
-// }
+  // Test the Backward function.
+  module.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == 5);
+}
 
-// /**
-//  * Concatenate layer numerical gradient test.
-//  */
-// TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
-// {
-//   // Concatenate function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::randu(10, 1)),
-//         target(arma::mat("1"))
-//     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
-//       model->Add<IdentityLayer<> >();
-//       model->Add<Linear<> >(10, 5);
+/**
+ * Concatenate layer numerical gradient test.
+ */
+TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
+{
+  // Concatenate function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
+    {
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer>();
+      model->Add<Linear>(10, 5);
 
-//       arma::mat concat = arma::ones(5, 1);
-//       concatenate = new Concatenate<>();
-//       concatenate->Concat() = concat;
-//       model->Add(concatenate);
+      arma::mat concat = arma::ones(5, 1);
+      // concatenate = new Concatenate();
+      // concatenate->Concat() = concat;
+      // model->Add(concatenate);
+      model->Add<Concatenate>(concat);
 
-//       model->Add<Linear<> >(10, 5);
-//       model->Add<LogSoftMax<> >();
-//     }
+      model->Add<Linear>(10, 5);
+      model->Add<LogSoftMax>();
+    }
 
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
 
-//     arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-//     Concatenate<>* concatenate;
-//     arma::mat input, target;
-//   } function;
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    Concatenate* concatenate;
+    arma::mat input, target;
+  } function;
 
-//   REQUIRE(CheckGradient(function) <= 1e-4);
-// }
+  REQUIRE(CheckGradient(function) <= 1e-4);
+}
 
 /**
  * Simple lookup module test.

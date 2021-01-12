@@ -19,15 +19,18 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-Concatenate<InputDataType, OutputDataType>::Concatenate() :
-  inRows(0)
+template<typename InputType, typename OutputType>
+ConcatenateType<InputType, OutputType>::
+ConcatenateType(const InputType& concat) :
+  inRows(0),
+  concat(concat)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-Concatenate<InputDataType, OutputDataType>::Concatenate(const Concatenate& layer) : 
+template<typename InputType, typename OutputType>
+ConcatenateType<InputType, OutputType>::
+ConcatenateType(const ConcatenateType& layer) :
   inRows(layer.inRows),
   weights(layer.weights),
   delta(layer.delta),
@@ -36,8 +39,9 @@ Concatenate<InputDataType, OutputDataType>::Concatenate(const Concatenate& layer
   // Nothing to to here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-Concatenate<InputDataType, OutputDataType>::Concatenate(Concatenate&& layer) : 
+template<typename InputType, typename OutputType>
+ConcatenateType<InputType, OutputType>::
+ConcatenateType(ConcatenateType&& layer) :
   inRows(layer.inRows),
   weights(std::move(layer.weights)),
   delta(std::move(layer.delta)),
@@ -46,12 +50,12 @@ Concatenate<InputDataType, OutputDataType>::Concatenate(Concatenate&& layer) :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-Concatenate<InputDataType, OutputDataType>&
-Concatenate<InputDataType, OutputDataType>::
-operator=(const Concatenate& layer)
+template<typename InputType, typename OutputType>
+ConcatenateType<InputType, OutputType>&
+ConcatenateType<InputType, OutputType>::
+operator=(const ConcatenateType& layer)
 {
-  if (this != &layer) 
+  if (this != &layer)
   {
     inRows = layer.inRows;
     weights = layer.weights;
@@ -62,12 +66,12 @@ operator=(const Concatenate& layer)
   return *this;
 }
 
-template<typename InputDataType, typename OutputDataType>
-Concatenate<InputDataType, OutputDataType>&
-Concatenate<InputDataType, OutputDataType>::
-operator=(Concatenate&& layer)
+template<typename InputType, typename OutputType>
+ConcatenateType<InputType, OutputType>&
+ConcatenateType<InputType, OutputType>::
+operator=(ConcatenateType&& layer)
 {
-  if (this != &layer) 
+  if (this != &layer)
   {
     inRows = layer.inRows;
     weights = std::move(layer.weights);
@@ -77,10 +81,9 @@ operator=(Concatenate&& layer)
   return *this;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Concatenate<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void ConcatenateType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   if (concat.is_empty())
     Log::Warn << "The concat matrix has not been provided." << std::endl;
@@ -95,12 +98,11 @@ void Concatenate<InputDataType, OutputDataType>::Forward(
   output = arma::join_cols(input, concat);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Concatenate<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void ConcatenateType<InputType, OutputType>::Backward(
+    const InputType& /* input */,
+    const OutputType& gy,
+    OutputType& g)
 {
   g = gy.submat(0, 0, inRows - 1, concat.n_cols - 1);
 }
