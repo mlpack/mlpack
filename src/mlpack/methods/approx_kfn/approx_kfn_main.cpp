@@ -151,16 +151,16 @@ class ApproxKFNModel
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(type);
+    ar(CEREAL_NVP(type));
     if (type == 0)
     {
-      ar & BOOST_SERIALIZATION_NVP(ds);
+      ar(CEREAL_NVP(ds));
     }
     else
     {
-      ar & BOOST_SERIALIZATION_NVP(qdafn);
+      ar(CEREAL_NVP(qdafn));
     }
   }
 };

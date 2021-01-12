@@ -207,10 +207,10 @@ class Convolution
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size.
+  //! Get the number of input maps.
   size_t InputSize() const { return inSize; }
 
-  //! Get the output size.
+  //! Get the number of output maps.
   size_t OutputSize() const { return outSize; }
 
   //! Get the kernel width.
@@ -253,11 +253,23 @@ class Convolution
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
 
+  //! Get size of weights for the layer.
+  size_t WeightSize() const
+  {
+    return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
+  }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inputHeight * inputWidth * inSize;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /*
@@ -397,27 +409,6 @@ class Convolution
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the Convolution class.
-namespace boost {
-namespace serialization {
-
-template<
-    typename ForwardConvolutionRule,
-    typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
->
-struct version<
-    mlpack::ann::Convolution<ForwardConvolutionRule, BackwardConvolutionRule,
-        GradientConvolutionRule, InputDataType, OutputDataType> >
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "convolution_impl.hpp"

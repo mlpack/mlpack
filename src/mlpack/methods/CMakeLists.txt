@@ -10,7 +10,6 @@ set(DIRS
   block_krylov_svd
   cf
   dbscan
-  decision_stump
   decision_tree
   det
   emst

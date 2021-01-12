@@ -23,7 +23,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.4.1.tar.gz">current stable version (3.4.1)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.4.2.tar.gz">current stable version (3.4.2)</a>
   </em>
 </p>
 
@@ -101,10 +101,10 @@ Citations are beneficial for the growth and improvement of mlpack.
 mlpack has the following dependencies:
 
       Armadillo      >= 8.400.0
-      Boost (math_c99, unit_test_framework, serialization,
-             spirit) >= 1.58.0
+      Boost (math_c99, spirit) >= 1.58.0
       CMake          >= 3.2.2
       ensmallen      >= 2.10.0
+      cereal         >= 1.1.2
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
@@ -146,13 +146,17 @@ This document discusses how to build mlpack from source. These build directions
 will work for any Linux-like shell environment (for example Ubuntu, macOS,
 FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
 and so it may be easier to use the package manager for your system.  For example, 
-on Ubuntu, you can install mlpack with the following command:
+on Ubuntu, you can install the mlpack library and command-line executables (e.g.
+mlpack_pca, mlpack_kmeans etc.) with the following command:
 
-    $ sudo apt-get install libmlpack-dev
+    $ sudo apt-get install libmlpack-dev mlpack-bin
+
+On Fedora or Red Hat (EPEL):
+    $ sudo dnf install mlpack-devel mlpack-bin
 
 Note: Older Ubuntu versions may not have the most recent version of mlpack
 available---for instance, at the time of this writing, Ubuntu 16.04 only has
-mlpack 3.4.1 available.  Options include upgrading your Ubuntu version, finding
+mlpack 3.4.2 available.  Options include upgrading your Ubuntu version, finding
 a PPA or other non-official sources, or installing with a manual build.
 
 There are some useful pages to consult in addition to this section:
@@ -217,6 +221,8 @@ Options are specified with the -D flag.  The allowed options include:
     STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
        STB image library
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
+    BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
+       (default ON)
 
 Other tools can also be used to configure CMake, but those are not documented
 here.  See [this section of the build guide](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html#build_config)

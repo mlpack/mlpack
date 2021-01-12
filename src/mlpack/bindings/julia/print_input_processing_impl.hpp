@@ -27,6 +27,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
@@ -126,6 +127,13 @@ void PrintInputProcessing(
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
 
+  // For a non-required argument, this gives code like the following:
+  //
+  // if !ismissing(<param_name>)
+  //   push!(model_ptrs, convert(<type>, <param_name>).ptr)
+  //   IOSetParam("<param_name>", convert(<type>, <param_name>))
+  // end
+
   // If the argument is not required, then we have to encase the code in an if.
   size_t extraIndent = 0;
   if (!d.required)
@@ -136,6 +144,9 @@ void PrintInputProcessing(
 
   std::string indent(extraIndent + 2, ' ');
   std::string type = util::StripType(d.cppType);
+  std::cout << indent << "push!(modelPtrs, convert("
+      << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "
+      << juliaName << ").ptr)" << std::endl;
   std::cout << indent << functionName << "_internal.IOSetParam" << type
       << "(\"" << d.name << "\", convert("
       << GetJuliaType<typename std::remove_pointer<T>::type>(d) << ", "

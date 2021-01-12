@@ -774,28 +774,6 @@ TEST_CASE("CategoricalBuildTestWithWeight", "[DecisionTreeTest]")
 }
 
 /**
- * Make sure that when we ask for a decision stump, we get one.
- */
-TEST_CASE("DecisionStumpTest", "[DecisionTreeTest]")
-{
-  // Use a random dataset.
-  arma::mat dataset(10, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000);
-  for (size_t i = 0; i < 1000; ++i)
-    labels[i] = i % 3; // 3 classes.
-
-  // Build a decision stump.
-  DecisionTree<GiniGain, BestBinaryNumericSplit, AllCategoricalSplit,
-      AllDimensionSelect, double, true> stump(dataset, labels, 3, 1);
-
-  // Check that it has children.
-  REQUIRE(stump.NumChildren() == 2);
-  // Check that its children doesn't have children.
-  REQUIRE(stump.Child(0).NumChildren() == 0);
-  REQUIRE(stump.Child(1).NumChildren() == 0);
-}
-
-/**
  * Test that we can build a decision tree using weighted data (where the
  * low-weighted data is random noise), and that the tree still builds correctly
  * enough to get good results.
@@ -804,8 +782,10 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
@@ -830,8 +810,10 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  data::Load("vc2_test.csv", testData);
-  data::Load("vc2_test_labels.txt", testLabels);
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Cannot load test dataset vc2_test.csv!");
+  if (!data::Load("vc2_test_labels.txt", testLabels))
+    FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
   d.Classify(testData, predictions);
@@ -913,8 +895,10 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
   arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
@@ -939,8 +923,10 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  data::Load("vc2_test.csv", testData);
-  data::Load("vc2_test_labels.txt", testLabels);
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Cannot load test dataset vc2_test.csv!");
+  if (!data::Load("vc2_test_labels.txt", testLabels))
+    FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
   d.Classify(testData, predictions);
@@ -1099,8 +1085,10 @@ TEST_CASE("NumClassesTest", "[DecisionTreeTest]")
   // Load a dataset to train with.
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> dt(dataset, labels, 3);
 
@@ -1229,8 +1217,10 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  data::Load("vc2.csv", dataset);
-  data::Load("vc2_labels.txt", labels);
+  if (!data::Load("vc2.csv", dataset))
+    FAIL("Cannot load test dataset vc2.csv!");
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> d(dataset, labels, 3, 10, 1e-7, 1);
 

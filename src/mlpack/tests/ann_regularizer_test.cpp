@@ -18,7 +18,7 @@
 
 #include "catch.hpp"
 #include "ann_test_tools.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;

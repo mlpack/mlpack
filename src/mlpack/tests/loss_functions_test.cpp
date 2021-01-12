@@ -21,7 +21,7 @@
 #include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
-#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
@@ -33,6 +33,7 @@
 #include <mlpack/methods/ann/loss_functions/l1_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_absolute_percentage_error.hpp>
+#include <mlpack/methods/ann/loss_functions/triplet_margin_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -201,7 +202,7 @@ TEST_CASE("KLDivergenceMeanTest", "[LossFunctionsTest]")
   target = arma::exp(arma::mat("2 1 1 1 1 1 1 1 1 1"));
 
   loss = module.Forward(input, target);
-  REQUIRE(loss == Approx(-1.1 ).epsilon(1e-5));
+  REQUIRE(loss == Approx(-1.1).epsilon(1e-5));
 
   // Test the Backward function.
   module.Backward(input, target, output);
@@ -267,27 +268,36 @@ TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
 }
 
 /*
- * Simple test for the cross-entropy error performance function.
+ * Simple test for the binary-cross-entropy lossfunction.
  */
-TEST_CASE("SimpleCrossEntropyErrorTest", "[LossFunctionsTest]")
+TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
 {
-  arma::mat input1, input2, output, target1, target2;
-  CrossEntropyError<> module(1e-6);
-
+  arma::mat input1, input2, input3, output, target1, target2, target3;
+  BCELoss<> module1(1e-6, false);
+  BCELoss<> module2(1e-6, true);
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
   target1 = arma::zeros(1, 8);
-  double error1 = module.Forward(input1, target1);
+  double error1 = module1.Forward(input1, target1);
   REQUIRE(error1 - 8 * std::log(2) == Approx(0.0).margin(2e-5));
+
+  input2 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5");
+  target2 = arma::zeros(1, 6);
+  input2.reshape(2, 3);
+  target2.reshape(2, 3);
+  double error2 = module2.Forward(input2, target2);
+  REQUIRE(error2 - std::log(2) == Approx(0.0).margin(2e-5));
 
   input2 = arma::mat("0 1 1 0 1 0 0 1");
   target2 = arma::mat("0 1 1 0 1 0 0 1");
-  double error2 = module.Forward(input2, target2);
-  REQUIRE(error2 == Approx(0.0).margin(1e-5));
+  double error3 = module1.Forward(input2, target2);
+  REQUIRE(error3 == Approx(0.0).margin(1e-5));
+  double error4 = module2.Forward(input2, target2);
+  REQUIRE(error4 == Approx(0.0).margin(1e-5));
 
   // Test the Backward function.
-  module.Backward(input1, target1, output);
+  module1.Backward(input1, target1, output);
   for (double el : output)
   {
     // For the 0.5 constant vector we should get 1 / (1 - 0.5) = 2 everywhere.
@@ -296,7 +306,7 @@ TEST_CASE("SimpleCrossEntropyErrorTest", "[LossFunctionsTest]")
   REQUIRE(output.n_rows == input1.n_rows);
   REQUIRE(output.n_cols == input1.n_cols);
 
-  module.Backward(input2, target2, output);
+  module1.Backward(input2, target2, output);
   for (size_t i = 0; i < 8; ++i)
   {
     double el = output.at(0, i);
@@ -846,7 +856,8 @@ TEST_CASE("SoftMarginLossTest", "[LossFunctionsTest]")
 
   // Test the Backward function.
   module1.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(arma::accu(output)) == Approx(-1.48227).epsilon(1e-3));
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(-1.48227).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
@@ -865,7 +876,8 @@ TEST_CASE("SoftMarginLossTest", "[LossFunctionsTest]")
 
   // Test the Backward function.
   module2.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(arma::accu(output)) == Approx(-0.164697).epsilon(1e-3));
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(-0.164697).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
@@ -884,13 +896,62 @@ TEST_CASE("MeanAbsolutePercentageErrorTest", "[LossFunctionsTest]")
 
   // Test the Forward function. Loss should be 95.625.
   // Loss value calculated manually.
-  double loss = module.Forward(input,target);
-  REQUIRE(loss == Approx(95.625).epsilon(1e-1)); 
+  double loss = module.Forward(input, target);
+  REQUIRE(loss == Approx(95.625).epsilon(1e-1));
 
   // Test the Backward function.
   module.Backward(input, target, output);
-  REQUIRE(arma::as_scalar(arma::accu(output)) == Approx(-105.625).epsilon(1e-3));
+  REQUIRE(arma::as_scalar(arma::accu(output)) ==
+      Approx(-105.625).epsilon(1e-3));
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
+}
+
+/*
+ * Simple test for the Triplet Margin Loss function.
+ */
+TEST_CASE("TripletMarginLossTest")
+{
+  arma::mat anchor, positive, negative;
+  arma::mat input, target, output;
+  TripletMarginLoss<> module;
+
+  // Test the Forward function on a user generated input and compare it against
+  // the manually calculated result.
+  anchor = arma::mat("2 3 5");
+  positive = arma::mat("10 12 13");
+  negative = arma::mat("4 5 7");
+
+  input = { {2, 3, 5}, {10, 12, 13} };
+
+  double loss = module.Forward(input, negative);
+  REQUIRE(loss == 66);
+
+  // Test the Backward function.
+  module.Backward(input, negative, output);
+  // According to the used backward formula:
+  // output = 2 * (negative - positive) / anchor.n_cols,
+  // output * nofColumns / 2 + positive should be equal to negative.
+  CheckMatrices(negative, output * output.n_cols / 2 + positive);
+  REQUIRE(output.n_rows == anchor.n_rows);
+  REQUIRE(output.n_cols == anchor.n_cols);
+
+  // Test the loss function on a single input.
+  anchor = arma::mat("4");
+  positive = arma::mat("7");
+  negative = arma::mat("1");
+
+  input = arma::mat(2, 1);
+  input[0] = 4;
+  input[1] = 7;
+
+  loss = module.Forward(input, negative);
+  REQUIRE(loss == 1.0);
+
+  // Test the Backward function on a single input.
+  module.Backward(input, negative, output);
+  // Test whether the output is negative.
+  REQUIRE(arma::accu(output) == -12);
+  REQUIRE(output.n_elem == 1);
 }

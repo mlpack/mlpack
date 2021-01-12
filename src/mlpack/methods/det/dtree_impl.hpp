@@ -993,24 +993,24 @@ void DTree<MatType, TagType>::FillMinMax(const StatType& mins,
 template <typename MatType, typename TagType>
 template <typename Archive>
 void DTree<MatType, TagType>::serialize(Archive& ar,
-                                        const unsigned int /* version */)
+                                        const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(start);
-  ar & BOOST_SERIALIZATION_NVP(end);
-  ar & BOOST_SERIALIZATION_NVP(maxVals);
-  ar & BOOST_SERIALIZATION_NVP(minVals);
-  ar & BOOST_SERIALIZATION_NVP(splitDim);
-  ar & BOOST_SERIALIZATION_NVP(splitValue);
-  ar & BOOST_SERIALIZATION_NVP(logNegError);
-  ar & BOOST_SERIALIZATION_NVP(subtreeLeavesLogNegError);
-  ar & BOOST_SERIALIZATION_NVP(subtreeLeaves);
-  ar & BOOST_SERIALIZATION_NVP(root);
-  ar & BOOST_SERIALIZATION_NVP(ratio);
-  ar & BOOST_SERIALIZATION_NVP(logVolume);
-  ar & BOOST_SERIALIZATION_NVP(bucketTag);
-  ar & BOOST_SERIALIZATION_NVP(alphaUpper);
+  ar(CEREAL_NVP(start));
+  ar(CEREAL_NVP(end));
+  ar(CEREAL_NVP(maxVals));
+  ar(CEREAL_NVP(minVals));
+  ar(CEREAL_NVP(splitDim));
+  ar(CEREAL_NVP(splitValue));
+  ar(CEREAL_NVP(logNegError));
+  ar(CEREAL_NVP(subtreeLeavesLogNegError));
+  ar(CEREAL_NVP(subtreeLeaves));
+  ar(CEREAL_NVP(root));
+  ar(CEREAL_NVP(ratio));
+  ar(CEREAL_NVP(logVolume));
+  ar(CEREAL_NVP(bucketTag));
+  ar(CEREAL_NVP(alphaUpper));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
       delete left;
@@ -1024,21 +1024,21 @@ void DTree<MatType, TagType>::serialize(Archive& ar,
   bool hasLeft = (left != NULL);
   bool hasRight = (right != NULL);
 
-  ar & BOOST_SERIALIZATION_NVP(hasLeft);
-  ar & BOOST_SERIALIZATION_NVP(hasRight);
+  ar(CEREAL_NVP(hasLeft));
+  ar(CEREAL_NVP(hasRight));
 
   if (hasLeft)
-    ar & BOOST_SERIALIZATION_NVP(left);
+    ar(CEREAL_POINTER(left));
   if (hasRight)
-    ar & BOOST_SERIALIZATION_NVP(right);
+    ar(CEREAL_POINTER(right));
 
   if (root)
   {
-    ar & BOOST_SERIALIZATION_NVP(maxVals);
-    ar & BOOST_SERIALIZATION_NVP(minVals);
+    ar(CEREAL_NVP(maxVals));
+    ar(CEREAL_NVP(minVals));
 
     // This is added in order to reduce (dramatically!) the model file size.
-    if (Archive::is_loading::value && left && right)
+    if (cereal::is_loading<Archive>() && left && right)
       FillMinMax(minVals, maxVals);
   }
 }

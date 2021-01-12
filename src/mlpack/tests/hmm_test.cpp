@@ -13,21 +13,19 @@
 #include <mlpack/methods/gmm/gmm.hpp>
 #include <mlpack/methods/gmm/diagonal_gmm.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::hmm;
 using namespace mlpack::distribution;
 using namespace mlpack::gmm;
 
-BOOST_AUTO_TEST_SUITE(HMMTest);
-
 /**
  * We will use the simple case proposed by Russell and Norvig in Artificial
  * Intelligence: A Modern Approach, 2nd Edition, around p.549.
  */
-BOOST_AUTO_TEST_CASE(SimpleDiscreteHMMTestViterbi)
+TEST_CASE("SimpleDiscreteHMMTestViterbi", "[HMMTest]")
 {
   // We have two hidden states: rain/dry.  Two emission states: umbrella/no
   // umbrella.
@@ -55,18 +53,18 @@ BOOST_AUTO_TEST_CASE(SimpleDiscreteHMMTestViterbi)
   hmm.Predict(observation, states);
 
   // Check each state.
-  BOOST_REQUIRE_EQUAL(states[0], 0); // Rain.
-  BOOST_REQUIRE_EQUAL(states[1], 0); // Rain.
-  BOOST_REQUIRE_EQUAL(states[2], 1); // No rain.
-  BOOST_REQUIRE_EQUAL(states[3], 0); // Rain.
-  BOOST_REQUIRE_EQUAL(states[4], 0); // Rain.
+  REQUIRE(states[0] == 0); // Rain.
+  REQUIRE(states[1] == 0); // Rain.
+  REQUIRE(states[2] == 1); // No rain.
+  REQUIRE(states[3] == 0); // Rain.
+  REQUIRE(states[4] == 0); // Rain.
 }
 
 /**
  * This example is from Borodovsky & Ekisheva, p. 80-81.  It is just slightly
  * more complex.
  */
-BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
+TEST_CASE("BorodovskyHMMTestViterbi", "[HMMTest]")
 {
   // Equally probable initial states.
   arma::vec initial(3);
@@ -94,23 +92,23 @@ BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
   hmm.Predict(observation, states);
 
   // Most probable path is HHHLLLLLL.
-  BOOST_REQUIRE_EQUAL(states[0], 1);
-  BOOST_REQUIRE_EQUAL(states[1], 1);
-  BOOST_REQUIRE_EQUAL(states[2], 1);
-  BOOST_REQUIRE_EQUAL(states[3], 2);
+  REQUIRE(states[0] == 1);
+  REQUIRE(states[1] == 1);
+  REQUIRE(states[2] == 1);
+  REQUIRE(states[3] == 2);
   // This could actually be one of two states (equal probability).
-  BOOST_REQUIRE((states[4] == 1) || (states[4] == 2));
-  BOOST_REQUIRE_EQUAL(states[5], 2);
+  REQUIRE(((states[4] == 1) || (states[4] == 2)) == true);
+  REQUIRE(states[5] == 2);
   // This could also be one of two states.
-  BOOST_REQUIRE((states[6] == 1) || (states[6] == 2));
-  BOOST_REQUIRE_EQUAL(states[7], 2);
-  BOOST_REQUIRE_EQUAL(states[8], 2);
+  REQUIRE(((states[6] == 1) || (states[6] == 2)) == true);
+  REQUIRE(states[7] == 2);
+  REQUIRE(states[8] == 2);
 }
 
 /**
  * Ensure that the forward-backward algorithm is correct.
  */
-BOOST_AUTO_TEST_CASE(ForwardBackwardTwoState)
+TEST_CASE("ForwardBackwardTwoState", "[HMMTest]")
 {
   arma::mat obs("3 3 2 1 1 1 1 3 3 1");
 
@@ -137,35 +135,35 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTwoState)
       scales);
 
   // All values obtained from MATLAB hmmdecode().
-  BOOST_REQUIRE_CLOSE(log, -23.4349, 1e-3);
+  REQUIRE(log == Approx(-23.4349).epsilon(1e-5));
 
-  BOOST_REQUIRE_SMALL(stateProb(0, 0), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(1, 0), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(0, 1), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(1, 1), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(0, 2), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(1, 2), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(0, 3), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(1, 3), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(0, 4), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(1, 4), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(0, 5), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(1, 5), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(0, 6), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(1, 6), 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(0, 7), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(1, 7), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(0, 8), 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(1, 8), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(stateProb(0, 9), 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(stateProb(1, 9), 1e-5);
+  REQUIRE(stateProb(0, 0) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(1, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 1) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(1, 1) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 2) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(1, 2) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 3) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 3) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(0, 4) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 4) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(0, 5) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 5) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(0, 6) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 6) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(0, 7) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(1, 7) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 8) == Approx(0.0).margin(1e-7));
+  REQUIRE(stateProb(1, 8) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(0, 9) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(stateProb(1, 9) == Approx(0.0).margin(1e-7));
 }
 
 /**
  * In this example we try to estimate the transmission and emission matrices
  * based on some observations.  We use the simplest possible model.
  */
-BOOST_AUTO_TEST_CASE(SimplestBaumWelchDiscreteHMM)
+TEST_CASE("SimplestBaumWelchDiscreteHMM", "[HMMTest]")
 {
   // Don't yet require a useful distribution.  1 state, 1 emission.
   HMM<DiscreteDistribution> hmm(1, DiscreteDistribution(1));
@@ -179,15 +177,15 @@ BOOST_AUTO_TEST_CASE(SimplestBaumWelchDiscreteHMM)
 
   hmm.Train(observations);
 
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 1.0, 1e-5);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(hmm.Emission()[0].Probability("0") == Approx(1.0).epsilon(1e-7));
+  REQUIRE(hmm.Transition()(0, 0) == Approx(1.0).epsilon(1e-7));
 }
 
 /**
  * A slightly more complex model to estimate.
  */
-BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM)
+TEST_CASE("SimpleBaumWelchDiscreteHMM", "[HMMTest]")
 {
   HMM<DiscreteDistribution> hmm(1, 2); // 1 state, 2 emissions.
   // Randomize the emission matrix.
@@ -212,17 +210,17 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM)
 
   hmm.Train(observations);
 
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 0.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("1"), 0.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 1e-5);
+  REQUIRE(hmm.Emission()[0].Probability("0") == Approx(0.5).epsilon(1e-7));
+  REQUIRE(hmm.Emission()[0].Probability("1") == Approx(0.5).epsilon(1e-7));
+  REQUIRE(hmm.Transition()(0, 0) == Approx(1.0).epsilon(1e-7));
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(1e-7));
 }
 
 /**
  * Increasing complexity, but still simple; 4 emissions, 2 states; the state can
  * be determined directly by the emission.
  */
-BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
+TEST_CASE("SimpleBaumWelchDiscreteHMM_2", "[HMMTest]")
 {
   HMM<DiscreteDistribution> hmm(2, DiscreteDistribution(4));
 
@@ -301,25 +299,25 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
   double prob = double(stateZeroStarts) / observations.size();
 
   // Only require 2.5% tolerance, because this is a little fuzzier.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], prob, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[1], 1.0 - prob, 2.5);
+  REQUIRE(hmm.Initial()[0] == Approx(prob).epsilon(0.025));
+  REQUIRE(hmm.Initial()[1] == Approx(1.0 - prob).epsilon(0.025));
 
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 0.5, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 0), 0.5, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 1), 0.5, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 1), 0.5, 2.5);
+  REQUIRE(hmm.Transition()(0, 0) == Approx(0.5).epsilon(0.025));
+  REQUIRE(hmm.Transition()(1, 0) == Approx(0.5).epsilon(0.025));
+  REQUIRE(hmm.Transition()(0, 1) == Approx(0.5).epsilon(0.025));
+  REQUIRE(hmm.Transition()(1, 1) == Approx(0.5).epsilon(0.025));
 
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 0.4, 4.0);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("1"), 0.6, 4.0);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability("2"), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability("3"), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability("0"), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability("1"), 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability("2"), 0.2, 4.0);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability("3"), 0.8, 4.0);
+  REQUIRE(hmm.Emission()[0].Probability("0") == Approx(0.4).epsilon(0.04));
+  REQUIRE(hmm.Emission()[0].Probability("1") == Approx(0.6).epsilon(0.04));
+  REQUIRE(hmm.Emission()[0].Probability("2") == Approx(0.0).margin(2.5));
+  REQUIRE(hmm.Emission()[0].Probability("3") == Approx(0.0).margin(2.5));
+  REQUIRE(hmm.Emission()[1].Probability("0") == Approx(0.0).margin(2.5));
+  REQUIRE(hmm.Emission()[1].Probability("1") == Approx(0.0).margin(2.5));
+  REQUIRE(hmm.Emission()[1].Probability("2") == Approx(0.2).epsilon(0.04));
+  REQUIRE(hmm.Emission()[1].Probability("3") == Approx(0.8).epsilon(0.04));
 }
 
-BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
+TEST_CASE("DiscreteHMMLabeledTrainTest", "[HMMTest]")
 {
   // Generate a random Markov model with 3 hidden states and 6 observations.
   arma::mat transition;
@@ -387,10 +385,10 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
   // Make sure the initial weights are fine.  They should be equal (or close).
   arma::vec initial(3);
   initial.fill(1.0 / 3.0);
-  BOOST_REQUIRE_LT(arma::norm(hmm.Initial() - initial), 0.2);
+  REQUIRE(arma::norm(hmm.Initial() - initial) <  0.2);
 
   // Check that the transition matrix is close.
-  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - transition), 0.1);
+  REQUIRE(arma::norm(hmm.Transition() - transition) < 0.1);
 
   for (size_t col = 0; col < hmm.Emission().size(); col++)
   {
@@ -399,8 +397,8 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
     {
       arma::vec obs(1);
       obs[0] = row;
-      BOOST_REQUIRE_SMALL(hmm.Emission()[col].Probability(obs) -
-          emission[col].Probability(obs), 0.07);
+      REQUIRE(hmm.Emission()[col].Probability(obs) -
+          emission[col].Probability(obs) == Approx(0.0).margin(0.07));
     }
   }
 }
@@ -409,7 +407,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
  * Make sure the Generate() function works for a uniformly distributed HMM;
  * we'll take many samples just to make sure.
  */
-BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
+TEST_CASE("DiscreteHMMSimpleGenerateTest", "[HMMTest]")
 {
   // Very simple HMM.  4 emissions with equal probability and 2 states with
   // equal probability.
@@ -439,19 +437,19 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
   stateProb /= accu(stateProb);
 
   // Now check that the probabilities are right.  3% tolerance.
-  BOOST_REQUIRE_CLOSE(emissionProb[0], 0.25, 3.0);
-  BOOST_REQUIRE_CLOSE(emissionProb[1], 0.25, 3.0);
-  BOOST_REQUIRE_CLOSE(emissionProb[2], 0.25, 3.0);
-  BOOST_REQUIRE_CLOSE(emissionProb[3], 0.25, 3.0);
+  REQUIRE(emissionProb[0] == Approx(0.25).epsilon(0.03));
+  REQUIRE(emissionProb[1] == Approx(0.25).epsilon(0.03));
+  REQUIRE(emissionProb[2] == Approx(0.25).epsilon(0.03));
+  REQUIRE(emissionProb[3] == Approx(0.25).epsilon(0.03));
 
-  BOOST_REQUIRE_CLOSE(stateProb[0], 0.50, 3.0);
-  BOOST_REQUIRE_CLOSE(stateProb[1], 0.50, 3.0);
+  REQUIRE(stateProb[0] == Approx(0.50).epsilon(0.03));
+  REQUIRE(stateProb[1] == Approx(0.50).epsilon(0.03));
 }
 
 /**
  * More complex test for Generate().
  */
-BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
+TEST_CASE("DiscreteHMMGenerateTest", "[HMMTest]")
 {
   // 6 emissions, 4 states.  Random transition and emission probability.
   arma::vec initial("1 0 0 0");
@@ -493,7 +491,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
   hmm2.Train(sequences, states);
 
   // Check that training gives the same result.
-  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - hmm2.Transition()), 0.02);
+  REQUIRE(arma::norm(hmm.Transition() - hmm2.Transition()) <  0.02);
 
   for (size_t row = 0; row < 6; row++)
   {
@@ -501,13 +499,13 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
     obs[0] = row;
     for (size_t col = 0; col < 4; col++)
     {
-      BOOST_REQUIRE_SMALL(hmm.Emission()[col].Probability(obs) -
-          hmm2.Emission()[col].Probability(obs), 0.02);
+      REQUIRE(hmm.Emission()[col].Probability(obs) -
+          hmm2.Emission()[col].Probability(obs) == Approx(0.0).margin(0.02));
     }
   }
 }
 
-BOOST_AUTO_TEST_CASE(DiscreteHMMLogLikelihoodTest)
+TEST_CASE("DiscreteHMMLogLikelihoodTest", "[HMMTest]")
 {
   // Create a simple HMM with three states and four emissions.
   arma::vec initial("0.5 0.2 0.3"); // Default MATLAB initial states.
@@ -523,17 +521,17 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLogLikelihoodTest)
 
   // Now generate some sequences and check that the log-likelihood is the same
   // as MATLAB gives for this HMM.
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("0 1 2 3"), -4.9887223949, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("1 2 0 0"), -6.0288487077, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("3 3 3 3"), -5.5544000018, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("0 2 2 1 2 3 0 0 1 3 1 0 0 3 1 2 2"),
-      -24.51556128368, 1e-5);
+  REQUIRE(hmm.LogLikelihood("0 1 2 3") == Approx(-4.9887223949).epsilon(1e-7));
+  REQUIRE(hmm.LogLikelihood("1 2 0 0") == Approx(-6.0288487077).epsilon(1e-7));
+  REQUIRE(hmm.LogLikelihood("3 3 3 3") == Approx(-5.5544000018).epsilon(1e-7));
+  REQUIRE(hmm.LogLikelihood("0 2 2 1 2 3 0 0 1 3 1 0 0 3 1 2 2") ==
+      Approx(-24.51556128368).epsilon(1e-7));
 }
 
 /**
  * A simple test to make sure HMMs with Gaussian output distributions work.
  */
-BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
+TEST_CASE("GaussianHMMSimpleTest", "[HMMTest]")
 {
   // We'll have two Gaussians, far away from each other, one corresponding to
   // each state.
@@ -586,10 +584,10 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
   // Check that each prediction is right.
   for (size_t i = 0; i < 1000; ++i)
   {
-    BOOST_REQUIRE_EQUAL(predictedClasses[i], classes[i]);
+    REQUIRE(predictedClasses[i] == classes[i]);
 
     // The probability of the wrong class should be infinitesimal.
-    BOOST_REQUIRE_SMALL(stateProb((classes[i] + 1) % 2, i), 0.001);
+    REQUIRE(stateProb((classes[i] + 1) % 2, i) == Approx(0.0).margin(0.001));
   }
 }
 
@@ -597,7 +595,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
  * Ensure that Gaussian HMMs can be trained properly, for the labeled training
  * case and also for the unlabeled training case.
  */
-BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
+TEST_CASE("GaussianHMMTrainTest", "[HMMTest]")
 {
   // Four emission Gaussians and three internal states.  The goal is to estimate
   // the transition matrix correctly, and each distribution correctly.
@@ -655,21 +653,21 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
   hmm.Train(observations, states);
 
   // Check initial weights.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 1e-3);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[2], 1e-3);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(1e-7));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(1e-3));
+  REQUIRE(hmm.Initial()[2] == Approx(0.0).margin(1e-3));
 
   // We use a tolerance of 0.05 for the transition matrices.
   // Check that the transition matrix is correct.
-  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - transition), 0.05);
+  REQUIRE(arma::norm(hmm.Transition() - transition) < 0.05);
 
   // Check that each distribution is correct.
   for (size_t dist = 0; dist < 3; dist++)
   {
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Mean() -
-        emission[dist].Mean()), 0.05);
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Covariance() -
-        emission[dist].Covariance()), 0.1);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Mean() -
+        emission[dist].Mean()) < 0.05);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Covariance() -
+        emission[dist].Covariance()) < 0.1);
   }
 
   // Now let's try it all again, but this time, unlabeled.  Everything will fail
@@ -688,25 +686,25 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
 
   hmm.Train(observations);
 
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.1);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.05);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[2], 0.05);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.001));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.05));
+  REQUIRE(hmm.Initial()[2] == Approx(0.0).margin(0.05));
 
   // The tolerances are increased because there is more error in unlabeled
   // training; we use an absolute tolerance of 0.03 for the transition matrices.
   // Check that the transition matrix is correct.
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
-      BOOST_REQUIRE_SMALL(transition(row, col) - hmm.Transition()(row, col),
-          0.03);
+      REQUIRE(transition(row, col) - hmm.Transition()(row, col) ==
+          Approx(.0).margin(0.03));
 
   // Check that each distribution is correct.
   for (size_t dist = 0; dist < 3; dist++)
   {
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Mean() -
-        emission[dist].Mean()), 0.1);
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Covariance() -
-        emission[dist].Covariance()), 0.25);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Mean() -
+        emission[dist].Mean()) < 0.1);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Covariance() -
+        emission[dist].Covariance()) < 0.25);
   }
 }
 
@@ -714,7 +712,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
  * Make sure that a random sequence generated by a Gaussian HMM fits the
  * distribution correctly.
  */
-BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
+TEST_CASE("GaussianHMMGenerateTest", "[HMMTest]")
 {
   // Our distribution will have three two-dimensional output Gaussians.
   HMM<GaussianDistribution> hmm(3, GaussianDistribution(2));
@@ -736,22 +734,22 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
   hmm2.Train(observations, states);
 
   // Check that the estimated matrices are the same.
-  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - hmm2.Transition()), 0.1);
+  REQUIRE(arma::norm(hmm.Transition() - hmm2.Transition()) < 0.1);
 
   // Check that each Gaussian is the same.
   for (size_t dist = 0; dist < 3; dist++)
   {
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Mean() -
-        hmm2.Emission()[dist].Mean()), 0.2);
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Covariance() -
-        hmm2.Emission()[dist].Covariance()), 0.3);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Mean() -
+        hmm2.Emission()[dist].Mean()) < 0.2);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Covariance() -
+        hmm2.Emission()[dist].Covariance()) < 0.3);
   }
 }
 
 /**
  * Make sure that Predict() is numerically stable.
  */
-BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
+TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
 {
   size_t numState = 10;
   size_t obsDimension = 2;
@@ -802,6 +800,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
     emission.Covariance(cov.at(i));
   }
 
+  // 100 2D observations.
   arma::mat obs = {
       {
           -0.0424, -0.0395, -0.0336, -0.0294, -0.0299, -0.032, -0.0289, -0.0148,
@@ -834,9 +833,261 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
           0.0521, 0.0313, 0.0188, 0.0113, 0.0068, 0.0042, 0.0026, 0.0018, 0.0014
       }
   };
+  
+  //100 pre-calculated emission probabilities each for 10 states
+  std::vector<arma::vec> emissionProb = {
+    { -2.7301e+03, 1.7874e+00, -1.9428e+00, -3.6365e+00, -4.0397e-01, 
+            -1.5115e-01, -1.0328e+00, -1.1071e+00, 5.2876e-01, -1.0643e-01 },
+    { -2.3684e+03, 1.8059e+00, -2.2058e+00, -4.0514e+00, -5.0935e-01,
+            -2.1126e-01, -1.1962e+00, -1.2567e+00, 4.1247e-01, -3.0199e-01 },
+    { -1.7117e+03, 1.7981e+00, -2.5275e+00, -4.5634e+00, -6.4839e-01,
+            -2.9579e-01, -1.4000e+00, -1.4461e+00, 2.3795e-01, -5.5622e-01 },
+    { -1.3089e+03, 1.7393e+00, -2.8685e+00, -5.0996e+00, -8.0288e-01,
+            -3.9863e-01, -1.6229e+00, -1.6478e+00, 2.3300e-02, -8.6617e-01 },
+    { -1.3541e+03, 1.6414e+00, -3.1971e+00, -5.6043e+00, -9.5605e-01,
+            -5.1013e-01, -1.8460e+00, -1.8395e+00, -2.0603e-01, -1.2176e+00 },
+    { -1.5521e+03, 1.5367e+00, -3.4806e+00, -6.0349e+00, -1.0924e+00,
+            -6.1426e-01, -2.0436e+00, -2.0051e+00, -4.2045e-01, -1.5500e+00 },
+    { -1.2647e+03, 1.4680e+00, -3.6577e+00, -6.3144e+00, -1.1823e+00,
+            -6.8009e-01, -2.1646e+00, -2.1147e+00, -5.6512e-01, -1.7360e+00 },
+    { -3.2650e+02, 1.4646e+00, -3.6693e+00, -6.3649e+00, -1.1957e+00,
+            -6.7711e-01, -2.1592e+00, -2.1377e+00, -5.8400e-01, -1.6543e+00 },
+    { -1.3035e+02, 1.5123e+00, -3.5018e+00, -6.1593e+00, -1.1254e+00,
+            -6.0037e-01, -2.0181e+00, -2.0646e+00, -4.6413e-01, -1.3011e+00 },
+    { -2.6279e+03, 1.5809e+00, -3.1559e+00, -5.6861e+00, -9.7699e-01,
+            -4.5903e-01, -1.7490e+00, -1.8956e+00, -2.2135e-01, -7.2772e-01 },
+    { -9.6164e+03, 1.6193e+00, -2.6708e+00, -4.9944e+00, -7.8159e-01,
+            -2.8441e-01, -1.3909e+00, -1.6574e+00, 7.8411e-02, -5.0595e-02 },
+    { -2.0944e+04, 1.5980e+00, -2.1094e+00, -4.1681e+00, -5.8143e-01,
+            -1.2105e-01, -1.0055e+00, -1.3879e+00, 3.4591e-01, 5.6464e-01 },
+    { -3.3843e+04, 1.5241e+00, -1.5331e+00, -3.2977e+00, -4.1342e-01,
+            -8.0772e-03, -6.5026e-01, -1.1226e+00, 5.0244e-01, 9.8522e-01 },
+    { -4.6678e+04, 1.3796e+00, -9.8223e-01, -2.4507e+00, -3.0368e-01,
+            3.0609e-02, -3.5787e-01, -8.8913e-01, 4.9234e-01, 1.1530e+00 },
+    { -6.0839e+04, 1.1013e+00, -4.8302e-01, -1.6712e+00, -2.7541e-01,
+            -2.2814e-02, -1.4691e-01, -7.1095e-01, 2.6698e-01, 1.0338e+00 },
+    { -7.8940e+04, 6.2341e-01, -6.4826e-02, -1.0034e+00, -3.5198e-01,
+            -1.8517e-01, -3.7803e-02, -6.1240e-01, -2.1704e-01, 5.8353e-01 },
+    { -1.0182e+05, -8.9362e-02, 2.5888e-01, -4.6429e-01, -5.5297e-01,
+            -4.7752e-01, -4.9871e-02, -6.0739e-01, -1.0089e+00, -2.6587e-01 },
+    { -1.2437e+05, -9.8625e-01, 4.7236e-01, -8.1256e-02, -8.8097e-01,
+            -9.0979e-01, -2.0039e-01, -6.9837e-01, -2.1229e+00, -1.5424e+00 },
+    { -1.3878e+05, -1.9546e+00, 5.6976e-01, 1.2361e-01, -1.3043e+00,
+            -1.4534e+00, -4.7690e-01, -8.6807e-01, -3.4831e+00, -3.1393e+00 },
+    { -1.3979e+05, -2.8896e+00, 5.6962e-01, 1.6577e-01, -1.7631e+00,
+            -2.0456e+00, -8.3102e-01, -1.0792e+00, -4.9380e+00, -4.8430e+00 },
+    { -1.2717e+05, -3.7474e+00, 5.0493e-01, 9.2444e-02, -2.1969e+00,
+            -2.6201e+00, -1.2028e+00, -1.2907e+00, -6.3319e+00, -6.4416e+00 },
+    { -1.0548e+05, -4.5565e+00, 4.0397e-01, -4.5775e-02, -2.5711e+00,
+            -3.1354e+00, -1.5493e+00, -1.4771e+00, -7.5697e+00, -7.8170e+00 },
+    { -8.0621e+04, -5.3691e+00, 2.8365e-01, -2.1252e-01, -2.8783e+00,
+            -3.5784e+00, -1.8523e+00, -1.6312e+00, -8.6245e+00, -8.9480e+00 },
+    { -5.6310e+04, -6.2411e+00, 1.5008e-01, -3.9022e-01, -3.1294e+00,
+            -3.9597e+00, -2.1142e+00, -1.7569e+00, -9.5239e+00, -9.8785e+00 },
+    { -3.4173e+04, -7.2306e+00, 3.0396e-03, -5.7242e-01, -3.3347e+00,
+            -4.2928e+00, -2.3417e+00, -1.8583e+00, -1.0301e+01, -1.0652e+01 },
+    { -1.5877e+04, -8.3900e+00, -1.5871e-01, -7.5362e-01, -3.4959e+00,
+            -4.5816e+00, -2.5356e+00, -1.9353e+00, -1.0963e+01, -1.1284e+01 },
+    { -3.3829e+03, -9.7572e+00, -3.3006e-01, -9.1554e-01, -3.5912e+00,
+            -4.8035e+00, -2.6770e+00, -1.9722e+00, -1.1452e+01, -1.1714e+01 },
+    { -5.6088e+02, -1.1394e+01, -5.0305e-01, -1.0261e+00, -3.5777e+00,
+            -4.9138e+00, -2.7301e+00, -1.9403e+00, -1.1653e+01, -1.1829e+01 },
+    { -1.4303e+04, -1.3346e+01, -6.7336e-01, -1.0564e+00, -3.4266e+00,
+            -4.8757e+00, -2.6690e+00, -1.8219e+00, -1.1470e+01, -1.1561e+01 },
+    { -4.9066e+04, -1.5534e+01, -8.4176e-01, -1.0079e+00, -3.1636e+00,
+            -4.7028e+00, -2.5116e+00, -1.6369e+00, -1.0937e+01, -1.0995e+01 },
+    { -9.9717e+04, -1.7702e+01, -1.0039e+00, -9.1443e-01, -2.8597e+00,
+            -4.4595e+00, -2.3138e+00, -1.4339e+00, -1.0224e+01, -1.0331e+01 },
+    { -1.5886e+05, -1.9676e+01, -1.1535e+00, -7.9762e-01, -2.5479e+00,
+            -4.1805e+00, -2.1039e+00, -1.2332e+00, -9.4233e+00, -9.6530e+00 },
+    { -2.2947e+05, -2.1635e+01, -1.3117e+00, -6.6325e-01, -2.2133e+00,
+            -3.8587e+00, -1.8780e+00, -1.0253e+00, -8.5051e+00, -8.9416e+00 },
+    { -3.1968e+05, -2.3792e+01, -1.5095e+00, -5.1672e-01, -1.8381e+00,
+            -3.4770e+00, -1.6312e+00, -8.0190e-01, -7.4108e+00, -8.1836e+00 },
+    { -4.3323e+05, -2.6183e+01, -1.7728e+00, -3.8390e-01, -1.4394e+00,
+            -3.0487e+00, -1.3857e+00, -5.7953e-01, -6.1647e+00, -7.4521e+00 },
+    { -5.6473e+05, -2.8589e+01, -2.1061e+00, -3.0168e-01, -1.0547e+00,
+            -2.6054e+00, -1.1773e+00, -3.8708e-01, -4.8475e+00, -6.8476e+00 },
+    { -6.9974e+05, -3.0612e+01, -2.4921e+00, -3.0913e-01, -7.2535e-01,
+            -2.1849e+00, -1.0419e+00, -2.5359e-01, -3.5677e+00, -6.4479e+00 },
+    { -8.0655e+05, -3.1539e+01, -2.8524e+00, -4.2185e-01, -4.8692e-01,
+            -1.8260e+00, -9.9484e-01, -1.9514e-01, -2.4629e+00, -6.2373e+00 },
+    { -8.5216e+05, -3.0655e+01, -3.0833e+00, -6.1881e-01, -3.3169e-01,
+            -1.5249e+00, -1.0091e+00, -1.9595e-01, -1.5717e+00, -6.0513e+00 },
+    { -8.2392e+05, -2.7811e+01, -3.1362e+00, -8.7526e-01, -2.3459e-01,
+            -1.2631e+00, -1.0480e+00, -2.3278e-01, -8.7344e-01, -5.7341e+00 },
+    { -7.3612e+05, -2.3582e+01, -3.0425e+00, -1.1744e+00, -1.7841e-01,
+            -1.0351e+00, -1.0893e+00, -2.9210e-01, -3.4780e-01, -5.2495e+00 },
+    { -6.1397e+05, -1.8706e+01, -2.8744e+00, -1.5195e+00, -1.5516e-01,
+            -8.3816e-01, -1.1304e+00, -3.7330e-01, 3.7744e-02, -4.6424e+00 },
+    { -4.8041e+05, -1.3799e+01, -2.7054e+00, -1.9262e+00, -1.6637e-01,
+            -6.7558e-01, -1.1810e+00, -4.8405e-01, 3.0197e-01, -3.9898e+00 },
+    { -3.4790e+05, -9.2300e+00, -2.5518e+00, -2.3683e+00, -2.0524e-01,
+            -5.4582e-01, -1.2297e+00, -6.1666e-01, 4.5657e-01, -3.3063e+00 },
+    { -2.2370e+05, -5.1887e+00, -2.3941e+00, -2.7911e+00, -2.5500e-01,
+            -4.3560e-01, -1.2487e+00, -7.5224e-01, 5.3161e-01, -2.5570e+00 },
+    { -1.1273e+05, -1.7195e+00, -2.2258e+00, -3.1794e+00, -3.0915e-01,
+            -3.2974e-01, -1.2221e+00, -8.8867e-01, 5.5755e-01, -1.7017e+00 },
+    { -2.8363e+04, 9.0588e-01, -2.0601e+00, -3.5233e+00, -3.7171e-01,
+            -2.2162e-01, -1.1370e+00, -1.0334e+00, 5.4434e-01, -7.3209e-01 },
+    { -1.2122e+03, 1.9784e+00, -1.9455e+00, -3.7971e+00, -4.5862e-01,
+            -1.2081e-01, -9.8979e-01, -1.2000e+00, 4.7839e-01, 2.5783e-01 },
+    { -7.1694e+04, 5.6327e-01, -2.0051e+00, -4.0345e+00, -6.1306e-01,
+            -6.6602e-02, -8.2833e-01, -1.4287e+00, 3.0684e-01, 1.0022e+00 },
+    { -2.6198e+05, -3.8345e+00, -2.3396e+00, -4.2798e+00, -8.6900e-01,
+            -9.8822e-02, -7.1489e-01, -1.7486e+00, -1.6219e-02, 1.2358e+00 },
+    { -5.5328e+05, -1.0687e+01, -2.9124e+00, -4.5058e+00, -1.2121e+00,
+            -2.2259e-01, -6.7273e-01, -2.1347e+00, -4.7585e-01, 8.8080e-01 },
+    { -8.9436e+05, -1.8602e+01, -3.5518e+00, -4.6037e+00, -1.5911e+00,
+            -4.1140e-01, -6.7958e-01, -2.5173e+00, -1.0137e+00, 3.7886e-02 },
+    { -1.2162e+06, -2.5781e+01, -4.0541e+00, -4.4848e+00, -1.9485e+00,
+            -6.3137e-01, -7.0903e-01, -2.8240e+00, -1.5699e+00, -1.1063e+00 },
+    { -1.4436e+06, -3.0414e+01, -4.2395e+00, -4.1197e+00, -2.2265e+00,
+            -8.4654e-01, -7.3852e-01, -2.9921e+00, -2.0869e+00, -2.2970e+00 },
+    { -1.5227e+06, -3.1337e+01, -3.9989e+00, -3.5197e+00, -2.3836e+00,
+            -1.0315e+00, -7.4887e-01, -2.9823e+00, -2.5313e+00, -3.3017e+00 },
+    { -1.4386e+06, -2.8472e+01, -3.3472e+00, -2.7563e+00, -2.4087e+00,
+            -1.1801e+00, -7.3524e-01, -2.7971e+00, -2.9034e+00, -3.9803e+00 },
+    { -1.2257e+06, -2.2958e+01, -2.4364e+00, -1.9521e+00, -2.3275e+00,
+            -1.3043e+00, -7.0875e-01, -2.4858e+00, -3.2295e+00, -4.3252e+00 },
+    { -9.4813e+05, -1.6527e+01, -1.4675e+00, -1.2121e+00, -2.1965e+00,
+            -1.4367e+00, -6.9389e-01, -2.1228e+00, -3.5740e+00, -4.4844e+00 },
+    { -6.6589e+05, -1.0680e+01, -6.1313e-01, -6.1440e-01, -2.0638e+00,
+            -1.5984e+00, -7.0917e-01, -1.7727e+00, -3.9726e+00, -4.5979e+00 },
+    { -4.1809e+05, -6.2975e+00, 3.1651e-02, -1.8731e-01, -1.9586e+00,
+            -1.7982e+00, -7.6241e-01, -1.4730e+00, -4.4365e+00, -4.7645e+00 },
+    { -2.2534e+05, -3.7546e+00, 4.3188e-01, 7.1872e-02, -1.8959e+00,
+            -2.0366e+00, -8.5455e-01, -1.2417e+00, -4.9637e+00, -5.0424e+00 },
+    { -9.4330e+04, -3.0403e+00, 5.9517e-01, 1.8422e-01, -1.8702e+00,
+            -2.2952e+00, -9.7314e-01, -1.0776e+00, -5.5109e+00, -5.4155e+00 },
+    { -2.1454e+04, -3.9202e+00, 5.5647e-01, 1.8381e-01, -1.8704e+00,
+            -2.5578e+00, -1.1056e+00, -9.6899e-01, -6.0419e+00, -5.8579e+00 },
+    { -31.4830, -6.0953, 0.3567, 0.1044, -1.8840, -2.8086, -1.2397,
+            -0.9026, -6.5224, -6.3374 },
+    { -2.2442e+04, -9.2735e+00, 3.4960e-02, -2.1605e-02, -1.8931e+00,
+            -3.0282e+00, -1.3611e+00, -8.6066e-01, -6.9076e+00, -6.8075e+00 },
+    { -8.1676e+04, -1.3138e+01, -3.6831e-01, -1.6104e-01, -1.8763e+00,
+            -3.1905e+00, -1.4522e+00, -8.2511e-01, -7.1362e+00, -7.2081e+00 },
+    { -1.6865e+05, -1.7287e+01, -8.0643e-01, -2.8264e-01, -1.8178e+00,
+            -3.2726e+00, -1.4987e+00, -7.8144e-01, -7.1585e+00, -7.4877e+00 },
+    { -2.7001e+05, -2.1213e+01, -1.2247e+00, -3.6116e-01, -1.7095e+00,
+            -3.2596e+00, -1.4928e+00, -7.2002e-01, -6.9485e+00, -7.6058e+00 },
+    { -3.7506e+05, -2.4628e+01, -1.5962e+00, -3.9394e-01, -1.5583e+00,
+            -3.1610e+00, -1.4428e+00, -6.4101e-01, -6.5350e+00, -7.5763e+00 },
+    { -4.7871e+05, -2.7455e+01, -1.9194e+00, -3.9090e-01, -1.3720e+00,
+            -2.9900e+00, -1.3606e+00, -5.4763e-01, -5.9492e+00, -7.4279e+00 },
+    { -5.7329e+05, -2.9501e+01, -2.1830e+00, -3.6323e-01, -1.1594e+00,
+            -2.7564e+00, -1.2564e+00, -4.4501e-01, -5.2194e+00, -7.1738e+00 },
+    { -6.4968e+05, -3.0560e+01, -2.3747e+00, -3.2775e-01, -9.3375e-01,
+            -2.4742e+00, -1.1428e+00, -3.4141e-01, -4.3880e+00, -6.8281e+00 },
+    { -6.9933e+05, -3.0501e+01, -2.4875e+00, -3.0631e-01, -7.1262e-01,
+            -2.1653e+00, -1.0343e+00, -2.4789e-01, -3.5174e+00, -6.4120e+00 },
+    { -7.1802e+05, -2.9350e+01, -2.5271e+00, -3.2061e-01, -5.1194e-01,
+            -1.8521e+00, -9.4328e-01, -1.7450e-01, -2.6686e+00, -5.9486e+00 },
+    { -7.0553e+05, -2.7236e+01, -2.5060e+00, -3.8730e-01, -3.4217e-01,
+            -1.5515e+00, -8.7707e-01, -1.2819e-01, -1.8857e+00, -5.4542e+00 },
+    { -6.6569e+05, -2.4393e+01, -2.4435e+00, -5.1663e-01, -2.1031e-01,
+            -1.2775e+00, -8.3941e-01, -1.1339e-01, -1.2023e+00, -4.9470e+00 },
+    { -6.1301e+05, -2.1269e+01, -2.3992e+00, -7.3370e-01, -1.2064e-01,
+            -1.0383e+00, -8.4300e-01, -1.3855e-01, -6.1878e-01, -4.4864e+00 },
+    { -5.6195e+05, -1.8233e+01, -2.4507e+00, -1.0921e+00, -8.5743e-02,
+            -8.4467e-01, -9.1749e-01, -2.2378e-01, -1.3441e-01, -4.1677e+00 },
+    { -5.0308e+05, -1.5078e+01, -2.5824e+00, -1.6122e+00, -1.1850e-01,
+            -7.0720e-01, -1.0690e+00, -3.7916e-01, 2.0948e-01, -3.9737e+00 },
+    { -4.2417e+05, -1.1613e+01, -2.7333e+00, -2.2592e+00, -2.1392e-01,
+            -6.2529e-01, -1.2691e+00, -5.9232e-01, 3.8196e-01, -3.8021e+00 },
+    { -3.4311e+05, -8.4490e+00, -2.9262e+00, -2.9840e+00, -3.6201e-01,
+            -6.0612e-01, -1.5036e+00, -8.4657e-01, 3.8172e-01, -3.6994e+00 },
+    { -2.6553e+05, -5.7959e+00, -3.0657e+00, -3.6135e+00, -5.0450e-01,
+            -6.1056e-01, -1.6893e+00, -1.0726e+00, 2.9263e-01, -3.5310e+00 },
+    { -1.6581e+05, -2.8806e+00, -2.9242e+00, -3.9480e+00, -5.5108e-01,
+            -5.3603e-01, -1.6743e+00, -1.1832e+00, 2.8121e-01, -2.8215e+00 },
+    { -6.3112e+04, -4.4355e-02, -2.4673e+00, -3.8848e+00, -4.8010e-01,
+            -3.5415e-01, -1.4075e+00, -1.1547e+00, 4.0803e-01, -1.5227e+00 },
+    { -5.4196e+03, 1.6750e+00, -1.9272e+00, -3.5655e+00, -3.8433e-01,
+            -1.5578e-01, -1.0312e+00, -1.0745e+00, 5.4628e-01, -1.8838e-01 },
+    { -7.9742e+03, 1.9542e+00, -1.5297e+00, -3.2224e+00, -3.5023e-01,
+            -2.9557e-02, -7.1541e-01, -1.0340e+00, 5.7335e-01, 7.0234e-01 },
+    { -4.6838e+04, 1.3383e+00, -1.2840e+00, -2.9202e+00, -3.6943e-01,
+            2.1035e-02, -4.9879e-01, -1.0295e+00, 5.0388e-01, 1.1296e+00 },
+    { -9.2965e+04, 5.0293e-01, -1.1033e+00, -2.6251e+00, -4.0461e-01,
+            2.4992e-02, -3.5062e-01, -1.0246e+00, 3.8909e-01, 1.2595e+00 },
+    { -1.3250e+05, -2.3738e-01, -9.9398e-01, -2.4136e+00, -4.4740e-01,
+            6.0968e-03, -2.6559e-01, -1.0308e+00, 2.6684e-01, 1.2440e+00 },
+    { -1.7149e+05, -9.7999e-01, -9.1698e-01, -2.2384e+00, -4.9912e-01,
+            -2.5475e-02, -2.0762e-01, -1.0468e+00, 1.3078e-01, 1.1599e+00 },
+    { -2.2091e+05, -1.9350e+00, -8.5497e-01, -2.0582e+00, -5.7508e-01,
+            -7.7816e-02, -1.6138e-01, -1.0794e+00, -5.6045e-02, 9.8875e-01 },
+    { -2.8140e+05, -3.1219e+00, -8.2568e-01, -1.8962e+00, -6.7862e-01,
+            -1.5242e-01, -1.3554e-01, -1.1353e+00, -2.9320e-01, 7.2082e-01 },
+    { -3.4167e+05, -4.3171e+00, -8.2824e-01, -1.7733e+00, -7.8907e-01,
+            -2.3483e-01, -1.3167e-01, -1.2015e+00, -5.3627e-01, 4.0854e-01 },
+    { -3.7868e+05, -5.0537e+00, -8.3691e-01, -1.7046e+00, -8.6035e-01,
+            -2.9036e-01, -1.3690e-01, -1.2447e+00, -6.9304e-01, 1.9260e-01 },
+    { -3.7429e+05, -4.9406e+00, -7.8456e-01, -1.6323e+00, -8.6203e-01,
+            -3.0644e-01, -1.3159e-01, -1.2267e+00, -7.3358e-01, 1.3468e-01 },
+    { -3.3293e+05, -4.0758e+00, -6.6873e-01, -1.5416e+00, -8.0032e-01,
+            -2.8877e-01, -1.1346e-01, -1.1498e+00, -6.7458e-01, 2.1365e-01 },
+    { -2.7541e+05, -2.9085e+00, -5.3210e-01, -1.4470e+00, -7.0706e-01,
+            -2.5517e-01, -9.1435e-02, -1.0445e+00, -5.6402e-01, 3.5113e-01 },
+    { -2.2010e+05, -1.8209e+00, -4.1116e-01, -1.3627e+00, -6.1220e-01,
+            -2.2144e-01, -7.3319e-02, -9.4005e-01, -4.4660e-01, 4.7992e-01 },
+    { -1.7809e+05, -1.0242e+00, -3.2646e-01, -1.3011e+00, -5.3612e-01,
+            -1.9567e-01, -6.2291e-02, -8.5731e-01, -3.5032e-01, 5.7022e-01 },
+    { -1.5426e+05, -5.8691e-01, -2.8121e-01, -1.2660e+00, -4.9111e-01,
+            -1.8141e-01, -5.7387e-02, -8.0842e-01, -2.9317e-01, 6.1601e-01 },
+  };
+  
+  const double loglikelihoodRef = -2734.43;
+
+  // Test log-likelihood calculation for the whole data.
+  {
+    const double loglikelihood = hmm.LogLikelihood(obs);
+    REQUIRE(loglikelihood == Approx(loglikelihoodRef).epsilon(1e-3));
+  }
+
+  // Test loglikelihood calculation in an incremental way.
+  // It simulates the case where we have a stream of data.
+  {
+    double loglikelihood;
+    arma::vec forwardLogProb;
+    for (size_t t = 0; t<obs.n_cols; ++t)
+    {
+      loglikelihood = hmm.LogLikelihood(obs.col(t), loglikelihood,
+                                        forwardLogProb);
+    }
+    REQUIRE(loglikelihood == Approx(loglikelihoodRef).epsilon(1e-3));
+  }
+
+  // Test loglikelihood calculation in an incremental way.
+  // It simulates the case where we have a stream of data.
+  // In this case the accumulation of the log scales factor to calculate
+  // the log-likelihood value is done outside of the loop
+  {
+    double loglikelihood = 0;
+    arma::vec forwardLogProb;
+    for (size_t t = 0; t<obs.n_cols; ++t)
+    {
+      double logScale = hmm.LogScaleFactor(obs.col(t), forwardLogProb);
+      loglikelihood += logScale;
+    }
+    REQUIRE(loglikelihood == Approx(loglikelihoodRef).epsilon(1e-3));
+  }
+
+  // Test loglikelihood calculation in an incremental way.
+  // It simulates the case where we have emission probabilities pre-calculated.
+  {
+    double loglikelihood = 0;
+    arma::vec forwardLogProb;
+    for (size_t t = 0; t<emissionProb.size(); ++t)
+    {
+      loglikelihood = hmm.EmissionLogLikelihood(emissionProb.at(t),
+                                                loglikelihood, forwardLogProb);
+    }
+    REQUIRE(loglikelihood == Approx(loglikelihoodRef).epsilon(1e-1));
+  }
 
   arma::Row<size_t> stateSeq;
-  auto likelihood = hmm.LogLikelihood(obs);
   hmm.Predict(obs, stateSeq);
 
   arma::Row<size_t> stateSeqRef = { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -845,11 +1096,9 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
       7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9,
       9, 9, 9, 9, 9, 9, 9, 9, 9, 9 };
 
-  BOOST_REQUIRE_CLOSE(likelihood, -2734.43, 1e-3);
-
   for (size_t i = 0; i < stateSeqRef.n_cols; ++i)
   {
-    BOOST_REQUIRE_EQUAL(stateSeqRef.at(i), stateSeq.at(i));
+    REQUIRE(stateSeqRef.at(i) == stateSeq.at(i));
   }
 }
 
@@ -858,7 +1107,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMPredictTest)
  * simple model by hand and making sure that prediction of observation sequences
  * works correctly.
  */
-BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
+TEST_CASE("GMMHMMPredictTest", "[HMMTest]")
 {
   // It's possible, but extremely unlikely, that this test can fail.  So we are
   // willing to do three trials in case the first two fail.
@@ -937,14 +1186,14 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
       break;
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 /**
  * Test that GMM-based HMMs can train on models correctly using labeled training
  * data.
  */
-BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
+TEST_CASE("GMMHMMLabeledTrainingTest", "[HMMTest]")
 {
   // We will use two GMMs; one with two components and one with three.
   std::vector<GMM> gmms(2, GMM(2, 2));
@@ -999,65 +1248,65 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
 
   // Check the initial weights.  The dataset was generated with 100% probability
   // of a sequence starting in state 0.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[1] == Approx(.0).margin(0.01));
 
   // Check the results.  Use absolute tolerances instead of percentages.
-  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 0) - transMat(0, 0), 0.03);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 1) - transMat(0, 1), 0.03);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 0) - transMat(1, 0), 0.03);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 1) - transMat(1, 1), 0.03);
+  REQUIRE(hmm.Transition()(0, 0) - transMat(0, 0) == Approx(.0).margin(0.03));
+  REQUIRE(hmm.Transition()(0, 1) - transMat(0, 1) == Approx(.0).margin(0.03));
+  REQUIRE(hmm.Transition()(1, 0) - transMat(1, 0) == Approx(.0).margin(0.03));
+  REQUIRE(hmm.Transition()(1, 1) - transMat(1, 1) == Approx(.0).margin(0.03));
 
   // Now the emission probabilities (the GMMs).
   // We have to sort each GMM for comparison.
   arma::uvec sortedIndices = sort_index(hmm.Emission()[0].Weights());
 
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[0]] -
-      gmms[0].Weights()[0], 0.08);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[1]] -
-      gmms[0].Weights()[1], 0.08);
+  REQUIRE(hmm.Emission()[0].Weights()[sortedIndices[0]] -
+      gmms[0].Weights()[0] == Approx(.0).margin(0.08));
+  REQUIRE(hmm.Emission()[0].Weights()[sortedIndices[1]] -
+      gmms[0].Weights()[1] == Approx(.0).margin(0.08));
 
-  BOOST_REQUIRE_LT(arma::norm(
+  REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[0]).Mean() -
-      gmms[0].Component(0).Mean()), 0.2);
-  BOOST_REQUIRE_LT(arma::norm(
+      gmms[0].Component(0).Mean()) < 0.2);
+  REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[1]).Mean() -
-      gmms[0].Component(1).Mean()), 0.2);
+      gmms[0].Component(1).Mean()) < 0.2);
 
-  BOOST_REQUIRE_LT(arma::norm(
+  REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[0]).Covariance() -
-      gmms[0].Component(0).Covariance()), 0.5);
-  BOOST_REQUIRE_LT(arma::norm(
+      gmms[0].Component(0).Covariance()) < 0.5);
+  REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[1]).Covariance() -
-      gmms[0].Component(0).Covariance()), 0.5);
+      gmms[0].Component(0).Covariance()) < 0.5);
 
   // Sort the GMM.
   sortedIndices = sort_index(hmm.Emission()[1].Weights());
 
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[0]] -
-      gmms[1].Weights()[0], 0.08);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[1]] -
-      gmms[1].Weights()[1], 0.08);
+  REQUIRE(hmm.Emission()[1].Weights()[sortedIndices[0]] -
+      gmms[1].Weights()[0] == Approx(.0).margin(0.08));
+  REQUIRE(hmm.Emission()[1].Weights()[sortedIndices[1]] -
+      gmms[1].Weights()[1] == Approx(.0).margin(0.08));
 
-  BOOST_REQUIRE_LT(arma::norm(
+  REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[0]).Mean() -
-      gmms[1].Component(0).Mean()), 0.2);
-  BOOST_REQUIRE_LT(arma::norm(
+      gmms[1].Component(0).Mean()) < 0.2);
+  REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[1]).Mean() -
-      gmms[1].Component(1).Mean()), 0.2);
+      gmms[1].Component(1).Mean()) < 0.2);
 
-  BOOST_REQUIRE_LT(arma::norm(
+  REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[0]).Covariance() -
-      gmms[1].Component(0).Covariance()), 0.5);
-  BOOST_REQUIRE_LT(arma::norm(
+      gmms[1].Component(0).Covariance()) < 0.5);
+  REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[1]).Covariance() -
-      gmms[1].Component(1).Covariance()), 0.5);
+      gmms[1].Component(1).Covariance()) < 0.5);
 }
 
 /**
  * Test saving and loading of GMM HMMs
  */
-BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
+TEST_CASE("GMMHMMLoadSaveTest", "[HMMTest]")
 {
   // Create a GMM HMM, save it, and load it.
   HMM<GMM> hmm(3, GMM(4, 3));
@@ -1080,16 +1329,16 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP(hmm);
+    cereal::XMLOutputArchive ar(ofs);
+    ar(CEREAL_NVP(hmm));
   }
 
   // Load the HMM.
   HMM<GMM> hmm2(3, GMM(4, 3));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
-    ar >> BOOST_SERIALIZATION_NVP(hmm2);
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.
@@ -1097,26 +1346,27 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
 
   for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
-    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Gaussians(),
+    REQUIRE(hmm.Emission()[j].Gaussians() ==
                         hmm2.Emission()[j].Gaussians());
-    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Dimensionality(),
+    REQUIRE(hmm.Emission()[j].Dimensionality() ==
                         hmm2.Emission()[j].Dimensionality());
 
     for (size_t i = 0; i < hmm.Emission()[j].Dimensionality(); ++i)
-      BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Weights()[i],
-                          hmm2.Emission()[j].Weights()[i], 1e-3);
+      REQUIRE(hmm.Emission()[j].Weights()[i] ==
+          Approx(hmm2.Emission()[j].Weights()[i]).epsilon(1e-5));
 
     for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); ++i)
     {
       for (size_t l = 0; l < hmm.Emission()[j].Dimensionality(); ++l)
       {
-        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Mean()[l],
-            hmm2.Emission()[j].Component(i).Mean()[l], 1e-3);
+        REQUIRE(hmm.Emission()[j].Component(i).Mean()[l] ==
+            Approx(hmm2.Emission()[j].Component(i).Mean()[l]).epsilon(1e-5));
 
         for (size_t k = 0; k < hmm.Emission()[j].Dimensionality(); ++k)
         {
-          BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Covariance()(l, k),
-              hmm2.Emission()[j].Component(i).Covariance()(l, k), 1e-3);
+          REQUIRE(hmm.Emission()[j].Component(i).Covariance()(l, k) ==
+              Approx(hmm2.Emission()[j].Component(i).Covariance()(l,
+              k)).epsilon(1e-5));
         }
       }
     }
@@ -1126,7 +1376,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
 /**
  * Test saving and loading of Gaussian HMMs
  */
-BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
+TEST_CASE("GaussianHMMLoadSaveTest", "[HMMTest]")
 {
   // Create a Gaussian HMM, save it, and load it.
   HMM<GaussianDistribution> hmm(3, GaussianDistribution(2));
@@ -1145,16 +1395,16 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP(hmm);
+    cereal::XMLOutputArchive ar(ofs);
+    ar(cereal::make_nvp("hmm", hmm));
   }
 
   // Load the HMM.
   HMM<GaussianDistribution> hmm2(3, GaussianDistribution(2));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
-    ar >> BOOST_SERIALIZATION_NVP(hmm2);
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.
@@ -1162,17 +1412,18 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
 
   for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
-    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Dimensionality(),
+    REQUIRE(hmm.Emission()[j].Dimensionality() ==
                         hmm2.Emission()[j].Dimensionality());
 
     for (size_t i = 0; i < hmm.Emission()[j].Dimensionality(); ++i)
     {
-      BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Mean()[i],
-          hmm2.Emission()[j].Mean()[i], 1e-3);
+        REQUIRE(hmm.Emission()[j].Mean()[i] ==
+            Approx(hmm2.Emission()[j].Mean()[i]).epsilon(1e-5));
+
       for (size_t k = 0; k < hmm.Emission()[j].Dimensionality(); ++k)
       {
-        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Covariance()(i, k),
-            hmm2.Emission()[j].Covariance()(i, k), 1e-3);
+        REQUIRE(hmm.Emission()[j].Covariance()(i, k) ==
+            Approx(hmm2.Emission()[j].Covariance()(i, k)).epsilon(1e-5));
       }
     }
   }
@@ -1181,7 +1432,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
 /**
  * Test saving and loading of Discrete HMMs
  */
-BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
+TEST_CASE("DiscreteHMMLoadSaveTest", "[HMMTest]")
 {
   // Create a Discrete HMM, save it, and load it.
   std::vector<DiscreteDistribution> emission(4);
@@ -1208,16 +1459,16 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP(hmm);
+    cereal::XMLOutputArchive ar(ofs);
+    ar(cereal::make_nvp("hmm", hmm));
   }
 
   // Load the HMM.
   HMM<DiscreteDistribution> hmm2(3, DiscreteDistribution(3));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
-    ar >> BOOST_SERIALIZATION_NVP(hmm2);
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.
@@ -1225,14 +1476,14 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
 
   for (size_t j = 0; j < hmm.Emission().size(); ++j)
     for (size_t i = 0; i < hmm.Emission()[j].Probabilities().n_elem; ++i)
-      BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Probabilities()[i],
-          hmm2.Emission()[j].Probabilities()[i], 1e-3);
+      REQUIRE(hmm.Emission()[j].Probabilities()[i] ==
+          Approx(hmm2.Emission()[j].Probabilities()[i]).epsilon(1e-5));
 }
 
 /**
  * Test that HMM::Train() returns finite log-likelihood.
  */
-BOOST_AUTO_TEST_CASE(HMMTrainReturnLogLikelihood)
+TEST_CASE("HMMTrainReturnLogLikelihood", "[HMMTest]")
 {
   HMM<DiscreteDistribution> hmm(1, 2); // 1 state, 2 emissions.
   // Randomize the emission matrix.
@@ -1255,7 +1506,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainReturnLogLikelihood)
 
   double loglik = hmm.Train(observations);
 
-  BOOST_REQUIRE_EQUAL(std::isfinite(loglik), true);
+  REQUIRE(std::isfinite(loglik) == true);
 }
 
 /********************************************/
@@ -1263,7 +1514,7 @@ BOOST_AUTO_TEST_CASE(HMMTrainReturnLogLikelihood)
 /********************************************/
 
 //! Make sure the prediction of DiagonalGMM HMMs is reasonable.
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
+TEST_CASE("DiagonalGMMHMMPredictTest", "[HMMTest]")
 {
   // This test is probabilistic, so we perform it three times to make it robust.
   bool success = false;
@@ -1335,14 +1586,14 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMPredictTest)
       break;
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 /**
  * Make sure a random data sequence generation is correct when the emission
  * distribution is DiagonalGMM.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMGenerateTest)
+TEST_CASE("DiagonalGMMHMMGenerateTest", "[HMMTest]")
 {
   // Build the model.
   HMM<DiagonalGaussianDistribution> hmm(3, DiagonalGaussianDistribution(2));
@@ -1368,15 +1619,15 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMGenerateTest)
   hmm2.Train(observations, states);
 
   // Check that the estimated matrices are the same.
-  BOOST_REQUIRE_LT(arma::norm(hmm.Transition() - hmm2.Transition()), 0.05);
+  REQUIRE(arma::norm(hmm.Transition() - hmm2.Transition()) < 0.05);
 
   // Check that each Gaussian is the same.
   for (size_t dist = 0; dist < 3; dist++)
   {
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Mean() -
-        hmm2.Emission()[dist].Mean()), 0.1);
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[dist].Covariance() -
-        hmm2.Emission()[dist].Covariance()), 0.2);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Mean() -
+        hmm2.Emission()[dist].Mean()) < 0.1);
+    REQUIRE(arma::norm(hmm.Emission()[dist].Covariance() -
+        hmm2.Emission()[dist].Covariance()) < 0.2);
   }
 }
 
@@ -1384,7 +1635,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMGenerateTest)
  * Make sure the unlabeled 1-state training works reasonably given a single
  * distribution with diagonal covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianOneStateTrainingTest)
+TEST_CASE("DiagonalGMMHMMOneGaussianOneStateTrainingTest", "[HMMTest]")
 {
   // Create a Gaussian distribution with diagonal covariance.
   DiagonalGaussianDistribution d("2.05 3.45", "0.89 1.05");
@@ -1422,7 +1673,7 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianOneStateTrainingTest)
  * Make sure the unlabeled training works reasonably given a single
  * distribution with diagonal covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
+TEST_CASE("DiagonalGMMHMMOneGaussianUnlabeledTrainingTest", "[HMMTest]")
 {
   // Create a sequence of DiagonalGMMs. Each GMM has one gaussian distribution.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(1, 2));
@@ -1467,35 +1718,36 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianUnlabeledTrainingTest)
   hmm.Train(observations);
 
   // Check the initial weights.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 2; ++i)
     for (size_t j = 0; j < 2; ++j)
-      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.08);
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.08));
 
   // Check the estimated weights of the each emission distribution.
   for (size_t i = 0; i < 2; ++i)
-    BOOST_REQUIRE_SMALL(hmm.Emission()[i].Weights()[0] - gmms[i].Weights()[0],
-        0.08);
+    REQUIRE(hmm.Emission()[i].Weights()[0] - gmms[i].Weights()[0] ==
+        Approx(0.0).margin(0.08));
 
   // Check the estimated means of the each emission distribution.
   for (size_t i = 0; i < 2; ++i)
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Mean() -
-        gmms[i].Component(0).Mean()), 0.2);
+    REQUIRE(arma::norm(hmm.Emission()[i].Component(0).Mean() -
+        gmms[i].Component(0).Mean()) < 0.2);
 
   // Check the estimated covariances of the each emission distribution.
   for (size_t i = 0; i < 2; ++i)
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Covariance() -
-        gmms[i].Component(0).Covariance()), 0.5);
+    REQUIRE(arma::norm(hmm.Emission()[i].Component(0).Covariance() -
+        gmms[i].Component(0).Covariance()) < 0.5);
 }
 
 /**
  * Make sure the labeled training works reasonably given a single distribution
  * with diagonal covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianLabeledTrainingTest)
+TEST_CASE("DiagonalGMMHMMOneGaussianLabeledTrainingTest", "[HMMTest]")
 {
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(3, DiagonalGMM(1, 2));
@@ -1548,36 +1800,37 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMOneGaussianLabeledTrainingTest)
   hmm.Train(observations, states);
 
   // Check the initial weights.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[2], 0.01);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
+  REQUIRE(hmm.Initial()[2] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 3; ++i)
     for (size_t j = 0; j < 3; ++j)
-      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.03);
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.03));
 
   // Check the estimated weights of the each emission distribution.
   for (size_t i = 0; i < 3; ++i)
-    BOOST_REQUIRE_SMALL(hmm.Emission()[i].Weights()[0] - gmms[i].Weights()[0],
-        0.08);
+    REQUIRE(hmm.Emission()[i].Weights()[0] - gmms[i].Weights()[0] ==
+        Approx(0.0).margin(0.08));
 
   // Check the estimated means of the each emission distribution.
   for (size_t i = 0; i < 3; ++i)
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Mean() -
-        gmms[i].Component(0).Mean()), 0.2);
+    REQUIRE(arma::norm(hmm.Emission()[i].Component(0).Mean() -
+        gmms[i].Component(0).Mean()) < 0.2);
 
   // Check the estimated covariances of the each emission distribution.
   for (size_t i = 0; i < 3; ++i)
-    BOOST_REQUIRE_LT(arma::norm(hmm.Emission()[i].Component(0).Covariance() -
-        gmms[i].Component(0).Covariance()), 0.5);
+    REQUIRE(arma::norm(hmm.Emission()[i].Component(0).Covariance() -
+        gmms[i].Component(0).Covariance()) < 0.5);
 }
 
 /**
  * Make sure the unlabeled training works reasonably given multiple
  * distributions with diagonal covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest)
+TEST_CASE("DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest", "[HMMTest]")
 {
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
@@ -1628,13 +1881,14 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest)
   hmm.Train(observations);
 
   // Check the initial weights.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 2; ++i)
     for (size_t j = 0; j < 2; ++j)
-      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.08);
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.08));
 
   // Sort by the estimated weights of the first emission distribution.
   arma::uvec sortedIndices = sort_index(hmm.Emission()[0].Weights());
@@ -1643,18 +1897,18 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest)
   for (size_t i = 0; i < 2; ++i)
   {
     // Check the estimated weights using the first DiagonalGMM.
-    BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[i]] -
-        gmms[0].Weights()[i], 0.08);
+    REQUIRE(hmm.Emission()[0].Weights()[sortedIndices[i]] -
+        gmms[0].Weights()[i] == Approx(0.0).margin(0.08));
 
     // Check the estimated means using the first DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[i]).Mean() -
-      gmms[0].Component(i).Mean()), 0.35);
+      gmms[0].Component(i).Mean()) < 0.35);
 
     // Check the estimated covariances using the first DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[i]).Covariance() -
-      gmms[0].Component(i).Covariance()), 0.6);
+      gmms[0].Component(i).Covariance()) < 0.6);
   }
 
   // Sort by the estimated weights of the second emission distribution.
@@ -1664,18 +1918,18 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest)
   for (size_t i = 0; i < 2; ++i)
   {
     // Check the estimated weights using the second DiagonalGMM.
-    BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[i]] -
-        gmms[1].Weights()[i], 0.08);
+    REQUIRE(hmm.Emission()[1].Weights()[sortedIndices[i]] -
+        gmms[1].Weights()[i] == Approx(0.0).margin(0.08));
 
     // Check the estimated means using the second DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[i]).Mean() -
-      gmms[1].Component(i).Mean()), 0.35);
+      gmms[1].Component(i).Mean()) < 0.35);
 
     // Check the estimated covariances using the second DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[i]).Covariance() -
-      gmms[1].Component(i).Covariance()), 0.6);
+      gmms[1].Component(i).Covariance()) < 0.6);
   }
 }
 
@@ -1683,9 +1937,8 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansUnlabeledTrainingTest)
  * Make sure the labeled training works reasonably given multiple distributions
  * with diagonal covariance.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest)
+TEST_CASE("DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest", "[HMMTest]")
 {
-  math::RandomSeed(std::time(NULL));
   // Create a sequence of DiagonalGMMs.
   std::vector<DiagonalGMM> gmms(2, DiagonalGMM(2, 2));
   gmms[0].Weights() = arma::vec("0.3 0.7");
@@ -1732,13 +1985,14 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest)
   hmm.Train(observations, states);
 
   // Check the initial weights.
-  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
-  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
+  REQUIRE(hmm.Initial()[0] == Approx(1.0).epsilon(0.0001));
+  REQUIRE(hmm.Initial()[1] == Approx(0.0).margin(0.01));
 
   // Check the transition probability matrix.
   for (size_t i = 0; i < 2; ++i)
     for (size_t j = 0; j < 2; ++j)
-      BOOST_REQUIRE_SMALL(hmm.Transition()(i, j) - transProbs(i, j), 0.03);
+      REQUIRE(hmm.Transition()(i, j) - transProbs(i, j) ==
+          Approx(0.0).margin(0.03));
 
   // Sort by the estimated weights of the first emission distribution.
   arma::uvec sortedIndices = sort_index(hmm.Emission()[0].Weights());
@@ -1747,18 +2001,18 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest)
   for (size_t i = 0; i < 2; ++i)
   {
     // Check the estimated weights using the first DiagonalGMM.
-    BOOST_REQUIRE_SMALL(hmm.Emission()[0].Weights()[sortedIndices[i]] -
-        gmms[0].Weights()[i], 0.08);
+    REQUIRE(hmm.Emission()[0].Weights()[sortedIndices[i]] -
+        gmms[0].Weights()[i] == Approx(0.0).margin(0.08));
 
     // Check the estimated means using the first DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[i]).Mean() -
-      gmms[0].Component(i).Mean()), 0.2);
+      gmms[0].Component(i).Mean()) < 0.2);
 
     // Check the estimated covariances using the first DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[0].Component(sortedIndices[i]).Covariance() -
-      gmms[0].Component(i).Covariance()), 0.5);
+      gmms[0].Component(i).Covariance()) < 0.5);
   }
 
   // Sort by the estimated weights of the second emission distribution.
@@ -1768,25 +2022,25 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMMultipleGaussiansLabeledTrainingTest)
   for (size_t i = 0; i < 2; ++i)
   {
     // Check the estimated weights using the second DiagonalGMM.
-    BOOST_REQUIRE_SMALL(hmm.Emission()[1].Weights()[sortedIndices[i]] -
-        gmms[1].Weights()[i], 0.08);
+    REQUIRE(hmm.Emission()[1].Weights()[sortedIndices[i]] -
+        gmms[1].Weights()[i] == Approx(0.0).margin(0.08));
 
     // Check the estimated means using the second DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[i]).Mean() -
-      gmms[1].Component(i).Mean()), 0.2);
+      gmms[1].Component(i).Mean()) < 0.2);
 
     // Check the estimated covariances using the second DiagonalGMM.
-    BOOST_REQUIRE_LT(arma::norm(
+    REQUIRE(arma::norm(
       hmm.Emission()[1].Component(sortedIndices[i]).Covariance() -
-      gmms[1].Component(i).Covariance()), 0.5);
+      gmms[1].Component(i).Covariance()) < 0.5);
   }
 }
 
 /**
  * Make sure loading and saving the model is correct.
  */
-BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
+TEST_CASE("DiagonalGMMHMMLoadSaveTest", "[HMMTest]")
 {
   // Create a GMM HMM, save and load it.
   HMM<DiagonalGMM> hmm(3, DiagonalGMM(4, 3));
@@ -1809,16 +2063,16 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
   // Save the HMM.
   {
     std::ofstream ofs("test-hmm-save.xml");
-    boost::archive::xml_oarchive ar(ofs);
-    ar << BOOST_SERIALIZATION_NVP(hmm);
+    cereal::XMLOutputArchive ar(ofs);
+    ar(cereal::make_nvp("hmm", hmm));
   }
 
   // Load the HMM.
   HMM<DiagonalGMM> hmm2(3, DiagonalGMM(4, 3));
   {
     std::ifstream ifs("test-hmm-save.xml");
-    boost::archive::xml_iarchive ar(ifs);
-    ar >> BOOST_SERIALIZATION_NVP(hmm2);
+    cereal::XMLInputArchive ar(ifs);
+    ar(cereal::make_nvp("hmm", hmm2));
   }
 
   // Remove clutter.
@@ -1827,32 +2081,30 @@ BOOST_AUTO_TEST_CASE(DiagonalGMMHMMLoadSaveTest)
   for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     // Check the number of Gaussians.
-    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Gaussians(),
-                        hmm2.Emission()[j].Gaussians());
+    REQUIRE(hmm.Emission()[j].Gaussians() == hmm2.Emission()[j].Gaussians());
 
     // Check the dimensionality.
-    BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Dimensionality(),
-                        hmm2.Emission()[j].Dimensionality());
+    REQUIRE(hmm.Emission()[j].Dimensionality() ==
+            hmm2.Emission()[j].Dimensionality());
 
     for (size_t i = 0; i < hmm.Emission()[j].Dimensionality(); ++i)
       // Check the weights.
-      BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Weights()[i],
-                          hmm2.Emission()[j].Weights()[i], 1e-3);
+      REQUIRE(hmm.Emission()[j].Weights()[i] ==
+          Approx(hmm2.Emission()[j].Weights()[i]).epsilon(1e-5));
 
     for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); ++i)
     {
       for (size_t l = 0; l < hmm.Emission()[j].Dimensionality(); l++)
       {
         // Check the means.
-        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Mean()[l],
-            hmm2.Emission()[j].Component(i).Mean()[l], 1e-3);
+      REQUIRE(hmm.Emission()[j].Component(i).Mean()[l] ==
+          Approx(hmm2.Emission()[j].Component(i).Mean()[l]).epsilon(1e-5));
 
         // Check the covariances.
-        BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Component(i).Covariance()[l],
-            hmm2.Emission()[j].Component(i).Covariance()[l], 1e-3);
+      REQUIRE(hmm.Emission()[j].Component(i).Covariance()[l] ==
+          Approx(hmm2.Emission()[j].Component(i).Covariance()[l]).epsilon(
+          1e-5));
       }
     }
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

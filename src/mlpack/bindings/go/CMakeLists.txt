@@ -230,9 +230,9 @@ if (BUILD_GO_BINDINGS)
          -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/generate_go_${name}.cpp
          -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
          -DPROGRAM_NAME=${name}
-         -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake
+         -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/go/generate_go.cpp.in
-             ${CMAKE_SOURCE_DIR}/CMake/ConfigureGenerate.cmake)
+             ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
 
   add_executable(generate_go_${name}
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/go/src/mlpack.org/v1/mlpack/capi/${name}.h

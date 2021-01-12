@@ -18,16 +18,13 @@
 #include <ensmallen.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::metric;
 using namespace mlpack::lmnn;
 using namespace ens;
-
-
-BOOST_AUTO_TEST_SUITE(LMNNTest);
 
 //
 // Tests for the Constraints.
@@ -37,7 +34,7 @@ BOOST_AUTO_TEST_SUITE(LMNNTest);
  * The target neighbors function should be correct.
  * point.
  */
-BOOST_AUTO_TEST_CASE(LMNNTargetNeighborsTest)
+TEST_CASE("LMNNTargetNeighborsTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -59,18 +56,18 @@ BOOST_AUTO_TEST_CASE(LMNNTargetNeighborsTest)
 
   constraint.TargetNeighbors(targetNeighbors, dataset, labels, norm);
 
-  BOOST_REQUIRE_EQUAL(targetNeighbors(0, 0), 1);
-  BOOST_REQUIRE_EQUAL(targetNeighbors(0, 1), 0);
-  BOOST_REQUIRE_EQUAL(targetNeighbors(0, 2), 1);
-  BOOST_REQUIRE_EQUAL(targetNeighbors(0, 3), 4);
-  BOOST_REQUIRE_EQUAL(targetNeighbors(0, 4), 3);
-  BOOST_REQUIRE_EQUAL(targetNeighbors(0, 5), 4);
+  REQUIRE(targetNeighbors(0, 0) == 1);
+  REQUIRE(targetNeighbors(0, 1) == 0);
+  REQUIRE(targetNeighbors(0, 2) == 1);
+  REQUIRE(targetNeighbors(0, 3) == 4);
+  REQUIRE(targetNeighbors(0, 4) == 3);
+  REQUIRE(targetNeighbors(0, 5) == 4);
 }
 
 /**
  * The impostors function should be correct.
  */
-BOOST_AUTO_TEST_CASE(LMNNImpostorsTest)
+TEST_CASE("LMNNImpostorsTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -92,12 +89,12 @@ BOOST_AUTO_TEST_CASE(LMNNImpostorsTest)
 
   constraint.Impostors(impostors, dataset, labels, norm);
 
-  BOOST_REQUIRE_EQUAL(impostors(0, 0), 3);
-  BOOST_REQUIRE_EQUAL(impostors(0, 1), 4);
-  BOOST_REQUIRE_EQUAL(impostors(0, 2), 5);
-  BOOST_REQUIRE_EQUAL(impostors(0, 3), 0);
-  BOOST_REQUIRE_EQUAL(impostors(0, 4), 1);
-  BOOST_REQUIRE_EQUAL(impostors(0, 5), 2);
+  REQUIRE(impostors(0, 0) == 3);
+  REQUIRE(impostors(0, 1) == 4);
+  REQUIRE(impostors(0, 2) == 5);
+  REQUIRE(impostors(0, 3) == 0);
+  REQUIRE(impostors(0, 4) == 1);
+  REQUIRE(impostors(0, 5) == 2);
 }
 
 //
@@ -108,7 +105,7 @@ BOOST_AUTO_TEST_CASE(LMNNImpostorsTest)
  * The LMNN function should return the identity matrix as its initial
  * point.
  */
-BOOST_AUTO_TEST_CASE(LMNNInitialPointTest)
+TEST_CASE("LMNNInitialPointTest", "[LMNNTest]")
 {
   // Cheap fake dataset.
   arma::mat dataset = arma::randu(5, 5);
@@ -123,9 +120,9 @@ BOOST_AUTO_TEST_CASE(LMNNInitialPointTest)
     for (int col = 0; col < 5; col++)
     {
       if (row == col)
-        BOOST_REQUIRE_CLOSE(initialPoint(row, col), 1.0, 1e-5);
+        REQUIRE(initialPoint(row, col) == Approx(1.0).epsilon(1e-7));
       else
-        BOOST_REQUIRE_SMALL(initialPoint(row, col), 1e-5);
+        REQUIRE(initialPoint(row, col) == Approx(0.0).margin(1e-5));
     }
   }
 }
@@ -133,7 +130,7 @@ BOOST_AUTO_TEST_CASE(LMNNInitialPointTest)
 /***
  * Ensure non-seprable objective function is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNInitialEvaluationTest)
+TEST_CASE("LMNNInitialEvaluationTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -145,13 +142,13 @@ BOOST_AUTO_TEST_CASE(LMNNInitialEvaluationTest)
   double objective = lmnnfn.Evaluate(arma::eye<arma::mat>(2, 2));
 
   // Result calculated by hand.
-  BOOST_REQUIRE_CLOSE(objective, 9.456, 1e-5);
+  REQUIRE(objective == Approx(9.456).epsilon(1e-7));
 }
 
 /**
  * Ensure non-seprable gradient function is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNInitialGradientTest)
+TEST_CASE("LMNNInitialGradientTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -165,16 +162,16 @@ BOOST_AUTO_TEST_CASE(LMNNInitialGradientTest)
   lmnnfn.Gradient(coordinates, gradient);
 
   // Result calculated by hand.
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.288, 1e-5);
-  BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
-  BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 12.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.288).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(1, 1) == Approx(12.0).epsilon(1e-7));
 }
 
 /***
  * Ensure non-seprable EvaluateWithGradient function is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNInitialEvaluateWithGradientTest)
+TEST_CASE("LMNNInitialEvaluateWithGradientTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -188,18 +185,18 @@ BOOST_AUTO_TEST_CASE(LMNNInitialEvaluateWithGradientTest)
   double objective = lmnnfn.EvaluateWithGradient(coordinates, gradient);
 
   // Result calculated by hand.
-  BOOST_REQUIRE_CLOSE(objective, 9.456, 1e-5);
+  REQUIRE(objective == Approx(9.456).epsilon(1e-7));
   // Check Gradient
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.288, 1e-5);
-  BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
-  BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 12.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.288).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(0, 1) == Approx(0.0).margin(1e-5));
+  REQUIRE(gradient(1, 1) == Approx(12.0).epsilon(1e-7));
 }
 
 /**
  * Ensure the separable objective function is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNSeparableObjectiveTest)
+TEST_CASE("LMNNSeparableObjectiveTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -210,18 +207,18 @@ BOOST_AUTO_TEST_CASE(LMNNSeparableObjectiveTest)
 
   // Result calculated by hand.
   arma::mat coordinates = arma::eye<arma::mat>(2, 2);
-  BOOST_REQUIRE_CLOSE(lmnnfn.Evaluate(coordinates, 0, 1), 1.576, 1e-5);
-  BOOST_REQUIRE_CLOSE(lmnnfn.Evaluate(coordinates, 1, 1), 1.576, 1e-5);
-  BOOST_REQUIRE_CLOSE(lmnnfn.Evaluate(coordinates, 2, 1), 1.576, 1e-5);
-  BOOST_REQUIRE_CLOSE(lmnnfn.Evaluate(coordinates, 3, 1), 1.576, 1e-5);
-  BOOST_REQUIRE_CLOSE(lmnnfn.Evaluate(coordinates, 4, 1), 1.576, 1e-5);
-  BOOST_REQUIRE_CLOSE(lmnnfn.Evaluate(coordinates, 5, 1), 1.576, 1e-5);
+  REQUIRE(lmnnfn.Evaluate(coordinates, 0, 1) == Approx(1.576).epsilon(1e-7));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 1, 1) == Approx(1.576).epsilon(1e-7));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 2, 1) == Approx(1.576).epsilon(1e-7));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 3, 1) == Approx(1.576).epsilon(1e-7));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 4, 1) == Approx(1.576).epsilon(1e-7));
+  REQUIRE(lmnnfn.Evaluate(coordinates, 5, 1) == Approx(1.576).epsilon(1e-7));
 }
 
 /**
  * Ensure the separable gradient is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNSeparableGradientTest)
+TEST_CASE("LMNNSeparableGradientTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -235,51 +232,51 @@ BOOST_AUTO_TEST_CASE(LMNNSeparableGradientTest)
 
   lmnnfn.Gradient(coordinates, 0, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   lmnnfn.Gradient(coordinates, 1, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   lmnnfn.Gradient(coordinates, 2, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   lmnnfn.Gradient(coordinates, 3, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   lmnnfn.Gradient(coordinates, 4, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   lmnnfn.Gradient(coordinates, 5, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 }
 
 /**
  * Ensure the separable EvaluateWithGradient function is right.
  */
-BOOST_AUTO_TEST_CASE(LMNNSeparableEvaluateWithGradientTest)
+TEST_CASE("LMNNSeparableEvaluateWithGradientTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset           = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -293,61 +290,61 @@ BOOST_AUTO_TEST_CASE(LMNNSeparableEvaluateWithGradientTest)
 
   double objective = lmnnfn.EvaluateWithGradient(coordinates, 0, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(objective, 1.576, 1e-5);
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 1, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(objective, 1.576, 1e-5);
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 2, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(objective, 1.576, 1e-5);
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 3, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(objective, 1.576, 1e-5);
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 4, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(objective, 1.576, 1e-5);
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 
   objective = lmnnfn.EvaluateWithGradient(coordinates, 5, gradient, 1);
 
-  BOOST_REQUIRE_CLOSE(objective, 1.576, 1e-5);
+  REQUIRE(objective == Approx(1.576).epsilon(1e-7));
 
-  BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.048, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(gradient(1, 1), 2.0, 1e-5);
+  REQUIRE(gradient(0, 0) == Approx(-0.048).epsilon(1e-7));
+  REQUIRE(gradient(0, 1) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 0) == Approx(0.0).epsilon(1e-7));
+  REQUIRE(gradient(1, 1) == Approx(2.0).epsilon(1e-7));
 }
 
 // Check that final objective value using SGD optimizer is optimal.
-BOOST_AUTO_TEST_CASE(LMNNSGDSimpleDatasetTest)
+TEST_CASE("LMNNSGDSimpleDatasetTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -366,11 +363,11 @@ BOOST_AUTO_TEST_CASE(LMNNSGDSimpleDatasetTest)
   double finalObj = lmnnfn.Evaluate(outputMatrix);
 
   // finalObj must be less than initObj.
-  BOOST_REQUIRE_LT(finalObj, initObj);
+  REQUIRE(finalObj < initObj);
 }
 
 // Check that final objective value using L-BFGS optimizer is optimal.
-BOOST_AUTO_TEST_CASE(LMNNLBFGSSimpleDatasetTest)
+TEST_CASE("LMNNLBFGSSimpleDatasetTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -389,7 +386,7 @@ BOOST_AUTO_TEST_CASE(LMNNLBFGSSimpleDatasetTest)
   double finalObj = lmnnfn.Evaluate(outputMatrix);
 
   // finalObj must be less than initObj.
-  BOOST_REQUIRE_LT(finalObj, initObj);
+  REQUIRE(finalObj < initObj);
 }
 
 double KnnAccuracy(const arma::mat& dataset,
@@ -432,7 +429,7 @@ double KnnAccuracy(const arma::mat& dataset,
 
 // Check that final accuracy is greater than initial accuracy on
 // simple dataset.
-BOOST_AUTO_TEST_CASE(LMNNAccuracyTest)
+TEST_CASE("LMNNAccuracyTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -450,16 +447,16 @@ BOOST_AUTO_TEST_CASE(LMNNAccuracyTest)
   double finalAccuracy = KnnAccuracy(outputMatrix * dataset, labels, 3);
 
   // finalObj must be less than initObj.
-  BOOST_REQUIRE_LT(initAccuracy, finalAccuracy);
+  REQUIRE(initAccuracy < finalAccuracy);
 
   // Since this is a very simple dataset final accuracy should be around 100%.
-  BOOST_REQUIRE_CLOSE(finalAccuracy, 100.0, 1e-5);
+  REQUIRE(finalAccuracy == Approx(100.0).epsilon(1e-7));
 }
 
 // Check that accuracy while learning square distance matrix is the same as when
 // we are learning low rank matrix.  I'm ok if this passes only once out of
 // three tries.
-BOOST_AUTO_TEST_CASE(LMNNLowRankAccuracyLBFGSTest)
+TEST_CASE("LMNNLowRankAccuracyLBFGSTest", "[LMNNTest]")
 {
   bool success = false;
   for (size_t trial = 0; trial < 3; ++trial)
@@ -508,13 +505,13 @@ BOOST_AUTO_TEST_CASE(LMNNLowRankAccuracyLBFGSTest)
       break;
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 // Check that accuracy while learning square distance matrix is the same as when
 // we are learning low rank matrix.  I'm ok if this passes only once out of
 // three tries.
-BOOST_AUTO_TEST_CASE(LMNNLowRankAccuracyTest)
+TEST_CASE("LMNNLowRankAccuracyTest", "[LMNNTest]")
 {
   bool success = false;
   for (size_t trial = 0; trial < 3; ++trial)
@@ -563,14 +560,14 @@ BOOST_AUTO_TEST_CASE(LMNNLowRankAccuracyTest)
       break;
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 // Check that accuracy while learning square distance matrix is the same as when
 // we are learning low rank matrix.  I'm ok if this passes only once out of
 // five tries, since BBSGD seems to have a harder time converging.
 /*
-BOOST_AUTO_TEST_CASE(LMNNLowRankAccuracyBBSGDTest)
+TEST_CASE("LMNNLowRankAccuracyBBSGDTest", "[LMNNTest]")
 {
   bool success = false;
   for (size_t trial = 0; trial < 5; ++trial)
@@ -621,7 +618,7 @@ BOOST_AUTO_TEST_CASE(LMNNLowRankAccuracyBBSGDTest)
       break;
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 */
 
@@ -664,7 +661,7 @@ double CheckGradient(FunctionType& function,
       arma::norm(orgGradient + estGradient);
 }
 
-BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest)
+TEST_CASE("LMNNFunctionGradientTest", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -681,7 +678,7 @@ BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest)
   }
 }
 
-BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest2)
+TEST_CASE("LMNNFunctionGradientTest2", "[LMNNTest]")
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat dataset        = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -698,7 +695,7 @@ BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest2)
   }
 }
 
-BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest3)
+TEST_CASE("LMNNFunctionGradientTest3", "[LMNNTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
@@ -715,7 +712,7 @@ BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest3)
   }
 }
 
-BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest4)
+TEST_CASE("LMNNFunctionGradientTest4", "[LMNNTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
@@ -731,5 +728,3 @@ BOOST_AUTO_TEST_CASE(LMNNFunctionGradientTest4)
     CheckGradient(lmnnfn, coordinates);
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

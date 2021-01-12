@@ -115,11 +115,14 @@ class AdaptiveMeanPooling
   //! Get the output size.
   size_t OutputSize() const { return poolingLayer.OutputSize(); }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   /**

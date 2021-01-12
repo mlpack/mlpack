@@ -42,8 +42,91 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
 {
   // Weights for: input to gate layer (4 * outsize * inSize + 4 * outsize)
   // and output to gate (4 * outSize).
-  weights.set_size(
-      4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize, 1);
+  weights.set_size(WeightSize(), 1);
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>::FastLSTM(const FastLSTM& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    forwardStep(layer.forwardStep),
+    backwardStep(layer.backwardStep),
+    gradientStep(layer.gradientStep),
+    weights(layer.weights),
+    batchSize(layer.batchSize),
+    batchStep(layer.batchStep),
+    gradientStepIdx(layer.gradientStepIdx),
+    grad(layer.grad),
+    rhoSize(layer.rho),
+    bpttSteps(layer.bpttSteps)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>::FastLSTM(FastLSTM&& layer) :
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
+    rho(std::move(layer.rho)),
+    forwardStep(std::move(layer.forwardStep)),
+    backwardStep(std::move(layer.backwardStep)),
+    gradientStep(std::move(layer.gradientStep)),
+    weights(std::move(layer.weights)),
+    batchSize(std::move(layer.batchSize)),
+    batchStep(std::move(layer.batchStep)),
+    gradientStepIdx(std::move(layer.gradientStepIdx)),
+    grad(std::move(layer.grad)),
+    rhoSize(std::move(layer.rho)),
+    bpttSteps(std::move(layer.bpttSteps))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>&
+FastLSTM<InputDataType, OutputDataType>::operator=(const FastLSTM& layer)
+{
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    rho = layer.rho;
+    forwardStep = layer.forwardStep;
+    backwardStep = layer.backwardStep;
+    gradientStep = layer.gradientStep;
+    weights = layer.weights;
+    batchSize = layer.batchSize;
+    batchStep = layer.batchStep;
+    gradientStepIdx = layer.gradientStepIdx;
+    grad = layer.grad;
+    rhoSize = layer.rho;
+    bpttSteps = layer.bpttSteps;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>&
+FastLSTM<InputDataType, OutputDataType>::operator=(FastLSTM&& layer)
+{
+  if (this != &layer)
+  {
+    inSize = std::move(layer.inSize);
+    outSize = std::move(layer.outSize);
+    rho = std::move(layer.rho);
+    forwardStep = std::move(layer.forwardStep);
+    backwardStep = std::move(layer.backwardStep);
+    gradientStep = std::move(layer.gradientStep);
+    weights = std::move(layer.weights);
+    batchSize = std::move(layer.batchSize);
+    batchStep = std::move(layer.batchStep);
+    gradientStepIdx = std::move(layer.gradientStepIdx);
+    grad = std::move(layer.grad);
+    rhoSize = std::move(layer.rho);
+    bpttSteps = std::move(layer.bpttSteps);
+  }
+  return *this;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -281,27 +364,27 @@ void FastLSTM<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void FastLSTM<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(weights);
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
-  ar & BOOST_SERIALIZATION_NVP(rho);
-  ar & BOOST_SERIALIZATION_NVP(bpttSteps);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(batchStep);
-  ar & BOOST_SERIALIZATION_NVP(forwardStep);
-  ar & BOOST_SERIALIZATION_NVP(backwardStep);
-  ar & BOOST_SERIALIZATION_NVP(gradientStep);
-  ar & BOOST_SERIALIZATION_NVP(gradientStepIdx);
-  ar & BOOST_SERIALIZATION_NVP(cell);
-  ar & BOOST_SERIALIZATION_NVP(stateActivation);
-  ar & BOOST_SERIALIZATION_NVP(gateActivation);
-  ar & BOOST_SERIALIZATION_NVP(gate);
-  ar & BOOST_SERIALIZATION_NVP(cellActivation);
-  ar & BOOST_SERIALIZATION_NVP(forgetGateError);
-  ar & BOOST_SERIALIZATION_NVP(prevError);
-  ar & BOOST_SERIALIZATION_NVP(outParameter);
+  ar(CEREAL_NVP(weights));
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(rho));
+  ar(CEREAL_NVP(bpttSteps));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(batchStep));
+  ar(CEREAL_NVP(forwardStep));
+  ar(CEREAL_NVP(backwardStep));
+  ar(CEREAL_NVP(gradientStep));
+  ar(CEREAL_NVP(gradientStepIdx));
+  ar(CEREAL_NVP(cell));
+  ar(CEREAL_NVP(stateActivation));
+  ar(CEREAL_NVP(gateActivation));
+  ar(CEREAL_NVP(gate));
+  ar(CEREAL_NVP(cellActivation));
+  ar(CEREAL_NVP(forgetGateError));
+  ar(CEREAL_NVP(prevError));
+  ar(CEREAL_NVP(outParameter));
 }
 
 } // namespace ann
