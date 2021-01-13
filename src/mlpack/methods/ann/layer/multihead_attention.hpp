@@ -48,24 +48,24 @@ namespace ann /** Artificial Neural Network. */ {
  * of shape `(embedDim * tgtSeqLen, batchSize)`. The embeddings are stored
  * consequently.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam RegularizerType Type of the regularizer to be used.
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class MultiheadAttention
+class MultiheadAttentionType : public Layer<InputType, OutputType>
 {
  public:
   /**
    * Default constructor.
    */
-  MultiheadAttention();
+  MultiheadAttentionType();
 
   /**
    * Create the MultiheadAttention object using the specified modules.
@@ -74,11 +74,15 @@ class MultiheadAttention
    * @param srcSeqLen Source sequence length.
    * @param embedDim Total dimension of the model.
    * @param numHeads Number of parallel attention heads.
+   * @param attnMask Two dimensional Attention Mask.
+   * @param keyPaddingMask Key Padding Mask.
    */
-  MultiheadAttention(const size_t tgtSeqLen,
-                     const size_t srcSeqLen,
-                     const size_t embedDim,
-                     const size_t numHeads);
+  MultiheadAttentionType(const size_t tgtSeqLen,
+                         const size_t srcSeqLen,
+                         const size_t embedDim,
+                         const size_t numHeads,
+                         const InputType& attnmask = InputType(),
+                         const InputType& keyPaddingMask = InputType());
 
   /**
    * Reset the layer parameters.
@@ -92,8 +96,7 @@ class MultiheadAttention
    * @param input The query matrix.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -103,10 +106,9 @@ class MultiheadAttention
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -115,10 +117,9 @@ class MultiheadAttention
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& gradient);
 
   /**
    * Serialize the layer.
@@ -147,46 +148,46 @@ class MultiheadAttention
   size_t& NumHeads() { return numHeads; }
 
   //! Get the two dimensional Attention Mask.
-  OutputDataType const& AttentionMask() const { return attnMask; }
+  OutputType const& AttentionMask() const { return attnMask; }
   //! Modify the two dimensional Attention Mask.
-  OutputDataType& AttentionMask() { return attnMask; }
+  OutputType& AttentionMask() { return attnMask; }
 
   //! Get Key Padding Mask.
-  OutputDataType const& KeyPaddingMask() const { return keyPaddingMask; }
+  OutputType const& KeyPaddingMask() const { return keyPaddingMask; }
   //! Modify the Key Padding Mask.
-  OutputDataType& KeyPaddingMask() { return keyPaddingMask; }
+  OutputType& KeyPaddingMask() { return keyPaddingMask; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return grad; }
+  OutputType const& Gradient() const { return grad; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return grad; }
+  OutputType& Gradient() { return grad; }
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
  private:
   //! Element Type of the input.
-  typedef typename OutputDataType::elem_type ElemType;
+  typedef typename OutputType::elem_type ElemType;
 
   //! Target sequence length.
   size_t tgtSeqLen;
 
-  //! Source sequence lenght.
+  //! Source sequence length.
   size_t srcSeqLen;
 
-  //! Locally-stored module output size.
+  //! Locally-stored dimensionality of each embedding vector.
   size_t embedDim;
 
   //! Locally-stored number of parallel attention heads.
@@ -196,37 +197,37 @@ class MultiheadAttention
   size_t headDim;
 
   //! Two dimensional Attention Mask of shape (tgtSeqLen, srcSeqLen).
-  OutputDataType attnMask;
+  OutputType attnMask;
 
   //! Key Padding Mask.
-  OutputDataType keyPaddingMask;
+  OutputType keyPaddingMask;
 
   //! Locally-stored weight matrix associated with query.
-  OutputDataType queryWt;
+  OutputType queryWt;
 
   //! Locally-stored weight matrix associated with key.
-  OutputDataType keyWt;
+  OutputType keyWt;
 
   //! Locally-stored weight matrix associated with value.
-  OutputDataType valueWt;
+  OutputType valueWt;
 
   //! Locally-stored weight matrix associated with attnWt.
-  OutputDataType outWt;
+  OutputType outWt;
 
   //! Locally-stored bias associated with query.
-  OutputDataType qBias;
+  OutputType qBias;
 
   //! Locally-stored bias associated with key.
-  OutputDataType kBias;
+  OutputType kBias;
 
   //! Locall-stored bias associated with value.
-  OutputDataType vBias;
+  OutputType vBias;
 
   //! Locally-stored bias associated with attnWt.
-  OutputDataType outBias;
+  OutputType outBias;
 
   //! Locally-stored weights parameter.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored projected query matrix over linear layer.
   arma::Cube<ElemType> qProj;
@@ -244,20 +245,25 @@ class MultiheadAttention
   arma::Cube<ElemType> attnOut;
 
   //! Softmax layer to represent the probabilities of next sequence.
-  Softmax<InputDataType, OutputDataType> softmax;
+  Softmax softmax;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient.
-  OutputDataType grad;
+  OutputType grad;
 
   //! Locally-stored output parameter.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
 }; // class MultiheadAttention
+
+// Standard MultiheadAttention layer using no regularization.
+typedef MultiheadAttentionType<arma::mat, arma::mat, NoRegularizer>
+MultiheadAttention;
+
 } // namespace ann
 } // namespace mlpack
 

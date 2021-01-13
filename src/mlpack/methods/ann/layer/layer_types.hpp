@@ -33,7 +33,7 @@
 #include <mlpack/methods/ann/layer/linear3d.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
-// #include <mlpack/methods/ann/layer/multihead_attention.hpp>
+#include <mlpack/methods/ann/layer/multihead_attention.hpp>
 // #include <mlpack/methods/ann/layer/multiply_constant.hpp>
 // #include <mlpack/methods/ann/layer/max_pooling.hpp>
 // #include <mlpack/methods/ann/layer/mean_pooling.hpp>
