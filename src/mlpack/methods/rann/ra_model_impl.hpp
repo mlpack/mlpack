@@ -83,7 +83,7 @@ void RABiSearchVisitor<SortPolicy>::SearchLeaf(RAType* ra) const
     Timer::Start("tree_building");
     Log::Info << "Building query tree...."<< std::endl;
     std::vector<size_t> oldFromNewQueries;
-    typedef typename RAType::Tree TreeType
+    typedef typename RAType::Tree TreeType;
     TreeType queryTree(std::move(querySet), oldFromNewQueries, leafSize);
     Log::Info << "Tree Built." << std::endl;
     Timer::Stop("tree_building");
