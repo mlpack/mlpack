@@ -20,6 +20,7 @@
 #include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
 // #include <mlpack/methods/ann/layer/constant.hpp>
 #include <mlpack/methods/ann/layer/concatenate.hpp>
+#include <mlpack/methods/ann/layer/convolution.hpp>
 // #include <mlpack/methods/ann/layer/dropout.hpp>
 // #include <mlpack/methods/ann/layer/elu.hpp>
 // #include <mlpack/methods/ann/layer/hard_tanh.hpp>

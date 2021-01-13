@@ -22,16 +22,16 @@ template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
-Convolution<
+ConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
->::Convolution()
+    InputType,
+    OutputType
+>::ConvolutionType()
 {
   // Nothing to do here.
 }
@@ -40,16 +40,16 @@ template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
-Convolution<
+ConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
->::Convolution(
+    InputType,
+    OutputType
+>::ConvolutionType(
     const size_t inSize,
     const size_t outSize,
     const size_t kernelWidth,
@@ -61,7 +61,7 @@ Convolution<
     const size_t inputWidth,
     const size_t inputHeight,
     const std::string& paddingType) :
-    Convolution(
+    ConvolutionType(
       inSize,
       outSize,
       kernelWidth,
@@ -81,16 +81,16 @@ template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
-Convolution<
+ConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
->::Convolution(
+    InputType,
+    OutputType
+>::ConvolutionType(
     const size_t inSize,
     const size_t outSize,
     const size_t kernelWidth,
@@ -142,20 +142,20 @@ template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
-void Convolution<
+void ConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
+    InputType,
+    OutputType
 >::Reset()
 {
     weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
         outSize * inSize, false, false);
-    bias = arma::mat(weights.memptr() + weight.n_elem,
+    bias = OutputType(weights.memptr() + weight.n_elem,
         outSize, 1, false, false);
 }
 
@@ -163,20 +163,19 @@ template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
-template<typename eT>
-void Convolution<
+void ConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
->::Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
+    InputType,
+    OutputType
+>::Forward(const InputType& input, OutputType& output)
 {
   batchSize = input.n_cols;
-  arma::cube inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(),
+  arma::cube inputTemp(const_cast<InputType&>(input).memptr(),
       inputWidth, inputHeight, inSize * batchSize, false, false);
 
   if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
@@ -196,7 +195,7 @@ void Convolution<
       padHBottom);
 
   output.set_size(wConv * hConv * outSize, batchSize);
-  outputTemp = arma::Cube<eT>(output.memptr(), wConv, hConv,
+  outputTemp = arma::cube(output.memptr(), wConv, hConv,
       outSize * batchSize, false, false);
   outputTemp.zeros();
 
@@ -211,7 +210,7 @@ void Convolution<
 
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      arma::Mat<eT> convOutput;
+      OutputType convOutput;
 
       if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
@@ -240,24 +239,23 @@ template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
-template<typename eT>
-void Convolution<
+void ConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
+    InputType,
+    OutputType
 >::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+    const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  arma::cube mappedError(((arma::Mat<eT>&) gy).memptr(), outputWidth,
+  arma::cube mappedError(((OutputType&) gy).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
 
   g.set_size(inputWidth * inputHeight * inSize, batchSize);
-  gTemp = arma::Cube<eT>(g.memptr(), inputWidth, inputHeight,
+  gTemp = arma::cube(g.memptr(), inputWidth, inputHeight,
       inSize * batchSize, false, false);
   gTemp.zeros();
 
@@ -272,7 +270,7 @@ void Convolution<
 
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      arma::Mat<eT> output, rotatedFilter;
+      OutputType output, rotatedFilter;
       Rotate180(weight.slice(outMapIdx), rotatedFilter);
 
       BackwardConvolutionRule::Convolution(mappedError.slice(outMap),
@@ -295,28 +293,27 @@ template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
-template<typename eT>
-void Convolution<
+void ConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
+    InputType,
+    OutputType
 >::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
+    const InputType& input,
+    const OutputType& error,
+    OutputType& gradient)
 {
-  arma::cube mappedError(((arma::Mat<eT>&) error).memptr(), outputWidth,
+  arma::cube mappedError(((OutputType&) error).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
-  arma::cube inputTemp(((arma::Mat<eT>&) input).memptr(), inputWidth,
+  arma::cube inputTemp(((InputType&) input).memptr(), inputWidth,
       inputHeight, inSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
-  gradientTemp = arma::Cube<eT>(gradient.memptr(), weight.n_rows,
+  gradientTemp = arma::cube(gradient.memptr(), weight.n_rows,
       weight.n_cols, weight.n_slices, false, false);
   gradientTemp.zeros();
 
@@ -331,7 +328,7 @@ void Convolution<
 
     for (size_t inMap = 0; inMap < inSize; inMap++, outMapIdx++)
     {
-      arma::Mat<eT> inputSlice;
+      InputType inputSlice;
       if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
       {
         inputSlice = inputPaddedTemp.slice(inMap + batchCount * inSize);
@@ -341,9 +338,9 @@ void Convolution<
         inputSlice = inputTemp.slice(inMap + batchCount * inSize);
       }
 
-      arma::Mat<eT> deltaSlice = mappedError.slice(outMap);
+      OutputType deltaSlice = mappedError.slice(outMap);
 
-      arma::Mat<eT> output;
+      OutputType output;
       GradientConvolutionRule::Convolution(inputSlice, deltaSlice,
           output, strideWidth, strideHeight);
 
@@ -374,16 +371,16 @@ template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
 template<typename Archive>
-void Convolution<
+void ConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
+    InputType,
+    OutputType
 >::serialize(Archive& ar, const uint32_t /* version*/)
 {
   ar(CEREAL_NVP(inSize));
@@ -414,15 +411,15 @@ template<
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
-void Convolution<
+void ConvolutionType<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
-    InputDataType,
-    OutputDataType
+    InputType,
+    OutputType
 >::InitializeSamePadding()
 {
   /*

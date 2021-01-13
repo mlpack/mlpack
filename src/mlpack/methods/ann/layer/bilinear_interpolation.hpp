@@ -27,9 +27,9 @@ namespace ann /** Artificial Neural Network. */ {
  * different known points in the grid. This way, we represent any arbitrary
  * point, present within the grid, as a function of those four points.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
@@ -125,23 +125,30 @@ class BilinearInterpolationType : public Layer<InputType, OutputType>
  private:
   //! Locally stored row size of the input.
   size_t inRowSize;
+
   //! Locally stored column size of the input.
   size_t inColSize;
+
   //! Locally stored row size of the output.
   size_t outRowSize;
+
   //! Locally stored column size of the input.
   size_t outColSize;
+
   //! Locally stored depth of the input.
   size_t depth;
+
   //! Locally stored number of input points.
   size_t batchSize;
+
   //! Locally-stored delta object.
   OutputType delta;
+
   //! Locally-stored output parameter object.
   OutputType outputParameter;
 }; // class BilinearInterpolation
 
-//
+// Standard BilinearInterpolation layer.
 typedef BilinearInterpolationType<arma::mat, arma::mat> BilinearInterpolation;
 
 } // namespace ann

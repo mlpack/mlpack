@@ -3569,97 +3569,97 @@ TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
 //   ANNLayerSerializationTest(layer);
 // }
 
-// /**
-//  * Test that the functions that can modify and access the parameters of the
-//  * Convolution layer work.
-//  */
-// TEST_CASE("ConvolutionLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order: inSize, outSize, kW, kH, dW, dH, padW, padH, inputWidth,
-//   // inputHeight, paddingType.
-//   Convolution<> layer1(1, 2, 3, 4, 5, 6, std::tuple<size_t, size_t>(7, 8),
-//       std::tuple<size_t, size_t>(9, 10), 11, 12, "none");
-//   Convolution<> layer2(2, 3, 4, 5, 6, 7, std::tuple<size_t, size_t>(8, 9),
-//       std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Convolution layer work.
+ */
+TEST_CASE("ConvolutionLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter order: inSize, outSize, kW, kH, dW, dH, padW, padH, inputWidth,
+  // inputHeight, paddingType.
+  Convolution layer1(1, 2, 3, 4, 5, 6, std::tuple<size_t, size_t>(7, 8),
+      std::tuple<size_t, size_t>(9, 10), 11, 12, "none");
+  Convolution layer2(2, 3, 4, 5, 6, 7, std::tuple<size_t, size_t>(8, 9),
+      std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
 
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer1.InputWidth() == 11);
-//   REQUIRE(layer1.InputHeight() == 12);
-//   REQUIRE(layer1.KernelWidth() == 3);
-//   REQUIRE(layer1.KernelHeight() == 4);
-//   REQUIRE(layer1.StrideWidth() == 5);
-//   REQUIRE(layer1.StrideHeight() == 6);
-//   REQUIRE(layer1.PadWLeft() == 7);
-//   REQUIRE(layer1.PadWRight() == 8);
-//   REQUIRE(layer1.PadHTop() == 9);
-//   REQUIRE(layer1.PadHBottom() == 10);
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer1.InputWidth() == 11);
+  REQUIRE(layer1.InputHeight() == 12);
+  REQUIRE(layer1.KernelWidth() == 3);
+  REQUIRE(layer1.KernelHeight() == 4);
+  REQUIRE(layer1.StrideWidth() == 5);
+  REQUIRE(layer1.StrideHeight() == 6);
+  REQUIRE(layer1.PadWLeft() == 7);
+  REQUIRE(layer1.PadWRight() == 8);
+  REQUIRE(layer1.PadHTop() == 9);
+  REQUIRE(layer1.PadHBottom() == 10);
 
-//   // Now modify the parameters to match the second layer.
-//   layer1.InputWidth() = 12;
-//   layer1.InputHeight() = 13;
-//   layer1.KernelWidth() = 4;
-//   layer1.KernelHeight() = 5;
-//   layer1.StrideWidth() = 6;
-//   layer1.StrideHeight() = 7;
-//   layer1.PadWLeft() = 8;
-//   layer1.PadWRight() = 9;
-//   layer1.PadHTop() = 10;
-//   layer1.PadHBottom() = 11;
+  // Now modify the parameters to match the second layer.
+  layer1.InputWidth() = 12;
+  layer1.InputHeight() = 13;
+  layer1.KernelWidth() = 4;
+  layer1.KernelHeight() = 5;
+  layer1.StrideWidth() = 6;
+  layer1.StrideHeight() = 7;
+  layer1.PadWLeft() = 8;
+  layer1.PadWRight() = 9;
+  layer1.PadHTop() = 10;
+  layer1.PadHBottom() = 11;
 
-//   // Now ensure all results are the same.
-//   REQUIRE(layer1.InputWidth() == layer2.InputWidth());
-//   REQUIRE(layer1.InputHeight() == layer2.InputHeight());
-//   REQUIRE(layer1.KernelWidth() == layer2.KernelWidth());
-//   REQUIRE(layer1.KernelHeight() == layer2.KernelHeight());
-//   REQUIRE(layer1.StrideWidth() == layer2.StrideWidth());
-//   REQUIRE(layer1.StrideHeight() == layer2.StrideHeight());
-//   REQUIRE(layer1.PadWLeft() == layer2.PadWLeft());
-//   REQUIRE(layer1.PadWRight() == layer2.PadWRight());
-//   REQUIRE(layer1.PadHTop() == layer2.PadHTop());
-//   REQUIRE(layer1.PadHBottom() == layer2.PadHBottom());
-// }
+  // Now ensure all results are the same.
+  REQUIRE(layer1.InputWidth() == layer2.InputWidth());
+  REQUIRE(layer1.InputHeight() == layer2.InputHeight());
+  REQUIRE(layer1.KernelWidth() == layer2.KernelWidth());
+  REQUIRE(layer1.KernelHeight() == layer2.KernelHeight());
+  REQUIRE(layer1.StrideWidth() == layer2.StrideWidth());
+  REQUIRE(layer1.StrideHeight() == layer2.StrideHeight());
+  REQUIRE(layer1.PadWLeft() == layer2.PadWLeft());
+  REQUIRE(layer1.PadWRight() == layer2.PadWRight());
+  REQUIRE(layer1.PadHTop() == layer2.PadHTop());
+  REQUIRE(layer1.PadHBottom() == layer2.PadHBottom());
+}
 
-// /**
-//  * Test that the padding options are working correctly in Convolution layer.
-//  */
-// TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta;
+/**
+ * Test that the padding options are working correctly in Convolution layer.
+ */
+TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta;
 
-//   // Check valid padding option.
-//   Convolution<> module1(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(1, 1),
-//       std::tuple<size_t, size_t>(1, 1), 7, 7, "valid");
+  // Check valid padding option.
+  Convolution module1(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(1, 1),
+      std::tuple<size_t, size_t>(1, 1), 7, 7, "valid");
 
-//   // Test the Forward function.
-//   input = arma::linspace<arma::colvec>(0, 48, 49);
-//   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-//   module1.Reset();
-//   module1.Forward(input, output);
+  // Test the Forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Reset();
+  module1.Forward(input, output);
 
-//   REQUIRE(arma::accu(output) == 0);
-//   REQUIRE(output.n_rows == 25);
-//   REQUIRE(output.n_cols == 1);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == 25);
+  REQUIRE(output.n_cols == 1);
 
-//   // Test the Backward function.
-//   module1.Backward(input, output, delta);
+  // Test the Backward function.
+  module1.Backward(input, output, delta);
 
-//   // Check same padding option.
-//   Convolution<> module2(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(0, 0),
-//       std::tuple<size_t, size_t>(0, 0), 7, 7, "same");
+  // Check same padding option.
+  Convolution module2(1, 1, 3, 3, 1, 1, std::tuple<size_t, size_t>(0, 0),
+      std::tuple<size_t, size_t>(0, 0), 7, 7, "same");
 
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 48, 49);
-//   module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-//   module2.Reset();
-//   module2.Forward(input, output);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 48, 49);
+  module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module2.Reset();
+  module2.Forward(input, output);
 
-//   REQUIRE(arma::accu(output) == 0);
-//   REQUIRE(output.n_rows == 49);
-//   REQUIRE(output.n_cols == 1);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == 49);
+  REQUIRE(output.n_cols == 1);
 
-//   // Test the backward function.
-//   module2.Backward(input, output, delta);
-// }
+  // Test the backward function.
+  module2.Backward(input, output, delta);
+}
 
 // /**
 //  * Test that the padding options in Transposed Convolution layer.
@@ -4324,42 +4324,42 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
 //   REQUIRE(pass);
 // }
 
-// TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
-// {
-//   arma::mat input, output;
+TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
+{
+  arma::mat input, output;
 
-//   // The input test matrix is of the form 3 x 2 x 4 x 1 where
-//   // number of images are 3 and number of feature maps are 2.
-//   input = arma::mat(8, 3);
-//   input << 1 << 446 << 42 << arma::endr
-//       << 2 << 16 << 63 << arma::endr
-//       << 3 << 13 << 63 << arma::endr
-//       << 4 << 21 << 21 << arma::endr
-//       << 1 << 13 << 11 << arma::endr
-//       << 32 << 45 << 42 << arma::endr
-//       << 22 << 16 << 63 << arma::endr
-//       << 32 << 13 << 42 << arma::endr;
+  // The input test matrix is of the form 3 x 2 x 4 x 1 where
+  // number of images are 3 and number of feature maps are 2.
+  input = arma::mat(8, 3);
+  input << 1 << 446 << 42 << arma::endr
+        << 2 << 16 << 63 << arma::endr
+        << 3 << 13 << 63 << arma::endr
+        << 4 << 21 << 21 << arma::endr
+        << 1 << 13 << 11 << arma::endr
+        << 32 << 45 << 42 << arma::endr
+        << 22 << 16 << 63 << arma::endr
+        << 32 << 13 << 42 << arma::endr;
 
-//   Convolution<> layer(2, 4, 1, 1, 1, 1, 0, 0, 4, 1);
-//   layer.Reset();
+  Convolution layer(2, 4, 1, 1, 1, 1, 0, 0, 4, 1);
+  layer.Reset();
 
-//   // Set weights to 1.0 and bias to 0.0.
-//   layer.Parameters().zeros();
-//   arma::mat weight(2 * 4, 1);
-//   weight.fill(1.0);
-//   layer.Parameters().submat(arma::span(0, 2 * 4 - 1), arma::span()) = weight;
-//   layer.Forward(input, output);
+  // Set weights to 1.0 and bias to 0.0.
+  layer.Parameters().zeros();
+  arma::mat weight(2 * 4, 1);
+  weight.fill(1.0);
+  layer.Parameters().submat(arma::span(0, 2 * 4 - 1), arma::span()) = weight;
+  layer.Forward(input, output);
 
-//   // Value calculated using torch.nn.Conv2d().
-//   REQUIRE(arma::accu(output) == 4108);
+  // Value calculated using torch.nn.Conv2d().
+  REQUIRE(arma::accu(output) == 4108);
 
-//   // Set bias to one.
-//   layer.Parameters().fill(1.0);
-//   layer.Forward(input, output);
+  // Set bias to one.
+  layer.Parameters().fill(1.0);
+  layer.Forward(input, output);
 
-//   // Value calculated using torch.nn.Conv2d().
-//   REQUIRE(arma::accu(output) == 4156);
-// }
+  // Value calculated using torch.nn.Conv2d().
+  REQUIRE(arma::accu(output) == 4156);
+}
 
 // TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
 // {
@@ -4433,34 +4433,34 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
 //       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
 // }
 
-// /**
-//  * Convolution module weight initialization test.
-//  */
-// TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
-// {
-//   size_t inSize = 2, outSize = 3;
-//   size_t kernelWidth = 4, kernelHeight = 5;
-//   Convolution<> module = Convolution<>(inSize, outSize,
-//       kernelWidth, kernelHeight, 6, 7, std::tuple<size_t, size_t>(8, 9),
-//       std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
-//   module.Reset();
-//   RandomInitialization().Initialize(module.Weight());
-//   module.Bias().ones();
+/**
+ * Convolution module weight initialization test.
+ */
+TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
+  Convolution module = Convolution(inSize, outSize,
+      kernelWidth, kernelHeight, 6, 7, std::tuple<size_t, size_t>(8, 9),
+      std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
+  module.Reset();
+  RandomInitialization().Initialize(module.Weight());
+  module.Bias().ones();
 
-//   REQUIRE(std::equal(module.Weight().begin(),
-//       module.Weight().end(), module.Parameters().begin()));
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
 
-//   REQUIRE(std::equal(module.Bias().begin(),
-//       module.Bias().end(), module.Parameters().end() - outSize));
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - outSize));
 
-//   REQUIRE(module.Weight().n_rows == kernelWidth);
-//   REQUIRE(module.Weight().n_cols == kernelHeight);
-//   REQUIRE(module.Weight().n_slices == inSize * outSize);
-//   REQUIRE(module.Bias().n_rows == outSize);
-//   REQUIRE(module.Bias().n_cols == 1);
-//   REQUIRE(module.Parameters().n_rows
-//       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
-// }
+  REQUIRE(module.Weight().n_rows == kernelWidth);
+  REQUIRE(module.Weight().n_cols == kernelHeight);
+  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Bias().n_rows == outSize);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
 
 // /**
 //  * Transposed Convolution module weight initialization test.

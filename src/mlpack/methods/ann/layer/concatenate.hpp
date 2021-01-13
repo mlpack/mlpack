@@ -96,7 +96,7 @@ class ConcatenateType : public Layer<InputType, OutputType>
   OutputType& Concat() { return concat; }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */)
@@ -121,6 +121,7 @@ class ConcatenateType : public Layer<InputType, OutputType>
   InputType concat;
 }; // class Concatenate
 
+// Standard Concatenate layer.
 typedef ConcatenateType<arma::mat, arma::mat> Concatenate;
 
 } // namespace ann

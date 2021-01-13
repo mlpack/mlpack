@@ -28,9 +28,9 @@ namespace ann /** Artificial Neural Network. */ {
  * Shape of input : (inSize * nPoints, batchSize)
  * Shape of output : (outSize * nPoints, batchSize)
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
@@ -94,7 +94,7 @@ class Linear3DType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
@@ -184,6 +184,7 @@ class Linear3DType : public Layer<InputType, OutputType>
   RegularizerType regularizer;
 }; // class Linear
 
+// Standard Linear3D layer.
 typedef Linear3DType<arma::mat, arma::mat, NoRegularizer> Linear3D;
 
 } // namespace ann

@@ -33,26 +33,26 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
  * @tparam GradientConvolutionRule Convolution to calculate gradient.
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
     typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class Convolution
+class ConvolutionType
 {
  public:
-  //! Create the Convolution object.
-  Convolution();
+  //! Create the ConvolutionType object.
+  ConvolutionType();
 
   /**
-   * Create the Convolution object using the specified number of input maps,
+   * Create the ConvolutionType object using the specified number of input maps,
    * output maps, filter size, stride and padding parameter.
    *
    * @param inSize The number of input maps.
@@ -67,17 +67,17 @@ class Convolution
    * @param inputHeight The height of the input data.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
-  Convolution(const size_t inSize,
-              const size_t outSize,
-              const size_t kernelWidth,
-              const size_t kernelHeight,
-              const size_t strideWidth = 1,
-              const size_t strideHeight = 1,
-              const size_t padW = 0,
-              const size_t padH = 0,
-              const size_t inputWidth = 0,
-              const size_t inputHeight = 0,
-              const std::string& paddingType = "None");
+  ConvolutionType(const size_t inSize,
+                  const size_t outSize,
+                  const size_t kernelWidth,
+                  const size_t kernelHeight,
+                  const size_t strideWidth = 1,
+                  const size_t strideHeight = 1,
+                  const size_t padW = 0,
+                  const size_t padH = 0,
+                  const size_t inputWidth = 0,
+                  const size_t inputHeight = 0,
+                  const std::string& paddingType = "None");
 
   /**
    * Create the Convolution object using the specified number of input maps,
@@ -99,17 +99,17 @@ class Convolution
    * @param inputHeight The height of the input data.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
-  Convolution(const size_t inSize,
-              const size_t outSize,
-              const size_t kernelWidth,
-              const size_t kernelHeight,
-              const size_t strideWidth,
-              const size_t strideHeight,
-              const std::tuple<size_t, size_t>& padW,
-              const std::tuple<size_t, size_t>& padH,
-              const size_t inputWidth = 0,
-              const size_t inputHeight = 0,
-              const std::string& paddingType = "None");
+  ConvolutionType(const size_t inSize,
+                  const size_t outSize,
+                  const size_t kernelWidth,
+                  const size_t kernelHeight,
+                  const size_t strideWidth,
+                  const size_t strideHeight,
+                  const std::tuple<size_t, size_t>& padW,
+                  const std::tuple<size_t, size_t>& padH,
+                  const size_t inputWidth = 0,
+                  const size_t inputHeight = 0,
+                  const std::string& paddingType = "None");
 
   /*
    * Set the weight and bias term.
@@ -123,8 +123,7 @@ class Convolution
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -135,27 +134,25 @@ class Convolution
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& /* input */,
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the weight of the layer.
   arma::cube const& Weight() const { return weight; }
@@ -163,29 +160,29 @@ class Convolution
   arma::cube& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  arma::mat const& Bias() const { return bias; }
+  OutputType const& Bias() const { return bias; }
   //! Modify the bias of the layer.
-  arma::mat& Bias() { return bias; }
+  OutputType& Bias() { return bias; }
 
   //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
+  InputType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  InputType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputType const& Gradient() const { return gradient; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Gradient() { return gradient; }
 
   //! Get the input width.
   size_t InputWidth() const { return inputWidth; }
@@ -266,7 +263,7 @@ class Convolution
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  /*
+  /**
    * Return the convolution output size.
    *
    * @param size The size of the input (row or column).
@@ -285,12 +282,12 @@ class Convolution
     return std::floor(size + pSideOne + pSideTwo - k) / s + 1;
   }
 
-  /*
+  /**
    * Function to assign padding such that output size is same as input size.
    */
   void InitializeSamePadding();
 
-  /*
+  /**
    * Rotates a 3rd-order tensor counterclockwise by 180 degrees.
    *
    * @param input The input data to be rotated.
@@ -306,7 +303,7 @@ class Convolution
       output.slice(s) = arma::fliplr(arma::flipud(input.slice(s)));
   }
 
-  /*
+  /**
    * Rotates a dense matrix counterclockwise by 180 degrees.
    *
    * @param input The input data to be rotated.
@@ -353,13 +350,13 @@ class Convolution
   size_t padHTop;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored weight object.
   arma::cube weight;
 
   //! Locally-stored bias term object.
-  arma::mat bias;
+  OutputType bias;
 
   //! Locally-stored input width.
   size_t inputWidth;
@@ -389,18 +386,26 @@ class Convolution
   ann::Padding<> padding;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType gradient;
 
   //! Locally-stored input parameter object.
-  InputDataType inputParameter;
+  InputType inputParameter;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 }; // class Convolution
 
+// Standard Convolution layer.
+typedef ConvolutionType<
+    NaiveConvolution<ValidConvolution>,
+    NaiveConvolution<FullConvolution>,
+    NaiveConvolution<ValidConvolution>,
+    arma::mat,
+    arma::mat
+> Convolution;
 } // namespace ann
 } // namespace mlpack
 

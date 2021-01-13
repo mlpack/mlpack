@@ -178,7 +178,7 @@ class MultiheadAttentionType : public Layer<InputType, OutputType>
   OutputType& Parameters() { return weights; }
 
  private:
-  //! Element Type of the input.
+  //! Element Type of the output.
   typedef typename OutputType::elem_type ElemType;
 
   //! Target sequence length.
