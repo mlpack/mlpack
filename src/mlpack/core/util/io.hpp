@@ -220,6 +220,14 @@ class IO
   static T& GetRawParam(const std::string& identifier);
 
   /**
+   * Utility function for CheckInputMatrices().
+   *
+   * @param identifier Name of the parameter in question.
+   */
+  template<typename T>
+  static void CheckInputMatrix(const std::string& identifier);
+
+  /**
    * Given two (matrix) parameters, ensure that the first is an in-place copy of
    * the second.  This will generally do nothing (as the bindings already do
    * this automatically), except for command-line bindings, where we need to
@@ -284,14 +292,6 @@ class IO
    * Clear all of the settings, removing all parameters and function mappings.
    */
   static void ClearSettings();
-
-  /**
-   * Utility function for CheckInputMatrices().
-   *
-   * @param identifier Name of the parameter in question.
-   */
-  template<typename T>
-  static void CheckInputMatrix(const std::string& identifier);
 
   /**
    * Checks all input matrices for NaN and inf values, exits if found any.
