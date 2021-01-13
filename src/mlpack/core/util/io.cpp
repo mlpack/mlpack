@@ -268,23 +268,6 @@ void IO::ClearSettings()
   GetSingleton().functionMap = persistentFunctions;
 }
 
-// For handling std::tuple<data::DatasetInfo, arma::mat>
-// seperately.
-template<>
-void IO::CheckInputMatrix<std::tuple<data::DatasetInfo, arma::mat>>(
-  const std::string& identifier)
-{
-  typedef typename std::tuple<data::DatasetInfo, arma::mat> TupleType;
-
-  std::string errMsg1 = "The input " + identifier + " has NaN values.";
-  std::string errMsg2 = "The input " + identifier + " has inf values.";
-
-  if (std::get<1>(IO::GetParam<TupleType>(identifier)).has_nan())
-    Log::Fatal << errMsg1 << std::endl;
-  if (std::get<1>(IO::GetParam<TupleType>(identifier)).has_inf())
-    Log::Fatal << errMsg2 << std::endl;
-}
-
 void IO::CheckInputMatrices()
 {
   typedef typename std::tuple<data::DatasetInfo, arma::mat> TupleType;
@@ -308,7 +291,15 @@ void IO::CheckInputMatrices()
     else if (paramType == "arma::Row<size_t>")
       IO::CheckInputMatrix<arma::Row<size_t>>(paramName);
     else if (paramType == "std::tuple<data::DatasetInfo, arma::mat>")
-      IO::CheckInputMatrix<TupleType>(paramName);
+    {
+      std::string errMsg1 = "The input " + paramName + " has NaN values.";
+      std::string errMsg2 = "The input " + paramName + " has inf values.";
+
+      if (std::get<1>(GetParam<TupleType>(paramName)).has_nan())
+        Log::Fatal << errMsg1 << std::endl;
+      if (std::get<1>(GetParam<TupleType>(paramName)).has_inf())
+        Log::Fatal << errMsg2 << std::endl;
+    }
   }
 }
 
