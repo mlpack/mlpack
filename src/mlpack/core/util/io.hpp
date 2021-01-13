@@ -288,10 +288,10 @@ class IO
   /**
    * Utility function for CheckInputMatrices().
    *
-   * @param matrix Matrix to check for NaN or Inf values.
+   * @param identifier Name of the parameter in question.
    */
   template<typename T>
-  static void CheckInputMatrix(T& matrix);
+  static void CheckInputMatrix(const std::string& identifier);
 
   /**
    * Checks all input matrices for NaN and inf values, exits if found any.

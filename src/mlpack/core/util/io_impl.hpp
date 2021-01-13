@@ -146,15 +146,15 @@ T& IO::GetRawParam(const std::string& identifier)
 }
 
 template<typename T>
-void CheckInputMatrix(const std::string paramName)
+void CheckInputMatrix(const std::string& identifier)
 {
-  std::string errMsg1 = "The input " + paramName + " has NaN values.";
-  std::string errMsg2 = "The input " + paramName + " has inf values.";
+  std::string errMsg1 = "The input " + identifier + " has NaN values.";
+  std::string errMsg2 = "The input " + identifier + " has inf values.";
 
-  if (IO::GetParam<T>(paramName).has_nan())
+  if (IO::GetParam<T>(identifier).has_nan())
     Log::Fatal << errMsg1 << std::endl;
 
-  if (IO::GetParam<T>(paramName).has_inf())
+  if (IO::GetParam<T>(identifier).has_inf())
     Log::Fatal << errMsg2 << std::endl;
 }
 
