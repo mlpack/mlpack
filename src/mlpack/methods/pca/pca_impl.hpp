@@ -78,8 +78,8 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
 /**
  * Apply Principal Component Analysis to the provided data set.
  *
- * @param data - Data matrix
- * @param transformedData - Data with PCA applied
+ * @param data - Data matrix.
+ * @param transformedData Data with PCA applied.
  */
 template<typename DecompositionPolicy>
 void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
