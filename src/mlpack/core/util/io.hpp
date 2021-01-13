@@ -286,6 +286,14 @@ class IO
   static void ClearSettings();
 
   /**
+   * Utility function for CheckInputMatrices().
+   *
+   * @param matrix Matrix to check for NaN or Inf values.
+   */
+  template<typename T>
+  static void CheckInputMatrix(T& matrix);
+
+  /**
    * Checks all input matrices for NaN and inf values, exits if found any.
    */
   static void CheckInputMatrices();

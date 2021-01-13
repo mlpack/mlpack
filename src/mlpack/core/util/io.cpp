@@ -277,65 +277,21 @@ void IO::CheckInputMatrices()
   {
     std::string paramName = itr->first;
     std::string paramType = itr->second.cppType;
-    std::string errMsg1 = "The input " + paramName + " has NaN values.";
-    std::string errMsg2 = "The input " + paramName + " has inf values.";
 
     if (paramType == "arma::mat")
-    {
-      if (IO::GetParam<arma::Mat<double>>(paramName).has_nan())
-        Log::Fatal << errMsg1 << std::endl;
-
-      if (IO::GetParam<arma::Mat<double>>(paramName).has_inf())
-        Log::Fatal << errMsg2 << std::endl;
-    }
+      IO::CheckInputMatrix<arma::Mat<double>>(paramName);
     else if (paramType == "arma::Mat<size_t>")
-    {
-      if (IO::GetParam<arma::Mat<size_t>>(paramName).has_nan())
-        Log::Fatal << errMsg1 << std::endl;
-
-      if (IO::GetParam<arma::Mat<size_t>>(paramName).has_inf())
-        Log::Fatal << errMsg2 << std::endl;
-    }
+      IO::CheckInputMatrix<arma::Mat<size_t>>(paramName);
     else if (paramType == "arma::colvec")
-    {
-      if (IO::GetParam<arma::Col<double>>(paramName).has_nan())
-        Log::Fatal << errMsg1 << std::endl;
-
-      if (IO::GetParam<arma::Col<double>>(paramName).has_inf())
-        Log::Fatal << errMsg2 << std::endl;
-    }
+      IO::CheckInputMatrix<arma::Col<double>>(paramName);
     else if (paramType == "arma::Col<size_t>")
-    {
-      if (IO::GetParam<arma::Col<size_t>>(paramName).has_nan())
-        Log::Fatal << errMsg1 << std::endl;
-
-      if (IO::GetParam<arma::Col<size_t>>(paramName).has_inf())
-        Log::Fatal << errMsg2 << std::endl;
-    }
+      IO::CheckInputMatrix<arma::Col<size_t>>(paramName);
     else if (paramType == "arma::rowvec")
-    {
-      if (IO::GetParam<arma::Row<double>>(paramName).has_nan())
-        Log::Fatal << errMsg1 << std::endl;
-
-      if (IO::GetParam<arma::Row<double>>(paramName).has_inf())
-        Log::Fatal << errMsg2 << std::endl;
-    }
+      IO::CheckInputMatrix<arma::Row<double>>(paramName);
     else if (paramType == "arma::Row<size_t>")
-    {
-      if (IO::GetParam<arma::Row<size_t>>(paramName).has_nan())
-        Log::Fatal << errMsg1 << std::endl;
-
-      if (IO::GetParam<arma::Row<size_t>>(paramName).has_inf())
-        Log::Fatal << errMsg2 << std::endl;
-    }
+      IO::CheckInputMatrix<arma::Row<size_t>>(paramName);
     else if (paramType == "std::tuple<data::DatasetInfo, arma::mat>")
-    {
-      if (std::get<1>(IO::GetParam<TupleType>(paramName)).has_nan())
-        Log::Fatal << errMsg1 << std::endl;
-
-      if (std::get<1>(IO::GetParam<TupleType>(paramName)).has_inf())
-        Log::Fatal << errMsg2 << std::endl;
-    }
+      IO::CheckInputMatrix<TupleType>(paramName);
   }
 }
 
