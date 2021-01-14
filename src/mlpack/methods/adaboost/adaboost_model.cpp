@@ -72,19 +72,40 @@ AdaBoostModel::AdaBoostModel(AdaBoostModel&& other) :
 //! Copy assignment operator.
 AdaBoostModel& AdaBoostModel::operator=(const AdaBoostModel& other)
 {
-  mappings = other.mappings;
-  weakLearnerType = other.weakLearnerType;
+  if (this != &other)
+  {
+    mappings = other.mappings;
+    weakLearnerType = other.weakLearnerType;
 
-  delete dsBoost;
-  dsBoost = (other.dsBoost == NULL) ? NULL :
-      new AdaBoost<ID3DecisionStump>(*other.dsBoost);
+    delete dsBoost;
+    dsBoost = (other.dsBoost == NULL) ? NULL :
+        new AdaBoost<ID3DecisionStump>(*other.dsBoost);
 
-  delete pBoost;
-  pBoost = (other.pBoost == NULL) ? NULL :
-      new AdaBoost<Perceptron<>>(*other.pBoost);
+    delete pBoost;
+    pBoost = (other.pBoost == NULL) ? NULL :
+        new AdaBoost<Perceptron<>>(*other.pBoost);
 
-  dimensionality = other.dimensionality;
+    dimensionality = other.dimensionality;
+  }
+  return *this;
+}
 
+//! Move assignment operator.
+AdaBoostModel& AdaBoostModel::operator=(AdaBoostModel&& other)
+{
+  if (this != &other)
+  {
+    mappings = std::move(other.mappings);
+    weakLearnerType = other.weakLearnerType;
+
+    dsBoost = other.dsBoost;
+    other.dsBoost = nullptr;
+
+    pBoost = other.pBoost;
+    other.pBoost = nullptr;
+
+    dimensionality = other.dimensionality;
+  }
   return *this;
 }
 

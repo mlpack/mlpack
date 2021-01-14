@@ -61,6 +61,9 @@ class AdaBoostModel
   //! Copy assignment operator.
   AdaBoostModel& operator=(const AdaBoostModel& other);
 
+  //! Move assignment operator.
+  AdaBoostModel& operator=(AdaBoostModel&& other);
+
   //! Clean up memory.
   ~AdaBoostModel();
 
