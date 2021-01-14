@@ -85,7 +85,7 @@ template <
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class GlimpseType
+class GlimpseType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -127,12 +127,12 @@ class GlimpseType
                 OutputType& g);
 
   //! Get the output parameter.
-  OutputType& OutputParameter() const {return outputParameter; }
+  const OutputType& OutputParameter() const {return outputParameter; }
   //! Modify the output parameter.
   OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the detla.
-  OutputType& Delta() const { return delta; }
+  const OutputType& Delta() const { return delta; }
   //! Modify the delta.
   OutputType& Delta() { return delta; }
 
@@ -159,11 +159,6 @@ class GlimpseType
   size_t const& OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
-
-  //! Get the value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
 
   //! Get the number of patches to crop per glimpse.
   size_t const& Depth() const { return depth; }

@@ -21,20 +21,20 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Join module class. The Join class accumulates
  * the output of various modules.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template<
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class Join
+class JoinType : public Layer<InputType, OutputType>
 {
  public:
-  //! Create the Join object.
-  Join();
+  //! Create the JoinType object.
+  JoinType();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -43,7 +43,6 @@ class Join
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -55,20 +54,19 @@ class Join
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   /**
    * Serialize the layer.
@@ -84,11 +82,14 @@ class Join
   size_t inSizeCols;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-}; // class Join
+  OutputType outputParameter;
+}; // class JoinType
+
+//Standard Join layer.
+typedef JoinType<arma::mat, arma::mat> Join;
 
 } // namespace ann
 } // namespace mlpack

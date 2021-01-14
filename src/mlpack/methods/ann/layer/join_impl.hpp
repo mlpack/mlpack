@@ -18,17 +18,16 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-Join<InputDataType, OutputDataType>::Join() :
+template<typename InputType, typename OutputType>
+JoinType<InputType, OutputType>::JoinType() :
     inSizeRows(0),
     inSizeCols(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void Join<InputDataType, OutputDataType>::Forward(
+void JoinType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   inSizeRows = input.n_rows;
@@ -36,20 +35,19 @@ void Join<InputDataType, OutputDataType>::Forward(
   output = arma::vectorise(input);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Join<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void JoinType<InputType, OutputType>::Backward(
+    const InputType& /* input */,
+    const OutputType& gy,
+    OutputType& g)
 {
-  g = arma::mat(((arma::Mat<eT>&) gy).memptr(), inSizeRows, inSizeCols, false,
+  g = OutputType(((OutputType&) gy).memptr(), inSizeRows, inSizeCols, false,
       false);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void Join<InputDataType, OutputDataType>::serialize(
+void JoinType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

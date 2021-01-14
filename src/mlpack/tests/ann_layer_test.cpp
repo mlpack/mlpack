@@ -962,29 +962,29 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
 //   REQUIRE(layer.NumElements() == 5);
 // }
 
-// /**
-//  * Simple join module test.
-//  */
-// TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta;
-//   input = arma::ones(10, 5);
+/**
+ * Simple join module test.
+ */
+TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta;
+  input = arma::ones(10, 5);
 
-//   // Test the Forward function.
-//   Join<> module;
-//   module.Forward(input, output);
-//   REQUIRE(50 == arma::accu(output));
+  // Test the Forward function.
+  Join module;
+  module.Forward(input, output);
+  REQUIRE(50 == arma::accu(output));
 
-//   bool b = output.n_rows == 1 || output.n_cols == 1;
-//   REQUIRE(b == true);
+  bool b = output.n_rows == 1 || output.n_cols == 1;
+  REQUIRE(b == true);
 
-//   // Test the Backward function.
-//   module.Backward(input, output, delta);
-//   REQUIRE(50 == arma::accu(delta));
+  // Test the Backward function.
+  module.Backward(input, output, delta);
+  REQUIRE(50 == arma::accu(delta));
 
-//   b = delta.n_rows == input.n_rows && input.n_cols;
-//   REQUIRE(b == true);
-// }
+  b = delta.n_rows == input.n_rows && input.n_cols;
+  REQUIRE(b == true);
+}
 
 // /**
 //  * Simple add merge module test.

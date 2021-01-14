@@ -45,7 +45,7 @@ template <
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class ConvolutionType
+class ConvolutionType : public Layer<InputType, OutputType>
 {
  public:
   //! Create the ConvolutionType object.
