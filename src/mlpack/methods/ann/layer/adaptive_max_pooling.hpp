@@ -132,7 +132,7 @@ class AdaptiveMaxPoolingType : public Layer<InputType, OutputType>
   }
 
   //! Locally stored MaxPooling Object.
-  MaxPooling<InputType, OutputType> poolingLayer;
+  MaxPoolingType<InputType, OutputType> poolingLayer;
 
   //! Locally-stored output width.
   size_t outputWidth;

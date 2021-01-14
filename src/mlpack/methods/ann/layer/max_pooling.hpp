@@ -40,20 +40,20 @@ class MaxPoolingRule
 /**
  * Implementation of the MaxPooling layer.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class MaxPooling
+class MaxPoolingType : public Layer<InputType, OutputType>
 {
  public:
   //! Create the MaxPooling object.
-  MaxPooling();
+  MaxPoolingType();
 
   /**
    * Create the MaxPooling object using the specified number of units.
@@ -64,11 +64,11 @@ class MaxPooling
    * @param strideHeight Width of the stride operation.
    * @param floor Rounding operator (floor or ceil).
    */
-  MaxPooling(const size_t kernelWidth,
-             const size_t kernelHeight,
-             const size_t strideWidth = 1,
-             const size_t strideHeight = 1,
-             const bool floor = true);
+  MaxPoolingType(const size_t kernelWidth,
+                 const size_t kernelHeight,
+                 const size_t strideWidth = 1,
+                 const size_t strideHeight = 1,
+                 const bool floor = true);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -77,8 +77,7 @@ class MaxPooling
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -89,20 +88,19 @@ class MaxPooling
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   //! Get the output parameter.
-  const OutputDataType& OutputParameter() const { return outputParameter; }
+  const OutputType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  const OutputDataType& Delta() const { return delta; }
+  const OutputType& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the input width.
   size_t InputWidth() const { return inputWidth; }
@@ -156,7 +154,7 @@ class MaxPooling
   bool& Floor() { return floor; }
 
   //! Get the value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
+  bool const& Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
@@ -177,10 +175,9 @@ class MaxPooling
    * @param output The pooled result.
    * @param poolingIndices The pooled indices.
    */
-  template<typename eT>
-  void PoolingOperation(const arma::Mat<eT>& input,
-                        arma::Mat<eT>& output,
-                        arma::Mat<eT>& poolingIndices)
+  void PoolingOperation(const InputType& input,
+                        OutputType& output,
+                        OutputType& poolingIndices)
   {
     for (size_t j = 0, colidx = 0; j < output.n_cols;
         ++j, colidx += strideHeight)
@@ -188,7 +185,7 @@ class MaxPooling
       for (size_t i = 0, rowidx = 0; i < output.n_rows;
           ++i, rowidx += strideWidth)
       {
-        arma::mat subInput = input(
+        InputType subInput = input(
             arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
             arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
@@ -214,10 +211,9 @@ class MaxPooling
    * @param output The pooled result.
    * @param poolingIndices The pooled indices.
    */
-  template<typename eT>
-  void Unpooling(const arma::Mat<eT>& error,
-                 arma::Mat<eT>& output,
-                 arma::Mat<eT>& poolingIndices)
+  void Unpooling(const InputType& error,
+                 OutputType& output,
+                 OutputType& poolingIndices)
   {
     for (size_t i = 0; i < poolingIndices.n_elem; ++i)
     {
@@ -283,13 +279,13 @@ class MaxPooling
   MaxPoolingRule pooling;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType gradient;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 
   //! Locally-stored indices matrix parameter.
   arma::Mat<size_t> indices;
@@ -299,7 +295,10 @@ class MaxPooling
 
   //! Locally-stored pooling indicies.
   std::vector<arma::cube> poolingIndices;
-}; // class MaxPooling
+}; // class MaxPoolingType
+
+// Standard MaxPooling layer.
+typedef MaxPoolingType<arma::mat, arma::mat> MaxPooling;
 
 } // namespace ann
 } // namespace mlpack

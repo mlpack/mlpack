@@ -21,20 +21,20 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of the MeanPooling.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class MeanPooling
+class MeanPoolingType : public Layer<InputType, OutputType>
 {
  public:
-  //! Create the MeanPooling object.
-  MeanPooling();
+  //! Create the MeanPoolingType object.
+  MeanPoolingType();
 
   /**
    * Create the MeanPooling object using the specified number of units.
@@ -45,11 +45,11 @@ class MeanPooling
    * @param strideHeight Width of the stride operation.
    * @param floor Set to true to use floor method.
    */
-  MeanPooling(const size_t kernelWidth,
-              const size_t kernelHeight,
-              const size_t strideWidth = 1,
-              const size_t strideHeight = 1,
-              const bool floor = true);
+  MeanPoolingType(const size_t kernelWidth,
+                  const size_t kernelHeight,
+                  const size_t strideWidth = 1,
+                  const size_t strideHeight = 1,
+                  const bool floor = true);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -58,8 +58,7 @@ class MeanPooling
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -70,20 +69,19 @@ class MeanPooling
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the intput width.
   size_t const& InputWidth() const { return inputWidth; }
@@ -137,7 +135,7 @@ class MeanPooling
   bool& Floor() { return floor; }
 
   //! Get the value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
+  bool const& Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
@@ -157,8 +155,7 @@ class MeanPooling
    * @param input The input to be apply the pooling rule.
    * @param output The pooled result.
    */
-  template<typename eT>
-  void Pooling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
+  void Pooling(const InputType& input, OutputType& output)
   {
     for (size_t j = 0, colidx = 0; j < output.n_cols;
          ++j, colidx += strideHeight)
@@ -166,7 +163,7 @@ class MeanPooling
       for (size_t i = 0, rowidx = 0; i < output.n_rows;
            ++i, rowidx += strideWidth)
       {
-        arma::mat subInput = input(
+        InputType subInput = input(
             arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
             arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
@@ -181,23 +178,22 @@ class MeanPooling
    * @param input The input to be apply the unpooling rule.
    * @param output The pooled result.
    */
-  template<typename eT>
-  void Unpooling(const arma::Mat<eT>& input,
-                 const arma::Mat<eT>& error,
-                 arma::Mat<eT>& output)
+  void Unpooling(const InputType& input,
+                 const OutputType& error,
+                 OutputType& output)
   {
     const size_t rStep = input.n_rows / error.n_rows - offset;
     const size_t cStep = input.n_cols / error.n_cols - offset;
 
-    arma::Mat<eT> unpooledError;
+    OutputType unpooledError;
     for (size_t j = 0; j < input.n_cols - cStep; j += cStep)
     {
       for (size_t i = 0; i < input.n_rows - rStep; i += rStep)
       {
-        const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
+        const InputType& inputArea = input(arma::span(i, i + rStep - 1),
             arma::span(j, j + cStep - 1));
 
-        unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
+        unpooledError = OutputType(inputArea.n_rows, inputArea.n_cols);
         unpooledError.fill(error(i / rStep, j / cStep) / inputArea.n_elem);
 
         output(arma::span(i, i + rStep - 1 - offset),
@@ -261,15 +257,17 @@ class MeanPooling
   arma::cube gTemp;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType gradient;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-}; // class MeanPooling
+  OutputType outputParameter;
+}; // class MeanPoolingType
 
+// Standard MaxPooling layer.
+typedef MaxPoolingType<arma::mat, arma::mat> MaxPooling;
 
 } // namespace ann
 } // namespace mlpack

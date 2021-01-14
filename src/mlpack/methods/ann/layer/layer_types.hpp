@@ -26,7 +26,7 @@
 #include <mlpack/methods/ann/layer/glimpse.hpp>
 // #include <mlpack/methods/ann/layer/hard_tanh.hpp>
 #include <mlpack/methods/ann/layer/join.hpp>
-// #include <mlpack/methods/ann/layer/layer_norm.hpp>
+#include <mlpack/methods/ann/layer/layer_norm.hpp>
 // #include <mlpack/methods/ann/layer/leaky_relu.hpp>
 // #include <mlpack/methods/ann/layer/c_relu.hpp>
 // #include <mlpack/methods/ann/layer/fast_lstm.hpp>
@@ -38,8 +38,8 @@
 #include <mlpack/methods/ann/layer/lookup.hpp>
 #include <mlpack/methods/ann/layer/multihead_attention.hpp>
 // #include <mlpack/methods/ann/layer/multiply_constant.hpp>
-// #include <mlpack/methods/ann/layer/max_pooling.hpp>
-// #include <mlpack/methods/ann/layer/mean_pooling.hpp>
+#include <mlpack/methods/ann/layer/max_pooling.hpp>
+#include <mlpack/methods/ann/layer/mean_pooling.hpp>
 // #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>

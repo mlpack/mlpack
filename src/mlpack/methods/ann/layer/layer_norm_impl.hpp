@@ -20,8 +20,8 @@ namespace mlpack {
 namespace ann { /** Artificial Neural Network. */
 
 
-template<typename InputDataType, typename OutputDataType>
-LayerNorm<InputDataType, OutputDataType>::LayerNorm() :
+template<typename InputType, typename OutputType>
+LayerNormType<InputType, OutputType>::LayerNormType() :
     size(0),
     eps(1e-8),
     loading(false)
@@ -29,8 +29,8 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm() :
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-LayerNorm<InputDataType, OutputDataType>::LayerNorm(
+template <typename InputType, typename OutputType>
+LayerNormType<InputType, OutputType>::LayerNormType(
     const size_t size, const double eps) :
     size(size),
     eps(eps),
@@ -39,11 +39,11 @@ LayerNorm<InputDataType, OutputDataType>::LayerNorm(
   weights.set_size(size + size, 1);
 }
 
-template<typename InputDataType, typename OutputDataType>
-void LayerNorm<InputDataType, OutputDataType>::Reset()
+template<typename InputType, typename OutputType>
+void LayerNormType<InputType, OutputType>::Reset()
 {
-  gamma = arma::mat(weights.memptr(), size, 1, false, false);
-  beta = arma::mat(weights.memptr() + gamma.n_elem, size, 1, false, false);
+  gamma = OutputType(weights.memptr(), size, 1, false, false);
+  beta = OutputType(weights.memptr() + gamma.n_elem, size, 1, false, false);
 
   if (!loading)
   {
@@ -54,10 +54,9 @@ void LayerNorm<InputDataType, OutputDataType>::Reset()
   loading = false;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void LayerNorm<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void LayerNormType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   mean = arma::mean(input, 0);
   variance = arma::var(input, 1, 0);
@@ -75,18 +74,17 @@ void LayerNorm<InputDataType, OutputDataType>::Forward(
   output.each_col() += beta;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void LayerNorm<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void LayerNormType<InputType, OutputType>::Backward(
+    const InputType& input, const OutputType& gy, OutputType& g)
 {
-  const arma::mat stdInv = 1.0 / arma::sqrt(variance + eps);
+  const OutputType stdInv = 1.0 / arma::sqrt(variance + eps);
 
   // dl / dxhat.
-  const arma::mat norm = gy.each_col() % gamma;
+  const OutputType norm = gy.each_col() % gamma;
 
   // sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
-  const arma::mat var = arma::sum(norm % inputMean, 0) %
+  const OutputType var = arma::sum(norm % inputMean, 0) %
       arma::pow(stdInv, 3.0) * -0.5;
 
   // dl / dxhat * 1 / stdInv + variance * 2 * (x - mu) / m +
@@ -99,12 +97,11 @@ void LayerNorm<InputDataType, OutputDataType>::Backward(
   g.each_row() += arma::sum(norm.each_row() % -stdInv, 0) / input.n_rows;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void LayerNorm<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
+template<typename InputType, typename OutputType>
+void LayerNormType<InputType, OutputType>::Gradient(
+    const InputType& /* input */,
+    const OutputType& error,
+    OutputType& gradient)
 {
   gradient.set_size(size + size, 1);
 
@@ -116,9 +113,9 @@ void LayerNorm<InputDataType, OutputDataType>::Gradient(
       arma::sum(error, 1);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void LayerNorm<InputDataType, OutputDataType>::serialize(
+void LayerNormType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(size));

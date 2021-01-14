@@ -172,6 +172,11 @@ class GlimpseType : public Layer<InputType, OutputType>
   //! Get the used glimpse size (height = width).
   size_t GlimpseSize() const { return size;}
 
+  //! Get the value of deterministic parameter.
+  bool const& Deterministic() const { return deterministic; }
+  //! Modify the value of deterministic parameter.
+  bool& Deterministic() { return deterministic; }
+
   /**
    * Serialize the layer.
    */
@@ -400,13 +405,13 @@ class GlimpseType : public Layer<InputType, OutputType>
   arma::cube outputTemp;
 
   //! The x and y coordinate of the center of the output glimpse.
-  arma::mat location;
+  OutputType location;
 
   //! Locally-stored object to perform the mean pooling operation.
   MeanPoolingRule pooling;
 
   //! Location-stored module location parameter.
-  std::vector<arma::mat> locationParameter;
+  std::vector<OutputType> locationParameter;
 
   //! Location-stored transformed gradient paramter.
   arma::cube gTemp;

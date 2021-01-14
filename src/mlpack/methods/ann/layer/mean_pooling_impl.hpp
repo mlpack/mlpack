@@ -19,14 +19,14 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-MeanPooling<InputDataType, OutputDataType>::MeanPooling()
+template<typename InputType, typename OutputType>
+MeanPoolingType<InputType, OutputType>::MeanPoolingType()
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-MeanPooling<InputDataType, OutputDataType>::MeanPooling(
+template<typename InputType, typename OutputType>
+MeanPoolingType<InputType, OutputType>::MeanPoolingType(
     const size_t kernelWidth,
     const size_t kernelHeight,
     const size_t strideWidth,
@@ -51,14 +51,13 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void MeanPooling<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void MeanPoolingType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   batchSize = input.n_cols;
   inSize = input.n_elem / (inputWidth * inputHeight * batchSize);
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
+  inputTemp = arma::cube(const_cast<InputType&>(input).memptr(),
       inputWidth, inputHeight, batchSize * inSize, false, false);
 
   if (floor)
@@ -80,13 +79,13 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
     offset = 1;
   }
 
-  outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,
+  outputTemp = arma::zeros<arma::cube>(outputWidth, outputHeight,
       batchSize * inSize);
 
   for (size_t s = 0; s < inputTemp.n_slices; s++)
     Pooling(inputTemp.slice(s), outputTemp.slice(s));
 
-  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / batchSize,
+  output = OutputType(outputTemp.memptr(), outputTemp.n_elem / batchSize,
       batchSize);
 
   outputWidth = outputTemp.n_rows;
@@ -94,14 +93,13 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
   outSize = batchSize * inSize;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void MeanPooling<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>& /* input */,
-  const arma::Mat<eT>& gy,
-  arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void MeanPoolingType<InputType, OutputType>::Backward(
+  const InputType& /* input */,
+  const OutputType& gy,
+  OutputType& g)
 {
-  arma::cube mappedError = arma::cube(((arma::Mat<eT>&) gy).memptr(),
+  arma::cube mappedError = arma::cube(((OutputType&) gy).memptr(),
       outputWidth, outputHeight, outSize, false, false);
 
   gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
@@ -112,12 +110,12 @@ void MeanPooling<InputDataType, OutputDataType>::Backward(
     Unpooling(inputTemp.slice(s), mappedError.slice(s), gTemp.slice(s));
   }
 
-  g = arma::mat(gTemp.memptr(), gTemp.n_elem / batchSize, batchSize);
+  g = OutputType(gTemp.memptr(), gTemp.n_elem / batchSize, batchSize);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void MeanPooling<InputDataType, OutputDataType>::serialize(
+void MeanPoolingType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

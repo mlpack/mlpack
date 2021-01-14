@@ -40,7 +40,7 @@ AdaptiveMeanPoolingType<InputType, OutputType>::AdaptiveMeanPoolingType(
     outputHeight(std::get<1>(outputShape)),
     reset(false)
 {
-  poolingLayer = ann::MeanPooling<>(0, 0);
+  poolingLayer = ann::MeanPoolingType<InputType, OutputType>(0, 0);
 }
 
 template<typename InputType, typename OutputType>

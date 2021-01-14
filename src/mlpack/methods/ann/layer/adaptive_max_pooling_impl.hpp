@@ -40,7 +40,7 @@ AdaptiveMaxPoolingType<InputType, OutputType>::AdaptiveMaxPoolingType(
     outputHeight(std::get<1>(outputShape)),
     reset(false)
 {
-  poolingLayer = ann::MaxPooling<>(0, 0);
+  poolingLayer = ann::MaxPoolingType<InputType, OutputType>(0, 0);
 }
 
 template<typename InputType, typename OutputType>

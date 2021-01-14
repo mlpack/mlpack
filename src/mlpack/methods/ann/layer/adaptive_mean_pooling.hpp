@@ -133,7 +133,7 @@ class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
   }
 
   //! Locally stored MeanPooling Object.
-  MeanPooling<InputType, OutputType> poolingLayer;
+  MeanPoolingType<InputType, OutputType> poolingLayer;
 
   //! Locally-stored output width.
   size_t outputWidth;

@@ -2787,96 +2787,96 @@ TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
 //   module2.Backward(input, output, delta);
 // }
 
-// /**
-//  * Tests the LayerNorm layer.
-//  */
-// TEST_CASE("LayerNormTest", "[ANNLayerTest]")
-// {
-//   arma::mat input, output;
-//   input << 5.1 << 3.5 << arma::endr
-//         << 4.9 << 3.0 << arma::endr
-//         << 4.7 << 3.2 << arma::endr;
+/**
+ * Tests the LayerNorm layer.
+ */
+TEST_CASE("LayerNormTest", "[ANNLayerTest]")
+{
+  arma::mat input, output;
+  input << 5.1 << 3.5 << arma::endr
+        << 4.9 << 3.0 << arma::endr
+        << 4.7 << 3.2 << arma::endr;
 
-//   LayerNorm<> model(input.n_rows);
-//   model.Reset();
+  LayerNorm model(input.n_rows);
+  model.Reset();
 
-//   model.Forward(input, output);
-//   arma::mat result;
-//   result << 1.2247 << 1.2978 << arma::endr
-//          << 0 << -1.1355 << arma::endr
-//          << -1.2247 << -0.1622 << arma::endr;
+  model.Forward(input, output);
+  arma::mat result;
+  result << 1.2247 << 1.2978 << arma::endr
+         << 0 << -1.1355 << arma::endr
+         << -1.2247 << -0.1622 << arma::endr;
 
-//   CheckMatrices(output, result, 1e-1);
-//   result.clear();
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
 
-//   output = model.Mean();
-//   result << 4.9000 << 3.2333 << arma::endr;
+  output = model.Mean();
+  result << 4.9000 << 3.2333 << arma::endr;
 
-//   CheckMatrices(output, result, 1e-1);
-//   result.clear();
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
 
-//   output = model.Variance();
-//   result << 0.0267 << 0.0422 << arma::endr;
+  output = model.Variance();
+  result << 0.0267 << 0.0422 << arma::endr;
 
-//   CheckMatrices(output, result, 1e-1);
-// }
+  CheckMatrices(output, result, 1e-1);
+}
 
-// /**
-//  * LayerNorm layer numerical gradient test.
-//  */
-// TEST_CASE("GradientLayerNormTest", "[ANNLayerTest]")
-// {
-//   // Add function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::randn(10, 256)),
-//         target(arma::ones(1, 256))
-//     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
-//       model->Add<IdentityLayer<> >();
-//       model->Add<Linear<> >(10, 10);
-//       model->Add<LayerNorm<> >(10);
-//       model->Add<Linear<> >(10, 2);
-//       model->Add<LogSoftMax<> >();
-//     }
+/**
+ * LayerNorm layer numerical gradient test.
+ */
+TEST_CASE("GradientLayerNormTest", "[ANNLayerTest]")
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randn(10, 16)),
+        target(arma::ones(1, 16))
+    {
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer>();
+      model->Add<Linear>(10, 10);
+      model->Add<LayerNorm>(10);
+      model->Add<Linear>(10, 2);
+      model->Add<LogSoftMax>();
+    }
 
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 256, false);
-//       model->Gradient(model->Parameters(), 0, gradient, 256);
-//       return error;
-//     }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 16, false);
+      model->Gradient(model->Parameters(), 0, gradient, 16);
+      return error;
+    }
 
-//     arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-//     arma::mat input, target;
-//   } function;
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
 
-//   REQUIRE(CheckGradient(function) <= 1e-4);
-// }
+  REQUIRE(CheckGradient(function) <= 1e-4);
+}
 
-// /**
-//  * Test that the functions that can access the parameters of the
-//  * Layer Norm layer work.
-//  */
-// TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : size, eps.
-//   LayerNorm<> layer(5, 1e-3);
+/**
+ * Test that the functions that can access the parameters of the
+ * Layer Norm layer work.
+ */
+TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter order : size, eps.
+  LayerNorm layer(5, 1e-3);
 
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer.InSize() == 5);
-//   REQUIRE(layer.Epsilon() == 1e-3);
-// }
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer.InSize() == 5);
+  REQUIRE(layer.Epsilon() == 1e-3);
+}
 
 // /**
 //  * Test if the AddMerge layer is able to forward the
@@ -3763,90 +3763,90 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
 //   REQUIRE(arma::accu(delta) == 0.0);
 // }
 
-// /**
-//  * Simple test for Max Pooling layer.
-//  */
-// TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
-// {
-//   // For rectangular input to pooling layers.
-//   arma::mat input = arma::mat(12, 1);
-//   arma::mat output;
-//   input.zeros();
-//   input(0) = 1;
-//   input(1) = 2;
-//   input(2) = 3;
-//   input(3) = input(8) = 7;
-//   input(4) = 4;
-//   input(5) = 5;
-//   input(6) = input(7) = 6;
-//   input(10) = 8;
-//   input(11) = 9;
-//   // Output-Size should be 2 x 2.
-//   // Square output.
-//   MaxPooling<> module1(2, 2, 2, 1);
-//   module1.InputHeight() = 3;
-//   module1.InputWidth() = 4;
-//   module1.Forward(input, output);
-//   // Calculated using torch.nn.MaxPool2d().
-//   REQUIRE(arma::accu(output) == 28);
-//   REQUIRE(output.n_elem == 4);
-//   REQUIRE(output.n_cols == 1);
+/**
+ * Simple test for Max Pooling layer.
+ */
+TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
+{
+  // For rectangular input to pooling layers.
+  arma::mat input = arma::mat(12, 1);
+  arma::mat output;
+  input.zeros();
+  input(0) = 1;
+  input(1) = 2;
+  input(2) = 3;
+  input(3) = input(8) = 7;
+  input(4) = 4;
+  input(5) = 5;
+  input(6) = input(7) = 6;
+  input(10) = 8;
+  input(11) = 9;
+  // Output-Size should be 2 x 2.
+  // Square output.
+  MaxPooling module1(2, 2, 2, 1);
+  module1.InputHeight() = 3;
+  module1.InputWidth() = 4;
+  module1.Forward(input, output);
+  // Calculated using torch.nn.MaxPool2d().
+  REQUIRE(arma::accu(output) == 28);
+  REQUIRE(output.n_elem == 4);
+  REQUIRE(output.n_cols == 1);
 
-//   // For Square input.
-//   input = arma::mat(9, 1);
-//   input.zeros();
-//   input(0) = 6;
-//   input(1) = 3;
-//   input(2) = 9;
-//   input(3) = 3;
-//   input(6) = 3;
-//   // Output-Size should be 1 x 2.
-//   // Rectangular output.
-//   MaxPooling<> module2(3, 2, 3, 1);
-//   module2.InputHeight() = 3;
-//   module2.InputWidth() = 3;
-//   module2.Forward(input, output);
-//   // Calculated using torch.nn.MaxPool2d().
-//   REQUIRE(arma::accu(output) == 12.0);
-//   REQUIRE(output.n_elem == 2);
-//   REQUIRE(output.n_cols == 1);
+  // For Square input.
+  input = arma::mat(9, 1);
+  input.zeros();
+  input(0) = 6;
+  input(1) = 3;
+  input(2) = 9;
+  input(3) = 3;
+  input(6) = 3;
+  // Output-Size should be 1 x 2.
+  // Rectangular output.
+  MaxPooling module2(3, 2, 3, 1);
+  module2.InputHeight() = 3;
+  module2.InputWidth() = 3;
+  module2.Forward(input, output);
+  // Calculated using torch.nn.MaxPool2d().
+  REQUIRE(arma::accu(output) == 12.0);
+  REQUIRE(output.n_elem == 2);
+  REQUIRE(output.n_cols == 1);
 
-//   // For Square input.
-//   input = arma::mat(16, 1);
-//   input.zeros();
-//   input(0) = 6;
-//   input(1) = 3;
-//   input(2) = 9;
-//   input(4) = 3;
-//   input(8) = 3;
-//   // Output-Size should be 3 x 3.
-//   // Square output.
-//   MaxPooling<> module3(2, 2, 1, 1);
-//   module3.InputHeight() = 4;
-//   module3.InputWidth() = 4;
-//   module3.Forward(input, output);
-//   // Calculated using torch.nn.MaxPool2d().
-//   REQUIRE(arma::accu(output) == 30.0);
-//   REQUIRE(output.n_elem == 9);
-//   REQUIRE(output.n_cols == 1);
+  // For Square input.
+  input = arma::mat(16, 1);
+  input.zeros();
+  input(0) = 6;
+  input(1) = 3;
+  input(2) = 9;
+  input(4) = 3;
+  input(8) = 3;
+  // Output-Size should be 3 x 3.
+  // Square output.
+  MaxPooling module3(2, 2, 1, 1);
+  module3.InputHeight() = 4;
+  module3.InputWidth() = 4;
+  module3.Forward(input, output);
+  // Calculated using torch.nn.MaxPool2d().
+  REQUIRE(arma::accu(output) == 30.0);
+  REQUIRE(output.n_elem == 9);
+  REQUIRE(output.n_cols == 1);
 
-//   // For Rectangular input.
-//   input = arma::mat(6, 1);
-//   input.zeros();
-//   input(0) = 1;
-//   input(1) = 1;
-//   input(3) = 1;
-//   // Output-Size should be 2 x 2.
-//   // Square output.
-//   MaxPooling<> module4(2, 1, 1, 1);
-//   module4.InputHeight() = 2;
-//   module4.InputWidth() = 3;
-//   module4.Forward(input, output);
-//   // Calculated using torch.nn.MaxPool2d().
-//   REQUIRE(arma::accu(output) == 3);
-//   REQUIRE(output.n_elem == 4);
-//   REQUIRE(output.n_cols == 1);
-// }
+  // For Rectangular input.
+  input = arma::mat(6, 1);
+  input.zeros();
+  input(0) = 1;
+  input(1) = 1;
+  input(3) = 1;
+  // Output-Size should be 2 x 2.
+  // Square output.
+  MaxPooling module4(2, 1, 1, 1);
+  module4.InputHeight() = 2;
+  module4.InputWidth() = 3;
+  module4.Forward(input, output);
+  // Calculated using torch.nn.MaxPool2d().
+  REQUIRE(arma::accu(output) == 3);
+  REQUIRE(output.n_elem == 4);
+  REQUIRE(output.n_cols == 1);
+}
 
 /**
  * Test that the functions that can modify and access the parameters of the
