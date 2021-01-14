@@ -76,16 +76,16 @@ class MeanPoolingRule
  * (down-scaled cropped images) of increasing scale around a given location in a
  * given image.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class Glimpse
+class GlimpseType
 {
  public:
   /**
@@ -100,12 +100,12 @@ class Glimpse
    * @param inputWidth The input width of the given input data.
    * @param inputHeight The input height of the given input data.
    */
-  Glimpse(const size_t inSize = 0,
-          const size_t size = 0,
-          const size_t depth = 3,
-          const size_t scale = 2,
-          const size_t inputWidth = 0,
-          const size_t inputHeight = 0);
+  GlimpseType(const size_t inSize = 0,
+              const size_t size = 0,
+              const size_t depth = 3,
+              const size_t scale = 2,
+              const size_t inputWidth = 0,
+              const size_t inputHeight = 0);
 
   /**
    * Ordinary feed forward pass of the glimpse layer.
@@ -113,8 +113,7 @@ class Glimpse
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of the glimpse layer.
@@ -123,27 +122,23 @@ class Glimpse
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  OutputType& OutputParameter() const {return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the detla.
-  OutputDataType& Delta() const { return delta; }
+  OutputType& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Set the locationthe x and y coordinate of the center of the output
   //! glimpse.
-  void Location(const arma::mat& location)
-  {
-    this->location = location;
-  }
+  void Location(const arma::mat& location) { this->location = location; }
 
   //! Get the input width.
   size_t const& InputWidth() const { return inputWidth; }
@@ -189,7 +184,7 @@ class Glimpse
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  /*
+  /**
    * Transform the given input by changing rows to columns.
    *
    * @param w The input matrix used to perform the transformation.
@@ -229,10 +224,9 @@ class Glimpse
    * @param input The input to be apply the pooling rule.
    * @param output The pooled result.
    */
-  template<typename eT>
   void Pooling(const size_t kSize,
-               const arma::Mat<eT>& input,
-               arma::Mat<eT>& output)
+               const InputType& input,
+               OutputType& output)
   {
     const size_t rStep = kSize;
     const size_t cStep = kSize;
@@ -254,21 +248,20 @@ class Glimpse
    * @param error The error used to perform the unpooling operation.
    * @param output The pooled result.
    */
-  template<typename eT>
-  void Unpooling(const arma::Mat<eT>& input,
-                 const arma::Mat<eT>& error,
-                 arma::Mat<eT>& output)
+  void Unpooling(const InputType& input,
+                 const OutputType& error,
+                 OutputType& output)
   {
     const size_t rStep = input.n_rows / error.n_rows;
     const size_t cStep = input.n_cols / error.n_cols;
 
-    arma::Mat<eT> unpooledError;
+    OutputType unpooledError;
     for (size_t j = 0; j < input.n_cols; j += cStep)
     {
       for (size_t i = 0; i < input.n_rows; i += rStep)
       {
-        const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
-                                               arma::span(j, j + cStep - 1));
+        const InputType& inputArea = input(arma::span(i, i + rStep - 1),
+                                           arma::span(j, j + cStep - 1));
 
         pooling.Unpooling(inputArea, error(i / rStep, j / cStep),
             unpooledError);
@@ -286,8 +279,7 @@ class Glimpse
    * @param input The input to be apply the ReSampling rule.
    * @param output The pooled result.
    */
-  template<typename eT>
-  void ReSampling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
+  void ReSampling(const InputType& input, OutputType& output)
   {
     double wRatio = (double) (input.n_rows - 1) / (size - 1);
     double hRatio = (double) (input.n_cols - 1) / (size - 1);
@@ -331,10 +323,9 @@ class Glimpse
    * @param error The error used to perform the DownwardReSampling operation.
    * @param output The DownwardReSampled result.
    */
-  template<typename eT>
-  void DownwardReSampling(const arma::Mat<eT>& input,
-                          const arma::Mat<eT>& error,
-                          arma::Mat<eT>& output)
+  void DownwardReSampling(const InputType& input,
+                          const OutputType& error,
+                          OutputType& output)
   {
     double iWidth = input.n_rows - 1;
     double iHeight = input.n_cols - 1;
@@ -399,10 +390,10 @@ class Glimpse
   size_t outputHeight;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 
   //! Locally-stored depth of the input.
   size_t inputDepth;
@@ -427,7 +418,10 @@ class Glimpse
 
   //! If true use maximum a posteriori during the forward pass.
   bool deterministic;
-}; // class GlimpseLayer
+}; // class GlimpseType
+
+// Standard Glimpse layer.
+typedef GlimpseType<arma::mat, arma::mat> Glimpse;
 
 } // namespace ann
 } // namespace mlpack

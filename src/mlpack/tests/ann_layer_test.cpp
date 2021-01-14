@@ -3848,36 +3848,36 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
 //   REQUIRE(output.n_cols == 1);
 // }
 
-// /**
-//  * Test that the functions that can modify and access the parameters of the
-//  * Glimpse layer work.
-//  */
-// TEST_CASE("GlimpseLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : inSize, size, depth, scale, inputWidth, inputHeight.
-//   Glimpse<> layer1(1, 2, 3, 4, 5, 6);
-//   Glimpse<> layer2(1, 2, 3, 4, 6, 7);
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Glimpse layer work.
+ */
+TEST_CASE("GlimpseLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter order : inSize, size, depth, scale, inputWidth, inputHeight.
+  Glimpse layer1(1, 2, 3, 4, 5, 6);
+  Glimpse layer2(1, 2, 3, 4, 6, 7);
 
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer1.InputHeight() == 6);
-//   REQUIRE(layer1.InputWidth() == 5);
-//   REQUIRE(layer1.Scale() == 4);
-//   REQUIRE(layer1.Depth() == 3);
-//   REQUIRE(layer1.GlimpseSize() == 2);
-//   REQUIRE(layer1.InSize() == 1);
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer1.InputHeight() == 6);
+  REQUIRE(layer1.InputWidth() == 5);
+  REQUIRE(layer1.Scale() == 4);
+  REQUIRE(layer1.Depth() == 3);
+  REQUIRE(layer1.GlimpseSize() == 2);
+  REQUIRE(layer1.InSize() == 1);
 
-//   // Now modify the parameters to match the second layer.
-//   layer1.InputHeight() = 7;
-//   layer1.InputWidth() = 6;
+  // Now modify the parameters to match the second layer.
+  layer1.InputHeight() = 7;
+  layer1.InputWidth() = 6;
 
-//   // Now ensure that all the results are the same.
-//   REQUIRE(layer1.InputHeight() == layer2.InputHeight());
-//   REQUIRE(layer1.InputWidth() == layer2.InputWidth());
-//   REQUIRE(layer1.Scale() == layer2.Scale());
-//   REQUIRE(layer1.Depth() == layer2.Depth());
-//   REQUIRE(layer1.GlimpseSize() == layer2.GlimpseSize());
-//   REQUIRE(layer1.InSize() == layer2.InSize());
-// }
+  // Now ensure that all the results are the same.
+  REQUIRE(layer1.InputHeight() == layer2.InputHeight());
+  REQUIRE(layer1.InputWidth() == layer2.InputWidth());
+  REQUIRE(layer1.Scale() == layer2.Scale());
+  REQUIRE(layer1.Depth() == layer2.Depth());
+  REQUIRE(layer1.GlimpseSize() == layer2.GlimpseSize());
+  REQUIRE(layer1.InSize() == layer2.InSize());
+}
 
 // /**
 //  * Test that the function that can access the stdev parameter of the

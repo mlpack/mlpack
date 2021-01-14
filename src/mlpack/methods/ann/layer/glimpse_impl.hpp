@@ -20,8 +20,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template <typename InputDataType, typename OutputDataType>
-Glimpse<InputDataType, OutputDataType>::Glimpse(
+template <typename InputType, typename OutputType>
+GlimpseType<InputType, OutputType>::GlimpseType(
     const size_t inSize,
     const size_t size,
     const size_t depth,
@@ -42,13 +42,12 @@ Glimpse<InputDataType, OutputDataType>::Glimpse(
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Glimpse<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template <typename InputType, typename OutputType>
+void GlimpseType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   inputTemp = arma::cube(input.colptr(0), inputWidth, inputHeight, inSize);
-  outputTemp = arma::Cube<eT>(size, size, depth * inputTemp.n_slices);
+  outputTemp = arma::cube(size, size, depth * inputTemp.n_slices);
 
   location = input.submat(0, 1, 1, 1);
 
@@ -66,7 +65,7 @@ void Glimpse<InputDataType, OutputDataType>::Forward(
     {
       size_t padSize = std::floor((glimpseSize - 1) / 2);
 
-      arma::Cube<eT> inputPadded = arma::zeros<arma::Cube<eT> >(
+      arma::cube inputPadded = arma::zeros<arma::cube>(
           inputTemp.n_rows + padSize * 2, inputTemp.n_cols + padSize * 2,
           inputTemp.n_slices / inSize);
 
@@ -98,9 +97,8 @@ void Glimpse<InputDataType, OutputDataType>::Forward(
         for (size_t j = (inputIdx + depthIdx * (depth - 1)), paddedSlice = 0;
             j < outputTemp.n_slices; j += (inSize * depth), paddedSlice++)
         {
-          arma::Mat<eT> poolingInput = inputPadded.subcube(x, y,
-              paddedSlice, x + glimpseSize - 1, y + glimpseSize - 1,
-              paddedSlice);
+          InputType poolingInput = inputPadded.subcube(x, y, paddedSlice,
+              x + glimpseSize - 1, y + glimpseSize - 1, paddedSlice);
 
           if (scale == 2)
           {
@@ -120,19 +118,18 @@ void Glimpse<InputDataType, OutputDataType>::Forward(
     outputTemp.slice(i) = arma::trans(outputTemp.slice(i));
   }
 
-  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem, 1);
+  output = OutputType(outputTemp.memptr(), outputTemp.n_elem, 1);
 
   outputWidth = outputTemp.n_rows;
   outputHeight = outputTemp.n_cols;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Glimpse<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+template <typename InputType, typename OutputType>
+void GlimpseType<InputType, OutputType>::Backward(
+    const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   // Generate a cube using the backpropagated error matrix.
-  arma::Cube<eT> mappedError = arma::zeros<arma::cube>(outputWidth,
+  arma::cube mappedError = arma::zeros<arma::cube>(outputWidth,
       outputHeight, 1);
 
   location = locationParameter.back();
@@ -142,7 +139,7 @@ void Glimpse<InputDataType, OutputDataType>::Backward(
   {
     for (size_t i = 0; i < gy.n_cols; ++i)
     {
-      mappedError.slice(s + i) = arma::Mat<eT>(gy.memptr(),
+      mappedError.slice(s + i) = OutputType(gy.memptr(),
           outputWidth, outputHeight);
     }
   }
@@ -157,7 +154,7 @@ void Glimpse<InputDataType, OutputDataType>::Backward(
     {
       size_t padSize = std::floor((glimpseSize - 1) / 2);
 
-      arma::Cube<eT> inputPadded = arma::zeros<arma::Cube<eT> >(
+      arma::cube inputPadded = arma::zeros<arma::cube>(
           inputTemp.n_rows + padSize * 2, inputTemp.n_cols +
           padSize * 2, inputTemp.n_slices / inSize);
 
@@ -184,9 +181,8 @@ void Glimpse<InputDataType, OutputDataType>::Backward(
         for (size_t j = (inputIdx + depthIdx * (depth - 1)), paddedSlice = 0;
             j < mappedError.n_slices; j += (inSize * depth), paddedSlice++)
         {
-          arma::Mat<eT> poolingOutput = inputPadded.subcube(x, y,
-               paddedSlice, x + glimpseSize - 1, y + glimpseSize - 1,
-               paddedSlice);
+          OutputType poolingOutput = inputPadded.subcube(x, y, paddedSlice,
+              x + glimpseSize - 1, y + glimpseSize - 1, paddedSlice);
 
           if (scale == 2)
           {
@@ -211,12 +207,12 @@ void Glimpse<InputDataType, OutputDataType>::Backward(
   }
 
   Transform(gTemp);
-  g = arma::mat(gTemp.memptr(), gTemp.n_elem, 1);
+  g = OutputType(gTemp.memptr(), gTemp.n_elem, 1);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template <typename InputType, typename OutputType>
 template<typename Archive>
-void Glimpse<InputDataType, OutputDataType>::serialize(
+void GlimpseType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(inSize));
