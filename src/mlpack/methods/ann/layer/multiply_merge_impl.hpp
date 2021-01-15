@@ -16,109 +16,111 @@
 // In case it hasn't yet been included.
 #include "multiply_merge.hpp"
 
-#include "../visitor/forward_visitor.hpp"
-#include "../visitor/backward_visitor.hpp"
-#include "../visitor/gradient_visitor.hpp"
+// #include "../visitor/forward_visitor.hpp"
+// #include "../visitor/backward_visitor.hpp"
+// #include "../visitor/gradient_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::MultiplyMerge(
+template<typename InputType, typename OutputType>
+MultiplyMergeType<InputType, OutputType>::MultiplyMergeType(
     const bool model, const bool run) :
     model(model), run(run), ownsLayer(!model)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::~MultiplyMerge()
+template<typename InputType, typename OutputType>
+MultiplyMergeType<InputType, OutputType>::~MultiplyMergeType()
 {
   if (ownsLayer)
   {
-    std::for_each(network.begin(), network.end(),
-        boost::apply_visitor(deleteVisitor));
+    // std::for_each(network.begin(), network.end(),
+    //     boost::apply_visitor(deleteVisitor));
+    for (size_t i = 0; i < network.size(); ++i)
+      delete network[i];
   }
 }
 
-template <typename InputDataType, typename OutputDataType,
-          typename... CustomLayers>
 template<typename InputType, typename OutputType>
-void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::Forward(
+void MultiplyMergeType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(ForwardVisitor(input,
-          boost::apply_visitor(outputParameterVisitor, network[i])),
-          network[i]);
+      // boost::apply_visitor(ForwardVisitor(input,
+      //     boost::apply_visitor(outputParameterVisitor, network[i])),
+      //     network[i]);
+      network[i]->Forward(input, network[i]->OutputParameter());
     }
   }
 
-  output = boost::apply_visitor(outputParameterVisitor, network.front());
+  // output = boost::apply_visitor(outputParameterVisitor, network.front());
+  output = network.front()->OutputParameter();
   for (size_t i = 1; i < network.size(); ++i)
   {
-    output %= boost::apply_visitor(outputParameterVisitor, network[i]);
+    // output %= boost::apply_visitor(outputParameterVisitor, network[i]);
+    output %= network[i]->OutputParameter();
   }
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void MultiplyMergeType<InputType, OutputType>::Backward(
+    const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-          outputParameterVisitor, network[i]), gy,
-          boost::apply_visitor(deltaVisitor, network[i])), network[i]);
+      // boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
+      //     outputParameterVisitor, network[i]), gy,
+      //     boost::apply_visitor(deltaVisitor, network[i])), network[i]);
+      network[i]->Backward(network[i]->OutputParameter(),
+                           gy,
+                           network[i]->Delta());
     }
 
-    g = boost::apply_visitor(deltaVisitor, network[0]);
+    // g = boost::apply_visitor(deltaVisitor, network[0]);
+    g = network[0]->Delta();
     for (size_t i = 1; i < network.size(); ++i)
     {
-      g += boost::apply_visitor(deltaVisitor, network[i]);
+      // g += boost::apply_visitor(deltaVisitor, network[i]);
+      g += network[i]->Delta();
     }
   }
   else
     g = gy;
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& /* gradient */ )
+template<typename InputType, typename OutputType>
+void MultiplyMergeType<InputType, OutputType>::Gradient(
+    const InputType& input,
+    const OutputType& error,
+    OutputType& /* gradient */ )
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(GradientVisitor(input, error), network[i]);
+      // boost::apply_visitor(GradientVisitor(input, error), network[i]);
+      network[i]->Gradient(input, error, network[i]->Gradient());
     }
   }
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
+void MultiplyMergeType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   // Be sure to clear other layers before loading.
   if (cereal::is_loading<Archive>())
     network.clear();
 
-  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
+  // ar(CEREAL_VECTOR_VARIANT_POINTER(network));
   ar(CEREAL_NVP(model));
   ar(CEREAL_NVP(run));
   ar(CEREAL_NVP(ownsLayer));

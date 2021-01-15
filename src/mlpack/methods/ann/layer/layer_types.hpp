@@ -30,6 +30,7 @@
 #include <mlpack/methods/ann/layer/glimpse.hpp>
 // #include <mlpack/methods/ann/layer/hardshrink.hpp>
 // #include <mlpack/methods/ann/layer/hard_tanh.hpp>
+// #include <mlpack/methods/ann/layer/highway.hpp>
 #include <mlpack/methods/ann/layer/join.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>
 // #include <mlpack/methods/ann/layer/leaky_relu.hpp>
@@ -43,11 +44,12 @@
 #include <mlpack/methods/ann/layer/lookup.hpp>
 #include <mlpack/methods/ann/layer/multihead_attention.hpp>
 // #include <mlpack/methods/ann/layer/multiply_constant.hpp>
+#include <mlpack/methods/ann/layer/multiply_merge.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 // #include <mlpack/methods/ann/layer/noisylinear.hpp>
 // #include <mlpack/methods/ann/layer/parametric_relu.hpp>
-// #include <mlpack/methods/ann/layer/positional_encoding.hpp>
+#include <mlpack/methods/ann/layer/positional_encoding.hpp>
 // #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 // #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 // #include <mlpack/methods/ann/layer/reparametrization.hpp>

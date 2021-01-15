@@ -15,9 +15,9 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "../visitor/delete_visitor.hpp"
-#include "../visitor/delta_visitor.hpp"
-#include "../visitor/output_parameter_visitor.hpp"
+// #include "../visitor/delete_visitor.hpp"
+// #include "../visitor/delta_visitor.hpp"
+// #include "../visitor/output_parameter_visitor.hpp"
 
 #include "layer_types.hpp"
 
@@ -28,18 +28,16 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the MultiplyMerge module class. The MultiplyMerge class
  * multiplies the output of various modules element-wise.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam CustomLayers Additional custom layers that can be added.
  */
 template<
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
-    typename... CustomLayers
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class MultiplyMerge
+class MultiplyMergeType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -48,10 +46,10 @@ class MultiplyMerge
    * @param model Expose all the network modules.
    * @param run Call the Forward/Backward method before the output is merged.
    */
-  MultiplyMerge(const bool model = false, const bool run = true);
+  MultiplyMergeType(const bool model = false, const bool run = true);
 
   //! Destructor to release allocated memory.
-  ~MultiplyMerge();
+  ~MultiplyMergeType();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -60,7 +58,6 @@ class MultiplyMerge
    * @param * (input) Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& /* input */, OutputType& output);
 
   /**
@@ -72,10 +69,9 @@ class MultiplyMerge
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -84,12 +80,11 @@ class MultiplyMerge
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& gradient);
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param args The layer parameter.
@@ -97,30 +92,30 @@ class MultiplyMerge
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
+  void Add(Layer<>* layer) { network.push_back(layer); }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputType const& Gradient() const { return gradient; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Gradient() { return gradient; }
 
   //! Return the model modules.
-  std::vector<LayerTypes<CustomLayers...> >& Model()
+  std::vector<Layer<>*>& Model()
   {
     if (model)
     {
@@ -131,9 +126,9 @@ class MultiplyMerge
   }
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   /**
    * Serialize the layer.
@@ -153,32 +148,35 @@ class MultiplyMerge
   bool ownsLayer;
 
   //! Locally-stored network modules.
-  std::vector<LayerTypes<CustomLayers...> > network;
+  std::vector<Layer<>*> network;
 
   //! Locally-stored empty list of modules.
-  std::vector<LayerTypes<CustomLayers...> > empty;
+  std::vector<Layer<>*> empty;
 
   //! Locally-stored delete visitor module object.
-  DeleteVisitor deleteVisitor;
+  // DeleteVisitor deleteVisitor;
 
   //! Locally-stored output parameter visitor module object.
-  OutputParameterVisitor outputParameterVisitor;
+  // OutputParameterVisitor outputParameterVisitor;
 
   //! Locally-stored delta visitor module object.
-  DeltaVisitor deltaVisitor;
+  // DeltaVisitor deltaVisitor;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType gradient;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
-}; // class MultiplyMerge
+  OutputType weights;
+}; // class MultiplyMergeType
+
+// Standard MultiplyMerge layer.
+typedef MultiplyMergeType<arma::mat, arma::mat> MultiplyMerge;
 
 } // namespace ann
 } // namespace mlpack

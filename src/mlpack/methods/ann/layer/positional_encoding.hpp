@@ -25,22 +25,22 @@ namespace ann /** Artificial Neural Network. */ {
  * `(embedDim * maxSequenceLength, batchSize)`. The embeddings are stored
  * consequently.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class PositionalEncoding
+class PositionalEncodingType : public Layer<InputType, OutputType>
 {
  public:
   /**
-   * Create PositionalEncoding object.
+   * Create PositionalEncodingType object.
    */
-  PositionalEncoding();
+  PositionalEncodingType();
 
   /**
    * Create the PositionalEncoding layer object using the specified parameters.
@@ -48,8 +48,8 @@ class PositionalEncoding
    * @param embedDim The length of the embedding vector.
    * @param maxSequenceLength Number of tokens in each sequence.
    */
-  PositionalEncoding(const size_t embedDim,
-                     const size_t maxSequenceLength);
+  PositionalEncodingType(const size_t embedDim,
+                         const size_t maxSequenceLength);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -58,8 +58,7 @@ class PositionalEncoding
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -70,28 +69,27 @@ class PositionalEncoding
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
+  InputType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  InputType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the positional encoding vector.
-  InputDataType const& Encoding() const { return positionalEncoding; }
+  InputType const& Encoding() const { return positionalEncoding; }
 
   /**
    * Serialize the layer
@@ -112,17 +110,20 @@ class PositionalEncoding
   size_t maxSequenceLength;
 
   //! Locally-stored positional encodings.
-  InputDataType positionalEncoding;
+  InputType positionalEncoding;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored input parameter object.
-  InputDataType inputParameter;
+  InputType inputParameter;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-}; // class PositionalEncoding
+  OutputType outputParameter;
+}; // class PositionalEncodingTest
+
+// Standard PositionalEncoding layer.
+typedef PositionalEncodingType<arma::mat, arma::mat> PositionalEncoding;
 
 } // namespace ann
 } // namespace mlpack

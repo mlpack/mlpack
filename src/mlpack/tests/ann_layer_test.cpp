@@ -2571,35 +2571,35 @@ TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
 //   REQUIRE(pass == true);
 // }
 
-// /**
-//  * Simple MultiplyMerge module test.
-//  */
-// TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta;
-//   input = arma::ones(10, 1);
+/**
+ * Simple MultiplyMerge module test.
+ */
+TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta;
+  input = arma::ones(10, 1);
 
-//   for (size_t i = 0; i < 5; ++i)
-//   {
-//     MultiplyMerge<> module(false, false);
-//     const size_t numMergeModules = math::RandInt(2, 10);
-//     for (size_t m = 0; m < numMergeModules; ++m)
-//     {
-//       IdentityLayer<> identityLayer;
-//       identityLayer.Forward(input, identityLayer.OutputParameter());
+  for (size_t i = 0; i < 5; ++i)
+  {
+    MultiplyMerge module(false, false);
+    const size_t numMergeModules = math::RandInt(2, 10);
+    for (size_t m = 0; m < numMergeModules; ++m)
+    {
+      IdentityLayer* identityLayer = new IdentityLayer();
+      identityLayer->Forward(input, identityLayer->OutputParameter());
 
-//       module.Add<IdentityLayer<> >(identityLayer);
-//     }
+      module.Add(identityLayer);
+    }
 
-//     // Test the Forward function.
-//     module.Forward(input, output);
-//     REQUIRE(10 == arma::accu(output));
+    // Test the Forward function.
+    module.Forward(input, output);
+    REQUIRE(10 == arma::accu(output));
 
-//     // Test the Backward function.
-//     module.Backward(input, output, delta);
-//     REQUIRE(arma::accu(output) == arma::accu(delta));
-//   }
-// }
+    // Test the Backward function.
+    module.Backward(input, output, delta);
+    REQUIRE(arma::accu(output) == arma::accu(delta));
+  }
+}
 
 // /**
 //  * Simple Atrous Convolution layer test.
@@ -4606,49 +4606,49 @@ TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
 //   REQUIRE(layer.Ratio() == 0.2);
 // }
 
-// /**
-//  * Simple Positional Encoding layer test.
-//  */
-// TEST_CASE("SimplePositionalEncodingTest", "[ANNLayerTest]")
-// {
-//   const size_t seqLength = 5;
-//   const size_t embedDim = 4;
-//   const size_t batchSize = 2;
+/**
+ * Simple Positional Encoding layer test.
+ */
+TEST_CASE("SimplePositionalEncodingTest", "[ANNLayerTest]")
+{
+  const size_t seqLength = 5;
+  const size_t embedDim = 4;
+  const size_t batchSize = 2;
 
-//   arma::mat input = arma::randu(embedDim * seqLength, batchSize);
-//   arma::mat gy = 0.01 * arma::randu(embedDim * seqLength, batchSize);
-//   arma::mat output, g;
+  arma::mat input = arma::randu(embedDim * seqLength, batchSize);
+  arma::mat gy = 0.01 * arma::randu(embedDim * seqLength, batchSize);
+  arma::mat output, g;
 
-//   PositionalEncoding<> module(embedDim, seqLength);
+  PositionalEncoding module(embedDim, seqLength);
 
-//   // Check Forward function.
-//   module.Forward(input, output);
-//   arma::mat pe = output - input;
-//   CheckMatrices(arma::mean(pe, 1), module.Encoding());
+  // Check Forward function.
+  module.Forward(input, output);
+  arma::mat pe = output - input;
+  CheckMatrices(arma::mean(pe, 1), module.Encoding());
 
-//   // Check Backward function.
-//   module.Backward(input, gy, g);
-//   REQUIRE(std::equal(gy.begin(), gy.end(), g.begin()));
-// }
+  // Check Backward function.
+  module.Backward(input, gy, g);
+  REQUIRE(std::equal(gy.begin(), gy.end(), g.begin()));
+}
 
-// /**
-//  * Jacobian test for Positional Encoding layer.
-//  */
-// TEST_CASE("JacobianPositionalEncodingTest", "[ANNLayerTest]")
-// {
-//   for (size_t i = 0; i < 5; ++i)
-//   {
-//     const size_t embedDim = 4;
-//     const size_t seqLength = math::RandInt(5, 10);
-//     arma::mat input;
-//     input.set_size(embedDim * seqLength, 1);
+/**
+ * Jacobian test for Positional Encoding layer.
+ */
+TEST_CASE("JacobianPositionalEncodingTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t embedDim = 4;
+    const size_t seqLength = math::RandInt(5, 10);
+    arma::mat input;
+    input.set_size(embedDim * seqLength, 1);
 
-//     PositionalEncoding<> module(embedDim, seqLength);
+    PositionalEncoding module(embedDim, seqLength);
 
-//     double error = JacobianTest(module, input);
-//     REQUIRE(error <= 1e-5);
-//   }
-// }
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
 
 /**
  * Simple Multihead Attention test.

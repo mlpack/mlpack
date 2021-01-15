@@ -19,16 +19,16 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-PositionalEncoding<InputDataType, OutputDataType>::PositionalEncoding() :
+template<typename InputType, typename OutputType>
+PositionalEncodingType<InputType, OutputType>::PositionalEncodingType() :
     embedDim(0),
     maxSequenceLength(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-PositionalEncoding<InputDataType, OutputDataType>::PositionalEncoding(
+template<typename InputType, typename OutputType>
+PositionalEncodingType<InputType, OutputType>::PositionalEncodingType(
     const size_t embedDim,
     const size_t maxSequenceLength) :
     embedDim(embedDim),
@@ -37,14 +37,14 @@ PositionalEncoding<InputDataType, OutputDataType>::PositionalEncoding(
   InitPositionalEncoding();
 }
 
-template<typename InputDataType, typename OutputDataType>
-void PositionalEncoding<InputDataType, OutputDataType>::InitPositionalEncoding()
+template<typename InputType, typename OutputType>
+void PositionalEncodingType<InputType, OutputType>::InitPositionalEncoding()
 {
   positionalEncoding.set_size(maxSequenceLength, embedDim);
-  const InputDataType position = arma::regspace(0, 1, maxSequenceLength - 1);
-  const InputDataType divTerm = arma::exp(arma::regspace(0, 2, embedDim - 1)
+  const InputType position = arma::regspace(0, 1, maxSequenceLength - 1);
+  const InputType divTerm = arma::exp(arma::regspace(0, 2, embedDim - 1)
       * (- std::log(10000.0) / embedDim));
-  const InputDataType theta = position * divTerm.t();
+  const InputType theta = position * divTerm.t();
   for (size_t i = 0; i < theta.n_cols; ++i)
   {
     positionalEncoding.col(2 * i) = arma::sin(theta.col(i));
@@ -53,10 +53,9 @@ void PositionalEncoding<InputDataType, OutputDataType>::InitPositionalEncoding()
   positionalEncoding = arma::vectorise(positionalEncoding.t());
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void PositionalEncoding<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void PositionalEncodingType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   if (input.n_rows != embedDim * maxSequenceLength)
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
@@ -64,17 +63,16 @@ void PositionalEncoding<InputDataType, OutputDataType>::Forward(
   output = input.each_col() + positionalEncoding;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void PositionalEncoding<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void PositionalEncodingType<InputType, OutputType>::Backward(
+    const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   g = gy;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void PositionalEncoding<InputDataType, OutputDataType>::serialize(
+void PositionalEncodingType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(embedDim));
