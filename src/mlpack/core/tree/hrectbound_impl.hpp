@@ -104,6 +104,37 @@ inline HRectBound<MetricType, ElemType>::HRectBound(
 }
 
 /**
+ * Move assignment operator
+ */
+template<typename MetricType, typename ElemType>
+inline HRectBound<
+    MetricType,
+    ElemType>& HRectBound<MetricType,
+    ElemType>::operator=(HRectBound<MetricType, ElemType>&& other)
+{
+  if (this != &other)
+  {
+    if (dim != other.Dim())
+    {
+      // Reallocation is necessary.
+      if (bounds)
+        delete[] bounds;
+
+      dim = other.Dim();
+      bounds = new math::RangeType<ElemType>[dim];
+    }
+
+    // Now move each of the bound values.
+    // cannot move the bound pointer because there are no accessor method to the bound pointer
+    for (size_t i = 0; i < dim; ++i)
+      bounds[i] = std::move(other[i]);
+
+    minWidth = std::move(other.MinWidth());
+  }
+  return *this;
+}
+
+/**
  * Destructor: clean up memory.
  */
 template<typename MetricType, typename ElemType>
