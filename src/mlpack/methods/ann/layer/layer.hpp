@@ -49,8 +49,10 @@
  *     computation and weight type to differ from the input type
  *     (default: arma::mat).
  */
-template<typename InputType = arma::mat,
-         typename OutputType = arma::mat>
+template<
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
+>
 class Layer
 {
  public:

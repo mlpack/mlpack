@@ -13,17 +13,22 @@
 #define MLPACK_METHODS_ANN_LAYER_LAYER_TYPES_HPP
 
 // Layer modules.
+#include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
+#include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/add.hpp>
+// #include <mlpack/methods/ann/layer/add_merge.hpp>
 // #include <mlpack/methods/ann/layer/alpha_dropout.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 // #include <mlpack/methods/ann/layer/batch_norm.hpp>
 #include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
+#include <mlpack/methods/ann/layer/celu.hpp>
 // #include <mlpack/methods/ann/layer/constant.hpp>
 #include <mlpack/methods/ann/layer/concatenate.hpp>
 #include <mlpack/methods/ann/layer/convolution.hpp>
 // #include <mlpack/methods/ann/layer/dropout.hpp>
 // #include <mlpack/methods/ann/layer/elu.hpp>
 #include <mlpack/methods/ann/layer/glimpse.hpp>
+// #include <mlpack/methods/ann/layer/hardshrink.hpp>
 // #include <mlpack/methods/ann/layer/hard_tanh.hpp>
 #include <mlpack/methods/ann/layer/join.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>
@@ -41,26 +46,22 @@
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 // #include <mlpack/methods/ann/layer/noisylinear.hpp>
-#include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
-#include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
 // #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 // #include <mlpack/methods/ann/layer/positional_encoding.hpp>
+// #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 // #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 // #include <mlpack/methods/ann/layer/reparametrization.hpp>
 // #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
+// #include <mlpack/methods/ann/layer/softshrink.hpp>
 // #include <mlpack/methods/ann/layer/spatial_dropout.hpp>
 // #include <mlpack/methods/ann/layer/subview.hpp>
 // #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
-// #include <mlpack/methods/ann/layer/hardshrink.hpp>
-#include <mlpack/methods/ann/layer/celu.hpp>
-// #include <mlpack/methods/ann/layer/softshrink.hpp>
-// #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 
 // // Convolution modules.
 // #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
-// #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 // #include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
+// #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
 
 // // Regularizers.
 // #include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
