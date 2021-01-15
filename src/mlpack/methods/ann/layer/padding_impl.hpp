@@ -19,8 +19,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-Padding<InputDataType, OutputDataType>::Padding(
+template<typename InputType, typename OutputType>
+PaddingType<InputType, OutputType>::PaddingType(
     const size_t padWLeft,
     const size_t padWRight,
     const size_t padHTop,
@@ -35,10 +35,9 @@ Padding<InputDataType, OutputDataType>::Padding(
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Padding<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void PaddingType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   nRows = input.n_rows;
   nCols = input.n_cols;
@@ -48,20 +47,19 @@ void Padding<InputDataType, OutputDataType>::Forward(
       padHTop + nCols - 1) = input;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Padding<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void PaddingType<InputType, OutputType>::Backward(
+    const InputType& /* input */,
+    const OutputType& gy,
+    OutputType& g)
 {
   g = gy.submat(padWLeft, padHTop, padWLeft + nRows - 1,
       padHTop + nCols - 1);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void Padding<InputDataType, OutputDataType>::serialize(
+void PaddingType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(padWLeft));

@@ -135,7 +135,7 @@ ConvolutionType<
     InitializeSamePadding();
   }
 
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  padding = ann::Padding(padWLeft, padWRight, padHTop, padHBottom);
 }
 
 template<

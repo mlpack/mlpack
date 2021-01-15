@@ -692,25 +692,25 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
 //   REQUIRE(arma::accu(delta) == 0);
 // }
 
-// /**
-//  * Simple padding layer test.
-//  */
-// TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta;
-//   Padding<> module(1, 2, 3, 4);
+/**
+ * Simple padding layer test.
+ */
+TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta;
+  Padding module(1, 2, 3, 4);
 
-//   // Test the Forward function.
-//   input = arma::randu(10, 1);
-//   module.Forward(input, output);
-//   REQUIRE(arma::accu(input) == arma::accu(output));
-//   REQUIRE(output.n_rows == input.n_rows + 3);
-//   REQUIRE(output.n_cols == input.n_cols + 7);
+  // Test the Forward function.
+  input = arma::randu(10, 1);
+  module.Forward(input, output);
+  REQUIRE(arma::accu(input) == arma::accu(output));
+  REQUIRE(output.n_rows == input.n_rows + 3);
+  REQUIRE(output.n_cols == input.n_cols + 7);
 
-//   // Test the Backward function.
-//   module.Backward(input, output, delta);
-//   CheckMatrices(delta, input);
-// }
+  // Test the Backward function.
+  module.Backward(input, output, delta);
+  CheckMatrices(delta, input);
+}
 
 // /**
 //  * Jacobian linear no bias module test.
@@ -916,51 +916,51 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
 //   }
 // }
 
-// /**
-//  * Simple select module test.
-//  */
-// TEST_CASE("SimpleSelectLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat outputA, outputB, input, delta;
+/**
+ * Simple select module test.
+ */
+TEST_CASE("SimpleSelectLayerTest", "[ANNLayerTest]")
+{
+  arma::mat outputA, outputB, input, delta;
 
-//   input = arma::ones(10, 5);
-//   for (size_t i = 0; i < input.n_cols; ++i)
-//   {
-//     input.col(i) *= i;
-//   }
+  input = arma::ones(10, 5);
+  for (size_t i = 0; i < input.n_cols; ++i)
+  {
+    input.col(i) *= i;
+  }
 
-//   // Test the Forward function.
-//   Select<> moduleA(3);
-//   moduleA.Forward(input, outputA);
-//   REQUIRE(30 == arma::accu(outputA));
+  // Test the Forward function.
+  Select moduleA(3);
+  moduleA.Forward(input, outputA);
+  REQUIRE(30 == arma::accu(outputA));
 
-//   // Test the Forward function.
-//   Select<> moduleB(3, 5);
-//   moduleB.Forward(input, outputB);
-//   REQUIRE(15 == arma::accu(outputB));
+  // Test the Forward function.
+  Select moduleB(3, 5);
+  moduleB.Forward(input, outputB);
+  REQUIRE(15 == arma::accu(outputB));
 
-//   // Test the Backward function.
-//   moduleA.Backward(input, outputA, delta);
-//   REQUIRE(30 == arma::accu(delta));
+  // Test the Backward function.
+  moduleA.Backward(input, outputA, delta);
+  REQUIRE(30 == arma::accu(delta));
 
-//   // Test the Backward function.
-//   moduleB.Backward(input, outputA, delta);
-//   REQUIRE(15 == arma::accu(delta));
-// }
+  // Test the Backward function.
+  moduleB.Backward(input, outputA, delta);
+  REQUIRE(15 == arma::accu(delta));
+}
 
-// /**
-//  * Test that the functions that can access the parameters of the
-//  * Select layer work.
-//  */
-// TEST_CASE("SelectLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : index, elements.
-//   Select<> layer(3, 5);
+/**
+ * Test that the functions that can access the parameters of the
+ * Select layer work.
+ */
+TEST_CASE("SelectLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter order : index, elements.
+  Select layer(3, 5);
 
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer.Index() == 3);
-//   REQUIRE(layer.NumElements() == 5);
-// }
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer.Index() == 3);
+  REQUIRE(layer.NumElements() == 5);
+}
 
 /**
  * Simple join module test.
@@ -2387,189 +2387,188 @@ TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
 //   REQUIRE(CheckGradient(function) <= 1e-4);
 // }
 
-// /**
-//  * Simple Transposed Convolution layer test.
-//  */
-// TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta;
+/**
+ * Simple Transposed Convolution layer test.
+ */
+TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta;
 
-//   TransposedConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 6, 6);
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 15, 16);
-//   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-//   module1.Parameters()(0) = 1.0;
-//   module1.Parameters()(8) = 2.0;
-//   module1.Reset();
-//   module1.Forward(input, output);
-//   // Value calculated using tensorflow.nn.conv2d_transpose()
-//   REQUIRE(arma::accu(output) == 360.0);
+  TransposedConvolution module1(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 6, 6);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 15, 16);
+  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Parameters()(0) = 1.0;
+  module1.Parameters()(8) = 2.0;
+  module1.Reset();
+  module1.Forward(input, output);
+  // Value calculated using tensorflow.nn.conv2d_transpose()
+  REQUIRE(arma::accu(output) == 360.0);
 
-//   // Test the backward function.
-//   module1.Backward(input, output, delta);
-//   // Value calculated using tensorflow.nn.conv2d()
-//   REQUIRE(arma::accu(delta) == 720.0);
+  // Test the backward function.
+  module1.Backward(input, output, delta);
+  // Value calculated using tensorflow.nn.conv2d()
+  REQUIRE(arma::accu(delta) == 720.0);
 
-//   TransposedConvolution<> module2(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 6, 6);
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 24, 25);
-//   module2.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
-//   module2.Parameters()(0) = 1.0;
-//   module2.Parameters()(3) = 1.0;
-//   module2.Parameters()(6) = 1.0;
-//   module2.Parameters()(9) = 1.0;
-//   module2.Parameters()(12) = 1.0;
-//   module2.Parameters()(15) = 2.0;
-//   module2.Reset();
-//   module2.Forward(input, output);
-//   // Value calculated using torch.nn.functional.conv_transpose2d()
-//   REQUIRE(arma::accu(output) == 1512.0);
+  TransposedConvolution module2(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 6, 6);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module2.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
+  module2.Parameters()(0) = 1.0;
+  module2.Parameters()(3) = 1.0;
+  module2.Parameters()(6) = 1.0;
+  module2.Parameters()(9) = 1.0;
+  module2.Parameters()(12) = 1.0;
+  module2.Parameters()(15) = 2.0;
+  module2.Reset();
+  module2.Forward(input, output);
+  // Value calculated using torch.nn.functional.conv_transpose2d()
+  REQUIRE(arma::accu(output) == 1512.0);
 
-//   // Test the backward function.
-//   module2.Backward(input, output, delta);
-//   // Value calculated using torch.nn.functional.conv2d()
-//   REQUIRE(arma::accu(delta) == 6504.0);
+  // Test the backward function.
+  module2.Backward(input, output, delta);
+  // Value calculated using torch.nn.functional.conv2d()
+  REQUIRE(arma::accu(delta) == 6504.0);
 
-//   TransposedConvolution<> module3(1, 1, 3, 3, 1, 1, 1, 1, 5, 5, 5, 5);
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 24, 25);
-//   module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-//   module3.Parameters()(1) = 2.0;
-//   module3.Parameters()(2) = 4.0;
-//   module3.Parameters()(3) = 3.0;
-//   module3.Parameters()(8) = 1.0;
-//   module3.Reset();
-//   module3.Forward(input, output);
-//   // Value calculated using torch.nn.functional.conv_transpose2d()
-//   REQUIRE(arma::accu(output) == 2370.0);
+  TransposedConvolution module3(1, 1, 3, 3, 1, 1, 1, 1, 5, 5, 5, 5);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module3.Parameters()(1) = 2.0;
+  module3.Parameters()(2) = 4.0;
+  module3.Parameters()(3) = 3.0;
+  module3.Parameters()(8) = 1.0;
+  module3.Reset();
+  module3.Forward(input, output);
+  // Value calculated using torch.nn.functional.conv_transpose2d()
+  REQUIRE(arma::accu(output) == 2370.0);
 
-//   // Test the backward function.
-//   module3.Backward(input, output, delta);
-//   // Value calculated using torch.nn.functional.conv2d()
-//   REQUIRE(arma::accu(delta) == 19154.0);
+  // Test the backward function.
+  module3.Backward(input, output, delta);
+  // Value calculated using torch.nn.functional.conv2d()
+  REQUIRE(arma::accu(delta) == 19154.0);
 
-//   TransposedConvolution<> module4(1, 1, 3, 3, 1, 1, 0, 0, 5, 5, 7, 7);
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 24, 25);
-//   module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-//   module4.Parameters()(2) = 2.0;
-//   module4.Parameters()(4) = 4.0;
-//   module4.Parameters()(6) = 6.0;
-//   module4.Parameters()(8) = 8.0;
-//   module4.Reset();
-//   module4.Forward(input, output);
-//   // Value calculated using torch.nn.functional.conv_transpose2d()
-//   REQUIRE(arma::accu(output) == 6000.0);
+  TransposedConvolution module4(1, 1, 3, 3, 1, 1, 0, 0, 5, 5, 7, 7);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module4.Parameters()(2) = 2.0;
+  module4.Parameters()(4) = 4.0;
+  module4.Parameters()(6) = 6.0;
+  module4.Parameters()(8) = 8.0;
+  module4.Reset();
+  module4.Forward(input, output);
+  // Value calculated using torch.nn.functional.conv_transpose2d()
+  REQUIRE(arma::accu(output) == 6000.0);
 
-//   // Test the backward function.
-//   module4.Backward(input, output, delta);
-//   // Value calculated using torch.nn.functional.conv2d()
-//   REQUIRE(arma::accu(delta) == 86208.0);
+  // Test the backward function.
+  module4.Backward(input, output, delta);
+  // Value calculated using torch.nn.functional.conv2d()
+  REQUIRE(arma::accu(delta) == 86208.0);
 
-//   TransposedConvolution<> module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 5, 5);
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 3, 4);
-//   module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
-//   module5.Parameters()(2) = 8.0;
-//   module5.Parameters()(4) = 6.0;
-//   module5.Parameters()(6) = 4.0;
-//   module5.Parameters()(8) = 2.0;
-//   module5.Reset();
-//   module5.Forward(input, output);
-//   // Value calculated using torch.nn.functional.conv_transpose2d()
-//   REQUIRE(arma::accu(output) == 120.0);
+  TransposedConvolution module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 5, 5);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 3, 4);
+  module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
+  module5.Parameters()(2) = 8.0;
+  module5.Parameters()(4) = 6.0;
+  module5.Parameters()(6) = 4.0;
+  module5.Parameters()(8) = 2.0;
+  module5.Reset();
+  module5.Forward(input, output);
+  // Value calculated using torch.nn.functional.conv_transpose2d()
+  REQUIRE(arma::accu(output) == 120.0);
 
-//   // Test the backward function.
-//   module5.Backward(input, output, delta);
-//   // Value calculated using torch.nn.functional.conv2d()
-//   REQUIRE(arma::accu(delta) == 960.0);
+  // Test the backward function.
+  module5.Backward(input, output, delta);
+  // Value calculated using torch.nn.functional.conv2d()
+  REQUIRE(arma::accu(delta) == 960.0);
 
-//   TransposedConvolution<> module6(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 5, 5);
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 8, 9);
-//   module6.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-//   module6.Parameters()(0) = 8.0;
-//   module6.Parameters()(3) = 6.0;
-//   module6.Parameters()(6) = 2.0;
-//   module6.Parameters()(8) = 4.0;
-//   module6.Reset();
-//   module6.Forward(input, output);
-//   // Value calculated using torch.nn.functional.conv_transpose2d()
-//   REQUIRE(arma::accu(output) == 410.0);
+  TransposedConvolution module6(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 5, 5);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 8, 9);
+  module6.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module6.Parameters()(0) = 8.0;
+  module6.Parameters()(3) = 6.0;
+  module6.Parameters()(6) = 2.0;
+  module6.Parameters()(8) = 4.0;
+  module6.Reset();
+  module6.Forward(input, output);
+  // Value calculated using torch.nn.functional.conv_transpose2d()
+  REQUIRE(arma::accu(output) == 410.0);
 
-//   // Test the backward function.
-//   module6.Backward(input, output, delta);
-//   // Value calculated using torch.nn.functional.conv2d()
-//   REQUIRE(arma::accu(delta) == 4444.0);
+  // Test the backward function.
+  module6.Backward(input, output, delta);
+  // Value calculated using torch.nn.functional.conv2d()
+  REQUIRE(arma::accu(delta) == 4444.0);
 
-//   TransposedConvolution<> module7(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 6, 6);
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 8, 9);
-//   module7.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-//   module7.Parameters()(0) = 8.0;
-//   module7.Parameters()(2) = 6.0;
-//   module7.Parameters()(4) = 2.0;
-//   module7.Parameters()(8) = 4.0;
-//   module7.Reset();
-//   module7.Forward(input, output);
-//   // Value calculated using torch.nn.functional.conv_transpose2d()
-//   REQUIRE(arma::accu(output) == 606.0);
+  TransposedConvolution module7(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 6, 6);
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 8, 9);
+  module7.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module7.Parameters()(0) = 8.0;
+  module7.Parameters()(2) = 6.0;
+  module7.Parameters()(4) = 2.0;
+  module7.Parameters()(8) = 4.0;
+  module7.Reset();
+  module7.Forward(input, output);
+  // Value calculated using torch.nn.functional.conv_transpose2d()
+  REQUIRE(arma::accu(output) == 606.0);
 
-//   module7.Backward(input, output, delta);
-//   // Value calculated using torch.nn.functional.conv2d()
-//   REQUIRE(arma::accu(delta) == 7732.0);
-// }
+  module7.Backward(input, output, delta);
+  // Value calculated using torch.nn.functional.conv2d()
+  REQUIRE(arma::accu(delta) == 7732.0);
+}
 
-// /**
-//  * Transposed Convolution layer numerical gradient test.
-//  */
-// TEST_CASE("GradientTransposedConvolutionLayerTest", "[ANNLayerTest]")
-// {
-//   // Add function gradient instantiation.
-//   // To make this test robust, check it five times.
-//   bool pass = false;
-//   for (size_t trial = 0; trial < 5; trial++)
-//   {
-//     struct GradientFunction
-//     {
-//       GradientFunction() :
-//           input(arma::linspace<arma::colvec>(0, 35, 36)),
-//           target(arma::mat("1"))
-//       {
-//         model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
-//         model->Predictors() = input;
-//         model->Responses() = target;
-//         model->Add<TransposedConvolution<> >
-//             (1, 1, 3, 3, 2, 2, 1, 1, 6, 6, 12, 12);
-//         model->Add<LogSoftMax<> >();
-//       }
+/**
+ * Transposed Convolution layer numerical gradient test.
+ */
+TEST_CASE("GradientTransposedConvolutionLayerTest", "[ANNLayerTest]")
+{
+  // Add function gradient instantiation.
+  // To make this test robust, check it five times.
+  bool pass = false;
+  for (size_t trial = 0; trial < 5; trial++)
+  {
+    struct GradientFunction
+    {
+      GradientFunction() :
+          input(arma::linspace<arma::colvec>(0, 35, 36)),
+          target(arma::mat("1"))
+      {
+        model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
+        model->Predictors() = input;
+        model->Responses() = target;
+        model->Add<TransposedConvolution>(1, 1, 3, 3, 2, 2, 1, 1, 6, 6, 12, 12);
+        model->Add<LogSoftMax>();
+      }
 
-//       ~GradientFunction()
-//       {
-//         delete model;
-//       }
+      ~GradientFunction()
+      {
+        delete model;
+      }
 
-//       double Gradient(arma::mat& gradient) const
-//       {
-//         double error = model->Evaluate(model->Parameters(), 0, 1);
-//         model->Gradient(model->Parameters(), 0, gradient, 1);
-//         return error;
-//       }
+      double Gradient(arma::mat& gradient) const
+      {
+        double error = model->Evaluate(model->Parameters(), 0, 1);
+        model->Gradient(model->Parameters(), 0, gradient, 1);
+        return error;
+      }
 
-//       arma::mat& Parameters() { return model->Parameters(); }
+      arma::mat& Parameters() { return model->Parameters(); }
 
-//       FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
-//       arma::mat input, target;
-//     } function;
+      FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+      arma::mat input, target;
+    } function;
 
-//     if (CheckGradient(function) < 1e-3)
-//     {
-//       pass = true;
-//       break;
-//     }
-//   }
-//   REQUIRE(pass == true);
-// }
+    if (CheckGradient(function) < 1e-3)
+    {
+      pass = true;
+      break;
+    }
+  }
+  REQUIRE(pass == true);
+}
 
 /**
  * Simple MultiplyMerge module test.
@@ -2942,125 +2941,125 @@ TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
 //   REQUIRE(arma::accu(delta) == 0);
 // }
 
-// /**
-//  * Simple subview module test.
-//  */
-// TEST_CASE("SimpleSubviewLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta, outputMat;
-//   Subview<> moduleRow(1, 10, 19);
+/**
+ * Simple subview module test.
+ */
+TEST_CASE("SimpleSubviewLayerTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta, outputMat;
+  Subview moduleRow(1, 10, 19);
 
-//   // Test the Forward function for a vector.
-//   input = arma::ones(20, 1);
-//   moduleRow.Forward(input, output);
-//   REQUIRE(output.n_rows == 10);
+  // Test the Forward function for a vector.
+  input = arma::ones(20, 1);
+  moduleRow.Forward(input, output);
+  REQUIRE(output.n_rows == 10);
 
-//   Subview<> moduleMat(4, 3, 6, 0, 2);
+  Subview moduleMat(4, 3, 6, 0, 2);
 
-//   // Test the Forward function for a matrix.
-//   input = arma::ones(20, 8);
-//   moduleMat.Forward(input, outputMat);
-//   REQUIRE(outputMat.n_rows == 12);
-//   REQUIRE(outputMat.n_cols == 2);
+  // Test the Forward function for a matrix.
+  input = arma::ones(20, 8);
+  moduleMat.Forward(input, outputMat);
+  REQUIRE(outputMat.n_rows == 12);
+  REQUIRE(outputMat.n_cols == 2);
 
-//   // Test the Backward function.
-//   moduleMat.Backward(input, input, delta);
-//   REQUIRE(accu(delta) == 160);
-//   REQUIRE(delta.n_rows == 20);
-// }
+  // Test the Backward function.
+  moduleMat.Backward(input, input, delta);
+  REQUIRE(accu(delta) == 160);
+  REQUIRE(delta.n_rows == 20);
+}
 
-// /**
-//  * Subview index test.
-//  */
-// TEST_CASE("SubviewIndexTest", "[ANNLayerTest]")
-// {
-//   arma::mat outputEnd, outputMid, outputStart, input, delta;
-//   input = arma::linspace<arma::vec>(1, 20, 20);
+/**
+ * Subview index test.
+ */
+TEST_CASE("SubviewIndexTest", "[ANNLayerTest]")
+{
+  arma::mat outputEnd, outputMid, outputStart, input, delta;
+  input = arma::linspace<arma::vec>(1, 20, 20);
 
-//   // Slicing from the initial indices.
-//   Subview<> moduleStart(1, 0, 9);
-//   arma::mat subStart = arma::linspace<arma::vec>(1, 10, 10);
+  // Slicing from the initial indices.
+  Subview moduleStart(1, 0, 9);
+  arma::mat subStart = arma::linspace<arma::vec>(1, 10, 10);
 
-//   moduleStart.Forward(input, outputStart);
-//   CheckMatrices(outputStart, subStart);
+  moduleStart.Forward(input, outputStart);
+  CheckMatrices(outputStart, subStart);
 
-//   // Slicing from the mid indices.
-//   Subview<> moduleMid(1, 6, 15);
-//   arma::mat subMid = arma::linspace<arma::vec>(7, 16, 10);
+  // Slicing from the mid indices.
+  Subview moduleMid(1, 6, 15);
+  arma::mat subMid = arma::linspace<arma::vec>(7, 16, 10);
 
-//   moduleMid.Forward(input, outputMid);
-//   CheckMatrices(outputMid, subMid);
+  moduleMid.Forward(input, outputMid);
+  CheckMatrices(outputMid, subMid);
 
-//   // Slicing from the end indices.
-//   Subview<> moduleEnd(1, 10, 19);
-//   arma::mat subEnd = arma::linspace<arma::vec>(11, 20, 10);
+  // Slicing from the end indices.
+  Subview moduleEnd(1, 10, 19);
+  arma::mat subEnd = arma::linspace<arma::vec>(11, 20, 10);
 
-//   moduleEnd.Forward(input, outputEnd);
-//   CheckMatrices(outputEnd, subEnd);
-// }
+  moduleEnd.Forward(input, outputEnd);
+  CheckMatrices(outputEnd, subEnd);
+}
 
-// /**
-//  * Subview batch test.
-//  */
-// TEST_CASE("SubviewBatchTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, outputCol, outputMat, outputDef;
+/**
+ * Subview batch test.
+ */
+TEST_CASE("SubviewBatchTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, outputCol, outputMat, outputDef;
 
-//   // All rows selected.
-//   Subview<> moduleCol(1, 0, 19);
+  // All rows selected.
+  Subview moduleCol(1, 0, 19);
 
-//   // Test with inSize 1.
-//   input = arma::ones(20, 8);
-//   moduleCol.Forward(input, outputCol);
-//   CheckMatrices(outputCol, input);
+  // Test with inSize 1.
+  input = arma::ones(20, 8);
+  moduleCol.Forward(input, outputCol);
+  CheckMatrices(outputCol, input);
 
-//   // Few rows and columns selected.
-//   Subview<> moduleMat(4, 3, 6, 0, 2);
+  // Few rows and columns selected.
+  Subview moduleMat(4, 3, 6, 0, 2);
 
-//   // Test with inSize greater than 1.
-//   moduleMat.Forward(input, outputMat);
-//   output = arma::ones(12, 2);
-//   CheckMatrices(outputMat, output);
+  // Test with inSize greater than 1.
+  moduleMat.Forward(input, outputMat);
+  output = arma::ones(12, 2);
+  CheckMatrices(outputMat, output);
 
-//   // endCol changed to 3 by default.
-//   Subview<> moduleDef(4, 1, 6, 0, 4);
+  // endCol changed to 3 by default.
+  Subview moduleDef(4, 1, 6, 0, 4);
 
-//   // Test with inSize greater than 1 and endCol >= inSize.
-//   moduleDef.Forward(input, outputDef);
-//   output = arma::ones(24, 2);
-//   CheckMatrices(outputDef, output);
-// }
+  // Test with inSize greater than 1 and endCol >= inSize.
+  moduleDef.Forward(input, outputDef);
+  output = arma::ones(24, 2);
+  CheckMatrices(outputDef, output);
+}
 
-// /**
-//  * Test that the functions that can modify and access the parameters of the
-//  * Subview layer work.
-//  */
-// TEST_CASE("SubviewLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : inSize, beginRow, endRow, beginCol, endCol.
-//   Subview<> layer1(1, 2, 3, 4, 5);
-//   Subview<> layer2(1, 3, 4, 5, 6);
+/**
+ * Test that the functions that can modify and access the parameters of the
+ * Subview layer work.
+ */
+TEST_CASE("SubviewLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter order : inSize, beginRow, endRow, beginCol, endCol.
+  Subview layer1(1, 2, 3, 4, 5);
+  Subview layer2(1, 3, 4, 5, 6);
 
-//   // Make sure we can get the parameters correctly.
-//   REQUIRE(layer1.InSize() == 1);
-//   REQUIRE(layer1.BeginRow() == 2);
-//   REQUIRE(layer1.EndRow() == 3);
-//   REQUIRE(layer1.BeginCol() == 4);
-//   REQUIRE(layer1.EndCol() == 5);
+  // Make sure we can get the parameters correctly.
+  REQUIRE(layer1.InSize() == 1);
+  REQUIRE(layer1.BeginRow() == 2);
+  REQUIRE(layer1.EndRow() == 3);
+  REQUIRE(layer1.BeginCol() == 4);
+  REQUIRE(layer1.EndCol() == 5);
 
-//   // Now modify the parameters to match the second layer.
-//   layer1.BeginRow() = 3;
-//   layer1.EndRow() = 4;
-//   layer1.BeginCol() = 5;
-//   layer1.EndCol() = 6;
+  // Now modify the parameters to match the second layer.
+  layer1.BeginRow() = 3;
+  layer1.EndRow() = 4;
+  layer1.BeginCol() = 5;
+  layer1.EndCol() = 6;
 
-//   // Now ensure all results are the same.
-//   REQUIRE(layer1.InSize() == layer2.InSize());
-//   REQUIRE(layer1.BeginRow() == layer2.BeginRow());
-//   REQUIRE(layer1.EndRow() == layer2.EndRow());
-//   REQUIRE(layer1.BeginCol() == layer2.BeginCol());
-//   REQUIRE(layer1.EndCol() == layer2.EndCol());
-// }
+  // Now ensure all results are the same.
+  REQUIRE(layer1.InSize() == layer2.InSize());
+  REQUIRE(layer1.BeginRow() == layer2.BeginRow());
+  REQUIRE(layer1.EndRow() == layer2.EndRow());
+  REQUIRE(layer1.BeginCol() == layer2.BeginCol());
+  REQUIRE(layer1.EndCol() == layer2.EndCol());
+}
 
 // /*
 //  * Simple Reparametrization module test.
@@ -3661,107 +3660,107 @@ TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
   module2.Backward(input, output, delta);
 }
 
-// /**
-//  * Test that the padding options in Transposed Convolution layer.
-//  */
-// TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta;
+/**
+ * Test that the padding options in Transposed Convolution layer.
+ */
+TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta;
 
-//   TransposedConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 6, 6, "VALID");
-//   // Test the forward function.
-//   // Valid Should give the same result.
-//   input = arma::linspace<arma::colvec>(0, 15, 16);
-//   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-//   module1.Reset();
-//   module1.Forward(input, output);
-//   // Value calculated using tensorflow.nn.conv2d_transpose().
-//   REQUIRE(arma::accu(output) == 0.0);
+  TransposedConvolution module1(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 6, 6, "VALID");
+  // Test the forward function.
+  // Valid Should give the same result.
+  input = arma::linspace<arma::colvec>(0, 15, 16);
+  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Reset();
+  module1.Forward(input, output);
+  // Value calculated using tensorflow.nn.conv2d_transpose().
+  REQUIRE(arma::accu(output) == 0.0);
 
-//   // Test the Backward Function.
-//   module1.Backward(input, output, delta);
-//   REQUIRE(arma::accu(delta) == 0.0);
+  // Test the Backward Function.
+  module1.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == 0.0);
 
-//   // Test Valid for non zero padding.
-//   TransposedConvolution<> module2(1, 1, 3, 3, 2, 2,
-//       std::tuple<size_t, size_t>(0, 0), std::tuple<size_t, size_t>(0, 0),
-//       2, 2, 5, 5, "VALID");
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 3, 4);
-//   module2.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
-//   module2.Parameters()(2) = 8.0;
-//   module2.Parameters()(4) = 6.0;
-//   module2.Parameters()(6) = 4.0;
-//   module2.Parameters()(8) = 2.0;
-//   module2.Reset();
-//   module2.Forward(input, output);
-//   // Value calculated using torch.nn.functional.conv_transpose2d().
-//   REQUIRE(arma::accu(output) == 120.0);
+  // Test Valid for non zero padding.
+  TransposedConvolution module2(1, 1, 3, 3, 2, 2,
+      std::tuple<size_t, size_t>(0, 0), std::tuple<size_t, size_t>(0, 0),
+      2, 2, 5, 5, "VALID");
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 3, 4);
+  module2.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
+  module2.Parameters()(2) = 8.0;
+  module2.Parameters()(4) = 6.0;
+  module2.Parameters()(6) = 4.0;
+  module2.Parameters()(8) = 2.0;
+  module2.Reset();
+  module2.Forward(input, output);
+  // Value calculated using torch.nn.functional.conv_transpose2d().
+  REQUIRE(arma::accu(output) == 120.0);
 
-//   // Test the Backward Function.
-//   module2.Backward(input, output, delta);
-//   REQUIRE(arma::accu(delta) == 960.0);
+  // Test the Backward Function.
+  module2.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == 960.0);
 
-//   // Test for same padding type.
-//   TransposedConvolution<> module3(1, 1, 3, 3, 2, 2, 0, 0, 3, 3, 3, 3, "SAME");
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 8, 9);
-//   module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-//   module3.Reset();
-//   module3.Forward(input, output);
-//   REQUIRE(arma::accu(output) == 0);
-//   REQUIRE(output.n_rows == input.n_rows);
-//   REQUIRE(output.n_cols == input.n_cols);
+  // Test for same padding type.
+  TransposedConvolution module3(1, 1, 3, 3, 2, 2, 0, 0, 3, 3, 3, 3, "SAME");
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 8, 9);
+  module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module3.Reset();
+  module3.Forward(input, output);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 
-//   // Test the Backward Function.
-//   module3.Backward(input, output, delta);
-//   REQUIRE(arma::accu(delta) == 0.0);
+  // Test the Backward Function.
+  module3.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == 0.0);
 
-//   // Output shape should equal input.
-//   TransposedConvolution<> module4(1, 1, 3, 3, 1, 1,
-//     std::tuple<size_t, size_t>(2, 2), std::tuple<size_t, size_t>(2, 2),
-//     5, 5, 5, 5, "SAME");
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 24, 25);
-//   module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
-//   module4.Reset();
-//   module4.Forward(input, output);
-//   REQUIRE(arma::accu(output) == 0);
-//   REQUIRE(output.n_rows == input.n_rows);
-//   REQUIRE(output.n_cols == input.n_cols);
+  // Output shape should equal input.
+  TransposedConvolution module4(1, 1, 3, 3, 1, 1,
+    std::tuple<size_t, size_t>(2, 2), std::tuple<size_t, size_t>(2, 2),
+    5, 5, 5, 5, "SAME");
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module4.Reset();
+  module4.Forward(input, output);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 
-//   // Test the Backward Function.
-//   module4.Backward(input, output, delta);
-//   REQUIRE(arma::accu(delta) == 0.0);
+  // Test the Backward Function.
+  module4.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == 0.0);
 
-//   TransposedConvolution<> module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 2, 2, "SAME");
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 3, 4);
-//   module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
-//   module5.Reset();
-//   module5.Forward(input, output);
-//   REQUIRE(arma::accu(output) == 0);
-//   REQUIRE(output.n_rows == input.n_rows);
-//   REQUIRE(output.n_cols == input.n_cols);
+  TransposedConvolution module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 2, 2, "SAME");
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 3, 4);
+  module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
+  module5.Reset();
+  module5.Forward(input, output);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 
-//   // Test the Backward Function.
-//   module5.Backward(input, output, delta);
-//   REQUIRE(arma::accu(delta) == 0.0);
+  // Test the Backward Function.
+  module5.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == 0.0);
 
-//   TransposedConvolution<> module6(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 5, 5, "SAME");
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 24, 25);
-//   module6.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
-//   module6.Reset();
-//   module6.Forward(input, output);
-//   REQUIRE(arma::accu(output) == 0);
-//   REQUIRE(output.n_rows == input.n_rows);
-//   REQUIRE(output.n_cols == input.n_cols);
+  TransposedConvolution module6(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 5, 5, "SAME");
+  // Test the forward function.
+  input = arma::linspace<arma::colvec>(0, 24, 25);
+  module6.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
+  module6.Reset();
+  module6.Forward(input, output);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 
-//   // Test the Backward Function.
-//   module6.Backward(input, output, delta);
-//   REQUIRE(arma::accu(delta) == 0.0);
-// }
+  // Test the Backward Function.
+  module6.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == 0.0);
+}
 
 /**
  * Simple test for Max Pooling layer.
@@ -4102,19 +4101,19 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   REQUIRE(arma::accu(delta) == 1.5);
 }
 
-// TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
-// {
-//   Sequential<>* decoder = new Sequential<>();
+TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
+{
+  Sequential* decoder = new Sequential();
 
-//   // Check if we can create an object without specifying output.
-//   REQUIRE_NOTHROW(decoder->Add<TransposedConvolution<>>(24, 16,
-//       5, 5, 1, 1, 0, 0, 10, 10));
+  // Check if we can create an object without specifying output.
+  REQUIRE_NOTHROW(decoder->Add<TransposedConvolution>(24, 16,
+      5, 5, 1, 1, 0, 0, 10, 10));
 
-//   REQUIRE_NOTHROW(decoder->Add<TransposedConvolution<>>(16, 1,
-//       15, 15, 1, 1, 1, 1, 14, 14));
+  REQUIRE_NOTHROW(decoder->Add<TransposedConvolution>(16, 1,
+      15, 15, 1, 1, 1, 1, 14, 14));
 
-//   delete decoder;
-// }
+  delete decoder;
+}
 
 // TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
 // {
@@ -4462,33 +4461,33 @@ TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
 }
 
-// /**
-//  * Transposed Convolution module weight initialization test.
-//  */
-// TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
-// {
-//   size_t inSize = 3, outSize = 3;
-//   size_t kernelWidth = 4, kernelHeight = 4;
-//   TransposedConvolution<> module = TransposedConvolution<>(inSize, outSize,
-//       kernelWidth, kernelHeight, 1, 1, 1, 1, 5, 5, 6, 6);
-//   module.Reset();
-//   RandomInitialization().Initialize(module.Weight());
-//   module.Bias().ones();
+/**
+ * Transposed Convolution module weight initialization test.
+ */
+TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 3, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 4;
+  TransposedConvolution module = TransposedConvolution(inSize, outSize,
+      kernelWidth, kernelHeight, 1, 1, 1, 1, 5, 5, 6, 6);
+  module.Reset();
+  RandomInitialization().Initialize(module.Weight());
+  module.Bias().ones();
 
-//   REQUIRE(std::equal(module.Weight().begin(),
-//       module.Weight().end(), module.Parameters().begin()));
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
 
-//   REQUIRE(std::equal(module.Bias().begin(),
-//       module.Bias().end(), module.Parameters().end() - outSize));
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - outSize));
 
-//   REQUIRE(module.Weight().n_rows == kernelWidth);
-//   REQUIRE(module.Weight().n_cols == kernelHeight);
-//   REQUIRE(module.Weight().n_slices == inSize * outSize);
-//   REQUIRE(module.Bias().n_rows == outSize);
-//   REQUIRE(module.Bias().n_cols == 1);
-//   REQUIRE(module.Parameters().n_rows
-//       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
-// }
+  REQUIRE(module.Weight().n_rows == kernelWidth);
+  REQUIRE(module.Weight().n_cols == kernelHeight);
+  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Bias().n_rows == outSize);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
 
 // /**
 //  * Simple Test for SpatialDropout layer.

@@ -18,8 +18,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-Select<InputDataType, OutputDataType>::Select(
+template<typename InputType, typename OutputType>
+SelectType<InputType, OutputType>::SelectType(
     const size_t index,
     const size_t elements) :
     index(index),
@@ -28,10 +28,9 @@ Select<InputDataType, OutputDataType>::Select(
     // Nothing to do here.
   }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Select<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void SelectType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   if (elements == 0)
   {
@@ -43,12 +42,11 @@ void Select<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Select<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void SelectType<InputType, OutputType>::Backward(
+    const InputType& /* input */,
+    const OutputType& gy,
+    OutputType& g)
 {
   if (elements == 0)
   {
@@ -60,9 +58,9 @@ void Select<InputDataType, OutputDataType>::Backward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void Select<InputDataType, OutputDataType>::serialize(
+void SelectType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(index));

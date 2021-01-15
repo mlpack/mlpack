@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_PADDING_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/layer/layer_traits.hpp>
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -22,16 +22,16 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the Padding module class. The Padding module applies a bias term
  * to the incoming data.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class Padding
+class PaddingType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -42,10 +42,10 @@ class Padding
    * @param padHTop Top padding height of the input.
    * @param padHBottom Bottom padding height of the input.
    */
-  Padding(const size_t padWLeft = 0,
-          const size_t padWRight = 0,
-          const size_t padHTop = 0,
-          const size_t padHBottom = 0);
+  PaddingType(const size_t padWLeft = 0,
+              const size_t padWRight = 0,
+              const size_t padHTop = 0,
+              const size_t padHBottom = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -54,8 +54,7 @@ class Padding
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -66,20 +65,19 @@ class Padding
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the left padding width.
   size_t PadWLeft() const { return padWLeft; }
@@ -124,11 +122,14 @@ class Padding
   size_t nRows, nCols;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-}; // class Padding
+  OutputType outputParameter;
+}; // class PaddingType
+
+// Standard Padding layer.
+typedef PaddingType<arma::mat, arma::mat> Padding;
 
 } // namespace ann
 } // namespace mlpack

@@ -21,7 +21,7 @@
 #include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 #include <mlpack/core/util/to_lower.hpp>
 
-#include "layer_types.hpp"
+#include "layer.hpp"
 #include "padding.hpp"
 
 namespace mlpack {
@@ -34,23 +34,23 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
  * @tparam GradientConvolutionRule Convolution to calculate gradient.
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename BackwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class TransposedConvolution
+class TransposedConvolutionType : public Layer<InputType, OutputType>
 {
  public:
   //! Create the Transposed Convolution object.
-  TransposedConvolution();
+  TransposedConvolutionType();
 
   /**
    * Create the Transposed Convolution object using the specified number of
@@ -76,19 +76,19 @@ class TransposedConvolution
    * @param outputHeight The height of the output data.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
-  TransposedConvolution(const size_t inSize,
-                        const size_t outSize,
-                        const size_t kernelWidth,
-                        const size_t kernelHeight,
-                        const size_t strideWidth = 1,
-                        const size_t strideHeight = 1,
-                        const size_t padW = 0,
-                        const size_t padH = 0,
-                        const size_t inputWidth = 0,
-                        const size_t inputHeight = 0,
-                        const size_t outputWidth = 0,
-                        const size_t outputHeight = 0,
-                        const std::string& paddingType = "None");
+  TransposedConvolutionType(const size_t inSize,
+                            const size_t outSize,
+                            const size_t kernelWidth,
+                            const size_t kernelHeight,
+                            const size_t strideWidth = 1,
+                            const size_t strideHeight = 1,
+                            const size_t padW = 0,
+                            const size_t padH = 0,
+                            const size_t inputWidth = 0,
+                            const size_t inputHeight = 0,
+                            const size_t outputWidth = 0,
+                            const size_t outputHeight = 0,
+                            const std::string& paddingType = "None");
 
   /**
    * Create the Transposed Convolution object using the specified number of
@@ -118,19 +118,19 @@ class TransposedConvolution
    * @param outputHeight The height of the output data.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
-  TransposedConvolution(const size_t inSize,
-                        const size_t outSize,
-                        const size_t kernelWidth,
-                        const size_t kernelHeight,
-                        const size_t strideWidth,
-                        const size_t strideHeight,
-                        const std::tuple<size_t, size_t>& padW,
-                        const std::tuple<size_t, size_t>& padH,
-                        const size_t inputWidth = 0,
-                        const size_t inputHeight = 0,
-                        const size_t outputWidth = 0,
-                        const size_t outputHeight = 0,
-                        const std::string& paddingType = "None");
+  TransposedConvolutionType(const size_t inSize,
+                            const size_t outSize,
+                            const size_t kernelWidth,
+                            const size_t kernelHeight,
+                            const size_t strideWidth,
+                            const size_t strideHeight,
+                            const std::tuple<size_t, size_t>& padW,
+                            const std::tuple<size_t, size_t>& padH,
+                            const size_t inputWidth = 0,
+                            const size_t inputHeight = 0,
+                            const size_t outputWidth = 0,
+                            const size_t outputHeight = 0,
+                            const std::string& paddingType = "None");
 
   /*
    * Set the weight and bias term.
@@ -144,8 +144,7 @@ class TransposedConvolution
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -156,27 +155,25 @@ class TransposedConvolution
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param * (input) The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& /* input */,
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the weight of the layer.
   arma::cube const& Weight() const { return weight; }
@@ -184,29 +181,29 @@ class TransposedConvolution
   arma::cube& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  arma::mat const& Bias() const { return bias; }
+  OutputType const& Bias() const { return bias; }
   //! Modify the bias of the layer.
-  arma::mat& Bias() { return bias; }
+  OutputType& Bias() { return bias; }
 
   //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
+  InputType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  InputType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputType const& Gradient() const { return gradient; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Gradient() { return gradient; }
 
   //! Get the input width.
   size_t InputWidth() const { return inputWidth; }
@@ -414,13 +411,13 @@ class TransposedConvolution
   size_t aH;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored weight object.
   arma::cube weight;
 
   //! Locally-stored bias term object.
-  arma::mat bias;
+  OutputType bias;
 
   //! Locally-stored input width.
   size_t inputWidth;
@@ -450,23 +447,32 @@ class TransposedConvolution
   arma::cube gradientTemp;
 
   //! Locally-stored padding layer for forward propagation.
-  ann::Padding<> paddingForward;
+  ann::Padding paddingForward;
 
   //! Locally-stored padding layer for back propagation.
-  ann::Padding<> paddingBackward;
+  ann::Padding paddingBackward;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType gradient;
 
   //! Locally-stored input parameter object.
-  InputDataType inputParameter;
+  InputType inputParameter;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-}; // class TransposedConvolution
+  OutputType outputParameter;
+}; // class TransposedConvolutionType
+
+// Standard TransposedConvolution
+typedef TransposedConvolutionType<
+  NaiveConvolution<ValidConvolution>,
+  NaiveConvolution<ValidConvolution>,
+  NaiveConvolution<ValidConvolution>,
+  arma::mat,
+  arma::mat
+> TransposedConvolution;
 
 } // namespace ann
 } // namespace mlpack

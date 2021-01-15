@@ -13,7 +13,8 @@
 #define MLPACK_METHODS_ANN_LAYER_SUBVIEW_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/activation_functions/identity_function.hpp>
+
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann {
@@ -22,16 +23,16 @@ namespace ann {
  * Implementation of the subview layer. The subview layer modifies the input to
  * a submatrix of required size.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class Subview
+class SubviewType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -44,11 +45,11 @@ class Subview
    * @param beginCol Starting column index.
    * @param endCol Ending column index.
    */
-  Subview(const size_t inSize = 1,
-          const size_t beginRow = 0,
-          const size_t endRow = 0,
-          const size_t beginCol = 0,
-          const size_t endCol = 0) :
+  SubviewType(const size_t inSize = 1,
+              const size_t beginRow = 0,
+              const size_t endRow = 0,
+              const size_t beginCol = 0,
+              const size_t endCol = 0) :
       inSize(inSize),
       beginRow(beginRow),
       endRow(endRow),
@@ -65,7 +66,6 @@ class Subview
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output)
   {
     size_t batchSize = input.n_cols / inSize;
@@ -111,23 +111,22 @@ class Subview
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g)
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g)
   {
     g = gy;
   }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the width of each sample.
   size_t InSize() const { return inSize; }
@@ -182,11 +181,14 @@ class Subview
   size_t endCol;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-}; // class Subview
+  OutputType outputParameter;
+}; // class SubviewType
+
+// Standard Subview layer.
+typedef SubviewType<arma::mat, arma::mat> Subview;
 
 } // namespace ann
 } // namespace mlpack

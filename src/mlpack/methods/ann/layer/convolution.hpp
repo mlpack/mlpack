@@ -383,7 +383,7 @@ class ConvolutionType : public Layer<InputType, OutputType>
   arma::cube gradientTemp;
 
   //! Locally-stored padding layer.
-  ann::Padding<> padding;
+  ann::Padding padding;
 
   //! Locally-stored delta object.
   OutputType delta;
