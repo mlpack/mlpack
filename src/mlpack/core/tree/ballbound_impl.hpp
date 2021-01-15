@@ -92,6 +92,22 @@ BallBound<MetricType, VecType>::BallBound(BallBound&& other) :
   other.ownsMetric = false;
 }
 
+//! Move assignment operator.
+template<typename MetricType, typename VecType>
+BallBound<MetricType, VecType>& BallBound<MetricType, VecType>::operator=(
+    BallBound&& other)
+{
+  radius = other.radius,
+  center = std::move(other.center),
+  metric = other.metric,
+  ownsMetric = other.ownsMetric
+
+  other.radius = 0.0;
+  other.center = VecType();
+  other.metric = nullptr;
+  other.ownsMetric = false;
+}
+
 //! Destructor to release allocated memory.
 template<typename MetricType, typename VecType>
 BallBound<MetricType, VecType>::~BallBound()
