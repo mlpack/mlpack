@@ -3244,49 +3244,49 @@ TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
 //   REQUIRE(layer.Beta() == 2);
 // }
 
-// /**
-//  * Simple residual module test.
-//  */
-// TEST_CASE("SimpleResidualLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat outputA, outputB, input, deltaA, deltaB;
+/**
+ * Simple residual module test.
+ */
+TEST_CASE("SimpleResidualLayerTest", "[ANNLayerTest]")
+{
+  arma::mat outputA, outputB, input, deltaA, deltaB;
 
-//   Sequential<>* sequential = new Sequential<>(true);
-//   Residual<>* residual = new Residual<>(true);
+  Sequential* sequential = new Sequential(true);
+  Residual* residual = new Residual(true);
 
-//   Linear<>* linearA = new Linear<>(10, 10);
-//   linearA->Parameters().randu();
-//   linearA->Reset();
-//   Linear<>* linearB = new Linear<>(10, 10);
-//   linearB->Parameters().randu();
-//   linearB->Reset();
+  Linear* linearA = new Linear(10, 10);
+  linearA->Parameters().randu();
+  linearA->Reset();
+  Linear* linearB = new Linear(10, 10);
+  linearB->Parameters().randu();
+  linearB->Reset();
 
-//   // Add the same layers (with the same parameters) to both Sequential and
-//   // Residual object.
-//   sequential->Add(linearA);
-//   sequential->Add(linearB);
+  // Add the same layers (with the same parameters) to both Sequential and
+  // Residual object.
+  sequential->Add(linearA);
+  sequential->Add(linearB);
 
-//   residual->Add(linearA);
-//   residual->Add(linearB);
+  residual->Add(linearA);
+  residual->Add(linearB);
 
-//   // Test the Forward function (pass the same input to both).
-//   input = arma::randu(10, 1);
-//   sequential->Forward(input, outputA);
-//   residual->Forward(input, outputB);
+  // Test the Forward function (pass the same input to both).
+  input = arma::randu(10, 1);
+  sequential->Forward(input, outputA);
+  residual->Forward(input, outputB);
 
-//   CheckMatrices(outputA, outputB - input);
+  CheckMatrices(outputA, outputB - input);
 
-//   // Test the Backward function (pass the same error to both).
-//   sequential->Backward(input, input, deltaA);
-//   residual->Backward(input, input, deltaB);
+  // Test the Backward function (pass the same error to both).
+  sequential->Backward(input, input, deltaA);
+  residual->Backward(input, input, deltaB);
 
-//   CheckMatrices(deltaA, deltaB - input);
+  CheckMatrices(deltaA, deltaB - input);
 
-//   delete sequential;
-//   delete residual;
-//   delete linearA;
-//   delete linearB;
-// }
+  delete sequential;
+  delete residual;
+  delete linearA;
+  delete linearB;
+}
 
 // /**
 //  * Simple Highway module test.
@@ -3390,9 +3390,9 @@ TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
 //   REQUIRE(CheckGradient(function) <= 1e-4);
 // }
 
-// /**
-//  * Sequential layer numerical gradient test.
-//  */
+/**
+ * Sequential layer numerical gradient test.
+ */
 // TEST_CASE("GradientSequentialLayerTest", "[ANNLayerTest]")
 // {
 //   // Linear function gradient instantiation.
@@ -3405,17 +3405,17 @@ TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
 //       model->Predictors() = input;
 //       model->Responses() = target;
-//       model->Add<IdentityLayer<> >();
-//       model->Add<Linear<> >(10, 10);
-//       sequential = new Sequential<>();
-//       sequential->Add<Linear<> >(10, 10);
-//       sequential->Add<ReLULayer<> >();
-//       sequential->Add<Linear<> >(10, 5);
-//       sequential->Add<ReLULayer<> >();
+//       model->Add<IdentityLayer>();
+//       model->Add<Linear>(10, 10);
+//       sequential = new Sequential();
+//       sequential->Add<Linear>(10, 10);
+//       sequential->Add<ReLULayer>();
+//       sequential->Add<Linear>(10, 5);
+//       sequential->Add<ReLULayer>();
 
 //       model->Add(sequential);
-//       model->Add<Linear<> >(5, 2);
-//       model->Add<LogSoftMax<> >();
+//       model->Add<Linear>(5, 2);
+//       model->Add<LogSoftMax>();
 //     }
 
 //     ~GradientFunction()
@@ -3433,7 +3433,7 @@ TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
 //     arma::mat& Parameters() { return model->Parameters(); }
 
 //     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-//     Sequential<>* sequential;
+//     Sequential* sequential;
 //     arma::mat input, target;
 //   } function;
 

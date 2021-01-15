@@ -17,15 +17,7 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 
-#include "../visitor/delete_visitor.hpp"
-#include "../visitor/copy_visitor.hpp"
-#include "../visitor/delta_visitor.hpp"
-#include "../visitor/output_height_visitor.hpp"
-#include "../visitor/output_parameter_visitor.hpp"
-#include "../visitor/output_width_visitor.hpp"
-
-#include "layer_types.hpp"
-#include "add_merge.hpp"
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -57,19 +49,18 @@ namespace ann /** Artificial Neural Network. */ {
  * Note: This class should at least have two layers for a call to its Gradient()
  *       function.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam Residual If true, use the object as a Residual block.
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
-    bool Residual = false,
-    typename... CustomLayers
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat,
+    bool Residual = false
 >
-class Sequential
+class SequentialType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -77,7 +68,7 @@ class Sequential
    *
    * @param model Expose the all network modules.
    */
-  Sequential(const bool model = true);
+  SequentialType(const bool model = true);
 
   /**
    * Create the Sequential object using the specified parameters.
@@ -86,16 +77,16 @@ class Sequential
    * @param ownsLayers If true, then this module will delete its layers when
    *      deallocated.
    */
-  Sequential(const bool model, const bool ownsLayers);
+  SequentialType(const bool model, const bool ownsLayers);
 
   //! Copy constructor.
-  Sequential(const Sequential& layer);
+  SequentialType(const SequentialType& layer);
 
   //! Copy assignment operator.
-  Sequential& operator = (const Sequential& layer);
+  SequentialType& operator = (const SequentialType& layer);
 
   //! Destroy the Sequential object.
-  ~Sequential();
+  ~SequentialType();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -104,8 +95,7 @@ class Sequential
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -116,24 +106,22 @@ class Sequential
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& /* gradient */);
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& /* gradient */);
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param args The layer parameter.
@@ -141,15 +129,15 @@ class Sequential
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
+  void Add(Layer<InputType, OutputType>* layer) { network.push_back(layer); }
 
   //! Return the model modules.
-  std::vector<LayerTypes<CustomLayers...> >& Model()
+  std::vector<Layer<InputType, OutputType>*>& Model()
   {
     if (model)
     {
@@ -160,29 +148,29 @@ class Sequential
   }
 
   //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return parameters; }
+  const OutputType& Parameters() const { return parameters; }
   //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return parameters; }
+  OutputType& Parameters() { return parameters; }
 
   //! Get the input parameter.
-  arma::mat const& InputParameter() const { return inputParameter; }
+  const InputType& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  arma::mat& InputParameter() { return inputParameter; }
+  InputType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  arma::mat const& OutputParameter() const { return outputParameter; }
+  const OutputType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  arma::mat& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  arma::mat const& Delta() const { return delta; }
+  const OutputType& Delta() const { return delta; }
   //! Modify the delta.
-  arma::mat& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  arma::mat const& Gradient() const { return gradient; }
+  const OutputType& Gradient() const { return gradient; }
   //! Modify the gradient.
-  arma::mat& Gradient() { return gradient; }
+  OutputType& Gradient() { return gradient; }
 
   /**
    * Serialize the layer
@@ -198,43 +186,25 @@ class Sequential
   bool reset;
 
   //! Locally-stored network modules.
-  std::vector<LayerTypes<CustomLayers...> > network;
+  std::vector<Layer<InputType, OutputType>*> network;
 
   //! Locally-stored model parameters.
-  arma::mat parameters;
-
-  //! Locally-stored delta visitor.
-  DeltaVisitor deltaVisitor;
-
-  //! Locally-stored output parameter visitor.
-  OutputParameterVisitor outputParameterVisitor;
-
-  //! Locally-stored delete visitor.
-  DeleteVisitor deleteVisitor;
+  OutputType parameters;
 
   //! Locally-stored empty list of modules.
-  std::vector<LayerTypes<CustomLayers...> > empty;
+  std::vector<Layer<InputType, OutputType>*> empty;
 
   //! Locally-stored delta object.
-  arma::mat delta;
+  OutputType delta;
 
   //! Locally-stored input parameter object.
-  arma::mat inputParameter;
+  InputType inputParameter;
 
   //! Locally-stored output parameter object.
-  arma::mat outputParameter;
+  OutputType outputParameter;
 
   //! Locally-stored gradient object.
-  arma::mat gradient;
-
-  //! Locally-stored output width visitor.
-  OutputWidthVisitor outputWidthVisitor;
-
-  //! Locally-stored output height visitor.
-  OutputHeightVisitor outputHeightVisitor;
-
-  //! Locally-stored copy visitor
-  CopyVisitor<CustomLayers...> copyVisitor;
+  OutputType gradient;
 
   //! The input width.
   size_t width;
@@ -244,18 +214,13 @@ class Sequential
 
   //! Whether we are responsible for deleting the layers held in this module.
   bool ownsLayers;
-}; // class Sequential
+}; // class SequentialType
 
-/*
- * Convenience typedef for use as Residual<> layer.
- */
-template<
-  typename InputDataType = arma::mat,
-  typename OutputDataType = arma::mat,
-  typename... CustomLayers
->
-using Residual = Sequential<
-    InputDataType, OutputDataType, true, CustomLayers...>;
+// Standard Sequential layer.
+typedef SequentialType<arma::mat, arma::mat, false> Sequential;
+
+// Standard Residual layer.
+typedef SequentialType<arma::mat, arma::mat, true> Residual;
 
 } // namespace ann
 } // namespace mlpack

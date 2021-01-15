@@ -55,6 +55,7 @@
 // #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 // #include <mlpack/methods/ann/layer/reparametrization.hpp>
 // #include <mlpack/methods/ann/layer/select.hpp>
+#include <mlpack/methods/ann/layer/sequential.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
 // #include <mlpack/methods/ann/layer/softshrink.hpp>
 // #include <mlpack/methods/ann/layer/spatial_dropout.hpp>

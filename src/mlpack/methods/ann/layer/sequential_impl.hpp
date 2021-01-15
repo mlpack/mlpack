@@ -16,37 +16,28 @@
 // In case it hasn't yet been included.
 #include "sequential.hpp"
 
-#include "../visitor/forward_visitor.hpp"
-#include "../visitor/backward_visitor.hpp"
-#include "../visitor/gradient_visitor.hpp"
-#include "../visitor/set_input_height_visitor.hpp"
-#include "../visitor/set_input_width_visitor.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template <typename InputDataType, typename OutputDataType, bool Residual,
-          typename... CustomLayers>
-Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
-Sequential(const bool model) :
+template <typename InputType, typename OutputType, bool Residual>
+SequentialType<InputType, OutputType, Residual>::
+SequentialType(const bool model) :
     model(model), reset(false), width(0), height(0), ownsLayers(!model)
 {
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType, bool Residual,
-          typename... CustomLayers>
-Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
-Sequential(const bool model, const bool ownsLayers) :
+template <typename InputType, typename OutputType, bool Residual>
+SequentialType<InputType, OutputType, Residual>::
+SequentialType(const bool model, const bool ownsLayers) :
     model(model), reset(false), width(0), height(0), ownsLayers(ownsLayers)
 {
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType, bool Residual,
-          typename... CustomLayers>
-Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
-Sequential(const Sequential& layer) :
+template <typename InputType, typename OutputType, bool Residual>
+SequentialType<InputType, OutputType, Residual>::
+SequentialType(const SequentialType& layer) :
     model(layer.model),
     reset(layer.reset),
     width(layer.width),
@@ -56,11 +47,10 @@ Sequential(const Sequential& layer) :
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType, bool Residual,
-          typename... CustomLayers>
-Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>&
-Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
-operator = (const Sequential& layer)
+template <typename InputType, typename OutputType, bool Residual>
+SequentialType<InputType, OutputType, Residual>&
+SequentialType<InputType, OutputType, Residual>::
+operator = (const SequentialType& layer)
 {
   if (this != &layer)
   {
@@ -72,89 +62,83 @@ operator = (const Sequential& layer)
     parameters = layer.parameters;
     network.clear();
     // Build new layers according to source network.
-    for (size_t i = 0; i < layer.network.size(); ++i)
-    {
-      this->network.push_back(boost::apply_visitor(copyVisitor,
-          layer.network[i]));
-    }
+    // for (size_t i = 0; i < layer.network.size(); ++i)
+    // {
+    //   this->network.push_back(boost::apply_visitor(copyVisitor,
+    //       layer.network[i]));
+    // }
   }
   return *this;
 }
 
 
-template <typename InputDataType, typename OutputDataType, bool Residual,
-          typename... CustomLayers>
-Sequential<
-    InputDataType, OutputDataType, Residual, CustomLayers...>::~Sequential()
+template <typename InputType, typename OutputType, bool Residual>
+SequentialType<InputType, OutputType, Residual>::~SequentialType()
 {
   if (!model && ownsLayers)
   {
-    for (LayerTypes<CustomLayers...>& layer : network)
-      boost::apply_visitor(deleteVisitor, layer);
+    for (size_t i = 0; i < network.size(); ++i)
+      delete network[i];
   }
 }
 
-template<typename InputDataType, typename OutputDataType, bool Residual,
-         typename... CustomLayers>
-template<typename eT>
-void Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
-Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template <typename InputType, typename OutputType, bool Residual>
+void SequentialType<InputType, OutputType, Residual>::
+Forward(const InputType& input, OutputType& output)
 {
-  boost::apply_visitor(ForwardVisitor(input,
-      boost::apply_visitor(outputParameterVisitor, network.front())),
-      network.front());
+  network.front()->Forward(input, network.front()->OutputParameter());
 
-  if (!reset)
-  {
-    if (boost::apply_visitor(outputWidthVisitor, network.front()) != 0)
-    {
-      width = boost::apply_visitor(outputWidthVisitor, network.front());
-    }
+  // if (!reset)
+  // {
+  //   if (boost::apply_visitor(outputWidthVisitor, network.front()) != 0)
+  //   {
+  //     width = boost::apply_visitor(outputWidthVisitor, network.front());
+  //   }
 
-    if (boost::apply_visitor(outputHeightVisitor, network.front()) != 0)
-    {
-      height = boost::apply_visitor(outputHeightVisitor, network.front());
-    }
-  }
+  //   if (boost::apply_visitor(outputHeightVisitor, network.front()) != 0)
+  //   {
+  //     height = boost::apply_visitor(outputHeightVisitor, network.front());
+  //   }
+  // }
 
   for (size_t i = 1; i < network.size(); ++i)
   {
-    if (!reset)
-    {
-      // Set the input width.
-      boost::apply_visitor(SetInputWidthVisitor(width), network[i]);
+    // if (!reset)
+    // {
+    //   // Set the input width.
+    //   boost::apply_visitor(SetInputWidthVisitor(width), network[i]);
 
-      // Set the input height.
-      boost::apply_visitor(SetInputHeightVisitor(height), network[i]);
-    }
+    //   // Set the input height.
+    //   boost::apply_visitor(SetInputHeightVisitor(height), network[i]);
+    // }
 
-    boost::apply_visitor(ForwardVisitor(boost::apply_visitor(
-        outputParameterVisitor, network[i - 1]),
-        boost::apply_visitor(outputParameterVisitor, network[i])),
-        network[i]);
+    network[i]->Forward(
+        network[i - 1]->OutputParameter(),
+        network[i]->OutputParameter()
+    );
 
-    if (!reset)
-    {
-      // Get the output width.
-      if (boost::apply_visitor(outputWidthVisitor, network[i]) != 0)
-      {
-        width = boost::apply_visitor(outputWidthVisitor, network[i]);
-      }
+    // if (!reset)
+    // {
+    //   // Get the output width.
+    //   if (boost::apply_visitor(outputWidthVisitor, network[i]) != 0)
+    //   {
+    //     width = boost::apply_visitor(outputWidthVisitor, network[i]);
+    //   }
 
-      // Get the output height.
-      if (boost::apply_visitor(outputHeightVisitor, network[i]) != 0)
-      {
-        height = boost::apply_visitor(outputHeightVisitor, network[i]);
-      }
-    }
+    //   // Get the output height.
+    //   if (boost::apply_visitor(outputHeightVisitor, network[i]) != 0)
+    //   {
+    //     height = boost::apply_visitor(outputHeightVisitor, network[i]);
+    //   }
+    // }
   }
 
-  if (!reset)
-  {
-    reset = true;
-  }
+  // if (!reset)
+  // {
+  //   reset = true;
+  // }
 
-  output = boost::apply_visitor(outputParameterVisitor, network.back());
+  output = network.back()->OutputParameter();
 
   if (Residual)
   {
@@ -168,30 +152,28 @@ Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   }
 }
 
-template<typename InputDataType, typename OutputDataType, bool Residual,
-         typename... CustomLayers>
-template<typename eT>
-void Sequential<
-    InputDataType, OutputDataType, Residual, CustomLayers...>::Backward(
-        const arma::Mat<eT>& /* input */,
-        const arma::Mat<eT>& gy,
-        arma::Mat<eT>& g)
+template <typename InputType, typename OutputType, bool Residual>
+void SequentialType<InputType, OutputType, Residual>::Backward(
+        const InputType& /* input */,
+        const OutputType& gy,
+        OutputType& g)
 {
-  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-      outputParameterVisitor, network.back()), gy,
-      boost::apply_visitor(deltaVisitor, network.back())),
-      network.back());
+  network.back()->Backward(
+      network.back()->OutputParameter(),
+      gy,
+      network.back()->Delta()
+  );
 
   for (size_t i = 2; i < network.size() + 1; ++i)
   {
-    boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-        outputParameterVisitor, network[network.size() - i]),
-        boost::apply_visitor(deltaVisitor, network[network.size() - i + 1]),
-        boost::apply_visitor(deltaVisitor, network[network.size() - i])),
-        network[network.size() - i]);
+    network[network.size() - i]->Backward(
+        network[network.size() - i]->OutputParameter(),
+        network[network.size() - i + 1]->Delta(),
+        network[network.size() - i]->Delta()
+    );
   }
 
-  g = boost::apply_visitor(deltaVisitor, network.front());
+  g = network.front()->Delta();
 
   if (Residual)
   {
@@ -199,49 +181,48 @@ void Sequential<
   }
 }
 
-template<typename InputDataType, typename OutputDataType, bool Residual,
-         typename... CustomLayers>
-template<typename eT>
-void Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
-Gradient(const arma::Mat<eT>& input,
-         const arma::Mat<eT>& error,
-         arma::Mat<eT>& /* gradient */)
+template <typename InputType, typename OutputType, bool Residual>
+void SequentialType<InputType, OutputType, Residual>::
+Gradient(const InputType& input,
+         const OutputType& error,
+         OutputType& /* gradient */)
 {
-  boost::apply_visitor(GradientVisitor(boost::apply_visitor(
-      outputParameterVisitor, network[network.size() - 2]), error),
-      network.back());
+  network.back()->Gradient(
+      network[network.size() - 2]->OutputParameter(),
+      error,
+      network.back()->Gradient()
+  );
 
   for (size_t i = 2; i < network.size(); ++i)
   {
-    boost::apply_visitor(GradientVisitor(boost::apply_visitor(
-        outputParameterVisitor, network[network.size() - i - 1]),
-        boost::apply_visitor(deltaVisitor, network[network.size() - i + 1])),
-        network[network.size() - i]);
+    network[network.size() - i]->Gradient(
+        network[network.size() - i - 1]->OutputParameter(),
+        network[network.size() - i + 1]->Delta(),
+        network[network.size() - i]->Gradient()
+    );
   }
 
-  boost::apply_visitor(GradientVisitor(input,
-      boost::apply_visitor(deltaVisitor, network[1])), network.front());
+  network.front()->Gradient(
+      input,
+      network[1]->Delta(),
+      network.front()->Gradient()
+  );
 }
 
-template<typename InputDataType, typename OutputDataType, bool Residual,
-         typename... CustomLayers>
+template <typename InputType, typename OutputType, bool Residual>
 template<typename Archive>
-void Sequential<
-    InputDataType, OutputDataType, Residual, CustomLayers...>::serialize(
+void SequentialType<InputType, OutputType, Residual>::serialize(
         Archive& ar, const uint32_t /* version */)
 {
   // If loading, delete the old layers.
   if (cereal::is_loading<Archive>())
   {
-    for (LayerTypes<CustomLayers...>& layer : network)
-    {
-      boost::apply_visitor(deleteVisitor, layer);
-    }
+    for (size_t i = 0; i < network.size(); ++i)
+      delete network[i];
   }
 
   ar(CEREAL_NVP(model));
-  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
-
+  // ar(CEREAL_VECTOR_VARIANT_POINTER(network));
   ar(CEREAL_NVP(ownsLayers));
 }
 
