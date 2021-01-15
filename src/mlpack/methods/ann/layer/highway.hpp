@@ -15,16 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include <boost/ptr_container/ptr_vector.hpp>
-
-#include "../visitor/delete_visitor.hpp"
-#include "../visitor/delta_visitor.hpp"
-#include "../visitor/output_height_visitor.hpp"
-#include "../visitor/output_parameter_visitor.hpp"
-#include "../visitor/output_width_visitor.hpp"
-
-#include "layer_types.hpp"
-#include "add_merge.hpp"
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -48,31 +39,31 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
-    typename... CustomLayers>
-class Highway
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
+>
+class HighwayType : public Layer<InputType, OutputType>
 {
  public:
-  //! Create the Highway object.
-  Highway();
+  //! Create the HighwayTest object.
+  HighwayType();
 
   /**
-   * Create the Highway object.
+   * Create the HighwayTest object.
    *
    * @param inSize The number of input units.
    * @param model Expose all the network modules.
    */
-  Highway(const size_t inSize, const bool model = true);
+  HighwayType(const size_t inSize, const bool model = true);
 
   //! Destroy the Highway object.
-  ~Highway();
+  ~HighwayType();
 
   /**
    * Reset the layer parameter.
@@ -86,8 +77,7 @@ class Highway
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed-backward pass of a neural network, calculating the function
@@ -98,10 +88,9 @@ class Highway
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activation.
@@ -110,10 +99,9 @@ class Highway
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& gradient);
 
   /**
    * Add a new module to the model.
@@ -132,14 +120,14 @@ class Highway
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer)
+  void Add(Layer<arma::mat, arma::mat>* layer)
   {
     network.push_back(layer);
     networkOwnerships.push_back(false);
   }
 
   //! Return the modules of the model.
-  std::vector<LayerTypes<CustomLayers...> >& Model()
+  std::vector<Layer<>*>& Model()
   {
     if (model)
     {
@@ -150,29 +138,29 @@ class Highway
   }
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
+  InputType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  InputType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputType const& Gradient() const { return gradient; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Gradient() { return gradient; }
 
   //! Get the number of input units.
   size_t InSize() const { return inSize; }
@@ -194,43 +182,43 @@ class Highway
   bool reset;
 
   //! Locally-stored network modules.
-  std::vector<LayerTypes<CustomLayers...> > network;
+  std::vector<Layer<arma::mat, arma::mat>*> network;
 
   //! The list of network modules we are responsible for.
   std::vector<bool> networkOwnerships;
 
   //! Locally-stored empty list of modules.
-  std::vector<LayerTypes<CustomLayers...> > empty;
+  std::vector<Layer<arma::mat, arma::mat>*> empty;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType gradient;
 
   //! Weights for transformation of output.
-  OutputDataType transformWeight;
+  OutputType transformWeight;
 
   //! Bias for transformation of output.
-  OutputDataType transformBias;
+  OutputType transformBias;
 
   //! Locally-stored transform gate parameters.
-  OutputDataType transformGate;
+  OutputType transformGate;
 
   //! Locally-stored transform gate activation.
-  OutputDataType transformGateActivation;
+  OutputType transformGateActivation;
 
   //! Locally-stored transform gate error.
-  OutputDataType transformGateError;
+  OutputType transformGateError;
 
   //! Locally-stored input parameter object.
-  InputDataType inputParameter;
+  InputType inputParameter;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 
   //! The input width.
   size_t width;
@@ -239,23 +227,11 @@ class Highway
   size_t height;
 
   //! The normal output without highway network.
-  OutputDataType networkOutput;
+  OutputType networkOutput;
+}; // class HighwayType
 
-  //! Locally-stored delta visitor.
-  DeltaVisitor deltaVisitor;
-
-  //! Locally-stored output parameter visitor.
-  OutputParameterVisitor outputParameterVisitor;
-
-  //! Locally-stored delete visitor.
-  DeleteVisitor deleteVisitor;
-
-  //! Locally-stored output width visitor.
-  OutputWidthVisitor outputWidthVisitor;
-
-  //! Locally-stored output height visitor.
-  OutputHeightVisitor outputHeightVisitor;
-}; // class Highway
+// Standard Highway layer.
+typedef HighwayType<arma::mat, arma::mat> Highway;
 
 } // namespace ann
 } // namespace mlpack

@@ -271,7 +271,7 @@ class FFN
    */
   void Shuffle();
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param args The layer parameter.
@@ -279,12 +279,12 @@ class FFN
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  //void Add(Layer layer) { network.push_back(layer); }
+  void Add(Layer<arma::mat, arma::mat>* layer) { network.push_back(layer); }
 
   //! Get the network model.
   const std::vector<Layer<arma::mat, arma::mat>*>& Model() const

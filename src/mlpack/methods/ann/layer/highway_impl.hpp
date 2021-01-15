@@ -16,18 +16,11 @@
 // In case it hasn't yet been included.
 #include "highway.hpp"
 
-#include "../visitor/forward_visitor.hpp"
-#include "../visitor/backward_visitor.hpp"
-#include "../visitor/gradient_visitor.hpp"
-#include "../visitor/set_input_height_visitor.hpp"
-#include "../visitor/set_input_width_visitor.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-Highway<InputDataType, OutputDataType, CustomLayers...>::Highway() :
+template<typename InputType, typename OutputType>
+HighwayType<InputType, OutputType>::HighwayType() :
     inSize(0),
     model(true),
     reset(false),
@@ -37,9 +30,8 @@ Highway<InputDataType, OutputDataType, CustomLayers...>::Highway() :
   // Nothing to do here.
 }
 
-template<
-    typename InputDataType, typename OutputDataType, typename... CustomLayers>
-Highway<InputDataType, OutputDataType, CustomLayers...>::Highway(
+template<typename InputType, typename OutputType>
+HighwayType<InputType, OutputType>::HighwayType(
     const size_t inSize,
     const bool model) :
     inSize(inSize),
@@ -51,89 +43,83 @@ Highway<InputDataType, OutputDataType, CustomLayers...>::Highway(
   weights.set_size(inSize * inSize + inSize, 1);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-Highway<InputDataType, OutputDataType, CustomLayers...>::~Highway()
+template<typename InputType, typename OutputType>
+HighwayType<InputType, OutputType>::~HighwayType()
 {
   if (!model)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
       if (networkOwnerships[i])
-        boost::apply_visitor(deleteVisitor, network[i]);
+        delete network[i];
     }
   }
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-void Highway<InputDataType, OutputDataType, CustomLayers...>::Reset()
+template<typename InputType, typename OutputType>
+void HighwayType<InputType, OutputType>::Reset()
 {
-  transformWeight = arma::mat(weights.memptr(), inSize, inSize, false, false);
-  transformBias = arma::mat(weights.memptr() + transformWeight.n_elem,
+  transformWeight = OutputType(weights.memptr(), inSize, inSize, false, false);
+  transformBias = OutputType(weights.memptr() + transformWeight.n_elem,
       inSize, 1, false, false);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void Highway<InputDataType, OutputDataType, CustomLayers...>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void HighwayType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
-  boost::apply_visitor(ForwardVisitor(input,
-      boost::apply_visitor(outputParameterVisitor, network.front())),
-      network.front());
+  network.front()->Forward(input, network.front()->OutputParameter());
 
-  if (!reset)
-  {
-    if (boost::apply_visitor(outputWidthVisitor, network.front()) != 0)
-    {
-      width = boost::apply_visitor(outputWidthVisitor, network.front());
-    }
+  // if (!reset)
+  // {
+  //   if (boost::apply_visitor(outputWidthVisitor, network.front()) != 0)
+  //   {
+  //     width = boost::apply_visitor(outputWidthVisitor, network.front());
+  //   }
 
-    if (boost::apply_visitor(outputHeightVisitor, network.front()) != 0)
-    {
-      height = boost::apply_visitor(outputHeightVisitor, network.front());
-    }
-  }
+  //   if (boost::apply_visitor(outputHeightVisitor, network.front()) != 0)
+  //   {
+  //     height = boost::apply_visitor(outputHeightVisitor, network.front());
+  //   }
+  // }
 
   for (size_t i = 1; i < network.size(); ++i)
   {
-    if (!reset)
-    {
-      // Set the input width.
-      boost::apply_visitor(SetInputWidthVisitor(width), network[i]);
+    // if (!reset)
+    // {
+    //   // Set the input width.
+    //   boost::apply_visitor(SetInputWidthVisitor(width), network[i]);
 
-      // Set the input height.
-      boost::apply_visitor(SetInputHeightVisitor(height), network[i]);
-    }
+    //   // Set the input height.
+    //   boost::apply_visitor(SetInputHeightVisitor(height), network[i]);
+    // }
 
-    boost::apply_visitor(ForwardVisitor(boost::apply_visitor(
-        outputParameterVisitor, network[i - 1]),
-        boost::apply_visitor(outputParameterVisitor, network[i])),
-        network[i]);
+    network[i]->Forward(
+        network[i - 1]->OutputParameter(),
+        network[i]->OutputParameter()
+      );
 
-    if (!reset)
-    {
-      // Get the output width.
-      if (boost::apply_visitor(outputWidthVisitor, network[i]) != 0)
-      {
-        width = boost::apply_visitor(outputWidthVisitor, network[i]);
-      }
+    // if (!reset)
+    // {
+    //   // Get the output width.
+    //   if (boost::apply_visitor(outputWidthVisitor, network[i]) != 0)
+    //   {
+    //     width = boost::apply_visitor(outputWidthVisitor, network[i]);
+    //   }
 
-      // Get the output height.
-      if (boost::apply_visitor(outputHeightVisitor, network[i]) != 0)
-      {
-        height = boost::apply_visitor(outputHeightVisitor, network[i]);
-      }
-    }
+    //   // Get the output height.
+    //   if (boost::apply_visitor(outputHeightVisitor, network[i]) != 0)
+    //   {
+    //     height = boost::apply_visitor(outputHeightVisitor, network[i]);
+    //   }
+    // }
   }
-  if (!reset)
-  {
-    reset = true;
-  }
+  // if (!reset)
+  // {
+  //   reset = true;
+  // }
 
-  output = boost::apply_visitor(outputParameterVisitor, network.back());
+  output = network.back()->OutputParameter();
 
   if (arma::size(output) != arma::size(input))
   {
@@ -150,31 +136,27 @@ void Highway<InputDataType, OutputDataType, CustomLayers...>::Forward(
       (input % (1 - transformGateActivation));
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void Highway<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void HighwayType<InputType, OutputType>::Backward(
+    const InputType& /* input */,
+    const OutputType& gy,
+    OutputType& g)
 {
-  arma::Mat<eT> gyTransform = gy % transformGateActivation;
-  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-      outputParameterVisitor, network.back()),
-      gyTransform,
-      boost::apply_visitor(deltaVisitor, network.back())),
-      network.back());
+  OutputType gyTransform = gy % transformGateActivation;
+  network.back()->Backward(network.back()->OutputParameter(),
+                           gyTransform,
+                           network.back()->Delta());
 
   for (size_t i = 2; i < network.size() + 1; ++i)
   {
-    boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-        outputParameterVisitor, network[network.size() - i]),
-        boost::apply_visitor(deltaVisitor, network[network.size() - i + 1]),
-        boost::apply_visitor(deltaVisitor,
-        network[network.size() - i])), network[network.size() - i]);
+    network[network.size() - i]->Backward(
+        network[network.size() - i]->OutputParameter(),
+        network[network.size() - i + 1]->Delta(),
+        network[network.size() - i]->Delta()
+      );
   }
 
-  g = boost::apply_visitor(deltaVisitor, network.front());
+  g = network.front()->Delta();
 
   transformGateError = gy % (networkOutput - inputParameter) %
       transformGateActivation % (1.0 - transformGateActivation);
@@ -182,29 +164,33 @@ void Highway<InputDataType, OutputDataType, CustomLayers...>::Backward(
   g += gy % (1 - transformGateActivation);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void Highway<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
+template<typename InputType, typename OutputType>
+void HighwayType<InputType, OutputType>::Gradient(
+    const InputType& input,
+    const OutputType& error,
+    OutputType& gradient)
 {
-  arma::Mat<eT> errorTransform = error % transformGateActivation;
-  boost::apply_visitor(GradientVisitor(boost::apply_visitor(
-      outputParameterVisitor, network[network.size() - 2]),
-      errorTransform), network.back());
+  OutputType errorTransform = error % transformGateActivation;
+  network.back()->Gradient(
+      network[network.size() - 2]->OutputParameter(),
+      errorTransform,
+      network[network.size() - 2]->Gradient()
+    );
 
   for (size_t i = 2; i < network.size(); ++i)
   {
-    boost::apply_visitor(GradientVisitor(boost::apply_visitor(
-        outputParameterVisitor, network[network.size() - i - 1]),
-        boost::apply_visitor(deltaVisitor, network[network.size() - i + 1])),
-        network[network.size() - i]);
+    network[network.size() - i]->Gradient(
+        network[network.size() - i - 1]->OutputParameter(),
+        network[network.size() - i + 1]->Delta(),
+        network[network.size() - i]->Gradient()
+      );
   }
 
-  boost::apply_visitor(GradientVisitor(input,
-      boost::apply_visitor(deltaVisitor, network[1])), network.front());
+  network.front()->Gradient(
+      input,
+      network[1]->Delta(),
+      network.front()->Delta()
+    );
 
   gradient.submat(0, 0, transformWeight.n_elem - 1, 0) = arma::vectorise(
       transformGateError * input.t());
@@ -212,24 +198,22 @@ void Highway<InputDataType, OutputDataType, CustomLayers...>::Gradient(
       arma::sum(transformGateError, 1);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void Highway<InputDataType, OutputDataType, CustomLayers...>::serialize(
+void HighwayType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   // If loading, delete the old layers and set size for weights.
   if (cereal::is_loading<Archive>())
   {
-    for (LayerTypes<CustomLayers...>& layer : network)
-    {
-      boost::apply_visitor(deleteVisitor, layer);
-    }
+    for (size_t i = 0; i < network.size(); ++i)
+      delete network[i];
+
     weights.set_size(inSize * inSize + inSize, 1);
   }
 
   ar(CEREAL_NVP(model));
-  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
+  // ar(CEREAL_VECTOR_VARIANT_POINTER(network));
 }
 
 } // namespace ann

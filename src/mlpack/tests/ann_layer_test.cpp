@@ -1598,146 +1598,146 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //   boost::apply_visitor(DeleteVisitor(), layer);
 // }
 
-// /**
-//  * Simple concat module test.
-//  */
-// TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta, error;
+/**
+ * Simple concat module test.
+ */
+TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta, error;
 
-//   Linear<>* moduleA = new Linear<>(10, 10);
-//   moduleA->Parameters().randu();
-//   moduleA->Reset();
+  Linear* moduleA = new Linear(10, 10);
+  moduleA->Parameters().randu();
+  moduleA->Reset();
 
-//   Linear<>* moduleB = new Linear<>(10, 10);
-//   moduleB->Parameters().randu();
-//   moduleB->Reset();
+  Linear* moduleB = new Linear(10, 10);
+  moduleB->Parameters().randu();
+  moduleB->Reset();
 
-//   Concat<> module;
-//   module.Add(moduleA);
-//   module.Add(moduleB);
+  Concat module;
+  module.Add(moduleA);
+  module.Add(moduleB);
 
-//   // Test the Forward function.
-//   input = arma::zeros(10, 1);
-//   module.Forward(input, output);
+  // Test the Forward function.
+  input = arma::zeros(10, 1);
+  module.Forward(input, output);
 
-//   const double sumModuleA = arma::accu(
-//       moduleA->Parameters().submat(
-//       100, 0, moduleA->Parameters().n_elem - 1, 0));
-//   const double sumModuleB = arma::accu(
-//       moduleB->Parameters().submat(
-//       100, 0, moduleB->Parameters().n_elem - 1, 0));
-//   REQUIRE(sumModuleA + sumModuleB ==
-//       Approx(arma::accu(output.col(0))).epsilon(1e-5));
+  const double sumModuleA = arma::accu(
+      moduleA->Parameters().submat(
+      100, 0, moduleA->Parameters().n_elem - 1, 0));
+  const double sumModuleB = arma::accu(
+      moduleB->Parameters().submat(
+      100, 0, moduleB->Parameters().n_elem - 1, 0));
+  REQUIRE(sumModuleA + sumModuleB ==
+      Approx(arma::accu(output.col(0))).epsilon(1e-5));
 
-//   // Test the Backward function.
-//   error = arma::zeros(20, 1);
-//   module.Backward(input, error, delta);
-//   REQUIRE(arma::accu(delta) == 0);
-// }
+  // Test the Backward function.
+  error = arma::zeros(20, 1);
+  module.Backward(input, error, delta);
+  REQUIRE(arma::accu(delta) == 0);
+}
 
-// /**
-//  * Test to check Concat layer along different axes.
-//  */
-// TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, error, outputA, outputB;
-//   size_t inputWidth = 4, inputHeight = 4, inputChannel = 2;
-//   size_t outputWidth, outputHeight, outputChannel = 2;
-//   size_t kW = 3, kH = 3;
-//   size_t batch = 1;
+/**
+ * Test to check Concat layer along different axes.
+ */
+TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, error, outputA, outputB;
+  size_t inputWidth = 4, inputHeight = 4, inputChannel = 2;
+  size_t outputWidth, outputHeight, outputChannel = 2;
+  size_t kW = 3, kH = 3;
+  size_t batch = 1;
 
-//   // Using Convolution<> layer as inout to Concat<> layer.
-//   // Compute the output shape of convolution layer.
-//   outputWidth  = (inputWidth - kW) + 1;
-//   outputHeight = (inputHeight - kH) + 1;
+  // Using Convolution<> layer as inout to Concat<> layer.
+  // Compute the output shape of convolution layer.
+  outputWidth  = (inputWidth - kW) + 1;
+  outputHeight = (inputHeight - kH) + 1;
 
-//   input = arma::ones(inputWidth * inputHeight * inputChannel, batch);
+  input = arma::ones(inputWidth * inputHeight * inputChannel, batch);
 
-//   Convolution<>* moduleA = new Convolution<>(inputChannel, outputChannel,
-//       kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
-//   Convolution<>* moduleB = new Convolution<>(inputChannel, outputChannel,
-//       kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
+  Convolution* moduleA = new Convolution(inputChannel, outputChannel,
+      kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
+  Convolution* moduleB = new Convolution(inputChannel, outputChannel,
+      kW, kH, 1, 1, 0, 0, inputWidth, inputHeight);
 
-//   moduleA->Reset();
-//   moduleA->Parameters().randu();
-//   moduleB->Reset();
-//   moduleB->Parameters().randu();
+  moduleA->Reset();
+  moduleA->Parameters().randu();
+  moduleB->Reset();
+  moduleB->Parameters().randu();
 
-//   // Compute output of each layer.
-//   moduleA->Forward(input, outputA);
-//   moduleB->Forward(input, outputB);
+  // Compute output of each layer.
+  moduleA->Forward(input, outputA);
+  moduleB->Forward(input, outputB);
 
-//   arma::cube A(outputA.memptr(), outputWidth, outputHeight, outputChannel);
-//   arma::cube B(outputB.memptr(), outputWidth, outputHeight, outputChannel);
+  arma::cube A(outputA.memptr(), outputWidth, outputHeight, outputChannel);
+  arma::cube B(outputB.memptr(), outputWidth, outputHeight, outputChannel);
 
-//   error = arma::ones(outputWidth * outputHeight * outputChannel * 2, 1);
+  error = arma::ones(outputWidth * outputHeight * outputChannel * 2, 1);
 
-//   for (size_t axis = 0; axis < 3; ++axis)
-//   {
-//     size_t x = 1, y = 1, z = 1;
-//     arma::cube calculatedOut;
-//     if (axis == 0)
-//     {
-//       calculatedOut.set_size(2 * outputWidth, outputHeight, outputChannel);
-//       for (size_t i = 0; i < A.n_slices; ++i)
-//       {
-//           arma::mat aMat = A.slice(i);
-//           arma::mat bMat = B.slice(i);
-//           calculatedOut.slice(i) = arma::join_cols(aMat, bMat);
-//       }
-//       x = 2;
-//     }
-//     if (axis == 1)
-//     {
-//       calculatedOut.set_size(outputWidth, 2 * outputHeight, outputChannel);
-//       for (size_t i = 0; i < A.n_slices; ++i)
-//       {
-//           arma::mat aMat = A.slice(i);
-//           arma::mat bMat = B.slice(i);
-//           calculatedOut.slice(i) = arma::join_rows(aMat, bMat);
-//       }
-//       y = 2;
-//     }
-//     if (axis == 2)
-//     {
-//       calculatedOut = arma::join_slices(A, B);
-//       z = 2;
-//     }
+  for (size_t axis = 0; axis < 3; ++axis)
+  {
+    size_t x = 1, y = 1, z = 1;
+    arma::cube calculatedOut;
+    if (axis == 0)
+    {
+      calculatedOut.set_size(2 * outputWidth, outputHeight, outputChannel);
+      for (size_t i = 0; i < A.n_slices; ++i)
+      {
+          arma::mat aMat = A.slice(i);
+          arma::mat bMat = B.slice(i);
+          calculatedOut.slice(i) = arma::join_cols(aMat, bMat);
+      }
+      x = 2;
+    }
+    if (axis == 1)
+    {
+      calculatedOut.set_size(outputWidth, 2 * outputHeight, outputChannel);
+      for (size_t i = 0; i < A.n_slices; ++i)
+      {
+          arma::mat aMat = A.slice(i);
+          arma::mat bMat = B.slice(i);
+          calculatedOut.slice(i) = arma::join_rows(aMat, bMat);
+      }
+      y = 2;
+    }
+    if (axis == 2)
+    {
+      calculatedOut = arma::join_slices(A, B);
+      z = 2;
+    }
 
-//     // Compute output of Concat<> layer.
-//     arma::Row<size_t> inputSize{outputWidth, outputHeight, outputChannel};
-//     Concat<> module(inputSize, axis, true);
-//     module.Add(moduleA);
-//     module.Add(moduleB);
-//     module.Forward(input, output);
-//     arma::cube concatOut(output.memptr(), x * outputWidth,
-//         y * outputHeight, z * outputChannel);
+    // Compute output of Concat<> layer.
+    arma::Row<size_t> inputSize{outputWidth, outputHeight, outputChannel};
+    Concat module(inputSize, axis, true);
+    module.Add(moduleA);
+    module.Add(moduleB);
+    module.Forward(input, output);
+    arma::cube concatOut(output.memptr(), x * outputWidth,
+        y * outputHeight, z * outputChannel);
 
-//     // Verify if the output reshaped to cubes are similar.
-//     CheckMatrices(concatOut, calculatedOut, 1e-12);
-//   }
-//   delete moduleA;
-//   delete moduleB;
-// }
+    // Verify if the output reshaped to cubes are similar.
+    CheckMatrices(concatOut, calculatedOut, 1e-12);
+  }
+  delete moduleA;
+  delete moduleB;
+}
 
-// /**
-//  * Test that the function that can access the axis parameter of the
-//  * Concat layer works.
-//  */
-// TEST_CASE("ConcatLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : inputSize{width, height, channels}, axis, model, run.
-//   arma::Row<size_t> inputSize{128, 128, 3};
-//   Concat<> layer(inputSize, 2, false, true);
+/**
+ * Test that the function that can access the axis parameter of the
+ * Concat layer works.
+ */
+TEST_CASE("ConcatLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter order : inputSize{width, height, channels}, axis, model, run.
+  arma::Row<size_t> inputSize{128, 128, 3};
+  Concat layer(inputSize, 2, false, true);
 
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer.ConcatAxis() == 2);
-// }
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer.ConcatAxis() == 2);
+}
 
-// /**
-//  * Concat layer numerical gradient test.
-//  */
+/**
+ * Concat layer numerical gradient test.
+ */
 // TEST_CASE("GradientConcatLayerTest", "[ANNLayerTest]")
 // {
 //   // Concat function gradient instantiation.
@@ -1750,14 +1750,14 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
 //       model->Predictors() = input;
 //       model->Responses() = target;
-//       model->Add<IdentityLayer<> >();
-//       model->Add<Linear<> >(10, 10);
+//       model->Add<IdentityLayer>();
+//       model->Add<Linear>(10, 10);
 
-//       concat = new Concat<>(true);
-//       concat->Add<Linear<> >(10, 2);
+//       concat = new Concat(true);
+//       concat->Add<Linear>(10, 2);
 //       model->Add(concat);
 
-//       model->Add<LogSoftMax<> >();
+//       model->Add<LogSoftMax>();
 //     }
 
 //     ~GradientFunction()
@@ -1775,7 +1775,7 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //     arma::mat& Parameters() { return model->Parameters(); }
 
 //     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-//     Concat<>* concat;
+//     Concat* concat;
 //     arma::mat input, target;
 //   } function;
 

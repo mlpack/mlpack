@@ -36,8 +36,6 @@ MultiplyMergeType<InputType, OutputType>::~MultiplyMergeType()
 {
   if (ownsLayer)
   {
-    // std::for_each(network.begin(), network.end(),
-    //     boost::apply_visitor(deleteVisitor));
     for (size_t i = 0; i < network.size(); ++i)
       delete network[i];
   }
@@ -51,18 +49,13 @@ void MultiplyMergeType<InputType, OutputType>::Forward(
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      // boost::apply_visitor(ForwardVisitor(input,
-      //     boost::apply_visitor(outputParameterVisitor, network[i])),
-      //     network[i]);
       network[i]->Forward(input, network[i]->OutputParameter());
     }
   }
 
-  // output = boost::apply_visitor(outputParameterVisitor, network.front());
   output = network.front()->OutputParameter();
   for (size_t i = 1; i < network.size(); ++i)
   {
-    // output %= boost::apply_visitor(outputParameterVisitor, network[i]);
     output %= network[i]->OutputParameter();
   }
 }
@@ -75,19 +68,14 @@ void MultiplyMergeType<InputType, OutputType>::Backward(
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      // boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-      //     outputParameterVisitor, network[i]), gy,
-      //     boost::apply_visitor(deltaVisitor, network[i])), network[i]);
       network[i]->Backward(network[i]->OutputParameter(),
                            gy,
                            network[i]->Delta());
     }
 
-    // g = boost::apply_visitor(deltaVisitor, network[0]);
     g = network[0]->Delta();
     for (size_t i = 1; i < network.size(); ++i)
     {
-      // g += boost::apply_visitor(deltaVisitor, network[i]);
       g += network[i]->Delta();
     }
   }
@@ -105,7 +93,6 @@ void MultiplyMergeType<InputType, OutputType>::Gradient(
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      // boost::apply_visitor(GradientVisitor(input, error), network[i]);
       network[i]->Gradient(input, error, network[i]->Gradient());
     }
   }

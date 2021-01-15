@@ -15,13 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "../visitor/delete_visitor.hpp"
-#include "../visitor/delta_visitor.hpp"
-#include "../visitor/output_parameter_visitor.hpp"
-
-#include <boost/ptr_container/ptr_vector.hpp>
-
-#include "layer_types.hpp"
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -31,18 +25,16 @@ namespace ann /** Artificial Neural Network. */ {
  * feed-forward fully connected network container which plugs various layers
  * together.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam CustomLayers Additional custom layers if required.
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
-    typename... CustomLayers
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class Concat
+class ConcatType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -51,8 +43,8 @@ class Concat
    * @param model Expose all network modules.
    * @param run Call the Forward/Backward method before the output is merged.
    */
-  Concat(const bool model = false,
-         const bool run = true);
+  ConcatType(const bool model = false,
+             const bool run = true);
 
   /**
    * Create the Concat object using the specified parameters.
@@ -62,15 +54,15 @@ class Concat
    * @param model Expose all network modules.
    * @param run Call the Forward/Backward method before the output is merged.
    */
-  Concat(arma::Row<size_t>& inputSize,
-         const size_t axis,
-         const bool model = false,
-         const bool run = true);
+  ConcatType(arma::Row<size_t>& inputSize,
+             const size_t axis,
+             const bool model = false,
+             const bool run = true);
 
   /**
    * Destroy the layers held by the model.
    */
-  ~Concat();
+  ~ConcatType();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -79,8 +71,7 @@ class Concat
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
@@ -91,10 +82,9 @@ class Concat
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   /**
    * This is the overload of Backward() that runs only a specific layer with
@@ -105,25 +95,23 @@ class Concat
    * @param g The calculated gradient.
    * @param index The index of the layer to run.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g,
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g,
                 const size_t index);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& /* gradient */);
+  void Gradient(const InputType& /* input */,
+                const OutputType& error,
+                OutputType& /* gradient */);
 
-  /*
+  /**
    * This is the overload of Gradient() that runs a specific layer with the
    * given input.
    *
@@ -132,13 +120,12 @@ class Concat
    * @param gradient The calculated gradient.
    * @param The index of the layer to run.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient,
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& gradient,
                 const size_t index);
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param args The layer parameter.
@@ -146,15 +133,15 @@ class Concat
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<CustomLayers...> layer) { network.push_back(layer); }
+  void Add(Layer<>* layer) { network.push_back(layer); }
 
   //! Return the model modules.
-  std::vector<LayerTypes<CustomLayers...> >& Model()
+  std::vector<Layer<>*>& Model()
   {
     if (model)
     {
@@ -165,36 +152,36 @@ class Concat
   }
 
   //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return weights; }
+  const OutputType& Parameters() const { return weights; }
   //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the value of run parameter.
   bool Run() const { return run; }
   //! Modify the value of run parameter.
   bool& Run() { return run; }
 
-  arma::mat const& InputParameter() const { return inputParameter; }
+  const InputType& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  arma::mat& InputParameter() { return inputParameter; }
+  InputType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  arma::mat const& OutputParameter() const { return outputParameter; }
+  const OutputType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  arma::mat& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.e
-  arma::mat const& Delta() const { return delta; }
+  const OutputType& Delta() const { return delta; }
   //! Modify the delta.
-  arma::mat& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  arma::mat const& Gradient() const { return gradient; }
+  const OutputType& Gradient() const { return gradient; }
   //! Modify the gradient.
-  arma::mat& Gradient() { return gradient; }
+  OutputType& Gradient() { return gradient; }
 
   //! Get the axis of concatenation.
-  size_t const& ConcatAxis() const { return axis; }
+  const size_t& ConcatAxis() const { return axis; }
 
   //! Get the size of the weight matrix.
   size_t WeightSize() const { return 0; }
@@ -226,35 +213,29 @@ class Concat
   size_t channels;
 
   //! Locally-stored network modules.
-  std::vector<LayerTypes<CustomLayers...> > network;
+  std::vector<Layer<>*> network;
 
   //! Locally-stored model weights.
-  OutputDataType weights;
-
-  //! Locally-stored delta visitor.
-  DeltaVisitor deltaVisitor;
-
-  //! Locally-stored output parameter visitor.
-  OutputParameterVisitor outputParameterVisitor;
-
-  //! Locally-stored delete visitor.
-  DeleteVisitor deleteVisitor;
+  OutputType weights;
 
   //! Locally-stored empty list of modules.
-  std::vector<LayerTypes<CustomLayers...> > empty;
+  std::vector<Layer<>*> empty;
 
   //! Locally-stored delta object.
-  arma::mat delta;
+  OutputType delta;
 
   //! Locally-stored input parameter object.
-  arma::mat inputParameter;
+  InputType inputParameter;
 
   //! Locally-stored output parameter object.
-  arma::mat outputParameter;
+  OutputType outputParameter;
 
   //! Locally-stored gradient object.
-  arma::mat gradient;
-}; // class Concat
+  OutputType gradient;
+}; // class ConcatType.
+
+// Standard Concat layer.
+typedef ConcatType<arma::mat, arma::mat> Concat;
 
 } // namespace ann
 } // namespace mlpack

@@ -23,6 +23,7 @@
 #include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
 #include <mlpack/methods/ann/layer/celu.hpp>
 // #include <mlpack/methods/ann/layer/constant.hpp>
+#include <mlpack/methods/ann/layer/concat.hpp>
 #include <mlpack/methods/ann/layer/concatenate.hpp>
 #include <mlpack/methods/ann/layer/convolution.hpp>
 // #include <mlpack/methods/ann/layer/dropout.hpp>
@@ -30,7 +31,7 @@
 #include <mlpack/methods/ann/layer/glimpse.hpp>
 // #include <mlpack/methods/ann/layer/hardshrink.hpp>
 // #include <mlpack/methods/ann/layer/hard_tanh.hpp>
-// #include <mlpack/methods/ann/layer/highway.hpp>
+#include <mlpack/methods/ann/layer/highway.hpp>
 #include <mlpack/methods/ann/layer/join.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>
 // #include <mlpack/methods/ann/layer/leaky_relu.hpp>
