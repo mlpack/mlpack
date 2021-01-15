@@ -114,22 +114,12 @@ inline HRectBound<
 {
   if (this != &other)
   {
-    if (dim != other.Dim())
-    {
-      // Reallocation is necessary.
-      if (bounds)
-        delete[] bounds;
-
-      dim = other.Dim();
-      bounds = new math::RangeType<ElemType>[dim];
-    }
-
-    // Now move each of the bound values.
-    // cannot move the bound pointer because there are no accessor method to the bound pointer
-    for (size_t i = 0; i < dim; ++i)
-      bounds[i] = std::move(other[i]);
-
-    minWidth = std::move(other.MinWidth());
+    bounds = other.bounds;
+    minWidth = other.minWidth;
+    dim = other.dim;
+    other.dim = 0;
+    other.bounds = nullptr;
+    other.minWidth = 0.0;
   }
   return *this;
 }
