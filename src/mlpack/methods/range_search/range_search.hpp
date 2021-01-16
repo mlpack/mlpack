@@ -122,12 +122,18 @@ class RangeSearch
   RangeSearch(RangeSearch&& other);
 
   /**
-   * Copy the given RangeSearch model.
-   * Use std::move to pass in the model if the old copy is no longer needed.
-   *
+   * Deep copy the given RangeSearch model.
+   * 
    * @param other RangeSearch model to copy.
    */
-  RangeSearch& operator=(RangeSearch other);
+  RangeSearch& operator=(const RangeSearch& other);
+
+  /**
+   * Move the given RangeSearch model.
+   *
+   * @param other RangeSearch model to move.
+   */
+  RangeSearch& operator=(RangeSearch&& other);
 
   /**
    * Destroy the RangeSearch object.  If trees were created, they will be

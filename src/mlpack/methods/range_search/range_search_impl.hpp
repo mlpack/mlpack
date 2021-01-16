@@ -169,25 +169,61 @@ template<typename MetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 RangeSearch<MetricType, MatType, TreeType>&
-RangeSearch<MetricType, MatType, TreeType>::operator=(RangeSearch other)
+RangeSearch<MetricType, MatType, TreeType>::operator=(const RangeSearch& other)
 {
-  // Clean memory first.
-  if (treeOwner)
-    delete referenceTree;
-  if (naive)
-    delete referenceSet;
+  if (this != &other)
+  {
+    oldFromNewReferences = other.oldFromNewReferences;
+    referenceTree = other.referenceTree ? new Tree(*other.referenceTree) : nullptr;
+    referenceSet = other.referenceTree ? &referenceTree->Dataset() :
+        new MatType(*other.referenceSet);
+    treeOwner = other.referenceTree;
+    naive = other.naive;
+    singleMode = other.singleMode;
+    metric = other.metric;
+    baseCases = other.baseCases;
+    scores = other.scores;
+  }
+  return *this;
+}
 
-  // Move the other model.
-  oldFromNewReferences = std::move(other.oldFromNewReferences);
-  referenceTree = other.referenceTree;
-  referenceSet = other.referenceSet;
-  treeOwner = other.treeOwner;
-  naive = other.naive;
-  singleMode = other.singleMode;
-  metric = std::move(other.metric);
-  baseCases = other.baseCases;
-  scores = other.scores;
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RangeSearch<MetricType, MatType, TreeType>&
+RangeSearch<MetricType, MatType, TreeType>::operator=(RangeSearch&& other)
+{
+  if (this != &other)
+  {
+    // Clean memory first.
+    if (treeOwner)
+      delete referenceTree;
+    if (naive)
+      delete referenceSet;
 
+    // Move the other model.
+    oldFromNewReferences = std::move(other.oldFromNewReferences);
+    referenceTree = other.referenceTree;
+    referenceSet = other.referenceSet;
+    treeOwner = other.treeOwner;
+    naive = other.naive;
+    singleMode = other.singleMode;
+    metric = std::move(other.metric);
+    baseCases = other.baseCases;
+    scores = other.scores;
+
+    // Clear other object.
+    other.referenceTree = nullptr;
+    other.referenceSet = nullptr;
+    other.treeOwner = false;
+    other.naive = false;
+    other.singleMode = false;
+    other.baseCases = 0;
+    other.scores = 0;
+
+  }
   return *this;
 }
 
@@ -254,12 +290,15 @@ void RangeSearch<MetricType, MatType, TreeType>::Train(
     throw std::invalid_argument("cannot train on given reference tree when "
         "naive search (without trees) is desired");
 
+  // Can only train when passed argument `referenceTree` is not nullptr
   if (treeOwner && referenceTree)
+  {
     delete this->referenceTree;
 
-  this->referenceTree = referenceTree;
-  this->referenceSet = &referenceTree->Dataset();
-  treeOwner = false;
+    this->referenceTree = referenceTree;
+    this->referenceSet = &referenceTree->Dataset();
+    treeOwner = false;
+  }
 }
 
 template<typename MetricType,

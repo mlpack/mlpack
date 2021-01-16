@@ -182,6 +182,14 @@ class DiscreteHilbertValue
    */
   DiscreteHilbertValue& operator=(const DiscreteHilbertValue& val);
 
+   /**
+   * Move the local Hilbert object.
+   *
+   * @param val The DiscreteHilbertValue object from which the dataset
+   *    will be copied.
+   */
+  DiscreteHilbertValue& operator=(DiscreteHilbertValue&& val);
+
   /**
    * Nullify the localHilbertValues pointer in order to prevent an invalid free.
    */

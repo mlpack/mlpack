@@ -129,6 +129,20 @@ class HMMModel
     return *this;
   }
 
+  //! Move assignment operator.
+  HMMModel& operator=(HMMModel&& other)
+  {
+    if (this != &other)
+    {
+      type = other.type;
+      discreteHMM = other.discreteHMM;
+      gaussianHMM = other.gaussianHMM;
+      gmmHMM = other.gmmHMM;
+      diagGMMHMM = other.diagGMMHMM;
+    }
+    return *this;
+  }
+
   //! Clean memory.
   ~HMMModel()
   {

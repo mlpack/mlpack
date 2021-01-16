@@ -451,6 +451,27 @@ operator=(const DiscreteHilbertValue& val)
 }
 
 template<typename TreeElemType>
+DiscreteHilbertValue<TreeElemType>& DiscreteHilbertValue<TreeElemType>::
+operator=(DiscreteHilbertValue&& other)
+{
+  if (this != &other)
+  {
+    localHilbertValues = other.localHilbertValues;
+    ownsLocalHilbertValues = other.ownsLocalHilbertValues;
+    numValues = other.numValues;
+    valueToInsert = other.valueToInsert;
+    ownsValueToInsert = other.ownsValueToInsert;
+
+    other.localHilbertValues = nullptr;
+    other.ownsLocalHilbertValues = false;
+    other.numValues = 0;
+    other.valueToInsert = nullptr;
+    other.ownsValueToInsert = false;
+  }
+  return *this;
+}
+
+template<typename TreeElemType>
 void DiscreteHilbertValue<TreeElemType>::NullifyData()
 {
   ownsLocalHilbertValues = false;
