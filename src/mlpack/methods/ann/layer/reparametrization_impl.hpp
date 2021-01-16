@@ -19,8 +19,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-Reparametrization<InputDataType, OutputDataType>::Reparametrization() :
+template<typename InputType, typename OutputType>
+ReparametrizationType<InputType, OutputType>::ReparametrizationType() :
     latentSize(0),
     stochastic(true),
     includeKl(true),
@@ -29,8 +29,8 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization() :
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-Reparametrization<InputDataType, OutputDataType>::Reparametrization(
+template <typename InputType, typename OutputType>
+ReparametrizationType<InputType, OutputType>::ReparametrizationType(
     const size_t latentSize,
     const bool stochastic,
     const bool includeKl,
@@ -47,10 +47,9 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Reparametrization<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void ReparametrizationType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   if (input.n_rows != 2 * latentSize)
   {
@@ -63,18 +62,17 @@ void Reparametrization<InputDataType, OutputDataType>::Forward(
   preStdDev = input.submat(0, 0, latentSize - 1, input.n_cols - 1);
 
   if (stochastic)
-    gaussianSample = arma::randn<arma::Mat<eT> >(latentSize, input.n_cols);
+    gaussianSample = arma::randn<OutputType>(latentSize, input.n_cols);
   else
-    gaussianSample = arma::ones<arma::Mat<eT> >(latentSize, input.n_cols) * 0.7;
+    gaussianSample = arma::ones<OutputType>(latentSize, input.n_cols) * 0.7;
 
   SoftplusFunction::Fn(preStdDev, stdDev);
   output = mean + stdDev % gaussianSample;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Reparametrization<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void ReparametrizationType<InputType, OutputType>::Backward(
+    const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   SoftplusFunction::Deriv(preStdDev, g);
 
@@ -87,9 +85,9 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
     g = join_cols(gy % std::move(gaussianSample) % g, gy);
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void Reparametrization<InputDataType, OutputDataType>::serialize(
+void ReparametrizationType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(latentSize));

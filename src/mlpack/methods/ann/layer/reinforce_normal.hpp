@@ -14,6 +14,7 @@
 #define MLPACK_METHODS_ANN_LAYER_REINFORCE_NORMAL_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -22,16 +23,16 @@ namespace ann /** Artificial Neural Network. */ {
  * Implementation of the reinforce normal layer. The reinforce normal layer
  * implements the REINFORCE algorithm for the normal distribution.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class ReinforceNormal
+class ReinforceNormalType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -39,7 +40,7 @@ class ReinforceNormal
    *
    * @param stdev Standard deviation used during the forward and backward pass.
    */
-  ReinforceNormal(const double stdev = 1.0);
+  ReinforceNormalType(const double stdev = 1.0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -48,8 +49,7 @@ class ReinforceNormal
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -60,31 +60,32 @@ class ReinforceNormal
    * @param * (gy) The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename DataType>
-  void Backward(const DataType& input, const DataType& /* gy */, DataType& g);
+  void Backward(const InputType& input,
+                const OutputType& /* gy */,
+                OutputType& g);
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
+  bool const& Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
   //! Get the value of the reward parameter.
-  double Reward() const { return reward; }
+  double const& Reward() const { return reward; }
   //! Modify the value of the deterministic parameter.
   double& Reward() { return reward; }
 
   //! Get the standard deviation used during forward and backward pass.
-  double StandardDeviation() const { return stdev; }
+  double const& StandardDeviation() const { return stdev; }
 
   /**
    * Serialize the layer
@@ -100,17 +101,20 @@ class ReinforceNormal
   double reward;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 
   //!  Locally-stored output module parameter parameters.
-  std::vector<arma::mat> moduleInputParameter;
+  std::vector<InputType> moduleInputParameter;
 
   //! If true use maximum a posteriori during the forward pass.
   bool deterministic;
-}; // class ReinforceNormal
+}; // class ReinforceNormalType.
+
+// Standard ReinforceNormal layer.
+typedef ReinforceNormalType<arma::mat, arma::mat> ReinforceNormal;
 
 } // namespace ann
 } // namespace mlpack

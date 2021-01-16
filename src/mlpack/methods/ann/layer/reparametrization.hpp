@@ -15,8 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "layer_types.hpp"
-#include "../activation_functions/softplus_function.hpp"
+#include "layer.hpp"
+// #include "../activation_functions/softplus_function.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -44,20 +44,20 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class Reparametrization
+class ReparametrizationType : public Layer<InputType, OutputType>
 {
  public:
   //! Create the Reparametrization object.
-  Reparametrization();
+  ReparametrizationType();
 
   /**
    * Create the Reparametrization layer object using the specified sample vector size.
@@ -67,10 +67,10 @@ class Reparametrization
    * @param includeKl Whether we want to include KL loss in backward function.
    * @param beta The beta (hyper)parameter for beta-VAE mentioned above.
    */
-  Reparametrization(const size_t latentSize,
-                    const bool stochastic = true,
-                    const bool includeKl = true,
-                    const double beta = 1);
+  ReparametrizationType(const size_t latentSize,
+                         const bool stochastic = true,
+                         const bool includeKl = true,
+                         const double beta = 1);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -79,8 +79,7 @@ class Reparametrization
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -91,20 +90,19 @@ class Reparametrization
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& input,
+                const OutputType& gy,
+                OutputType& g);
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the output size.
   size_t const& OutputSize() const { return latentSize; }
@@ -122,13 +120,13 @@ class Reparametrization
   }
 
   //! Get the value of the stochastic parameter.
-  bool Stochastic() const { return stochastic; }
+  bool const& Stochastic() const { return stochastic; }
 
   //! Get the value of the includeKl parameter.
-  bool IncludeKL() const { return includeKl; }
+  bool const& IncludeKL() const { return includeKl; }
 
   //! Get the value of the beta hyperparameter.
-  double Beta() const { return beta; }
+  double const& Beta() const { return beta; }
 
   /**
    * Serialize the layer
@@ -150,24 +148,27 @@ class Reparametrization
   double beta;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored current gaussian sample.
-  OutputDataType gaussianSample;
+  OutputType gaussianSample;
 
   //! Locally-stored current mean.
-  OutputDataType mean;
+  OutputType mean;
 
   //! Locally-stored pre standard deviation.
   //! After softplus activation gives standard deviation.
-  OutputDataType preStdDev;
+  OutputType preStdDev;
 
   //! Locally-stored current standard deviation.
-  OutputDataType stdDev;
+  OutputType stdDev;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-}; // class Reparametrization
+  OutputType outputParameter;
+}; // class ReparametrizationType
+
+// Standard Reparametrization layer.
+typedef ReparametrizationType<arma::mat, arma::mat> Reparametrization;
 
 } // namespace ann
 } // namespace mlpack

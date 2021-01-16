@@ -3061,187 +3061,187 @@ TEST_CASE("SubviewLayerParametersTest", "[ANNLayerTest]")
   REQUIRE(layer1.EndCol() == layer2.EndCol());
 }
 
-// /*
-//  * Simple Reparametrization module test.
-//  */
-// TEST_CASE("SimpleReparametrizationLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat input, output, delta;
-//   Reparametrization<> module(5);
+/*
+ * Simple Reparametrization module test.
+ */
+TEST_CASE("SimpleReparametrizationLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, delta;
+  Reparametrization module(5);
 
-//   // Test the Forward function. As the mean is zero and the standard
-//   // deviation is small, after multiplying the gaussian sample, the
-//   // output should be small enough.
-//   input = join_cols(arma::ones<arma::mat>(5, 1) * -15,
-//       arma::zeros<arma::mat>(5, 1));
-//   module.Forward(input, output);
-//   REQUIRE(arma::accu(output) <= 1e-5);
+  // Test the Forward function. As the mean is zero and the standard
+  // deviation is small, after multiplying the gaussian sample, the
+  // output should be small enough.
+  input = join_cols(arma::ones<arma::mat>(5, 1) * -15,
+      arma::zeros<arma::mat>(5, 1));
+  module.Forward(input, output);
+  REQUIRE(arma::accu(output) <= 1e-5);
 
-//   // Test the Backward function.
-//   arma::mat gy = arma::zeros<arma::mat>(5, 1);
-//   module.Backward(input, gy, delta);
-//   REQUIRE(arma::accu(delta) != 0); // klBackward will be added.
-// }
+  // Test the Backward function.
+  arma::mat gy = arma::zeros<arma::mat>(5, 1);
+  module.Backward(input, gy, delta);
+  REQUIRE(arma::accu(delta) != 0); // klBackward will be added.
+}
 
-// /**
-//  * Reparametrization module stochastic boolean test.
-//  */
-// TEST_CASE("ReparametrizationLayerStochasticTest", "[ANNLayerTest]")
-// {
-//   arma::mat input, outputA, outputB;
-//   Reparametrization<> module(5, false);
+/**
+ * Reparametrization module stochastic boolean test.
+ */
+TEST_CASE("ReparametrizationLayerStochasticTest", "[ANNLayerTest]")
+{
+  arma::mat input, outputA, outputB;
+  Reparametrization module(5, false);
 
-//   input = join_cols(arma::ones<arma::mat>(5, 1),
-//       arma::zeros<arma::mat>(5, 1));
+  input = join_cols(arma::ones<arma::mat>(5, 1),
+      arma::zeros<arma::mat>(5, 1));
 
-//   // Test if two forward passes generate same output.
-//   module.Forward(input, outputA);
-//   module.Forward(input, outputB);
+  // Test if two forward passes generate same output.
+  module.Forward(input, outputA);
+  module.Forward(input, outputB);
 
-//   CheckMatrices(outputA, outputB);
-// }
+  CheckMatrices(outputA, outputB);
+}
 
-// /**
-//  * Reparametrization module includeKl boolean test.
-//  */
-// TEST_CASE("ReparametrizationLayerIncludeKlTest", "[ANNLayerTest]")
-// {
-//   arma::mat input, output, gy, delta;
-//   Reparametrization<> module(5, true, false);
+/**
+ * Reparametrization module includeKl boolean test.
+ */
+TEST_CASE("ReparametrizationLayerIncludeKlTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, gy, delta;
+  Reparametrization module(5, true, false);
 
-//   input = join_cols(arma::ones<arma::mat>(5, 1),
-//       arma::zeros<arma::mat>(5, 1));
-//   module.Forward(input, output);
+  input = join_cols(arma::ones<arma::mat>(5, 1),
+      arma::zeros<arma::mat>(5, 1));
+  module.Forward(input, output);
 
-//   // As KL divergence is not included, with the above inputs, the delta
-//   // matrix should be all zeros.
-//   gy = arma::zeros(output.n_rows, output.n_cols);
-//   module.Backward(output, gy, delta);
+  // As KL divergence is not included, with the above inputs, the delta
+  // matrix should be all zeros.
+  gy = arma::zeros(output.n_rows, output.n_cols);
+  module.Backward(output, gy, delta);
 
-//   REQUIRE(arma::accu(delta) == 0);
-// }
+  REQUIRE(arma::accu(delta) == 0);
+}
 
-// /**
-//  * Jacobian Reparametrization module test.
-//  */
-// TEST_CASE("JacobianReparametrizationLayerTest", "[ANNLayerTest]")
-// {
-//   for (size_t i = 0; i < 5; ++i)
-//   {
-//     const size_t inputElementsHalf = math::RandInt(2, 1000);
+/**
+ * Jacobian Reparametrization module test.
+ */
+TEST_CASE("JacobianReparametrizationLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inputElementsHalf = math::RandInt(2, 10);
 
-//     arma::mat input;
-//     input.set_size(inputElementsHalf * 2, 1);
+    arma::mat input;
+    input.set_size(inputElementsHalf * 2, 1);
 
-//     Reparametrization<> module(inputElementsHalf, false, false);
+    Reparametrization module(inputElementsHalf, false, false);
 
-//     double error = JacobianTest(module, input);
-//     REQUIRE(error <= 1e-5);
-//   }
-// }
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
 
-// /**
-//  * Reparametrization layer numerical gradient test.
-//  */
-// TEST_CASE("GradientReparametrizationLayerTest", "[ANNLayerTest]")
-// {
-//   // Linear function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::randu(10, 1)),
-//         target(arma::mat("1"))
-//     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
-//       model->Add<IdentityLayer<> >();
-//       model->Add<Linear<> >(10, 6);
-//       model->Add<Reparametrization<> >(3, false, true, 1);
-//       model->Add<Linear<> >(3, 2);
-//       model->Add<LogSoftMax<> >();
-//     }
+/**
+ * Reparametrization layer numerical gradient test.
+ */
+TEST_CASE("GradientReparametrizationLayerTest", "[ANNLayerTest]")
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
+    {
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer>();
+      model->Add<Linear>(10, 6);
+      model->Add<Reparametrization>(3, false, true, 1);
+      model->Add<Linear>(3, 2);
+      model->Add<LogSoftMax>();
+    }
 
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
 
-//     arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-//     arma::mat input, target;
-//   } function;
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
 
-//   REQUIRE(CheckGradient(function) <= 1e-4);
-// }
+  // REQUIRE(CheckGradient(function) <= 1e-4);
+}
 
-// /**
-//  * Reparametrization layer beta numerical gradient test.
-//  */
-// TEST_CASE("GradientReparametrizationLayerBetaTest", "[ANNLayerTest]")
-// {
-//   // Linear function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::randu(10, 2)),
-//         target(arma::mat("1 1"))
-//     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
-//       model->Add<IdentityLayer<> >();
-//       model->Add<Linear<> >(10, 6);
-//       // Use a value of beta not equal to 1.
-//       model->Add<Reparametrization<> >(3, false, true, 2);
-//       model->Add<Linear<> >(3, 2);
-//       model->Add<LogSoftMax<> >();
-//     }
+/**
+ * Reparametrization layer beta numerical gradient test.
+ */
+TEST_CASE("GradientReparametrizationLayerBetaTest", "[ANNLayerTest]")
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randu(10, 2)),
+        target(arma::mat("1 1"))
+    {
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer>();
+      model->Add<Linear>(10, 6);
+      // Use a value of beta not equal to 1.
+      model->Add<Reparametrization>(3, false, true, 2);
+      model->Add<Linear>(3, 2);
+      model->Add<LogSoftMax>();
+    }
 
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
 
-//     arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-//     arma::mat input, target;
-//   } function;
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
 
-//   REQUIRE(CheckGradient(function) <= 1e-4);
-// }
+  // REQUIRE(CheckGradient(function) <= 1e-4);
+}
 
-// /**
-//  * Test that the functions that can access the parameters of the
-//  * Reparametrization layer work.
-//  */
-// TEST_CASE("ReparametrizationLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : latentSize, stochastic, includeKL, beta.
-//   Reparametrization<> layer(5, false, false, 2);
+/**
+ * Test that the functions that can access the parameters of the
+ * Reparametrization layer work.
+ */
+TEST_CASE("ReparametrizationLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter order : latentSize, stochastic, includeKL, beta.
+  Reparametrization layer(5, false, false, 2);
 
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer.OutputSize() == 5);
-//   REQUIRE(layer.Stochastic() == false);
-//   REQUIRE(layer.IncludeKL() == false);
-//   REQUIRE(layer.Beta() == 2);
-// }
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer.OutputSize() == 5);
+  REQUIRE(layer.Stochastic() == false);
+  REQUIRE(layer.IncludeKL() == false);
+  REQUIRE(layer.Beta() == 2);
+}
 
 /**
  * Simple residual module test.
@@ -3878,18 +3878,18 @@ TEST_CASE("GlimpseLayerParametersTest", "[ANNLayerTest]")
   REQUIRE(layer1.InSize() == layer2.InSize());
 }
 
-// /**
-//  * Test that the function that can access the stdev parameter of the
-//  * Reinforce Normal layer works.
-//  */
-// TEST_CASE("ReinforceNormalLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter : stdev.
-//   ReinforceNormal<> layer(4.0);
+/**
+ * Test that the function that can access the stdev parameter of the
+ * Reinforce Normal layer works.
+ */
+TEST_CASE("ReinforceNormalLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter : stdev.
+  ReinforceNormal layer(4.0);
 
-//   // Make sure we can get the parameter successfully.
-//   REQUIRE(layer.StandardDeviation() == 4.0);
-// }
+  // Make sure we can get the parameter successfully.
+  REQUIRE(layer.StandardDeviation() == 4.0);
+}
 
 // /**
 //  * Test that the function that can access the parameters of the

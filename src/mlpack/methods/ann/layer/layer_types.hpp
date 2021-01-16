@@ -53,8 +53,8 @@
 // #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/positional_encoding.hpp>
 // #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
-// #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
-// #include <mlpack/methods/ann/layer/reparametrization.hpp>
+#include <mlpack/methods/ann/layer/reinforce_normal.hpp>
+#include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/sequential.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
@@ -63,6 +63,8 @@
 #include <mlpack/methods/ann/layer/subview.hpp>
 #include <mlpack/methods/ann/layer/transposed_convolution.hpp>
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
+// #include <mlpack/methods/ann/layer/vr_class_reward.hpp>
+// #include <mlpack/methods/ann/layer/weight_norm.hpp>
 
 // // Convolution modules.
 // #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
