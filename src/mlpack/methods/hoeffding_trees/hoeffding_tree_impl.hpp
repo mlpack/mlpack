@@ -259,7 +259,7 @@ template<typename FitnessFunction,
          template<typename> class CategoricalSplitType>
 HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>&
     HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
-    operator=(const HoeffdingTree& other) :
+    operator=(const HoeffdingTree& other)
 {
   if (this != &other)
   {
@@ -306,7 +306,7 @@ template<typename FitnessFunction,
          template<typename> class CategoricalSplitType>
 HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>&
     HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
-    operator=(HoeffdingTree&& other) :
+    operator=(HoeffdingTree&& other)
 {
   if (this != &other)
   {

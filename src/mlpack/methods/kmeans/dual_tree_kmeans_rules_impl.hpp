@@ -40,7 +40,8 @@ DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
     baseCases(0),
     scores(0),
     lastQueryIndex(dataset.n_cols),
-    lastReferenceIndex(centroids.n_cols)
+    lastReferenceIndex(centroids.n_cols),
+    lastBaseCase(0.0)
 {
   // We must set the traversal info last query and reference node pointers to
   // something that is both invalid (i.e. not a tree node) and not NULL.  We'll

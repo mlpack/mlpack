@@ -21,7 +21,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 ReinforceNormal<InputDataType, OutputDataType>::ReinforceNormal(
-    const double stdev) : stdev(stdev)
+    const double stdev) : stdev(stdev), reward(0.0), deterministic(false)
 {
   // Nothing to do here.
 }
