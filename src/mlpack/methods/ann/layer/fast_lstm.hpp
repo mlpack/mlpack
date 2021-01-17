@@ -15,6 +15,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <limits>
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -54,36 +55,36 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * \see LSTM for a standard implementation of the LSTM layer.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class FastLSTM
+class FastLSTMType : public Layer<InputType, OutputType>
 {
  public:
   // Convenience typedefs.
-  typedef typename InputDataType::elem_type InputElemType;
-  typedef typename OutputDataType::elem_type ElemType;
+  typedef typename InputType::elem_type InputET;
+  typedef typename OutputType::elem_type OutputET;
 
-  //! Create the Fast LSTM object.
-  FastLSTM();
+  //! Create the FastLSTMType object.
+  FastLSTMType();
 
   //! Copy Constructor
-  FastLSTM(const FastLSTM& layer);
+  FastLSTMType(const FastLSTMType& layer);
 
   //! Move Constructor
-  FastLSTM(FastLSTM&& layer);
+  FastLSTMType(FastLSTMType&& layer);
 
   //! Copy assignment operator
-  FastLSTM& operator=(const FastLSTM& layer);
+  FastLSTMType& operator=(const FastLSTMType& layer);
 
   //! Move assignment operator
-  FastLSTM& operator=(FastLSTM&& layer);
+  FastLSTMType& operator=(FastLSTMType&& layer);
 
   /**
    * Create the Fast LSTM layer object using the specified parameters.
@@ -92,9 +93,9 @@ class FastLSTM
    * @param outSize The number of output units.
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    */
-  FastLSTM(const size_t inSize,
-           const size_t outSize,
-           const size_t rho = std::numeric_limits<size_t>::max());
+  FastLSTMType(const size_t inSize,
+               const size_t outSize,
+               const size_t rho = std::numeric_limits<size_t>::max());
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -103,7 +104,6 @@ class FastLSTM
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -115,17 +115,16 @@ class FastLSTM
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename InputType, typename ErrorType, typename GradientType>
   void Backward(const InputType& input,
-                const ErrorType& gy,
-                GradientType& g);
+                const OutputType& gy,
+                OutputType& g);
 
-  /*
+  /**
    * Reset the layer parameter.
    */
   void Reset();
 
-  /*
+  /**
    * Resets the cell to accept a new input. This breaks the BPTT chain starts a
    * new one.
    *
@@ -133,17 +132,16 @@ class FastLSTM
    */
   void ResetCell(const size_t size);
 
-  /*
+  /**
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The input parameter used for calculating the gradient.
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename InputType, typename ErrorType, typename GradientType>
   void Gradient(const InputType& input,
-                const ErrorType& error,
-                GradientType& gradient);
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the maximum number of steps to backpropagate through time (BPTT).
   size_t Rho() const { return rho; }
@@ -151,24 +149,24 @@ class FastLSTM
   size_t& Rho() { return rho; }
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return grad; }
+  OutputType const& Gradient() const { return grad; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return grad; }
+  OutputType& Gradient() { return grad; }
 
   //! Get the number of input units.
   size_t InSize() const { return inSize; }
@@ -195,7 +193,6 @@ class FastLSTM
    * @param input The input data.
    * @param sigmoid The matrix to store the sigmoid approximation into.
    */
-  template<typename InputType, typename OutputType>
   void FastSigmoid(const InputType& input, OutputType& sigmoids)
   {
     for (size_t i = 0; i < input.n_elem; ++i)
@@ -208,10 +205,10 @@ class FastLSTM
    * @param data The given data sample for the sigmoid approximation.
    * @tparam The sigmoid approximation.
    */
-  ElemType FastSigmoid(const InputElemType data)
+  OutputET FastSigmoid(const InputET data)
   {
-    ElemType x = 0.5 * data;
-    ElemType z;
+    OutputET x = 0.5 * data;
+    OutputET z;
     if (x >= 0)
     {
       if (x < 1.7)
@@ -223,7 +220,7 @@ class FastLSTM
     }
     else
     {
-      ElemType xx = -x;
+      OutputET xx = -x;
       if (xx < 1.7)
         z = -(1.5 * xx / (1 + xx));
       else if (xx < 3)
@@ -254,10 +251,10 @@ class FastLSTM
   size_t gradientStep;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored previous output.
-  OutputDataType prevOutput;
+  OutputType prevOutput;
 
   //! Locally-stored batch size.
   size_t batchSize;
@@ -270,56 +267,59 @@ class FastLSTM
   size_t gradientStepIdx;
 
   //! Locally-stored cell activation error.
-  OutputDataType cellActivationError;
+  OutputType cellActivationError;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType grad;
+  OutputType grad;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 
   //! Weights between the output and gate.
-  OutputDataType output2GateWeight;
+  OutputType output2GateWeight;
 
   //! Weights between the input and gate.
-  OutputDataType input2GateWeight;
+  OutputType input2GateWeight;
 
   //! Bias between the input and gate.
-  OutputDataType input2GateBias;
+  OutputType input2GateBias;
 
   //! Locally-stored gate parameter.
-  OutputDataType gate;
+  OutputType gate;
 
   //! Locally-stored gate activation.
-  OutputDataType gateActivation;
+  OutputType gateActivation;
 
   //! Locally-stored state activation.
-  OutputDataType stateActivation;
+  OutputType stateActivation;
 
   //! Locally-stored cell parameter.
-  OutputDataType cell;
+  OutputType cell;
 
   //! Locally-stored cell activation error.
-  OutputDataType cellActivation;
+  OutputType cellActivation;
 
   //! Locally-stored foget gate error.
-  OutputDataType forgetGateError;
+  OutputType forgetGateError;
 
   //! Locally-stored previous error.
-  OutputDataType prevError;
+  OutputType prevError;
 
   //! Locally-stored output parameters.
-  OutputDataType outParameter;
+  OutputType outParameter;
 
   //! Locally-stored current rho size.
   size_t rhoSize;
 
   //! Current backpropagate through time steps.
   size_t bpttSteps;
-}; // class FastLSTM
+}; // class FastLSTMType.
+
+// Standard FastLSTM layer.
+typedef FastLSTMType<arma::mat, arma::mat> FastLSTM;
 
 } // namespace ann
 } // namespace mlpack

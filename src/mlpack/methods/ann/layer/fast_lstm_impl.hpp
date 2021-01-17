@@ -19,14 +19,14 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-FastLSTM<InputDataType, OutputDataType>::FastLSTM()
+template<typename InputType, typename OutputType>
+FastLSTMType<InputType, OutputType>::FastLSTMType()
 {
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-FastLSTM<InputDataType, OutputDataType>::FastLSTM(
+template<typename InputType, typename OutputType>
+FastLSTMType<InputType, OutputType>::FastLSTMType(
     const size_t inSize, const size_t outSize, const size_t rho) :
     inSize(inSize),
     outSize(outSize),
@@ -45,8 +45,8 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
   weights.set_size(WeightSize(), 1);
 }
 
-template<typename InputDataType, typename OutputDataType>
-FastLSTM<InputDataType, OutputDataType>::FastLSTM(const FastLSTM& layer) :
+template<typename InputType, typename OutputType>
+FastLSTMType<InputType, OutputType>::FastLSTMType(const FastLSTMType& layer) :
     inSize(layer.inSize),
     outSize(layer.outSize),
     rho(layer.rho),
@@ -64,8 +64,8 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(const FastLSTM& layer) :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-FastLSTM<InputDataType, OutputDataType>::FastLSTM(FastLSTM&& layer) :
+template<typename InputType, typename OutputType>
+FastLSTMType<InputType, OutputType>::FastLSTMType(FastLSTMType&& layer) :
     inSize(std::move(layer.inSize)),
     outSize(std::move(layer.outSize)),
     rho(std::move(layer.rho)),
@@ -83,9 +83,9 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(FastLSTM&& layer) :
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType>
-FastLSTM<InputDataType, OutputDataType>&
-FastLSTM<InputDataType, OutputDataType>::operator=(const FastLSTM& layer)
+template<typename InputType, typename OutputType>
+FastLSTMType<InputType, OutputType>&
+FastLSTMType<InputType, OutputType>::operator=(const FastLSTMType& layer)
 {
   if (this != &layer)
   {
@@ -106,9 +106,9 @@ FastLSTM<InputDataType, OutputDataType>::operator=(const FastLSTM& layer)
   return *this;
 }
 
-template<typename InputDataType, typename OutputDataType>
-FastLSTM<InputDataType, OutputDataType>&
-FastLSTM<InputDataType, OutputDataType>::operator=(FastLSTM&& layer)
+template<typename InputType, typename OutputType>
+FastLSTMType<InputType, OutputType>&
+FastLSTMType<InputType, OutputType>::operator=(FastLSTMType&& layer)
 {
   if (this != &layer)
   {
@@ -129,8 +129,8 @@ FastLSTM<InputDataType, OutputDataType>::operator=(FastLSTM&& layer)
   return *this;
 }
 
-template<typename InputDataType, typename OutputDataType>
-void FastLSTM<InputDataType, OutputDataType>::Reset()
+template<typename InputType, typename OutputType>
+void FastLSTMType<InputType, OutputType>::Reset()
 {
   // Set the weight parameter for the input to gate layer (linear layer) using
   // the overall layer parameter matrix.
@@ -145,8 +145,8 @@ void FastLSTM<InputDataType, OutputDataType>::Reset()
       + input2GateBias.n_elem, 4 * outSize, outSize, false, false);
 }
 
-template<typename InputDataType, typename OutputDataType>
-void FastLSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
+template<typename InputType, typename OutputType>
+void FastLSTMType<InputType, OutputType>::ResetCell(const size_t size)
 {
   if (size == std::numeric_limits<size_t>::max())
     return;
@@ -173,10 +173,10 @@ void FastLSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
 
     if (prevOutput.is_empty())
     {
-      prevOutput = arma::zeros<OutputDataType>(outSize, batchSize);
+      prevOutput = arma::zeros<OutputType>(outSize, batchSize);
       cell = arma::zeros(outSize, size * batchSize);
-      cellActivationError = arma::zeros<OutputDataType>(outSize, batchSize);
-      outParameter = arma::zeros<OutputDataType>(
+      cellActivationError = arma::zeros<OutputType>(outSize, batchSize);
+      outParameter = arma::zeros<OutputType>(
           outSize, (size + 1) * batchSize);
     }
     else
@@ -192,9 +192,8 @@ void FastLSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void FastLSTM<InputDataType, OutputDataType>::Forward(
+void FastLSTMType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   // Check if the batch size changed, the number of cols is defines the input
@@ -260,20 +259,19 @@ void FastLSTM<InputDataType, OutputDataType>::Forward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename ErrorType, typename GradientType>
-void FastLSTM<InputDataType, OutputDataType>::Backward(
-  const InputType& /* input */, const ErrorType& gy, GradientType& g)
+template<typename InputType, typename OutputType>
+void FastLSTMType<InputType, OutputType>::Backward(
+  const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  ErrorType gyLocal;
+  OutputType gyLocal;
   if (gradientStepIdx > 0)
   {
     gyLocal = gy + output2GateWeight.t() * prevError;
   }
   else
   {
-    gyLocal = ErrorType(((ErrorType&) gy).memptr(), gy.n_rows, gy.n_cols, false,
-        false);
+    gyLocal = OutputType(((OutputType&) gy).memptr(), gy.n_rows, gy.n_cols,
+        false, false);
   }
 
   cellActivationError = gyLocal % gateActivation.submat(outSize,
@@ -332,12 +330,11 @@ void FastLSTM<InputDataType, OutputDataType>::Backward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename ErrorType, typename GradientType>
-void FastLSTM<InputDataType, OutputDataType>::Gradient(
+template<typename InputType, typename OutputType>
+void FastLSTMType<InputType, OutputType>::Gradient(
     const InputType& input,
-    const ErrorType& /* error */,
-    GradientType& gradient)
+    const OutputType& /* error */,
+    OutputType& gradient)
 {
   // Gradient of the input to gate layer.
   gradient.submat(0, 0, input2GateWeight.n_elem - 1, 0) =
@@ -361,9 +358,9 @@ void FastLSTM<InputDataType, OutputDataType>::Gradient(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void FastLSTM<InputDataType, OutputDataType>::serialize(
+void FastLSTMType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(weights));
