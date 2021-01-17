@@ -140,11 +140,16 @@ class KDE
   /**
    * Copy a KDE model.
    *
-   * Use std::move if the object to copy is no longer needed.
+   * @param other KDE model to copy.
+   */
+  KDE& operator=(const KDE& other);
+
+  /**
+   * Move a KDE model.
    *
    * @param other KDE model to copy.
    */
-  KDE& operator=(KDE other);
+  KDE& operator=(KDE&& other);
 
   /**
    * Destroy the KDE object. If this object created any trees, they will be

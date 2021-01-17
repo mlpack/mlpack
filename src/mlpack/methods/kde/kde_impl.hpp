@@ -190,31 +190,95 @@ KDE<KernelType,
     TreeType,
     DualTreeTraversalType,
     SingleTreeTraversalType>::
-operator=(KDE other)
+operator=(const KDE& other)
 {
-  // Clean memory.
-  if (ownsReferenceTree)
+  if (this != &other)
   {
-    delete referenceTree;
-    delete oldFromNewReferences;
+    // Clean memory.
+    if (ownsReferenceTree)
+    {
+      delete referenceTree;
+      delete oldFromNewReferences;
+    }
+    kernel = KernelType(other.kernel);
+    metric = MetricType(other.metric);
+    relError = other.relError;
+    absError = other.absError;
+    ownsReferenceTree = other.ownsReferenceTree;
+    trained = other.trained;
+    mode = other.mode;
+    monteCarlo = other.monteCarlo;
+    mcProb = other.mcProb;
+    initialSampleSize = other.initialSampleSize;
+    mcEntryCoef = other.mcEntryCoef;
+    mcBreakCoef = other.mcBreakCoef;
+    if (trained)
+    {
+      if (ownsReferenceTree)
+      {
+        oldFromNewReferences =
+            new std::vector<size_t>(*other.oldFromNewReferences);
+        referenceTree = new Tree(*other.referenceTree);
+      }
+      else
+      {
+        oldFromNewReferences = other.oldFromNewReferences;
+        referenceTree = other.referenceTree;
+      }
+    }
   }
+  return *this;
+}
 
-  // Move the other object.
-  this->kernel = std::move(other.kernel);
-  this->metric = std::move(other.metric);
-  this->referenceTree = std::move(other.referenceTree);
-  this->oldFromNewReferences = std::move(other.oldFromNewReferences);
-  this->relError = other.relError;
-  this->absError = other.absError;
-  this->ownsReferenceTree = other.ownsReferenceTree;
-  this->trained = other.trained;
-  this->mode = other.mode;
-  this->monteCarlo = other.monteCarlo;
-  this->mcProb = other.mcProb;
-  this->initialSampleSize = other.initialSampleSize;
-  this->mcEntryCoef = other.mcEntryCoef;
-  this->mcBreakCoef = other.mcBreakCoef;
+template<typename KernelType,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class DualTreeTraversalType,
+         template<typename> class SingleTreeTraversalType>
+KDE<KernelType,
+    MetricType,
+    MatType,
+    TreeType,
+    DualTreeTraversalType,
+    SingleTreeTraversalType>&
+KDE<KernelType,
+    MetricType,
+    MatType,
+    TreeType,
+    DualTreeTraversalType,
+    SingleTreeTraversalType>::
+operator=(KDE&& other)
+{
+  if (this != &other)
+  {
+    // Clean memory.
+    if (ownsReferenceTree)
+    {
+      delete referenceTree;
+      delete oldFromNewReferences;
+    }
 
+    // Move the other object.
+    this->kernel = std::move(other.kernel);
+    this->metric = std::move(other.metric);
+    // TODO: This should be: this->referenceTree = other.referenceTree;
+    this->referenceTree = std::move(other.referenceTree);
+    // TODO: This should be: this->oldFromNewReferences = other.oldFromNewReferences;
+    this->oldFromNewReferences = std::move(other.oldFromNewReferences);
+    this->relError = other.relError;
+    this->absError = other.absError;
+    this->ownsReferenceTree = other.ownsReferenceTree;
+    this->trained = other.trained;
+    this->mode = other.mode;
+    this->monteCarlo = other.monteCarlo;
+    this->mcProb = other.mcProb;
+    this->initialSampleSize = other.initialSampleSize;
+    this->mcEntryCoef = other.mcEntryCoef;
+    this->mcBreakCoef = other.mcBreakCoef;
+  }
   return *this;
 }
 
