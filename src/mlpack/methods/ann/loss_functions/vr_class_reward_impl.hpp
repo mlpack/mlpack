@@ -1,5 +1,5 @@
 /**
- * @file methods/ann/layer/vr_class_reward_impl.hpp
+ * @file methods/ann/loss_functions/vr_class_reward_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the VRClassReward class, which implements the variance
@@ -10,13 +10,13 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_VR_CLASS_REWARD_IMPL_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_VR_CLASS_REWARD_IMPL_HPP
 
 // In case it hasn't yet been included.
 #include "vr_class_reward.hpp"
 
-#include "../visitor/reward_set_visitor.hpp"
+// #include "../visitor/reward_set_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -90,7 +90,8 @@ void VRClassReward<InputDataType, OutputDataType>::Backward(
   const double norm = sizeAverage ? 2.0 / (input.n_cols - 1) : 2.0;
 
   output(0, 1) = norm * (input(0, 1) - reward);
-  boost::apply_visitor(RewardSetVisitor(vrReward), network.back());
+  // boost::apply_visitor(RewardSetVisitor(vrReward), network.back());
+  network.back()->Reward() = vrReward;
 }
 
 template<typename InputDataType, typename OutputDataType>

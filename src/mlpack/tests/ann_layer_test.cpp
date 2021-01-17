@@ -3891,20 +3891,6 @@ TEST_CASE("ReinforceNormalLayerParametersTest", "[ANNLayerTest]")
   REQUIRE(layer.StandardDeviation() == 4.0);
 }
 
-// /**
-//  * Test that the function that can access the parameters of the
-//  * VR Class Reward layer works.
-//  */
-// TEST_CASE("VRClassRewardLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : scale, sizeAverage.
-//   VRClassReward<> layer(2, false);
-
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer.Scale() == 2);
-//   REQUIRE(layer.SizeAverage() == false);
-// }
-
 /**
  * Simple test for Adaptive pooling for Max Pooling layer.
  */

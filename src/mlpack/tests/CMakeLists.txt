@@ -64,7 +64,7 @@ add_executable(mlpack_test
   # local_coordinate_coding_test.cpp
   # logistic_regression_test.cpp
   # log_test.cpp
-  # loss_functions_test.cpp
+  loss_functions_test.cpp
   # lsh_test.cpp
   main.cpp
   # math_test.cpp

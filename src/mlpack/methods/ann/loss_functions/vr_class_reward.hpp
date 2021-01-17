@@ -1,5 +1,5 @@
 /**
- * @file methods/ann/layer/vr_class_reward.hpp
+ * @file methods/ann/loss_functions/vr_class_reward.hpp
  * @author Marcus Edel
  *
  * Definition of the VRClassReward class, which implements the variance
@@ -10,12 +10,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_HPP
-#define MLPACK_METHODS_ANN_LAYER_VR_CLASS_REWARD_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_VR_CLASS_REWARD_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_VR_CLASS_REWARD_HPP
 
 #include <mlpack/prereqs.hpp>
-
-#include "layer_types.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -74,16 +72,16 @@ class VRClassReward
                 OutputType& output);
 
   //! Get the output parameter.
-  OutputDataType& OutputParameter() const {return outputParameter; }
+  const OutputDataType& OutputParameter() const {return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType& Delta() const {return delta; }
+  const OutputDataType& Delta() const {return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param args The layer parameter.
@@ -91,15 +89,21 @@ class VRClassReward
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
-  /*
+  /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(LayerTypes<> layer) { network.push_back(layer); }
+  void Add(Layer<InputDataType, OutputDataType>* layer)
+  {
+    network.push_back(layer);
+  }
 
   //! Get the network modules.
-  std::vector<LayerTypes<> >& Model() { return network; }
+  std::vector<Layer<InputDataType, OutputDataType>*>& Model()
+  {
+    return network;
+  }
 
   //! Get the value of parameter sizeAverage.
   bool SizeAverage() const { return sizeAverage; }
@@ -130,7 +134,7 @@ class VRClassReward
   OutputDataType outputParameter;
 
   //! Locally-stored network modules.
-  std::vector<LayerTypes<> > network;
+  std::vector<Layer<InputDataType, OutputDataType>*> network;
 }; // class VRClassReward
 
 } // namespace ann

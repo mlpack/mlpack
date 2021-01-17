@@ -14,7 +14,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/loss_functions/huber_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/poisson_nll_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/kl_divergence.hpp>
@@ -33,6 +33,7 @@
 #include <mlpack/methods/ann/loss_functions/l1_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_absolute_percentage_error.hpp>
+#include <mlpack/methods/ann/loss_functions/vr_class_reward.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -423,9 +424,9 @@ TEST_CASE("GradientMeanSquaredErrorTest", "[LossFunctionsTest]")
       model = new FFN<MeanSquaredError<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
-      model->Add<IdentityLayer<> >();
-      model->Add<Linear<> >(10, 2);
-      model->Add<SigmoidLayer<> >();
+      model->Add<IdentityLayer>();
+      model->Add<Linear>(10, 2);
+      model->Add<SigmoidLayer>();
     }
 
     ~GradientFunction()
@@ -466,9 +467,9 @@ TEST_CASE("GradientReconstructionLossTest", "[LossFunctionsTest]")
       model = new FFN<ReconstructionLoss<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
-      model->Add<IdentityLayer<> >();
-      model->Add<Linear<> >(10, 2);
-      model->Add<SigmoidLayer<> >();
+      model->Add<IdentityLayer>();
+      model->Add<Linear>(10, 2);
+      model->Add<SigmoidLayer>();
     }
 
     ~GradientFunction()
@@ -896,4 +897,18 @@ TEST_CASE("MeanAbsolutePercentageErrorTest", "[LossFunctionsTest]")
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
   CheckMatrices(output, expectedOutput, 0.1);
+}
+
+/**
+ * Test that the function that can access the parameters of the
+ * VR Class Reward layer works.
+ */
+TEST_CASE("VRClassRewardLayerParametersTest", "[LossFunctionsTest]")
+{
+  // Parameter order : scale, sizeAverage.
+  VRClassReward<> layer(2, false);
+
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer.Scale() == 2);
+  REQUIRE(layer.SizeAverage() == false);
 }
