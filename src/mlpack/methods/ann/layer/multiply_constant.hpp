@@ -39,16 +39,16 @@ class MultiplyConstant
    */
   MultiplyConstant(const double scalar = 1.0);
 
-  //! Copy Constructor
+  //! Copy Constructor.
   MultiplyConstant(const MultiplyConstant& layer);
 
-  //! Move Constructor
+  //! Move Constructor.
   MultiplyConstant(MultiplyConstant&& layer);
 
-  //! Copy assignment operator
+  //! Copy assignment operator.
   MultiplyConstant& operator=(const MultiplyConstant& layer);
 
-  //! Move assignment operator
+  //! Move assignment operator.
   MultiplyConstant& operator=(MultiplyConstant&& layer);
 
   /**

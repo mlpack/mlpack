@@ -50,16 +50,16 @@ class MultiplyMerge
    */
   MultiplyMerge(const bool model = false, const bool run = true);
 
-  //! Copy Constructor
+  //! Copy Constructor.
   MultiplyMerge(const MultiplyMerge& layer);
 
-  //! Move Constructor
+  //! Move Constructor.
   MultiplyMerge(MultiplyMerge&& layer);
 
-  //! Copy assignment operator
+  //! Copy assignment operator.
   MultiplyMerge& operator=(const MultiplyMerge& layer);
 
-  //! Move assignment operator
+  //! Move assignment operator.
   MultiplyMerge& operator=(MultiplyMerge&& layer);
 
   //! Destructor to release allocated memory.
