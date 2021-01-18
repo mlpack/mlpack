@@ -1,29 +1,29 @@
 <h2 align="center">
-  <a href="http://mlpack.org"><img
+  <a href="http://mlpack.org" target="_blank"><img
 src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="background-color:rgba(0,0,0,0);" height=230 alt="mlpack: a fast, flexible machine learning library"></a>
   <br>a fast, flexible machine learning library<br>
 </h2>
 
 <h5 align="center">
-  <a href="https://mlpack.org">Home</a> |
-  <a href="https://www.mlpack.org/docs.html">Documentation</a> |
-  <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html">Doxygen</a> |
-  <a href="https://www.mlpack.org/community.html">Community</a> |
-  <a href="https://www.mlpack.org/questions.html">Help</a> |
-  <a href="https://webchat.freenode.net/?channels=mlpack">IRC Chat</a>
+  <a href="https://mlpack.org" target="_blank">Home</a> |
+  <a href="https://www.mlpack.org/docs.html" target="_blank">Documentation</a> |
+  <a href="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html" target="_blank">Doxygen</a> |
+  <a href="https://www.mlpack.org/community.html" target="_blank">Community</a> |
+  <a href="https://www.mlpack.org/questions.html" target="_blank">Help</a> |
+  <a href="https://webchat.freenode.net/?channels=mlpack" target="_blank">IRC Chat</a>
 </h5>
 
 <p align="center">
-  <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/build.svg?jobUrl=http%3A%2F%2Fci.mlpack.org%2Fjob%2Fmlpack%2520-%2520git%2520commit%2520test%2F&label=Linux%20build&style=flat-square" alt="Jenkins"></a>
-  <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg?style=flat-square" alt="Coveralls"></a>
-  <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
-  <a href="http://numfocus.org/donate-to-mlpack"><img src="https://img.shields.io/badge/sponsored%20by-NumFOCUS-orange.svg?style=flat-square&colorA=E1523D&colorB=007D8A" alt="NumFOCUS"></a>
+  <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/" target="_blank"><img src="https://img.shields.io/jenkins/build.svg?jobUrl=http%3A%2F%2Fci.mlpack.org%2Fjob%2Fmlpack%2520-%2520git%2520commit%2520test%2F&label=Linux%20build&style=flat-square" alt="Jenkins"></a>
+  <a href="https://coveralls.io/github/mlpack/mlpack?branch=master" target="_blank"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg?style=flat-square" alt="Coveralls"></a>
+  <a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
+  <a href="http://numfocus.org/donate-to-mlpack" target="_blank"><img src="https://img.shields.io/badge/sponsored%20by-NumFOCUS-orange.svg?style=flat-square&colorA=E1523D&colorB=007D8A" alt="NumFOCUS"></a>
 </p>
 
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-3.4.2.tar.gz">current stable version (3.4.2)</a>
+    <a href="https://www.mlpack.org/files/mlpack-3.4.2.tar.gz" target="_blank">current stable version (3.4.2)</a>
   </em>
 </p>
 
