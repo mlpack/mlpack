@@ -452,7 +452,7 @@ void HoeffdingTree<
     delete dimensionMappings;
 
   const CategoricalSplitType<FitnessFunction> categoricalSplitIn(0, 0);
-  const NumericSplitType<FitnessFunction>& numericSplitIn(0);
+  const NumericSplitType<FitnessFunction> numericSplitIn(0);
 
   dimensionMappings =
       new std::unordered_map<size_t, std::pair<size_t, size_t>>();

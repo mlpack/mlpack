@@ -157,8 +157,7 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
         traversalInfo.LastQueryNode()->MinimumBoundDistance();
     const double lastRefDescDist =
         traversalInfo.LastReferenceNode()->MinimumBoundDistance();
-    adjustedScore = lastScore + lastQueryDescDist;
-    adjustedScore = lastScore + lastRefDescDist;
+    adjustedScore = lastScore + lastQueryDescDist + lastRefDescDist;
   }
 
   // Assemble an adjusted score.  For nearest neighbor search, this adjusted
