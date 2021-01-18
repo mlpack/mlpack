@@ -36,7 +36,8 @@ HingeLoss<InputDataType, OutputDataType>::Forward(
   TargetType temp = target - (target == 0);
   TargetType temp_zeros.zeros(target.size());
 
-  PredictionType loss = arma::mean(arma::max(1 - prediction % temp, temp_zeros), 1);
+  PredictionType loss = arma::max(1 - prediction % temp, temp_zeros);
+
   typename PredictionType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
@@ -53,11 +54,20 @@ void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
     LossType& loss)
 {
   TargetType temp = target - (target == 0);
-  loss = (prediction < 1 / temp) % -temp;
+  loss = (prediction < (1 / temp)) % -temp;
+
+  if (!reduction)
+    loss /= target.n_elem;
 }
 
-
-
+template<typename InputDataType, typename OutputDataType>
+template<typename Archive>
+void HingeEmbeddingLoss<InputDataType, OutputDataType>::serialize(
+    Archive& ar,
+    const uint32_t /* version */)
+{
+  ar(CEREAL_NVP(reduction));
+}
 
 } // namespace ann
 } // namespace mlpack
