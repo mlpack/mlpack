@@ -180,144 +180,144 @@ TEST_CASE("AddLayerParametersTest", "[ANNLayerTest]")
   REQUIRE(layer.OutputSize() == 7);
 }
 
-// /**
-//  * Simple constant module test.
-//  */
-// TEST_CASE("SimpleConstantLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta;
-//   Constant<> module(10, 3.0);
+/**
+ * Simple constant module test.
+ */
+TEST_CASE("SimpleConstantLayerTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta;
+  Constant module(10, 3.0);
 
-//   // Test the Forward function.
-//   input = arma::zeros(10, 1);
-//   module.Forward(input, output);
-//   REQUIRE(arma::accu(output) == 30.0);
+  // Test the Forward function.
+  input = arma::zeros(10, 1);
+  module.Forward(input, output);
+  REQUIRE(arma::accu(output) == 30.0);
 
-//   // Test the Backward function.
-//   module.Backward(input, output, delta);
-//   REQUIRE(arma::accu(delta) == 0);
+  // Test the Backward function.
+  module.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == 0);
 
-//   // Test the forward function.
-//   input = arma::ones(10, 1);
-//   module.Forward(input, output);
-//   REQUIRE(arma::accu(output) == 30.0);
+  // Test the forward function.
+  input = arma::ones(10, 1);
+  module.Forward(input, output);
+  REQUIRE(arma::accu(output) == 30.0);
 
-//   // Test the backward function.
-//   module.Backward(input, output, delta);
-//   REQUIRE(arma::accu(delta) == 0);
-// }
+  // Test the backward function.
+  module.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == 0);
+}
 
-// /**
-//  * Jacobian constant module test.
-//  */
-// TEST_CASE("JacobianConstantLayerTest", "[ANNLayerTest]")
-// {
-//   for (size_t i = 0; i < 5; ++i)
-//   {
-//     const size_t elements = math::RandInt(2, 1000);
-//     arma::mat input;
-//     input.set_size(elements, 1);
+/**
+ * Jacobian constant module test.
+ */
+TEST_CASE("JacobianConstantLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t elements = math::RandInt(2, 1000);
+    arma::mat input;
+    input.set_size(elements, 1);
 
-//     Constant<> module(elements, 1.0);
+    Constant module(elements, 1.0);
 
-//     double error = JacobianTest(module, input);
-//     REQUIRE(error <= 1e-5);
-//   }
-// }
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
 
-// /**
-//  * Test that the function that can access the outSize parameter of the
-//  * Constant layer works.
-//  */
-// TEST_CASE("ConstantLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter : outSize.
-//   Constant<> layer(7);
+/**
+ * Test that the function that can access the outSize parameter of the
+ * Constant layer works.
+ */
+TEST_CASE("ConstantLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter : outSize.
+  Constant layer(7);
 
-//   // Make sure we can get the parameter successfully.
-//   REQUIRE(layer.OutSize() == 7);
-// }
+  // Make sure we can get the parameter successfully.
+  REQUIRE(layer.OutSize() == 7);
+}
 
-// /**
-//  * Simple dropout module test.
-//  */
-// TEST_CASE("SimpleDropoutLayerTest", "[ANNLayerTest]")
-// {
-//   // Initialize the probability of setting a value to zero.
-//   const double p = 0.2;
+/**
+ * Simple dropout module test.
+ */
+TEST_CASE("SimpleDropoutLayerTest", "[ANNLayerTest]")
+{
+  // Initialize the probability of setting a value to zero.
+  const double p = 0.2;
 
-//   // Initialize the input parameter.
-//   arma::mat input(1000, 1);
-//   input.fill(1 - p);
+  // Initialize the input parameter.
+  arma::mat input(1000, 1);
+  input.fill(1 - p);
 
-//   Dropout<> module(p);
-//   module.Deterministic() = false;
+  Dropout module(p);
+  module.Deterministic() = false;
 
-//   // Test the Forward function.
-//   arma::mat output;
-//   module.Forward(input, output);
-//   REQUIRE(arma::as_scalar(arma::abs(arma::mean(output) - (1 - p))) <= 0.05);
+  // Test the Forward function.
+  arma::mat output;
+  module.Forward(input, output);
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(output) - (1 - p))) <= 0.05);
 
-//   // Test the Backward function.
-//   arma::mat delta;
-//   module.Backward(input, input, delta);
-//   REQUIRE(arma::as_scalar(arma::abs(arma::mean(delta) - (1 - p))) <= 0.05);
+  // Test the Backward function.
+  arma::mat delta;
+  module.Backward(input, input, delta);
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(delta) - (1 - p))) <= 0.05);
 
-//   // Test the Forward function.
-//   module.Deterministic() = true;
-//   module.Forward(input, output);
-//   REQUIRE(arma::accu(input) == arma::accu(output));
-// }
+  // Test the Forward function.
+  module.Deterministic() = true;
+  module.Forward(input, output);
+  REQUIRE(arma::accu(input) == arma::accu(output));
+}
 
-// /**
-//  * Perform dropout x times using ones as input, sum the number of ones and
-//  * validate that the layer is producing approximately the correct number of
-//  * ones.
-//  */
-// TEST_CASE("DropoutProbabilityTest", "[ANNLayerTest]")
-// {
-//   arma::mat input = arma::ones(1500, 1);
-//   const size_t iterations = 10;
+/**
+ * Perform dropout x times using ones as input, sum the number of ones and
+ * validate that the layer is producing approximately the correct number of
+ * ones.
+ */
+TEST_CASE("DropoutProbabilityTest", "[ANNLayerTest]")
+{
+  arma::mat input = arma::ones(1500, 1);
+  const size_t iterations = 10;
 
-//   double probability[5] = { 0.1, 0.3, 0.4, 0.7, 0.8 };
-//   for (size_t trial = 0; trial < 5; ++trial)
-//   {
-//     double nonzeroCount = 0;
-//     for (size_t i = 0; i < iterations; ++i)
-//     {
-//       Dropout<> module(probability[trial]);
-//       module.Deterministic() = false;
+  double probability[5] = { 0.1, 0.3, 0.4, 0.7, 0.8 };
+  for (size_t trial = 0; trial < 5; ++trial)
+  {
+    double nonzeroCount = 0;
+    for (size_t i = 0; i < iterations; ++i)
+    {
+      Dropout module(probability[trial]);
+      module.Deterministic() = false;
 
-//       arma::mat output;
-//       module.Forward(input, output);
+      arma::mat output;
+      module.Forward(input, output);
 
-//       // Return a column vector containing the indices of elements of X that
-//       // are non-zero, we just need the number of non-zero values.
-//       arma::uvec nonzero = arma::find(output);
-//       nonzeroCount += nonzero.n_elem;
-//     }
-//     const double expected = input.n_elem * (1 - probability[trial]) *
-//         iterations;
-//     const double error = fabs(nonzeroCount - expected) / expected;
+      // Return a column vector containing the indices of elements of X that
+      // are non-zero, we just need the number of non-zero values.
+      arma::uvec nonzero = arma::find(output);
+      nonzeroCount += nonzero.n_elem;
+    }
+    const double expected = input.n_elem * (1 - probability[trial]) *
+        iterations;
+    const double error = fabs(nonzeroCount - expected) / expected;
 
-//     REQUIRE(error <= 0.15);
-//   }
-// }
+    REQUIRE(error <= 0.15);
+  }
+}
 
-// /*
-//  * Perform dropout with probability 1 - p where p = 0, means no dropout.
-//  */
-// TEST_CASE("NoDropoutTest", "[ANNLayerTest]")
-// {
-//   arma::mat input = arma::ones(1500, 1);
-//   Dropout<> module(0);
-//   module.Deterministic() = false;
+/*
+ * Perform dropout with probability 1 - p where p = 0, means no dropout.
+ */
+TEST_CASE("NoDropoutTest", "[ANNLayerTest]")
+{
+  arma::mat input = arma::ones(1500, 1);
+  Dropout module(0);
+  module.Deterministic() = false;
 
-//   arma::mat output;
-//   module.Forward(input, output);
+  arma::mat output;
+  module.Forward(input, output);
 
-//   REQUIRE(arma::accu(output) == arma::accu(input));
-// }
+  REQUIRE(arma::accu(output) == arma::accu(input));
+}
 
 // /*
 //  * Perform test to check whether mean and variance remain nearly same
@@ -672,25 +672,25 @@ TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
 //   REQUIRE(CheckGradient(function) <= 1e-4);
 // }
 
-// /**
-//  * Simple linear no bias module test.
-//  */
-// TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta;
-//   LinearNoBias<> module(10, 10);
-//   module.Parameters().randu();
-//   module.Reset();
+/**
+ * Simple linear no bias module test.
+ */
+TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta;
+  LinearNoBias module(10, 10);
+  module.Parameters().randu();
+  module.Reset();
 
-//   // Test the Forward function.
-//   input = arma::zeros(10, 1);
-//   module.Forward(input, output);
-//   REQUIRE(0 == arma::accu(output));
+  // Test the Forward function.
+  input = arma::zeros(10, 1);
+  module.Forward(input, output);
+  REQUIRE(0 == arma::accu(output));
 
-//   // Test the Backward function.
-//   module.Backward(input, input, delta);
-//   REQUIRE(arma::accu(delta) == 0);
-// }
+  // Test the Backward function.
+  module.Backward(input, input, delta);
+  REQUIRE(arma::accu(delta) == 0);
+}
 
 /**
  * Simple padding layer test.
@@ -712,68 +712,68 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   CheckMatrices(delta, input);
 }
 
-// /**
-//  * Jacobian linear no bias module test.
-//  */
-// TEST_CASE("JacobianLinearNoBiasLayerTest", "[ANNLayerTest]")
-// {
-//   for (size_t i = 0; i < 5; ++i)
-//   {
-//     const size_t inputElements = math::RandInt(2, 1000);
-//     const size_t outputElements = math::RandInt(2, 1000);
+/**
+ * Jacobian linear no bias module test.
+ */
+TEST_CASE("JacobianLinearNoBiasLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inputElements = math::RandInt(2, 1000);
+    const size_t outputElements = math::RandInt(2, 1000);
 
-//     arma::mat input;
-//     input.set_size(inputElements, 1);
+    arma::mat input;
+    input.set_size(inputElements, 1);
 
-//     LinearNoBias<> module(inputElements, outputElements);
-//     module.Parameters().randu();
+    LinearNoBias module(inputElements, outputElements);
+    module.Parameters().randu();
 
-//     double error = JacobianTest(module, input);
-//     REQUIRE(error <= 1e-5);
-//   }
-// }
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
 
-// /**
-//  * LinearNoBias layer numerical gradient test.
-//  */
-// TEST_CASE("GradientLinearNoBiasLayerTest", "[ANNLayerTest]")
-// {
-//   // LinearNoBias function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::randu(10, 1)),
-//         target(arma::mat("1"))
-//     {
-//       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-//       model->Predictors() = input;
-//       model->Responses() = target;
-//       model->Add<IdentityLayer<> >();
-//       model->Add<Linear<> >(10, 10);
-//       model->Add<LinearNoBias<> >(10, 2);
-//       model->Add<LogSoftMax<> >();
-//     }
+/**
+ * LinearNoBias layer numerical gradient test.
+ */
+TEST_CASE("GradientLinearNoBiasLayerTest", "[ANNLayerTest]")
+{
+  // LinearNoBias function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1"))
+    {
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer>();
+      model->Add<Linear>(10, 10);
+      model->Add<LinearNoBias>(10, 2);
+      model->Add<LogSoftMax>();
+    }
 
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
 
-//     arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-//     arma::mat input, target;
-//   } function;
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
 
-//   REQUIRE(CheckGradient(function) <= 1e-4);
-// }
+  REQUIRE(CheckGradient(function) <= 1e-4);
+}
 
 // /**
 //  * Jacobian negative log likelihood module test.
@@ -796,125 +796,125 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
 //   }
 // }
 
-// /**
-//  * Jacobian LeakyReLU module test.
-//  */
-// TEST_CASE("JacobianLeakyReLULayerTest", "[ANNLayerTest]")
-// {
-//   for (size_t i = 0; i < 5; ++i)
-//   {
-//     const size_t inputElements = math::RandInt(2, 1000);
+/**
+ * Jacobian LeakyReLU module test.
+ */
+TEST_CASE("JacobianLeakyReLULayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inputElements = math::RandInt(2, 1000);
 
-//     arma::mat input;
-//     input.set_size(inputElements, 1);
+    arma::mat input;
+    input.set_size(inputElements, 1);
 
-//     LeakyReLU<> module;
+    LeakyReLU module;
 
-//     double error = JacobianTest(module, input);
-//     REQUIRE(error <= 1e-5);
-//   }
-// }
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
 
-// /**
-//  * Jacobian FlexibleReLU module test.
-//  */
-// TEST_CASE("JacobianFlexibleReLULayerTest", "[ANNLayerTest]")
-// {
-//   for (size_t i = 0; i < 5; ++i)
-//   {
-//     const size_t inputElements = math::RandInt(2, 1000);
+/**
+ * Jacobian FlexibleReLU module test.
+ */
+TEST_CASE("JacobianFlexibleReLULayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inputElements = math::RandInt(2, 1000);
 
-//     arma::mat input;
-//     input.set_size(inputElements, 1);
+    arma::mat input;
+    input.set_size(inputElements, 1);
 
-//     FlexibleReLU<> module;
+    FlexibleReLU module;
 
-//     double error = JacobianTest(module, input);
-//     REQUIRE(error <= 1e-5);
-//   }
-// }
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
 
-// /**
-//  * Flexible ReLU layer numerical gradient test.
-//  */
-// TEST_CASE("GradientFlexibleReLULayerTest", "[ANNLayerTest]")
-// {
-//   // Add function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::randu(2, 1)),
-//         target(arma::mat("1"))
-//     {
-//       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
-//           NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
+/**
+ * Flexible ReLU layer numerical gradient test.
+ */
+TEST_CASE("GradientFlexibleReLULayerTest", "[ANNLayerTest]")
+{
+  // Add function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randu(2, 1)),
+        target(arma::mat("1"))
+    {
+      model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
+          NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
 
-//       model->Predictors() = input;
-//       model->Responses() = target;
-//       model->Add<Linear<> >(2, 2);
-//       model->Add<LinearNoBias<> >(2, 5);
-//       model->Add<FlexibleReLU<> >(0.05);
-//       model->Add<LogSoftMax<> >();
-//     }
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<Linear>(2, 2);
+      model->Add<LinearNoBias>(2, 5);
+      model->Add<FlexibleReLU>(0.05);
+      model->Add<LogSoftMax>();
+    }
 
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
 
-//     arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
-//     arma::mat input, target;
-//   } function;
+    FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
+    arma::mat input, target;
+  } function;
 
-//   REQUIRE(CheckGradient(function) <= 1e-4);
-// }
+  REQUIRE(CheckGradient(function) <= 1e-4);
+}
 
-// /**
-//  * Jacobian MultiplyConstant module test.
-//  */
-// TEST_CASE("JacobianMultiplyConstantLayerTest", "[ANNLayerTest]")
-// {
-//   for (size_t i = 0; i < 5; ++i)
-//   {
-//     const size_t inputElements = math::RandInt(2, 1000);
+/**
+ * Jacobian MultiplyConstant module test.
+ */
+TEST_CASE("JacobianMultiplyConstantLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inputElements = math::RandInt(2, 1000);
 
-//     arma::mat input;
-//     input.set_size(inputElements, 1);
+    arma::mat input;
+    input.set_size(inputElements, 1);
 
-//     MultiplyConstant<> module(3.0);
+    MultiplyConstant module(3.0);
 
-//     double error = JacobianTest(module, input);
-//     REQUIRE(error <= 1e-5);
-//   }
-// }
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
 
-// /**
-//  * Jacobian HardTanH module test.
-//  */
-// TEST_CASE("JacobianHardTanHLayerTest", "[ANNLayerTest]")
-// {
-//   for (size_t i = 0; i < 5; ++i)
-//   {
-//     const size_t inputElements = math::RandInt(2, 1000);
+/**
+ * Jacobian HardTanH module test.
+ */
+TEST_CASE("JacobianHardTanHLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inputElements = math::RandInt(2, 1000);
 
-//     arma::mat input;
-//     input.set_size(inputElements, 1);
+    arma::mat input;
+    input.set_size(inputElements, 1);
 
-//     HardTanH<> module;
+    HardTanH module;
 
-//     double error = JacobianTest(module, input);
-//     REQUIRE(error <= 1e-5);
-//   }
-// }
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
 
 /**
  * Simple select module test.
@@ -1963,92 +1963,92 @@ TEST_CASE("LookupLayerParametersTest", "[ANNLayerTest]")
   REQUIRE(layer.EmbeddingSize() == 8);
 }
 
-// /**
-//  * Simple LogSoftMax module test.
-//  */
-// TEST_CASE("SimpleLogSoftmaxLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, error, delta;
-//   LogSoftMax<> module;
+/**
+ * Simple LogSoftMax module test.
+ */
+TEST_CASE("SimpleLogSoftmaxLayerTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, error, delta;
+  LogSoftMax module;
 
-//   // Test the Forward function.
-//   input = arma::mat("0.5; 0.5");
-//   module.Forward(input, output);
-//   REQUIRE(arma::accu(arma::abs(arma::mat("-0.6931; -0.6931") - output)) ==
-//       Approx(0.0).margin(1e-3));
+  // Test the Forward function.
+  input = arma::mat("0.5; 0.5");
+  module.Forward(input, output);
+  REQUIRE(arma::accu(arma::abs(arma::mat("-0.6931; -0.6931") - output)) ==
+      Approx(0.0).margin(1e-3));
 
-//   // Test the Backward function.
-//   error = arma::zeros(input.n_rows, input.n_cols);
-//   // Assume LogSoftmax layer is always associated with NLL output layer.
-//   error(1, 0) = -1;
-//   module.Backward(input, error, delta);
-//   REQUIRE(arma::accu(arma::abs(arma::mat("1.6487; 0.6487") - delta)) ==
-//       Approx(0.0).margin(1e-3));
-// }
+  // Test the Backward function.
+  error = arma::zeros(input.n_rows, input.n_cols);
+  // Assume LogSoftmax layer is always associated with NLL output layer.
+  error(1, 0) = -1;
+  module.Backward(input, error, delta);
+  REQUIRE(arma::accu(arma::abs(arma::mat("1.6487; 0.6487") - delta)) ==
+      Approx(0.0).margin(1e-3));
+}
 
-// /**
-//  * Simple Softmax module test.
-//  */
-// TEST_CASE("SimpleSoftmaxLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat input, output, gy, g;
-//   Softmax<> module;
+/**
+ * Simple Softmax module test.
+ */
+TEST_CASE("SimpleSoftmaxLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, gy, g;
+  Softmax module;
 
-//   // Test the forward function.
-//   input = arma::mat("1.7; 3.6");
-//   module.Forward(input, output);
-//   REQUIRE(arma::accu(arma::abs(arma::mat("0.130108; 0.869892") - output)) ==
-//       Approx(0.0).margin(1e-4));
+  // Test the forward function.
+  input = arma::mat("1.7; 3.6");
+  module.Forward(input, output);
+  REQUIRE(arma::accu(arma::abs(arma::mat("0.130108; 0.869892") - output)) ==
+      Approx(0.0).margin(1e-4));
 
-//   // Test the backward function.
-//   gy = arma::zeros(input.n_rows, input.n_cols);
-//   gy(0) = 1;
-//   module.Backward(output, gy, g);
-//   REQUIRE(arma::accu(arma::abs(arma::mat("0.11318; -0.11318") - g)) ==
-//       Approx(0.0).margin(1e-04));
-// }
+  // Test the backward function.
+  gy = arma::zeros(input.n_rows, input.n_cols);
+  gy(0) = 1;
+  module.Backward(output, gy, g);
+  REQUIRE(arma::accu(arma::abs(arma::mat("0.11318; -0.11318") - g)) ==
+      Approx(0.0).margin(1e-04));
+}
 
-// /**
-//  * Softmax layer numerical gradient test.
-//  */
-// TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
-// {
-//   // Softmax function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::randu(10, 1)),
-//         target(arma::mat("1; 0"))
-//     {
-//       model = new FFN<MeanSquaredError<>, RandomInitialization>;
-//       model->Predictors() = input;
-//       model->Responses() = target;
-//       model->Add<Linear<> >(10, 10);
-//       model->Add<ReLULayer<> >();
-//       model->Add<Linear<> >(10, 2);
-//       model->Add<Softmax<> >();
-//     }
+/**
+ * Softmax layer numerical gradient test.
+ */
+TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
+{
+  // Softmax function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1; 0"))
+    {
+      model = new FFN<MeanSquaredError<>, RandomInitialization>;
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<Linear>(10, 10);
+      model->Add<ReLULayer>();
+      model->Add<Linear>(10, 2);
+      model->Add<Softmax>();
+    }
 
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
+    ~GradientFunction()
+    {
+      delete model;
+    }
 
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
 
-//     arma::mat& Parameters() { return model->Parameters(); }
+    arma::mat& Parameters() { return model->Parameters(); }
 
-//     FFN<MeanSquaredError<> >* model;
-//     arma::mat input, target;
-//   } function;
+    FFN<MeanSquaredError<> >* model;
+    arma::mat input, target;
+  } function;
 
-//   REQUIRE(CheckGradient(function) <= 1e-4);
-// }
+  REQUIRE(CheckGradient(function) <= 1e-4);
+}
 
 /*
  * Simple test for the BilinearInterpolation layer
@@ -2909,37 +2909,37 @@ TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
 //   REQUIRE(arma::accu(delta) == 0);
 // }
 
-// /**
-//  * Test if the MultiplyMerge layer is able to forward the
-//  * Forward/Backward/Gradient calls.
-//  */
-// TEST_CASE("MultiplyMergeRunTest", "[ANNLayerTest]")
-// {
-//   arma::mat output, input, delta, error;
+/**
+ * Test if the MultiplyMerge layer is able to forward the
+ * Forward/Backward/Gradient calls.
+ */
+TEST_CASE("MultiplyMergeRunTest", "[ANNLayerTest]")
+{
+  arma::mat output, input, delta, error;
 
-//   MultiplyMerge<> module(true, true);
+  MultiplyMerge module(true, true);
 
-//   Linear<>* linear = new Linear<>(10, 10);
-//   module.Add(linear);
+  Linear* linear = new Linear(10, 10);
+  module.Add(linear);
 
-//   linear->Parameters().randu();
-//   linear->Reset();
+  linear->Parameters().randu();
+  linear->Reset();
 
-//   input = arma::zeros(10, 1);
-//   module.Forward(input, output);
+  input = arma::zeros(10, 1);
+  module.Forward(input, output);
 
-//   double parameterSum = arma::accu(linear->Parameters().submat(
-//       100, 0, linear->Parameters().n_elem - 1, 0));
+  double parameterSum = arma::accu(linear->Parameters().submat(
+      100, 0, linear->Parameters().n_elem - 1, 0));
 
-//   // Test the Backward function.
-//   module.Backward(input, input, delta);
+  // Test the Backward function.
+  module.Backward(input, input, delta);
 
-//   // Clean up before we break,
-//   delete linear;
+  // Clean up before we break,
+  delete linear;
 
-//   REQUIRE(parameterSum == Approx(arma::accu(output)).epsilon(1e-5));
-//   REQUIRE(arma::accu(delta) == 0);
-// }
+  REQUIRE(parameterSum == Approx(arma::accu(output)).epsilon(1e-5));
+  REQUIRE(arma::accu(delta) == 0);
+}
 
 /**
  * Simple subview module test.
@@ -3287,56 +3287,56 @@ TEST_CASE("SimpleResidualLayerTest", "[ANNLayerTest]")
   delete linearB;
 }
 
-// /**
-//  * Simple Highway module test.
-//  */
-// TEST_CASE("SimpleHighwayLayerTest", "[ANNLayerTest]")
-// {
-//   arma::mat outputA, outputB, input, deltaA, deltaB;
-//   Sequential<>* sequential = new Sequential<>(true);
-//   Highway<>* highway = new Highway<>(10, true);
-//   highway->Parameters().zeros();
-//   highway->Reset();
+/**
+ * Simple Highway module test.
+ */
+TEST_CASE("SimpleHighwayLayerTest", "[ANNLayerTest]")
+{
+  arma::mat outputA, outputB, input, deltaA, deltaB;
+  Sequential* sequential = new Sequential(true);
+  Highway* highway = new Highway(10, true);
+  highway->Parameters().zeros();
+  highway->Reset();
 
-//   Linear<>* linearA = new Linear<>(10, 10);
-//   linearA->Parameters().randu();
-//   linearA->Reset();
-//   Linear<>* linearB = new Linear<>(10, 10);
-//   linearB->Parameters().randu();
-//   linearB->Reset();
+  Linear* linearA = new Linear(10, 10);
+  linearA->Parameters().randu();
+  linearA->Reset();
+  Linear* linearB = new Linear(10, 10);
+  linearB->Parameters().randu();
+  linearB->Reset();
 
-//   // Add the same layers (with the same parameters) to both Sequential and
-//   // Highway object.
-//   highway->Add(linearA);
-//   highway->Add(linearB);
-//   sequential->Add(linearA);
-//   sequential->Add(linearB);
+  // Add the same layers (with the same parameters) to both Sequential and
+  // Highway object.
+  highway->Add(linearA);
+  highway->Add(linearB);
+  sequential->Add(linearA);
+  sequential->Add(linearB);
 
-//   // Test the Forward function (pass the same input to both).
-//   input = arma::randu(10, 1);
-//   sequential->Forward(input, outputA);
-//   highway->Forward(input, outputB);
+  // Test the Forward function (pass the same input to both).
+  input = arma::randu(10, 1);
+  sequential->Forward(input, outputA);
+  highway->Forward(input, outputB);
 
-//   CheckMatrices(outputB, input * 0.5 + outputA * 0.5);
+  CheckMatrices(outputB, input * 0.5 + outputA * 0.5);
 
-//   delete sequential;
-//   delete highway;
-//   delete linearA;
-//   delete linearB;
-// }
+  delete sequential;
+  delete highway;
+  delete linearA;
+  delete linearB;
+}
 
-// /**
-//  * Test that the function that can access the inSize parameter of the
-//  * Highway layer works.
-//  */
-// TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : inSize, model.
-//   Highway<> layer(1, true);
+/**
+ * Test that the function that can access the inSize parameter of the
+ * Highway layer works.
+ */
+TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
+{
+  // Parameter order : inSize, model.
+  Highway layer(1, true);
 
-//   // Make sure we can get the parameter successfully.
-//   REQUIRE(layer.InSize() == 1);
-// }
+  // Make sure we can get the parameter successfully.
+  REQUIRE(layer.InSize() == 1);
+}
 
 // /**
 //  * Sequential layer numerical gradient test.
@@ -3353,18 +3353,18 @@ TEST_CASE("SimpleResidualLayerTest", "[ANNLayerTest]")
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
 //       model->Predictors() = input;
 //       model->Responses() = target;
-//       model->Add<IdentityLayer<> >();
-//       model->Add<Linear<> >(5, 10);
+//       model->Add<IdentityLayer>();
+//       model->Add<Linear>(5, 10);
 
-//       highway = new Highway<>(10);
-//       highway->Add<Linear<> >(10, 10);
-//       highway->Add<ReLULayer<> >();
-//       highway->Add<Linear<> >(10, 10);
-//       highway->Add<ReLULayer<> >();
+//       highway = new Highway(10);
+//       highway->Add<Linear>(10, 10);
+//       highway->Add<ReLULayer>();
+//       highway->Add<Linear>(10, 10);
+//       highway->Add<ReLULayer>();
 
 //       model->Add(highway);
-//       model->Add<Linear<> >(10, 2);
-//       model->Add<LogSoftMax<> >();
+//       model->Add<Linear>(10, 2);
+//       model->Add<LogSoftMax>();
 //     }
 
 //     ~GradientFunction()
@@ -3382,7 +3382,7 @@ TEST_CASE("SimpleResidualLayerTest", "[ANNLayerTest]")
 //     arma::mat& Parameters() { return model->Parameters(); }
 
 //     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-//     Highway<>* highway;
+//     Highway* highway;
 //     arma::mat input, target;
 //   } function;
 
@@ -3454,13 +3454,13 @@ TEST_CASE("SimpleResidualLayerTest", "[ANNLayerTest]")
 //       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
 //       model->Predictors() = input;
 //       model->Responses() = target;
-//       model->Add<Linear<> >(10, 10);
+//       model->Add<Linear>(10, 10);
 
-//       Linear<>* linear = new Linear<>(10, 2);
-//       weightNorm = new WeightNorm<>(linear);
+//       Linear* linear = new Linear(10, 2);
+//       weightNorm = new WeightNorm(linear);
 
 //       model->Add(weightNorm);
-//       model->Add<LogSoftMax<> >();
+//       model->Add<LogSoftMax>();
 //     }
 
 //     ~GradientFunction()
@@ -3478,7 +3478,7 @@ TEST_CASE("SimpleResidualLayerTest", "[ANNLayerTest]")
 //     arma::mat& Parameters() { return model->Parameters(); }
 
 //     FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-//     WeightNorm<>* weightNorm;
+//     WeightNorm* weightNorm;
 //     arma::mat input, target;
 //   } function;
 
@@ -3493,9 +3493,9 @@ TEST_CASE("SimpleResidualLayerTest", "[ANNLayerTest]")
 // {
 //   arma::mat output, input, delta, error;
 
-//   Linear<>* linear = new Linear<>(10, 10);
+//   Linear* linear = new Linear(10, 10);
 
-//   WeightNorm<> module(linear);
+//   WeightNorm module(linear);
 
 //   module.Parameters().randu();
 //   module.Reset();

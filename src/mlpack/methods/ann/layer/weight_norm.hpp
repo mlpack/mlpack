@@ -13,14 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_WEIGHTNORM_HPP
 
 #include <mlpack/prereqs.hpp>
-#include "layer_types.hpp"
-
-#include "../visitor/delete_visitor.hpp"
-#include "../visitor/delta_visitor.hpp"
-#include "../visitor/output_parameter_visitor.hpp"
-#include "../visitor/reset_visitor.hpp"
-#include "../visitor/weight_size_visitor.hpp"
-#include "../visitor/weight_set_visitor.hpp"
+#include "layer.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -51,14 +44,12 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam CustomLayers Additional custom layers that can be added.
  */
 template <
-  typename InputDataType = arma::mat,
-  typename OutputDataType = arma::mat,
-  typename... CustomLayers
+  typename InputType = arma::mat,
+  typename OutputType = arma::mat
 >
-class WeightNorm
+class WeightNormType : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -66,10 +57,10 @@ class WeightNorm
    *
    * @param layer The layer whose weights are needed to be normalized.
    */
-  WeightNorm(LayerTypes<CustomLayers...> layer = LayerTypes<CustomLayers...>());
+  WeightNormType(Layer<InputType, OutputType>* layer);
 
   //! Destructor to release allocated memory.
-  ~WeightNorm();
+  ~WeightNormType();
 
   /**
    * Reset the layer parameters.
@@ -85,8 +76,7 @@ class WeightNorm
    * @param input Input data for the layer.
    * @param output Resulting output activations.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Backward pass through the layer. This function calls the Backward()
@@ -96,10 +86,9 @@ class WeightNorm
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& input,
+                const OutputType& gy,
+                OutputType& g);
 
   /**
    * Calculate the gradient using the output delta, input activations and the
@@ -109,33 +98,32 @@ class WeightNorm
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputType const& Gradient() const { return gradient; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Gradient() { return gradient; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the wrapped layer.
-  LayerTypes<CustomLayers...> const& Layer() { return wrappedLayer; }
+  Layer<InputType, OutputType>* const& WrappedLayer() { return wrappedLayer; }
 
   /**
    * Serialize the layer.
@@ -147,54 +135,42 @@ class WeightNorm
   //! Locally-stored number of bias elements in the weights of wrapped layer.
   size_t biasWeightSize;
 
-  //! Locally-stored delete visitor module object.
-  DeleteVisitor deleteVisitor;
+  //! Locally-stored gradient object.
+  OutputType gradient;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored delta visitor module object.
-  DeltaVisitor deltaVisitor;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType delta;
 
   //! Locally-stored wrapped layer.
-  LayerTypes<CustomLayers...> wrappedLayer;
+  Layer<InputType, OutputType>* wrappedLayer;
 
   //! Locally stored number of elements in the weights of wrapped layer.
   size_t layerWeightSize;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
-  //! Locally-stored output parameter visitor module object.
-  OutputParameterVisitor outputParameterVisitor;
+  OutputType outputParameter;
 
   //! Reset the gradient for all modules that implement the Gradient function.
-  void ResetGradients(arma::mat& gradient);
-
-  //! Locally-stored reset visitor.
-  ResetVisitor resetVisitor;
+  void ResetGradients(OutputType& gradient);
 
   //! Locally-stored scalar parameter.
-  OutputDataType scalarParameter;
+  OutputType scalarParameter;
 
   //! Locally-stored parameter vector.
-  OutputDataType vectorParameter;
+  OutputType vectorParameter;
 
   //! Locally-stored parameters.
-  OutputDataType weights;
-
-  //! Locally-stored weight size visitor.
-  WeightSizeVisitor weightSizeVisitor;
+  OutputType weights;
 
   //! Locally-stored gradients of wrappedLayer.
-  OutputDataType layerGradients;
+  OutputType layerGradients;
 
   //! Locally-stored weights of wrappedLayer.
-  OutputDataType layerWeights;
-}; // class WeightNorm
+  OutputType layerWeights;
+}; // class WeightNormType.
+
+// Standard WeightNorm layer.
+typedef WeightNormType<arma::mat, arma::mat> WeightNorm;
 
 } // namespace ann
 } // namespace mlpack

@@ -93,7 +93,7 @@ class DropoutType : public Layer<InputType, OutputType>
                 OutputType& g);
 
   //! The value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
+  bool const& Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 

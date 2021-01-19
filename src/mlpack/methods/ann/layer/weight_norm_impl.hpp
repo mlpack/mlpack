@@ -16,97 +16,91 @@
 // In case it is not included.
 #include "weight_norm.hpp"
 
-#include "../visitor/forward_visitor.hpp"
-#include "../visitor/backward_visitor.hpp"
-#include "../visitor/gradient_visitor.hpp"
-#include "../visitor/bias_set_visitor.hpp"
-
 namespace mlpack {
 namespace ann { /** Artificial Neural Network. */
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-WeightNorm<InputDataType, OutputDataType, CustomLayers...>::WeightNorm(
-    LayerTypes<CustomLayers...> layer) :
-    wrappedLayer(layer)
+template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>::
+WeightNormType(Layer<InputType, OutputType>* layer) : wrappedLayer(layer)
 {
-  layerWeightSize = boost::apply_visitor(weightSizeVisitor, wrappedLayer);
+  layerWeightSize = wrappedLayer->WeightSize();
   weights.set_size(layerWeightSize + 1, 1);
 
   layerWeights.set_size(layerWeightSize, 1);
   layerGradients.set_size(layerWeightSize, 1);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-WeightNorm<InputDataType, OutputDataType, CustomLayers...>::~WeightNorm()
+template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>::~WeightNormType()
 {
-  boost::apply_visitor(deleteVisitor, wrappedLayer);
+  delete wrappedLayer;
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Reset()
+template<typename InputType, typename OutputType>
+void WeightNormType<InputType, OutputType>::Reset()
 {
   // Set the weights of the inside layer to layerWeights.
   // This is done to set the non-bias terms correctly.
-  boost::apply_visitor(WeightSetVisitor(layerWeights, 0), wrappedLayer);
+  /* boost::apply_visitor(WeightSetVisitor(layerWeights, 0), wrappedLayer); */
+  wrappedLayer->Parameters() = OutputType(layerWeights.memptr(),
+      wrappedLayer->Parameters().n_rows, wrappedLayer->Parameters().n_cols,
+      false, false);
 
-  boost::apply_visitor(resetVisitor, wrappedLayer);
+  /* boost::apply_visitor(ResetVisitor(), wrappedLayer); */
+  wrappedLayer->Reset();
 
-  biasWeightSize = boost::apply_visitor(BiasSetVisitor(weights, 0),
-      wrappedLayer);
+  /* biasWeightSize = boost::apply_visitor(BiasSetVisitor(weights, 0), */
+  /*     wrappedLayer); */
+  biasWeightSize = 0;
 
-  vectorParameter = arma::mat(weights.memptr() + biasWeightSize,
+  vectorParameter = OutputType(weights.memptr() + biasWeightSize,
       layerWeightSize - biasWeightSize, 1, false, false);
 
-  scalarParameter = arma::mat(weights.memptr() + layerWeightSize, 1, 1, false,
+  scalarParameter = OutputType(weights.memptr() + layerWeightSize, 1, 1, false,
       false);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void WeightNormType<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   // Initialize the non-bias weights of wrapped layer.
   const double normVectorParameter = arma::norm(vectorParameter, 2);
   layerWeights.rows(0, layerWeightSize - biasWeightSize - 1) =
       scalarParameter(0) * vectorParameter / normVectorParameter;
 
-  boost::apply_visitor(ForwardVisitor(input,
-      boost::apply_visitor(outputParameterVisitor, wrappedLayer)),
-      wrappedLayer);
+  wrappedLayer->Forward(input, wrappedLayer->OutputParameter());
 
-  output = boost::apply_visitor(outputParameterVisitor, wrappedLayer);
+  output = wrappedLayer->OutputParameter();
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void WeightNormType<InputType, OutputType>::Backward(
+    const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-      outputParameterVisitor, wrappedLayer), gy,
-      boost::apply_visitor(deltaVisitor, wrappedLayer)), wrappedLayer);
+  wrappedLayer->Backward(
+      wrappedLayer->OutputParameter(),
+      gy,
+      wrappedLayer->Delta()
+  );
 
-  g = boost::apply_visitor(deltaVisitor, wrappedLayer);
+  g = wrappedLayer->Delta();
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
+template<typename InputType, typename OutputType>
+void WeightNormType<InputType, OutputType>::Gradient(
+    const InputType& input,
+    const OutputType& error,
+    OutputType& gradient)
 {
   ResetGradients(layerGradients);
 
   // Calculate the gradients of the wrapped layer.
-  boost::apply_visitor(GradientVisitor(input, error), wrappedLayer);
+  wrappedLayer->Gradient(
+      input,
+      error,
+      wrappedLayer->Gradient()
+  );
 
   // Store the norm of vector parameter temporarily.
   const double normVectorParameter = arma::norm(vectorParameter, 2);
@@ -114,7 +108,7 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Gradient(
   // Set the gradients of the bias terms.
   if (biasWeightSize != 0)
   {
-    gradient.rows(0, biasWeightSize - 1) = arma::mat(layerGradients.memptr() +
+    gradient.rows(0, biasWeightSize - 1) = OutputType(layerGradients.memptr() +
         layerWeightSize - biasWeightSize, biasWeightSize, 1, false, false);
   }
 
@@ -130,26 +124,25 @@ void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::Gradient(
       normVectorParameter * vectorParameter);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::ResetGradients(
-    arma::mat& gradient)
+template<typename InputType, typename OutputType>
+void WeightNormType<InputType, OutputType>::ResetGradients(OutputType& gradient)
 {
-  boost::apply_visitor(GradientSetVisitor(gradient, 0), wrappedLayer);
+  // boost::apply_visitor(GradientSetVisitor(gradient, 0), wrappedLayer);
+  wrappedLayer->Gradient() = OutputType(gradient.memptr(),
+      weights.n_rows, weights.n_cols, false, false);
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void WeightNorm<InputDataType, OutputDataType, CustomLayers...>::serialize(
+void WeightNormType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   if (cereal::is_loading<Archive>())
   {
-    boost::apply_visitor(deleteVisitor, wrappedLayer);
+    delete wrappedLayer;
   }
 
-  ar(CEREAL_VARIANT_POINTER(wrappedLayer));
+  // ar(CEREAL_VARIANT_POINTER(wrappedLayer));
   ar(CEREAL_NVP(layerWeightSize));
 
   // If we are loading, we need to initialize the weights.
