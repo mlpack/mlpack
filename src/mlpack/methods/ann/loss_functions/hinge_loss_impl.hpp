@@ -34,7 +34,7 @@ HingeLoss<InputDataType, OutputDataType>::Forward(
     const TargetType& target)
 {
   TargetType temp = target - (target == 0);
-  TargetType temp_zeros.zeros(target.size());
+  TargetType temp_zeros(size(target), arma::fill::zeros);
 
   PredictionType loss = arma::max(1 - prediction % temp, temp_zeros);
 
@@ -48,7 +48,7 @@ HingeLoss<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename PredictionType, typename TargetType, typename LossType>
-void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
+void HingeLoss<InputDataType, OutputDataType>::Backward(
     const PredictionType& prediction,
     const TargetType& target,
     LossType& loss)
@@ -62,7 +62,7 @@ void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void HingeEmbeddingLoss<InputDataType, OutputDataType>::serialize(
+void HingeLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

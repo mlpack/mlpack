@@ -64,7 +64,7 @@ class HingeLoss
    * @param target The target vector.
    * @param loss The calculated error.
    */
-  template<typename PredictionType, typename TargetType>
+  template<typename PredictionType, typename TargetType, typename LossType>
   void Backward(const PredictionType& prediction,
                 const TargetType& target,
                 LossType& loss);
