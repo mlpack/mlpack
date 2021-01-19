@@ -35,9 +35,6 @@ void ReinforceNormal<InputDataType, OutputDataType>::Forward(
   {
     // Multiply by standard deviations and re-center the means to the mean.
     output = output.randn(input.n_rows, input.n_cols) * stdev + input;
-    
-    // output = arma::randn<arma::Mat<eT>>(input.n_rows, input.n_cols) *
-    //     stdev + input;
 
     moduleInputParameter.push_back(input);
   }
