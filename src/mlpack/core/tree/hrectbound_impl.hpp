@@ -104,7 +104,7 @@ inline HRectBound<MetricType, ElemType>::HRectBound(
 }
 
 /**
- * Move assignment operator
+ * Move assignment operator.
  */
 template<typename MetricType, typename ElemType>
 inline HRectBound<
