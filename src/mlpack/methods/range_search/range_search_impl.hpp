@@ -290,7 +290,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Train(
     throw std::invalid_argument("cannot train on given reference tree when "
         "naive search (without trees) is desired");
 
-  // Can only train when passed argument `referenceTree` is not nullptr
+  // Can only train when passed argument `referenceTree` is not nullptr.
   if (treeOwner && referenceTree)
   {
     delete this->referenceTree;
