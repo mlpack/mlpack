@@ -315,13 +315,14 @@ void RVMRegression<KernelType>::CenterScaleDataPred(
 template<typename KernelType>
 template<typename Archive>
 void RVMRegression<KernelType>::serialize(Archive& ar, 
-                                          const unsigned int /* version */)
+                                          const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(centerData);
-  ar & BOOST_SERIALIZATION_NVP(scaleData);
-  ar & BOOST_SERIALIZATION_NVP(relevantVectors);
-  ar & BOOST_SERIALIZATION_NVP(omega);
-  ar & BOOST_SERIALIZATION_NVP(responsesOffset);
+  ar(CEREAL_NVP(centerData));
+  ar(CEREAL_NVP(scaleData));
+  ar(CEREAL_NVP(relevantVectors));
+  ar(CEREAL_NVP(omega));
+  ar(CEREAL_NVP(responsesOffset));
+  ar(CEREAL_NVP(kernel));
 }
 
 } // namespace regression
