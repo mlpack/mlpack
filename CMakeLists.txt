@@ -22,11 +22,12 @@ option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
 set(ARMADILLO_INCLUDE_DIR "" CACHE STRING "Path for Armadillo headers.")
 set(GFORTRAN_LIBRARY "" CACHE STRING "Path for gfortran library.")
+set(GCC_VERSION ""  CACHE STRING "")
 
 if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
 elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
-  execute_process(COMMAND bash -c ../../board/download_openblas.sh
+  execute_process(COMMAND bash -c "../../board/download_openblas.sh ${GCC_VERSION}"
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
   include(board/flags-config.cmake)
   flags(${BOARD_NAME})
