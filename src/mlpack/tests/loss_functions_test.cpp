@@ -994,7 +994,7 @@ TEST_CASE("HingeLossTest", "[LossFunctionsTest]")
       {1, -1, -1},
       {1, -1, -1}};
 
-  // Binary labels for target
+  // Binary labels for target.
   target_b = {{0, 0, 1},
       {0, 1, 1},
       {1, 0, 0},
@@ -1019,6 +1019,7 @@ TEST_CASE("HingeLossTest", "[LossFunctionsTest]")
   REQUIRE(output.n_cols == input.n_cols);
 
   // Test for mean reduction.
+  // Test for the Forward function.
   loss = module2.Forward(input, target);
   REQUIRE(loss == Approx(1.21755).epsilon(1e-3));
 
