@@ -4,8 +4,8 @@
  *
  * This file implements the k-means++ initialization strategy.
  */
-#ifndef KMEANS_PLUS_PLUS_INITIALIZATION_HPP
-#define KMEANS_PLUS_PLUS_INITIALIZATION_HPP
+#ifndef MLPACK_METHODS_KMEANS_KMEANS_PLUS_PLUS_INITIALIZATION_HPP
+#define MLPACK_METHODS_KMEANS_KMEANS_PLUS_PLUS_INITIALIZATION_HPP
 
 #include <mlpack/prereqs.hpp>
 
