@@ -34,6 +34,7 @@
 #include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_absolute_percentage_error.hpp>
 #include <mlpack/methods/ann/loss_functions/triplet_margin_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/hinge_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -954,4 +955,76 @@ TEST_CASE("TripletMarginLossTest")
   // Test whether the output is negative.
   REQUIRE(arma::accu(output) == -12);
   REQUIRE(output.n_elem == 1);
+}
+
+/**
+ * Simple test for the Hinge loss function.
+ */
+TEST_CASE("HingeLossTest", "[LossFunctionsTest]")
+{
+  arma::mat input, target, target_b, output;
+  double loss, loss_b;
+  HingeLoss<> module1;
+  HingeLoss<> module2(false);
+
+  // Test the Forward function. Loss should be 0 if input = target.
+  input = arma::ones(10, 1);
+  target = arma::ones(10, 1);
+  loss = module1.Forward(input, target);
+  REQUIRE(loss == 0);
+
+  // Test the Backward function for input = target.
+  module1.Backward(input, target, output);
+  for (double el : output)
+  {
+    // For input = target we should get 0.0 everywhere.
+    REQUIRE(el == Approx(0.0).epsilon(1e-5));
+  }
+
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+
+  input = {{0.90599973, -0.33040298, 0.07123354},
+      {0.71988434, 0.49657596, 0.39873373},
+      {-0.57646927, 0.3951491 , -0.1003365},
+      {0.12528634, 0.68122971, 0.85448826}};
+
+  target = {{-1, -1, 1},
+      {-1, 1, 1},
+      {1, -1, -1},
+      {1, -1, -1}};
+
+  // Binary labels for target
+  target_b = {{0, 0, 1},
+      {0, 1, 1},
+      {1, 0, 0},
+      {1, 0, 0}};
+
+  // Test for binary labels as target.
+  loss = module1.Forward(input, target);
+  loss_b = module1.Forward(input, target_b);
+
+  // Loss should be same due to internal conversion of binary labels.
+  REQUIRE(loss == loss_b);
+
+  // Test for sum reduction.
+  // Test the Forward function.
+  loss = module1.Forward(input, target);
+  REQUIRE(loss == Approx(14.61065).epsilon(1e-3));
+
+  // Test the Backward function
+  module1.Backward(input, target, output);
+  REQUIRE(arma::accu(output) == Approx(-5).epsilon(1e-3));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+
+  // Test for mean reduction.
+  loss = module2.Forward(input, target);
+  REQUIRE(loss == Approx(1.21755).epsilon(1e-3));
+
+  // Test the Backward function.
+  module2.Backward(input, target, output);
+  REQUIRE(arma::accu(output) == Approx(-0.41667).epsilon(1e-3));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 }
