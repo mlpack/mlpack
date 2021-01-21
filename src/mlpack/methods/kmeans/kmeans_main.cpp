@@ -17,6 +17,7 @@
 #include "allow_empty_clusters.hpp"
 #include "kill_empty_clusters.hpp"
 #include "refined_start.hpp"
+#include "kmeans_plus_plus_initialization.hpp"
 #include "elkan_kmeans.hpp"
 #include "hamerly_kmeans.hpp"
 #include "pelleg_moore_kmeans.hpp"
@@ -44,14 +45,17 @@ BINDING_LONG_DESC(
     " the point furthest from the centroid of the cluster with maximum variance"
     " is taken to fill that cluster."
     "\n\n"
-    "Optionally, the Bradley and Fayyad approach (\"Refining initial points for"
-    " k-means clustering\", 1998) can be used to select initial points by "
-    "specifying the " + PRINT_PARAM_STRING("refined_start") + " parameter.  "
-    "This approach works by taking random samplings of the dataset; to specify "
-    "the number of samplings, the " + PRINT_PARAM_STRING("samplings") +
-    " parameter is used, and to specify the percentage of the dataset to be "
-    "used in each sample, the " + PRINT_PARAM_STRING("percentage") +
-    " parameter is used (it should be a value between 0.0 and 1.0)."
+    "Optionally, the strategy to choose initial centroids can be specified.  "
+    "The k-means++ algorithm can be used to choose initial centroids with "
+    "the " + PRINT_PARAM_STRING("kmeans_plus_plus") + " parameter.  The "
+    "Bradley and Fayyad approach (\"Refining initial points for k-means "
+    "clustering\", 1998) can be used to select initial points by specifying "
+    "the " + PRINT_PARAM_STRING("refined_start") + " parameter.  This approach "
+    "works by taking random samplings of the dataset; to specify the number of "
+    "samplings, the " + PRINT_PARAM_STRING("samplings") + " parameter is used, "
+    "and to specify the percentage of the dataset to be used in each sample, "
+    "the " + PRINT_PARAM_STRING("percentage") + " parameter is used (it should "
+    "be a value between 0.0 and 1.0)."
     "\n\n"
     "There are several options available for the algorithm used for each Lloyd "
     "iteration, specified with the " + PRINT_PARAM_STRING("algorithm") + " "
@@ -102,6 +106,7 @@ BINDING_EXAMPLE(
 // See also...
 BINDING_SEE_ALSO("K-Means tutorial", "@doxygen/kmtutorial.html");
 BINDING_SEE_ALSO("@dbscan", "#dbscan");
+BINDING_SEE_ALSO("k-means++", "https://en.wikipedia.org/wiki/K-means%2B%2B");
 BINDING_SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
         "http://www.aaai.org/Papers/ICML/2003/ICML03-022.pdf");
 BINDING_SEE_ALSO("Making k-means even faster (pdf)",
@@ -147,6 +152,8 @@ PARAM_INT_IN("samplings", "Number of samplings to perform for refined start "
     "(use when --refined_start is specified).", "S", 100);
 PARAM_DOUBLE_IN("percentage", "Percentage of dataset to use for each refined "
     "start sampling (use when --refined_start is specified).", "p", 0.02);
+PARAM_FLAG("kmeans_plus_plus", "Use the k-means++ initialization strategy to "
+    "choose initial points.", "K");
 
 PARAM_STRING_IN("algorithm", "Algorithm to use for the Lloyd iteration "
     "('naive', 'pelleg-moore', 'elkan', 'hamerly', 'dualtree', or "
@@ -176,6 +183,9 @@ static void mlpackMain()
   else
     math::RandomSeed((size_t) std::time(NULL));
 
+  util::RequireOnlyOnePassed({ "refined_start", "kmeans_plus_plus" }, true,
+      "Only one initialization strategy can be specified!");
+
   // Now, start building the KMeans type that we'll be using.  Start with the
   // initial partition policy.  The call to FindEmptyClusterPolicy<> results in
   // a call to RunKMeans<> and the algorithm is completed.
@@ -190,6 +200,11 @@ static void mlpackMain()
     const double percentage = IO::GetParam<double>("percentage");
 
     FindEmptyClusterPolicy<RefinedStart>(RefinedStart(samplings, percentage));
+  }
+  else if (IO::HasParam("kmeans_plus_plus"))
+  {
+    FindEmptyClusterPolicy<KMeansPlusPlusInitialization>(
+        KMeansPlusPlusInitialization());
   }
   else
   {
