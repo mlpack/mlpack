@@ -134,10 +134,10 @@ class RVMRegressionModel
   const Col<size_t>& Map() const { return map; }
 
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(r);
-    ar & BOOST_SERIALIZATION_NVP(map);
+    ar(CEREAL_NVP(r));
+    ar(CEREAL_NVP(map));
   }
 };
 
