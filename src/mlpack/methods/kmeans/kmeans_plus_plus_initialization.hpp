@@ -1,5 +1,5 @@
 /**
- * @file kmeans_plus_plus_initialization.hpp
+ * @file methods/kmeans/kmeans_plus_plus_initialization.hpp
  * @author Ryan Curtin
  *
  * This file implements the k-means++ initialization strategy.
@@ -82,7 +82,7 @@ class KMeansPlusPlusInitialization
       }
 
       // Next normalize the distribution (actually technically we could avoid
-      // this.)
+      // this).
       distribution /= arma::accu(distribution);
 
       // Turn it into a CDF for convenience...
