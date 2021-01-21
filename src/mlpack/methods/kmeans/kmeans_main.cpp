@@ -183,8 +183,8 @@ static void mlpackMain()
   else
     math::RandomSeed((size_t) std::time(NULL));
 
-  util::RequireOnlyOnePassed({ "refined_start", "kmeans_plus_plus" }, true,
-      "Only one initialization strategy can be specified!");
+  RequireOnlyOnePassed({ "refined_start", "kmeans_plus_plus" }, true,
+      "Only one initialization strategy can be specified!", true);
 
   // Now, start building the KMeans type that we'll be using.  Start with the
   // initial partition policy.  The call to FindEmptyClusterPolicy<> results in
@@ -286,7 +286,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
   const int maxIterations = IO::GetParam<int>("max_iterations");
 
   // Make sure we have an output file if we're not doing the work in-place.
-  RequireAtLeastOnePassed({ "in_place", "output", "centroid" }, false,
+  RequireOnlyOnePassed({ "in_place", "output", "centroid" }, false,
       "no results will be saved");
 
   arma::mat dataset = IO::GetParam<arma::mat>("input");  // Load our dataset.
