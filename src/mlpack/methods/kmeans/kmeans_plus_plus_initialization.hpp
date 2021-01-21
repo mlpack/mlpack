@@ -91,9 +91,10 @@ class KMeansPlusPlusInitialization
 
       // Sample a point...
       const double sampleValue = mlpack::math::Random();
-      double* elem = std::lower_bound(distribution.begin(), distribution.end(),
-          sampleValue);
-      size_t position = (size_t) (elem - distribution.begin()) / sizeof(double);
+      const double* elem = std::lower_bound(distribution.begin(),
+          distribution.end(), sampleValue);
+      const size_t position = (size_t)
+          (elem - distribution.begin()) / sizeof(double);
       centroids.col(i) = data.col(position);
     }
   }
