@@ -371,10 +371,15 @@ static void mlpackMain()
       arma::Mat<size_t> users =
           std::move(IO::GetParam<arma::Mat<size_t>>("query"));
       if (users.n_rows > 1)
+      {
         users = users.t();
+      }
+
       if (users.n_rows > 1)
+      {
         Log::Fatal << "List of query users must be one-dimensional!"
-                   << std::endl;
+            << std::endl;
+      }
 
       Log::Info << "Generating recommendations for " << users.n_elem
           << " users." << endl;
