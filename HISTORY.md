@@ -16,7 +16,7 @@
   * HMM: add functions to calculate likelihood for data stream with/without
     pre-calculated emission probability (#2142).
 
-  * Replace boost Boost serialization library by Cereal (#2458).
+  * Replace Boost serialization library by Cereal (#2458).
 
 ### mlpack 3.4.2
 ###### 2020-10-26
