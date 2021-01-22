@@ -19,7 +19,7 @@
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
@@ -1914,7 +1914,7 @@ TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
         target(targetWord, i) = 1;
       }
 
-      model = new FFN<CrossEntropyError<>, GlorotInitialization>();
+      model = new FFN<BCELoss<>, GlorotInitialization>(BCELoss<>(1e-10, false));
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<Lookup<> >(vocabSize, embeddingSize);
@@ -1936,7 +1936,7 @@ TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<CrossEntropyError<>, GlorotInitialization>* model;
+    FFN<BCELoss<>, GlorotInitialization>* model;
     arma::mat input, target;
 
     const size_t seqLength = 10;

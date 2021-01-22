@@ -12,6 +12,11 @@
   * Add Triplet Margin Loss function (#2762).
 
   * Add finalizers to Julia binding model types to fix memory handling (#2756).
+  
+  * HMM: add functions to calculate likelihood for data stream with/without
+    pre-calculated emission probability (#2142).
+
+  * Replace Boost serialization library by Cereal (#2458).
 
   * Removed `boost::visitor` from model classes for `knn`, `kfn`, `cf`,
     `range_search`, `krann`, and `kde` bindings (#2803).

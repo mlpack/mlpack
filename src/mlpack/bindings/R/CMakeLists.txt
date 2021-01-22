@@ -87,6 +87,93 @@ if (BUILD_R_BINDINGS)
 
   string(TIMESTAMP PACKAGE_DATE "%Y-%m-%d")
 
+  # We need to generate an Authors@R list using every single contributor in
+  # COPYRIGHT.txt.  That takes a little bit of processing.
+  file(READ "${CMAKE_SOURCE_DIR}/COPYRIGHT.txt" COPYRIGHT_TXT_CONTENTS)
+  string(REGEX MATCHALL "  Copyright [0-9-]*, ([^\n]*)\n" CONTRIBUTORS_LIST
+      "${COPYRIGHT_TXT_CONTENTS}")
+
+  # These are the authors meant to be listed as 'authors' and not
+  # 'contributors'.  If you contributed specifically to the R bindings, you
+  # should probably be listed here, so if you're not, open a PR to fix it! :)
+  set(SPECIAL_AUTHORS "Yashwant Singh Parihar" "Ryan Curtin" "Dirk Eddelbuettel"
+      "James Balamuta")
+
+  string(CONCAT AUTHORS_R "c(\n"
+      "    person(\"Yashwant\", \"Singh Parihar\", "
+              "email = \"yashwantsingh.sngh@gmail.com\", "
+              "role = c(\"aut\", \"ctb\", \"cph\")),\n"
+      "    person(\"Ryan\", \"Curtin\", email = \"ryan@ratml.org\", "
+              "role = c(\"aut\", \"ctb\", \"cph\", \"cre\")),\n"
+      "    person(\"Dirk\", \"Eddelbuettel\", email = \"edd@debian.org\", "
+              "role = c(\"aut\", \"ctb\", \"cph\")),\n"
+      "    person(\"James\", \"Balamuta\", "
+              "email = \"james.balamuta@gmail.com\", "
+              "role = c(\"aut\", \"ctb\", \"cph\")),")
+  foreach (CONTRIBUTOR_LINE ${CONTRIBUTORS_LIST})
+    # Strip 'Copyright XXXX-YYYY, '.
+    string(REGEX REPLACE "^  Copyright [0-9-]*, (.*)\n$" "\\1"
+        CONTRIBUTOR_FILTERED "${CONTRIBUTOR_LINE}")
+
+    # Extract the email if it exists.
+    string(REGEX MATCH "^[^<]*<(.*)>.*$" HAS_EMAIL "${CONTRIBUTOR_FILTERED}")
+
+    # The first name is just the first space-delimited word.  (That may not
+    # always be right, but we have no way to know what is a first name and last
+    # name and therefore must assume.)
+    string(REGEX REPLACE "^([^ ]*) .*$" "\\1" CONTRIBUTOR_FIRST_NAME
+        "${CONTRIBUTOR_FILTERED}")
+
+    # Extracting the last name is just the rest of the tokens, but the regex is
+    # different depending on whether we managed to get an email.
+    if (HAS_EMAIL)
+      string(REGEX REPLACE "^[^<]*<(.*)>.*$" "\\1" CONTRIBUTOR_EMAIL
+          "${CONTRIBUTOR_FILTERED}")
+      string(REGEX MATCH "^[^ ]* (.*) <.*$" CONTRIBUTOR_LAST_NAME
+          "${CONTRIBUTOR_FILTERED}")
+      if (NOT CONTRIBUTOR_LAST_NAME)
+        set (CONTRIBUTOR_LAST_NAME "")
+      else ()
+        string(REGEX REPLACE "^[^ ]* (.*) <.*$" "\\1" CONTRIBUTOR_LAST_NAME
+            "${CONTRIBUTOR_FILTERED}")
+      endif ()
+
+      # Skip anyone already listed as an author.
+      if ("${CONTRIBUTOR_FIRST_NAME} ${CONTRIBUTOR_LAST_NAME}" IN_LIST
+          SPECIAL_AUTHORS)
+        continue()
+      endif ()
+
+      string(CONCAT AUTHORS_R "${AUTHORS_R}\n    "
+          "person(\"${CONTRIBUTOR_FIRST_NAME}\", \"${CONTRIBUTOR_LAST_NAME}\", "
+          "email = \"${CONTRIBUTOR_EMAIL}\", role = c(\"ctb\", \"cph\")),")
+
+    else ()
+      # No email is available.  So just get the last name.
+      string(REGEX MATCH "^[^ ]* (.*)$" CONTRIBUTOR_LAST_NAME
+          "${CONTRIBUTOR_FILTERED}")
+      if (NOT CONTRIBUTOR_LAST_NAME)
+        set (CONTRIBUTOR_LAST_NAME "")
+      else ()
+        string(REGEX REPLACE "^[^ ]* (.*)$" "\\1" CONTRIBUTOR_LAST_NAME
+            "${CONTRIBUTOR_FILTERED}")
+      endif ()
+
+      # Skip anyone already listed as an author.
+      if ("${CONTRIBUTOR_FIRST_NAME} ${CONTRIBUTOR_LAST_NAME}" IN_LIST
+          SPECIAL_AUTHORS)
+        continue()
+      endif ()
+
+      string(CONCAT AUTHORS_R "${AUTHORS_R}\n    "
+          "person(\"${CONTRIBUTOR_FIRST_NAME}\", \"${CONTRIBUTOR_LAST_NAME}\", "
+          "role = c(\"ctb\", \"cph\")),")
+    endif ()
+  endforeach ()
+  # We also have to remove the final comma...
+  string(REGEX REPLACE ",$" "" AUTHORS_R_OUT "${AUTHORS_R}")
+  set(AUTHORS_R "${AUTHORS_R_OUT})")
+
   configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/mlpack/DESCRIPTION.in
                  ${CMAKE_CURRENT_BINARY_DIR}/mlpack/DESCRIPTION
                  @ONLY)
@@ -136,9 +223,11 @@ if (BUILD_R_BINDINGS)
     "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/testthat.R"
   )
 
-  set(LICENSE_SOURCES
-    "${CMAKE_SOURCE_DIR}/LICENSE.txt"
-  )
+  # Configure the license file.
+  string(TIMESTAMP LICENSE_YEAR "%Y")
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/mlpack/LICENSE.in"
+                 "${CMAKE_CURRENT_BINARY_DIR}/mlpack/LICENSE")
+
   add_custom_target(r_copy ALL)
 
   # First we have to create all the required directories for copy.
@@ -160,22 +249,22 @@ if (BUILD_R_BINDINGS)
 
   # Copy all necessary files for building package.
   foreach(cpp_file ${CPP_SOURCES})
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${cpp_file}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/)
+    add_custom_command(TARGET r_copy PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
+            ${cpp_file}
+            ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/)
   endforeach()
   foreach(r_file ${R_SOURCES})
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${r_file}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/R/)
+    add_custom_command(TARGET r_copy PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
+            ${r_file}
+            ${CMAKE_CURRENT_BINARY_DIR}/mlpack/R/)
   endforeach()
   foreach(bindings_file ${BINDINGS_SOURCES})
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${bindings_file}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/mlpack/bindings/R)
+    add_custom_command(TARGET r_copy PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
+            ${bindings_file}
+            ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/mlpack/bindings/R)
   endforeach()
   add_custom_command(TARGET r_copy PRE_BUILD
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
@@ -185,14 +274,6 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
           ${R_TESTS_SOURCES}
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests)
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${LICENSE_SOURCES}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack)
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E rename
-          "${CMAKE_CURRENT_BINARY_DIR}/mlpack/LICENSE.txt"
-          "${CMAKE_CURRENT_BINARY_DIR}/mlpack/LICENSE")
   # This file will take care of multiple definition of functions in .cpp files.
   add_custom_command(TARGET r_copy PRE_BUILD
       COMMAND ${CMAKE_COMMAND} ARGS -E touch
