@@ -23,6 +23,7 @@ steps:
 
     sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost1.70-dev libarmadillo-dev xz-utils g++-5-aarch64-linux-gnu gcc-5-aarch64-linux-gnu gfortran-aarch64-linux-gnu gfortran-5-dev-arm64-cross
 
+    ls /usr/bin/
     if [ "$(binding)" == "python" ]; then
       export PYBIN=$(which python)
       $PYBIN -m pip install --upgrade pip
