@@ -178,8 +178,7 @@ PrefixedOutStream::BaseLogic(const T& val)
     if (maxVal == 0.0)
       maxVal = 1;
 
-    int maxLog = log10(maxVal);
-    maxLog = (maxLog > 0) ? floor(maxLog) + 1 : 1;
+    const int maxLog = int(log10(maxVal)) + 1;
     const int padding = 4;
     convert.width(convert.precision() + maxLog + padding);
     printVal.raw_print(convert);

@@ -1,5 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add Adjusted R squared functionality to R2Score::Evaluate (#2624).
+
+  * Disabled all the bindings by default in CMake (#2782).
+
   * Added an implementation to Stratify Data (#2671).
 
   * Add `BUILD_DOCS` CMake option to control whether Doxygen documentation is
@@ -8,6 +12,9 @@
   * Add Triplet Margin Loss function (#2762).
 
   * Add finalizers to Julia binding model types to fix memory handling (#2756).
+  
+  * HMM: add functions to calculate likelihood for data stream with/without
+    pre-calculated emission probability (#2142).
 
 ### mlpack 3.4.2
 ###### 2020-10-26

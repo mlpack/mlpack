@@ -21,7 +21,7 @@ namespace neighbor {
 
 //! Monochromatic search for the given RAType instance.
 template<typename RAType>
-void MonoSearchVisitor::operator()(RAType* ra) const
+void RAMonoSearchVisitor::operator()(RAType* ra) const
 {
   if (ra)
     return ra->Search(k, neighbors, distances);
@@ -30,11 +30,11 @@ void MonoSearchVisitor::operator()(RAType* ra) const
 
 //! Save the parameters for the rank-approximate search.
 template<typename SortPolicy>
-BiSearchVisitor<SortPolicy>::BiSearchVisitor(const arma::mat& querySet,
-                                 const size_t k,
-                                 arma::Mat<size_t>& neighbors,
-                                 arma::mat& distances,
-                                 const size_t leafSize) :
+RABiSearchVisitor<SortPolicy>::RABiSearchVisitor(const arma::mat& querySet,
+                                                 const size_t k,
+                                                 arma::Mat<size_t>& neighbors,
+                                                 arma::mat& distances,
+                                                 const size_t leafSize) :
     querySet(querySet),
     k(k),
     neighbors(neighbors),
@@ -47,7 +47,7 @@ template<typename SortPolicy>
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void BiSearchVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
+void RABiSearchVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
 {
   if (ra)
     return ra->Search(querySet, k, neighbors, distances);
@@ -56,7 +56,7 @@ void BiSearchVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
 
 //! Bichromatic search on the given RAType specialized for KDTrees.
 template<typename SortPolicy>
-void BiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
+void RABiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
 {
   if (ra)
     return SearchLeaf(ra);
@@ -65,7 +65,7 @@ void BiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
 
 //! Bichromatic search on the given RAType specialized for Octrees.
 template<typename SortPolicy>
-void BiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
+void RABiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
 {
   if (ra)
     return SearchLeaf(ra);
@@ -75,7 +75,7 @@ void BiSearchVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
 //! Bichromatic search on the given RAType considering the leafSize.
 template<typename SortPolicy>
 template<typename RAType>
-void BiSearchVisitor<SortPolicy>::SearchLeaf(RAType* ra) const
+void RABiSearchVisitor<SortPolicy>::SearchLeaf(RAType* ra) const
 {
   if (!ra->Naive() && !ra->SingleMode())
   {
@@ -83,8 +83,8 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(RAType* ra) const
     Timer::Start("tree_building");
     Log::Info << "Building query tree...."<< std::endl;
     std::vector<size_t> oldFromNewQueries;
-    typename RAType::Tree queryTree(std::move(querySet), oldFromNewQueries,
-        leafSize);
+    typedef typename RAType::Tree TreeType;
+    TreeType queryTree(std::move(querySet), oldFromNewQueries, leafSize);
     Log::Info << "Tree Built." << std::endl;
     Timer::Stop("tree_building");
 
@@ -110,8 +110,8 @@ void BiSearchVisitor<SortPolicy>::SearchLeaf(RAType* ra) const
 
 //! Save parameters for the Train.
 template<typename SortPolicy>
-TrainVisitor<SortPolicy>::TrainVisitor(arma::mat&& referenceSet,
-                                       const size_t leafSize) :
+RATrainVisitor<SortPolicy>::RATrainVisitor(arma::mat&& referenceSet,
+                                           const size_t leafSize) :
     referenceSet(std::move(referenceSet)),
     leafSize(leafSize)
 {};
@@ -121,7 +121,7 @@ template<typename SortPolicy>
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void TrainVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
+void RATrainVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
 {
   if (ra)
     return ra->Train(std::move(referenceSet));
@@ -130,7 +130,7 @@ void TrainVisitor<SortPolicy>::operator()(RATypeT<TreeType>* ra) const
 
 //! Train on the given RAType specialized for KDTrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
+void RATrainVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
 {
   if (ra)
     return TrainLeaf(ra);
@@ -139,7 +139,7 @@ void TrainVisitor<SortPolicy>::operator()(RATypeT<tree::KDTree>* ra) const
 
 //! Train on the given RAType specialized for Octrees.
 template<typename SortPolicy>
-void TrainVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
+void RATrainVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
 {
   if (ra)
     return TrainLeaf(ra);
@@ -149,7 +149,7 @@ void TrainVisitor<SortPolicy>::operator()(RATypeT<tree::Octree>* ra) const
 //! Train on the given RAType considering the leafSize.
 template<typename SortPolicy>
 template<typename RAType>
-void TrainVisitor<SortPolicy>::TrainLeaf(RAType* ra) const
+void RATrainVisitor<SortPolicy>::TrainLeaf(RAType* ra) const
 {
   // Build tree, if necessary
   if (ra->Naive())
@@ -226,7 +226,7 @@ bool& SingleModeVisitor::operator()(RAType* ra) const
 
 //! Exposes the referenceSet of the given RAType.
 template<typename RAType>
-const arma::mat& ReferenceSetVisitor::operator()(RAType* ra) const
+const arma::mat& RAReferenceSetVisitor::operator()(RAType* ra) const
 {
   if (ra)
     return ra->ReferenceSet();
@@ -244,7 +244,7 @@ bool& NaiveVisitor::operator()(RAType* ra) const
 
 //! For cleaning memory
 template<typename RSType>
-void DeleteVisitor::operator()(RSType* rs) const
+void RADeleteVisitor::operator()(RSType* rs) const
 {
   if (rs)
     delete rs;
@@ -292,7 +292,7 @@ template<typename SortPolicy>
 RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(const RAModel& other)
 {
   // Clear current model.
-  boost::apply_visitor(DeleteVisitor(), raSearch);
+  boost::apply_visitor(RADeleteVisitor(), raSearch);
 
   treeType = other.treeType;
   leafSize = other.leafSize;
@@ -306,7 +306,7 @@ RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(const RAModel& other)
 template<typename SortPolicy>
 RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(RAModel&& other)
 {
-  boost::apply_visitor(DeleteVisitor(), raSearch);
+  boost::apply_visitor(RADeleteVisitor(), raSearch);
 
   treeType = other.treeType;
   leafSize = other.leafSize;
@@ -327,7 +327,7 @@ RAModel<SortPolicy>& RAModel<SortPolicy>::operator=(RAModel&& other)
 template<typename SortPolicy>
 RAModel<SortPolicy>::~RAModel()
 {
-  boost::apply_visitor(DeleteVisitor(), raSearch);
+  boost::apply_visitor(RADeleteVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
@@ -342,7 +342,7 @@ void RAModel<SortPolicy>::serialize(Archive& ar,
   // This should never happen, but just in case, be clean with memory.
   if (cereal::is_loading<Archive>())
   {
-    boost::apply_visitor(DeleteVisitor(), raSearch);
+    boost::apply_visitor(RADeleteVisitor(), raSearch);
   }
 
   // We only need to serialize one of the kRANN objects.
@@ -352,7 +352,7 @@ void RAModel<SortPolicy>::serialize(Archive& ar,
 template<typename SortPolicy>
 const arma::mat& RAModel<SortPolicy>::Dataset() const
 {
-  return boost::apply_visitor(ReferenceSetVisitor(), raSearch);
+  return boost::apply_visitor(RAReferenceSetVisitor(), raSearch);
 }
 
 template<typename SortPolicy>
@@ -489,7 +489,7 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
   }
 
   // Clean memory, if necessary.
-  boost::apply_visitor(DeleteVisitor(), raSearch);
+  boost::apply_visitor(RADeleteVisitor(), raSearch);
 
   this->leafSize = leafSize;
 
@@ -538,7 +538,7 @@ void RAModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
       break;
   }
 
-  TrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize);
+  RATrainVisitor<SortPolicy> tn(std::move(referenceSet), leafSize);
   boost::apply_visitor(tn, raSearch);
 
   if (!naive)
@@ -567,7 +567,7 @@ void RAModel<SortPolicy>::Search(arma::mat&& querySet,
     Log::Info << "brute-force (naive) rank-approximate search...";
   Log::Info << std::endl;
 
-  BiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
+  RABiSearchVisitor<SortPolicy> search(querySet, k, neighbors, distances,
       leafSize);
   boost::apply_visitor(search, raSearch);
 }
@@ -586,7 +586,7 @@ void RAModel<SortPolicy>::Search(const size_t k,
     Log::Info << "brute-force (naive) rank-approximate search...";
   Log::Info << std::endl;
 
-  MonoSearchVisitor search(k, neighbors, distances);
+  RAMonoSearchVisitor search(k, neighbors, distances);
   boost::apply_visitor(search, raSearch);
 }
 
