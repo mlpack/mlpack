@@ -71,6 +71,18 @@ class Reparametrization
                     const bool stochastic = true,
                     const bool includeKl = true,
                     const double beta = 1);
+    
+  //! Copy Constructor.
+  Reparametrization(const Reparametrization& layer);
+    
+  //! Move Constructor.
+  Reparametrization(Reparametrization&& layer);
+    
+  //! Copy assignment operator.
+  Reparametrization& operator=(const Reparametrization& layer);
+    
+  //! Move assignment operator.
+  Reparametrization& operator=(Reparametrization&& layer);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -129,6 +141,11 @@ class Reparametrization
 
   //! Get the value of the beta hyperparameter.
   double Beta() const { return beta; }
+
+  size_t InputShape() const
+  {
+    return 2 * latentSize;
+  }
 
   /**
    * Serialize the layer

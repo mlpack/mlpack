@@ -37,10 +37,10 @@ using RAType = RASearch<SortPolicy,
                         TreeType>;
 
 /**
- * MonoSearchVisitor executes a monochromatic neighbor search on the given
+ * RAMonoSearchVisitor executes a monochromatic neighbor search on the given
  * RAType. We don't make any difference for different instantiation of RAType.
  */
-class MonoSearchVisitor : public boost::static_visitor<void>
+class RAMonoSearchVisitor : public boost::static_visitor<void>
 {
  private:
   //! Number of neighbors to search for.
@@ -55,10 +55,10 @@ class MonoSearchVisitor : public boost::static_visitor<void>
   template<typename RAType>
   void operator()(RAType* ra) const;
 
-  //! Construct the MonoSearchVisitor object with the given parameters.
-  MonoSearchVisitor(const size_t k,
-                    arma::Mat<size_t>& neighbors,
-                    arma::mat& distances) :
+  //! Construct the RAMonoSearchVisitor object with the given parameters.
+  RAMonoSearchVisitor(const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances) :
       k(k),
       neighbors(neighbors),
       distances(distances)
@@ -66,13 +66,13 @@ class MonoSearchVisitor : public boost::static_visitor<void>
 };
 
 /**
- * BiSearchVisitor executes a bichromatic neighbor search on the given RAType.
+ * RABiSearchVisitor executes a bichromatic neighbor search on the given RAType.
  * We use template specialization to differentiate those tree types types that
  * accept leafSize as a parameter. In these cases, before doing neighbor search
  * a query tree with proper leafSize is built from the querySet.
  */
 template<typename SortPolicy>
-class BiSearchVisitor : public boost::static_visitor<void>
+class RABiSearchVisitor : public boost::static_visitor<void>
 {
  private:
   //! The query set for the bichromatic search.
@@ -109,22 +109,22 @@ class BiSearchVisitor : public boost::static_visitor<void>
   //! Bichromatic search on the given RAType specialized for octrees.
   void operator()(RATypeT<tree::Octree>* ra) const;
 
-  //! Construct the BiSearchVisitor.
-  BiSearchVisitor(const arma::mat& querySet,
-                  const size_t k,
-                  arma::Mat<size_t>& neighbors,
-                  arma::mat& distances,
-                  const size_t leafSize);
+  //! Construct the RABiSearchVisitor.
+  RABiSearchVisitor(const arma::mat& querySet,
+                    const size_t k,
+                    arma::Mat<size_t>& neighbors,
+                    arma::mat& distances,
+                    const size_t leafSize);
 };
 
 /**
- * TrainVisitor sets the reference set to a new reference set on the given
+ * RATrainVisitor sets the reference set to a new reference set on the given
  * RAType. We use template specialization to differentiate those trees that 
  * accept leafSize as a parameter. In these cases, a reference tree with proper
  * leafSize is built from the referenceSet.
  */
 template<typename SortPolicy>
-class TrainVisitor : public boost::static_visitor<void>
+class RATrainVisitor : public boost::static_visitor<void>
 {
  private:
   //! The reference set to use for training.
@@ -155,10 +155,10 @@ class TrainVisitor : public boost::static_visitor<void>
   //! Train on the given RAType specialized for Octrees.
   void operator()(RATypeT<tree::Octree>* ra) const;
 
-  //! Construct the TrainVisitor object with the given reference set, leafSize
+  //! Construct the RATrainVisitor object with the given reference set, leafSize
   //! for BinarySpaceTrees.
-  TrainVisitor(arma::mat&& referenceSet,
-               const size_t leafSize);
+  RATrainVisitor(arma::mat&& referenceSet,
+                 const size_t leafSize);
 };
 
 /**
@@ -228,7 +228,7 @@ class SingleModeVisitor : public boost::static_visitor<bool&>
 /**
  * Exposes the referenceSet of the given RAType.
  */
-class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
+class RAReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
 {
  public:
   //! Return the reference set.
@@ -237,9 +237,9 @@ class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
 };
 
 /**
- * DeleteVisitor deletes the give RAType Instance.
+ * RADeleteVisitor deletes the give RAType Instance.
  */
-class DeleteVisitor : public boost::static_visitor<void>
+class RADeleteVisitor : public boost::static_visitor<void>
 {
  public:
   //! Delete the RAType Object.

@@ -140,6 +140,7 @@ Copyright:
   Copyright 2020, Sudhakar Brar <dxhrmhall1449@tutanota.com>
   Copyright 2020, Alex Nguyen <alexvn.edu@gmail.com>
   Copyright 2020, Gaurav Ghati <gauravghatii@gmail.com>
+  Copyright 2020, Anmolpreet Singh <anmol323c@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

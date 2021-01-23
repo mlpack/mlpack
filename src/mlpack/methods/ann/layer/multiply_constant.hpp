@@ -75,6 +75,9 @@ class MultiplyConstant
   //! Modify the scalar multiplier.
   double& Scalar() { return scalar; }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */

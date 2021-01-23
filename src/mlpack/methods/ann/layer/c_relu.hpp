@@ -88,6 +88,9 @@ class CReLU
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get size of weights.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */

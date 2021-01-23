@@ -32,8 +32,19 @@ function(append_type TYPES_FILE PROGRAM_NAME PROGRAM_MAIN_FILE)
         # function.
         file(APPEND
             "${TYPES_FILE}"
-            "struct ${MODEL_SAFE_TYPE}\n"
+            "mutable struct ${MODEL_SAFE_TYPE}\n"
             "  ptr::Ptr{Nothing}\n"
+            "\n"
+            "  # Construct object and set finalizer to free memory if `finalize` is true.\n"
+            "  function ${MODEL_SAFE_TYPE}(ptr::Ptr{Nothing}; finalize::Bool = false)::${MODEL_SAFE_TYPE}\n"
+            "    result = new(ptr)\n"
+            "    if finalize\n"
+            "      finalizer(\n"
+            "          x -> _Internal.${PROGRAM_NAME}_internal.Delete${MODEL_SAFE_TYPE}(x.ptr),\n"
+            "          result)\n"
+            "    end\n"
+            "    return result\n"
+            "  end\n"
             "end\n"
             "\n")
       endif ()

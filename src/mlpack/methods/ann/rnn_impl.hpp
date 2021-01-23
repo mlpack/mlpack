@@ -25,6 +25,8 @@
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/weight_set_visitor.hpp"
 
+#include "util/check_input_shape.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -147,6 +149,10 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
+                                                              predictors.n_rows, 
+                                                              "RNN<>::Train()");
+
   numFunctions = responses.n_cols;
 
   this->predictors = std::move(predictors);
@@ -191,6 +197,10 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube responses,
     CallbackTypes&&... callbacks)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
+                                                              predictors.n_rows, 
+                                                              "RNN<>::Train()");
+
   numFunctions = responses.n_cols;
 
   this->predictors = std::move(predictors);
@@ -223,6 +233,10 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::cube predictors, arma::cube& results, const size_t batchSize)
 {
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
+                                                              predictors.n_rows, 
+                                                              "RNN<>::Predict()");
+
   ResetCells();
 
   if (parameter.is_empty())
