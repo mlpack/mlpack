@@ -152,8 +152,14 @@ std::vector<std::wstring> BasicTokenizer::tokenize(const std::string& text) cons
     std::vector<std::wstring> splitTokens;
     for (std::wstring token : origTokens) {
         if (mDoLowerCase) {
-        	std::wstring t;
-            mlpack::util::ToLower(token, t);
+            std::string t_s; //Temporary variable used for converting character to lower.
+            std::string token_s;
+            //Convert to std::string format.
+            convertFromUnicode(token, token_s);
+            mlpack::util::ToLower(token_s, t_s);
+            std::wstring t;
+            //Convert to std::wstring format.
+            convertToUnicode(t_s, t);
             token = t;
         }
         const auto& tokens = runSplitOnPunc(token);
