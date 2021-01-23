@@ -1354,6 +1354,60 @@ class TestPythonBinding(unittest.TestCase):
                                                    matrix_in=x,
                                                    check_input_matrices=True))
 
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                  int_in=12,
+                                                  double_in=4.0,
+                                                  mat_req_in=[[1.0]],
+                                                  col_req_in=[1.0],
+                                                  umatrix_in=x,
+                                                  check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   row_in=x,
+                                                   check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   urow_in=x,
+                                                   check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   col_in=x,
+                                                   check_input_matrices=True))
+ 
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   ucol_in=x,
+                                                   check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   matrix_and_info_in=x,
+                                                   check_input_matrices=True))
+
   def testCheckInputMatricesInf(self):
     """
     Checks that an exception is thrown if the input matrix contains
@@ -1370,6 +1424,60 @@ class TestPythonBinding(unittest.TestCase):
                                                    mat_req_in=[[1.0]],
                                                    col_req_in=[1.0],
                                                    matrix_in=x,
+                                                   check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                  int_in=12,
+                                                  double_in=4.0,
+                                                  mat_req_in=[[1.0]],
+                                                  col_req_in=[1.0],
+                                                  umatrix_in=x,
+                                                  check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   row_in=x,
+                                                   check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   urow_in=x,
+                                                   check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   col_in=x,
+                                                   check_input_matrices=True))
+ 
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   ucol_in=x,
+                                                   check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   matrix_and_info_in=x,
                                                    check_input_matrices=True))
 
 if __name__ == '__main__':
