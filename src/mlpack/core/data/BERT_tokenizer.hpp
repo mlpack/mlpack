@@ -113,3 +113,30 @@ std::vector<std::wstring> BasicTokenizer::tokenize(const std::string& text) cons
     return whitespaceTokenize(boost::join(splitTokens, L" "));
 }
 
+
+class FullTokenizer {
+public:
+    FullTokenizer(const std::string& vocabFile, bool doLowerCase = true);
+
+    std::vector<std::wstring> tokenize(const std::string& text) const {
+        std::vector<std::wstring> splitTokens;
+        for (auto& token : mBasicTokenizer.tokenize(text))
+            splitTokens.push_back(token);
+        return splitTokens;
+    }
+
+
+private:
+    std::shared_ptr<Vocab> mVocab;
+    InvVocab mInvVocab;
+    std::string mVocabFile;
+    bool mDoLowerCase;
+    BasicTokenizer mBasicTokenizer;
+};
+
+FullTokenizer::FullTokenizer(const std::string& vocabFile, bool doLowerCase) : 
+    mVocab(loadVocab(vocabFile)), 
+    mBasicTokenizer(BasicTokenizer(doLowerCase)) {
+    for (auto& v : *mVocab) mInvVocab[v.second] = v.first;
+}
+
