@@ -29,6 +29,7 @@ endif()
 if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
 elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
+  message("Downloading mlpack dependencies for cross compiling")
   execute_process(COMMAND bash -c "../../board/download_openblas.sh ${GCC_VERSION}"
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
   include(board/flags-config.cmake)
