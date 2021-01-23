@@ -279,27 +279,26 @@ void IO::CheckInputMatrices()
     std::string paramType = itr->second.cppType;
 
     if (paramType == "arma::mat")
-      IO::CheckInputMatrix<arma::Mat<double>>(paramName);
+      IO::CheckInputMatrix<arma::Mat<double>>(
+          IO::GetParam<arma::Mat<double>>(paramName), paramName);
     else if (paramType == "arma::Mat<size_t>")
-      IO::CheckInputMatrix<arma::Mat<size_t>>(paramName);
+      IO::CheckInputMatrix<arma::Mat<size_t>>(
+          IO::GetParam<arma::Mat<size_t>>(paramName), paramName);
     else if (paramType == "arma::colvec")
-      IO::CheckInputMatrix<arma::Col<double>>(paramName);
+      IO::CheckInputMatrix<arma::Col<double>>(
+          IO::GetParam<arma::Col<double>>(paramName), paramName);
     else if (paramType == "arma::Col<size_t>")
-      IO::CheckInputMatrix<arma::Col<size_t>>(paramName);
+      IO::CheckInputMatrix<arma::Col<size_t>>(
+          IO::GetParam<arma::Col<size_t>>(paramName), paramName);
     else if (paramType == "arma::rowvec")
-      IO::CheckInputMatrix<arma::Row<double>>(paramName);
+      IO::CheckInputMatrix<arma::Row<double>>(
+          IO::GetParam<arma::Row<double>>(paramName), paramName);
     else if (paramType == "arma::Row<size_t>")
-      IO::CheckInputMatrix<arma::Row<size_t>>(paramName);
+      IO::CheckInputMatrix<arma::Row<size_t>>(
+          IO::GetParam<arma::Row<size_t>>(paramName), paramName);
     else if (paramType == "std::tuple<data::DatasetInfo, arma::mat>")
-    {
-      std::string errMsg1 = "The input " + paramName + " has NaN values.";
-      std::string errMsg2 = "The input " + paramName + " has inf values.";
-
-      if (std::get<1>(GetParam<TupleType>(paramName)).has_nan())
-        Log::Fatal << errMsg1 << std::endl;
-      if (std::get<1>(GetParam<TupleType>(paramName)).has_inf())
-        Log::Fatal << errMsg2 << std::endl;
-    }
+      IO::CheckInputMatrix<arma::Mat<double>>(
+        std::get<1>(IO::GetParam<TupleType>(paramName)), paramName);
   }
 }
 

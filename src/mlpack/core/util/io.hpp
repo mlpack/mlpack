@@ -222,10 +222,11 @@ class IO
   /**
    * Utility function for CheckInputMatrices().
    *
+   * @param matrix Matrix to check.
    * @param identifier Name of the parameter in question.
    */
   template<typename T>
-  static void CheckInputMatrix(const std::string& identifier);
+  static void CheckInputMatrix(const T& matrix, const std::string& identifier);
 
   /**
    * Given two (matrix) parameters, ensure that the first is an in-place copy of
