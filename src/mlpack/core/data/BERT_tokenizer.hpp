@@ -13,6 +13,7 @@
 #define MLPACK_CORE_DATA_STRING_ENCODING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
 #include <mlpack/core/boost_backport/boost_backport_string_view.hpp>
 #include <mlpack/core/data/string_encoding_dictionary.hpp>
 #include <mlpack/core/data/string_encoding_policies/policy_traits.hpp>
@@ -37,6 +38,7 @@ using InvVocab = std::unordered_map<size_t, std::wstring>;
 
 class BasicTokenizer {
 public:
+	BasicTokenizer(bool doLowerCase);
     std::vector<std::wstring> tokenize(const std::string& text) const;
 
 private:
@@ -49,6 +51,7 @@ private:
     std::wstring runStripAccents(const std::wstring& text) const;
     std::vector<std::wstring> runSplitOnPunc(const std::wstring& text) const;
 
+    bool mDoLowerCase;
 };
 
 
@@ -64,17 +67,19 @@ std::wstring BasicTokenizer::cleanText(const std::wstring& text) const {
 
 bool BasicTokenizer::isWhitespace(const wchar_t& ch) const {
     if (ch== L' ' || ch== L'\t' || ch== L'\n' || ch== L'\r') return true;
-    auto cat = utf8proc_category(ch);
-    if (cat == UTF8PROC_CATEGORY_ZS) return true;
     return false;
 }
 
 bool BasicTokenizer::isPunctuation(const wchar_t& ch) const {
-    if (ch[i] == '!' || ch[i] == ',' || ch[i] == ';' || ch[i] == '.' || ch[i] == '?' ||   
-       ch[i] == '-' || ch[i] == '\'' || ch[i] == '\"' || ch[i] == ':' || ch[i] == '(' ||
-       ch[i] == ')' || ch[i] == '[' || ch[i] == ']' || ch[i] == '{' || ch[i] == '}' ) return true;
+    if (ch == '!' || ch == ',' || ch == ';' || ch == '.' || ch == '?' ||   
+       ch == '-' || ch == '\'' || ch == '\"' || ch == ':' || ch == '(' ||
+       ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}' ) return true;
     
     return false;
+}
+
+BasicTokenizer::BasicTokenizer(bool doLowerCase=true) 
+    : mDoLowerCase(doLowerCase) {
 }
 
 std::vector<std::wstring> BasicTokenizer::runSplitOnPunc(const std::wstring& text) const {
@@ -97,15 +102,59 @@ std::vector<std::wstring> BasicTokenizer::runSplitOnPunc(const std::wstring& tex
     return output;
 }
 
+static bool isStripChar(const wchar_t& ch) {
+    return stripChar.find(ch) != std::wstring::npos;
+}
+
+static std::wstring strip(const std::wstring& text) {
+    std::wstring ret =  text;
+    if (ret.empty()) return ret;
+    size_t pos = 0;
+    while (pos < ret.size() && isStripChar(ret[pos])) pos++;
+    if (pos != 0) ret = ret.substr(pos, ret.size() - pos);
+    pos = ret.size() - 1;
+    while (pos != (size_t)-1 && isStripChar(ret[pos])) pos--;
+    return ret.substr(0, pos + 1);
+}
+
+static std::vector<std::wstring> split(const std::wstring& text) {
+    std::vector<std::wstring>  result;
+    boost::split(result, text, boost::is_any_of(stripChar));
+    return result;
+}
+
+static std::vector<std::wstring> whitespaceTokenize(const std::wstring& text) {
+    std::wstring rtext = strip(text);
+    if (rtext.empty()) return std::vector<std::wstring>();
+    return split(text);
+}
+
+void convertToUnicode(const std::string &s, std::wstring &ws) {
+
+    std::wstring wsTmp(s.begin(), s.end());
+
+    ws = wsTmp;
+}
+
+void convertFromUnicode(const std::wstring &ws, std::string &s) {
+
+    std::string sTmp(ws.begin(), ws.end());
+
+    s = sTmp;
+}
+
 std::vector<std::wstring> BasicTokenizer::tokenize(const std::string& text) const {
-    std::wstring nText = convertToUnicode(text);
+    std::wstring nText;
+    convertToUnicode(text, nText);
     nText = cleanText(nText);
 
     const std::vector<std::wstring>& origTokens = whitespaceTokenize(nText);
     std::vector<std::wstring> splitTokens;
     for (std::wstring token : origTokens) {
         if (mDoLowerCase) {
-            token = ToLower(token);
+        	std::wstring t;
+            mlpack::util::ToLower(token, t);
+            token = t;
         }
         const auto& tokens = runSplitOnPunc(token);
         splitTokens.insert(splitTokens.end(), tokens.begin(), tokens.end());
@@ -140,3 +189,16 @@ FullTokenizer::FullTokenizer(const std::string& vocabFile, bool doLowerCase) :
     for (auto& v : *mVocab) mInvVocab[v.second] = v.first;
 }
 
+    std::vector<size_t> ret(text.size());
+    for (size_t i = 0; i < text.size(); i++) {
+        ret[i] = (*mVocab)[text[i]];
+    }
+    return ret;
+}
+
+
+} // namespace ann
+} // namespace mlpack
+
+
+#endif
