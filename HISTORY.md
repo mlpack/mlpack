@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Add "check_input_matrices" option to python bindings that checks
+    for NaN and inf values in all the input matrices (#2787).
+
   * Add Adjusted R squared functionality to R2Score::Evaluate (#2624).
 
   * Disabled all the bindings by default in CMake (#2782).
