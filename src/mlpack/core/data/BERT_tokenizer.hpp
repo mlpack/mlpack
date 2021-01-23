@@ -166,14 +166,7 @@ std::vector<std::wstring> BasicTokenizer::tokenize(const std::string& text) cons
 class FullTokenizer {
 public:
     FullTokenizer(const std::string& vocabFile, bool doLowerCase = true);
-
-    std::vector<std::wstring> tokenize(const std::string& text) const {
-        std::vector<std::wstring> splitTokens;
-        for (auto& token : mBasicTokenizer.tokenize(text))
-            splitTokens.push_back(token);
-        return splitTokens;
-    }
-
+    std::vector<std::wstring> tokenize(const std::string& text) const;
 
 private:
     std::shared_ptr<Vocab> mVocab;
@@ -189,11 +182,12 @@ FullTokenizer::FullTokenizer(const std::string& vocabFile, bool doLowerCase) :
     for (auto& v : *mVocab) mInvVocab[v.second] = v.first;
 }
 
-    std::vector<size_t> ret(text.size());
-    for (size_t i = 0; i < text.size(); i++) {
-        ret[i] = (*mVocab)[text[i]];
-    }
-    return ret;
+
+std::vector<std::wstring> FullTokenizer::tokenize(const std::string& text) const {
+    std::vector<std::wstring> splitTokens;
+    for (auto& token : mBasicTokenizer.tokenize(text))
+        splitTokens.push_back(token);
+    return splitTokens;
 }
 
 
