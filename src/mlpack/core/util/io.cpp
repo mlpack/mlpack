@@ -279,26 +279,36 @@ void IO::CheckInputMatrices()
     std::string paramType = itr->second.cppType;
 
     if (paramType == "arma::mat")
-      IO::CheckInputMatrix<arma::Mat<double>>(
-          IO::GetParam<arma::Mat<double>>(paramName), paramName);
+    {
+      IO::CheckInputMatrix(IO::GetParam<arma::mat>(paramName), paramName);
+    }
     else if (paramType == "arma::Mat<size_t>")
-      IO::CheckInputMatrix<arma::Mat<size_t>>(
+    {
+      IO::CheckInputMatrix(
           IO::GetParam<arma::Mat<size_t>>(paramName), paramName);
+    }
     else if (paramType == "arma::colvec")
-      IO::CheckInputMatrix<arma::Col<double>>(
-          IO::GetParam<arma::Col<double>>(paramName), paramName);
+    {
+      IO::CheckInputMatrix(IO::GetParam<arma::colvec>(paramName), paramName);
+    }
     else if (paramType == "arma::Col<size_t>")
-      IO::CheckInputMatrix<arma::Col<size_t>>(
+    {
+      IO::CheckInputMatrix(
           IO::GetParam<arma::Col<size_t>>(paramName), paramName);
+    }
     else if (paramType == "arma::rowvec")
-      IO::CheckInputMatrix<arma::Row<double>>(
-          IO::GetParam<arma::Row<double>>(paramName), paramName);
+    {
+      IO::CheckInputMatrix(IO::GetParam<arma::rowvec>(paramName), paramName);
+    }
     else if (paramType == "arma::Row<size_t>")
-      IO::CheckInputMatrix<arma::Row<size_t>>(
+    {
+      IO::CheckInputMatrix(
           IO::GetParam<arma::Row<size_t>>(paramName), paramName);
+    }
     else if (paramType == "std::tuple<data::DatasetInfo, arma::mat>")
-      IO::CheckInputMatrix<arma::Mat<double>>(
+    {
+      IO::CheckInputMatrix(
         std::get<1>(IO::GetParam<TupleType>(paramName)), paramName);
+    }
   }
 }
-
