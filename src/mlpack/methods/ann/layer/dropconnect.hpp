@@ -110,7 +110,7 @@ class DropConnectType : public Layer<InputType, OutputType>
   OutputType& Parameters() { return weights; }
 
   //! The value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
+  bool const& Deterministic() const { return deterministic; }
 
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }

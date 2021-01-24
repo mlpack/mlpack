@@ -48,8 +48,8 @@ class NegativeLogLikelihood
    * @param target The target vector, that contains the class index in the range
    *        between 1 and the number of classes.
    */
-  double Forward(const arma::mat& prediction,
-                 const arma::mat& target);
+  double Forward(const InputDataType& prediction,
+                 const OutputDataType& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log

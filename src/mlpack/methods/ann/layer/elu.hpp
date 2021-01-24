@@ -153,7 +153,7 @@ class ELUType : public Layer<InputType, OutputType>
   double& Alpha() { return alpha; }
 
   //! Get the value of deterministic parameter.
-  bool Deterministic() const { return deterministic; }
+  bool const& Deterministic() const { return deterministic; }
   //! Modify the value of deterministic parameter.
   bool& Deterministic() { return deterministic; }
 

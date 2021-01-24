@@ -56,15 +56,12 @@ template<
 class Layer
 {
  public:
-   /**
-    * Default constructor.
-    */
-   Layer() { /* Nothing to do here */ }
+   //! Default constructor.
+   Layer() : outputWidth(0), outputHeight(0)
+   { /* Nothing to do here */ }
 
-   /**
-    * Default deconstructor.
-    */
-   virtual ~Layer() { /* Nothing to do here */ }
+   //! Default deconstructor.
+   virtual ~Layer() = default;
 
   /**
    * Takes an input object, and computes the corresponding output of the layer.
@@ -178,14 +175,14 @@ class Layer
   /**
    * Get the deterministic parameter.
    *
-   * Mote: during training you should set the deterministic parameter for each
+   * @note During training you should set the deterministic parameter for each
    * layer to false and during testing you should set deterministic to true.
    */
   virtual bool const& Deterministic() const { return deterministic; }
   /**
    * Modify the deterministic parameter.
    *
-   * Mote: during training you should set the deterministic parameter for each
+   * @note During training you should set the deterministic parameter for each
    * layer to false and during testing you should set deterministic to true.
    */
   virtual bool& Deterministic() { return deterministic; }
@@ -193,10 +190,42 @@ class Layer
   //! Get the layer loss.
   virtual double Loss() { return 0; }
 
-  //! Get the size of the weights.
+  //! Get the weight size.
   virtual size_t WeightSize() const { return 0; }
 
+  //! Get the the output width.
+  virtual size_t const& OutputWidth() const { return outputWidth; }
+  //! Modify the output width.
+  virtual size_t& OutputWidth() { return outputWidth; }
+
+  //! Get the the output height.
+  virtual size_t const& OutputHeight() const { return outputHeight; }
+  //! Modify the output height.
+  virtual size_t& OutputHeight() { return outputHeight; }
+
+  //! Get the input width.
+  virtual size_t const& InputWidth() const { return inputWidth; }
+  //! Modify input the width.
+  virtual size_t& InputWidth() { return inputWidth; }
+
+  //! Get the input height.
+  virtual size_t const& InputHeight() const { return inputHeight; }
+  //! Modify the input height.
+  virtual size_t& InputHeight() { return inputHeight; }
+
  private:
+  //! Locally-stored output width.
+  size_t outputWidth;
+
+  //! Locally-stored output height.
+  size_t outputHeight;
+
+  //! Locally-stored input width.
+  size_t inputWidth;
+
+  //! Locally-stored input height.
+  size_t inputHeight;
+
   //! Locally-stored weight object.
   OutputType weights;
 
@@ -217,6 +246,7 @@ class Layer
 
   //! Locally-stored model.
   std::vector<Layer<InputType, OutputType>*> model;
+
 };
 
 #endif
