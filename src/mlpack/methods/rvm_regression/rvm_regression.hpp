@@ -14,22 +14,111 @@
 namespace mlpack{
 namespace regression{
 
+/**
+ * A sparse bayesian approach to the maximum likelihood estimation of the 
+ * parameters \f$ \omega \f$ of the linear regression model. The Complexity is 
+ * governed by the addition of a ARD prior impososed on the precisions 
+ * \f$ \alpha_{i} \f$ over the \f$ \omega_{i} \f$:  
+ *
+ * \f[
+ * p(\omega|\alpha) = \prod_{i=1}^{M} \mathcal{N}(\omega_{i}|0, \alpha_{i}^{-1})
+ * \f]
+ * 
+ * The optimization procedure calculates the posterior distribution of 
+ * \f$ \omega \f$ knowing the data by maximizing an approximation of the log 
+ * marginal likelihood derived from a type II maximum likelihood approximation. 
+ * The determination of the \f$ alpha_{i} \f$ and of the noise precision 
+ * \f$ beta \f$ is part of the optimization process, leading to an automatic 
+ * determination of w. The model being entirely based on probabilty 
+ * distributions, uncertainties are available and easly computed for both the 
+ * parameters and the predictions.
+ *
+ * The Relevance Vector Machine is a bayesian sparse kernel method similar to
+ * the SVM in the handling of non linear data. Instead of simple scalars, the 
+ * RVM outputs are posterior distributions informing about the uncertainties on
+ * the predictions. 
+ *
+ * The ARD prior leads to sparse solution by pruning out all the \f$ w_{i} \f$ 
+ * whose the precisions \f$ a_{i} \f$ tend to infinity. The solution is 
+ * generally much sparser than for the SVM. 
+ *  
+ * The code below is an implementation of the maximization of the evidence 
+ * function described in the section 7.2.1 of the C.Bishop's book, Pattern
+ * Recognition and Machine Learning.  
+ *
+ * @code
+ * @article{MacKay91bayesianinterpolation,
+ *   author = {Micheal E. Tipping},
+ *   title = {Sparse Bayesian Learning ad the Relevance Vector Machine},
+ *   journal = {Journal if Machine Learning Research},
+ *   year = {2001},
+ *   volume = {1},
+ *   pages = {211--244}
+ * }
+ * @endcode
+ *
+ * @code
+ * @book{Bishop:2006:PRM:1162264,
+ *   author = {Bishop, Christopher M.},
+ *   title = {Pattern Recognition and Machine Learning (Information Science 
+ *            and Statistics)},
+ *   chapter = {7}
+ *   year = {2006},
+ *   isbn = {0387310738},
+ *   publisher = {Springer-Verlag},
+ *   address = {Berlin, Heidelberg},
+ * } 
+ * @endcode
+ *   
+ * Example of use:
+ * This example shows how to train RVM regression model with kernel and 
+ * a ARD regression model. The same class is used in both cases.
+
+ * @code
+ * arma::mat xTrain; // Train data matrix. Column-major.
+ * arma::rowvec yTrain; // Train target values.
+ 
+ * // Train the model. Regularization strength is optimally tunned with the
+ * // training data alone by applying the Train method.
+ * BayesianLinearRegression estimator(); // Instanciate the estimator with default option.
+ * estimator.Train(xTrain, yTrain);
+ 
+ * // Prediction on test points.
+ * arma::mat xTest; // Test data matrix. Column-major.
+ * arma::rowvec predictions;
+ 
+ * estimator.Predict(xTest, prediction);
+ 
+ * arma::rowvec yTest; // Test target values.
+ * estimator.RMSE(xTest, yTest); // Evaluate using the RMSE score.
+ 
+ * // Compute the standard deviations of the predictions.
+ * arma::rowvec stds;
+ * estimator.Predict(xTest, responses, stds)
+ * @endcode
+ */
   template<typename KernelType=mlpack::kernel::LinearKernel>
 class RVMRegression
 {
 public:
   /**
-   * Set the parameters of the RVMRegression (Relevance Vector Machine for regression) 
-   *    object for a given kernel. There are numerous available kernels in 
-   *    the mlpack::kernel namespace.
-   *    Regulariation parameters are automaticaly set to their optimal values by 
-   *    maximizing the marginal likelihood. Optimization is done by Evidence
-   *    Maximization. A REFORMULER
+   * Set the parameters of the RVMRegression (Relevance Vector Machine for 
+   * regression) object for a given kernel. There are numerous available kernels 
+   * in the mlpack::kernel namespace. Regulariation parameters are automaticaly 
+   * set to their optimal values by maximization the marginal likelihood. 
+   *
    * @param kernel Kernel to be used for computation.
    * @param centerData Whether or not center the data according to the *
    *    examples.
    * @param scaleData Whether or to scaleData the data according to the 
    *    standard deviation of each feature.
+   * @param ard If true fit a ARD regression model. kernel is ignored.
+   * @param alphaTresh Value from which the posterior distributions of the w_i
+   * are considered to be centered auround zero with certainty. 
+   * @param tol Level from which the solution is considered sufficientlly 
+   *    stable.  
+   * @param nIterMax Maximum number of iterations for convergency.
+
    **/
   RVMRegression(const KernelType& kernel,
                 const bool centerData,
@@ -40,30 +129,27 @@ public:
 		const int nIterMax);
 
   /**
-   * Set the parameters of the ARD regression (Automatic Relevance Determination) 
-   *    object without any kernel. The class Performs a linear regression with an ARD prior promoting 
-   *    sparsity in the final solution. 
-   *    Regulariation parameters are automaticaly set to their optimal values by 
-   *    the maximmization of the marginal likelihood. Optimization is done by 
-   *    Evidence Maximization.
-   *    ARD regression is computed whatever the kernel type given for the 
-   *    initalization.
+   * Defaut constructor for ARD regression. The class Performs a linear 
+   * regression with an ARD prior promoting sparsity in the final solution. 
+   * Regulariation parameters are automaticaly set to their optimal values by 
+   * the maximmization of the marginal likelihood. ARD regression is computed 
+   * whatever the kernel given at initalization.
    *
    * @param centerData Whether or not center the data according to the 
    *    examples.
    * @param scaleData Whether or to scaleData the data according to the 
    *    standard deviation of each feature.
+   * @param ard If true fit a ARD regression model. kernel is ignored.
    **/
-  RVMRegression(const KernelType& kernel,
+  RVMRegression(const KernelType& kernel=mlpack::kernel::LinearKernel(),
 		const bool centerData = false,
                 const bool scaleData = false,
-		const bool ard = false);
+		const bool ard = true);
    
   /**
    * Run Relevance Vector Machine for regression. The input matrix 
-   *    (like all mlpack matrices) should be
-   *    column-major -- each column is an observation and each row is 
-   *    a dimension.
+   * (like all mlpack matrices) should be column-major -- each column is an 
+   * observation and each row is a dimension.
    *    
    * @param data Column-major input data (or row-major input data if rowMajor =
    *     true).
@@ -74,8 +160,9 @@ public:
 
   /**
    * Predict \f$\hat{y}_{i}\f$ for each data point in the given data matrix using the
-   *    currently-trained RVM model. Only the coefficients of the active basis 
-   *    funcions are used for prediction. This allows fast predictions.
+   * currently-trained RVM model. Only the coefficients of the active basis 
+   * funcions are used for prediction. This allows fast predictions.
+   *
    * @param points The data points to apply the model.
    * @param predictions y, which will contained calculated values on completion.
    */
@@ -96,18 +183,18 @@ public:
 	       arma::rowvec& std) const;
   
   /**
-   * Compute the Root Mean Square Error
-   * between the predictions returned by the model
-   * and the true repsonses.
-   * @param Points Data points to predict.
+   * Compute the Root Mean Square Error between the predictions returned by the
+   * model and the true responses.
+   *
+   * @param data Data points to predict
    * @param responses A vector of targets.
-   * @return RMSE
+   * @return Root mean squared error.
    **/
   double RMSE(const arma::mat& data,
               const arma::rowvec& responses) const;
 
   /**
-   * Get the solution vector
+   * Get the solution vector.
    *
    * @return omega Solution vector.
    */
