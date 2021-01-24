@@ -168,6 +168,59 @@ std::vector<std::wstring> BasicTokenizer::tokenize(const std::string& text) cons
     return whitespaceTokenize(boost::join(splitTokens, L" "));
 }
 
+class WordpieceTokenizer {
+public:
+    WordpieceTokenizer(std::shared_ptr<Vocab> vocab, const std::wstring& unkToken = L"[UNK]", size_t maxInputCharsPerWord=200);
+    std::vector<std::wstring> tokenize(const std::wstring& text) const;
+
+private:
+    std::shared_ptr<Vocab> mVocab;
+    std::wstring mUnkToken;
+    size_t mMaxInputCharsPerWord;
+};
+
+WordpieceTokenizer::WordpieceTokenizer(const std::shared_ptr<Vocab> vocab, const std::wstring& unkToken, size_t maxInputCharsPerWord)
+    : mVocab(vocab),
+    mUnkToken(unkToken),
+    mMaxInputCharsPerWord(maxInputCharsPerWord) {
+}
+
+std::vector<std::wstring> WordpieceTokenizer::tokenize(const std::wstring& text) const {
+    std::vector<std::wstring> outputTokens;
+    for (auto& token : whitespaceTokenize(text)) {
+        if (token.size() > mMaxInputCharsPerWord) {
+            outputTokens.push_back(mUnkToken);
+        }
+        bool isBad = false;
+        size_t start = 0;
+        std::vector<std::wstring> subTokens;
+        while (start < token.size()) {
+            size_t end = token.size();
+            std::wstring curSubstr;
+            bool hasCurSubstr = false;
+            while (start < end) {
+                std::wstring substr = token.substr(start, end - start);
+                if (start > 0) substr = L"##" + substr;
+                if (mVocab->find(substr) != mVocab->end()) {
+                    curSubstr = substr;
+                    hasCurSubstr = true;
+                    break;
+                }
+                end--;
+            }
+            if (!hasCurSubstr) {
+                isBad = true;
+                break;
+            }
+            subTokens.push_back(curSubstr);
+            start = end;
+        }
+        if (isBad) outputTokens.push_back(mUnkToken);
+        else outputTokens.insert(outputTokens.end(), subTokens.begin(), subTokens.end());
+    }
+    return outputTokens;
+}
+
 
 class FullTokenizer {
 public:
@@ -180,19 +233,21 @@ private:
     std::string mVocabFile;
     bool mDoLowerCase;
     BasicTokenizer mBasicTokenizer;
+    WordpieceTokenizer mWordpieceTokenizer;
 };
 
 FullTokenizer::FullTokenizer(const std::string& vocabFile, bool doLowerCase) : 
     mVocab(loadVocab(vocabFile)), 
-    mBasicTokenizer(BasicTokenizer(doLowerCase)) {
+    mBasicTokenizer(BasicTokenizer(doLowerCase)),
+    mWordpieceTokenizer(WordpieceTokenizer(mVocab)) {
     for (auto& v : *mVocab) mInvVocab[v.second] = v.first;
 }
-
 
 std::vector<std::wstring> FullTokenizer::tokenize(const std::string& text) const {
     std::vector<std::wstring> splitTokens;
     for (auto& token : mBasicTokenizer.tokenize(text))
-        splitTokens.push_back(token);
+        for (auto& subToken : mWordpieceTokenizer.tokenize(token))  
+            splitTokens.push_back(subToken);
     return splitTokens;
 }
 
