@@ -287,6 +287,11 @@ void IO::CheckInputMatrices()
       IO::CheckInputMatrix(
           IO::GetParam<arma::Mat<size_t>>(paramName), paramName);
     }
+    else if (paramType == "arma::Mat<unsigned int>")
+    {
+      IO::CheckInputMatrix(
+          IO::GetParam<arma::Mat<unsigned int>>(paramName), paramName);
+    }
     else if (paramType == "arma::colvec")
     {
       IO::CheckInputMatrix(IO::GetParam<arma::colvec>(paramName), paramName);
