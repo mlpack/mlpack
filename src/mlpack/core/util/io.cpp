@@ -277,7 +277,6 @@ void IO::CheckInputMatrices()
   {
     std::string paramName = itr->first;
     std::string paramType = itr->second.cppType;
-
     if (paramType == "arma::mat")
     {
       IO::CheckInputMatrix(IO::GetParam<arma::mat>(paramName), paramName);
@@ -287,14 +286,9 @@ void IO::CheckInputMatrices()
       IO::CheckInputMatrix(
           IO::GetParam<arma::Mat<size_t>>(paramName), paramName);
     }
-    else if (paramType == "arma::Mat<unsigned int>")
+    else if (paramType == "arma::vec")
     {
-      IO::CheckInputMatrix(
-          IO::GetParam<arma::Mat<unsigned int>>(paramName), paramName);
-    }
-    else if (paramType == "arma::colvec")
-    {
-      IO::CheckInputMatrix(IO::GetParam<arma::colvec>(paramName), paramName);
+      IO::CheckInputMatrix(IO::GetParam<arma::vec>(paramName), paramName);
     }
     else if (paramType == "arma::Col<size_t>")
     {
