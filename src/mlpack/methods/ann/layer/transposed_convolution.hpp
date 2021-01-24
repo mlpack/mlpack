@@ -206,68 +206,68 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
   OutputType& Gradient() { return gradient; }
 
   //! Get the input width.
-  size_t InputWidth() const { return inputWidth; }
+  size_t const& InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  size_t InputHeight() const { return inputHeight; }
+  size_t const& InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  size_t OutputWidth() const { return outputWidth; }
+  size_t const& OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  size_t OutputHeight() const { return outputHeight; }
+  size_t const& OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
-  size_t InputSize() const { return inSize; }
+  size_t const& InputSize() const { return inSize; }
 
   //! Get the output size.
-  size_t OutputSize() const { return outSize; }
+  size_t const& OutputSize() const { return outSize; }
 
   //! Get the kernel width.
-  size_t KernelWidth() const { return kernelWidth; }
+  size_t const& KernelWidth() const { return kernelWidth; }
   //! Modify the kernel width.
   size_t& KernelWidth() { return kernelWidth; }
 
   //! Get the kernel height.
-  size_t KernelHeight() const { return kernelHeight; }
+  size_t const& KernelHeight() const { return kernelHeight; }
   //! Modify the kernel height.
   size_t& KernelHeight() { return kernelHeight; }
 
   //! Get the stride width.
-  size_t StrideWidth() const { return strideWidth; }
+  size_t const& StrideWidth() const { return strideWidth; }
   //! Modify the stride width.
   size_t& StrideWidth() { return strideWidth; }
 
   //! Get the stride height.
-  size_t StrideHeight() const { return strideHeight; }
+  size_t const& StrideHeight() const { return strideHeight; }
   //! Modify the stride height.
   size_t& StrideHeight() { return strideHeight; }
 
   //! Get the top padding height.
-  size_t PadHTop() const { return padHTop; }
+  size_t const& PadHTop() const { return padHTop; }
   //! Modify the top padding height.
   size_t& PadHTop() { return padHTop; }
 
   //! Get the bottom padding height.
-  size_t PadHBottom() const { return padHBottom; }
+  size_t const& PadHBottom() const { return padHBottom; }
   //! Modify the bottom padding height.
   size_t& PadHBottom() { return padHBottom; }
 
   //! Get the left padding width.
-  size_t PadWLeft() const { return padWLeft; }
+  size_t const& PadWLeft() const { return padWLeft; }
   //! Modify the left padding width.
   size_t& PadWLeft() { return padWLeft; }
 
   //! Get the right padding width.
-  size_t PadWRight() const { return padWRight; }
+  size_t const& PadWRight() const { return padWRight; }
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
 

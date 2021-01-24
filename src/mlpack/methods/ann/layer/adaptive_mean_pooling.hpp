@@ -75,30 +75,30 @@ class AdaptiveMeanPoolingType : public Layer<InputType, OutputType>
                 OutputType& g);
 
   //! Get the input width.
-  size_t InputWidth() const { return poolingLayer.InputWidth(); }
+  size_t const& InputWidth() const { return poolingLayer.InputWidth(); }
   //! Modify the input width.
   size_t& InputWidth() { return poolingLayer.InputWidth(); }
 
   //! Get the input height.
-  size_t InputHeight() const { return poolingLayer.InputHeight(); }
+  size_t const& InputHeight() const { return poolingLayer.InputHeight(); }
   //! Modify the input height.
   size_t& InputHeight() { return poolingLayer.InputHeight(); }
 
   //! Get the output width.
-  size_t OutputWidth() const { return outputWidth; }
+  size_t const& OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  size_t OutputHeight() const { return outputHeight; }
+  size_t const& OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
-  size_t InputSize() const { return poolingLayer.InputSize(); }
+  size_t const& InputSize() const { return poolingLayer.InputSize(); }
 
   //! Get the output size.
-  size_t OutputSize() const { return poolingLayer.OutputSize(); }
+  size_t const& OutputSize() const { return poolingLayer.OutputSize(); }
 
   /**
    * Serialize the layer.

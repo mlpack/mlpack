@@ -104,28 +104,28 @@ class MeanPoolingType : public Layer<InputType, OutputType>
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
-  size_t InputSize() const { return inSize; }
+  size_t const& InputSize() const { return inSize; }
 
   //! Get the output size.
-  size_t OutputSize() const { return outSize; }
+  size_t const& OutputSize() const { return outSize; }
 
   //! Get the kernel width.
-  size_t KernelWidth() const { return kernelWidth; }
+  size_t const& KernelWidth() const { return kernelWidth; }
   //! Modify the kernel width.
   size_t& KernelWidth() { return kernelWidth; }
 
   //! Get the kernel height.
-  size_t KernelHeight() const { return kernelHeight; }
+  size_t const& KernelHeight() const { return kernelHeight; }
   //! Modify the kernel height.
   size_t& KernelHeight() { return kernelHeight; }
 
   //! Get the stride width.
-  size_t StrideWidth() const { return strideWidth; }
+  size_t const& StrideWidth() const { return strideWidth; }
   //! Modify the stride width.
   size_t& StrideWidth() { return strideWidth; }
 
   //! Get the stride height.
-  size_t StrideHeight() const { return strideHeight; }
+  size_t const& StrideHeight() const { return strideHeight; }
   //! Modify the stride height.
   size_t& StrideHeight() { return strideHeight; }
 
@@ -140,7 +140,7 @@ class MeanPoolingType : public Layer<InputType, OutputType>
   bool& Deterministic() { return deterministic; }
 
   //! Get the size of the weights.
-  size_t WeightSize() const { return 0; }
+  //size_t const& WeightSize() const { return 0; }
 
   /**
    * Serialize the layer.
