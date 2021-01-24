@@ -31,19 +31,20 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @tparam OutputLayerType The output layer type used to evaluate the network.
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
- * @tparam CustomLayers Any set of custom layers that could be a part of the
- *         feed forward network.
  */
 template<
   typename OutputLayerType = NegativeLogLikelihood<>,
   typename InitializationRuleType = RandomInitialization,
-  typename... CustomLayers
->
+  typename InputType = arma::mat,
+  typename OutputType = arma::mat>
 class FFN
 {
  public:
   //! Convenience typedef for the internal model construction.
-  using NetworkType = FFN<OutputLayerType, InitializationRuleType>;
+  using NetworkType = FFN<OutputLayerType,
+                          InitializationRuleType,
+                          InputType,
+                          OutputType>;
 
   /**
    * Create the FFN object.
@@ -123,8 +124,8 @@ class FFN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  double Train(arma::mat predictors,
-               arma::mat responses,
+  double Train(InputType predictors,
+               InputType responses,
                OptimizerType& optimizer,
                CallbackTypes&&... callbacks);
 
@@ -149,8 +150,8 @@ class FFN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
-  double Train(arma::mat predictors,
-               arma::mat responses,
+  double Train(InputType predictors,
+               OutputType responses,
                CallbackTypes&&... callbacks);
 
   /**
@@ -164,7 +165,7 @@ class FFN
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
    */
-  void Predict(arma::mat predictors, arma::mat& results);
+  void Predict(InputType predictors, OutputType& results);
 
   /**
    * Evaluate the feedforward network with the given predictors and responses.
@@ -183,7 +184,7 @@ class FFN
    *
    * @param parameters Matrix model parameters.
    */
-  double Evaluate(const arma::mat& parameters);
+  double Evaluate(const OutputType& parameters);
 
    /**
    * Evaluate the feedforward network with the given parameters, but using only
@@ -198,7 +199,7 @@ class FFN
    * @param deterministic Whether or not to train or test the model. Note some
    *        layer act differently in training or testing mode.
    */
-  double Evaluate(const arma::mat& parameters,
+  double Evaluate(const OutputType& parameters,
                   const size_t begin,
                   const size_t batchSize,
                   const bool deterministic);
@@ -215,7 +216,7 @@ class FFN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
-  double Evaluate(const arma::mat& parameters,
+  double Evaluate(const OutputType& parameters,
                   const size_t begin,
                   const size_t batchSize);
 
@@ -227,8 +228,7 @@ class FFN
    * @param parameters Matrix model parameters.
    * @param gradient Matrix to output gradient into.
    */
-  template<typename GradType>
-  double EvaluateWithGradient(const arma::mat& parameters, GradType& gradient);
+  double EvaluateWithGradient(const OutputType& parameters, OutputType& gradient);
 
    /**
    * Evaluate the feedforward network with the given parameters, but using only
@@ -242,10 +242,9 @@ class FFN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
-  template<typename GradType>
-  double EvaluateWithGradient(const arma::mat& parameters,
+  double EvaluateWithGradient(const OutputType& parameters,
                               const size_t begin,
-                              GradType& gradient,
+                              OutputType& gradient,
                               const size_t batchSize);
 
   /**
@@ -260,9 +259,9 @@ class FFN
    * @param batchSize Number of points to be processed as a batch for objective
    *        function gradient evaluation.
    */
-  void Gradient(const arma::mat& parameters,
+  void Gradient(const OutputType& parameters,
                 const size_t begin,
-                arma::mat& gradient,
+                OutputType& gradient,
                 const size_t batchSize);
 
   /**
@@ -279,44 +278,38 @@ class FFN
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
-  /**
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  void Add(Layer<arma::mat, arma::mat>* layer) { network.push_back(layer); }
-
   //! Get the network model.
-  const std::vector<Layer<arma::mat, arma::mat>*>& Model() const
+  const std::vector<Layer<InputType, OutputType>*>& Model() const
   {
     return network;
   }
-  //! Modify the network model.  Be careful!  If you change the structure of the
-  //! network or parameters for layers, its state may become invalid, so be sure
-  //! to call ResetParameters() afterwards.
-  //std::vector<Layer>& Model() { return network; }
+
+  /**
+   * Modify the network model.  Be careful!  If you change the structure of the
+   * network or parameters for layers, its state may become invalid, so be sure
+   * to call ResetParameters() afterwards.
+   */
+  std::vector<Layer<InputType, OutputType>>& Model() { return network; }
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }
 
   //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return parameter; }
+  const OutputType& Parameters() const { return parameter; }
   //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return parameter; }
+  OutputType& Parameters() { return parameter; }
 
   //! Get the matrix of responses to the input data points.
-  const arma::mat& Responses() const { return responses; }
+  const InputType& Responses() const { return responses; }
   //! Modify the matrix of responses to the input data points.
-  arma::mat& Responses() { return responses; }
+  InputType& Responses() { return responses; }
 
   //! Get the matrix of data points (predictors).
-  const arma::mat& Predictors() const { return predictors; }
+  const InputType& Predictors() const { return predictors; }
   //! Modify the matrix of data points (predictors).
-  arma::mat& Predictors() { return predictors; }
+  InputType& Predictors() { return predictors; }
 
-  /**
-   * Reset the module infomration (weights/parameters).
-   */
+  //! Reset the module infomration (weights/parameters).
   void ResetParameters();
 
   //! Serialize the model.
@@ -374,13 +367,13 @@ class FFN
 
  private:
   // Helper functions.
+
   /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
    * forward probabilities for each module.
    *
    * @param input Data sequence to compute probabilities for.
    */
-  template<typename InputType>
   void Forward(const InputType& input);
 
   /**
@@ -390,7 +383,7 @@ class FFN
    * @param predictors Input data variables.
    * @param responses Outputs results from input data variables.
    */
-  void ResetData(arma::mat predictors, arma::mat responses);
+  void ResetData(InputType predictors, InputType responses);
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
@@ -402,7 +395,6 @@ class FFN
    * Iterate through all layer modules and update the the gradient using the
    * layer defined optimizer.
    */
-  template<typename InputType>
   void Gradient(const InputType& input);
 
   /**
@@ -414,7 +406,7 @@ class FFN
   /**
    * Reset the gradient for all modules that implement the Gradient function.
    */
-  void ResetGradients(arma::mat& gradient);
+  void ResetGradients(OutputType& gradient);
 
   /**
    * Swap the content of this network with given network.
@@ -440,38 +432,37 @@ class FFN
   bool reset;
 
   //! Locally-stored model modules.
-  std::vector<Layer<arma::mat, arma::mat>*> network;
+  std::vector<Layer<InputType, OutputType>*> network;
 
   //! The matrix of data points (predictors).
-  arma::mat predictors;
+  InputType predictors;
 
   //! The matrix of responses to the input data points.
-  arma::mat responses;
+  InputType responses;
 
   //! Matrix of (trained) parameters.
-  arma::mat parameter;
+  OutputType parameter;
 
   //! The number of separable functions (the number of predictor points).
   size_t numFunctions;
 
   //! The current error for the backward pass.
-  arma::mat error;
+  OutputType error;
 
   //! The current evaluation mode (training or testing).
   bool deterministic;
 
   //! Locally-stored delta object.
-  arma::mat delta;
+  OutputType delta;
 
   //! Locally-stored input parameter object.
-  arma::mat inputParameter;
+  InputType inputParameter;
 
   //! Locally-stored output parameter object.
-  arma::mat outputParameter;
+  OutputType outputParameter;
 
   //! Locally-stored gradient parameter.
-  arma::mat gradient;
-
+  OutputType gradient;
 }; // class FFN
 
 } // namespace ann
