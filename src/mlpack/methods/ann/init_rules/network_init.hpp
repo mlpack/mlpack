@@ -14,13 +14,9 @@
 #define MLPACK_METHODS_ANN_INIT_RULES_NETWORK_INIT_HPP
 
 #include <mlpack/prereqs.hpp>
-
-//#include "../visitor/reset_visitor.hpp"
-//#include "../visitor/weight_size_visitor.hpp"
-//#include "../visitor/weight_set_visitor.hpp"
-//#include "init_rules_traits.hpp"
-
 #include <mlpack/methods/ann/layer/layer.hpp>
+
+#include "init_rules_traits.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -62,49 +58,98 @@ class NetworkInitialization
     {
       size_t weights = 0;
       for (size_t i = 0; i < network.size(); ++i)
-        weights += network[i]->Parameters().n_elem;
+        weights += ModelParameterSize(network[i]);
+
       parameter.set_size(weights, 1);
     }
 
     // Initialize the network layer by layer or the complete network.
-    /* if (ann::InitTraits<InitializationRuleType>::UseLayer) */
-    /* { */
-    /*   for (size_t i = 0, offset = parameterOffset; i < network.size(); ++i) */
-    /*   { */
-    /*     // Initialize the layer with the specified parameter/weight */
-    /*     // initialization rule. */
-    /*     const size_t weight = boost::apply_visitor(weightSizeVisitor, */
-    /*         network[i]); */
-    /*     arma::Mat<eT> tmp = arma::mat(parameter.memptr() + offset, */
-    /*         weight, 1, false, false); */
-    /*     initializeRule.Initialize(tmp, tmp.n_elem, 1); */
+    if (ann::InitTraits<InitializationRuleType>::UseLayer)
+    {
+      for (size_t i = 0, offset = parameterOffset; i < network.size(); ++i)
+      {
+        // Initialize the layer with the specified parameter/weight
+        // initialization rule.
+        const size_t weight = ModelParameterSize(network[i]);
+        arma::Mat<eT> tmp = arma::mat(parameter.memptr() + offset,
+            weight, 1, false, false);
+        initializeRule.Initialize(tmp, tmp.n_elem, 1);
 
-    /*     // Increase the parameter/weight offset for the next layer. */
-    /*     offset += weight; */
-    /*   } */
-    /* } */
-    /* else */
-    /* { */
+        // Increase the parameter/weight offset for the next layer.
+        offset += weight;
+      }
+    }
+    else
+    {
       initializeRule.Initialize(parameter, parameter.n_elem, 1);
-      parameter.fill(0.5);
-    /* } */
+    }
 
     // Note: We can't merge the for loop into the for loop above because
-    // WeightSetVisitor also sets the parameter/weights of the inner modules.
-    // Inner Modules are held by the parent module e.g. the concat module can
-    // hold various other modules.
-    for (size_t i = 0, offset = parameterOffset; i < network.size(); ++i)
-    {
-
-      network[i]->Parameters() = arma::mat(parameter.memptr() + offset,
-          network[i]->Parameters().n_rows, network[i]->Parameters().n_cols,
-          false, false);
-      offset += network[i]->Parameters().n_elem;
-      network[i]->Reset();
-    }
+    // ModelParameterSize() also sets the parameter/weights of the inner
+    // modules. Inner Modules are held by the parent module e.g. the concat
+    // module can hold various other modules.
+    size_t offset = parameterOffset;
+    for (size_t i = 0; i < network.size(); ++i)
+      offset += ModelParameterSize(network[i], offset, parameter);
   }
 
  private:
+  /**
+   * Get the size of the weights of the given layer including all sub-layer.
+   *
+   * @tparam LayerType The type of the layer to get the weight size for.
+   * @param layer The layer to get the weight size for.
+   * @return The weight size of the given layer and sub-layer.
+   */
+  template<typename LayerType>
+  size_t ModelParameterSize(const LayerType& layer)
+  {
+    size_t size = 0;
+
+    if (layer->Parameters().n_elem > 0)
+      size = layer->Parameters().n_elem;
+
+    if (layer->Model().size() > 0)
+    {
+      for (size_t i = 0; i < layer->Model().size(); ++i)
+        size += ModelParameterSize(layer->Model()[i]);
+    }
+
+    return size;
+  }
+
+  /**
+   * Assign portion of the given parameter matrix to the layer/sub-layer.
+   *
+   * @tparam LayerType The type of the layer to assign the portion of the
+   *     parameter matrix.
+   * @param layer The layer to assign the portion of the parameter matrix.
+   * @param parameter The complete parameter matrix that will be assigned to
+   *     the layer/sub-layer.
+   * @return The size of the assigned layer/sub-layer parameter.
+   */
+  template<typename LayerType>
+  size_t ModelParameterSize(const LayerType& layer,
+                            size_t offset, arma::mat& parameter)
+  {
+    size_t size = 0;
+    if (layer->Parameters().n_elem > 0)
+    {
+      layer->Parameters() = arma::mat(parameter.memptr() + offset,
+          layer->Parameters().n_rows, layer->Parameters().n_cols, false, false);
+      size = layer->Parameters().n_elem;
+      layer->Reset();
+    }
+
+    if (layer->Model().size() > 0)
+    {
+      for (size_t i = 0; i < layer->Model().size(); ++i)
+        size += ModelParameterSize(layer->Model()[i], offset + size, parameter);
+    }
+
+    return size;
+  }
+
   //! Instantiated InitializationRule object for initializing the network
   //! parameter.
   InitializationRuleType initializeRule;
