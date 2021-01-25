@@ -203,6 +203,7 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
     PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
+    PYTHON_INSTALL_PREFIX=(/path/to/python/): Path to root of Python installation
     BUILD_JULIA_BINDINGS=(ON/OFF): whether or not to build Julia bindings
     JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
     BUILD_GO_BINDINGS=(ON/OFF): whether or not to build Go bindings
