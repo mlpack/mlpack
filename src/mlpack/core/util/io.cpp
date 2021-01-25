@@ -304,7 +304,7 @@ void IO::CheckInputMatrices()
       IO::CheckInputMatrix(
           IO::GetParam<arma::Row<size_t>>(paramName), paramName);
     }
-    else if (paramType == "std::tuple<data::DatasetInfo, arma::mat>")
+    else if (paramType == "TUPLE_TYPE")
     {
       IO::CheckInputMatrix(
         std::get<1>(IO::GetParam<TupleType>(paramName)), paramName);
