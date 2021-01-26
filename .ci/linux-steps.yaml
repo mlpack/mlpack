@@ -35,8 +35,24 @@ steps:
     fi
 
     ls -la
-
     pwd
+    
+    echo "Download and build boost as a static lbrary"
+    apt-get download libboost-all-dev
+    dpkg-deb -x libboost-all-dev_1.58.0.1ubuntu1_amd64.dev
+
+    echo "Download the Cereal library"
+    apt-get download libcereal-dev
+    dpkg-deb -x libcereal-dev_1.1.2-4_amd64.deb
+
+    echo "Download and build OpenBLAS as a static library"
+    wget --no-check-certificate \
+      "https://github.com/xianyi/OpenBLAS/archive/v0.3.13.tar.gz" && \
+       tar xvzf v0.3.13.tar.gz && \
+       rm -f v0.3.13.tar.gz && \
+       cd OpenBLAS-0.3.13 && \
+       make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=aarch64-linux-gnu-gcc FC=aarch64-linux-gnu-gfortran NO_SHARED=1 &&\
+       cd ../ &&\
      
     # Install armadillo.
     curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
