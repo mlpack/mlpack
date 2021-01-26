@@ -289,7 +289,7 @@ void IO::CheckInputMatrices()
     {
       IO::CheckInputMatrix(IO::GetParam<arma::rowvec>(paramName), paramName);
     }
-    else if (paramType == "std::tuple<data::DatasetInfo, arma::mat>")
+    else if (paramType == "std::tuple<mlpack::data::DatasetInfo, arma::mat>")
     {
       IO::CheckInputMatrix(
         std::get<1>(IO::GetParam<TupleType>(paramName)), paramName);
