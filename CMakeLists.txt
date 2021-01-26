@@ -29,26 +29,12 @@ endif()
 if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
 elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
-  message("Downloading mlpack dependencies for cross compiling")
-  execute_process(COMMAND bash -c "../../board/download_openblas.sh ${GCC_VERSION}"
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
   include(board/flags-config.cmake)
   flags(${BOARD_NAME})
 
-# This is the only solution I found.
-# We need to download cereal, boost, OpenBlas, we can not use the one
-# already included in the system
-# Armadillo and ensmallen are covered by autodownloader.
-# We can not allow the user to specify the cereal and boost location
-# manually, the user might include the system header if specified /usr/include/
-# this can causes catastrophic unwanted behavior that might requires hours to debug.
-# I am going to stick to this solution now, hopefully we can automate the 
-# new version downloading as Yashwant did.
-# If other solution exists please do not hesitate in proposing them
-
-  set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a" CACHE STRING "OpenBlas PATH")
-  set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/cereal-1.3.0/include" CACHE STRING "Cereal header PATH")
-  set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/boost_1_75_0" CACHE STRING "Boost header PATH")
+  set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/../OpenBLAS-0.3.13/libopenblas.a" CACHE STRING "OpenBlas PATH")
+  set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/../cereal-1.3.0/include" CACHE STRING "Cereal header PATH")
+  set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/../boost_1_75_0" CACHE STRING "Boost header PATH")
   message("CEREAL INCLUDE PATH" ${CEREAL_INCLUDE_DIR})
   message("Boost INCLUDE PATH" ${Boost_INCLUDE_DIR})
   message("GFortran library PATH:" ${GFORTRAN_LIBRARY})

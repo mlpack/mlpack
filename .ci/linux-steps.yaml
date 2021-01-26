@@ -36,14 +36,12 @@ steps:
 
     ls -la
     pwd
-    
-    echo "Download and build boost as a static lbrary"
-    apt-get download libboost-all-dev
-    dpkg-deb -x libboost-all-dev_1.58.0.1ubuntu1_amd64.dev
 
-    echo "Download the Cereal library"
-    apt-get download libcereal-dev
-    dpkg-deb -x libcereal-dev_1.1.2-4_amd64.deb
+    echo "Download and build boost as a static lbrary"
+        wget --no-check-certificate \
+        "https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.gz" && \
+        tar xvzf boost_$version_underscore.tar.gz && \
+        rm -f boost_$version_underscore.tar.gz && \
 
     echo "Download and build OpenBLAS as a static library"
     wget --no-check-certificate \
