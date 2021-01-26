@@ -1013,9 +1013,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * collisions are still possible, and they produce bizarre error messages.  See
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
-#define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
 #define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS) \
-    PARAM_IN(TUPLE_TYPE, ID, DESC, ALIAS, TUPLE_TYPE(), false)
+    PARAM_IN(std::tuple<mlpack::data::DatasetInfo, arma::mat>, ID, DESC, \
+        ALIAS, std::tuple<mlpack::data::DatasetInfo, arma::mat>(), false)
 
 /**
  * Define an input model.  From the command line, the user can specify the file
