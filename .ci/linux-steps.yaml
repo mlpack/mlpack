@@ -21,9 +21,8 @@ steps:
     unset BOOST_ROOT
     echo "##vso[task.setvariable variable=BOOST_ROOT]"$BOOST_ROOT
 
-    sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost-all-dev xz-utils g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gfortran-aarch64-linux-gnu gcc-arm-linux-gnueabi g++-arm-linux-gnueabi gfortran-arm-linux-gnueabi
+    sudo apt-get install -y --allow-unauthenticated libopenblas-dev g++ libboost-all-dev xz-utils g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gfortran-aarch64-linux-gnu gcc-arm-linux-gnueabi g++-arm-linux-gnueabi gfortran-arm-linux-gnueabi
     
-    ls .
     if [ "$(binding)" == "python" ]; then
       export PYBIN=$(which python)
       $PYBIN -m pip install --upgrade pip

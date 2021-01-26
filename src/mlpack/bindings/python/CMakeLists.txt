@@ -214,14 +214,20 @@ add_custom_command(TARGET python POST_BUILD
 add_dependencies(python python_configured)
 
 # Configure installation script file.
+if (NOT PYTHON_INSTALL_PREFIX)
+  set(PYTHON_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+endif ()
+
 execute_process(COMMAND ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/print_python_version.py" "${CMAKE_INSTALL_PREFIX}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/print_python_version.py"
+    "${PYTHON_INSTALL_PREFIX}"
     OUTPUT_VARIABLE CMAKE_PYTHON_PATH)
 string(STRIP "${CMAKE_PYTHON_PATH}" CMAKE_PYTHON_PATH)
 install(CODE "set(ENV{PYTHONPATH} ${CMAKE_PYTHON_PATH})")
 install(CODE "set(PYTHON_EXECUTABLE \"${PYTHON_EXECUTABLE}\")")
 install(CODE "set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")")
-install(CODE "set(CMAKE_INSTALL_PREFIX \"${CMAKE_INSTALL_PREFIX}\")")
+
+install(CODE "set(PYTHON_INSTALL_PREFIX \"${PYTHON_INSTALL_PREFIX}\")")
 install(CODE "execute_process(COMMAND mkdir -p $ENV{DESTDIR}${CMAKE_PYTHON_PATH})")
 install(SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/PythonInstall.cmake")
 
