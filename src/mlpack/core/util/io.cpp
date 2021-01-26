@@ -281,28 +281,13 @@ void IO::CheckInputMatrices()
     {
       IO::CheckInputMatrix(IO::GetParam<arma::mat>(paramName), paramName);
     }
-    else if (paramType == "arma::Mat<size_t>")
-    {
-      IO::CheckInputMatrix(
-          IO::GetParam<arma::Mat<size_t>>(paramName), paramName);
-    }
     else if (paramType == "arma::vec")
     {
       IO::CheckInputMatrix(IO::GetParam<arma::vec>(paramName), paramName);
     }
-    else if (paramType == "arma::Col<size_t>")
-    {
-      IO::CheckInputMatrix(
-          IO::GetParam<arma::Col<size_t>>(paramName), paramName);
-    }
     else if (paramType == "arma::rowvec")
     {
       IO::CheckInputMatrix(IO::GetParam<arma::rowvec>(paramName), paramName);
-    }
-    else if (paramType == "arma::Row<size_t>")
-    {
-      IO::CheckInputMatrix(
-          IO::GetParam<arma::Row<size_t>>(paramName), paramName);
     }
     else if (paramType == "TUPLE_TYPE")
     {
