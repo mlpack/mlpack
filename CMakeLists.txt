@@ -32,9 +32,10 @@ elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
   include(board/flags-config.cmake)
   flags(${BOARD_NAME})
 
-  set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/../OpenBLAS-0.3.13/libopenblas.a" CACHE STRING "OpenBlas PATH")
+  set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/../OpenBLAS-0.3.13/libopenblas.a" CACHE STRING "OpenBLAS PATH")
   set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/../cereal-1.3.0/include" CACHE STRING "Cereal header PATH")
   set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/../boost_1_75_0" CACHE STRING "Boost header PATH")
+  set(ARMADILLO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/../armadillo-8.400.0/include" CACHE STRING "Armadillo header PATH")
   message("CEREAL INCLUDE PATH" ${CEREAL_INCLUDE_DIR})
   message("Boost INCLUDE PATH" ${Boost_INCLUDE_DIR})
   message("GFortran library PATH:" ${GFORTRAN_LIBRARY})
@@ -319,59 +320,18 @@ endif()
 
 # Remove support for older 32bit system, if we need to have 32bit system
 # Since we are cross compiling, We will download it into the deps folder,
-if (CMAKE_CROSSCOMPILING)
-  file(DOWNLOAD https://freefr.dl.sourceforge.net/project/arma/armadillo-10.1.2.tar.xz
-        "${CMAKE_BINARY_DIR}/deps/armadillo-10.1.2.tar.xz"
-        STATUS ARMADILLO_DOWNLOAD_STATUS_LIST LOG ARMADILLO_DOWNLOAD_LOG
-        SHOW_PROGRESS)
-  list(GET ARMADILLO_DOWNLOAD_STATUS_LIST 0 ARMADILLO_DOWNLOAD_STATUS)
-  if (ARMADILLO_DOWNLOAD_STATUS EQUAL 0)
-    execute_process(COMMAND ${CMAKE_COMMAND} -E
-        tar xf "${CMAKE_BINARY_DIR}/deps/armadillo-10.1.2.tar.xz"
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
-
-    # Get the name of the directory.
-    file (GLOB ARMADILLO_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
-        "${CMAKE_BINARY_DIR}/deps/armadillo*.*")
-    # list(FILTER) is not available on 3.5 or older, but try to keep
-    # configuring without filtering the list anyway (it might work if only
-    # the file cereal-latest.tar.gz is present.
-    if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
-      list(FILTER ARMADILLO_DIRECTORIES EXCLUDE REGEX ".*\.tar\.xz")
-    endif ()
-    list(LENGTH ARMADILLO_DIRECTORIES ARMADILLO_DIRECTORIES_LEN)
-    if (ARMADILLO_DIRECTORIES_LEN EQUAL 1)
-      list(GET ARMADILLO_DIRECTORIES 0 ARMADILLO_INCLUDE_DIR)
-      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-          "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/include")
-      message(STATUS
-          "Successfully downloaded armadillo into ${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/")
-
-      # Now we have to also ensure these header files get installed.
-      install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/include/armadillo_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/armadillo_bits")
-      install(FILES "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/include/armadillo" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-    else ()
-      message(FATAL_ERROR "Problem unpacking armadillo! Expected only one directory armadillo-; found ${ARMADILLO_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
-    endif ()
-  else ()
-    list(GET ARMADILLO_DOWNLOAD_STATUS_LIST 1 ARMADILLO_DOWNLOAD_ERROR)
-    message(FATAL_ERROR
-        "Could not download armadillo! Error code ${ARMADILLO_DOWNLOAD_STATUS}: ${ARMADILLO_DOWNLOAD_ERROR}!  Error log: ${ARMADILLO_DOWNLOAD_LOG}")
-  endif ()
-else()
+if (NOT CMAKE_CROSSCOMPILING)
   find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 endif()
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 
-
 if(CMAKE_CROSSCOMPILING)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OPENBLAS_LIBRARIES} ${GFORTRAN_LIBRARY})
 else()
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARY})
 endif()
-
 
 # Find stb_image.h and stb_image_write.h.
 find_package(StbImage)
