@@ -34,9 +34,6 @@ steps:
       sudo tar -C /opt/ -xvpf julia-1.3.0-linux-x86_64.tar.gz
     fi
 
-    ls -la
-    pwd
-
     echo "Download and build boost as a static lbrary"
         wget --no-check-certificate \
         "https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.gz" && \
@@ -59,7 +56,8 @@ steps:
     # Install cereal.
     wget https://github.com/USCiLab/cereal/archive/v1.3.0.tar.gz
     tar -xvzpf v1.3.0.tar.gz # Unpack into cereal-1.3.0/.
-    cd cereal-1.3.0/
+    ls -la
+    pwd
   displayName: 'Install Build Dependencies'
 
 # Configure mlpack (CMake)

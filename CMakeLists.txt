@@ -21,7 +21,6 @@ option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
 if(CMAKE_CROSSCOMPILING)
   set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
-  set(ARMADILLO_INCLUDE_DIR "" CACHE STRING "Path for Armadillo headers.")
   set(GFORTRAN_LIBRARY "" CACHE STRING "Path for gfortran library.")
   set(GCC_VERSION ""  CACHE STRING "")
 endif()
@@ -34,11 +33,12 @@ elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
 
   set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/../OpenBLAS-0.3.13/libopenblas.a" CACHE STRING "OpenBLAS PATH")
   set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/../cereal-1.3.0/include" CACHE STRING "Cereal header PATH")
-  set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/../boost_1_75_0" CACHE STRING "Boost header PATH")
+  set(Boost_INCLUDE_DIRS "${CMAKE_BINARY_DIR}/../boost_1_75_0" CACHE STRING "Boost header PATH")
   set(ARMADILLO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/../armadillo-8.400.0/include" CACHE STRING "Armadillo header PATH")
   message("CEREAL INCLUDE PATH" ${CEREAL_INCLUDE_DIR})
-  message("Boost INCLUDE PATH" ${Boost_INCLUDE_DIR})
+  message("Boost INCLUDE PATH" ${Boost_INCLUDE_DIRS})
   message("GFortran library PATH:" ${GFORTRAN_LIBRARY})
+  message("Armadillo Include path:" ${ARMADILLO_INCLUDE_DIR})
 endif()
 
 # Set minimum library version required by mlpack.
@@ -325,7 +325,7 @@ if (NOT CMAKE_CROSSCOMPILING)
 endif()
 
 # Include directories for the previous dependencies.
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIR})
 
 if(CMAKE_CROSSCOMPILING)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OPENBLAS_LIBRARIES} ${GFORTRAN_LIBRARY})
@@ -437,7 +437,7 @@ if (NOT ENSMALLEN_FOUND)
     # Release versions will have ensmallen packaged with the release so we can
     # just reference that.
     if (EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen/ensmallen.hpp")
-      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIR}
           "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen")
     else ()
       message(FATAL_ERROR
