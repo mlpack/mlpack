@@ -80,7 +80,7 @@ class HRectBound
   //! Move constructor: take possession of another bound's information.
   HRectBound(HRectBound&& other);
 
-  //! Move assignment operator
+  //! Move assignment operator.
   HRectBound& operator=(HRectBound&& other);
 
   //! Destructor: clean up memory.
