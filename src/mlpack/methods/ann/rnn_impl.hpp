@@ -87,10 +87,10 @@ RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::RNN(
     targetSize(std::move(network.targetSize)),
     reset(std::move(network.reset)),
     single(std::move(network.single)),
+    network(std::move(network.network)),
     parameter(std::move(network.parameter)),
     numFunctions(std::move(network.numFunctions)),
-    deterministic(std::move(network.deterministic)),
-    network(std::move(network.network))
+    deterministic(std::move(network.deterministic))
 {
   // Nothing to do here.
 }
