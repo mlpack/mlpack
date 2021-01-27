@@ -86,8 +86,9 @@ GRU<InputDataType, OutputDataType>::GRU(const GRU& layer) :
     forwardStep(layer.forwardStep),
     backwardStep(layer.backwardStep),
     gradientStep(layer.gradientStep),
-    deterministic(layer.deterministic),    
     weights(layer.weights),
+    deterministic(layer.deterministic)    
+
 {
   // Nothing to do here.
 }
@@ -102,8 +103,8 @@ GRU<InputDataType, OutputDataType>::GRU(GRU&& layer) :
     forwardStep(std::move(layer.forwardStep)),
     backwardStep(std::move(layer.backwardStep)),
     gradientStep(std::move(layer.gradientStep)),
-    deterministic(std::move(layer.deterministic)),
     weights(std::move(layer.weights)),
+    deterministic(std::move(layer.deterministic))
 
 {
   // Nothing to do here.
@@ -123,8 +124,9 @@ GRU<InputDataType, OutputDataType>&
     forwardStep = layer.forwardStep;
     backwardStep = layer.backwardStep;
     gradientStep = layer.gradientStep;
-    deterministic = layer.deterministic;
     weights = layer.weights;
+    deterministic = layer.deterministic;
+
   }
   return *this;
 }
@@ -143,8 +145,9 @@ GRU<InputDataType, OutputDataType>&
     forwardStep = std::move(layer.forwardStep);
     backwardStep = std::move(layer.backwardStep);
     gradientStep = std::move(layer.gradientStep);
-    deterministic = std::move(layer.deterministic);
     weights = std::move(layer.weights);
+    deterministic = std::move(layer.deterministic);
+
   }
   return *this;
 }
