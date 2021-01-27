@@ -36,7 +36,7 @@ class IncompleteIncrementalTermination
   IncompleteIncrementalTermination(
       TerminationPolicy tPolicy = TerminationPolicy()) :
       tPolicy(tPolicy), incrementalIndex(0), iteration(0)
-  { /** Nothing to do here. */ }
+  { /* Nothing to do here. */ }
 
   /**
    * Initializes the termination policy before stating the factorization.
