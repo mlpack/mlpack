@@ -1013,9 +1013,11 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * collisions are still possible, and they produce bizarre error messages.  See
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
+#define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
 #define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS) \
-    PARAM_IN(std::tuple<mlpack::data::DatasetInfo, arma::mat>, ID, DESC, ALIAS, \
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>(), false)
+    PARAM_IN_WITH_NAME(TUPLE_TYPE, ID, DESC, ALIAS, \
+        "std::tuple<mlpack::data::DatasetInfo, arma::mat>", TUPLE_TYPE(), \
+        false)
 
 /**
  * Define an input model.  From the command line, the user can specify the file
@@ -1228,6 +1230,11 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
       JOIN(io_option_dummy_object_in_, __COUNTER__) \
       (DEF, ID, DESC, ALIAS, #T, REQ, true, false, testName);
 
+  #define PARAM_IN_WITH_NAME(T, ID, DESC, ALIAS, NAME, DEF, REQ) \
+      static mlpack::util::Option<T> \
+      JOIN(io_option_dummy_object_in_, __COUNTER__) \
+      (DEF, ID, DESC, ALIAS, NAME, REQ, true, false, testName);
+
   #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
       JOIN(io_option_dummy_object_out_, __COUNTER__) \
@@ -1284,6 +1291,11 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
       static mlpack::util::Option<T> \
       JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
       (DEF, ID, DESC, ALIAS, #T, REQ, true, false, testName);
+
+  #define PARAM_IN_WITH_NAME(T, ID, DESC, ALIAS, NAME, DEF, REQ) \
+      static mlpack::util::Option<T> \
+      JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
+      (DEF, ID, DESC, ALIAS, NAME, REQ, true, false, testName);
 
   #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
       static mlpack::util::Option<T> \
