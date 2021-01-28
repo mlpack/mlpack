@@ -898,6 +898,39 @@ TEST_CASE("JacobianMultiplyConstantLayerTest", "[ANNLayerTest]")
 }
 
 /**
+ * Check whether copying and moving network with MultiplyConstant is working or
+ * not.
+ */
+TEST_CASE("CheckCopyMoveMultiplyConstantTest", "[ANNLayerTest]")
+{
+  arma::mat input(2, 1000);
+  input.randu();
+
+  arma::mat output1;
+  arma::mat output2;
+  arma::mat output3;
+  arma::mat output4;
+
+  MultiplyConstant<> *module1 = new MultiplyConstant<>(3.0);
+  module1->Forward(input, output1);
+
+  MultiplyConstant<> module2 = *module1;
+  delete module1;
+
+  module2.Forward(input, output2);
+  CheckMatrices(output1, output2);
+
+  MultiplyConstant<> *module3 = new MultiplyConstant<>(3.0);
+  module3->Forward(input, output3);
+
+  MultiplyConstant<> module4(std::move(*module3));
+  delete module3;
+
+  module4.Forward(input, output4);
+  CheckMatrices(output3, output4);
+}
+
+/**
  * Jacobian HardTanH module test.
  */
 TEST_CASE("JacobianHardTanHLayerTest", "[ANNLayerTest]")
@@ -2591,6 +2624,56 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
     module.Backward(input, output, delta);
     REQUIRE(arma::accu(output) == arma::accu(delta));
   }
+}
+
+/**
+ * Check whether copying and moving network with MultiplyMerge is working or
+ * not.
+ */
+TEST_CASE("CheckCopyMoveMultiplyMergeTest", "[ANNLayerTest]")
+{
+  arma::mat input(10, 1);
+  input.randu();
+
+  arma::mat output1;
+  arma::mat output2;
+  arma::mat output3;
+  arma::mat output4;
+
+  const size_t numMergeModules = math::RandInt(2, 10);
+
+  MultiplyMerge<> *module1 = new MultiplyMerge<>(true, false);
+  for (size_t m = 0; m < numMergeModules; ++m)
+  {
+    IdentityLayer<> identityLayer;
+    identityLayer.Forward(input, identityLayer.OutputParameter());
+
+    module1->Add<IdentityLayer<> >(identityLayer);
+  }
+
+  module1->Forward(input, output1);
+
+  MultiplyMerge<> module2 = *module1;
+  delete module1;
+
+  module2.Forward(input, output2);
+  CheckMatrices(output1, output2);
+
+  MultiplyMerge<> *module3 = new MultiplyMerge<>(true, false);
+  for (size_t m = 0; m < numMergeModules; ++m)
+  {
+    IdentityLayer<> identityLayer;
+    identityLayer.Forward(input, identityLayer.OutputParameter());
+
+    module3->Add<IdentityLayer<> >(identityLayer);
+  }
+  module3->Forward(input, output3);
+
+  MultiplyMerge<> module4(std::move(*module3));
+  delete module3;
+
+  module4.Forward(input, output4);
+  CheckMatrices(output3, output4);
 }
 
 /**

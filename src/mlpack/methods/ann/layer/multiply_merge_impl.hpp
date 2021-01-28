@@ -34,6 +34,66 @@ MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::MultiplyMerge(
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::MultiplyMerge(
+    const MultiplyMerge& layer) :
+    model(layer.model),
+    run(layer.run),
+    ownsLayer(layer.ownsLayer),
+    network(layer.network),
+    weights(layer.weights)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::MultiplyMerge(
+    MultiplyMerge&& layer) :
+    model(std::move(layer.model)),
+    run(std::move(layer.run)),
+    ownsLayer(std::move(layer.ownsLayer)),
+    network(std::move(layer.network)),
+    weights(std::move(layer.weights))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>&
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::operator=(
+    const MultiplyMerge& layer)
+{
+  if (this != &layer)
+  {
+    model = layer.model;
+    run = layer.run;
+    ownsLayer = layer.ownsLayer;
+    network = layer.network;
+    weights = layer.weights;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>&
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::operator=(
+    MultiplyMerge&& layer)
+{
+  if (this != &layer)
+  {
+    model = std::move(layer.model);
+    run = std::move(layer.run);
+    ownsLayer = std::move(layer.ownsLayer);
+    network = std::move(layer.network);
+    weights = std::move(layer.weights);
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::~MultiplyMerge()
 {
   if (ownsLayer)
