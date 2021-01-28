@@ -109,7 +109,8 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat trainData;
   data::Load("thyroid_train.csv", trainData, true);
 
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  // Normalize labels to [0, 2].
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
 
   /*
@@ -162,7 +163,8 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTes
   arma::mat trainData;
   data::Load("thyroid_train.csv", trainData, true);
 
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  // Normalize labels to [0, 2].
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
 
   /*
@@ -196,7 +198,8 @@ TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat trainData;
   data::Load("thyroid_train.csv", trainData, true);
 
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  // Normalize labels to [0, 2].
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
 
   /*
@@ -334,7 +337,8 @@ TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
   arma::mat trainData;
   data::Load("thyroid_train.csv", trainData, true);
 
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  // Normalize labels to [0, 2].
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
 
   /*
@@ -962,13 +966,14 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   arma::mat trainData;
   data::Load("thyroid_train.csv", trainData, true);
 
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  // Normalize labels to [0, 2].
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat testData;
   data::Load("thyroid_test.csv", testData, true);
 
-  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  arma::mat testLabels = testData.row(testData.n_rows - 1) - 1;
   testData.shed_row(testData.n_rows - 1);
 
   FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
