@@ -278,6 +278,13 @@ class FFN
   template <class LayerType, class... Args>
   void Add(Args... args) { network.push_back(new LayerType(args...)); }
 
+  /**
+   * Add a new module to the model.
+   *
+   * @param layer The Layer to be added to the model.
+   */
+  void Add(Layer<InputType, OutputType>* layer) { network.push_back(layer); }
+
   //! Get the network model.
   const std::vector<Layer<InputType, OutputType>*>& Model() const
   {
@@ -289,7 +296,7 @@ class FFN
    * network or parameters for layers, its state may become invalid, so be sure
    * to call ResetParameters() afterwards.
    */
-  std::vector<Layer<InputType, OutputType>>& Model() { return network; }
+  std::vector<Layer<InputType, OutputType>* >& Model() { return network; }
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }

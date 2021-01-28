@@ -141,6 +141,14 @@ class Layer
    */
   virtual void Reset() {}
 
+  /**
+   * Resets the cell to accept a new input. This breaks the BPTT chain starts a
+   * new one.
+   *
+   * @param * (size) The current maximum number of steps through time.
+   */
+  virtual void ResetCell(const size_t /* size */) {}
+
   //! Get the model modules.
   virtual std::vector<Layer<InputType, OutputType>*>& Model()
   {
@@ -190,6 +198,11 @@ class Layer
   //! Get the layer loss.
   virtual double Loss() { return 0; }
 
+  //! Get the value of reward parameter.
+  virtual double const& Reward() const { return reward; }
+  //! Modify the value of reward parameter.
+  virtual double& Reward() { return reward; }
+
   //! Get the weight size.
   virtual size_t WeightSize() const { return 0; }
 
@@ -225,6 +238,9 @@ class Layer
 
   //! Locally-stored input height.
   size_t inputHeight;
+
+  //! Locally-stored reward parameter.
+  double reward;
 
   //! Locally-stored weight object.
   OutputType weights;
