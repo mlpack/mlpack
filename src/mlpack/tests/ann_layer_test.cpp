@@ -19,7 +19,7 @@
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
@@ -895,6 +895,39 @@ TEST_CASE("JacobianMultiplyConstantLayerTest", "[ANNLayerTest]")
     double error = JacobianTest(module, input);
     REQUIRE(error <= 1e-5);
   }
+}
+
+/**
+ * Check whether copying and moving network with MultiplyConstant is working or
+ * not.
+ */
+TEST_CASE("CheckCopyMoveMultiplyConstantTest", "[ANNLayerTest]")
+{
+  arma::mat input(2, 1000);
+  input.randu();
+
+  arma::mat output1;
+  arma::mat output2;
+  arma::mat output3;
+  arma::mat output4;
+
+  MultiplyConstant<> *module1 = new MultiplyConstant<>(3.0);
+  module1->Forward(input, output1);
+
+  MultiplyConstant<> module2 = *module1;
+  delete module1;
+
+  module2.Forward(input, output2);
+  CheckMatrices(output1, output2);
+
+  MultiplyConstant<> *module3 = new MultiplyConstant<>(3.0);
+  module3->Forward(input, output3);
+
+  MultiplyConstant<> module4(std::move(*module3));
+  delete module3;
+
+  module4.Forward(input, output4);
+  CheckMatrices(output3, output4);
 }
 
 /**
@@ -1914,7 +1947,7 @@ TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
         target(targetWord, i) = 1;
       }
 
-      model = new FFN<CrossEntropyError<>, GlorotInitialization>();
+      model = new FFN<BCELoss<>, GlorotInitialization>(BCELoss<>(1e-10, false));
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<Lookup<> >(vocabSize, embeddingSize);
@@ -1936,7 +1969,7 @@ TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<CrossEntropyError<>, GlorotInitialization>* model;
+    FFN<BCELoss<>, GlorotInitialization>* model;
     arma::mat input, target;
 
     const size_t seqLength = 10;
@@ -2123,9 +2156,9 @@ TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
 TEST_CASE("BatchNormTest", "[ANNLayerTest]")
 {
   arma::mat input, output;
-  input << 5.1 << 3.5 << 1.4 << arma::endr
-        << 4.9 << 3.0 << 1.4 << arma::endr
-        << 4.7 << 3.2 << 1.3 << arma::endr;
+  input = { { 5.1, 3.5, 1.4 },
+            { 4.9, 3.0, 1.4 },
+            { 4.7, 3.2, 1.3 } };
 
   // BatchNorm layer with average parameter set to true.
   BatchNorm<> model(input.n_rows);
@@ -2141,9 +2174,9 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
 
   // Value calculates using torch.nn.BatchNorm2d(momentum = None).
   arma::mat result;
-  result << 1.1658 << 0.1100 << -1.2758 << arma::endr
-         << 1.2579 << -0.0699 << -1.1880 << arma::endr
-         << 1.1737 << 0.0958 << -1.2695 << arma::endr;
+  result = { { 1.1658, 0.1100, -1.2758 },
+             { 1.2579, -0.0699, -1.1880},
+             { 1.1737, 0.0958, -1.2695 } };
 
   CheckMatrices(output, result, 1e-1);
 
@@ -2153,35 +2186,27 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
 
   // Values calculated using torch.nn.BatchNorm2d(momentum = None).
   output = model.TrainingMean();
-  result << 3.33333333 << arma::endr
-         << 3.1 << arma::endr
-         << 3.06666666 << arma::endr;
+  result = arma::mat({ 3.33333333, 3.1, 3.06666666 }).t();
 
   CheckMatrices(output, result, 1e-1);
 
   // Values calculated using torch.nn.BatchNorm2d().
   output = model2.TrainingMean();
-  result << 0.3333 << arma::endr
-         << 0.3100 << arma::endr
-         << 0.3067 << arma::endr;
+  result = arma::mat({ 0.3333, 0.3100, 0.3067 }).t();
 
   CheckMatrices(output, result, 1e-1);
   result.clear();
 
   // Values calculated using torch.nn.BatchNorm2d(momentum = None).
   output = model.TrainingVariance();
-  result << 3.4433 << arma::endr
-         << 3.0700 << arma::endr
-         << 2.9033 << arma::endr;
+  result = arma::mat({ 3.4433, 3.0700, 2.9033 }).t();
 
   CheckMatrices(output, result, 1e-1);
   result.clear();
 
   // Values calculated using torch.nn.BatchNorm2d().
   output = model2.TrainingVariance();
-  result << 1.2443 << arma::endr
-         << 1.2070 << arma::endr
-         << 1.1903 << arma::endr;
+  result = arma::mat({ 1.2443, 1.2070, 1.1903 }).t();
 
   CheckMatrices(output, result, 1e-1);
   result.clear();
@@ -2191,9 +2216,9 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   model.Forward(input, output);
 
   // Values calculated using torch.nn.BatchNorm2d(momentum = None).
-  result << 0.9521 << 0.0898 << -1.0419 << arma::endr
-         << 1.0273 << -0.0571 << -0.9702 << arma::endr
-         << 0.9586 << 0.0783 << -1.0368 << arma::endr;
+  result = { { 0.9521, 0.0898, -1.0419 },
+             { 1.0273, -0.0571, -0.9702 },
+             { 0.9586, 0.0783, -1.0368 } };
 
   CheckMatrices(output, result, 1e-1);
 
@@ -2201,9 +2226,10 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   model2.Deterministic() = true;
   model2.Forward(input, output);
 
-  result << 4.2731 << 2.8388 << 0.9562 << arma::endr
-         << 4.1779 << 2.4485 << 0.9921 << arma::endr
-         << 4.0268 << 2.6519 << 0.9105 << arma::endr;
+  result = { { 4.2731, 2.8388, 0.9562 },
+             { 4.1779, 2.4485, 0.9921 },
+             { 4.0268, 2.6519, 0.9105 } };
+
   CheckMatrices(output, result, 1e-1);
 }
 
@@ -2601,6 +2627,56 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 }
 
 /**
+ * Check whether copying and moving network with MultiplyMerge is working or
+ * not.
+ */
+TEST_CASE("CheckCopyMoveMultiplyMergeTest", "[ANNLayerTest]")
+{
+  arma::mat input(10, 1);
+  input.randu();
+
+  arma::mat output1;
+  arma::mat output2;
+  arma::mat output3;
+  arma::mat output4;
+
+  const size_t numMergeModules = math::RandInt(2, 10);
+
+  MultiplyMerge<> *module1 = new MultiplyMerge<>(true, false);
+  for (size_t m = 0; m < numMergeModules; ++m)
+  {
+    IdentityLayer<> identityLayer;
+    identityLayer.Forward(input, identityLayer.OutputParameter());
+
+    module1->Add<IdentityLayer<> >(identityLayer);
+  }
+
+  module1->Forward(input, output1);
+
+  MultiplyMerge<> module2 = *module1;
+  delete module1;
+
+  module2.Forward(input, output2);
+  CheckMatrices(output1, output2);
+
+  MultiplyMerge<> *module3 = new MultiplyMerge<>(true, false);
+  for (size_t m = 0; m < numMergeModules; ++m)
+  {
+    IdentityLayer<> identityLayer;
+    identityLayer.Forward(input, identityLayer.OutputParameter());
+
+    module3->Add<IdentityLayer<> >(identityLayer);
+  }
+  module3->Forward(input, output3);
+
+  MultiplyMerge<> module4(std::move(*module3));
+  delete module3;
+
+  module4.Forward(input, output4);
+  CheckMatrices(output3, output4);
+}
+
+/**
  * Simple Atrous Convolution layer test.
  */
 TEST_CASE("SimpleAtrousConvolutionLayerTest", "[ANNLayerTest]")
@@ -2792,30 +2868,30 @@ TEST_CASE("AtrousConvolutionLayerPaddingTest", "[ANNLayerTest]")
 TEST_CASE("LayerNormTest", "[ANNLayerTest]")
 {
   arma::mat input, output;
-  input << 5.1 << 3.5 << arma::endr
-        << 4.9 << 3.0 << arma::endr
-        << 4.7 << 3.2 << arma::endr;
+  input = { { 5.1, 3.5 },
+            { 4.9, 3.0 },
+            { 4.7, 3.2 } };
 
   LayerNorm<> model(input.n_rows);
   model.Reset();
 
   model.Forward(input, output);
   arma::mat result;
-  result << 1.2247 << 1.2978 << arma::endr
-         << 0 << -1.1355 << arma::endr
-         << -1.2247 << -0.1622 << arma::endr;
+  result = { { 1.2247, 1.2978 },
+              { 0, -1.1355 },
+              { -1.2247, -0.1622 } };
 
   CheckMatrices(output, result, 1e-1);
   result.clear();
 
   output = model.Mean();
-  result << 4.9000 << 3.2333 << arma::endr;
+  result = { 4.9000, 3.2333 };
 
   CheckMatrices(output, result, 1e-1);
   result.clear();
 
   output = model.Variance();
-  result << 0.0267 << 0.0422 << arma::endr;
+  result = { 0.0267, 0.0422 };
 
   CheckMatrices(output, result, 1e-1);
 }
@@ -4121,26 +4197,24 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
 
   // The input test matrix is of the form 3 x 2 x 4 x 1 where
   // number of images are 3 and number of feature maps are 2.
-  input = arma::mat(8, 3);
-  input << 1 << 446 << 42 << arma::endr
-      << 2 << 16 << 63 << arma::endr
-      << 3 << 13 << 63 << arma::endr
-      << 4 << 21 << 21 << arma::endr
-      << 1 << 13 << 11 << arma::endr
-      << 32 << 45 << 42 << arma::endr
-      << 22 << 16 << 63 << arma::endr
-      << 32 << 13 << 42 << arma::endr;
+  input = { { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 22, 16, 63 },
+            { 32, 13, 42 } };
 
   // Output calculated using torch.nn.BatchNorm2d().
-  result = arma::mat(8, 3);
-  result << -0.4786 << 3.2634 << -0.1338 << arma::endr
-      << -0.4702 << -0.3525 << 0.0427 << arma::endr
-      << -0.4618 << -0.3777 << 0.0427 << arma::endr
-      << -0.4534 << -0.3104 << -0.3104 << arma::endr
-      << -1.5429 << -0.8486 << -0.9643 << arma::endr
-      << 0.2507 << 1.0029 << 0.8293 << arma::endr
-      << -0.3279 << -0.675 << 2.0443 << arma::endr
-      << 0.2507 << -0.8486 << 0.8293 << arma::endr;
+  result = { { -0.4786, 3.2634, -0.1338 },
+             { -0.4702, -0.3525, 0.0427 },
+             { -0.4618, -0.3777, 0.0427 },
+             { -0.4534, -0.3104, -0.3104 },
+             { -1.5429, -0.8486, -0.9643 },
+             { 0.2507, 1.0029, 0.8293 },
+             { -0.3279, -0.675, 2.0443 },
+             { 0.2507 , -0.8486 , 0.8293 } };
 
   // Check correctness of batch normalization.
   BatchNorm<> module1(2, 1e-5, false, 0.1);
@@ -4187,15 +4261,14 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
   module1.Forward(input, deterministicOutput);
 
   result.clear();
-  result = arma::mat(8, 3);
-  result << -0.12195 << 11.20426 << 0.92158 << arma::endr
-      << -0.0965 << 0.259824 << 1.4560 << arma::endr
-      << -0.071054 << 0.183567 << 1.45607 << arma::endr
-      << -0.045601<< 0.3870852 << 0.38708 << arma::endr
-      << -0.305288 << 1.7683 << 1.4227 << arma::endr
-      << 5.05166 << 7.29812<< 6.7797 << arma::endr
-      << 3.323614 << 2.2867 << 10.4086 << arma::endr
-      << 5.05166 << 1.7683 << 6.7797 << arma::endr;
+  result = { { -0.12195, 11.20426, 0.92158 },
+             { -0.0965, 0.259824, 1.4560 },
+             { -0.071054, 0.183567, 1.45607 },
+             { -0.045601, 0.3870852, 0.38708 },
+             { -0.305288, 1.7683, 1.4227 },
+             { 5.05166, 7.29812, 6.7797 },
+             { 3.323614, 2.2867, 10.4086 },
+             { 5.05166, 1.7683, 6.7797 } };
 
   CheckMatrices(result, deterministicOutput, 1e-1);
 
@@ -4208,20 +4281,19 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
 
   // The input test matrix is of the form 2 x 2 x 3 x 1 where
   // number of images are 2 and number of feature maps are 2.
-  input = arma::mat(6, 2);
-  input << 12 << 443 << arma::endr
-      << 134 << 45 << arma::endr
-      << 11 << 13 << arma::endr
-      << 14 << 55 << arma::endr
-      << 110 << 4 << arma::endr
-      << 1 << 45 << arma::endr;
+  input = { { 12, 443 },
+            { 134, 45 },
+            { 11, 13 },
+            { 14, 55 },
+            { 110, 4 },
+            { 1, 45 } };
 
-  result << -0.629337 << 2.14791 << arma::endr
-      << 0.156797 << -0.416694 << arma::endr
-      << -0.63578 << -0.622893 << arma::endr
-      << -0.637481 << 0.4440386 << arma::endr
-      << 1.894857 << -0.901267 << arma::endr
-      << -0.980402 << 0.180253 << arma::endr;
+  result = { { -0.629337, 2.14791 },
+             { 0.156797, -0.416694 },
+             { -0.63578, -0.622893 },
+             { -0.637481, 0.4440386 },
+             { 1.894857, -0.901267 },
+             { -0.980402, 0.180253 } };
 
   module1.Forward(input, output);
   CheckMatrices(result, output, 1e-3);
@@ -4257,12 +4329,12 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
   module1.Forward(input, deterministicOutput);
 
   result.clear();
-  result << -0.06388436 << 6.524754114 << arma::endr
-      << 1.799655281 << 0.44047968 << arma::endr
-      << -0.07913291 << -0.04784981 << arma::endr
-      << 0.5405045 << 3.4210097 << arma::endr
-      << 7.2851023 << -0.1620577 << arma::endr
-      << -0.37282639 << 2.7184474 << arma::endr;
+  result = { { -0.06388436, 6.524754114 },
+             { 1.799655281, 0.44047968 },
+             { -0.07913291, -0.04784981 },
+             { 0.5405045, 3.4210097 },
+             { 7.2851023, -0.1620577 },
+             { -0.37282639, 2.7184474 } };
 
   // Calculated using torch.nn.BatchNorm2d().
   CheckMatrices(result, deterministicOutput, 1e-1);
@@ -4329,15 +4401,14 @@ TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
 
   // The input test matrix is of the form 3 x 2 x 4 x 1 where
   // number of images are 3 and number of feature maps are 2.
-  input = arma::mat(8, 3);
-  input << 1 << 446 << 42 << arma::endr
-      << 2 << 16 << 63 << arma::endr
-      << 3 << 13 << 63 << arma::endr
-      << 4 << 21 << 21 << arma::endr
-      << 1 << 13 << 11 << arma::endr
-      << 32 << 45 << 42 << arma::endr
-      << 22 << 16 << 63 << arma::endr
-      << 32 << 13 << 42 << arma::endr;
+  input = { { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 22, 16 , 63 },
+            { 32, 13 , 42 } };
 
   Convolution<> layer(2, 4, 1, 1, 1, 1, 0, 0, 4, 1);
   layer.Reset();
@@ -4503,60 +4574,51 @@ TEST_CASE("SpatialDropoutLayerTest", "[ANNLayerTest]")
   SpatialDropout<> module(3, 0.2);
 
   // Input is a batch of 2 images, each of size (2,2) and having 4 channels.
-  input << 0.4963 << 0.0885 << 0.7682 << 0.1320 << 0.3074 << 0.4901 << 0.6341
-      << 0.8964 << 0.4556 << 0.3489 << 0.6323 << 0.4017 << arma::endr;
+  input = { 0.4963, 0.0885, 0.7682, 0.1320, 0.3074, 0.4901, 0.6341, 0.8964,
+      0.4556, 0.3489, 0.6323, 0.4017 };
 
-  gy << 1 << 3 << 2 << 4 << 5 << 7 << 6 << 8
-      << 9 << 11 << 10 << 12 << arma::endr;
+  gy = { 1, 3, 2, 4, 5, 7, 6, 8, 9, 11, 10, 12 };
 
   // Following values have been calculated using torch.nn.Dropout2d(p=0.2).
-  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
-      << 0 << 0 << 0 << 0 << arma::endr;
+  temp = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   outputsExpected.row(0) = temp;
-  temp << 0 << 0 << 0 << 0 << 0.3842 << 0.6126 << 0.7926 << 1.1205
-      << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  temp = { 0, 0, 0, 0, 0.3842, 0.6126, 0.7926, 1.1205, 0.5695, 0.4361, 0.7904,
+      0.5021 };
   outputsExpected.row(1) = temp;
-  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0 << 0 << 0 << 0
-      << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  temp = { 0.6204, 0.1106, 0.9603, 0.1650, 0, 0, 0, 0, 0.5695, 0.4361,
+      0.7904, 0.5021 };
   outputsExpected.row(2) = temp;
-  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0.3842 << 0.6126
-      << 0.7926 << 1.1205 << 0 << 0 << 0 << 0 << arma::endr;
+  temp = { 0.6204, 0.1106, 0.9603, 0.1650, 0.3842, 0.6126, 0.7926, 1.1205, 0,
+      0, 0, 0 };
   outputsExpected.row(3) = temp;
-  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
-      << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  temp = { 0, 0, 0, 0, 0, 0, 0, 0, 0.5695, 0.4361, 0.7904, 0.5021 };
   outputsExpected.row(4) = temp;
-  temp << 0 << 0 << 0 << 0 << 0.3842 << 0.6126 << 0.7926 << 1.1205
-      << 0 << 0 << 0 << 0 << arma::endr;
+  temp = { 0, 0, 0, 0, 0.3842, 0.6126, 0.7926, 1.1205, 0, 0, 0, 0 };
   outputsExpected.row(5) = temp;
-  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0 << 0 << 0 << 0
-      << 0 << 0 << 0 << 0  << arma::endr;
+  temp = { 0.6204, 0.1106, 0.9603, 0.1650, 0, 0, 0, 0, 0, 0, 0, 0 };
   outputsExpected.row(6) = temp;
-  temp << 0.6204 << 0.1106 << 0.9603 << 0.1650 << 0.3842 << 0.6126 << 0.7926
-      << 1.1205 << 0.5695 << 0.4361 << 0.7904 << 0.5021 << arma::endr;
+  temp = { 0.6204, 0.1106, 0.9603, 0.1650, 0.3842, 0.6126, 0.7926, 1.1205,
+      0.5695, 0.4361, 0.7904, 0.5021 };
   outputsExpected.row(7) = temp;
-  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
-      << 0 << 0 << 0 << 0 << arma::endr;
+  temp = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   gsExpected.row(0) = temp;
-  temp << 0 << 0 << 0 << 0 << 6.2500 << 8.7500 << 7.5000 << 10.0000
-      << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  temp = { 0, 0, 0, 0, 6.2500, 8.7500, 7.5000, 10.0000, 11.2500, 13.7500,
+      12.5000, 15.0000 };
   gsExpected.row(1) = temp;
-  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 0 << 0 << 0 << 0
-      << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  temp = { 1.2500, 3.7500, 2.5000, 5.0000, 0, 0, 0, 0, 11.2500, 13.7500,
+      12.5000, 15.0000 };
   gsExpected.row(2) = temp;
-  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 6.2500 << 8.7500
-      << 7.5000 << 10.0000 << 0 << 0 << 0 << 0 << arma::endr;
+  temp = { 1.2500, 3.7500, 2.5000, 5.0000, 6.2500, 8.7500, 7.5000, 10.0000, 0,
+      0, 0, 0 };
   gsExpected.row(3) = temp;
-  temp << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
-      << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  temp = { 0, 0, 0, 0, 0, 0, 0, 0, 11.2500, 13.7500, 12.5000, 15.0000 };
   gsExpected.row(4) = temp;
-  temp << 0 << 0 << 0 << 0 << 6.2500 << 8.7500 << 7.5000 << 10.0000
-      << 0 << 0 << 0 << 0 << arma::endr;
+  temp = { 0, 0, 0, 0, 6.2500, 8.7500, 7.5000, 10.0000, 0, 0, 0, 0 };
   gsExpected.row(5) = temp;
-  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 0 << 0 << 0 << 0
-      << 0 << 0 << 0 << 0 << arma::endr;
+  temp = { 1.2500, 3.7500, 2.5000, 5.0000, 0, 0, 0, 0, 0, 0, 0, 0 };
   gsExpected.row(6) = temp;
-  temp << 1.2500 << 3.7500 << 2.5000 << 5.0000 << 6.2500 << 8.7500 << 7.5000
-      << 10.0000 << 11.2500 << 13.7500 << 12.5000 << 15.0000 << arma::endr;
+  temp = { 1.2500, 3.7500, 2.5000, 5.0000, 6.2500, 8.7500, 7.5000, 10.0000,
+      11.2500, 13.7500, 12.5000, 15.0000 };
   gsExpected.row(7) = temp;
 
   input = input.t();

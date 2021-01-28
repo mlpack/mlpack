@@ -123,8 +123,7 @@ LSTM<InputDataType, OutputDataType>::LSTM(
     rhoSize(rho),
     bpttSteps(0)
 {
-  weights.set_size(4 * outSize * inSize + 7 * outSize +
-      4 * outSize * outSize, 1);
+  weights.set_size(WeightSize(), 1);
 }
 
 template<typename InputDataType, typename OutputDataType>

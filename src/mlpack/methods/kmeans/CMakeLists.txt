@@ -14,6 +14,7 @@ set(SOURCES
   kill_empty_clusters.hpp
   kmeans.hpp
   kmeans_impl.hpp
+  kmeans_plus_plus_initialization.hpp
   max_variance_new_cluster.hpp
   max_variance_new_cluster_impl.hpp
   naive_kmeans.hpp

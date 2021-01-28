@@ -154,6 +154,40 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 }
 
 /**
+ * Check whether copying and moving network with Reparametrization is working or not.
+ */
+TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * followed by a linear layer and then a reparametrization layer.
+   */
+
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<Linear<> >(trainData.n_rows, 8);
+  model->Add<Reparametrization<> >(4, false, true, 1);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  model1->Add<Linear<> >(trainData.n_rows, 8);
+  model1->Add<Reparametrization<> >(4, false, true, 1);
+  model1->Add<LogSoftMax<> >();
+
+  // Check whether copy constructor is working or not.
+  CheckCopyFunction<>(model, trainData, trainLabels, 1);
+
+  // Check whether move constructor is working or not.
+  CheckMoveFunction<>(model1, trainData, trainLabels, 1);
+}
+
+/**
  * Check whether copying and moving network with linear3d is working or not.
  */
 TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
@@ -916,4 +950,40 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
 
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
   model.Train(trainData, trainLabels, opt);
+}
+
+/**
+ * Test to see if an exception is thrown when input with
+ * wrong shape is provided to a FFN.
+ */
+TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  arma::mat testData;
+  data::Load("thyroid_test.csv", testData, true);
+
+  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  testData.shed_row(testData.n_rows - 1);
+
+  FFN<NegativeLogLikelihood<>, RandomInitialization, CustomLayer<> > model;
+  // Purposely putting wrong input shape so that error is thrown.
+  model.Add<Linear<> >(trainData.n_rows - 3, 8);
+  model.Add<CustomLayer<> >();
+  model.Add<Linear<> >(8, 3);
+  model.Add<LogSoftMax<> >();
+
+  std::string expectedMsg = "FFN<>::Train(): ";
+              expectedMsg += "the first layer of the network expects ";
+              expectedMsg += std::to_string(trainData.n_rows - 3) + " elements, ";
+              expectedMsg += "but the input has " + std::to_string(trainData.n_rows) + " dimensions! ";
+
+  ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
+
+  REQUIRE_THROWS_AS(model.Train(trainData, trainLabels, opt), std::logic_error);
 }
