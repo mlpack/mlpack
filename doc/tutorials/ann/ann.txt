@@ -210,8 +210,9 @@ int main()
   data::Load("thyroid_test.csv", testData, true);
 
   // Split the labels from the training set and testing set respectively.
-  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
-  arma::mat testLabels = testData.row(testData.n_rows - 1);
+  // Decrement the labels by 1, so they are in the range 0 to (numClasses - 1).
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
+  arma::mat testLabels = testData.row(testData.n_rows - 1) - 1;
   trainData.shed_row(trainData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
 
@@ -246,9 +247,8 @@ int main()
   // Find index of max prediction for each data point and store in "prediction"
   for (size_t i = 0; i < predictionTemp.n_cols; ++i)
   {
-    // we add 1 to the max index, so that it matches the actual test labels.
     prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1));
   }
 
   /*
@@ -311,7 +311,7 @@ void RNNModel()
   for (size_t i = 0; i < labelsTemp.n_cols; ++i)
   {
     const int value = arma::as_scalar(arma::find(
-        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1)) + 1;
+        arma::max(labelsTemp.col(i)) == labelsTemp.col(i), 1));
     labels.col(i).fill(value);
   }
 
@@ -589,8 +589,9 @@ arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
     dataset.n_cols - 1);
 
 // Split the data from the training set.
+// Subtract 1 so the labels are the range from 0 to (numClasses - 1).
 arma::mat trainLabels = dataset.submat(dataset.n_rows - 3, 0,
-    dataset.n_rows - 1, dataset.n_cols - 1);
+    dataset.n_rows - 1, dataset.n_cols - 1) - 1;
 
 // Initialize the network.
 FFN<> model;
