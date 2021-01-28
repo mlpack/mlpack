@@ -1208,6 +1208,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 #define PARAM_VECTOR_IN_REQ(T, ID, DESC, ALIAS) \
     PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), true);
 
+/**
+ * Defining useful macros using PARAM_COMPLETE() macro defined later.
+ */
 #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
     PARAM_COMPLETE(T, ID, DESC, ALIAS, #T, REQ, true, false, DEF);
 
@@ -1239,11 +1242,11 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
     REQ, IN, TRANS, arma::Row<size_t>());
 
 /**
- * Define an input parameter.  Don't use this function; use the other ones above
- * that call it.  Note that we are using the __LINE__ macro for naming these
- * actual parameters when __COUNTER__ does not exist, which is a bit of an ugly
- * hack... but this is the preprocessor, after all.  We don't have much choice
- * other than ugliness.
+ * Define the PARAM_COMPLETE(), PARAM_MODEL() macro. Don't use this function; 
+ * use the other ones above that call it.  Note that we are using the __LINE__
+ * macro for naming these actual parameters when __COUNTER__ does not exist, 
+ * which is a bit of an ugly hack... but this is the preprocessor, after all.
+ * We don't have much choice other than ugliness.
  *
  * @param T Type of the parameter.
  * @param ID Name of the parameter.
