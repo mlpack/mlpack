@@ -74,6 +74,21 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
   arma::mat eigvec;
   Apply(data, transformedData, eigVal, eigvec);
 }
+    
+/**
+ * Apply Principal Component Analysis to the provided data set.
+ *
+ * @param data - Data matrix.
+ * @param transformedData Data with PCA applied.
+ */
+template<typename DecompositionPolicy>
+void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
+                                     arma::mat& transformedData)
+{
+  arma::mat eigvec;
+  arma::vec eigVal;
+  Apply(data, transformedData, eigVal, eigvec);
+}
 
 /**
  * Use PCA for dimensionality reduction on the given dataset.  This will save
