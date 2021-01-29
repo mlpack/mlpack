@@ -71,10 +71,14 @@ template<typename MetricType, typename VecType>
 BallBound<MetricType, VecType>& BallBound<MetricType, VecType>::operator=(
     const BallBound& other)
 {
-  radius = other.radius;
-  center = other.center;
-  metric = other.metric;
-  ownsMetric = false;
+  if (this != &other)
+  {
+    radius = other.radius;
+    center = other.center;
+    metric = other.metric;
+    ownsMetric = false;
+  }
+  return *this;
 }
 
 //! Move constructor.
@@ -97,15 +101,19 @@ template<typename MetricType, typename VecType>
 BallBound<MetricType, VecType>& BallBound<MetricType, VecType>::operator=(
     BallBound&& other)
 {
-  radius = other.radius;
-  center = std::move(other.center);
-  metric = other.metric;
-  ownsMetric = other.ownsMetric;
+  if (this != &other)
+  {
+    radius = other.radius;
+    center = std::move(other.center);
+    metric = other.metric;
+    ownsMetric = other.ownsMetric;
 
-  other.radius = 0.0;
-  other.center = VecType();
-  other.metric = nullptr;
-  other.ownsMetric = false;
+    other.radius = 0.0;
+    other.center = VecType();
+    other.metric = nullptr;
+    other.ownsMetric = false;
+  }
+  return *this;
 }
 
 //! Destructor to release allocated memory.

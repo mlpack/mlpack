@@ -139,6 +139,12 @@ class HMMModel
       gaussianHMM = other.gaussianHMM;
       gmmHMM = other.gmmHMM;
       diagGMMHMM = other.diagGMMHMM;
+
+      other.type = HMMType::DiscreteHMM;
+      other.discreteHMM = new HMM<distribution::DiscreteDistribution>();
+      other.gaussianHMM = nullptr;
+      other.gmmHMM = nullptr;
+      other.diagGMMHMM = nullptr;
     }
     return *this;
   }
