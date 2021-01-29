@@ -99,10 +99,6 @@ private:
 
     bool isStripChar(const wchar_t& ch) const;
 
-    std::wstring strip(const std::wstring& text) const;
-
-    std::vector<std::wstring> split(const std::wstring& text) const;
-
     std::wstring runStripAccents(const std::wstring& text) const;
 
     /**
