@@ -211,6 +211,14 @@ std::vector<std::wstring> FullTokenizer::tokenize(const std::string& text) const
     return splitTokens;
 }
 
+std::vector<size_t> FullTokenizer::convertTokensToIds(const std::vector<std::wstring>& text) const {
+    std::vector<size_t> ret(text.size());
+    for (size_t i = 0; i < text.size(); i++) {
+        ret[i] = (*mVocab)[text[i]];
+    }
+    return ret;
+}
+
 } // namespace data
 } // namespace mlpack
 

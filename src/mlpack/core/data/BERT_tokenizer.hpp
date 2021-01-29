@@ -228,6 +228,14 @@ public:
      */
     std::vector<std::wstring> tokenize(const std::string& text) const;
 
+    /**
+     * Given a list of tokens, this function returns their corresponding
+     * Id's according to the vocab.txt file of the BERT model.
+     *
+     * @param text List of tokens.
+     */
+    std::vector<size_t> convertTokensToIds(const std::vector<std::wstring>& text) const;
+
 private:
     std::shared_ptr<Vocab> mVocab;
     InvVocab mInvVocab;
