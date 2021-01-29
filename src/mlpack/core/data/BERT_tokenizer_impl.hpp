@@ -57,6 +57,32 @@ void convertFromUnicode(const std::wstring &ws, std::string &s) {
     s = sTmp;
 }
 
+static std::shared_ptr<Vocab> loadVocab(const std::string& vocabFile) {
+    std::shared_ptr<Vocab> vocab(new Vocab);
+    size_t index = 0;
+    arma::mat temp;
+    mlpack::data::DatasetInfo info;
+    data::Load(vocabFile, temp, info);
+    std::vector<std::string> vocabset;
+
+    // Loading contents of vocab file from DatasetInfo object to vector<string>.
+    for (size_t i = 0; i < info.NumMappings(0); ++i)
+    {
+      vocabset.push_back(info.UnmapString(i, 0));
+    }
+
+    // Loading contents of vocab file from vector<string> a shared_ptr pointing towards wstring variables.
+    for (size_t i = 0; i < vocabset.size(); ++i) {
+        std::wstring token;
+        // Converting std::string datatype to std::wstring datatype.
+        convertToUnicode(vocabset[i], token);
+        token = strip(token);
+        (*vocab)[token] = index;
+        index++;
+    }
+    return vocab;
+}
+
 std::wstring BasicTokenizer::cleanText(const std::wstring& text) const {
     std::wstring output;
     for (const wchar_t& cp : text)  {

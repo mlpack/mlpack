@@ -162,6 +162,14 @@ void convertToUnicode(const std::string &s, std::wstring &ws);
  */
 void convertFromUnicode(const std::wstring &ws, std::string &s);
 
+/**
+ * Function for loading the vocab.txt file from the BERT model into a
+ * std::shared_ptr<std::unordered_map<std::wstring, size_t>>.
+ *
+ * @param vocabfile Path of BERT vocab file.
+ */
+static std::shared_ptr<Vocab> loadVocab(const std::string& vocabFile);
+
 
 /**
  * The following class is used to run WordPiece tokenization which is a
