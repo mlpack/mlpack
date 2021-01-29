@@ -248,10 +248,10 @@ TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
  */
 TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
 {
-  // Create training input by 5x5 matrix.
-  arma::mat input = arma::randu(10,1);
-  // Create training output by 1 matrix.
-  arma::mat output = arma::mat("1");
+  // Create training input by 10x1 matrix (only 1 point).
+  arma::mat input = arma::randu(10, 1);
+  // Create training output by 1-point matrix.
+  arma::mat output = arma::mat("0");
 
   // Check copying constructor.
   FFN<NegativeLogLikelihood<>> *model1 = new FFN<NegativeLogLikelihood<>>();
