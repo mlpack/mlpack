@@ -1015,7 +1015,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  */
 #define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
 #define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS) \
-    PARAM_COMPLETE(TUPLE_TYPE, ID, DESC, ALIAS, \
+    PARAM(TUPLE_TYPE, ID, DESC, ALIAS, \
         "std::tuple<mlpack::data::DatasetInfo, arma::mat>", false, true, true, \
         TUPLE_TYPE())
 
@@ -1209,40 +1209,40 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
     PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), true);
 
 /**
- * Defining useful macros using PARAM_COMPLETE() macro defined later.
+ * Defining useful macros using PARAM macro defined later.
  */
 #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
-    PARAM_COMPLETE(T, ID, DESC, ALIAS, #T, REQ, true, false, DEF);
+    PARAM(T, ID, DESC, ALIAS, #T, REQ, true, false, DEF);
 
 #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
-    PARAM_COMPLETE(T, ID, DESC, ALIAS, #T, REQ, false, false, DEF);
+    PARAM(T, ID, DESC, ALIAS, #T, REQ, false, false, DEF);
 
 #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
-    PARAM_COMPLETE(arma::mat, ID, DESC, ALIAS, "arma::mat", REQ, IN, \
+    PARAM(arma::mat, ID, DESC, ALIAS, "arma::mat", REQ, IN, \
         TRANS, arma::mat());
 
 #define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
-    PARAM_COMPLETE(arma::Mat<size_t>, ID, DESC, ALIAS, "arma::Mat<size_t>", \
+    PARAM(arma::Mat<size_t>, ID, DESC, ALIAS, "arma::Mat<size_t>", \
         REQ, IN, TRANS, arma::Mat<size_t>());
 
 #define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
-    PARAM_COMPLETE(arma::vec, ID, DESC, ALIAS, "arma::vec", REQ, IN, TRANS, \
+    PARAM(arma::vec, ID, DESC, ALIAS, "arma::vec", REQ, IN, TRANS, \
         arma::vec());
 
 #define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
-    PARAM_COMPLETE(arma::Col<size_t>, ID, DESC, ALIAS, "arma::Col<size_t>", \
+    PARAM(arma::Col<size_t>, ID, DESC, ALIAS, "arma::Col<size_t>", \
         REQ, IN, TRANS, arma::Col<size_t>());
 
 #define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
-    PARAM_COMPLETE(arma::rowvec, ID, DESC, ALIAS, "arma::rowvec", REQ, IN, \
+    PARAM(arma::rowvec, ID, DESC, ALIAS, "arma::rowvec", REQ, IN, \
     TRANS, arma::rowvec());
 
 #define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
-    PARAM_COMPLETE(arma::Row<size_t>, ID, DESC, ALIAS, "arma::Row<size_t>", \
+    PARAM(arma::Row<size_t>, ID, DESC, ALIAS, "arma::Row<size_t>", \
     REQ, IN, TRANS, arma::Row<size_t>());
 
 /**
- * Define the PARAM_COMPLETE(), PARAM_MODEL() macro. Don't use this function; 
+ * Define the PARAM(), PARAM_MODEL() macro. Don't use this function; 
  * use the other ones above that call it.  Note that we are using the __LINE__
  * macro for naming these actual parameters when __COUNTER__ does not exist, 
  * which is a bit of an ugly hack... but this is the preprocessor, after all.
@@ -1258,7 +1258,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param REQ Whether or not parameter is required (boolean value).
  */
 #ifdef __COUNTER__
-  #define PARAM_COMPLETE(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
+  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
       static mlpack::util::Option<T> \
       JOIN(io_option_dummy_object_in_, __COUNTER__) \
       (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, testName);
@@ -1274,7 +1274,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
   // don't think we can absolutely guarantee success, but it should be "good
   // enough".  We use the __LINE__ macro and the type of the parameter to try
   // and get a good guess at something unique.
-  #define PARAM_COMPLETE(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
+  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
       static mlpack::util::Option<T> \
       JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
       (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, testName);
