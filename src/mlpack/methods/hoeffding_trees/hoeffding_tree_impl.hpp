@@ -251,6 +251,16 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
   // Remove pointers.
   other.dimensionMappings = nullptr;
   other.datasetInfo = nullptr;
+
+  // Reset primary type variables.
+  other.numSamples = 0;
+  other.numClasses = 0;
+  other.checkInterval = 0;
+  other.minSamples = 0;
+  other.successProbability = 0.0;
+  other.splitDimension = 0;
+  other.majorityClass = 0;
+  other.majorityProbability = 0.0;
 }
 
 // Copy assignment operator.
@@ -327,9 +337,20 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>&
     majorityProbability = other.majorityProbability;
     categoricalSplit = std::move(other.categoricalSplit);
     numericSplit = std::move(other.numericSplit);
+
     // Remove pointers.
     other.dimensionMappings = nullptr;
     other.datasetInfo = nullptr;
+
+    // Reset primary type variables.
+    other.numSamples = 0;
+    other.numClasses = 0;
+    other.checkInterval = 0;
+    other.minSamples = 0;
+    other.successProbability = 0.0;
+    other.splitDimension = 0;
+    other.majorityClass = 0;
+    other.majorityProbability = 0.0;
   }
   return *this;
 }
