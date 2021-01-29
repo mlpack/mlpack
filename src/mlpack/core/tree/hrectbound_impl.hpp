@@ -107,10 +107,9 @@ inline HRectBound<MetricType, ElemType>::HRectBound(
  * Move assignment operator.
  */
 template<typename MetricType, typename ElemType>
-inline HRectBound<
-    MetricType,
-    ElemType>& HRectBound<MetricType,
-    ElemType>::operator=(HRectBound<MetricType, ElemType>&& other)
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator=(
+    HRectBound<MetricType, ElemType>&& other)
 {
   if (this != &other)
   {
