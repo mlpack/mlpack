@@ -292,7 +292,7 @@ void IO::CheckInputMatrices()
     else if (paramType == "std::tuple<mlpack::data::DatasetInfo, arma::mat>")
     {
       IO::CheckInputMatrix(
-        std::get<1>(IO::GetParam<TupleType>(paramName)), paramName);
+          std::get<1>(IO::GetParam<TupleType>(paramName)), paramName);
     }
   }
 }
