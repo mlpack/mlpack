@@ -12,6 +12,7 @@
 #include <mlpack/methods/kmeans/kmeans.hpp>
 #include <mlpack/methods/kmeans/allow_empty_clusters.hpp>
 #include <mlpack/methods/kmeans/refined_start.hpp>
+#include <mlpack/methods/kmeans/kmeans_plus_plus_initialization.hpp>
 #include <mlpack/methods/kmeans/elkan_kmeans.hpp>
 #include <mlpack/methods/kmeans/hamerly_kmeans.hpp>
 #include <mlpack/methods/kmeans/pelleg_moore_kmeans.hpp>
@@ -484,6 +485,72 @@ TEST_CASE("RefinedStartTest", "[KMeansTest]")
   // random initial starts give distortion around 22000.  So we'll require that
   // our distortion is less than 14000.
   REQUIRE(distortion < 14000.0);
+}
+
+/**
+ * Test that the k-means++ initialization strategy returns decent initial
+ * cluster estimates.
+ */
+TEST_CASE("KMeansPlusPlusTest", "[KMeansTest]")
+{
+  // Our dataset will be five Gaussians of largely varying numbers of points and
+  // we expect that the refined starting policy should return good guesses at
+  // what these Gaussians are.
+  arma::mat data(3, 3000);
+  data.randn();
+
+  // First Gaussian: 10000 points, centered at (0, 0, 0).
+  // Second Gaussian: 2000 points, centered at (5, 0, -2).
+  // Third Gaussian: 5000 points, centered at (-2, -2, -2).
+  // Fourth Gaussian: 1000 points, centered at (-6, 8, 8).
+  // Fifth Gaussian: 12000 points, centered at (1, 6, 1).
+  arma::mat centroids(" 0  5 -2 -6  1;"
+                      " 0  0 -2  8  6;"
+                      " 0 -2 -2  8  1");
+
+  for (size_t i = 1000; i < 1200; ++i)
+    data.col(i) += centroids.col(1);
+  for (size_t i = 1200; i < 1700; ++i)
+    data.col(i) += centroids.col(2);
+  for (size_t i = 1700; i < 1800; ++i)
+    data.col(i) += centroids.col(3);
+  for (size_t i = 1800; i < 3000; ++i)
+    data.col(i) += centroids.col(4);
+
+  KMeansPlusPlusInitialization k;
+  arma::mat resultingCentroids;
+  k.Cluster(data, 5, resultingCentroids);
+
+  // Calculate resulting assignments.
+  arma::Row<size_t> assignments(data.n_cols);
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    double bestDist = DBL_MAX;
+    for (size_t j = 0; j < 5; ++j)
+    {
+      const double dist = metric::EuclideanDistance::Evaluate(data.col(i),
+          resultingCentroids.col(j));
+      if (dist < bestDist)
+      {
+        bestDist = dist;
+        assignments[i] = j;
+      }
+    }
+  }
+
+  // Calculate sum of distances from centroid means.
+  double distortion = 0;
+  for (size_t i = 0; i < 3000; ++i)
+    distortion += metric::EuclideanDistance::Evaluate(data.col(i),
+        resultingCentroids.col(assignments[i]));
+
+  // Using k-means++, the distance for this dataset is usually around
+  // 10000.  Regular k-means is between 10000 and 30000 (I think the 10000
+  // figure is a corner case which actually does not give good clusters), and
+  // random initial starts give distortion around 22000.  So we'll require that
+  // our distortion is less than 14500.  (It seems like there is a lot of noise
+  // in the result.)
+  REQUIRE(distortion < 14500.0);
 }
 
 #ifdef ARMA_HAS_SPMAT
