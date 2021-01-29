@@ -185,7 +185,7 @@ class ConvolutionType : public Layer<InputType, OutputType>
   OutputType& Gradient() { return gradient; }
 
   //! Get the input width.
-  size_t const& nputWidth() const { return inputWidth; }
+  size_t const& InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 

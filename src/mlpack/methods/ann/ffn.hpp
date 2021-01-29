@@ -151,7 +151,7 @@ class FFN
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
   double Train(InputType predictors,
-               OutputType responses,
+               InputType responses,
                CallbackTypes&&... callbacks);
 
   /**
