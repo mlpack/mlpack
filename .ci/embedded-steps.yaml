@@ -44,8 +44,7 @@ steps:
        cd ../ &&\
      
     # Install armadillo.
-    curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ && cd armadillo*
-    cmake . && make && sudo make install && cd ..
+    curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ
 
     # Install cereal.
     wget https://github.com/USCiLab/cereal/archive/v1.3.0.tar.gz
