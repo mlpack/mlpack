@@ -135,7 +135,7 @@ TEST_CASE("GradientAddLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(10, 1)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -463,7 +463,7 @@ TEST_CASE("GradientLinearLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(10, 1)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -640,7 +640,7 @@ TEST_CASE("GradientNoisyLinearLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(10, 1)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -743,7 +743,7 @@ TEST_CASE("GradientLinearNoBiasLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(10, 1)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -789,7 +789,7 @@ TEST_CASE("JacobianNegativeLogLikelihoodLayerTest", "[ANNLayerTest]")
     init.Initialize(input, inputElements, 1);
 
     arma::mat target(1, 1);
-    target(0) = math::RandInt(1, inputElements - 1);
+    target(0) = math::RandInt(0, inputElements - 2);
 
     double error = JacobianPerformanceTest(module, input, target);
     REQUIRE(error <= 1e-5);
@@ -844,7 +844,7 @@ TEST_CASE("GradientFlexibleReLULayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(2, 1)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
           NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
@@ -1056,7 +1056,7 @@ TEST_CASE("LSTMRrhoTest", "[ANNLayerTest]")
 {
   const size_t rho = 5;
   arma::cube input = arma::randu(1, 1, 5);
-  arma::cube target = arma::ones(1, 1, 5);
+  arma::cube target = arma::zeros(1, 1, 5);
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.
@@ -1096,7 +1096,7 @@ TEST_CASE("GradientLSTMLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(1, 1, 5)),
-        target(arma::ones(1, 1, 5))
+        target(arma::zeros(1, 1, 5))
     {
       const size_t rho = 5;
 
@@ -1161,7 +1161,7 @@ TEST_CASE("FastLSTMRrhoTest", "[ANNLayerTest]")
 {
   const size_t rho = 5;
   arma::cube input = arma::randu(1, 1, 5);
-  arma::cube target = arma::ones(1, 1, 5);
+  arma::cube target = arma::zeros(1, 1, 5);
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.
@@ -1201,7 +1201,7 @@ TEST_CASE("GradientFastLSTMLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(1, 1, 5)),
-        target(arma::ones(1, 1, 5))
+        target(arma::zeros(1, 1, 5))
     {
       const size_t rho = 5;
 
@@ -1538,7 +1538,7 @@ TEST_CASE("GradientGRULayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(1, 1, 5)),
-        target(arma::ones(1, 1, 5))
+        target(arma::zeros(1, 1, 5))
     {
       const size_t rho = 5;
 
@@ -1778,7 +1778,7 @@ TEST_CASE("GradientConcatLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(10, 1)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -1846,7 +1846,7 @@ TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(10, 1)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -2246,7 +2246,7 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
     {
       GradientFunction() :
           input(arma::randn(32, 2048)),
-          target(arma::ones(1, 2048))
+          target(arma::zeros(1, 2048))
       {
         model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
         model->Predictors() = input;
@@ -2319,7 +2319,7 @@ TEST_CASE("GradientVirtualBatchNormTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randn(5, 256)),
-        target(arma::ones(1, 256))
+        target(arma::zeros(1, 256))
     {
       arma::mat referenceBatch = arma::mat(input.memptr(), input.n_rows, 16);
 
@@ -2381,7 +2381,7 @@ TEST_CASE("MiniBatchDiscriminationTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randn(5, 4)),
-        target(arma::ones(1, 4))
+        target(arma::zeros(1, 4))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -2559,7 +2559,7 @@ TEST_CASE("GradientTransposedConvolutionLayerTest", "[ANNLayerTest]")
     {
       GradientFunction() :
           input(arma::linspace<arma::colvec>(0, 35, 36)),
-          target(arma::mat("1"))
+          target(arma::mat("0"))
       {
         model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
         model->Predictors() = input;
@@ -2725,7 +2725,7 @@ TEST_CASE("GradientAtrousConvolutionLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::linspace<arma::colvec>(0, 35, 36)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
       model->Predictors() = input;
@@ -2906,7 +2906,7 @@ TEST_CASE("GradientLayerNormTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randn(10, 256)),
-        target(arma::ones(1, 256))
+        target(arma::zeros(1, 256))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -3226,7 +3226,7 @@ TEST_CASE("GradientReparametrizationLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(10, 1)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -3269,7 +3269,7 @@ TEST_CASE("GradientReparametrizationLayerBetaTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(10, 2)),
-        target(arma::mat("1 1"))
+        target(arma::mat("0 0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -3424,7 +3424,7 @@ TEST_CASE("GradientHighwayLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(5, 1)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -3475,7 +3475,7 @@ TEST_CASE("GradientSequentialLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(10, 1)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -3525,7 +3525,7 @@ TEST_CASE("GradientWeightNormLayerTest", "[ANNLayerTest]")
   {
     GradientFunction() :
         input(arma::randu(10, 1)),
-        target(arma::mat("1"))
+        target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -4354,7 +4354,7 @@ TEST_CASE("GradientBatchNormWithMiniBatchesTest", "[ANNLayerTest]")
     {
       GradientFunction() :
           input(arma::randn(16, 1024)),
-          target(arma::ones(1, 1024))
+          target(arma::zeros(1, 1024))
       {
         model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
         model->Predictors() = input;
