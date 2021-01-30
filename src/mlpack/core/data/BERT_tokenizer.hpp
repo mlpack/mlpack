@@ -42,7 +42,6 @@ namespace data {
  * @endcode
  */
 
-
 // All the characters which cause break in tex in a string.
 const std::wstring stripChar = L" \t\n\r\v\f";
 
@@ -241,12 +240,10 @@ private:
     WordpieceTokenizer mWordpieceTokenizer;
 };
 
-
-} // namespace ann
+} // namespace data
 } // namespace mlpack
 
 // Include implementation.
 #include "BERT_tokenizer_impl.hpp"
-
 
 #endif
