@@ -32,7 +32,6 @@ jobs:
   steps:
   - template: linux-steps.yaml
 
-jobs:
 - job: EmbeddedLinux
   timeoutInMinutes: 360
   pool:
