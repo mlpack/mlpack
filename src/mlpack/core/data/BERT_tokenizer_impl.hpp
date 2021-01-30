@@ -7,8 +7,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_CONFUSION_MATRIX_IMPL_HPP
-#define MLPACK_CORE_DATA_CONFUSION_MATRIX_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_BERT_TOKENIZER_HPP
+#define MLPACK_CORE_DATA_BERT_TOKENIZER_HPP
 
 // In case it hasn't been included yet.
 #include "BERT_tokenizer.hpp"
