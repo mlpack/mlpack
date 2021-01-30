@@ -37,6 +37,12 @@ class MultiplyConstantType : public Layer<InputType, OutputType>
   //! Create the MultiplyConstant object.
   MultiplyConstantType(const double scalar = 1.0);
 
+	//! Clone the MultiplyConstantType object. This handles polymorphism correctly.
+	MultiplyConstantType* Clone() const
+  {
+    return new MultiplyConstantType(*this);
+  }
+
   /**
    * Ordinary feed forward pass of a neural network. Multiply the input with the
    * specified constant scalar value.

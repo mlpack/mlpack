@@ -62,6 +62,12 @@ class VirtualBatchNormType : public Layer<InputType, OutputType>
                        const size_t size,
                        const double eps = 1e-8);
 
+  //! Clone the VirtualBatchNormType object. This handles polymorphism correctly.
+  VirtualBatchNormType* Clone() const
+  {
+    return new VirtualBatchNormType(*this);
+  }
+
   /**
    * Reset the layer parameters.
    */

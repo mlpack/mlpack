@@ -51,6 +51,8 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
   PositionalEncodingType(const size_t embedDim,
                          const size_t maxSequenceLength);
 
+  //! Clone the PositionalEncodingType object. This handles polymorphism correctly.
+	PositionalEncodingType* Clone() const { return new PositionalEncodingType(*this); }
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

@@ -59,6 +59,9 @@ class SubviewType : public Layer<InputType, OutputType>
     /* Nothing to do here */
   }
 
+	//! Clone the SubviewType object. This handles polymorphism correctly.
+	SubviewType* Clone() const { return new SubviewType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

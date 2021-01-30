@@ -53,6 +53,9 @@ class LeakyReLUType : public Layer<InputType, OutputType>
    */
   LeakyReLUType(const double alpha = 0.03);
 
+  //! Clone the LeakyReLUType object. This handles polymorphism correctly.
+  LeakyReLUType* Clone() const { return new LeakyReLUType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

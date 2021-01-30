@@ -49,6 +49,9 @@ class LookupType : public Layer<InputType, OutputType>
    */
   LookupType(const size_t vocabSize = 0, const size_t embeddingSize = 0);
 
+	//! Clone the LookupType object. This handles polymorphism correctly.
+	LookupType* Clone() const { return new LookupType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

@@ -57,6 +57,9 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   //! Operator= move constructor.
   NoisyLinearType& operator=(NoisyLinearType&& layer);
 
+  //! Clone the NoisyLinearType object. This handles polymorphism correctly.
+  NoisyLinearType* Clone() const { return new NoisyLinearType(*this); }
+
   //! Reset the layer parameter.
   void Reset();
 

@@ -59,6 +59,9 @@ class HardTanHType : public Layer<InputType, OutputType>
    */
   HardTanHType(const double maxValue = 1, const double minValue = -1);
 
+  //! Clone the HardTanHType object. This handles polymorphism correctly.
+  HardTanHType* Clone() const { return new HardTanHType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

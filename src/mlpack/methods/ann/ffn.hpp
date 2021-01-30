@@ -296,7 +296,7 @@ class FFN
    * network or parameters for layers, its state may become invalid, so be sure
    * to call ResetParameters() afterwards.
    */
-  std::vector<Layer<InputType, OutputType>* >& Model() { return network; }
+  std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
 
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return numFunctions; }

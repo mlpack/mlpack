@@ -48,6 +48,7 @@ template<typename OutputLayerType,
          typename OutputType>
 FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::~FFN()
 {
+  //network.clear();
   for (size_t i = 0; i < network.size(); ++i)
     delete network[i];
 }
@@ -234,8 +235,8 @@ void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
 
   OutputType resultsTemp;
   Forward(arma::mat(predictors.colptr(0), predictors.n_rows, 1, false, true));
-  resultsTemp = network.back()->OutputParameter().col(0);
 
+  resultsTemp = network.back()->OutputParameter().col(0);
   results = arma::mat(resultsTemp.n_elem, predictors.n_cols);
   results.col(0) = resultsTemp.col(0);
 
@@ -629,7 +630,7 @@ FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::FFN(
   // Build new layers according to source network
   for (size_t i = 0; i < network.network.size(); ++i)
   {
-    this->network.push_back(network.network[i]);
+    this->network.push_back(network.network[i]->Clone());
     ResetUpdate(this->network.back());
   }
 };
@@ -665,7 +666,7 @@ template<typename OutputLayerType,
          typename OutputType>
 FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>&
 FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-operator = (FFN network)
+operator =(FFN network)
 {
   Swap(network);
   return *this;

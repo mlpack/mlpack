@@ -53,6 +53,9 @@ class ConcatenateType : public Layer<InputType, OutputType>
   //! Operator= move constructor.
   ConcatenateType& operator=(ConcatenateType&& layer);
 
+  //! Clone the ConcatenateType object. This handles polymorphism correctly.
+	ConcatenateType* Clone() const { return new ConcatenateType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

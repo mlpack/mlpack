@@ -88,6 +88,9 @@ class SequentialType : public Layer<InputType, OutputType>
   //! Destroy the Sequential object.
   ~SequentialType();
 
+  //! Clone the SequentialType object. This handles polymorphism correctly.
+	SequentialType* Clone() const { return new SequentialType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

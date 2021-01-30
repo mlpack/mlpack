@@ -55,6 +55,9 @@ class PReLUType : public Layer<InputType, OutputType>
    */
   PReLUType(const double userAlpha = 0.03);
 
+	//! Clone the PReLUType object. This handles polymorphism correctly.
+	PReLUType* Clone() const { return new PReLUType(*this); }
+
   //! Reset the layer parameter.
   void Reset();
 

@@ -59,6 +59,9 @@ class HardShrinkType : public Layer<InputType, OutputType>
    */
   HardShrinkType(const double lambda = 0.5);
 
+  //! Clone the HardShrinkType object. This handles polymorphism correctly.
+  HardShrinkType* Clone() const { return new HardShrinkType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

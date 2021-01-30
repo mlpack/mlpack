@@ -58,6 +58,9 @@ class SpatialDropoutType : public Layer<InputType, OutputType>
    */
   SpatialDropoutType(const size_t size, const double ratio = 0.5);
 
+  //! Clone the SpatialDropoutType object. This handles polymorphism correctly.
+  SpatialDropoutType* Clone() const { return new SpatialDropoutType(*this); }
+
   /**
    * Ordinary feed forward pass of the SpatialDropout layer.
    *

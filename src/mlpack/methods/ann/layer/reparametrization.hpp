@@ -73,6 +73,15 @@ class ReparametrizationType : public Layer<InputType, OutputType>
                          const double beta = 1);
 
   /**
+   * Clone the ReparametrizationType object. This handles polymorphism
+   * correctly.
+   */
+	ReparametrizationType* Clone() const
+  {
+    return new ReparametrizationType(*this);
+  }
+
+  /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *

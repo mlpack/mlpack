@@ -62,6 +62,9 @@ class SoftShrinkType : public Layer<InputType, OutputType>
    */
   SoftShrinkType(const double lambda = 0.5);
 
+  //! Clone the SoftShrinkType object. This handles polymorphism correctly.
+  SoftShrinkType* Clone() const { return new SoftShrinkType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

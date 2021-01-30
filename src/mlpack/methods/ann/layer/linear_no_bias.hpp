@@ -55,6 +55,9 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
                    const size_t outSize,
                    RegularizerType regularizer = RegularizerType());
 
+  //! Clone the LinearNoBiasType object. This handles polymorphism correctly.
+  LinearNoBiasType* Clone() const { return new LinearNoBiasType(*this); }
+
   //! Reset the layer parameter.
   void Reset();
 

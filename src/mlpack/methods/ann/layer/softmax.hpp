@@ -41,6 +41,9 @@ class SoftmaxType : public Layer<InputType, OutputType>
   //! Create the Softmax object.
   SoftmaxType();
 
+  //! Clone the SoftmaxType object. This handles polymorphism correctly.
+  SoftmaxType* Clone() const { return new SoftmaxType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

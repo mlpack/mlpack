@@ -65,6 +65,9 @@ class HighwayType : public Layer<InputType, OutputType>
   //! Destroy the Highway object.
   ~HighwayType();
 
+	//! Clone the HighwayType object. This handles polymorphism correctly.
+	HighwayType* Clone() const { return new HighwayType(*this); }
+
   /**
    * Reset the layer parameter.
    */

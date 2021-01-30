@@ -62,6 +62,9 @@ class WeightNormType : public Layer<InputType, OutputType>
   //! Destructor to release allocated memory.
   ~WeightNormType();
 
+  //! Clone the WeightNormType object. This handles polymorphism correctly.
+  WeightNormType* Clone() const { return new WeightNormType(*this); }
+
   /**
    * Reset the layer parameters.
    */

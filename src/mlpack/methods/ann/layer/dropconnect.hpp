@@ -73,6 +73,9 @@ class DropConnectType : public Layer<InputType, OutputType>
                   const size_t outSize,
                   const double ratio = 0.5);
 
+  //! Clone the DropConnectType object. This handles polymorphism correctly.
+  DropConnectType* Clone() const { return new DropConnectType(*this); }
+
   /**
    * Ordinary feed forward pass of the DropConnect layer.
    *

@@ -67,6 +67,9 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
    */
   FlexibleReLUType(const double alpha = 0);
 
+  //! Clone the FlexibleReLUType object. This handles polymorphism correctly.
+  FlexibleReLUType* Clone() const { return new FlexibleReLUType(*this); }
+
   /**
    * Reset the layer parameter (alpha). The method is called to
    * assign the allocated memory to the learnable layer parameter.

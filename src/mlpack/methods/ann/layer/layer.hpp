@@ -57,11 +57,25 @@ class Layer
 {
  public:
    //! Default constructor.
-   Layer() : outputWidth(0), outputHeight(0)
-   { /* Nothing to do here */ }
+   Layer() : outputWidth(0), outputHeight(0) { /* Nothing to do here */ }
 
    //! Default deconstructor.
    virtual ~Layer() = default;
+
+   //! Copy constructor.
+   Layer(const Layer& /* layer */) { /* Nothing to do here */ }
+
+   //! Make a copy of the object.
+   virtual Layer* Clone() const = 0;
+
+   //! Move constructor.
+   Layer(Layer&& /* layer */) { /* Nothing to do here */ }
+
+   //! Copy assignment operator.
+   virtual Layer& operator=(const Layer& /* layer */) { return *this; }
+
+   //! Move assignment operator.
+   virtual Layer& operator=(Layer&& /* layer */) { return *this; }
 
   /**
    * Takes an input object, and computes the corresponding output of the layer.

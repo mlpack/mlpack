@@ -84,6 +84,12 @@ class MultiheadAttentionType : public Layer<InputType, OutputType>
                          const InputType& attnmask = InputType(),
                          const InputType& keyPaddingMask = InputType());
 
+	//! Clone the MultiheadAttentionType object. This handles polymorphism correctly.
+	MultiheadAttentionType* Clone() const
+  {
+    return new MultiheadAttentionType(*this);
+  }
+
   /**
    * Reset the layer parameters.
    */

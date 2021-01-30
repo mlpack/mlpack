@@ -51,6 +51,9 @@ class MultiplyMergeType : public Layer<InputType, OutputType>
   //! Destructor to release allocated memory.
   ~MultiplyMergeType();
 
+	//! Clone the MultiplyMergeType object. This handles polymorphism correctly.
+	MultiplyMergeType* Clone() const { return new MultiplyMergeType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

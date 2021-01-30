@@ -43,6 +43,8 @@ class ConstantType : public Layer<InputType, OutputType>
    */
   ConstantType(const size_t outSize, const double scalar = 0);
 
+  //! Clone the ConstantType object. This handles polymorphism correctly.
+  ConstantType* Clone() const { return new ConstantType(*this); }
   /**
    * Ordinary feed forward pass of a neural network. The forward pass fills the
    * output with the specified constant parameter.

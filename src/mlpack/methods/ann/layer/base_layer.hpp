@@ -73,6 +73,9 @@ class BaseLayer : public Layer<InputType, OutputType>
     // Nothing to do here.
   }
 
+  //! Clone the BaseLayer object. This handles polymorphism correctly.
+	BaseLayer* Clone() const { return new BaseLayer(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -141,6 +144,7 @@ class BaseLayer : public Layer<InputType, OutputType>
 //     typename OutputType = arma::mat
 // >
 // using SigmoidLayer = BaseLayer<ActivationFunction, InputType, OutputType>;
+typedef BaseLayer<LogisticFunction, arma::mat, arma::mat> Sigmoid;
 typedef BaseLayer<LogisticFunction, arma::mat, arma::mat> SigmoidLayer;
 
 /**

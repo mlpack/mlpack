@@ -36,6 +36,9 @@ class JoinType : public Layer<InputType, OutputType>
   //! Create the JoinType object.
   JoinType();
 
+  //! Clone the JoinType object. This handles polymorphism correctly.
+	JoinType* Clone() const { return new JoinType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

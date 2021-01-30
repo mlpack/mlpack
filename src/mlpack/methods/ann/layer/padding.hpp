@@ -47,6 +47,9 @@ class PaddingType : public Layer<InputType, OutputType>
               const size_t padHTop = 0,
               const size_t padHBottom = 0);
 
+	//! Clone the PaddingType object. This handles polymorphism correctly.
+	PaddingType* Clone() const { return new PaddingType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

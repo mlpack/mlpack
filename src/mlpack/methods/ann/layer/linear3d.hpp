@@ -67,6 +67,9 @@ class Linear3DType : public Layer<InputType, OutputType>
   //! Move assignment operator.
   Linear3DType& operator=(Linear3DType&& layer);
 
+	//! Clone the Linear3DType object. This handles polymorphism correctly.
+	Linear3DType* Clone() const { return new Linear3DType(*this); }
+
   /*
    * Reset the layer parameter.
    */

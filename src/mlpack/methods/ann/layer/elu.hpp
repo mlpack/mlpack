@@ -127,6 +127,8 @@ class ELUType : public Layer<InputType, OutputType>
    */
   ELUType(const double alpha);
 
+  //! Clone the ELUType object. This handles polymorphism correctly.
+  ELUType* Clone() const { return new ELUType(*this); }
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

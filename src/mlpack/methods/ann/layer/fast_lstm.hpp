@@ -97,6 +97,9 @@ class FastLSTMType : public Layer<InputType, OutputType>
                const size_t outSize,
                const size_t rho = std::numeric_limits<size_t>::max());
 
+  //! Clone the FastLSTMType object. This handles polymorphism correctly.
+	FastLSTMType* Clone() const { return new FastLSTMType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

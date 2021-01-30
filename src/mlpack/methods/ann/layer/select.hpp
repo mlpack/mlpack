@@ -42,6 +42,9 @@ class SelectType : public Layer<InputType, OutputType>
    */
   SelectType(const size_t index = 0, const size_t elements = 0);
 
+  //! Clone the SelectType object. This handles polymorphism correctly.
+	SelectType* Clone() const { return new SelectType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

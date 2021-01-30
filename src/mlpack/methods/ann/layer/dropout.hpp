@@ -73,6 +73,9 @@ class DropoutType : public Layer<InputType, OutputType>
   //! Move assignment operator.
   DropoutType& operator=(DropoutType&& layer);
 
+  //! Clone the DropoutType object. This handles polymorphism correctly.
+  DropoutType* Clone() const { return new DropoutType(*this); }
+
   /**
    * Ordinary feed forward pass of the dropout layer.
    *

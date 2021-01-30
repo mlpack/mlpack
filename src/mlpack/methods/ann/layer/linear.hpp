@@ -73,6 +73,9 @@ class LinearType: public Layer<InputType, OutputType>
   //! Move assignment operator.
   LinearType& operator=(LinearType&& layer);
 
+  //! Clone the LinearType object. This handles polymorphism correctly.
+  LinearType* Clone() const { return new LinearType(*this); }
+
   /**
    * Reset the layer parameter (weights and bias). The method is called to
    * assign the allocated memory to the internal learnable parameters.

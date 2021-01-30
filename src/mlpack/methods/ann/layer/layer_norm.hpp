@@ -76,6 +76,9 @@ class LayerNormType : public Layer<InputType, OutputType>
    */
   LayerNormType(const size_t size, const double eps = 1e-8);
 
+  //! Clone the LayerNormType object. This handles polymorphism correctly.
+	LayerNormType* Clone() const { return new LayerNormType(*this); }
+
   /**
    * Reset the layer parameters.
    */

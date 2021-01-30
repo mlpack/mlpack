@@ -38,6 +38,9 @@ class SoftminType : public Layer<InputType, OutputType>
   //! Create the Softmin object.
   SoftminType();
 
+  //! Clone the SoftminType object. This handles polymorphism correctly.
+  SoftminType* Clone() const { return new SoftminType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
