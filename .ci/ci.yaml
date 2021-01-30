@@ -7,7 +7,7 @@ pr:
     include:
     - '*'
 
-# jobs:
+jobs:
 # - job: Linux
 #   timeoutInMinutes: 360
 #   pool:
