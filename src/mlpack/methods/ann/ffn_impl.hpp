@@ -137,7 +137,7 @@ template<typename OutputLayerType,
          typename OutputType>
 template<typename OptimizerType, typename... CallbackTypes>
 double FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-    Train(InputType predictors, OutputType responses,
+    Train(InputType predictors, InputType responses,
         CallbackTypes&&... callbacks)
 {
   ResetData(std::move(predictors), std::move(responses));
