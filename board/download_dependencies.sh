@@ -7,7 +7,7 @@ gcc_version=$1
 
 echo "Download and build boost as a static lbrary"
 wget --no-check-certificate \
-    "https://dl.bintray.com/boostorg/release/$version/source/boost_$version_underscore.tar.gz" && \
+    "https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.gz" && \
     tar xvzf boost_1_75_0.tar.gz && \
     rm -f boost_1.75.0.tar.gz && \
 
