@@ -17,6 +17,8 @@
 // In case it hasn't yet been included.
 #include "dropconnect.hpp"
 
+#include "linear.hpp"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 

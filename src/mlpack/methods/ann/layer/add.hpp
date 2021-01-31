@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_ADD_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "layer.hpp"
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 
 namespace mlpack {
@@ -40,6 +41,9 @@ class AddType : public Layer<InputType, OutputType>
    * @param outSize The number of output units.
    */
   AddType(const size_t outSize = 0);
+
+  //! Clone the AddType object. This handles polymorphism correctly.
+  AddType* Clone() const { return new AddType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

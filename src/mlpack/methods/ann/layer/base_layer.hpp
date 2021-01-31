@@ -171,6 +171,7 @@ typedef BaseLayer<IdentityFunction, arma::mat, arma::mat> Identity;
 // using ReLULayer = BaseLayer<
 //     ActivationFunction, InputDataType, OutputDataType>;
 typedef BaseLayer<RectifierFunction, arma::mat, arma::mat> ReLULayer;
+typedef BaseLayer<RectifierFunction, arma::mat, arma::mat> ReLU;
 
 /**
  * Standard hyperbolic tangent layer.

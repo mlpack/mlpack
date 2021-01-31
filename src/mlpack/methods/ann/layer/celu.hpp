@@ -70,7 +70,7 @@ class CELUType : public Layer<InputType, OutputType>
   CELUType(const double alpha = 1.0);
 
   //! Clone the CELUType object. This handles polymorphism correctly.
-	CELUType* Clone() const { return new CELUType(*this); }
+  CELUType* Clone() const { return new CELUType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
