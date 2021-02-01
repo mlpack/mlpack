@@ -22,6 +22,7 @@
 
 namespace mlpack {
 namespace data {
+
 /**
  * To use a pre-trained BERT model, we need to convert the input data into an
  * appropriate format so that each sentence can be sent to the pre-trained model 
@@ -57,58 +58,58 @@ using InvVocab = std::unordered_map<size_t, std::wstring>;
  * whitespace  and lower casing.
  */
 class BasicTokenizer {
-public:
-	/**
-	 * Enable a check condition for conversion to lower case.
-	 * 
-	 * @param doLowerCase Pass true if you want to process text after 
-	 * converting all characters to lower case.
-	 */
-	BasicTokenizer(bool doLowerCase);
+ public:
+  /**
+   * Enable a check condition for conversion to lower case.
+   * 
+   * @param doLowerCase Pass true if you want to process text after 
+   * converting all characters to lower case.
+   */
+  BasicTokenizer(bool doLowerCase);
 
-    /**
-     * Execute basic tokenization by calling all the functions of this
-     * class in a sequential manner.
-     *
-     * @param text The input text.
-     */
-    std::vector<std::wstring> tokenize(const std::string& text) const;
+  /**
+   * Execute basic tokenization by calling all the functions of this
+   * class in a sequential manner.
+   *
+   * @param text The input text.
+   */
+  std::vector<std::wstring> tokenize(const std::string& text) const;
 
-private:
-	/**
-	 * Perform invalid character removal and whitespace cleanup on text.
-	 *
-	 * @param text The input text.
-	 */
-    std::wstring cleanText(const std::wstring& text) const;
+ private:
+  /**
+   * Perform invalid character removal and whitespace cleanup on text.
+   *
+   * @param text The input text.
+   */
+  std::wstring cleanText(const std::wstring& text) const;
 
-    /**
-     * Checks whether the input character is a whitespace character.
-     *
-     * @param ch The input character.
-     */
-    bool isWhitespace(const wchar_t& ch) const;
+  /**
+   * Checks whether the input character is a whitespace character.
+   *
+   * @param ch The input character.
+   */
+  bool isWhitespace(const wchar_t& ch) const;
 
-    /**
-     * Checks whether the input character is a punctuation.
-     *
-     * @param ch The input character.
-     */
-    bool isPunctuation(const wchar_t& ch) const;
+  /**
+   * Checks whether the input character is a punctuation.
+   *
+   * @param ch The input character.
+   */
+  bool isPunctuation(const wchar_t& ch) const;
 
-    bool isStripChar(const wchar_t& ch) const;
+  bool isStripChar(const wchar_t& ch) const;
 
-    std::wstring runStripAccents(const std::wstring& text) const;
+  std::wstring runStripAccents(const std::wstring& text) const;
 
-    /**
-     * Splits punctuation on a piece of text.
-     *
-     * @param text The input text.
-     */
-    std::vector<std::wstring> runSplitOnPunc(const std::wstring& text) const;
+  /**
+   * Splits punctuation on a piece of text.
+   *
+   * @param text The input text.
+   */
+  std::vector<std::wstring> runSplitOnPunc(const std::wstring& text) const;
 
-    bool mDoLowerCase;
-};
+  bool mDoLowerCase;
+}; // class BasicTokenizer
 
 /**
  * Given a character, this function ascertains whether it
@@ -165,80 +166,79 @@ void convertFromUnicode(const std::wstring &ws, std::string &s);
  */
 static std::shared_ptr<Vocab> loadVocab(const std::string& vocabFile);
 
-
 /**
  * The following class is used to run WordPiece tokenization which is a
  * subword segmentation algorithm used in natural language processing.
  */
 class WordpieceTokenizer {
-public:
-	/**
-	 * Initialize the WordpieceTokenizer class.
-	 *
-	 * @param vocab The pointer containing the BERT tokens along with corresponding id's.
-	 * @param unkToken Token "[UNK]" of BERT Tokenizer.
-	 * @param maxInputCharsPerWord Maximum characters allowed per word.
-	 */
-    WordpieceTokenizer(std::shared_ptr<Vocab> vocab, const std::wstring& unkToken = L"[UNK]", size_t maxInputCharsPerWord=200);
+ public:
+  /**
+   * Initialize the WordpieceTokenizer class.
+   *
+   * @param vocab The pointer containing the BERT tokens along with corresponding id's.
+   * @param unkToken Token "[UNK]" of BERT Tokenizer.
+   * @param maxInputCharsPerWord Maximum characters allowed per word.
+   */
+  WordpieceTokenizer(std::shared_ptr<Vocab> vocab, const std::wstring& unkToken = L"[UNK]", size_t maxInputCharsPerWord=200);
 
-    /**
-     * Tokenizes a piece of text into its word pieces.
-     * This uses a greedy longest-match-first algorithm to perform tokenization
-     * using the given vocabulary.
-     * For example:
-     * input = "unaffable"
-     * output = ["un", "##aff", "##able"]
-     *
-     * @param text The input string which is already been passed
-     * through `BasicTokenizer.
-     */
-    std::vector<std::wstring> tokenize(const std::wstring& text) const;
+  /**
+   * Tokenizes a piece of text into its word pieces.
+   * This uses a greedy longest-match-first algorithm to perform tokenization
+   * using the given vocabulary.
+   * For example:
+   * input = "unaffable"
+   * output = ["un", "##aff", "##able"]
+   *
+   * @param text The input string which is already been passed
+   * through `BasicTokenizer.
+   */
+  std::vector<std::wstring> tokenize(const std::wstring& text) const;
 
-private:
-    std::shared_ptr<Vocab> mVocab;
-    std::wstring mUnkToken;
-    size_t mMaxInputCharsPerWord;
-};
+ private:
+  std::shared_ptr<Vocab> mVocab;
+  std::wstring mUnkToken;
+  size_t mMaxInputCharsPerWord;
+}; // class WordpieceTokenizer
 
 /**
  * This class uses functions and classes previously defined
  * to run end-to-end tokenziation.
  */
 class FullTokenizer {
-public:
-	/**
-	 * Initialize the FullTokenizer class.
-	 *
-	 * @param vocabfile Path of BERT vocab file.
-	 * @param doLowerCase Pass true if you want to process text after 
-	 * converting all characters to lower case.
-	 */
-    FullTokenizer(const std::string& vocabFile, bool doLowerCase = true);
+ public:
+  /**
+   * Initialize the FullTokenizer class.
+   *
+   * @param vocabfile Path of BERT vocab file.
+   * @param doLowerCase Pass true if you want to process text after 
+   * converting all characters to lower case.
+   */
+  FullTokenizer(const std::string& vocabFile, bool doLowerCase = true);
 
-    /**
-     * Function for firstly doing BasicTokenization and then
-     * WordPieceTokenization.
-     *
-     * @param text The input string.
-     */
-    std::vector<std::wstring> tokenize(const std::string& text) const;
+  /**
+   * Function for firstly doing BasicTokenization and then
+   * WordPieceTokenization.
+   *
+   * @param text The input string.
+   */
+  std::vector<std::wstring> tokenize(const std::string& text) const;
 
-    /**
-     * Given a list of tokens, this function returns their corresponding
-     * Id's according to the vocab.txt file of the BERT model.
-     *
-     * @param text List of tokens.
-     */
-    std::vector<size_t> convertTokensToIds(const std::vector<std::wstring>& text) const;
+  /**
+   * Given a list of tokens, this function returns their corresponding
+   * Id's according to the vocab.txt file of the BERT model.
+   *
+   * @param text List of tokens.
+   */
+  std::vector<size_t> convertTokensToIds(const std::vector<std::wstring>& text) const;
 
-private:
-    std::shared_ptr<Vocab> mVocab;
-    InvVocab mInvVocab;
-    std::string mVocabFile;
-    bool mDoLowerCase;
-    BasicTokenizer mBasicTokenizer;
-    WordpieceTokenizer mWordpieceTokenizer;
-};
+ private:
+  std::shared_ptr<Vocab> mVocab;
+  InvVocab mInvVocab;
+  std::string mVocabFile;
+  bool mDoLowerCase;
+  BasicTokenizer mBasicTokenizer;
+  WordpieceTokenizer mWordpieceTokenizer;
+}; // class FullTokenizer
 
 } // namespace data
 } // namespace mlpack
