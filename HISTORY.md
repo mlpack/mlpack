@@ -12,7 +12,7 @@
   * Add Triplet Margin Loss function (#2762).
 
   * Add finalizers to Julia binding model types to fix memory handling (#2756).
-  
+
   * HMM: add functions to calculate likelihood for data stream with/without
     pre-calculated emission probability (#2142).
 
@@ -22,6 +22,9 @@
     Python bindings (#2797).
 
   * Add k-means++ initialization strategy (#2813).
+
+  * `NegativeLogLikelihood<>` now expects classes in the range `0` to
+    `numClasses - 1` (#2534).
 
 ### mlpack 3.4.2
 ###### 2020-10-26
