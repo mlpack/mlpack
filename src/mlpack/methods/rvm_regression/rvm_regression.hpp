@@ -78,11 +78,17 @@ namespace regression{
  * arma::mat xTrain; // Train data matrix. Column-major.
  * arma::rowvec yTrain; // Train target values.
  
- * // Train the model. Regularization strength is optimally tunned with the
+ * // Train ARD regression. Regularization strength is optimally tunned with the
  * // training data alone by applying the Train method.
- * BayesianLinearRegression estimator(); // Instanciate the estimator with default option.
+  
+ * RVMRegression<> estimator();
  * estimator.Train(xTrain, yTrain);
  
+ * // Train RVM regression model with rbf kernel.
+ * mlpack::kernel::GaussianKernel kerne(). // Declare a default kernel.
+ * RVMRegression<mlpack::kernel::GaussianKernel> 
+ *     estimator(kernel, false, false, false);
+
  * // Prediction on test points.
  * arma::mat xTest; // Test data matrix. Column-major.
  * arma::rowvec predictions;
@@ -135,6 +141,7 @@ public:
    * the maximmization of the marginal likelihood. ARD regression is computed 
    * whatever the kernel given at initalization.
    *
+   * @param kernel Kernel to be used for computation.
    * @param centerData Whether or not center the data according to the 
    *    examples.
    * @param scaleData Whether or to scaleData the data according to the 
