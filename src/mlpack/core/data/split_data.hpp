@@ -170,7 +170,8 @@ void StratifiedSplit(const arma::Mat<T>& input,
  * @endcode
  *
  * @tparam T Type of the elements of the input matrix.
- * @tparam LabelsType Type of input labels. It must be arma::Mat or arma::row.
+ * @tparam LabelsType Type of input labels. It can be arma::Mat, arma::row,
+ *       arma::Cube or arma::SpMat.
  * @param input Input dataset to split.
  * @param inputLabel Input labels to split.
  * @param trainData Matrix to store training data into.
@@ -182,7 +183,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
  *       sample is visited in linear order. (Default true.)
  */
 template<typename T, typename LabelsType,
-         typename = std::enable_if_t<arma::is_Row<LabelsType>::value ||
+         typename = std::enable_if_t<arma::is_arma_type<LabelsType>::value ||
                           arma::is_Mat_only<LabelsType>::value> >
 void Split(const arma::Mat<T>& input,
            const LabelsType& inputLabel,
@@ -300,7 +301,8 @@ void Split(const arma::Mat<T>& input,
  * @endcode
  *
  * @tparam T Type of the elements of the input matrix.
- * @tparam LabelsType Type of input labels. It must be arma::Mat or arma::row.
+ * @tparam LabelsType Type of input labels. It can be arma::Mat, arma::row,
+ *       arma::Cube or arma::SpMat.
  * @param input Input dataset to split.
  * @param inputLabel Input labels to split.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
@@ -313,7 +315,7 @@ void Split(const arma::Mat<T>& input,
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */
 template<typename T, typename LabelsType,
-         typename = std::enable_if_t<arma::is_Row<LabelsType>::value ||
+         typename = std::enable_if_t<arma::is_arma_type<LabelsType>::value ||
                           arma::is_Mat_only<LabelsType>::value> >
 std::tuple<arma::Mat<T>, arma::Mat<T>, LabelsType, LabelsType>
 Split(const arma::Mat<T>& input,
