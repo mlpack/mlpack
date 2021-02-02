@@ -145,6 +145,18 @@ T& IO::GetRawParam(const std::string& identifier)
   }
 }
 
+template<typename T>
+void IO::CheckInputMatrix(const T& matrix, const std::string& identifier)
+{
+  std::string errMsg1 = "The input " + identifier + " has NaN values.";
+  std::string errMsg2 = "The input " + identifier + " has inf values.";
+
+  if (matrix.has_nan())
+    Log::Fatal << errMsg1 << std::endl;
+  if (matrix.has_inf())
+    Log::Fatal << errMsg2 << std::endl;
+}
+
 } // namespace mlpack
 
 #endif
