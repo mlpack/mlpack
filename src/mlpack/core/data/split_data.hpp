@@ -382,6 +382,8 @@ Split(const arma::Mat<T>& input,
  * Given an input dataset and labels, split into a training set and test set.
  * Example usage below.  This overload places the split dataset into the four
  * output parameters given (trainData, testData, trainLabel, and testLabel).
+ *
+ * The input dataset must be of type arma::field and have a single row.
  * 
  * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
  *
@@ -460,6 +462,8 @@ void Split(FieldType& input,
  * Given an input dataset, split into a training set and test set.
  * Example usage below. This overload places the split dataset into the two
  * output parameters given (trainData, testData).
+ *
+ * The input dataset must be of type arma::field and have a single row.
  * 
  * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
  *
@@ -521,6 +525,8 @@ void Split(const FieldType& input,
  * with four elements: an FieldType containing the training data, an
  * FieldType containing the test data, an arma::field<arma::vec> containing the
  * training labels, and an arma::field<arma::vec> containing the test labels.
+ *
+ * The input dataset must be of type arma::field and have a single row.
  * 
  * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
  *
@@ -568,6 +574,8 @@ Split(FieldType& input,
  * Example usage below.  This overload returns the split dataset as a std::tuple
  * with two elements: an FieldType containing the training data and an
  * FieldType containing the test data.
+ *
+ * The input dataset must be of type arma::field and have a single row.
  * 
  * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
  *
