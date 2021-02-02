@@ -19,9 +19,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Computes the hinge loss between y_true and y_pred. Expects y_true to be
- * either -1 or 1. If y_true is either 0 or 1, a temporary conversion is made to
- * calculate the loss.
+ * Computes the hinge loss between \f$y_true\f$ and \f$y_pred\f$. Expects
+ * \f$y_true\f$ to be either -1 or 1. If \f$y_true\f$ is either 0 or 1, a
+ * temporary conversion is made to calculate the loss.
  * The hinge loss \f$l(y_true, y_pred)\f$ is defined as
  * \f$l(y_true, y_pred) = max(0, 1 - y_true*y_pred)\f$.
  *
