@@ -984,21 +984,23 @@ TEST_CASE("HingeLossTest", "[LossFunctionsTest]")
   REQUIRE(output.n_rows == input.n_rows);
   REQUIRE(output.n_cols == input.n_cols);
 
-  input = {{0.90599973, -0.33040298, 0.07123354},
-      {0.71988434, 0.49657596, 0.39873373},
-      {-0.57646927, 0.3951491 , -0.1003365},
-      {0.12528634, 0.68122971, 0.85448826}};
+  // Randomly generated input.
+  input = { { 0.90599973, -0.33040298, 0.07123354},
+            { 0.71988434, 0.49657596, 0.39873373},
+            { -0.57646927, 0.3951491 , -0.1003365},
+            { 0.12528634, 0.68122971, 0.85448826} };
 
-  target = {{-1, -1, 1},
-      {-1, 1, 1},
-      {1, -1, -1},
-      {1, -1, -1}};
+  // Randomly generated target.
+  target = { { -1, -1, 1},
+             { -1, 1, 1},
+             { 1, -1, -1},
+             { 1, -1, -1} };
 
-  // Binary labels for target.
-  target_b = {{0, 0, 1},
-      {0, 1, 1},
-      {1, 0, 0},
-      {1, 0, 0}};
+  // Binary target can be obtained by replacing -1 with 0 in target.
+  target_b = { { 0, 0, 1},
+               { 0, 1, 1},
+               { 1, 0, 0},
+               { 1, 0, 0} };
 
   // Test for binary labels as target.
   loss = module1.Forward(input, target);
@@ -1009,6 +1011,7 @@ TEST_CASE("HingeLossTest", "[LossFunctionsTest]")
 
   // Test for sum reduction.
   // Test the Forward function.
+  // Loss calculated by referring to implementation of tf.keras.losses.hinge.
   loss = module1.Forward(input, target);
   REQUIRE(loss == Approx(14.61065).epsilon(1e-3));
 
@@ -1020,6 +1023,7 @@ TEST_CASE("HingeLossTest", "[LossFunctionsTest]")
 
   // Test for mean reduction.
   // Test for the Forward function.
+  // Loss calculated by referring to implementation of tf.keras.losses.hinge.
   loss = module2.Forward(input, target);
   REQUIRE(loss == Approx(1.21755).epsilon(1e-3));
 

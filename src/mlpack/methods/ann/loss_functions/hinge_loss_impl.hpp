@@ -36,7 +36,7 @@ HingeLoss<InputDataType, OutputDataType>::Forward(
   TargetType temp = target - (target == 0);
   TargetType temp_zeros(size(target), arma::fill::zeros);
 
-  PredictionType loss = arma::max(1 - prediction % temp, temp_zeros);
+  PredictionType loss = arma::max(temp_zeros, 1 - prediction % temp);
 
   typename PredictionType::elem_type lossSum = arma::accu(loss);
 

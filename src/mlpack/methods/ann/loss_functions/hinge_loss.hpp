@@ -22,6 +22,8 @@ namespace ann /** Artificial Neural Network. */ {
  * Computes the hinge loss between y_true and y_pred. Expects y_true to be
  * either -1 or 1. If y_true is either 0 or 1, a temporary conversion is made to
  * calculate the loss.
+ * The hinge loss \f$l(y_true, y_pred)\f$ is defined as
+ * \f$l(y_true, y_pred) = max(0, 1 - y_true*y_pred)\f$.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -37,6 +39,7 @@ class HingeLoss
  public:
   /**
    * Create HingeLoss object.
+   *
    * @param reduction Specifies the reduction to apply to the output. If false,
    *                  'mean' reduction is used, where sum of the output will be
    *                  divided by the number of elements in the output. If
@@ -54,7 +57,7 @@ class HingeLoss
    */
   template<typename PredictionType, typename TargetType>
   typename PredictionType::elem_type Forward(const PredictionType& prediction,
-                                              const TargetType& target);
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
