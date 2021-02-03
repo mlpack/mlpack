@@ -80,15 +80,17 @@ template<typename TMetricType, typename ElemType>
 HollowBallBound<TMetricType, ElemType>& HollowBallBound<TMetricType, ElemType>::
 operator=(const HollowBallBound& other)
 {
-  if (ownsMetric)
-    delete metric;
+  if (this != &other)
+  {
+    if (ownsMetric)
+      delete metric;
 
-  radii = other.radii;
-  center = other.center;
-  hollowCenter = other.hollowCenter;
-  metric = other.metric;
-  ownsMetric = false;
-
+    radii = other.radii;
+    center = other.center;
+    hollowCenter = other.hollowCenter;
+    metric = other.metric;
+    ownsMetric = false;
+  }
   return *this;
 }
 
@@ -109,6 +111,29 @@ HollowBallBound<TMetricType, ElemType>::HollowBallBound(
   other.hollowCenter = arma::Col<ElemType>();
   other.metric = NULL;
   other.ownsMetric = false;
+}
+
+//! Move assignment operator.
+template<typename TMetricType, typename ElemType>
+HollowBallBound<TMetricType, ElemType>& HollowBallBound<TMetricType, ElemType>::
+operator=(HollowBallBound&& other)
+{
+  if (this != &other)
+  {
+    radii = other.radii;
+    center = std::move(other.center);
+    hollowCenter = std::move(other.hollowCenter);
+    metric = other.metric;
+    ownsMetric = other.ownsMetric;
+
+    other.radii.Hi() = 0.0;
+    other.radii.Lo() = 0.0;
+    other.center = arma::Col<ElemType>();
+    other.hollowCenter = arma::Col<ElemType>();
+    other.metric = nullptr;
+    other.ownsMetric = false;
+  }
+  return *this;
 }
 
 //! Destructor to release allocated memory.

@@ -84,7 +84,7 @@ ScalingModel::ScalingModel(ScalingModel&& other) :
 }
 
 //! Copy assignment operator.
-ScalingModel& ScalingModel::operator= (const ScalingModel& other)
+ScalingModel& ScalingModel::operator=(const ScalingModel& other)
 {
   if (this == &other)
   {
@@ -120,6 +120,36 @@ ScalingModel& ScalingModel::operator= (const ScalingModel& other)
   maxValue = other.maxValue;
   epsilon = other.epsilon;
 
+  return *this;
+}
+
+//! Move assignment operator.
+ScalingModel& ScalingModel::operator=(ScalingModel&& other)
+{
+  if (this != &other)
+  {
+    scalerType = other.scalerType;
+    minmaxscale = other.minmaxscale;
+    maxabsscale = other.maxabsscale;
+    meanscale = other.meanscale;
+    standardscale = other.standardscale;
+    pcascale = other.pcascale;
+    zcascale = other.zcascale;
+    minValue = other.minValue;
+    maxValue = other.maxValue;
+    epsilon = other.epsilon;
+
+    other.scalerType = 0;
+    other.minmaxscale = nullptr;
+    other.maxabsscale = nullptr;
+    other.meanscale = nullptr;
+    other.standardscale = nullptr;
+    other.pcascale = nullptr;
+    other.zcascale = nullptr;
+    other.minValue = 0;
+    other.maxValue = 1;
+    other.epsilon = 0.00005;
+  }
   return *this;
 }
 

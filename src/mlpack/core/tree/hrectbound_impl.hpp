@@ -104,6 +104,26 @@ inline HRectBound<MetricType, ElemType>::HRectBound(
 }
 
 /**
+ * Move assignment operator.
+ */
+template<typename MetricType, typename ElemType>
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator=(
+    HRectBound<MetricType, ElemType>&& other)
+{
+  if (this != &other)
+  {
+    bounds = other.bounds;
+    minWidth = other.minWidth;
+    dim = other.dim;
+    other.dim = 0;
+    other.bounds = nullptr;
+    other.minWidth = 0.0;
+  }
+  return *this;
+}
+
+/**
  * Destructor: clean up memory.
  */
 template<typename MetricType, typename ElemType>
