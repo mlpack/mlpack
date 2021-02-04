@@ -183,7 +183,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
  *       sample is visited in linear order. (Default true.)
  */
 template<typename T, typename LabelsType,
-         typename = std::enable_if_t<arma::is_arma_type<LabelsType>::value>
+         typename = std::enable_if_t<arma::is_arma_type<LabelsType>::value> >
 void Split(const arma::Mat<T>& input,
            const LabelsType& inputLabel,
            arma::Mat<T>& trainData,
@@ -314,7 +314,7 @@ void Split(const arma::Mat<T>& input,
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */
 template<typename T, typename LabelsType,
-         typename = std::enable_if_t<arma::is_arma_type<LabelsType>::value>
+         typename = std::enable_if_t<arma::is_arma_type<LabelsType>::value> >
 std::tuple<arma::Mat<T>, arma::Mat<T>, LabelsType, LabelsType>
 Split(const arma::Mat<T>& input,
       const LabelsType& inputLabel,
