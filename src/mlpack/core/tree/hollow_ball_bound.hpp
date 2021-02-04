@@ -86,6 +86,9 @@ class HollowBallBound
   //! Move constructor: take possession of another bound.
   HollowBallBound(HollowBallBound&& other);
 
+  //! Move assignment operator.
+  HollowBallBound& operator=(HollowBallBound&& other);
+
   //! Destructor to release allocated memory.
   ~HollowBallBound();
 

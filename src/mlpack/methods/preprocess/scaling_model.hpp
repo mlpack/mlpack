@@ -65,6 +65,9 @@ class ScalingModel
   //! Copy assignment operator.
   ScalingModel& operator=(const ScalingModel& other);
 
+  //! Move assignment operator.
+  ScalingModel& operator=(ScalingModel&& other);
+
   //! Clean up memory.
   ~ScalingModel();
 

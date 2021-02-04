@@ -2,6 +2,9 @@
 ###### ????-??-??
   * Added Pixel Shuffle layer (#2563).
 
+  * Add "check_input_matrices" option to python bindings that checks
+    for NaN and inf values in all the input matrices (#2787).
+
   * Add Adjusted R squared functionality to R2Score::Evaluate (#2624).
 
   * Disabled all the bindings by default in CMake (#2782).
@@ -14,9 +17,19 @@
   * Add Triplet Margin Loss function (#2762).
 
   * Add finalizers to Julia binding model types to fix memory handling (#2756).
-  
+
   * HMM: add functions to calculate likelihood for data stream with/without
     pre-calculated emission probability (#2142).
+
+  * Replace Boost serialization library by Cereal (#2458).
+
+  * Add `PYTHON_INSTALL_PREFIX` CMake option to specify installation root for
+    Python bindings (#2797).
+
+  * Add k-means++ initialization strategy (#2813).
+
+  * `NegativeLogLikelihood<>` now expects classes in the range `0` to
+    `numClasses - 1` (#2534).
 
 ### mlpack 3.4.2
 ###### 2020-10-26

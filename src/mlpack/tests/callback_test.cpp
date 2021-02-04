@@ -94,7 +94,7 @@ TEST_CASE("RNNCallbackTest", "[CallbackTest]")
 {
   const size_t rho = 5;
   arma::cube input = arma::randu(1, 1, 5);
-  arma::cube target = arma::ones(1, 1, 5);
+  arma::cube target = arma::zeros(1, 1, 5);
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.
@@ -120,7 +120,7 @@ TEST_CASE("RNNWithOptimizerCallbackTest", "[CallbackTest]")
 {
   const size_t rho = 5;
   arma::cube input = arma::randu(1, 1, 5);
-  arma::cube target = arma::ones(1, 1, 5);
+  arma::cube target = arma::zeros(1, 1, 5);
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.

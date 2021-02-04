@@ -21,7 +21,7 @@ steps:
     unset BOOST_ROOT
     echo "##vso[task.setvariable variable=BOOST_ROOT]"$BOOST_ROOT
 
-    sudo apt-get install -y --allow-unauthenticated libopenblas-dev liblapack-dev g++ libboost1.70-dev libarmadillo-dev xz-utils
+    sudo apt-get install -y --allow-unauthenticated libopenblas-dev g++ libboost1.70-dev xz-utils
 
     if [ "$(binding)" == "python" ]; then
       export PYBIN=$(which python)

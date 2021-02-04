@@ -1015,7 +1015,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  */
 #define TUPLE_TYPE std::tuple<mlpack::data::DatasetInfo, arma::mat>
 #define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS) \
-    PARAM_IN(TUPLE_TYPE, ID, DESC, ALIAS, TUPLE_TYPE(), false)
+    PARAM(TUPLE_TYPE, ID, DESC, ALIAS, \
+        "std::tuple<mlpack::data::DatasetInfo, arma::mat>", false, true, true, \
+        TUPLE_TYPE())
 
 /**
  * Define an input model.  From the command line, the user can specify the file
@@ -1207,11 +1209,44 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
     PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), true);
 
 /**
- * Define an input parameter.  Don't use this function; use the other ones above
- * that call it.  Note that we are using the __LINE__ macro for naming these
- * actual parameters when __COUNTER__ does not exist, which is a bit of an ugly
- * hack... but this is the preprocessor, after all.  We don't have much choice
- * other than ugliness.
+ * Defining useful macros using PARAM macro defined later.
+ */
+#define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
+    PARAM(T, ID, DESC, ALIAS, #T, REQ, true, false, DEF);
+
+#define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
+    PARAM(T, ID, DESC, ALIAS, #T, REQ, false, false, DEF);
+
+#define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::mat, ID, DESC, ALIAS, "arma::mat", REQ, IN, \
+        TRANS, arma::mat());
+
+#define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::Mat<size_t>, ID, DESC, ALIAS, "arma::Mat<size_t>", \
+        REQ, IN, TRANS, arma::Mat<size_t>());
+
+#define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::vec, ID, DESC, ALIAS, "arma::vec", REQ, IN, TRANS, \
+        arma::vec());
+
+#define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::Col<size_t>, ID, DESC, ALIAS, "arma::Col<size_t>", \
+        REQ, IN, TRANS, arma::Col<size_t>());
+
+#define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::rowvec, ID, DESC, ALIAS, "arma::rowvec", REQ, IN, \
+    TRANS, arma::rowvec());
+
+#define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
+    PARAM(arma::Row<size_t>, ID, DESC, ALIAS, "arma::Row<size_t>", \
+    REQ, IN, TRANS, arma::Row<size_t>());
+
+/**
+ * Define the PARAM(), PARAM_MODEL() macro. Don't use this function; 
+ * use the other ones above that call it.  Note that we are using the __LINE__
+ * macro for naming these actual parameters when __COUNTER__ does not exist, 
+ * which is a bit of an ugly hack... but this is the preprocessor, after all.
+ * We don't have much choice other than ugliness.
  *
  * @param T Type of the parameter.
  * @param ID Name of the parameter.
@@ -1223,51 +1258,10 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param REQ Whether or not parameter is required (boolean value).
  */
 #ifdef __COUNTER__
-  #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
+  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
       static mlpack::util::Option<T> \
       JOIN(io_option_dummy_object_in_, __COUNTER__) \
-      (DEF, ID, DESC, ALIAS, #T, REQ, true, false, testName);
-
-  #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
-      static mlpack::util::Option<T> \
-      JOIN(io_option_dummy_object_out_, __COUNTER__) \
-      (DEF, ID, DESC, ALIAS, #T, REQ, false, false, testName);
-
-  #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::mat> \
-      JOIN(io_option_dummy_matrix_, __COUNTER__) \
-      (arma::mat(), ID, DESC, ALIAS, "arma::mat", \
-      REQ, IN, !TRANS, testName);
-
-  #define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Mat<size_t>> \
-      JOIN(io_option_dummy_umatrix_, __COUNTER__) \
-      (arma::Mat<size_t>(), ID, DESC, ALIAS, "arma::Mat<size_t>", \
-      REQ, IN, !TRANS, testName);
-
-  #define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::vec> \
-      JOIN(io_option_dummy_col_, __COUNTER__) \
-      (arma::vec(), ID, DESC, ALIAS, "arma::vec", \
-      REQ, IN, !TRANS, testName);
-
-  #define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Col<size_t>> \
-      JOIN(io_option_dummy_ucol_, __COUNTER__) \
-      (arma::Col<size_t>(), ID, DESC, ALIAS, "arma::Col<size_t>", \
-      REQ, IN, !TRANS, testName);
-
-  #define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::rowvec> \
-      JOIN(io_option_dummy_row_, __COUNTER__) \
-      (arma::rowvec(), ID, DESC, ALIAS, "arma::rowvec", \
-      REQ, IN, !TRANS, testName);
-
-  #define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Row<size_t>> \
-      JOIN(io_option_dummy_urow_, __COUNTER__) \
-      (arma::Row<size_t>(), ID, DESC, ALIAS, "arma::Row<size_t>", \
-      REQ, IN, !TRANS, testName);
+      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, testName);
 
   // There are no uses of required models, so that is not an option to this
   // macro (it would be easy to add).
@@ -1280,51 +1274,10 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
   // don't think we can absolutely guarantee success, but it should be "good
   // enough".  We use the __LINE__ macro and the type of the parameter to try
   // and get a good guess at something unique.
-  #define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
+  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
       static mlpack::util::Option<T> \
       JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
-      (DEF, ID, DESC, ALIAS, #T, REQ, true, false, testName);
-
-  #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
-      static mlpack::util::Option<T> \
-      JOIN(JOIN(io_option_dummy_object_out_, __LINE__), opt) \
-      (DEF, ID, DESC, ALIAS, #T, REQ, false, false, testName);
-
-  #define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::mat> \
-      JOIN(JOIN(io_option_dummy_object_matrix_, __LINE__), opt) \
-      (arma::mat(), ID, DESC, ALIAS, "arma::mat", REQ, IN, !TRANS, \
-      testName);
-
-  #define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Mat<size_t>> \
-      JOIN(JOIN(io_option_dummy_object_umatrix_, __LINE__), opt) \
-      (arma::Mat<size_t>(), ID, DESC, ALIAS, "arma::Mat<size_t>", REQ, IN, \
-      !TRANS, testName);
-
-  #define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::vec> \
-      JOIN(io_option_dummy_object_col_, __LINE__) \
-      (arma::vec(), ID, DESC, ALIAS, "arma::vec", REQ, IN, !TRANS, \
-      testName);
-
-  #define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Col<size_t>> \
-      JOIN(io_option_dummy_object_ucol_, __LINE__) \
-      (arma::Col<size_t>(), ID, DESC, ALIAS, "arma::Col<size_t>", REQ, IN, \
-      !TRANS, testName);
-
-  #define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::rowvec> \
-      JOIN(io_option_dummy_object_row_, __LINE__) \
-      (arma::rowvec(), ID, DESC, ALIAS, "arma::rowvec", REQ, IN, !TRANS, \
-      testName);
-
-  #define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
-      static mlpack::util::Option<arma::Row<size_t>> \
-      JOIN(io_option_dummy_object_urow_, __LINE__) \
-      (arma::Row<size_t>(), ID, DESC, ALIAS, "arma::Row<size_t>", REQ, IN, \
-      !TRANS, testName);
+      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, testName);
 
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
       static mlpack::util::Option<TYPE*> \
