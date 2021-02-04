@@ -199,6 +199,26 @@ TEST_CASE("SplitLabeledDataResultMat", "[SplitDataTest]")
   CheckDuplication(std::get<2>(value), std::get<3>(value));
 }
 
+TEST_CASE("SplitMatrixLabeledDataResultMat", "[SplitDataTest]")
+{
+  mat input(2, 10);
+  input.randu();
+
+  const mat labels(2, 10, fill::randu);
+
+  const auto value = Split(input, labels, 0.2);
+  REQUIRE(std::get<0>(value).n_cols == 8);
+  REQUIRE(std::get<1>(value).n_cols == 2);
+  REQUIRE(std::get<2>(value).n_cols == 8);
+  REQUIRE(std::get<3>(value).n_cols == 2);
+
+  mat input_concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
+  mat labels_concat = arma::join_rows(std::get<2>(value), std::get<3>(value));
+  // Order matters here.
+  CheckMatrices(input, input_concat);
+  CheckMatrices(labels, labels_concat);
+}
+
 /**
  * The same test as above, but on a larger dataset.
  */
