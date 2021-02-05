@@ -38,6 +38,7 @@
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
+#include <mlpack/methods/ann/layer/lp_pooling.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
@@ -282,6 +283,7 @@ using LayerTypes = boost::variant<
     LSTM<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
+    LpPooling<arma::mat, arma::mat>*,
     MiniBatchDiscrimination<arma::mat, arma::mat>*,
     MultiplyConstant<arma::mat, arma::mat>*,
     MultiplyMerge<arma::mat, arma::mat>*,

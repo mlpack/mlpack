@@ -207,6 +207,17 @@ class LayerNameVisitor : public boost::static_visitor<std::string>
   }
 
   /**
+   * Return the name of the given layer of type LpPooling as a string.
+   *
+   * @param * Given layer of type LpPooling.
+   * @return The string representation of the layer.
+   */
+  std::string LayerString(LpPooling<>* /*layer*/) const
+  {
+    return "lppooling";
+  }
+
+  /**
    * Return the name of the given layer of type MultiplyConstant as a string.
    *
    * @param * Given layer of type MultiplyConstant.
