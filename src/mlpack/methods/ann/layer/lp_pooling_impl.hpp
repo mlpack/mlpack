@@ -45,7 +45,6 @@ LpPooling<InputDataType, OutputDataType>::LpPooling(
     outputWidth(0),
     outputHeight(0),
     reset(false),
-    deterministic(false),
     offset(0),
     batchSize(0)
 {

@@ -3881,10 +3881,7 @@ BOOST_AUTO_TEST_CASE(LpMaxPoolingTestCase)
   // Calculated using torch.nn.LPPool2d().
   REQUIRE(arma::accu(output) - 77.0 == Approx(0.0).margin(2e-5));
   REQUIRE(output.n_elem == 4);
-
 }
-
-
 
 /**
  * Simple test for Max Pooling layer.

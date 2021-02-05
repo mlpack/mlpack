@@ -38,6 +38,7 @@ class LpPooling
   /**
    * Create the LpPooling object using the specified number of units.
    *
+   * @param norm_type Parameter for type of norm.
    * @param kernelWidth Width of the pooling window.
    * @param kernelHeight Height of the pooling window.
    * @param strideWidth Width of the stride operation.
@@ -45,11 +46,11 @@ class LpPooling
    * @param floor Set to true to use floor method.
    */
   LpPooling(const size_t norm_type,
-              const size_t kernelWidth,
-              const size_t kernelHeight,
-              const size_t strideWidth = 1,
-              const size_t strideHeight = 1,
-              const bool floor = true);
+            const size_t kernelWidth,
+            const size_t kernelHeight,
+            const size_t strideWidth = 1,
+            const size_t strideHeight = 1,
+            const bool floor = true);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -141,11 +142,6 @@ class LpPooling
   //! Modify the value of the rounding operation
   bool& Floor() { return floor; }
 
-  //! Get the value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
   //! Get the size of the weights.
   size_t WeightSize() const { return 0; }
 
@@ -175,7 +171,8 @@ class LpPooling
             arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
             arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
-        output(i, j) = cmath::pow(arma::accu(arma::pow(subInput, norm_type)), 1.0/norm_type);
+        output(i, j) = cmath::pow(arma::accu(arma::pow(subInput,
+            norm_type)), 1.0/norm_type);
       }
     }
   }
@@ -201,7 +198,8 @@ class LpPooling
       {
         const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
             arma::span(j, j + cStep - 1));
-        size_t sum = cmath::pow(arma::accu(arma::pow(inputArea, norm_type)), (norm_type-1) / norm_type);
+        size_t sum = cmath::pow(arma::accu(arma::pow(inputArea, norm_type)),
+            (norm_type-1) / norm_type);
         unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
         unpooledError.fill(error(i / rStep, j / cStep));
         unpooledError %= arma::pow(inputArea, norm_type - 1);
@@ -250,9 +248,6 @@ class LpPooling
 
   //! Locally-stored reset parameter used to initialize the module once.
   bool reset;
-
-  //! If true use maximum a posteriori during the forward pass.
-  bool deterministic;
 
   //! Locally-stored stored rounding offset.
   size_t offset;
