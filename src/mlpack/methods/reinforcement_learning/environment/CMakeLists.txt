@@ -10,6 +10,7 @@ set(SOURCES
   acrobot.hpp
   pendulum.hpp
   reward_clipping.hpp
+  frozen_lake.hpp
 )
 
 # Add directory name to sources.
