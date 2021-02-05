@@ -3853,7 +3853,7 @@ TEST_CASE("LpPoolingTestCase", "[ANNLayerTest]")
   input(3) = input(5) = 315;
   // Output-Size should be 1 x 2.
   // Square output.
-  Lp<> module1(4, 2, 2, 2, 2);
+  LpPooling<> module1(4, 2, 2, 2, 2);
   module1.InputHeight() = 2;
   module1.InputWidth() = 4;
   module1.Forward(input, output);
@@ -3874,7 +3874,7 @@ TEST_CASE("LpPoolingTestCase", "[ANNLayerTest]")
   input(15) = 24;
   // Output-Size should be 2 x 2.
   // Square output.
-  Lp<> module3(2, 2, 2, 2, 2);
+  LpPooling<> module3(2, 2, 2, 2, 2);
   module3.InputHeight() = 4;
   module3.InputWidth() = 4;
   module3.Forward(input, output);
