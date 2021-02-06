@@ -80,6 +80,7 @@ add_executable(mlpack_test
   one_hot_encoding_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+  persistence_test.cpp
   prefixedoutstream_test.cpp
   python_binding_test.cpp
   qdafn_test.cpp
