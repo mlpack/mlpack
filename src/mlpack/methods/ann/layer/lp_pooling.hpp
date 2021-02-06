@@ -115,7 +115,7 @@ class LpPooling
   //! Get the norm_type.
   size_t NormType() const { return norm_type; }
   //! Modify the norm_type.
-  size_t& NormType() const { return norm_type; }
+  size_t& NormType() { return norm_type; }
 
   //! Get the kernel width.
   size_t KernelWidth() const { return kernelWidth; }
