@@ -76,19 +76,16 @@ steps:
 
 # Run tests via ctest.
 - script: |
-  uname -m
-  docker pull arm32v7/ubuntu
-  docker run --rm -t arm32v7/ubuntu uname -m
-  docker pull multiarch/qemu-user-static
-  docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-  docker run --rm -t arm32v7/ubuntu uname -m
-  docker run -v build:/opt/share -it arm32v7/ubuntu
-
-  sudo apt-get update
-  sudo apt-get install -y --allow-unauthenticated cmake
-
-  cd /opt/share && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
-
+    uname -m
+    docker pull arm32v7/ubuntu
+    docker run --rm -t arm32v7/ubuntu uname -m
+    docker pull multiarch/qemu-user-static
+    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    docker run --rm -t arm32v7/ubuntu uname -m
+    docker run -v build:/opt/share -it arm32v7/ubuntu
+    sudo apt-get update
+    sudo apt-get install -y --allow-unauthenticated cmake
+    cd /opt/share && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
   displayName: 'Run tests via ctest'
 
 # Publish test results to Azure Pipelines
