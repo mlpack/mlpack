@@ -171,7 +171,7 @@ class LpPooling
             arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
             arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
-        output(i, j) = cmath::pow(arma::accu(arma::pow(subInput,
+        output(i, j) = pow(arma::accu(arma::pow(subInput,
             norm_type)), 1.0/norm_type);
       }
     }
@@ -198,7 +198,7 @@ class LpPooling
       {
         const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
             arma::span(j, j + cStep - 1));
-        size_t sum = cmath::pow(arma::accu(arma::pow(inputArea, norm_type)),
+        size_t sum = pow(arma::accu(arma::pow(inputArea, norm_type)),
             (norm_type-1) / norm_type);
         unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
         unpooledError.fill(error(i / rStep, j / cStep));

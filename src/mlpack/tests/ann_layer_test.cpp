@@ -3841,7 +3841,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
 /**
  * Simple test for Lp Pooling layer.
  */
-BOOST_AUTO_TEST_CASE(LpMaxPoolingTestCase)
+TEST_CASE("LpMaxPoolingTestCase", "[ANNLayerTest]")
 {
   // For rectangular input to pooling layers.
   arma::mat input = arma::mat(8, 1);
