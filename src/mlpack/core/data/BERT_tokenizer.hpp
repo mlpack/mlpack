@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core.hpp>
 #include <vector>
-#include <mlpack/core/util/to_lower.hpp>
 #include <unordered_map>
 #include <boost/algorithm/string.hpp>
 #include <string>
