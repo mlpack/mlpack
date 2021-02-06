@@ -38,14 +38,14 @@ class LpPooling
   /**
    * Create the LpPooling object using the specified number of units.
    *
-   * @param norm_type Parameter for type of norm.
+   * @param normType Parameter for type of norm.
    * @param kernelWidth Width of the pooling window.
    * @param kernelHeight Height of the pooling window.
    * @param strideWidth Width of the stride operation.
    * @param strideHeight Width of the stride operation.
    * @param floor Set to true to use floor method.
    */
-  LpPooling(const size_t norm_type,
+  LpPooling(const size_t normType,
             const size_t kernelWidth,
             const size_t kernelHeight,
             const size_t strideWidth = 1,
@@ -112,10 +112,10 @@ class LpPooling
   //! Get the output size.
   size_t OutputSize() const { return outSize; }
 
-  //! Get the norm_type.
-  size_t NormType() const { return norm_type; }
-  //! Modify the norm_type.
-  size_t& NormType() { return norm_type; }
+  //! Get the normType.
+  size_t NormType() const { return normType; }
+  //! Modify the normType.
+  size_t& NormType() { return normType; }
 
   //! Get the kernel width.
   size_t KernelWidth() const { return kernelWidth; }
@@ -172,7 +172,7 @@ class LpPooling
             arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
         output(i, j) = pow(arma::accu(arma::pow(subInput,
-            norm_type)), 1.0/norm_type);
+            normType)), 1.0/normType);
       }
     }
   }
@@ -198,11 +198,11 @@ class LpPooling
       {
         const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
             arma::span(j, j + cStep - 1));
-        size_t sum = pow(arma::accu(arma::pow(inputArea, norm_type)),
-            (norm_type-1) / norm_type);
+        size_t sum = pow(arma::accu(arma::pow(inputArea, normType)),
+            (normType-1) / normType);
         unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
         unpooledError.fill(error(i / rStep, j / cStep));
-        unpooledError %= arma::pow(inputArea, norm_type - 1);
+        unpooledError %= arma::pow(inputArea, normType - 1);
         unpooledError /= sum;
         output(arma::span(i, i + rStep - 1 - offset),
             arma::span(j, j + cStep - 1 - offset)) += unpooledError;
@@ -210,8 +210,8 @@ class LpPooling
     }
   }
 
-  //! Locally-stored norm_type.
-  size_t norm_type;
+  //! Locally-stored norm type.
+  size_t normType;
 
   //! Locally-stored width of the pooling window.
   size_t kernelWidth;

@@ -27,12 +27,13 @@ LpPooling<InputDataType, OutputDataType>::LpPooling()
 
 template<typename InputDataType, typename OutputDataType>
 LpPooling<InputDataType, OutputDataType>::LpPooling(
-    const size_t norm_type,
+    const size_t normType,
     const size_t kernelWidth,
     const size_t kernelHeight,
     const size_t strideWidth,
     const size_t strideHeight,
     const bool floor) :
+    normType(normType),
     kernelWidth(kernelWidth),
     kernelHeight(kernelHeight),
     strideWidth(strideWidth),
@@ -121,7 +122,7 @@ void LpPooling<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(norm_type));
+  ar(CEREAL_NVP(normType));
   ar(CEREAL_NVP(kernelWidth));
   ar(CEREAL_NVP(kernelHeight));
   ar(CEREAL_NVP(strideWidth));
