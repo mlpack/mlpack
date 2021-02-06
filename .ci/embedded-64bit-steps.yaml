@@ -88,7 +88,6 @@ steps:
   sudo apt-get install -y --allow-unauthenticated cmake
 
   cd /opt/share && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
-
   displayName: 'Run tests via ctest'
 
 # Publish test results to Azure Pipelines
