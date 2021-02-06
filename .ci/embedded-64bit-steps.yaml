@@ -15,7 +15,7 @@ steps:
 
     sudo apt-get update
 
-    sudo apt-get install -y --allow-unauthenticated g++ xz-utils g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gfortran-aarch64-linux-gnu gcc-arm-linux-gnueabi g++-arm-linux-gnueabi gfortran-arm-linux-gnueabi
+    sudo apt-get install -y --allow-unauthenticated g++ xz-utils g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gfortran-aarch64-linux-gnu
 
     if [ "$(binding)" == "python" ]; then
       export PYBIN=$(which python)
