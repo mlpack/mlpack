@@ -14,204 +14,364 @@
 
 #include "cf_model.hpp"
 
-#include <mlpack/methods/cf/normalization/no_normalization.hpp>
-#include <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
-#include <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
-#include <mlpack/methods/cf/normalization/item_mean_normalization.hpp>
-#include <mlpack/methods/cf/normalization/z_score_normalization.hpp>
+#include "interpolation_policies/average_interpolation.hpp"
+#include "interpolation_policies/regression_interpolation.hpp"
+#include "interpolation_policies/similarity_interpolation.hpp"
 
-using namespace mlpack::cf;
+#include "neighbor_search_policies/cosine_search.hpp"
+#include "neighbor_search_policies/lmetric_search.hpp"
+#include "neighbor_search_policies/pearson_search.hpp"
 
-template <typename DecompositionPolicy,
-          typename NormalizationType>
-void DeleteVisitor::
-operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
+#include "decomposition_policies/batch_svd_method.hpp"
+#include "decomposition_policies/bias_svd_method.hpp"
+#include "decomposition_policies/nmf_method.hpp"
+#include "decomposition_policies/randomized_svd_method.hpp"
+#include "decomposition_policies/regularized_svd_method.hpp"
+#include "decomposition_policies/svd_complete_method.hpp"
+#include "decomposition_policies/svd_incomplete_method.hpp"
+#include "decomposition_policies/svdplusplus_method.hpp"
+
+#include "normalization/no_normalization.hpp"
+#include "normalization/overall_mean_normalization.hpp"
+#include "normalization/user_mean_normalization.hpp"
+#include "normalization/item_mean_normalization.hpp"
+#include "normalization/z_score_normalization.hpp"
+
+namespace mlpack {
+namespace cf {
+
+template<typename NeighborSearchPolicy, typename CFType>
+void PredictHelper(CFType& cf,
+                   const InterpolationTypes interpolationType,
+                   const arma::Mat<size_t>& combinations,
+                   arma::vec& predictions)
 {
-  if (c)
-    delete c;
-}
-
-template <typename DecompositionPolicy,
-          typename NormalizationType>
-void* GetValueVisitor::
-operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
-{
-  if (!c)
-    throw std::runtime_error("no cf model initialized");
-
-  return (void*) c;
-}
-
-template <typename NeighborSearchPolicy,
-          typename InterpolationPolicy>
-PredictVisitor<NeighborSearchPolicy, InterpolationPolicy>::PredictVisitor(
-    const arma::Mat<size_t>& combinations,
-    arma::vec& predictions) :
-    combinations(combinations),
-    predictions(predictions)
-{ }
-
-template <typename NeighborSearchPolicy,
-          typename InterpolationPolicy>
-template <typename DecompositionPolicy,
-          typename NormalizationType>
-void PredictVisitor<NeighborSearchPolicy, InterpolationPolicy>
-        ::operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
-{
-  if (!c)
+  switch (interpolationType)
   {
-    throw std::runtime_error("no cf model initialized");
-    return;
-  }
+    case AVERAGE_INTERPOLATION:
+      cf.template Predict<NeighborSearchPolicy,
+                          AverageInterpolation>(combinations, predictions);
+      break;
 
-  c->template Predict<NeighborSearchPolicy,
-      InterpolationPolicy>(combinations, predictions);
-}
+    case REGRESSION_INTERPOLATION:
+      cf.template Predict<NeighborSearchPolicy,
+                          RegressionInterpolation>(combinations, predictions);
+      break;
 
-template <typename NeighborSearchPolicy,
-          typename InterpolationPolicy>
-RecommendationVisitor<NeighborSearchPolicy, InterpolationPolicy>
-        ::RecommendationVisitor(
-    const size_t numRecs,
-    arma::Mat<size_t>& recommendations,
-    const arma::Col<size_t>& users,
-    const bool usersGiven) :
-    numRecs(numRecs),
-    recommendations(recommendations),
-    users(users),
-    usersGiven(usersGiven)
-{ }
-
-template <typename NeighborSearchPolicy,
-          typename InterpolationPolicy>
-template <typename DecompositionPolicy,
-          typename NormalizationType>
-void RecommendationVisitor<NeighborSearchPolicy, InterpolationPolicy>
-        ::operator()(CFType<DecompositionPolicy, NormalizationType>* c) const
-{
-  if (!c)
-  {
-    throw std::runtime_error("no cf model initialized");
-    return;
-  }
-
-  if (usersGiven)
-    c->template GetRecommendations<NeighborSearchPolicy, InterpolationPolicy>
-        (numRecs, recommendations, users);
-  else
-    c->template GetRecommendations<NeighborSearchPolicy, InterpolationPolicy>
-        (numRecs, recommendations);
-}
-
-CFModel::~CFModel()
-{
-  boost::apply_visitor(DeleteVisitor(), cf);
-}
-
-template<typename DecompositionPolicy,
-         typename MatType>
-void CFModel::Train(const MatType& data,
-                    const size_t numUsersForSimilarity,
-                    const size_t rank,
-                    const size_t maxIterations,
-                    const double minResidue,
-                    const bool mit,
-                    const std::string& normalization)
-{
-  // Delete the current CFType object, if there is one.
-  boost::apply_visitor(DeleteVisitor(), cf);
-
-  // Instantiate a new CFType object.
-  DecompositionPolicy decomposition;
-  if (normalization == "overall_mean")
-  {
-    cf = new CFType<DecompositionPolicy, OverallMeanNormalization>(data,
-        decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
-        mit);
-  }
-  else if (normalization == "item_mean")
-  {
-    cf = new CFType<DecompositionPolicy, ItemMeanNormalization>(data,
-        decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
-        mit);
-  }
-  else if (normalization == "user_mean")
-  {
-    cf = new CFType<DecompositionPolicy, UserMeanNormalization>(data,
-        decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
-        mit);
-  }
-  else if (normalization == "z_score")
-  {
-    cf = new CFType<DecompositionPolicy, ZScoreNormalization>(data,
-        decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
-        mit);
-  }
-  else if (normalization == "none")
-  {
-    cf = new CFType<DecompositionPolicy, NoNormalization>(data,
-        decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
-        mit);
-  }
-  else
-  {
-    throw std::runtime_error("Unsupported normalization algorithm."
-                             " It should be one of none, overall_mean, "
-                             "item_mean, user_mean or z_score");
+    case SIMILARITY_INTERPOLATION:
+      cf.template Predict<NeighborSearchPolicy,
+                          SimilarityInterpolation>(combinations, predictions);
+      break;
   }
 }
 
 //! Make predictions.
-template <typename NeighborSearchPolicy,
-          typename InterpolationPolicy>
-void CFModel::Predict(const arma::Mat<size_t>& combinations,
-                      arma::vec& predictions)
+template<typename DecompositionPolicy, typename NormalizationPolicy>
+void CFWrapper<DecompositionPolicy, NormalizationPolicy>::Predict(
+    const NeighborSearchTypes nsType,
+    const InterpolationTypes interpolationType,
+    const arma::Mat<size_t>& combinations,
+    arma::vec& predictions)
 {
-  PredictVisitor<NeighborSearchPolicy, InterpolationPolicy>
-      predict(combinations, predictions);
-  boost::apply_visitor(predict, cf);
+  switch (nsType)
+  {
+    case COSINE_SEARCH:
+      PredictHelper<CosineSearch>(cf, interpolationType, combinations,
+          predictions);
+      break;
+
+    case EUCLIDEAN_SEARCH:
+      PredictHelper<EuclideanSearch>(cf, interpolationType, combinations,
+          predictions);
+      break;
+
+    case PEARSON_SEARCH:
+      PredictHelper<PearsonSearch>(cf, interpolationType, combinations,
+          predictions);
+      break;
+  }
+}
+
+template<typename NeighborSearchPolicy, typename CFType>
+void GetRecommendationsHelper(
+    CFType& cf,
+    const InterpolationTypes interpolationType,
+    const size_t numRecs,
+    arma::Mat<size_t>& recommendations,
+    const arma::Col<size_t>& users)
+{
+  switch (interpolationType)
+  {
+    case AVERAGE_INTERPOLATION:
+      cf.template GetRecommendations<NeighborSearchPolicy,
+                                     AverageInterpolation>(
+          numRecs, recommendations, users);
+      break;
+
+    case REGRESSION_INTERPOLATION:
+      cf.template GetRecommendations<NeighborSearchPolicy,
+                                     RegressionInterpolation>(
+          numRecs, recommendations, users);
+      break;
+
+    case SIMILARITY_INTERPOLATION:
+      cf.template GetRecommendations<NeighborSearchPolicy,
+                                     SimilarityInterpolation>(
+          numRecs, recommendations, users);
+      break;
+  }
 }
 
 //! Compute recommendations for queried users.
-template<typename NeighborSearchPolicy,
-         typename InterpolationPolicy>
-void CFModel::GetRecommendations(const size_t numRecs,
-                                 arma::Mat<size_t>& recommendations,
-                                 const arma::Col<size_t>& users)
+template<typename DecompositionPolicy, typename NormalizationPolicy>
+void CFWrapper<DecompositionPolicy, NormalizationPolicy>::GetRecommendations(
+    const NeighborSearchTypes nsType,
+    const InterpolationTypes interpolationType,
+    const size_t numRecs,
+    arma::Mat<size_t>& recommendations,
+    const arma::Col<size_t>& users)
 {
-  RecommendationVisitor<NeighborSearchPolicy, InterpolationPolicy>
-      recommendation(numRecs, recommendations, users, true);
-  boost::apply_visitor(recommendation, cf);
+  switch (nsType)
+  {
+    case COSINE_SEARCH:
+      GetRecommendationsHelper<CosineSearch>(cf, interpolationType, numRecs,
+          recommendations, users);
+      break;
+
+    case EUCLIDEAN_SEARCH:
+      GetRecommendationsHelper<EuclideanSearch>(cf, interpolationType, numRecs,
+          recommendations, users);
+      break;
+
+    case PEARSON_SEARCH:
+      GetRecommendationsHelper<PearsonSearch>(cf, interpolationType, numRecs,
+          recommendations, users);
+      break;
+  }
+}
+
+template<typename NeighborSearchPolicy, typename CFType>
+void GetRecommendationsHelper(
+    CFType& cf,
+    const InterpolationTypes interpolationType,
+    const size_t numRecs,
+    arma::Mat<size_t>& recommendations)
+{
+  switch (interpolationType)
+  {
+    case AVERAGE_INTERPOLATION:
+      cf.template GetRecommendations<NeighborSearchPolicy,
+                                     AverageInterpolation>(
+          numRecs, recommendations);
+      break;
+
+    case REGRESSION_INTERPOLATION:
+      cf.template GetRecommendations<NeighborSearchPolicy,
+                                     RegressionInterpolation>(
+          numRecs, recommendations);
+      break;
+
+    case SIMILARITY_INTERPOLATION:
+      cf.template GetRecommendations<NeighborSearchPolicy,
+                                     SimilarityInterpolation>(
+          numRecs, recommendations);
+      break;
+  }
 }
 
 //! Compute recommendations for all users.
-template<typename NeighborSearchPolicy,
-         typename InterpolationPolicy>
-void CFModel::GetRecommendations(const size_t numRecs,
-                                 arma::Mat<size_t>& recommendations)
+template<typename DecompositionPolicy, typename NormalizationPolicy>
+void CFWrapper<DecompositionPolicy, NormalizationPolicy>::GetRecommendations(
+    const NeighborSearchTypes nsType,
+    const InterpolationTypes interpolationType,
+    const size_t numRecs,
+    arma::Mat<size_t>& recommendations)
 {
-  arma::Col<size_t> users;
-  RecommendationVisitor<NeighborSearchPolicy, InterpolationPolicy>
-      recommendation(numRecs, recommendations, users, false);
-  boost::apply_visitor(recommendation, cf);
+  switch (nsType)
+  {
+    case COSINE_SEARCH:
+      GetRecommendationsHelper<CosineSearch>(cf, interpolationType, numRecs,
+          recommendations);
+      break;
+
+    case EUCLIDEAN_SEARCH:
+      GetRecommendationsHelper<EuclideanSearch>(cf, interpolationType, numRecs,
+          recommendations);
+      break;
+
+    case PEARSON_SEARCH:
+      GetRecommendationsHelper<PearsonSearch>(cf, interpolationType, numRecs,
+          recommendations);
+      break;
+  }
 }
 
-template <typename DecompositionPolicy,
-          typename NormalizationType>
-const CFType<DecompositionPolicy, NormalizationType>* CFModel::CFPtr() const
+template<typename DecompositionPolicy>
+CFWrapperBase* InitializeModelHelper(
+    CFModel::NormalizationTypes normalizationType)
 {
-  void* pointer = boost::apply_visitor(GetValueVisitor(), cf);
-  return (CFType<DecompositionPolicy, NormalizationType>*) pointer;
+  switch (normalizationType)
+  {
+    case CFModel::NO_NORMALIZATION:
+      return new CFWrapper<DecompositionPolicy, NoNormalization>();
+
+    case CFModel::ITEM_MEAN_NORMALIZATION:
+      return new CFWrapper<DecompositionPolicy, ItemMeanNormalization>();
+
+    case CFModel::USER_MEAN_NORMALIZATION:
+      return new CFWrapper<DecompositionPolicy, UserMeanNormalization>();
+
+    case CFModel::OVERALL_MEAN_NORMALIZATION:
+      return new CFWrapper<DecompositionPolicy, OverallMeanNormalization>();
+
+    case CFModel::Z_SCORE_NORMALIZATION:
+      return new CFWrapper<DecompositionPolicy, ZScoreNormalization>();
+  }
+
+  // This shouldn't ever happen.
+  return NULL;
+}
+
+inline CFWrapperBase* InitializeModel(
+    CFModel::DecompositionTypes decompositionType,
+    CFModel::NormalizationTypes normalizationType)
+{
+  switch (decompositionType)
+  {
+    case CFModel::NMF:
+      return InitializeModelHelper<NMFPolicy>(normalizationType);
+
+    case CFModel::BATCH_SVD:
+      return InitializeModelHelper<BatchSVDPolicy>(normalizationType);
+
+    case CFModel::RANDOMIZED_SVD:
+      return InitializeModelHelper<RandomizedSVDPolicy>(normalizationType);
+
+    case CFModel::REG_SVD:
+      return InitializeModelHelper<RegSVDPolicy>(normalizationType);
+
+    case CFModel::SVD_COMPLETE:
+      return InitializeModelHelper<SVDCompletePolicy>(normalizationType);
+
+    case CFModel::SVD_INCOMPLETE:
+      return InitializeModelHelper<SVDIncompletePolicy>(normalizationType);
+
+    case CFModel::BIAS_SVD:
+      return InitializeModelHelper<BiasSVDPolicy>(normalizationType);
+
+    case CFModel::SVD_PLUS_PLUS:
+      return InitializeModelHelper<SVDPlusPlusPolicy>(normalizationType);
+  }
+
+  // This shouldn't ever happen.
+  return NULL;
+};
+
+template<typename DecompositionPolicy, typename Archive>
+void SerializeHelper(Archive& ar,
+                     CFWrapperBase* cf,
+                     CFModel::NormalizationTypes normalizationType)
+{
+  switch (normalizationType)
+  {
+    case CFModel::NO_NORMALIZATION:
+      {
+        CFWrapper<DecompositionPolicy, NoNormalization>& typedModel =
+            dynamic_cast<CFWrapper<DecompositionPolicy,
+                                   NoNormalization>&>(*cf);
+        ar(CEREAL_NVP(typedModel));
+        break;
+      }
+
+    case CFModel::ITEM_MEAN_NORMALIZATION:
+      {
+        CFWrapper<DecompositionPolicy, ItemMeanNormalization>& typedModel =
+            dynamic_cast<CFWrapper<DecompositionPolicy,
+                                   ItemMeanNormalization>&>(*cf);
+        ar(CEREAL_NVP(typedModel));
+        break;
+      }
+
+    case CFModel::USER_MEAN_NORMALIZATION:
+      {
+        CFWrapper<DecompositionPolicy, UserMeanNormalization>& typedModel =
+            dynamic_cast<CFWrapper<DecompositionPolicy,
+                                   UserMeanNormalization>&>(*cf);
+        ar(CEREAL_NVP(typedModel));
+        break;
+      }
+
+    case CFModel::OVERALL_MEAN_NORMALIZATION:
+      {
+        CFWrapper<DecompositionPolicy, OverallMeanNormalization>& typedModel =
+            dynamic_cast<CFWrapper<DecompositionPolicy,
+                                   OverallMeanNormalization>&>(*cf);
+        ar(CEREAL_NVP(typedModel));
+        break;
+      }
+
+    case CFModel::Z_SCORE_NORMALIZATION:
+      {
+        CFWrapper<DecompositionPolicy, ZScoreNormalization>& typedModel =
+            dynamic_cast<CFWrapper<DecompositionPolicy,
+                                   ZScoreNormalization>&>(*cf);
+        ar(CEREAL_NVP(typedModel));
+        break;
+      }
+  }
 }
 
 template<typename Archive>
 void CFModel::serialize(Archive& ar, const uint32_t /* version */)
 {
+  ar(CEREAL_NVP(decompositionType));
+  ar(CEREAL_NVP(normalizationType));
+
   // This should never happen, but just in case, be clean with memory.
   if (cereal::is_loading<Archive>())
-    boost::apply_visitor(DeleteVisitor(), cf);
+  {
+    delete cf;
+    cf = InitializeModel(decompositionType, normalizationType);
+  }
 
-  ar(CEREAL_VARIANT_POINTER(cf));
+  // Avoid polymorphic serialization by determining the type directly.
+  switch (decompositionType)
+  {
+    case NMF:
+      SerializeHelper<NMFPolicy>(ar, cf, normalizationType);
+      break;
+
+    case BATCH_SVD:
+      SerializeHelper<BatchSVDPolicy>(ar, cf, normalizationType);
+      break;
+
+    case RANDOMIZED_SVD:
+      SerializeHelper<RandomizedSVDPolicy>(ar, cf, normalizationType);
+      break;
+
+    case REG_SVD:
+      SerializeHelper<RegSVDPolicy>(ar, cf, normalizationType);
+      break;
+
+    case SVD_COMPLETE:
+      SerializeHelper<SVDCompletePolicy>(ar, cf, normalizationType);
+      break;
+
+    case SVD_INCOMPLETE:
+      SerializeHelper<SVDIncompletePolicy>(ar, cf, normalizationType);
+      break;
+
+    case BIAS_SVD:
+      SerializeHelper<BiasSVDPolicy>(ar, cf, normalizationType);
+      break;
+
+    case SVD_PLUS_PLUS:
+      SerializeHelper<SVDPlusPlusPolicy>(ar, cf, normalizationType);
+      break;
+  }
 }
+
+} // namespace cf
+} // namespace mlpack
 
 #endif

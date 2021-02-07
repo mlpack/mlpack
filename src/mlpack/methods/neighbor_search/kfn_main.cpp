@@ -237,14 +237,14 @@ static void mlpackMain()
 
     kfn->TreeType() = tree;
     kfn->RandomBasis() = randomBasis;
+    kfn->LeafSize() = size_t(lsInt);
 
     Log::Info << "Using reference data from "
         << IO::GetPrintableParam<arma::mat>("reference") << "." << endl;
 
     arma::mat referenceSet = std::move(IO::GetParam<arma::mat>("reference"));
 
-    kfn->BuildModel(std::move(referenceSet), size_t(lsInt), searchMode,
-        epsilon);
+    kfn->BuildModel(std::move(referenceSet), searchMode, epsilon);
   }
   else
   {

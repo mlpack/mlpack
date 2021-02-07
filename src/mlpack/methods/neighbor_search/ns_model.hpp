@@ -4,8 +4,9 @@
  *
  * This is a model for nearest or furthest neighbor search.  It is useful in
  * that it provides an easy way to serialize a model, abstracts away the
- * different types of trees, and also reflects the NeighborSearch API and
- * automatically directs to the right tree type.
+ * different types of trees, and also (roughly) reflects the NeighborSearch API
+ * and automatically directs to the right tree type.  It is meant to be used by
+ * the knn and kfn bindings.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -20,218 +21,302 @@
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/spill_tree.hpp>
 #include <mlpack/core/tree/octree.hpp>
-#include <boost/variant.hpp>
 #include "neighbor_search.hpp"
 
 namespace mlpack {
 namespace neighbor {
 
 /**
- * Alias template for euclidean neighbor search.
+ * NSWrapperBase is a base wrapper class for holding all NeighborSearch types
+ * supported by NSModel.  All NeighborSearch type wrappers inherit from this
+ * class, allowing a simple interface via inheritance for all the different
+ * types we want to support.
+ */
+class NSWrapperBase
+{
+ public:
+  //! Create the NSWrapperBase object.  The base class does not hold anything,
+  //! so this constructor does not do anything.
+  NSWrapperBase() { }
+
+  //! Create a new NSWrapperBase that is the same as this one.  This function
+  //! will properly handle polymorphism.
+  virtual NSWrapperBase* Clone() const = 0;
+
+  //! Destruct the NSWrapperBase (nothing to do).
+  virtual ~NSWrapperBase() { };
+
+  //! Return a reference to the dataset.
+  virtual const arma::mat& Dataset() const = 0;
+
+  //! Get the search mode.
+  virtual NeighborSearchMode SearchMode() const = 0;
+  //! Modify the search modem
+  virtual NeighborSearchMode& SearchMode() = 0;
+
+  //! Get the approximation parameter epsilon.
+  virtual double Epsilon() const = 0;
+  //! Modify the approximation parameter epsilon.
+  virtual double& Epsilon() = 0;
+
+  //! Train the NeighborSearch model with the given parameters.
+  virtual void Train(arma::mat&& referenceSet,
+                     const size_t leafSize,
+                     const double tau,
+                     const double rho) = 0;
+
+  //! Perform bichromatic neighbor search (i.e. search with a separate query
+  //! set).
+  virtual void Search(arma::mat&& querySet,
+                      const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances,
+                      const size_t leafSize,
+                      const double rho) = 0;
+
+  //! Perform monochromatic neighbor search (i.e. use the reference set as the
+  //! query set).
+  virtual void Search(const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances) = 0;
+};
+
+/**
+ * NSWrapper is a wrapper class for most NeighborSearch types.
  */
 template<typename SortPolicy,
          template<typename TreeMetricType,
                   typename TreeStatType,
-                  typename TreeMatType> class TreeType>
-using NSType = NeighborSearch<SortPolicy,
-                              metric::EuclideanDistance,
-                              arma::mat,
-                              TreeType,
-                              TreeType<metric::EuclideanDistance,
-                                  NeighborSearchStat<SortPolicy>,
-                                  arma::mat>::template DualTreeTraverser>;
-
-/**
- * MonoSearchVisitor executes a monochromatic neighbor search on the given
- * NSType. We don't make any difference for different instantiations of NSType.
- */
-class MonoSearchVisitor : public boost::static_visitor<void>
+                  typename TreeMatType> class TreeType,
+         template<typename RuleType> class DualTreeTraversalType =
+             TreeType<metric::EuclideanDistance,
+                      NeighborSearchStat<SortPolicy>,
+                      arma::mat>::template DualTreeTraverser,
+         template<typename RuleType> class SingleTreeTraversalType =
+             TreeType<metric::EuclideanDistance,
+                      NeighborSearchStat<SortPolicy>,
+                      arma::mat>::template SingleTreeTraverser>
+class NSWrapper : public NSWrapperBase
 {
- private:
-  //! Number of neighbors to search for.
-  const size_t k;
-  //! Result matrix for neighbors.
-  arma::Mat<size_t>& neighbors;
-  //! Result matrix for distances.
-  arma::mat& distances;
-
  public:
-  //! Perform monochromatic nearest neighbor search.
-  template<typename NSType>
-  void operator()(NSType* ns) const;
+  //! Construct the NSWrapper object, initializing the internally-held
+  //! NeighborSearch object.
+  NSWrapper(const NeighborSearchMode searchMode,
+            const double epsilon) :
+      ns(searchMode, epsilon)
+  {
+    // Nothing else to do.
+  }
 
-  //! Construct the MonoSearchVisitor object with the given parameters.
-  MonoSearchVisitor(const size_t k,
-                    arma::Mat<size_t>& neighbors,
-                    arma::mat& distances) :
-      k(k),
-      neighbors(neighbors),
-      distances(distances)
-  {};
+  //! Delete the NSWrapper object.
+  virtual ~NSWrapper() { }
+
+  //! Create a copy of this NSWrapper object.  This correctly handles
+  //! polymorphism.
+  virtual NSWrapper* Clone() const { return new NSWrapper(*this); }
+
+  //! Get a reference to the reference set.
+  const arma::mat& Dataset() const { return ns.ReferenceSet(); }
+
+  //! Get the search mode.
+  NeighborSearchMode SearchMode() const { return ns.SearchMode(); }
+  //! Modify the search mode.
+  NeighborSearchMode& SearchMode() { return ns.SearchMode(); }
+
+  //! Get epsilon, the approximation parameter.
+  double Epsilon() const { return ns.Epsilon(); }
+  //! Modify epsilon, the approximation parameter.
+  double& Epsilon() { return ns.Epsilon(); }
+
+  //! Train the model with the given options.  For NSWrapper, we ignore the
+  //! extra parameters.
+  virtual void Train(arma::mat&& referenceSet,
+                     const size_t /* leafSize */,
+                     const double /* tau */,
+                     const double /* rho */);
+
+  //! Perform bichromatic neighbor search (i.e. search with a separate query
+  //! set).  For NSWrapper, we ignore the extra parameters.
+  virtual void Search(arma::mat&& querySet,
+                      const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances,
+                      const size_t /* leafSize */,
+                      const double /* rho */);
+
+  //! Perform monochromatic neighbor search (i.e. use the reference set as the
+  //! query set).
+  virtual void Search(const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances);
+
+  //! Serialize the NeighborSearch model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(ns));
+  }
+
+ protected:
+  // Convenience typedef for the neighbor search type held by this class.
+  typedef NeighborSearch<SortPolicy,
+                         metric::EuclideanDistance,
+                         arma::mat,
+                         TreeType,
+                         DualTreeTraversalType,
+                         SingleTreeTraversalType> NSType;
+
+  //! The instantiated NeighborSearch object that we are wrapping.
+  NSType ns;
 };
 
 /**
- * BiSearchVisitor executes a bichromatic neighbor search on the given NSType.
- * We use template specialization to differentiate those tree types that
- * accept leafSize as a parameter. In these cases, before doing neighbor search,
- * a query tree with proper leafSize is built from the querySet.
+ * LeafSizeNSWrapper wraps any NeighborSearch types that take a leaf size for
+ * tree construction.  The implementations of Train() and Search() take the leaf
+ * size into account.
+ */
+template<typename SortPolicy,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename RuleType> class DualTreeTraversalType =
+             TreeType<metric::EuclideanDistance,
+                      NeighborSearchStat<SortPolicy>,
+                      arma::mat>::template DualTreeTraverser,
+         template<typename RuleType> class SingleTreeTraversalType =
+             TreeType<metric::EuclideanDistance,
+                      NeighborSearchStat<SortPolicy>,
+                      arma::mat>::template SingleTreeTraverser>
+class LeafSizeNSWrapper :
+    public NSWrapper<SortPolicy,
+                     TreeType,
+                     DualTreeTraversalType,
+                     SingleTreeTraversalType>
+{
+ public:
+  //! Construct the LeafSizeNSWrapper by delegating to the NSWrapper
+  //! constructor.
+  LeafSizeNSWrapper(const NeighborSearchMode searchMode,
+                    const double epsilon) :
+      NSWrapper<SortPolicy,
+                TreeType,
+                DualTreeTraversalType,
+                SingleTreeTraversalType>(searchMode, epsilon)
+  {
+    // Nothing to do.
+  }
+
+  //! Delete the LeafSizeNSWrapper.
+  virtual ~LeafSizeNSWrapper() { }
+
+  //! Return a copy of the LeafSizeNSWrapper.
+  virtual LeafSizeNSWrapper* Clone() const
+  {
+    return new LeafSizeNSWrapper(*this);
+  }
+
+  //! Train a model with the given parameters.  This overload uses leafSize but
+  //! ignores the other parameters.
+  virtual void Train(arma::mat&& referenceSet,
+                     const size_t leafSize,
+                     const double /* tau */,
+                     const double /* rho */);
+
+  //! Perform bichromatic search (e.g. search with a separate query set).  This
+  //! overload uses the leaf size, but ignores the other parameters.
+  virtual void Search(arma::mat&& querySet,
+                      const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances,
+                      const size_t leafSize,
+                      const double /* rho */);
+
+  //! Serialize the NeighborSearch model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(ns));
+  }
+
+ protected:
+  using NSWrapper<SortPolicy,
+                  TreeType,
+                  DualTreeTraversalType,
+                  SingleTreeTraversalType>::ns;
+};
+
+/**
+ * The SpillNSWrapper class wraps the NeighborSearch class when the spill tree
+ * is used.
  */
 template<typename SortPolicy>
-class BiSearchVisitor : public boost::static_visitor<void>
-{
- private:
-  //! The query set for the bichromatic search.
-  const arma::mat& querySet;
-  //! The number of neighbors to search for.
-  const size_t k;
-  //! The result matrix for neighbors.
-  arma::Mat<size_t>& neighbors;
-  //! The result matrix for distances.
-  arma::mat& distances;
-  //! The number of points in a leaf (for BinarySpaceTrees).
-  const size_t leafSize;
-  //! Overlapping size (for spill trees).
-  const double tau;
-  //! Balance threshold (for spill trees).
-  const double rho;
-
-  //! Bichromatic neighbor search on the given NSType considering the leafSize.
-  template<typename NSType>
-  void SearchLeaf(NSType* ns) const;
-
- public:
-  //! Alias template necessary for visual c++ compiler.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using NSTypeT = NSType<SortPolicy, TreeType>;
-
-  //! Default Bichromatic neighbor search on the given NSType instance.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(NSTypeT<TreeType>* ns) const;
-
-  //! Bichromatic neighbor search on the given NSType specialized for KDTrees.
-  void operator()(NSTypeT<tree::KDTree>* ns) const;
-
-  //! Bichromatic neighbor search on the given NSType specialized for BallTrees.
-  void operator()(NSTypeT<tree::BallTree>* ns) const;
-
-  //! Bichromatic neighbor search specialized for SPTrees.
-  void operator()(SpillKNN* ns) const;
-
-  //! Bichromatic neighbor search specialized for octrees.
-  void operator()(NSTypeT<tree::Octree>* ns) const;
-
-  //! Construct the BiSearchVisitor.
-  BiSearchVisitor(const arma::mat& querySet,
-                  const size_t k,
-                  arma::Mat<size_t>& neighbors,
-                  arma::mat& distances,
-                  const size_t leafSize,
-                  const double tau,
-                  const double rho);
-};
-
-/**
- * TrainVisitor sets the reference set to a new reference set on the given
- * NSType. We use template specialization to differentiate those tree types that
- * accept leafSize as a parameter. In these cases, a reference tree with proper
- * leafSize is built from the referenceSet.
- */
-template<typename SortPolicy>
-class TrainVisitor : public boost::static_visitor<void>
-{
- private:
-  //! The reference set to use for training.
-  arma::mat&& referenceSet;
-  //! The leaf size, used only by BinarySpaceTree.
-  size_t leafSize;
-  //! Overlapping size (for spill trees).
-  const double tau;
-  //! Balance threshold (for spill trees).
-  const double rho;
-
-  //! Train on the given NSType considering the leafSize.
-  template<typename NSType>
-  void TrainLeaf(NSType* ns) const;
-
- public:
-  //! Alias template necessary for visual c++ compiler.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using NSTypeT = NSType<SortPolicy, TreeType>;
-
-  //! Default Train on the given NSType instance.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(NSTypeT<TreeType>* ns) const;
-
-  //! Train on the given NSType specialized for KDTrees.
-  void operator()(NSTypeT<tree::KDTree>* ns) const;
-
-  //! Train on the given NSType specialized for BallTrees.
-  void operator()(NSTypeT<tree::BallTree>* ns) const;
-
-  //! Train specialized for SPTrees.
-  void operator()(SpillKNN* ns) const;
-
-  //! Train specialized for octrees.
-  void operator()(NSTypeT<tree::Octree>* ns) const;
-
-  //! Construct the TrainVisitor object with the given reference set, leafSize
-  //! for BinarySpaceTrees, and tau and rho for spill trees.
-  TrainVisitor(arma::mat&& referenceSet,
-               const size_t leafSize,
-               const double tau,
-               const double rho);
-};
-
-/**
- * SearchModeVisitor exposes the SearchMode() method of the given NSType.
- */
-class SearchModeVisitor : public boost::static_visitor<NeighborSearchMode&>
+class SpillNSWrapper :
+    public NSWrapper<
+        SortPolicy,
+        tree::SPTree,
+        tree::SPTree<metric::EuclideanDistance,
+                     NeighborSearchStat<SortPolicy>,
+                     arma::mat>::template DefeatistDualTreeTraverser,
+        tree::SPTree<metric::EuclideanDistance,
+                     NeighborSearchStat<SortPolicy>,
+                     arma::mat>::template DefeatistSingleTreeTraverser>
 {
  public:
-  //! Return the search mode.
-  template<typename NSType>
-  NeighborSearchMode& operator()(NSType* ns) const;
-};
+  //! Construct the SpillNSWrapper.
+  SpillNSWrapper(const NeighborSearchMode searchMode,
+                 const double epsilon) :
+      NSWrapper<
+          SortPolicy,
+          tree::SPTree,
+          tree::SPTree<metric::EuclideanDistance,
+                       NeighborSearchStat<SortPolicy>,
+                       arma::mat>::template DefeatistDualTreeTraverser,
+          tree::SPTree<metric::EuclideanDistance,
+                       NeighborSearchStat<SortPolicy>,
+                       arma::mat>::template DefeatistSingleTreeTraverser>(
+          searchMode, epsilon)
+  {
+    // Nothing to do.
+  }
 
-/**
- * EpsilonVisitor exposes the Epsilon method of the given NSType.
- */
-class EpsilonVisitor : public boost::static_visitor<double&>
-{
- public:
-  //! Return epsilon, the approximation parameter.
-  template<typename NSType>
-  double& operator()(NSType *ns) const;
-};
+  //! Destruct the SpillNSWrapper.
+  virtual ~SpillNSWrapper() { }
 
-/**
- * ReferenceSetVisitor exposes the referenceSet of the given NSType.
- */
-class ReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
-{
- public:
-  //! Return the reference set.
-  template<typename NSType>
-  const arma::mat& operator()(NSType *ns) const;
-};
+  //! Return a copy of the SpillNSWrapper.
+  virtual SpillNSWrapper* Clone() const { return new SpillNSWrapper(*this); }
 
-/**
- * DeleteVisitor deletes the given NSType instance.
- */
-class DeleteVisitor : public boost::static_visitor<void>
-{
- public:
-  //! Delete the NSType object.
-  template<typename NSType>
-  void operator()(NSType *ns) const;
+  //! Train the model using the given parameters.
+  virtual void Train(arma::mat&& referenceSet,
+                     const size_t leafSize,
+                     const double tau,
+                     const double rho);
+
+  //! Perform bichromatic search (i.e. search with a different query set) using
+  //! the given parameters.
+  virtual void Search(arma::mat&& querySet,
+                      const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances,
+                      const size_t leafSize,
+                      const double rho);
+
+  //! Serialize the NeighborSearch model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(ns));
+  }
+
+ protected:
+  using NSWrapper<
+      SortPolicy,
+      tree::SPTree,
+      tree::SPTree<metric::EuclideanDistance,
+                   NeighborSearchStat<SortPolicy>,
+                   arma::mat>::template DefeatistDualTreeTraverser,
+      tree::SPTree<metric::EuclideanDistance,
+                   NeighborSearchStat<SortPolicy>,
+                   arma::mat>::template DefeatistSingleTreeTraverser>::ns;
 };
 
 /**
@@ -272,39 +357,20 @@ class NSModel
   //! Tree type considered for neighbor search.
   TreeTypes treeType;
 
-  //! For tree types that accept the maxLeafSize parameter.
-  size_t leafSize;
-
-  //! Overlapping size (for spill trees).
-  double tau;
-  //! Balance threshold (for spill trees).
-  double rho;
-
   //! If true, random projections are used.
   bool randomBasis;
   //! This is the random projection matrix; only used if randomBasis is true.
   arma::mat q;
 
+  size_t leafSize;
+  double tau;
+  double rho;
+
   /**
-   * nSearch holds an instance of the NeigborSearch class for the current
+   * nSearch holds an instance of the NeighborSearch class for the current
    * treeType. It is initialized every time BuildModel is executed.
-   * We access to the contained value through the visitor classes defined above.
    */
-  boost::variant<NSType<SortPolicy, tree::KDTree>*,
-                 NSType<SortPolicy, tree::StandardCoverTree>*,
-                 NSType<SortPolicy, tree::RTree>*,
-                 NSType<SortPolicy, tree::RStarTree>*,
-                 NSType<SortPolicy, tree::BallTree>*,
-                 NSType<SortPolicy, tree::XTree>*,
-                 NSType<SortPolicy, tree::HilbertRTree>*,
-                 NSType<SortPolicy, tree::RPlusTree>*,
-                 NSType<SortPolicy, tree::RPlusPlusTree>*,
-                 NSType<SortPolicy, tree::VPTree>*,
-                 NSType<SortPolicy, tree::RPTree>*,
-                 NSType<SortPolicy, tree::MaxRPTree>*,
-                 SpillKNN*,
-                 NSType<SortPolicy, tree::UBTree>*,
-                 NSType<SortPolicy, tree::Octree>*> nSearch;
+  NSWrapperBase* nSearch;
 
  public:
   /**
@@ -359,21 +425,21 @@ class NSModel
   NeighborSearchMode SearchMode() const;
   NeighborSearchMode& SearchMode();
 
-  //! Expose Epsilon.
-  double Epsilon() const;
-  double& Epsilon();
-
-  //! Expose leafSize.
+  //! Expose LeafSize.
   size_t LeafSize() const { return leafSize; }
   size_t& LeafSize() { return leafSize; }
 
-  //! Expose tau.
+  //! Expose Tau.
   double Tau() const { return tau; }
   double& Tau() { return tau; }
 
-  //! Expose rho.
+  //! Expose Rho.
   double Rho() const { return rho; }
   double& Rho() { return rho; }
+
+  //! Expose Epsilon.
+  double Epsilon() const;
+  double& Epsilon();
 
   //! Expose treeType.
   TreeTypes TreeType() const { return treeType; }
@@ -383,9 +449,12 @@ class NSModel
   bool RandomBasis() const { return randomBasis; }
   bool& RandomBasis() { return randomBasis; }
 
+  //! Initialize the model type.  (This does not perform any training.)
+  void InitializeModel(const NeighborSearchMode searchMode,
+                       const double epsilon);
+
   //! Build the reference tree.
   void BuildModel(arma::mat&& referenceSet,
-                  const size_t leafSize,
                   const NeighborSearchMode searchMode,
                   const double epsilon = 0);
 

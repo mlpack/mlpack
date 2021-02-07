@@ -23,6 +23,7 @@ set(SOURCES
   # model
   ra_model.hpp
   ra_model_impl.hpp
+  ra_model.cpp
 )
 
 # add directory name to sources

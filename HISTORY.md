@@ -19,10 +19,13 @@
   * HMM: add functions to calculate likelihood for data stream with/without
     pre-calculated emission probability (#2142).
 
-  * Replace Boost serialization library by Cereal (#2458).
+  * Replace Boost serialization library with Cereal (#2458).
 
   * Add `PYTHON_INSTALL_PREFIX` CMake option to specify installation root for
     Python bindings (#2797).
+
+  * Removed `boost::visitor` from model classes for `knn`, `kfn`, `cf`,
+    `range_search`, `krann`, and `kde` bindings (#2803).
 
   * Add k-means++ initialization strategy (#2813).
 
