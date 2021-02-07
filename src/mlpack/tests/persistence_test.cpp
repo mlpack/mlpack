@@ -52,7 +52,7 @@ TEST_CASE("PredictMethodTestVector2", "[PersistenceModelTest]")
   // First test prediction is equal to the last value of train.
   REQUIRE(predictions(0) - train(9) == Approx(0.0).margin(1e-5));
   // Looping for remaining values.
-  for(int i = 1; i < 10; i++)
+  for(int i = 1; i < 5; i++)
   {
     REQUIRE(predictions(i) - test(i-1) == Approx(0.0).margin(1e-5));
   }
@@ -87,12 +87,12 @@ TEST_CASE("PredictMethodTestMatrix2", "[PersistenceModelTest]")
   arma::rowvec predictions(5);
 
   PersistenceModel model;
-  model.Predict(test, predictions);
+  model.Predict(train, test, predictions);
   
   // First test prediction is equal to the last value of train.
   REQUIRE(predictions(0) - train(9, 2) == Approx(0.0).margin(1e-5));
   // Looping for remaining values.
-  for(int i = 1; i < 10; i++)
+  for(int i = 1; i < 5; i++)
   {
     REQUIRE(predictions(i) - test(i-1, 2) == Approx(0.0).margin(1e-5));
   }
