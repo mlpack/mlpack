@@ -24,18 +24,14 @@ PersistenceModel::PersistenceModel()
   // Nothing to do here.
 }
 
-template<typename InputType,
-         typename = std::enable_if_t<arma::is_Row<InputType>::value ||
-             arma::is_Col<InputType>::value>>
+template<typename InputType, typename>
 void PersistenceModel::Predict(const InputType& input,
     InputType& predictions)
 {
     predictions = Lag(input, 1);
 }
 
-template<typename InputType,
-         typename = std::enable_if_t<arma::is_Row<InputType>::value ||
-             arma::is_Col<InputType>::value>>
+template<typename InputType, typename>
 void PersistenceModel::Predict(const InputType& train, const InputType& test,
              InputType& predictions)
 {
