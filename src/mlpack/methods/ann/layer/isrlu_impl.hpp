@@ -1,6 +1,6 @@
 /**
  * @file methods/ann/layer/isrlu_impl.hpp
- * @author Gaurav Singh
+ * @author Abhinav Anand
  *
  * Implementation of the ISRLU activation function as described by Jonathan T. Barron.
  *
