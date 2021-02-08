@@ -559,6 +559,54 @@ void CheckCELUDerivativeCorrect(const arma::colvec input,
 }
 
 /**
+ * Implementation of the ISRLU activation function test. The function is
+ * implemented as ISRLU layer in the file isrlu.hpp.
+ *
+ * @param input Input data used for evaluating the ISRLU activation function.
+ * @param target Target data used to evaluate the ISRLU activation.
+ */
+void CheckISRLUActivationCorrect(const arma::colvec input,
+                                const arma::colvec target)
+{
+  // Initialize ISRLU object with alpha = 1.0.
+  ISRLU<> lrf(1.0);
+
+  // Test the activation function using the entire vector as input.
+  arma::colvec activations;
+  lrf.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Implementation of the ISRLU activation function derivative test. The function
+ * is implemented as ISRLU layer in the file isrlu.hpp.
+ *
+ * @param input Input data used for evaluating the ISRLU activation function.
+ * @param target Target data used to evaluate the ISRLU activation.
+ */
+void CheckISRLUDerivativeCorrect(const arma::colvec input,
+                                const arma::colvec target)
+{
+  // Initialize ISRLU object with alpha = 1.0.
+  ISRLU<> lrf(1.0);
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives, activations;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  lrf.Forward(input, activations);
+  lrf.Backward(activations, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
+  {
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
  * Implementation of the Softmin activation function test. The function is
  * implemented as Softmin layer in the file softmin.hpp.
  *
@@ -989,6 +1037,22 @@ TEST_CASE("CELUFunctionTest", "[ActivationFunctionsTest]")
 
   CheckCELUActivationCorrect(activationData, desiredActivations);
   CheckCELUDerivativeCorrect(desiredActivations, desiredDerivatives);
+}
+
+/**
+ * Basic test of the ISRLU activation function.
+ */
+TEST_CASE("ISRLUFunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec desiredActivations("-0.89442719 3.2 4.5 \
+                                         -0.99995020 1 -0.70710678 2 0");
+
+  const arma::colvec desiredDerivatives("0.74535599 1 1 \
+                                         0.70712438 1 \
+                                         0.81649658 1 1");
+
+  CheckISRLUActivationCorrect(activationData, desiredActivations);
+  CheckISRLUDerivativeCorrect(desiredActivations, desiredDerivatives);
 }
 
 /**
