@@ -220,6 +220,7 @@ class AdaptiveMeanPooling;
 
 using MoreTypes = boost::variant<
         Linear3D<arma::mat, arma::mat, NoRegularizer>*,
+        LpPooling<arma::mat, arma::mat>*,
         Glimpse<arma::mat, arma::mat>*,
         Highway<arma::mat, arma::mat>*,
         MultiheadAttention<arma::mat, arma::mat, NoRegularizer>*,
@@ -283,7 +284,6 @@ using LayerTypes = boost::variant<
     LSTM<arma::mat, arma::mat>*,
     MaxPooling<arma::mat, arma::mat>*,
     MeanPooling<arma::mat, arma::mat>*,
-    LpPooling<arma::mat, arma::mat>*,
     MiniBatchDiscrimination<arma::mat, arma::mat>*,
     MultiplyConstant<arma::mat, arma::mat>*,
     MultiplyMerge<arma::mat, arma::mat>*,
