@@ -1047,9 +1047,9 @@ TEST_CASE("ISRLUFunctionTest", "[ActivationFunctionsTest]")
   const arma::colvec desiredActivations("-0.89442719 3.2 4.5 \
                                          -0.99995020 1 -0.70710678 2 0");
 
-  const arma::colvec desiredDerivatives("0.74535599 1 1 \
-                                         0.70712438 1 \
-                                         0.81649658 1 1");
+  const arma::colvec desiredDerivatives("0.41408666 1 1 \
+                                         0.35357980 1 \
+                                         0.54433105 1 1");
 
   CheckISRLUActivationCorrect(activationData, desiredActivations);
   CheckISRLUDerivativeCorrect(desiredActivations, desiredDerivatives);
