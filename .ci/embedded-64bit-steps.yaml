@@ -74,15 +74,36 @@ steps:
   condition: ne(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF')
   displayName: 'Build'
 
-# Run tests via ctest.
 - script: |
     uname -m
     docker pull arm64v8/ubuntu
     docker run --rm -t arm64v8/ubuntu uname -m
     docker pull multiarch/qemu-user-static
-    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    docker run --rm -t arm64v8/ubuntu uname -m
-    docker run -v $PWD:/opt/share -t arm64v8/ubuntu
+  displayName: 'Download docker container'
+ 
+# Allow running docker container with different architecture than the host
+- task: Docker@2
+  displayName: 'Run privileged container'
+  inputs:
+    command: run
+    arguments: '--rm --privileged multiarch/qemu-user-static:register --reset'
+  enabled: false
+
+# Start docker container
+- task: Docker@2
+  displayName: 'Run tests via ctest'
+  inputs:
+    containerRegistry: ''
+    command: build
+    Dockerfile: aarch64/Dockerfile
+    arguments: '-v $PWD:/opt/share -t arm64v8/ubuntu --build-arg DOCKER_REGISTRY=$(DOCKER_REGISTRY)'
+    tags: arm64v8/ubuntu
+  addPipelineData: false
+
+# Run tests via ctest.
+- script: |
+    #docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    #docker run -v $PWD:/opt/share -t arm64v8/ubuntu
     apt-get update
     apt-get install -y --allow-unauthenticated cmake
     cd /opt/share/build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
