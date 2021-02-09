@@ -8,7 +8,8 @@
  *
  * @code
  * @article{
- *   author  = {Carlile, Brad and Delamarter, Guy and Kinney, Paul and Marti, Akiko and Whitney, Brian},
+ *   author  = {Carlile, Brad and Delamarter, Guy and Kinney, Paul and Marti,
+ *              Akiko and Whitney, Brian},
  *   title   = {Improving deep learning by inverse square root linear units (ISRLUs)},
  *   year    = {2017},
  *   url     = {https://arxiv.org/pdf/1710.09967.pdf}

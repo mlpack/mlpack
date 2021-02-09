@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LAYER_ISRLU_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_V_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_ISRLU_IMPL_HPP
 
 // In case it hasn't yet been included.
 #include "isrlu.hpp"
@@ -42,7 +42,7 @@ void ISRLU<InputDataType, OutputDataType>::Forward(
     for (size_t i = 0; i < input.n_elem; ++i)
     {
       derivative(i) = (input(i) >= 0) ? 1 :
-          std:pow(1 / std::sqrt(1 + alpha*input(i)*input(i)), 3);
+          std::pow(1 / std::sqrt(1 + alpha*input(i)*input(i)), 3);
     }
   }
 }

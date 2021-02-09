@@ -566,7 +566,7 @@ void CheckCELUDerivativeCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the ISRLU activation.
  */
 void CheckISRLUActivationCorrect(const arma::colvec input,
-                                const arma::colvec target)
+                                 const arma::colvec target)
 {
   // Initialize ISRLU object with alpha = 1.0.
   ISRLU<> lrf(1.0);
@@ -588,7 +588,7 @@ void CheckISRLUActivationCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the ISRLU activation.
  */
 void CheckISRLUDerivativeCorrect(const arma::colvec input,
-                                const arma::colvec target)
+                                 const arma::colvec target)
 {
   // Initialize ISRLU object with alpha = 1.0.
   ISRLU<> lrf(1.0);
