@@ -235,7 +235,8 @@ using MoreTypes = boost::variant<
         VirtualBatchNorm<arma::mat, arma::mat>*,
         RBF<arma::mat, arma::mat, GaussianFunction>*,
         BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
-        PositionalEncoding<arma::mat, arma::mat>*
+        PositionalEncoding<arma::mat, arma::mat>*,
+        ISRLU<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
@@ -273,7 +274,6 @@ using LayerTypes = boost::variant<
     FlexibleReLU<arma::mat, arma::mat>*,
     GRU<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
-    ISRLU<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
     LayerNorm<arma::mat, arma::mat>*,
     LeakyReLU<arma::mat, arma::mat>*,
