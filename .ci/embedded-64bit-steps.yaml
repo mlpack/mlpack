@@ -93,21 +93,21 @@ steps:
 - task: Docker@2
   displayName: 'Run tests via ctest'
   inputs:
-    containerRegistry: ''
+    #containerRegistry: ''
     command: build
     Dockerfile: aarch64/Dockerfile
     arguments: '-v $PWD:/opt/share -t arm64v8/ubuntu --build-arg DOCKER_REGISTRY=$(DOCKER_REGISTRY)'
     tags: arm64v8/ubuntu
-  addPipelineData: false
+  #addPipelineData: false
 
 # Run tests via ctest.
-- script: |
+#- script: |
     #docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     #docker run -v $PWD:/opt/share -t arm64v8/ubuntu
-    apt-get update
-    apt-get install -y --allow-unauthenticated cmake
-    cd /opt/share/build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
-  displayName: 'Run tests via ctest'
+#    apt-get update
+#    apt-get install -y --allow-unauthenticated cmake
+#    cd /opt/share/build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
+#  displayName: 'Run tests via ctest'
 
 # Publish test results to Azure Pipelines
 - task: PublishTestResults@2
