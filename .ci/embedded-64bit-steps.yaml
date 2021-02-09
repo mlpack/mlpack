@@ -94,10 +94,13 @@ steps:
   displayName: 'Run tests via ctest'
   inputs:
     #containerRegistry: ''
-    command: build
-    Dockerfile: aarch64/Dockerfile
-    arguments: '-v $PWD:/opt/share -t arm64v8/ubuntu --build-arg DOCKER_REGISTRY=$(DOCKER_REGISTRY)'
+    command: run
+    arguments: '-v $PWD:/opt/share'
     tags: arm64v8/ubuntu
+    script: | # maybe the name is different?
+        uname -m
+        ls
+        whoami
   #addPipelineData: false
 
 # Run tests via ctest.
