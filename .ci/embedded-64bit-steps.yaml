@@ -79,21 +79,21 @@ steps:
     docker pull arm64v8/ubuntu
     docker run --rm -t arm64v8/ubuntu uname -m
     docker pull multiarch/qemu-user-static
+    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
   displayName: 'Download docker container'
  
-# Allow running docker container with different architecture than the host
-- task: Docker@2
-  displayName: 'Run privileged container'
-  inputs:
-    command: run
-    arguments: '--rm --privileged multiarch/qemu-user-static:register --reset'
-  enabled: false
+# #Allow running docker container with different architecture than the host
+# - task: Docker@2
+#   displayName: 'Run privileged container'
+#   inputs:
+#     command: run
+#     arguments: '--rm --privileged multiarch/qemu-user-static:register --reset -p yes'
+#   enabled: false
 
 # Start docker container
 - task: Docker@2
   displayName: 'Run tests via ctest'
   inputs:
-    #containerRegistry: ''
     command: run
     arguments: '-v /home/vsts/work/1/s:/opt/share -t arm64v8/ubuntu'
     tags: arm64v8/ubuntu
