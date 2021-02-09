@@ -95,7 +95,7 @@ steps:
   inputs:
     #containerRegistry: ''
     command: run
-    arguments: '-v $PWD:/opt/share'
+    arguments: '-v $PWD:/opt/share -t arm64v8/ubuntu'
     tags: arm64v8/ubuntu
     script: | # maybe the name is different?
         uname -m
