@@ -38,6 +38,7 @@
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
+#include <mlpack/methods/ann/layer/lp_pooling.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
@@ -219,6 +220,7 @@ class AdaptiveMeanPooling;
 
 using MoreTypes = boost::variant<
         Linear3D<arma::mat, arma::mat, NoRegularizer>*,
+        LpPooling<arma::mat, arma::mat>*,
         Glimpse<arma::mat, arma::mat>*,
         Highway<arma::mat, arma::mat>*,
         MultiheadAttention<arma::mat, arma::mat, NoRegularizer>*,

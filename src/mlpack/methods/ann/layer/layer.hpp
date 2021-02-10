@@ -47,6 +47,7 @@
 #include "linear3d.hpp"
 #include "log_softmax.hpp"
 #include "lookup.hpp"
+#include "lp_pooling.hpp"
 #include "lstm.hpp"
 #include "max_pooling.hpp"
 #include "mean_pooling.hpp"

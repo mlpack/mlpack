@@ -3839,6 +3839,51 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
 }
 
 /**
+ * Simple test for Lp Pooling layer.
+ */
+TEST_CASE("LpMaxPoolingTestCase", "[ANNLayerTest]")
+{
+  // For rectangular input to pooling layers.
+  arma::mat input = arma::mat(8, 1);
+  arma::mat output;
+  input.zeros();
+  input(0) = input(6) = 30;
+  input(1) = input(7) = 120;
+  input(2) = input(4) = 272;
+  input(3) = input(5) = 315;
+  // Output-Size should be 1 x 2.
+  // Square output.
+  LpPooling<> module1(4, 2, 2, 2, 2);
+  module1.InputHeight() = 2;
+  module1.InputWidth() = 4;
+  module1.Forward(input, output);
+  // Calculated using torch.nn.LPPool2d().
+  REQUIRE(arma::accu(output) - 706.0 == Approx(0.0).margin(2e-5));
+  REQUIRE(output.n_elem == 2);
+
+  // For Square input.
+  input = arma::mat(16, 1);
+  input.zeros();
+  input(0) = 4;
+  input(1) = 3;
+  input(3) = 12;
+  input(7) = 35;
+  input(8) = 6;
+  input(11) = 7;
+  input(12) = 8;
+  input(15) = 24;
+  // Output-Size should be 2 x 2.
+  // Square output.
+  LpPooling<> module3(2, 2, 2, 2, 2);
+  module3.InputHeight() = 4;
+  module3.InputWidth() = 4;
+  module3.Forward(input, output);
+  // Calculated using torch.nn.LPPool2d().
+  REQUIRE(arma::accu(output) - 77.0 == Approx(0.0).margin(2e-5));
+  REQUIRE(output.n_elem == 4);
+}
+
+/**
  * Simple test for Max Pooling layer.
  */
 TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
