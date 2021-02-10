@@ -38,6 +38,7 @@ void PersistenceModel::Predict(const InputType& train, const InputType& test,
     {
         concat(i) = train(i);
     }
+
     for(arma::uword i = 0; i < test.n_elem; i++)
     {
         concat(i + train.n_elem) = test(i);
