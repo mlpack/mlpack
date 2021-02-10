@@ -172,7 +172,7 @@ class LpPooling
             arma::span(colidx, colidx + kernelHeight - 1 - offset));
 
         output(i, j) = pow(arma::accu(arma::pow(subInput,
-            normType)), 1.0/normType);
+            normType)), 1.0 / normType);
       }
     }
   }
@@ -199,7 +199,7 @@ class LpPooling
         const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
             arma::span(j, j + cStep - 1));
         size_t sum = pow(arma::accu(arma::pow(inputArea, normType)),
-            (normType-1) / normType);
+            (normType - 1) / normType);
         unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
         unpooledError.fill(error(i / rStep, j / cStep));
         unpooledError %= arma::pow(inputArea, normType - 1);
