@@ -19,10 +19,7 @@
 namespace mlpack {
 namespace ts /* Time Series methods. */ {
 
-PersistenceModel::PersistenceModel()
-{
-  // Nothing to do here.
-}
+PersistenceModel::PersistenceModel() { /* Nothing to do here. */ }
 
 template<typename InputType, typename>
 void PersistenceModel::Predict(const InputType& input,
