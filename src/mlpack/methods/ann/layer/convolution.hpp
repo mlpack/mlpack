@@ -29,8 +29,26 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of the Convolution class. The Convolution class represents a
  * single layer of a neural network.
- *
- * @tparam ForwardConvolutionRule Convolution to perform forward process.
+ *Example about how to organize the input matrix of the CNN. Say that I pass a matrix M(2744x100) to model.Add<Convolution<>>, which I have obtained from "flattening" 
+ *100 images (or Mel cepstral coefficients, if we talk about speech, or whatever you like) of dimension 196x14. In other words, the first 196 columns of each row of M 
+ *will be made of the 196 columns of the first row of each of the 100 images (or Mel cepstral coefficients). Then the next 295 columns of M (196 - 393) will be made 
+ *of the 196 columns of the second row of the 100 images (or Mel cepstral coefficients), etc. I want my input to be 196x14 for, so my add will be something like this:
+ 
+ *model.Add<Convolution<>>
+ *(1, // Number of input activation maps.
+    *14, // Number of output activation maps.
+        *3, // Filter width.
+            *3, // Filter height.
+                *1, // Stride along width.
+                    *1, // Stride along height.
+                        *0, // Padding width.
+                            *0, // Padding height.
+                                *196, // Input width.
+                                    *14 // Input height.
+                                        *);
+ *By doing so, will recreate the original 196x14 matrix for each image (or Mel cepstral coefficients) that will be used as input for the 14 filters of this example.
+
+* @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
  * @tparam GradientConvolutionRule Convolution to calculate gradient.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
