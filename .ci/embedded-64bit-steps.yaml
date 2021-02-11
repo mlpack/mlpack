@@ -104,13 +104,13 @@ steps:
 #   #addPipelineData: false
 
 # Start docker container
- - task: Docker@2
-   displayName: 'Run tests via ctest'
-   inputs:
-     repository: arm64v8/ubuntu
-     Dockerfile: aarch64/Dockerfile
+- task: Docker@2
+  displayName: 'Run tests via ctest'
+  inputs:
+    repository: arm64v8/ubuntu
+    Dockerfile: aarch64/Dockerfile
      #tags:
-     
+
 #- script: |
     #docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     #docker run -v $PWD:/opt/share -t arm64v8/ubuntu
