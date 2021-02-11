@@ -109,7 +109,7 @@ steps:
    inputs:
      repository: arm64v8/ubuntu
      Dockerfile: aarch64/Dockerfile
-     tags:
+     #tags:
      
 #- script: |
     #docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
