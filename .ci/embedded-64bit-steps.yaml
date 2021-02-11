@@ -108,7 +108,7 @@ steps:
   displayName: 'Run tests via ctest'
   inputs:
     repository: arm64v8/ubuntu
-    Dockerfile: aarch64/Dockerfile
+    Dockerfile: .ci/aarch64/Dockerfile
      #tags:
 
 #- script: |
