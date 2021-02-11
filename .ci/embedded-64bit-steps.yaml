@@ -42,7 +42,7 @@ steps:
        cd OpenBLAS-0.3.13 && \
        make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=aarch64-linux-gnu-gcc FC=aarch64-linux-gnu-gfortran NO_SHARED=1 &&\
        cd ../ &&\
-     
+ 
     # Install armadillo.
     curl https://data.kurg.org/armadillo-8.400.0.tar.xz | tar -xvJ
 
@@ -91,19 +91,26 @@ steps:
 #   enabled: false
 
 # Start docker container
-- task: Docker@2
-  displayName: 'Run tests via ctest'
-  inputs:
-    command: run
-    arguments: '-v /home/vsts/work/1/s:/opt/share -t arm64v8/ubuntu'
-    tags: arm64v8/ubuntu
-    script: | # maybe the name is different?
-        uname -m
-        ls
-        whoami
-  #addPipelineData: false
+# - task: Docker@2
+#   displayName: 'Run tests via ctest'
+#   inputs:
+#     command: run
+#     arguments: '-v /home/vsts/work/1/s:/opt/share -t arm64v8/ubuntu'
+#     tags: arm64v8/ubuntu
+#     script: | # maybe the name is different?
+#         uname -m
+#         ls
+#         whoami
+#   #addPipelineData: false
 
-# Run tests via ctest.
+# Start docker container
+ - task: Docker@2
+   displayName: 'Run tests via ctest'
+   inputs:
+     repository: arm64v8/ubuntu
+     Dockerfile: aarch64/Dockerfile
+     tags:
+     
 #- script: |
     #docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     #docker run -v $PWD:/opt/share -t arm64v8/ubuntu
