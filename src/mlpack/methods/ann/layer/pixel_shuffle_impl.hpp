@@ -133,16 +133,17 @@ void PixelShuffle<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(delta);
-  ar & BOOST_SERIALIZATION_NVP(outputParameter);
-  ar & BOOST_SERIALIZATION_NVP(upscaleFactor);
-  ar & BOOST_SERIALIZATION_NVP(height);
-  ar & BOOST_SERIALIZATION_NVP(width);
-  ar & BOOST_SERIALIZATION_NVP(size);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(outputHeight);
-  ar & BOOST_SERIALIZATION_NVP(outputWidth);
-  ar & BOOST_SERIALIZATION_NVP(sizeOut);
+  ar(CEREAL_NVP(delta));
+  ar(CEREAL_NVP(outputParameter));
+  ar(CEREAL_NVP(upscaleFactor));
+  ar(CEREAL_NVP(height));
+  ar(CEREAL_NVP(width));
+  ar(CEREAL_NVP(size));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(outputHeight));
+  ar(CEREAL_NVP(outputHeight));
+  ar(CEREAL_NVP(outputWidth));
+  ar(CEREAL_NVP(sizeOut));
 }
 
 } // namespace ann
