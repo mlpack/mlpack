@@ -278,7 +278,7 @@ Convolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
-> :: operator=(Convolution&& layer)
+> :operator=(Convolution&& layer)
 {
   if (this != &layer)
   {
