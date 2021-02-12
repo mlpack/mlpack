@@ -108,8 +108,8 @@ steps:
   displayName: 'Run tests via ctest'
   inputs:
     repository: arm64v8/ubuntu
-#    command: run
-#    arguments: '-v /home/vsts/work/1/s:/opt/share -t arm64v8/ubuntu'
+    command: build
+    arguments: '-v /home/vsts/work/1/s:/opt/share -t arm64v8/ubuntu'
     Dockerfile: .ci/aarch64/Dockerfile
      #tags:
 
