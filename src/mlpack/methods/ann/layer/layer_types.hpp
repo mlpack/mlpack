@@ -220,6 +220,7 @@ class AdaptiveMeanPooling;
 
 using MoreTypes = boost::variant<
         Linear3D<arma::mat, arma::mat, NoRegularizer>*,
+        PixelShuffle<arma::mat, arma::mat>*,
         Glimpse<arma::mat, arma::mat>*,
         Highway<arma::mat, arma::mat>*,
         MultiheadAttention<arma::mat, arma::mat, NoRegularizer>*,
@@ -290,7 +291,6 @@ using LayerTypes = boost::variant<
     NoisyLinear<arma::mat, arma::mat>*,
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
-    PixelShuffle<arma::mat, arma::mat>*,
     Softmax<arma::mat, arma::mat>*,
     SpatialDropout<arma::mat, arma::mat>*,
     TransposedConvolution<NaiveConvolution<ValidConvolution>,
