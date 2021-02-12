@@ -60,7 +60,8 @@ AdaptiveMaxPooling<InputDataType, OutputDataType>::AdaptiveMaxPooling(
 
 template <typename InputDataType, typename OutputDataType>
 AdaptiveMaxPooling<InputDataType, OutputDataType>& 
-AdaptiveMaxPooling<InputDataType, OutputDataType> :: operator=(const AdaptiveMaxPooling& layer)
+AdaptiveMaxPooling<InputDataType, OutputDataType>::operator=(
+  const AdaptiveMaxPooling& layer)
 {
   if (this != &layer)
   {
