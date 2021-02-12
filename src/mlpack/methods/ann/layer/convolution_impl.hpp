@@ -225,14 +225,14 @@ Convolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->& 
+>&
 Convolution<
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
-> :: operator=(const Convolution& layer)
+>::operator=(const Convolution& layer)
 {
   if (this != &layer)
   {
