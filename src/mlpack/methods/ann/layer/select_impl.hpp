@@ -51,12 +51,12 @@ Select<InputDataType, OutputDataType>&
 Select<InputDataType, OutputDataType>::
 operator=(const Select& layer) 
 {
-       if (this != &layer)
-       {
-         index = layer.index;
-         elements = layer.elements;
-       }
-       return *this;
+  if (this != &layer)
+  {
+    index = layer.index;
+    elements = layer.elements;
+  }
+  return *this;
 }
 
 template <typename InputDataType, typename OutputDataType>
@@ -64,12 +64,12 @@ Select<InputDataType, OutputDataType>&
 Select<InputDataType, OutputDataType>::
 operator=(Select&& layer) 
 {
-       if (this != &layer)
-       {
-         index = std::move(layer.index);
-         elements = std::move(layer.elements);
-       }
-       return *this;
+  if (this != &layer)
+  {
+    index = std::move(layer.index);
+    elements = std::move(layer.elements);
+  }
+  return *this;
 }
     
 template<typename InputDataType, typename OutputDataType>
