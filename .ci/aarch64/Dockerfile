@@ -6,6 +6,7 @@ COPY  . /home/vsts/work/1/s/
 RUN apt-get update
 RUN apt-get install -y --allow-unauthenticated cmake tree
 RUN tree /home
-RUN cd /home/mlpack
+RUN cd /home/vsts/work/1/s/build
+RUN ls 
 RUN uname -a
 RUN CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
