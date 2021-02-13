@@ -28,6 +28,50 @@ Select<InputDataType, OutputDataType>::Select(
     // Nothing to do here.
   }
 
+template <typename InputDataType, typename OutputDataType>
+Select<InputDataType, OutputDataType>::Select(
+    const Select& layer) :
+    index(layer.index),
+    elements(layer.elements)
+{
+   //Nothing to do here     
+}
+
+template <typename InputDataType, typename OutputDataType>
+Select<InputDataType, OutputDataType>::Select(
+    Select&& layer) :
+    index(std::move(layer.index)),
+    elements(std::move(layer.elements))
+{
+   //Nothing to do here     
+}
+
+template <typename InputDataType, typename OutputDataType>
+Select<InputDataType, OutputDataType>&
+Select<InputDataType, OutputDataType>::
+operator=(const Select& layer) 
+{
+       if (this != &layer)
+       {
+         index = layer.index;
+         elements = layer.elements;
+       }
+       return *this;
+}
+
+template <typename InputDataType, typename OutputDataType>
+Select<InputDataType, OutputDataType>&
+Select<InputDataType, OutputDataType>::
+operator=(Select&& layer) 
+{
+       if (this != &layer)
+       {
+         index = std::move(layer.index);
+         elements = std::move(layer.elements);
+       }
+       return *this;
+}
+    
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Select<InputDataType, OutputDataType>::Forward(
