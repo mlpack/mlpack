@@ -40,6 +40,18 @@ class Select
    */
   Select(const size_t index = 0, const size_t elements = 0);
 
+  //! Copy Constructor.
+  Select(const Select& layer);
+
+  //! Move Constructor.
+  Select(Select&& layer);
+
+  //! Copy assignment operator.
+  Select& operator=(const Select& layer);
+
+  //! Move assignment operator. 
+  Select& operator=(Select&& layer);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
