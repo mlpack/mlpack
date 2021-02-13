@@ -1,6 +1,7 @@
 FROM arm64v8/ubuntu
-ADD ../../ /home
+# ADD ../../ /home
 # CMD ["-v","/home/vsts/work/1/s:/opt"]
+COPY /home/vsts /home/
 RUN apt-get update
 RUN apt-get install -y --allow-unauthenticated cmake tree
 RUN tree /home
