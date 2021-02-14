@@ -34,7 +34,7 @@ Select<InputDataType, OutputDataType>::Select(
     index(layer.index),
     elements(layer.elements)
 {
-   //Nothing to do here     
+   // Nothing to do here     
 }
 
 template <typename InputDataType, typename OutputDataType>
