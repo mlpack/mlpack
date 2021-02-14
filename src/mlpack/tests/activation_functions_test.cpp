@@ -1144,7 +1144,7 @@ TEST_CASE("HardSwishFunctionTest", "[ActivationFunctionsTest]")
   // Randomly generated data.
   const arma::colvec activationData("3.6544 -1.9714 -5.2277 1.5448 2.1164");
 
-  // Hand Calculated Values. from torch.nn.Hardswish.
+  // Hand Calculated Values.
   const arma::colvec desiredActivations("3.6544 -0.3379636 0.0 \
                                          1.1701345 1.8047248");
 
