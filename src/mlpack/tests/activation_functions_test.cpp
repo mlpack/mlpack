@@ -1134,3 +1134,23 @@ TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
   CheckSoftminDerivativeCorrect(activationData,
                                 desiredDerivatives);
 }
+
+/**
+ * Basic test of the Hard Swish function.
+ */
+TEST_CASE("HardSwishFunctionTest", "[ActivationFunctionsTest]")
+{
+  // Randomly generated data.
+  const arma::colvec activationData("3.6544 -1.9714 -5.2277 1.5448 2.1164");
+
+  // Calculated from torch.nn.Hardswish.
+  const arma::colvec desiredActivations("3.6544 -0.3380 0 1.1701 1.8047");
+
+  // Hand Calculated Values.
+  const arma::colvec desiredDerivatives("1 ");
+
+  CheckSoftminActivationCorrect(activationData,
+                                desiredActivations);
+  CheckSoftminDerivativeCorrect(activationData,
+                                desiredDerivatives);
+}
