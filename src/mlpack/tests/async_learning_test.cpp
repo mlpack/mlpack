@@ -71,7 +71,7 @@ TEST_CASE("OneStepQLearningTest", "[AsyncLearningTest]")
 
     OneStepQLearning<
         CartPole, decltype(model), ens::VanillaUpdate, decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy));
+        agent(std::move(config), model, std::move(policy));
 
     arma::vec rewards(20, arma::fill::zeros);
     size_t pos = 0;
@@ -149,7 +149,7 @@ TEST_CASE("OneStepSarsaTest", "[AsyncLearningTest]")
                  decltype(model),
                  ens::VanillaUpdate,
                  decltype(policy)>
-    agent(std::move(config), std::move(model), std::move(policy));
+    agent(std::move(config), model, std::move(policy));
 
     arma::vec rewards(20, arma::fill::zeros);
     size_t pos = 0;
@@ -222,7 +222,7 @@ TEST_CASE("NStepQLearningTest", "[AsyncLearningTest]")
 
   NStepQLearning<
       CartPole, decltype(model), ens::VanillaUpdate, decltype(policy)>
-      agent(std::move(config), std::move(model), std::move(policy));
+      agent(std::move(config), model, std::move(policy));
 
   arma::vec rewards(20, arma::fill::zeros);
   size_t pos = 0;

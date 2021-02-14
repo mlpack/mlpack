@@ -67,7 +67,7 @@ class AsyncLearning
    * @param environment The reinforcement learning task.
    */
   AsyncLearning(TrainingConfig config,
-                NetworkType network,
+                NetworkType& network,
                 PolicyType policy,
                 UpdaterType updater = UpdaterType(),
                 EnvironmentType environment = EnvironmentType());
@@ -118,7 +118,7 @@ class AsyncLearning
   TrainingConfig config;
 
   //! Locally-stored global learning network.
-  NetworkType learningNetwork;
+  NetworkType& learningNetwork;
 
   //! Locally-stored policy.
   PolicyType policy;
