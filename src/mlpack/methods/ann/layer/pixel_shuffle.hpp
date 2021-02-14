@@ -50,6 +50,7 @@ class PixelShuffle
  public:
   //! Create the PixelShuffle object.
   PixelShuffle();
+
   /**
    * Create the PixelShuffle object using the specified parameters.
    * The number of input channels should be an integral multiple of the square

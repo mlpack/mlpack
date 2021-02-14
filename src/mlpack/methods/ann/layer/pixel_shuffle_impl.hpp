@@ -20,15 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 PixelShuffle<InputDataType, OutputDataType>::PixelShuffle() :
-    upscaleFactor(0),
-    height(0),
-    width(0),
-    size(0),
-    batchSize(0),
-    outputHeight(0),
-    outputWidth(0),
-    sizeOut(0),
-    reset(false)
+    PixelShuffle(0, 0, 0, 0)
 {
   // Nothing to do here.
 }
@@ -65,6 +57,7 @@ void PixelShuffle<InputDataType, OutputDataType>::Forward(
     outputWidth = width * upscaleFactor;
     reset = true;
   }
+
   output.zeros(outputHeight * outputWidth * sizeOut, batchSize);
   for (size_t n = 0; n < batchSize; n++)
   {
@@ -90,6 +83,7 @@ void PixelShuffle<InputDataType, OutputDataType>::Forward(
         }
       }
     }
+
     output.col(n) = outputImage;
   }
 }
@@ -123,6 +117,7 @@ void PixelShuffle<InputDataType, OutputDataType>::Backward(
         }
       }
     }
+
     g.col(n) = gImage;
   }
 }
