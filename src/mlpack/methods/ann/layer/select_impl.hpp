@@ -43,7 +43,7 @@ Select<InputDataType, OutputDataType>::Select(
     index(std::move(layer.index)),
     elements(std::move(layer.elements))
 {
-   //Nothing to do here     
+   // Nothing to do here     
 }
 
 template <typename InputDataType, typename OutputDataType>
