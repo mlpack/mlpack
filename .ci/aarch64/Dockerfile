@@ -6,6 +6,9 @@ RUN apt-get install -y --allow-unauthenticated cmake tree
 WORKDIR /home/vsts/work/1/s
 COPY  . /
 RUN cd /
+RUN ls /
+RUN ls /home/vsts/work/1/s
+RUN tree /home
 RUN tar -xzvf mlpack.tar.gz
 RUN tree /home
 RUN cd /home/vsts/work/1/s/
