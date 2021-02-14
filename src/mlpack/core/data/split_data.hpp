@@ -169,7 +169,6 @@ void Split(const arma::Mat<T>& input,
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *     sample is visited in linear order. (Default true).
- * @param stratifyData If true, the train and test splits are stratified
  *
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).

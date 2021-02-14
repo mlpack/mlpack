@@ -119,6 +119,9 @@ void StratifiedSplit(const arma::Mat<T>& input,
 
 /**
  * Given an input dataset and labels, stratify into a training set and test set.
+ * It is recommended to have the input labels between the range [0, n) where n
+ * is the number of different labels. The NormalizeLabels() function in
+ * mlpack::data can be used for this.
  * Example usage below.  This overload returns the stratified
  * dataset as a std::tuple with four elements: an arma::Mat<T> containing the
  * training data, an arma::Mat<T> containing the test data, an arma::Row<U>
@@ -131,12 +134,11 @@ void StratifiedSplit(const arma::Mat<T>& input,
  * auto splitResult = StratifiedSplit(input, label, 0.2);
  * @endcode
  *
- * @param input Input dataset to split.
- * @param inputLabel Input labels to split.
+ * @param input Input dataset to stratify.
+ * @param inputLabel Input labels to stratify.
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *     sample is visited in linear order. (Default true).
- * @param stratifyData If true, the train and test splits are stratified
  *
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
