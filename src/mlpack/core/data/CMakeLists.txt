@@ -26,6 +26,7 @@ set(SOURCES
   save_impl.hpp
   save_image.cpp
   split_data.hpp
+  stratified_split_data.hpp
   imputer.hpp
   binarize.hpp
   string_encoding.hpp

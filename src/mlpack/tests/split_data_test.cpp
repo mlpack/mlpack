@@ -2,7 +2,7 @@
  * @file tests/split_data_test.cpp
  * @author Tham Ngap Wei
  *
- * Test the SplitData method.
+ * Test the SplitData and StratfiedSplit methods.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -11,6 +11,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/split_data.hpp>
+#include <mlpack/core/data/stratified_split_data.hpp>
 
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
@@ -20,7 +21,7 @@ using namespace arma;
 using namespace mlpack::data;
 
 /**
- * Compare the data after train test split.  This assumes that the labels
+ * Compare the data after train test split. This assumes that the labels
  * correspond to each column, so that we can easily check each point against its
  * original.
  *
@@ -225,7 +226,7 @@ TEST_CASE("ZeroRatioStratifiedSplitData", "[SplitDataTest]")
   const Row<size_t> labels = { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
   const double test_ratio = 0;
 
-  const auto value = Split(input, labels, test_ratio, false, true);
+  const auto value = StratifiedSplit(input, labels, test_ratio, false);
   REQUIRE(std::get<0>(value).n_cols == 15);
   REQUIRE(std::get<1>(value).n_cols == 0);
   REQUIRE(std::get<2>(value).n_cols == 15);
@@ -244,7 +245,7 @@ TEST_CASE("TotalRatioStratifiedSplitData", "[SplitDataTest]")
   const Row<size_t> labels = { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
   const double test_ratio = 1;
 
-  const auto value = Split(input, labels, test_ratio, false, true);
+  const auto value = StratifiedSplit(input, labels, test_ratio, false);
   REQUIRE(std::get<0>(value).n_cols == 0);
   REQUIRE(std::get<1>(value).n_cols == 15);
   REQUIRE(std::get<2>(value).n_cols == 0);
@@ -265,7 +266,7 @@ TEST_CASE("StratifiedSplitDataResultTest", "[SplitDataTest]")
                                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
   const double test_ratio = 0.25;
 
-  const auto value = Split(input, labels, test_ratio, true, true);
+  const auto value = StratifiedSplit(input, labels, test_ratio, true);
   REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 0)).n_rows == 3);
   REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 1)).n_rows == 6);
   REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 2)).n_rows == 9);
@@ -308,7 +309,7 @@ TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
   labels = arma::join_rows(labels, three_label);
   const double test_ratio = 0.3;
 
-  const auto value = Split(input, labels, test_ratio, false, true);
+  const auto value = StratifiedSplit(input, labels, test_ratio, false);
   REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 0)).n_rows == 180);
   REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 1)).n_rows == 90);
   REQUIRE(static_cast<uvec>(find(std::get<2>(value) == 2)).n_rows == 45);

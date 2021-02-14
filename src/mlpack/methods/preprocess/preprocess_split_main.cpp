@@ -14,6 +14,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/data/split_data.hpp>
+#include <mlpack/core/data/stratified_split_data.hpp>
 
 // Program Name.
 BINDING_NAME("Split Data");
@@ -151,26 +152,50 @@ static void mlpackMain()
         IO::GetParam<arma::Mat<size_t>>("input_labels");
     arma::Row<size_t> labelsRow = labels.row(0);
 
-    Timer::Start("splitting_data");
-    const auto value =
-        data::Split(data, labelsRow, testRatio, !shuffleData, stratifyData);
-    Timer::Stop("splitting_data");
+    if (stratifyData) {
+      Timer::Start("splitting_data");
+      const auto value =
+          data::StratifiedSplit(data, labelsRow, testRatio, !shuffleData);
+      Timer::Stop("splitting_data");
 
-    Log::Info << "Training data contains "
-        << get<0>(value).n_cols << " points." << endl;
-    Log::Info << "Test data contains "
-        << get<1>(value).n_cols << " points." << endl;
+      Log::Info << "Training data contains "
+          << get<0>(value).n_cols << " points." << endl;
+      Log::Info << "Test data contains "
+          << get<1>(value).n_cols << " points." << endl;
 
-    if (IO::HasParam("training"))
-      IO::GetParam<arma::mat>("training") = std::move(get<0>(value));
-    if (IO::HasParam("test"))
-      IO::GetParam<arma::mat>("test") = std::move(get<1>(value));
-    if (IO::HasParam("training_labels"))
-      IO::GetParam<arma::Mat<size_t>>("training_labels") =
-          std::move(get<2>(value));
-    if (IO::HasParam("test_labels"))
-      IO::GetParam<arma::Mat<size_t>>("test_labels") =
-          std::move(get<3>(value));
+      if (IO::HasParam("training"))
+        IO::GetParam<arma::mat>("training") = std::move(get<0>(value));
+      if (IO::HasParam("test"))
+        IO::GetParam<arma::mat>("test") = std::move(get<1>(value));
+      if (IO::HasParam("training_labels"))
+        IO::GetParam<arma::Mat<size_t>>("training_labels") =
+            std::move(get<2>(value));
+      if (IO::HasParam("test_labels"))
+        IO::GetParam<arma::Mat<size_t>>("test_labels") =
+            std::move(get<3>(value));
+    }
+    else {
+      Timer::Start("splitting_data");
+      const auto value =
+          data::Split(data, labelsRow, testRatio, !shuffleData);
+      Timer::Stop("splitting_data");
+
+      Log::Info << "Training data contains "
+          << get<0>(value).n_cols << " points." << endl;
+      Log::Info << "Test data contains "
+          << get<1>(value).n_cols << " points." << endl;
+
+      if (IO::HasParam("training"))
+        IO::GetParam<arma::mat>("training") = std::move(get<0>(value));
+      if (IO::HasParam("test"))
+        IO::GetParam<arma::mat>("test") = std::move(get<1>(value));
+      if (IO::HasParam("training_labels"))
+        IO::GetParam<arma::Mat<size_t>>("training_labels") =
+            std::move(get<2>(value));
+      if (IO::HasParam("test_labels"))
+        IO::GetParam<arma::Mat<size_t>>("test_labels") =
+            std::move(get<3>(value));
+    }
   }
   else // We have no labels, so just split the dataset.
   {
