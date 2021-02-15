@@ -91,7 +91,7 @@ class HardSwishFunction
     else if (y >= 3)
       return 1;
 
-    return (2*y + 3.0)/6.0;
+    return (2 * y + 3.0) / 6.0;
   }
 
   /**
