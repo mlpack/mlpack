@@ -9,6 +9,8 @@ RUN pwd
 RUN tar -xzvf mlpack.tar.gz
 RUN tree /home
 RUN cd /home/vsts/work/1/s/
-RUN ls
-RUN cd build
+RUN tree .
+RUN ls .
+RUN pwd
+# RUN cd build
 RUN CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
