@@ -32,8 +32,8 @@ void ISRLU<InputDataType, OutputDataType>::Forward(
   output = arma::ones<OutputDataType>(arma::size(input));
   for (size_t i = 0; i < input.n_elem; ++i)
   {
-    output(i) = (input(i) >= 0) ? input(i) : input(i) %
-                (1 / arma::sqrt(1 + alpha * (input(i) % input(i))));
+    output(i) = (input(i) >= 0) ? input(i) : input(i) *
+                (1 / std::sqrt(1 + alpha * (input(i) * input(i))));
   }
 
   if (!deterministic)
@@ -42,7 +42,7 @@ void ISRLU<InputDataType, OutputDataType>::Forward(
     for (size_t i = 0; i < input.n_elem; ++i)
     {
       derivative(i) = (input(i) >= 0) ? 1 :
-          arma::pow(output(i), 3) / arma::pow(input(i), 3);
+          std::pow(output(i), 3) / std::pow(input(i), 3);
     }
   }
 }
