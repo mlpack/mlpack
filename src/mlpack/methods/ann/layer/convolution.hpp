@@ -55,7 +55,8 @@ namespace ann /** Artificial Neural Network. */ {
  *                 14); // Input height.
  * ```
  *
- * This `Convolution<>` layer will treat each column of the input matrix `M` as  * a 2-D image (or object) of the original 196x14 size, using this as the input
+ * This `Convolution<>` layer will treat each column of the input matrix `M` as
+ * a 2-D image (or object) of the original 196x14 size, using this as the input
  * for the 14 filters of this example.
  *
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
