@@ -190,6 +190,65 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTes
 }
 
 /**
+ * Check whether copying and moving network with select layer is working or not.
+ */
+TEST_CASE("CheckCopyMovingSelectNetworkTest", "[FeedForwardNetworkTest]")
+{
+  // Load the dataset.
+  arma::mat trainData;
+  data::Load("thyroid_train.csv", trainData, true);
+
+  arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
+  trainData.shed_row(trainData.n_rows - 1);
+  arma::mat SelectedLabel = trainLabels.submat(0,0,trainData.n_rows/2,0);
+  trainLabels=SelectedLabel;
+  FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
+  model->Add<Select<> >(0, trainData.n_rows/2);
+  //model->Add<Linear<> >(trainData.n_rows , 8);
+  model->Add<SigmoidLayer<> >();
+  //model->Add<Linear<> >(8, 3);
+  model->Add<LogSoftMax<> >();
+
+  FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
+  model->Add<Select<> >(0, trainData.n_rows/2);
+  //model1->Add<Linear<> >(trainData.n_rows , 8);
+  model1->Add<SigmoidLayer<> >();
+  //model1->Add<Linear<> >(8, 3);
+  model1->Add<LogSoftMax<> >();
+ 
+  // Check copy function.
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8,1, -1);
+  model->Train(trainData, trainLabels, opt);
+
+  arma::mat predictions1;
+  model->Predict(trainData, predictions1);
+  FFN<> net2;
+  net2 = *model;
+  delete model;
+
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
+  arma::mat predictions2;
+  net2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+
+  // Check move function.
+  ens::RMSProp opt2(0.01, 32, 0.88, 1e-8, 1, -1);
+  model1->Train(trainData, trainLabels, opt2);
+
+  arma::mat prediction1;
+  model1->Predict(trainData, prediction1);
+  FFN<> network2(std::move(*model1));
+  delete model1;
+
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
+  arma::mat prediction2;
+  network2.Predict(trainData, prediction2);
+  CheckMatrices(prediction1, prediction2);
+}
+
+/**
  * Check whether copying and moving network with linear3d is working or not.
  */
 TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
