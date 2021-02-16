@@ -33,7 +33,7 @@ void ISRLU<InputDataType, OutputDataType>::Forward(
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (input(i) >= 0) ? input(i) : input(i) *
-                (1 / std::sqrt(1 + alpha * (input(i) * input(i))));
+        (1 / std::sqrt(1 + alpha * (input(i) * input(i))));
   }
 
   if (!deterministic)
