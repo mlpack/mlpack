@@ -76,6 +76,10 @@ steps:
 
 - script: |
     uname -m
+    pwd
+    ls -la
+    ls .ci/
+    tree .
     docker pull arm64v8/ubuntu
     # docker run --rm -t arm64v8/ubuntu uname -m
     docker pull multiarch/qemu-user-static
