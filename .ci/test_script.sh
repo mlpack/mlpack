@@ -2,8 +2,7 @@
 apt-get update
 apt-get install -y --allow-unauthenticated cmake
 
-cd /build/
-
+cd /home/vsts/work/1/s/build
 pwd
 
 ls

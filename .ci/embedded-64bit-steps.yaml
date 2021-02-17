@@ -86,8 +86,6 @@ steps:
     docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     docker run -v /home/vsts/work/1/s:/home/vsts/work/1/s --rm arm64v8/ubuntu /bin/bash /home/vsts/work/1/s/.ci/test_script.sh
  
-    # tar -cvzf mlpack.tar.gz /home/vsts/work/1/s
-    # mv mlpack.tar.gz /home/vsts/work/1/s/.ci/aarch64
   displayName: 'Download docker container'
 
 # #Allow running docker container with different architecture than the host
