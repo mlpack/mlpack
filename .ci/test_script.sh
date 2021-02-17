@@ -7,5 +7,5 @@ pwd
 
 ls
 
-CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
+bin/mlpack_test "-r junit -o reports/tests/results.xml"
 

@@ -86,52 +86,13 @@ steps:
     docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     docker run -v /home/vsts/work/1/s:/home/vsts/work/1/s --rm arm64v8/ubuntu /bin/bash /home/vsts/work/1/s/.ci/test_script.sh
  
-  displayName: 'Download docker container'
-
-# #Allow running docker container with different architecture than the host
-# - task: Docker@2
-#   displayName: 'Run privileged container'
-#   inputs:
-#     command: run
-#     arguments: '--rm --privileged multiarch/qemu-user-static:register --reset -p yes'
-#   enabled: false
-
-# Start docker container
-# - task: Docker@2
-#   displayName: 'Run tests via ctest'
-#   inputs:
-#     command: run
-#     arguments: '-v /home/vsts/work/1/s:/opt/share -t arm64v8/ubuntu'
-#     tags: arm64v8/ubuntu
-#     script: | # maybe the name is different?
-#         uname -m
-#         ls
-#         whoami
-#   #addPipelineData: false
-
-# Start docker container
-# - task: Docker@2
-#   displayName: 'Run tests via ctest'
-#   inputs:
-#     repository: arm64v8/ubuntu
-# #    command: build
-# #    arguments: '-v /home/vsts/work/1/s:/opt/share -t arm64v8/ubuntu'
-#     Dockerfile: .ci/aarch64/Dockerfile
-#      #tags:
-
-#- script: |
-    #docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    #docker run -v $PWD:/opt/share -t arm64v8/ubuntu
-#    apt-get update
-#    apt-get install -y --allow-unauthenticated cmake
-#    cd /opt/share/build && CTEST_OUTPUT_ON_FAILURE=1 ctest -T Test .
-#  displayName: 'Run tests via ctest'
+  displayName: 'Download docker and start Tests'
 
 # Publish test results to Azure Pipelines
 - task: PublishTestResults@2
   inputs:
-    testResultsFormat: cTest
-    testResultsFiles: build/Testing/*/Test.xml
+    testResultsFormat: JUnit
+    testResultsFiles: 'mlpack_test.xml'
     failTaskOnFailedTests: true
   displayName: 'Publish tests'
 
