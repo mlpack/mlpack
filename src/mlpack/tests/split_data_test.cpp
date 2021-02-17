@@ -322,3 +322,20 @@ TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
   mat concat = arma::join_rows(std::get<0>(value), std::get<1>(value));
   CheckMatEqual(input, concat);
 }
+
+/**
+ * Check that Split() with stratifyData true throws a runtime error if labels
+ * are not of type arma::Row<>.
+ */
+TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
+{
+  mat input(3, 480);
+  mat labels(2, 480);
+  input.randu();
+  labels.randu();
+
+  const double test_ratio = 0.3;
+
+  REQUIRE_THROWS_AS(Split(input, labels, test_ratio, false, true),
+      std::runtime_error);
+}

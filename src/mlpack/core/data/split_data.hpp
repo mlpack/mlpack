@@ -23,6 +23,8 @@ namespace data {
  * It is recommended to have the input labels between the range [0, n) where n
  * is the number of different labels. The NormalizeLabels() function in
  * mlpack::data can be used for this.
+ * Expects labels to be of type arma::Row<>.
+ * Throws a runtime error if this is not the case.
  * Example usage below. This overload places the stratified dataset into the
  * four output parameters given (trainData, testData, trainLabel,
  * and testLabel).
@@ -52,56 +54,26 @@ namespace data {
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *     sample is visited in linear order. (Default true.)
  */
-template<typename T, typename U>
+template<typename T, typename LabelsType,
+         typename = std::enable_if_t<arma::is_arma_type<LabelsType>::value> >
 void StratifiedSplit(const arma::Mat<T>& input,
-                     const arma::Row<U>& inputLabel,
+                     const LabelsType& inputLabel,
                      arma::Mat<T>& trainData,
                      arma::Mat<T>& testData,
-                     arma::Row<U>& trainLabel,
-                     arma::Row<U>& testLabel,
+                     LabelsType& trainLabel,
+                     LabelsType& testLabel,
                      const double testRatio,
                      const bool shuffleData = true)
 {
-  /**
-   * Basic idea:
-   * Let us say we have to stratify a dataset based on labels:
-   * 0 0 0 0 0 (5 0s)
-   * 1 1 1 1 1 1 1 1 1 1 1 (11 1s)
-   *
-   * Let our test ratio be 0.2.
-   * Then, the number of 0 labels in our test set = floor(5 * 0.2) = 1.
-   * The number of 1 labels in our test set = floor(11 * 0.2) = 2.
-   *
-   * In our first pass over the dataset,
-   * We visit each label and keep count of each label in our 'labelCounts' uvec.
-   *
-   * We then take a second pass over the dataset.
-   * We now maintain an additional uvec 'testLabelCounts' to hold the label
-   * counts of our test set.
-   *
-   * In this pass, when we encounter a label we check the 'testLabelCounts' uvec
-   * for the count of this label in the test set.
-   * If this count is less than the required number of labels in the test set,
-   * we add the data to the test set and increment the label count in the uvec.
-   * If this count is equal to or more than the required count in the test set,
-   * we add this data to the train set.
-   *
-   * Based on the above steps, we get the following labels in the split set:
-   * Train set (4 0s, 9 1s)
-   * 0 0 0 0
-   * 1 1 1 1 1 1 1 1 1
-   *
-   * Test set (1 0s, 2 1s)
-   * 0
-   * 1 1
-   */
+  if (!arma::is_Row<LabelsType>::value)
+    throw std::runtime_error("data::Split(): when stratified sampling is done,labels must have type `arma::Row<>`!");
   size_t trainIdx = 0;
   size_t testIdx = 0;
   size_t trainSize = 0;
   size_t testSize = 0;
   arma::uvec labelCounts;
   arma::uvec testLabelCounts;
-  U maxLabel = inputLabel.max();
+  auto maxLabel = inputLabel.max();
 
   labelCounts.zeros(maxLabel+1);
   testLabelCounts.zeros(maxLabel+1);
@@ -114,7 +86,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
     order = arma::shuffle(order);
   }
 
-  for (U label : inputLabel)
+  for (auto label : inputLabel)
   {
     ++labelCounts[label];
   }
@@ -132,7 +104,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
 
   for (arma::uword i : order)
   {
-    U label = inputLabel[i];
+    auto label = inputLabel[i];
     if (testLabelCounts[label] < floor(labelCounts[label] * testRatio))
     {
       testLabelCounts[label] += 1;
@@ -300,13 +272,9 @@ void Split(const arma::Mat<T>& input,
  * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *     sample is visited in linear order. (Default true).
-<<<<<<< HEAD
- *
-=======
  * @param stratifyData If true, the train and test splits are stratified
  *     so that the ratio of each class in the training and test sets is the same
- *     as in the original dataset.
->>>>>>> parent of c4bf296e2... Decoupling Stratified Split and Split
+ *     as in the original dataset. Expects labels to be of type arma::Row<>.
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */
