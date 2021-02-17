@@ -12,6 +12,8 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 #include "rvm_regression.hpp"
 
@@ -20,6 +22,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::util;
+using namespace mlpack::kernel;
 
 // Program Name.
 BINDING_NAME("Relevance Vector Machine for regression");
@@ -118,7 +121,7 @@ BINDING_EXAMPLE(
 // See also...
 
 // When we save a model, we must also save the class mappings.  So we use this
-// auxiliary structure to store both the perceptron and the mapping, and we'll
+// auxiliary structure to store both the rvm and the mapping, and we'll
 // save this.
 class RVMRegressionModel
 {
@@ -165,117 +168,125 @@ PARAM_DOUBLE_IN("bandwidth", "Bandwidth, for 'gaussian' and 'laplacian' "
 PARAM_DOUBLE_IN("degree", "Degree of polynomial, for 'polynomial' kernel.", "D",
     1.0);
 
-//! Run RVMRegression on the specified dataset for the given kernel type.
-// template<typename KernelType>
-// void RunRVM(const mat& matX,
-// 	    const rowvec& responses,
-// 	    const KerneType& kernel;
-// 	    const bool center,
-// 	    const bool scale,
-// 	    const bool ard)
+// Run RVMRegression on the specified dataset for the given kernel type.
+template<typename KernelType>
+void RunRVM(const mat& matX,
+	    const rowvec& responses,
+	    const KernelType& kernel,
+	    const bool center,
+	    const bool scale,
+	    const bool ard)
 
-// {
-  // RVMRegression<KernelType>* rvm;
-  // if (input_model)
-  // {
-  //   rvm = IO::GetParam<RVMRegression<KernelType>*>("inpute_model");
-  // }
-  // else 
-  // {
-  //   rvm = new RvMMRegression<KernelType>(kernel, center, scale, ard);
-  //   rvm->Train(matX, responses);
-  // }
+{
+  RVMRegressionModel* estimator;
   
-  // if (IO::HasParam("test"))
-  // {
-  //   Log::Info << "Regressing on test points." << endl;
-  //   // Load test points.
-  //   mat testPoints = std::move(IO::GetParam<mat>("test"));
-  //   rowvec predictions;
+  if (IO::HasParam("input_model"))
+  {
+    estimator = IO::GetParam<RVMRegressionModel*>("input_model");
+  }
+  else 
+  {
+    // Create and train the RVM.
+    estimator = new RVMRegressionModel();
+    estimator->R().Train(matX, responses);
 
-  //   if (IO::HasParam("stds"))
-  //   {
-  //     rowvec std;
-  //     rvm->Predict(testPoints, predictions, std);
+    std::cout << "RMSE " << estimator->R().RMSE(matX, responses) << std::endl;
+  }
+  
+  if (IO::HasParam("test"))
+  {
+    Log::Info << "Regressing on test points." << endl;
+    // Load test points.
+    mat testPoints = std::move(IO::GetParam<mat>("test"));
+    rowvec predictions;
 
-  //     // Save the standard deviation of the test points (one per line).
-  //     IO::GetParam<mat>("stds") = std::move(std);
-  //   }
+    if (IO::HasParam("stds"))
+    {
+      rowvec std;
+      estimator->R().Predict(testPoints, predictions, std);
 
-  //   else
-  //   {
-  //     rvm->Predict(testPoints, predictions);
-  //   }
+      // Save the standard deviation of the test points (one per line).
+      IO::GetParam<mat>("stds") = std::move(std);
+    }
 
-  //   // Save test predictions (one per line).
-  //   IO::GetParam<mat>("predictions") = std::move(predictions);
-  // }
+    else
+    {
+      estimator->R().Predict(testPoints, predictions);
+    }
 
-  // IO::GetParam<RVMRegression<KernelType>*>("output_model") = rvm;
-// }
+    // Save test predictions (one per line).
+    IO::GetParam<mat>("predictions") = std::move(predictions);
+  }
+
+  IO::GetParam<RVMRegressionModel*>("output_model") = estimator;
+}
 
 static void mlpackMain()
 {
-  // bool center = IO::GetParam<bool>("center");
-  // bool scale = IO::GetParam<bool>("scale");
+  bool center = IO::GetParam<bool>("center");
+  bool scale = IO::GetParam<bool>("scale");
 
-  // // Check parameters -- make sure everything given make sense.
-  // RequireOnlyOnePassed({"input", "input_model"}, true, 
-  //     "Pass eihter input data or input model");
+  // Check parameters -- make sure everything given make sense.
+  RequireOnlyOnePassed({"input", "input_model"}, true, 
+      "Pass eihter input data or input model");
 
-  // if (IO::HasParam("input"))
-  // {
-  //   RequireOnlyOnePassed({"responses"}, true, "if input data is specified, " 
-  //       "reponses must also be specified");
-  //   mat matX = std::move(IO::GetParam("input"));
-  //   rowvec responses = std::move(IO::GetParam("responses"));
-  // }
+  mat matX;
+  rowvec responses;
+  if (IO::HasParam("input"))
+  {
+    RequireOnlyOnePassed({"responses"}, true, "if input data is specified, " 
+        "reponses must also be specified");
+    matX = std::move(IO::GetParam<arma::mat>("input"));
+    responses = std::move(IO::GetParam<arma::rowvec>("responses"));
+  }
 
-  // ReportIgnoredParam({{"input", false }}, "responses");
+  ReportIgnoredParam({{"input", false }}, "responses");
 
-  // RequireAtLeastOnePassed({"predictions", "output_model", "stds"}, false, 
-  //     "no result will be saved");
+  RequireAtLeastOnePassed({"predictions", "output_model", "stds"}, false, 
+      "no result will be saved");
 
-  // // Ignore predictions unless test is specified.
-  // ReportIgnoredParam({{"test", false}}, "predictions");
+  // Ignore predictions unless test is specified.
+  ReportIgnoredParam({{"test", false}}, "predictions");
 
-  // // If kernel is passed, ensure it is valid.
-  // if (IO::HasParam("kernel"))
-  // {
-  //   // Get the kernel type and make sure it is valid.
-  //   RequireParamInSet<string>("kernel", { "linear", "gaussian", "polynomial",
-  //       "hyptan", "laplacian", "epanechnikov", "cosine" }, true,
-  //       "unknown kernel type");
-  //   const string kernelType = IO::GetParam<string>("kernel");
-  // }
+  // If kernel is passed, ensure it is valid.
+  string kernelType;
+  if (IO::HasParam("kernel"))
+  {
+    // Get the kernel type and make sure it is valid.
+    RequireParamInSet<string>("kernel", { "linear", "gaussian", "polynomial",
+        "hyptan", "laplacian", "epanechnikov", "cosine" }, true,
+        "unknown kernel type");
+    kernelType = IO::GetParam<string>("kernel");
+  }
 
-  // else
-  // {
-  //   const string kernelType = "ard";
-  // }
+  else
+  {
+    kernelType = "ard";
+  }
 
-  // // Instanciation of the estimator according to the kernel specifications.
-  // bool ModelPassed = IO::HasParam("input_model");
-  // bool ard = false;
+  // Instanciation of the estimator according to the kernel specifications.
+  if (kernelType == "linear")
+  {    
+      LinearKernel kernel;
+      RunRVM<LinearKernel>(matX, responses, kernel, center, scale, false);
+  }
 
-  // switch(kernelType)
-  // {
-  //   case "linear":
-  //     LinearKernel kernel;
+  else if (kernelType == "gaussian")
+  {
+    const double bandwidth = IO::GetParam<double>("bandwidth");
+    GaussianKernel kernel(bandwidth);
+    RunRVM<GaussianKernel>(matX, responses, kernel, center, scale, false);
+  }
 
-  //   case "gaussian":
-  //     const double bandwidth = IO::GetParam<double>("bandwidth");
-  //     GaussianKernel kernel(bandwidth);
+  else if (kernelType == "ard")
+  {
+    LinearKernel kernel;
+    RunRVM<LinearKernel>(matX, responses, kernel, center, scale, true);
+  }
 
-  //   case "":
-  //     LinearKernel kernel;
-  //     const bool ard = true;
-
-  //   default:
-  //     std::cout << "Default case, FIX ME" << std::endl;
-  // }
-
-  // runRVM(matX, responses, kernel, center, scale, ard)
+  else
+  {
+    std::cout << "Default case, FIX ME" << std::endl;
+  }
 }
 
-// Il faut faire une fonction template pour l'utilisation du modèle en ligne.
