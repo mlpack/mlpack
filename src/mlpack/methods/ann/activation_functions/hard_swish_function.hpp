@@ -55,12 +55,12 @@ class HardSwishFunction
    */
   static double Fn(const double x)
   {
-    double x2 = x + 3.0;
-    x2 = x2 > 0.0 ? x2 : 0.0;
-    x2 = x2 < 6.0 ? x2 : 6.0;
-    x2 = x * x2 / 6.0;
+    if (x <= -3)
+      return 0;
+    else if (x >= 3)
+      return x;
 
-    return x2;
+    return x * (x + 3) / 6;
   }
 
   /**
