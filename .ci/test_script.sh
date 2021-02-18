@@ -7,5 +7,6 @@ pwd
 
 ls
 
-bin/mlpack_test "-r junit -o reports/tests/results.xml"
+bin/mlpack_test -r junit -o ../results.xml
+less results.xml
 
