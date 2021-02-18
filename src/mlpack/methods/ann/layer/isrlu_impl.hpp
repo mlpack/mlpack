@@ -35,16 +35,6 @@ void ISRLU<InputDataType, OutputDataType>::Forward(
     output(i) = (input(i) >= 0) ? input(i) : input(i) *
         (1 / std::sqrt(1 + alpha * (input(i) * input(i))));
   }
-
-  if (!deterministic)
-  {
-    derivative.set_size(arma::size(input));
-    for (size_t i = 0; i < input.n_elem; ++i)
-    {
-      derivative(i) = (input(i) >= 0) ? 1 :
-          std::pow(output(i), 3) / std::pow(input(i), 3);
-    }
-  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -52,6 +42,15 @@ template<typename DataType>
 void ISRLU<InputDataType, OutputDataType>::Backward(
     const DataType& /* input */, const DataType& gy, DataType& g)
 {
+  if (!deterministic)
+  {
+    derivative.set_size(arma::size(input));
+    for (size_t i = 0; i < input.n_elem; ++i)
+    {
+      derivative(i) = (input(i) >= 0) ? 1 :
+          std::pow(1 / std::sqrt(1 + alpha*input(i)*input(i)), 3);
+    }
+  }
   g = gy % derivative;
 }
 
