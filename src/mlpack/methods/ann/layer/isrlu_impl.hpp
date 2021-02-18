@@ -40,7 +40,7 @@ void ISRLU<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void ISRLU<InputDataType, OutputDataType>::Backward(
-    const DataType& /* input */, const DataType& gy, DataType& g)
+    const DataType& input, const DataType& gy, DataType& g)
 {
   if (!deterministic)
   {
