@@ -327,7 +327,7 @@ TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
  * Check that Split() with stratifyData true throws a runtime error if labels
  * are not of type arma::Row<>.
  */
-TEST_CASE("StratifiedSplitLargerDataResultTest", "[SplitDataTest]")
+TEST_CASE("StratifiedSplitRunTimeErrorTest", "[SplitDataTest]")
 {
   mat input(3, 480);
   mat labels(2, 480);
