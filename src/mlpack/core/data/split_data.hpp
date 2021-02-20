@@ -1,3 +1,4 @@
+
 /**
  * @file core/data/split_data.hpp
  * @author Tham Ngap Wei, Keon Kim
@@ -174,6 +175,9 @@ void Split(const arma::Mat<T>& input,
   arma::uvec order = arma::linspace<arma::uvec>(0, input.n_cols - 1,
       input.n_cols);
   if (shuffleData)
+    order = arma::shuffle(order);
+
+  if (trainSize > 0)
   {
     trainLabel.set_size(1, trainSize);
     trainData = input.cols(order.subvec(0, trainSize - 1));
@@ -181,7 +185,6 @@ void Split(const arma::Mat<T>& input,
     for (size_t i = 0; i < trainSize; i++)
       trainLabel(0, i) = inputLabel(0, order(i));
   }
-  else
 
   if (trainSize < input.n_cols)
   {
@@ -346,7 +349,7 @@ Split(const arma::Mat<T>& input,
  *
  * The input dataset must be of type arma::field. It should have the shape -
  * (n_rows = 1, n_cols = Number of samples, n_slices = 1)
- * 
+ *
  * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
  *
  * @code
@@ -385,7 +388,7 @@ void Split(FieldType& input,
            FieldType& testData,
            arma::field<arma::vec>& testLabels,
            const double testRatio,
-           const bool shuffleData = true) 
+           const bool shuffleData = true)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
@@ -406,7 +409,7 @@ void Split(FieldType& input,
       trainData[i] = input(0, order(i));
 
     for (size_t i = 0; i < trainSize; i++)
-      trainLabels(0, i) = inputLabel[i];
+      trainLabels(0, i) = inputLabel(0, order(i));
   }
 
   if (testSize <= input.n_cols)
@@ -416,7 +419,7 @@ void Split(FieldType& input,
 
     testLabels.set_size(1, testSize);
     for (size_t i = trainSize; i < input.n_cols; i++)
-      testLabels(0, i - trainSize) = inputLabel[i];
+      testLabels(0, i - trainSize) = inputLabel(0, order(i));
   }
 }
 
@@ -427,7 +430,7 @@ void Split(FieldType& input,
  *
  * The input dataset must be of type arma::field. It should have the shape -
  * (n_rows = 1, n_cols = Number of samples, n_slices = 1)
- * 
+ *
  * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
  *
  * @code
@@ -491,7 +494,7 @@ void Split(const FieldType& input,
  *
  * The input dataset must be of type arma::field. It should have the shape -
  * (n_rows = 1, n_cols = Number of samples, n_slices = 1)
- * 
+ *
  * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
  *
  * @code
@@ -506,7 +509,7 @@ void Split(const FieldType& input,
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *       sample is visited in linear order. (Default true).
  * @return std::tuple containing trainData (FieldType), testData
- *      (FieldType), trainLabel (arma::field<arma::vec>), and 
+ *      (FieldType), trainLabel (arma::field<arma::vec>), and
  *                   testLabel (arma::field<arma::vec>).
  */
 template <class FieldType,
@@ -541,7 +544,7 @@ Split(FieldType& input,
  *
  * The input dataset must be of type arma::field. It should have the shape -
  * (n_rows = 1, n_cols = Number of samples, n_slices = 1)
- * 
+ *
  * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
  *
  * @code
