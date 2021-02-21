@@ -1,8 +1,5 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Added `Multi Label Soft Margin Loss` loss function for neural networks
-   (#2345).
-
   * Storing and adding accessor method for action in q_learning (#2413).
 
   * Added accessor methods for ANN layers (#2321).
