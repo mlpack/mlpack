@@ -30,18 +30,16 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 using namespace ens;
 using namespace mlpack::rl;
 
-BOOST_AUTO_TEST_SUITE(RewardClippingTest);
 
 // Test checking that reward clipping works with vanilla update.
-BOOST_AUTO_TEST_CASE(ClippedRewardTest)
+TEST_CASE("ClippedRewardTest", "[RewardClippingTest]")
 {
   Pendulum task;
   RewardClipping<Pendulum> rewardClipping(task, -2.0, +2.0);
@@ -51,12 +49,12 @@ BOOST_AUTO_TEST_CASE(ClippedRewardTest)
   action.action[0] = mlpack::math::Random(-1.0, 1.0);
   double reward = rewardClipping.Sample(state, action);
 
-  BOOST_REQUIRE(reward <= 2.0);
-  BOOST_REQUIRE(reward >= -2.0);
+  REQUIRE(reward <= 2.0);
+  REQUIRE(reward >= -2.0);
 }
 
 //! Test DQN in Acrobot task.
-BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
+TEST_CASE("RewardClippedAcrobotWithDQN", "[RewardClippingTest]")
 {
   // We will allow three trials, although it would be very uncommon for the test
   // to use more than one.
@@ -88,8 +86,8 @@ BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
     // Set up DQN agent.
     QLearning<decltype(rewardClipping), decltype(model), AdamUpdate,
               decltype(policy)>
-        agent(std::move(config), std::move(model), std::move(policy),
-        std::move(replayMethod), std::move(update), std::move(rewardClipping));
+        agent(config, model, policy, replayMethod, std::move(update),
+        std::move(rewardClipping));
 
     arma::running_stat<double> averageReturn;
     size_t episodes = 0;
@@ -129,7 +127,5 @@ BOOST_AUTO_TEST_CASE(RewardClippedAcrobotWithDQN)
       break;
   }
 
-  BOOST_REQUIRE(converged);
+  REQUIRE(converged);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

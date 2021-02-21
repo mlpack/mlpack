@@ -18,10 +18,12 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "../visitor/delete_visitor.hpp"
+#include "../visitor/copy_visitor.hpp"
 #include "../visitor/delta_visitor.hpp"
 #include "../visitor/output_height_visitor.hpp"
 #include "../visitor/output_parameter_visitor.hpp"
 #include "../visitor/output_width_visitor.hpp"
+#include "../visitor/input_shape_visitor.hpp"
 
 #include "layer_types.hpp"
 #include "add_merge.hpp"
@@ -86,6 +88,12 @@ class Sequential
    *      deallocated.
    */
   Sequential(const bool model, const bool ownsLayers);
+
+  //! Copy constructor.
+  Sequential(const Sequential& layer);
+
+  //! Copy assignment operator.
+  Sequential& operator = (const Sequential& layer);
 
   //! Destroy the Sequential object.
   ~Sequential();
@@ -177,11 +185,13 @@ class Sequential
   //! Modify the gradient.
   arma::mat& Gradient() { return gradient; }
 
+  size_t InputShape() const;
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Parameter which indicates if the modules should be exposed.
@@ -226,6 +236,9 @@ class Sequential
   //! Locally-stored output height visitor.
   OutputHeightVisitor outputHeightVisitor;
 
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
+
   //! The input width.
   size_t width;
 
@@ -249,25 +262,6 @@ using Residual = Sequential<
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the Sequential class.
-namespace boost {
-namespace serialization {
-
-template <
-    typename InputDataType,
-    typename OutputDataType,
-    bool Residual,
-    typename... CustomLayers
->
-struct version<mlpack::ann::Sequential<
-    InputDataType, OutputDataType, Residual, CustomLayers...>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "sequential_impl.hpp"

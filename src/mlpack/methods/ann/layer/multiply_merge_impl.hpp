@@ -34,6 +34,66 @@ MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::MultiplyMerge(
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::MultiplyMerge(
+    const MultiplyMerge& layer) :
+    model(layer.model),
+    run(layer.run),
+    ownsLayer(layer.ownsLayer),
+    network(layer.network),
+    weights(layer.weights)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::MultiplyMerge(
+    MultiplyMerge&& layer) :
+    model(std::move(layer.model)),
+    run(std::move(layer.run)),
+    ownsLayer(std::move(layer.ownsLayer)),
+    network(std::move(layer.network)),
+    weights(std::move(layer.weights))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>&
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::operator=(
+    const MultiplyMerge& layer)
+{
+  if (this != &layer)
+  {
+    model = layer.model;
+    run = layer.run;
+    ownsLayer = layer.ownsLayer;
+    network = layer.network;
+    weights = layer.weights;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>&
+MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::operator=(
+    MultiplyMerge&& layer)
+{
+  if (this != &layer)
+  {
+    model = std::move(layer.model);
+    run = std::move(layer.run);
+    ownsLayer = std::move(layer.ownsLayer);
+    network = std::move(layer.network);
+    weights = std::move(layer.weights);
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
 MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::~MultiplyMerge()
 {
   if (ownsLayer)
@@ -112,16 +172,16 @@ template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>
 template<typename Archive>
 void MultiplyMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   // Be sure to clear other layers before loading.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     network.clear();
 
-  ar & BOOST_SERIALIZATION_NVP(network);
-  ar & BOOST_SERIALIZATION_NVP(model);
-  ar & BOOST_SERIALIZATION_NVP(run);
-  ar & BOOST_SERIALIZATION_NVP(ownsLayer);
+  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
+  ar(CEREAL_NVP(model));
+  ar(CEREAL_NVP(run));
+  ar(CEREAL_NVP(ownsLayer));
 }
 
 } // namespace ann

@@ -9,20 +9,13 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_TESTS_SERIALIZATION_HPP
-#define MLPACK_TESTS_SERIALIZATION_HPP
+#ifndef MLPACK_TESTS_SERIALIZATION_CATCH_HPP
+#define MLPACK_TESTS_SERIALIZATION_CATCH_HPP
 
-#include <boost/serialization/serialization.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
 #include <mlpack/core.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "test_catch_tools.hpp"
+#include "catch.hpp"
 
 namespace mlpack {
 
@@ -40,18 +33,10 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 
   {
     OArchiveType o(ofs);
-
-    try
-    {
-      o << BOOST_SERIALIZATION_NVP(x);
-    }
-    catch (boost::archive::archive_exception& e)
-    {
-      success = false;
-    }
+    o(CEREAL_NVP(x));
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
   ofs.close();
 
   // Now load it.
@@ -61,27 +46,19 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 
   {
     IArchiveType i(ifs);
-
-    try
-    {
-      i >> BOOST_SERIALIZATION_NVP(x);
-    }
-    catch (boost::archive::archive_exception& e)
-    {
-      success = false;
-    }
+    i(CEREAL_NVP(x));
   }
   ifs.close();
 
   remove(fileName.c_str());
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 
-  BOOST_REQUIRE_EQUAL(x.n_rows, orig.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_cols, orig.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_elem_slice, orig.n_elem_slice);
-  BOOST_REQUIRE_EQUAL(x.n_slices, orig.n_slices);
-  BOOST_REQUIRE_EQUAL(x.n_elem, orig.n_elem);
+  REQUIRE(x.n_rows == orig.n_rows);
+  REQUIRE(x.n_cols == orig.n_cols);
+  REQUIRE(x.n_elem_slice == orig.n_elem_slice);
+  REQUIRE(x.n_slices == orig.n_slices);
+  REQUIRE(x.n_elem == orig.n_elem);
 
   for (size_t slice = 0; slice != x.n_slices; ++slice)
   {
@@ -92,10 +69,10 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
       for (size_t j = 0; j < x.n_rows; ++j)
       {
         if (double(origSlice(j, i)) == 0.0)
-          BOOST_REQUIRE_SMALL(double(xSlice(j, i)), 1e-8);
+          REQUIRE(double(xSlice(j, i)) == Approx(0.0).margin(1e-8 / 100));
         else
-          BOOST_REQUIRE_CLOSE(double(origSlice(j, i)), double(xSlice(j, i)),
-              1e-8);
+          REQUIRE(double(origSlice(j, i)) ==
+              Approx(double(xSlice(j, i))).epsilon(1e-8 / 100));
       }
     }
   }
@@ -105,12 +82,12 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 template<typename CubeType>
 void TestAllArmadilloSerialization(arma::Cube<CubeType>& x)
 {
-  TestArmadilloSerialization<CubeType, boost::archive::xml_iarchive,
-      boost::archive::xml_oarchive>(x);
-  TestArmadilloSerialization<CubeType, boost::archive::text_iarchive,
-      boost::archive::text_oarchive>(x);
-  TestArmadilloSerialization<CubeType, boost::archive::binary_iarchive,
-      boost::archive::binary_oarchive>(x);
+  TestArmadilloSerialization<CubeType, cereal::XMLInputArchive,
+      cereal::XMLOutputArchive>(x);
+  TestArmadilloSerialization<CubeType, cereal::JSONInputArchive,
+      cereal::JSONOutputArchive>(x);
+  TestArmadilloSerialization<CubeType, cereal::BinaryInputArchive,
+      cereal::BinaryOutputArchive>(x);
 }
 
 // Test function for loading and saving Armadillo objects.
@@ -126,18 +103,10 @@ void TestArmadilloSerialization(MatType& x)
 
   {
     OArchiveType o(ofs);
-
-    try
-    {
-      o << BOOST_SERIALIZATION_NVP(x);
-    }
-    catch (boost::archive::archive_exception& e)
-    {
-      success = false;
-    }
+    o(CEREAL_NVP(x));
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
   ofs.close();
 
   // Now load it.
@@ -147,44 +116,37 @@ void TestArmadilloSerialization(MatType& x)
 
   {
     IArchiveType i(ifs);
-
-    try
-    {
-      i >> BOOST_SERIALIZATION_NVP(x);
-    }
-    catch (boost::archive::archive_exception& e)
-    {
-      success = false;
-    }
+    i(CEREAL_NVP(x));
   }
   ifs.close();
 
   remove(fileName.c_str());
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 
-  BOOST_REQUIRE_EQUAL(x.n_rows, orig.n_rows);
-  BOOST_REQUIRE_EQUAL(x.n_cols, orig.n_cols);
-  BOOST_REQUIRE_EQUAL(x.n_elem, orig.n_elem);
+  REQUIRE(x.n_rows == orig.n_rows);
+  REQUIRE(x.n_cols == orig.n_cols);
+  REQUIRE(x.n_elem == orig.n_elem);
 
   for (size_t i = 0; i < x.n_cols; ++i)
     for (size_t j = 0; j < x.n_rows; ++j)
       if (double(orig(j, i)) == 0.0)
-        BOOST_REQUIRE_SMALL(double(x(j, i)), 1e-8);
+        REQUIRE(double(x(j, i)) == Approx(0.0).margin(1e-8 / 100));
       else
-        BOOST_REQUIRE_CLOSE(double(orig(j, i)), double(x(j, i)), 1e-8);
+          REQUIRE(double(orig(j, i)) ==
+              Approx(double(x(j, i))).epsilon(1e-8 / 100));
 }
 
 // Test all serialization strategies.
 template<typename MatType>
 void TestAllArmadilloSerialization(MatType& x)
 {
-  TestArmadilloSerialization<MatType, boost::archive::xml_iarchive,
-      boost::archive::xml_oarchive>(x);
-  TestArmadilloSerialization<MatType, boost::archive::text_iarchive,
-      boost::archive::text_oarchive>(x);
-  TestArmadilloSerialization<MatType, boost::archive::binary_iarchive,
-      boost::archive::binary_oarchive>(x);
+  TestArmadilloSerialization<MatType, cereal::XMLInputArchive,
+      cereal::XMLOutputArchive>(x);
+  TestArmadilloSerialization<MatType, cereal::JSONInputArchive,
+      cereal::JSONOutputArchive>(x);
+  TestArmadilloSerialization<MatType, cereal::BinaryInputArchive,
+      cereal::BinaryOutputArchive>(x);
 }
 
 // Save and load an mlpack object.
@@ -199,52 +161,37 @@ void SerializeObject(T& t, T& newT)
   {
     OArchiveType o(ofs);
 
-    try
-    {
-      o << BOOST_SERIALIZATION_NVP(t);
-    }
-    catch (boost::archive::archive_exception& e)
-    {
-      std::cerr << e.what() << std::endl;
-      success = false;
-    }
+    T& x(t);
+    o(CEREAL_NVP(x));
   }
   ofs.close();
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 
   std::ifstream ifs(fileName, std::ios::binary);
 
   {
     IArchiveType i(ifs);
-
-    try
-    {
-      i >> BOOST_SERIALIZATION_NVP(newT);
-    }
-    catch (boost::archive::archive_exception& e)
-    {
-      std::cout << e.what() << "\n";
-      success = false;
-    }
+    T& x(newT);
+    i(CEREAL_NVP(x));
   }
   ifs.close();
 
   remove(fileName.c_str());
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 // Test mlpack serialization with all three archive types.
 template<typename T>
-void SerializeObjectAll(T& t, T& xmlT, T& textT, T& binaryT)
+void SerializeObjectAll(T& t, T& xmlT, T& jsonT, T& binaryT)
 {
-  SerializeObject<T, boost::archive::xml_iarchive,
-      boost::archive::xml_oarchive>(t, xmlT);
-  SerializeObject<T, boost::archive::text_iarchive,
-      boost::archive::text_oarchive>(t, textT);
-  SerializeObject<T, boost::archive::binary_iarchive,
-      boost::archive::binary_oarchive>(t, binaryT);
+  SerializeObject<T, cereal::XMLInputArchive,
+      cereal::XMLOutputArchive>(t, xmlT);
+  SerializeObject<T, cereal::JSONInputArchive,
+      cereal::JSONOutputArchive>(t, jsonT);
+  SerializeObject<T, cereal::BinaryInputArchive,
+      cereal::BinaryOutputArchive>(t, binaryT);
 }
 
 // Save and load a non-default-constructible mlpack object.
@@ -257,67 +204,49 @@ void SerializePointerObject(T* t, T*& newT)
 
   {
     OArchiveType o(ofs);
-    try
-    {
-      o << BOOST_SERIALIZATION_NVP(t);
-    }
-    catch (boost::archive::archive_exception& e)
-    {
-      std::cout << e.what() << "\n";
-      success = false;
-    }
+    o(CEREAL_POINTER(t));
   }
   ofs.close();
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 
   std::ifstream ifs(fileName, std::ios::binary);
 
   {
     IArchiveType i(ifs);
-
-    try
-    {
-      i >> BOOST_SERIALIZATION_NVP(newT);
-    }
-    catch (std::exception& e)
-    {
-      std::cout << e.what() << "\n";
-      success = false;
-    }
+    i(CEREAL_POINTER(newT));
   }
   ifs.close();
-
   remove(fileName.c_str());
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
 
 template<typename T>
-void SerializePointerObjectAll(T* t, T*& xmlT, T*& textT, T*& binaryT)
+void SerializePointerObjectAll(T* t, T*& xmlT, T*& jsonT, T*& binaryT)
 {
-  SerializePointerObject<T, boost::archive::text_iarchive,
-      boost::archive::text_oarchive>(t, textT);
-  SerializePointerObject<T, boost::archive::binary_iarchive,
-      boost::archive::binary_oarchive>(t, binaryT);
-  SerializePointerObject<T, boost::archive::xml_iarchive,
-      boost::archive::xml_oarchive>(t, xmlT);
+  SerializePointerObject<T, cereal::JSONInputArchive,
+      cereal::JSONOutputArchive>(t, jsonT);
+  SerializePointerObject<T, cereal::BinaryInputArchive,
+      cereal::BinaryOutputArchive>(t, binaryT);
+  SerializePointerObject<T, cereal::XMLInputArchive,
+      cereal::XMLOutputArchive>(t, xmlT);
 }
 
 // Utility function to check the equality of two Armadillo matrices.
 void CheckMatrices(const arma::mat& x,
                    const arma::mat& xmlX,
-                   const arma::mat& textX,
+                   const arma::mat& jsonX,
                    const arma::mat& binaryX);
 
 void CheckMatrices(const arma::Mat<size_t>& x,
                    const arma::Mat<size_t>& xmlX,
-                   const arma::Mat<size_t>& textX,
+                   const arma::Mat<size_t>& jsonX,
                    const arma::Mat<size_t>& binaryX);
 
 void CheckMatrices(const arma::cube& x,
                    const arma::cube& xmlX,
-                   const arma::cube& textX,
+                   const arma::cube& jsonX,
                    const arma::cube& binaryX);
 
 } // namespace mlpack

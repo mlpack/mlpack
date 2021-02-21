@@ -6,10 +6,10 @@ set(DIRS
   ann
   approx_kfn
   bias_svd
+  bayesian_linear_regression
   block_krylov_svd
   cf
   dbscan
-  decision_stump
   decision_tree
   det
   emst

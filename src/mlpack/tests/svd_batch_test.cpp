@@ -17,10 +17,7 @@
 #include <mlpack/methods/amf/termination_policies/validation_rmse_termination.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-
-BOOST_AUTO_TEST_SUITE(SVDBatchTest);
+#include "catch.hpp"
 
 using namespace std;
 using namespace mlpack;
@@ -30,7 +27,7 @@ using namespace arma;
 /**
  * Make sure the SVD Batch lerning is converging.
  */
-BOOST_AUTO_TEST_CASE(SVDBatchConvergenceElementTest)
+TEST_CASE("SVDBatchConvergenceElementTest", "[SVDBatchTest]")
 {
   sp_mat data;
   data.sprandn(100, 100, 0.2);
@@ -40,8 +37,8 @@ BOOST_AUTO_TEST_CASE(SVDBatchConvergenceElementTest)
   mat m1, m2;
   amf.Apply(data, 2, m1, m2);
 
-  BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),
-                   amf.TerminationPolicy().MaxIterations());
+  REQUIRE(amf.TerminationPolicy().Iteration() !=
+          amf.TerminationPolicy().MaxIterations());
 }
 
 //! This is used to ensure we start from the same initial point.
@@ -70,10 +67,11 @@ class SpecificRandomInitialization
 /**
  * Make sure the momentum is working okay.
  */
-BOOST_AUTO_TEST_CASE(SVDBatchMomentumTest)
+TEST_CASE("SVDBatchMomentumTest", "[SVDBatchTest]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  if (!data::Load("GroupLensSmall.csv", dataset))
+    FAIL("Cannot load dataset GroupLensSmall.csv!");
 
   // Generate list of locations for batch insert constructor for sparse
   // matrices.
@@ -111,16 +109,17 @@ BOOST_AUTO_TEST_CASE(SVDBatchMomentumTest)
 
   const double momentumRMSE = amf2.Apply(cleanedData, 2, m1, m2);
 
-  BOOST_REQUIRE_LE(momentumRMSE, regularRMSE + 0.1);
+  REQUIRE(momentumRMSE <= regularRMSE + 0.1);
 }
 
 /**
  * Make sure the regularization is working okay.
  */
-BOOST_AUTO_TEST_CASE(SVDBatchRegularizationTest)
+TEST_CASE("SVDBatchRegularizationTest", "[SVDBatchTest]")
 {
   mat dataset;
-  data::Load("GroupLensSmall.csv", dataset);
+  if (!data::Load("GroupLensSmall.csv", dataset))
+    FAIL("Cannot load dataset GroupLensSmall.csv!");
 
   // Generate list of locations for batch insert constructor for sparse
   // matrices.
@@ -158,13 +157,13 @@ BOOST_AUTO_TEST_CASE(SVDBatchRegularizationTest)
 
   double momentumRMSE = amf2.Apply(cleanedData, 2, m1, m2);
 
-  BOOST_REQUIRE_LE(momentumRMSE, regularRMSE + 0.05);
+  REQUIRE(momentumRMSE <= regularRMSE + 0.05);
 }
 
 /**
  * Make sure the SVD can factorize matrices with negative entries.
  */
-BOOST_AUTO_TEST_CASE(SVDBatchNegativeElementTest)
+TEST_CASE("SVDBatchNegativeElementTest", "[SVDBatchTest]")
 {
   // Create two 5x3 matrices that we should be able to recover.
   mat testLeft;
@@ -189,7 +188,6 @@ BOOST_AUTO_TEST_CASE(SVDBatchNegativeElementTest)
   arma::mat result = m1 * m2;
 
   // 6.5% tolerance on the norm.
-  BOOST_REQUIRE_CLOSE(arma::norm(test, "fro"), arma::norm(result, "fro"), 9.0);
+  REQUIRE(arma::norm(test, "fro") ==
+      Approx(arma::norm(result, "fro")).epsilon(0.09));
 }
-
-BOOST_AUTO_TEST_SUITE_END();

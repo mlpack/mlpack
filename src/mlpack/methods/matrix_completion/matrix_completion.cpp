@@ -67,7 +67,7 @@ void MatrixCompletion::CheckValues()
         << std::endl;
   }
 
-  for (size_t i = 0; i < values.n_elem; i++)
+  for (size_t i = 0; i < values.n_elem; ++i)
   {
     if (indices(0, i) >= m || indices(1, i) >= n)
       Log::Fatal << "MatrixCompletion::CheckValues(): indices ("
@@ -82,7 +82,7 @@ void MatrixCompletion::InitSDP()
   sdp.SDP().C().eye(m + n, m + n);
   sdp.SDP().SparseB() = 2. * values;
   const size_t p = indices.n_cols;
-  for (size_t i = 0; i < p; i++)
+  for (size_t i = 0; i < p; ++i)
   {
     sdp.SDP().SparseA()[i].zeros(m + n, m + n);
     sdp.SDP().SparseA()[i](indices(0, i), m + indices(1, i)) = 1.;

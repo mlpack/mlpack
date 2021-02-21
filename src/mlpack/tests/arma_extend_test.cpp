@@ -11,18 +11,17 @@
  */
 
 #include <mlpack/core.hpp>
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "test_catch_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace arma;
 
-BOOST_AUTO_TEST_SUITE(ArmaExtendTest);
 
 /**
  * Test const_row_col_iterator for basic functionality.
  */
-BOOST_AUTO_TEST_CASE(ConstRowColIteratorTest)
+TEST_CASE("ConstRowColIteratorTest", "[ArmaExtendTest]")
 {
   mat X;
   X.zeros(5, 5);
@@ -39,15 +38,15 @@ BOOST_AUTO_TEST_CASE(ConstRowColIteratorTest)
   for (it = X.begin_row_col(); it != X.end_row_col(); ++it)
   {
     // Check iterator value.
-    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+    REQUIRE(*it == ((count % 5) * 3 + (count / 5)));
 
     // Check iterator position.
-    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
-    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+    REQUIRE(it.row() == count % 5);
+    REQUIRE(it.col() == count / 5);
 
     ++count;
   }
-  BOOST_REQUIRE_EQUAL(count, 25);
+  REQUIRE(count == 25);
   it = X.end_row_col();
   do
   {
@@ -55,20 +54,20 @@ BOOST_AUTO_TEST_CASE(ConstRowColIteratorTest)
     --count;
 
     // Check iterator value.
-    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+    REQUIRE(*it == ((count % 5) * 3 + (count / 5)));
 
     // Check iterator position.
-    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
-    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+    REQUIRE(it.row() == count % 5);
+    REQUIRE(it.col() == count / 5);
   } while (it != X.begin_row_col());
 
-  BOOST_REQUIRE_EQUAL(count, 0);
+  REQUIRE(count == 0);
 }
 
 /**
  * Test row_col_iterator for basic functionality.
  */
-BOOST_AUTO_TEST_CASE(RowColIteratorTest)
+TEST_CASE("RowColIteratorTest", "[ArmaExtendTest]")
 {
   mat X;
   X.zeros(5, 5);
@@ -85,15 +84,15 @@ BOOST_AUTO_TEST_CASE(RowColIteratorTest)
   for (it = X.begin_row_col(); it != X.end_row_col(); ++it)
   {
     // Check iterator value.
-    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+    REQUIRE(*it == ((count % 5) * 3 + (count / 5)));
 
     // Check iterator position.
-    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
-    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+    REQUIRE(it.row() == count % 5);
+    REQUIRE(it.col() == count / 5);
 
     ++count;
   }
-  BOOST_REQUIRE_EQUAL(count, 25);
+  REQUIRE(count == 25);
   it = X.end_row_col();
   do
   {
@@ -101,20 +100,20 @@ BOOST_AUTO_TEST_CASE(RowColIteratorTest)
     --count;
 
     // Check iterator value.
-    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+    REQUIRE(*it == ((count % 5) * 3 + (count / 5)));
 
     // Check iterator position.
-    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
-    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+    REQUIRE(it.row() == count % 5);
+    REQUIRE(it.col() == count / 5);
   } while (it != X.begin_row_col());
 
-  BOOST_REQUIRE_EQUAL(count, 0);
+  REQUIRE(count == 0);
 }
 
 /**
  * Operator-- test for mat::row_col_iterator and mat::const_row_col_iterator
  */
-BOOST_AUTO_TEST_CASE(MatRowColIteratorDecrementOperatorTest)
+TEST_CASE("MatRowColIteratorDecrementOperatorTest", "[ArmaExtendTest]")
 {
   mat test = ones<mat>(5, 5);
 
@@ -124,14 +123,14 @@ BOOST_AUTO_TEST_CASE(MatRowColIteratorDecrementOperatorTest)
   // Check that postfix-- does not decrement the position when position is
   // pointing to the beginning.
   auto junk = it2--; (void)(junk);
-  BOOST_REQUIRE_EQUAL(it1.row(), it2.row());
-  BOOST_REQUIRE_EQUAL(it1.col(), it2.col());
+  REQUIRE(it1.row() == it2.row());
+  REQUIRE(it1.col() == it2.col());
 
   // Check that prefix-- does not decrement the position when position is
   // pointing to the beginning.
   --it2;
-  BOOST_REQUIRE_EQUAL(it1.row(), it2.row());
-  BOOST_REQUIRE_EQUAL(it1.col(), it2.col());
+  REQUIRE(it1.row() == it2.row());
+  REQUIRE(it1.col() == it2.col());
 }
 
 // These tests don't work when the sparse iterators hold references and not
@@ -140,7 +139,7 @@ BOOST_AUTO_TEST_CASE(MatRowColIteratorDecrementOperatorTest)
 /**
  * Test sparse const_row_col_iterator for basic functionality.
  */
-BOOST_AUTO_TEST_CASE(ConstSpRowColIteratorTest)
+TEST_CASE("ConstSpRowColIteratorTest", "[ArmaExtendTest]")
 {
   sp_mat X(5, 5);
   for (size_t i = 0; i < 5; ++i)
@@ -156,15 +155,15 @@ BOOST_AUTO_TEST_CASE(ConstSpRowColIteratorTest)
   for (it = X.begin_row_col(); it != X.end_row_col(); ++it)
   {
     // Check iterator value.
-    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+    REQUIRE(*it == (count % 5) * 3 + (count / 5));
 
     // Check iterator position.
-    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
-    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+    REQUIRE(it.row() == count % 5);
+    REQUIRE(it.col() == count / 5);
 
     ++count;
   }
-  BOOST_REQUIRE_EQUAL(count, 25);
+  REQUIRE(count == 25);
   it = X.end_row_col();
   do
   {
@@ -172,20 +171,20 @@ BOOST_AUTO_TEST_CASE(ConstSpRowColIteratorTest)
     --count;
 
     // Check iterator value.
-    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+    REQUIRE(*it == ((count % 5) * 3 + (count / 5)));
 
     // Check iterator position.
-    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
-    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+    REQUIRE(it.row() == count % 5);
+    REQUIRE(it.col() == count / 5);
   } while (it != X.begin_row_col());
 
-  BOOST_REQUIRE_EQUAL(count, 1);
+  REQUIRE(count == 1);
 }
 
 /**
  * Test sparse row_col_iterator for basic functionality.
  */
-BOOST_AUTO_TEST_CASE(SpRowColIteratorTest)
+TEST_CASE("SpRowColIteratorTest", "[ArmaExtendTest]")
 {
   sp_mat X(5, 5);
   for (size_t i = 0; i < 5; ++i)
@@ -201,15 +200,15 @@ BOOST_AUTO_TEST_CASE(SpRowColIteratorTest)
   for (it = X.begin_row_col(); it != X.end_row_col(); ++it)
   {
     // Check iterator value.
-    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+    REQUIRE(*it == ((count % 5) * 3 + (count / 5)));
 
     // Check iterator position.
-    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
-    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+    REQUIRE(it.row() == count % 5);
+    REQUIRE(it.col() == count / 5);
 
     ++count;
   }
-  BOOST_REQUIRE_EQUAL(count, 25);
+  REQUIRE(count == 25);
   it = X.end_row_col();
   do
   {
@@ -217,14 +216,12 @@ BOOST_AUTO_TEST_CASE(SpRowColIteratorTest)
     --count;
 
     // Check iterator value.
-    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+    REQUIRE(*it == ((count % 5) * 3 + (count / 5)));
 
     // Check iterator position.
-    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
-    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+    REQUIRE(it.row() == count % 5);
+    REQUIRE(it.col() == count / 5);
   } while (it != X.begin_row_col());
 
-  BOOST_REQUIRE_EQUAL(count, 1);
+  REQUIRE(count == 1);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

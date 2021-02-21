@@ -43,10 +43,10 @@ namespace tree {
  * The class is modular, and takes three template parameters.  The first,
  * FitnessFunction, is the fitness function that should be used to determine
  * whether a split is beneficial; examples might be GiniImpurity or
- * InformationGain.  The NumericSplitType determines how numeric attributes are
- * handled, and the CategoricalSplitType determines how categorical attributes
- * are handled.  As far as the actual splitting goes, the meat of the splitting
- * procedure will be contained in those two classes.
+ * HoeffdingInformationGain.  The NumericSplitType determines how numeric
+ * attributes are handled, and the CategoricalSplitType determines how
+ * categorical attributes are handled.  As far as the actual splitting goes,
+ * the meat of the splitting procedure will be contained in those two classes.
  *
  * @tparam FitnessFunction Fitness function to use.
  * @tparam NumericSplitType Technique for splitting numeric features.
@@ -154,6 +154,27 @@ class HoeffdingTree
    * @param other Tree to copy.
    */
   HoeffdingTree(const HoeffdingTree& other);
+
+  /**
+   * Move another tree.
+   *
+   * @param other Tree to move.
+   */
+  HoeffdingTree(HoeffdingTree&& other);
+
+  /**
+   * Copy assignment operator.
+   * 
+   * @param other Tree to copy.
+   */
+  HoeffdingTree& operator=(const HoeffdingTree& other);
+
+  /**
+   * Move assignment operator.
+   * 
+   * @param other Tree to move.
+   */
+  HoeffdingTree& operator=(HoeffdingTree&& other);
 
   /**
    * Clean up memory.
@@ -311,7 +332,7 @@ class HoeffdingTree
 
   //! Serialize the split.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   // We need to keep some information for before we have split.

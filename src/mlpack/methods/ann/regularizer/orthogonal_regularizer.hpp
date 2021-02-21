@@ -57,7 +57,7 @@ class OrthogonalRegularizer
 
   //! Serialize the regularizer (nothing to do).
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   //! The constant for the regularization
   double factor;

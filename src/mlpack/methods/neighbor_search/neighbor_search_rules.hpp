@@ -157,6 +157,10 @@ class NeighborSearchRules
   //! Modify the traversal info.
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
 
+  //! Get the minimum number of base cases we need to perform to have acceptable
+  //! results.  This is only needed in defeatist search mode.
+  size_t MinimumBaseCases() const { return k; }
+
  protected:
   //! The reference set.
   const typename TreeType::Mat& referenceSet;

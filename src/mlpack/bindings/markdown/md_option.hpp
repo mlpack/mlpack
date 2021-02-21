@@ -13,7 +13,7 @@
 #define MLPACK_BINDINGS_MARKDOWN_MD_OPTION_HPP
 
 #include <mlpack/core/util/param_data.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include "default_param.hpp"
 #include "get_param.hpp"
 #include "get_printable_param.hpp"
@@ -73,32 +73,32 @@ class MDOption
 
     // Restore the parameters for this program.
     if (identifier != "verbose" && identifier != "copy_all_inputs")
-      CLI::RestoreSettings(bindingName, false);
+      IO::RestoreSettings(bindingName, false);
 
     // Set the function pointers that we'll need.  Most of these simply delegate
     // to the current binding type's implementation.  Any new language will need
     // to have all of these implemented, and the Markdown implementation will
     // need to properly delegate.
-    CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
+    IO::GetSingleton().functionMap[data.tname]["DefaultParam"] =
         &DefaultParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
+    IO::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
+    IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParamName"] =
+    IO::GetSingleton().functionMap[data.tname]["GetPrintableParamName"] =
         &GetPrintableParamName<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParamValue"] =
+    IO::GetSingleton().functionMap[data.tname]["GetPrintableParamValue"] =
         &GetPrintableParamValue<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableType"] =
+    IO::GetSingleton().functionMap[data.tname]["GetPrintableType"] =
         &GetPrintableType<T>;
-    CLI::GetSingleton().functionMap[data.tname]["IsSerializable"] =
+    IO::GetSingleton().functionMap[data.tname]["IsSerializable"] =
         &IsSerializable<T>;
 
     // Add the option.
-    CLI::Add(std::move(data));
+    IO::Add(std::move(data));
     if (identifier != "verbose" && identifier != "copy_all_inputs" &&
         identifier != "help" && identifier != "info" && identifier != "version")
-      CLI::StoreSettings(bindingName);
-    CLI::ClearSettings();
+      IO::StoreSettings(bindingName);
+    IO::ClearSettings();
   }
 };
 

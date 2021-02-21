@@ -113,7 +113,7 @@ class LaplaceDistribution
   void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const
   {
     logProbabilities.set_size(x.n_cols);
-    for (size_t i = 0; i < x.n_cols; i++)
+    for (size_t i = 0; i < x.n_cols; ++i)
     {
       logProbabilities(i) = LogProbability(x.unsafe_col(i));
     }
@@ -173,10 +173,10 @@ class LaplaceDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(mean);
-    ar & BOOST_SERIALIZATION_NVP(scale);
+    ar(CEREAL_NVP(mean));
+    ar(CEREAL_NVP(scale));
   }
 
  private:

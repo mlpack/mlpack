@@ -182,11 +182,17 @@ class Glimpse
   //! Get the used glimpse size (height = width).
   size_t GlimpseSize() const { return size;}
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /*
@@ -198,9 +204,9 @@ class Glimpse
   {
     arma::mat t = w;
 
-    for (size_t i = 0, k = 0; i < w.n_elem; k++)
+    for (size_t i = 0, k = 0; i < w.n_elem; ++k)
     {
-      for (size_t j = 0; j < w.n_cols; j++, i++)
+      for (size_t j = 0; j < w.n_cols; ++j, ++i)
       {
         w(k, j) = t(i);
       }
@@ -214,7 +220,7 @@ class Glimpse
    */
   void Transform(arma::cube& w)
   {
-    for (size_t i = 0; i < w.n_slices; i++)
+    for (size_t i = 0; i < w.n_slices; ++i)
     {
       arma::mat t = w.slice(i);
       Transform(t);

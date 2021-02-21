@@ -21,7 +21,7 @@ namespace util {
 
 /**
  * Require that only one of the given parameters in the constraints set was
- * passed to the CLI object; otherwise, issue a warning or fatal error,
+ * passed to the IO object; otherwise, issue a warning or fatal error,
  * optionally with the given custom error message.
  *
  * This uses the correct binding type name for each parameter (i.e.
@@ -43,15 +43,18 @@ namespace util {
  * @param fatal If true, output goes to Log::Fatal instead of Log::Warn and an
  *     exception is thrown.
  * @param customErrorMessage Error message to append.
+ * @param allowNone If true, then no error message will be thrown if none of the
+ *     parameters in the constraints were passed.
  */
 void RequireOnlyOnePassed(
     const std::vector<std::string>& constraints,
     const bool fatal = true,
-    const std::string& customErrorMessage = "");
+    const std::string& customErrorMessage = "",
+    const bool allowNone = false);
 
 /**
  * Require that at least one of the given parameters in the constraints set was
- * passed to the CLI object; otherwise, issue a warning or fatal error,
+ * passed to the IO object; otherwise, issue a warning or fatal error,
  * optionally with the given custom error message.
  *
  * This uses the correct binding type name for each parameter (i.e.
@@ -84,7 +87,7 @@ void RequireAtLeastOnePassed(
 
 /**
  * Require that either none or all of the given parameters in the constraints
- * set were passed to the CLI object; otherwise, issue a warning or fatal error,
+ * set were passed to the IO object; otherwise, issue a warning or fatal error,
  * optionally with the given custom error message.
  *
  * This uses the correct binding type name for each parameter (i.e.

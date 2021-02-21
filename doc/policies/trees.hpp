@@ -225,7 +225,7 @@ class ExampleTree
   // tree using the given MetricType.
   ExampleTree(const MatType& data, MetricType& metric);
 
-  // Initialize the tree from a given boost::serialization archive.  SFINAE (the
+  // Initialize the tree from a given cereal archive.  SFINAE (the
   // second argument) is necessary to ensure that the archive is loading, not
   // saving.
   template<typename Archive>
@@ -330,16 +330,16 @@ class ExampleTree
   // Serialize the tree (load from the given archive / save to the given
   // archive, depending on its type).
   template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
  protected:
-  // A default constructor; only meant to be used by boost::serialization.  This
-  // must be protected so that boost::serialization will work; it does not need
+  // A default constructor; only meant to be used by cereal.  This
+  // must be protected so that cereal will work; it does not need
   // to return a valid tree.
   ExampleTree();
 
   // Friend access must be given for the default constructor.
-  friend class boost::serialization::access;
+  friend class cereal::access;
 };
 @endcode
 
@@ -378,7 +378,7 @@ calculation, and (usually) provides a decent bound on the minimum distance
 between \f$p\f$ and any descendant point of the node.
 
  - **Trees need to be able to be serialized.**  mlpack uses the
-boost::serialization library for saving and loading objects.  Trees---which can
+cereal library for saving and loading objects.  Trees---which can
 be a part of machine learning models---therefore must have the ability to be
 saved and loaded.  Making this all work requires a protected constructor (part
 of the API) and generally makes it impossible to hold references instead of
@@ -481,10 +481,10 @@ It is possible to implement both these constructors as one by using \c
 boost::optional.
 
 The third constructor requires the tree to be initializable from a \c
-boost::serialization archive:
+cereal archive:
 
 @code
-// Initialize the tree from a given boost::serialization archive.  SFINAE (the
+// Initialize the tree from a given cereal archive.  SFINAE (the
 // second argument) is necessary to ensure that the archive is loading, not
 // saving.
 template<typename Archive>
@@ -507,7 +507,7 @@ will be required:
 
 and, if the data matrix is represented internally with a pointer, this
 destructor will need to release the memory for the data matrix (in the case that
-the tree was created via \c boost::serialization ).
+the tree was created via \c cereal ).
 
 Note that these constructors are not necessarily the only constructors that a
 \c TreeType implementation can provide.  One important example of when more
@@ -778,22 +778,22 @@ the node plus one or two levels of children.
 // Serialize the tree (load from the given archive / save to the given
 // archive, depending on its type).
 template<typename Archive>
-void Serialize(Archive& ar, const unsigned int version);
+void serialize(Archive& ar);
 
 protected:
-// A default constructor; only meant to be used by boost::serialization.  This
-// must be protected so that boost::serialization will work; it does not need
+// A default constructor; only meant to be used by cereal.  This
+// must be protected so that cereal will work; it does not need
 // to return a valid tree.
 ExampleTree();
 
 // Friend access must be given for the default constructor.
-friend class boost::serialization::access;
+friend class cereal::access;
 @endcode
 
 On the other hand, the specifics of the functionality required for the
 \c Serialize() function are somewhat more difficult.  The \c Serialize()
 function will be called either when a tree is being saved to disk or loaded from
-disk.  The \c boost::serialization documentation is fairly comprehensive, but
+disk.  The \c cereal documentation is fairly comprehensive.
 when writing a \c Serialize() method for mlpack trees you should use
 \c data::CreateNVP() instead of \c BOOST_SERIALIZATION_NVP().  This is because
 mlpack classes implement \c Serialize() instead of \c serialize() in order to
@@ -803,10 +803,10 @@ be useful to look at other \c Serialize() methods contained in other mlpack
 classes as an example.
 
 An important note is that it is very difficult to use references with
-\c boost::serialization, because \c Serialize() may be called at any time during
+\c cereal, because \c serialize() may be called at any time during
 the object's lifetime, and references cannot be re-seated.  In general this will
 require the use of pointers, which then require manual memory management.
-Therefore, be careful that \c Serialize() (and the tree's destructor) properly
+Therefore, be careful that \c serialize() (and the tree's destructor) properly
 handle memory management!
 
 @section treetype_traits The TreeTraits trait class

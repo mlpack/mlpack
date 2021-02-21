@@ -55,6 +55,10 @@ class DualTreeKMeansRules
   size_t Scores() const { return scores; }
   size_t& Scores() { return scores; }
 
+  //! Get the minimum number of base cases needed for correct results for each
+  //! query point.  This only matters in defeatist search mode.
+  size_t MinimumBaseCases() const { return 0; }
+
  private:
   const arma::mat& centroids;
   const arma::mat& dataset;

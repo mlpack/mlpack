@@ -16,20 +16,18 @@
 #include <mlpack/methods/ann/dists/normal_distribution.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;
 
-BOOST_AUTO_TEST_SUITE(ANNDistTest);
-
 /**
  * Simple bernoulli distribution module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleBernoulliDistributionTest)
+TEST_CASE("SimpleBernoulliDistributionTest", "[ANNDistTest]")
 {
   arma::mat param = arma::mat("1 1 0");
   BernoulliDistribution<> module(param, false);
@@ -43,9 +41,9 @@ BOOST_AUTO_TEST_CASE(SimpleBernoulliDistributionTest)
 /**
  * Jacobian bernoulli distribution module test when we don't apply logistic.
  */
-BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionTest)
+TEST_CASE("JacobianBernoulliDistributionTest", "[ANNDistTest]")
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t targetElements = math::RandInt(2, 1000);
 
@@ -78,17 +76,16 @@ BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionTest)
     }
 
     module.LogProbBackward(target, jacobianB);
-    BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
-        1e-5);
+    REQUIRE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))) <= 1e-5);
   }
 }
 
 /**
  * Jacobian bernoulli distribution module test when we apply logistic.
  */
-BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionLogisticTest)
+TEST_CASE("JacobianBernoulliDistributionLogisticTest", "[ANNDistTest]")
 {
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0; i < 5; ++i)
   {
     const size_t targetElements = math::RandInt(2, 1000);
 
@@ -124,15 +121,14 @@ BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionLogisticTest)
     }
 
     module.LogProbBackward(target, jacobianB);
-    BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
-        3e-5);
+    REQUIRE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))) <= 3e-5);
   }
 }
 
 /**
  * Normal Distribution module test.
  */
-BOOST_AUTO_TEST_CASE(NormalDistributionTest)
+TEST_CASE("NormalDistributionTest", "[ANNDistTest]")
 {
   arma::vec mu = {1.1, 1.2, 1.5, 1.7};
   arma::vec sigma = {0.1, 0.11, 0.5, 0.23};
@@ -145,29 +141,29 @@ BOOST_AUTO_TEST_CASE(NormalDistributionTest)
   normalDist.LogProbability(x, prob);
 
   // Testing output of log probability for some random mu, sigma and x.
-  BOOST_REQUIRE_CLOSE(prob[0], 1.2586464, 1e-3);
-  BOOST_REQUIRE_CLOSE(prob[1], 0.8751131, 1e-3);
-  BOOST_REQUIRE_CLOSE(prob[2], -0.30579138, 1e-3);
-  BOOST_REQUIRE_CLOSE(prob[3], -5.498411, 1e-3);
+  REQUIRE(prob[0] == Approx(1.2586464).epsilon(1e-5));
+  REQUIRE(prob[1] == Approx(0.8751131).epsilon(1e-5));
+  REQUIRE(prob[2] == Approx(-0.30579138).epsilon(1e-5));
+  REQUIRE(prob[3] == Approx(-5.498411).epsilon(1e-5));
 
   arma::vec dmu, dsigma;
   normalDist.ProbBackward(x, dmu, dsigma);
 
   // Testing output of dmu and dsigma for some random mu, sigma and x.
-  BOOST_REQUIRE_CLOSE(dmu[0], -17.603287, 1e-3);
-  BOOST_REQUIRE_CLOSE(dsigma[0], -26.40487, 1e-3);
-  BOOST_REQUIRE_CLOSE(dmu[1], -19.827663, 1e-3);
-  BOOST_REQUIRE_CLOSE(dsigma[1], -3.7852707, 1e-3);
-  BOOST_REQUIRE_CLOSE(dmu[2], 0.5892323, 1e-3);
-  BOOST_REQUIRE_CLOSE(dsigma[2], -1.2373875, 1e-3);
-  BOOST_REQUIRE_CLOSE(dmu[3], 0.061901994, 1e-3);
-  BOOST_REQUIRE_CLOSE(dsigma[3], 0.19751444, 1e-3);
+  REQUIRE(dmu[0] == Approx(-17.603287).epsilon(1e-5));
+  REQUIRE(dsigma[0] == Approx(-26.40487).epsilon(1e-5));
+  REQUIRE(dmu[1] == Approx(-19.827663).epsilon(1e-5));
+  REQUIRE(dsigma[1] == Approx(-3.7852707).epsilon(1e-5));
+  REQUIRE(dmu[2] == Approx(0.5892323).epsilon(1e-5));
+  REQUIRE(dsigma[2] == Approx(-1.2373875).epsilon(1e-5));
+  REQUIRE(dmu[3] == Approx(0.061901994).epsilon(1e-5));
+  REQUIRE(dsigma[3] == Approx(0.19751444).epsilon(1e-5));
 }
 
 /**
  * Jacobian Normal Distribution module test for mean.
  */
-BOOST_AUTO_TEST_CASE(JacobianNormalDistributionMeanTest)
+TEST_CASE("JacobianNormalDistributionMeanTest", "[ANNDistTest]")
 {
   for (size_t i = 0; i < 5; i++)
   {
@@ -226,15 +222,14 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionMeanTest)
       jacobianB.col(k) = deltaMu % deriv;
     }
 
-    BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
-        5e-3);
+    REQUIRE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))) <= 5e-3);
   }
 }
 
 /**
  * Jacobian Normal Distribution module test for standard deviation.
  */
-BOOST_AUTO_TEST_CASE(JacobianNormalDistributionStandardDeviationTest)
+TEST_CASE("JacobianNormalDistributionStandardDeviationTest", "[ANNDistTest]")
 {
   for (size_t i = 0; i < 5; i++)
   {
@@ -293,10 +288,6 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionStandardDeviationTest)
       jacobianB.col(k) = deltaSigma % deriv;
     }
 
-    BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
-        5e-3);
+    REQUIRE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))) <= 5e-3);
   }
 }
-
-
-BOOST_AUTO_TEST_SUITE_END();

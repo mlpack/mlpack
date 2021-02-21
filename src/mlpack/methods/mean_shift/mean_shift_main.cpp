@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
@@ -22,13 +22,17 @@ using namespace mlpack::kernel;
 using namespace mlpack::util;
 using namespace std;
 
-// Define parameters for the executable.
-PROGRAM_INFO("Mean Shift Clustering",
-    // Short description.
+// Program Name.
+BINDING_NAME("Mean Shift Clustering");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A fast implementation of mean-shift clustering using dual-tree range "
     "search.  Given a dataset, this uses the mean shift algorithm to produce "
-    "and return a clustering of the data.",
-    // Long description.
+    "and return a clustering of the data.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs mean shift clustering on the given dataset, storing "
     "the learned cluster assignments either as a column of labels in the input "
     "dataset or separately."
@@ -42,22 +46,26 @@ PROGRAM_INFO("Mean Shift Clustering",
     "\n\n"
     "The output labels may be saved with the " + PRINT_PARAM_STRING("output") +
     " output parameter and the centroids of each cluster may be saved with the"
-    " " + PRINT_PARAM_STRING("centroid") + " output parameter."
-    "\n\n"
+    " " + PRINT_PARAM_STRING("centroid") + " output parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to run mean shift clustering on the dataset " +
     PRINT_DATASET("data") + " and store the centroids to " +
     PRINT_DATASET("centroids") + ", the following command may be used: "
     "\n\n" +
-    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"),
-    SEE_ALSO("@kmeans", "#kmeans"),
-    SEE_ALSO("@dbscan", "#dbscan"),
-    SEE_ALSO("Mean shift on Wikipedia",
-        "https://en.wikipedia.org/wiki/Mean_shift"),
-    SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
+    PRINT_CALL("mean_shift", "input", "data", "centroid", "centroids"));
+
+// See also...
+BINDING_SEE_ALSO("@kmeans", "#kmeans");
+BINDING_SEE_ALSO("@dbscan", "#dbscan");
+BINDING_SEE_ALSO("Mean shift on Wikipedia",
+        "https://en.wikipedia.org/wiki/Mean_shift");
+BINDING_SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
         "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.510.1222"
-        "&rep=rep1&type=pdf"),
-    SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
-        "@doxygen/classmlpack_1_1meanshift_1_1MeanShift.html"));
+        "&rep=rep1&type=pdf");
+BINDING_SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
+        "@doxygen/classmlpack_1_1meanshift_1_1MeanShift.html");
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");
@@ -86,8 +94,8 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
 
 static void mlpackMain()
 {
-  const double radius = CLI::GetParam<double>("radius");
-  const int maxIterations = CLI::GetParam<int>("max_iterations");
+  const double radius = IO::GetParam<double>("radius");
+  const int maxIterations = IO::GetParam<int>("max_iterations");
 
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
       "maximum iterations must be greater than or equal to 0");
@@ -99,7 +107,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "in_place", true }}, "output");
   ReportIgnoredParam({{ "in_place", true }}, "labels_only");
 
-  arma::mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat dataset = std::move(IO::GetParam<arma::mat>("input"));
   arma::mat centroids;
   arma::Row<size_t> assignments;
 
@@ -108,51 +116,51 @@ static void mlpackMain()
   Timer::Start("clustering");
   Log::Info << "Performing mean shift clustering..." << endl;
   meanShift.Cluster(dataset, assignments, centroids,
-    CLI::HasParam("force_convergence"));
+    IO::HasParam("force_convergence"));
   Timer::Stop("clustering");
 
   Log::Info << "Found " << centroids.n_cols << " centroids." << endl;
   if (radius <= 0.0)
     Log::Info << "Estimated radius was " << meanShift.Radius() << ".\n";
 
-  if (CLI::HasParam("in_place"))
+  if (IO::HasParam("in_place"))
   {
     // Add the column of assignments to the dataset; but we have to convert them
     // to type double first.
     arma::vec converted(assignments.n_elem);
-    for (size_t i = 0; i < assignments.n_elem; i++)
+    for (size_t i = 0; i < assignments.n_elem; ++i)
       converted(i) = (double) assignments(i);
 
     dataset.insert_rows(dataset.n_rows, trans(converted));
 
     // Save the dataset.
-    CLI::MakeInPlaceCopy("output", "input");
-    CLI::GetParam<arma::mat>("output") = std::move(dataset);
+    IO::MakeInPlaceCopy("output", "input");
+    IO::GetParam<arma::mat>("output") = std::move(dataset);
   }
-  else if (CLI::HasParam("output"))
+  else if (IO::HasParam("output"))
   {
-    if (!CLI::HasParam("labels_only"))
+    if (!IO::HasParam("labels_only"))
     {
       // Convert the assignments to doubles.
       arma::vec converted(assignments.n_elem);
-      for (size_t i = 0; i < assignments.n_elem; i++)
+      for (size_t i = 0; i < assignments.n_elem; ++i)
         converted(i) = (double) assignments(i);
 
       dataset.insert_rows(dataset.n_rows, trans(converted));
 
       // Now save, in the different file.
-      CLI::GetParam<arma::mat>("output") = std::move(dataset);
+      IO::GetParam<arma::mat>("output") = std::move(dataset);
     }
     else
     {
       // TODO: figure out how to output as an arma::Mat<size_t> so that files
       // aren't way larger than needed.
-      CLI::GetParam<arma::mat>("output") =
+      IO::GetParam<arma::mat>("output") =
           arma::conv_to<arma::mat>::from(assignments);
     }
   }
 
   // Should we write the centroids to a file?
-  if (CLI::HasParam("centroid"))
-    CLI::GetParam<arma::mat>("centroid") = std::move(centroids);
+  if (IO::HasParam("centroid"))
+    IO::GetParam<arma::mat>("centroid") = std::move(centroids);
 }

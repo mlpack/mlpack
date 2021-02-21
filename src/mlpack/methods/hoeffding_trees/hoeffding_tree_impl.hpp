@@ -224,6 +224,138 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
   }
 }
 
+// Move constructor.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
+HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
+    HoeffdingTree(HoeffdingTree&& other) :
+    numericSplits(std::move(other.numericSplits)),
+    categoricalSplits(std::move(other.categoricalSplits)),
+    dimensionMappings(other.dimensionMappings),
+    ownsMappings(true),
+    numSamples(other.numSamples),
+    numClasses(other.numClasses),
+    maxSamples(other.maxSamples),
+    checkInterval(other.checkInterval),
+    minSamples(other.minSamples),
+    datasetInfo(other.datasetInfo),
+    ownsInfo(true),
+    successProbability(other.successProbability),
+    splitDimension(other.splitDimension),
+    majorityClass(other.majorityClass),
+    majorityProbability(other.majorityProbability),
+    categoricalSplit(std::move(other.categoricalSplit)),
+    numericSplit(std::move(other.numericSplit))
+{
+  // Remove pointers.
+  other.dimensionMappings = nullptr;
+  other.datasetInfo = nullptr;
+
+  // Reset primary type variables.
+  other.numSamples = 0;
+  other.numClasses = 0;
+  other.checkInterval = 0;
+  other.minSamples = 0;
+  other.successProbability = 0.0;
+  other.splitDimension = 0;
+  other.majorityClass = 0;
+  other.majorityProbability = 0.0;
+}
+
+// Copy assignment operator.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
+HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>&
+    HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
+    operator=(const HoeffdingTree& other)
+{
+  if (this != &other)
+  {
+    numericSplits = other.numericSplits;
+    categoricalSplits = other.categoricalSplits;
+    dimensionMappings = new std::unordered_map<size_t,
+        std::pair<size_t, size_t>>(*other.dimensionMappings);
+    ownsMappings = true;
+    numSamples = other.numSamples;
+    numClasses = other.numClasses;
+    maxSamples = other.maxSamples;
+    checkInterval = other.checkInterval;
+    minSamples = other.minSamples;
+    datasetInfo = new data::DatasetInfo(*other.datasetInfo);
+    ownsInfo = true;
+    successProbability = other.successProbability;
+    splitDimension = other.splitDimension;
+    majorityClass = other.majorityClass;
+    majorityProbability = other.majorityProbability;
+    categoricalSplit = other.categoricalSplit;
+    numericSplit = other.numericSplit;
+
+    // Copy each of the children.
+    for (size_t i = 0; i < other.children.size(); ++i)
+    {
+      children.push_back(new HoeffdingTree(*other.children[i]));
+
+      // Delete copied datasetInfo and dimension mappings.
+      delete children[i]->datasetInfo;
+      children[i]->datasetInfo = this->datasetInfo;
+      children[i]->ownsInfo = false;
+
+      delete children[i]->dimensionMappings;
+      children[i]->dimensionMappings = this->dimensionMappings;
+      children[i]->ownsMappings = false;
+    }
+  }
+  return *this;
+}
+
+// Move assignment operator.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
+HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>&
+    HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
+    operator=(HoeffdingTree&& other)
+{
+  if (this != &other)
+  {
+    numericSplits = std::move(other.numericSplits);
+    categoricalSplits = std::move(other.categoricalSplits);
+    dimensionMappings = other.dimensionMappings;
+    ownsMappings = true;
+    numSamples = other.numSamples;
+    numClasses = other.numClasses;
+    maxSamples = other.maxSamples;
+    checkInterval = other.checkInterval;
+    minSamples = other.minSamples;
+    datasetInfo = other.datasetInfo;
+    ownsInfo = true;
+    successProbability = other.successProbability;
+    splitDimension = other.splitDimension;
+    majorityClass = other.majorityClass;
+    majorityProbability = other.majorityProbability;
+    categoricalSplit = std::move(other.categoricalSplit);
+    numericSplit = std::move(other.numericSplit);
+
+    // Remove pointers.
+    other.dimensionMappings = nullptr;
+    other.datasetInfo = nullptr;
+
+    // Reset primary type variables.
+    other.numSamples = 0;
+    other.numClasses = 0;
+    other.checkInterval = 0;
+    other.minSamples = 0;
+    other.successProbability = 0.0;
+    other.splitDimension = 0;
+    other.majorityClass = 0;
+    other.majorityProbability = 0.0;
+  }
+  return *this;
+}
+
+
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType>
@@ -341,7 +473,7 @@ void HoeffdingTree<
     delete dimensionMappings;
 
   const CategoricalSplitType<FitnessFunction> categoricalSplitIn(0, 0);
-  const NumericSplitType<FitnessFunction>& numericSplitIn(0);
+  const NumericSplitType<FitnessFunction> numericSplitIn(0);
 
   dimensionMappings =
       new std::unordered_map<size_t, std::pair<size_t, size_t>>();
@@ -793,22 +925,23 @@ void HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::serialize(Archive& ar, const unsigned int /* version */)
+>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(splitDimension);
+  ar(CEREAL_NVP(splitDimension));
 
   // Clear memory for the mappings if necessary.
-  if (Archive::is_loading::value && ownsMappings && dimensionMappings)
+  if (cereal::is_loading<Archive>() && ownsMappings && dimensionMappings)
     delete dimensionMappings;
 
-  ar & BOOST_SERIALIZATION_NVP(dimensionMappings);
+  ar(CEREAL_POINTER(dimensionMappings));
 
   // Special handling for const object.
   data::DatasetInfo* d = NULL;
-  if (Archive::is_saving::value)
+  if (cereal::is_saving<Archive>())
     d = const_cast<data::DatasetInfo*>(datasetInfo);
-  ar & BOOST_SERIALIZATION_NVP(d);
-  if (Archive::is_loading::value)
+  ar(CEREAL_POINTER(d));
+
+  if (cereal::is_loading<Archive>())
   {
     if (datasetInfo && ownsInfo)
       delete datasetInfo;
@@ -823,22 +956,22 @@ void HoeffdingTree<
     children.clear();
   }
 
-  ar & BOOST_SERIALIZATION_NVP(majorityClass);
-  ar & BOOST_SERIALIZATION_NVP(majorityProbability);
+  ar(CEREAL_NVP(majorityClass));
+  ar(CEREAL_NVP(majorityProbability));
 
   // Depending on whether or not we have split yet, we may need to save
   // different things.
   if (splitDimension == size_t(-1))
   {
     // We have not yet split.  So we have to serialize the splits.
-    ar & BOOST_SERIALIZATION_NVP(numSamples);
-    ar & BOOST_SERIALIZATION_NVP(numClasses);
-    ar & BOOST_SERIALIZATION_NVP(maxSamples);
-    ar & BOOST_SERIALIZATION_NVP(successProbability);
+    ar(CEREAL_NVP(numSamples));
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(maxSamples));
+    ar(CEREAL_NVP(successProbability));
 
     // Serialize the splits, but not if we haven't seen any samples yet (in
     // which case we can just reinitialize).
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       // Re-initialize all of the splits.
       numericSplits.clear();
@@ -865,23 +998,23 @@ void HoeffdingTree<
       return;
 
     // Serialize numeric splits.
-    ar & BOOST_SERIALIZATION_NVP(numericSplits);
+    ar(CEREAL_NVP(numericSplits));
 
     // Serialize categorical splits.
-    ar & BOOST_SERIALIZATION_NVP(categoricalSplits);
+    ar(CEREAL_NVP(categoricalSplits));
   }
   else
   {
     // We have split, so we only need to save the split and the children.
     if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
-      ar & BOOST_SERIALIZATION_NVP(categoricalSplit);
+      ar(CEREAL_NVP(categoricalSplit));
     else
-      ar & BOOST_SERIALIZATION_NVP(numericSplit);
+      ar(CEREAL_NVP(numericSplit));
 
     // Serialize the children, because we have split.
-    ar & BOOST_SERIALIZATION_NVP(children);
+      ar(CEREAL_VECTOR_POINTER(children));
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       for (size_t i = 0; i < children.size(); ++i)
       {

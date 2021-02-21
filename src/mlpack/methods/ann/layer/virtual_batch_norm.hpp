@@ -54,7 +54,7 @@ class VirtualBatchNorm
    *
    * @param referenceBatch The data from which the normalization
    *        statistics are computed.
-   * @param size The number of input units.
+   * @param size The number of input units / channels.
    * @param eps The epsilon added to variance to ensure numerical stability.
    */
   template<typename eT>
@@ -132,7 +132,7 @@ class VirtualBatchNorm
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

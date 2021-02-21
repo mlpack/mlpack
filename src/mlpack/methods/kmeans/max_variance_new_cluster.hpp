@@ -44,7 +44,6 @@ class MaxVarianceNewCluster
    * @param metric The Metric to use.
    * @param iteration Number of iteration.
    *
-   * @return Number of points changed.
    */
   template<typename MetricType, typename MatType>
   void EmptyCluster(const MatType& data,
@@ -57,7 +56,7 @@ class MaxVarianceNewCluster
 
   //! Serialize the object.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   //! Index of iteration for which variance is cached.

@@ -265,10 +265,10 @@ class LSHSearch
    * Serialize the LSH model.
    *
    * @param ar Archive to serialize to.
-   * @param version Version number.
+   * @param version serialize class version to provide backward compatibility
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
   //! Return the number of distance evaluations performed.
   size_t DistanceEvaluations() const { return distanceEvaluations; }
@@ -483,10 +483,6 @@ class LSHSearch
 
 } // namespace neighbor
 } // namespace mlpack
-
-//! Set the serialization version of the LSHSearch class.
-BOOST_TEMPLATE_CLASS_VERSION(template<typename SortPolicy>,
-    mlpack::neighbor::LSHSearch<SortPolicy>, 1);
 
 // Include implementation.
 #include "lsh_search_impl.hpp"

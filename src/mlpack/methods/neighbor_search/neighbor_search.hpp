@@ -31,8 +31,13 @@ namespace mlpack {
 namespace neighbor  {
 
 // Forward declaration.
-template<typename SortPolicy>
-class TrainVisitor;
+template<typename SortPolicy,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename RuleType> class DualTreeTraversalType,
+         template<typename RuleType> class SingleTreeTraversalType>
+class LeafSizeNSWrapper;
 
 //! NeighborSearchMode represents the different neighbor search modes available.
 enum NeighborSearchMode
@@ -331,7 +336,7 @@ class NeighborSearch
 
   //! Serialize the NeighborSearch model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   //! Permutations of reference points during tree building.
@@ -359,8 +364,8 @@ class NeighborSearch
   bool treeNeedsReset;
 
   //! The NSModel class should have access to internal members.
-  template<typename SortPol>
-  friend class TrainVisitor;
+  friend class LeafSizeNSWrapper<SortPolicy, TreeType, DualTreeTraversalType,
+      SingleTreeTraversalType>;
 }; // class NeighborSearch
 
 } // namespace neighbor

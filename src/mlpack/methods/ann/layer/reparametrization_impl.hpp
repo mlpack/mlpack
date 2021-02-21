@@ -46,7 +46,60 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
         << "included." << std::endl;
   }
 }
+    
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>::Reparametrization(
+    const Reparametrization& layer) :
+    latentSize(layer.latentSize),
+    stochastic(layer.stochastic),
+    includeKl(layer.includeKl),
+    beta(layer.beta)
+{
+   // Nothing to do here.
+}
 
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>::Reparametrization(
+    Reparametrization&& layer) :
+    latentSize(std::move(layer.latentSize)),
+    stochastic(std::move(layer.stochastic)),
+    includeKl(std::move(layer.includeKl)),
+    beta(std::move(layer.beta))
+{
+   // Nothing to do here.
+}
+    
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>&
+Reparametrization<InputDataType, OutputDataType>::
+operator=(const Reparametrization& layer) 
+{
+  if (this != &layer)
+  {
+    latentSize = layer.latentSize;
+    stochastic = layer.stochastic;
+    includeKl = layer.includeKl;
+    beta = layer.beta;
+  }
+  return *this;
+}
+    
+template <typename InputDataType, typename OutputDataType>
+Reparametrization<InputDataType, OutputDataType>&
+Reparametrization<InputDataType, OutputDataType>::
+operator=(Reparametrization&& layer) 
+{
+  if (this != &layer)
+  {
+    latentSize = std::move(layer.latentSize);
+    stochastic = std::move(layer.stochastic);
+    includeKl = std::move(layer.includeKl);
+    beta = std::move(layer.beta);
+  }
+  return *this;
+}
+  
+    
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Reparametrization<InputDataType, OutputDataType>::Forward(
@@ -90,11 +143,11 @@ void Reparametrization<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Reparametrization<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(latentSize);
-  ar & BOOST_SERIALIZATION_NVP(stochastic);
-  ar & BOOST_SERIALIZATION_NVP(includeKl);
+  ar(CEREAL_NVP(latentSize));
+  ar(CEREAL_NVP(stochastic));
+  ar(CEREAL_NVP(includeKl));
 }
 
 } // namespace ann

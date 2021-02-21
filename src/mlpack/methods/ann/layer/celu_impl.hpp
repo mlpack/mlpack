@@ -36,7 +36,7 @@ void CELU<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
 {
   output = arma::ones<OutputDataType>(arma::size(input));
-  for (size_t i = 0; i < input.n_elem; i++)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (input(i) >= 0) ? input(i) : alpha *
                 (std::exp(input(i) / alpha) - 1);
@@ -45,7 +45,7 @@ void CELU<InputDataType, OutputDataType>::Forward(
   if (!deterministic)
   {
     derivative.set_size(arma::size(input));
-    for (size_t i = 0; i < input.n_elem; i++)
+    for (size_t i = 0; i < input.n_elem; ++i)
     {
       derivative(i) = (input(i) >= 0) ? 1 :
           (output(i) / alpha) + 1;
@@ -65,9 +65,9 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void CELU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar(CEREAL_NVP(alpha));
 }
 
 } // namespace ann

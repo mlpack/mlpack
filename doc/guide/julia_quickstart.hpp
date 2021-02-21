@@ -9,8 +9,9 @@
 This page describes how you can quickly get started using mlpack from Julia and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for
-@ref cli_quickstart "the command-line" and @ref python_quickstart "Python".
+This quickstart guide is also available for @ref python_quickstart "Python",
+@ref cli_quickstart "the command-line", @ref go_quickstart "Go" and
+@ref r_quickstart "R".
 
 @section julia_quickstart_install Installing mlpack
 
@@ -37,7 +38,7 @@ print the accuracy of the random forest on the test dataset.
 
 You can copy-paste this code directly into Julia to run it.  You may need to add
 some extra packages with, e.g., `using Pkg; Pkg.add("CSV");
-Pkg.add("DataFrames"); Pkg.add("Zlib")`.
+Pkg.add("DataFrames"); Pkg.add("Libz")`.
 
 @code{.julia}
 using CSV
@@ -56,7 +57,7 @@ dataset = select!(df, Not(:label))
 
 # Split the dataset using mlpack.
 test, test_labels, train, train_labels = mlpack.preprocess_split(
-    input=dataset,
+    dataset,
     input_labels=labels,
     test_ratio=0.3)
 

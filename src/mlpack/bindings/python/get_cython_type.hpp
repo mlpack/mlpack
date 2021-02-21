@@ -22,7 +22,7 @@ namespace python {
 
 template<typename T>
 inline std::string GetCythonType(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
@@ -32,7 +32,7 @@ inline std::string GetCythonType(
 
 template<>
 inline std::string GetCythonType<int>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<int>>::type*,
     const typename boost::disable_if<data::HasSerialize<int>>::type*,
     const typename boost::disable_if<arma::is_arma_type<int>>::type*)
@@ -42,7 +42,7 @@ inline std::string GetCythonType<int>(
 
 template<>
 inline std::string GetCythonType<double>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<double>>::type*,
     const typename boost::disable_if<data::HasSerialize<double>>::type*,
     const typename boost::disable_if<arma::is_arma_type<double>>::type*)
@@ -52,7 +52,7 @@ inline std::string GetCythonType<double>(
 
 template<>
 inline std::string GetCythonType<std::string>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<std::string>>::type*,
     const typename boost::disable_if<data::HasSerialize<std::string>>::type*,
     const typename boost::disable_if<arma::is_arma_type<std::string>>::type*)
@@ -62,7 +62,7 @@ inline std::string GetCythonType<std::string>(
 
 template<>
 inline std::string GetCythonType<size_t>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<size_t>>::type*,
     const typename boost::disable_if<data::HasSerialize<size_t>>::type*,
     const typename boost::disable_if<arma::is_arma_type<size_t>>::type*)
@@ -72,7 +72,7 @@ inline std::string GetCythonType<size_t>(
 
 template<>
 inline std::string GetCythonType<bool>(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<util::IsStdVector<bool>>::type*,
     const typename boost::disable_if<data::HasSerialize<bool>>::type*,
     const typename boost::disable_if<arma::is_arma_type<bool>>::type*)
@@ -82,7 +82,7 @@ inline std::string GetCythonType<bool>(
 
 template<typename T>
 inline std::string GetCythonType(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::enable_if<util::IsStdVector<T>>::type* = 0)
 {
   return "vector[" + GetCythonType<typename T::value_type>(d) + "]";
@@ -90,7 +90,7 @@ inline std::string GetCythonType(
 
 template<typename T>
 inline std::string GetCythonType(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   std::string type = "Mat";
@@ -104,7 +104,7 @@ inline std::string GetCythonType(
 
 template<typename T>
 inline std::string GetCythonType(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {

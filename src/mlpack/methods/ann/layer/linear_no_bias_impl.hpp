@@ -83,14 +83,14 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 template<typename Archive>
 void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(outSize));
 
   // This is inefficient, but necessary so that WeightSetVisitor sets the right
   // size.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     weights.set_size(outSize * inSize, 1);
 }
 

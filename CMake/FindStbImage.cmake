@@ -36,7 +36,7 @@ endif ()
 
 # Checks 'REQUIRED'.
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(STB_IMAGE
+find_package_handle_standard_args(StbImage
     REQUIRED_VARS STB_IMAGE_INCLUDE_DIR)
 
 mark_as_advanced(STB_IMAGE_INCLUDE_DIR)
