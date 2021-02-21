@@ -1052,7 +1052,7 @@ TEST_CASE("ISRLUFunctionTest", "[ActivationFunctionsTest]")
                                          0.54433105 1 1");
 
   CheckISRLUActivationCorrect(activationData, desiredActivations);
-  CheckISRLUDerivativeCorrect(desiredActivations, desiredDerivatives);
+  CheckISRLUDerivativeCorrect(activationData, desiredDerivatives);
 }
 
 /**
