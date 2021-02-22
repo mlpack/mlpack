@@ -31,12 +31,12 @@ using namespace mlpack::kmeans;
 /**
  * Train and evaluate a model with the specified structure.
  */
-template<typename MatType = arma::mat, typename ModelType>
-void TestNetwork(ModelType& model,
-                 MatType& trainData,
-                 MatType& trainLabels,
-                 MatType& testData,
-                 MatType& testLabels,
+template <typename MatType = arma::mat, typename ModelType>
+void TestNetwork(ModelType &model,
+                 MatType &trainData,
+                 MatType &trainLabels,
+                 MatType &testData,
+                 MatType &testLabels,
                  const size_t maxEpochs,
                  const double classificationErrorThreshold)
 {
@@ -50,7 +50,8 @@ void TestNetwork(ModelType& model,
   for (size_t i = 0; i < predictionTemp.n_cols; ++i)
   {
     prediction(i) = arma::as_scalar(arma::find(
-        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+                        arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) +
+                    1;
   }
 
   size_t correct = arma::accu(prediction == testLabels);
@@ -65,7 +66,8 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot load dataset thyroid_train.csv")
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
@@ -77,7 +79,8 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   }
 
   arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot load dataset thyroid_test.csv")
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -99,9 +102,9 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   KMeans<> kmeans;
   kmeans.Cluster(trainData, 8, centroids);
 
-  FFN<MeanSquaredError<> > model;
-  model.Add<RBF<> >(trainData.n_rows, 8, centroids);
-  model.Add<Linear<> >(8, 3);
+  FFN<MeanSquaredError<>> model;
+  model.Add<RBF<>>(trainData.n_rows, 8, centroids);
+  model.Add<Linear<>>(8, 3);
 
   // RBFN neural net with MeanSquaredError.
   TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
@@ -131,9 +134,9 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   KMeans<> kmeans1;
   kmeans1.Cluster(dataset, 140, centroids1);
 
-  FFN<MeanSquaredError<> > model1;
-  model1.Add<RBF<> >(dataset.n_rows, 140, centroids1, 4.1);
-  model1.Add<Linear<> >(140, 2);
+  FFN<MeanSquaredError<>> model1;
+  model1.Add<RBF<>>(dataset.n_rows, 140, centroids1, 4.1);
+  model1.Add<Linear<>>(140, 2);
 
   // RBFN neural net with MeanSquaredError.
   TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
