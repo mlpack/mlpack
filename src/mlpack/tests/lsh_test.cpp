@@ -115,8 +115,10 @@ TEST_CASE("NumTablesTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata))
+    FAIL("Cannot load dataset");
+  if (!data::Load(testSet, qdata))
+    FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
   KNN knn(rdata);
@@ -187,8 +189,10 @@ TEST_CASE("HashWidthTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata))
+    FAIL("Cannot load dataset");
+  if (!data::Load(testSet, qdata))
+    FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
   KNN knn(rdata);
@@ -247,8 +251,10 @@ TEST_CASE("NumProjTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata))
+    FAIL("Cannot load dataset");
+  if (!data::Load(testSet, qdata))
+    FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
   KNN knn(rdata);
@@ -307,8 +313,10 @@ TEST_CASE("RecallTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata))
+    FAIL("Cannot load dataset");
+  if (!data::Load(testSet, qdata))
+    FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
   KNN knn(rdata);
@@ -502,8 +510,10 @@ TEST_CASE("MultiprobeTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata))
+    FAIL("Cannot load dataset");
+  if (!data::Load(testSet, qdata))
+    FAIL("Cannot load dataset");
 
   // Add a slight amount of noise to the dataset, so that we don't end up with
   // points that have the same distance (hopefully).
@@ -780,8 +790,10 @@ TEST_CASE("ParallelBichromatic", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata))
+    FAIL("Cannot load dataset");
+  if (!data::Load(testSet, qdata))
+    FAIL("Cannot load dataset");
 
   // Where to store neighbors and distances
   arma::Mat<size_t> sequentialNeighbors;
@@ -819,7 +831,8 @@ TEST_CASE("ParallelMonochromatic", "[LSHTest]")
   // Read iris training data as reference and query set.
   const string trainSet = "iris_train.csv";
   arma::mat rdata;
-  data::Load(trainSet, rdata, true);
+  if (!data::Load(trainSet, rdata))
+    FAIL("Cannot load dataset");
 
   // Where to store neighbors and distances
   arma::Mat<size_t> sequentialNeighbors;
@@ -936,8 +949,10 @@ TEST_CASE("SparseLSHTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  data::Load(trainSet, rdata, true);
-  data::Load(testSet, qdata, true);
+  if (!data::Load(trainSet, rdata))
+    FAIL("Cannot load dataset");
+  if (!data::Load(testSet, qdata))
+    FAIL("Cannot load dataset");
 
   // Run on dense data.
   LSHSearch<> denseLSH(
