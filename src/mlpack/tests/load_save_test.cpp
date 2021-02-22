@@ -1416,7 +1416,7 @@ TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest]")
     DatasetInfo info;
     if (!data::Load(testFiles[i], one))
       FAIL("Cannot load dataset");
-    if (!data::Load(testFiles[i], two, info)
+    if (!data::Load(testFiles[i], two, info))
       FAIL("Cannot load dataset");
 
     // Check that the matrices contain the same information.
