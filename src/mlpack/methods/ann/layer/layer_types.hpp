@@ -53,6 +53,7 @@
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 #include <mlpack/methods/ann/layer/hardshrink.hpp>
 #include <mlpack/methods/ann/layer/celu.hpp>
+#include <mlpack/methods/ann/layer/isrlu.hpp>
 #include <mlpack/methods/ann/layer/softshrink.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 
@@ -236,7 +237,8 @@ using MoreTypes = boost::variant<
         VirtualBatchNorm<arma::mat, arma::mat>*,
         RBF<arma::mat, arma::mat, GaussianFunction>*,
         BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
-        PositionalEncoding<arma::mat, arma::mat>*
+        PositionalEncoding<arma::mat, arma::mat>*,
+        ISRLU<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
