@@ -7,6 +7,7 @@ pwd
 
 ls
 
-bin/mlpack_test -r junit -o ../results.xml
-less results.xml
+bin/mlpack_test -s -r console AKNNDualCoverTreeTest
+
+# less results.xml
 
