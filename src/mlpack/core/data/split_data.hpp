@@ -1,4 +1,3 @@
-
 /**
  * @file core/data/split_data.hpp
  * @author Tham Ngap Wei, Keon Kim
@@ -67,7 +66,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
                      const bool shuffleData = true)
 {
   if (!arma::is_Row<LabelsType>::value)
-    throw std::runtime_error("data::Split(): when stratified sampling is done,"
+    throw std::runtime_error("data::Split(): when stratified sampling is done, "
         "labels must have type `arma::Row<>`!");
   size_t trainIdx = 0;
   size_t testIdx = 0;
@@ -75,7 +74,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
   size_t testSize = 0;
   arma::uvec labelCounts;
   arma::uvec testLabelCounts;
-  auto maxLabel = inputLabel.max();
+  typename LabelsType::elem_type maxLabel = inputLabel.max();
 
   labelCounts.zeros(maxLabel+1);
   testLabelCounts.zeros(maxLabel+1);
@@ -88,7 +87,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
     order = arma::shuffle(order);
   }
 
-  for (auto label : inputLabel)
+  for (typename LabelsType::elem_type label : inputLabel)
   {
     ++labelCounts[label];
   }
@@ -106,7 +105,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
 
   for (arma::uword i : order)
   {
-    auto label = inputLabel[i];
+    typename LabelsType::elem_type label = inputLabel[i];
     if (testLabelCounts[label] < floor(labelCounts[label] * testRatio))
     {
       testLabelCounts[label] += 1;
@@ -182,7 +181,7 @@ void Split(const arma::Mat<T>& input,
     trainLabel.set_size(1, trainSize);
     trainData = input.cols(order.subvec(0, trainSize - 1));
 
-    for (size_t i = 0; i < trainSize; i++)
+    for (size_t i = 0; i < trainSize; ++i)
       trainLabel(0, i) = inputLabel(0, order(i));
   }
 
@@ -191,7 +190,7 @@ void Split(const arma::Mat<T>& input,
     testLabel.set_size(1, testSize);
     testData = input.cols(order.subvec(trainSize, input.n_cols - 1));
 
-    for (size_t i = trainSize; i < input.n_cols; i++)
+    for (size_t i = trainSize; i < input.n_cols; ++i)
       testLabel(0, i - trainSize) = inputLabel(0, order(i));
   }
 }
@@ -398,6 +397,7 @@ void Split(FieldType& input,
 
   arma::uvec order = arma::linspace<arma::uvec>(0, input.n_cols - 1,
       input.n_cols);
+
   if (shuffleData)
     order = arma::shuffle(order);
 
@@ -405,20 +405,20 @@ void Split(FieldType& input,
   {
     trainLabels.set_size(1, trainSize);
 
-    for (size_t i = 0; i < trainSize; i++)
+    for (size_t i = 0; i < trainSize; ++i)
       trainData[i] = input(0, order(i));
 
-    for (size_t i = 0; i < trainSize; i++)
+    for (size_t i = 0; i < trainSize; ++i)
       trainLabels(0, i) = inputLabel(0, order(i));
   }
 
   if (testSize <= input.n_cols)
   {
-    for (size_t i = trainSize; i < input.n_cols - 1; i++)
+    for (size_t i = trainSize; i < input.n_cols - 1; ++i)
      testData[i - trainSize] = input(0, order(i));
 
     testLabels.set_size(1, testSize);
-    for (size_t i = trainSize; i < input.n_cols; i++)
+    for (size_t i = trainSize; i < input.n_cols; ++i)
       testLabels(0, i - trainSize) = inputLabel(0, order(i));
   }
 }
@@ -480,7 +480,7 @@ void Split(const FieldType& input,
 
   if (testSize <= input.n_cols)
   {
-    for (size_t i = trainSize; i < input.n_cols - 1; i++)
+    for (size_t i = trainSize; i < input.n_cols - 1; ++i)
        testData[i - trainSize] = input(0, order(i));
   }
 }

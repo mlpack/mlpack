@@ -144,7 +144,6 @@ TEST_CASE("SplitDataResultField", "[SplitDataTest]")
   CheckFields(input, concat);
 }
 
-
 TEST_CASE("ZeroRatioSplitData", "[SplitDataTest]")
 {
   mat input(2, 10);
