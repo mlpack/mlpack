@@ -20,8 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 ISRLU<InputDataType, OutputDataType>::ISRLU(const double alpha) :
-    alpha(alpha),
-    deterministic(false)
+    alpha(alpha)
 {}
 
 template<typename InputDataType, typename OutputDataType>
@@ -42,14 +41,11 @@ template<typename DataType>
 void ISRLU<InputDataType, OutputDataType>::Backward(
     const DataType& input, const DataType& gy, DataType& g)
 {
-  if (!deterministic)
+  derivative.set_size(arma::size(input));
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
-    derivative.set_size(arma::size(input));
-    for (size_t i = 0; i < input.n_elem; ++i)
-    {
-      derivative(i) = (input(i) >= 0) ? 1 :
-          std::pow(1 / std::sqrt(1 + alpha*input(i)*input(i)), 3);
-    }
+    derivative(i) = (input(i) >= 0) ? 1 :
+        std::pow(1 / std::sqrt(1 + alpha * input(i) * input(i)), 3);
   }
   g = gy % derivative;
 }
