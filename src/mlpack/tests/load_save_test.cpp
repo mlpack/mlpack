@@ -1415,7 +1415,7 @@ TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest]")
     arma::mat one, two;
     DatasetInfo info;
     if (!data::Load(testFiles[i], one))
-      FAIL("Cannot load dataset");
+      FAIL("Cannot load dataset")
     if (!data::Load(testFiles[i], two, info);
       FAIL("Cannot load dataset");
 
