@@ -17,6 +17,13 @@ if (NOT BUILD_R_BINDINGS)
   not_found_return("Not building R bindings.")
 endif ()
 
+# Set CXXFLAGS, but only on Windows, to fix build.
+if (BUILD_R_BINDINGS)
+  if ((UNIX AND NOT APPLE) OR WIN32)  # Detect Solaris or Windows.
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-ftrack-macro-expansion=0")
+  endif ()
+endif ()
+
 if (BUILD_R_BINDINGS)
 
   # If mlpack upgrade the version of dependencies, then we also have to update the version here.
