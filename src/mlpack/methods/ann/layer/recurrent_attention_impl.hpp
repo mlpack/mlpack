@@ -31,7 +31,8 @@ RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention() :
     rho(0),
     forwardStep(0),
     backwardStep(0),
-    deterministic(false)
+    deterministic(false),
+    outSize(0)
 {
   // Nothing to do.
 }

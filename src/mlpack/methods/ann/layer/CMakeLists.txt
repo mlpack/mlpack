@@ -63,6 +63,8 @@ set(SOURCES
   log_softmax_impl.hpp
   lookup.hpp
   lookup_impl.hpp
+  lp_pooling.hpp
+  lp_pooling_impl.hpp
   lstm.hpp
   lstm_impl.hpp
   max_pooling.hpp

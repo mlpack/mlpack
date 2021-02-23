@@ -183,6 +183,9 @@ class LSTM
   //! Get the number of output units.
   size_t OutSize() const { return outSize; }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const { return (4 * outSize * inSize + 7 * outSize + 4 * outSize * outSize); }
+
   //! Get the shape of the input.
   size_t InputShape() const
   {

@@ -54,7 +54,7 @@ MultiheadAttention(
   }
 
   headDim = embedDim / numHeads;
-  weights.set_size(4 * (embedDim + 1) * embedDim, 1);
+  weights.set_size(WeightSize(), 1);
 }
 
 template <typename InputDataType, typename OutputDataType,

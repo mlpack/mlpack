@@ -370,14 +370,13 @@ TEST_CASE("AKNNModelTest", "[AKNNTest]")
       // We only have std::move() constructors so make a copy of our data.
       arma::mat referenceCopy(referenceData);
       arma::mat queryCopy(queryData);
+      models[i].LeafSize() = 20;
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE,
-            0.05);
+        models[i].BuildModel(std::move(referenceCopy), DUAL_TREE_MODE, 0.05);
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20,
-            SINGLE_TREE_MODE, 0.05);
+        models[i].BuildModel(std::move(referenceCopy), SINGLE_TREE_MODE, 0.05);
       if (j == 2)
-        models[i].BuildModel(std::move(referenceCopy), 20, NAIVE_MODE);
+        models[i].BuildModel(std::move(referenceCopy), NAIVE_MODE);
 
       arma::Mat<size_t> neighborsApprox;
       arma::mat distancesApprox;
@@ -448,12 +447,11 @@ TEST_CASE("AKNNModelMonochromaticTest", "[AKNNTest]")
     {
       // We only have a std::move() constructor... so copy the data.
       arma::mat referenceCopy(referenceData);
+      models[i].LeafSize() = 20;
       if (j == 0)
-        models[i].BuildModel(std::move(referenceCopy), 20, DUAL_TREE_MODE,
-            0.05);
+        models[i].BuildModel(std::move(referenceCopy), DUAL_TREE_MODE, 0.05);
       if (j == 1)
-        models[i].BuildModel(std::move(referenceCopy), 20,
-            SINGLE_TREE_MODE, 0.05);
+        models[i].BuildModel(std::move(referenceCopy), SINGLE_TREE_MODE, 0.05);
 
       arma::Mat<size_t> neighborsApprox;
       arma::mat distancesApprox;

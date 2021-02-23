@@ -177,6 +177,18 @@ TEST_CASE("WeightSizeVisitorTestForBatchNormLayer", "[ANNVisitorTest]")
 }
 
 /**
+ * Test that WeightSizeVisitor works properly for LSTM layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForLSTMLayer", "[ANNVisitorTest]")
+{
+  size_t randomInSize = arma::randi(arma::distr_param(1, 100));
+  size_t randomOutSize = arma::randi(arma::distr_param(1, 100));
+
+  LayerTypes<> lstm = new LSTM<>(randomInSize, randomOutSize);
+  CheckCorrectnessOfWeightSize(lstm);
+}
+
+/**
  * Test that WeightSizeVisitor works properly for Transposed Convolution layer.
  */
 TEST_CASE("WeightSizeVisitorTestForTransposedConvLayer", "[ANNVisitorTest]")
@@ -204,4 +216,20 @@ TEST_CASE("WeightSizeVisitorTestForNoisyLinearLayer", "[ANNVisitorTest]")
       randomOutSize);
 
   CheckCorrectnessOfWeightSize(noisyLinearLayer);
+}
+
+/**
+ * Test that WeightSizeVisitor works properly for Multihead Attention layer.
+ */
+TEST_CASE("WeightSizeVisitorTestForMultiheadAttentionLayer", "[ANNVisitorTest]")
+{
+  size_t randomtgtSeqLen = arma::randi(arma::distr_param(1, 100));
+  size_t randomsrcSeqLen = arma::randi(arma::distr_param(1, 100));
+  size_t randomembedDim = 768;
+  size_t randomnumHeads = 12;
+
+  LayerTypes<> MultiheadAttentionLayer = new MultiheadAttention<>(randomtgtSeqLen,
+      randomsrcSeqLen, randomembedDim, randomnumHeads);
+
+  CheckCorrectnessOfWeightSize(MultiheadAttentionLayer);
 }

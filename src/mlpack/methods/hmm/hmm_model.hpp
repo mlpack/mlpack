@@ -129,6 +129,26 @@ class HMMModel
     return *this;
   }
 
+  //! Move assignment operator.
+  HMMModel& operator=(HMMModel&& other)
+  {
+    if (this != &other)
+    {
+      type = other.type;
+      discreteHMM = other.discreteHMM;
+      gaussianHMM = other.gaussianHMM;
+      gmmHMM = other.gmmHMM;
+      diagGMMHMM = other.diagGMMHMM;
+
+      other.type = HMMType::DiscreteHMM;
+      other.discreteHMM = new HMM<distribution::DiscreteDistribution>();
+      other.gaussianHMM = nullptr;
+      other.gmmHMM = nullptr;
+      other.diagGMMHMM = nullptr;
+    }
+    return *this;
+  }
+
   //! Clean memory.
   ~HMMModel()
   {

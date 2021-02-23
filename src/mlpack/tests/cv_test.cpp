@@ -199,13 +199,13 @@ TEST_CASE("AdjR2ScoreTest", "[CVTest]")
   // Making two variables that define the linear function is
   // f(x1, x2) = x1 + x2.
   arma::mat X;
-  X << 1 << 2 << 3 << 4 << 5 << 6 << arma::endr
-    << 2 << 3 << 4 << 5 << 6 << 7 << arma::endr;
+  X = { { 1, 2, 3, 4, 5, 6 },
+        { 2, 3, 4, 5, 6, 7 } };
   arma::rowvec Y;
-  Y << 3 << 5 << 7 << 9 << 11 << 13;
-  
+  Y = { 3, 5, 7, 9, 11, 13 };
+
   LinearRegression lr(X, Y);
-  
+
   // Theoretically Adjusted R squared should be equal 1
   double expAdjR2 = 1;
   REQUIRE(std::abs(R2Score<true>::Evaluate(lr, X, Y) - expAdjR2)

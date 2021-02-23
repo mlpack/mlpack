@@ -1,26 +1,27 @@
 /**
- * @file methods/ann/loss_functions/cross_entropy_error_impl.hpp
- * @author Konstantin Sidorov
+ * @file methods/ann/loss_functions/hinge_loss_impl.hpp
+ * @author Anush Kini
  *
- * Implementation of the cross-entropy performance function.
+ * Implementation of the Hinge loss function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_IMPL_HPP
-#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_IMPL_HPP
+
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_HINGE_LOSS_IMPL_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTION_HINGE_LOSS_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "cross_entropy_error.hpp"
+#include "hinge_loss.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-CrossEntropyError<InputDataType, OutputDataType>::CrossEntropyError(
-    const double eps) : eps(eps)
+HingeLoss<InputDataType, OutputDataType>::HingeLoss(const bool reduction):
+  reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -28,31 +29,44 @@ CrossEntropyError<InputDataType, OutputDataType>::CrossEntropyError(
 template<typename InputDataType, typename OutputDataType>
 template<typename PredictionType, typename TargetType>
 typename PredictionType::elem_type
-CrossEntropyError<InputDataType, OutputDataType>::Forward(
+HingeLoss<InputDataType, OutputDataType>::Forward(
     const PredictionType& prediction,
     const TargetType& target)
 {
-  return -arma::accu(target % arma::log(prediction + eps) +
-      (1. - target) % arma::log(1. - prediction + eps));
+  TargetType temp = target - (target == 0);
+  TargetType temp_zeros(size(target), arma::fill::zeros);
+
+  PredictionType loss = arma::max(temp_zeros, 1 - prediction % temp);
+
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / loss.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename PredictionType, typename TargetType, typename LossType>
-void CrossEntropyError<InputDataType, OutputDataType>::Backward(
+void HingeLoss<InputDataType, OutputDataType>::Backward(
     const PredictionType& prediction,
     const TargetType& target,
     LossType& loss)
 {
-  loss = (1. - target) / (1. - prediction + eps) - target / (prediction + eps);
+  TargetType temp = target - (target == 0);
+  loss = (prediction < (1 / temp)) % -temp;
+
+  if (!reduction)
+    loss /= target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void CrossEntropyError<InputDataType, OutputDataType>::serialize(
+void HingeLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(eps));
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

@@ -32,6 +32,7 @@
 #include <mlpack/methods/ann/activation_functions/spline_function.hpp>
 #include <mlpack/methods/ann/activation_functions/poisson1_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
+#include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
 
 #include "catch.hpp"
 
@@ -1133,4 +1134,25 @@ TEST_CASE("SoftminFunctionTest", "[ActivationFunctionsTest]")
                                 desiredActivations);
   CheckSoftminDerivativeCorrect(activationData,
                                 desiredDerivatives);
+}
+
+/**
+ * Basic test of the Hard Swish function.
+ */
+TEST_CASE("HardSwishFunctionTest", "[ActivationFunctionsTest]")
+{
+  // Randomly generated data.
+  const arma::colvec activationData("3.6544 -1.9714 -5.2277 1.5448 2.1164");
+
+  // Hand-calculated values.
+  const arma::colvec desiredActivations("3.6544 -0.3379636 0.0 \
+                                         1.1701345 1.8047248");
+
+  // Hand-calculated values.
+  const arma::colvec desiredDerivatives("1.0 0.38734546 0.5 \
+                                         0.89004483 1.1015749");
+
+  CheckActivationCorrect<HardSwishFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<HardSwishFunction>
+      (desiredActivations, desiredDerivatives);
 }

@@ -1,26 +1,29 @@
 /**
- * @file methods/ann/loss_functions/cross_entropy_error.hpp
- * @author Konstantin Sidorov
+ * @file methods/ann/loss_functions/hinge_loss.hpp
+ * @author Anush Kini
  *
- * Definition of the cross-entropy performance function.
+ * Definition of the Hinge Loss Function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_HPP
-#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_HPP
 
-#include <mlpack/prereqs.hpp>
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_HINGE_LOSS_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTION_HINGE_LOSS_HPP
+
+#include<mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The cross-entropy performance function measures the network's
- * performance according to the cross-entropy
- * between the input and target distributions.
+ * Computes the hinge loss between \f$y_true\f$ and \f$y_pred\f$. Expects
+ * \f$y_true\f$ to be either -1 or 1. If \f$y_true\f$ is either 0 or 1, a
+ * temporary conversion is made to calculate the loss.
+ * The hinge loss \f$l(y_true, y_pred)\f$ is defined as
+ * \f$l(y_true, y_pred) = max(0, 1 - y_true*y_pred)\f$.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -28,26 +31,29 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+        typename InputDataType = arma::mat,
+        typename OutputDataType = arma::mat
 >
-class CrossEntropyError
+class HingeLoss
 {
  public:
   /**
-   * Create the CrossEntropyError object.
+   * Create HingeLoss object.
    *
-   * @param eps The minimum value used for computing logarithms
-   *            and denominators in a numerically stable way.
+   * @param reduction Specifies the reduction to apply to the output. If false,
+   *                  'mean' reduction is used, where sum of the output will be
+   *                  divided by the number of elements in the output. If
+   *                  true, 'sum' reduction is used and the output will be
+   *                  summed. It is set to true by default.
    */
-  CrossEntropyError(const double eps = 1e-10);
+  HingeLoss(const bool reduction = true);
 
   /**
-   * Computes the cross-entropy function.
+   * Computes the Hinge loss function.
    *
-   * @param prediction Predictions used for evaluating the specified loss
+   * @param prediction Prediction used for evaluating the specified loss
    *     function.
-   * @param target The target vector.
+   * @param target Target data to compare with.
    */
   template<typename PredictionType, typename TargetType>
   typename PredictionType::elem_type Forward(const PredictionType& prediction,
@@ -56,7 +62,7 @@ class CrossEntropyError
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param prediction Predictions used for evaluating the specified loss
+   * @param prediction Prediction used for evaluating the specified loss
    *     function.
    * @param target The target vector.
    * @param loss The calculated error.
@@ -71,10 +77,10 @@ class CrossEntropyError
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
-  //! Get the epsilon.
-  double Eps() const { return eps; }
-  //! Modify the epsilon.
-  double& Eps() { return eps; }
+  //! Get the type of reduction used.
+  bool Reduction() const { return reduction; }
+  //! Modify the type of reduction used.
+  bool& Reduction() { return reduction; }
 
   /**
    * Serialize the layer.
@@ -86,14 +92,14 @@ class CrossEntropyError
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! The minimum value used for computing logarithms and denominators
-  double eps;
-}; // class CrossEntropyError
+  //! The boolean value that tells if reduction is sum or mean.
+  bool reduction;
+}; // class HingeLoss
 
 } // namespace ann
 } // namespace mlpack
 
-// Include implementation.
-#include "cross_entropy_error_impl.hpp"
+// include implementation
+#include "hinge_loss_impl.hpp"
 
 #endif
