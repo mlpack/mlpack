@@ -20,7 +20,7 @@ endif ()
 # Set CXXFLAGS, but only on Windows, to fix build.
 if (BUILD_R_BINDINGS)
   if ((UNIX AND NOT APPLE) OR WIN32)  # Detect Solaris or Windows.
-    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-ftrack-macro-expansion=0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftrack-macro-expansion=0")
   endif ()
 endif ()
 
