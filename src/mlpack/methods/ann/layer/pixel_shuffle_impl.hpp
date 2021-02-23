@@ -66,7 +66,7 @@ void PixelShuffle<InputDataType, OutputDataType>::Forward(
     arma::cube outputTemp(const_cast<arma::mat&>(output).memptr(),
         outputHeight, outputWidth, sizeOut * batchSize, false, false);
 
-    for (size_t c = 0; c < sizeOut ; c++)
+    for (size_t c = 0; c < sizeOut; c++)
     {
       for (size_t h = 0; h < outputHeight; h++)
       {
@@ -93,14 +93,12 @@ void PixelShuffle<InputDataType, OutputDataType>::Backward(
   g.zeros(arma::size(input));
   for (size_t n = 0; n < batchSize; n++)
   {
-    arma::mat gyImage = gy.col(n);
-    arma::mat gImage = g.col(n);
-    arma::cube gyTemp(const_cast<arma::mat&>(gyImage).memptr(), outputHeight,
-        outputWidth, sizeOut, false, false);
-    arma::cube gTemp(const_cast<arma::mat&>(gImage).memptr(), height, width,
-        size, false, false);
+    arma::cube gyTemp(const_cast<arma::mat&>(gy).memptr(), outputHeight,
+        outputWidth, sizeOut * batchSize, false, false);
+    arma::cube gTemp(const_cast<arma::mat&>(g).memptr(), height, width,
+        size * batchSize, false, false);
 
-    for (size_t c = 0; c < sizeOut ; c++)
+    for (size_t c = 0; c < sizeOut; c++)
     {
       for (size_t h = 0; h < outputHeight; h++)
       {
@@ -110,12 +108,12 @@ void PixelShuffle<InputDataType, OutputDataType>::Backward(
           size_t width_index = w / upscaleFactor;
           size_t channel_index = (upscaleFactor * (h % upscaleFactor)) +
               (w % upscaleFactor) + (c * std::pow(upscaleFactor, 2));
-          gTemp(width_index, height_index, channel_index) = gyTemp(w, h, c);
+          gTemp(width_index, height_index, channel_index + n * sizeOut) = gyTemp(w, h,
+              c + n * size);
         }
       }
     }
 
-    g.col(n) = gImage;
   }
 }
 
