@@ -43,7 +43,7 @@ TEST_CASE("NaiveGuaranteeTest", "[KRANNTest]")
   RASearch<> rsRann(refData, true, false, 1.0);
 
   arma::mat qrRanks;
-    if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false)) // No transpose.
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false)) // No transpose.
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 1000;
