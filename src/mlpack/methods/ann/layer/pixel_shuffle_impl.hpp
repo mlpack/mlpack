@@ -61,12 +61,10 @@ void PixelShuffle<InputDataType, OutputDataType>::Forward(
   output.zeros(outputHeight * outputWidth * sizeOut, batchSize);
   for (size_t n = 0; n < batchSize; n++)
   {
-    arma::mat inputImage = input.col(n);
-    arma::mat outputImage = output.col(n);
-    arma::cube inputTemp(const_cast<arma::mat&>(inputImage).memptr(), height,
-        width, size, false, false);
-    arma::cube outputTemp(const_cast<arma::mat&>(outputImage).memptr(),
-        outputHeight, outputWidth, sizeOut, false, false);
+    arma::cube inputTemp(const_cast<arma::mat&>(input).memptr(), height,
+        width, size * batchSize, false, false);
+    arma::cube outputTemp(const_cast<arma::mat&>(output).memptr(),
+        outputHeight, outputWidth, sizeOut * batchSize, false, false);
 
     for (size_t c = 0; c < sizeOut ; c++)
     {
@@ -78,13 +76,12 @@ void PixelShuffle<InputDataType, OutputDataType>::Forward(
           size_t width_index = w / upscaleFactor;
           size_t channel_index = (upscaleFactor * (h % upscaleFactor)) +
               (w % upscaleFactor) + (c * std::pow(upscaleFactor, 2));
-          outputTemp(w, h, c) = inputTemp(width_index, height_index,
-              channel_index);
+          outputTemp(w, h, c + n * sizeOut) = inputTemp(width_index, height_index,
+              channel_index + n * size);
         }
       }
     }
 
-    output.col(n) = outputImage;
   }
 }
 
