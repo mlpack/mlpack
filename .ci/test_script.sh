@@ -7,7 +7,7 @@ pwd
 
 ls
 
-bin/mlpack_test -s -r console AKNNDualCoverTreeTest
+bin/mlpack_test -s -r console
 
 # less results.xml
 
