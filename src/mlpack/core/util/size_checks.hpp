@@ -71,7 +71,7 @@ inline void CheckSameSizes(const DataType& data,
   * @param dimension Dimension of the model.
   * @param callerDescription A description of the caller that can be used for
   *     error generation.
-  * @param addInfo  An additional information about data that can be used for
+  * @param addInfo Additional information about data that can be used for
   *	precise error generation. Default is "dataset". Another e.g. weights.
   */
 template<typename DataType, typename DimType>
@@ -114,4 +114,3 @@ inline void CheckSameDimensionality(const DataType& data,
 } // namespace mlpack
 
 #endif
-
