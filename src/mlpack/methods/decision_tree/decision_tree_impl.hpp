@@ -13,7 +13,6 @@
 #define MLPACK_METHODS_DECISION_TREE_DECISION_TREE_IMPL_HPP
 
 #include "decision_tree.hpp"
-#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace tree {

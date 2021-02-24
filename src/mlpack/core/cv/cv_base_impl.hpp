@@ -12,7 +12,7 @@
 #ifndef MLPACK_CORE_CV_CV_BASE_IMPL_HPP
 #define MLPACK_CORE_CV_CV_BASE_IMPL_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace cv {
@@ -108,7 +108,7 @@ void CVBase<MLAlgorithm,
             WeightsType>::AssertDataConsistency(const MatType& xs,
                                                 const PredictionsType& ys)
 {
-  util::CheckSameSizes(xs, ys, "CVBase::AssertDataConsistency()", "CC",
+  util::CheckSameSizes(xs, (size_t) ys.n_cols, "CVBase::AssertDataConsistency()",
       "predictions");
 }
 
@@ -125,14 +125,8 @@ void CVBase<MLAlgorithm,
   static_assert(MIE::SupportsWeights,
       "The given MLAlgorithm does not support weighted learning");
 
-  if (weights.n_elem != xs.n_cols)
-  {
-    std::ostringstream oss;
-    oss << "CVBase::AssertWeightsConsistency(): number of weights ("
-        << weights.n_elem << ") does not match number of data points ("
-        << xs.n_cols << ")!" << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameSizes(xs, weights, "CVBase::AssertWeightsConsistency()",
+      "weights");
 }
 
 template<typename MLAlgorithm,

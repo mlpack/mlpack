@@ -9,54 +9,48 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
-#include <boost/test/unit_test.hpp>
+#include <mlpack/prereqs.hpp>
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
-BOOST_AUTO_TEST_SUITE(SizeCheckTest);
 
 /**
  * Test that CheckSameSizes() works in different cases.
  */
-BOOST_AUTO_TEST_CASE(CheckSizeTest)
+TEST_CASE("CheckSizeTest", "[SizeCheckTest]")
 {
   arma::mat data = arma::randu<arma::mat>(20, 30);
   arma::colvec firstLabels = arma::randu<arma::colvec>(20);
   arma::colvec secondLabels = arma::randu<arma::colvec>(30);
-  arma::mat thirdLabels = arma::randu<arma::mat>(20, 30);
+  arma::mat thirdLabels = arma::randu<arma::mat>(40, 30);
 
-  BOOST_REQUIRE_THROW(CheckSameSizes(data, firstLabels, "TestChecking"),
+  REQUIRE_THROWS_AS(CheckSameSizes(data, firstLabels, "TestChecking"),
       std::invalid_argument);
-  BOOST_REQUIRE_THROW(CheckSameSizes(data, firstLabels, "TestChecking", "CC"),
+  REQUIRE_THROWS_AS(CheckSameSizes(data, (size_t) 20, "TestChecking"),
       std::invalid_argument);
-  BOOST_REQUIRE_THROW(CheckSameSizes(data, firstLabels, "TestChecking", "AB"),
-      std::runtime_error);
 
-  BOOST_REQUIRE_NO_THROW(CheckSameSizes(data, secondLabels, "TestChecking"));
-  BOOST_REQUIRE_NO_THROW(CheckSameSizes(data, thirdLabels, "TestChecking",
-      "CC"));
+  REQUIRE_NOTHROW(CheckSameSizes(data, secondLabels, "TestChecking"));
+  REQUIRE_NOTHROW(CheckSameSizes(data, (size_t) 30, "TestChecking"));
+  REQUIRE_NOTHROW(CheckSameSizes(data, (size_t) thirdLabels.n_cols, "TestChecking"));
 }
 
 /**
  * Test that CheckSameDimensionality() works in different cases.
  */
-BOOST_AUTO_TEST_CASE(CheckDimensionality)
+TEST_CASE("CheckDimensionality", "[SizeCheckTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(20, 30);
   arma::colvec refSet = arma::randu<arma::colvec>(20);
   arma::colvec refSet2 = arma::randu<arma::colvec>(40);
 
-  BOOST_REQUIRE_NO_THROW(CheckSameDimensionality(dataset, (size_t) 20,
+  REQUIRE_NOTHROW(CheckSameDimensionality(dataset, (size_t) 20,
       "TestingDim"));
-  BOOST_REQUIRE_THROW(CheckSameDimensionality(dataset, (size_t) 100,
+  REQUIRE_THROWS_AS(CheckSameDimensionality(dataset, (size_t) 100,
       "TestingDim"), std::invalid_argument);
 
-  BOOST_REQUIRE_THROW(CheckSameDimensionality(dataset, refSet2, "TestingDim"),
+  REQUIRE_THROWS_AS(CheckSameDimensionality(dataset, refSet2, "TestingDim"),
       std::invalid_argument);
-  BOOST_REQUIRE_NO_THROW(CheckSameDimensionality(dataset, refSet,
+  REQUIRE_NOTHROW(CheckSameDimensionality(dataset, refSet,
       "TestingDim"));
 }
-
-BOOST_AUTO_TEST_SUITE_END();
-

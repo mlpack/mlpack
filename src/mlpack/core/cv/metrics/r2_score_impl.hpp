@@ -21,7 +21,7 @@ double R2Score<AdjustedR2>::Evaluate(MLAlgorithm& model,
                                      const DataType& data,
                                      const ResponsesType& responses)
 {
-  util::CheckSameSizes(data, responses, "R2Score::Evaluate()", "CC",
+  util::CheckSameSizes(data,(size_t) responses.n_cols, "R2Score::Evaluate()",
       "responses");
 
   ResponsesType predictedResponses;

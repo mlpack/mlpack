@@ -14,7 +14,6 @@
 
 // In case it hasn't been included yet.
 #include "linear_svm.hpp"
-#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace svm {

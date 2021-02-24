@@ -11,7 +11,6 @@
  */
 
 #include "softmax_regression.hpp"
-#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace regression {
