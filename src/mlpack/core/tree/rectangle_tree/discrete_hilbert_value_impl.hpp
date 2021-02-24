@@ -434,19 +434,40 @@ RemoveNode(TreeType* node, const size_t nodeIndex)
 
 template<typename TreeElemType>
 DiscreteHilbertValue<TreeElemType>& DiscreteHilbertValue<TreeElemType>::
-operator=(const DiscreteHilbertValue& val)
+operator=(const DiscreteHilbertValue& other)
 {
-  if (this == &val)
+  if (this == &other)
     return *this;
 
   if (ownsLocalHilbertValues)
     delete localHilbertValues;
 
   localHilbertValues = const_cast<arma::Mat<HilbertElemType>* >
-      (val.LocalHilbertValues());
+      (other.LocalHilbertValues());
   ownsLocalHilbertValues = false;
-  numValues = val.NumValues();
+  numValues = other.NumValues();
 
+  return *this;
+}
+
+template<typename TreeElemType>
+DiscreteHilbertValue<TreeElemType>& DiscreteHilbertValue<TreeElemType>::
+operator=(DiscreteHilbertValue&& other)
+{
+  if (this != &other)
+  {
+    localHilbertValues = other.localHilbertValues;
+    ownsLocalHilbertValues = other.ownsLocalHilbertValues;
+    numValues = other.numValues;
+    valueToInsert = other.valueToInsert;
+    ownsValueToInsert = other.ownsValueToInsert;
+
+    other.localHilbertValues = nullptr;
+    other.ownsLocalHilbertValues = false;
+    other.numValues = 0;
+    other.valueToInsert = nullptr;
+    other.ownsValueToInsert = false;
+  }
   return *this;
 }
 

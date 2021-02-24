@@ -46,6 +46,90 @@ FastLSTM<InputDataType, OutputDataType>::FastLSTM(
 }
 
 template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>::FastLSTM(const FastLSTM& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    forwardStep(layer.forwardStep),
+    backwardStep(layer.backwardStep),
+    gradientStep(layer.gradientStep),
+    weights(layer.weights),
+    batchSize(layer.batchSize),
+    batchStep(layer.batchStep),
+    gradientStepIdx(layer.gradientStepIdx),
+    grad(layer.grad),
+    rhoSize(layer.rho),
+    bpttSteps(layer.bpttSteps)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>::FastLSTM(FastLSTM&& layer) :
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
+    rho(std::move(layer.rho)),
+    forwardStep(std::move(layer.forwardStep)),
+    backwardStep(std::move(layer.backwardStep)),
+    gradientStep(std::move(layer.gradientStep)),
+    weights(std::move(layer.weights)),
+    batchSize(std::move(layer.batchSize)),
+    batchStep(std::move(layer.batchStep)),
+    gradientStepIdx(std::move(layer.gradientStepIdx)),
+    grad(std::move(layer.grad)),
+    rhoSize(std::move(layer.rho)),
+    bpttSteps(std::move(layer.bpttSteps))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>&
+FastLSTM<InputDataType, OutputDataType>::operator=(const FastLSTM& layer)
+{
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    rho = layer.rho;
+    forwardStep = layer.forwardStep;
+    backwardStep = layer.backwardStep;
+    gradientStep = layer.gradientStep;
+    weights = layer.weights;
+    batchSize = layer.batchSize;
+    batchStep = layer.batchStep;
+    gradientStepIdx = layer.gradientStepIdx;
+    grad = layer.grad;
+    rhoSize = layer.rho;
+    bpttSteps = layer.bpttSteps;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
+FastLSTM<InputDataType, OutputDataType>&
+FastLSTM<InputDataType, OutputDataType>::operator=(FastLSTM&& layer)
+{
+  if (this != &layer)
+  {
+    inSize = std::move(layer.inSize);
+    outSize = std::move(layer.outSize);
+    rho = std::move(layer.rho);
+    forwardStep = std::move(layer.forwardStep);
+    backwardStep = std::move(layer.backwardStep);
+    gradientStep = std::move(layer.gradientStep);
+    weights = std::move(layer.weights);
+    batchSize = std::move(layer.batchSize);
+    batchStep = std::move(layer.batchStep);
+    gradientStepIdx = std::move(layer.gradientStepIdx);
+    grad = std::move(layer.grad);
+    rhoSize = std::move(layer.rho);
+    bpttSteps = std::move(layer.bpttSteps);
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
 void FastLSTM<InputDataType, OutputDataType>::Reset()
 {
   // Set the weight parameter for the input to gate layer (linear layer) using
@@ -79,33 +163,20 @@ void FastLSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
   gradientStep = batchSize * size - 1;
 
   const size_t rhoBatchSize = size * batchSize;
-  if (gate.is_empty() || gate.n_cols != rhoBatchSize)
-  {
-    gate.set_size(4 * outSize, rhoBatchSize);
-    gateActivation.set_size(outSize * 3, rhoBatchSize);
-    stateActivation.set_size(outSize, rhoBatchSize);
-    cellActivation.set_size(outSize, rhoBatchSize);
-    prevError.set_size(4 * outSize, batchSize);
 
-    if (prevOutput.is_empty())
-    {
-      prevOutput = arma::zeros<OutputDataType>(outSize, batchSize);
-      cell = arma::zeros(outSize, size * batchSize);
-      cellActivationError = arma::zeros<OutputDataType>(outSize, batchSize);
-      outParameter = arma::zeros<OutputDataType>(
-          outSize, (size + 1) * batchSize);
-    }
-    else
-    {
-      // To preserve the leading zeros, recreate the object according to given
-      // size specifications, while preserving the elements as well as the
-      // layout of the elements.
-      prevOutput.resize(outSize, batchSize);
-      cell.resize(outSize, size * batchSize);
-      cellActivationError.resize(outSize, batchSize);
-      outParameter.resize(outSize, (size + 1) * batchSize);
-    }
-  }
+  // Make sure all of the matrices we use to store state are at least as large
+  // as we need.
+  gate.set_size(4 * outSize, rhoBatchSize);
+  gateActivation.set_size(outSize * 3, rhoBatchSize);
+  stateActivation.set_size(outSize, rhoBatchSize);
+  cellActivation.set_size(outSize, rhoBatchSize);
+  prevError.set_size(4 * outSize, batchSize);
+
+  // Reset stored state to zeros.
+  prevOutput.zeros(outSize, batchSize);
+  cell.zeros(outSize, size * batchSize);
+  cellActivationError.zeros(outSize, batchSize);
+  outParameter.zeros(outSize, (size + 1) * batchSize);
 }
 
 template<typename InputDataType, typename OutputDataType>

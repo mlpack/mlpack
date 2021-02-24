@@ -146,9 +146,13 @@ This document discusses how to build mlpack from source. These build directions
 will work for any Linux-like shell environment (for example Ubuntu, macOS,
 FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
 and so it may be easier to use the package manager for your system.  For example, 
-on Ubuntu, you can install mlpack with the following command:
+on Ubuntu, you can install the mlpack library and command-line executables (e.g.
+mlpack_pca, mlpack_kmeans etc.) with the following command:
 
-    $ sudo apt-get install libmlpack-dev
+    $ sudo apt-get install libmlpack-dev mlpack-bin
+
+On Fedora or Red Hat (EPEL):
+    $ sudo dnf install mlpack-devel mlpack-bin
 
 Note: Older Ubuntu versions may not have the most recent version of mlpack
 available---for instance, at the time of this writing, Ubuntu 16.04 only has
@@ -199,6 +203,7 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
     PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
+    PYTHON_INSTALL_PREFIX=(/path/to/python/): Path to root of Python installation
     BUILD_JULIA_BINDINGS=(ON/OFF): whether or not to build Julia bindings
     JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
     BUILD_GO_BINDINGS=(ON/OFF): whether or not to build Go bindings
@@ -217,6 +222,8 @@ Options are specified with the -D flag.  The allowed options include:
     STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
        STB image library
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available
+    BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
+       (default ON)
 
 Other tools can also be used to configure CMake, but those are not documented
 here.  See [this section of the build guide](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html#build_config)

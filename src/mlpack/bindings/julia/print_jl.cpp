@@ -251,6 +251,12 @@ void PrintJL(const util::BindingDetails& doc,
       << endl;
   cout << endl;
 
+  // Create the set of model pointers.
+  cout << "  # Create the set of model pointers to avoid setting multiple "
+      << "finalizers." << endl;
+  cout << "  modelPtrs = Set{Ptr{Nothing}}()" << endl;
+  cout << endl;
+
   // Restore IO settings.
   cout << "  IORestoreSettings(\"" << programName << "\")" << endl;
   cout << endl;

@@ -71,7 +71,6 @@ build_script:
     -DARMADILLO_LIBRARY:FILEPATH=%ARMADILLO_LIBRARY%
     -DCEREAL_INCLUDE_DIR="C:/projects/mlpack/unofficial-flayan-cereal.1.2.2/build/native/include"
     -DBOOST_INCLUDEDIR:PATH=%BOOST_INCLUDE%
-    -DBOOST_LIBRARYDIR:PATH="C:/projects/mlpack/boost_libs"
     -DDEBUG=OFF
     -DPROFILE=OFF
     -DBUILD_PYTHON_BINDINGS=OFF

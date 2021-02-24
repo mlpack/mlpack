@@ -107,7 +107,7 @@ void PrintOutputProcessing(
 {
   std::string type = util::StripType(d.cppType);
   std::cout << functionName << "_internal.IOGetParam"
-      << type << "(\"" << d.name << "\")";
+      << type << "(\"" << d.name << "\", modelPtrs)";
 }
 
 /**

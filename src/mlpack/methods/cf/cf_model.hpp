@@ -14,105 +14,146 @@
 #define MLPACK_METHODS_CF_CF_MODEL_HPP
 
 #include <mlpack/core.hpp>
-#include <boost/variant.hpp>
 #include "cf.hpp"
-
-#include <mlpack/methods/cf/decomposition_policies/batch_svd_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/randomized_svd_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/svd_complete_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/svd_incomplete_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp>
-#include <mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp>
-
-#include <mlpack/methods/cf/normalization/no_normalization.hpp>
-#include <mlpack/methods/cf/normalization/overall_mean_normalization.hpp>
-#include <mlpack/methods/cf/normalization/user_mean_normalization.hpp>
-#include <mlpack/methods/cf/normalization/item_mean_normalization.hpp>
-#include <mlpack/methods/cf/normalization/z_score_normalization.hpp>
 
 namespace mlpack {
 namespace cf {
 
 /**
- * DeleteVisitor deletes the CFType<> object which is pointed to by the
- * variable cf in class CFModel.
+ * NeighborSearchTypes contains the set of NeighborSearchPolicy classes that are
+ * usable by CFModel at prediction time.
  */
-class DeleteVisitor : public boost::static_visitor<void>
+enum NeighborSearchTypes
 {
- public:
-  //! Delete CFType object.
-  template <typename DecompositionPolicy,
-            typename NormalizationType = NoNormalization>
-  void operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
+  COSINE_SEARCH,
+  EUCLIDEAN_SEARCH,
+  PEARSON_SEARCH
 };
 
 /**
- * GetValueVisitor returns the pointer which points to the CFType object.
+ * InterpolationTypes contains the set of InterpolationPolicy classes that are
+ * usable by CFModel at prediction time.
  */
-class GetValueVisitor : public boost::static_visitor<void*>
+enum InterpolationTypes
 {
- public:
-  //! Return stored pointer as void* type.
-  template <typename DecompositionPolicy,
-            typename NormalizationType = NoNormalization>
-  void* operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
+  AVERAGE_INTERPOLATION,
+  REGRESSION_INTERPOLATION,
+  SIMILARITY_INTERPOLATION
 };
 
 /**
- * PredictVisitor uses the CFType object to make predictions on the given
- * combinations of users and items.
+ * The CFWrapperBase class provides a unified interface that can be used by the
+ * CFModel class to interact with all different CF types at runtime.  All CF
+ * wrapper types inherit from this base class.
  */
-template <typename NeighborSearchPolicy,
-          typename InterpolationPolicy>
-class PredictVisitor : public boost::static_visitor<void>
+class CFWrapperBase
 {
- private:
-  //! User/item combinations to predict.
-  const arma::Mat<size_t>& combinations;
-  //! Predicted ratings for each user/item combination.
-  arma::vec& predictions;
-
  public:
-  //! Predict ratings for each user-item combination.
-  template <typename DecompositionPolicy,
-            typename NormalizationType = NoNormalization>
-  void operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
+  //! Create the object.  The base class has nothing to hold.
+  CFWrapperBase() { }
 
-  //! Visitor constructor.
-  PredictVisitor(const arma::Mat<size_t>& combinations,
-                 arma::vec& predictions);
+  //! Make a copy of the object.
+  virtual CFWrapperBase* Clone() const = 0;
+
+  //! Delete the object.
+  virtual ~CFWrapperBase() { }
+
+  //! Compute predictions for users.
+  virtual void Predict(const NeighborSearchTypes nsType,
+                       const InterpolationTypes interpolationType,
+                       const arma::Mat<size_t>& combinations,
+                       arma::vec& predictions) = 0;
+
+  //! Compute recommendations for all users.
+  virtual void GetRecommendations(
+      const NeighborSearchTypes nsType,
+      const InterpolationTypes interpolationType,
+      const size_t numRecs,
+      arma::Mat<size_t>& recommendations) = 0;
+
+  //! Compute recommendations.
+  virtual void GetRecommendations(
+      const NeighborSearchTypes nsType,
+      const InterpolationTypes interpolationType,
+      const size_t numRecs,
+      arma::Mat<size_t>& recommendations,
+      const arma::Col<size_t>& users) = 0;
 };
 
 /**
- * RecommendationVisitor uses the CFType object to get recommendations for the
- * given users.
+ * The CFWrapper class wraps the functionality of all CF types.  If special
+ * handling is needed for a future CF type, this class can be extended.
  */
-template <typename NeighborSearchPolicy,
-          typename InterpolationPolicy>
-class RecommendationVisitor : public boost::static_visitor<void>
+template<typename DecompositionPolicy, typename NormalizationPolicy>
+class CFWrapper : public CFWrapperBase
 {
- private:
-  //! Number of Recommendations.
-  const size_t numRecs;
-  //! Recommendations matrix to save recommendations.
-  arma::Mat<size_t>& recommendations;
-  //! Users for which recommendations are to be generated.
-  const arma::Col<size_t>& users;
-  //! Whether users are given.
-  const bool usersGiven;
+ protected:
+  typedef CFType<DecompositionPolicy, NormalizationPolicy> CFModelType;
 
  public:
-  //! Visitor constructor.
-  RecommendationVisitor(const size_t numRecs,
-                        arma::Mat<size_t>& recommendations,
-                        const arma::Col<size_t>& users,
-                        const bool usersGiven);
+  //! Create the CFWrapper object, using default parameters to initialize the
+  //! held CF object.
+  CFWrapper() { }
 
-  //! Generates the given number of recommendations.
-  template <typename DecompositionPolicy,
-            typename NormalizationType = NoNormalization>
-  void operator()(CFType<DecompositionPolicy, NormalizationType>* c) const;
+  //! Create the CFWrapper object, initializing the held CF object.
+  CFWrapper(const arma::mat& data,
+            const DecompositionPolicy& decomposition,
+            const size_t numUsersForSimilarity,
+            const size_t rank,
+            const size_t maxIterations,
+            const size_t minResidue,
+            const bool mit) :
+      cf(data,
+         decomposition,
+         numUsersForSimilarity,
+         rank,
+         maxIterations,
+         minResidue,
+         mit)
+  {
+    // Nothing else to do.
+  }
+
+  //! Clone the CFWrapper object.  This handles polymorphism correctly.
+  virtual CFWrapper* Clone() const { return new CFWrapper(*this); }
+
+  //! Destroy the CFWrapper object.
+  virtual ~CFWrapper() { }
+
+  //! Get the CFType object.
+  CFModelType& CF() { return cf; }
+
+  //! Compute predictions for users.
+  virtual void Predict(const NeighborSearchTypes nsType,
+                       const InterpolationTypes interpolationType,
+                       const arma::Mat<size_t>& combinations,
+                       arma::vec& predictions);
+
+  //! Compute recommendations for all users.
+  virtual void GetRecommendations(
+      const NeighborSearchTypes nsType,
+      const InterpolationTypes interpolationType,
+      const size_t numRecs,
+      arma::Mat<size_t>& recommendations);
+
+  //! Compute recommendations.
+  virtual void GetRecommendations(
+      const NeighborSearchTypes nsType,
+      const InterpolationTypes interpolationType,
+      const size_t numRecs,
+      arma::Mat<size_t>& recommendations,
+      const arma::Col<size_t>& users);
+
+  //! Serialize the model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(cf));
+  }
+
+ protected:
+  //! This is the CF object that we are wrapping.
+  CFModelType cf;
 };
 
 /**
@@ -120,98 +161,110 @@ class RecommendationVisitor : public boost::static_visitor<void>
  */
 class CFModel
 {
+ public:
+  enum DecompositionTypes
+  {
+    NMF,
+    BATCH_SVD,
+    RANDOMIZED_SVD,
+    REG_SVD,
+    SVD_COMPLETE,
+    SVD_INCOMPLETE,
+    BIAS_SVD,
+    SVD_PLUS_PLUS
+  };
+
+  enum NormalizationTypes
+  {
+    NO_NORMALIZATION,
+    ITEM_MEAN_NORMALIZATION,
+    USER_MEAN_NORMALIZATION,
+    OVERALL_MEAN_NORMALIZATION,
+    Z_SCORE_NORMALIZATION
+  };
+
  private:
+  //! The current decomposition policy type.
+  DecompositionTypes decompositionType;
+  //! The current normalization policy type.
+  NormalizationTypes normalizationType;
+
   /**
    * cf holds an instance of the CFType class for the current
    * decompositionPolicy and normalizationType. It is initialized every time
-   * Train() is executed. We access to the contained value through the visitor
-   * classes defined above.
+   * Train() is executed.
    */
-  boost::variant<CFType<NMFPolicy, NoNormalization>*,
-                 CFType<BatchSVDPolicy, NoNormalization>*,
-                 CFType<RandomizedSVDPolicy, NoNormalization>*,
-                 CFType<RegSVDPolicy, NoNormalization>*,
-                 CFType<SVDCompletePolicy, NoNormalization>*,
-                 CFType<SVDIncompletePolicy, NoNormalization>*,
-                 CFType<BiasSVDPolicy, NoNormalization>*,
-                 CFType<SVDPlusPlusPolicy, NoNormalization>*,
-
-                 CFType<NMFPolicy, ItemMeanNormalization>*,
-                 CFType<BatchSVDPolicy, ItemMeanNormalization>*,
-                 CFType<RandomizedSVDPolicy, ItemMeanNormalization>*,
-                 CFType<RegSVDPolicy, ItemMeanNormalization>*,
-                 CFType<SVDCompletePolicy, ItemMeanNormalization>*,
-                 CFType<SVDIncompletePolicy, ItemMeanNormalization>*,
-                 CFType<BiasSVDPolicy, ItemMeanNormalization>*,
-                 CFType<SVDPlusPlusPolicy, ItemMeanNormalization>*,
-
-                 CFType<NMFPolicy, UserMeanNormalization>*,
-                 CFType<BatchSVDPolicy, UserMeanNormalization>*,
-                 CFType<RandomizedSVDPolicy, UserMeanNormalization>*,
-                 CFType<RegSVDPolicy, UserMeanNormalization>*,
-                 CFType<SVDCompletePolicy, UserMeanNormalization>*,
-                 CFType<SVDIncompletePolicy, UserMeanNormalization>*,
-                 CFType<BiasSVDPolicy, UserMeanNormalization>*,
-                 CFType<SVDPlusPlusPolicy, UserMeanNormalization>*,
-
-                 CFType<NMFPolicy, OverallMeanNormalization>*,
-                 CFType<BatchSVDPolicy, OverallMeanNormalization>*,
-                 CFType<RandomizedSVDPolicy, OverallMeanNormalization>*,
-                 CFType<RegSVDPolicy, OverallMeanNormalization>*,
-                 CFType<SVDCompletePolicy, OverallMeanNormalization>*,
-                 CFType<SVDIncompletePolicy, OverallMeanNormalization>*,
-                 CFType<BiasSVDPolicy, OverallMeanNormalization>*,
-                 CFType<SVDPlusPlusPolicy, OverallMeanNormalization>*,
-
-                 CFType<NMFPolicy, ZScoreNormalization>*,
-                 CFType<BatchSVDPolicy, ZScoreNormalization>*,
-                 CFType<RandomizedSVDPolicy, ZScoreNormalization>*,
-                 CFType<RegSVDPolicy, ZScoreNormalization>*,
-                 CFType<SVDCompletePolicy, ZScoreNormalization>*,
-                 CFType<SVDIncompletePolicy, ZScoreNormalization>*,
-                 CFType<BiasSVDPolicy, ZScoreNormalization>*,
-                 CFType<SVDPlusPlusPolicy, ZScoreNormalization>*> cf;
+  CFWrapperBase* cf;
 
  public:
   //! Create an empty CF model.
-  CFModel() { }
+  CFModel();
+
+  //! Create a CF model by copying the given model.
+  CFModel(const CFModel& other);
+
+  //! Create a CF model by taking ownership of the data of the other model.
+  CFModel(CFModel&& other);
+
+  //! Make this CF model a copy of the other model.
+  CFModel& operator=(const CFModel& other);
+
+  //! Make this CF model take ownership of the data of the other model.
+  CFModel& operator=(CFModel&& other);
 
   //! Clean up memory.
   ~CFModel();
 
-  //! Get the pointer to CFType<> object.
-  template <typename DecompositionPolicy,
-            typename NormalizationType = NoNormalization>
-  const CFType<DecompositionPolicy, NormalizationType>* CFPtr() const;
+  //! Get the CFWrapperBase object.  (Be careful!)
+  CFWrapperBase* CF() const { return cf; }
+
+  //! Get the decomposition type.
+  const DecompositionTypes& DecompositionType() const
+  {
+    return decompositionType;
+  }
+  //! Set the decomposition type.
+  DecompositionTypes& DecompositionType()
+  {
+    return decompositionType;
+  }
+
+  //! Get the normalization type.
+  const NormalizationTypes& NormalizationType() const
+  {
+    return normalizationType;
+  }
+  //! Set the normalization type.
+  NormalizationTypes& NormalizationType()
+  {
+    return normalizationType;
+  }
 
   //! Train the model.
-  template<typename DecompositionPolicy,
-           typename MatType>
-  void Train(const MatType& data,
+  void Train(const arma::mat& data,
              const size_t numUsersForSimilarity,
              const size_t rank,
              const size_t maxIterations,
              const double minResidue,
-             const bool mit,
-             const std::string& normalizationType = "none");
+             const bool mit);
 
   //! Make predictions.
-  template <typename NeighborSearchPolicy,
-            typename InterpolationPolicy>
-  void Predict(const arma::Mat<size_t>& combinations,
+  void Predict(const NeighborSearchTypes nsType,
+               const InterpolationTypes interpolationType,
+               const arma::Mat<size_t>& combinations,
                arma::vec& predictions);
 
   //! Compute recommendations for query users.
-  template<typename NeighborSearchPolicy,
-           typename InterpolationPolicy>
-  void GetRecommendations(const size_t numRecs,
+  void GetRecommendations(const NeighborSearchTypes nsType,
+                          const InterpolationTypes interpolationType,
+                          const size_t numRecs,
                           arma::Mat<size_t>& recommendations,
                           const arma::Col<size_t>& users);
 
   //! Compute recommendations for all users.
-  template<typename NeighborSearchPolicy,
-           typename InterpolationPolicy>
-  void GetRecommendations(const size_t numRecs,
+  void GetRecommendations(const NeighborSearchTypes nsType,
+                          const InterpolationTypes interpolationType,
+                          const size_t numRecs,
                           arma::Mat<size_t>& recommendations);
 
   //! Serialize the model.

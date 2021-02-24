@@ -25,23 +25,23 @@ EarthMoverDistance<InputDataType, OutputDataType>::EarthMoverDistance()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 EarthMoverDistance<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  return -arma::accu(target % input);
+  return -arma::accu(target % prediction);
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void EarthMoverDistance<InputDataType, OutputDataType>::Backward(
-    const InputType& /* input */,
+    const PredictionType& /* prediction */,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output = -target;
+  loss = -target;
 }
 
 template<typename InputDataType, typename OutputDataType>

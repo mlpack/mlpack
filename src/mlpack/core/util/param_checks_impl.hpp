@@ -21,7 +21,8 @@ namespace util {
 inline void RequireOnlyOnePassed(
     const std::vector<std::string>& constraints,
     const bool fatal,
-    const std::string& errorMessage)
+    const std::string& errorMessage,
+    const bool allowNone)
 {
   if (BINDING_IGNORE_CHECK(constraints))
     return;
@@ -57,7 +58,7 @@ inline void RequireOnlyOnePassed(
       stream << "; " << errorMessage;
     stream << "!" << std::endl;
   }
-  else if (set == 0)
+  else if (set == 0 && !allowNone)
   {
     stream << (fatal ? "Must " : "Should ");
 

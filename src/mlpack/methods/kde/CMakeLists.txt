@@ -8,6 +8,7 @@ set(SOURCES
   kde_stat.hpp
   kde_model.hpp
   kde_model_impl.hpp
+  kde_model.cpp
 )
 
 # Add directory name to sources.

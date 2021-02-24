@@ -110,6 +110,12 @@ class RBF
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer.
    */

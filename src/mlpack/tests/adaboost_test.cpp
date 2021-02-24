@@ -12,7 +12,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/adaboost/adaboost.hpp>
 
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
 

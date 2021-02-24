@@ -37,7 +37,7 @@
 
 #include "catch.hpp"
 #include "test_catch_tools.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::cf;
@@ -346,7 +346,7 @@ void TrainWithCoordinateList(DecompositionPolicy& decomposition)
 {
   arma::mat randomData(3, 100);
   randomData.row(0) = arma::linspace<arma::rowvec>(0, 99, 100);
-  randomData.row(1) = arma::linspace<arma::rowvec>(0, 99, 100);
+  randomData.row(1) = randomData.row(0);
   randomData.row(2).fill(3);
   CFType<DecompositionPolicy> c(randomData, decomposition, 5, 5, 30);
 

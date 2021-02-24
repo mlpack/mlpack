@@ -118,6 +118,12 @@ class BilinearInterpolation
   //! Modify the depth of the input.
   size_t& InDepth() { return depth; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inRowSize;
+  }
+
   /**
    * Serialize the layer.
    */

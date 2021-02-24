@@ -34,7 +34,6 @@ mlpack and dependencies in Release Mode).
 - Under Linker > Input > Additional Dependencies add:
 @code
  - C:\mlpack\mlpack-3.4.2\build\Debug\mlpack.lib
- - C:\boost\boost_1_71_0\lib64-msvc-14.2\libboost_serialization-vc142-mt-gd-x64-1_71.lib
 @endcode
 - Under Build Events > Post-Build Event > Command Line add:
 @code

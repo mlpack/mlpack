@@ -53,7 +53,7 @@ class CategoricalDQN
   /**
    * Default constructor.
    */
-  CategoricalDQN() : network(), isNoisy(false)
+  CategoricalDQN() : network(), isNoisy(false), atomSize(0), vMin(0.0), vMax(0.0)
   { /* Nothing to do here. */ }
 
   /**

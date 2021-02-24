@@ -307,7 +307,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronReTrainWithWrongClasses",
   arma::Row<size_t> labelsX2;
 
   // 10 responses.
-  labelsX2 << 0 << 1 << 4 << 1 << 2 << 1 << 0 << 3 << 3 << 0 << endr;
+  labelsX2 = { 0, 1, 4, 1, 2, 1, 0, 3, 3, 0 };
 
   // Last column of trainX2 contains the class labels.
   SetInputParam("training", std::move(trainX2));
@@ -334,7 +334,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongDimOfTestData",
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr;
+  trainY = { 0 , 1, 0, 1, 1, 1, 0, 1, 0, 0 };
 
   // Test data with wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D-3, M);
@@ -362,7 +362,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongResponseSizeTest",
   arma::Row<size_t> trainY; // Response vector with wrong size.
 
   // 8 responses.
-  trainY << 0 << 0 << 1 << 0 << 1 << 1 << 1 << 0 << endr;
+  trainY = { 0, 0, 1, 0, 1, 1, 1, 0 };
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));
@@ -398,7 +398,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronNoTrainingDataTest",
                  "[PerceptronMainTest][BindingTests]")
 {
   arma::Row<size_t> trainY;
-  trainY << 1 << 1 << 0 << 1 << 0 << 0 <<endr;
+  trainY = { 1, 1, 0, 1, 0, 0 };
 
   SetInputParam("labels", std::move(trainY));
 
@@ -422,7 +422,7 @@ TEST_CASE_METHOD(PerceptronTestFixture, "PerceptronWrongDimOfTestData2",
   arma::Row<size_t> trainY;
 
   // 10 responses.
-  trainY << 0 << 1 << 0 << 1 << 1 << 1 << 0 << 1 << 0 << 0 << endr;
+  trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
 
   SetInputParam("training", std::move(trainX));
   SetInputParam("labels", std::move(trainY));

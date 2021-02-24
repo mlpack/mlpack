@@ -134,6 +134,12 @@ class MiniBatchDiscrimination
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return A;
+  }
+
   /**
    * Serialize the layer.
    */

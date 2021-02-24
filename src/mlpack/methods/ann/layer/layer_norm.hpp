@@ -148,6 +148,12 @@ class LayerNorm
   //! Get the value of epsilon.
   double Epsilon() const { return eps; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return size;
+  }
+
   /**
    * Serialize the layer.
    */

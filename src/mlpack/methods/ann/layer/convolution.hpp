@@ -29,6 +29,35 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of the Convolution class. The Convolution class represents a
  * single layer of a neural network.
+ * Example usage:
+ * 
+ * Suppose we want to pass a matrix M (2744x100) to a `Convolution` layer;
+ * in this example, `M` was obtained from "flattening" 100 images (or Mel
+ * cepstral coefficients, if we talk about speech, or whatever you like) of
+ * dimension 196x14. In other words, the first 196 columns of each row of M
+ * will be made of the 196 columns of the first row of each of the 100 images
+ * (or Mel cepstral coefficients). Then the next 295 columns of M (196 - 393)
+ * will be made of the 196 columns of the second row of the 100 images (or Mel
+ * cepstral coefficients), etc.  Given that the size of our 2-D input images is
+ * 196x14, the parameters for our `Convolution` layer will be something like
+ * this:
+ *
+ * ```
+ * Convolution<> c(1, // Number of input activation maps.
+ *                 14, // Number of output activation maps.
+ *                 3, // Filter width.
+ *                 3, // Filter height.
+ *                 1, // Stride along width.
+ *                 1, // Stride along height.
+ *                 0, // Padding width.
+ *                 0, // Padding height.
+ *                 196, // Input width.
+ *                 14); // Input height.
+ * ```
+ *
+ * This `Convolution<>` layer will treat each column of the input matrix `M` as
+ * a 2-D image (or object) of the original 196x14 size, using this as the input
+ * for the 14 filters of this example.
  *
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
@@ -207,10 +236,10 @@ class Convolution
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size.
+  //! Get the number of input maps.
   size_t InputSize() const { return inSize; }
 
-  //! Get the output size.
+  //! Get the number of output maps.
   size_t OutputSize() const { return outSize; }
 
   //! Get the kernel width.
@@ -257,6 +286,12 @@ class Convolution
   size_t WeightSize() const
   {
     return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
+  }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inputHeight * inputWidth * inSize;
   }
 
   /**

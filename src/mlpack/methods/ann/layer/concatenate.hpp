@@ -41,6 +41,18 @@ class Concatenate
    */
   Concatenate();
 
+  //! Copy constructor.
+  Concatenate(const Concatenate& layer);
+
+  //! Move constructor.
+  Concatenate(Concatenate&& layer);
+
+  //! Operator= copy constructor.
+  Concatenate& operator=(const Concatenate& layer);
+
+  //! Operator= move constructor.
+  Concatenate& operator=(Concatenate&& layer);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -82,7 +94,7 @@ class Concatenate
 
   //! Get the concat matrix.
   OutputDataType const& Concat() const { return concat; }
-  //! Modify the delta.
+  //! Modify the concat.
   OutputDataType& Concat() { return concat; }
 
   /**

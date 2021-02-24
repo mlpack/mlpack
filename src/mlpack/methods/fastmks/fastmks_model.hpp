@@ -60,6 +60,9 @@ class FastMKSModel
   //! Copy assignment operator.
   FastMKSModel& operator=(const FastMKSModel& other);
 
+  //! Move assignment operator.
+  FastMKSModel& operator=(FastMKSModel&& other);
+
   /**
    * Clean memory.
    */

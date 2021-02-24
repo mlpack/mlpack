@@ -35,7 +35,7 @@ BINDING_LONG_DESC(
     PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("test") +
     " output parameters."
     "\n\n"
-    "Optionally, labels can be also be split along with the data by specifying "
+    "Optionally, labels can also be split along with the data by specifying "
     "the " + PRINT_PARAM_STRING("input_labels") + " parameter.  Splitting "
     "labels works the same way as splitting the data. The output training and "
     "test labels may be saved with the " +
@@ -96,7 +96,7 @@ PARAM_DOUBLE_IN("test_ratio", "Ratio of test set; if not set,"
     "the ratio defaults to 0.2", "r", 0.2);
 
 PARAM_INT_IN("seed", "Random seed (0 for std::time(NULL)).", "s", 0);
-PARAM_FLAG("no_shuffle", "Avoid shuffling and splitting the data.", "S");
+PARAM_FLAG("no_shuffle", "Avoid shuffling the data before splitting.", "S");
 PARAM_FLAG("stratify_data", "Stratify the data according to labels", "z")
 
 using namespace mlpack;
@@ -140,12 +140,6 @@ static void mlpackMain()
   RequireParamValue<double>("test_ratio",
       [](double x) { return x >= 0.0 && x <= 1.0; }, true,
       "test ratio must be between 0.0 and 1.0");
-
-  if (!IO::HasParam("test_ratio")) // If test_ratio is not set, warn the user.
-  {
-    Log::Warn << "You did not specify " << PRINT_PARAM_STRING("test_ratio")
-        << ", so it will be automatically set to 0.2." << endl;
-  }
 
   // Load the data.
   arma::mat& data = IO::GetParam<arma::mat>("input");
