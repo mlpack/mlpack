@@ -71,7 +71,22 @@ TEST_CASE("BERTTokenizer-BasicTests", "[BERTTokenizerTest]")
 		{"hello", "##ab", "##cd", "##ef", "check", "##up"}
 	};
 
-	BERTTokenizerRunner(input_list);
+	BERTTokenizerRunner(input_list, tokenized_output_true);
 }
+
+TEST_CASE("BERTTokenizer-PunctTests", "[BERTTokenizerTest]")
+{
+    std::vector<std::string> input_list = {"check check make it , gtab",
+                              "UNwant 00E9d,running",
+                              "hello how are you?!!"};
+    std::vector<std::vector<std::string>> tokenized_output_true = 
+    {
+        {"check", "check", "make", "it", ",", "gt", "##ab"},
+        {"un", "##wan", "##t", "00", "##e", "##9", "##d", ",", "running"}
+    };
+
+    BERTTokenizerRunner(input_list, tokenized_output_true);
+}
+
 
 #endif
