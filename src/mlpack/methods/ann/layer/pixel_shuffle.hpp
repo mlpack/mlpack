@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/layer/pixel_shuffle.hpp
  * @author Anjishnu Mukherjee
+ * @author Abhinav Anand
  *
  * Definition of the PixelShuffle class.
  *
