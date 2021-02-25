@@ -91,6 +91,14 @@ if (BUILD_R_BINDINGS)
                  ${CMAKE_CURRENT_BINARY_DIR}/mlpack/DESCRIPTION
                  @ONLY)
 
+  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/mlpack/configure.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/mlpack/configure
+                 @ONLY)
+
+  configure_file(${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/mlpack/configure.ac.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/mlpack/configure.ac
+                 @ONLY)
+
   # Create the empty NAMESPACE file that will include all export functions.
   file(WRITE
       "${CMAKE_CURRENT_BINARY_DIR}/mlpack/NAMESPACE"
@@ -100,7 +108,7 @@ if (BUILD_R_BINDINGS)
   set(CPP_SOURCES
    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/src/r_util.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/src/rcpp_mlpack.h"
-   "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/src/Makevars"
+   "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/src/Makevars.in"
    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/src/Makevars.win"
   )
 
