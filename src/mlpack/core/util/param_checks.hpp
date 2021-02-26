@@ -180,7 +180,7 @@ void RequireParamValue(const std::string& paramName,
  * then a warning will be issued noting that the parameter is ignored.  The
  * warning will go to Log::Warn.
  *
- * @param constraints Set of constraints.
+ *@c @param constraints Set of constraints.
  * @param paramName Name of parameter to check.
  */
 void ReportIgnoredParam(
@@ -205,6 +205,29 @@ void ReportIgnoredParam(
  */
 void ReportIgnoredParam(const std::string& paramName,
                         const std::string& reason);
+
+
+/**
+* Checks if the matrix column dimension matches a row dimension.
+* Useful to e.g check if number of labels matches number of training points
+*  
+* Depending on Macros, used for passing parameters, this function
+* should be called in different modes:
+* - @c mode MR, for arma::Mat and arma::Row
+* - @c mode IR, for tuple<DatasetInfo, arma::mat> and arma::Row 
+*
+* @param mName Name of the matrix param
+* @param rName Name of row param
+* @param errorMessage Error Message
+* @param mode Comparision mode
+* @param fatal If true, an exception is thrown and output goes to Log::Fatal.
+*/
+template <typename T, typename S>
+void RequireParamShapesMatch(const std::string& mName,
+			     const std::string& rName,
+			     const std::string& errorMessage,
+			     const std::string& mode,
+			     const bool fatal);
 
 } // namespace util
 } // namespace mlpack

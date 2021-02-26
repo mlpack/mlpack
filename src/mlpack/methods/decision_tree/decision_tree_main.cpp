@@ -176,6 +176,11 @@ static void mlpackMain()
   RequireParamValue<double>("minimum_gain_split", [](double x)
                          { return (x > 0.0 && x < 1.0); }, true,
                          "gain split must be a fraction in range [0,1]");
+  
+  if(IO::HasParam("training") && IO::HasParam("labels"))
+  {
+    RequireParamShapesMatch<double, size_t>("training", "labels", "", "IR", true);
+  }
 
   if (IO::HasParam("print_training_error"))
   {
@@ -195,6 +200,7 @@ static void mlpackMain()
     trainingSet = std::move(std::get<1>(IO::GetParam<TupleType>("training")));
     if (IO::HasParam("labels"))
     {
+      std::string error = "Number of training labels should match number of training points";
       labels = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
     }
     else

@@ -181,10 +181,17 @@ static void mlpackMain()
   // "output" will be removed in mlpack 4.0.0.
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
-  AdaBoostModel* m;
+
+	if(IO::HasParam("training") && IO::HasParam("labels"))
+	{
+		RequireParamShapesMatch<double, size_t>("training", "labels", "", "MR", true); 
+	}
+  
+	AdaBoostModel* m;
   if (IO::HasParam("training"))
-  {
-    mat trainingData;
+  {  
+    // Load Data
+		mat trainingData = std::move(IO::GetParam<arma::mat>("training"));
     m = new AdaBoostModel();
 
     // Load labels.
@@ -192,23 +199,11 @@ static void mlpackMain()
 
     if (IO::HasParam("labels"))
     {
-      // Load labels.
+			// Load labels.
       labelsIn = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
-      // require that shape of data matches the size of it's labels
-      std::ostringstream error;
-      error << "column number of training data must match"
-        << "the number of training labels (" 
-	      << labelsIn.n_cols << ")";
-
-      RequireParamValue<arma::mat>("training",
-                             [labelsIn](arma::mat trainingData) {return trainingData.n_cols == labelsIn.n_cols;}, true, error.str());
-      //  Load data
-      trainingData = std::move(IO::GetParam<arma::mat>("training"));
     }
     else
     {
-      // Load data without checking shape
-      trainingData =  std::move(IO::GetParam<arma::mat>("training"));
       // Extract the labels as the last dimension of the training data.
       Log::Info << "Using the last dimension of training set as labels."
           << endl;

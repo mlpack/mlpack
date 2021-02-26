@@ -223,6 +223,70 @@ void RequireParamValue(const std::string& name,
   }
 }
 
+template<typename T>
+void RequireParamValue(const std::string& name,
+                       const std::function<bool(arma::Mat<T>)>& conditional,
+                       const bool fatal,
+                       const std::string& errorMessage)
+{
+  if (BINDING_IGNORE_CHECK(name))
+    return;
+
+  // We need to make sure that the condition holds.
+  bool condition = conditional(IO::GetParam<T>(name));
+  if (!condition)
+  {
+    // The condition failed.
+    util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
+    stream << "Invalid value of " << PRINT_PARAM_STRING(name) << " specified ("
+           << PRINT_PARAM_VALUE(IO::GetParam<T>(name), false) << "); "
+           << errorMessage << "!" << std::endl;
+  }
+}
+
+template <typename T, typename S>
+void RequireParamShapesMatch(const std::string& mName,
+                             const std::string& rName,
+                             const std::string& errorMessage,
+														 const std::string& mode,
+		       	     						 const bool fatal)
+{
+  if(BINDING_IGNORE_CHECK(mName) || BINDING_IGNORE_CHECK(rName))
+	{
+		return;
+  }
+	
+	arma::Mat<T> m;
+	arma::Row<S> r;
+	
+	if(mode == "MR")	// Matrix and Row
+	{   
+		m = IO::GetParam<arma::Mat<T>>(mName);
+		r = IO::GetParam<arma::Row<S>>(rName);
+	}
+	else if(mode == "IR") // Matrix with categoricals and Row
+	{
+		m = std::get<1>(IO::GetParam<std::tuple<mlpack::data::DatasetInfo, arma::mat> >(mName));
+		r = IO::GetParam<arma::Row<S>>(rName);
+	}
+	else 
+	{
+	  util::PrefixedOutStream& stream = Log::Warn;
+		stream << "mode not recognized" << std::endl;
+		return ;
+	}
+
+	if(m.n_cols != r.n_cols){
+  	util::PrefixedOutStream& stream = fatal ? Log::Fatal : Log::Warn;
+		stream << "Invalid shapes of " << PRINT_PARAM_STRING(mName) 
+					 << " ([" << m.n_rows << "," << m.n_cols 
+					 << "]) and " 
+					 << PRINT_PARAM_STRING(rName) 
+					 << " ([1," << r.n_cols << "]) "
+					 << errorMessage << "!" << std::endl;
+	}
+}
+
 inline void ReportIgnoredParam(
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName)
