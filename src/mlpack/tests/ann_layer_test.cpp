@@ -4606,6 +4606,106 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
 }
 
 /**
+ * Simple Test for PixelShuffle layer.
+ */
+TEST_CASE("PixelShuffleLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input1, output1, gy1, g1, outputExpected1, gExpected1;
+  arma::mat input2, output2, gy2, g2, outputExpected2, gExpected2;
+  PixelShuffle<> module1(2, 2, 2, 4);
+  PixelShuffle<> module2(2, 2, 2, 4);
+
+  // Input is a single image, of size (2,2) and having 4 channels.
+  input1 << 1 << 3 << 2 << 4 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << arma::endr;
+  gy1 << 1 << 5 << 9 << 13 << 2 << 6 << 10 << 14 << 3 << 7 << 11 << 15 << 4 << 8
+      << 12 << 16 << arma::endr;
+
+  // Calculated using torch.nn.PixelShuffle().
+  outputExpected1 << 1 << 0 << 3 << 0 << 0 << 0 << 0 << 0 << 2 << 0 << 4 << 0
+      << 0 << 0 << 0 << 0 << arma::endr;
+  gExpected1 << 1 << 9 << 3 << 11 << 5 << 13 << 7 << 15 << 2 << 10 << 4 << 12
+      << 6 << 14 << 8 << 16 << arma::endr;
+
+  input1 = input1.t();
+  outputExpected1 = outputExpected1.t();
+  gy1 = gy1.t();
+  gExpected1 = gExpected1.t();
+
+  // Check the Forward pass of the layer.
+  module1.Forward(input1, output1);
+  CheckMatrices(output1, outputExpected1);
+
+  // Check the Backward pass of the layer.
+  module1.Backward(input1, gy1, g1);
+  CheckMatrices(g1, gExpected1);
+
+  // Input is a batch of 2 images, each of size (2,2) and having 4 channels.
+  input2 << 1 << 3 << 2 << 4 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << arma::endr << 5 << 7 << 6 << 8 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << 0 << 0 << arma::endr;
+  gy2 << 1 << 5 << 9 << 13 << 2 << 6 << 10 << 14 << 3 << 7 << 11 << 15 << 4 << 8
+      << 12 << 16 << arma::endr << 17 << 21 << 25 << 29 << 18 << 22 << 26 << 30
+      << 19 << 23 << 27 << 31 << 20 << 24 << 28 << 32 << arma::endr;
+
+  // Calculated using torch.nn.PixelShuffle().
+  outputExpected2 << 1 << 0 << 3 << 0 << 0 << 0 << 0 << 0 << 2 << 0 << 4 << 0
+      << 0 << 0 << 0 << 0 << arma::endr << 5 << 0 << 7 << 0 << 0 << 0 << 0 << 0
+      << 6 << 0 << 8 << 0 << 0 << 0 << 0 << 0 << arma::endr;
+  gExpected2 << 1 << 9 << 3 << 11 << 5 << 13 << 7 << 15 << 2 << 10 << 4 << 12
+      << 6 << 14 << 8 << 16 << arma::endr << 17 << 25 << 19 << 27 << 21 << 29
+      << 23 << 31 << 18 << 26 << 20 << 28 << 22 << 30 << 24 << 32 << arma::endr;
+
+  input2 = input2.t();
+  outputExpected2 = outputExpected2.t();
+  gy2 = gy2.t();
+  gExpected2 = gExpected2.t();
+
+  // Check the Forward pass of the layer.
+  module2.Forward(input2, output2);
+  CheckMatrices(output2, outputExpected2);
+
+  // Check the Backward pass of the layer.
+  module2.Backward(input2, gy2, g2);
+  CheckMatrices(g2, gExpected2);
+}
+
+/**
+ * Test that the function that can access the parameters of the
+ * PixelShuffle layer works.
+ */
+TEST_CASE("PixelShuffleLayerParametersTest", "[ANNLayerTest]")
+{
+  // Create the layer using the empty constructor.
+  PixelShuffle<> layer;
+
+  // Set the different input parameters of the layer.
+  layer.UpscaleFactor() = 2;
+  layer.InputHeight() = 2;
+  layer.InputWidth() = 2;
+  layer.InputChannels() = 4;
+
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer.UpscaleFactor() == 2);
+  REQUIRE(layer.InputHeight() == 2);
+  REQUIRE(layer.InputWidth() == 2);
+  REQUIRE(layer.InputChannels() == 4);
+
+  arma::mat input, output;
+  // Input is a batch of 2 images, each of size (2,2) and having 4 channels.
+  input << 1 << 3 << 2 << 4 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << arma::endr << 5 << 7 << 6 << 8 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << 0 << 0 << arma::endr;
+  input = input.t();
+  layer.Forward(input, output);
+
+  // Check whether output parameters are returned correctly.
+  REQUIRE(layer.OutputHeight() == 4);
+  REQUIRE(layer.OutputWidth() == 4);
+  REQUIRE(layer.OutputChannels() == 1);
+}
+
+/*
  * Simple Test for SpatialDropout layer.
  */
 TEST_CASE("SpatialDropoutLayerTest", "[ANNLayerTest]")
