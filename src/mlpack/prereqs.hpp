@@ -140,7 +140,7 @@ or upgrade Boost to 1.59 or newer.
 // We need to be able to mark functions deprecated.
 #include <mlpack/core/util/deprecated.hpp>
 
-// Include ready to use utility function for better workflow.
+// Include ready to use utility function to check sizes of datasets.
 #include <mlpack/core/util/size_checks.hpp>
 
 #endif

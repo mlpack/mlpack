@@ -20,7 +20,8 @@ double MSE::Evaluate(MLAlgorithm& model,
                      const DataType& data,
                      const ResponsesType& responses)
 {
-  util::CheckSameSizes(data,(size_t) responses.n_cols, "MSE::Evaluate()", "responses");
+  util::CheckSameSizes(data, (size_t) responses.n_cols, "MSE::Evaluate()",
+      "responses");
 
   ResponsesType predictedResponses;
   model.Predict(data, predictedResponses);

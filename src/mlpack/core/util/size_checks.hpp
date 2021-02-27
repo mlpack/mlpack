@@ -19,15 +19,15 @@ namespace mlpack {
 namespace util {
 
 /**
-  * Check for if the given data points & labels have same size.
-  *
-  * @param data data.
-  * @param labels Labels.
-  * @param callerDescription A description of the caller that can be used for
-  *     error generation.
-  * @param addInfo  Additional information about labels that can be used for
-  *	precise error generation. Default is "labels". Another e.g. weights
-  */
+ * Check for if the given data points & labels have same size.
+ *
+ * @param data data.
+ * @param labels Labels.
+ * @param callerDescription A description of the caller that can be used for
+ *     error generation.
+ * @param addInfo Name to use for labels for precise error generation. Default
+ *     is "labels"; for example, "weights" could also be used.
+ */
 template<typename DataType, typename LabelsType>
 inline void CheckSameSizes(const DataType& data,
                            const LabelsType& label,
@@ -44,7 +44,8 @@ inline void CheckSameSizes(const DataType& data,
   }
 }
 
-/** An overload of CheckSameSizes() where the size to be checked is known
+/**
+ * An overload of CheckSameSizes() where the size to be checked is known
  * previously. The second parameter is of type unsigned int.
  */
 template<typename DataType>
@@ -65,15 +66,15 @@ inline void CheckSameSizes(const DataType& data,
 
 
 /**
-  * Check for if the given dataset dimension matches with the model's.
-  *
-  * @param data dataset.
-  * @param dimension Dimension of the model.
-  * @param callerDescription A description of the caller that can be used for
-  *     error generation.
-  * @param addInfo Additional information about data that can be used for
-  *	precise error generation. Default is "dataset". Another e.g. weights.
-  */
+ * Check for if the given dataset dimension matches with the model's.
+ *
+ * @param data dataset.
+ * @param dimension Dimension of the model.
+ * @param callerDescription A description of the caller that can be used for
+ *     error generation.
+ * @param addInfo Name to use for dataset for precise error generation. Default
+ *     is "dataset"; for example, "weights" could also be used.
+ */
 template<typename DataType, typename DimType>
 inline void CheckSameDimensionality(const DataType& data,
                                     const DimType& dimension,
@@ -91,7 +92,8 @@ inline void CheckSameDimensionality(const DataType& data,
   }
 }
 
-/** An overload of CheckSameDimensionality() where the dimension to be checked
+/**
+ * An overload of CheckSameDimensionality() where the dimension to be checked
  * is known second param is unsigned long int.
  */
 template<typename DataType>
