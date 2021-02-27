@@ -20,31 +20,6 @@ namespace mlpack {
 namespace cv {
 
 /**
-  * Assert there is the same number of the given data points and labels.
-  *
-  * @param data Column-major data.
-  * @param labels Labels.
-  * @param callerDescription A description of the caller that can be used for
-  *     error generation.
-  * @deprecated Check the new versions, util::CheckSameSizes &
-  * util::CheckSameDimensionality.
-  */
-template<typename DataType>
-void AssertSizes(const DataType& data,
-                 const arma::Row<size_t>& labels,
-                 const std::string& callerDescription)
-{
-  if (data.n_cols != labels.n_elem)
-  {
-    std::ostringstream oss;
-    oss << callerDescription << ": number of points (" << data.n_cols << ") "
-        << "does not match number of labels (" << labels.n_elem << ")!"
-        << std::endl;
-    throw std::invalid_argument(oss.str());
-  }
-}
-
-/**
   * Pairwise distance of the given data.
   *
   * @param data Column-major matrix.
