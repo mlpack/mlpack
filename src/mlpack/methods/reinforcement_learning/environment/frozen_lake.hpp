@@ -222,7 +222,7 @@ class FrozenLake
     if (done && maxSteps != 0 && newRow == height - 1 && 
         newCol == width - 1)
       return 1.0;
-    else if (done && boardDescription[newRow][newCol] == 'H')
+    else if (done && boardDescription(newRow, newCol) == tiles::Hole)
       return -1.0;
 
     // Reward 0 otherwise.
@@ -267,7 +267,7 @@ class FrozenLake
    * @return A state in which the height and width of the environment board are 
    *    limited to height and width, respectively.
    */
-  State InitialSample(std::vector<std::vector<char>> board, size_t height, size_t width)
+  State InitialSample(arma::Mat<size_t> board, size_t height, size_t width)
   {
     stepsPerformed = 0;
     this->height = height;
@@ -290,12 +290,12 @@ class FrozenLake
           "being taken.\n";
       return true;
     }
-    else if (boardDescription[state.CurRow()][state.CurCol()] == 'H')
+    else if (boardDescription(state.CurRow(), state.CurCol()) == tiles::Hole)
     {
       Log::Info << "Episode terminated due to agent falling in the hole.\n";
       return true;
     }
-    else if (boardDescription[state.CurRow()][state.CurCol()] == 'G')
+    else if (boardDescription(state.CurRow(), state.CurCol()) == tiles::Goal)
     {
       Log::Info << "Episode terminated, agent reached the goal.\n";
       return true;
@@ -313,25 +313,33 @@ class FrozenLake
   size_t& MaxSteps() { return maxSteps; }
 
   //! Get the board description.
-  std::vector<std::vector<char>> Description() const {return boardDescription;}
+  // std::vector<std::vector<char>> Description() const {return boardDescription;}
+  arma::Mat<size_t> Description() const {return boardDescription;}
 
   //! Set the board description.
-  std::vector<std::vector<char>>& Description() {return boardDescription;}
+  // std::vector<std::vector<char>>& Description() {return boardDescription;}
+  arma::Mat<size_t>& Description() {return boardDescription;}
+
+  enum tiles
+  {
+    Start, Goal, Frozen, Hole
+  };
 
  private:
   /**
    * Utility function that helps generate random environment board.
    * 
    * @return board, a 2D array of characters that hold the board description.
-   *    'S' is the Start Tile, the starting position of the agent.
-   *    'G' is the Goal Tile, the agent can walk into a goal tile to win.
-   *    'F' is a Frozen Tile, the agent can walk on it.
-   *    'H' is a Hole Tile, the agent can fall into it and the game ends.
+   *    'S' is the Start Tile, the starting position of the agent. 0
+   *    'G' is the Goal Tile, the agent can walk into a goal tile to win. 1
+   *    'F' is a Frozen Tile, the agent can walk on it. 2
+   *    'H' is a Hole Tile, the agent can fall into it and the game ends. 3
    */
-  std::vector<std::vector<char>> generateRandomBoard()
+  arma::Mat<size_t> generateRandomBoard()
   {
     bool valid = false;
-    std::vector<std::vector<char>> Board;
+    // std::vector<std::vector<char>> Board;
+    arma::Mat<size_t> Board(height, width);
     //! TODO: Tentative, implement max step to control whether
     // we can never generate a possible board.
     while (!valid)
@@ -352,18 +360,19 @@ class FrozenLake
    * @param width Width of the environment board.
    * @return true if there is a solution, false otherwise. 
    */
-  static bool dfsHelper(std::vector<std::vector<char>> candidateBoard, size_t height, size_t width)
+  static bool dfsHelper(arma::Mat<size_t> candidateBoard, size_t height, size_t width)
   {
     arma::Mat<short> visited(height, width);
     visited.fill(0);
     std::vector<std::array<size_t, 2>> path;
+    // arma::Mat<size_t> path();
     path.push_back({0, 0});
     while (!path.empty())
     {
       auto node = path.back();
       path.pop_back();
 
-      visited(node[0],node[1]) = 1;
+      visited(node[0], node[1]) = 1;
       int directions[4][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
       for (auto direction : directions)
       {
@@ -373,9 +382,9 @@ class FrozenLake
         {
           if (r_new >= height || c_new >= width)
               continue;
-          if (candidateBoard[r_new][c_new] == 'G')
+          if (candidateBoard(r_new, c_new) == tiles::Goal)
               return true;
-          if (candidateBoard[r_new][c_new] != 'H')
+          if (candidateBoard(r_new, c_new) != tiles::Hole)
               path.push_back({r_new, c_new});
         }
       }
@@ -385,34 +394,34 @@ class FrozenLake
 
   /**
    * Perform random distribution of tile in the environment board. There are 4 type of tile:
-   * 'S' is the Start Tile, the starting position of the agent.
-   * 'G' is the Goal Tile, the agent can walk into a goal tile to win.
-   * 'F' is a Frozen Tile, the agent can walk on it.
-   * 'H' is a Hole Tile, the agent can fall into it and the game ends.
+   * 'S' is the Start Tile, the starting position of the agent. 0
+   * 'G' is the Goal Tile, the agent can walk into a goal tile to win. 1
+   * 'F' is a Frozen Tile, the agent can walk on it. 2
+   * 'H' is a Hole Tile, the agent can fall into it and the game ends. 3
    * 
    * @param m Height of the environment board.
    * @param n Width of the environment board.
    * @return a 2d array that describes the environment board. 
    */
-  std::vector<std::vector<char>> genBoardHelper(size_t height, size_t width, double platformRate)
+  arma::Mat<size_t> genBoardHelper(size_t height, size_t width, double platformRate)
   {
-    std::vector<char> board[height];
+    arma::Mat<size_t> board(height, width);
+
     for (size_t i = 0; i < height; i++)
     {
       for (size_t j = 0; j < width; j++)
       {
         auto r = arma::randu();
         if (r < 1 - platformRate)
-          board[i].push_back('H');
+          board(i) = tiles::Hole;
         else
-          board[i].push_back('F');
+          board(i) = tiles::Frozen;
       }
     }
-    board[0][0] = 'S';
-    board[height - 1][width - 1] = 'G';
+    board(0, 0) = tiles::Start;
+    board(height - 1, width - 1) = tiles::Goal;
 
-    std::vector<std::vector<char>> returnedBoard(board, board + height);
-    return returnedBoard;
+    return board;
   }
 
   /**
@@ -422,13 +431,13 @@ class FrozenLake
    * @param height Height of the environment board.
    * @param width Width of the environment board.
    */
-  static void printBoard(std::vector<std::vector<char>> board, size_t height, size_t width)
+  static void printBoard(arma::Mat<size_t> board, size_t height, size_t width)
   {
     for (size_t i = 0; i < height; i++) 
     {
       for (size_t j = 0; j < width; j++)
       {
-        Log::Info << board[i][j] << " ";
+        Log::Info << board(i, j) << " ";
       }
       Log::Info << "\n";
     }
@@ -452,7 +461,7 @@ class FrozenLake
   double platformRate;
 
   //! Locally-stored the environment board description.
-  std::vector<std::vector<char>> boardDescription;
+  arma::Mat<size_t> boardDescription;
 
 };
 } // namespace rl

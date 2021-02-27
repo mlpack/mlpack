@@ -325,14 +325,20 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
   FrozenLake::Action goRight;
   goRight.action = FrozenLake::Action::actions::Right;
 
-  // Static board definition.
-  std::vector<std::vector<char>> sampleBoard {{'S','F','H','F'},
-                                              {'F','H','F','F'},
-                                              {'F','F','F','F'},
-                                              {'F','F','F','G'}};
+  // // Static board definition.
+  // std::vector<std::vector<char>> sampleBoard {{'S','F','H','F'},
+  //                                             {'F','H','F','F'},
+  //                                             {'F','F','F','F'},
+  //                                             {'F','F','F','G'}};
 
-  // Task 1 checks the case that the agent makes it to the goal,
-  // receiving 1.0 as the reward.
+  arma::Mat<size_t> sampleBoard(4, 4);
+  sampleBoard = {{FrozenLake::tiles::Start, FrozenLake::tiles::Frozen, FrozenLake::tiles::Hole, FrozenLake::tiles::Frozen},
+                {FrozenLake::tiles::Frozen, FrozenLake::tiles::Hole, FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen},
+                {FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen},
+                {FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen, FrozenLake::tiles::Goal}};
+
+  // // Task 1 checks the case that the agent makes it to the goal,
+  // // receiving 1.0 as the reward.
   FrozenLake task1 = FrozenLake();
   FrozenLake::State state1 = task1.InitialSample(sampleBoard, 4, 4);
   task1.Sample(state1, goDown, state1);
