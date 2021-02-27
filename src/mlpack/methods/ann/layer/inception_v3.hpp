@@ -18,7 +18,7 @@
 #include "layer.hpp"
 
 namespace mlpack {
-namespace ann /**Artificial Neural Network. */
+namespace ann { /**Artificial Neural Network. */
 
 /**
  * Declaration of the Inception V3 layer class. This class will be a
@@ -27,38 +27,38 @@ namespace ann /**Artificial Neural Network. */
  *
  * The Inception V3 model consists of the following 5 modules:
  *
- * 1. Inception Block A:
+ * 1. Inception Module A:
  * Concat (
  * Network A : 1 x 1 convolution
- * Network B : 1 x 1 followed by 3 x 3 convolutions
+ * Network B : 1 x 1 followed by 3 x 3 convolution
  * Network C : 3 x 3 convolution followed by another 3 x 3 convolution
- * Network D : 3 x 3 max pool followed by 1 x 1 convolutions
+ * Network D : 3 x 3 max pool followed by 1 x 1 convolution
  * )
  *
- * 2. Reduction Block A:
+ * 2. Reduction Module A:
  * Concat (
- * Network A : 3 x 3 Max Pool
+ * Network A : 3 x 3 max pool
  * Network B : 3 x 3 convolution
- * Network C : 1 x 1 convolution followed by two 3 x 3 convolutions
+ * Network C : 1 x 1 convolution followed by two 3 x 3 convolution
  * )
  *
- * 3. Inception Block B:
+ * 3. Inception Module B:
  * Concat (
  * Network A : 1 x 1 convolution
- * Network B : 3 x 3 Avg Pool followed by 1 x 1 convolution
+ * Network B : 3 x 3 avg pool followed by 1 x 1 convolution
  * Network C : 1 x 1 convolution followed by 1 x 7 & 7 x 1 convolution
- * Network D : 1 x 1 convolution followed by 2 blocks of 7 X 1 & 1 x 7 convolutions
+ * Network D : 1 x 1 convolution followed by 2 blocks of 7 X 1 & 1 x 7 convolution
  * )
  *
- * 4. Reduction Block B:
+ * 4. Reduction Module B:
  * Concat (
- * Network A : 3 x 3 Max pool
+ * Network A : 3 x 3 max pool
  * Network B : 1 x 1 convolution followed by 3 x 3 convolution
  * Network C : 1 x 1 convolution followed by 1 x 7 and
- *             7 x 1 convolution followed by another 3x3 convolution
+ *             7 x 1 convolution followed by 3x3 convolution
  * )
  *
- * 5. Inception Block C:
+ * 5. Inception Module C:
  * Concat (
  * Network A : 1 x 1 convolution
  * Network B : 1 x 1 convolution followed by 1 x 3 convolution
@@ -91,7 +91,7 @@ template<
     typename OutputType = arma::mat,
     int module = 1
 >
-class Inception3 : public Layer <InputType, OutputType>
+class Inception3 : public Layer<InputType, OutputType>
 {
   public:
 
@@ -101,46 +101,23 @@ class Inception3 : public Layer <InputType, OutputType>
    * @param inSize The number of input maps.
    * @param inputWidth The width of input data.
    * @param inputHeight The height of input data.
-   * @param outA The number of output maps of network A.
-   * @param outBOne The number of output maps of the first layer of network B.
-   * @param outBTwo The number of output maps of the second layer of network B.
-   * @param outBTwo The number of output maps of the second layer of network B.
-   * @param outCOne The number of output maps of the first layer of network C.
-   * @param outCTwo The number of output maps of the second layer of network C.
-   * @param outCThree The number of output maps of the third layer of network C.
-   * @param outCFour The number of output maps of the fourth layer of network C.
-   * @param outDOne The number of output maps of the first layer of network D.
-   * @param outDTwo The number of output maps of the second layer of network D.
-   * @param outDThree The number of output maps of the third layer of network D.
-   * @param outDFour The number of output maps of the fourth layer of network D.
-   * @param outDFive The number of output maps of the fifth layer of network D.
-   * @param outEOne The number of output maps of the first layer of network E.
-   * @param outETwo The number of output maps of the second layer of network E.
-   * @param outEThree The number of output maps of the third layer of network E.
-   * @param outFOne The number of output maps of the first layer of network F.
-   * @param outFTwo The number of output maps of the second layer of network F.
+   * @param outA The number of output maps of all layers of network A.
+   * @param outB The number of output maps of all layers of network B.
+   * @param outC The number of output maps of all layers of network C.
+   * @param outD The number of output maps of all layers of network D.
+   * @param outE The number of output maps of all layers of network E.
+   * @param outF The number of output maps of all layers of network F.
    */
 
   Inception3(const size_t inSize,
              const size_t inputWidth,
              const size_t inputHeight,
-             const size_t outA,
-             const size_t outBOne,
-             const size_t outBTwo,
-             const size_t outCOne,
-             const size_t outCTwo,
-             const size_t outCThree,
-             const size_t outCFour,
-             const size_t outDOne,
-             const size_t outDTwo,
-             const size_t outDThree,
-             const size_t outDFour,
-             const size_t outDFive,
-             const size_t outEOne,
-             const size_t outETwo,
-             const size_t outEThree,
-             const size_t outFOne,
-             const size_t outFTwo);
+             const arma::vec outA,
+             const arma::vec outB,
+             const arma::vec outC,
+             const arma::vec outD,
+             const arma::vec outE,
+             const arma::vec outF);
 
   //! Destructor to release allocated memory.
   ~Inception3();
@@ -224,11 +201,11 @@ class Inception3 : public Layer <InputType, OutputType>
   Concat<InputType, OutputType>* model;
 };
   //! Typedef for various blocks of the model
-  using Inception3A = Inception3< InputType , OutputType, 1>;
-  using Inception3B = Inception3< InputType , OutputType, 2>;
-  using Inception3C = Inception3< InputType , OutputType, 3>;
-  using Reduction3A = Inception3< InputType , OutputType, 4>;
-  using Reduction3B = Inception3< InputType , OutputType, 5>;
+  using Inception3A = Inception3< arma::mat, arma::mat, 1>;
+  using Inception3B = Inception3< arma::mat, arma::mat, 2>;
+  using Inception3C = Inception3< arma::mat, arma::mat, 3>;
+  using Reduction3A = Inception3< arma::mat, arma::mat, 4>;
+  using Reduction3B = Inception3< arma::mat, arma::mat, 5>;
 
 
 } // namespace ann
@@ -238,5 +215,3 @@ class Inception3 : public Layer <InputType, OutputType>
 #include "inception_v3_impl.hpp"
 
 #endif
-}
-}
