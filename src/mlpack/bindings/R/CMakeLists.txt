@@ -100,7 +100,7 @@ if (BUILD_R_BINDINGS)
   set(CPP_SOURCES
    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/src/r_util.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/src/rcpp_mlpack.h"
-   "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/src/Makevars.in"
+   "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/src/Makevars"
    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/src/Makevars.win"
   )
 
@@ -205,11 +205,6 @@ if (BUILD_R_BINDINGS)
 
   file(COPY
        "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/configure"
-       DESTINATION
-       "${CMAKE_CURRENT_BINARY_DIR}/mlpack/")
-
-  file(COPY
-       "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/configure.ac"
        DESTINATION
        "${CMAKE_CURRENT_BINARY_DIR}/mlpack/")
 
