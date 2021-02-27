@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Pixel Shuffle layer (#2563).
+
   * Add "check_input_matrices" option to python bindings that checks
     for NaN and inf values in all the input matrices (#2787).
 
@@ -19,10 +21,13 @@
   * HMM: add functions to calculate likelihood for data stream with/without
     pre-calculated emission probability (#2142).
 
-  * Replace Boost serialization library by Cereal (#2458).
+  * Replace Boost serialization library with Cereal (#2458).
 
   * Add `PYTHON_INSTALL_PREFIX` CMake option to specify installation root for
     Python bindings (#2797).
+
+  * Removed `boost::visitor` from model classes for `knn`, `kfn`, `cf`,
+    `range_search`, `krann`, and `kde` bindings (#2803).
 
   * Add k-means++ initialization strategy (#2813).
 
@@ -49,7 +54,6 @@
 
 ### mlpack 3.4.0
 ###### 2020-09-01
-
   * Issue warnings when metrics produce NaNs in KFoldCV (#2595).
 
   * Added bindings for _R_ during Google Summer of Code (#2556).

@@ -39,8 +39,10 @@ namespace mlpack {
 namespace neighbor {
 
 // Forward declaration.
-template<typename SortPolicy>
-class RATrainVisitor;
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+class LeafSizeRAWrapper;
 
 /**
  * The RASearch class: This class provides a generic manner to perform
@@ -394,8 +396,7 @@ class RASearch
   MetricType metric;
 
   //! For access to mappings when building models.
-  template<typename SortPol>
-  friend class RATrainVisitor;
+  friend class LeafSizeRAWrapper<TreeType>;
 }; // class RASearch
 
 } // namespace neighbor

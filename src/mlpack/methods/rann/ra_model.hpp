@@ -18,245 +18,234 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
 #include <mlpack/core/tree/octree.hpp>
-#include <boost/variant.hpp>
 #include "ra_search.hpp"
 
 namespace mlpack {
 namespace neighbor {
 
 /**
- * Alias template for RASearch
+ * RAWrapperBase is a base wrapper class for holding all RASearch types
+ * supported by RAModel.  All RASearch type wrappers inherit from this class,
+ * allowing a simple interface via inheritance for all the different types we
+ * want to support.
  */
-template<typename SortPolicy,
-         template<typename TreeMetricType,
+class RAWrapperBase
+{
+ public:
+  //! Create the RAWrapperBase object.  The base class does not hold anything,
+  //! so this constructor does nothing.
+  RAWrapperBase() { }
+
+  //! Create a new RAWrapperBase that is the same as this one.  This function
+  //! will properly handle polymorphism.
+  virtual RAWrapperBase* Clone() const = 0;
+
+  //! Destruct the RAWrapperBase (nothing to do).
+  virtual ~RAWrapperBase() { };
+
+  //! Return a reference to the dataset.
+  virtual const arma::mat& Dataset() const = 0;
+
+  //! Get the single sample limit.
+  virtual size_t SingleSampleLimit() const = 0;
+  //! Modify the single sample limit.
+  virtual size_t& SingleSampleLimit() = 0;
+
+  //! Get whether to do exact search at the first leaf.
+  virtual bool FirstLeafExact() const = 0;
+  //! Modify whether to do exact search at the first leaf.
+  virtual bool& FirstLeafExact() = 0;
+
+  //! Get whether to do sampling at leaves.
+  virtual bool SampleAtLeaves() const = 0;
+  //! Modify whether to do sampling at leaves.
+  virtual bool& SampleAtLeaves() = 0;
+
+  //! Get the value of alpha.
+  virtual double Alpha() const = 0;
+  //! Modify the value of alpha.
+  virtual double& Alpha() = 0;
+
+  //! Get the value of tau.
+  virtual double Tau() const = 0;
+  //! Modify the value of tau.
+  virtual double& Tau() = 0;
+
+  //! Get whether single-tree search is being used.
+  virtual bool SingleMode() const = 0;
+  //! Modify whether single-tree search is being used.
+  virtual bool& SingleMode() = 0;
+
+  //! Get whether naive search is being used.
+  virtual bool Naive() const = 0;
+  //! Modify whether naive search is being used.
+  virtual bool& Naive() = 0;
+
+  //! Train the RASearch model with the given parameters.
+  virtual void Train(arma::mat&& referenceSet,
+                     const size_t leafSize) = 0;
+
+  //! Perform bichromatic rank-approximate nearest neighbor search (i.e. search
+  //! with a separate query set).
+  virtual void Search(arma::mat&& querySet,
+                      const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances,
+                      const size_t leafSize) = 0;
+
+  //! Perform monochromatic rank-approximate nearest neighbor search (i.e. a
+  //! search with the reference set as the query set).
+  virtual void Search(const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances) = 0;
+};
+
+/**
+ * RAWrapper is a wrapper class for most RASearch types.
+ */
+template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-using RAType = RASearch<SortPolicy,
-                        metric::EuclideanDistance,
-                        arma::mat,
-                        TreeType>;
-
-/**
- * RAMonoSearchVisitor executes a monochromatic neighbor search on the given
- * RAType. We don't make any difference for different instantiation of RAType.
- */
-class RAMonoSearchVisitor : public boost::static_visitor<void>
+class RAWrapper : public RAWrapperBase
 {
- private:
-  //! Number of neighbors to search for.
-  const size_t k;
-  //! Result matrix for neighbors.
-  arma::Mat<size_t>& neighbors;
-  //! Result matrix for distances.
-  arma::mat& distances;
-
  public:
-  //! Perform monochromatic nearest neighbor search.
-  template<typename RAType>
-  void operator()(RAType* ra) const;
+  //! Construct the RAWrapper object, initializing the internally-held RASearch
+  //! object.
+  RAWrapper(const bool singleMode, const bool naive) :
+      ra(singleMode, naive)
+  {
+    // Nothing else to do.
+  }
 
-  //! Construct the RAMonoSearchVisitor object with the given parameters.
-  RAMonoSearchVisitor(const size_t k,
+  //! Delete the RAWrapper object.
+  virtual ~RAWrapper() { }
+
+  //! Create a copy of this RAWrapper object.  This correctly handles
+  //! polymorphism.
+  virtual RAWrapper* Clone() const { return new RAWrapper(*this); }
+
+  //! Get a reference to the reference set.
+  const arma::mat& Dataset() const { return ra.ReferenceSet(); }
+
+  //! Get the single sample limit.
+  size_t SingleSampleLimit() const { return ra.SingleSampleLimit(); }
+  //! Modify the single sample limit.
+  size_t& SingleSampleLimit() { return ra.SingleSampleLimit(); }
+
+  //! Get whether to do exact search at the first leaf.
+  bool FirstLeafExact() const { return ra.FirstLeafExact(); }
+  //! Modify whether to do exact search at the first leaf.
+  bool& FirstLeafExact() { return ra.FirstLeafExact(); }
+
+  //! Get whether to do sampling at leaves.
+  bool SampleAtLeaves() const { return ra.SampleAtLeaves(); }
+  //! Modify whether to do sampling at leaves.
+  bool& SampleAtLeaves() { return ra.SampleAtLeaves(); }
+
+  //! Get the value of alpha.
+  double Alpha() const { return ra.Alpha(); }
+  //! Modify the value of alpha.
+  double& Alpha() { return ra.Alpha(); }
+
+  //! Get the value of tau.
+  double Tau() const { return ra.Tau(); }
+  //! Modify the value of tau.
+  double& Tau() { return ra.Tau(); }
+
+  //! Get whether single-tree search is being used.
+  bool SingleMode() const { return ra.SingleMode(); }
+  //! Modify whether single-tree search is being used.
+  bool& SingleMode() { return ra.SingleMode(); }
+
+  //! Get whether naive search is being used.
+  bool Naive() const { return ra.Naive(); }
+  //! Modify whether naive search is being used.
+  bool& Naive() { return ra.Naive(); }
+
+  //! Train the model.  For RAWrapper, we ignore the leaf size.
+  virtual void Train(arma::mat&& referenceSet,
+                     const size_t /* leafSize */);
+
+  //! Perform bichromatic neighbor search (i.e. search with a separate query
+  //! set).  For RAWrapper, we ignore the leaf size.
+  virtual void Search(arma::mat&& querySet,
+                      const size_t k,
                       arma::Mat<size_t>& neighbors,
-                      arma::mat& distances) :
-      k(k),
-      neighbors(neighbors),
-      distances(distances)
-  {};
+                      arma::mat& distances,
+                      const size_t /* leafSize */);
+
+  //! Perform monochromatic neighbor search (i.e. search where the reference set
+  //! is used as the query set).
+  virtual void Search(const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances);
+
+  //! Serialize the RASearch model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(ra));
+  }
+
+ protected:
+  typedef RASearch<NearestNeighborSort,
+                   metric::EuclideanDistance,
+                   arma::mat,
+                   TreeType> RAType;
+
+  //! The instantiated RASearch object that we are wrapping.
+  RAType ra;
 };
 
 /**
- * RABiSearchVisitor executes a bichromatic neighbor search on the given RAType.
- * We use template specialization to differentiate those tree types types that
- * accept leafSize as a parameter. In these cases, before doing neighbor search
- * a query tree with proper leafSize is built from the querySet.
+ * LeafSizeRAWrapper wraps any RASearch type that needs to be able to take the
+ * leaf size into account when building trees.  The implementations of Train()
+ * and bichromatic Search() take this leaf size into account.
  */
-template<typename SortPolicy>
-class RABiSearchVisitor : public boost::static_visitor<void>
-{
- private:
-  //! The query set for the bichromatic search.
-  const arma::mat& querySet;
-  //! The number of neighbors to search for.
-  const size_t k;
-  //! The results matrix for neighbors.
-  arma::Mat<size_t>& neighbors;
-  //! The result matrix for distances.
-  arma::mat& distances;
-  //! The number of points in a leaf (for BinarySpaceTrees).
-  const size_t leafSize;
-
-  //! Bichromatic neighbor search on the given RAType considering leafSize.
-  template<typename RAType>
-  void SearchLeaf(RAType* ra) const;
-
- public:
-  //! Alias template necessary for visual c++ compiler.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using RATypeT = RAType<SortPolicy, TreeType>;
-
-  //! Default Bichromatic neighbor search on the given RAType instance.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(RATypeT<TreeType>* ra) const;
-
-  //! Bichromatic search on the given RAType specialized for KDTrees.
-  void operator()(RATypeT<tree::KDTree>* ra) const;
-
-  //! Bichromatic search on the given RAType specialized for octrees.
-  void operator()(RATypeT<tree::Octree>* ra) const;
-
-  //! Construct the RABiSearchVisitor.
-  RABiSearchVisitor(const arma::mat& querySet,
-                    const size_t k,
-                    arma::Mat<size_t>& neighbors,
-                    arma::mat& distances,
-                    const size_t leafSize);
-};
-
-/**
- * RATrainVisitor sets the reference set to a new reference set on the given
- * RAType. We use template specialization to differentiate those trees that 
- * accept leafSize as a parameter. In these cases, a reference tree with proper
- * leafSize is built from the referenceSet.
- */
-template<typename SortPolicy>
-class RATrainVisitor : public boost::static_visitor<void>
-{
- private:
-  //! The reference set to use for training.
-  arma::mat&& referenceSet;
-  //! The leaf size, used only by BinarySpaceTree.
-  size_t leafSize;
-
-  //! Train on the given RAType considering the leafSize.
-  template<typename RAType>
-  void TrainLeaf(RAType* ra) const;
-
- public:
-  //! Alias template necessary for visual c++ compiler.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  using RATypeT = RAType<SortPolicy, TreeType>;
-
-  //! Default Train on the given RAType instance.
-  template<template<typename TreeMetricType,
-                    typename TreeStatType,
-                    typename TreeMatType> class TreeType>
-  void operator()(RATypeT<TreeType>* ra) const;
-
-  //! Train on the given RAType specialized for KDTrees.
-  void operator()(RATypeT<tree::KDTree>* ra) const;
-
-  //! Train on the given RAType specialized for Octrees.
-  void operator()(RATypeT<tree::Octree>* ra) const;
-
-  //! Construct the RATrainVisitor object with the given reference set, leafSize
-  //! for BinarySpaceTrees.
-  RATrainVisitor(arma::mat&& referenceSet,
-                 const size_t leafSize);
-};
-
-/**
- * Exposes the SingleSampleLimit() method of the given RAType.
- */
-class SingleSampleLimitVisitor : public boost::static_visitor<size_t&>
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+class LeafSizeRAWrapper : public RAWrapper<TreeType>
 {
  public:
-  template<typename RAType>
-  size_t& operator()(RAType* ra) const;
-};
+  //! Construct the LeafSizeRAWrapper by delegating to the RAWrapper
+  //! constructor.
+  LeafSizeRAWrapper(const bool singleMode, const bool naive) :
+      RAWrapper<TreeType>(singleMode, naive)
+  {
+    // Nothing else to do.
+  }
 
-/**
- * Exposes the FirstLeafExact() method of the given RAType.
- */
-class FirstLeafExactVisitor : public boost::static_visitor<bool&>
-{
- public:
-  template<typename RAType>
-  bool& operator()(RAType* ra) const;
-};
+  //! Delete the LeafSizeRAWrapper.
+  virtual ~LeafSizeRAWrapper() { }
 
-/**
- * Exposes the SampleAtLeaves() method of the given RAType.
- */
-class SampleAtLeavesVisitor : public boost::static_visitor<bool&>
-{
- public:
-  //! Return SampleAtLeaves (whether or not sampling is done at leaves).
-  template<typename RAType>
-  bool& operator()(RAType *) const;
-};
+  //! Return a copy of the LeafSizeRAWrapper.
+  virtual LeafSizeRAWrapper* Clone() const
+  {
+    return new LeafSizeRAWrapper(*this);
+  }
 
-/**
- * Exposes the Alpha() method of the given RAType.
- */
-class AlphaVisitor : public boost::static_visitor<double&>
-{
- public:
-  //! Return Alpha parameter.
-  template<typename RAType>
-  double& operator()(RAType* ra) const;
-};
+  //! Train a model with the given parameters.  This overload uses leafSize.
+  virtual void Train(arma::mat&& referenceSet,
+                     const size_t leafSize);
 
-/**
- * Exposes the Tau() method of the given RAType.
- */
-class TauVisitor : public boost::static_visitor<double&>
-{
- public:
-  //! Get a reference to the Tau parameter.
-  template<typename RAType>
-  double& operator()(RAType* ra) const;
-};
+  //! Perform bichromatic search (e.g. search with a separate query set).  This
+  //! overload takes the leaf size into account to build the query tree.
+  virtual void Search(arma::mat&& querySet,
+                      const size_t k,
+                      arma::Mat<size_t>& neighbors,
+                      arma::mat& distances,
+                      const size_t leafSize);
 
-/**
- * Exposes the SingleMode() method of the given RAType.
- */
-class SingleModeVisitor : public boost::static_visitor<bool&>
-{
- public:
-  //! Get a reference to the SingleMode parameter of the given RASearch object.
-  template<typename RAType>
-  bool& operator()(RAType* ra) const;
-};
+  //! Serialize the RASearch model.
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(ra));
+  }
 
-/**
- * Exposes the referenceSet of the given RAType.
- */
-class RAReferenceSetVisitor : public boost::static_visitor<const arma::mat&>
-{
- public:
-  //! Return the reference set.
-  template<typename RAType>
-  const arma::mat& operator()(RAType* ra) const;
-};
-
-/**
- * RADeleteVisitor deletes the give RAType Instance.
- */
-class RADeleteVisitor : public boost::static_visitor<void>
-{
- public:
-  //! Delete the RAType Object.
-  template<typename RAType> void operator()(RAType* ra) const;
-};
-
-/**
- * NaiveVisitor exposes the Naive() method of the given RAType.
- */
-class NaiveVisitor : public boost::static_visitor<bool&>
-{
- public:
-  /**
-   * Get a reference to the naive parameter of the given RASearch object.
-   */
-  template<typename RAType>
-  bool& operator()(RAType* ra) const;
+ protected:
+  using RAWrapper<TreeType>::ra;
 };
 
 /**
@@ -264,10 +253,7 @@ class NaiveVisitor : public boost::static_visitor<bool&>
  * away the TreeType parameter and allowing it to be specified at runtime in
  * this class.  This class is written for the sake of the 'allkrann' program,
  * but is not necessarily restricted to that use.
- *
- * @param SortPolicy Sorting policy for neighbor searching (see RASearch).
  */
-template<typename SortPolicy>
 class RAModel
 {
  public:
@@ -301,16 +287,7 @@ class RAModel
   arma::mat q;
 
   //! The rank-approximate model.
-  boost::variant<RAType<SortPolicy, tree::KDTree>*,
-                 RAType<SortPolicy, tree::StandardCoverTree>*,
-                 RAType<SortPolicy, tree::RTree>*,
-                 RAType<SortPolicy, tree::RStarTree>*,
-                 RAType<SortPolicy, tree::XTree>*,
-                 RAType<SortPolicy, tree::HilbertRTree>*,
-                 RAType<SortPolicy, tree::RPlusTree>*,
-                 RAType<SortPolicy, tree::RPlusPlusTree>*,
-                 RAType<SortPolicy, tree::UBTree>*,
-                 RAType<SortPolicy, tree::Octree>*> raSearch;
+  RAWrapperBase* raSearch;
 
  public:
   /**
@@ -355,58 +332,61 @@ class RAModel
   void serialize(Archive& ar, const uint32_t /* version */);
 
   //! Expose the dataset.
-  const arma::mat& Dataset() const;
+  const arma::mat& Dataset() const { return raSearch->Dataset(); }
 
   //! Get whether or not single-tree search is being used.
-  bool SingleMode() const;
+  bool SingleMode() const { return raSearch->SingleMode(); }
   //! Modify whether or not single-tree search is being used.
-  bool& SingleMode();
+  bool& SingleMode() { return raSearch->SingleMode(); }
 
   //! Get whether or not naive search is being used.
-  bool Naive() const;
+  bool Naive() const { return raSearch->Naive(); }
   //! Modify whether or not naive search is being used.
-  bool& Naive();
+  bool& Naive() { return raSearch->Naive(); }
 
   //! Get the rank-approximation in percentile of the data.
-  double Tau() const;
+  double Tau() const { return raSearch->Tau(); }
   //! Modify the rank-approximation in percentile of the data.
-  double& Tau();
+  double& Tau() { return raSearch->Tau(); }
 
   //! Get the desired success probability.
-  double Alpha() const;
+  double Alpha() const { return raSearch->Alpha(); }
   //! Modify the desired success probability.
-  double& Alpha();
+  double& Alpha() { return raSearch->Alpha(); }
 
   //! Get whether or not sampling is done at the leaves.
-  bool SampleAtLeaves() const;
+  bool SampleAtLeaves() const { return raSearch->SampleAtLeaves(); }
   //! Modify whether or not sampling is done at the leaves.
-  bool& SampleAtLeaves();
+  bool& SampleAtLeaves() { return raSearch->SampleAtLeaves(); }
 
   //! Get whether or not we traverse to the first leaf without approximation.
-  bool FirstLeafExact() const;
+  bool FirstLeafExact() const { return raSearch->FirstLeafExact(); }
   //! Modify whether or not we traverse to the first leaf without approximation.
-  bool& FirstLeafExact();
+  bool& FirstLeafExact() { return raSearch->FirstLeafExact(); }
 
   //! Get the limit on the size of a node that can be approximated.
-  size_t SingleSampleLimit() const;
+  size_t SingleSampleLimit() const { return raSearch->SingleSampleLimit(); }
   //! Modify the limit on the size of a node that can be approximation.
-  size_t& SingleSampleLimit();
+  size_t& SingleSampleLimit() { return raSearch->SingleSampleLimit(); }
 
   //! Get the leaf size (only relevant when the kd-tree is used).
-  size_t LeafSize() const;
+  size_t LeafSize() const { return leafSize; }
   //! Modify the leaf size (only relevant when the kd-tree is used).
-  size_t& LeafSize();
+  size_t& LeafSize() { return leafSize; }
 
   //! Get the type of tree being used.
-  TreeTypes TreeType() const;
+  TreeTypes TreeType() const { return treeType; }
   //! Modify the type of tree being used.
-  TreeTypes& TreeType();
+  TreeTypes& TreeType() { return treeType; }
 
   //! Get whether or not a random basis is being used.
-  bool RandomBasis() const;
+  bool RandomBasis() const { return randomBasis; }
   //! Modify whether or not a random basis is being used.  Be sure to rebuild
   //! the model using BuildModel().
-  bool& RandomBasis();
+  bool& RandomBasis() { return randomBasis; }
+
+  //! Initialize the model's memory.
+  void InitializeModel(const bool naive, const bool singleMode);
 
   //! Build the reference tree.
   void BuildModel(arma::mat&& referenceSet,
