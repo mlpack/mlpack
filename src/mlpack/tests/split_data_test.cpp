@@ -341,7 +341,7 @@ TEST_CASE("StratifiedSplitRunTimeErrorTest", "[SplitDataTest]")
 }
 
 /*
- * Split with input of type field<>.
+ * Split with input of type field<mat>.
  */
 TEST_CASE("SplitDataResultField", "[SplitDataTest]")
 {
@@ -386,4 +386,38 @@ TEST_CASE("SplitMatrixLabeledData", "[SplitDataTest]")
   // Order matters here.
   CheckMatrices(input, input_concat);
   CheckMatrices(labels, labels_concat);
+}
+
+/*
+ * Split with input of type field<mat> and label of type field<vec>.
+ */
+TEST_CASE("SplitLabeledDataResultField", "[SplitDataTest]")
+{
+  field<mat> input(1, 2);
+  field<vec> label(1, 2);
+
+  mat matA(2, 10, fill::randu);
+  mat matB(2, 10, fill::randu);
+
+  vec vecA(10, fill::randu);
+  vec vecB(10, fill::randu);
+
+  input(0, 0) = matA;
+  input(0, 1) = matB;
+
+  label(0, 0) = vecA;
+  label(0, 1) = vecB;
+
+  const auto value = Split(input, label, 0.5, false);
+  REQUIRE(std::get<0>(value).n_cols == 1); // Train data.
+  REQUIRE(std::get<1>(value).n_cols == 1); // Test data.
+  REQUIRE(std::get<2>(value).n_cols == 1); // Train label.
+  REQUIRE(std::get<3>(value).n_cols == 1); // Test label.
+
+  field<mat> input_concat = {std::get<0>(value)(0), std::get<1>(value)(0)};
+  field<vec> label_concat = {std::get<2>(value)(0), std::get<3>(value)(0)};
+
+  // Order matters here.
+  CheckFields(input, input_concat);
+  CheckFields(label, label_concat);
 }

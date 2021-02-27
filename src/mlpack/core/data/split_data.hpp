@@ -420,8 +420,11 @@ void Split(const FieldType& input,
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
-  trainLabel.set_size(1, trainSize);
-  testLabel.set_size(1, testSize);
+
+  trainData.set_size(1, trainSize);
+  testData.set_size(1, testSize);
+  trainLabel.set_size(trainSize);
+  testLabel.set_size(testSize);
 
   if (shuffleData)
   {
@@ -430,34 +433,39 @@ void Split(const FieldType& input,
 
     if (trainSize > 0)
     {
-      trainData = input.cols(order.subvec(0, trainSize - 1));
-
       for (size_t i = 0; i < trainSize; ++i)
-        trainLabel(0, i) = inputLabel(0, order(i));
+      {
+        trainData[i] = input(0, order(i));
+        trainLabel[i] = inputLabel(0, order(i));
+      }
     }
-
     if (trainSize < input.n_cols)
     {
-      testData = input.cols(order.subvec(trainSize, input.n_cols - 1));
-
       for (size_t i = trainSize; i < input.n_cols; ++i)
-        testLabel(0, i - trainSize) = inputLabel(0, order(i));
+      {
+        testData[i - trainSize] = input(0, order(i));
+        testLabel[i - trainSize] = inputLabel(0, order(i));
+      }
     }
   }
   else
   {
     if (trainSize > 0)
     {
-      trainData = input.cols(0, trainSize - 1);
       for (size_t i = 0; i < trainSize; ++i)
-        trainLabel(0, i) = inputLabel(0, i);
+      {
+        trainData[i] = input(0, i);
+        trainLabel[i] = inputLabel(0, i);
+      }
     }
 
     if (trainSize < input.n_cols)
     {
-      testData = input.cols(trainSize, input.n_cols - 1);
       for (size_t i = trainSize; i < input.n_cols; ++i)
-        testLabel(0, i - trainSize) = inputLabel(0, i);
+      {
+        testData[i - trainSize] = input(0, i);
+        testLabel[i - trainSize] = inputLabel(0, i);
+      }
     }
   }
 }
@@ -570,7 +578,7 @@ template <class FieldType,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
-std::tuple<FieldType, FieldType, FieldType, FieldType>
+std::tuple<FieldType, FieldType, arma::field<arma::vec>, arma::field<arma::vec>>
 Split(const FieldType& input,
       const arma::field<arma::vec>& inputLabel,
       const double testRatio,
@@ -581,7 +589,7 @@ Split(const FieldType& input,
   arma::field<arma::vec> trainLabel;
   arma::field<arma::vec> testLabel;
 
-  Split(input, inputLabel, trainData, testData, trainLabel, testLabel,
+  Split(input, inputLabel, trainData, trainLabel, testData, testLabel,
       testRatio, shuffleData);
 
   return std::make_tuple(std::move(trainData),
