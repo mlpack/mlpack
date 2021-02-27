@@ -23,7 +23,7 @@ namespace data {
  * It is recommended to have the input labels between the range [0, n) where n
  * is the number of different labels. The NormalizeLabels() function in
  * mlpack::data can be used for this.
- * Expects labels to be of type arma::Row<>.
+ * Expects labels to be of type arma::Row<> or arma::Col<>.
  * Throws a runtime error if this is not the case.
  * Example usage below. This overload places the stratified dataset into the
  * four output parameters given (trainData, testData, trainLabel,
@@ -65,7 +65,9 @@ void StratifiedSplit(const arma::Mat<T>& input,
                      const double testRatio,
                      const bool shuffleData = true)
 {
-  if (!arma::is_Row<LabelsType>::value)
+  const bool typeCheck = (arma::is_Row<LabelsType>::value)
+      || (arma::is_Col<LabelsType>::value);
+  if (!typeCheck)
     throw std::runtime_error("data::Split(): when stratified sampling is done, "
         "labels must have type `arma::Row<>`!");
   size_t trainIdx = 0;
@@ -79,18 +81,8 @@ void StratifiedSplit(const arma::Mat<T>& input,
   labelCounts.zeros(maxLabel+1);
   testLabelCounts.zeros(maxLabel+1);
 
-  arma::uvec order =
-      arma::linspace<arma::uvec>(0, input.n_cols - 1, input.n_cols);
-
-  if (shuffleData)
-  {
-    order = arma::shuffle(order);
-  }
-
   for (typename LabelsType::elem_type label : inputLabel)
-  {
     ++labelCounts[label];
-  }
 
   for (arma::uword labelCount : labelCounts)
   {
@@ -103,21 +95,47 @@ void StratifiedSplit(const arma::Mat<T>& input,
   trainLabel.set_size(trainSize);
   testLabel.set_size(testSize);
 
-  for (arma::uword i : order)
+  if (shuffleData)
   {
-    typename LabelsType::elem_type label = inputLabel[i];
-    if (testLabelCounts[label] < floor(labelCounts[label] * testRatio))
+    arma::uvec order = arma::shuffle(
+        arma::linspace<arma::uvec>(0, input.n_cols - 1, input.n_cols));
+
+    for (arma::uword i : order)
     {
-      testLabelCounts[label] += 1;
-      testData.col(testIdx) = input.col(i);
-      testLabel[testIdx] = inputLabel[i];
-      testIdx += 1;
+      typename LabelsType::elem_type label = inputLabel[i];
+      if (testLabelCounts[label] < floor(labelCounts[label] * testRatio))
+      {
+        testLabelCounts[label] += 1;
+        testData.col(testIdx) = input.col(i);
+        testLabel[testIdx] = inputLabel[i];
+        testIdx += 1;
+      }
+      else
+      {
+        trainData.col(trainIdx) = input.col(i);
+        trainLabel[trainIdx] = inputLabel[i];
+        trainIdx += 1;
+      }
     }
-    else
+  }
+  else
+  {
+    for (arma::uword i = 0; i < input.n_cols; i++)
     {
-      trainData.col(trainIdx) = input.col(i);
-      trainLabel[trainIdx] = inputLabel[i];
-      trainIdx += 1;
+      typename LabelsType::elem_type label = inputLabel[i];
+      if (testLabelCounts[label] < floor(labelCounts[label] * testRatio))
+      {
+        testLabelCounts[label] += 1;
+        testData.col(testIdx) = input.col(i);
+        testLabel[testIdx] = inputLabel[i];
+        testIdx += 1;
+      }
+      else
+      {
+        trainData.col(trainIdx) = input.col(i);
+        trainLabel[trainIdx] = inputLabel[i];
+        trainIdx += 1;
+      }
     }
   }
 }
@@ -285,7 +303,8 @@ void Split(const arma::Mat<T>& input,
  *     sample is visited in linear order. (Default true).
  * @param stratifyData If true, the train and test splits are stratified
  *     so that the ratio of each class in the training and test sets is the same
- *     as in the original dataset. Expects labels to be of type arma::Row<>.
+ *     as in the original dataset. Expects labels to be of type arma::Row<> or
+ *     arma::Col<>.
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */
