@@ -23,7 +23,7 @@ namespace data {
  * It is recommended to have the input labels between the range [0, n) where n
  * is the number of different labels. The NormalizeLabels() function in
  * mlpack::data can be used for this.
- * Expects labels to be of type arma::Row<>.
+ * Expects labels to be of type arma::Row<> or arma::Col<>.
  * Throws a runtime error if this is not the case.
  * Example usage below. This overload places the stratified dataset into the
  * four output parameters given (trainData, testData, trainLabel,
@@ -65,7 +65,9 @@ void StratifiedSplit(const arma::Mat<T>& input,
                      const double testRatio,
                      const bool shuffleData = true)
 {
-  if (!arma::is_Row<LabelsType>::value)
+  const bool typeCheck = (arma::is_Row<LabelsType>::value)
+      || (arma::is_Col<LabelsType>::value);
+  if (!typeCheck)
     throw std::runtime_error("data::Split(): when stratified sampling is done, "
         "labels must have type `arma::Row<>`!");
   size_t trainIdx = 0;
@@ -79,18 +81,8 @@ void StratifiedSplit(const arma::Mat<T>& input,
   labelCounts.zeros(maxLabel+1);
   testLabelCounts.zeros(maxLabel+1);
 
-  arma::uvec order =
-      arma::linspace<arma::uvec>(0, input.n_cols - 1, input.n_cols);
-
-  if (shuffleData)
-  {
-    order = arma::shuffle(order);
-  }
-
   for (typename LabelsType::elem_type label : inputLabel)
-  {
     ++labelCounts[label];
-  }
 
   for (arma::uword labelCount : labelCounts)
   {
@@ -103,21 +95,47 @@ void StratifiedSplit(const arma::Mat<T>& input,
   trainLabel.set_size(trainSize);
   testLabel.set_size(testSize);
 
-  for (arma::uword i : order)
+  if (shuffleData)
   {
-    typename LabelsType::elem_type label = inputLabel[i];
-    if (testLabelCounts[label] < floor(labelCounts[label] * testRatio))
+    arma::uvec order = arma::shuffle(
+        arma::linspace<arma::uvec>(0, input.n_cols - 1, input.n_cols));
+
+    for (arma::uword i : order)
     {
-      testLabelCounts[label] += 1;
-      testData.col(testIdx) = input.col(i);
-      testLabel[testIdx] = inputLabel[i];
-      testIdx += 1;
+      typename LabelsType::elem_type label = inputLabel[i];
+      if (testLabelCounts[label] < floor(labelCounts[label] * testRatio))
+      {
+        testLabelCounts[label] += 1;
+        testData.col(testIdx) = input.col(i);
+        testLabel[testIdx] = inputLabel[i];
+        testIdx += 1;
+      }
+      else
+      {
+        trainData.col(trainIdx) = input.col(i);
+        trainLabel[trainIdx] = inputLabel[i];
+        trainIdx += 1;
+      }
     }
-    else
+  }
+  else
+  {
+    for (arma::uword i = 0; i < input.n_cols; i++)
     {
-      trainData.col(trainIdx) = input.col(i);
-      trainLabel[trainIdx] = inputLabel[i];
-      trainIdx += 1;
+      typename LabelsType::elem_type label = inputLabel[i];
+      if (testLabelCounts[label] < floor(labelCounts[label] * testRatio))
+      {
+        testLabelCounts[label] += 1;
+        testData.col(testIdx) = input.col(i);
+        testLabel[testIdx] = inputLabel[i];
+        testIdx += 1;
+      }
+      else
+      {
+        trainData.col(trainIdx) = input.col(i);
+        trainLabel[trainIdx] = inputLabel[i];
+        trainIdx += 1;
+      }
     }
   }
 }
@@ -143,7 +161,7 @@ void StratifiedSplit(const arma::Mat<T>& input,
  * @endcode
  *
  * @tparam T Type of the elements of the input matrix.
- * @tparam LabelsType Type of input labels. It can be arma::Mat, arma::row,
+ * @tparam LabelsType Type of input labels. It can be arma::Mat, arma::Row,
  *       arma::Cube or arma::SpMat.
  * @param input Input dataset to split.
  * @param inputLabel Input labels to split.
@@ -170,28 +188,39 @@ void Split(const arma::Mat<T>& input,
   const size_t trainSize = input.n_cols - testSize;
   trainData.set_size(input.n_rows, trainSize);
   testData.set_size(input.n_rows, testSize);
+  trainLabel.set_size(1, trainSize);
+  testLabel.set_size(1, testSize);
 
-  arma::uvec order = arma::linspace<arma::uvec>(0, input.n_cols - 1,
-      input.n_cols);
   if (shuffleData)
-    order = arma::shuffle(order);
-
-  if (trainSize > 0)
   {
-    trainLabel.set_size(1, trainSize);
-    trainData = input.cols(order.subvec(0, trainSize - 1));
+    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0, input.n_cols - 1,
+        input.n_cols));
 
-    for (size_t i = 0; i < trainSize; ++i)
-      trainLabel(0, i) = inputLabel(0, order(i));
+    if (trainSize > 0)
+    {
+      trainData = input.cols(order.subvec(0, trainSize - 1));
+      trainLabel = inputLabel.cols(order.subvec(0, trainSize - 1));
+    }
+
+    if (trainSize < input.n_cols)
+    {
+      testData = input.cols(order.subvec(trainSize, input.n_cols - 1));
+      testLabel = inputLabel.cols(order.subvec(trainSize, input.n_cols - 1));
+    }
   }
-
-  if (trainSize < input.n_cols)
+  else
   {
-    testLabel.set_size(1, testSize);
-    testData = input.cols(order.subvec(trainSize, input.n_cols - 1));
+    if (trainSize > 0)
+    {
+      trainData = input.cols(0, trainSize - 1);
+      trainLabel = inputLabel.cols(0, trainSize - 1);
+    }
 
-    for (size_t i = trainSize; i < input.n_cols; ++i)
-      testLabel(0, i - trainSize) = inputLabel(0, order(i));
+    if (trainSize < input.n_cols)
+    {
+      testData = input.cols(trainSize, input.n_cols - 1);
+      testLabel = inputLabel.cols(trainSize, inputLabel.n_cols - 1);
+    }
   }
 }
 
@@ -265,7 +294,7 @@ void Split(const arma::Mat<T>& input,
  * @endcode
  *
  * @tparam T Type of the elements of the input matrix.
- * @tparam LabelsType Type of input labels. It can be arma::Mat, arma::row,
+ * @tparam LabelsType Type of input labels. It can be arma::Mat, arma::Row,
  *       arma::Cube or arma::SpMat.
  * @param input Input dataset to split.
  * @param inputLabel Input labels to split.
@@ -274,7 +303,8 @@ void Split(const arma::Mat<T>& input,
  *     sample is visited in linear order. (Default true).
  * @param stratifyData If true, the train and test splits are stratified
  *     so that the ratio of each class in the training and test sets is the same
- *     as in the original dataset. Expects labels to be of type arma::Row<>.
+ *     as in the original dataset. Expects labels to be of type arma::Row<> or
+ *     arma::Col<>.
  * @return std::tuple containing trainData (arma::Mat<T>), testData
  *      (arma::Mat<T>), trainLabel (arma::Row<U>), and testLabel (arma::Row<U>).
  */
@@ -362,8 +392,7 @@ Split(const arma::Mat<T>& input,
  *
  * // Split the dataset into a training and test set, with 30% of the data being
  * // held out for the test set.
- * Split(input, label, trainData,
- *                testData, trainLabel, testLabel, 0.3);
+ * Split(input, label, trainData, testData, trainLabel, testLabel, 0.3);
  * @endcode
  *
  * @param input Input dataset to split.
@@ -380,12 +409,12 @@ template <typename FieldType,
           typename = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
-void Split(FieldType& input,
-           arma::field<arma::vec>& inputLabel,
+void Split(const FieldType& input,
+           const arma::field<arma::vec>& inputLabel,
            FieldType& trainData,
-           arma::field<arma::vec>& trainLabels,
+           arma::field<arma::vec>& trainLabel,
            FieldType& testData,
-           arma::field<arma::vec>& testLabels,
+           arma::field<arma::vec>& testLabel,
            const double testRatio,
            const bool shuffleData = true)
 {
@@ -394,32 +423,50 @@ void Split(FieldType& input,
 
   trainData.set_size(1, trainSize);
   testData.set_size(1, testSize);
-
-  arma::uvec order = arma::linspace<arma::uvec>(0, input.n_cols - 1,
-      input.n_cols);
+  trainLabel.set_size(trainSize);
+  testLabel.set_size(testSize);
 
   if (shuffleData)
-    order = arma::shuffle(order);
-
-  if (trainSize > 0)
   {
-    trainLabels.set_size(1, trainSize);
+    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
+        input.n_cols - 1, input.n_cols));
 
-    for (size_t i = 0; i < trainSize; ++i)
-      trainData[i] = input(0, order(i));
-
-    for (size_t i = 0; i < trainSize; ++i)
-      trainLabels(0, i) = inputLabel(0, order(i));
+    if (trainSize > 0)
+    {
+      for (size_t i = 0; i < trainSize; ++i)
+      {
+        trainData[i] = input(0, order(i));
+        trainLabel[i] = inputLabel(0, order(i));
+      }
+    }
+    if (trainSize < input.n_cols)
+    {
+      for (size_t i = trainSize; i < input.n_cols; ++i)
+      {
+        testData[i - trainSize] = input(0, order(i));
+        testLabel[i - trainSize] = inputLabel(0, order(i));
+      }
+    }
   }
-
-  if (testSize <= input.n_cols)
+  else
   {
-    for (size_t i = trainSize; i < input.n_cols - 1; ++i)
-     testData[i - trainSize] = input(0, order(i));
+    if (trainSize > 0)
+    {
+      for (size_t i = 0; i < trainSize; ++i)
+      {
+        trainData[i] = input(0, i);
+        trainLabel[i] = inputLabel(0, i);
+      }
+    }
 
-    testLabels.set_size(1, testSize);
-    for (size_t i = trainSize; i < input.n_cols; ++i)
-      testLabels(0, i - trainSize) = inputLabel(0, order(i));
+    if (trainSize < input.n_cols)
+    {
+      for (size_t i = trainSize; i < input.n_cols; ++i)
+      {
+        testData[i - trainSize] = input(0, i);
+        testLabel[i - trainSize] = inputLabel(0, i);
+      }
+    }
   }
 }
 
@@ -467,21 +514,36 @@ void Split(const FieldType& input,
   trainData.set_size(1, trainSize);
   testData.set_size(1, testSize);
 
-  arma::uvec order = arma::linspace<arma::uvec>(0, input.n_cols - 1,
-      input.n_cols);
   if (shuffleData)
-    order = arma::shuffle(order);
-
-  if (trainSize > 0)
   {
-    for (size_t i = 0; i < trainSize; i++)
-       trainData[i] = input(0, order(i));
+    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
+        input.n_cols - 1, input.n_cols));
+
+    if (trainSize > 0)
+    {
+      for (size_t i = 0; i < trainSize; i++)
+        trainData[i] = input(0, order(i));
+    }
+
+    if (trainSize < input.n_cols)
+    {
+      for (size_t i = trainSize; i < input.n_cols - 1; ++i)
+         testData[i - trainSize] = input(0, order(i));
+    }
   }
-
-  if (testSize <= input.n_cols)
+  else
   {
-    for (size_t i = trainSize; i < input.n_cols - 1; ++i)
-       testData[i - trainSize] = input(0, order(i));
+    if (trainSize > 0)
+    {
+      for (size_t i = 0; i < trainSize; i++)
+        trainData[i] = input(0, i);
+    }
+
+    if (trainSize < input.n_cols)
+    {
+      for (size_t i = trainSize; i < input.n_cols - 1; ++i)
+         testData[i - trainSize] = input(0, i);
+    }
   }
 }
 
@@ -516,9 +578,9 @@ template <class FieldType,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
-std::tuple<FieldType, FieldType, FieldType, FieldType>
-Split(FieldType& input,
-      arma::field<arma::vec>& inputLabel,
+std::tuple<FieldType, FieldType, arma::field<arma::vec>, arma::field<arma::vec>>
+Split(const FieldType& input,
+      const arma::field<arma::vec>& inputLabel,
       const double testRatio,
       const bool shuffleData = true)
 {
@@ -527,8 +589,8 @@ Split(FieldType& input,
   arma::field<arma::vec> trainLabel;
   arma::field<arma::vec> testLabel;
 
-  Split(input, inputLabel, trainData, testData, trainLabel, testLabel,
-    testRatio, shuffleData);
+  Split(input, inputLabel, trainData, trainLabel, testData, testLabel,
+      testRatio, shuffleData);
 
   return std::make_tuple(std::move(trainData),
                          std::move(testData),
