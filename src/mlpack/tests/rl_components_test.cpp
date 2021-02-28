@@ -348,24 +348,24 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
   task1.Sample(state1, goDown, state1);
   double reward1 = task1.Sample(state1, goRight, state1);
 
-  // // Reward must be 1.0 as the agent reaches the goal.
-  // REQUIRE(reward1 == 1.0);
-  // // As the agent reaches the goal, the game must end.
-  // REQUIRE(task1.IsTerminal(state1));
+  // Reward must be 1.0 as the agent reaches the goal.
+  REQUIRE(reward1 == 1.0);
+  // As the agent reaches the goal, the game must end.
+  REQUIRE(task1.IsTerminal(state1));
 
-  // // Task 2 checks the case where the agent does not
-  // // complete the game by reaching the max number of steps.
-  // FrozenLake task2 = FrozenLake();
-  // FrozenLake::State state2 = task2.InitialSample(sampleBoard, 4, 4);
-  // task2.MaxSteps() = 10;
-  // double reward2;
-  // while (!task2.IsTerminal(state2))
-  //   reward2 = task2.Sample(state2, goDown, state2);
+  // Task 2 checks the case where the agent does not
+  // complete the game by reaching the max number of steps.
+  FrozenLake task2 = FrozenLake();
+  FrozenLake::State state2 = task2.InitialSample(sampleBoard, 4, 4);
+  task2.MaxSteps() = 10;
+  double reward2;
+  while (!task2.IsTerminal(state2))
+    reward2 = task2.Sample(state2, goDown, state2);
 
-  // // Check if the number of steps performed is the same as 
-  // // the maximum allowed.
-  // REQUIRE(task2.StepsPerformed() == 10);
-  // REQUIRE(reward2 == 0.0);
+  // Check if the number of steps performed is the same as 
+  // the maximum allowed.
+  REQUIRE(task2.StepsPerformed() == 10);
+  REQUIRE(reward2 == 0.0);
 
   // // Task 3 checks the case where the agent fall into a hole.
   // // and recieved -1.0 as a reward.

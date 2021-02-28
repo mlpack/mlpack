@@ -202,13 +202,13 @@ class FrozenLake
     size_t newRow = state.CurRow();
     size_t newCol = state.CurCol();
     if (action.action == Action::actions::Left)
-      newCol = std::max(nextState.CurCol() - 1, (unsigned long) 0);
+      newCol = std::max(nextState.CurCol() - 1, (size_t) 0);
     else if (action.action == Action::actions::Down)
       newRow = std::min(nextState.CurRow() + 1, height - 1);
     else if (action.action == Action::actions::Right)
       newCol = std::min(nextState.CurCol() + 1, width - 1);
     else if (action.action == Action::actions::Up)
-      newRow = std::max(nextState.CurRow() - 1, (unsigned long) 0);
+      newRow = std::max(nextState.CurRow() - 1, (size_t) 0);
     
     // Update states by setting new current row and column, 
     // and manually set the description of board.
