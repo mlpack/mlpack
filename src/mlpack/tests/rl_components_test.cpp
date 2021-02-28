@@ -367,31 +367,31 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
   REQUIRE(task2.StepsPerformed() == 10);
   REQUIRE(reward2 == 0.0);
 
-  // // Task 3 checks the case where the agent fall into a hole.
-  // // and recieved -1.0 as a reward.
-  // FrozenLake task3 = FrozenLake();
-  // FrozenLake::State state3 = task3.InitialSample(sampleBoard, 4, 4);
-  // task3.Sample(state3, goDown, state3);
-  // task3.Sample(state3, goDown, state3);
-  // task3.Sample(state3, goRight, state3);
-  // task3.Sample(state3, goRight, state3);
-  // task3.Sample(state3, goUp, state3);
-  // double reward3 = task3.Sample(state3, goLeft, state3);
+  // Task 3 checks the case where the agent fall into a hole.
+  // and recieved -1.0 as a reward.
+  FrozenLake task3 = FrozenLake();
+  FrozenLake::State state3 = task3.InitialSample(sampleBoard, 4, 4);
+  task3.Sample(state3, goDown, state3);
+  task3.Sample(state3, goDown, state3);
+  task3.Sample(state3, goRight, state3);
+  task3.Sample(state3, goRight, state3);
+  task3.Sample(state3, goUp, state3);
+  double reward3 = task3.Sample(state3, goLeft, state3);
 
-  // // Reward must be -1.0 as the agent fall into a hole.
-  // REQUIRE(reward3 == -1.0);
-  // // As the agent fall into the hole, the game must end.
-  // REQUIRE(task3.IsTerminal(state3));
+  // Reward must be -1.0 as the agent fall into a hole.
+  REQUIRE(reward3 == -1.0);
+  // As the agent fall into the hole, the game must end.
+  REQUIRE(task3.IsTerminal(state3));
 
-  // // Task 4 checks the case with random board.
-  // FrozenLake task4 = FrozenLake();
-  // FrozenLake::State state4 = task4.InitialSample();
-  // while (!task4.IsTerminal(state4))
-  // { 
-  //   task4.Sample(state4, goDown, state4);
-  // }
-  // REQUIRE(task4.IsTerminal(state4));
+  // Task 4 checks the case with random board.
+  FrozenLake task4 = FrozenLake();
+  FrozenLake::State state4 = task4.InitialSample();
+  while (!task4.IsTerminal(state4))
+  { 
+    task4.Sample(state4, goDown, state4);
+  }
+  REQUIRE(task4.IsTerminal(state4));
 
-  // // Other checks.
-  // REQUIRE(4 == static_cast<size_t>(FrozenLake::Action::size));
+  // Other checks.
+  REQUIRE(4 == static_cast<size_t>(FrozenLake::Action::size));
 } 
