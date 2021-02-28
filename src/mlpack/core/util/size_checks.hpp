@@ -13,7 +13,6 @@
 #ifndef MLPACK_UTIL_SIZE_CHECKS_HPP
 #define MLPACK_UTIL_SIZE_CHECKS_HPP
 
-#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace util {
