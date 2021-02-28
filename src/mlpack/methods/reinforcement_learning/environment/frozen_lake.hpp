@@ -342,12 +342,13 @@ class FrozenLake
     arma::Mat<size_t> Board(height, width);
     //! TODO: Tentative, implement max step to control whether
     // we can never generate a possible board.
-    while (!valid)
-    {
-      // Randomly choose tiles in the board (discrete random distribution).
-      Board = genBoardHelper(height, width, platformRate);
-      valid = dfsHelper(Board, height, width);
-    }
+    Board = genBoardHelper(height, width, platformRate);
+    // while (!valid)
+    // {
+    //   // Randomly choose tiles in the board (discrete random distribution).
+      
+    //   valid = dfsHelper(Board, height, width);
+    // }
     return Board;
   }
 
@@ -394,10 +395,10 @@ class FrozenLake
 
   /**
    * Perform random distribution of tile in the environment board. There are 4 type of tile:
-   * 'S' is the Start Tile, the starting position of the agent. 0
-   * 'G' is the Goal Tile, the agent can walk into a goal tile to win. 1
-   * 'F' is a Frozen Tile, the agent can walk on it. 2
-   * 'H' is a Hole Tile, the agent can fall into it and the game ends. 3
+   * 'S' is the Start Tile, the starting position of the agent.
+   * 'G' is the Goal Tile, the agent can walk into a goal tile to win.
+   * 'F' is a Frozen Tile, the agent can walk on it.
+   * 'H' is a Hole Tile, the agent can fall into it and the game ends.
    * 
    * @param m Height of the environment board.
    * @param n Width of the environment board.

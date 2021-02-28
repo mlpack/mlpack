@@ -384,14 +384,14 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
   REQUIRE(task3.IsTerminal(state3));
 
   // Task 4 checks the case with random board.
-  // FrozenLake task4 = FrozenLake();
-  // FrozenLake::State state4 = task4.InitialSample();
-  // while (!task4.IsTerminal(state4))
-  // { 
-  //   task4.Sample(state4, goDown, state4);
-  // }
-  // REQUIRE(task4.IsTerminal(state4));
+  FrozenLake task4 = FrozenLake();
+  FrozenLake::State state4 = task4.InitialSample();
+  while (!task4.IsTerminal(state4))
+  { 
+    task4.Sample(state4, goDown, state4);
+  }
+  REQUIRE(task4.IsTerminal(state4));
 
-  // // Other checks.
-  // REQUIRE(4 == static_cast<size_t>(FrozenLake::Action::size));
+  // Other checks.
+  REQUIRE(4 == static_cast<size_t>(FrozenLake::Action::size));
 } 
