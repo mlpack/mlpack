@@ -66,7 +66,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   // Load the dataset.
   arma::mat trainData;
   if (!data::Load("thyroid_train.csv", trainData))
-    Fail("Cannot open thyroid_train.csv");
+    FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
@@ -79,7 +79,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
 
   arma::mat testData;
   if (!data::Load("thyroid_test.csv", testData))
-    Fail("Cannot open thyroid_test.csv");
+    FAIL("Cannot open thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
