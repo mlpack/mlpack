@@ -86,6 +86,24 @@ static std::shared_ptr<Vocab> loadVocab(const std::string& vocabFile) {
     return vocab;
 }
 
+std::wstring str_replacer(std::wstring str, std::wstring old_substring, std::wstring new_substring)
+{
+  size_t index = 0;
+  while (true) {
+     /* Locate the substring to replace. */
+     index = str.find(old_substring, index);
+     if (index == std::string::npos) break;
+
+     /* Make the replacement. */
+     str.replace(index, old_substring.size(), new_substring);
+
+     /* Advance index forward so the next iteration doesn't pick it up as well. */
+     //index += old_substring.size();
+     index += old_substring.size();
+  }
+  return str;
+}
+
 std::wstring BasicTokenizer::cleanText(const std::wstring& text) const {
     std::wstring output;
     for (const wchar_t& cp : text)  {
@@ -104,7 +122,6 @@ bool BasicTokenizer::isPunctuation(const wchar_t& ch) const {
     if (ch == '!' || ch == ',' || ch == ';' || ch == '.' || ch == '?' ||   
        ch == '-' || ch == '\'' || ch == '\"' || ch == ':' || ch == '(' ||
        ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}' ) return true;
-    
     return false;
 }
 
@@ -139,8 +156,19 @@ std::vector<std::wstring> BasicTokenizer::tokenize(const std::string& text) cons
 
     const std::vector<std::wstring>& origTokens = whitespaceTokenize(nText);
     std::vector<std::wstring> splitTokens;
+    bool is_bert_tkn;
     for (std::wstring token : origTokens) {
-        if (mDoLowerCase) {
+
+        is_bert_tkn = false;
+        //If is_bert_tkn is true, then we won't convert the token to smaller case.
+        //The following list contains the list of BERT symbols.
+        std::wstring predefined_bert_tkns[3] = {L"[CLS]", L"[SEP]", L"[MASK]"};
+        for(int i=0; i<3;i++){
+            if(predefined_bert_tkns[i] == token)
+                is_bert_tkn = true;
+        }
+
+        if (mDoLowerCase and !is_bert_tkn) {
             //Temporary variable used for converting string to lower.
             std::string token_s;
             //Convert to std::string format.
@@ -153,7 +181,13 @@ std::vector<std::wstring> BasicTokenizer::tokenize(const std::string& text) cons
         const auto& tokens = runSplitOnPunc(token);
         splitTokens.insert(splitTokens.end(), tokens.begin(), tokens.end());
     }
-    return whitespaceTokenize(boost::join(splitTokens, L" "));
+
+    //Ensuring that BERT symbols remain intact after Basic processing.
+    std::wstring processed_text = str_replacer(boost::join(splitTokens, L" "), L"[ CLS ]", L"[CLS]");
+    processed_text = str_replacer(processed_text, L"[ MASK ]", L"[MASK]");
+    processed_text = str_replacer(processed_text, L"[ SEP ]", L"[SEP]");
+
+    return whitespaceTokenize(processed_text);
 }
 
 WordpieceTokenizer::WordpieceTokenizer(const std::shared_ptr<Vocab> vocab, const std::wstring& unkToken, size_t maxInputCharsPerWord)

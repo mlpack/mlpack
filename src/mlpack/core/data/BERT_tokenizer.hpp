@@ -166,6 +166,15 @@ void convertFromUnicode(const std::wstring &ws, std::string &s);
 static std::shared_ptr<Vocab> loadVocab(const std::string& vocabFile);
 
 /**
+ * Function to replace substring in a given string.
+ *
+ * @param str The string which is to be processed.
+ * @param old_substring The substring which shall be removed.
+ * @param new_substring The substring which is replaced in place of old_substring.
+ */
+std::wstring str_replacer(std::wstring str, std::wstring old_substring, std::wstring new_substring);
+
+/**
  * The following class is used to run WordPiece tokenization which is a
  * subword segmentation algorithm used in natural language processing.
  */
