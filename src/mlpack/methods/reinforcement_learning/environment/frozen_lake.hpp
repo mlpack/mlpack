@@ -342,13 +342,13 @@ class FrozenLake
     arma::Mat<size_t> Board(height, width);
     //! TODO: Tentative, implement max step to control whether
     // we can never generate a possible board.
-    Board = genBoardHelper(height, width, platformRate);
-    // while (!valid)
-    // {
-    //   // Randomly choose tiles in the board (discrete random distribution).
-      
-    //   valid = dfsHelper(Board, height, width);
-    // }
+    
+    while (!valid)
+    {
+      // Randomly choose tiles in the board (discrete random distribution).
+      Board = genBoardHelper(height, width, platformRate);
+      valid = dfsHelper(Board, height, width);
+    }
     return Board;
   }
 
@@ -374,14 +374,14 @@ class FrozenLake
       path.pop_back();
 
       visited(node[0], node[1]) = 1;
-      int directions[4][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+      short directions[4][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
       for (auto direction : directions)
       {
         size_t r_new = direction[0] + node[0];
         size_t c_new = direction[1] + node[1];
         if (!visited(r_new, c_new))
         {
-          if (r_new >= height || c_new >= width)
+          if (r_new >= height || c_new >= width || r_new < 0 || c_new < 0)
               continue;
           if (candidateBoard(r_new, c_new) == tiles::Goal)
               return true;
