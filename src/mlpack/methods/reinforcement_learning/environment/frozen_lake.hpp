@@ -365,7 +365,7 @@ class FrozenLake
   {
     arma::Mat<short> visited(height, width);
     visited.fill(0);
-    std::vector<std::array<size_t, 2>> path;
+    std::vector<std::array<int, 2>> path;
     // arma::Mat<size_t> path();
     path.push_back({0, 0});
     while (!path.empty())
@@ -374,11 +374,11 @@ class FrozenLake
       path.pop_back();
 
       visited(node[0], node[1]) = 1;
-      short directions[4][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+      int directions[4][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
       for (auto direction : directions)
       {
-        size_t r_new = direction[0] + node[0];
-        size_t c_new = direction[1] + node[1];
+        int r_new = direction[0] + node[0];
+        int c_new = direction[1] + node[1];
         if (!visited(r_new, c_new))
         {
           if (r_new >= height || c_new >= width || r_new < 0 || c_new < 0)
