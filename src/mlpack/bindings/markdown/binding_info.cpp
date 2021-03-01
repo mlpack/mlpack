@@ -17,7 +17,8 @@ namespace mlpack {
 namespace bindings {
 namespace markdown {
 
-util::ProgramDoc& BindingInfo::GetProgramDoc(const std::string& bindingName)
+util::BindingDetails& BindingInfo::GetBindingDetails(
+    const std::string& bindingName)
 {
   if (GetSingleton().map.count(bindingName) == 0)
   {
@@ -26,14 +27,6 @@ util::ProgramDoc& BindingInfo::GetProgramDoc(const std::string& bindingName)
   }
 
   return GetSingleton().map.at(bindingName);
-}
-
-
-//! Register a ProgramDoc object with the given bindingName.
-void BindingInfo::RegisterProgramDoc(const std::string& bindingName,
-                                     const util::ProgramDoc& programDoc)
-{
-  GetSingleton().map[bindingName] = programDoc;
 }
 
 //! Get or modify the current language (don't set it to something invalid!).

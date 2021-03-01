@@ -117,6 +117,10 @@ class RangeSearchRules
   //! Get the number of scores (that is, calls to RangeDistance()).
   size_t Scores() const { return scores; }
 
+  //! Get the minimum number of base cases we need to perform to have acceptable
+  //! results.
+  size_t MinimumBaseCases() const { return 0; }
+
  private:
   //! The reference set.
   const arma::mat& referenceSet;

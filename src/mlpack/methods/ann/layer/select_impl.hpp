@@ -63,10 +63,10 @@ void Select<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Select<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(index);
-  ar & BOOST_SERIALIZATION_NVP(elements);
+  ar(CEREAL_NVP(index));
+  ar(CEREAL_NVP(elements));
 }
 
 } // namespace ann

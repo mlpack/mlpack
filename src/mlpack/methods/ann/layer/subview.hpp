@@ -86,7 +86,7 @@ class Subview
     if ((input.n_rows != ((endRow - beginRow + 1) *
         (endCol - beginCol + 1))) || (input.n_cols != batchSize))
     {
-      for (size_t i = 0; i < batchSize; i++)
+      for (size_t i = 0; i < batchSize; ++i)
       {
         output.col(i) = arma::vectorise(
             input.submat(beginRow, batchBegin, endRow, batchEnd));
@@ -156,13 +156,13 @@ class Subview
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(inSize);
-    ar & BOOST_SERIALIZATION_NVP(beginRow);
-    ar & BOOST_SERIALIZATION_NVP(endRow);
-    ar & BOOST_SERIALIZATION_NVP(beginCol);
-    ar & BOOST_SERIALIZATION_NVP(endCol);
+    ar(CEREAL_NVP(inSize));
+    ar(CEREAL_NVP(beginRow));
+    ar(CEREAL_NVP(endRow));
+    ar(CEREAL_NVP(beginCol));
+    ar(CEREAL_NVP(endCol));
   }
 
  private:

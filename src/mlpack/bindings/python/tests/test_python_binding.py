@@ -1336,5 +1336,101 @@ class TestPythonBinding(unittest.TestCase):
     self.assertEqual(output2['model_bw_out'], 20.0)
     self.assertEqual(output3['model_bw_out'], 20.0)
 
+  def testCheckInputMatricesNaN(self):
+    """
+    Checks that an exception is thrown if the input matrix contains
+    NaN values.
+    """
+    x = np.random.rand(100, 5)
+    a = np.random.randint(low=0, high=100)
+    b = np.random.randint(low=0, high=5)
+    x[a][b] = np.nan
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   matrix_in=x,
+                                                   check_input_matrices=True))
+
+    x_vec = np.random.rand(100)
+    a = np.random.randint(low=0, high=100)
+    x_vec[a] = np.nan
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   row_in=x_vec,
+                                                   check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   col_in=x_vec,
+                                                   check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   matrix_and_info_in=x,
+                                                   check_input_matrices=True))
+
+  def testCheckInputMatricesInf(self):
+    """
+    Checks that an exception is thrown if the input matrix contains
+    inf values.
+    """
+    x = np.random.rand(100, 5)
+    a = np.random.randint(low=0, high=100)
+    b = np.random.randint(low=0, high=5)
+    x[a][b] = np.inf
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   matrix_in=x,
+                                                   check_input_matrices=True))
+
+    x_vec = np.random.rand(100)
+    a = np.random.randint(low=0, high=100)
+    x_vec[a] = np.inf
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   row_in=x_vec,
+                                                   check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   col_in=x_vec,
+                                                   check_input_matrices=True))
+
+    self.assertRaises(RuntimeError,
+                      lambda : test_python_binding(string_in="hello",
+                                                   int_in=12,
+                                                   double_in=4.0,
+                                                   mat_req_in=[[1.0]],
+                                                   col_req_in=[1.0],
+                                                   matrix_and_info_in=x,
+                                                   check_input_matrices=True))
+
 if __name__ == '__main__':
   unittest.main()

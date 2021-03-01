@@ -173,7 +173,7 @@ class XTreeAuxiliaryInformation
 
     SplitHistoryStruct(int dim) : lastDimension(0), history(dim)
     {
-      for (int i = 0; i < dim; i++)
+      for (int i = 0; i < dim; ++i)
         history[i] = false;
     }
 
@@ -197,10 +197,10 @@ class XTreeAuxiliaryInformation
     }
 
     template<typename Archive>
-    void serialize(Archive& ar, const unsigned int /* version */)
+    void serialize(Archive& ar, const uint32_t /* version */)
     {
-      ar & BOOST_SERIALIZATION_NVP(lastDimension);
-      ar & BOOST_SERIALIZATION_NVP(history);
+      ar(CEREAL_NVP(lastDimension));
+      ar(CEREAL_NVP(history));
     }
   } SplitHistoryStruct;
 
@@ -224,10 +224,10 @@ class XTreeAuxiliaryInformation
    * Serialize the information.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(normalNodeMaxNumChildren);
-    ar & BOOST_SERIALIZATION_NVP(splitHistory);
+    ar(CEREAL_NVP(normalNodeMaxNumChildren));
+    ar(CEREAL_NVP(splitHistory));
   }
 };
 

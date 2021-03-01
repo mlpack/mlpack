@@ -15,6 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/math/make_alias.hpp>
+#include <mlpack/core/math/shuffle_data.hpp>
 
 namespace mlpack {
 namespace nca {

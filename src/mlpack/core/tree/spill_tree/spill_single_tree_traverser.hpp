@@ -46,8 +46,12 @@ class SpillTree<MetricType, StatisticType, MatType, HyperplaneType, SplitType>::
    * @param queryIndex The index of the point in the query set which is being
    *     used as the query point.
    * @param referenceNode The tree node to be traversed.
+   * @param bruteForce If true, then do a brute-force search on the reference
+   *     node instead of traversing any further.
    */
-  void Traverse(const size_t queryIndex, SpillTree& referenceNode);
+  void Traverse(const size_t queryIndex,
+                SpillTree& referenceNode,
+                const bool bruteForce = false);
 
   //! Get the number of prunes.
   size_t NumPrunes() const { return numPrunes; }

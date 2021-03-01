@@ -60,6 +60,9 @@ class FastMKSModel
   //! Copy assignment operator.
   FastMKSModel& operator=(const FastMKSModel& other);
 
+  //! Move assignment operator.
+  FastMKSModel& operator=(FastMKSModel&& other);
+
   /**
    * Clean memory.
    */
@@ -126,7 +129,7 @@ class FastMKSModel
    * Serialize the model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The type of kernel we are using.

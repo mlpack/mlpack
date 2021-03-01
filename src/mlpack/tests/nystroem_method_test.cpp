@@ -12,8 +12,7 @@
  */
 #include <mlpack/core.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 #include <mlpack/methods/nystroem_method/ordered_selection.hpp>
 #include <mlpack/methods/nystroem_method/random_selection.hpp>
@@ -23,14 +22,12 @@
 using namespace mlpack;
 using namespace mlpack::kernel;
 
-BOOST_AUTO_TEST_SUITE(NystroemMethodTest);
-
 /**
  * Make sure that if the rank is the same and we do a full-rank approximation,
  * the result is virtually identical (a little bit of tolerance for floating
  * point error).
  */
-BOOST_AUTO_TEST_CASE(FullRankTest)
+TEST_CASE("FullRankTest", "[NystroemMethodTest]")
 {
   // Run several trials.
   for (size_t trial = 0; trial < 3; ++trial)
@@ -59,9 +56,9 @@ BOOST_AUTO_TEST_CASE(FullRankTest)
       for (size_t j = 0; j < trial * 200; ++j)
       {
         if (kernel(i, j) < 1e-5)
-          BOOST_REQUIRE_SMALL(approximation(i, j), 1e-4);
+          REQUIRE(approximation(i, j) == Approx(0.0).margin(1e-4));
         else
-          BOOST_REQUIRE_CLOSE(kernel(i, j), approximation(i, j), 1e-5);
+          REQUIRE(kernel(i, j) == Approx(approximation(i, j)).epsilon(1e-7));
       }
     }
   }
@@ -70,7 +67,7 @@ BOOST_AUTO_TEST_CASE(FullRankTest)
 /**
  * Can we accurately represent a rank-10 matrix?
  */
-BOOST_AUTO_TEST_CASE(Rank10Test)
+TEST_CASE("Rank10Test", "[NystroemMethodTest]")
 {
   arma::mat data;
   data.randu(500, 500); // Just so it's square.
@@ -131,7 +128,7 @@ BOOST_AUTO_TEST_CASE(Rank10Test)
     }
   }
 
-  BOOST_REQUIRE_GE(successes, 1);
+  REQUIRE(successes >= 1);
 }
 
 /**
@@ -145,7 +142,7 @@ BOOST_AUTO_TEST_CASE(Rank10Test)
  *  rank = 0.08n; approximation error: ~7
  *  rank = 0.10n; approximation error: ~3
  */
-BOOST_AUTO_TEST_CASE(GermanTest)
+TEST_CASE("GermanTest", "[NystroemMethodTest]")
 {
   // Load the dataset.
   arma::mat dataset;
@@ -198,8 +195,6 @@ BOOST_AUTO_TEST_CASE(GermanTest)
 
     // Ensure that this is within tolerance, which is at least as good as the
     // paper's results (plus a little bit for noise).
-    BOOST_REQUIRE_SMALL(avgError, results[trial]);
+    REQUIRE(avgError == Approx(0.0).margin(results[trial]));
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

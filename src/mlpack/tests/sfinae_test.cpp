@@ -13,9 +13,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/sfinae_utility.hpp>
 
-#include <boost/test/unit_test.hpp>
-
-BOOST_AUTO_TEST_SUITE(SFINAETest);
+#include "catch.hpp"
 
 class A
 {
@@ -97,7 +95,7 @@ HAS_ANY_METHOD_FORM(Model, HasModel);
  * Test at compile time the presence of methods of the specified forms with the
  * stated number of additional arguments.
  */
-BOOST_AUTO_TEST_CASE(HasMethodFormWithNAdditionalArgsTest)
+TEST_CASE("HasMethodFormWithNAdditionalArgsTest", "[SFINAETest]")
 {
   static_assert(!HasM<A, MForm1>::WithNAdditionalArgs<0>::value,
       "value should be false");
@@ -145,7 +143,7 @@ BOOST_AUTO_TEST_CASE(HasMethodFormWithNAdditionalArgsTest)
 /*
  * Test at compile time the presence of methods of the specified forms.
  */
-BOOST_AUTO_TEST_CASE(HasMethodFormTest)
+TEST_CASE("HasMethodFormTest", "[SFINAETest]")
 {
   static_assert(HasM<A, MForm1>::value, "value should be true");
 
@@ -168,7 +166,7 @@ BOOST_AUTO_TEST_CASE(HasMethodFormTest)
  * Test at compile time, for the presence/absence of a specific member
  * function in a class.
  */
-BOOST_AUTO_TEST_CASE(HasMethodNameTest)
+TEST_CASE("HasMethodNameTest", "[SFINAETest]")
 {
   static_assert(!HasModel<WithOutFunctionModel>::value,
                 "value should be false");
@@ -176,5 +174,3 @@ BOOST_AUTO_TEST_CASE(HasMethodNameTest)
   static_assert(HasModel<WithFunctionModelB>::value, "value should be true");
   static_assert(HasModel<WithInheritedModelA>::value, "value should be true");
 }
-
-BOOST_AUTO_TEST_SUITE_END();

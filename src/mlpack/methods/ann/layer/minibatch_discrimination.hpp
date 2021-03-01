@@ -134,11 +134,17 @@ class MiniBatchDiscrimination
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return A;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored dimensions of weight.

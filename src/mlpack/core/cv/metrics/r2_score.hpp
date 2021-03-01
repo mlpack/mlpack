@@ -42,12 +42,17 @@ namespace cv {
  * where @f$ \bar{y} = frac{1}{y}\sum_{i=1}^{n} y_i @f$.
  * For example, a model having R2Score = 0.85, explains 85 \% variability of
  * the response data around its mean.
+ * 
+ * @tparam AdjustedR2 If true, then the Adjusted R2 score will be used.
+ * 	Otherwise, the regular R2 score is used.
  */
+
+template<bool AdjustedR2>
 class R2Score
 {
  public:
   /**
-   * Run prediction and calculate the R squared error.
+   * Run prediction and calculate the R squared or Adjusted R squared error.
    *
    * @param model A regression model.
    * @param data Column-major data containing test items.

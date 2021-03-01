@@ -36,6 +36,11 @@ inline std::string PrintImport(const std::string& bindingName);
 inline std::string PrintOutputOptionInfo();
 
 /**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo();
+
+/**
  * Print documentation for each of the types.
  */
 inline std::string PrintTypeDocs();
@@ -68,14 +73,14 @@ inline std::string PrintModel(const std::string& model);
 /**
  * Print the type of a parameter that a user would specify from Julia.
  */
-inline std::string PrintType(const util::ParamData& param);
+inline std::string PrintType(util::ParamData& param);
 
 // Recursion base case.
 inline std::string PrintInputOptions();
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
- * not exist in CLI.  For a parameter 'x' with value '5', this will print
+ * not exist in IO.  For a parameter 'x' with value '5', this will print
  * something like x=5.
  */
 template<typename T, typename... Args>

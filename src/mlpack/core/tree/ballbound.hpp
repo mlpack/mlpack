@@ -81,6 +81,9 @@ class BallBound
   //! Move constructor: take possession of another bound.
   BallBound(BallBound&& other);
 
+  //! Move assignment operator.
+  BallBound& operator=(BallBound&& other);
+
   //! Destructor to release allocated memory.
   ~BallBound();
 
@@ -203,7 +206,7 @@ class BallBound
 
   //! Serialize the bound.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 };
 
 //! A specialization of BoundTraits for this bound type.

@@ -12,7 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#define BINDING_NAME "${BINDING}"
+#define MARKDOWN_BINDING_NAME "${BINDING}"
 
 #include <mlpack/core.hpp>
 #include "generate_markdown.${BINDING}.hpp"

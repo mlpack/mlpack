@@ -90,11 +90,14 @@ class LeakyReLU
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
+  //! Get size of weights.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

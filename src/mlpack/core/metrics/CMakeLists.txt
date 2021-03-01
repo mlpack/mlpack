@@ -1,6 +1,8 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  bleu.hpp
+  bleu_impl.hpp
   ip_metric.hpp
   ip_metric_impl.hpp
   iou_metric.hpp
@@ -9,6 +11,8 @@ set(SOURCES
   lmetric_impl.hpp
   mahalanobis_distance.hpp
   mahalanobis_distance_impl.hpp
+  non_maximal_supression.hpp
+  non_maximal_supression_impl.hpp
 )
 
 # add directory name to sources

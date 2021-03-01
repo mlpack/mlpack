@@ -16,6 +16,7 @@
 #include <unordered_map>
 #include <mlpack/core/data/map_policies/datatype.hpp>
 #include <limits>
+#include <set>
 
 namespace mlpack {
 namespace data {

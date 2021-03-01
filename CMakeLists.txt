@@ -16,8 +16,14 @@ option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
-option(BUILD_PYTHON_BINDINGS "Build Python bindings." ON)
-option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
+option(BUILD_GO_SHLIB "Build Go shared library." OFF)
+option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
+
+# Set minimum library version required by mlpack.
+set(ARMADILLO_VERSION "8.400.0")
+set(ENSMALLEN_VERSION "2.10.0")
+set(BOOST_VERSION "1.58")
+set(CEREAL_VERSION "1.1.2")
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -30,6 +36,46 @@ else ()
       "Compile shared libraries (if OFF, static libraries are compiled)." ON)
 endif()
 
+# Detect whether the user passed BUILD_PYTHON_BINDINGS in order to determine if
+# we should fail if Python isn't found.
+if (BUILD_PYTHON_BINDINGS)
+  set(FORCE_BUILD_PYTHON_BINDINGS ON)
+else()
+  set(FORCE_BUILD_PYTHON_BINDINGS OFF)
+endif()
+option(BUILD_PYTHON_BINDINGS "Build Python bindings." OFF)
+
+# Detect whether the user passed BUILD_JULIA_BINDINGS in order to determine if
+# we should fail if Julia isn't found.
+if (BUILD_JULIA_BINDINGS)
+  set(FORCE_BUILD_JULIA_BINDINGS ON)
+else()
+  set(FORCE_BUILD_JULIA_BINDINGS OFF)
+endif()
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." OFF)
+
+# Detect whether the user passed BUILD_GO_BINDINGS in order to determine if
+# we should fail if Go isn't found.
+if (BUILD_GO_BINDINGS)
+  set(FORCE_BUILD_GO_BINDINGS ON)
+else()
+  set(FORCE_BUILD_GO_BINDINGS OFF)
+endif()
+option(BUILD_GO_BINDINGS "Build Go bindings." OFF)
+
+# If building Go bindings then build go shared libraries.
+if (BUILD_GO_BINDINGS)
+  set(BUILD_GO_SHLIB ON)
+endif()
+
+# Detect whether the user passed BUILD_R_BINDINGS in order to determine if
+# we should fail if R isn't found.
+if (BUILD_R_BINDINGS)
+  set(FORCE_BUILD_R_BINDINGS ON)
+else()
+  set(FORCE_BUILD_R_BINDINGS OFF)
+endif()
+option(BUILD_R_BINDINGS "Build R bindings." OFF)
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
@@ -96,7 +142,7 @@ set(COMPILER_SUPPORT_LIBRARIES "")
 
 # If we are using MSVC, we need /bigobj.
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /Zm400")
 endif ()
 
 # If we are using MINGW, we need sections and big-obj, otherwise we create too
@@ -243,54 +289,10 @@ endif()
 #   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
-#   BOOST_LIBRARYDIR - library directory for Boost
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
-
-find_package(Armadillo 8.400.0 REQUIRED)
-
-# If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
-# system (where size_t will be 64 bits), suggest to the user that they should
-# compile Armadillo with 64-bit words.  Note that with Armadillo 5.000.0 and
-# newer, ARMA_64BIT_WORD is enabled by default.
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  # Check the version, to see if ARMA_64BIT_WORD is enabled by default.
-  set(ARMA_HAS_64BIT_WORD 0)
-  if(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
-    set(ARMA_HAS_64BIT_WORD 1)
-  else()
-    # Can we open the configuration file?  If not, issue a warning.
-    if(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-      message(WARNING "Armadillo configuration file "
-          "(${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
-    else()
-      # We are on a 64-bit system.  Does Armadillo have ARMA_64BIT_WORD enabled?
-      file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" ARMA_CONFIG)
-      string(REGEX MATCH
-          "[\r\n][ ]*#define ARMA_64BIT_WORD"
-          ARMA_HAS_64BIT_WORD_PRE
-          "${ARMA_CONFIG}")
-
-      string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
-    endif()
-  endif()
-
-  if(ARMA_HAS_64BIT_WORD EQUAL 0)
-    message(WARNING "This is a 64-bit system, but Armadillo was compiled "
-        "without 64-bit index support.  Consider recompiling Armadillo with "
-        "ARMA_64BIT_WORD to enable 64-bit indices (large matrix support). "
-        "mlpack will still work without ARMA_64BIT_WORD defined, but will not "
-        "scale to matrices with more than 4 billion elements.")
-  endif()
-else()
-  # If we are on a 32-bit system, we must manually specify the size of the word
-  # to be 32 bits, since otherwise Armadillo will produce a warning that it is
-  # disabling 64-bit support.
-  if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    add_definitions(-DARMA_32BIT_WORD)
-  endif ()
-endif()
+find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
@@ -352,11 +354,10 @@ else ()
   set(STB_AVAILABLE "1")
 endif ()
 
-
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
-find_package(Ensmallen 2.10.0)
+find_package(Ensmallen "${ENSMALLEN_VERSION}")
 if (NOT ENSMALLEN_FOUND)
   if (DOWNLOAD_ENSMALLEN)
     file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
@@ -412,9 +413,15 @@ else ()
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 endif ()
 
+find_package(cereal "${CEREAL_VERSION}" REQUIRED)
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
+
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.75.0" "1.75"
+  "1.74.0" "1.74"
+  "1.73.0" "1.73"
   "1.72.0" "1.72"
   "1.71.0" "1.71"
   "1.70.0" "1.70"
@@ -436,34 +443,11 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost 1.58
-    COMPONENTS
-      program_options
-      unit_test_framework
-      serialization
-    REQUIRED
-)
-
-link_directories(${Boost_LIBRARY_DIRS})
-
-# In Visual Studio, automatic linking is performed, so we don't need to worry
-# about it.  Clear the list of libraries to link against and let Visual Studio
-# handle it.
-if (MSVC)
-  link_directories(${Boost_LIBRARY_DIRS})
-  set(CMAKE_MSVCIDE_RUN_PATH ${CMAKE_MSVCIDE_RUN_PATH} ${Boost_LIBRARY_DIRS})
-  message("boost lib dirs ${Boost_LIBRARY_DIRS}")
-  set(Boost_LIBRARIES "")
-endif ()
+find_package(Boost "${BOOST_VERSION}")
 
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${Boost_LIBRARIES})
-set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
-
-# For Boost testing framework (will have no effect on non-testing executables).
-# This specifies to Boost that we are dynamically linking to the Boost test
-# library.
-add_definitions(-DBOOST_TEST_DYN_LINK)
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES})
+set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS})
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
 # to compile with OpenMP are returned and added and the HAS_OPENMP definition
@@ -568,8 +552,8 @@ include(CMake/CreateArmaConfigInfo.cmake)
 add_custom_target(mlpack_arma_config ALL
     COMMAND ${CMAKE_COMMAND}
         -D ARMADILLO_INCLUDE_DIR="${ARMADILLO_INCLUDE_DIR}"
-        -D ARMADILLO_VERSION_MAJOR="${ARMADILLO_VERSION_MAJOR}"
         -D OPENMP_FOUND="${OPENMP_FOUND}"
+        -D CMAKE_SIZEOF_VOID_P="${CMAKE_SIZEOF_VOID_P}"
         -P CMake/CreateArmaConfigInfo.cmake
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Updating arma_config.hpp (if necessary)")
@@ -617,43 +601,45 @@ add_dependencies(mlpack_headers mlpack_arma_config)
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
-find_package(Doxygen)
-if (DOXYGEN_FOUND)
-  if (MATHJAX)
-    find_package(MathJax)
-    if (NOT MATHJAX_FOUND)
-      message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
-          "Be careful, formulas will not be shown without the internet.")
+if (BUILD_DOCS)
+  find_package(Doxygen)
+  if (DOXYGEN_FOUND)
+    if (MATHJAX)
+      find_package(MathJax)
+      if (NOT MATHJAX_FOUND)
+        message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
+            "Be careful, formulas will not be shown without the internet.")
+      endif ()
     endif ()
+    # Preprocess the Doxyfile.  This is done before 'make doc'.
+    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
+        PRE_BUILD
+        COMMAND ${CMAKE_COMMAND}
+            -D DESTDIR=${CMAKE_BINARY_DIR}
+            -D MATHJAX="${MATHJAX}"
+            -D MATHJAX_FOUND="${MATHJAX_FOUND}"
+            -D MATHJAX_PATH="${MATHJAX_PATH}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
+        COMMENT "Creating Doxyfile to generate Doxygen documentation"
+    )
+
+    # Generate documentation.
+    add_custom_target(doc
+        COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
+        DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+        COMMENT "Generating API documentation with Doxygen"
+    )
+
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+        COMPONENT doc
+        OPTIONAL
+    )
   endif ()
-  # Preprocess the Doxyfile.  This is done before 'make doc'.
-  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
-      PRE_BUILD
-      COMMAND ${CMAKE_COMMAND}
-          -D DESTDIR=${CMAKE_BINARY_DIR}
-          -D MATHJAX="${MATHJAX}"
-          -D MATHJAX_FOUND="${MATHJAX_FOUND}"
-          -D MATHJAX_PATH="${MATHJAX_PATH}"
-          -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
-      COMMENT "Creating Doxyfile to generate Doxygen documentation"
-  )
-
-  # Generate documentation.
-  add_custom_target(doc
-      COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
-      DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
-      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-      COMMENT "Generating API documentation with Doxygen"
-  )
-
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
-      DESTINATION "${CMAKE_INSTALL_DOCDIR}"
-      COMPONENT doc
-      OPTIONAL
-  )
-endif ()
+endif()
 
 # Create the pkg-config file, if we have pkg-config.
 find_package(PkgConfig)
@@ -730,4 +716,5 @@ if (PKG_CONFIG_FOUND)
 
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc"
       DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
+
 endif ()

@@ -190,19 +190,19 @@ template<typename FitnessFunction, typename ObservationType>
 template<typename Archive>
 void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(samplesSeen);
-  ar & BOOST_SERIALIZATION_NVP(observationsBeforeBinning);
-  ar & BOOST_SERIALIZATION_NVP(bins);
+  ar(CEREAL_NVP(samplesSeen));
+  ar(CEREAL_NVP(observationsBeforeBinning));
+  ar(CEREAL_NVP(bins));
 
   if (samplesSeen >= observationsBeforeBinning)
   {
     // The binning has happened, so we only need to save the resulting bins.
-    ar & BOOST_SERIALIZATION_NVP(splitPoints);
-    ar & BOOST_SERIALIZATION_NVP(sufficientStatistics);
+    ar(CEREAL_NVP(splitPoints));
+    ar(CEREAL_NVP(sufficientStatistics));
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       // Clean other objects.
       observations.clear();
@@ -213,7 +213,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
   {
     // The binning has not happened yet, so we only need to save the information
     // required before binning.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       observations.zeros(observationsBeforeBinning);
       labels.zeros(observationsBeforeBinning);
@@ -221,13 +221,13 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::serialize(
 
     // Save the number of classes.
     size_t numClasses;
-    if (Archive::is_saving::value)
+    if (cereal::is_saving<Archive>())
       numClasses = sufficientStatistics.n_rows;
-    ar & BOOST_SERIALIZATION_NVP(numClasses);
-    ar & BOOST_SERIALIZATION_NVP(observations);
-    ar & BOOST_SERIALIZATION_NVP(labels);
+    ar(CEREAL_NVP(numClasses));
+    ar(CEREAL_NVP(observations));
+    ar(CEREAL_NVP(labels));
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       // Clean other objects.
       splitPoints.clear();

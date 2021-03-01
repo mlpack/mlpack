@@ -2,8 +2,9 @@
  * @file bindings/markdown/program_doc_wrapper.hpp
  * @author Ryan Curtin
  *
- * A simple wrapper around ProgramDoc that also calls
- * BindingInfo::RegisterProgramDoc() upon construction.
+ * A simple wrapper around programName, shortDescription, longDescription,
+ * example and seeAlso that also respectively register all the macros upon
+ * construction.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,23 +20,73 @@ namespace mlpack {
 namespace bindings {
 namespace markdown {
 
-class ProgramDocWrapper
+class ProgramNameWrapper
 {
  public:
   /**
-   * Construct a ProgramDoc object and register it with
-   * BindingInfo::RegisterProgramDoc().
+   * Register programName.
    */
-  ProgramDocWrapper(const std::string& bindingName,
-                    const std::string& programName,
-                    const std::string& shortDocumentation,
-                    const std::function<std::string()>& documentation,
-                    const std::vector<std::pair<std::string, std::string>>&
-                        seeAlso)
+  ProgramNameWrapper(const std::string& bindingName,
+                     const std::string& programName)
   {
-    util::ProgramDoc pd(programName, shortDocumentation, documentation,
-        seeAlso);
-    BindingInfo::RegisterProgramDoc(bindingName, pd);
+    BindingInfo::GetSingleton().map[bindingName].programName =
+        std::move(programName);
+  }
+};
+
+class ShortDescriptionWrapper
+{
+ public:
+  /**
+   * Register shortDescription.
+   */
+  ShortDescriptionWrapper(const std::string& bindingName,
+                          const std::string& shortDescription)
+  {
+    BindingInfo::GetSingleton().map[bindingName].shortDescription =
+        std::move(shortDescription);
+  }
+};
+
+class LongDescriptionWrapper
+{
+ public:
+  /**
+   * Register longDescription.
+   */
+  LongDescriptionWrapper(const std::string& bindingName,
+                         const std::function<std::string()>& longDescription)
+  {
+    BindingInfo::GetSingleton().map[bindingName].longDescription =
+        std::move(longDescription);
+  }
+};
+
+class ExampleWrapper
+{
+ public:
+  /**
+   * Register example.
+   */
+  ExampleWrapper(const std::string& bindingName,
+                 const std::function<std::string()>& example)
+  {
+    BindingInfo::GetSingleton().map[bindingName].example.push_back(
+        std::move(example));
+  }
+};
+
+class SeeAlsoWrapper
+{
+ public:
+  /**
+   * Register seeAlso.
+   */
+  SeeAlsoWrapper(const std::string& bindingName,
+                 const std::string& description, const std::string& link)
+  {
+    BindingInfo::GetSingleton().map[bindingName].seeAlso.push_back(
+        std::move(std::make_pair(description, link)));
   }
 };
 

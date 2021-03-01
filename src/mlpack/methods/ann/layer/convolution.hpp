@@ -29,6 +29,35 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of the Convolution class. The Convolution class represents a
  * single layer of a neural network.
+ * Example usage:
+ * 
+ * Suppose we want to pass a matrix M (2744x100) to a `Convolution` layer;
+ * in this example, `M` was obtained from "flattening" 100 images (or Mel
+ * cepstral coefficients, if we talk about speech, or whatever you like) of
+ * dimension 196x14. In other words, the first 196 columns of each row of M
+ * will be made of the 196 columns of the first row of each of the 100 images
+ * (or Mel cepstral coefficients). Then the next 295 columns of M (196 - 393)
+ * will be made of the 196 columns of the second row of the 100 images (or Mel
+ * cepstral coefficients), etc.  Given that the size of our 2-D input images is
+ * 196x14, the parameters for our `Convolution` layer will be something like
+ * this:
+ *
+ * ```
+ * Convolution<> c(1, // Number of input activation maps.
+ *                 14, // Number of output activation maps.
+ *                 3, // Filter width.
+ *                 3, // Filter height.
+ *                 1, // Stride along width.
+ *                 1, // Stride along height.
+ *                 0, // Padding width.
+ *                 0, // Padding height.
+ *                 196, // Input width.
+ *                 14); // Input height.
+ * ```
+ *
+ * This `Convolution<>` layer will treat each column of the input matrix `M` as
+ * a 2-D image (or object) of the original 196x14 size, using this as the input
+ * for the 14 filters of this example.
  *
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
@@ -153,54 +182,64 @@ class Convolution
                 arma::Mat<eT>& gradient);
 
   //! Get the parameters.
-  const OutputDataType& Parameters() const { return weights; }
+  OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
+  //! Get the weight of the layer.
+  arma::cube const& Weight() const { return weight; }
+  //! Modify the weight of the layer.
+  arma::cube& Weight() { return weight; }
+
+  //! Get the bias of the layer.
+  arma::mat const& Bias() const { return bias; }
+  //! Modify the bias of the layer.
+  arma::mat& Bias() { return bias; }
+
   //! Get the input parameter.
-  const InputDataType& InputParameter() const { return inputParameter; }
+  InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  const OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  const OutputDataType& Delta() const { return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  const OutputDataType& Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
   //! Get the input width.
-  const size_t& InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  const size_t& InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  const size_t& OutputWidth() const { return outputWidth; }
+  size_t OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  const size_t& OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size.
+  //! Get the number of input maps.
   size_t InputSize() const { return inSize; }
 
-  //! Get the output size.
+  //! Get the number of output maps.
   size_t OutputSize() const { return outSize; }
 
   //! Get the kernel width.
@@ -243,14 +282,23 @@ class Convolution
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
 
-  //! Modify the bias weights of the layer.
-  arma::mat& Bias() { return bias; }
+  //! Get size of weights for the layer.
+  size_t WeightSize() const
+  {
+    return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
+  }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inputHeight * inputWidth * inSize;
+  }
 
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /*
@@ -390,27 +438,6 @@ class Convolution
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the Convolution class.
-namespace boost {
-namespace serialization {
-
-template<
-    typename ForwardConvolutionRule,
-    typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
->
-struct version<
-    mlpack::ann::Convolution<ForwardConvolutionRule, BackwardConvolutionRule,
-        GradientConvolutionRule, InputDataType, OutputDataType> >
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "convolution_impl.hpp"

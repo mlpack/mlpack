@@ -86,6 +86,9 @@ class HollowBallBound
   //! Move constructor: take possession of another bound.
   HollowBallBound(HollowBallBound&& other);
 
+  //! Move assignment operator.
+  HollowBallBound& operator=(HollowBallBound&& other);
+
   //! Destructor to release allocated memory.
   ~HollowBallBound();
 
@@ -232,7 +235,7 @@ class HollowBallBound
 
   //! Serialize the bound.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 };
 
 //! A specialization of BoundTraits for this bound type.

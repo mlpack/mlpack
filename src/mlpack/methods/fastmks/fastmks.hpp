@@ -163,6 +163,11 @@ class FastMKS
    */
   FastMKS& operator=(const FastMKS& other);
 
+  /**
+   * Move assignment operator.
+   */
+  FastMKS& operator=(FastMKS&& other);
+
   //! Destructor for the FastMKS object.
   ~FastMKS();
 
@@ -299,7 +304,7 @@ class FastMKS
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The reference dataset.  We never own this; only the tree or a higher level

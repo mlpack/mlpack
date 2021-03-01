@@ -26,30 +26,31 @@ MeanBiasError<InputDataType, OutputDataType>::MeanBiasError()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
-MeanBiasError<InputDataType, OutputDataType>::Forward(const InputType& input,
-                                                      const TargetType& target)
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+MeanBiasError<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  return arma::accu(target - input) / target.n_cols;
+  return arma::accu(target - prediction) / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void MeanBiasError<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& /* target */,
-    OutputType& output)
+    LossType& loss)
 {
-  output.set_size(arma::size(input));
-  output.fill(-1.0);
+  loss.set_size(arma::size(prediction));
+  loss.fill(-1.0);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanBiasError<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // Nothing to do here.
 }

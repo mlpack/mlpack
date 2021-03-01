@@ -93,6 +93,10 @@ class KDERules
   //! Get the number of scores.
   size_t Scores() const { return scores; }
 
+  //! Get the minimum number of base cases we need to perform to have acceptable
+  //! results.
+  size_t MinimumBaseCases() const { return 0; }
+
  private:
   //! Evaluate kernel value of 2 points given their indexes.
   double EvaluateKernel(const size_t queryIndex,

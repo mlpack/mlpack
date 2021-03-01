@@ -13,20 +13,18 @@
  */
 #include <mlpack/core.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kernel;
 
-BOOST_AUTO_TEST_SUITE(KernelTraitsTest);
-
-BOOST_AUTO_TEST_CASE(IsNormalizedTest)
+TEST_CASE("IsNormalizedTest", "[KernelTraitsTest]")
 {
   // Reason number ten billion why macros are bad:
   //
   // The Boost unit test framework is built on macros.  When I write
-  // BOOST_REQUIRE_EQUAL(KernelTraits<int>::IsNormalized, false), what actually
+  // REQUIRE(KernelTraits<int>::IsNormalized, false) == what actually
   // happens (in gcc at least) is that the 'false' gets implicitly converted to
   // an int; then, the compiler goes looking for an int IsNormalized variable in
   // KernelTraits.  But this doesn't exist, so we get this error at linker time:
@@ -41,25 +39,19 @@ BOOST_AUTO_TEST_CASE(IsNormalizedTest)
 
   // Test each kernel individually.
   // If the type is not a valid kernel, it should be false (default value).
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<int>::IsNormalized, false);
+  REQUIRE((bool) KernelTraits<int>::IsNormalized == false);
 
   // Normalized kernels.
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<CosineDistance>::IsNormalized, true);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<EpanechnikovKernel>::IsNormalized,
-      true);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<GaussianKernel>::IsNormalized, true);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<LaplacianKernel>::IsNormalized, true);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<SphericalKernel>::IsNormalized, true);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<TriangularKernel>::IsNormalized,
-      true);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<CauchyKernel>::IsNormalized, true);
+  REQUIRE((bool) KernelTraits<CosineDistance>::IsNormalized == true);
+  REQUIRE((bool) KernelTraits<EpanechnikovKernel>::IsNormalized == true);
+  REQUIRE((bool) KernelTraits<GaussianKernel>::IsNormalized == true);
+  REQUIRE((bool) KernelTraits<LaplacianKernel>::IsNormalized == true);
+  REQUIRE((bool) KernelTraits<SphericalKernel>::IsNormalized == true);
+  REQUIRE((bool) KernelTraits<TriangularKernel>::IsNormalized == true);
+  REQUIRE((bool) KernelTraits<CauchyKernel>::IsNormalized == true);
 
   // Unnormalized kernels.
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<LinearKernel>::IsNormalized, false);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<PolynomialKernel>::IsNormalized,
-      false);
-  BOOST_REQUIRE_EQUAL((bool) KernelTraits<PSpectrumStringKernel>::IsNormalized,
-      false);
+  REQUIRE((bool) KernelTraits<LinearKernel>::IsNormalized == false);
+  REQUIRE((bool) KernelTraits<PolynomialKernel>::IsNormalized == false);
+  REQUIRE((bool) KernelTraits<PSpectrumStringKernel>::IsNormalized == false);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

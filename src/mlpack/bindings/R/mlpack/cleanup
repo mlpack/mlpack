@@ -1,0 +1,2 @@
+## compilation and editing objects
+rm -f src/*.o src/*.so src/*.dylib src/*~ *~

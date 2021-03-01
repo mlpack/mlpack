@@ -13,10 +13,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
-
-BOOST_AUTO_TEST_SUITE(BlockKrylovSVDTest);
+#include "catch.hpp"
 
 using namespace mlpack;
 
@@ -48,7 +45,8 @@ void CreateNoisyLowRankMatrix(arma::mat& data,
  * The reconstruction and sigular value error of the obtained SVD should be
  * small.
  */
-BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDReconstructionError)
+TEST_CASE("RandomizedBlockKrylovSVDReconstructionError",
+          "[BlockKrylovSVDTest]")
 {
   arma::mat U = arma::randn<arma::mat>(3, 20);
   arma::mat V = arma::randn<arma::mat>(10, 3);
@@ -78,20 +76,20 @@ BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDReconstructionError)
 
   // The sigular value error should be small.
   double error = arma::norm(s2 - s3, "frob") / arma::norm(s2, "frob");
-  BOOST_REQUIRE_SMALL(error, 1e-5);
+  REQUIRE(error == Approx(0.0).margin(1e-5));
 
   arma::mat reconstruct = U2 * arma::diagmat(s2) * V2.t();
 
   // The relative reconstruction error should be small.
   error = arma::norm(centeredData - reconstruct, "frob") /
       arma::norm(centeredData, "frob");
-  BOOST_REQUIRE_SMALL(error, 1e-5);
+  REQUIRE(error == Approx(0.0).margin(1e-7));
 }
 
 /*
  * Check if the method can handle noisy matrices.
  */
-BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDNoisyLowRankTest)
+TEST_CASE("RandomizedBlockKrylovSVDNoisyLowRankTest", "[BlockKrylovSVDTest]")
 {
   arma::mat data;
   CreateNoisyLowRankMatrix(data, 200, 1000, 5, 0.5);
@@ -106,7 +104,5 @@ BOOST_AUTO_TEST_CASE(RandomizedBlockKrylovSVDNoisyLowRankTest)
   svd::RandomizedBlockKrylovSVD rSVDB(data, U2, s2, V2, 10, rank, 20);
 
   double error = arma::max(arma::abs(s1.subvec(0, rank) - s2.subvec(0, rank)));
-  BOOST_REQUIRE_SMALL(error, 1e-2);
+  REQUIRE(error == Approx(0.0).margin(1e-4));
 }
-
-BOOST_AUTO_TEST_SUITE_END();
