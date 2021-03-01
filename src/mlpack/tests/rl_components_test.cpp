@@ -336,7 +336,7 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
                 {FrozenLake::tiles::Frozen, FrozenLake::tiles::Hole, FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen},
                 {FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen},
                 {FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen, FrozenLake::tiles::Frozen, FrozenLake::tiles::Goal}};
-
+  Log::Info << "Test 1: \n";
   // // Task 1 checks the case that the agent makes it to the goal,
   // // receiving 1.0 as the reward.
   FrozenLake task1 = FrozenLake();
@@ -353,6 +353,8 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
   // As the agent reaches the goal, the game must end.
   REQUIRE(task1.IsTerminal(state1));
 
+  Log::Info << "Test 2: \n";
+
   // Task 2 checks the case where the agent does not
   // complete the game by reaching the max number of steps.
   FrozenLake task2 = FrozenLake();
@@ -366,6 +368,8 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
   // the maximum allowed.
   REQUIRE(task2.StepsPerformed() == 10);
   REQUIRE(reward2 == 0.0);
+
+  Log::Info << "Test 3: \n";
 
   // Task 3 checks the case where the agent fall into a hole.
   // and recieved -1.0 as a reward.
@@ -382,6 +386,8 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
   REQUIRE(reward3 == -1.0);
   // As the agent fall into the hole, the game must end.
   REQUIRE(task3.IsTerminal(state3));
+
+  Log::Info << "Test 4: \n";
 
   // Task 4 checks the case with random board.
   FrozenLake task4 = FrozenLake();

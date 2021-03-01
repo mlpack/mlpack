@@ -330,10 +330,10 @@ class FrozenLake
    * Utility function that helps generate random environment board.
    * 
    * @return board, a 2D array of characters that hold the board description.
-   *    'S' is the Start Tile, the starting position of the agent. 0
-   *    'G' is the Goal Tile, the agent can walk into a goal tile to win. 1
-   *    'F' is a Frozen Tile, the agent can walk on it. 2
-   *    'H' is a Hole Tile, the agent can fall into it and the game ends. 3
+   *    'S' is the Start Tile, the starting position of the agent.
+   *    'G' is the Goal Tile, the agent can walk into a goal tile to win.
+   *    'F' is a Frozen Tile, the agent can walk on it.
+   *    'H' is a Hole Tile, the agent can fall into it and the game ends.
    */
   arma::Mat<size_t> generateRandomBoard()
   {
@@ -342,11 +342,13 @@ class FrozenLake
     arma::Mat<size_t> Board(height, width);
     //! TODO: Tentative, implement max step to control whether
     // we can never generate a possible board.
-    
+
     while (!valid)
     {
       // Randomly choose tiles in the board (discrete random distribution).
       Board = genBoardHelper(height, width, platformRate);
+      // printBoard(Board, height, width);
+      Log::Info << Board;
       valid = dfsHelper(Board, height, width);
     }
     return Board;
@@ -361,7 +363,7 @@ class FrozenLake
    * @param width Width of the environment board.
    * @return true if there is a solution, false otherwise. 
    */
-  static bool dfsHelper(arma::Mat<size_t> candidateBoard, size_t height, size_t width)
+  static bool dfsHelper(const arma::Mat<size_t>& candidateBoard, size_t height, size_t width)
   {
     arma::Mat<short> visited(height, width);
     visited.fill(0);
@@ -381,7 +383,7 @@ class FrozenLake
         int c_new = direction[1] + node[1];
         if (!visited(r_new, c_new))
         {
-          if (r_new >= height || c_new >= width || r_new < 0 || c_new < 0)
+          if (r_new >= int(height) || c_new >= int(width) || r_new < 0 || c_new < 0)
               continue;
           if (candidateBoard(r_new, c_new) == tiles::Goal)
               return true;
@@ -414,13 +416,18 @@ class FrozenLake
       {
         auto r = arma::randu();
         if (r < 1 - platformRate)
-          board(i) = tiles::Hole;
+          board(i, j) = tiles::Hole;
+          // board(i, j) = 1;
         else
-          board(i) = tiles::Frozen;
+          board(i, j) = tiles::Frozen;
+          // board(i, j) = 2;
       }
     }
     board(0, 0) = tiles::Start;
     board(height - 1, width - 1) = tiles::Goal;
+    // board(0, 0) = 1;
+    // board(height - 1, width - 1) = 1;
+
 
     return board;
   }
