@@ -390,7 +390,7 @@ TEST_CASE("FrozenLakeTest", "[RLComponentsTest]")
   Log::Info << "Test 4: \n";
 
   // Task 4 checks the case with random board.
-  FrozenLake task4 = FrozenLake();
+  FrozenLake task4 = FrozenLake(200, 4, 4, 0.2);
   FrozenLake::State state4 = task4.InitialSample();
   while (!task4.IsTerminal(state4))
   { 

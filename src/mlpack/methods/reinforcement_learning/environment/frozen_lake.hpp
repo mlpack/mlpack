@@ -348,7 +348,7 @@ class FrozenLake
       // Randomly choose tiles in the board (discrete random distribution).
       Board = genBoardHelper(height, width, platformRate);
       // printBoard(Board, height, width);
-      Log::Info << Board;
+      // Log::Info << Board;
       valid = dfsHelper(Board, height, width);
     }
     return Board;
@@ -381,12 +381,14 @@ class FrozenLake
       {
         int r_new = direction[0] + node[0];
         int c_new = direction[1] + node[1];
+        
         if (!visited(r_new, c_new)
             && r_new < int(height)
             && c_new < int(width)
             && r_new >= 0
             && c_new >= 0)
         {
+          // Log::Info << "r_new: " << r_new << ", c_new: " << c_new << "\n";
           if (candidateBoard(r_new, c_new) == tiles::Goal)
           {
             return true;
