@@ -158,14 +158,14 @@ std::vector<std::wstring> BasicTokenizer::tokenize(const std::string& text) cons
     std::vector<std::wstring> splitTokens;
     bool is_bert_tkn;
     for (std::wstring token : origTokens) {
-
         is_bert_tkn = false;
         //If is_bert_tkn is true, then we won't convert the token to smaller case.
         //The following list contains the list of BERT symbols.
         std::wstring predefined_bert_tkns[3] = {L"[CLS]", L"[SEP]", L"[MASK]"};
         for(int i=0; i<3;i++){
-            if(predefined_bert_tkns[i] == token)
+            if(token.find(predefined_bert_tkns[i]) != std::string::npos){
                 is_bert_tkn = true;
+            }
         }
 
         if (mDoLowerCase and !is_bert_tkn) {
@@ -205,6 +205,7 @@ std::vector<std::wstring> WordpieceTokenizer::tokenize(const std::wstring& text)
         bool isBad = false;
         size_t start = 0;
         std::vector<std::wstring> subTokens;
+        std::wstring substr_t; //Temporary string used to store the lower case version of a token.
         while (start < token.size()) {
             size_t end = token.size();
             std::wstring curSubstr;
@@ -212,7 +213,21 @@ std::vector<std::wstring> WordpieceTokenizer::tokenize(const std::wstring& text)
             while (start < end) {
                 std::wstring substr = token.substr(start, end - start);
                 if (start > 0) substr = L"##" + substr;
-                if (mVocab->find(substr) != mVocab->end()) {
+                
+                //If the token has a BERT symbol, then we won't convert the token to smaller case.
+                //The following list contains the list of BERT symbols.
+                std::wstring predefined_bert_tkns[3] = {L"[CLS]", L"[SEP]", L"[MASK]"};
+                for(int i=0; i<3;i++){
+                    if(substr.find(predefined_bert_tkns[i]) != std::string::npos){
+                        substr_t = substr;
+                        break;
+                    }
+                    else{
+                        substr_t = substr;
+                        transform(substr_t.begin(), substr_t.end(), substr_t.begin(), ::tolower);
+                    }
+                }
+                if (mVocab->find(substr_t) != mVocab->end()) {
                     curSubstr = substr;
                     hasCurSubstr = true;
                     break;
