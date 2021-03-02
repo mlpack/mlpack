@@ -141,6 +141,7 @@ Copyright:
   Copyright 2020, Alex Nguyen <alexvn.edu@gmail.com>
   Copyright 2020, Gaurav Ghati <gauravghatii@gmail.com>
   Copyright 2020, Anmolpreet Singh <anmol323c@gmail.com>
+  Copyright 2021, Tru Hoang <trugiahoang@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
