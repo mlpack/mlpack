@@ -405,16 +405,16 @@ Split(const arma::Mat<T>& input,
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *       sample is visited in linear order. (Default true.)
  */
-template <typename FieldType,
+template <typename FieldType, typename T,
           typename = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
 void Split(const FieldType& input,
-           const arma::field<arma::vec>& inputLabel,
+           const arma::field<T>& inputLabel,
            FieldType& trainData,
-           arma::field<arma::vec>& trainLabel,
+           arma::field<T>& trainLabel,
            FieldType& testData,
-           arma::field<arma::vec>& testLabel,
+           arma::field<T>& testLabel,
            const double testRatio,
            const bool shuffleData = true)
 {
@@ -574,20 +574,20 @@ void Split(const FieldType& input,
  *      (FieldType), trainLabel (arma::field<arma::vec>), and
  *                   testLabel (arma::field<arma::vec>).
  */
-template <class FieldType,
+template <class FieldType, typename T,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
-std::tuple<FieldType, FieldType, arma::field<arma::vec>, arma::field<arma::vec>>
+std::tuple<FieldType, FieldType, arma::field<T>, arma::field<T>>
 Split(const FieldType& input,
-      const arma::field<arma::vec>& inputLabel,
+      const arma::field<T>& inputLabel,
       const double testRatio,
       const bool shuffleData = true)
 {
   FieldType trainData;
   FieldType testData;
-  arma::field<arma::vec> trainLabel;
-  arma::field<arma::vec> testLabel;
+  arma::field<T> trainLabel;
+  arma::field<T> testLabel;
 
   Split(input, inputLabel, trainData, trainLabel, testData, testLabel,
       testRatio, shuffleData);
