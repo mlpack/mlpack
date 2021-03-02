@@ -381,14 +381,20 @@ class FrozenLake
       {
         int r_new = direction[0] + node[0];
         int c_new = direction[1] + node[1];
-        if (!visited(r_new, c_new))
+        if (!visited(r_new, c_new)
+            && r_new < int(height)
+            && c_new < int(width)
+            && r_new >= 0
+            && c_new >= 0)
         {
-          if (r_new >= int(height) || c_new >= int(width) || r_new < 0 || c_new < 0)
-              continue;
           if (candidateBoard(r_new, c_new) == tiles::Goal)
-              return true;
-          if (candidateBoard(r_new, c_new) != tiles::Hole)
-              path.push_back({r_new, c_new});
+          {
+            return true;
+          }
+          else if (candidateBoard(r_new, c_new) != tiles::Hole)
+          {
+            path.push_back({r_new, c_new});
+          }
         }
       }
     }
