@@ -74,6 +74,10 @@ TEST_CASE("BERTTokenizer-BasicTests", "[BERTTokenizerTest]")
 	BERTTokenizerRunner(input_list, tokenized_output_true);
 }
 
+/**
+ * Testing if the tokenization performs correctly for a string
+ * containing alphabets, spaces and punctuations.
+ */
 TEST_CASE("BERTTokenizer-PunctTests", "[BERTTokenizerTest]")
 {
     std::vector<std::string> input_list = {"check check make it , gtab",
@@ -88,5 +92,21 @@ TEST_CASE("BERTTokenizer-PunctTests", "[BERTTokenizerTest]")
     BERTTokenizerRunner(input_list, tokenized_output_true);
 }
 
+/**
+ * Testing if the tokenization performs correctly for a string
+ * containing alphabets, spaces and punctuations.
+ */
+TEST_CASE("BERTTokenizer-CapitalLetterTests", "[BERTTokenizerTest]")
+{
+    std::vector<std::string> input_list = {"[CLS] hello How ARE You?",
+                              "[CLS] This is a sentence. [SEP] Hoping it works [MASK] Fingers crossed [SEP]"};
+    std::vector<std::vector<std::string>> tokenized_output_true = 
+    {
+        {"[CLS]", "hello", "how", "are", "you", "?"},
+        {"[CLS]", "this", "is", "a", "sentence", ".", "[SEP]", "hoping", "it", "works", "[MASK]", "fingers", "crossed", "[SEP]"}
+    };
+
+    BERTTokenizerRunner(input_list, tokenized_output_true);
+}
 
 #endif
