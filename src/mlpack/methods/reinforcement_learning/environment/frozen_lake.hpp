@@ -14,7 +14,6 @@
 #define MLPACK_METHODS_RL_ENVIRONMENT_FROZEN_LAKE_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <stack>
 
 namespace mlpack {
 namespace rl {
