@@ -15,9 +15,12 @@
 
 // In case it is not included.
 #include "inception_v3.hpp"
+// Returns sequential object not found
+// even though layer_types.hpp is included
+#include "sequential.hpp"
 
 namespace mlpack {
-namespace ann { /** Artificial Neural Network. */
+namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType, int module>
 Inception3<InputType, OutputType, module> :: Inception3(
@@ -27,9 +30,7 @@ Inception3<InputType, OutputType, module> :: Inception3(
     const arma::vec outA,
     const arma::vec outB,
     const arma::vec outC,
-    const arma::vec outD,
-    const arma::vec outE,
-    const arma::vec outF)
+    const arma::vec outD)
 {
   model = new Concat(true);
 
@@ -56,7 +57,7 @@ Inception3<InputType, OutputType, module> :: Inception3(
     networkB->Add<BatchNorm>(outB[0]);
     networkB->Add<ReLULayer>();
 
-    networkB->Add<Convolution>(outB[0], outB[1], 3, 3, 1, 1, 0, 0,
+    networkB->Add<Convolution>(outB[0], outB[1], 3, 3, 1, 1, 1, 1,
        inputWidth, inputHeight);
     networkB->Add<BatchNorm>(outB[1]);
     networkB->Add<ReLULayer>();
@@ -67,24 +68,30 @@ Inception3<InputType, OutputType, module> :: Inception3(
     Sequential* networkC;
     networkC = new Sequential();
 
-    networkC->Add<Convolution>(inSize, outC[0], 3, 3, 1, 1, 0, 0,
-        inputWidth, inputHeight);
+    networkC->Add<Convolution>(inSize, outC[0], 1, 1, 1, 1, 0, 0, 
+      inputWidth, inputHeight);
     networkC->Add<BatchNorm>(outC[0]);
     networkC->Add<ReLULayer>();
 
-    networkC->Add<Convolution>(outC[0], outC[1], 3, 3, 1, 1, 0, 0,
-        inputWidth - 2, inputHeight - 2);
+    networkC->Add<Convolution>(outC[0], outC[1], 3, 3, 1, 1, 1, 1,
+        inputWidth, inputHeight);
     networkC->Add<BatchNorm>(outC[1]);
+    networkC->Add<ReLULayer>();
+
+    networkC->Add<Convolution>(outC[1], outC[2], 3, 3, 1, 1, 1, 1,
+        inputWidth, inputHeight);
+    networkC->Add<BatchNorm>(outC[2]);
     networkC->Add<ReLULayer>();
 
     model->Add(networkC);
 
     //! Build Network D
     Sequential* networkD;
+    networkD = new Sequential();
 
     networkD->Add<MaxPooling>(3, 3, 1, 1);
     
-    networkD->Add<Convolution>(inSize, outD[0], 1, 1, 1, 1, 0, 0,
+    networkD->Add<Convolution>(inSize, outD[0], 1, 1, 1, 1, 1, 1,
         inputWidth - 2 , inputHeight - 2);
     networkD->Add<BatchNorm>(outD[0]);
     networkD->Add<ReLULayer>();
@@ -106,13 +113,15 @@ Inception3<InputType, OutputType, module> :: Inception3(
     model->Add(networkA);
 
     //! Build Network B
-    Sequential* networkB;
+   Sequential* networkB;
     networkB = new Sequential();
 
-    networkB->Add<AveragePooling>(3, 3, 1, 1);
+    // THere's some problem with the backward function 
+    // of MeanPooling(Also no test exists for it in ann_layer_test)---->> inform zoq
+    networkB->Add<AdaptiveMeanPooling>(inputWidth, inputHeight);
 
-    networkB->Add<Convolution>(inSize, outB[0], 1, 1, 1, 1,
-        inputWidth - 2, inputHeight -2);
+    networkB->Add<Convolution>(inSize, outB[0], 1, 1, 1, 1, 0, 0,
+        inputWidth, inputHeight);
     networkB->Add<BatchNorm>(outB[0]);
     networkB->Add<ReLULayer>();
 
@@ -127,13 +136,13 @@ Inception3<InputType, OutputType, module> :: Inception3(
     networkC->Add<BatchNorm>(outC[0]);
     networkC->Add<ReLULayer>();
 
-    networkC->Add<Convolution>(outC[0], outC[1], 1, 7, 1, 1, 0, 0,
+    networkC->Add<Convolution>(outC[0], outC[1], 1, 7, 1, 1, 0, 3,
         inputWidth, inputHeight);
     networkC->Add<BatchNorm>(outC[1]);
     networkC->Add<ReLULayer>();
 
-    networkC->Add<Convolution>(outC[1], outC[2], 7, 1, 1, 1, 0, 0,
-        inputWidth, inputHeight - 6);
+    networkC->Add<Convolution>(outC[1], outC[2], 7, 1, 1, 1, 3, 0,
+        inputWidth, inputHeight);
     networkC->Add<BatchNorm>(outC[2]);
     networkC->Add<ReLULayer>();
 
@@ -148,23 +157,23 @@ Inception3<InputType, OutputType, module> :: Inception3(
     networkD->Add<BatchNorm>(outD[0]);
     networkD->Add<ReLULayer>();
 
-    networkD->Add<Convolution>(outD[0], outD[1], 7, 1, 1, 1, 0, 0,
+    networkD->Add<Convolution>(outD[0], outD[1], 7, 1, 1, 1, 3, 0,
         inputWidth, inputHeight);
     networkD->Add<BatchNorm>(outD[1]);
     networkD->Add<ReLULayer>();
 
-    networkD->Add<Convolution>(outD[1], outD[2], 1, 7, 1, 1, 0, 0,
-        inputWidth - 6, inputHeight);
+    networkD->Add<Convolution>(outD[1], outD[2], 1, 7, 1, 1, 0, 3,
+        inputWidth, inputHeight);
     networkD->Add<BatchNorm>(outD[2]);
     networkD->Add<ReLULayer>();
 
-    networkD->Add<Convolution>(outD[2], outD[3], 7, 1, 1, 1, 0, 0,
-        inputWidth - 6, inputHeight - 6);
+    networkD->Add<Convolution>(outD[2], outD[3], 7, 1, 1, 1, 3, 0,
+        inputWidth, inputHeight);
     networkD->Add<BatchNorm>(outD[3]);
     networkD->Add<ReLULayer>();
 
-    networkD->Add<Convolution>(outD[3], outD[4], 1, 7, 1, 1, 0, 0,
-        inputWidth - 12, inputHeight - 6);
+    networkD->Add<Convolution>(outD[3], outD[4], 1, 7, 1, 1, 0, 3,
+        inputWidth, inputHeight);
     networkD->Add<BatchNorm>(outD[4]);
     networkD->Add<ReLULayer>();
 
@@ -185,34 +194,86 @@ Inception3<InputType, OutputType, module> :: Inception3(
     model->Add(networkA);
 
     //! Build Network B
-    Sequential* networkB;
-    networkB = new Sequential();
+    Concat* networkB;
+    networkB = new Concat(true);
 
-    networkB->Add<Convolution>(inSize, outB[0], 1, 1, 1, 1, 0, 0,
-        inputWidth, inputHeight);
-    networkB->Add<BatchNorm>(outB[0]);
-    networkB->Add<ReLULayer>();
+    Sequential* branch1x1B;
+    branch1x1B = new Sequential();
 
-    networkB->Add<Convolution>(outB[0], outB[1], 1, 3, 1, 1, 0, 0,
+    branch1x1B->Add<Convolution>(inSize, outB[0], 1, 1, 1, 1, 0, 0,
         inputWidth, inputHeight);
-    networkB->Add<BatchNorm>(outB[1]);
-    networkB->Add<ReLULayer>();
+    branch1x1B->Add<BatchNorm>(outB[0]);
+    branch1x1B->Add<ReLULayer>();
+
+    Sequential* branch1x3B;
+    branch1x3B = new Sequential();
+
+    branch1x3B->Add(branch1x1B);
+
+    branch1x3B->Add<Convolution>(outB[0], outB[1], 1, 3, 1, 1, 0, 1,
+        inputWidth, inputHeight);
+    branch1x3B->Add<BatchNorm>(outB[1]);
+    branch1x3B->Add<ReLULayer>();
+
+    Sequential* branch3x1B;
+    branch3x1B = new Sequential();
+
+    branch3x1B->Add(branch1x1B);
+
+    branch3x1B->Add<Convolution>(outB[0], outB[2], 3, 1, 1, 1, 1, 0,
+        inputWidth, inputHeight);
+    branch3x1B->Add<BatchNorm>(outB[2]);
+    branch3x1B->Add<ReLULayer>();
+
+    networkB->Add(branch1x3B);
+    networkB->Add(branch3x1B);
 
     model->Add(networkB);
 
     //! Build Network C
-    Sequential* networkC;
-    networkC = new Sequential();
+    Concat* networkC;
+    networkC = new Concat(true);
 
-    networkC->Add<Convolution>(inSize, outC[0], 1, 1, 1, 1, 0, 0,
-        inputWidth, inputHeight);
-    networkC->Add<BatchNorm>(outC[0]);
-    networkC->Add<ReLULayer>();
+    Sequential* branch1x1C;
+    branch1x1C = new Sequential();
 
-    networkC->Add<Convolution>(outC[0], outC[1], 3, 1, 1, 1, 0, 0,
+    branch1x1C->Add<Convolution>(inSize, outC[0], 1, 1, 1, 1, 0, 0,
         inputWidth, inputHeight);
-    networkC->Add<BatchNorm>(outC[1]);
-    networkC->Add<ReLULayer>();
+    branch1x1C->Add<BatchNorm>(outC[0]);
+    branch1x1C->Add<ReLULayer>();
+
+    Sequential* branch3x3C;
+    branch3x3C = new Sequential();
+
+    branch3x3C->Add<Convolution>(outC[0], outC[1], 3, 3, 1, 1, 1, 1,
+        inputWidth, inputHeight);
+    branch3x3C->Add<BatchNorm>(outC[1]);
+    branch3x3C->Add<ReLULayer>();
+
+    Sequential* branch3x1C;
+    branch3x1C = new Sequential();
+    
+    branch3x1C->Add(branch1x1C);
+    branch3x1C->Add(branch3x3C);
+
+    branch3x1C->Add<Convolution>(outC[1], outC[2], 3, 1, 1, 1, 1, 0,
+        inputWidth, inputHeight);
+    branch3x1C->Add<BatchNorm>(outC[2]);
+    branch3x1C->Add<ReLULayer>();
+
+    Sequential* branch1x3C;
+    branch1x3C = new Sequential();
+
+    branch1x3C->Add(branch1x1C);
+    branch1x3C->Add(branch3x3C);
+
+   branch1x3C->Add<Convolution>(outC[1], outC[3], 1, 3, 1, 1, 0, 1,
+        inputWidth, inputHeight);
+    branch1x3C->Add<BatchNorm>(outC[3]);
+    branch1x3C->Add<ReLULayer>();
+
+    networkC->Add(branch3x1C);
+    networkC->Add(branch1x3C);
 
     model->Add(networkC);
 
@@ -220,56 +281,14 @@ Inception3<InputType, OutputType, module> :: Inception3(
     Sequential* networkD;
     networkD = new Sequential();
 
-    networkD->Add<Convolution>(inSize, outD[0], 1, 1, 1, 1, 0, 0,
-        inputWidth, inputHeight);
+    networkD->Add<MaxPooling>(3, 3, 1, 1);
+
+    networkD->Add<Convolution>(inSize, outD[0], 1, 1, 1, 1, 1, 1,
+        inputWidth - 2, inputHeight - 2);
     networkD->Add<BatchNorm>(outD[0]);
     networkD->Add<ReLULayer>();
 
-    networkD->Add<Convolution>(outD[0], outD[1], 3, 3, 1, 1, 0, 0,
-        inputWidth, inputHeight);
-    networkD->Add<BatchNorm>(outD[1]);
-    networkD->Add<ReLULayer>();
-
-    networkD->Add<Convolution>(outD[1], outD[2], 3, 1, 1, 1, 0, 0,
-        inputWidth - 2, inputHeight - 2);
-    networkD->Add<BatchNorm>(outD[2]);
-    networkD->Add<ReLULayer>();
-
     model->Add(networkD);
-
-    //! Build Network E
-    Sequential* networkE;
-    networkE = new Sequential();
-
-    networkE->Add<Convolution>(inSize, outE[0], 1, 1, 1, 1, 0, 0,
-        inputWidth, inputHeight);
-    networkE->Add<BatchNorm>(outE[0]);
-    networkE->Add<ReLULayer>();
-
-    networkE->Add<Convolution>(outE[0], outE[1], 3, 3, 1, 1, 0, 0,
-        inputWidth, inputHeight);
-    networkE->Add<BatchNorm>(outE[1]);
-    networkE->Add<ReLULayer>();
-
-    networkE->Add<Convolution>(outE[1], outE[2], 1, 3, 1, 1, 0, 0,
-        inputWidth - 2, inputHeight - 2);
-    networkE->Add<BatchNorm>(outE[2]);
-    networkE->Add<ReLULayer>();
-
-    model->Add(networkE);
-
-    //! Build Network F
-    Sequential* networkF;
-    networkF = new Sequential();
-
-    networkF->Add<Maxpooling>(3, 3, 1, 1);
-
-    networkF->Add<Convolution>(inSize, outF[0], 1, 1, 1, 1, 0, 0,
-        inputWidth - 2, inputHeight - 2);
-    networkF->Add<BatchNorm>(outF[0]);
-    networkF->Add<ReLULayer>();
-
-    model->Add(networkF);
   }
   //! Build Reduction Block A module
   else if(module == 4)
@@ -278,7 +297,7 @@ Inception3<InputType, OutputType, module> :: Inception3(
     Sequential* networkA;
     networkA = new Sequential();
 
-    networkA->Add<Maxpooling>(3, 3, 1, 1);
+    networkA->Add<MaxPooling>(3, 3, 1, 1);
 
     model->Add(networkA);
 
@@ -286,7 +305,7 @@ Inception3<InputType, OutputType, module> :: Inception3(
     Sequential* networkB;
     networkB = new Sequential();
 
-    networkB->Add<Convolution>(inSize, outB[0], 3, 3, 1, 1, 0, 0,
+    networkB->Add<Convolution>(inSize, outB[0], 3, 3, 1, 1, 1, 1,
         inputWidth, inputHeight);
     networkB->Add<BatchNorm>(outB[0]);
     networkB->Add<ReLULayer>();
@@ -302,13 +321,13 @@ Inception3<InputType, OutputType, module> :: Inception3(
     networkC->Add<BatchNorm>(outC[0]);
     networkC->Add<ReLULayer>();
 
-    networkC->Add<Convolution>(outC[0], outC[1], 3, 3, 1, 1, 0, 0,
+    networkC->Add<Convolution>(outC[0], outC[1], 3, 3, 1, 1, 1, 1,
         inputWidth, inputHeight);
     networkC->Add<BatchNorm>(outC[1]);
     networkC->Add<ReLULayer>();
 
-    networkC->Add<Convolution>(outC[1], outC[2], 3, 3, 1, 1, 0, 0,
-        inputWidth - 2, inputHeight -2);
+    networkC->Add<Convolution>(outC[1], outC[2], 3, 3, 1, 1, 1, 1,
+        inputWidth, inputHeight);
     networkC->Add<BatchNorm>(outC[2]);
     networkC->Add<ReLULayer>();
 
@@ -316,13 +335,13 @@ Inception3<InputType, OutputType, module> :: Inception3(
 
   }
   //! Build Reduction Block B module
-  else if(module ==5)
+  else if(module == 5)
   {
     //! Build Network A
     Sequential* networkA;
     networkA = new Sequential();
 
-    networkA->Add<Maxpooling>(3, 3, 1, 1);
+    networkA->Add<MaxPooling>(3, 3, 1, 1);
 
     model->Add(networkA);
 
@@ -335,7 +354,7 @@ Inception3<InputType, OutputType, module> :: Inception3(
     networkB->Add<BatchNorm>(outB[0]);
     networkB->Add<ReLULayer>();
 
-    networkB->Add<Convolution>(outB[0], outB[1], 3, 3, 1, 1, 0, 0,
+    networkB->Add<Convolution>(outB[0], outB[1], 3, 3, 1, 1, 1, 1,
         inputWidth, inputHeight);                                    
     networkB->Add<BatchNorm>(outB[1]);
     networkB->Add<ReLULayer>();                                
@@ -351,18 +370,18 @@ Inception3<InputType, OutputType, module> :: Inception3(
     networkC->Add<BatchNorm>(outC[0]);
     networkC->Add<ReLULayer>();
 
-    networkC->Add<Convolution>(outC[0], outC[1], 1, 7, 1, 1, 0, 0,
+    networkC->Add<Convolution>(outC[0], outC[1], 1, 7, 1, 1, 0, 3,
         inputWidth, inputHeight);
     networkC->Add<BatchNorm>(outC[1]);
     networkC->Add<ReLULayer>();
 
-    networkC->Add<Convolution>(outC[1], outC[2], 7, 1, 1, 1, 0, 0,
-        inputWidth, inputHeight - 6);
+    networkC->Add<Convolution>(outC[1], outC[2], 7, 1, 1, 1, 3, 0,
+        inputWidth, inputHeight);
     networkC->Add<BatchNorm>(outC[2]);
     networkC->Add<ReLULayer>();
 
-    networkC->Add<Convolution>(outC[2], outC[3], 3, 3, 1, 1, 0, 0,
-        inputWidth - 6, inputHeight - 6);
+    networkC->Add<Convolution>(outC[2], outC[3], 3, 3, 1, 1, 1, 1,
+        inputWidth, inputHeight);
     networkC->Add<BatchNorm>(outC[3]);
     networkC->Add<ReLULayer>();
 
@@ -378,10 +397,16 @@ Inception3<InputType, OutputType, module>::~Inception3()
 }
 
 template<typename InputType, typename OutputType, int module>
+void Inception3<InputType, OutputType, module>::Reset()
+{
+  model->Reset();
+}
+
+template<typename InputType, typename OutputType, int module>
 void Inception3<InputType, OutputType, module>::Forward(const InputType& input,
                                                     OutputType& output)
 {
-  model->Forward(std::move(input), std::move(output));
+  model->Forward(std::move(input), output);
 }
 
 template<typename InputType, typename OutputType, int module>
@@ -389,7 +414,7 @@ void Inception3<InputType, OutputType, module>::Backward(const InputType& input,
                                                           const OutputType& gy,
                                                           OutputType &g)
 {
-  model->Backward(std::move(input), std::move(gy), std::move(g));
+  model->Backward(std::move(input), std::move(gy), g);
 }
 
 template<typename InputType, typename OutputType, int module>
@@ -398,7 +423,7 @@ void Inception3<InputType, OutputType, module>::Gradient(
     const OutputType& error,
     OutputType& gradient)
 {
-  model->Gradient(std::move(input), std::move(error), std::move(gradient));
+  model->Gradient(std::move(input), std::move(error), gradient);
 }
 
 template<typename InputType, typename OutputType, int module>
@@ -406,12 +431,10 @@ template<typename Archive>
 void Inception3<InputType, OutputType, module>::serialize(
     Archive& ar, const unsigned int /* version */)
 {
-  // Don't know how this works..yet
+  //Not sure how to do this..
 }
 
 } // namespace ann
 } // namespace mlpack
 
 #endif
-}
-}

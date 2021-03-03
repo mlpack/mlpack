@@ -16,6 +16,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include "layer.hpp"
+#include "layer_types.hpp"
 
 namespace mlpack {
 namespace ann { /**Artificial Neural Network. */
@@ -27,45 +28,55 @@ namespace ann { /**Artificial Neural Network. */
  *
  * The Inception V3 model consists of the following 5 modules:
  *
+ * NOTE: Each convolution block consists of a convolutional layer
+ * followed by BatchNorm and ReLU layers.
+ *
  * 1. Inception Module A:
  * Concat (
- * Network A : 1 x 1 convolution
- * Network B : 1 x 1 followed by 3 x 3 convolution
- * Network C : 3 x 3 convolution followed by another 3 x 3 convolution
- * Network D : 3 x 3 max pool followed by 1 x 1 convolution
+ * Network A : 1 x 1 convolution block.
+ * Network B : 1 x 1 followed by 3 x 3 convolution block.
+ * Network C : 1 x 1 convolution block followed by two 3 x 3 convolution blocks.
+ * Network D : 3 x 3 max pool followed by 1 x 1 convolution block.
  * )
  *
  * 2. Reduction Module A:
  * Concat (
- * Network A : 3 x 3 max pool
- * Network B : 3 x 3 convolution
- * Network C : 1 x 1 convolution followed by two 3 x 3 convolution
+ * Network A : 3 x 3 max pool.
+ * Network B : 3 x 3 convolution block.
+ * Network C : 1 x 1 convolution block followed by two 3 x 3 convolution blocks.
  * )
  *
  * 3. Inception Module B:
  * Concat (
- * Network A : 1 x 1 convolution
- * Network B : 3 x 3 avg pool followed by 1 x 1 convolution
- * Network C : 1 x 1 convolution followed by 1 x 7 & 7 x 1 convolution
- * Network D : 1 x 1 convolution followed by 2 blocks of 7 X 1 & 1 x 7 convolution
+ * Network A : 1 x 1 convolution block.
+ * Network B : 3 x 3 avg pool followed by 1 x 1 convolution block.
+ * Network C : 1 x 1 convolution block followed by 1 x 7 & 7 x 1 convolution blocks.
+ * Network D : 1 x 1 convolution block followed by
+ *             2 blocks of 7 X 1 & 1 x 7 convolution blocks.
  * )
  *
  * 4. Reduction Module B:
  * Concat (
  * Network A : 3 x 3 max pool
- * Network B : 1 x 1 convolution followed by 3 x 3 convolution
- * Network C : 1 x 1 convolution followed by 1 x 7 and
- *             7 x 1 convolution followed by 3x3 convolution
+ * Network B : 1 x 1 convolution block followed by 3 x 3 convolution block.
+ * Network C : 1 x 1 convolution block followed by 1 x 7 and
+ *             7 x 1 convolution blocks followed by 3x3 convolution block.
  * )
  *
  * 5. Inception Module C:
  * Concat (
- * Network A : 1 x 1 convolution
- * Network B : 1 x 1 convolution followed by 1 x 3 convolution
- * Network C : 1 x 1 convolution followed by 3 x 1 convolution
- * Network D : 1 x 1 convolution followed by 3 x 3 & 3 x 1 convolution
- * Network E : 1 x 1 convolution followed by 3 x 3  & 1 x 3 convoltion
- * Network F : 3 x 3 max pooling followed by 1 x 1 convolution
+ * Network A : 1 x 1 convolution block.
+ * Network B : Concat(
+ *                                              |-- 1 x 3 convolution block 
+ *                    1 x 1 convolution block --|
+ *                                              |-- 3 x 1 convolution block  
+ *                   )
+ * Network C :Concat(
+ *                                                      |-- 1 x 3 convolution block      
+ *                   1 x 1 -- 3 x 3 convolution block --|
+ *                                                      |-- 3 x 1 convolution block
+ *                  )
+ * Network D : 3 x 3 max pool followed by 1 x 1 convolution block.
  * )
  *
  * For more information , see the following paper:
@@ -101,12 +112,10 @@ class Inception3 : public Layer<InputType, OutputType>
    * @param inSize The number of input maps.
    * @param inputWidth The width of input data.
    * @param inputHeight The height of input data.
-   * @param outA The number of output maps of all layers of network A.
-   * @param outB The number of output maps of all layers of network B.
-   * @param outC The number of output maps of all layers of network C.
-   * @param outD The number of output maps of all layers of network D.
-   * @param outE The number of output maps of all layers of network E.
-   * @param outF The number of output maps of all layers of network F.
+   * @param outA Vector of output maps of all layers of network A.
+   * @param outB Vector of output maps of all layers of network B.
+   * @param outC Vector of output maps of all layers of network C.
+   * @param outD Vector of output maps of all layers of network D.
    */
 
   Inception3(const size_t inSize,
@@ -115,12 +124,16 @@ class Inception3 : public Layer<InputType, OutputType>
              const arma::vec outA,
              const arma::vec outB,
              const arma::vec outC,
-             const arma::vec outD,
-             const arma::vec outE,
-             const arma::vec outF);
+             const arma::vec outD);
 
   //! Destructor to release allocated memory.
   ~Inception3();
+
+  /**
+   * Reset the layer parameters. This method is called to assign
+   * the allocated memory to the internal learnable parameters.
+   */
+  void Reset();
 
   /**
    * Forward pass of the Inception3 Layer.
@@ -186,9 +199,9 @@ class Inception3 : public Layer<InputType, OutputType>
     return model->OutputParameter();
   }
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return model->Parameters(); }
+  OutputType const& Parameters() const { return model->Parameters(); }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return model->Parameters(); }
+  OutputType& Parameters() { return model->Parameters(); }
 
   /**
    * Serialize the layer.
@@ -198,7 +211,7 @@ class Inception3 : public Layer<InputType, OutputType>
 
  private:
   //! Locally-stored concat layer object.
-  Concat<InputType, OutputType>* model;
+  Concat* model;
 };
   //! Typedef for various blocks of the model
   using Inception3A = Inception3< arma::mat, arma::mat, 1>;
