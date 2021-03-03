@@ -163,10 +163,10 @@ class FrozenLake
    * @param platformRate The probability of platform (walkable) tile
    *    distribution. Default to 0.8.
    */ 
-  FrozenLake(size_t const maxSteps=200,
-             size_t const height=4,
-             size_t const width=4,
-             double const platformRate=0.8) : 
+  FrozenLake(size_t const maxSteps = 200,
+             size_t const height = 4,
+             size_t const width = 4,
+             double const platformRate = 0.8) : 
     stepsPerformed(0),
     maxSteps(maxSteps),
     height(height),
