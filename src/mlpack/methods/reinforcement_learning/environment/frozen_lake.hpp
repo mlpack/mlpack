@@ -337,7 +337,6 @@ class FrozenLake
   arma::Mat<size_t> generateRandomBoard()
   {
     bool valid = false;
-    // std::vector<std::vector<char>> Board;
     arma::Mat<size_t> Board(height, width);
     //! TODO: Tentative, implement max step to control whether
     // we can never generate a possible board.
