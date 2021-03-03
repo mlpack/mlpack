@@ -45,9 +45,9 @@ class SimpleResidueTermination
     maxIterations(maxIterations),
     residue(0.0),
     iteration(0),
-    nm(0),
-    normOld(0)
-  { 
+    normOld(0),
+    nm(0)
+  {
     // Nothing to do here.
   }
 
