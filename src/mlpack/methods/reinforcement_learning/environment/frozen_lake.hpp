@@ -252,7 +252,7 @@ class FrozenLake
   State InitialSample()
   {
     stepsPerformed = 0;
-    boardDescription = generateRandomBoard();
+    boardDescription = GenerateRandomBoard();
     return State(height, width);
   }
 
@@ -286,7 +286,7 @@ class FrozenLake
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
       Log::Info << "Episode terminated due to the maximum number of steps"
-          "being taken.\n";
+          " being taken.\n";
       return true;
     }
     else if (boardDescription(state.CurRow(), state.CurCol()) == tiles::Hole)
@@ -312,11 +312,9 @@ class FrozenLake
   size_t& MaxSteps() { return maxSteps; }
 
   //! Get the board description.
-  // std::vector<std::vector<char>> Description() const {return boardDescription;}
   arma::Mat<size_t> Description() const {return boardDescription;}
 
   //! Set the board description.
-  // std::vector<std::vector<char>>& Description() {return boardDescription;}
   arma::Mat<size_t>& Description() {return boardDescription;}
 
   enum tiles
@@ -334,21 +332,25 @@ class FrozenLake
    *    'F' is a Frozen Tile, the agent can walk on it.
    *    'H' is a Hole Tile, the agent can fall into it and the game ends.
    */
-  arma::Mat<size_t> generateRandomBoard()
+  arma::Mat<size_t> GenerateRandomBoard(size_t max_steps = 100)
   {
+    //! TODO: Currently, the method which generate the board works locally but does not
+    //! pass the test in the pipeline. For more information, please check FrozenLake::GenerateRandomBoard().
     bool valid = false;
     arma::Mat<size_t> Board(height, width);
-    //! TODO: Tentative, implement max step to control whether
-    // we can never generate a possible board.
-
-    while (!valid)
+    size_t n_times = 0;
+    while (!valid && n_times < max_steps)
     {
       // Randomly choose tiles in the board (discrete random distribution).
       Board = genBoardHelper(height, width, platformRate);
-      // printBoard(Board, height, width);
-      // Log::Info << Board;
-      valid = dfsHelper(Board, height, width);
+      valid = DfsHelper(Board, height, width);
+      n_times ++;
     }
+    if (!valid)
+    {
+      Log::Fatal << "Cannot generate board for Frozen Lake." << std::endl;
+    }
+
     return Board;
   }
 
@@ -361,12 +363,11 @@ class FrozenLake
    * @param width Width of the environment board.
    * @return true if there is a solution, false otherwise. 
    */
-  static bool dfsHelper(const arma::Mat<size_t>& candidateBoard, size_t height, size_t width)
+  static bool DfsHelper(const arma::Mat<size_t>& candidateBoard, size_t height, size_t width)
   {
     arma::Mat<short> visited(height, width);
     visited.fill(0);
     std::vector<std::array<int, 2>> path;
-    // arma::Mat<size_t> path();
     path.push_back({0, 0});
     while (!path.empty())
     {
@@ -386,7 +387,6 @@ class FrozenLake
             && r_new >= 0
             && c_new >= 0)
         {
-          // Log::Info << "r_new: " << r_new << ", c_new: " << c_new << "\n";
           if (candidateBoard(r_new, c_new) == tiles::Goal)
           {
             return true;
@@ -423,17 +423,12 @@ class FrozenLake
         auto r = arma::randu();
         if (r < 1 - platformRate)
           board(i, j) = tiles::Hole;
-          // board(i, j) = 1;
         else
           board(i, j) = tiles::Frozen;
-          // board(i, j) = 2;
       }
     }
     board(0, 0) = tiles::Start;
     board(height - 1, width - 1) = tiles::Goal;
-    // board(0, 0) = 1;
-    // board(height - 1, width - 1) = 1;
-
 
     return board;
   }
