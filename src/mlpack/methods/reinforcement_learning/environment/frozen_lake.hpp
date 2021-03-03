@@ -172,7 +172,7 @@ class FrozenLake
     height(height),
     width(width)
   { 
-    // Pre-process platform rate
+    // Pre-process platform rate.
     this->platformRate = std::min(platformRate, 1.0);
     this->platformRate = std::max(platformRate, 0.0);
   }
