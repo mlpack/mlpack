@@ -36,8 +36,18 @@ void PrintHeaders(const std::string& bindingName,
   {
     BindingInfo::Language() = languages[i];
 
-    cout << " - [" << GetBindingName(bindingName) << "](#" << languages[i]
-        << "_" << bindingName << "){: .language-link #" << languages[i] << " }"
+    // Get the name of the binding in the target language, and convert it to
+    // lowercase (since the anchor link will be in lowercase).
+    const std::string langBindingName = GetBindingName(bindingName);
+    std::string anchorName = langBindingName;
+    std::transform(anchorName.begin(), anchorName.end(), anchorName.begin(),
+        [](unsigned char c) { return std::tolower(c); });
+    // Strip '()' from the end if needed.
+    if (anchorName.substr(anchorName.size() - 2, 2) == "()")
+      anchorName = anchorName.substr(0, anchorName.size() - 2);
+
+    cout << " - [" << langBindingName << "](#" << languages[i]
+        << "_" << anchorName << "){: .language-link #" << languages[i] << " }"
         << endl;
   }
 }
