@@ -34,19 +34,19 @@ namespace ann { /**Artificial Neural Network. */
  * 1. Inception Module A:
  * Concat (
  * Network A : 1 x 1 convolution block.
- * Network B : 1 x 1 followed by 3 x 3 convolution block.
+ * Network B : 1 x 1 followed by 5 x 5 convolution block.
  * Network C : 1 x 1 convolution block followed by two 3 x 3 convolution blocks.
- * Network D : 3 x 3 max pool followed by 1 x 1 convolution block.
+ * Network D : 3 x 3 avg pool followed by 1 x 1 convolution block.
  * )
  *
- * 2. Reduction Module A:
+ * 2. Inception Module B:
  * Concat (
  * Network A : 3 x 3 max pool.
  * Network B : 3 x 3 convolution block.
  * Network C : 1 x 1 convolution block followed by two 3 x 3 convolution blocks.
  * )
  *
- * 3. Inception Module B:
+ * 3. Inception Module C:
  * Concat (
  * Network A : 1 x 1 convolution block.
  * Network B : 3 x 3 avg pool followed by 1 x 1 convolution block.
@@ -55,7 +55,7 @@ namespace ann { /**Artificial Neural Network. */
  *             2 blocks of 7 X 1 & 1 x 7 convolution blocks.
  * )
  *
- * 4. Reduction Module B:
+ * 4. Inception Module D:
  * Concat (
  * Network A : 3 x 3 max pool
  * Network B : 1 x 1 convolution block followed by 3 x 3 convolution block.
@@ -63,7 +63,7 @@ namespace ann { /**Artificial Neural Network. */
  *             7 x 1 convolution blocks followed by 3x3 convolution block.
  * )
  *
- * 5. Inception Module C:
+ * 5. Inception Module E:
  * Concat (
  * Network A : 1 x 1 convolution block.
  * Network B : Concat(
@@ -76,8 +76,9 @@ namespace ann { /**Artificial Neural Network. */
  *                   1 x 1 -- 3 x 3 convolution block --|
  *                                                      |-- 3 x 1 convolution block
  *                  )
- * Network D : 3 x 3 max pool followed by 1 x 1 convolution block.
+ * Network D : 3 x 3 avg pool followed by 1 x 1 convolution block.
  * )
+ *
  *
  * For more information , see the following paper:
  * @code
@@ -217,8 +218,8 @@ class Inception3 : public Layer<InputType, OutputType>
   using Inception3A = Inception3< arma::mat, arma::mat, 1>;
   using Inception3B = Inception3< arma::mat, arma::mat, 2>;
   using Inception3C = Inception3< arma::mat, arma::mat, 3>;
-  using Reduction3A = Inception3< arma::mat, arma::mat, 4>;
-  using Reduction3B = Inception3< arma::mat, arma::mat, 5>;
+  using Inception3D = Inception3< arma::mat, arma::mat, 4>;
+  using Inception3E = Inception3< arma::mat, arma::mat, 5>;
 
 
 } // namespace ann

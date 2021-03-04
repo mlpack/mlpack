@@ -15,9 +15,6 @@
 
 // In case it is not included.
 #include "inception_v3.hpp"
-// Returns sequential object not found
-// even though layer_types.hpp is included
-#include "sequential.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -57,7 +54,7 @@ Inception3<InputType, OutputType, module> :: Inception3(
     networkB->Add<BatchNorm>(outB[0]);
     networkB->Add<ReLULayer>();
 
-    networkB->Add<Convolution>(outB[0], outB[1], 3, 3, 1, 1, 1, 1,
+    networkB->Add<Convolution>(outB[0], outB[1], 5, 5, 1, 1, 2, 2,
        inputWidth, inputHeight);
     networkB->Add<BatchNorm>(outB[1]);
     networkB->Add<ReLULayer>();
@@ -89,17 +86,62 @@ Inception3<InputType, OutputType, module> :: Inception3(
     Sequential* networkD;
     networkD = new Sequential();
 
-    networkD->Add<MaxPooling>(3, 3, 1, 1);
+    networkD->Add<AdaptiveMeanPooling>(inputWidth, inputHeight);
     
-    networkD->Add<Convolution>(inSize, outD[0], 1, 1, 1, 1, 1, 1,
-        inputWidth - 2 , inputHeight - 2);
+    networkD->Add<Convolution>(inSize, outD[0], 1, 1, 1, 1, 0, 0,
+        inputWidth, inputHeight);
     networkD->Add<BatchNorm>(outD[0]);
     networkD->Add<ReLULayer>();
 
     model->Add(networkD);
   }
-  //! Build Inception Block B module
+
+  //! Build Inception B module
   else if(module == 2)
+  {
+    //! Build Network A
+    Sequential* networkA;
+    networkA = new Sequential();
+
+    networkA->Add<MaxPooling>(3, 3, 2, 2);
+
+    model->Add(networkA);
+
+    //! Build Network B
+    Sequential* networkB;
+    networkB = new Sequential();
+
+    networkB->Add<Convolution>(inSize, outB[0], 3, 3, 2, 2, 0, 0,
+        inputWidth, inputHeight);
+    networkB->Add<BatchNorm>(outB[0]);
+    networkB->Add<ReLULayer>();
+
+    model->Add(networkB);
+
+    //! Build Network C
+    Sequential* networkC;
+    networkC = new Sequential();
+
+    networkC->Add<Convolution>(inSize, outC[0], 1, 1, 1, 1, 0, 0,
+        inputWidth, inputHeight);
+    networkC->Add<BatchNorm>(outC[0]);
+    networkC->Add<ReLULayer>();
+
+    networkC->Add<Convolution>(outC[0], outC[1], 3, 3, 1, 1, 1, 1,
+        inputWidth, inputHeight);
+    networkC->Add<BatchNorm>(outC[1]);
+    networkC->Add<ReLULayer>();
+
+    networkC->Add<Convolution>(outC[1], outC[2], 3, 3, 2, 2, 0, 0,
+        inputWidth, inputHeight);
+    networkC->Add<BatchNorm>(outC[2]);
+    networkC->Add<ReLULayer>();
+
+    model->Add(networkC);
+  }
+
+  //! Build Inception Block C module
+  else if(module == 3)
   {
     //! Build Network A
     Sequential* networkA;
@@ -116,8 +158,6 @@ Inception3<InputType, OutputType, module> :: Inception3(
    Sequential* networkB;
     networkB = new Sequential();
 
-    // THere's some problem with the backward function 
-    // of MeanPooling(Also no test exists for it in ann_layer_test)---->> inform zoq
     networkB->Add<AdaptiveMeanPooling>(inputWidth, inputHeight);
 
     networkB->Add<Convolution>(inSize, outB[0], 1, 1, 1, 1, 0, 0,
@@ -178,9 +218,64 @@ Inception3<InputType, OutputType, module> :: Inception3(
     networkD->Add<ReLULayer>();
 
     model->Add(networkD);
+
   }
-  //! Build Inception Block C module
-  else if(module == 3)
+  //! Build Inception D module
+  else if(module == 4)
+  {
+    //! Build Network A
+    Sequential* networkA;
+    networkA = new Sequential();
+
+    networkA->Add<MaxPooling>(3, 3, 2, 2);
+
+    model->Add(networkA);
+
+    //! Build Network B
+    Sequential* networkB;
+    networkB = new Sequential();
+
+    networkB->Add<Convolution>(inSize, outB[0], 1, 1, 1, 1, 0, 0,
+        inputWidth, inputHeight);
+    networkB->Add<BatchNorm>(outB[0]);
+    networkB->Add<ReLULayer>();
+
+    networkB->Add<Convolution>(outB[0], outB[1], 3, 3, 2, 2, 0, 0,
+        inputWidth, inputHeight);                                    
+    networkB->Add<BatchNorm>(outB[1]);
+    networkB->Add<ReLULayer>();                                
+
+    model->Add(networkB);
+
+    //! Build Network C
+    Sequential* networkC;
+    networkC = new Sequential();
+
+    networkC->Add<Convolution>(inSize, outC[0], 1, 1, 1, 1, 0, 0,
+        inputWidth, inputHeight);
+    networkC->Add<BatchNorm>(outC[0]);
+    networkC->Add<ReLULayer>();
+
+    networkC->Add<Convolution>(outC[0], outC[1], 1, 7, 1, 1, 0, 3,
+        inputWidth, inputHeight);
+    networkC->Add<BatchNorm>(outC[1]);
+    networkC->Add<ReLULayer>();
+
+    networkC->Add<Convolution>(outC[1], outC[2], 7, 1, 1, 1, 3, 0,
+        inputWidth, inputHeight);
+    networkC->Add<BatchNorm>(outC[2]);
+    networkC->Add<ReLULayer>();
+
+    networkC->Add<Convolution>(outC[2], outC[3], 3, 3, 2, 2, 0, 0,
+        inputWidth, inputHeight);
+    networkC->Add<BatchNorm>(outC[3]);
+    networkC->Add<ReLULayer>();
+
+    model->Add(networkC);
+
+  }
+  //! Build Inception E module
+  else if(module == 5)
   {
     //! Build Network A
     Sequential* networkA; 
@@ -281,112 +376,14 @@ Inception3<InputType, OutputType, module> :: Inception3(
     Sequential* networkD;
     networkD = new Sequential();
 
-    networkD->Add<MaxPooling>(3, 3, 1, 1);
+    networkD->Add<AdaptiveMeanPooling>(inputWidth, inputHeight);
 
-    networkD->Add<Convolution>(inSize, outD[0], 1, 1, 1, 1, 1, 1,
-        inputWidth - 2, inputHeight - 2);
+    networkD->Add<Convolution>(inSize, outD[0], 1, 1, 1, 1, 0, 0,
+        inputWidth, inputHeight);
     networkD->Add<BatchNorm>(outD[0]);
     networkD->Add<ReLULayer>();
 
     model->Add(networkD);
-  }
-  //! Build Reduction Block A module
-  else if(module == 4)
-  {
-    //! Build Network A
-    Sequential* networkA;
-    networkA = new Sequential();
-
-    networkA->Add<MaxPooling>(3, 3, 1, 1);
-
-    model->Add(networkA);
-
-    //! Build Network B
-    Sequential* networkB;
-    networkB = new Sequential();
-
-    networkB->Add<Convolution>(inSize, outB[0], 3, 3, 1, 1, 1, 1,
-        inputWidth, inputHeight);
-    networkB->Add<BatchNorm>(outB[0]);
-    networkB->Add<ReLULayer>();
-
-    model->Add(networkB);
-
-    //! Build Network C
-    Sequential* networkC;
-    networkC = new Sequential();
-
-    networkC->Add<Convolution>(inSize, outC[0], 1, 1, 1, 1, 0, 0,
-        inputWidth, inputHeight);
-    networkC->Add<BatchNorm>(outC[0]);
-    networkC->Add<ReLULayer>();
-
-    networkC->Add<Convolution>(outC[0], outC[1], 3, 3, 1, 1, 1, 1,
-        inputWidth, inputHeight);
-    networkC->Add<BatchNorm>(outC[1]);
-    networkC->Add<ReLULayer>();
-
-    networkC->Add<Convolution>(outC[1], outC[2], 3, 3, 1, 1, 1, 1,
-        inputWidth, inputHeight);
-    networkC->Add<BatchNorm>(outC[2]);
-    networkC->Add<ReLULayer>();
-
-    model->Add(networkC);
-
-  }
-  //! Build Reduction Block B module
-  else if(module == 5)
-  {
-    //! Build Network A
-    Sequential* networkA;
-    networkA = new Sequential();
-
-    networkA->Add<MaxPooling>(3, 3, 1, 1);
-
-    model->Add(networkA);
-
-    //! Build Network B
-    Sequential* networkB;
-    networkB = new Sequential();
-
-    networkB->Add<Convolution>(inSize, outB[0], 1, 1, 1, 1, 0, 0,
-        inputWidth, inputHeight);
-    networkB->Add<BatchNorm>(outB[0]);
-    networkB->Add<ReLULayer>();
-
-    networkB->Add<Convolution>(outB[0], outB[1], 3, 3, 1, 1, 1, 1,
-        inputWidth, inputHeight);                                    
-    networkB->Add<BatchNorm>(outB[1]);
-    networkB->Add<ReLULayer>();                                
-
-    model->Add(networkB);
-
-    //! Build Network C
-    Sequential* networkC;
-    networkC = new Sequential();
-
-    networkC->Add<Convolution>(inSize, outC[0], 1, 1, 1, 1, 0, 0,
-        inputWidth, inputHeight);
-    networkC->Add<BatchNorm>(outC[0]);
-    networkC->Add<ReLULayer>();
-
-    networkC->Add<Convolution>(outC[0], outC[1], 1, 7, 1, 1, 0, 3,
-        inputWidth, inputHeight);
-    networkC->Add<BatchNorm>(outC[1]);
-    networkC->Add<ReLULayer>();
-
-    networkC->Add<Convolution>(outC[1], outC[2], 7, 1, 1, 1, 3, 0,
-        inputWidth, inputHeight);
-    networkC->Add<BatchNorm>(outC[2]);
-    networkC->Add<ReLULayer>();
-
-    networkC->Add<Convolution>(outC[2], outC[3], 3, 3, 1, 1, 1, 1,
-        inputWidth, inputHeight);
-    networkC->Add<BatchNorm>(outC[3]);
-    networkC->Add<ReLULayer>();
-
-    model->Add(networkC);
-
   }
 }
 
