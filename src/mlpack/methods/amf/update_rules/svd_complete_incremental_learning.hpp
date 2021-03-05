@@ -172,7 +172,7 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
   SVDCompleteIncrementalLearning(double u = 0.01,
                                  double kw = 0,
                                  double kh = 0)
-            : u(u), kw(kw), kh(kh), it(NULL), m(0), n(0), isStart(false)
+            : u(u), kw(kw), kh(kh), n(0), m(0), it(NULL), isStart(false)
     {}
 
   ~SVDCompleteIncrementalLearning()

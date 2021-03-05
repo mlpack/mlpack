@@ -84,7 +84,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    util::ParamData& data,
+    util::ParamData& /* data */,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
   if (T::is_col || T::is_row)
