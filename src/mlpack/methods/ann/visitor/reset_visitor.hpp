@@ -1,5 +1,5 @@
 /**
- * @file reset_visitor.hpp
+ * @file methods/ann/visitor/reset_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Reset() function for different

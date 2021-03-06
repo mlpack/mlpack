@@ -1,5 +1,5 @@
 /**
- * @file softplus_function.hpp
+ * @file methods/ann/activation_functions/softplus_function.hpp
  * @author Vivek Pal
  *
  * Definition and implementation of the softplus function as described by
@@ -51,9 +51,10 @@ class SoftplusFunction
    */
   static double Fn(const double x)
   {
-    if (x < DBL_MAX)
-      return x > -DBL_MAX ? std::log(1 + std::exp(x)) : 0;
-    return 1.0;
+    const double val = std::log(1 + std::exp(x));
+    if (std::isfinite(val))
+      return val;
+    return x;
   }
 
   /**
@@ -67,7 +68,7 @@ class SoftplusFunction
   {
     y.set_size(arma::size(x));
 
-    for (size_t i = 0; i < x.n_elem; i++)
+    for (size_t i = 0; i < x.n_elem; ++i)
       y(i) = Fn(x(i));
   }
 
@@ -85,7 +86,7 @@ class SoftplusFunction
   /**
    * Computes the first derivatives of the softplus function.
    *
-   * @param y Input activations.
+   * @param y Input data.
    * @param x The resulting derivatives.
    */
   template<typename InputType, typename OutputType>
@@ -102,7 +103,10 @@ class SoftplusFunction
    */
   static double Inv(const double y)
   {
-    return y > 0 ? arma::trunc_log(arma::trunc_exp(y) - 1) : 0;
+    const double val = std::log(std::exp(y) - 1);
+    if (std::isfinite(val))
+      return val;
+    return y;
   }
 
   /**
@@ -116,7 +120,7 @@ class SoftplusFunction
   {
     x.set_size(arma::size(y));
 
-    for (size_t i = 0; i < y.n_elem; i++)
+    for (size_t i = 0; i < y.n_elem; ++i)
       x(i) = Inv(y(i));
   }
 }; // class SoftplusFunction

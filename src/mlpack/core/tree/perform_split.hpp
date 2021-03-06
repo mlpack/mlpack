@@ -1,5 +1,5 @@
 /**
- * @file perform_split.hpp
+ * @file core/tree/perform_split.hpp
  * @author Mikhail Lozhnikov
  *
  * This file contains functions that implement the default binary split

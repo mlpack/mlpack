@@ -1,5 +1,5 @@
 /**
- * @file regression_distribution.cpp
+ * @file core/dists/regression_distribution.cpp
  * @author Michael Fox
  *
  * Implementation of conditional Gaussian distribution for HMM regression

@@ -1,5 +1,5 @@
 /**
- * @file k_fold_cv.hpp
+ * @file core/cv/k_fold_cv.hpp
  * @author Kirill Mishchenko
  *
  * k-fold cross-validation.

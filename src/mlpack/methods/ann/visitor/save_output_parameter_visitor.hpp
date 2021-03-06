@@ -1,5 +1,5 @@
 /**
- * @file save_output_parameter_visitor.hpp
+ * @file methods/ann/visitor/save_output_parameter_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the OutputParameter() function for
@@ -28,7 +28,7 @@ class SaveOutputParameterVisitor : public boost::static_visitor<void>
 {
  public:
   //! Save the output parameter into the given parameter set.
-  SaveOutputParameterVisitor(std::vector<arma::mat>&& parameter);
+  SaveOutputParameterVisitor(std::vector<arma::mat>& parameter);
 
   //! Save the output parameter.
   template<typename LayerType>
@@ -38,7 +38,7 @@ class SaveOutputParameterVisitor : public boost::static_visitor<void>
 
  private:
   //! The parameter set.
-  std::vector<arma::mat>&& parameter;
+  std::vector<arma::mat>& parameter;
 
   //! Save the output parameter for a module which doesn't implement the
   //! Model() function.

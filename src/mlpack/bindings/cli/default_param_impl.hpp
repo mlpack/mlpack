@@ -1,5 +1,5 @@
 /**
- * @file default_param_impl.hpp
+ * @file bindings/cli/default_param_impl.hpp
  * @author Ryan Curtin
  *
  * Return the default value of a parameter, depending on its type.
@@ -23,7 +23,7 @@ namespace cli {
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
@@ -43,7 +43,7 @@ std::string DefaultParamImpl(
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
 {
   // Print each element in an array delimited by square brackets.
@@ -87,7 +87,7 @@ std::string DefaultParamImpl(
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<std::is_same<T, std::string>>::type*)
 {
   const std::string& s = *boost::any_cast<std::string>(&data.value);
@@ -99,7 +99,7 @@ std::string DefaultParamImpl(
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const typename boost::enable_if_c<
         arma::is_arma_type<T>::value ||
         std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
@@ -114,7 +114,7 @@ std::string DefaultParamImpl(
  */
 template<typename T>
 std::string DefaultParamImpl(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
 {

@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_impl.hpp
+ * @file methods/softmax_regression/softmax_regression_impl.hpp
  * @author Siddharth Agrawal
  *
  * Implementation of softmax regression.
@@ -33,6 +33,22 @@ SoftmaxRegression::SoftmaxRegression(
   Train(data, labels, numClasses, optimizer);
 }
 
+template<typename OptimizerType, typename... CallbackTypes>
+SoftmaxRegression::SoftmaxRegression(
+    const arma::mat& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const double lambda,
+    const bool fitIntercept,
+    OptimizerType optimizer,
+    CallbackTypes&&... callbacks) :
+    numClasses(numClasses),
+    lambda(lambda),
+    fitIntercept(fitIntercept)
+{
+  Train(data, labels, numClasses, optimizer, callbacks...);
+}
+
 template<typename VecType>
 size_t SoftmaxRegression::Classify(const VecType& point) const
 {
@@ -47,14 +63,37 @@ double SoftmaxRegression::Train(const arma::mat& data,
                                 const size_t numClasses,
                                 OptimizerType optimizer)
 {
-  SoftmaxRegressionFunction regressor(data, labels, numClasses,
-                                      lambda, fitIntercept);
-  if (parameters.is_empty())
+  SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
+                                      fitIntercept);
+  if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
     parameters = regressor.GetInitialPoint();
 
   // Train the model.
   Timer::Start("softmax_regression_optimization");
   const double out = optimizer.Optimize(regressor, parameters);
+  Timer::Stop("softmax_regression_optimization");
+
+  Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
+            << "trained model is " << out << "." << std::endl;
+
+  return out;
+}
+
+template<typename OptimizerType, typename... CallbackTypes>
+double SoftmaxRegression::Train(const arma::mat& data,
+                                const arma::Row<size_t>& labels,
+                                const size_t numClasses,
+                                OptimizerType optimizer,
+                                CallbackTypes&&... callbacks)
+{
+  SoftmaxRegressionFunction regressor(data, labels, numClasses, lambda,
+                                      fitIntercept);
+  if (parameters.n_elem != regressor.GetInitialPoint().n_elem)
+    parameters = regressor.GetInitialPoint();
+
+  // Train the model.
+  Timer::Start("softmax_regression_optimization");
+  const double out = optimizer.Optimize(regressor, parameters, callbacks...);
   Timer::Stop("softmax_regression_optimization");
 
   Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "

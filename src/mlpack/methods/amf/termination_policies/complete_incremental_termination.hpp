@@ -1,5 +1,5 @@
 /**
- * @file complete_incremental_termination.hpp
+ * @file methods/amf/termination_policies/complete_incremental_termination.hpp
  * @author Sumedh Ghaisas
  *
  * Termination policy used in AMF (Alternating Matrix Factorization).
@@ -36,7 +36,8 @@ class CompleteIncrementalTermination
    */
   CompleteIncrementalTermination(
       TerminationPolicy tPolicy = TerminationPolicy()) :
-      tPolicy(tPolicy) { }
+      tPolicy(tPolicy), incrementalIndex(0), iteration(0)
+  { /* Nothing to do here. */ }
 
   /**
    * Initializes the termination policy before stating the factorization.
@@ -119,4 +120,3 @@ class CompleteIncrementalTermination
 } // namespace mlpack
 
 #endif // MLPACK_METHODS_AMF_COMPLETE_INCREMENTAL_TERMINATION_HPP
-

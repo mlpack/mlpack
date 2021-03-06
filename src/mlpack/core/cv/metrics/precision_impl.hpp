@@ -1,5 +1,5 @@
 /**
- * @file precision_impl.hpp
+ * @file core/cv/metrics/precision_impl.hpp
  * @author Kirill Mishchenko
  *
  * Implementation of the class Precision.

@@ -1,5 +1,5 @@
 /**
- * @file continuous_double_pole_cart.hpp
+ * @file methods/reinforcement_learning/environment/continuous_double_pole_cart.hpp
  * @author Rahul Ganesh Prabhu
  *
  * This file is an implementation of Continuous Double Pole Cart Balancing
@@ -29,7 +29,7 @@ class ContinuousDoublePoleCart
 {
  public:
   /**
-   * Implementation of the state of Continuous Double Pole Cart. The state is 
+   * Implementation of the state of Continuous Double Pole Cart. The state is
    * expressed as a vector (position, velocity, angle, angular velocity, angle,
    * angular velocity)
    */
@@ -105,7 +105,6 @@ class ContinuousDoublePoleCart
    * @param l2 The length of the second pole.
    * @param gravity The gravity constant.
    * @param massCart The mass of the cart.
-   * @param length The length of the pole.
    * @param forceMag The magnitude of the applied force.
    * @param tau The time interval.
    * @param thetaThresholdRadians The maximum angle.

@@ -1,5 +1,5 @@
 /**
- * @file backward_visitor.hpp
+ * @file methods/ann/visitor/backward_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Backward() function for different
@@ -30,11 +30,15 @@ class BackwardVisitor : public boost::static_visitor<void>
  public:
   //! Execute the Backward() function given the input, error and delta
   //! parameter.
-  BackwardVisitor(arma::mat&& input, arma::mat&& error, arma::mat&& delta);
+  BackwardVisitor(const arma::mat& input,
+                  const arma::mat& error,
+                  arma::mat& delta);
 
   //! Execute the Backward() function for the layer with the specified index.
-  BackwardVisitor(arma::mat&& input, arma::mat&& error, arma::mat&& delta,
-      const size_t index);
+  BackwardVisitor(const arma::mat& input,
+                  const arma::mat& error,
+                  arma::mat& delta,
+                  const size_t index);
 
   //! Execute the Backward() function.
   template<typename LayerType>
@@ -44,13 +48,13 @@ class BackwardVisitor : public boost::static_visitor<void>
 
  private:
   //! The input parameter set.
-  arma::mat&& input;
+  const arma::mat& input;
 
   //! The error parameter.
-  arma::mat&& error;
+  const arma::mat& error;
 
   //! The delta parameter.
-  arma::mat&& delta;
+  arma::mat& delta;
 
   //! The index of the layer to run.
   size_t index;

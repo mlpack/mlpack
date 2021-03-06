@@ -1,5 +1,5 @@
 /**
- * @file lregularization_impl.hpp
+ * @file methods/ann/regularizer/lregularizer_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of template specializations of LRegularizer class.
@@ -52,9 +52,9 @@ void LRegularizer<2>::Evaluate(const MatType& weight, MatType& gradient)
 template<int Power>
 template<typename Archive>
 void LRegularizer<Power>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(factor);
+  ar(CEREAL_NVP(factor));
 }
 
 } // namespace ann

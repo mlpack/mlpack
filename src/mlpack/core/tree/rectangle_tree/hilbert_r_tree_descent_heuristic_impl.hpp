@@ -1,5 +1,5 @@
 /**
- * @file hilbert_r_tree_descent_heuristic_impl.hpp
+ * @file core/tree/rectangle_tree/hilbert_r_tree_descent_heuristic_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of HilbertRTreeDescentHeuristic, a class that chooses the best

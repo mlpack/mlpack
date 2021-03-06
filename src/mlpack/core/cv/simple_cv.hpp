@@ -1,5 +1,5 @@
 /**
- * @file simple_cv.hpp
+ * @file core/cv/simple_cv.hpp
  * @author Kirill Mishchenko
  *
  * A simple cross-validation strategy.

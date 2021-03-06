@@ -1,5 +1,5 @@
 /**
- * @file gradient_set_visitor.hpp
+ * @file methods/ann/visitor/gradient_set_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Gradient() function for different
@@ -27,7 +27,7 @@ class GradientSetVisitor : public boost::static_visitor<size_t>
 {
  public:
   //! Update the gradient parameter given the gradient set.
-  GradientSetVisitor(arma::mat&& gradient, size_t offset = 0);
+  GradientSetVisitor(arma::mat& gradient, size_t offset = 0);
 
   //! Update the gradient parameter.
   template<typename LayerType>
@@ -37,7 +37,7 @@ class GradientSetVisitor : public boost::static_visitor<size_t>
 
  private:
   //! The gradient set.
-  arma::mat&& gradient;
+  arma::mat& gradient;
 
   //! The gradient offset.
   size_t offset;

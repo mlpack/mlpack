@@ -1,5 +1,5 @@
 /**
- * @file reward_clipping.hpp
+ * @file methods/reinforcement_learning/environment/reward_clipping.hpp
  * @author Shashank Shekhar
  *
  * Reward clipping wrapper for RL environments.
@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_RL_ENVIRONMENT_REWARD_CLIPPING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -91,7 +92,7 @@ class RewardClipping
     // Get original unclipped reward from base environment.
     double unclippedReward =  environment.Sample(state, action, nextState);
     // Clip rewards according to the min and max limit and return.
-    return std::min(std::max(unclippedReward, minReward), maxReward);
+    return math::ClampRange(unclippedReward, minReward, maxReward);
   }
 
   /**

@@ -1,5 +1,5 @@
 /**
- * @file maximal_inputs.cpp
+ * @file methods/sparse_autoencoder/maximal_inputs.cpp
  * @author Tham Ngap Wei
  *
  * Implementation of MaximalInputs().

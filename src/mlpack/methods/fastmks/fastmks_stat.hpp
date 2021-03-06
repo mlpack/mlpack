@@ -1,5 +1,5 @@
 /**
- * @file fastmks_stat.hpp
+ * @file methods/fastmks/fastmks_stat.hpp
  * @author Ryan Curtin
  *
  * The statistic used in trees with FastMKS.
@@ -100,13 +100,13 @@ class FastMKSStat
 
   //! Serialize the statistic.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(bound);
-    ar & BOOST_SERIALIZATION_NVP(selfKernel);
+    ar(CEREAL_NVP(bound));
+    ar(CEREAL_NVP(selfKernel));
 
     // Void out last kernel information on load.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       lastKernel = 0.0;
       lastKernelNode = NULL;

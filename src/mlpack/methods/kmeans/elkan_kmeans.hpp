@@ -1,5 +1,5 @@
 /**
- * @file elkan_kmeans.hpp
+ * @file methods/kmeans/elkan_kmeans.hpp
  * @author Ryan Curtin
  *
  * An implementation of Elkan's algorithm for exact Lloyd iterations.

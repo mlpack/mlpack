@@ -7,7 +7,7 @@
 # First, we need to extract the version string.
 if (NOT EXISTS "${CMAKE_BINARY_DIR}/include/mlpack/core/util/version.hpp")
   message(FATAL_ERROR "Cannot open "
-      "${CNAKE_BINARY_DIR}/include/mlpack/core/util/version.hpp to extract "
+      "${CMAKE_BINARY_DIR}/include/mlpack/core/util/version.hpp to extract "
       "version!")
 endif ()
 

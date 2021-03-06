@@ -1,5 +1,5 @@
 /**
- * @file dtnn_kmeans_impl.hpp
+ * @file methods/kmeans/dual_tree_kmeans_impl.hpp
  * @author Ryan Curtin
  *
  * An implementation of a Lloyd iteration which uses dual-tree nearest neighbor

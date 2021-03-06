@@ -1,5 +1,5 @@
 /**
- * @file weight_set_visitor.hpp
+ * @file methods/ann/visitor/weight_set_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Weight() function for different
@@ -27,7 +27,7 @@ class WeightSetVisitor : public boost::static_visitor<size_t>
 {
  public:
   //! Update the parameters given the parameters set and offset.
-  WeightSetVisitor(arma::mat&& weight, const size_t offset = 0);
+  WeightSetVisitor(arma::mat& weight, const size_t offset = 0);
 
   //! Update the parameters set.
   template<typename LayerType>
@@ -37,7 +37,7 @@ class WeightSetVisitor : public boost::static_visitor<size_t>
 
  private:
   //! The parameters set.
-  arma::mat&& weight;
+  arma::mat& weight;
 
   //! The parameters offset.
   const size_t offset;

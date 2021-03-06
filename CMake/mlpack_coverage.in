@@ -77,10 +77,10 @@ lcov -b . -c -i -d ./ -o .coverage.wtest.base > ./coveragehistory/$current_log_f
 # Run the tests.
 if [ "$test_case" = "ALL" ]; then
   echo "Running all the tests..."
-  @CMAKE_BINARY_DIR@/bin/mlpack_test
+  "@CMAKE_BINARY_DIR@"/bin/mlpack_test
 elif ! [ "$test_case" = "" ]; then
   echo "Running test suite: $test_case"
-  @CMAKE_BINARY_DIR@/bin/mlpack_test --run_test=$test_case
+  "@CMAKE_BINARY_DIR@"/bin/mlpack_test --run_test=$test_case
 fi
 
 # Generate coverage based on executed tests.

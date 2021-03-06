@@ -1,5 +1,5 @@
 /**
- * @file kde_rules_impl.hpp
+ * @file methods/kde/kde_rules_impl.hpp
  * @author Roberto Hueso
  *
  * Implementation of rules for Kernel Density Estimation with generic trees.

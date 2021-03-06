@@ -1,5 +1,5 @@
 /**
- * @file mountain_car.hpp
+ * @file methods/reinforcement_learning/environment/mountain_car.hpp
  * @author Shangtong Zhang
  *
  * This file is an implementation of Mountain Car task:
@@ -17,6 +17,7 @@
 #define MLPACK_METHODS_RL_ENVIRONMENT_MOUNTAIN_CAR_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/clamp.hpp>
 
 namespace mlpack {
 namespace rl {
@@ -75,42 +76,48 @@ class MountainCar
   /**
    * Implementation of action of Mountain Car.
    */
-  enum Action
+  class Action
   {
-    backward,
-    stop,
-    forward,
+   public:
+    enum actions
+    {
+      backward,
+      stop,
+      forward
+    };
+    // To store the action.
+    Action::actions action;
 
-    //! Track the size of the action space.
-    size
+    // Track the size of the action space.
+    static const size_t size = 3;
   };
 
   /**
    * Construct a Mountain Car instance using the given constant.
    *
+   * @param maxSteps The number of steps after which the episode
+   *    terminates. If the value is 0, there is no limit.
    * @param positionMin Minimum legal position.
    * @param positionMax Maximum legal position.
    * @param positionGoal Final target position.
    * @param velocityMin Minimum legal velocity.
    * @param velocityMax Maximum legal velocity.
    * @param doneReward The reward recieved by the agent on success.
-   * @param maxSteps The number of steps after which the episode
-   *    terminates. If the value is 0, there is no limit.
    */
-  MountainCar(const double positionMin = -1.2,
+  MountainCar(const size_t maxSteps = 200,
+              const double positionMin = -1.2,
               const double positionMax = 0.6,
               const double positionGoal = 0.5,
               const double velocityMin = -0.07,
               const double velocityMax = 0.07,
-              const double doneReward = 0,
-              const size_t maxSteps = 0) :
+              const double doneReward = 0) :
+      maxSteps(maxSteps),
       positionMin(positionMin),
       positionMax(positionMax),
       positionGoal(positionGoal),
       velocityMin(velocityMin),
       velocityMax(velocityMax),
       doneReward(doneReward),
-      maxSteps(maxSteps),
       stepsPerformed(0)
   { /* Nothing to do here */ }
 
@@ -131,16 +138,16 @@ class MountainCar
     stepsPerformed++;
 
     // Calculate acceleration.
-    int direction = action - 1;
+    int direction = action.action - 1;
     nextState.Velocity() = state.Velocity() + 0.001 * direction - 0.0025 *
         std::cos(3 * state.Position());
-    nextState.Velocity() = std::min(
-        std::max(nextState.Velocity(), velocityMin), velocityMax);
+    nextState.Velocity() = math::ClampRange(nextState.Velocity(),
+        velocityMin, velocityMax);
 
     // Update states.
     nextState.Position() = state.Position() + nextState.Velocity();
-    nextState.Position() = std::min(
-        std::max(nextState.Position(), positionMin), positionMax);
+    nextState.Position() = math::ClampRange(nextState.Position(),
+        positionMin, positionMax);
 
     if (nextState.Position() == positionMin && nextState.Velocity() < 0)
       nextState.Velocity() = 0.0;
@@ -217,6 +224,9 @@ class MountainCar
   size_t& MaxSteps() { return maxSteps; }
 
  private:
+  //! Locally-stored maximum number of steps.
+  size_t maxSteps;
+
   //! Locally-stored minimum legal position.
   double positionMin;
 
@@ -234,9 +244,6 @@ class MountainCar
 
   //! Locally-stored done reward.
   double doneReward;
-
-  //! Locally-stored maximum number of steps.
-  size_t maxSteps;
 
   //! Locally-stored number of steps performed.
   size_t stepsPerformed;

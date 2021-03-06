@@ -1,5 +1,5 @@
 /**
- * @file diagonal_constraint.hpp
+ * @file methods/gmm/diagonal_constraint.hpp
  * @author Ryan Curtin
  *
  * Constrain a covariance matrix to be diagonal.
@@ -44,7 +44,7 @@ class DiagonalConstraint
 
   //! Serialize the constraint (which holds nothing, so, nothing to do).
   template<typename Archive>
-  static void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  static void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace gmm

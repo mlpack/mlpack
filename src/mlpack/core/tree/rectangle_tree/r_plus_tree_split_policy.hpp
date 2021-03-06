@@ -1,5 +1,5 @@
 /**
- * @file r_plus_tree_split_policy.hpp
+ * @file core/tree/rectangle_tree/r_plus_tree_split_policy.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition and implementation of the RPlusTreeSplitPolicy class, a class that

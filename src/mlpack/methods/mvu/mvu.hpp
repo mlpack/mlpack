@@ -1,5 +1,5 @@
 /**
- * @file mvu.hpp
+ * @file methods/mvu/mvu.hpp
  * @author Ryan Curtin
  *
  * An implementation of Maximum Variance Unfolding.  This file defines an MVU

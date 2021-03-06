@@ -1,5 +1,5 @@
 /**
- * @file nulloutstream.hpp
+ * @file core/util/nulloutstream.hpp
  * @author Ryan Curtin
  * @author Matthew Amidon
  *

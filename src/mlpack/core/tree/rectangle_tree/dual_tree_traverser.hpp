@@ -1,5 +1,5 @@
 /**
- * @file dual_tree_traverser.hpp
+ * @file core/tree/rectangle_tree/dual_tree_traverser.hpp
  * @author Andrew Wells
  *
  * A nested class of Rectangle Tree for traversing rectangle type trees
@@ -42,7 +42,6 @@ class RectangleTree<MetricType, StatisticType, MatType, SplitType,
    *
    * @param queryNode The query node to be traversed.
    * @param referenceNode The reference node to be traversed.
-   * @param score The score of the current node combination.
    */
   void Traverse(RectangleTree& queryNode, RectangleTree& referenceNode);
 

@@ -1,5 +1,5 @@
 /**
- * @file rp_tree_mean_split_impl.hpp
+ * @file core/tree/binary_space_tree/rp_tree_mean_split_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of class (RPTreeMeanSplit) to split a binary space partition
@@ -70,8 +70,8 @@ GetAveragePointDistance(
 {
   ElemType dist = 0;
 
-  for (size_t i = 0; i < samples.n_elem; i++)
-    for (size_t j = i + 1; j < samples.n_elem; j++)
+  for (size_t i = 0; i < samples.n_elem; ++i)
+    for (size_t j = i + 1; j < samples.n_elem; ++j)
       dist += metric::SquaredEuclideanDistance::Evaluate(data.col(samples[i]),
           data.col(samples[j]));
 
@@ -89,7 +89,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetDotMedian(
 {
   arma::Col<ElemType> values(samples.n_elem);
 
-  for (size_t k = 0; k < samples.n_elem; k++)
+  for (size_t k = 0; k < samples.n_elem; ++k)
     values[k] = arma::dot(data.col(samples[k]), direction);
 
   const ElemType maximum = arma::max(values);
@@ -118,7 +118,7 @@ bool RPTreeMeanSplit<BoundType, MatType>::GetMeanMedian(
 
   arma::Col<ElemType> tmp(data.n_rows);
 
-  for (size_t k = 0; k < samples.n_elem; k++)
+  for (size_t k = 0; k < samples.n_elem; ++k)
   {
     tmp = data.col(samples[k]);
     tmp -= mean;

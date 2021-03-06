@@ -1,5 +1,5 @@
 /**
- * @file weight_size_visitor.hpp
+ * @file methods/ann/visitor/weight_size_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the WeightSize() function for

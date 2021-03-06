@@ -1,5 +1,5 @@
 /**
- * @file discrete_hilbert_value.hpp
+ * @file core/tree/rectangle_tree/discrete_hilbert_value.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the DiscreteHilbertValue class, a class that calculates
@@ -177,10 +177,18 @@ class DiscreteHilbertValue
   /**
    * Copy the local Hilbert value's pointer.
    *
-   * @param val The DiscreteHilbertValue object from which the dataset
+   * @param other The DiscreteHilbertValue object from which the dataset
    *    will be copied.
    */
-  DiscreteHilbertValue& operator=(const DiscreteHilbertValue& val);
+  DiscreteHilbertValue& operator=(const DiscreteHilbertValue& other);
+
+  /**
+   * Move the local Hilbert object.
+   *
+   * @param other The DiscreteHilbertValue object from which the dataset
+   *    will be copied.
+   */
+  DiscreteHilbertValue& operator=(DiscreteHilbertValue&& other);
 
   /**
    * Nullify the localHilbertValues pointer in order to prevent an invalid free.
@@ -280,7 +288,7 @@ class DiscreteHilbertValue
 
  public:
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 };
 
 } // namespace tree

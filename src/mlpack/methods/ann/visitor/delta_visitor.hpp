@@ -1,5 +1,5 @@
 /**
- * @file delta_visitor.hpp
+ * @file methods/ann/visitor/delta_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Delta() function for different

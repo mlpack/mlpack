@@ -1,5 +1,5 @@
 /**
- * @file fastmks_model_impl.hpp
+ * @file methods/fastmks/fastmks_model_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of templated functions of FastMKSModel.
@@ -132,11 +132,11 @@ void FastMKSModel::BuildModel(arma::mat&& referenceData,
 }
 
 template<typename Archive>
-void FastMKSModel::serialize(Archive& ar, const unsigned int /* version */)
+void FastMKSModel::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(kernelType);
+  ar(CEREAL_NVP(kernelType));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // Clean memory.
     if (linear)
@@ -167,31 +167,31 @@ void FastMKSModel::serialize(Archive& ar, const unsigned int /* version */)
   switch (kernelType)
   {
     case LINEAR_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(linear);
+      ar(CEREAL_POINTER(linear));
       break;
 
     case POLYNOMIAL_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(polynomial);
+      ar(CEREAL_POINTER(polynomial));
       break;
 
     case COSINE_DISTANCE:
-      ar & BOOST_SERIALIZATION_NVP(cosine);
+      ar(CEREAL_POINTER(cosine));
       break;
 
     case GAUSSIAN_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(gaussian);
+      ar(CEREAL_POINTER(gaussian));
       break;
 
     case EPANECHNIKOV_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(epan);
+      ar(CEREAL_POINTER(epan));
       break;
 
     case TRIANGULAR_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(triangular);
+      ar(CEREAL_POINTER(triangular));
       break;
 
     case HYPTAN_KERNEL:
-      ar & BOOST_SERIALIZATION_NVP(hyptan);
+      ar(CEREAL_POINTER(hyptan));
       break;
   }
 }

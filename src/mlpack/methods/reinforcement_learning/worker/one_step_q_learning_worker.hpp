@@ -1,5 +1,5 @@
 /**
- * @file one_step_q_learning_worker.hpp
+ * @file methods/reinforcement_learning/worker/one_step_q_learning_worker.hpp
  * @author Shangtong Zhang
  *
  * This file is the definition of OneStepQLearningWorker class,
@@ -301,12 +301,13 @@ class OneStepQLearningWorker
             config.Discount() * targetActionValue;
 
         // Compute the training target for current state.
-        network.Forward(std::get<0>(transition).Encode(), actionValue);
-        actionValue[std::get<1>(transition)] = targetActionValue;
+        arma::mat input = std::get<0>(transition).Encode();
+        network.Forward(input, actionValue);
+        actionValue[std::get<1>(transition).action] = targetActionValue;
 
         // Compute gradient.
         arma::mat gradients;
-        network.Backward(actionValue, gradients);
+        network.Backward(input, actionValue, gradients);
 
         // Accumulate gradients.
         totalGradients += gradients;

@@ -1,5 +1,5 @@
 /**
- * @file rbm_policies.hpp
+ * @file methods/ann/rbm/rbm_policies.hpp
  * @author Shikhar Jaiswal
  *
  * Implementation of the RBM policy types.

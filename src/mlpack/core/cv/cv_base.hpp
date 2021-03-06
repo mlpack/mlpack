@@ -1,5 +1,5 @@
 /**
- * @file cv_base.hpp
+ * @file core/cv/cv_base.hpp
  * @author Kirill Mishchenko
  *
  * A base class for cross-validation.

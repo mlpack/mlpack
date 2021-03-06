@@ -1,5 +1,5 @@
 /**
- * @file dice_loss.hpp
+ * @file methods/ann/loss_functions/dice_loss.hpp
  * @author N Rajiv Vaidyanathan
  *
  * Definition of the dice loss function.
@@ -24,6 +24,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * For more information see the following.
  *
+ * @code
  * @article{Milletari2016,
  *   author    = {Fausto Milletari and Nassir Navab and Seyed{-}Ahmad Ahmadi},
  *   title     = {V-Net: Fully Convolutional Neural Networks for
@@ -35,6 +36,7 @@ namespace ann /** Artificial Neural Network. */ {
  *   archivePrefix = {arXiv},
  *   eprint    = {1606.04797},
  * }
+ * @endcode
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -58,23 +60,26 @@ class DiceLoss
   /**
    * Computes the dice loss function.
    *
-   * @param input Input data used for evaluating the specified function.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
    * @param target The target vector.
    */
-  template<typename InputType, typename TargetType>
-  double Forward(const InputType&& input, const TargetType&& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param input The propagated input activation.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
    * @param target The target vector.
-   * @param output The calculated error.
+   * @param loss The calculated error.
    */
-  template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType&& input,
-                const TargetType&& target,
-                OutputType&& output);
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
+                const TargetType& target,
+                LossType& loss);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -90,7 +95,7 @@ class DiceLoss
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored output parameter object.

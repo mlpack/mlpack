@@ -1,5 +1,5 @@
 /**
- * @file gaussian_distribution.cpp
+ * @file core/dists/gaussian_distribution.cpp
  * @author Ryan Curtin
  * @author Michael Fox
  *
@@ -19,7 +19,7 @@ using namespace mlpack::distribution;
 
 GaussianDistribution::GaussianDistribution(const arma::vec& mean,
                                            const arma::mat& covariance)
-  : mean(mean)
+  : mean(mean), logDetCov(0.0)
 {
   Covariance(covariance);
 }
@@ -39,8 +39,11 @@ void GaussianDistribution::Covariance(arma::mat&& covariance)
 void GaussianDistribution::FactorCovariance()
 {
   // On Armadillo < 4.500, the "lower" option isn't available.
-  covLower = arma::chol(covariance, "lower");
 
+  if (!arma::chol(covLower, covariance, "lower"))
+  {
+    Log::Fatal << "Cholesky decomposition failed." << std::endl;
+  }
   // Comment from rcurtin:
   //
   // I think the use of the word "interpret" in the Armadillo documentation
@@ -99,14 +102,14 @@ void GaussianDistribution::Train(const arma::mat& observations)
   }
 
   // Calculate the mean.
-  for (size_t i = 0; i < observations.n_cols; i++)
+  for (size_t i = 0; i < observations.n_cols; ++i)
     mean += observations.col(i);
 
   // Normalize the mean.
   mean /= observations.n_cols;
 
   // Now calculate the covariance.
-  for (size_t i = 0; i < observations.n_cols; i++)
+  for (size_t i = 0; i < observations.n_cols; ++i)
   {
     arma::vec obsNoMean = observations.col(i) - mean;
     covariance += obsNoMean * trans(obsNoMean);
@@ -147,7 +150,7 @@ void GaussianDistribution::Train(const arma::mat& observations,
 
   // First calculate the mean, and save the sum of all the probabilities for
   // later normalization.
-  for (size_t i = 0; i < observations.n_cols; i++)
+  for (size_t i = 0; i < observations.n_cols; ++i)
   {
     mean += probabilities[i] * observations.col(i);
     sumProb += probabilities[i];
@@ -167,7 +170,7 @@ void GaussianDistribution::Train(const arma::mat& observations,
     mean /= sumProb;
 
   // Now find the covariance.
-  for (size_t i = 0; i < observations.n_cols; i++)
+  for (size_t i = 0; i < observations.n_cols; ++i)
   {
     arma::vec obsNoMean = observations.col(i) - mean;
     covariance += probabilities[i] * (obsNoMean * trans(obsNoMean));

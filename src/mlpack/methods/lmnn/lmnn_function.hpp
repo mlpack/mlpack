@@ -1,5 +1,5 @@
 /**
- * @file lmnn_function.hpp
+ * @file methods/lmnn/lmnn_function.hpp
  * @author Manish Kumar
  *
  * Declaration of the LMNNFunction class.
@@ -26,9 +26,9 @@ namespace lmnn {
  *
  * The actual function is
  *
- * \epsilon(M) = \sum_{ij}\eta_{ij}|| L x_i - L x_j ||^2 +
+ * @f$ \epsilon(M) = \sum_{ij}\eta_{ij}|| L x_i - L x_j ||^2 +
  *     c\sum_{ijl}\eta_{ij}(1-y_{il})[1 + || L x_i - L x_j ||^2 -
- *     || L x_i - L x_l ||^2)]_{+}
+ *     || L x_i - L x_l ||^2)]_{+} @f$
  *
  * where x_n represents a point and A is the current scaling matrix.
  *
@@ -81,7 +81,7 @@ class LMNNFunction
   /**
    * Evaluate the LMNN objective function for the given transformation matrix on
    * the given batch size from a given inital point of the dataset.
-   * This is the separable implementation, where the objective 
+   * This is the separable implementation, where the objective
    * function is decomposed into the sum of many objective
    * functions, and here, only one of those constituent objective functions is
    * returned.

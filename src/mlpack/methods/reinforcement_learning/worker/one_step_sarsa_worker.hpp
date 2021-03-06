@@ -1,5 +1,5 @@
 /**
- * @file one_step_sarsa_worker.hpp
+ * @file methods/reinforcement_learning/worker/one_step_sarsa_worker.hpp
  * @author Shangtong Zhang
  *
  * This file is the definition of OneStepSarsaWorker class,
@@ -252,7 +252,7 @@ class OneStepSarsaWorker
             double& totalReward)
   {
     // Interact with the environment.
-    if (action == ActionType::size)
+    if (action.action == ActionType::size)
     {
       // Invalid action means we are at the beginning of an episode.
       arma::colvec actionValue;
@@ -309,17 +309,18 @@ class OneStepSarsaWorker
         };
         double targetActionValue = 0;
         if (!(terminal && i == pending.size() - 1))
-          targetActionValue = actionValue[std::get<4>(transition)];
+          targetActionValue = actionValue[std::get<4>(transition).action];
         targetActionValue = std::get<2>(transition) +
             config.Discount() * targetActionValue;
 
         // Compute the training target for current state.
-        network.Forward(std::get<0>(transition).Encode(), actionValue);
-        actionValue[std::get<1>(transition)] = targetActionValue;
+        arma::mat input = std::get<0>(transition).Encode();
+        network.Forward(input, actionValue);
+        actionValue[std::get<1>(transition).action] = targetActionValue;
 
         // Compute gradient.
         arma::mat gradients;
-        network.Backward(actionValue, gradients);
+        network.Backward(input, actionValue, gradients);
 
         // Accumulate gradients.
         totalGradients += gradients;
@@ -376,7 +377,8 @@ class OneStepSarsaWorker
     episodeReturn = 0;
     pendingIndex = 0;
     state = environment.InitialSample();
-    action = ActionType::size;
+    using actions = typename EnvironmentType::Action::actions;
+    action.action = static_cast<actions>(ActionType::size);
   }
 
   //! Locally-stored optimizer.

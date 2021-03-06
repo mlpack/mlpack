@@ -1,5 +1,5 @@
 /**
- * @file test_function_tools.hpp
+ * @file tests/test_function_tools.hpp
  * @author Marcus Edel
  *
  * This file provides some useful test function methods.

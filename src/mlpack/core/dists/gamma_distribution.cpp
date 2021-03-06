@@ -1,5 +1,5 @@
 /**
- * @file gamma_distribution.cpp
+ * @file core/dists/gamma_distribution.cpp
  * @author Yannis Mentekidis
  * @author Rohan Raj
  *
@@ -11,8 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "gamma_distribution.hpp"
-// This will include digamma and trigamma.
-#include <mlpack/core/boost_backport/boost_backport_math.hpp>
+#include <boost/math/special_functions/trigamma.hpp>
+#include <boost/math/special_functions/polygamma.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -78,7 +78,7 @@ void GammaDistribution::Train(const arma::mat& rdata,
   arma::vec meanxVec(rdata.n_rows, arma::fill::zeros);
   arma::vec logMeanxVec(rdata.n_rows, arma::fill::zeros);
 
-  for (size_t i = 0; i < rdata.n_cols; i++)
+  for (size_t i = 0; i < rdata.n_cols; ++i)
   {
     meanLogxVec += probabilities(i) * arma::log(rdata.col(i));
     meanxVec += probabilities(i) * rdata.col(i);

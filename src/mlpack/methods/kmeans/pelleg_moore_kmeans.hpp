@@ -1,5 +1,5 @@
 /**
- * @file pelleg_moore_kmeans.hpp
+ * @file methods/kmeans/pelleg_moore_kmeans.hpp
  * @author Ryan Curtin
  *
  * An implementation of Pelleg-Moore's 'blacklist' algorithm for k-means

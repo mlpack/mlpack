@@ -1,5 +1,5 @@
 /**
- * @file decision_tree_impl.hpp
+ * @file methods/decision_tree/decision_tree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of generic decision tree class.
@@ -11,6 +11,8 @@
  */
 #ifndef MLPACK_METHODS_DECISION_TREE_DECISION_TREE_IMPL_HPP
 #define MLPACK_METHODS_DECISION_TREE_DECISION_TREE_IMPL_HPP
+
+#include "decision_tree.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -116,10 +118,8 @@ DecisionTree<FitnessFunction,
     const double minimumGainSplit,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
-    const std::enable_if_t<
-        arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*)
+    const std::enable_if_t<arma::is_arma_type<
+        typename std::remove_reference<WeightsType>::type>::value>*)
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
@@ -137,6 +137,47 @@ DecisionTree<FitnessFunction,
   Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
       tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
+}
+
+//! Construct and train with weights.
+template<typename FitnessFunction,
+        template<typename> class NumericSplitType,
+        template<typename> class CategoricalSplitType,
+        typename DimensionSelectionType,
+        typename ElemType,
+        bool NoRecursion>
+template<typename MatType, typename LabelsType, typename WeightsType>
+DecisionTree<FitnessFunction,
+        NumericSplitType,
+        CategoricalSplitType,
+        DimensionSelectionType,
+        ElemType,
+        NoRecursion>::DecisionTree(
+    const DecisionTree& other,
+    MatType data,
+    const data::DatasetInfo& datasetInfo,
+    LabelsType labels,
+    const size_t numClasses,
+    WeightsType weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const std::enable_if_t<arma::is_arma_type<
+        typename std::remove_reference<WeightsType>::type>::value>*):
+        NumericAuxiliarySplitInfo(other),
+        CategoricalAuxiliarySplitInfo(other)
+{
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
+
+  // Copy or move data.
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Pass off work to the weighted Train() method.
+  Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels, numClasses,
+              tmpWeights, minimumLeafSize, minimumGainSplit);
 }
 
 //! Construct and train with weights.
@@ -165,6 +206,52 @@ DecisionTree<FitnessFunction,
         arma::is_arma_type<
         typename std::remove_reference<
         WeightsType>::type>::value>*)
+{
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
+
+  // Copy or move data.
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
+
+  // Pass off work to the weighted Train() method.
+  Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses, tmpWeights,
+      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+}
+
+//! Construct and train with weights.
+template<typename FitnessFunction,
+        template<typename> class NumericSplitType,
+        template<typename> class CategoricalSplitType,
+        typename DimensionSelectionType,
+        typename ElemType,
+        bool NoRecursion>
+template<typename MatType, typename LabelsType, typename WeightsType>
+DecisionTree<FitnessFunction,
+        NumericSplitType,
+        CategoricalSplitType,
+        DimensionSelectionType,
+        ElemType,
+        NoRecursion>::DecisionTree(
+    const DecisionTree& other,
+    MatType data,
+    LabelsType labels,
+    const size_t numClasses,
+    WeightsType weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector,
+    const std::enable_if_t<arma::is_arma_type<
+        typename std::remove_reference<
+        WeightsType>::type>::value>*):
+        NumericAuxiliarySplitInfo(other),
+        CategoricalAuxiliarySplitInfo(other)  // other info does need to copy
 {
   using TrueMatType = typename std::decay<MatType>::type;
   using TrueLabelsType = typename std::decay<LabelsType>::type;
@@ -568,7 +655,7 @@ double DecisionTree<FitnessFunction,
       dimensionSelector);
 }
 
-//! Train on the given data.
+//! Train on the given data, assuming all dimensions are numeric.
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
@@ -1045,23 +1132,22 @@ void DecisionTree<FitnessFunction,
                   DimensionSelectionType,
                   ElemType,
                   NoRecursion>::serialize(Archive& ar,
-                                          const unsigned int /* version */)
+                                          const uint32_t /* version */)
 {
   // Clean memory if needed.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < children.size(); ++i)
       delete children[i];
     children.clear();
   }
-
   // Serialize the children first.
-  ar & BOOST_SERIALIZATION_NVP(children);
+  ar(CEREAL_VECTOR_POINTER(children));
 
   // Now serialize the rest of the object.
-  ar & BOOST_SERIALIZATION_NVP(splitDimension);
-  ar & BOOST_SERIALIZATION_NVP(dimensionTypeOrMajorityClass);
-  ar & BOOST_SERIALIZATION_NVP(classProbabilities);
+  ar(CEREAL_NVP(splitDimension));
+  ar(CEREAL_NVP(dimensionTypeOrMajorityClass));
+  ar(CEREAL_NVP(classProbabilities));
 }
 
 template<typename FitnessFunction,

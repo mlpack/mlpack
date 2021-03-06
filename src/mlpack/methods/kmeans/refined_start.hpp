@@ -1,5 +1,5 @@
 /**
- * @file refined_start.hpp
+ * @file methods/kmeans/refined_start.hpp
  * @author Ryan Curtin
  *
  * An implementation of Bradley and Fayyad's "Refining Initial Points for
@@ -25,6 +25,7 @@ namespace kmeans {
  * clusters those solutions to select refined initial cluster assignments.  It
  * is an implementation of the following paper:
  *
+ * @code
  * @inproceedings{bradley1998refining,
  *   title={Refining initial points for k-means clustering},
  *   author={Bradley, Paul S and Fayyad, Usama M},
@@ -33,6 +34,7 @@ namespace kmeans {
  *   volume={66},
  *   year={1998}
  * }
+ * @endcode
  */
 class RefinedStart
 {
@@ -89,10 +91,10 @@ class RefinedStart
 
   //! Serialize the object.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(samplings);
-    ar & BOOST_SERIALIZATION_NVP(percentage);
+    ar(CEREAL_NVP(samplings));
+    ar(CEREAL_NVP(percentage));
   }
 
  private:

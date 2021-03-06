@@ -14,6 +14,7 @@ set(SOURCES
   kill_empty_clusters.hpp
   kmeans.hpp
   kmeans_impl.hpp
+  kmeans_plus_plus_initialization.hpp
   max_variance_new_cluster.hpp
   max_variance_new_cluster_impl.hpp
   naive_kmeans.hpp
@@ -40,4 +41,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_cli_executable(kmeans)
 add_python_binding(kmeans)
-add_markdown_docs(kmeans "cli;python" "clustering")
+add_julia_binding(kmeans)
+add_go_binding(kmeans)
+add_r_binding(kmeans)
+add_markdown_docs(kmeans "cli;python;julia;go;r" "clustering")

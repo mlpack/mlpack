@@ -1,5 +1,5 @@
 /**
- * @file epanechnikov_kernel.hpp
+ * @file core/kernels/epanechnikov_kernel.hpp
  * @author Neil Slagle
  *
  * Definition of the Epanechnikov kernel.
@@ -93,7 +93,7 @@ class EpanechnikovKernel
    * Serialize the kernel.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   //! Bandwidth of the kernel.

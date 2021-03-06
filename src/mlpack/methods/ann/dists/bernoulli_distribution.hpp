@@ -1,5 +1,5 @@
 /**
- * @file bernoulli_distribution.hpp
+ * @file methods/ann/dists/bernoulli_distribution.hpp
  * @author Atharva Khandait
  *
  * Definition of the Bernoulli distribution class.
@@ -55,12 +55,12 @@ class BernoulliDistribution
    *
    * @param param The matrix of probabilities or pre probabilities of
    *        the multiple distributions.
-   * @param applyLogsitic If true, we apply Logistic function to the param
+   * @param applyLogistic If true, we apply Logistic function to the param
    *        matrix (pre probability) to get probability.
    * @param eps The minimum value used for computing logarithms and
    *        denominators.
    */
-  BernoulliDistribution(const DataType&& param,
+  BernoulliDistribution(const DataType& param,
                         const bool applyLogistic = true,
                         const double eps = 1e-10);
 
@@ -69,7 +69,7 @@ class BernoulliDistribution
    *
    * @param observation The observation matrix.
    */
-  double Probability(const DataType&& observation) const
+  double Probability(const DataType& observation) const
   {
     return std::exp(LogProbability(observation));
   }
@@ -79,7 +79,7 @@ class BernoulliDistribution
    *
    * @param observation The observation matrix.
    */
-  double LogProbability(const DataType&& observation) const;
+  double LogProbability(const DataType& observation) const;
 
   /**
    * Stores the gradient of the log probabilities of the observations in the
@@ -88,7 +88,7 @@ class BernoulliDistribution
    * @param observation The observation matrix.
    * @param output The output matrix where the gradients are stored.
    */
-  void LogProbBackward(const DataType&& observation, DataType&& output) const;
+  void LogProbBackward(const DataType& observation, DataType& output) const;
 
   /**
    * Return a matrix of randomly generated samples according to the
@@ -114,13 +114,13 @@ class BernoulliDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
     // We just need to serialize each of the members.
-    ar & BOOST_SERIALIZATION_NVP(probability);
-    ar & BOOST_SERIALIZATION_NVP(logits);
-    ar & BOOST_SERIALIZATION_NVP(applyLogistic);
-    ar & BOOST_SERIALIZATION_NVP(eps);
+    ar(CEREAL_NVP(probability));
+    ar(CEREAL_NVP(logits));
+    ar(CEREAL_NVP(applyLogistic));
+    ar(CEREAL_NVP(eps));
   }
 
  private:

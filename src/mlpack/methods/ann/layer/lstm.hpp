@@ -1,5 +1,5 @@
 /**
- * @file lstm.hpp
+ * @file methods/ann/layer/lstm.hpp
  * @author Marcus Edel
  *
  * Definition of the LSTM class, which implements a LSTM network layer.
@@ -26,10 +26,14 @@ namespace ann /** Artificial Neural Network. */ {
  * i &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\
  * f &=& sigmoid(W  \cdot x + W \cdot h + W \cdot c + b) \\
  * z &=& tanh(W \cdot x + W \cdot h + b) \\
- * c &=& f \cdot c + i \cdot z \\
+ * c &=& f \odot c + i \odot z \\
  * o &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\
- * h &=& o \cdot tanh(c)
+ * h &=& o \odot tanh(c)
  * @f}
+ *
+ * Note that if an LSTM layer is desired as the first layer of a neural network,
+ * an IdentityLayer should be added to the network as the first layer, and then
+ * the LSTM layer should be added.
  *
  * For more information, see the following.
  *
@@ -72,6 +76,18 @@ class LSTM
        const size_t outSize,
        const size_t rho = std::numeric_limits<size_t>::max());
 
+  //! Copy constructor.
+  LSTM(const LSTM& layer);
+
+  //! Move constructor.
+  LSTM(LSTM&&);
+
+  //! Copy assignment operator.
+  LSTM& operator=(const LSTM& layer);
+
+  //! Move assignment operator.
+  LSTM& operator=(LSTM&& layer);
+
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -80,7 +96,7 @@ class LSTM
    * @param output Resulting output activation.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input, OutputType&& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
@@ -92,9 +108,9 @@ class LSTM
    * @param useCellState Use the cellState passed in the LSTM cell.
    */
   template<typename InputType, typename OutputType>
-  void Forward(InputType&& input,
-               OutputType&& output,
-               OutputType&& cellState,
+  void Forward(const InputType& input,
+               OutputType& output,
+               OutputType& cellState,
                bool useCellState = false);
 
   /**
@@ -107,9 +123,9 @@ class LSTM
    * @param g The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Backward(const InputType&& input,
-                ErrorType&& gy,
-                GradientType&& g);
+  void Backward(const InputType& input,
+                const ErrorType& gy,
+                GradientType& g);
 
   /*
    * Reset the layer parameter.
@@ -132,9 +148,9 @@ class LSTM
    * @param gradient The calculated gradient.
    */
   template<typename InputType, typename ErrorType, typename GradientType>
-  void Gradient(InputType&& input,
-                ErrorType&& error,
-                GradientType&& gradient);
+  void Gradient(const InputType& input,
+                const ErrorType& error,
+                GradientType& gradient);
 
   //! Get the maximum number of steps to backpropagate through time (BPTT).
   size_t Rho() const { return rho; }
@@ -161,11 +177,26 @@ class LSTM
   //! Modify the gradient.
   OutputDataType& Gradient() { return grad; }
 
+  //! Get the number of input units.
+  size_t InSize() const { return inSize; }
+
+  //! Get the number of output units.
+  size_t OutSize() const { return outSize; }
+
+  //! Get the size of the weights.
+  size_t WeightSize() const { return (4 * outSize * inSize + 7 * outSize + 4 * outSize * outSize); }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

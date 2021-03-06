@@ -1,5 +1,5 @@
 /**
- * @file accuracy_impl.hpp
+ * @file core/cv/metrics/accuracy_impl.hpp
  * @author Kirill Mishchenko
  *
  * The implementation of the class Accuracy.

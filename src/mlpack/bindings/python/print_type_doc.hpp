@@ -1,5 +1,5 @@
 /**
- * @file print_type_doc.hpp
+ * @file bindings/python/print_type_doc.hpp
  * @author Ryan Curtin
  *
  * Print documentation for a given type, detailing what the type actually is to
@@ -24,7 +24,7 @@ namespace python {
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
@@ -36,7 +36,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0);
 
 /**
@@ -44,7 +44,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0);
 
 /**
@@ -52,7 +52,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
@@ -61,7 +61,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
 
@@ -69,7 +69,7 @@ std::string PrintTypeDoc(
  * Print the command-line type of an option into a string.
  */
 template<typename T>
-void PrintTypeDoc(const util::ParamData& data,
+void PrintTypeDoc(util::ParamData& data,
                   const void* /* input */,
                   void* output)
 {

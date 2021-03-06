@@ -1,5 +1,5 @@
 /**
- * @file range_search.hpp
+ * @file methods/range_search/range_search.hpp
  * @author Ryan Curtin
  *
  * Defines the RangeSearch class, which performs a generalized range search on
@@ -22,7 +22,10 @@ namespace mlpack {
 namespace range /** Range-search routines. */ {
 
 //! Forward declaration.
-class TrainVisitor;
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+class LeafSizeRSWrapper;
 
 /**
  * The RangeSearch class is a template class for performing range searches.  It
@@ -82,10 +85,8 @@ class RangeSearch
    * Because tree-building (at least with BinarySpaceTree) modifies the ordering
    * of a matrix, be aware that mapping of the points back to their original
    * indices is not done when this constructor is used.
-   * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
-   * @param referenceSet Set of reference points corresponding to referenceTree.
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
    * @param metric Instantiated distance metric.
@@ -124,12 +125,18 @@ class RangeSearch
   RangeSearch(RangeSearch&& other);
 
   /**
-   * Copy the given RangeSearch model.
-   * Use std::move to pass in the model if the old copy is no longer needed.
-   *
+   * Deep copy the given RangeSearch model.
+   * 
    * @param other RangeSearch model to copy.
    */
-  RangeSearch& operator=(RangeSearch other);
+  RangeSearch& operator=(const RangeSearch& other);
+
+  /**
+   * Move the given RangeSearch model.
+   *
+   * @param other RangeSearch model to move.
+   */
+  RangeSearch& operator=(RangeSearch&& other);
 
   /**
    * Destroy the RangeSearch object.  If trees were created, they will be
@@ -251,7 +258,6 @@ class RangeSearch
    *
    * - neighbors[i] and distances[i] are not sorted in any particular order.
    *
-   * @param queryTree Tree built on query points.
    * @param range Range of distances in which to search.
    * @param neighbors Object which will hold the list of neighbors for each
    *      point which fell into the given range, for each query point.
@@ -279,7 +285,7 @@ class RangeSearch
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
   //! Return the reference set.
   const MatType& ReferenceSet() const { return *referenceSet; }
@@ -313,7 +319,7 @@ class RangeSearch
   size_t scores;
 
   //! For access to mappings when building models.
-  friend class TrainVisitor;
+  friend class LeafSizeRSWrapper<TreeType>;
 };
 
 } // namespace range

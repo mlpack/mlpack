@@ -1,5 +1,5 @@
 /**
- * @file lregularizer.hpp
+ * @file methods/ann/regularizer/lregularizer.hpp
  * @author Saksham Bansal
  *
  * Generalized L-regularizer, allowing both l1 and l2 regularization methods.
@@ -46,7 +46,7 @@ class LRegularizer
 
   //! Serialize the regularizer (nothing to do).
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   //! The power of the regularizer.
   static const int Power = TPower;

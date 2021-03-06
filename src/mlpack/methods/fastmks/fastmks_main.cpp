@@ -1,5 +1,5 @@
 /**
- * @file fastmks_main.cpp
+ * @file methods/fastmks/fastmks_main.cpp
  * @author Ryan Curtin
  *
  * Main executable for maximum inner product search.
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "fastmks.hpp"
@@ -24,20 +24,27 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::util;
 
-PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
-    // Short description.
+// Program Name.
+BINDING_NAME("FastMKS (Fast Max-Kernel Search)");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of the single-tree and dual-tree fast max-kernel search"
     " (FastMKS) algorithm.  Given a set of reference points and a set of query"
     " points, this can find the reference point with maximum kernel value for "
-    "each query point; trained models can be reused for future queries.",
-    // Long description.
+    "each query point; trained models can be reused for future queries.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program will find the k maximum kernels of a set of points, "
     "using a query set and a reference set (which can optionally be the same "
     "set). More specifically, for each point in the query set, the k points in"
     " the reference set with maximum kernel evaluations are found.  The kernel "
     "function used is specified with the " + PRINT_PARAM_STRING("kernel") +
-    " parameter."
-    "\n\n"
+    " parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, the following command will calculate, for each point in the "
     "query set " + PRINT_DATASET("query") + ", the five points in the "
     "reference set " + PRINT_DATASET("reference") + " with maximum kernel "
@@ -57,14 +64,16 @@ PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
     "\n\n"
     "This program performs FastMKS using a cover tree.  The base used to build "
     "the cover tree can be specified with the " + PRINT_PARAM_STRING("base") +
-    " parameter.",
-    SEE_ALSO("Fast max-kernel search tutorial (fastmks)",
-        "@doxygen/fmkstutorial.html"),
-    SEE_ALSO("k-nearest-neighbor search", "#knn"),
-    SEE_ALSO("Dual-tree Fast Exact Max-Kernel Search (pdf)",
-        "http://mlpack.org/papers/fmks.pdf"),
-    SEE_ALSO("mlpack::fastmks::FastMKS class documentation",
-        "@doxygen/classmlpack_1_1fastmks_1_1FastMKS.html"));
+    " parameter.");
+
+// See also...
+BINDING_SEE_ALSO("Fast max-kernel search tutorial (fastmks)",
+        "@doxygen/fmkstutorial.html");
+BINDING_SEE_ALSO("k-nearest-neighbor search", "#knn");
+BINDING_SEE_ALSO("Dual-tree Fast Exact Max-Kernel Search (pdf)",
+        "http://mlpack.org/papers/fmks.pdf");
+BINDING_SEE_ALSO("mlpack::fastmks::FastMKS class documentation",
+        "@doxygen/classmlpack_1_1fastmks_1_1FastMKS.html");
 
 // Model-building parameters.
 PARAM_MATRIX_IN("reference", "The reference dataset.", "r");
@@ -110,7 +119,7 @@ static void mlpackMain()
   ReportIgnoredParam({{ "k", false }}, "kernels");
   ReportIgnoredParam({{ "k", false }}, "query");
 
-  if (CLI::HasParam("k"))
+  if (IO::HasParam("k"))
   {
     RequireAtLeastOnePassed({ "indices", "kernels" }, false,
         "no output will be saved");
@@ -122,10 +131,16 @@ static void mlpackMain()
       "unknown kernel type");
 
   // Make sure number of maximum kernels is greater than 0.
-  if (CLI::HasParam("k"))
+  if (IO::HasParam("k"))
   {
     RequireParamValue<int>("k", [](int x) { return x > 0; }, true,
         "number of maximum kernels must be greater than 0");
+  }
+
+  if (IO::HasParam("base"))
+  {
+    RequireParamValue<double>("base", [](double x) { return x > 1.0; }, true,
+        "base must be greater than or equal to 1!");
   }
 
   // Naive mode overrides single mode.
@@ -133,27 +148,27 @@ static void mlpackMain()
 
   FastMKSModel* model;
   arma::mat referenceData;
-  if (CLI::HasParam("reference"))
+  if (IO::HasParam("reference"))
   {
     model = new FastMKSModel();
-    referenceData = std::move(CLI::GetParam<arma::mat>("reference"));
+    referenceData = std::move(IO::GetParam<arma::mat>("reference"));
 
     Log::Info << "Loaded reference data (" << referenceData.n_rows << " x "
         << referenceData.n_cols << ")." << endl;
 
     // For cover tree construction.
-    const double base = CLI::GetParam<double>("base");
+    const double base = IO::GetParam<double>("base");
 
     // Kernel parameters.
-    const string kernelType = CLI::GetParam<string>("kernel");
-    const double degree = CLI::GetParam<double>("degree");
-    const double offset = CLI::GetParam<double>("offset");
-    const double bandwidth = CLI::GetParam<double>("bandwidth");
-    const double scale = CLI::GetParam<double>("scale");
+    const string kernelType = IO::GetParam<string>("kernel");
+    const double degree = IO::GetParam<double>("degree");
+    const double offset = IO::GetParam<double>("offset");
+    const double bandwidth = IO::GetParam<double>("bandwidth");
+    const double scale = IO::GetParam<double>("scale");
 
     // Search preferences.
-    const bool naive = CLI::HasParam("naive");
-    const bool single = CLI::HasParam("single");
+    const bool naive = IO::HasParam("naive");
+    const bool single = IO::HasParam("single");
 
     if (kernelType == "linear")
     {
@@ -201,41 +216,61 @@ static void mlpackMain()
   else
   {
     // Load model from file, then do whatever is necessary.
-    model = CLI::GetParam<FastMKSModel*>("input_model");
+    model = IO::GetParam<FastMKSModel*>("input_model");
   }
 
   // Set search preferences.
-  model->Naive() = CLI::HasParam("naive");
-  model->SingleMode() = CLI::HasParam("single");
+  model->Naive() = IO::HasParam("naive");
+  model->SingleMode() = IO::HasParam("single");
 
   // Should we do search?
-  if (CLI::HasParam("k"))
+  if (IO::HasParam("k"))
   {
     arma::mat kernels;
     arma::Mat<size_t> indices;
 
-    if (CLI::HasParam("query"))
+    if (IO::HasParam("query"))
     {
-      const double base = CLI::GetParam<double>("base");
+      const double base = IO::GetParam<double>("base");
 
-      arma::mat queryData = std::move(CLI::GetParam<arma::mat>("query"));
+      arma::mat queryData = std::move(IO::GetParam<arma::mat>("query"));
 
       Log::Info << "Loaded query data (" << queryData.n_rows << " x "
           << queryData.n_cols << ")." << endl;
 
-      model->Search(queryData, (size_t) CLI::GetParam<int>("k"), indices,
-          kernels, base);
+      try
+      {
+        model->Search(queryData, (size_t) IO::GetParam<int>("k"), indices,
+            kernels, base);
+      }
+      catch (std::invalid_argument& e)
+      {
+        // Delete the memory, if needed.
+        if (IO::HasParam("reference"))
+          delete model;
+        throw;
+      }
     }
     else
     {
-      model->Search((size_t) CLI::GetParam<int>("k"), indices, kernels);
+      try
+      {
+        model->Search((size_t) IO::GetParam<int>("k"), indices, kernels);
+      }
+      catch (std::invalid_argument& e)
+      {
+        // Delete the memory, if needed.
+        if (IO::HasParam("reference"))
+          delete model;
+        throw e;
+      }
     }
 
     // Save output.
-    CLI::GetParam<arma::mat>("kernels") = std::move(kernels);
-    CLI::GetParam<arma::Mat<size_t>>("indices") = std::move(indices);
+    IO::GetParam<arma::mat>("kernels") = std::move(kernels);
+    IO::GetParam<arma::Mat<size_t>>("indices") = std::move(indices);
   }
 
   // Save the model.
-  CLI::GetParam<FastMKSModel*>("output_model") = model;
+  IO::GetParam<FastMKSModel*>("output_model") = model;
 }

@@ -1,5 +1,5 @@
 /**
- * @file async_learning.hpp
+ * @file methods/reinforcement_learning/async_learning.hpp
  * @author Shangtong Zhang
  *
  * This file is the definition of AsyncLearning class,

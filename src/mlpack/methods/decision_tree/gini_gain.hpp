@@ -1,5 +1,5 @@
 /**
- * @file gini_gain.hpp
+ * @file methods/decision_tree/gini_gain.hpp
  * @author Ryan Curtin
  *
  * The GiniGain class, which is a fitness function (FitnessFunction) for

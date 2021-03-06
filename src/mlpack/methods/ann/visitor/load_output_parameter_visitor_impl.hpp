@@ -1,5 +1,5 @@
 /**
- * @file load_output_parameter_visitor_impl.hpp
+ * @file methods/ann/visitor/load_output_parameter_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the OutputParameter() function layer abstraction.
@@ -20,7 +20,7 @@ namespace ann {
 
 //! LoadOutputParameterVisitor visitor class.
 inline LoadOutputParameterVisitor::LoadOutputParameterVisitor(
-    std::vector<arma::mat>&& parameter) : parameter(std::move(parameter))
+    std::vector<arma::mat>& parameter) : parameter(parameter)
 {
   /* Nothing to do here. */
 }
@@ -52,7 +52,7 @@ LoadOutputParameterVisitor::OutputParameter(T* layer) const
 {
   for (size_t i = 0; i < layer->Model().size(); ++i)
   {
-    boost::apply_visitor(LoadOutputParameterVisitor(std::move(parameter)),
+    boost::apply_visitor(LoadOutputParameterVisitor(parameter),
         layer->Model()[layer->Model().size() - i - 1]);
   }
 

@@ -1,5 +1,5 @@
 /**
- * @file binary_space_tree_impl.hpp
+ * @file core/tree/binary_space_tree/binary_space_tree_impl.hpp
  *
  * Implementation of generalized space partitioning tree.
  *
@@ -14,7 +14,6 @@
 // In case it wasn't included already for some reason.
 #include "binary_space_tree.hpp"
 
-#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <queue>
 
@@ -72,7 +71,7 @@ BinarySpaceTree(
 {
   // Initialize oldFromNew correctly.
   oldFromNew.resize(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -106,7 +105,7 @@ BinarySpaceTree(
 {
   // Initialize the oldFromNew vector correctly.
   oldFromNew.resize(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -118,7 +117,7 @@ BinarySpaceTree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 
@@ -169,7 +168,7 @@ BinarySpaceTree(
 {
   // Initialize oldFromNew correctly.
   oldFromNew.resize(dataset->n_cols);
-  for (size_t i = 0; i < dataset->n_cols; i++)
+  for (size_t i = 0; i < dataset->n_cols; ++i)
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -203,7 +202,7 @@ BinarySpaceTree(
 {
   // Initialize the oldFromNew vector correctly.
   oldFromNew.resize(dataset->n_cols);
-  for (size_t i = 0; i < dataset->n_cols; i++)
+  for (size_t i = 0; i < dataset->n_cols; ++i)
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -215,7 +214,7 @@ BinarySpaceTree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(dataset->n_cols);
-  for (size_t i = 0; i < dataset->n_cols; i++)
+  for (size_t i = 0; i < dataset->n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 
@@ -315,7 +314,7 @@ BinarySpaceTree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(dataset->n_cols);
-  for (size_t i = 0; i < dataset->n_cols; i++)
+  for (size_t i = 0; i < dataset->n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 
@@ -341,6 +340,7 @@ BinarySpaceTree(
     stat(other.stat),
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
+    minimumBoundDistance(other.minimumBoundDistance),
     // Copy matrix, but only if we are the root.
     dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL)
 {
@@ -380,6 +380,126 @@ BinarySpaceTree(
 }
 
 /**
+ * Copy assignment operator: copy the given other tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+operator=(const BinarySpaceTree& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  delete dataset;
+  delete left;
+  delete right;
+
+  left = NULL;
+  right = NULL;
+  parent = other.Parent();
+  begin = other.Begin();
+  count = other.Count();
+  bound = other.bound;
+  stat = other.stat;
+  parentDistance = other.ParentDistance();
+  furthestDescendantDistance = other.FurthestDescendantDistance();
+  minimumBoundDistance = other.MinimumBoundDistance();
+  // Copy matrix, but only if we are the root.
+  dataset = ((other.parent == NULL) ? new MatType(*other.dataset) : NULL);
+
+  // Create left and right children (if any).
+  if (other.Left())
+  {
+    left = new BinarySpaceTree(*other.Left());
+    left->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  if (other.Right())
+  {
+    right = new BinarySpaceTree(*other.Right());
+    right->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL)
+  {
+    std::queue<BinarySpaceTree*> queue;
+    if (left)
+      queue.push(left);
+    if (right)
+      queue.push(right);
+    while (!queue.empty())
+    {
+      BinarySpaceTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      if (node->left)
+        queue.push(node->left);
+      if (node->right)
+        queue.push(node->right);
+    }
+  }
+
+  return *this;
+}
+
+/**
+ * Move assignment operator: take ownership of the given tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType, typename...> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+operator=(BinarySpaceTree&& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  delete dataset;
+  delete left;
+  delete right;
+
+  parent = other.Parent();
+  left = other.Left();
+  right = other.Right();
+  begin = other.Begin();
+  count = other.Count();
+  bound = std::move(other.bound);
+  stat = std::move(other.stat);
+  parentDistance = other.ParentDistance();
+  furthestDescendantDistance = other.FurthestDescendantDistance();
+  minimumBoundDistance = other.MinimumBoundDistance();
+  dataset = other.dataset;
+
+  other.left = NULL;
+  other.right = NULL;
+  other.parent = NULL;
+  other.begin = 0;
+  other.count = 0;
+  other.parentDistance = 0.0;
+  other.furthestDescendantDistance = 0.0;
+  other.minimumBoundDistance = 0.0;
+  other.dataset = NULL;
+
+  return *this;
+}
+
+
+/**
  * Move constructor.
  */
 template<typename MetricType,
@@ -406,6 +526,7 @@ BinarySpaceTree(BinarySpaceTree&& other) :
   // tree's contents, so it doesn't delete anything when it is destructed.
   other.left = NULL;
   other.right = NULL;
+  other.parent = NULL;
   other.begin = 0;
   other.count = 0;
   other.parentDistance = 0.0;
@@ -433,12 +554,12 @@ template<typename Archive>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 BinarySpaceTree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
     BinarySpaceTree() // Create an empty BinarySpaceTree.
 {
   // We've delegated to the constructor which gives us an empty tree, and now we
   // can serialize from it.
-  ar >> BOOST_SERIALIZATION_NVP(*this);
+  ar(CEREAL_NVP(*this));
 }
 
 /**
@@ -911,7 +1032,7 @@ UpdateBound(bound::HollowBallBound<MetricType>& boundToUpdate)
     boundToUpdate |= dataset->cols(begin, begin + count - 1);
 }
 
-// Default constructor (private), for boost::serialization.
+// Default constructor (private), for cereal.
 template<typename MetricType,
          typename StatisticType,
          typename MatType,
@@ -944,10 +1065,10 @@ template<typename MetricType,
              class SplitType>
 template<typename Archive>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
-    serialize(Archive& ar, const unsigned int /* version */)
+    serialize(Archive& ar, const uint32_t /* version */)
 {
   // If we're loading, and we have children, they need to be deleted.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
       delete left;
@@ -961,32 +1082,57 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
     right = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(begin);
-  ar & BOOST_SERIALIZATION_NVP(count);
-  ar & BOOST_SERIALIZATION_NVP(bound);
-  ar & BOOST_SERIALIZATION_NVP(stat);
+  ar(CEREAL_NVP(begin));
+  ar(CEREAL_NVP(count));
+  ar(CEREAL_NVP(bound));
+  ar(CEREAL_NVP(stat));
 
-  ar & BOOST_SERIALIZATION_NVP(parentDistance);
-  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
-  ar & BOOST_SERIALIZATION_NVP(dataset);
+  ar(CEREAL_NVP(parentDistance));
+  ar(CEREAL_NVP(furthestDescendantDistance));
 
-  // Save children last; otherwise boost::serialization gets confused.
+  // Save children last.
   bool hasLeft = (left != NULL);
   bool hasRight = (right != NULL);
+  bool hasParent = (parent != NULL);
 
-  ar & BOOST_SERIALIZATION_NVP(hasLeft);
-  ar & BOOST_SERIALIZATION_NVP(hasRight);
+  ar(CEREAL_NVP(hasLeft));
+  ar(CEREAL_NVP(hasRight));
+  ar(CEREAL_NVP(hasParent));
   if (hasLeft)
-    ar & BOOST_SERIALIZATION_NVP(left);
+    ar(CEREAL_POINTER(left));
   if (hasRight)
-    ar & BOOST_SERIALIZATION_NVP(right);
+    ar(CEREAL_POINTER(right));
+  if (!hasParent)
+  {
+    MatType*& datasetTemp = const_cast<MatType*&>(dataset);
+    ar(CEREAL_POINTER(datasetTemp));
+  }
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     if (left)
       left->parent = this;
     if (right)
       right->parent = this;
+  }
+  // If we are the root, we need to restore the dataset pointer throughout
+  if (!hasParent)
+  {
+    std::stack<BinarySpaceTree*> stack;
+    if (left)
+      stack.push(left);
+    if (right)
+      stack.push(right);
+    while (!stack.empty())
+    {
+      BinarySpaceTree* node = stack.top();
+      stack.pop();
+      node->dataset = dataset;
+      if (node->left)
+        stack.push(node->left);
+      if (node->right)
+       stack.push(node->right);
+    }
   }
 }
 

@@ -1,5 +1,5 @@
 /**
- * @file multiply_constant_impl.hpp
+ * @file methods/ann/layer/multiply_constant_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the MultiplyConstantLayer class, which multiplies the
@@ -27,9 +27,49 @@ MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
 }
 
 template<typename InputDataType, typename OutputDataType>
+MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
+    const MultiplyConstant& layer) :
+    scalar(layer.scalar)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
+    MultiplyConstant&& layer) :
+    scalar(std::move(layer.scalar))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+MultiplyConstant<InputDataType, OutputDataType>&
+MultiplyConstant<InputDataType, OutputDataType>::operator=(
+    const MultiplyConstant& layer)
+{
+  if (this != &layer)
+  {
+    scalar = layer.scalar;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
+MultiplyConstant<InputDataType, OutputDataType>&
+MultiplyConstant<InputDataType, OutputDataType>::operator=(
+    MultiplyConstant&& layer)
+{
+  if (this != &layer)
+  {
+    scalar = std::move(layer.scalar);
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void MultiplyConstant<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, OutputType&& output)
+    const InputType& input, OutputType& output)
 {
   output = input * scalar;
 }
@@ -37,7 +77,7 @@ void MultiplyConstant<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
 void MultiplyConstant<InputDataType, OutputDataType>::Backward(
-    const DataType&& /* input */, DataType&& gy, DataType&& g)
+    const DataType& /* input */, const DataType& gy, DataType& g)
 {
   g = gy * scalar;
 }
@@ -45,9 +85,9 @@ void MultiplyConstant<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MultiplyConstant<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(scalar);
+  ar(CEREAL_NVP(scalar));
 }
 
 } // namespace ann

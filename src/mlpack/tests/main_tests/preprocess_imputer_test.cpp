@@ -1,5 +1,5 @@
 /**
- * @file preprocess_imputer_test.cpp
+ * @file tests/main_tests/preprocess_imputer_test.cpp
  * @author Manish Kumar
  *
  * Test mlpackMain() of preprocess_imputer_main.cpp.
@@ -18,8 +18,8 @@ static const std::string testName = "PreprocessImputer";
 #include <mlpack/methods/preprocess/preprocess_imputer_main.cpp>
 
 #include "test_helper.hpp"
-#include <boost/test/unit_test.hpp>
-#include "../test_tools.hpp"
+#include "../test_catch_tools.hpp"
+#include "../catch.hpp"
 
 #include <cmath>
 
@@ -31,25 +31,24 @@ struct PreprocessImputerTestFixture
   PreprocessImputerTestFixture()
   {
     // Cache in the options for this program.
-    CLI::RestoreSettings(testName);
+    IO::RestoreSettings(testName);
   }
 
   ~PreprocessImputerTestFixture()
   {
     // Clear the settings.
     bindings::tests::CleanMemory();
-    CLI::ClearSettings();
+    IO::ClearSettings();
   }
 };
-
-BOOST_FIXTURE_TEST_SUITE(PreprocessImputerMainTest,
-                         PreprocessImputerTestFixture);
 
 /**
  * Check that input and output have same dimensions
  * except for listwise_deletion strategy.
  */
-BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
+TEST_CASE_METHOD(
+    PreprocessImputerTestFixture, "PreprocessImputerDimensionTest",
+    "[PreprocessImputerMainTest][BindingTests]")
 {
   // Load synthetic dataset.
   arma::mat inputData;
@@ -72,12 +71,12 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(CLI::GetParam<std::string>("output_file"), outputData);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
+  data::Load(IO::GetParam<std::string>("output_file"), outputData);
+  REQUIRE(outputData.n_cols == inputSize);
+  REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
   // Reset passed strategy.
-  CLI::GetSingleton().Parameters()["strategy"].wasPassed = false;
+  IO::GetSingleton().Parameters()["strategy"].wasPassed = false;
 
   // Check for median strategy.
   SetInputParam("strategy", (std::string) "median");
@@ -85,12 +84,12 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(CLI::GetParam<std::string>("output_file"), outputData);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
+  data::Load(IO::GetParam<std::string>("output_file"), outputData);
+  REQUIRE(outputData.n_cols == inputSize);
+  REQUIRE(outputData.n_rows == 3); // Input Dimension.
 
   // Reset passed strategy.
-  CLI::GetSingleton().Parameters()["strategy"].wasPassed = false;
+  IO::GetSingleton().Parameters()["strategy"].wasPassed = false;
 
   // Check for custom strategy.
   SetInputParam("strategy", (std::string) "custom");
@@ -99,15 +98,17 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerDimensionTest)
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  data::Load(CLI::GetParam<std::string>("output_file"), outputData);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols, inputSize);
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
+  data::Load(IO::GetParam<std::string>("output_file"), outputData);
+  REQUIRE(outputData.n_cols == inputSize);
+  REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
 
 /**
  * Check that output has fewer points in case of listwise_deletion strategy.
  */
-BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
+TEST_CASE_METHOD(
+    PreprocessImputerTestFixture, "PreprocessImputerListwiseDimensionTest",
+    "[PreprocessImputerMainTest][BindingTests]")
 {
   // Load synthetic dataset.
   arma::mat inputData;
@@ -118,7 +119,7 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
   size_t countNaN = 0;
 
   // Count number of unavailable entries in all dimensions.
-  for (size_t i = 0; i < inputSize; i++)
+  for (size_t i = 0; i < inputSize; ++i)
   {
     if (std::to_string(inputData(0, i)) == "nan" ||
         std::to_string(inputData(1, i)) == "nan" ||
@@ -139,15 +140,17 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerListwiseDimensionTest)
 
   // Now check that the output has desired dimensions.
   arma::mat outputData;
-  data::Load(CLI::GetParam<std::string>("output_file"), outputData);
-  BOOST_REQUIRE_EQUAL(outputData.n_cols + countNaN, inputSize);
-  BOOST_REQUIRE_EQUAL(outputData.n_rows, 3); // Input Dimension.
+  data::Load(IO::GetParam<std::string>("output_file"), outputData);
+  REQUIRE(outputData.n_cols + countNaN == inputSize);
+  REQUIRE(outputData.n_rows == 3); // Input Dimension.
 }
 
 /**
  * Check that invalid strategy can't be specified.
  */
-BOOST_AUTO_TEST_CASE(PreprocessImputerStrategyTest)
+TEST_CASE_METHOD(
+    PreprocessImputerTestFixture, "PreprocessImputerStrategyTest",
+    "[PreprocessImputerMainTest][BindingTests]")
 {
   // Load synthetic dataset.
   arma::mat inputData;
@@ -159,8 +162,6 @@ BOOST_AUTO_TEST_CASE(PreprocessImputerStrategyTest)
   SetInputParam("strategy", (std::string) "notmean"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  BOOST_REQUIRE_THROW(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
-
-BOOST_AUTO_TEST_SUITE_END();

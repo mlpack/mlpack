@@ -1,5 +1,5 @@
 /**
- * @file best_binary_numeric_split_impl.hpl
+ * @file methods/decision_tree/best_binary_numeric_split_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of strategy that finds the best binary numeric split.

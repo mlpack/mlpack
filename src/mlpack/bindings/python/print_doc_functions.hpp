@@ -1,5 +1,5 @@
 /**
- * @file print_doc_functions.hpp
+ * @file bindings/python/print_doc_functions.hpp
  * @author Ryan Curtin
  *
  * This file contains functions useful for printing documentation strings
@@ -30,6 +30,11 @@ inline std::string GetBindingName(const std::string& bindingName);
 inline std::string PrintImport(const std::string& bindingName);
 
 /**
+ * Print any special information about input options.
+ */
+inline std::string PrintInputOptionInfo();
+
+/**
  * Print any special information about output options.
  */
 inline std::string PrintOutputOptionInfo();
@@ -54,7 +59,7 @@ inline std::string PrintInputOptions();
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
- * not exist in CLI.  For a parameter 'x' with value '5', this will print
+ * not exist in IO.  For a parameter 'x' with value '5', this will print
  * something like x=5.
  */
 template<typename T, typename... Args>

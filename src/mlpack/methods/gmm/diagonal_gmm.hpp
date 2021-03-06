@@ -1,6 +1,6 @@
 /**
  * @author Kim SangYeon
- * @file diagonal_gmm.hpp
+ * @file methods/gmm/diagonal_gmm.hpp
  *
  * Defines a Diagonal Gaussian Mixture model and estimates the parameters
  * of the model.
@@ -303,7 +303,7 @@ class DiagonalGMM
    * Serialize the DiagonalGMM.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /**

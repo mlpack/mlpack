@@ -1,5 +1,5 @@
 /**
- * @file delete_allocated_memory.hpp
+ * @file bindings/cli/delete_allocated_memory.hpp
  * @author Ryan Curtin
  *
  * If any memory has been allocated by the parameter, delete it.
@@ -20,7 +20,7 @@ namespace cli {
 
 template<typename T>
 void DeleteAllocatedMemoryImpl(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
 {
@@ -29,7 +29,7 @@ void DeleteAllocatedMemoryImpl(
 
 template<typename T>
 void DeleteAllocatedMemoryImpl(
-    const util::ParamData& /* d */,
+    util::ParamData& /* d */,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   // Do nothing.
@@ -37,7 +37,7 @@ void DeleteAllocatedMemoryImpl(
 
 template<typename T>
 void DeleteAllocatedMemoryImpl(
-    const util::ParamData& d,
+    util::ParamData& d,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
@@ -48,7 +48,7 @@ void DeleteAllocatedMemoryImpl(
 
 template<typename T>
 void DeleteAllocatedMemory(
-    const util::ParamData& d,
+    util::ParamData& d,
     const void* /* input */,
     void* /* output */)
 {

@@ -1,5 +1,5 @@
 /**
- * @file strip_type.hpp
+ * @file bindings/python/strip_type.hpp
  * @author Ryan Curtin
  *
  * Given a C++ typename that may have template parameters, return stripped and

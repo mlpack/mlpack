@@ -1,5 +1,5 @@
 /**
- * @file log.hpp
+ * @file core/util/log.hpp
  * @author Matthew Amidon
  *
  * Definition of the Log class.
@@ -49,9 +49,9 @@ namespace mlpack {
  *
  * Any messages sent to Log::Debug will not be shown when compiling in non-debug
  * mode.  Messages to Log::Info will only be shown when the --verbose flag is
- * given to the program (or rather, the CLI class).
+ * given to the program (or rather, the IO class).
  *
- * @see PrefixedOutStream, NullOutStream, CLI
+ * @see PrefixedOutStream, NullOutStream, IO
  */
 class Log
 {

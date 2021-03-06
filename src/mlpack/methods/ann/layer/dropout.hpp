@@ -1,5 +1,5 @@
 /**
- * @file dropout.hpp
+ * @file methods/ann/layer/dropout.hpp
  * @author Marcus Edel
  *
  * Definition of the Dropout class, which implements a regularizer that
@@ -39,6 +39,7 @@ namespace ann /** Artificial Neural Network. */ {
  *   journal = {CoRR},
  *   volume  = {abs/1207.0580},
  *   year    = {2012},
+ *   url     = {https://arxiv.org/abs/1207.0580}
  * }
  * @endcode
  *
@@ -59,6 +60,18 @@ class Dropout
    */
   Dropout(const double ratio = 0.5);
 
+  //! Copy Constructor
+  Dropout(const Dropout& layer);
+
+  //! Move Constructor
+  Dropout(const Dropout&&);
+
+  //! Copy assignment operator
+  Dropout& operator=(const Dropout& layer);
+
+  //! Move assignment operator
+  Dropout& operator=(Dropout&& layer);
+
   /**
    * Ordinary feed forward pass of the dropout layer.
    *
@@ -66,19 +79,19 @@ class Dropout
    * @param output Resulting output activation.
    */
   template<typename eT>
-  void Forward(const arma::Mat<eT>&& input, arma::Mat<eT>&& output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of the dropout layer.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>&& /* input */,
-                arma::Mat<eT>&& gy,
-                arma::Mat<eT>&& g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -109,7 +122,7 @@ class Dropout
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

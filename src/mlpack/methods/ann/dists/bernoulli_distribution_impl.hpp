@@ -1,5 +1,5 @@
 /**
- * @file bernoulli_distribution_impl.hpp
+ * @file methods/ann/dists/bernoulli_distribution_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the Bernoulli distribution class.
@@ -28,7 +28,7 @@ BernoulliDistribution<DataType>::BernoulliDistribution() :
 
 template<typename DataType>
 BernoulliDistribution<DataType>::BernoulliDistribution(
-    const DataType&& param,
+    const DataType& param,
     const bool applyLogistic,
     const double eps) :
     logits(param),
@@ -36,7 +36,9 @@ BernoulliDistribution<DataType>::BernoulliDistribution(
     eps(eps)
 {
   if (applyLogistic)
+  {
     LogisticFunction::Fn(logits, probability);
+  }
   else
   {
     probability = arma::mat(logits.memptr(), logits.n_rows,
@@ -50,7 +52,7 @@ DataType BernoulliDistribution<DataType>::Sample() const
   DataType sample = arma::randu<DataType>
       (probability.n_rows, probability.n_cols);
 
-  for (size_t i = 0; i < sample.n_elem; i++)
+  for (size_t i = 0; i < sample.n_elem; ++i)
       sample(i) = sample(i) < probability(i);
 
   return sample;
@@ -58,7 +60,7 @@ DataType BernoulliDistribution<DataType>::Sample() const
 
 template<typename DataType>
 double BernoulliDistribution<DataType>::LogProbability(
-    const DataType&& observation) const
+    const DataType& observation) const
 {
   return arma::accu(arma::log(probability + eps) % observation +
       arma::log(1 - probability + eps) % (1 - observation)) /
@@ -67,7 +69,7 @@ double BernoulliDistribution<DataType>::LogProbability(
 
 template<typename DataType>
 void BernoulliDistribution<DataType>::LogProbBackward(
-    const DataType&& observation, DataType&& output) const
+    const DataType& observation, DataType& output) const
 {
   if (!applyLogistic)
   {

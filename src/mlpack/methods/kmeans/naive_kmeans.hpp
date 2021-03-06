@@ -1,5 +1,5 @@
 /**
- * @file naive_kmeans.hpp
+ * @file methods/kmeans/naive_kmeans.hpp
  * @author Ryan Curtin
  *
  * An implementation of a naively-implemented step of the Lloyd algorithm for

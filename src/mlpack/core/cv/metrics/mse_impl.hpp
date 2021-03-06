@@ -1,5 +1,5 @@
 /**
- * @file mse_impl.hpp
+ * @file core/cv/metrics/mse_impl.hpp
  * @author Kirill Mishchenko
  *
  * The implementation of the class MSE.

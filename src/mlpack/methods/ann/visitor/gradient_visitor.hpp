@@ -1,5 +1,5 @@
 /**
- * @file gradient_visitor.hpp
+ * @file methods/ann/visitor/gradient_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Gradient() function for different
@@ -30,10 +30,12 @@ class GradientVisitor : public boost::static_visitor<void>
  public:
   //! Executes the Gradient() method of the given module using the input and
   //! delta parameter.
-  GradientVisitor(arma::mat&& input, arma::mat&& delta);
+  GradientVisitor(const arma::mat& input, const arma::mat& delta);
 
   //! Executes the Gradient() method for the layer with the specified index.
-  GradientVisitor(arma::mat&& input, arma::mat&& delta, const size_t index);
+  GradientVisitor(const arma::mat& input,
+                  const arma::mat& delta,
+                  const size_t index);
 
   //! Executes the Gradient() method.
   template<typename LayerType>
@@ -43,10 +45,10 @@ class GradientVisitor : public boost::static_visitor<void>
 
  private:
   //! The input set.
-  arma::mat&& input;
+  const arma::mat& input;
 
   //! The delta parameter.
-  arma::mat&& delta;
+  const arma::mat& delta;
 
   //! Index of the layer to run.
   size_t index;

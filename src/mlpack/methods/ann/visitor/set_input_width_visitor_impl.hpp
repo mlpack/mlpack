@@ -1,5 +1,5 @@
 /**
- * @file set_input_width_visitor_impl.hpp
+ * @file methods/ann/visitor/set_input_width_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the InputWidth() function layer abstraction.

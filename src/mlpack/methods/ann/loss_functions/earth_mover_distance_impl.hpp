@@ -1,5 +1,5 @@
 /**
- * @file earth_mover_distance_impl.hpp
+ * @file methods/ann/loss_functions/earth_mover_distance_impl.hpp
  * @author Shikhar Jaiswal
  *
  * Implementation of the earth mover distance function.
@@ -25,28 +25,30 @@ EarthMoverDistance<InputDataType, OutputDataType>::EarthMoverDistance()
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-double EarthMoverDistance<InputDataType, OutputDataType>::Forward(
-    const InputType&& input, const TargetType&& target)
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+EarthMoverDistance<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
-  return -arma::accu(target % input);
+  return -arma::accu(target % prediction);
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void EarthMoverDistance<InputDataType, OutputDataType>::Backward(
-    const InputType&& /* input */,
-    const TargetType&& target,
-    OutputType&& output)
+    const PredictionType& /* prediction */,
+    const TargetType& target,
+    LossType& loss)
 {
-  output = -target;
+  loss = -target;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void EarthMoverDistance<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   /* Nothing to do here */
 }

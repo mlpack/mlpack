@@ -1,5 +1,5 @@
 /**
- * @file ub_tree_test.cpp
+ * @file tests/ub_tree_test.cpp
  * @author Mikhail Lozhnikov
  *
  * Tests for the UB tree.
@@ -14,7 +14,7 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::math;
@@ -23,9 +23,7 @@ using namespace mlpack::metric;
 using namespace mlpack::bound;
 using namespace mlpack::neighbor;
 
-BOOST_AUTO_TEST_SUITE(UBTreeTest);
-
-BOOST_AUTO_TEST_CASE(AddressTest)
+TEST_CASE("AddressTest", "[UBTreeTest]")
 {
   typedef double ElemType;
   typedef typename std::conditional<sizeof(ElemType) * CHAR_BIT <= 32,
@@ -39,13 +37,13 @@ BOOST_AUTO_TEST_CASE(AddressTest)
   arma::Col<ElemType> point(dataset.n_rows);
 
   // Ensure that this is one-to-one transform.
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     addr::PointToAddress(address, dataset.col(i));
     addr::AddressToPoint(point, address);
 
-    for (size_t k = 0; k < dataset.n_rows; k++)
-      BOOST_REQUIRE_CLOSE(dataset(k, i), point[k], 1e-13);
+    for (size_t k = 0; k < dataset.n_rows; ++k)
+      REQUIRE(dataset(k, i) == Approx(point[k]).epsilon(1e-15));
   }
 }
 
@@ -69,7 +67,7 @@ void CheckSplit(const TreeType& tree)
   arma::Col<AddressElemType> address(tree.Bound().Dim());
 
   // Find the highest address of the left node.
-  for (size_t i = 0; i < tree.Left()->NumDescendants(); i++)
+  for (size_t i = 0; i < tree.Left()->NumDescendants(); ++i)
   {
     addr::PointToAddress(address,
         tree.Dataset().col(tree.Left()->Descendant(i)));
@@ -79,7 +77,7 @@ void CheckSplit(const TreeType& tree)
   }
 
   // Find the lowest address of the right node.
-  for (size_t i = 0; i < tree.Right()->NumDescendants(); i++)
+  for (size_t i = 0; i < tree.Right()->NumDescendants(); ++i)
   {
     addr::PointToAddress(address,
         tree.Dataset().col(tree.Right()->Descendant(i)));
@@ -89,13 +87,13 @@ void CheckSplit(const TreeType& tree)
   }
 
   // Addresses in the left node should be less than addresses in the right node.
-  BOOST_REQUIRE_LE(addr::CompareAddresses(hi, lo), 0);
+  REQUIRE(addr::CompareAddresses(hi, lo) <= 0);
 
   CheckSplit(*tree.Left());
   CheckSplit(*tree.Right());
 }
 
-BOOST_AUTO_TEST_CASE(UBTreeSplitTest)
+TEST_CASE("UBTreeSplitTest", "[UBTreeTest]")
 {
   typedef UBTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
   arma::mat dataset(8, 1000);
@@ -110,22 +108,22 @@ template<typename TreeType>
 void CheckBound(const TreeType& tree)
 {
   typedef typename TreeType::ElemType ElemType;
-  for (size_t i = 0; i < tree.NumDescendants(); i++)
+  for (size_t i = 0; i < tree.NumDescendants(); ++i)
   {
     arma::Col<ElemType> point = tree.Dataset().col(tree.Descendant(i));
 
     // Check that the point is contained in the bound.
-    BOOST_REQUIRE_EQUAL(true, tree.Bound().Contains(point));
+    REQUIRE(true == tree.Bound().Contains(point));
 
     const arma::Mat<ElemType>& loBound = tree.Bound().LoBound();
     const arma::Mat<ElemType>& hiBound = tree.Bound().HiBound();
 
     // Ensure that there is a hyperrectangle that contains the point.
     bool success = false;
-    for (size_t j = 0; j < tree.Bound().NumBounds(); j++)
+    for (size_t j = 0; j < tree.Bound().NumBounds(); ++j)
     {
       success = true;
-      for (size_t k = 0; k < loBound.n_rows; k++)
+      for (size_t k = 0; k < loBound.n_rows; ++k)
       {
         if (point[k] < loBound(k, j) - 1e-14 * std::fabs(loBound(k, j)) ||
             point[k] > hiBound(k, j) + 1e-14 * std::fabs(hiBound(k, j)))
@@ -138,7 +136,7 @@ void CheckBound(const TreeType& tree)
         break;
     }
 
-    BOOST_REQUIRE_EQUAL(success, true);
+    REQUIRE(success == true);
   }
 
   if (!tree.IsLeaf())
@@ -148,7 +146,7 @@ void CheckBound(const TreeType& tree)
   }
 }
 
-BOOST_AUTO_TEST_CASE(UBTreeBoundTest)
+TEST_CASE("UBTreeBoundTest", "[UBTreeTest]")
 {
   typedef UBTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
   arma::mat dataset(8, 1000);
@@ -173,12 +171,12 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
 
     CheckDistance<TreeType, MetricType>(tree, node);
 
-    for (size_t j = 0; j < tree.Dataset().n_cols; j++)
+    for (size_t j = 0; j < tree.Dataset().n_cols; ++j)
     {
       const arma::Col<ElemType>& point = tree.  Dataset().col(j);
       ElemType maxDist = 0;
       ElemType minDist = std::numeric_limits<ElemType>::max();
-      for (size_t i = 0; i < tree.NumDescendants(); i++)
+      for (size_t i = 0; i < tree.NumDescendants(); ++i)
       {
         ElemType dist = MetricType::Evaluate(
             tree.Dataset().col(tree.Descendant(i)),
@@ -190,16 +188,16 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
           minDist = dist;
       }
 
-      BOOST_REQUIRE_LE(tree.Bound().MinDistance(point), minDist *
+      REQUIRE(tree.Bound().MinDistance(point) <= minDist *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
-      BOOST_REQUIRE_LE(maxDist, tree.Bound().MaxDistance(point) *
+      REQUIRE(maxDist <= tree.Bound().MaxDistance(point) *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
 
       math::RangeType<ElemType> r = tree.Bound().RangeDistance(point);
 
-      BOOST_REQUIRE_LE(r.Lo(), minDist *
+      REQUIRE(r.Lo() <= minDist *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
-      BOOST_REQUIRE_LE(maxDist, r.Hi() *
+      REQUIRE(maxDist <= r.Hi() *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
     }
 
@@ -215,8 +213,8 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
     {
       ElemType maxDist = 0;
       ElemType minDist = std::numeric_limits<ElemType>::max();
-      for (size_t i = 0; i < tree.NumDescendants(); i++)
-        for (size_t j = 0; j < node->NumDescendants(); j++)
+      for (size_t i = 0; i < tree.NumDescendants(); ++i)
+        for (size_t j = 0; j < node->NumDescendants(); ++j)
         {
           ElemType dist = MetricType::Evaluate(
               tree.Dataset().col(tree.Descendant(i)),
@@ -228,16 +226,16 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
             minDist = dist;
         }
 
-      BOOST_REQUIRE_LE(tree.Bound().MinDistance(node->Bound()), minDist *
+      REQUIRE(tree.Bound().MinDistance(node->Bound()) <= minDist *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
-      BOOST_REQUIRE_LE(maxDist, tree.Bound().MaxDistance(node->Bound()) *
+      REQUIRE(maxDist <= tree.Bound().MaxDistance(node->Bound()) *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
 
       math::RangeType<ElemType> r = tree.Bound().RangeDistance(node->Bound());
 
-      BOOST_REQUIRE_LE(r.Lo(), minDist *
+      REQUIRE(r.Lo() <= minDist *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
-      BOOST_REQUIRE_LE(maxDist, r.Hi() *
+      REQUIRE(maxDist <= r.Hi() *
           (1.0 + 10 * std::numeric_limits<ElemType>::epsilon()));
     }
     if (!node->IsLeaf())
@@ -248,7 +246,7 @@ void CheckDistance(TreeType& tree, TreeType* node = NULL)
   }
 }
 
-BOOST_AUTO_TEST_CASE(UBTreeDistanceTest)
+TEST_CASE("UBTreeDistanceTest", "[UBTreeTest]")
 {
   typedef UBTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
   arma::mat dataset(8, 200);
@@ -260,7 +258,7 @@ BOOST_AUTO_TEST_CASE(UBTreeDistanceTest)
 }
 
 
-BOOST_AUTO_TEST_CASE(UBTreeTest)
+TEST_CASE("UBTreeTest", "[UBTreeTest]")
 {
   typedef UBTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
 
@@ -289,21 +287,21 @@ BOOST_AUTO_TEST_CASE(UBTreeTest)
     const arma::mat& treeset = root.Dataset();
 
     // Ensure the size of the tree is correct.
-    BOOST_REQUIRE_EQUAL(root.NumDescendants(), size);
+    REQUIRE(root.NumDescendants() == size);
 
     // Check the forward and backward mappings for correctness.
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; ++i)
     {
-      for (size_t j = 0; j < dimensions; j++)
+      for (size_t j = 0; j < dimensions; ++j)
       {
-        BOOST_REQUIRE_EQUAL(treeset(j, i), dataset(j, newToOld[i]));
-        BOOST_REQUIRE_EQUAL(treeset(j, oldToNew[i]), dataset(j, i));
+        REQUIRE(treeset(j, i) == dataset(j, newToOld[i]));
+        REQUIRE(treeset(j, oldToNew[i]) == dataset(j, i));
       }
     }
   }
 }
 
-BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
+TEST_CASE("SingleUBTreeTraverserTest", "[UBTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
@@ -323,14 +321,14 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
-    BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
+    REQUIRE(neighbors1[i] == neighbors2[i]);
+    REQUIRE(distances1[i] == distances2[i]);
   }
 }
 
-BOOST_AUTO_TEST_CASE(DualTreeTraverserTest)
+TEST_CASE("DualUBTreeTraverserTest", "[UBTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
@@ -350,11 +348,9 @@ BOOST_AUTO_TEST_CASE(DualTreeTraverserTest)
 
   knn2.Search(5, neighbors2, distances2);
 
-  for (size_t i = 0; i < neighbors1.size(); i++)
+  for (size_t i = 0; i < neighbors1.size(); ++i)
   {
-    BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
-    BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
+    REQUIRE(neighbors1[i] == neighbors2[i]);
+    REQUIRE(distances1[i] == distances2[i]);
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

@@ -1,5 +1,5 @@
 /**
- * @file load_arff.hpp
+ * @file core/data/load_arff.hpp
  * @author Ryan Curtin
  *
  * Load an ARFF dataset.

@@ -1,5 +1,5 @@
 /**
- * @file score_impl.hpp
+ * @file methods/ann/augmented/tasks/score_impl.hpp
  * @author Konstantin Sidorov
  *
  * Implementation of scoring functions
@@ -38,7 +38,7 @@ double SequencePrecision(arma::field<MatType> trueOutputs,
     throw std::invalid_argument(oss.str());
   }
 
-  for (size_t i = 0; i < testSize; i++)
+  for (size_t i = 0; i < testSize; ++i)
   {
     arma::vec delta = arma::vectorise(arma::abs(
       trueOutputs.at(i) - predOutputs.at(i)));

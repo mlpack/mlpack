@@ -1,5 +1,5 @@
 /**
- * @file param_data.hpp
+ * @file core/util/param_data.hpp
  * @author Ryan Curtin
  *
  * This defines the structure that holds information for each command-line
@@ -44,7 +44,7 @@ namespace util {
  * handled elsewhere.  A ParamData struct is only useful in order to get
  * "static" information about a parameter.  Note that some parameter types have
  * internal types but also different types that are used by
- * boost::program_options (specifically, matrix and model types map to strings).
+ * CLI11 (specifically, matrix and model types map to strings).
  *
  * This structure is somewhat unwieldy and is likely to be refactored at some
  * point in the future, but for now it does the job fine.

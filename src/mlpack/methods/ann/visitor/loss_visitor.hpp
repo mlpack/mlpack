@@ -1,5 +1,5 @@
 /**
- * @file loss_visitor.hpp
+ * @file methods/ann/visitor/loss_visitor.hpp
  * @author Atharva Khandait
  *
  * This file provides an abstraction for the Loss() function for different

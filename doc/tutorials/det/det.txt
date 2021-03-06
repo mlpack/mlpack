@@ -344,9 +344,9 @@ For further documentation on the DTree class, consult the
 The usual regularized error \f$R_\alpha(t)\f$ of a node \f$t\f$ is given by:
 \f$R_\alpha(t) = R(t) + \alpha |\tilde{t}|\f$ where
 
-\f[
+\f{
 R(t) = -\frac{|t|^2}{N^2 V(t)}.
-\f]
+\f}
 
 \f$V(t)\f$ is the volume of the node \f$t\f$ and \f$\tilde{t}\f$ is
 the set of leaves in the subtree rooted at \f$t\f$.

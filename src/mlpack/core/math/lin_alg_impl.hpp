@@ -1,5 +1,5 @@
 /**
- * @file lin_alg_impl.hpp
+ * @file core/math/lin_alg_impl.hpp
  * @author Stephen Tu
  *
  * mlpack is free software; you may redistribute it and/or modify it under the

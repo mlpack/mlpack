@@ -1,5 +1,5 @@
 /**
- * @file network_init.hpp
+ * @file methods/ann/init_rules/network_init.hpp
  * @author Marcus Edel
  *
  * Intialization of a given network with a given initialization rule
@@ -51,9 +51,11 @@ class NetworkInitialization
    *
    * @param network Network that should be initialized.
    * @param parameter The network parameter.
+   * @param parameterOffset Offset for network paramater, default 0.
    */
+  template <typename eT>
   void Initialize(const std::vector<LayerTypes<CustomLayers...> >& network,
-                  arma::mat& parameter, size_t parameterOffset = 0)
+                  arma::Mat<eT>& parameter, size_t parameterOffset = 0)
   {
     // Determine the number of parameter/weights of the given network.
     if (parameter.is_empty())
@@ -73,7 +75,7 @@ class NetworkInitialization
         // initialization rule.
         const size_t weight = boost::apply_visitor(weightSizeVisitor,
             network[i]);
-        arma::mat tmp = arma::mat(parameter.memptr() + offset,
+        arma::Mat<eT> tmp = arma::mat(parameter.memptr() + offset,
             weight, 1, false, false);
         initializeRule.Initialize(tmp, tmp.n_elem, 1);
 
@@ -92,8 +94,8 @@ class NetworkInitialization
     // hold various other modules.
     for (size_t i = 0, offset = parameterOffset; i < network.size(); ++i)
     {
-      offset += boost::apply_visitor(WeightSetVisitor(std::move(parameter),
-          offset), network[i]);
+      offset += boost::apply_visitor(WeightSetVisitor(parameter, offset),
+          network[i]);
 
       boost::apply_visitor(resetVisitor, network[i]);
     }

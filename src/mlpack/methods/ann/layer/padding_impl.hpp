@@ -1,5 +1,5 @@
 /**
- * @file padding_impl.hpp
+ * @file methods/ann/layer/padding_impl.hpp
  * @author Saksham Bansal
  *
  * Implementation of the Padding class that adds padding to the incoming
@@ -38,7 +38,7 @@ Padding<InputDataType, OutputDataType>::Padding(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Padding<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   nRows = input.n_rows;
   nCols = input.n_cols;
@@ -51,9 +51,9 @@ void Padding<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Padding<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>&& /* input */,
-    const arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
   g = gy.submat(padWLeft, padHTop, padWLeft + nRows - 1,
       padHTop + nCols - 1);
@@ -62,12 +62,12 @@ void Padding<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Padding<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(padWLeft);
-  ar & BOOST_SERIALIZATION_NVP(padWRight);
-  ar & BOOST_SERIALIZATION_NVP(padHTop);
-  ar & BOOST_SERIALIZATION_NVP(padHBottom);
+  ar(CEREAL_NVP(padWLeft));
+  ar(CEREAL_NVP(padWRight));
+  ar(CEREAL_NVP(padHTop));
+  ar(CEREAL_NVP(padHBottom));
 }
 
 } // namespace ann

@@ -1,17 +1,11 @@
 clone_depth: 10
 
 environment:
-  BOOST_PROG_OPTION : "C:/projects/mlpack/\
-  boost_program_options-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
   BOOST_MATH : "C:/projects/mlpack/\
   boost_math_c99-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
   BOOST_RANDOM : "C:/projects/mlpack/\
   boost_random-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
-  BOOST_SERIALIZATION : "C:/projects/mlpack/\
-  boost_serialization-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
-  BOOST_UNIT_TEST : "C:/projects/mlpack/\
-  boost_unit_test_framework-vc140.1.60.0.0/lib/native/address-model-64/lib/*.*"
-  ARMADILLO_DOWNLOAD : "http://ftp.fau.de/macports/distfiles/armadillo/armadillo-8.400.0.tar.xz"
+  ARMADILLO_DOWNLOAD : "https://data.kurg.org/armadillo-8.400.0.tar.xz"
   ARMADILLO_LIBRARY : "C:/projects/mlpack/armadillo-8.400.0/\
   build/Debug/armadillo.lib"
   BLAS_LIBRARY : "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/\
@@ -22,50 +16,36 @@ environment:
   JENKINS_DOC : "C:/projects/mlpack/dist/win-installer/jenkinsdoc.zip"
   GIT_VERSION_FILE : "C:/projects/mlpack/src/mlpack/core/util/gitversion.hpp"
   matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      VSVER: Visual Studio 14 2015 Win64
-      MSBUILD: C:\Program Files (x86)\MSBuild\14.0\bin\MSBuild.exe
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      VSVER: Visual Studio 15 2017 Win64
-      MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe
-# Currently, the VS2019 build seems to always time out.  This seems to be an
-# AppVeyor issue.
-#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-#      VSVER: Visual Studio 16 2019
-#      MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      VSVER: Visual Studio 16 2019
+      MSBUILD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
 
+# We have removed the VS studio 15 2017 build since it is not possible to complete
+# or finish the build due to the `compiler out of heap space issues`.
+# Therefore, in the meanwhile, we are only doing the installation for VS 16 2019.
 
 configuration: Release
 
-os: Visual Studio 2015
+os: Visual Studio 2019
 
 install:
   - ps: nuget install boost -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: >
-      nuget install boost_unit_test_framework-vc140
-      -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
-  - ps: >
-      nuget install boost_program_options-vc140
-      -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
-  - ps: >
       nuget install boost_random-vc140
-      -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
-  - ps: >
-      nuget install boost_serialization-vc140
       -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
   - ps: >
       nuget install boost_math_c99-vc140
       -o "${env:APPVEYOR_BUILD_FOLDER}" -Version 1.60.0
+  - ps: >
+      nuget install unofficial-flayan-cereal
+      -o "${env:APPVEYOR_BUILD_FOLDER}"
   - ps: nuget install OpenBLAS -o "${env:APPVEYOR_BUILD_FOLDER}"
   - set path=C:\Program Files (x86)\WiX Toolset v3.11\bin;%path%
 
 build_script:
   - mkdir boost_libs
-  - ps: cp ${env:BOOST_PROG_OPTION} C:\projects\mlpack\boost_libs\
   - ps: cp ${env:BOOST_MATH} C:\projects\mlpack\boost_libs\
   - ps: cp ${env:BOOST_RANDOM} C:\projects\mlpack\boost_libs\
-  - ps: cp ${env:BOOST_SERIALIZATION} C:\projects\mlpack\boost_libs\
-  - ps: cp ${env:BOOST_UNIT_TEST} C:\projects\mlpack\boost_libs\
   - echo TEST_ARMA is %ARMADILLO_DOWNLOAD%
   - >
     appveyor DownloadFile %ARMADILLO_DOWNLOAD%
@@ -85,21 +65,24 @@ build_script:
   - cd C:\projects\mlpack && mkdir build && cd build
   - >
     cmake -G "%VSVER%"
-    -DBLAS_LIBRARY:FILEPATH=%BLAS_LIBRARY%
-    -DLAPACK_LIBRARY:FILEPATH=%BLAS_LIBRARY%
+    -DBLAS_LIBRARIES:FILEPATH=%BLAS_LIBRARY%
+    -DLAPACK_LIBRARIES:FILEPATH=%BLAS_LIBRARY%
     -DARMADILLO_INCLUDE_DIR="C:/projects/mlpack/armadillo-8.400.0/include"
     -DARMADILLO_LIBRARY:FILEPATH=%ARMADILLO_LIBRARY%
+    -DCEREAL_INCLUDE_DIR="C:/projects/mlpack/unofficial-flayan-cereal.1.2.2/build/native/include"
     -DBOOST_INCLUDEDIR:PATH=%BOOST_INCLUDE%
-    -DBOOST_LIBRARYDIR:PATH="C:/projects/mlpack/boost_libs"
     -DDEBUG=OFF
     -DPROFILE=OFF
     -DBUILD_PYTHON_BINDINGS=OFF
+    -DBUILD_GO_BINDINGS=OFF
+    -DBUILD_R_BINDINGS=OFF
+    -DBUILD_TESTS=OFF
     -DCMAKE_BUILD_TYPE=Release ..
   - >
     "%MSBUILD%" "C:\projects\mlpack\build\mlpack.sln"
     /m /verbosity:minimal /nologo /p:BuildInParallel=true
     /p:Configuration=Release;Platform=x64
-  
+
   # Zip Artifacts.
   - >
     7z a mlpack-windows-no-libs.zip
@@ -108,7 +91,7 @@ build_script:
     7z a mlpack-windows.zip
     "%APPVEYOR_BUILD_FOLDER%\build\Release\*.*"
     "%APPVEYOR_BUILD_FOLDER%/OpenBLAS.0.2.14.1/lib/native/lib/x64/*.*"
-  
+
   # Pulling documentation for the installer.
   - ps: >
       try{(new-object net.webclient).DownloadFile(${env:JENKINS_DOC_DOWNLOAD},
@@ -119,7 +102,7 @@ build_script:
       [System.IO.Compression.ZipFile]::ExtractToDirectory(${env:JENKINS_DOC},
       'C:\projects\mlpack\dist\win-installer\staging\doc')}
       catch{Write-Output "Unable to add doc to installer, skipping!"}
-  
+
   # Preparing installer staging.
   - cd C:\projects\mlpack\dist\win-installer\staging && mkdir lib
   - ps: >
@@ -138,9 +121,6 @@ build_script:
       cp C:\projects\mlpack\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll
       C:\projects\mlpack\dist\win-installer\staging\
   - ps: >
-      cp C:\projects\mlpack\boost_libs\boost_unit_test_framework-vc*.dll
-      C:\projects\mlpack\dist\win-installer\staging\
-  - ps: >
       cp C:\projects\mlpack\build\include\mlpack
       C:\projects\mlpack\dist\win-installer\staging -recurse
   - ps: >
@@ -149,7 +129,7 @@ build_script:
   - ps: >
       cp C:\projects\mlpack\src\mlpack\tests\data\german.csv
       C:\projects\mlpack\dist\win-installer\staging\examples\sample-ml-app\sample-ml-app\data\
-  
+
   # Checking current gitversion or mlpack version.
   - ps: >
       $ver = (Get-Content
@@ -221,7 +201,7 @@ build_script:
 artifacts:
   - path: 'build\*.zip'
     name: mlpack-windows-zip
-  
+
   - path: 'dist\win-installer\mlpack-win-installer\bin\x64\Release\*.msi'
     name: mlpack-windows-installer
 
@@ -237,20 +217,3 @@ cache:
   - packages -> **\packages.config
   - armadillo.tar.xz -> appveyor.yaml
 
-test_script:
-  # Copy all DLLs into the right place before running the test.
-  - ps: cp C:\projects\mlpack\boost_libs\*.* C:\projects\mlpack\build\
-  - ps: >
-      cp C:\projects\mlpack\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.*
-      C:\projects\mlpack\build\
-  - cd "%APPVEYOR_BUILD_FOLDER%/build/"
-  - >
-    Release\mlpack_test.exe
-    --report_level=detailed
-    --log_level=test_suite --log_format=XML > mlpack_test.xml & exit 0
-  # Attempt to upload results to AppVeyor.
-  - ps: >
-      $wc = New-Object 'System.Net.WebClient';
-      $wc.UploadFile(
-      "https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)",
-      (Resolve-Path .\mlpack_test.xml));

@@ -1,5 +1,5 @@
 /**
- * @file dcgan_test.cpp
+ * @file tests/dcgan_test.cpp
  * @author Shikhar Jaiswal
  *
  * Tests the DCGAN network.
@@ -20,8 +20,9 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -29,14 +30,12 @@ using namespace mlpack::math;
 using namespace mlpack::regression;
 using namespace std::placeholders;
 
-BOOST_AUTO_TEST_SUITE(DCGANNetworkTest);
-
 /*
  * Tests the DCGAN implementation on the MNIST dataset.
  * It's not viable to train on bigger parameters due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
  */
-BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
+TEST_CASE("DCGANMNISTTest", "[DCGANNetworkTest]")
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 5;
@@ -75,7 +74,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
             << trainData.n_cols << ")" << std::endl;
   Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
-  // Create the Discriminator network
+  // Create the Discriminator network.
   FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Convolution<> >(1, dNumKernels, 4, 4, 2, 2, 1, 1, 28, 28);
   discriminator.Add<LeakyReLU<> >(0.2);
@@ -91,52 +90,52 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   discriminator.Add<Convolution<> >(8 * dNumKernels, 1, 4, 4, 1, 1,
       1, 1, 2, 2);
 
-  // Create the Generator network
+  // Create the Generator network.
   FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<TransposedConvolution<> >(noiseDim, 8 * dNumKernels, 2, 2,
-      1, 1, 1, 1, 1, 1);
+      1, 1, 0, 0, 1, 1, 2, 2);
   generator.Add<BatchNorm<> >(1024);
   generator.Add<ReLULayer<> >();
   generator.Add<TransposedConvolution<> >(8 * dNumKernels, 4 * dNumKernels,
-      2, 2, 1, 1, 0, 0, 2, 2);
+      2, 2, 1, 1, 0, 0, 2, 2, 3, 3);
   generator.Add<BatchNorm<> >(1152);
   generator.Add<ReLULayer<> >();
   generator.Add<TransposedConvolution<> >(4 * dNumKernels, 2 * dNumKernels,
-      5, 5, 2, 2, 1, 1, 3, 3);
+      5, 5, 2, 2, 1, 1, 3, 3, 7, 7);
   generator.Add<BatchNorm<> >(3136);
   generator.Add<ReLULayer<> >();
-  generator.Add<TransposedConvolution<> >(2 * dNumKernels, dNumKernels, 8, 8,
-      1, 1, 1, 1, 7, 7);
+  generator.Add<TransposedConvolution<> >(2 * dNumKernels, dNumKernels, 4, 4,
+      2, 2, 1, 1, 7, 7, 14, 14);
   generator.Add<BatchNorm<> >(6272);
   generator.Add<ReLULayer<> >();
-  generator.Add<TransposedConvolution<> >(dNumKernels, 1, 15, 15, 1, 1, 1, 1,
-      14, 14);
+  generator.Add<TransposedConvolution<> >(dNumKernels, 1, 4, 4, 2, 2, 1, 1,
+      14, 14, 28, 28);
   generator.Add<TanHLayer<> >();
 
-  // Create DCGAN
+  // Create DCGAN.
   GaussianInitialization gaussian(0, 1);
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
   GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
-      std::function<double()>, DCGAN> dcgan(trainData, generator, discriminator,
-      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      std::function<double()>, DCGAN> dcgan(generator, discriminator, gaussian,
+      noiseFunction, noiseDim, batchSize, generatorUpdateStep,
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  double objVal = dcgan.Train(optimizer);
+  double objVal = dcgan.Train(trainData, optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 
-  // Generate samples
+  // Generate samples.
   Log::Info << "Sampling..." << std::endl;
-  arma::mat noise(noiseDim, 1);
+  arma::mat noise(noiseDim, batchSize);
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
 
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
@@ -156,6 +155,38 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   }
 
   Log::Info << "Output generated!" << std::endl;
+
+  // Check that Serialization is working correctly.
+  arma::mat orgPredictions;
+  dcgan.Predict(noise, orgPredictions);
+
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
+      std::function<double()>, DCGAN> dcganJson(generator, discriminator,
+      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      discriminatorPreTrain, multiplier);
+
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
+      std::function<double()>, DCGAN> dcganXml(generator, discriminator,
+      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      discriminatorPreTrain, multiplier);
+
+  GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
+      std::function<double()>, DCGAN> dcganBinary(generator, discriminator,
+      gaussian, noiseFunction, noiseDim, batchSize, generatorUpdateStep,
+      discriminatorPreTrain, multiplier);
+
+  SerializeObjectAll(dcgan, dcganXml, dcganJson, dcganBinary);
+
+  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
+  dcgan.Predict(noise, predictions);
+  dcganXml.Predict(noise, xmlPredictions);
+  dcganJson.Predict(noise, jsonPredictions);
+  dcganBinary.Predict(noise, binaryPredictions);
+
+  CheckMatrices(orgPredictions, predictions);
+  CheckMatrices(orgPredictions, xmlPredictions);
+  CheckMatrices(orgPredictions, jsonPredictions);
+  CheckMatrices(orgPredictions, binaryPredictions);
 }
 
 
@@ -163,7 +194,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
  * Tests the DCGAN implementation with minibatch layer on the MNIST dataset.
  * It's not viable to train on bigger parameters due to time constraints.
 
-BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
+TEST_CASE("DCGANMNISTTest", "[DCGANNetworkTest]")
 {
   size_t dNumKernels = 32;
   size_t discriminatorPreTrain = 5;
@@ -251,7 +282,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   double objVal = dcgan.Train(optimizer);
 
   // Test that objective value returned by GAN::Train() is finite.
-  BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+  REQUIRE(std::isfinite(objVal) == true);
 
   // Generate samples
   Log::Info << "Sampling..." << std::endl;
@@ -259,7 +290,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
 
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
@@ -317,7 +348,7 @@ BOOST_AUTO_TEST_CASE(DCGANMNISTTest)
  * It's currently not possible to run this every time due to time constraints.
  * Please refer mlpack/models repository for the tutorial.
 
-BOOST_AUTO_TEST_CASE(DCGANCelebATest)
+TEST_CASE("DCGANCelebATest", "[DCGANNetworkTest]")
 {
   size_t dNumKernels = 64;
   size_t discriminatorPreTrain = 300;
@@ -357,7 +388,7 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
             << trainData.n_cols << ")" << std::endl;
   Log::Info << trainData.n_rows << "--------" << trainData.n_cols << std::endl;
 
-  // Create the Discriminator network
+  // Create the Discriminator network.
   FFN<SigmoidCrossEntropyError<> > discriminator;
   discriminator.Add<Convolution<> >(3, dNumKernels, 4, 4, 2, 2, 1, 1, 64, 64);
   discriminator.Add<LeakyReLU<> >(0.2);
@@ -373,7 +404,7 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
   discriminator.Add<Convolution<> >(8 * dNumKernels, 1, 4, 4, 1, 1,
       0, 0, 4, 4);
 
-  // Create the Generator network
+  // Create the Generator network.
   FFN<SigmoidCrossEntropyError<> > generator;
   generator.Add<TransposedConvolution<> >(noiseDim, 8 * dNumKernels, 4, 4,
       1, 1, 2, 2, 1, 1);
@@ -395,7 +426,7 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
       32, 32);
   generator.Add<TanHLayer<> >();
 
-  // Create DCGAN
+  // Create DCGAN.
   GaussianInitialization gaussian(0, 1);
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
@@ -409,13 +440,13 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
   Log::Info << "Training..." << std::endl;
   dcgan.Train(optimizer);
 
-  // Generate samples
+  // Generate samples.
   Log::Info << "Sampling..." << std::endl;
   arma::mat noise(noiseDim, 1);
   size_t dim = std::sqrt(trainData.n_rows);
   arma::mat generatedData(2 * dim, dim * numSamples);
 
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     arma::mat samples;
     noise.imbue( [&]() { return noiseFunction(); } );
@@ -437,5 +468,3 @@ BOOST_AUTO_TEST_CASE(DCGANCelebATest)
   Log::Info << "Output generated!" << std::endl;
 }
 */
-
-BOOST_AUTO_TEST_SUITE_END();

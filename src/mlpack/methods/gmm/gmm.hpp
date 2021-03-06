@@ -1,7 +1,7 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Michael Fox
- * @file gmm.hpp
+ * @file methods/gmm/gmm.hpp
  *
  * Defines a Gaussian Mixture model and estimates the parameters of the model.
  *
@@ -235,6 +235,7 @@ class GMM
    *      the greatest log-likelihood will be selected.
    * @param useExistingModel If true, the existing model is used as an initial
    *      model for the estimation.
+   * @param fitter The fitter to use, optional.
    * @return The log-likelihood of the best fit.
    */
   template<typename FittingType = EMFit<>>
@@ -265,6 +266,7 @@ class GMM
    *     the greatest log-likelihood will be selected.
    * @param useExistingModel If true, the existing model is used as an initial
    *     model for the estimation.
+   * @param fitter The fitter to use, optional.
    * @return The log-likelihood of the best fit.
    */
   template<typename FittingType = EMFit<>>
@@ -297,7 +299,7 @@ class GMM
    * Serialize the GMM.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /**
@@ -322,4 +324,3 @@ class GMM
 #include "gmm_impl.hpp"
 
 #endif
-

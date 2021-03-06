@@ -1,5 +1,5 @@
 /**
- * @file kernel_pca_main.cpp
+ * @file methods/kernel_pca/kernel_pca_main.cpp
  * @author Ajinkya Kale <kaleajinkya@gmail.com>
  *
  * Executable for Kernel PCA.
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/kernels/kernel_traits.hpp>
@@ -40,12 +40,17 @@ using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
-PROGRAM_INFO("Kernel Principal Components Analysis",
-    // Short description.
+// Program Name.
+BINDING_NAME("Kernel Principal Components Analysis");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of Kernel Principal Components Analysis (KPCA).  This "
     "can be used to perform nonlinear dimensionality reduction or preprocessing"
-    " on a given dataset.",
-    // Long description.
+    " on a given dataset.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs Kernel Principal Components Analysis (KPCA) on the "
     "specified dataset with the specified kernel.  This will transform the "
     "data onto the kernel principal components, and optionally reduce the "
@@ -54,13 +59,6 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     "\n\n"
     "For the case where a linear kernel is used, this reduces to regular "
     "PCA."
-    "\n\n"
-    "For example, the following command will perform KPCA on the dataset " +
-    PRINT_DATASET("input") + " using the Gaussian kernel, and saving the "
-    "transformed data to " + PRINT_DATASET("transformed") + ": "
-    "\n\n" +
-    PRINT_CALL("kernel_pca", "input", "input", "kernel", "gaussian", "output",
-        "transformed") +
     "\n\n"
     "The kernels that are supported are listed below:"
     "\n\n"
@@ -91,20 +89,31 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     PRINT_PARAM_STRING("offset") + ", or " + PRINT_PARAM_STRING("degree") +
     " (or a combination of those parameters)."
     "\n\n"
-    "Optionally, the Nystr\u00F6m method (\"Using the Nystroem method to speed "
+    "Optionally, the Nystroem method (\"Using the Nystroem method to speed "
     "up kernel machines\", 2001) can be used to calculate the kernel matrix by "
     "specifying the " + PRINT_PARAM_STRING("nystroem_method") + " parameter. "
     "This approach works by using a subset of the data as basis to reconstruct "
     "the kernel matrix; to specify the sampling scheme, the " +
     PRINT_PARAM_STRING("sampling") + " parameter is used.  The "
-    "sampling scheme for the Nystr\u00F6m method can be chosen from the "
-    "following list: 'kmeans', 'random', 'ordered'.",
-    SEE_ALSO("Kernel principal component analysis on Wikipedia",
-        "https://en.wikipedia.org/wiki/Kernel_principal_component_analysis"),
-    SEE_ALSO("Kernel Principal Component Analysis (pdf)",
-        "http://pca.narod.ru/scholkopf_kernel.pdf"),
-    SEE_ALSO("mlpack::kpca::KernelPCA class documentation",
-        "@doxygen/classmlpack_1_1kpca_1_1KernelPCA.html"));
+    "sampling scheme for the Nystroem method can be chosen from the "
+    "following list: 'kmeans', 'random', 'ordered'.");
+
+// Example.
+BINDING_EXAMPLE(
+    "For example, the following command will perform KPCA on the dataset " +
+    PRINT_DATASET("input") + " using the Gaussian kernel, and saving the "
+    "transformed data to " + PRINT_DATASET("transformed") + ": "
+    "\n\n" +
+    PRINT_CALL("kernel_pca", "input", "input", "kernel", "gaussian", "output",
+        "transformed"));
+
+// See also...
+BINDING_SEE_ALSO("Kernel principal component analysis on Wikipedia",
+        "https://en.wikipedia.org/wiki/Kernel_principal_component_analysis");
+BINDING_SEE_ALSO("Kernel Principal Component Analysis (pdf)",
+        "http://pca.narod.ru/scholkopf_kernel.pdf");
+BINDING_SEE_ALSO("mlpack::kpca::KernelPCA class documentation",
+        "@doxygen/classmlpack_1_1kpca_1_1KernelPCA.html");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform KPCA on.", "i");
 PARAM_MATRIX_OUT("output", "Matrix to save modified dataset to.", "o");
@@ -180,13 +189,13 @@ static void mlpackMain()
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
   // Load input dataset.
-  mat dataset = std::move(CLI::GetParam<arma::mat>("input"));
+  mat dataset = std::move(IO::GetParam<arma::mat>("input"));
 
   // Get the new dimensionality, if it is necessary.
   size_t newDim = dataset.n_rows;
-  if (CLI::GetParam<int>("new_dimensionality") != 0)
+  if (IO::GetParam<int>("new_dimensionality") != 0)
   {
-    newDim = CLI::GetParam<int>("new_dimensionality");
+    newDim = IO::GetParam<int>("new_dimensionality");
 
     if (newDim > dataset.n_rows)
     {
@@ -200,11 +209,11 @@ static void mlpackMain()
   RequireParamInSet<string>("kernel", { "linear", "gaussian", "polynomial",
       "hyptan", "laplacian", "epanechnikov", "cosine" }, true,
       "unknown kernel type");
-  const string kernelType = CLI::GetParam<string>("kernel");
+  const string kernelType = IO::GetParam<string>("kernel");
 
-  const bool centerTransformedData = CLI::HasParam("center");
-  const bool nystroem = CLI::HasParam("nystroem_method");
-  const string sampling = CLI::GetParam<string>("sampling");
+  const bool centerTransformedData = IO::HasParam("center");
+  const bool nystroem = IO::HasParam("nystroem_method");
+  const string sampling = IO::GetParam<string>("sampling");
 
   if (kernelType == "linear")
   {
@@ -214,7 +223,7 @@ static void mlpackMain()
   }
   else if (kernelType == "gaussian")
   {
-    const double bandwidth = CLI::GetParam<double>("bandwidth");
+    const double bandwidth = IO::GetParam<double>("bandwidth");
 
     GaussianKernel kernel(bandwidth);
     RunKPCA<GaussianKernel>(dataset, centerTransformedData, nystroem, newDim,
@@ -222,8 +231,8 @@ static void mlpackMain()
   }
   else if (kernelType == "polynomial")
   {
-    const double degree = CLI::GetParam<double>("degree");
-    const double offset = CLI::GetParam<double>("offset");
+    const double degree = IO::GetParam<double>("degree");
+    const double offset = IO::GetParam<double>("offset");
 
     PolynomialKernel kernel(degree, offset);
     RunKPCA<PolynomialKernel>(dataset, centerTransformedData, nystroem,
@@ -231,8 +240,8 @@ static void mlpackMain()
   }
   else if (kernelType == "hyptan")
   {
-    const double scale = CLI::GetParam<double>("kernel_scale");
-    const double offset = CLI::GetParam<double>("offset");
+    const double scale = IO::GetParam<double>("kernel_scale");
+    const double offset = IO::GetParam<double>("offset");
 
     HyperbolicTangentKernel kernel(scale, offset);
     RunKPCA<HyperbolicTangentKernel>(dataset, centerTransformedData, nystroem,
@@ -240,7 +249,7 @@ static void mlpackMain()
   }
   else if (kernelType == "laplacian")
   {
-    const double bandwidth = CLI::GetParam<double>("bandwidth");
+    const double bandwidth = IO::GetParam<double>("bandwidth");
 
     LaplacianKernel kernel(bandwidth);
     RunKPCA<LaplacianKernel>(dataset, centerTransformedData, nystroem, newDim,
@@ -248,7 +257,7 @@ static void mlpackMain()
   }
   else if (kernelType == "epanechnikov")
   {
-    const double bandwidth = CLI::GetParam<double>("bandwidth");
+    const double bandwidth = IO::GetParam<double>("bandwidth");
 
     EpanechnikovKernel kernel(bandwidth);
     RunKPCA<EpanechnikovKernel>(dataset, centerTransformedData, nystroem,
@@ -262,6 +271,6 @@ static void mlpackMain()
   }
 
   // Save the output dataset.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = std::move(dataset);
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = std::move(dataset);
 }

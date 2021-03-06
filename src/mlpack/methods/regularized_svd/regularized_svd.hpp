@@ -1,5 +1,5 @@
 /**
- * @file regularized_svd.hpp
+ * @file methods/regularized_svd/regularized_svd.hpp
  * @author Siddharth Agrawal
  *
  * An implementation of Regularized SVD.

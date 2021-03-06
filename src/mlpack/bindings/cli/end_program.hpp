@@ -1,5 +1,5 @@
 /**
- * @file end_program.hpp
+ * @file bindings/cli/end_program.hpp
  * @author Ryan Curtin
  * @author Matthew Amidon
  *
@@ -13,7 +13,7 @@
 #ifndef MLPACK_BINDINGS_CLI_END_PROGRAM_HPP
 #define MLPACK_BINDINGS_CLI_END_PROGRAM_HPP
 
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 
 namespace mlpack {
 namespace bindings {
@@ -26,79 +26,69 @@ namespace cli {
 inline void EndProgram()
 {
   // Stop the CLI timers.
-  CLI::GetSingleton().timer.StopAllTimers();
+  IO::GetSingleton().timer.StopAllTimers();
 
   // Print any output.
-  const std::map<std::string, util::ParamData>& parameters = CLI::Parameters();
-  std::map<std::string, util::ParamData>::const_iterator it =
-      parameters.begin();
-  while (it != parameters.end())
+  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  for (auto& it : parameters)
   {
-    const util::ParamData& d = it->second;
+    util::ParamData& d = it.second;
     if (!d.input)
-      CLI::GetSingleton().functionMap[d.tname]["OutputParam"](d, NULL, NULL);
-
-    ++it;
+      IO::GetSingleton().functionMap[d.tname]["OutputParam"](d, NULL, NULL);
   }
 
-  if (CLI::HasParam("verbose"))
+  if (IO::HasParam("verbose"))
   {
     Log::Info << std::endl << "Execution parameters:" << std::endl;
 
     // Print out all the values.
-    it = parameters.begin();
-    while (it != parameters.end())
+    for (auto& it : parameters)
     {
       // Now, figure out what type it is, and print it.
       // We can handle strings, ints, bools, doubles.
-      const util::ParamData& data = it->second;
-      std::string boostName;
-      CLI::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
-          NULL, (void*) &boostName);
-      Log::Info << "  " << boostName << ": ";
+      util::ParamData& data = it.second;
+      std::string cliName;
+      IO::GetSingleton().functionMap[data.tname]["MapParameterName"](data,
+          NULL, (void*) &cliName);
+      Log::Info << "  " << cliName << ": ";
 
       std::string printableParam;
-      CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
+      IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"](data,
           NULL, (void*) &printableParam);
       Log::Info << printableParam << std::endl;
-
-      ++it;
     }
 
     Log::Info << "Program timers:" << std::endl;
-    for (auto it2 : CLI::GetSingleton().timer.GetAllTimers())
+    for (auto& it2 : IO::GetSingleton().timer.GetAllTimers())
     {
       Log::Info << "  " << it2.first << ": ";
-      CLI::GetSingleton().timer.PrintTimer(it2.first);
+      IO::GetSingleton().timer.PrintTimer(it2.first);
     }
   }
 
   // Lastly clean up any memory.  If we are holding any pointers, then we "own"
   // them.  But we may hold the same pointer twice, so we have to be careful to
   // not delete it multiple times.
-  std::unordered_map<void*, const util::ParamData*> memoryAddresses;
-  it = parameters.begin();
-  while (it != parameters.end())
+  std::unordered_map<void*, util::ParamData*> memoryAddresses;
+  for (auto& it : parameters)
   {
-    const util::ParamData& data = it->second;
+    util::ParamData& data = it.second;
 
     void* result;
-    CLI::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
+    IO::GetSingleton().functionMap[data.tname]["GetAllocatedMemory"](data,
         NULL, (void*) &result);
     if (result != NULL && memoryAddresses.count(result) == 0)
       memoryAddresses[result] = &data;
-
-    ++it;
   }
 
   // Now we have all the unique addresses that need to be deleted.
-  std::unordered_map<void*, const util::ParamData*>::const_iterator it2;
+  std::unordered_map<void*, util::ParamData*>::const_iterator it2;
   it2 = memoryAddresses.begin();
   while (it2 != memoryAddresses.end())
   {
-    const util::ParamData& data = *(it2->second);
+    util::ParamData& data = *(it2->second);
 
-    CLI::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
+    IO::GetSingleton().functionMap[data.tname]["DeleteAllocatedMemory"](data,
         NULL, NULL);
 
     ++it2;

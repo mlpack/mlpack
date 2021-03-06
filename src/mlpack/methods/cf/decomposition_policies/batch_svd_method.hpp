@@ -1,5 +1,5 @@
 /**
- * @file batch_svd_method.hpp
+ * @file methods/cf/decomposition_policies/batch_svd_method.hpp
  * @author Haritha Nair
  *
  * Implementation of the batch SVD method for use in Collaborative Filtering.
@@ -47,7 +47,7 @@ class BatchSVDPolicy
    * Apply Collaborative Filtering to the provided data set using the
    * batch SVD method.
    *
-   * @param data Data matrix: dense matrix (coordinate lists) 
+   * @param * (data) Data matrix: dense matrix (coordinate lists) 
    *    or sparse matrix(cleaned).
    * @param cleanedData item user table in form of sparse matrix.
    * @param rank Rank parameter for matrix factorization.
@@ -138,7 +138,7 @@ class BatchSVDPolicy
     // Temporarily store feature vector of queried users.
     arma::mat query(stretchedH.n_rows, users.n_elem);
     // Select feature vectors of queried users.
-    for (size_t i = 0; i < users.n_elem; i++)
+    for (size_t i = 0; i < users.n_elem; ++i)
       query.col(i) = stretchedH.col(users(i));
 
     NeighborSearchPolicy neighborSearch(stretchedH);
@@ -155,10 +155,10 @@ class BatchSVDPolicy
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(w);
-    ar & BOOST_SERIALIZATION_NVP(h);
+    ar(CEREAL_NVP(w));
+    ar(CEREAL_NVP(h));
   }
 
  private:

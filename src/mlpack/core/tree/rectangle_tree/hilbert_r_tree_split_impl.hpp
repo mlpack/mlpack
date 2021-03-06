@@ -1,5 +1,5 @@
 /**
- * @file hilbert_r_tree_split_impl.hpp
+ * @file core/tree/rectangle_tree/hilbert_r_tree_split_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of class (HilbertRTreeSplit) to split a RectangleTree.
@@ -76,7 +76,6 @@ void HilbertRTreeSplit<splitOrder>::SplitLeafNode(TreeType* tree,
   firstSibling = (lastSibling > splitOrder ? lastSibling - splitOrder : 0);
 
   assert(lastSibling - firstSibling <= splitOrder);
-  assert(firstSibling >= 0);
   assert(lastSibling < parent->NumChildren());
 
   // Redistribute the points among (splitOrder + 1) cooperating siblings evenly.
@@ -141,7 +140,6 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
                   lastSibling - splitOrder : 0);
 
   assert(lastSibling - firstSibling <= splitOrder);
-  assert(firstSibling >= 0);
   assert(lastSibling < parent->NumChildren());
 
   // Redistribute children among (splitOrder + 1) cooperating siblings evenly.
@@ -203,7 +201,6 @@ bool HilbertRTreeSplit<splitOrder>::FindCooperatingSiblings(
   }
 
   assert(lastSibling - firstSibling <= splitOrder - 1);
-  assert(firstSibling >= 0);
   assert(lastSibling < parent->NumChildren());
 
   return true;
@@ -218,7 +215,7 @@ RedistributeNodesEvenly(const TreeType *parent,
   size_t numChildren = 0;
   size_t numChildrenPerNode, numRestChildren;
 
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
     numChildren += parent->Child(i).NumChildren();
 
   numChildrenPerNode = numChildren / (lastSibling - firstSibling + 1);
@@ -228,9 +225,9 @@ RedistributeNodesEvenly(const TreeType *parent,
 
   // Copy children's children in order to redistribute them.
   size_t iChild = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
-    for (size_t j = 0; j < parent->Child(i).NumChildren(); j++)
+    for (size_t j = 0; j < parent->Child(i).NumChildren(); ++j)
     {
       children[iChild] = parent->Child(i).children[j];
       iChild++;
@@ -238,14 +235,14 @@ RedistributeNodesEvenly(const TreeType *parent,
   }
 
   iChild = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
     // Since we redistribute children of a sibling we should recalculate the
     // bound.
     parent->Child(i).Bound().Clear();
     parent->Child(i).numDescendants = 0;
 
-    for (size_t j = 0; j < numChildrenPerNode; j++)
+    for (size_t j = 0; j < numChildrenPerNode; ++j)
     {
       parent->Child(i).Bound() |= children[iChild]->Bound();
       parent->Child(i).numDescendants += children[iChild]->numDescendants;
@@ -286,7 +283,7 @@ RedistributePointsEvenly(TreeType* parent,
   size_t numPoints = 0;
   size_t numPointsPerNode, numRestPoints;
 
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
     numPoints += parent->Child(i).NumPoints();
 
   numPointsPerNode = numPoints / (lastSibling - firstSibling + 1);
@@ -296,21 +293,21 @@ RedistributePointsEvenly(TreeType* parent,
 
   // Copy children's points in order to redistribute them.
   size_t iPoint = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
-    for (size_t j = 0; j < parent->Child(i).NumPoints(); j++)
+    for (size_t j = 0; j < parent->Child(i).NumPoints(); ++j)
       points[iPoint++] = parent->Child(i).Point(j);
   }
 
   iPoint = 0;
-  for (size_t i = firstSibling; i <= lastSibling; i++)
+  for (size_t i = firstSibling; i <= lastSibling; ++i)
   {
     // Since we redistribute points of a sibling we should recalculate the
     // bound.
     parent->Child(i).Bound().Clear();
 
     size_t j;
-    for (j = 0; j < numPointsPerNode; j++)
+    for (j = 0; j < numPointsPerNode; ++j)
     {
       parent->Child(i).Bound() |= parent->Dataset().col(points[iPoint]);
       parent->Child(i).Point(j) = points[iPoint];

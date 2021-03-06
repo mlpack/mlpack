@@ -1,5 +1,5 @@
 /**
- * @file forward_visitor_impl.hpp
+ * @file methods/ann/visitor/forward_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Forward() function layer abstraction.
@@ -19,9 +19,9 @@ namespace mlpack {
 namespace ann {
 
 //! ForwardVisitor visitor class.
-inline ForwardVisitor::ForwardVisitor(arma::mat&& input, arma::mat&& output) :
-    input(std::move(input)),
-    output(std::move(output))
+inline ForwardVisitor::ForwardVisitor(const arma::mat& input, arma::mat& output) :
+    input(input),
+    output(output)
 {
   /* Nothing to do here. */
 }
@@ -29,7 +29,7 @@ inline ForwardVisitor::ForwardVisitor(arma::mat&& input, arma::mat&& output) :
 template<typename LayerType>
 inline void ForwardVisitor::operator()(LayerType* layer) const
 {
-  layer->Forward(std::move(input), std::move(output));
+  layer->Forward(input, output);
 }
 
 inline void ForwardVisitor::operator()(MoreTypes layer) const

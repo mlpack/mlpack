@@ -1,5 +1,5 @@
 /**
- * @file neighbor_search.hpp
+ * @file methods/neighbor_search/neighbor_search_stat.hpp
  * @author Ryan Curtin
  *
  * Defines the NeighborSearch class, which performs an abstract
@@ -92,12 +92,12 @@ class NeighborSearchStat
 
   //! Serialize the statistic to/from an archive.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(firstBound);
-    ar & BOOST_SERIALIZATION_NVP(secondBound);
-    ar & BOOST_SERIALIZATION_NVP(auxBound);
-    ar & BOOST_SERIALIZATION_NVP(lastDistance);
+    ar(CEREAL_NVP(firstBound));
+    ar(CEREAL_NVP(secondBound));
+    ar(CEREAL_NVP(auxBound));
+    ar(CEREAL_NVP(lastDistance));
   }
 };
 

@@ -1,5 +1,5 @@
 /**
- * @file hamerly_kmeans_impl.hpp
+ * @file methods/kmeans/hamerly_kmeans_impl.hpp
  * @author Ryan Curtin
  *
  * An implementation of Greg Hamerly's algorithm for k-means clustering.

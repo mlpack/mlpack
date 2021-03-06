@@ -1,5 +1,5 @@
 /**
- * @file accuracy.hpp
+ * @file core/cv/metrics/accuracy.hpp
  * @author Kirill Mishchenko
  *
  * The accuracy metric.

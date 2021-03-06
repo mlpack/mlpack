@@ -1,5 +1,5 @@
 /**
- * @file random_partition.hpp
+ * @file methods/kmeans/random_partition.hpp
  * @author Ryan Curtin
  *
  * Very simple partitioner which partitions the data randomly into the number of
@@ -52,7 +52,7 @@ class RandomPartition
 
   //! Serialize the partitioner (nothing to do).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace kmeans

@@ -1,5 +1,5 @@
 /**
- * @file drusilla_select_impl.hpp
+ * @file methods/approx_kfn/drusilla_select_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of DrusillaSelect class methods.
@@ -202,12 +202,12 @@ void DrusillaSelect<MatType>::Search(const MatType& querySet,
 template<typename MatType>
 template<typename Archive>
 void DrusillaSelect<MatType>::serialize(Archive& ar,
-                                        const unsigned int /* version */)
+                                        const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(candidateSet);
-  ar & BOOST_SERIALIZATION_NVP(candidateIndices);
-  ar & BOOST_SERIALIZATION_NVP(l);
-  ar & BOOST_SERIALIZATION_NVP(m);
+  ar(CEREAL_NVP(candidateSet));
+  ar(CEREAL_NVP(candidateIndices));
+  ar(CEREAL_NVP(l));
+  ar(CEREAL_NVP(m));
 }
 
 } // namespace neighbor

@@ -6,9 +6,10 @@ set(SOURCES
   arma_config_check.hpp
   backtrace.hpp
   backtrace.cpp
-  cli.hpp
-  cli.cpp
-  cli_impl.hpp
+  binding_details.hpp
+  io.hpp
+  io.cpp
+  io_impl.hpp
   deprecated.hpp
   hyphenate_string.hpp
   is_std_vector.hpp
@@ -29,6 +30,7 @@ set(SOURCES
   singletons.cpp
   timers.hpp
   timers.cpp
+  to_lower.hpp
   version.hpp
   version.cpp
 )

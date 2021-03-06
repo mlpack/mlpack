@@ -1,5 +1,5 @@
 /**
- * @file validation_RMSE_termination.hpp
+ * @file methods/amf/termination_policies/validation_rmse_termination.hpp
  * @author Sumedh Ghaisas
  *
  * Termination policy used in AMF (Alternating Matrix Factorization).
@@ -43,6 +43,7 @@ class ValidationRMSETermination
    *
    * @param V Input matrix to be factorized.
    * @param num_test_points number of validation test points
+   * @param tolerance the tolerance value to compare RMSe against
    * @param maxIterations max iteration count before termination
    * @param reverseStepTolerance max successive RMSE drops allowed
    */
@@ -63,7 +64,7 @@ class ValidationRMSETermination
     test_points.zeros(num_test_points, 3);
 
     // fill validation set matrix with random chosen entries
-    for (size_t i = 0; i < num_test_points; i++)
+    for (size_t i = 0; i < num_test_points; ++i)
     {
       double t_val;
       size_t t_row;
@@ -89,7 +90,7 @@ class ValidationRMSETermination
   /**
    * Initializes the termination policy before stating the factorization.
    *
-   * @param V Input matrix to be factorized.
+   * @param * (V) Input matrix to be factorized.
    */
   void Initialize(const MatType& /* V */)
   {
@@ -122,7 +123,7 @@ class ValidationRMSETermination
     {
       rmseOld = rmse;
       rmse = 0;
-      for (size_t i = 0; i < num_test_points; i++)
+      for (size_t i = 0; i < num_test_points; ++i)
       {
         size_t t_row = test_points(i, 0);
         size_t t_col = test_points(i, 1);

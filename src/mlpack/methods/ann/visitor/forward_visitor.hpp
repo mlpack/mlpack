@@ -1,5 +1,5 @@
 /**
- * @file forward_visitor.hpp
+ * @file methods/ann/visitor/forward_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Forward() function for different
@@ -29,7 +29,7 @@ class ForwardVisitor : public boost::static_visitor<void>
 {
  public:
   //! Execute the Forward() function given the input and output parameter.
-  ForwardVisitor(arma::mat&& input, arma::mat&& output);
+  ForwardVisitor(const arma::mat& input, arma::mat& output);
 
   //! Execute the Forward() function.
   template<typename LayerType>
@@ -39,10 +39,10 @@ class ForwardVisitor : public boost::static_visitor<void>
 
  private:
   //! The input parameter set.
-  arma::mat&& input;
+  const arma::mat& input;
 
   //! The output parameter set.
-  arma::mat&& output;
+  arma::mat& output;
 };
 
 } // namespace ann

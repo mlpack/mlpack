@@ -1,5 +1,5 @@
 /**
- * @file delta_visitor_impl.hpp
+ * @file methods/ann/visitor/delta_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Delta() function layer abstraction.

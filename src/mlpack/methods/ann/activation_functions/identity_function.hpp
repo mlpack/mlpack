@@ -1,5 +1,5 @@
 /**
- * @file identity_function.hpp
+ * @file methods/ann/activation_functions/identity_function.hpp
  * @author Marcus Edel
  *
  * Definition and implementation of the identity function.
@@ -54,10 +54,10 @@ class IdentityFunction
   /**
    * Computes the first derivative of the identity function.
    *
-   * @param x Input data.
+   * @param * (x) Input data.
    * @return f'(x)
    */
-  static double Deriv(const double /* unused */)
+  static double Deriv(const double /* x */)
   {
     return 1.0;
   }
@@ -65,7 +65,7 @@ class IdentityFunction
   /**
    * Computes the first derivatives of the identity function.
    *
-   * @param y Input activations.
+   * @param y Input data/activation.
    * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>

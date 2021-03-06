@@ -1,9 +1,9 @@
 /**
- * @file parameter_type.hpp
+ * @file bindings/cli/parameter_type.hpp
  * @author Ryan Curtin
  *
  * Template metaprogramming structures to find the type (as seen by
- * boost::program_options) of a particular option type.
+ * CLI11) of a particular option type.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -34,7 +34,7 @@ struct ParameterTypeDeducer<true, T>
 };
 
 /**
- * Utility struct to return the type that boost::program_options should accept
+ * Utility struct to return the type that CLI11 should accept
  * for a given input type.  In general, there is no change from the input type,
  * but in some cases this may be another type.
  */
@@ -46,7 +46,7 @@ struct ParameterType
 };
 
 /**
- * For vector types, boost::program_options will accept a std::string, not an
+ * For vector types, CLI11 will accept a std::string, not an
  * arma::Col<eT> (since it is not clear how to specify a vector on the
  * command-line).
  */
@@ -57,7 +57,7 @@ struct ParameterType<arma::Col<eT>>
 };
 
 /**
- * For row vector types, boost::program_options will accept a std::string, not
+ * For row vector types, CLI11 will accept a std::string, not
  * an
  * arma::Row<eT> (since it is not clear how to specify a vector on the
  * command-line).
@@ -69,7 +69,7 @@ struct ParameterType<arma::Row<eT>>
 };
 
 /**
- * For matrix types, boost::program_options will accept a std::string, not an
+ * For matrix types, CLI11 will accept a std::string, not an
  * arma::mat (since it is not clear how to specify a matrix on the
  * command-line).
  */

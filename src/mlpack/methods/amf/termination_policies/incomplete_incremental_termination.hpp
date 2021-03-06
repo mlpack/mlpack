@@ -1,5 +1,5 @@
 /**
- * @file incomplete_incremental_termination.hpp
+ * @file methods/amf/termination_policies/incomplete_incremental_termination.hpp
  * @author Sumedh Ghaisas
  *
  * Termination policy used in AMF (Alternating Matrix Factorization).
@@ -35,7 +35,8 @@ class IncompleteIncrementalTermination
    */
   IncompleteIncrementalTermination(
       TerminationPolicy tPolicy = TerminationPolicy()) :
-      tPolicy(tPolicy) { }
+      tPolicy(tPolicy), incrementalIndex(0), iteration(0)
+  { /* Nothing to do here. */ }
 
   /**
    * Initializes the termination policy before stating the factorization.

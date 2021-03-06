@@ -1,5 +1,5 @@
 /**
- * @file linear_no_bias_impl.hpp
+ * @file methods/ann/layer/linear_no_bias_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the LinearNoBias class also known as fully-connected layer
@@ -52,7 +52,7 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 template<typename eT>
 void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Forward(
-    const arma::Mat<eT>&& input, arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   output = weight * input;
 }
@@ -61,7 +61,7 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 template<typename eT>
 void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Backward(
-    const arma::Mat<eT>&& /* input */, arma::Mat<eT>&& gy, arma::Mat<eT>&& g)
+    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
 {
   g = weight.t() * gy;
 }
@@ -70,9 +70,9 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 template<typename eT>
 void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::Gradient(
-    const arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& gradient)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& gradient)
 {
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
       error * input.t());
@@ -83,14 +83,14 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 template<typename Archive>
 void LinearNoBias<InputDataType, OutputDataType, RegularizerType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(outSize));
 
   // This is inefficient, but necessary so that WeightSetVisitor sets the right
   // size.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
     weights.set_size(outSize * inSize, 1);
 }
 

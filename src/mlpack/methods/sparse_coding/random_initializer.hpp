@@ -1,5 +1,5 @@
 /**
- * @file random_initializer.hpp
+ * @file methods/sparse_coding/random_initializer.hpp
  * @author Nishant Mehta
  *
  * A very simple random dictionary initializer for SparseCoding; it is probably

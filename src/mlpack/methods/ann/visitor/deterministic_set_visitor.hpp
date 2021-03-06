@@ -1,5 +1,5 @@
 /**
- * @file deterministic_set_visitor.hpp
+ * @file methods/ann/visitor/deterministic_set_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Deterministic() function for

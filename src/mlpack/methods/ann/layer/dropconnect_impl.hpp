@@ -1,5 +1,5 @@
 /**
- * @file dropconnect_impl.hpp
+ * @file methods/ann/layer/dropconnect_impl.hpp
  * @author Palash Ahuja
  * @author Marcus Edel
  *
@@ -48,40 +48,32 @@ DropConnect<InputDataType, OutputDataType>::DropConnect(
   network.push_back(baseLayer);
 }
 
-template <typename InputDataType, typename OutputDataType>
-DropConnect<InputDataType, OutputDataType>::~DropConnect()
-{
-  boost::apply_visitor(DeleteVisitor(), baseLayer);
-}
-
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void DropConnect<InputDataType, OutputDataType>::Forward(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& output)
+    const arma::Mat<eT>& input,
+    arma::Mat<eT>& output)
 {
   // The DropConnect mask will not be multiplied in the deterministic mode
   // (during testing).
   if (deterministic)
   {
-    boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
-        baseLayer);
+    boost::apply_visitor(ForwardVisitor(input, output), baseLayer);
   }
   else
   {
     // Save weights for denoising.
-    boost::apply_visitor(ParametersVisitor(std::move(denoise)), baseLayer);
+    boost::apply_visitor(ParametersVisitor(denoise), baseLayer);
 
     // Scale with input / (1 - ratio) and set values to zero with
     // probability ratio.
     mask = arma::randu<arma::Mat<eT> >(denoise.n_rows, denoise.n_cols);
     mask.transform([&](double val) { return (val > ratio); });
 
-    boost::apply_visitor(ParametersSetVisitor(std::move(denoise % mask)),
-        baseLayer);
+    arma::mat tmp = denoise % mask;
+    boost::apply_visitor(ParametersSetVisitor(tmp), baseLayer);
 
-    boost::apply_visitor(ForwardVisitor(std::move(input), std::move(output)),
-        baseLayer);
+    boost::apply_visitor(ForwardVisitor(input, output), baseLayer);
 
     output = output * scale;
   }
@@ -90,45 +82,43 @@ void DropConnect<InputDataType, OutputDataType>::Forward(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void DropConnect<InputDataType, OutputDataType>::Backward(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& gy,
-    arma::Mat<eT>&& g)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& gy,
+    arma::Mat<eT>& g)
 {
-  boost::apply_visitor(BackwardVisitor(std::move(input), std::move(gy),
-      std::move(g)), baseLayer);
+  boost::apply_visitor(BackwardVisitor(input, gy, g), baseLayer);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void DropConnect<InputDataType, OutputDataType>::Gradient(
-    arma::Mat<eT>&& input,
-    arma::Mat<eT>&& error,
-    arma::Mat<eT>&& /* gradient */)
+    const arma::Mat<eT>& input,
+    const arma::Mat<eT>& error,
+    arma::Mat<eT>& /* gradient */)
 {
-  boost::apply_visitor(GradientVisitor(std::move(input), std::move(error)),
+  boost::apply_visitor(GradientVisitor(input, error),
       baseLayer);
 
   // Denoise the weights.
-  boost::apply_visitor(ParametersSetVisitor(std::move(denoise)), baseLayer);
+  boost::apply_visitor(ParametersSetVisitor(denoise), baseLayer);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void DropConnect<InputDataType, OutputDataType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   // Delete the old network first, if needed.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     boost::apply_visitor(DeleteVisitor(), baseLayer);
   }
 
-  ar & BOOST_SERIALIZATION_NVP(ratio);
-  ar & BOOST_SERIALIZATION_NVP(scale);
-  ar & BOOST_SERIALIZATION_NVP(baseLayer);
+  ar(CEREAL_NVP(ratio));
+  ar(CEREAL_NVP(scale));
+  ar(CEREAL_VARIANT_POINTER(baseLayer));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     network.clear();
     network.push_back(baseLayer);

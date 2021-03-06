@@ -1,5 +1,5 @@
 /**
- * @file ra_typedef.hpp
+ * @file methods/rann/ra_typedef.hpp
  * @author Parikshit Ram
  *
  * Simple typedefs describing template instantiations of the RASearch

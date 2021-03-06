@@ -1,5 +1,5 @@
 /**
- * @file epanechnikov_kernel.cpp
+ * @file core/kernels/epanechnikov_kernel.cpp
  * @author Neil Slagle
  *
  * Implementation of non-template Epanechnikov kernels.

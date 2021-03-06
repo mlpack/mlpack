@@ -1,5 +1,5 @@
 /**
- * @file ccov_impl.hpp
+ * @file core/math/ccov_impl.hpp
  * @author Ryan Curtin
  * @author Conrad Sanderson
  *

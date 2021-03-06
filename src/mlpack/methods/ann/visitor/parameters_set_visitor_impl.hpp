@@ -1,5 +1,5 @@
 /**
- * @file parameters_set_visitor_impl.hpp
+ * @file methods/ann/visitor/parameters_set_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Parameters() function layer abstraction.
@@ -19,8 +19,8 @@ namespace mlpack {
 namespace ann {
 
 //! ParametersSetVisitor visitor class.
-inline ParametersSetVisitor::ParametersSetVisitor(arma::mat&& parameters) :
-    parameters(std::move(parameters))
+inline ParametersSetVisitor::ParametersSetVisitor(arma::mat& parameters) :
+    parameters(parameters)
 {
   /* Nothing to do here. */
 }

@@ -1,5 +1,5 @@
 /**
- * @file regression_distribution.hpp
+ * @file core/dists/regression_distribution.hpp
  * @author Michael Fox
  *
  * Implementation of conditional Gaussian distribution for HMM regression
@@ -75,10 +75,10 @@ class RegressionDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(rf);
-    ar & BOOST_SERIALIZATION_NVP(err);
+    ar(CEREAL_NVP(rf));
+    ar(CEREAL_NVP(err));
   }
 
   //! Return regression function.

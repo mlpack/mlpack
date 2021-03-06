@@ -1,5 +1,5 @@
 /**
- * @file octree_impl.hpp
+ * @file core/tree/octree/octree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of generalized octree (Octree).
@@ -141,7 +141,7 @@ Octree<MetricType, StatisticType, MatType>::Octree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(this->dataset->n_cols);
-  for (size_t i = 0; i < this->dataset->n_cols; i++)
+  for (size_t i = 0; i < this->dataset->n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 
@@ -267,7 +267,7 @@ Octree<MetricType, StatisticType, MatType>::Octree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(this->dataset->n_cols);
-  for (size_t i = 0; i < this->dataset->n_cols; i++)
+  for (size_t i = 0; i < this->dataset->n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 
@@ -363,6 +363,43 @@ Octree<MetricType, StatisticType, MatType>::Octree(const Octree& other) :
   }
 }
 
+//! Copy assignment operator: copy the given other tree.
+template<typename MetricType, typename StatisticType, typename MatType>
+Octree<MetricType, StatisticType, MatType>&
+Octree<MetricType, StatisticType, MatType>::
+operator=(const Octree& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  delete dataset;
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
+  children.clear();
+
+  begin = other.Begin();
+  count = other.Count();
+  bound = other.bound;
+  dataset = ((other.parent == NULL) ? new MatType(*other.dataset) : NULL);
+  parent = NULL;
+  stat = other.stat;
+  parentDistance = other.ParentDistance();
+  furthestDescendantDistance = other.FurthestDescendantDistance();
+  metric = other.metric;
+
+  // If we have any children, we need to create them, and then ensure that their
+  // parent links are set right.
+  for (size_t i = 0; i < other.NumChildren(); ++i)
+  {
+    children.push_back(new Octree(other.Child(i)));
+    children[i]->parent = this;
+    children[i]->dataset = this->dataset;
+  }
+  return *this;
+}
+
 //! Move the given tree.
 template<typename MetricType, typename StatisticType, typename MatType>
 Octree<MetricType, StatisticType, MatType>::Octree(Octree&& other) :
@@ -389,6 +426,48 @@ Octree<MetricType, StatisticType, MatType>::Octree(Octree&& other) :
   other.parent = NULL;
 }
 
+//! Move assignment operator: take ownership of the given tree.
+template<typename MetricType, typename StatisticType, typename MatType>
+Octree<MetricType, StatisticType, MatType>&
+Octree<MetricType, StatisticType, MatType>::
+operator=(Octree&& other)
+{
+  // Return if it's the same tree.
+  if (this == &other)
+    return *this;
+
+  // Freeing memory that will not be used anymore.
+  delete dataset;
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
+  children.clear();
+
+  children = std::move(other.children);
+  begin = other.Begin();
+  count = other.Count();
+  bound = std::move(other.bound);
+  dataset = other.dataset;
+  parent = other.Parent();
+  stat = std::move(other.stat);
+  parentDistance = other.ParentDistance();
+  furthestDescendantDistance = other.furthestDescendantDistance();
+  metric = std::move(other.metric);
+
+  // Update the parent pointers of the direct children.
+  for (size_t i = 0; i < children.size(); ++i)
+    children[i]->parent = this;
+
+  other.begin = 0;
+  other.count = 0;
+  other.dataset = new MatType();
+  other.parentDistance = 0.0;
+  other.numDescendants = 0;
+  other.furthestDescendantDistance = 0.0;
+  other.parent = NULL;
+
+  return *this;
+}
+
 template<typename MetricType, typename StatisticType, typename MatType>
 Octree<MetricType, StatisticType, MatType>::Octree() :
     begin(0),
@@ -406,11 +485,11 @@ template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
 Octree<MetricType, StatisticType, MatType>::Octree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
     Octree() // Create an empty tree.
 {
   // De-serialize the tree into this object.
-  ar >> BOOST_SERIALIZATION_NVP(*this);
+  ar(CEREAL_NVP(*this));
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
@@ -631,10 +710,10 @@ template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
 void Octree<MetricType, StatisticType, MatType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // If we're loading and we have children, they need to be deleted.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < children.size(); ++i)
       delete children[i];
@@ -646,21 +725,48 @@ void Octree<MetricType, StatisticType, MatType>::serialize(
     parent = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(begin);
-  ar & BOOST_SERIALIZATION_NVP(count);
-  ar & BOOST_SERIALIZATION_NVP(bound);
-  ar & BOOST_SERIALIZATION_NVP(stat);
-  ar & BOOST_SERIALIZATION_NVP(parentDistance);
-  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
-  ar & BOOST_SERIALIZATION_NVP(metric);
-  ar & BOOST_SERIALIZATION_NVP(dataset);
+  bool hasParent = (parent != NULL);
 
-  ar & BOOST_SERIALIZATION_NVP(children);
+  ar(CEREAL_NVP(begin));
+  ar(CEREAL_NVP(count));
+  ar(CEREAL_NVP(bound));
+  ar(CEREAL_NVP(stat));
+  ar(CEREAL_NVP(parentDistance));
+  ar(CEREAL_NVP(furthestDescendantDistance));
+  ar(CEREAL_NVP(metric));
+  ar(CEREAL_NVP(hasParent));
+  if (!hasParent)
+  {
+    MatType*& datasetTemp = const_cast<MatType*&>(dataset);
+    ar(CEREAL_POINTER(datasetTemp));
+  }
 
-  if (Archive::is_loading::value)
+  ar(CEREAL_VECTOR_POINTER(children));
+
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < children.size(); ++i)
       children[i]->parent = this;
+  }
+
+  // We have to correct the dataset pointers in all of the children.
+  if (!hasParent)
+  {
+    std::stack<Octree*> stack;
+    for (size_t i = 0; i < children.size(); ++i)
+    {
+      stack.push(children[i]);
+    }
+    while (!stack.empty())
+    {
+      Octree* node = stack.top();
+      stack.pop();
+      node->dataset = dataset;
+      for (size_t i = 0; i < node->children.size(); ++i)
+      {
+        stack.push(node->children[i]);
+      }
+    }
   }
 }
 

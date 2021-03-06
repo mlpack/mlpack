@@ -52,7 +52,7 @@ endif ()
 
 # Checks 'REQUIRED', 'QUIET' and versions.
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(ensmallen
+find_package_handle_standard_args(Ensmallen
     REQUIRED_VARS ENSMALLEN_INCLUDE_DIR
     VERSION_VAR ENSMALLEN_VERSION_STRING)
 

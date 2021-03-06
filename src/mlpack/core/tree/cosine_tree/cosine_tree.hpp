@@ -1,5 +1,5 @@
 /**
- * @file cosine_tree.hpp
+ * @file core/tree/cosine_tree/cosine_tree.hpp
  * @author Siddharth Agrawal
  *
  * Definition of Cosine Tree.
@@ -67,6 +67,35 @@ class CosineTree
   CosineTree(const arma::mat& dataset,
              const double epsilon,
              const double delta);
+
+  /**
+   * Copy the given tree.  Be careful!  This may use a lot of memory.
+   *
+   * @param other Tree to copy from.
+   */
+  CosineTree(const CosineTree& other);
+
+  /**
+   * Move the given tree.  The tree passed as a parameter will be emptied and
+   * will not be usable after this call.
+   *
+   * @param other Tree to move.
+   */
+  CosineTree(CosineTree&& other);
+
+  /**
+   * Copy the given Cosine Tree.
+   *
+   * @param other The tree to be copied.
+   */
+  CosineTree& operator=(const CosineTree& other);
+
+  /**
+   * Take ownership of the given Cosine Tree.
+   *
+   * @param other The tree to take ownership of.
+   */
+  CosineTree& operator=(CosineTree&& other);
 
   /**
    * Clean up the CosineTree: release allocated memory (including children).
@@ -169,7 +198,7 @@ class CosineTree
   void GetFinalBasis(arma::mat& finalBasis) { finalBasis = basis; }
 
   //! Get pointer to the dataset matrix.
-  const arma::mat& GetDataset() const { return dataset; }
+  const arma::mat& GetDataset() const { return *dataset; }
 
   //! Get the indices of columns in the node.
   std::vector<size_t>& VectorIndices() { return indices; }
@@ -214,7 +243,7 @@ class CosineTree
 
  private:
   //! Matrix for which cosine tree is constructed.
-  const arma::mat& dataset;
+  const arma::mat* dataset;
   //! Cumulative probability for Monte Carlo error lower bound.
   double delta;
   //! Subspace basis of the input dataset.
@@ -241,6 +270,8 @@ class CosineTree
   double l2Error;
   //! Frobenius norm squared of columns in the node.
   double frobNormSquared;
+  //! If true, we own the dataset and need to destroy it in the destructor.
+  bool localDataset;
 };
 
 class CompareCosineNode

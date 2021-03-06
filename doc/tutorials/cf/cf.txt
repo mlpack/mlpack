@@ -310,7 +310,7 @@ factorization with alternating least squares update rules).  These include:
 
 The amf::AMF<> class has many other possibilities than those listed here; it is
 a framework for alternating matrix factorization techniques.  See the
-\ref amf::AMF<> "class documentation" or \ref amftutorial "tutorial on AMF" for
+\ref mlpack::amf::AMF<> "class documentation" or \ref amftutorial "tutorial on AMF" for
 more information.
 
 The use of another factorizer is straightforward; the example from the previous
@@ -458,15 +458,15 @@ items and number of columns equal to the \c rank parameter, and \c H should have
 number of rows equal to the \c rank parameter, and number of columns equal to
 the number of users.
 
-The \ref mlpack::amf::AMF "amf::AMF<> class" can be used as a base for
+The \ref mlpack::amf::AMF<> "amf::AMF<> class" can be used as a base for
 factorizers that alternate between updating \c W and updating \c H.  A useful
 reference is the \ref amftutorial "AMF tutorial".
 
 @section further_doc_cftut Further documentation
 
 Further documentation for the \c CF class may be found in the \ref
-mlpack::cf::CF "complete API documentation".  In addition, more information on
-the \c AMF class of factorizers may be found in its \ref mlpack::amf::AMF
+mlpack::cf "complete API documentation".  In addition, more information on
+the \c AMF class of factorizers may be found in its \ref mlpack::amf::AMF<>
 "complete API documentation".
 
 */

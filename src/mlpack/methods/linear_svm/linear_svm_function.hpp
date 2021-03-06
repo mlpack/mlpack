@@ -1,5 +1,5 @@
 /**
- * @file linear_svm_function.hpp
+ * @file methods/linear_svm/linear_svm_function.hpp
  * @author Shikhar Bhardwaj
  * @author Ayush Chamoli
  *
@@ -35,7 +35,7 @@ class LinearSVMFunction
    * @param labels Labels associated with the feature data.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
-   * @paran delta Margin of difference between correct class and other classes.
+   * @param delta Margin of difference between correct class and other classes.
    * @param fitIntercept Intercept term flag.
    */
   LinearSVMFunction(const MatType& dataset,
@@ -58,7 +58,6 @@ class LinearSVMFunction
    * @param featureSize The number of features in the training set.
    * @param numClasses Number of classes for classification.
    * @param fitIntercept If true, an intercept is fitted.
-   * @return Initialized model weights.
    */
   static void InitializeWeights(arma::mat& weights,
                                 const size_t featureSize,
@@ -77,7 +76,7 @@ class LinearSVMFunction
   /**
    * Evaluate the hinge loss function for all the datapoints
    *
-   * @param paramters The parameters of the SVM.
+   * @param parameters The parameters of the SVM.
    * @return The value of the loss function for the entire dataset.
    */
   double Evaluate(const arma::mat& parameters);

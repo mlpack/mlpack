@@ -1,5 +1,5 @@
 /**
- * @file meta_info_extractor.hpp
+ * @file core/cv/meta_info_extractor.hpp
  * @author Kirill Mishchenko
  *
  * Tools for extracting meta information about machine learning algorithms.

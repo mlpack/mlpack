@@ -1,5 +1,5 @@
 /**
- * @file range.hpp
+ * @file core/math/range.hpp
  *
  * Definition of the Range class, which represents a simple range with a lower
  * and upper bound.
@@ -125,6 +125,7 @@ class RangeType
    * Scale the bounds by the given double.
    *
    * @param d Scaling factor.
+   * @param r Bounds range.
    */
   template<typename TT>
   friend inline RangeType<TT> operator*(const TT d, const RangeType<TT>& r);
@@ -179,7 +180,7 @@ class RangeType
    * Serialize the range object.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 };
 
 } // namespace math

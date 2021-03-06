@@ -1,5 +1,5 @@
 /**
- * @file laplacian_kernel.hpp
+ * @file core/kernels/laplacian_kernel.hpp
  * @author Ajinkya Kale <kaleajinkya@gmail.com>
  *
  * Implementation of the Laplacian kernel (LaplacianKernel).
@@ -98,9 +98,9 @@ class LaplacianKernel
 
   //! Serialize the kernel.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(bandwidth);
+    ar(CEREAL_NVP(bandwidth));
   }
 
  private:

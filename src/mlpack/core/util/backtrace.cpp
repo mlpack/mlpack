@@ -1,5 +1,5 @@
 /**
- * @file backtrace.cpp
+ * @file core/util/backtrace.cpp
  * @author Grzegorz Krajewski
  *
  * Implementation of the Backtrace class.
@@ -84,7 +84,7 @@ void Backtrace::GetAddress(int maxDepth)
   int stackDepth = backtrace(trace, maxDepth);
 
   // Skip first stack frame (points to Backtrace::Backtrace).
-  for (int i = 1; i < stackDepth; i++)
+  for (int i = 1; i < stackDepth; ++i)
   {
     Dl_info addressHandler;
 
@@ -182,7 +182,7 @@ std::string Backtrace::ToString()
     return stackStr;
   }
 
-  for (size_t i = 0; i < stack.size(); i++)
+  for (size_t i = 0; i < stack.size(); ++i)
   {
     frame = stack[i];
 
