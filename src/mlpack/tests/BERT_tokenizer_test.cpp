@@ -109,4 +109,20 @@ TEST_CASE("BERTTokenizer-CapitalLetterTests", "[BERTTokenizerTest]")
     BERTTokenizerRunner(input_list, tokenized_output_true);
 }
 
+/**
+ * Testing if the tokenization is able to correctly convert tokens
+ * to their corresponding id's acc. to the vocab file.
+ */
+TEST_CASE("BERTTokenizer-BERTIdTest", "[BERTTokenizerTest]")
+{
+    auto tokenizer = mlpack::data::FullTokenizer("data/BERT-vocab.txt");
+    std::vector<std::wstring> tokens = { L"make", L"plug", L"token" };
+    std::vector<size_t> pred_ids = tokenizer.convertTokensToIds(tokens);
+    std::vector<size_t> true_ids = {2191, 13354, 19204};
+    // Testing output of convertTokensToIds function.
+    for (size_t i = 0; i < ids.size(); i++) {
+        REQUIRE(pred_ids[i] == true_ids[i]);
+        }
+}
+
 #endif
