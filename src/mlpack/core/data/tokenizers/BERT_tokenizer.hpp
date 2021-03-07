@@ -1,5 +1,5 @@
 /**
- * @file core/data/BERT_tokenizer.hpp
+ * @file core/data/tokenizers/BERT_tokenizer.hpp
  * @author Ayush Singh
  *
  * Definition of BERT Tokenizer.

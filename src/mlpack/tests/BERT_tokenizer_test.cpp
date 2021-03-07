@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/data/BERT_tokenizer.hpp>
+#include <mlpack/core/data/tokenizers/BERT_tokenizer.hpp>
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
 

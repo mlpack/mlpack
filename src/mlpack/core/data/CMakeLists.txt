@@ -1,8 +1,6 @@
 # Define the files that we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  BERT_tokenizer.hpp
-  BERT_tokenizer_impl.hpp
   dataset_mapper.hpp
   dataset_mapper_impl.hpp
   detect_file_type.hpp
