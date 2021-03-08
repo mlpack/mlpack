@@ -224,7 +224,6 @@ void ReportIgnoredParam(const std::string& paramName,
  * @param xt_cols the number of rows in test matrix
  * 
  * 
- * @param reason Reason that parameter is ignored, if it is passed.
  */
 
 void CheckInputShape(const std::string& method,
