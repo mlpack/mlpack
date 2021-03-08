@@ -83,7 +83,7 @@ static void mlpackMain()
     arma::rowvec& predictions(labels.n_elem);
 
     PersistenceModel model;
-    model.Predict(labels, predicions);
+    model.Predict(labels, predictions);
   }
   else
   {
