@@ -299,6 +299,27 @@ inline void ReportIgnoredParam(const std::string& paramName,
   }
 }
 
+void CheckInputShape(const std::string& method,
+                        const int x_rows,
+                        const int x_cols,
+                        const int y_rows, 
+                        const int y_cols, 
+                        const int xt_rows,
+                        const int xt_cols,
+                        const bool fatal, 
+                        const std::string& errorMessage)
+{
+  util::PrefixedOutStream& stream =  Log::Fatal;
+  if(x_cols!=y_cols)
+    {
+      stream << "Number of data points in training data and labels don't match. Number of data points in feature matrix are " << x_cols 
+            <<"as opposed to " <<  y_cols <<"in true labels"; 
+    }
+    if(xt_rows!=-1 && xt_rows!=x_rows)
+    {
+      stream << "Unequal number of features of a datapoint in train and test sets";
+    }
+}
 } // namespace util
 } // namespace mlpack
 

@@ -206,6 +206,35 @@ void ReportIgnoredParam(
 void ReportIgnoredParam(const std::string& paramName,
                         const std::string& reason);
 
+/**
+ * If the input has correct shapes(kind of santity checks). 
+ *
+ * @code
+ * Number of data points in both X and y of linear regression should be same. Also the features in test and training matrix should be same.
+ * @endcode
+ *
+ * Obviously for all the data points we must have both X and y for all the points in linear regression. 
+ *
+ * @param method Name of the method for which santity task is to be performed.
+ * @param x_rows the number of rows in training matrix X
+ * @param x_cols the number of columns in training matrix X
+ * @param y_rows the number of rows in training label matrix y
+ * @param y_cols the number of rows in training label matrix y
+ * @param xt_rows the number of rows in test matrix
+ * @param xt_cols the number of rows in test matrix
+ * 
+ * 
+ * @param reason Reason that parameter is ignored, if it is passed.
+ */
+
+void CheckInputShape(const std::string& method,
+                        const int x_rows,
+                        const int x_cols,
+                        const int y_rows, 
+                        const int y_cols, 
+                        const int xt_rows,
+                        const int xt_cols);
+
 } // namespace util
 } // namespace mlpack
 
