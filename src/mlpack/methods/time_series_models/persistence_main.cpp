@@ -71,23 +71,25 @@ PARAM_ROW_OUT("output", "Vector to save the predictions to.", "o");
 static void mlpackMain()
 {
   // Load input dataset.
-  arma::mat& dataset = std::move(IO::GetParam<arma::mat>("input"));
+  arma::mat dataset = std::move(IO::GetParam<arma::mat>("input"));
 
   // Issue a warning if the user did not specify an output file.
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
+  arma::rowvec predictions;
+
   // Making the predictions.
   if(IO::HasParam("labels"))
   {
-    arma::rowvec& labels = std::move(IO::GetParam<arma::mat>("labels"));
-    arma::rowvec& predictions(labels.n_elem);
+    arma::rowvec labels = std::move(IO::GetParam<arma::mat>("labels"));
+    predictions.set_size(labels.n_elem);
 
     PersistenceModel model;
     model.Predict(labels, predictions);
   }
   else
   {
-    arma::rowvec& predictions(dataset.n_rows);
+    predictions.set_size(dataset.n_rows);
 
     PersistenceModel model;
     model.Predict(dataset, predictions);
