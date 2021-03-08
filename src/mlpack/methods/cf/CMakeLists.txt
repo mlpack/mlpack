@@ -5,6 +5,7 @@ set(SOURCES
   cf_impl.hpp
   cf_model.hpp
   cf_model_impl.hpp
+  cf_model.cpp
   svd_wrapper.hpp
   svd_wrapper_impl.hpp
 )
@@ -27,4 +28,5 @@ add_cli_executable(cf)
 add_python_binding(cf)
 add_julia_binding(cf)
 add_go_binding(cf)
-add_markdown_docs(cf "cli;python;julia;go" "misc. / other")
+add_r_binding(cf)
+add_markdown_docs(cf "cli;python;julia;go;r" "misc. / other")

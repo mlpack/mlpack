@@ -50,6 +50,22 @@ class OrthogonalInitialization
   }
 
   /**
+   * Initialize the elements of the specified weight matrix with the orthogonal
+   * matrix initialization method.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W)
+  {
+    arma::Mat<eT> V;
+    arma::Col<eT> s;
+
+    arma::svd_econ(W, s, V, arma::randu<arma::Mat<eT> >(W.n_rows, W.n_cols));
+    W *= gain;
+  }
+
+  /**
    * Initialize the elements of the specified weight 3rd order tensor with the
    * orthogonal matrix initialization method.
    *
@@ -64,10 +80,27 @@ class OrthogonalInitialization
                   const size_t cols,
                   const size_t slices)
   {
-    W = arma::Cube<eT>(rows, cols, slices);
+    if (W.is_empty())
+      W.set_size(rows, cols, slices);
 
     for (size_t i = 0; i < slices; ++i)
       Initialize(W.slice(i), rows, cols);
+  }
+
+  /**
+   * Initialize the elements of the specified weight 3rd order tensor with the
+   * orthogonal matrix initialization method.
+   *
+   * @param W Weight matrix to initialize.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT>& W)
+  {
+    if (W.is_empty())
+      Log::Fatal << "Cannot initialize an empty cube." << std::endl;
+
+    for (size_t i = 0; i < W.n_slices; ++i)
+      Initialize(W.slice(i));
   }
 
  private:

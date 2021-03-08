@@ -15,11 +15,11 @@
 // In case it hasn't already been included.
 #include "save.hpp"
 #include "extension.hpp"
+#include "detect_file_type.hpp"
 
-#include <boost/serialization/serialization.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/binary.hpp>
 
 namespace mlpack {
 namespace data {
@@ -27,42 +27,52 @@ namespace data {
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Col<eT>& vec,
-          const bool fatal)
+          const bool fatal,
+          arma::file_type inputSaveType)
 {
   // Don't transpose: one observation per line (for CSVs at least).
-  return Save(filename, vec, fatal, false);
+  return Save(filename, vec, fatal, false, inputSaveType);
 }
 
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Row<eT>& rowvec,
-          const bool fatal)
+          const bool fatal,
+          arma::file_type inputSaveType)
 {
-  return Save(filename, rowvec, fatal, true);
+  return Save(filename, rowvec, fatal, true, inputSaveType);
 }
 
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
           const bool fatal,
-          bool transpose)
+          bool transpose,
+          arma::file_type inputSaveType)
 {
   Timer::Start("saving_data");
 
-  // First we will try to discriminate by file extension.
-  std::string extension = Extension(filename);
-  if (extension == "")
-  {
-    Timer::Stop("saving_data");
-    if (fatal)
-      Log::Fatal << "No extension given with filename '" << filename << "'; "
-          << "type unknown.  Save failed." << std::endl;
-    else
-      Log::Warn << "No extension given with filename '" << filename << "'; "
-          << "type unknown.  Save failed." << std::endl;
+  arma::file_type saveType = inputSaveType;
+  std::string stringType = "";
 
-    return false;
+  if (inputSaveType == arma::auto_detect)
+  {
+    // Detect the file type using only the extension.
+    saveType = DetectFromExtension(filename);
+    if (saveType == arma::file_type_unknown)
+    {
+      if (fatal)
+        Log::Fatal << "Could not detect type of file '" << filename << "' for "
+            << "writing.  Save failed." << std::endl;
+      else
+        Log::Warn << "Could not detect type of file '" << filename << "' for "
+            << "writing.  Save failed." << std::endl;
+
+      return false;
+    }
   }
+
+  stringType = GetStringType(saveType);
 
   // Catch errors opening the file.
   std::fstream stream;
@@ -80,71 +90,6 @@ bool Save(const std::string& filename,
     else
       Log::Warn << "Cannot open file '" << filename << "' for writing; save "
           << "failed." << std::endl;
-
-    return false;
-  }
-
-  bool unknownType = false;
-  arma::file_type saveType;
-  std::string stringType;
-
-  if (extension == "csv")
-  {
-    saveType = arma::csv_ascii;
-    stringType = "CSV data";
-  }
-  else if (extension == "txt")
-  {
-    saveType = arma::raw_ascii;
-    stringType = "raw ASCII formatted data";
-  }
-  else if (extension == "bin")
-  {
-    saveType = arma::arma_binary;
-    stringType = "Armadillo binary formatted data";
-  }
-  else if (extension == "pgm")
-  {
-    saveType = arma::pgm_binary;
-    stringType = "PGM data";
-  }
-  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
-           extension == "he5")
-  {
-#ifdef ARMA_USE_HDF5
-    saveType = arma::hdf5_binary;
-    stringType = "HDF5 data";
-#else
-    Timer::Stop("saving_data");
-    if (fatal)
-      Log::Fatal << "Attempted to save HDF5 data to '" << filename << "', but "
-          << "Armadillo was compiled without HDF5 support.  Save failed."
-          << std::endl;
-    else
-      Log::Warn << "Attempted to save HDF5 data to '" << filename << "', but "
-          << "Armadillo was compiled without HDF5 support.  Save failed."
-          << std::endl;
-
-    return false;
-#endif
-  }
-  else
-  {
-    unknownType = true;
-    saveType = arma::raw_binary; // Won't be used; prevent a warning.
-    stringType = "";
-  }
-
-  // Provide error if we don't know the type.
-  if (unknownType)
-  {
-    Timer::Stop("saving_data");
-    if (fatal)
-      Log::Fatal << "Unable to determine format to save to from filename '"
-          << filename << "'.  Save failed." << std::endl;
-    else
-      Log::Warn << "Unable to determine format to save to from filename '"
-          << filename << "'.  Save failed." << std::endl;
 
     return false;
   }
@@ -330,16 +275,16 @@ bool Save(const std::string& filename,
       f = format::xml;
     else if (extension == "bin")
       f = format::binary;
-    else if (extension == "txt")
-      f = format::text;
+    else if (extension == "json")
+      f = format::json;
     else
     {
       if (fatal)
         Log::Fatal << "Unable to detect type of '" << filename << "'; incorrect"
-            << " extension? (allowed: xml/bin/txt)" << std::endl;
+            << " extension? (allowed: xml/bin/json)" << std::endl;
       else
         Log::Warn << "Unable to detect type of '" << filename << "'; save "
-            << "failed.  Incorrect extension? (allowed: xml/bin/txt)"
+            << "failed.  Incorrect extension? (allowed: xml/bin/json)"
             << std::endl;
 
       return false;
@@ -373,23 +318,23 @@ bool Save(const std::string& filename,
   {
     if (f == format::xml)
     {
-      boost::archive::xml_oarchive ar(ofs);
-      ar << boost::serialization::make_nvp(name.c_str(), t);
+      cereal::XMLOutputArchive ar(ofs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
-    else if (f == format::text)
+    else if (f == format::json)
     {
-      boost::archive::text_oarchive ar(ofs);
-      ar << boost::serialization::make_nvp(name.c_str(), t);
+      cereal::JSONOutputArchive ar(ofs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
     else if (f == format::binary)
     {
-      boost::archive::binary_oarchive ar(ofs);
-      ar << boost::serialization::make_nvp(name.c_str(), t);
+      cereal::BinaryOutputArchive ar(ofs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
 
     return true;
   }
-  catch (boost::archive::archive_exception& e)
+  catch (cereal::Exception& e)
   {
     if (fatal)
       Log::Fatal << e.what() << std::endl;

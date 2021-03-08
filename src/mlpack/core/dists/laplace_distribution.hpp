@@ -173,10 +173,10 @@ class LaplaceDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(mean);
-    ar & BOOST_SERIALIZATION_NVP(scale);
+    ar(CEREAL_NVP(mean));
+    ar(CEREAL_NVP(scale));
   }
 
  private:

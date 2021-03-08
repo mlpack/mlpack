@@ -24,6 +24,90 @@ LSTM<InputDataType, OutputDataType>::LSTM()
   // Nothing to do here.
 }
 
+template<typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::LSTM(
+    const LSTM& layer) : 
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    rho(layer.rho),
+    forwardStep(layer.forwardStep),
+    backwardStep(layer.backwardStep),
+    gradientStep(layer.gradientStep),
+    weights(layer.weights),
+    batchSize(layer.batchSize),
+    batchStep(layer.batchStep),
+    gradientStepIdx(layer.gradientStepIdx),
+    rhoSize(layer.rho),
+    bpttSteps(layer.bpttSteps)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>::LSTM(
+    LSTM&& layer) : 
+    inSize(std::move(layer.inSize)),
+    outSize(std::move(layer.outSize)),
+    rho(std::move(layer.rho)),
+    forwardStep(std::move(layer.forwardStep)),
+    backwardStep(std::move(layer.backwardStep)),
+    gradientStep(std::move(layer.gradientStep)),
+    weights(std::move(layer.weights)),
+    batchSize(std::move(layer.batchSize)),
+    batchStep(std::move(layer.batchStep)),
+    gradientStepIdx(std::move(layer.gradientStepIdx)),
+    rhoSize(std::move(layer.rho)),
+    bpttSteps(std::move(layer.bpttSteps))
+{
+  // Nothing to do here.
+}
+
+template <typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>& 
+LSTM<InputDataType, OutputDataType> :: operator=(const LSTM& layer)
+{
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    rho = layer.rho;
+    forwardStep = layer.forwardStep;
+    backwardStep = layer.backwardStep;
+    gradientStep = layer.gradientStep;
+    weights = layer.weights;
+    batchSize = layer.batchSize;
+    batchStep = layer.batchStep;
+    gradientStepIdx = layer.gradientStepIdx;
+    grad = layer.grad;
+    rhoSize = layer.rho;
+    bpttSteps = layer.bpttSteps;
+  }
+  return *this; 
+}
+
+template <typename InputDataType, typename OutputDataType>
+LSTM<InputDataType, OutputDataType>& 
+LSTM<InputDataType, OutputDataType> :: operator=(LSTM&& layer)
+{
+  if (this != &layer)
+  {
+    inSize = std::move(layer.inSize);
+    outSize = std::move(layer.outSize);
+    rho = std::move(layer.rho);
+    forwardStep = std::move(layer.forwardStep);
+    backwardStep = std::move(layer.backwardStep);
+    gradientStep = std::move(layer.gradientStep);
+    weights = std::move(layer.weights);
+    batchSize = std::move(layer.batchSize);
+    batchStep = std::move(layer.batchStep);
+    gradientStepIdx = std::move(layer.gradientStepIdx);
+    grad = std::move(layer.grad);
+    rhoSize = std::move(layer.rho);
+    bpttSteps = std::move(layer.bpttSteps);
+  }
+  return *this; 
+}
+
 template <typename InputDataType, typename OutputDataType>
 LSTM<InputDataType, OutputDataType>::LSTM(
     const size_t inSize, const size_t outSize, const size_t rho) :
@@ -39,8 +123,7 @@ LSTM<InputDataType, OutputDataType>::LSTM(
     rhoSize(rho),
     bpttSteps(0)
 {
-  weights.set_size(4 * outSize * inSize + 7 * outSize +
-      4 * outSize * outSize, 1);
+  weights.set_size(WeightSize(), 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -61,36 +144,25 @@ void LSTM<InputDataType, OutputDataType>::ResetCell(const size_t size)
   gradientStep = batchSize * size - 1;
 
   const size_t rhoBatchSize = size * batchSize;
-  if (inputGate.is_empty() || inputGate.n_cols < rhoBatchSize)
-  {
-    inputGate.set_size(outSize, rhoBatchSize);
-    forgetGate.set_size(outSize, rhoBatchSize);
-    hiddenLayer.set_size(outSize, rhoBatchSize);
-    outputGate.set_size(outSize, rhoBatchSize);
 
-    inputGateActivation.set_size(outSize, rhoBatchSize);
-    forgetGateActivation.set_size(outSize, rhoBatchSize);
-    outputGateActivation.set_size(outSize, rhoBatchSize);
-    hiddenLayerActivation.set_size(outSize, rhoBatchSize);
+  // Make sure all of the different matrices we will use to hold parameters are
+  // at least as large as we need.
+  inputGate.set_size(outSize, rhoBatchSize);
+  forgetGate.set_size(outSize, rhoBatchSize);
+  hiddenLayer.set_size(outSize, rhoBatchSize);
+  outputGate.set_size(outSize, rhoBatchSize);
 
-    cellActivation.set_size(outSize, rhoBatchSize);
-    prevError.set_size(4 * outSize, batchSize);
+  inputGateActivation.set_size(outSize, rhoBatchSize);
+  forgetGateActivation.set_size(outSize, rhoBatchSize);
+  outputGateActivation.set_size(outSize, rhoBatchSize);
+  hiddenLayerActivation.set_size(outSize, rhoBatchSize);
 
-    if (cell.is_empty())
-    {
-      cell = arma::zeros(outSize, size * batchSize);
-      outParameter = arma::zeros<OutputDataType>(
-          outSize, (size + 1) * batchSize);
-    }
-    else
-    {
-      // To preserve the leading zeros, recreate the object according to given
-      // size specifications, while preserving the elements as well as the
-      // layout of the elements.
-      cell.resize(outSize, size * batchSize);
-      outParameter.resize(outSize, (size + 1) * batchSize);
-    }
-  }
+  cellActivation.set_size(outSize, rhoBatchSize);
+  prevError.set_size(4 * outSize, batchSize);
+
+  // Now reset recurrent values to 0.
+  cell.zeros(outSize, size * batchSize);
+  outParameter.zeros(outSize, (size + 1) * batchSize);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -467,27 +539,27 @@ void LSTM<InputDataType, OutputDataType>::Gradient(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void LSTM<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(weights);
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
-  ar & BOOST_SERIALIZATION_NVP(rho);
-  ar & BOOST_SERIALIZATION_NVP(bpttSteps);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(batchStep);
-  ar & BOOST_SERIALIZATION_NVP(forwardStep);
-  ar & BOOST_SERIALIZATION_NVP(backwardStep);
-  ar & BOOST_SERIALIZATION_NVP(gradientStep);
-  ar & BOOST_SERIALIZATION_NVP(gradientStepIdx);
-  ar & BOOST_SERIALIZATION_NVP(cell);
-  ar & BOOST_SERIALIZATION_NVP(inputGateActivation);
-  ar & BOOST_SERIALIZATION_NVP(forgetGateActivation);
-  ar & BOOST_SERIALIZATION_NVP(outputGateActivation);
-  ar & BOOST_SERIALIZATION_NVP(hiddenLayerActivation);
-  ar & BOOST_SERIALIZATION_NVP(cellActivation);
-  ar & BOOST_SERIALIZATION_NVP(prevError);
-  ar & BOOST_SERIALIZATION_NVP(outParameter);
+  ar(CEREAL_NVP(weights));
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(rho));
+  ar(CEREAL_NVP(bpttSteps));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(batchStep));
+  ar(CEREAL_NVP(forwardStep));
+  ar(CEREAL_NVP(backwardStep));
+  ar(CEREAL_NVP(gradientStep));
+  ar(CEREAL_NVP(gradientStepIdx));
+  ar(CEREAL_NVP(cell));
+  ar(CEREAL_NVP(inputGateActivation));
+  ar(CEREAL_NVP(forgetGateActivation));
+  ar(CEREAL_NVP(outputGateActivation));
+  ar(CEREAL_NVP(hiddenLayerActivation));
+  ar(CEREAL_NVP(cellActivation));
+  ar(CEREAL_NVP(prevError));
+  ar(CEREAL_NVP(outParameter));
 }
 
 } // namespace ann

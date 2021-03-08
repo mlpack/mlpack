@@ -255,6 +255,35 @@ template<typename KernelType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+FastMKS<KernelType, MatType, TreeType>&
+FastMKS<KernelType, MatType, TreeType>::operator=(FastMKS&& other)
+{
+  if (this != &other)
+  {
+    referenceSet = other.referenceSet;
+    referenceTree = other.referenceTree;
+    treeOwner = other.treeOwner;
+    setOwner = other.setOwner;
+    singleMode = other.singleMode;
+    naive = other.naive;
+    metric = std::move(other.metric);
+
+    // Clear information from the other.
+    other.referenceSet = nullptr;
+    other.referenceTree = nullptr;
+    other.treeOwner = false;
+    other.setOwner = false;
+    other.singleMode = false;
+    other.naive = false;
+  }
+  return *this;
+}
+
+template<typename KernelType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 FastMKS<KernelType, MatType, TreeType>::~FastMKS()
 {
   // If we created the trees, we must delete them.
@@ -640,18 +669,17 @@ template<typename KernelType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void FastMKS<KernelType, MatType, TreeType>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
   // Serialize preferences for search.
-  ar & BOOST_SERIALIZATION_NVP(naive);
-  ar & BOOST_SERIALIZATION_NVP(singleMode);
+  ar(CEREAL_NVP(naive));
+  ar(CEREAL_NVP(singleMode));
 
   // If we are doing naive search, serialize the dataset.  Otherwise we
   // serialize the tree.
   if (naive)
   {
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (setOwner && referenceSet)
         delete referenceSet;
@@ -659,13 +687,13 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
       setOwner = true;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceSet);
-    ar & BOOST_SERIALIZATION_NVP(metric);
+    ar(CEREAL_POINTER(const_cast<MatType*&>(referenceSet)));
+    ar(CEREAL_NVP(metric));
   }
   else
   {
     // Delete the current reference tree, if necessary.
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (treeOwner && referenceTree)
         delete referenceTree;
@@ -673,9 +701,9 @@ void FastMKS<KernelType, MatType, TreeType>::serialize(
       treeOwner = true;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(referenceTree);
+    ar(CEREAL_POINTER(referenceTree));
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (setOwner && referenceSet)
         delete referenceSet;

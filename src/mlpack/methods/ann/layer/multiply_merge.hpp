@@ -50,6 +50,18 @@ class MultiplyMerge
    */
   MultiplyMerge(const bool model = false, const bool run = true);
 
+  //! Copy Constructor.
+  MultiplyMerge(const MultiplyMerge& layer);
+
+  //! Move Constructor.
+  MultiplyMerge(MultiplyMerge&& layer);
+
+  //! Copy assignment operator.
+  MultiplyMerge& operator=(const MultiplyMerge& layer);
+
+  //! Move assignment operator.
+  MultiplyMerge& operator=(MultiplyMerge&& layer);
+
   //! Destructor to release allocated memory.
   ~MultiplyMerge();
 
@@ -135,11 +147,14 @@ class MultiplyMerge
   //! Modify the parameters.
   OutputDataType& Parameters() { return weights; }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Parameter which indicates if the modules should be exposed.

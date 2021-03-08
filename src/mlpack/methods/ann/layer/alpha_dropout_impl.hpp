@@ -66,12 +66,12 @@ void AlphaDropout<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void AlphaDropout<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(ratio);
-  ar & BOOST_SERIALIZATION_NVP(alphaDash);
-  ar & BOOST_SERIALIZATION_NVP(a);
-  ar & BOOST_SERIALIZATION_NVP(b);
+  ar(CEREAL_NVP(ratio));
+  ar(CEREAL_NVP(alphaDash));
+  ar(CEREAL_NVP(a));
+  ar(CEREAL_NVP(b));
 }
 
 } // namespace ann

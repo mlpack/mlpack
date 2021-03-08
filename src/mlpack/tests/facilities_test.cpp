@@ -15,28 +15,26 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/data/load.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::cv;
 
-BOOST_AUTO_TEST_SUITE(FacilitiesTest);
-
-
 /**
  * The unequal sizes for data and labels show throw an error.
  */
-BOOST_AUTO_TEST_CASE(AssertSizesTest)
+TEST_CASE("AssertSizesTest", "[FacilitiesTest]")
 {
   // Load the dataset.
   arma::mat dataset;
-  data::Load("iris_train.csv", dataset);
+  if (!data::Load("iris_train.csv", dataset))
+    FAIL("Cannot load test dataset iris_train.csv!");
   // Load the labels.
   arma::Row<size_t> labels;
-  data::Load("iris_test_labels.csv", labels);
+  if (!data::Load("iris_test_labels.csv", labels))
+    FAIL("Cannot load test dataset iris_test_labels.csv!");
 
-  BOOST_REQUIRE_THROW(
+  REQUIRE_THROWS_AS(
     AssertSizes(dataset, labels, "test"), std::invalid_argument);
 }
 
@@ -44,17 +42,15 @@ BOOST_AUTO_TEST_CASE(AssertSizesTest)
 /**
  * Pairwise distances.
  */
-BOOST_AUTO_TEST_CASE(PairwiseDistanceTest)
+TEST_CASE("PairwiseDistanceTest", "[FacilitiesTest]")
 {
   arma::mat X;
-  X << 0 << 1 << 1 << 0 << 0 << arma::endr
-    << 0 << 1 << 2 << 0 << 0 << arma::endr
-    << 1 << 1 << 3 << 2 << 0 << arma::endr;
+  X = { { 0, 1, 1, 0, 0 },
+        { 0, 1, 2, 0, 0 },
+        { 1, 1, 3, 2, 0 } };
   metric::EuclideanDistance metric;
   arma::mat dist = PairwiseDistances(X, metric);
-  BOOST_REQUIRE_EQUAL(dist(0, 0), 0);
-  BOOST_REQUIRE_CLOSE(dist(1, 0), 1.41421, 1e-3);
-  BOOST_REQUIRE_EQUAL(dist(2, 0), 3);
+  REQUIRE(dist(0, 0) == 0);
+  REQUIRE(dist(1, 0) == Approx(1.41421).epsilon(1e-5));
+  REQUIRE(dist(2, 0) == 3);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

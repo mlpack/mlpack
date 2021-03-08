@@ -18,18 +18,17 @@
 
 #include <ensmallen.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "serialization.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 
-BOOST_AUTO_TEST_SUITE(ConvolutionalNetworkTest);
-
 /**
  * Train the vanilla network on a larger dataset.
  */
-BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
+TEST_CASE("VanillaNetworkTest", "[ConvolutionalNetworkTest]")
 {
   arma::mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
@@ -47,13 +46,13 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   {
     if (i < nPoints / 2)
     {
-      // Assign label "1" to all samples with digit = 4
-      Y(i) = 1;
+      // Assign label "0" to all samples with digit = 4
+      Y(i) = 0;
     }
     else
     {
-      // Assign label "2" to all samples with digit = 9
-      Y(i) = 2;
+      // Assign label "1" to all samples with digit = 9
+      Y(i) = 1;
     }
   }
 
@@ -102,7 +101,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
     double objVal = model.Train(X, Y, opt);
 
     // Test that objective value returned by FFN::Train() is finite.
-    BOOST_REQUIRE_EQUAL(std::isfinite(objVal), true);
+    REQUIRE(std::isfinite(objVal) == true);
 
     arma::mat predictionTemp;
     model.Predict(X, predictionTemp);
@@ -111,7 +110,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
     for (size_t i = 0; i < predictionTemp.n_cols; ++i)
     {
       prediction(i) = arma::as_scalar(arma::find(
-            arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1)) + 1;
+            arma::max(predictionTemp.col(i)) == predictionTemp.col(i), 1));
     }
 
     size_t correct = arma::accu(prediction == Y);
@@ -123,7 +122,5 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
     }
   }
 
-  BOOST_REQUIRE_EQUAL(success, true);
+  REQUIRE(success == true);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

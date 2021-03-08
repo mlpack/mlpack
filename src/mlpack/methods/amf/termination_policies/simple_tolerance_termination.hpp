@@ -34,10 +34,19 @@ class SimpleToleranceTermination
   //! empty constructor
   SimpleToleranceTermination(const double tolerance = 1e-5,
                              const size_t maxIterations = 10000,
-                             const size_t reverseStepTolerance = 3)
-            : tolerance(tolerance),
-              maxIterations(maxIterations),
-              reverseStepTolerance(reverseStepTolerance) {}
+                             const size_t reverseStepTolerance = 3) :
+      tolerance(tolerance),
+      maxIterations(maxIterations),
+      V(nullptr),
+      iteration(1),
+      residueOld(DBL_MAX),
+      residue(DBL_MIN),
+      reverseStepTolerance(reverseStepTolerance),
+      reverseStepCount(0),
+      isCopy(false),
+      c_indexOld(0),
+      c_index(0)
+  { }
 
   /**
    * Initializes the termination policy before stating the factorization.
@@ -56,8 +65,6 @@ class SimpleToleranceTermination
 
     c_index = 0;
     c_indexOld = 0;
-
-    reverseStepCount = 0;
   }
 
   /**
@@ -174,7 +181,6 @@ class SimpleToleranceTermination
   //! residue values
   double residueOld;
   double residue;
-  double normOld;
 
   //! tolerance on successive residue drops
   size_t reverseStepTolerance;

@@ -21,6 +21,7 @@
 #include "../visitor/gradient_visitor.hpp"
 #include "../visitor/set_input_height_visitor.hpp"
 #include "../visitor/set_input_width_visitor.hpp"
+#include "../visitor/input_shape_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -92,6 +93,24 @@ Sequential<
     for (LayerTypes<CustomLayers...>& layer : network)
       boost::apply_visitor(deleteVisitor, layer);
   }
+}
+
+template<typename InputDataType, typename OutputDataType, bool Residual,
+         typename... CustomLayers>
+size_t Sequential<InputDataType, OutputDataType, Residual, CustomLayers...>::
+InputShape() const
+{
+  size_t inputShape = 0;
+
+  for (size_t l = 0; l < network.size(); ++l)
+  {
+    if (inputShape == 0)
+      inputShape = boost::apply_visitor(InShapeVisitor(), network[l]);
+    else
+      break;
+  }
+
+  return inputShape;
 }
 
 template<typename InputDataType, typename OutputDataType, bool Residual,
@@ -228,10 +247,10 @@ template<typename InputDataType, typename OutputDataType, bool Residual,
 template<typename Archive>
 void Sequential<
     InputDataType, OutputDataType, Residual, CustomLayers...>::serialize(
-        Archive& ar, const unsigned int version)
+        Archive& ar, const uint32_t /* version */)
 {
   // If loading, delete the old layers.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (LayerTypes<CustomLayers...>& layer : network)
     {
@@ -239,13 +258,10 @@ void Sequential<
     }
   }
 
-  ar & BOOST_SERIALIZATION_NVP(model);
-  ar & BOOST_SERIALIZATION_NVP(network);
+  ar(CEREAL_NVP(model));
+  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
 
-  if (version >= 1)
-    ar & BOOST_SERIALIZATION_NVP(ownsLayers);
-  else if (Archive::is_loading::value)
-    ownsLayers = !model;
+  ar(CEREAL_NVP(ownsLayers));
 }
 
 } // namespace ann

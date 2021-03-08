@@ -71,40 +71,68 @@ FastMKSModel::FastMKSModel(FastMKSModel&& other) :
 
 FastMKSModel& FastMKSModel::operator=(const FastMKSModel& other)
 {
-  // Clear memory.
-  delete linear;
-  delete polynomial;
-  delete cosine;
-  delete gaussian;
-  delete epan;
-  delete triangular;
-  delete hyptan;
+  if (this != &other)
+  {
+    // Clear memory.
+    delete linear;
+    delete polynomial;
+    delete cosine;
+    delete gaussian;
+    delete epan;
+    delete triangular;
+    delete hyptan;
 
-  // Set pointers to null.
-  linear = NULL;
-  polynomial = NULL;
-  cosine = NULL;
-  gaussian = NULL;
-  epan = NULL;
-  triangular = NULL;
-  hyptan = NULL;
+    // Set pointers to null.
+    linear = NULL;
+    polynomial = NULL;
+    cosine = NULL;
+    gaussian = NULL;
+    epan = NULL;
+    triangular = NULL;
+    hyptan = NULL;
 
-  kernelType = other.kernelType;
-  if (other.linear)
-    linear = new FastMKS<LinearKernel>(*other.linear);
-  if (other.polynomial)
-    polynomial = new FastMKS<PolynomialKernel>(*other.polynomial);
-  if (other.cosine)
-    cosine = new FastMKS<CosineDistance>(*other.cosine);
-  if (other.gaussian)
-    gaussian = new FastMKS<GaussianKernel>(*other.gaussian);
-  if (other.epan)
-    epan = new FastMKS<EpanechnikovKernel>(*other.epan);
-  if (other.triangular)
-    triangular = new FastMKS<TriangularKernel>(*other.triangular);
-  if (other.hyptan)
-    hyptan = new FastMKS<HyperbolicTangentKernel>(*other.hyptan);
+    kernelType = other.kernelType;
+    if (other.linear)
+      linear = new FastMKS<LinearKernel>(*other.linear);
+    if (other.polynomial)
+      polynomial = new FastMKS<PolynomialKernel>(*other.polynomial);
+    if (other.cosine)
+      cosine = new FastMKS<CosineDistance>(*other.cosine);
+    if (other.gaussian)
+      gaussian = new FastMKS<GaussianKernel>(*other.gaussian);
+    if (other.epan)
+      epan = new FastMKS<EpanechnikovKernel>(*other.epan);
+    if (other.triangular)
+      triangular = new FastMKS<TriangularKernel>(*other.triangular);
+    if (other.hyptan)
+      hyptan = new FastMKS<HyperbolicTangentKernel>(*other.hyptan);
+  }
+  return *this;
+}
 
+FastMKSModel& FastMKSModel::operator=(FastMKSModel&& other)
+{
+  if (this != &other)
+  {
+    kernelType = other.kernelType;
+    linear = other.linear;
+    polynomial = other.polynomial;
+    cosine = other.cosine;
+    gaussian = other.gaussian;
+    epan = other.epan;
+    triangular = other.triangular;
+    hyptan = other.hyptan;
+
+    // Clear other object.
+    other.kernelType = KernelTypes::LINEAR_KERNEL;
+    other.linear = nullptr;
+    other.polynomial = nullptr;
+    other.cosine = nullptr;
+    other.gaussian = nullptr;
+    other.epan = nullptr;
+    other.triangular = nullptr;
+    other.hyptan = nullptr;
+  }
   return *this;
 }
 

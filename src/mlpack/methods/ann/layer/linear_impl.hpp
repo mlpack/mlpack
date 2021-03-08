@@ -38,7 +38,63 @@ Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
     outSize(outSize),
     regularizer(regularizer)
 {
-  weights.set_size(outSize * inSize + outSize, 1);
+  weights.set_size(WeightSize(), 1);
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
+    const Linear& layer) :
+    inSize(layer.inSize),
+    outSize(layer.outSize),
+    weights(layer.weights),
+    regularizer(layer.regularizer)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear<InputDataType, OutputDataType, RegularizerType>::Linear(
+    Linear&& layer) :
+    inSize(0),
+    outSize(0),
+    weights(std::move(layer.weights)),
+    regularizer(std::move(layer.regularizer))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear<InputDataType, OutputDataType, RegularizerType>&
+Linear<InputDataType, OutputDataType, RegularizerType>::
+operator=(const Linear& layer)
+{
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = layer.weights;
+    regularizer = layer.regularizer;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType,
+    typename RegularizerType>
+Linear<InputDataType, OutputDataType, RegularizerType>&
+Linear<InputDataType, OutputDataType, RegularizerType>::
+operator=(Linear&& layer)
+{
+  if (this != &layer)
+  {
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+    weights = std::move(layer.weights);
+    regularizer = std::move(layer.regularizer);
+  }
+  return *this;
 }
 
 template<typename InputDataType, typename OutputDataType,
@@ -88,15 +144,11 @@ template<typename InputDataType, typename OutputDataType,
     typename RegularizerType>
 template<typename Archive>
 void Linear<InputDataType, OutputDataType, RegularizerType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
-
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
-  if (Archive::is_loading::value)
-    weights.set_size(outSize * inSize + outSize, 1);
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(weights));
 }
 
 } // namespace ann

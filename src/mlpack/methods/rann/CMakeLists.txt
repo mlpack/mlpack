@@ -23,6 +23,7 @@ set(SOURCES
   # model
   ra_model.hpp
   ra_model_impl.hpp
+  ra_model.cpp
 )
 
 # add directory name to sources
@@ -39,4 +40,5 @@ add_cli_executable(krann)
 add_python_binding(krann)
 add_julia_binding(krann)
 add_go_binding(krann)
-add_markdown_docs(krann "cli;python;julia;go" "geometry")
+add_r_binding(krann)
+add_markdown_docs(krann "cli;python;julia;go;r" "geometry")

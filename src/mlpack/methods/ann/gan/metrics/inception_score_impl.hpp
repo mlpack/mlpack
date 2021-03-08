@@ -32,7 +32,7 @@ double InceptionScore(ModelType model,
   size_t index = 0;
   arma::vec scores = arma::vec(splits);
 
-  for (int i = 0; i < splits; ++i)
+  for (size_t i = 0; i < splits; ++i)
   {
     size_t curSize = splitSize;
     if (remainder)

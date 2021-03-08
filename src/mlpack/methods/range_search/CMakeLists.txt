@@ -8,6 +8,7 @@ set(SOURCES
   range_search_stat.hpp
   rs_model.hpp
   rs_model_impl.hpp
+  rs_model.cpp
 )
 
 # Add directory name to sources.
@@ -22,5 +23,6 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_cli_executable(range_search)
 #add_python_binding(range_search)
 #add_julia_binding(range_search)
-add_go_binding(range_search)
-add_markdown_docs(range_search "cli;go" "geometry")
+#add_go_binding(range_search)
+#add_r_binding(range_search)
+add_markdown_docs(range_search "cli" "geometry")

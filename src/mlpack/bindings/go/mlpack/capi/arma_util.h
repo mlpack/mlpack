@@ -146,7 +146,7 @@ int mlpackNumElemCol(const char* identifier);
 int mlpackNumElemUcol(const char* identifier);
 
 /**
- * Call CLI::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
+ * Call IO::SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
  */
 void mlpackToArmaMatWithInfo(const char* identifier,
                              const bool* dimensions,

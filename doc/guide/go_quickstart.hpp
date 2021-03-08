@@ -9,9 +9,9 @@
 This page describes how you can quickly get started using mlpack from Go and
 gives a few examples of usage, and pointers to deeper documentation.
 
-This quickstart guide is also available for
-@ref cli_quickstart "the command-line", @ref python_quickstart "Python"
-and @ref julia_quickstart "Julia".
+This quickstart guide is also available for @ref python_quickstart "Python",
+@ref cli_quickstart "the command-line", @ref julia_quickstart "Julia" and
+@ref r_quickstart "R".
 
 @section go_quickstart_install Installing mlpack
 

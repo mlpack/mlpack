@@ -39,6 +39,18 @@ class MultiplyConstant
    */
   MultiplyConstant(const double scalar = 1.0);
 
+  //! Copy Constructor.
+  MultiplyConstant(const MultiplyConstant& layer);
+
+  //! Move Constructor.
+  MultiplyConstant(MultiplyConstant&& layer);
+
+  //! Copy assignment operator.
+  MultiplyConstant& operator=(const MultiplyConstant& layer);
+
+  //! Move assignment operator.
+  MultiplyConstant& operator=(MultiplyConstant&& layer);
+
   /**
    * Ordinary feed forward pass of a neural network. Multiply the input with the
    * specified constant scalar value.
@@ -75,11 +87,14 @@ class MultiplyConstant
   //! Modify the scalar multiplier.
   double& Scalar() { return scalar; }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored constant scalar value.

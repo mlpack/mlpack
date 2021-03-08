@@ -25,7 +25,7 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::Reset()
 {
@@ -65,10 +65,10 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, double>::type
 RBM<InitializationRuleType, DataType, PolicyType>::FreeEnergy(
-    arma::Mat<ElemType>&& input)
+    const arma::Mat<ElemType>& input)
 {
   ElemType freeEnergy = 0.5 * visiblePenalty(0) * arma::dot(input, input);
 
@@ -90,11 +90,11 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::Phase(
-    DataType&& input,
-    DataType&& gradient)
+    const InputType& input,
+    DataType& gradient)
 {
   arma::Cube<ElemType> weightGrad = arma::Cube<ElemType>
       (gradient.memptr(), visibleSize, poolSize, hiddenSize, false, false);
@@ -102,12 +102,9 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
   DataType spikeBiasGrad = DataType(gradient.memptr() + weightGrad.n_elem,
       hiddenSize, 1, false, false);
 
-  DataType visiblePenaltyGrad = DataType(gradient.memptr() +
-      weightGrad.n_elem + spikeBiasGrad.n_elem, 1, 1, false, false);
-
-  SpikeMean(std::move(input), std::move(spikeMean));
-  SampleSpike(std::move(spikeMean), std::move(spikeSamples));
-  SlabMean(std::move(input), std::move(spikeSamples), std::move(slabMean));
+  SpikeMean(input, spikeMean);
+  SampleSpike(spikeMean, spikeSamples);
+  SlabMean(input, spikeSamples, slabMean);
 
   for (size_t i = 0 ; i < hiddenSize; ++i)
   {
@@ -116,9 +113,9 @@ RBM<InitializationRuleType, DataType, PolicyType>::Phase(
   }
 
   spikeBiasGrad = spikeMean;
-
-  visiblePenaltyGrad = -0.5 * arma::dot(input, input)
-      / std::pow(input.n_cols, 2);
+  // Setting visiblePenaltyGrad.
+  gradient.row(weightGrad.n_elem + spikeBiasGrad.n_elem) = -0.5 * arma::dot(
+       input, input) / std::pow(input.n_cols, 2);
 }
 
 template<
@@ -126,11 +123,11 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::SampleHidden(
-    arma::Mat<ElemType>&& input,
-    arma::Mat<ElemType>&& output)
+    const arma::Mat<ElemType>& input,
+    arma::Mat<ElemType>& output)
 {
   output.set_size(hiddenSize + poolSize * hiddenSize, 1);
 
@@ -138,10 +135,10 @@ RBM<InitializationRuleType, DataType, PolicyType>::SampleHidden(
   DataType slab(output.memptr() + hiddenSize, poolSize, hiddenSize, false,
       false);
 
-  SpikeMean(std::move(input), std::move(spike));
-  SampleSpike(std::move(spike), std::move(spike));
-  SlabMean(std::move(input), std::move(spike), std::move(slab));
-  SampleSlab(std::move(slab), std::move(slab));
+  SpikeMean(input, spike);
+  SampleSpike(spike, spike);
+  SlabMean(input, spike, slab);
+  SampleSlab(slab, slab);
 }
 
 template<
@@ -149,16 +146,16 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::SampleVisible(
-    arma::Mat<ElemType>&& input,
-    arma::Mat<ElemType>&& output)
+    arma::Mat<ElemType>& input,
+    arma::Mat<ElemType>& output)
 {
   const size_t numMaxTrials = 10;
   size_t k = 0;
 
-  VisibleMean(std::move(input), std::move(visibleMean));
+  VisibleMean(input, visibleMean);
   output.set_size(visibleSize, 1);
 
   for (k = 0; k < numMaxTrials; ++k)
@@ -187,11 +184,11 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::VisibleMean(
-    DataType&& input,
-    DataType&& output)
+    InputType& input,
+    DataType& output)
 {
   output.zeros(visibleSize, 1);
 
@@ -212,11 +209,11 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::HiddenMean(
-    DataType&& input,
-    DataType&& output)
+    const InputType& input,
+    DataType& output)
 {
   output.set_size(hiddenSize + poolSize * hiddenSize, 1);
 
@@ -224,9 +221,9 @@ RBM<InitializationRuleType, DataType, PolicyType>::HiddenMean(
   DataType slab(output.memptr() + hiddenSize, poolSize, hiddenSize, false,
       false);
 
-  SpikeMean(std::move(input), std::move(spike));
-  SampleSpike(std::move(spike), std::move(spikeSamples));
-  SlabMean(std::move(input), std::move(spikeSamples), std::move(slab));
+  SpikeMean(input, spike);
+  SampleSpike(spike, spikeSamples);
+  SlabMean(input, spikeSamples, slab);
 }
 
 template<
@@ -234,11 +231,11 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::SpikeMean(
-    DataType&& visible,
-    DataType&& spikeMean)
+    const InputType& visible,
+    DataType& spikeMean)
 {
   for (size_t i = 0; i < hiddenSize; ++i)
   {
@@ -253,11 +250,11 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::SampleSpike(
-    DataType&& spikeMean,
-    DataType&& spike)
+    InputType& spikeMean,
+    DataType& spike)
 {
   for (size_t i = 0; i < hiddenSize; ++i)
   {
@@ -270,12 +267,12 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::SlabMean(
-    DataType&& visible,
-    DataType&& spike,
-    DataType&& slabMean)
+    const DataType& visible,
+    DataType& spike,
+    DataType& slabMean)
 {
   for (size_t i = 0; i < hiddenSize; ++i)
   {
@@ -289,11 +286,11 @@ template<
   typename DataType,
   typename PolicyType
 >
-template<typename Policy>
+template<typename Policy, typename InputType>
 typename std::enable_if<std::is_same<Policy, SpikeSlabRBM>::value, void>::type
 RBM<InitializationRuleType, DataType, PolicyType>::SampleSlab(
-    DataType&& slabMean,
-    DataType&& slab)
+    InputType& slabMean,
+    DataType& slab)
 {
   for (size_t i = 0; i < hiddenSize; ++i)
   {

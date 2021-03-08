@@ -104,6 +104,26 @@ inline HRectBound<MetricType, ElemType>::HRectBound(
 }
 
 /**
+ * Move assignment operator.
+ */
+template<typename MetricType, typename ElemType>
+inline HRectBound<MetricType, ElemType>&
+HRectBound<MetricType, ElemType>::operator=(
+    HRectBound<MetricType, ElemType>&& other)
+{
+  if (this != &other)
+  {
+    bounds = other.bounds;
+    minWidth = other.minWidth;
+    dim = other.dim;
+    other.dim = 0;
+    other.bounds = nullptr;
+    other.minWidth = 0.0;
+  }
+  return *this;
+}
+
+/**
  * Destructor: clean up memory.
  */
 template<typename MetricType, typename ElemType>
@@ -664,23 +684,12 @@ template<typename MetricType, typename ElemType>
 template<typename Archive>
 void HRectBound<MetricType, ElemType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(dim);
-
-  // Allocate memory for the bounds, if necessary.
-  if (Archive::is_loading::value)
-  {
-    if (bounds)
-      delete[] bounds;
-    bounds = new math::RangeType<ElemType>[dim];
-  }
-
   // We can't serialize a raw array directly, so wrap it.
-  auto boundsArray = boost::serialization::make_array(bounds, dim);
-  ar & BOOST_SERIALIZATION_NVP(boundsArray);
-  ar & BOOST_SERIALIZATION_NVP(minWidth);
-  ar & BOOST_SERIALIZATION_NVP(metric);
+  ar(CEREAL_POINTER_ARRAY(bounds, dim));
+  ar(CEREAL_NVP(minWidth));
+  ar(CEREAL_NVP(metric));
 }
 
 } // namespace bound

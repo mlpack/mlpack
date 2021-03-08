@@ -100,11 +100,14 @@ class Add
   //! Get the output size.
   size_t OutputSize() const { return outSize; }
 
+  //! Get the size of weights.
+  size_t WeightSize() const { return outSize; }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of output units.

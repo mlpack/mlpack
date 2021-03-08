@@ -16,14 +16,12 @@
 #include <mlpack/core/data/scaler_methods/standard_scaler.hpp>
 #include <mlpack/core/data/scaler_methods/mean_normalization.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "test_catch_tools.hpp"
+#include "catch.hpp"
 
 using namespace mlpack;
 using namespace mlpack::data;
 using namespace std;
-
-BOOST_AUTO_TEST_SUITE(ScalingTest);
 
 arma::mat dataset = "-1 -0.5 0 1;"
                     "2 6 10 18;";
@@ -33,7 +31,7 @@ arma::mat temp;
 /**
  * Test For MinMax Scaler Class.
  */
-BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
+TEST_CASE("MinMaxScalerTest", "[ScalingTest]")
 {
   arma::mat scaled = "0 0.2500 0.5000 1.000;"
                      "0 0.2500 0.5000 1.000;";
@@ -48,7 +46,7 @@ BOOST_AUTO_TEST_CASE(MinMaxScalerTest)
 /**
  * Test For MaxAbs Scaler Class.
  */
-BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
+TEST_CASE("MaxAbsScalerTest", "[ScalingTest]")
 {
   arma::mat scaled = "-1 -0.5 0 1;"
                      "0.1111111111 0.3333333333 0.55555556 1.0000;";
@@ -63,7 +61,7 @@ BOOST_AUTO_TEST_CASE(MaxAbsScalerTest)
 /**
  * Test For Standard Scaler Class.
  */
-BOOST_AUTO_TEST_CASE(StandardScalerTest)
+TEST_CASE("StandardScalerTest", "[ScalingTest]")
 {
   arma::mat scaled = "-1.18321596 -0.50709255  0.16903085 1.52127766;"
                      "-1.18321596 -0.50709255  0.16903085 1.52127766;";
@@ -78,7 +76,7 @@ BOOST_AUTO_TEST_CASE(StandardScalerTest)
 /**
  * Test For MeanNormalization Scaler Class.
  */
-BOOST_AUTO_TEST_CASE(MeanNormalizationTest)
+TEST_CASE("MeanNormalizationTest", "[ScalingTest]")
 {
   arma::mat scaled = "-0.43750000000 -0.187500000 0.062500000 0.562500000;"
                      "-0.43750000000 -0.187500000 0.062500000 0.562500000;";
@@ -93,7 +91,7 @@ BOOST_AUTO_TEST_CASE(MeanNormalizationTest)
 /**
  * Test to pass same matrix as input and output
  */
-BOOST_AUTO_TEST_CASE(SameInputOutputTest)
+TEST_CASE("SameInputOutputTest", "[ScalingTest]")
 {
   temp = dataset;
   arma::mat scaled = "-0.43750000000 -0.187500000 0.062500000 0.562500000;"
@@ -109,7 +107,7 @@ BOOST_AUTO_TEST_CASE(SameInputOutputTest)
 /**
  * Test for Zero Matrix.
  */
-BOOST_AUTO_TEST_CASE(ZeroMatrixTest)
+TEST_CASE("ZeroMatrixTest", "[ScalingTest]")
 {
   arma::mat input(2, 4, arma::fill::zeros);
   data::MeanNormalization scale;
@@ -123,7 +121,7 @@ BOOST_AUTO_TEST_CASE(ZeroMatrixTest)
 /**
  * Test for Zero Scale.
  */
-BOOST_AUTO_TEST_CASE(ZeroScaleTest)
+TEST_CASE("ZeroScaleTest", "[ScalingTest]")
 {
   dataset = "1 1 1 1;"
             "2 6 10 18;";
@@ -140,7 +138,7 @@ BOOST_AUTO_TEST_CASE(ZeroScaleTest)
 /**
  * Test for PCA whitening Scale.
  */
-BOOST_AUTO_TEST_CASE(PCAWhiteningTest)
+TEST_CASE("PCAWhiteningTest", "[ScalingTest]")
 {
   data::PCAWhitening scale;
   arma::mat output;
@@ -151,7 +149,7 @@ BOOST_AUTO_TEST_CASE(PCAWhiteningTest)
   double ccovsum = 0.0;
   for (size_t i = 0; i < diagonals.n_elem; ++i)
     ccovsum += diagonals(i);
-  BOOST_REQUIRE_CLOSE(ccovsum, 1.0, 1e-3);
+  REQUIRE(ccovsum == Approx(1.0).epsilon(1e-5));
   scale.InverseTransform(output, temp);
   CheckMatrices(dataset, temp);
 }
@@ -159,7 +157,7 @@ BOOST_AUTO_TEST_CASE(PCAWhiteningTest)
 /**
  * Test for ZCA whitening Scale.
  */
-BOOST_AUTO_TEST_CASE(ZCAWhiteningTest)
+TEST_CASE("ZCAWhiteningTest", "[ScalingTest]")
 {
   data::ZCAWhitening scale;
   arma::mat output;
@@ -170,9 +168,7 @@ BOOST_AUTO_TEST_CASE(ZCAWhiteningTest)
   double ccovsum = 0.0;
   for (size_t i = 0; i < diagonals.n_elem; ++i)
     ccovsum += diagonals(i);
-  BOOST_REQUIRE_CLOSE(ccovsum, 1.0, 1e-3);
+  REQUIRE(ccovsum == Approx(1.0).epsilon(1e-5));
   scale.InverseTransform(output, temp);
   CheckMatrices(dataset, temp);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

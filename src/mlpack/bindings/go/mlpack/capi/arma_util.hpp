@@ -13,7 +13,7 @@
 #define MLPACK_BINDINGS_GO_GONUM_ARMA_UTIL_HPP
 
 // Include Armadillo via mlpack.
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core.hpp>
 
 namespace mlpack {
@@ -37,6 +37,11 @@ inline typename T::elem_type* GetMemory(T& m)
   else
   {
     arma::access::rw(m.mem_state) = 1;
+    // With Armadillo 10 and newer, we must set `n_alloc` to 0 so that
+    // Armadillo does not deallocate the memory.
+    #if ARMA_VERSION_MAJOR >= 10
+      arma::access::rw(m.n_alloc) = 0;
+    #endif
     return m.memptr();
   }
 }

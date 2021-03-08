@@ -13,21 +13,19 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/spill_tree.hpp>
-#include <boost/test/unit_test.hpp>
+#include "catch.hpp"
 #include <stack>
 
 using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::metric;
 
-BOOST_AUTO_TEST_SUITE(SpillTreeTest);
-
 /**
  * Test to make sure the tree contains the correct number of points after
  * it is constructed. Also, it checks some invariants in the relation between
  * parent and child nodes.
  */
-BOOST_AUTO_TEST_CASE(SpillTreeConstructionCountTest)
+TEST_CASE("SpillTreeConstructionCountTest", "[SpillTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(3, 1000); // 1000 points in 3 dimensions.
@@ -38,8 +36,8 @@ BOOST_AUTO_TEST_CASE(SpillTreeConstructionCountTest)
   TreeType tree1(dataset, 0);
   TreeType tree2 = tree1;
 
-  BOOST_REQUIRE_EQUAL(tree1.NumDescendants(), 1000);
-  BOOST_REQUIRE_EQUAL(tree2.NumDescendants(), 1000);
+  REQUIRE(tree1.NumDescendants() == 1000);
+  REQUIRE(tree2.NumDescendants() == 1000);
 
   // When overlapping buffer is greater than 0, it is possible to have repeated
   // points. So, let's check node by node, that the number of descendants
@@ -68,18 +66,18 @@ BOOST_AUTO_TEST_CASE(SpillTreeConstructionCountTest)
     }
 
     if (node->IsLeaf())
-      BOOST_REQUIRE_EQUAL(node->NumPoints(), node->NumDescendants());
+      REQUIRE(node->NumPoints() == node->NumDescendants());
     else
-      BOOST_REQUIRE_EQUAL(node->NumPoints(), 0);
+      REQUIRE(node->NumPoints() == 0);
 
-    BOOST_REQUIRE_EQUAL(node->NumDescendants(), numDesc);
+    REQUIRE(node->NumDescendants() == numDesc);
   }
 }
 
 /**
  * Test to check that parents and children are set correctly.
  */
-BOOST_AUTO_TEST_CASE(SpillTreeConstructionParentTest)
+TEST_CASE("SpillTreeConstructionParentTest", "[SpillTreeTest]")
 {
   arma::mat dataset;
   dataset.randu(3, 1000); // 1000 points in 3 dimensions.
@@ -98,13 +96,13 @@ BOOST_AUTO_TEST_CASE(SpillTreeConstructionParentTest)
     if (node->Left())
     {
       nodes.push(node->Left());
-      BOOST_REQUIRE_EQUAL(node, node->Left()->Parent());
+      REQUIRE(node == node->Left()->Parent());
     }
 
     if (node->Right())
     {
       nodes.push(node->Right());
-      BOOST_REQUIRE_EQUAL(node, node->Right()->Parent());
+      REQUIRE(node == node->Right()->Parent());
     }
   }
 }
@@ -146,8 +144,8 @@ void SpillTreeHyperplaneTestAux()
           for (size_t i = 0; i < numDesc; ++i)
           {
             size_t descIndex = node->Left()->Descendant(i);
-            BOOST_REQUIRE_LE(
-                node->Hyperplane().Project(node->Dataset().col(descIndex)),
+            REQUIRE(
+                node->Hyperplane().Project(node->Dataset().col(descIndex)) <
                 tau);
           }
         }
@@ -159,9 +157,8 @@ void SpillTreeHyperplaneTestAux()
           for (size_t i = 0; i < numDesc; ++i)
           {
             size_t descIndex = node->Right()->Descendant(i);
-            BOOST_REQUIRE_GT(
-                node->Hyperplane().Project(node->Dataset().col(descIndex)),
-                -tau);
+            REQUIRE(node->Hyperplane().Project(node->Dataset().col(descIndex))
+                > -tau);
           }
         }
       }
@@ -176,7 +173,7 @@ void SpillTreeHyperplaneTestAux()
           for (size_t i = 0; i < numDesc; ++i)
           {
             size_t descIndex = node->Left()->Descendant(i);
-            BOOST_REQUIRE(
+            REQUIRE(
                 node->Hyperplane().Left(node->Dataset().col(descIndex)));
           }
         }
@@ -188,7 +185,7 @@ void SpillTreeHyperplaneTestAux()
           for (size_t i = 0; i < numDesc; ++i)
           {
             size_t descIndex = node->Right()->Descendant(i);
-            BOOST_REQUIRE(
+            REQUIRE(
                 node->Hyperplane().Right(node->Dataset().col(descIndex)));
           }
         }
@@ -208,7 +205,7 @@ void SpillTreeHyperplaneTestAux()
  * left by the node's splitting hyperplane, and the same for points in the
  * right child.
  */
-BOOST_AUTO_TEST_CASE(SpillTreeHyperplaneTest)
+TEST_CASE("SpillTreeHyperplaneTest", "[SpillTreeTest]")
 {
   typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> SpillType1;
   typedef NonOrtSPTree<EuclideanDistance, EmptyStatistic, arma::mat> SpillType2;
@@ -225,7 +222,7 @@ BOOST_AUTO_TEST_CASE(SpillTreeHyperplaneTest)
 /**
  * Simple test for the move constructor.
  */
-BOOST_AUTO_TEST_CASE(SpillTreeMoveConstructorTest)
+TEST_CASE("SpillTreeMoveConstructorTest", "[SpillTreeTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 1000);
   typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
@@ -238,29 +235,29 @@ BOOST_AUTO_TEST_CASE(SpillTreeMoveConstructorTest)
 
   TreeType newTree(std::move(tree));
 
-  BOOST_REQUIRE(tree.Left() == NULL);
-  BOOST_REQUIRE(tree.Right() == NULL);
-  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 0);
+  REQUIRE(tree.Left() == NULL);
+  REQUIRE(tree.Right() == NULL);
+  REQUIRE(tree.NumDescendants() == 0);
 
-  BOOST_REQUIRE_EQUAL(newTree.Left(), left);
-  BOOST_REQUIRE_EQUAL(newTree.Right(), right);
-  BOOST_REQUIRE_EQUAL(newTree.NumDescendants(), numDesc);
+  REQUIRE(newTree.Left() == left);
+  REQUIRE(newTree.Right() == right);
+  REQUIRE(newTree.NumDescendants() == numDesc);
   if (left)
   {
-    BOOST_REQUIRE(newTree.Left() != NULL);
-    BOOST_REQUIRE_EQUAL(newTree.Left()->Parent(), &newTree);
+    REQUIRE(newTree.Left() != NULL);
+    REQUIRE(newTree.Left()->Parent() == &newTree);
   }
   if (right)
   {
-    BOOST_REQUIRE(newTree.Right() != NULL);
-    BOOST_REQUIRE_EQUAL(newTree.Right()->Parent(), &newTree);
+    REQUIRE(newTree.Right() != NULL);
+    REQUIRE(newTree.Right()->Parent() == &newTree);
   }
 }
 
 /**
  * Simple test for the copy constructor.
  */
-BOOST_AUTO_TEST_CASE(SpillTreeCopyConstructorTest)
+TEST_CASE("SpillTreeCopyConstructorTest", "[SpillTreeTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 1000);
   typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
@@ -276,36 +273,34 @@ BOOST_AUTO_TEST_CASE(SpillTreeCopyConstructorTest)
 
   delete tree;
 
-  BOOST_REQUIRE_EQUAL(newTree.Dataset().n_rows, 3);
-  BOOST_REQUIRE_EQUAL(newTree.Dataset().n_cols, 1000);
-  BOOST_REQUIRE_EQUAL(newTree.NumDescendants(), numDesc);
+  REQUIRE(newTree.Dataset().n_rows == 3);
+  REQUIRE(newTree.Dataset().n_cols == 1000);
+  REQUIRE(newTree.NumDescendants() == numDesc);
   if (left)
   {
-    BOOST_REQUIRE(newTree.Left() != left);
-    BOOST_REQUIRE(newTree.Left() != NULL);
-    BOOST_REQUIRE_EQUAL(newTree.Left()->Parent(), &newTree);
+    REQUIRE(newTree.Left() != left);
+    REQUIRE(newTree.Left() != NULL);
+    REQUIRE(newTree.Left()->Parent() == &newTree);
   }
   if (right)
   {
-    BOOST_REQUIRE(newTree.Right() != right);
-    BOOST_REQUIRE(newTree.Right() != NULL);
-    BOOST_REQUIRE_EQUAL(newTree.Right()->Parent(), &newTree);
+    REQUIRE(newTree.Right() != right);
+    REQUIRE(newTree.Right() != NULL);
+    REQUIRE(newTree.Right()->Parent() == &newTree);
   }
 }
 
 /**
  * Simple test for the constructor that takes a rvalue reference to the dataset.
  */
-BOOST_AUTO_TEST_CASE(SpillTreeMoveDatasetTest)
+TEST_CASE("SpillTreeMoveDatasetTest", "[SpillTreeTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(3, 1000);
   typedef SPTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
 
   TreeType tree(std::move(dataset));
 
-  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
-  BOOST_REQUIRE_EQUAL(tree.Dataset().n_rows, 3);
-  BOOST_REQUIRE_EQUAL(tree.Dataset().n_cols, 1000);
+  REQUIRE(dataset.n_elem == 0);
+  REQUIRE(tree.Dataset().n_rows == 3);
+  REQUIRE(tree.Dataset().n_cols == 1000);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

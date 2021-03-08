@@ -25,7 +25,7 @@ template<typename InputDataType, typename OutputDataType>
 PReLU<InputDataType, OutputDataType>::PReLU(
     const double userAlpha) : userAlpha(userAlpha)
 {
-  alpha.set_size(1, 1);
+  alpha.set_size(WeightSize(), 1);
   alpha(0) = userAlpha;
 }
 
@@ -81,9 +81,9 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void PReLU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar(CEREAL_NVP(alpha));
 }
 
 } // namespace ann

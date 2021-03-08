@@ -61,6 +61,9 @@ class AdaBoostModel
   //! Copy assignment operator.
   AdaBoostModel& operator=(const AdaBoostModel& other);
 
+  //! Move assignment operator.
+  AdaBoostModel& operator=(AdaBoostModel&& other);
+
   //! Clean up memory.
   ~AdaBoostModel();
 
@@ -97,9 +100,9 @@ class AdaBoostModel
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       if (dsBoost)
         delete dsBoost;
@@ -110,13 +113,13 @@ class AdaBoostModel
       pBoost = NULL;
     }
 
-    ar & BOOST_SERIALIZATION_NVP(mappings);
-    ar & BOOST_SERIALIZATION_NVP(weakLearnerType);
+    ar(CEREAL_NVP(mappings));
+    ar(CEREAL_NVP(weakLearnerType));
     if (weakLearnerType == WeakLearnerTypes::DECISION_STUMP)
-      ar & BOOST_SERIALIZATION_NVP(dsBoost);
+      ar(CEREAL_POINTER(dsBoost));
     else if (weakLearnerType == WeakLearnerTypes::PERCEPTRON)
-      ar & BOOST_SERIALIZATION_NVP(pBoost);
-    ar & BOOST_SERIALIZATION_NVP(dimensionality);
+      ar(CEREAL_POINTER(pBoost));
+    ar(CEREAL_NVP(dimensionality));
   }
 };
 

@@ -41,24 +41,6 @@ class LogisticRegressionFunction
                              const arma::Row<size_t>& responses,
                              const double lambda = 0);
 
-  /**
-   * Creates the LogisticRegressionFunction with initialPoint.
-   *
-   * @param predictors The matrix of data points.
-   * @param responses The measured data for each point in predictors.
-   * @param initialPoint Point from which to start the optimization.
-   * @param lambda Regularization constant for ridge regression.
-   */
-  LogisticRegressionFunction(const MatType& predictors,
-                             const arma::Row<size_t>& responses,
-                             const arma::vec& initialPoint,
-                             const double lambda = 0);
-
-  //! Return the initial point for the optimization.
-  const arma::mat& InitialPoint() const { return initialPoint; }
-  //! Modify the initial point for the optimization.
-  arma::mat& InitialPoint() { return initialPoint; }
-
   //! Return the regularization parameter (lambda).
   const double& Lambda() const { return lambda; }
   //! Modify the regularization parameter (lambda).
@@ -170,9 +152,6 @@ class LogisticRegressionFunction
                               GradType& gradient,
                               const size_t batchSize = 1) const;
 
-  //! Return the initial point for the optimization.
-  const arma::mat& GetInitialPoint() const { return initialPoint; }
-
   //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return predictors.n_cols; }
 
@@ -180,8 +159,6 @@ class LogisticRegressionFunction
   size_t NumFeatures() const { return predictors.n_rows + 1; }
 
  private:
-  //! The initial point, from which to start the optimization.
-  arma::mat initialPoint;
   //! The matrix of data points (predictors).  This is an alias until shuffling
   //! is done.
   MatType predictors;

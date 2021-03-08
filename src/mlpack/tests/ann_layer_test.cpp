@@ -15,26 +15,72 @@
 #include <mlpack/methods/ann/layer/layer.hpp>
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/init_rules/glorot_init.hpp>
 #include <mlpack/methods/ann/init_rules/const_init.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "test_catch_tools.hpp"
+#include "catch.hpp"
 #include "ann_test_tools.hpp"
 #include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
 
-BOOST_AUTO_TEST_SUITE(ANNLayerTest);
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::cube, typename ModelType>
+void CheckRNNCopyFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  arma::cube predictions1;
+  arma::cube predictions2;
+  ens::StandardSGD opt(0.1, 1, maxEpochs * trainData.n_slices, -100, false);
+
+  network1->Train(trainData, trainLabels, opt);
+  network1->Predict(trainData, predictions1);
+
+  RNN<> network2 = *network1;
+  delete network1;
+
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
+
+// network1 should be allocated with `new`, and trained on some data.
+template<typename MatType = arma::cube, typename ModelType>
+void CheckRNNMoveFunction(ModelType* network1,
+                       MatType& trainData,
+                       MatType& trainLabels,
+                       const size_t maxEpochs)
+{
+  arma::cube predictions1;
+  arma::cube predictions2;
+  ens::StandardSGD opt(0.1, 1, maxEpochs * trainData.n_slices, -100, false);
+
+  network1->Train(trainData, trainLabels, opt);
+  network1->Predict(trainData, predictions1);
+
+  RNN<> network2(std::move(*network1));
+  delete network1;
+
+  // Deallocating all of network1's memory, so that network2 does not use any
+  // of that memory.
+  network2.Predict(trainData, predictions2);
+  CheckMatrices(predictions1, predictions2);
+}
 
 /**
  * Simple add module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleAddLayerTest)
+TEST_CASE("SimpleAddLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
   Add<> module(10);
@@ -43,27 +89,27 @@ BOOST_AUTO_TEST_CASE(SimpleAddLayerTest)
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(arma::accu(module.Parameters()), arma::accu(output));
+  REQUIRE(arma::accu(module.Parameters()) == arma::accu(output));
 
   // Test the Backward function.
   module.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(delta));
+  REQUIRE(arma::accu(output) == arma::accu(delta));
 
   // Test the forward function.
   input = arma::ones(10, 1);
   module.Forward(input, output);
-  BOOST_REQUIRE_CLOSE(10 + arma::accu(module.Parameters()),
-      arma::accu(output), 1e-3);
+  REQUIRE(10 + arma::accu(module.Parameters()) ==
+      Approx(arma::accu(output)).epsilon(1e-5));
 
   // Test the backward function.
   module.Backward(input, output, delta);
-  BOOST_REQUIRE_CLOSE(arma::accu(output), arma::accu(delta), 1e-3);
+  REQUIRE(arma::accu(output) == Approx(arma::accu(delta)).epsilon(1e-5));
 }
 
 /**
  * Jacobian add module test.
  */
-BOOST_AUTO_TEST_CASE(JacobianAddLayerTest)
+TEST_CASE("JacobianAddLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
@@ -75,23 +121,22 @@ BOOST_AUTO_TEST_CASE(JacobianAddLayerTest)
     module.Parameters().randu();
 
     double error = JacobianTest(module, input);
-    BOOST_REQUIRE_LE(error, 1e-5);
+    REQUIRE(error <= 1e-5);
   }
 }
 
 /**
  * Add layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
+TEST_CASE("GradientAddLayerTest", "[ANNLayerTest]")
 {
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("0"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -119,26 +164,26 @@ BOOST_AUTO_TEST_CASE(GradientAddLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Test that the function that can access the outSize parameter of
  * the Add layer works.
  */
-BOOST_AUTO_TEST_CASE(AddLayerParametersTest)
+TEST_CASE("AddLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter : outSize.
   Add<> layer(7);
 
   // Make sure we can get the parameter successfully.
-  BOOST_REQUIRE_EQUAL(layer.OutputSize(), 7);
+  REQUIRE(layer.OutputSize() == 7);
 }
 
 /**
  * Simple constant module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleConstantLayerTest)
+TEST_CASE("SimpleConstantLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
   Constant<> module(10, 3.0);
@@ -146,26 +191,26 @@ BOOST_AUTO_TEST_CASE(SimpleConstantLayerTest)
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 30.0);
+  REQUIRE(arma::accu(output) == 30.0);
 
   // Test the Backward function.
   module.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  REQUIRE(arma::accu(delta) == 0);
 
   // Test the forward function.
   input = arma::ones(10, 1);
   module.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 30.0);
+  REQUIRE(arma::accu(output) == 30.0);
 
   // Test the backward function.
   module.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  REQUIRE(arma::accu(delta) == 0);
 }
 
 /**
  * Jacobian constant module test.
  */
-BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
+TEST_CASE("JacobianConstantLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
@@ -176,7 +221,7 @@ BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
     Constant<> module(elements, 1.0);
 
     double error = JacobianTest(module, input);
-    BOOST_REQUIRE_LE(error, 1e-5);
+    REQUIRE(error <= 1e-5);
   }
 }
 
@@ -184,19 +229,19 @@ BOOST_AUTO_TEST_CASE(JacobianConstantLayerTest)
  * Test that the function that can access the outSize parameter of the
  * Constant layer works.
  */
-BOOST_AUTO_TEST_CASE(ConstantLayerParametersTest)
+TEST_CASE("ConstantLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter : outSize.
   Constant<> layer(7);
 
   // Make sure we can get the parameter successfully.
-  BOOST_REQUIRE_EQUAL(layer.OutSize(), 7);
+  REQUIRE(layer.OutSize() == 7);
 }
 
 /**
  * Simple dropout module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
+TEST_CASE("SimpleDropoutLayerTest", "[ANNLayerTest]")
 {
   // Initialize the probability of setting a value to zero.
   const double p = 0.2;
@@ -211,19 +256,17 @@ BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
   // Test the Forward function.
   arma::mat output;
   module.Forward(input, output);
-  BOOST_REQUIRE_LE(
-      arma::as_scalar(arma::abs(arma::mean(output) - (1 - p))), 0.05);
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(output) - (1 - p))) <= 0.05);
 
   // Test the Backward function.
   arma::mat delta;
   module.Backward(input, input, delta);
-  BOOST_REQUIRE_LE(
-      arma::as_scalar(arma::abs(arma::mean(delta) - (1 - p))), 0.05);
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(delta) - (1 - p))) <= 0.05);
 
   // Test the Forward function.
   module.Deterministic() = true;
   module.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
+  REQUIRE(arma::accu(input) == arma::accu(output));
 }
 
 /**
@@ -231,7 +274,7 @@ BOOST_AUTO_TEST_CASE(SimpleDropoutLayerTest)
  * validate that the layer is producing approximately the correct number of
  * ones.
  */
-BOOST_AUTO_TEST_CASE(DropoutProbabilityTest)
+TEST_CASE("DropoutProbabilityTest", "[ANNLayerTest]")
 {
   arma::mat input = arma::ones(1500, 1);
   const size_t iterations = 10;
@@ -257,14 +300,14 @@ BOOST_AUTO_TEST_CASE(DropoutProbabilityTest)
         iterations;
     const double error = fabs(nonzeroCount - expected) / expected;
 
-    BOOST_REQUIRE_LE(error, 0.15);
+    REQUIRE(error <= 0.15);
   }
 }
 
 /*
  * Perform dropout with probability 1 - p where p = 0, means no dropout.
  */
-BOOST_AUTO_TEST_CASE(NoDropoutTest)
+TEST_CASE("NoDropoutTest", "[ANNLayerTest]")
 {
   arma::mat input = arma::ones(1500, 1);
   Dropout<> module(0);
@@ -273,14 +316,14 @@ BOOST_AUTO_TEST_CASE(NoDropoutTest)
   arma::mat output;
   module.Forward(input, output);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(input));
+  REQUIRE(arma::accu(output) == arma::accu(input));
 }
 
 /*
  * Perform test to check whether mean and variance remain nearly same
  * after AlphaDropout.
  */
-BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
+TEST_CASE("SimpleAlphaDropoutLayerTest", "[ANNLayerTest]")
 {
   // Initialize the probability of setting a value to alphaDash.
   const double p = 0.2;
@@ -296,23 +339,22 @@ BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
   arma::mat output;
   module.Forward(input, output);
   // Check whether mean remains nearly same.
-  BOOST_REQUIRE_LE(
-      arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))), 0.1);
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(input) - arma::mean(output))) <=
+      0.1);
 
   // Check whether variance remains nearly same.
-  BOOST_REQUIRE_LE(
-      arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))), 0.1);
+  REQUIRE(arma::as_scalar(arma::abs(arma::var(input) - arma::var(output))) <=
+      0.1);
 
   // Test the Backward function when training phase.
   arma::mat delta;
   module.Backward(input, input, delta);
-  BOOST_REQUIRE_LE(
-      arma::as_scalar(arma::abs(arma::mean(delta) - 0)), 0.05);
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(delta) - 0)) <= 0.05);
 
   // Test the Forward function when testing phase.
   module.Deterministic() = true;
   module.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
+  REQUIRE(arma::accu(input) == arma::accu(output));
 }
 
 /**
@@ -320,7 +362,7 @@ BOOST_AUTO_TEST_CASE(SimpleAlphaDropoutLayerTest)
  * and validate that the layer is producing approximately the correct number
  * of ones.
  */
-BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
+TEST_CASE("AlphaDropoutProbabilityTest", "[ANNLayerTest]")
 {
   arma::mat input = arma::ones(1500, 1);
   const size_t iterations = 10;
@@ -348,7 +390,7 @@ BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
 
     const double error = fabs(nonzeroCount - expected) / expected;
 
-    BOOST_REQUIRE_LE(error, 0.15);
+    REQUIRE(error <= 0.15);
   }
 }
 
@@ -356,7 +398,7 @@ BOOST_AUTO_TEST_CASE(AlphaDropoutProbabilityTest)
  * Perform AlphaDropout with probability 1 - p where p = 0,
  * means no AlphaDropout.
  */
-BOOST_AUTO_TEST_CASE(NoAlphaDropoutTest)
+TEST_CASE("NoAlphaDropoutTest", "[ANNLayerTest]")
 {
   arma::mat input = arma::ones(1500, 1);
   AlphaDropout<> module(0);
@@ -365,13 +407,13 @@ BOOST_AUTO_TEST_CASE(NoAlphaDropoutTest)
   arma::mat output;
   module.Forward(input, output);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(input));
+  REQUIRE(arma::accu(output) == arma::accu(input));
 }
 
 /**
  * Simple linear module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleLinearLayerTest)
+TEST_CASE("SimpleLinearLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
   Linear<> module(10, 10);
@@ -381,19 +423,19 @@ BOOST_AUTO_TEST_CASE(SimpleLinearLayerTest)
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(input, output);
-  BOOST_REQUIRE_CLOSE(arma::accu(
-      module.Parameters().submat(100, 0, module.Parameters().n_elem - 1, 0)),
-      arma::accu(output), 1e-3);
+  REQUIRE(arma::accu(module.Parameters().submat(100,
+          0, module.Parameters().n_elem - 1, 0)) ==
+          Approx(arma::accu(output)).epsilon(1e-5));
 
   // Test the Backward function.
   module.Backward(input, input, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  REQUIRE(arma::accu(delta) == 0);
 }
 
 /**
  * Jacobian linear module test.
  */
-BOOST_AUTO_TEST_CASE(JacobianLinearLayerTest)
+TEST_CASE("JacobianLinearLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
@@ -407,23 +449,22 @@ BOOST_AUTO_TEST_CASE(JacobianLinearLayerTest)
     module.Parameters().randu();
 
     double error = JacobianTest(module, input);
-    BOOST_REQUIRE_LE(error, 1e-5);
+    REQUIRE(error <= 1e-5);
   }
 }
 
 /**
  * Linear layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
+TEST_CASE("GradientLinearLayerTest", "[ANNLayerTest]")
 {
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("0"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -451,13 +492,115 @@ BOOST_AUTO_TEST_CASE(GradientLinearLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
+}
+
+/**
+ * Simple Linear3D layer test.
+ */
+TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
+{
+  const size_t inSize = 4;
+  const size_t outSize = 1;
+  const size_t nPoints = 2;
+  const size_t batchSize = 1;
+  arma::mat input, output, delta;
+
+  Linear3D<> module(inSize, outSize);
+  module.Reset();
+  module.Parameters().randu();
+
+  // Test the Forward function.
+  input = arma::zeros(inSize * nPoints, batchSize);
+  module.Forward(input, output);
+  REQUIRE(arma::accu(module.Bias())
+      == Approx(arma::accu(output) / (nPoints * batchSize)).epsilon(1e-3));
+
+  // Test the Backward function.
+  module.Backward(input, input, delta);
+  REQUIRE(arma::accu(delta) == 0);
+}
+
+/**
+ * Jacobian Linear3D module test.
+ */
+TEST_CASE("JacobianLinear3DLayerTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t inSize = math::RandInt(2, 10);
+    const size_t outSize = math::RandInt(2, 10);
+    const size_t nPoints = math::RandInt(2, 10);
+    const size_t batchSize = 1;
+
+    arma::mat input;
+    input.set_size(inSize * nPoints, batchSize);
+
+    Linear3D<> module(inSize, outSize);
+    module.Parameters().randu();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Simple Gradient test for Linear3D layer.
+ */
+TEST_CASE("GradientLinear3DLayerTest", "[ANNLayerTest]")
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        inSize(4),
+        outSize(1),
+        nPoints(2),
+        batchSize(4)
+    {
+      input = arma::randu(inSize * nPoints, batchSize);
+      target = arma::zeros(outSize * nPoints, batchSize);
+      target(0, 0) = 1;
+      target(0, 3) = 1;
+      target(1, 1) = 1;
+      target(1, 2) = 1;
+
+      model = new FFN<MeanSquaredError<>, RandomInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<>>();
+      model->Add<Linear3D<>>(inSize, outSize);
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<MeanSquaredError<>, RandomInitialization>* model;
+    arma::mat input, target;
+    const size_t inSize;
+    const size_t outSize;
+    const size_t nPoints;
+    const size_t batchSize;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-7);
 }
 
 /**
  * Simple noisy linear module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleNoisyLinearLayerTest)
+TEST_CASE("SimpleNoisyLinearLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
   NoisyLinear<> module(10, 10);
@@ -466,13 +609,13 @@ BOOST_AUTO_TEST_CASE(SimpleNoisyLinearLayerTest)
 
   // Test the Backward function.
   module.Backward(input, input, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  REQUIRE(arma::accu(delta) == 0);
 }
 
 /**
  * Jacobian noisy linear module test.
  */
-BOOST_AUTO_TEST_CASE(JacobianNoisyLinearLayerTest)
+TEST_CASE("JacobianNoisyLinearLayerTest", "[ANNLayerTest]")
 {
   const size_t inputElements = math::RandInt(2, 1000);
   const size_t outputElements = math::RandInt(2, 1000);
@@ -484,22 +627,21 @@ BOOST_AUTO_TEST_CASE(JacobianNoisyLinearLayerTest)
   module.Parameters().randu();
 
   double error = JacobianTest(module, input);
-  BOOST_REQUIRE_LE(error, 1e-5);
+  REQUIRE(error <= 1e-5);
 }
 
 /**
  * Noisy Linear layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientNoisyLinearLayerTest)
+TEST_CASE("GradientNoisyLinearLayerTest", "[ANNLayerTest]")
 {
   // Noisy linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("0"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -527,13 +669,13 @@ BOOST_AUTO_TEST_CASE(GradientNoisyLinearLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Simple linear no bias module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleLinearNoBiasLayerTest)
+TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
   LinearNoBias<> module(10, 10);
@@ -543,17 +685,17 @@ BOOST_AUTO_TEST_CASE(SimpleLinearNoBiasLayerTest)
   // Test the Forward function.
   input = arma::zeros(10, 1);
   module.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(0, arma::accu(output));
+  REQUIRE(0 == arma::accu(output));
 
   // Test the Backward function.
   module.Backward(input, input, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  REQUIRE(arma::accu(delta) == 0);
 }
 
 /**
  * Simple padding layer test.
  */
-BOOST_AUTO_TEST_CASE(SimplePaddingLayerTest)
+TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
   Padding<> module(1, 2, 3, 4);
@@ -561,9 +703,9 @@ BOOST_AUTO_TEST_CASE(SimplePaddingLayerTest)
   // Test the Forward function.
   input = arma::randu(10, 1);
   module.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(output));
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows + 3);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols + 7);
+  REQUIRE(arma::accu(input) == arma::accu(output));
+  REQUIRE(output.n_rows == input.n_rows + 3);
+  REQUIRE(output.n_cols == input.n_cols + 7);
 
   // Test the Backward function.
   module.Backward(input, output, delta);
@@ -573,7 +715,7 @@ BOOST_AUTO_TEST_CASE(SimplePaddingLayerTest)
 /**
  * Jacobian linear no bias module test.
  */
-BOOST_AUTO_TEST_CASE(JacobianLinearNoBiasLayerTest)
+TEST_CASE("JacobianLinearNoBiasLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
@@ -587,23 +729,22 @@ BOOST_AUTO_TEST_CASE(JacobianLinearNoBiasLayerTest)
     module.Parameters().randu();
 
     double error = JacobianTest(module, input);
-    BOOST_REQUIRE_LE(error, 1e-5);
+    REQUIRE(error <= 1e-5);
   }
 }
 
 /**
  * LinearNoBias layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
+TEST_CASE("GradientLinearNoBiasLayerTest", "[ANNLayerTest]")
 {
   // LinearNoBias function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("0"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -631,13 +772,13 @@ BOOST_AUTO_TEST_CASE(GradientLinearNoBiasLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Jacobian negative log likelihood module test.
  */
-BOOST_AUTO_TEST_CASE(JacobianNegativeLogLikelihoodLayerTest)
+TEST_CASE("JacobianNegativeLogLikelihoodLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
@@ -648,17 +789,17 @@ BOOST_AUTO_TEST_CASE(JacobianNegativeLogLikelihoodLayerTest)
     init.Initialize(input, inputElements, 1);
 
     arma::mat target(1, 1);
-    target(0) = math::RandInt(1, inputElements - 1);
+    target(0) = math::RandInt(0, inputElements - 2);
 
     double error = JacobianPerformanceTest(module, input, target);
-    BOOST_REQUIRE_LE(error, 1e-5);
+    REQUIRE(error <= 1e-5);
   }
 }
 
 /**
  * Jacobian LeakyReLU module test.
  */
-BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
+TEST_CASE("JacobianLeakyReLULayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
@@ -670,14 +811,14 @@ BOOST_AUTO_TEST_CASE(JacobianLeakyReLULayerTest)
     LeakyReLU<> module;
 
     double error = JacobianTest(module, input);
-    BOOST_REQUIRE_LE(error, 1e-5);
+    REQUIRE(error <= 1e-5);
   }
 }
 
 /**
  * Jacobian FlexibleReLU module test.
  */
-BOOST_AUTO_TEST_CASE(JacobianFlexibleReLULayerTest)
+TEST_CASE("JacobianFlexibleReLULayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
@@ -689,23 +830,22 @@ BOOST_AUTO_TEST_CASE(JacobianFlexibleReLULayerTest)
     FlexibleReLU<> module;
 
     double error = JacobianTest(module, input);
-    BOOST_REQUIRE_LE(error, 1e-5);
+    REQUIRE(error <= 1e-5);
   }
 }
 
 /**
  * Flexible ReLU layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
+TEST_CASE("GradientFlexibleReLULayerTest", "[ANNLayerTest]")
 {
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(2, 1)),
+        target(arma::mat("0"))
     {
-      input = arma::randu(2, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>(
           NegativeLogLikelihood<>(), RandomInitialization(0.1, 0.5));
 
@@ -735,13 +875,13 @@ BOOST_AUTO_TEST_CASE(GradientFlexibleReLULayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Jacobian MultiplyConstant module test.
  */
-BOOST_AUTO_TEST_CASE(JacobianMultiplyConstantLayerTest)
+TEST_CASE("JacobianMultiplyConstantLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
@@ -753,14 +893,47 @@ BOOST_AUTO_TEST_CASE(JacobianMultiplyConstantLayerTest)
     MultiplyConstant<> module(3.0);
 
     double error = JacobianTest(module, input);
-    BOOST_REQUIRE_LE(error, 1e-5);
+    REQUIRE(error <= 1e-5);
   }
+}
+
+/**
+ * Check whether copying and moving network with MultiplyConstant is working or
+ * not.
+ */
+TEST_CASE("CheckCopyMoveMultiplyConstantTest", "[ANNLayerTest]")
+{
+  arma::mat input(2, 1000);
+  input.randu();
+
+  arma::mat output1;
+  arma::mat output2;
+  arma::mat output3;
+  arma::mat output4;
+
+  MultiplyConstant<> *module1 = new MultiplyConstant<>(3.0);
+  module1->Forward(input, output1);
+
+  MultiplyConstant<> module2 = *module1;
+  delete module1;
+
+  module2.Forward(input, output2);
+  CheckMatrices(output1, output2);
+
+  MultiplyConstant<> *module3 = new MultiplyConstant<>(3.0);
+  module3->Forward(input, output3);
+
+  MultiplyConstant<> module4(std::move(*module3));
+  delete module3;
+
+  module4.Forward(input, output4);
+  CheckMatrices(output3, output4);
 }
 
 /**
  * Jacobian HardTanH module test.
  */
-BOOST_AUTO_TEST_CASE(JacobianHardTanHLayerTest)
+TEST_CASE("JacobianHardTanHLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
@@ -772,14 +945,14 @@ BOOST_AUTO_TEST_CASE(JacobianHardTanHLayerTest)
     HardTanH<> module;
 
     double error = JacobianTest(module, input);
-    BOOST_REQUIRE_LE(error, 1e-5);
+    REQUIRE(error <= 1e-5);
   }
 }
 
 /**
  * Simple select module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleSelectLayerTest)
+TEST_CASE("SimpleSelectLayerTest", "[ANNLayerTest]")
 {
   arma::mat outputA, outputB, input, delta;
 
@@ -792,40 +965,40 @@ BOOST_AUTO_TEST_CASE(SimpleSelectLayerTest)
   // Test the Forward function.
   Select<> moduleA(3);
   moduleA.Forward(input, outputA);
-  BOOST_REQUIRE_EQUAL(30, arma::accu(outputA));
+  REQUIRE(30 == arma::accu(outputA));
 
   // Test the Forward function.
   Select<> moduleB(3, 5);
   moduleB.Forward(input, outputB);
-  BOOST_REQUIRE_EQUAL(15, arma::accu(outputB));
+  REQUIRE(15 == arma::accu(outputB));
 
   // Test the Backward function.
   moduleA.Backward(input, outputA, delta);
-  BOOST_REQUIRE_EQUAL(30, arma::accu(delta));
+  REQUIRE(30 == arma::accu(delta));
 
   // Test the Backward function.
   moduleB.Backward(input, outputA, delta);
-  BOOST_REQUIRE_EQUAL(15, arma::accu(delta));
+  REQUIRE(15 == arma::accu(delta));
 }
 
 /**
  * Test that the functions that can access the parameters of the
  * Select layer work.
  */
-BOOST_AUTO_TEST_CASE(SelectLayerParametersTest)
+TEST_CASE("SelectLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : index, elements.
   Select<> layer(3, 5);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer.Index(), 3);
-  BOOST_REQUIRE_EQUAL(layer.NumElements(), 5);
+  REQUIRE(layer.Index() == 3);
+  REQUIRE(layer.NumElements() == 5);
 }
 
 /**
  * Simple join module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleJoinLayerTest)
+TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
   input = arma::ones(10, 5);
@@ -833,23 +1006,23 @@ BOOST_AUTO_TEST_CASE(SimpleJoinLayerTest)
   // Test the Forward function.
   Join<> module;
   module.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(50, arma::accu(output));
+  REQUIRE(50 == arma::accu(output));
 
   bool b = output.n_rows == 1 || output.n_cols == 1;
-  BOOST_REQUIRE_EQUAL(b, true);
+  REQUIRE(b == true);
 
   // Test the Backward function.
   module.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(50, arma::accu(delta));
+  REQUIRE(50 == arma::accu(delta));
 
   b = delta.n_rows == input.n_rows && input.n_cols;
-  BOOST_REQUIRE_EQUAL(b, true);
+  REQUIRE(b == true);
 }
 
 /**
  * Simple add merge module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleAddMergeLayerTest)
+TEST_CASE("SimpleAddMergeLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
   input = arma::ones(10, 1);
@@ -868,22 +1041,22 @@ BOOST_AUTO_TEST_CASE(SimpleAddMergeLayerTest)
 
     // Test the Forward function.
     module.Forward(input, output);
-    BOOST_REQUIRE_EQUAL(10 * numMergeModules, arma::accu(output));
+    REQUIRE(10 * numMergeModules == arma::accu(output));
 
     // Test the Backward function.
     module.Backward(input, output, delta);
-    BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(delta));
+    REQUIRE(arma::accu(output) == arma::accu(delta));
   }
 }
 
 /**
  * Test the LSTM layer with a user defined rho parameter and without.
  */
-BOOST_AUTO_TEST_CASE(LSTMRrhoTest)
+TEST_CASE("LSTMRrhoTest", "[ANNLayerTest]")
 {
   const size_t rho = 5;
   arma::cube input = arma::randu(1, 1, 5);
-  arma::cube target = arma::ones(1, 1, 5);
+  arma::cube target = arma::zeros(1, 1, 5);
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.
@@ -916,15 +1089,15 @@ BOOST_AUTO_TEST_CASE(LSTMRrhoTest)
 /**
  * LSTM layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
+TEST_CASE("GradientLSTMLayerTest", "[ANNLayerTest]")
 {
   // LSTM function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(1, 1, 5)),
+        target(arma::zeros(1, 1, 5))
     {
-      input = arma::randu(1, 1, 5);
-      target.ones(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
@@ -954,41 +1127,41 @@ BOOST_AUTO_TEST_CASE(GradientLSTMLayerTest)
     arma::cube input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Test that the functions that can modify and access the parameters of the
  * LSTM layer work.
  */
-BOOST_AUTO_TEST_CASE(LSTMLayerParametersTest)
+TEST_CASE("LSTMLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : inSize, outSize, rho.
   LSTM<> layer1(1, 2, 3);
   LSTM<> layer2(1, 2, 4);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
-  BOOST_REQUIRE_EQUAL(layer1.OutSize(), 2);
-  BOOST_REQUIRE_EQUAL(layer1.Rho(), 3);
+  REQUIRE(layer1.InSize() == 1);
+  REQUIRE(layer1.OutSize() == 2);
+  REQUIRE(layer1.Rho() == 3);
 
   // Now modify the parameters to match the second layer.
   layer1.Rho() = 4;
 
   // Now ensure all the results are the same.
-  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
-  BOOST_REQUIRE_EQUAL(layer2.OutSize(), layer2.OutSize());
-  BOOST_REQUIRE_EQUAL(layer1.Rho(), layer2.Rho());
+  REQUIRE(layer1.InSize() == layer2.InSize());
+  REQUIRE(layer1.OutSize() == layer2.OutSize());
+  REQUIRE(layer1.Rho() == layer2.Rho());
 }
 
 /**
  * Test the FastLSTM layer with a user defined rho parameter and without.
  */
-BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
+TEST_CASE("FastLSTMRrhoTest", "[ANNLayerTest]")
 {
   const size_t rho = 5;
   arma::cube input = arma::randu(1, 1, 5);
-  arma::cube target = arma::ones(1, 1, 5);
+  arma::cube target = arma::zeros(1, 1, 5);
   RandomInitialization init(0.5, 0.5);
 
   // Create model with user defined rho parameter.
@@ -1021,15 +1194,15 @@ BOOST_AUTO_TEST_CASE(FastLSTMRrhoTest)
 /**
  * FastLSTM layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
+TEST_CASE("GradientFastLSTMLayerTest", "[ANNLayerTest]")
 {
   // Fast LSTM function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(1, 1, 5)),
+        target(arma::zeros(1, 1, 5))
     {
-      input = arma::randu(1, 1, 5);
-      target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
@@ -1062,31 +1235,99 @@ BOOST_AUTO_TEST_CASE(GradientFastLSTMLayerTest)
   // The threshold should be << 0.1 but since the Fast LSTM layer uses an
   // approximation of the sigmoid function the estimated gradient is not
   // correct.
-  BOOST_REQUIRE_LE(CheckGradient(function), 0.2);
+  REQUIRE(CheckGradient(function) <= 0.2);
 }
 
 /**
  * Test that the functions that can modify and access the parameters of the
  * Fast LSTM layer work.
  */
-BOOST_AUTO_TEST_CASE(FastLSTMLayerParametersTest)
+TEST_CASE("FastLSTMLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : inSize, outSize, rho.
   FastLSTM<> layer1(1, 2, 3);
   FastLSTM<> layer2(1, 2, 4);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
-  BOOST_REQUIRE_EQUAL(layer1.OutSize(), 2);
-  BOOST_REQUIRE_EQUAL(layer1.Rho(), 3);
+  REQUIRE(layer1.InSize() == 1);
+  REQUIRE(layer1.OutSize() == 2);
+  REQUIRE(layer1.Rho() == 3);
 
   // Now modify the parameters to match the second layer.
   layer1.Rho() = 4;
 
   // Now ensure all the results are the same.
-  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
-  BOOST_REQUIRE_EQUAL(layer2.OutSize(), layer2.OutSize());
-  BOOST_REQUIRE_EQUAL(layer1.Rho(), layer2.Rho());
+  REQUIRE(layer1.InSize() == layer2.InSize());
+  REQUIRE(layer1.OutSize() == layer2.OutSize());
+  REQUIRE(layer1.Rho() == layer2.Rho());
+}
+
+/**
+ * Check whether copying and moving network with FastLSTM is working or not.
+ */
+TEST_CASE("CheckCopyMoveFastLSTMTest", "[ANNLayerTest]")
+{
+  arma::cube input = arma::randu(1, 1, 5);
+  arma::cube target = arma::ones(1, 1, 5);
+  const size_t rho = 5;
+
+  RNN<NegativeLogLikelihood<> > *model1 =
+      new RNN<NegativeLogLikelihood<> >(rho);
+  model1->Predictors() = input;
+  model1->Responses() = target;
+  model1->Add<IdentityLayer<> >();
+  model1->Add<Linear<> >(1, 10);
+  model1->Add<FastLSTM<> >(10, 3, rho);
+  model1->Add<LogSoftMax<> >();
+
+  RNN<NegativeLogLikelihood<> > *model2 =
+     new RNN<NegativeLogLikelihood<> >(rho);
+  model2->Predictors() = input;
+  model2->Responses() = target;
+  model2->Add<IdentityLayer<> >();
+  model2->Add<Linear<> >(1, 10);
+  model2->Add<FastLSTM<> >(10, 3, rho);
+  model2->Add<LogSoftMax<> >();
+
+  // Check whether copy constructor is working or not.
+  CheckRNNCopyFunction<>(model1, input, target, 1);
+
+  // Check whether move constructor is working or not.
+  CheckRNNMoveFunction<>(model2, input, target, 1);
+}
+
+/**
+ * Check whether copying and moving network with LSTM is working or not.
+ */
+TEST_CASE("CheckCopyMoveLSTMTest", "[ANNLayerTest]")
+{
+  arma::cube input = arma::randu(1, 1, 5);
+  arma::cube target = arma::ones(1, 1, 5);
+  const size_t rho = 5;
+
+  RNN<NegativeLogLikelihood<> > *model1 =
+      new RNN<NegativeLogLikelihood<> >(rho);
+  model1->Predictors() = input;
+  model1->Responses() = target;
+  model1->Add<IdentityLayer<> >();
+  model1->Add<Linear<> >(1, 10);
+  model1->Add<LSTM<> >(10, 3, rho);
+  model1->Add<LogSoftMax<> >();
+
+  RNN<NegativeLogLikelihood<> > *model2 =
+     new RNN<NegativeLogLikelihood<> >(rho);
+  model2->Predictors() = input;
+  model2->Responses() = target;
+  model2->Add<IdentityLayer<> >();
+  model2->Add<Linear<> >(1, 10);
+  model2->Add<LSTM<> >(10, 3, rho);
+  model2->Add<LogSoftMax<> >();
+
+  // Check whether copy constructor is working or not.
+  CheckRNNCopyFunction<>(model1, input, target, 1);
+
+  // Check whether move constructor is working or not.
+  CheckRNNMoveFunction<>(model2, input, target, 1);
 }
 
 /**
@@ -1094,7 +1335,7 @@ BOOST_AUTO_TEST_CASE(FastLSTMLayerParametersTest)
  * state. Besides output, the overloaded function provides read access to cell
  * state of the LSTM layer.
  */
-BOOST_AUTO_TEST_CASE(ReadCellStateParamLSTMLayerTest)
+TEST_CASE("ReadCellStateParamLSTMLayerTest", "[ANNLayerTest]")
 {
   const size_t rho = 5, inputSize = 3, outputSize = 2;
 
@@ -1163,7 +1404,7 @@ BOOST_AUTO_TEST_CASE(ReadCellStateParamLSTMLayerTest)
  * state. Besides output, the overloaded function provides write access to cell
  * state of the LSTM layer.
  */
-BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
+TEST_CASE("WriteCellStateParamLSTMLayerTest", "[ANNLayerTest]")
 {
   const size_t rho = 5, inputSize = 3, outputSize = 2;
 
@@ -1254,11 +1495,11 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
   {
     arma::mat empty;
     // Should throw error.
-    BOOST_REQUIRE_THROW(lstm.Forward(stepData, // Input.
-                                     outLstm,  // Output.
-                                     empty, // Cell state.
-                                     true),  // Write into cell state.
-                                     std::runtime_error);
+    REQUIRE_THROWS_AS(lstm.Forward(stepData, // Input.
+                                   outLstm,  // Output.
+                                   empty, // Cell state.
+                                   true),  // Write into cell state.
+                                   std::runtime_error);
   }
 }
 
@@ -1266,39 +1507,39 @@ BOOST_AUTO_TEST_CASE(WriteCellStateParamLSTMLayerTest)
  * Test that the functions that can modify and access the parameters of the
  * GRU layer work.
  */
-BOOST_AUTO_TEST_CASE(GRULayerParametersTest)
+TEST_CASE("GRULayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : inSize, outSize, rho.
   GRU<> layer1(1, 2, 3);
   GRU<> layer2(1, 2, 4);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
-  BOOST_REQUIRE_EQUAL(layer1.OutSize(), 2);
-  BOOST_REQUIRE_EQUAL(layer1.Rho(), 3);
+  REQUIRE(layer1.InSize() == 1);
+  REQUIRE(layer1.OutSize() == 2);
+  REQUIRE(layer1.Rho() == 3);
 
   // Now modify the parameters to match the second layer.
   layer1.Rho() = 4;
 
   // Now ensure all the results are the same.
-  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
-  BOOST_REQUIRE_EQUAL(layer2.OutSize(), layer2.OutSize());
-  BOOST_REQUIRE_EQUAL(layer1.Rho(), layer2.Rho());
+  REQUIRE(layer1.InSize() == layer2.InSize());
+  REQUIRE(layer1.OutSize() == layer2.OutSize());
+  REQUIRE(layer1.Rho() == layer2.Rho());
 }
 
 /**
  * Check if the gradients computed by GRU cell are close enough to the
  * approximation of the gradients.
  */
-BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
+TEST_CASE("GradientGRULayerTest", "[ANNLayerTest]")
 {
   // GRU function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(1, 1, 5)),
+        target(arma::zeros(1, 1, 5))
     {
-      input = arma::randu(1, 1, 5);
-      target = arma::ones(1, 1, 5);
       const size_t rho = 5;
 
       model = new RNN<NegativeLogLikelihood<> >(rho);
@@ -1329,13 +1570,13 @@ BOOST_AUTO_TEST_CASE(GradientGRULayerTest)
     arma::cube input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * GRU layer manual forward test.
  */
-BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
+TEST_CASE("ForwardGRULayerTest", "[ANNLayerTest]")
 {
   // This will make it easier to clean memory later.
   GRU<>* gruAlloc = new GRU<>(3, 3, 5);
@@ -1361,7 +1602,7 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
 
   // For the first input the output should be equal to the output of
   // gate z_t as the previous output fed to the cell is all zeros.
-  BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
+  REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
 
   expectedOutput = output;
 
@@ -1384,7 +1625,7 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
   // Expected output for the second input.
   expectedOutput = z_t % expectedOutput + (arma::ones(3, 1) - z_t) % o_t;
 
-  BOOST_REQUIRE_LE(arma::as_scalar(arma::trans(output) * expectedOutput), 1e-2);
+  REQUIRE(arma::as_scalar(arma::trans(output) * expectedOutput) <= 1e-2);
 
   LayerTypes<> layer(gruAlloc);
   boost::apply_visitor(DeleteVisitor(), layer);
@@ -1393,7 +1634,7 @@ BOOST_AUTO_TEST_CASE(ForwardGRULayerTest)
 /**
  * Simple concat module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
+TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta, error;
 
@@ -1419,18 +1660,19 @@ BOOST_AUTO_TEST_CASE(SimpleConcatLayerTest)
   const double sumModuleB = arma::accu(
       moduleB->Parameters().submat(
       100, 0, moduleB->Parameters().n_elem - 1, 0));
-  BOOST_REQUIRE_CLOSE(sumModuleA + sumModuleB, arma::accu(output.col(0)), 1e-3);
+  REQUIRE(sumModuleA + sumModuleB ==
+      Approx(arma::accu(output.col(0))).epsilon(1e-5));
 
   // Test the Backward function.
   error = arma::zeros(20, 1);
   module.Backward(input, error, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  REQUIRE(arma::accu(delta) == 0);
 }
 
 /**
  * Test to check Concat layer along different axes.
  */
-BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
+TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
 {
   arma::mat output, input, error, outputA, outputB;
   size_t inputWidth = 4, inputHeight = 4, inputChannel = 2;
@@ -1516,29 +1758,28 @@ BOOST_AUTO_TEST_CASE(ConcatAlongAxisTest)
  * Test that the function that can access the axis parameter of the
  * Concat layer works.
  */
-BOOST_AUTO_TEST_CASE(ConcatLayerParametersTest)
+TEST_CASE("ConcatLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : inputSize{width, height, channels}, axis, model, run.
   arma::Row<size_t> inputSize{128, 128, 3};
   Concat<> layer(inputSize, 2, false, true);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer.ConcatAxis(), 2);
+  REQUIRE(layer.ConcatAxis() == 2);
 }
 
 /**
  * Concat layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
+TEST_CASE("GradientConcatLayerTest", "[ANNLayerTest]")
 {
   // Concat function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("0"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -1571,13 +1812,13 @@ BOOST_AUTO_TEST_CASE(GradientConcatLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Simple concatenate module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleConcatenateLayerTest)
+TEST_CASE("SimpleConcatenateLayerTest", "[ANNLayerTest]")
 {
   arma::mat input = arma::ones(5, 1);
   arma::mat output, delta;
@@ -1588,26 +1829,25 @@ BOOST_AUTO_TEST_CASE(SimpleConcatenateLayerTest)
   // Test the Forward function.
   module.Forward(input, output);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 7.5);
+  REQUIRE(arma::accu(output) == 7.5);
 
   // Test the Backward function.
   module.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 5);
+  REQUIRE(arma::accu(delta) == 5);
 }
 
 /**
  * Concatenate layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientConcatenateLayerTest)
+TEST_CASE("GradientConcatenateLayerTest", "[ANNLayerTest]")
 {
   // Concatenate function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("0"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -1642,68 +1882,123 @@ BOOST_AUTO_TEST_CASE(GradientConcatenateLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Simple lookup module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleLookupLayerTest)
+TEST_CASE("SimpleLookupLayerTest", "[ANNLayerTest]")
 {
-  arma::mat output, input, delta, gradient;
-  Lookup<> module(10, 5);
+  const size_t vocabSize = 10;
+  const size_t embeddingSize = 2;
+  const size_t seqLength = 3;
+  const size_t batchSize = 4;
+
+  arma::mat output, input, gy, g, gradient;
+
+  Lookup<> module(vocabSize, embeddingSize);
   module.Parameters().randu();
 
   // Test the Forward function.
-  input = arma::zeros(2, 1);
-  input(0) = 1;
-  input(1) = 3;
+  input = arma::zeros(seqLength, batchSize);
+  for (size_t i = 0; i < input.n_elem; ++i)
+  {
+    int token = math::RandInt(1, vocabSize);
+    input(i) = token;
+  }
 
   module.Forward(input, output);
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    // The Lookup module uses index - 1 for the cols.
+    const double outputSum = arma::accu(module.Parameters().cols(
+        arma::conv_to<arma::uvec>::from(input.col(i)) - 1));
 
-  // The Lookup module uses index - 1 for the cols.
-  const double outputSum = arma::accu(module.Parameters().col(0)) +
-      arma::accu(module.Parameters().col(2));
-
-  BOOST_REQUIRE_CLOSE(outputSum, arma::accu(output), 1e-3);
-
-  // Test the Backward function.
-  module.Backward(input, input, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(input), arma::accu(input));
+    REQUIRE(std::fabs(outputSum - arma::accu(output.col(i))) <= 1e-5);
+  }
 
   // Test the Gradient function.
-  arma::mat error = arma::ones(2, 5);
-  error = error.t();
-  error.col(1) *= 0.5;
-
+  arma::mat error = 0.01 * arma::randu(embeddingSize * seqLength, batchSize);
   module.Gradient(input, error, gradient);
 
-  // The Lookup module uses index - 1 for the cols.
-  const double gradientSum = arma::accu(gradient.col(0)) +
-      arma::accu(gradient.col(2));
+  REQUIRE(std::fabs(arma::accu(error) - arma::accu(gradient)) <= 1e-07);
+}
 
-  BOOST_REQUIRE_CLOSE(gradientSum, arma::accu(error), 1e-3);
-  BOOST_REQUIRE_CLOSE(arma::accu(gradient), arma::accu(error), 1e-3);
+/**
+ * Lookup layer numerical gradient test.
+ */
+TEST_CASE("GradientLookupLayerTest", "[ANNLayerTest]")
+{
+  // Lookup function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction()
+    {
+      input.set_size(seqLength, batchSize);
+      for (size_t i = 0; i < input.n_elem; ++i)
+      {
+        input(i) = math::RandInt(1, vocabSize);
+      }
+      target = arma::zeros(vocabSize, batchSize);
+      for (size_t i = 0; i < batchSize; ++i)
+      {
+        const size_t targetWord = math::RandInt(1, vocabSize);
+        target(targetWord, i) = 1;
+      }
+
+      model = new FFN<BCELoss<>, GlorotInitialization>(BCELoss<>(1e-10, false));
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<Lookup<> >(vocabSize, embeddingSize);
+      model->Add<Linear<> >(embeddingSize * seqLength, vocabSize);
+      model->Add<Softmax<> >();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, batchSize);
+      model->Gradient(model->Parameters(), 0, gradient, batchSize);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<BCELoss<>, GlorotInitialization>* model;
+    arma::mat input, target;
+
+    const size_t seqLength = 10;
+    const size_t embeddingSize = 8;
+    const size_t vocabSize = 20;
+    const size_t batchSize = 4;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-6);
 }
 
 /**
  * Test that the functions that can access the parameters of the
  * Lookup layer work.
  */
-BOOST_AUTO_TEST_CASE(LookupLayerParametersTest)
+TEST_CASE("LookupLayerParametersTest", "[ANNLayerTest]")
 {
-  // Parameter order : inSize, outSize.
-  Lookup<> layer(5, 7);
+  // Parameter order : vocabSize, embedingSize.
+  Lookup<> layer(100, 8);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer.InSize(), 5);
-  BOOST_REQUIRE_EQUAL(layer.OutSize(), 7);
+  REQUIRE(layer.VocabSize() == 100);
+  REQUIRE(layer.EmbeddingSize() == 8);
 }
 
 /**
  * Simple LogSoftMax module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
+TEST_CASE("SimpleLogSoftmaxLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, error, delta;
   LogSoftMax<> module;
@@ -1711,22 +2006,22 @@ BOOST_AUTO_TEST_CASE(SimpleLogSoftmaxLayerTest)
   // Test the Forward function.
   input = arma::mat("0.5; 0.5");
   module.Forward(input, output);
-  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
-    arma::mat("-0.6931; -0.6931") - output)), 1e-3);
+  REQUIRE(arma::accu(arma::abs(arma::mat("-0.6931; -0.6931") - output)) ==
+      Approx(0.0).margin(1e-3));
 
   // Test the Backward function.
   error = arma::zeros(input.n_rows, input.n_cols);
   // Assume LogSoftmax layer is always associated with NLL output layer.
   error(1, 0) = -1;
   module.Backward(input, error, delta);
-  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
-      arma::mat("1.6487; 0.6487") - delta)), 1e-3);
+  REQUIRE(arma::accu(arma::abs(arma::mat("1.6487; 0.6487") - delta)) ==
+      Approx(0.0).margin(1e-3));
 }
 
 /**
  * Simple Softmax module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleSoftmaxLayerTest)
+TEST_CASE("SimpleSoftmaxLayerTest", "[ANNLayerTest]")
 {
   arma::mat input, output, gy, g;
   Softmax<> module;
@@ -1734,30 +2029,29 @@ BOOST_AUTO_TEST_CASE(SimpleSoftmaxLayerTest)
   // Test the forward function.
   input = arma::mat("1.7; 3.6");
   module.Forward(input, output);
-  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
-    arma::mat("0.130108; 0.869892") - output)), 1e-4);
+  REQUIRE(arma::accu(arma::abs(arma::mat("0.130108; 0.869892") - output)) ==
+      Approx(0.0).margin(1e-4));
 
   // Test the backward function.
   gy = arma::zeros(input.n_rows, input.n_cols);
   gy(0) = 1;
   module.Backward(output, gy, g);
-  BOOST_REQUIRE_SMALL(arma::accu(arma::abs(
-    arma::mat("0.11318; -0.11318") - g)), 1e-04);
+  REQUIRE(arma::accu(arma::abs(arma::mat("0.11318; -0.11318") - g)) ==
+      Approx(0.0).margin(1e-04));
 }
 
 /**
  * Softmax layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientSoftmaxTest)
+TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
 {
   // Softmax function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("1; 0"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1; 0");
-
       model = new FFN<MeanSquaredError<>, RandomInitialization>;
       model->Predictors() = input;
       model->Responses() = target;
@@ -1785,13 +2079,13 @@ BOOST_AUTO_TEST_CASE(GradientSoftmaxTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /*
  * Simple test for the BilinearInterpolation layer
  */
-BOOST_AUTO_TEST_CASE(SimpleBilinearInterpolationLayerTest)
+TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
 {
   // Tested output against tensorflow.image.resize_bilinear()
   arma::mat input, output, unzoomedOutput, expectedOutput;
@@ -1826,18 +2120,18 @@ BOOST_AUTO_TEST_CASE(SimpleBilinearInterpolationLayerTest)
  * Test that the functions that can modify and access the parameters of the
  * Bilinear Interpolation layer work.
  */
-BOOST_AUTO_TEST_CASE(BilinearInterpolationLayerParametersTest)
+TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : inRowSize, inColSize, outRowSize, outColSize, depth.
   BilinearInterpolation<> layer1(1, 2, 3, 4, 5);
   BilinearInterpolation<> layer2(2, 3, 4, 5, 6);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer1.InRowSize(), 1);
-  BOOST_REQUIRE_EQUAL(layer1.InColSize(), 2);
-  BOOST_REQUIRE_EQUAL(layer1.OutRowSize(), 3);
-  BOOST_REQUIRE_EQUAL(layer1.OutColSize(), 4);
-  BOOST_REQUIRE_EQUAL(layer1.InDepth(), 5);
+  REQUIRE(layer1.InRowSize() == 1);
+  REQUIRE(layer1.InColSize() == 2);
+  REQUIRE(layer1.OutRowSize() == 3);
+  REQUIRE(layer1.OutColSize() == 4);
+  REQUIRE(layer1.InDepth() == 5);
 
   // Now modify the parameters to match the second layer.
   layer1.InRowSize() = 2;
@@ -1847,11 +2141,11 @@ BOOST_AUTO_TEST_CASE(BilinearInterpolationLayerParametersTest)
   layer1.InDepth() = 6;
 
   // Now ensure all results are the same.
-  BOOST_REQUIRE_EQUAL(layer1.InRowSize(), layer2.InRowSize());
-  BOOST_REQUIRE_EQUAL(layer1.InColSize(), layer2.InColSize());
-  BOOST_REQUIRE_EQUAL(layer1.OutRowSize(), layer2.OutRowSize());
-  BOOST_REQUIRE_EQUAL(layer1.OutColSize(), layer2.OutColSize());
-  BOOST_REQUIRE_EQUAL(layer1.InDepth(), layer2.InDepth());
+  REQUIRE(layer1.InRowSize() == layer2.InRowSize());
+  REQUIRE(layer1.InColSize() == layer2.InColSize());
+  REQUIRE(layer1.OutRowSize() == layer2.OutRowSize());
+  REQUIRE(layer1.OutColSize() == layer2.OutColSize());
+  REQUIRE(layer1.InDepth() == layer2.InDepth());
 }
 
 /**
@@ -1859,50 +2153,82 @@ BOOST_AUTO_TEST_CASE(BilinearInterpolationLayerParametersTest)
  * the values from another implementation.
  * Link to the implementation - http://cthorey.github.io./backpropagation/
  */
-BOOST_AUTO_TEST_CASE(BatchNormTest)
+TEST_CASE("BatchNormTest", "[ANNLayerTest]")
 {
   arma::mat input, output;
-  input << 5.1 << 3.5 << 1.4 << arma::endr
-        << 4.9 << 3.0 << 1.4 << arma::endr
-        << 4.7 << 3.2 << 1.3 << arma::endr;
+  input = { { 5.1, 3.5, 1.4 },
+            { 4.9, 3.0, 1.4 },
+            { 4.7, 3.2, 1.3 } };
 
+  // BatchNorm layer with average parameter set to true.
   BatchNorm<> model(input.n_rows);
   model.Reset();
+
+  // BatchNorm layer with average parameter set to false.
+  BatchNorm<> model2(input.n_rows, 1e-5, false);
+  model2.Reset();
 
   // Non-Deteministic Forward Pass Test.
   model.Deterministic() = false;
   model.Forward(input, output);
+
+  // Value calculates using torch.nn.BatchNorm2d(momentum = None).
   arma::mat result;
-  result << 1.1658 << 0.1100 << -1.2758 << arma::endr
-         << 1.2579 << -0.0699 << -1.1880 << arma::endr
-         << 1.1737 << 0.0958 << -1.2695 << arma::endr;
+  result = { { 1.1658, 0.1100, -1.2758 },
+             { 1.2579, -0.0699, -1.1880},
+             { 1.1737, 0.0958, -1.2695 } };
+
+  CheckMatrices(output, result, 1e-1);
+
+  model2.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+
+  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
+  output = model.TrainingMean();
+  result = arma::mat({ 3.33333333, 3.1, 3.06666666 }).t();
+
+  CheckMatrices(output, result, 1e-1);
+
+  // Values calculated using torch.nn.BatchNorm2d().
+  output = model2.TrainingMean();
+  result = arma::mat({ 0.3333, 0.3100, 0.3067 }).t();
+
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+
+  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
+  output = model.TrainingVariance();
+  result = arma::mat({ 3.4433, 3.0700, 2.9033 }).t();
+
+  CheckMatrices(output, result, 1e-1);
+  result.clear();
+
+  // Values calculated using torch.nn.BatchNorm2d().
+  output = model2.TrainingVariance();
+  result = arma::mat({ 1.2443, 1.2070, 1.1903 }).t();
 
   CheckMatrices(output, result, 1e-1);
   result.clear();
 
   // Deterministic Forward Pass test.
-  output = model.TrainingMean();
-  result << 3.33333333 << arma::endr
-         << 3.1 << arma::endr
-         << 3.06666666 << arma::endr;
-
-  CheckMatrices(output, result, 1e-1);
-  result.clear();
-
-  output = model.TrainingVariance();
-  result << 2.2956 << arma::endr
-         << 2.0467 << arma::endr
-         << 1.9356 << arma::endr;
-
-  CheckMatrices(output, result, 1e-1);
-  result.clear();
-
   model.Deterministic() = true;
   model.Forward(input, output);
 
-  result << 1.1658 << 0.1100 << -1.2757 << arma::endr
-         << 1.2579 << -0.0699 << -1.1880 << arma::endr
-         << 1.1737 << 0.0958 << -1.2695 << arma::endr;
+  // Values calculated using torch.nn.BatchNorm2d(momentum = None).
+  result = { { 0.9521, 0.0898, -1.0419 },
+             { 1.0273, -0.0571, -0.9702 },
+             { 0.9586, 0.0783, -1.0368 } };
+
+  CheckMatrices(output, result, 1e-1);
+
+  // Values calculated using torch.nn.BatchNorm2d().
+  model2.Deterministic() = true;
+  model2.Forward(input, output);
+
+  result = { { 4.2731, 2.8388, 0.9562 },
+             { 4.1779, 2.4485, 0.9921 },
+             { 4.0268, 2.6519, 0.9105 } };
 
   CheckMatrices(output, result, 1e-1);
 }
@@ -1910,76 +2236,92 @@ BOOST_AUTO_TEST_CASE(BatchNormTest)
 /**
  * BatchNorm layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientBatchNormTest)
+TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
 {
-  // Add function gradient instantiation.
-  struct GradientFunction
+  bool pass = false;
+  for (size_t trial = 0; trial < 10; trial++)
   {
-    GradientFunction()
+    // Add function gradient instantiation.
+    struct GradientFunction
     {
-      input = arma::randn(10, 256);
-      arma::mat target;
-      target.ones(1, 256);
+      GradientFunction() :
+          input(arma::randn(32, 2048)),
+          target(arma::zeros(1, 2048))
+      {
+        model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+        model->Predictors() = input;
+        model->Responses() = target;
+        model->Add<IdentityLayer<> >();
+        model->Add<Linear<> >(32, 4);
+        model->Add<BatchNorm<> >(4);
+        model->Add<Linear<>>(4, 2);
+        model->Add<LogSoftMax<> >();
+      }
 
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
-      model->Add<IdentityLayer<> >();
-      model->Add<Linear<> >(10, 10);
-      model->Add<BatchNorm<> >(10);
-      model->Add<Linear<> >(10, 2);
-      model->Add<LogSoftMax<> >();
-    }
+      ~GradientFunction()
+      {
+        delete model;
+      }
 
-    ~GradientFunction()
+      double Gradient(arma::mat& gradient) const
+      {
+        double error = model->Evaluate(model->Parameters(), 0, 2048, false);
+        model->Gradient(model->Parameters(), 0, gradient, 2048);
+        return error;
+      }
+
+      arma::mat& Parameters() { return model->Parameters(); }
+
+      FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+      arma::mat input, target;
+    } function;
+
+    double gradient = CheckGradient(function);
+    if (gradient < 2e-1)
     {
-      delete model;
+      pass = true;
+      break;
     }
+  }
 
-    double Gradient(arma::mat& gradient) const
-    {
-      double error = model->Evaluate(model->Parameters(), 0, 256, false);
-      model->Gradient(model->Parameters(), 0, gradient, 256);
-      return error;
-    }
-
-    arma::mat& Parameters() { return model->Parameters(); }
-
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-    arma::mat input, target;
-  } function;
-
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(pass);
 }
 
 /**
  * Test that the functions that can access the parameters of the
  * Batch Norm layer work.
  */
-BOOST_AUTO_TEST_CASE(BatchNormLayerParametersTest)
+TEST_CASE("BatchNormLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : size, eps.
   BatchNorm<> layer(7, 1e-3);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer.InputSize(), 7);
-  BOOST_REQUIRE_EQUAL(layer.Epsilon(), 1e-3);
+  REQUIRE(layer.InputSize() == 7);
+  REQUIRE(layer.Epsilon() == 1e-3);
+
+  arma::mat runningMean(7, 1, arma::fill::randn);
+  arma::mat runningVariance(7, 1, arma::fill::randn);
+
+  layer.TrainingVariance() = runningVariance;
+  layer.TrainingMean() = runningMean;
+  CheckMatrices(layer.TrainingVariance(), runningVariance);
+  CheckMatrices(layer.TrainingMean(), runningMean);
 }
 
 /**
  * VirtualBatchNorm layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
+TEST_CASE("GradientVirtualBatchNormTest", "[ANNLayerTest]")
 {
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randn(5, 256)),
+        target(arma::zeros(1, 256))
     {
-      input = arma::randn(5, 256);
       arma::mat referenceBatch = arma::mat(input.memptr(), input.n_rows, 16);
-      arma::mat target;
-      target.ones(1, 256);
 
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
@@ -2009,14 +2351,14 @@ BOOST_AUTO_TEST_CASE(GradientVirtualBatchNormTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Test that the functions that can modify and access the parameters of the
  * Virtual Batch Norm layer work.
  */
-BOOST_AUTO_TEST_CASE(VirtualBatchNormLayerParametersTest)
+TEST_CASE("VirtualBatchNormLayerParametersTest", "[ANNLayerTest]")
 {
   arma::mat input = arma::randn(5, 256);
   arma::mat referenceBatch = arma::mat(input.memptr(), input.n_rows, 16);
@@ -2025,24 +2367,22 @@ BOOST_AUTO_TEST_CASE(VirtualBatchNormLayerParametersTest)
   VirtualBatchNorm<> layer(referenceBatch, 5, 1e-3);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer.InSize(), 5);
-  BOOST_REQUIRE_EQUAL(layer.Epsilon(), 1e-3);
+  REQUIRE(layer.InSize() == 5);
+  REQUIRE(layer.Epsilon() == 1e-3);
 }
 
 /**
  * MiniBatchDiscrimination layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(MiniBatchDiscriminationTest)
+TEST_CASE("MiniBatchDiscriminationTest", "[ANNLayerTest]")
 {
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randn(5, 4)),
+        target(arma::zeros(1, 4))
     {
-      input = arma::randn(5, 4);
-      arma::mat target;
-      target.ones(1, 4);
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -2069,13 +2409,13 @@ BOOST_AUTO_TEST_CASE(MiniBatchDiscriminationTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Simple Transposed Convolution layer test.
  */
-BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
+TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
 
@@ -2088,12 +2428,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module1.Reset();
   module1.Forward(input, output);
   // Value calculated using tensorflow.nn.conv2d_transpose()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 360.0);
+  REQUIRE(arma::accu(output) == 360.0);
 
   // Test the backward function.
   module1.Backward(input, output, delta);
   // Value calculated using tensorflow.nn.conv2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 720.0);
+  REQUIRE(arma::accu(delta) == 720.0);
 
   TransposedConvolution<> module2(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 6, 6);
   // Test the forward function.
@@ -2108,12 +2448,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module2.Reset();
   module2.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 1512.0);
+  REQUIRE(arma::accu(output) == 1512.0);
 
   // Test the backward function.
   module2.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 6504.0);
+  REQUIRE(arma::accu(delta) == 6504.0);
 
   TransposedConvolution<> module3(1, 1, 3, 3, 1, 1, 1, 1, 5, 5, 5, 5);
   // Test the forward function.
@@ -2126,12 +2466,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module3.Reset();
   module3.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 2370.0);
+  REQUIRE(arma::accu(output) == 2370.0);
 
   // Test the backward function.
   module3.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 19154.0);
+  REQUIRE(arma::accu(delta) == 19154.0);
 
   TransposedConvolution<> module4(1, 1, 3, 3, 1, 1, 0, 0, 5, 5, 7, 7);
   // Test the forward function.
@@ -2144,12 +2484,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module4.Reset();
   module4.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 6000.0);
+  REQUIRE(arma::accu(output) == 6000.0);
 
   // Test the backward function.
   module4.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 86208.0);
+  REQUIRE(arma::accu(delta) == 86208.0);
 
   TransposedConvolution<> module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 5, 5);
   // Test the forward function.
@@ -2162,12 +2502,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module5.Reset();
   module5.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 120.0);
+  REQUIRE(arma::accu(output) == 120.0);
 
   // Test the backward function.
   module5.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 960.0);
+  REQUIRE(arma::accu(delta) == 960.0);
 
   TransposedConvolution<> module6(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 5, 5);
   // Test the forward function.
@@ -2180,12 +2520,12 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module6.Reset();
   module6.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 410.0);
+  REQUIRE(arma::accu(output) == 410.0);
 
   // Test the backward function.
   module6.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 4444.0);
+  REQUIRE(arma::accu(delta) == 4444.0);
 
   TransposedConvolution<> module7(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 6, 6);
   // Test the forward function.
@@ -2198,17 +2538,17 @@ BOOST_AUTO_TEST_CASE(SimpleTransposedConvolutionLayerTest)
   module7.Reset();
   module7.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 606.0);
+  REQUIRE(arma::accu(output) == 606.0);
 
   module7.Backward(input, output, delta);
   // Value calculated using torch.nn.functional.conv2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 7732.0);
+  REQUIRE(arma::accu(delta) == 7732.0);
 }
 
 /**
  * Transposed Convolution layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
+TEST_CASE("GradientTransposedConvolutionLayerTest", "[ANNLayerTest]")
 {
   // Add function gradient instantiation.
   // To make this test robust, check it five times.
@@ -2217,11 +2557,10 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
   {
     struct GradientFunction
     {
-      GradientFunction()
+      GradientFunction() :
+          input(arma::linspace<arma::colvec>(0, 35, 36)),
+          target(arma::mat("0"))
       {
-        input = arma::linspace<arma::colvec>(0, 35, 36);
-        target = arma::mat("1");
-
         model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
         model->Predictors() = input;
         model->Responses() = target;
@@ -2254,13 +2593,13 @@ BOOST_AUTO_TEST_CASE(GradientTransposedConvolutionLayerTest)
       break;
     }
   }
-  BOOST_REQUIRE_EQUAL(pass, true);
+  REQUIRE(pass == true);
 }
 
 /**
  * Simple MultiplyMerge module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleMultiplyMergeLayerTest)
+TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
   input = arma::ones(10, 1);
@@ -2279,18 +2618,68 @@ BOOST_AUTO_TEST_CASE(SimpleMultiplyMergeLayerTest)
 
     // Test the Forward function.
     module.Forward(input, output);
-    BOOST_REQUIRE_EQUAL(10, arma::accu(output));
+    REQUIRE(10 == arma::accu(output));
 
     // Test the Backward function.
     module.Backward(input, output, delta);
-    BOOST_REQUIRE_EQUAL(arma::accu(output), arma::accu(delta));
+    REQUIRE(arma::accu(output) == arma::accu(delta));
   }
+}
+
+/**
+ * Check whether copying and moving network with MultiplyMerge is working or
+ * not.
+ */
+TEST_CASE("CheckCopyMoveMultiplyMergeTest", "[ANNLayerTest]")
+{
+  arma::mat input(10, 1);
+  input.randu();
+
+  arma::mat output1;
+  arma::mat output2;
+  arma::mat output3;
+  arma::mat output4;
+
+  const size_t numMergeModules = math::RandInt(2, 10);
+
+  MultiplyMerge<> *module1 = new MultiplyMerge<>(true, false);
+  for (size_t m = 0; m < numMergeModules; ++m)
+  {
+    IdentityLayer<> identityLayer;
+    identityLayer.Forward(input, identityLayer.OutputParameter());
+
+    module1->Add<IdentityLayer<> >(identityLayer);
+  }
+
+  module1->Forward(input, output1);
+
+  MultiplyMerge<> module2 = *module1;
+  delete module1;
+
+  module2.Forward(input, output2);
+  CheckMatrices(output1, output2);
+
+  MultiplyMerge<> *module3 = new MultiplyMerge<>(true, false);
+  for (size_t m = 0; m < numMergeModules; ++m)
+  {
+    IdentityLayer<> identityLayer;
+    identityLayer.Forward(input, identityLayer.OutputParameter());
+
+    module3->Add<IdentityLayer<> >(identityLayer);
+  }
+  module3->Forward(input, output3);
+
+  MultiplyMerge<> module4(std::move(*module3));
+  delete module3;
+
+  module4.Forward(input, output4);
+  CheckMatrices(output3, output4);
 }
 
 /**
  * Simple Atrous Convolution layer test.
  */
-BOOST_AUTO_TEST_CASE(SimpleAtrousConvolutionLayerTest)
+TEST_CASE("SimpleAtrousConvolutionLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
 
@@ -2303,11 +2692,11 @@ BOOST_AUTO_TEST_CASE(SimpleAtrousConvolutionLayerTest)
   module1.Reset();
   module1.Forward(input, output);
   // Value calculated using tensorflow.nn.atrous_conv2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 792.0);
+  REQUIRE(arma::accu(output) == 792.0);
 
   // Test the Backward function.
   module1.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 2376);
+  REQUIRE(arma::accu(delta) == 2376);
 
   AtrousConvolution<> module2(1, 1, 3, 3, 2, 2, 0, 0, 7, 7, 2, 2);
   // Test the forward function.
@@ -2319,26 +2708,25 @@ BOOST_AUTO_TEST_CASE(SimpleAtrousConvolutionLayerTest)
   module2.Reset();
   module2.Forward(input, output);
   // Value calculated using tensorflow.nn.conv2d()
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 264.0);
+  REQUIRE(arma::accu(output) == 264.0);
 
   // Test the backward function.
   module2.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 792.0);
+  REQUIRE(arma::accu(delta) == 792.0);
 }
 
 /**
  * Atrous Convolution layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
+TEST_CASE("GradientAtrousConvolutionLayerTest", "[ANNLayerTest]")
 {
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::linspace<arma::colvec>(0, 35, 36)),
+        target(arma::mat("0"))
     {
-      input = arma::linspace<arma::colvec>(0, 35, 36);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, RandomInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -2365,16 +2753,16 @@ BOOST_AUTO_TEST_CASE(GradientAtrousConvolutionLayerTest)
     arma::mat input, target;
   } function;
 
-  // TODO: this tolerance seems far higher than necessary.  The implementation
+  // TODO: this tolerance seems far higher than necessary. The implementation
   // should be checked.
-  BOOST_REQUIRE_LE(CheckGradient(function), 0.2);
+  REQUIRE(CheckGradient(function) <= 0.2);
 }
 
 /**
  * Test the functions to access and modify the parameters of the
  * AtrousConvolution layer.
  */
-BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerParametersTest)
+TEST_CASE("AtrousConvolutionLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order for the constructor: inSize, outSize, kW, kH, dW, dH, padW,
   // padH, inputWidth, inputHeight, dilationW, dilationH, paddingType ("none").
@@ -2384,18 +2772,18 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerParametersTest)
       std::make_tuple(10, 11), 12, 13, 14, 15);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), 11);
-  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), 12);
-  BOOST_REQUIRE_EQUAL(layer1.KernelWidth(), 3);
-  BOOST_REQUIRE_EQUAL(layer1.KernelHeight(), 4);
-  BOOST_REQUIRE_EQUAL(layer1.StrideWidth(), 5);
-  BOOST_REQUIRE_EQUAL(layer1.StrideHeight(), 6);
-  BOOST_REQUIRE_EQUAL(layer1.Padding().PadHTop(), 9);
-  BOOST_REQUIRE_EQUAL(layer1.Padding().PadHBottom(), 10);
-  BOOST_REQUIRE_EQUAL(layer1.Padding().PadWLeft(), 7);
-  BOOST_REQUIRE_EQUAL(layer1.Padding().PadWRight(), 8);
-  BOOST_REQUIRE_EQUAL(layer1.DilationWidth(), 13);
-  BOOST_REQUIRE_EQUAL(layer1.DilationHeight(), 14);
+  REQUIRE(layer1.InputWidth() == 11);
+  REQUIRE(layer1.InputHeight() == 12);
+  REQUIRE(layer1.KernelWidth() == 3);
+  REQUIRE(layer1.KernelHeight() == 4);
+  REQUIRE(layer1.StrideWidth() == 5);
+  REQUIRE(layer1.StrideHeight() == 6);
+  REQUIRE(layer1.Padding().PadHTop() == 9);
+  REQUIRE(layer1.Padding().PadHBottom() == 10);
+  REQUIRE(layer1.Padding().PadWLeft() == 7);
+  REQUIRE(layer1.Padding().PadWRight() == 8);
+  REQUIRE(layer1.DilationWidth() == 13);
+  REQUIRE(layer1.DilationHeight() == 14);
 
   // Now modify the parameters to match the second layer.
   layer1.InputWidth() = 12;
@@ -2412,28 +2800,28 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerParametersTest)
   layer1.DilationHeight() = 15;
 
   // Now ensure all results are the same.
-  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), layer2.InputWidth());
-  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), layer2.InputHeight());
-  BOOST_REQUIRE_EQUAL(layer1.KernelWidth(), layer2.KernelWidth());
-  BOOST_REQUIRE_EQUAL(layer1.KernelHeight(), layer2.KernelHeight());
-  BOOST_REQUIRE_EQUAL(layer1.StrideWidth(), layer2.StrideWidth());
-  BOOST_REQUIRE_EQUAL(layer1.StrideHeight(), layer2.StrideHeight());
-  BOOST_REQUIRE_EQUAL(layer1.Padding().PadHTop(), layer2.Padding().PadHTop());
-  BOOST_REQUIRE_EQUAL(layer1.Padding().PadHBottom(),
+  REQUIRE(layer1.InputWidth() == layer2.InputWidth());
+  REQUIRE(layer1.InputHeight() == layer2.InputHeight());
+  REQUIRE(layer1.KernelWidth() == layer2.KernelWidth());
+  REQUIRE(layer1.KernelHeight() == layer2.KernelHeight());
+  REQUIRE(layer1.StrideWidth() == layer2.StrideWidth());
+  REQUIRE(layer1.StrideHeight() == layer2.StrideHeight());
+  REQUIRE(layer1.Padding().PadHTop() == layer2.Padding().PadHTop());
+  REQUIRE(layer1.Padding().PadHBottom() ==
                       layer2.Padding().PadHBottom());
-  BOOST_REQUIRE_EQUAL(layer1.Padding().PadWLeft(),
+  REQUIRE(layer1.Padding().PadWLeft() ==
                       layer2.Padding().PadWLeft());
-  BOOST_REQUIRE_EQUAL(layer1.Padding().PadWRight(),
+  REQUIRE(layer1.Padding().PadWRight() ==
                       layer2.Padding().PadWRight());
-  BOOST_REQUIRE_EQUAL(layer1.DilationWidth(), layer2.DilationWidth());
-  BOOST_REQUIRE_EQUAL(layer1.DilationHeight(), layer2.DilationHeight());
+  REQUIRE(layer1.DilationWidth() == layer2.DilationWidth());
+  REQUIRE(layer1.DilationHeight() == layer2.DilationHeight());
 }
 
 /**
  * Test that the padding options are working correctly in Atrous Convolution
  * layer.
  */
-BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
+TEST_CASE("AtrousConvolutionLayerPaddingTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
 
@@ -2448,9 +2836,9 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
   module1.Reset();
   module1.Forward(input, output);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 9);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == 9);
+  REQUIRE(output.n_cols == 1);
 
   // Test the Backward function.
   module1.Backward(input, output, delta);
@@ -2466,9 +2854,9 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
   module2.Reset();
   module2.Forward(input, output);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 49);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == 49);
+  REQUIRE(output.n_cols == 1);
 
   // Test the backward function.
   module2.Backward(input, output, delta);
@@ -2477,33 +2865,33 @@ BOOST_AUTO_TEST_CASE(AtrousConvolutionLayerPaddingTest)
 /**
  * Tests the LayerNorm layer.
  */
-BOOST_AUTO_TEST_CASE(LayerNormTest)
+TEST_CASE("LayerNormTest", "[ANNLayerTest]")
 {
   arma::mat input, output;
-  input << 5.1 << 3.5 << arma::endr
-        << 4.9 << 3.0 << arma::endr
-        << 4.7 << 3.2 << arma::endr;
+  input = { { 5.1, 3.5 },
+            { 4.9, 3.0 },
+            { 4.7, 3.2 } };
 
   LayerNorm<> model(input.n_rows);
   model.Reset();
 
   model.Forward(input, output);
   arma::mat result;
-  result << 1.2247 << 1.2978 << arma::endr
-         << 0 << -1.1355 << arma::endr
-         << -1.2247 << -0.1622 << arma::endr;
+  result = { { 1.2247, 1.2978 },
+              { 0, -1.1355 },
+              { -1.2247, -0.1622 } };
 
   CheckMatrices(output, result, 1e-1);
   result.clear();
 
   output = model.Mean();
-  result << 4.9000 << 3.2333 << arma::endr;
+  result = { 4.9000, 3.2333 };
 
   CheckMatrices(output, result, 1e-1);
   result.clear();
 
   output = model.Variance();
-  result << 0.0267 << 0.0422 << arma::endr;
+  result = { 0.0267, 0.0422 };
 
   CheckMatrices(output, result, 1e-1);
 }
@@ -2511,17 +2899,15 @@ BOOST_AUTO_TEST_CASE(LayerNormTest)
 /**
  * LayerNorm layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
+TEST_CASE("GradientLayerNormTest", "[ANNLayerTest]")
 {
   // Add function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randn(10, 256)),
+        target(arma::zeros(1, 256))
     {
-      input = arma::randn(10, 256);
-      arma::mat target;
-      target.ones(1, 256);
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -2550,28 +2936,28 @@ BOOST_AUTO_TEST_CASE(GradientLayerNormTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Test that the functions that can access the parameters of the
  * Layer Norm layer work.
  */
-BOOST_AUTO_TEST_CASE(LayerNormLayerParametersTest)
+TEST_CASE("LayerNormLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : size, eps.
   LayerNorm<> layer(5, 1e-3);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer.InSize(), 5);
-  BOOST_REQUIRE_EQUAL(layer.Epsilon(), 1e-3);
+  REQUIRE(layer.InSize() == 5);
+  REQUIRE(layer.Epsilon() == 1e-3);
 }
 
 /**
  * Test if the AddMerge layer is able to forward the
  * Forward/Backward/Gradient calls.
  */
-BOOST_AUTO_TEST_CASE(AddMergeRunTest)
+TEST_CASE("AddMergeRunTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta, error;
 
@@ -2595,15 +2981,15 @@ BOOST_AUTO_TEST_CASE(AddMergeRunTest)
   // Clean up before we break,
   delete linear;
 
-  BOOST_REQUIRE_CLOSE(parameterSum, arma::accu(output), 1e-3);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  REQUIRE(parameterSum == Approx(arma::accu(output)).epsilon(1e-5));
+  REQUIRE(arma::accu(delta) == 0);
 }
 
 /**
  * Test if the MultiplyMerge layer is able to forward the
  * Forward/Backward/Gradient calls.
  */
-BOOST_AUTO_TEST_CASE(MultiplyMergeRunTest)
+TEST_CASE("MultiplyMergeRunTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta, error;
 
@@ -2627,14 +3013,14 @@ BOOST_AUTO_TEST_CASE(MultiplyMergeRunTest)
   // Clean up before we break,
   delete linear;
 
-  BOOST_REQUIRE_CLOSE(parameterSum, arma::accu(output), 1e-3);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  REQUIRE(parameterSum == Approx(arma::accu(output)).epsilon(1e-5));
+  REQUIRE(arma::accu(delta) == 0);
 }
 
 /**
  * Simple subview module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleSubviewLayerTest)
+TEST_CASE("SimpleSubviewLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta, outputMat;
   Subview<> moduleRow(1, 10, 19);
@@ -2642,26 +3028,26 @@ BOOST_AUTO_TEST_CASE(SimpleSubviewLayerTest)
   // Test the Forward function for a vector.
   input = arma::ones(20, 1);
   moduleRow.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 10);
+  REQUIRE(output.n_rows == 10);
 
   Subview<> moduleMat(4, 3, 6, 0, 2);
 
   // Test the Forward function for a matrix.
   input = arma::ones(20, 8);
   moduleMat.Forward(input, outputMat);
-  BOOST_REQUIRE_EQUAL(outputMat.n_rows, 12);
-  BOOST_REQUIRE_EQUAL(outputMat.n_cols, 2);
+  REQUIRE(outputMat.n_rows == 12);
+  REQUIRE(outputMat.n_cols == 2);
 
   // Test the Backward function.
   moduleMat.Backward(input, input, delta);
-  BOOST_REQUIRE_EQUAL(accu(delta), 160);
-  BOOST_REQUIRE_EQUAL(delta.n_rows, 20);
+  REQUIRE(accu(delta) == 160);
+  REQUIRE(delta.n_rows == 20);
 }
 
 /**
  * Subview index test.
  */
-BOOST_AUTO_TEST_CASE(SubviewIndexTest)
+TEST_CASE("SubviewIndexTest", "[ANNLayerTest]")
 {
   arma::mat outputEnd, outputMid, outputStart, input, delta;
   input = arma::linspace<arma::vec>(1, 20, 20);
@@ -2691,7 +3077,7 @@ BOOST_AUTO_TEST_CASE(SubviewIndexTest)
 /**
  * Subview batch test.
  */
-BOOST_AUTO_TEST_CASE(SubviewBatchTest)
+TEST_CASE("SubviewBatchTest", "[ANNLayerTest]")
 {
   arma::mat output, input, outputCol, outputMat, outputDef;
 
@@ -2724,18 +3110,18 @@ BOOST_AUTO_TEST_CASE(SubviewBatchTest)
  * Test that the functions that can modify and access the parameters of the
  * Subview layer work.
  */
-BOOST_AUTO_TEST_CASE(SubviewLayerParametersTest)
+TEST_CASE("SubviewLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : inSize, beginRow, endRow, beginCol, endCol.
   Subview<> layer1(1, 2, 3, 4, 5);
   Subview<> layer2(1, 3, 4, 5, 6);
 
   // Make sure we can get the parameters correctly.
-  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
-  BOOST_REQUIRE_EQUAL(layer1.BeginRow(), 2);
-  BOOST_REQUIRE_EQUAL(layer1.EndRow(), 3);
-  BOOST_REQUIRE_EQUAL(layer1.BeginCol(), 4);
-  BOOST_REQUIRE_EQUAL(layer1.EndCol(), 5);
+  REQUIRE(layer1.InSize() == 1);
+  REQUIRE(layer1.BeginRow() == 2);
+  REQUIRE(layer1.EndRow() == 3);
+  REQUIRE(layer1.BeginCol() == 4);
+  REQUIRE(layer1.EndCol() == 5);
 
   // Now modify the parameters to match the second layer.
   layer1.BeginRow() = 3;
@@ -2744,17 +3130,17 @@ BOOST_AUTO_TEST_CASE(SubviewLayerParametersTest)
   layer1.EndCol() = 6;
 
   // Now ensure all results are the same.
-  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
-  BOOST_REQUIRE_EQUAL(layer1.BeginRow(), layer2.BeginRow());
-  BOOST_REQUIRE_EQUAL(layer1.EndRow(), layer2.EndRow());
-  BOOST_REQUIRE_EQUAL(layer1.BeginCol(), layer2.BeginCol());
-  BOOST_REQUIRE_EQUAL(layer1.EndCol(), layer2.EndCol());
+  REQUIRE(layer1.InSize() == layer2.InSize());
+  REQUIRE(layer1.BeginRow() == layer2.BeginRow());
+  REQUIRE(layer1.EndRow() == layer2.EndRow());
+  REQUIRE(layer1.BeginCol() == layer2.BeginCol());
+  REQUIRE(layer1.EndCol() == layer2.EndCol());
 }
 
 /*
  * Simple Reparametrization module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleReparametrizationLayerTest)
+TEST_CASE("SimpleReparametrizationLayerTest", "[ANNLayerTest]")
 {
   arma::mat input, output, delta;
   Reparametrization<> module(5);
@@ -2765,18 +3151,18 @@ BOOST_AUTO_TEST_CASE(SimpleReparametrizationLayerTest)
   input = join_cols(arma::ones<arma::mat>(5, 1) * -15,
       arma::zeros<arma::mat>(5, 1));
   module.Forward(input, output);
-  BOOST_REQUIRE_LE(arma::accu(output), 1e-5);
+  REQUIRE(arma::accu(output) <= 1e-5);
 
   // Test the Backward function.
   arma::mat gy = arma::zeros<arma::mat>(5, 1);
   module.Backward(input, gy, delta);
-  BOOST_REQUIRE(arma::accu(delta) != 0); // klBackward will be added.
+  REQUIRE(arma::accu(delta) != 0); // klBackward will be added.
 }
 
 /**
  * Reparametrization module stochastic boolean test.
  */
-BOOST_AUTO_TEST_CASE(ReparametrizationLayerStochasticTest)
+TEST_CASE("ReparametrizationLayerStochasticTest", "[ANNLayerTest]")
 {
   arma::mat input, outputA, outputB;
   Reparametrization<> module(5, false);
@@ -2794,7 +3180,7 @@ BOOST_AUTO_TEST_CASE(ReparametrizationLayerStochasticTest)
 /**
  * Reparametrization module includeKl boolean test.
  */
-BOOST_AUTO_TEST_CASE(ReparametrizationLayerIncludeKlTest)
+TEST_CASE("ReparametrizationLayerIncludeKlTest", "[ANNLayerTest]")
 {
   arma::mat input, output, gy, delta;
   Reparametrization<> module(5, true, false);
@@ -2808,13 +3194,13 @@ BOOST_AUTO_TEST_CASE(ReparametrizationLayerIncludeKlTest)
   gy = arma::zeros(output.n_rows, output.n_cols);
   module.Backward(output, gy, delta);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  REQUIRE(arma::accu(delta) == 0);
 }
 
 /**
  * Jacobian Reparametrization module test.
  */
-BOOST_AUTO_TEST_CASE(JacobianReparametrizationLayerTest)
+TEST_CASE("JacobianReparametrizationLayerTest", "[ANNLayerTest]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
@@ -2826,23 +3212,22 @@ BOOST_AUTO_TEST_CASE(JacobianReparametrizationLayerTest)
     Reparametrization<> module(inputElementsHalf, false, false);
 
     double error = JacobianTest(module, input);
-    BOOST_REQUIRE_LE(error, 1e-5);
+    REQUIRE(error <= 1e-5);
   }
 }
 
 /**
  * Reparametrization layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerTest)
+TEST_CASE("GradientReparametrizationLayerTest", "[ANNLayerTest]")
 {
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("0"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -2871,22 +3256,21 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Reparametrization layer beta numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerBetaTest)
+TEST_CASE("GradientReparametrizationLayerBetaTest", "[ANNLayerTest]")
 {
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 2)),
+        target(arma::mat("0 0"))
     {
-      input = arma::randu(10, 2);
-      target = arma::mat("1 1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -2916,29 +3300,29 @@ BOOST_AUTO_TEST_CASE(GradientReparametrizationLayerBetaTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Test that the functions that can access the parameters of the
  * Reparametrization layer work.
  */
-BOOST_AUTO_TEST_CASE(ReparametrizationLayerParametersTest)
+TEST_CASE("ReparametrizationLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : latentSize, stochastic, includeKL, beta.
   Reparametrization<> layer(5, false, false, 2);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer.OutputSize(), 5);
-  BOOST_REQUIRE_EQUAL(layer.Stochastic(), false);
-  BOOST_REQUIRE_EQUAL(layer.IncludeKL(), false);
-  BOOST_REQUIRE_EQUAL(layer.Beta(), 2);
+  REQUIRE(layer.OutputSize() == 5);
+  REQUIRE(layer.Stochastic() == false);
+  REQUIRE(layer.IncludeKL() == false);
+  REQUIRE(layer.Beta() == 2);
 }
 
 /**
  * Simple residual module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleResidualLayerTest)
+TEST_CASE("SimpleResidualLayerTest", "[ANNLayerTest]")
 {
   arma::mat outputA, outputB, input, deltaA, deltaB;
 
@@ -2982,7 +3366,7 @@ BOOST_AUTO_TEST_CASE(SimpleResidualLayerTest)
 /**
  * Simple Highway module test.
  */
-BOOST_AUTO_TEST_CASE(SimpleHighwayLayerTest)
+TEST_CASE("SimpleHighwayLayerTest", "[ANNLayerTest]")
 {
   arma::mat outputA, outputB, input, deltaA, deltaB;
   Sequential<>* sequential = new Sequential<>(true);
@@ -3021,28 +3405,27 @@ BOOST_AUTO_TEST_CASE(SimpleHighwayLayerTest)
  * Test that the function that can access the inSize parameter of the
  * Highway layer works.
  */
-BOOST_AUTO_TEST_CASE(HighwayLayerParametersTest)
+TEST_CASE("HighwayLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : inSize, model.
   Highway<> layer(1, true);
 
   // Make sure we can get the parameter successfully.
-  BOOST_REQUIRE_EQUAL(layer.InSize(), 1);
+  REQUIRE(layer.InSize() == 1);
 }
 
 /**
  * Sequential layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientHighwayLayerTest)
+TEST_CASE("GradientHighwayLayerTest", "[ANNLayerTest]")
 {
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(5, 1)),
+        target(arma::mat("0"))
     {
-      input = arma::randu(5, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -3079,22 +3462,21 @@ BOOST_AUTO_TEST_CASE(GradientHighwayLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Sequential layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
+TEST_CASE("GradientSequentialLayerTest", "[ANNLayerTest]")
 {
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("0"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -3130,22 +3512,21 @@ BOOST_AUTO_TEST_CASE(GradientSequentialLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * WeightNorm layer numerical gradient test.
  */
-BOOST_AUTO_TEST_CASE(GradientWeightNormLayerTest)
+TEST_CASE("GradientWeightNormLayerTest", "[ANNLayerTest]")
 {
   // Linear function gradient instantiation.
   struct GradientFunction
   {
-    GradientFunction()
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("0"))
     {
-      input = arma::randu(10, 1);
-      target = arma::mat("1");
-
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
@@ -3177,14 +3558,14 @@ BOOST_AUTO_TEST_CASE(GradientWeightNormLayerTest)
     arma::mat input, target;
   } function;
 
-  BOOST_REQUIRE_LE(CheckGradient(function), 1e-4);
+  REQUIRE(CheckGradient(function) <= 1e-4);
 }
 
 /**
  * Test if the WeightNorm layer is able to forward the
  * Forward/Backward/Gradient calls.
  */
-BOOST_AUTO_TEST_CASE(WeightNormRunTest)
+TEST_CASE("WeightNormRunTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta, error;
 
@@ -3203,8 +3584,8 @@ BOOST_AUTO_TEST_CASE(WeightNormRunTest)
   // Test the Backward function.
   module.Backward(input, input, delta);
 
-  BOOST_REQUIRE_EQUAL(0, arma::accu(output));
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0);
+  REQUIRE(0 == arma::accu(output));
+  REQUIRE(arma::accu(delta) == 0);
 }
 
 // General ANN serialization test.
@@ -3228,27 +3609,27 @@ void ANNLayerSerializationTest(LayerType& layer)
   model.Predict(input, originalOutput);
 
   // Now serialize the model.
-  FFN<NegativeLogLikelihood<>, ann::RandomInitialization> xmlModel, textModel,
+  FFN<NegativeLogLikelihood<>, ann::RandomInitialization> xmlModel, jsonModel,
       binaryModel;
-  SerializeObjectAll(model, xmlModel, textModel, binaryModel);
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
   // Ensure that predictions are the same.
-  arma::mat modelOutput, xmlOutput, textOutput, binaryOutput;
+  arma::mat modelOutput, xmlOutput, jsonOutput, binaryOutput;
   model.Predict(input, modelOutput);
   xmlModel.Predict(input, xmlOutput);
-  textModel.Predict(input, textOutput);
+  jsonModel.Predict(input, jsonOutput);
   binaryModel.Predict(input, binaryOutput);
 
   CheckMatrices(originalOutput, modelOutput, 1e-5);
   CheckMatrices(originalOutput, xmlOutput, 1e-5);
-  CheckMatrices(originalOutput, textOutput, 1e-5);
+  CheckMatrices(originalOutput, jsonOutput, 1e-5);
   CheckMatrices(originalOutput, binaryOutput, 1e-5);
 }
 
 /**
  * Simple serialization test for batch normalization layer.
  */
-BOOST_AUTO_TEST_CASE(BatchNormSerializationTest)
+TEST_CASE("BatchNormSerializationTest", "[ANNLayerTest]")
 {
   BatchNorm<> layer(10);
   ANNLayerSerializationTest(layer);
@@ -3257,7 +3638,7 @@ BOOST_AUTO_TEST_CASE(BatchNormSerializationTest)
 /**
  * Simple serialization test for layer normalization layer.
  */
-BOOST_AUTO_TEST_CASE(LayerNormSerializationTest)
+TEST_CASE("LayerNormSerializationTest", "[ANNLayerTest]")
 {
   LayerNorm<> layer(10);
   ANNLayerSerializationTest(layer);
@@ -3267,7 +3648,7 @@ BOOST_AUTO_TEST_CASE(LayerNormSerializationTest)
  * Test that the functions that can modify and access the parameters of the
  * Convolution layer work.
  */
-BOOST_AUTO_TEST_CASE(ConvolutionLayerParametersTest)
+TEST_CASE("ConvolutionLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order: inSize, outSize, kW, kH, dW, dH, padW, padH, inputWidth,
   // inputHeight, paddingType.
@@ -3277,16 +3658,16 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerParametersTest)
       std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), 11);
-  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), 12);
-  BOOST_REQUIRE_EQUAL(layer1.KernelWidth(), 3);
-  BOOST_REQUIRE_EQUAL(layer1.KernelHeight(), 4);
-  BOOST_REQUIRE_EQUAL(layer1.StrideWidth(), 5);
-  BOOST_REQUIRE_EQUAL(layer1.StrideHeight(), 6);
-  BOOST_REQUIRE_EQUAL(layer1.PadWLeft(), 7);
-  BOOST_REQUIRE_EQUAL(layer1.PadWRight(), 8);
-  BOOST_REQUIRE_EQUAL(layer1.PadHTop(), 9);
-  BOOST_REQUIRE_EQUAL(layer1.PadHBottom(), 10);
+  REQUIRE(layer1.InputWidth() == 11);
+  REQUIRE(layer1.InputHeight() == 12);
+  REQUIRE(layer1.KernelWidth() == 3);
+  REQUIRE(layer1.KernelHeight() == 4);
+  REQUIRE(layer1.StrideWidth() == 5);
+  REQUIRE(layer1.StrideHeight() == 6);
+  REQUIRE(layer1.PadWLeft() == 7);
+  REQUIRE(layer1.PadWRight() == 8);
+  REQUIRE(layer1.PadHTop() == 9);
+  REQUIRE(layer1.PadHBottom() == 10);
 
   // Now modify the parameters to match the second layer.
   layer1.InputWidth() = 12;
@@ -3301,22 +3682,22 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerParametersTest)
   layer1.PadHBottom() = 11;
 
   // Now ensure all results are the same.
-  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), layer2.InputWidth());
-  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), layer2.InputHeight());
-  BOOST_REQUIRE_EQUAL(layer1.KernelWidth(), layer2.KernelWidth());
-  BOOST_REQUIRE_EQUAL(layer1.KernelHeight(), layer2.KernelHeight());
-  BOOST_REQUIRE_EQUAL(layer1.StrideWidth(), layer2.StrideWidth());
-  BOOST_REQUIRE_EQUAL(layer1.StrideHeight(), layer2.StrideHeight());
-  BOOST_REQUIRE_EQUAL(layer1.PadWLeft(), layer2.PadWLeft());
-  BOOST_REQUIRE_EQUAL(layer1.PadWRight(), layer2.PadWRight());
-  BOOST_REQUIRE_EQUAL(layer1.PadHTop(), layer2.PadHTop());
-  BOOST_REQUIRE_EQUAL(layer1.PadHBottom(), layer2.PadHBottom());
+  REQUIRE(layer1.InputWidth() == layer2.InputWidth());
+  REQUIRE(layer1.InputHeight() == layer2.InputHeight());
+  REQUIRE(layer1.KernelWidth() == layer2.KernelWidth());
+  REQUIRE(layer1.KernelHeight() == layer2.KernelHeight());
+  REQUIRE(layer1.StrideWidth() == layer2.StrideWidth());
+  REQUIRE(layer1.StrideHeight() == layer2.StrideHeight());
+  REQUIRE(layer1.PadWLeft() == layer2.PadWLeft());
+  REQUIRE(layer1.PadWRight() == layer2.PadWRight());
+  REQUIRE(layer1.PadHTop() == layer2.PadHTop());
+  REQUIRE(layer1.PadHBottom() == layer2.PadHBottom());
 }
 
 /**
  * Test that the padding options are working correctly in Convolution layer.
  */
-BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
+TEST_CASE("ConvolutionLayerPaddingTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
 
@@ -3330,9 +3711,9 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
   module1.Reset();
   module1.Forward(input, output);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 25);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == 25);
+  REQUIRE(output.n_cols == 1);
 
   // Test the Backward function.
   module1.Backward(input, output, delta);
@@ -3347,9 +3728,9 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
   module2.Reset();
   module2.Forward(input, output);
 
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, 49);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == 49);
+  REQUIRE(output.n_cols == 1);
 
   // Test the backward function.
   module2.Backward(input, output, delta);
@@ -3358,7 +3739,7 @@ BOOST_AUTO_TEST_CASE(ConvolutionLayerPaddingTest)
 /**
  * Test that the padding options in Transposed Convolution layer.
  */
-BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
+TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta;
 
@@ -3370,11 +3751,11 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module1.Reset();
   module1.Forward(input, output);
   // Value calculated using tensorflow.nn.conv2d_transpose().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0.0);
+  REQUIRE(arma::accu(output) == 0.0);
 
   // Test the Backward Function.
   module1.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+  REQUIRE(arma::accu(delta) == 0.0);
 
   // Test Valid for non zero padding.
   TransposedConvolution<> module2(1, 1, 3, 3, 2, 2,
@@ -3390,11 +3771,11 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module2.Reset();
   module2.Forward(input, output);
   // Value calculated using torch.nn.functional.conv_transpose2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 120.0);
+  REQUIRE(arma::accu(output) == 120.0);
 
   // Test the Backward Function.
   module2.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 960.0);
+  REQUIRE(arma::accu(delta) == 960.0);
 
   // Test for same padding type.
   TransposedConvolution<> module3(1, 1, 3, 3, 2, 2, 0, 0, 3, 3, 3, 3, "SAME");
@@ -3403,13 +3784,13 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module3.Reset();
   module3.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 
   // Test the Backward Function.
   module3.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+  REQUIRE(arma::accu(delta) == 0.0);
 
   // Output shape should equal input.
   TransposedConvolution<> module4(1, 1, 3, 3, 1, 1,
@@ -3420,13 +3801,13 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
   module4.Reset();
   module4.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 
   // Test the Backward Function.
   module4.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+  REQUIRE(arma::accu(delta) == 0.0);
 
   TransposedConvolution<> module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 2, 2, "SAME");
   // Test the forward function.
@@ -3434,13 +3815,13 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
   module5.Reset();
   module5.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 
   // Test the Backward Function.
   module5.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+  REQUIRE(arma::accu(delta) == 0.0);
 
   TransposedConvolution<> module6(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 5, 5, "SAME");
   // Test the forward function.
@@ -3448,19 +3829,64 @@ BOOST_AUTO_TEST_CASE(TransposedConvolutionLayerPaddingTest)
   module6.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
   module6.Reset();
   module6.Forward(input, output);
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 0);
-  BOOST_REQUIRE_EQUAL(output.n_rows, input.n_rows);
-  BOOST_REQUIRE_EQUAL(output.n_cols, input.n_cols);
+  REQUIRE(arma::accu(output) == 0);
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 
   // Test the Backward Function.
   module6.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+  REQUIRE(arma::accu(delta) == 0.0);
+}
+
+/**
+ * Simple test for Lp Pooling layer.
+ */
+TEST_CASE("LpMaxPoolingTestCase", "[ANNLayerTest]")
+{
+  // For rectangular input to pooling layers.
+  arma::mat input = arma::mat(8, 1);
+  arma::mat output;
+  input.zeros();
+  input(0) = input(6) = 30;
+  input(1) = input(7) = 120;
+  input(2) = input(4) = 272;
+  input(3) = input(5) = 315;
+  // Output-Size should be 1 x 2.
+  // Square output.
+  LpPooling<> module1(4, 2, 2, 2, 2);
+  module1.InputHeight() = 2;
+  module1.InputWidth() = 4;
+  module1.Forward(input, output);
+  // Calculated using torch.nn.LPPool2d().
+  REQUIRE(arma::accu(output) - 706.0 == Approx(0.0).margin(2e-5));
+  REQUIRE(output.n_elem == 2);
+
+  // For Square input.
+  input = arma::mat(16, 1);
+  input.zeros();
+  input(0) = 4;
+  input(1) = 3;
+  input(3) = 12;
+  input(7) = 35;
+  input(8) = 6;
+  input(11) = 7;
+  input(12) = 8;
+  input(15) = 24;
+  // Output-Size should be 2 x 2.
+  // Square output.
+  LpPooling<> module3(2, 2, 2, 2, 2);
+  module3.InputHeight() = 4;
+  module3.InputWidth() = 4;
+  module3.Forward(input, output);
+  // Calculated using torch.nn.LPPool2d().
+  REQUIRE(arma::accu(output) - 77.0 == Approx(0.0).margin(2e-5));
+  REQUIRE(output.n_elem == 4);
 }
 
 /**
  * Simple test for Max Pooling layer.
  */
-BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
+TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
 {
   // For rectangular input to pooling layers.
   arma::mat input = arma::mat(12, 1);
@@ -3482,9 +3908,9 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   module1.InputWidth() = 4;
   module1.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 28);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 4);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 28);
+  REQUIRE(output.n_elem == 4);
+  REQUIRE(output.n_cols == 1);
 
   // For Square input.
   input = arma::mat(9, 1);
@@ -3501,9 +3927,9 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   module2.InputWidth() = 3;
   module2.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 12.0);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 2);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 12.0);
+  REQUIRE(output.n_elem == 2);
+  REQUIRE(output.n_cols == 1);
 
   // For Square input.
   input = arma::mat(16, 1);
@@ -3520,9 +3946,9 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   module3.InputWidth() = 4;
   module3.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 30.0);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 9);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 30.0);
+  REQUIRE(output.n_elem == 9);
+  REQUIRE(output.n_cols == 1);
 
   // For Rectangular input.
   input = arma::mat(6, 1);
@@ -3537,73 +3963,73 @@ BOOST_AUTO_TEST_CASE(MaxPoolingTestCase)
   module4.InputWidth() = 3;
   module4.Forward(input, output);
   // Calculated using torch.nn.MaxPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 3);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 4);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 3);
+  REQUIRE(output.n_elem == 4);
+  REQUIRE(output.n_cols == 1);
 }
 
 /**
  * Test that the functions that can modify and access the parameters of the
  * Glimpse layer work.
  */
-BOOST_AUTO_TEST_CASE(GlimpseLayerParametersTest)
+TEST_CASE("GlimpseLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : inSize, size, depth, scale, inputWidth, inputHeight.
   Glimpse<> layer1(1, 2, 3, 4, 5, 6);
   Glimpse<> layer2(1, 2, 3, 4, 6, 7);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), 6);
-  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), 5);
-  BOOST_REQUIRE_EQUAL(layer1.Scale(), 4);
-  BOOST_REQUIRE_EQUAL(layer1.Depth(), 3);
-  BOOST_REQUIRE_EQUAL(layer1.GlimpseSize(), 2);
-  BOOST_REQUIRE_EQUAL(layer1.InSize(), 1);
+  REQUIRE(layer1.InputHeight() == 6);
+  REQUIRE(layer1.InputWidth() == 5);
+  REQUIRE(layer1.Scale() == 4);
+  REQUIRE(layer1.Depth() == 3);
+  REQUIRE(layer1.GlimpseSize() == 2);
+  REQUIRE(layer1.InSize() == 1);
 
   // Now modify the parameters to match the second layer.
   layer1.InputHeight() = 7;
   layer1.InputWidth() = 6;
 
   // Now ensure that all the results are the same.
-  BOOST_REQUIRE_EQUAL(layer1.InputHeight(), layer2.InputHeight());
-  BOOST_REQUIRE_EQUAL(layer1.InputWidth(), layer2.InputWidth());
-  BOOST_REQUIRE_EQUAL(layer1.Scale(), layer2.Scale());
-  BOOST_REQUIRE_EQUAL(layer1.Depth(), layer2.Depth());
-  BOOST_REQUIRE_EQUAL(layer1.GlimpseSize(), layer2.GlimpseSize());
-  BOOST_REQUIRE_EQUAL(layer1.InSize(), layer2.InSize());
+  REQUIRE(layer1.InputHeight() == layer2.InputHeight());
+  REQUIRE(layer1.InputWidth() == layer2.InputWidth());
+  REQUIRE(layer1.Scale() == layer2.Scale());
+  REQUIRE(layer1.Depth() == layer2.Depth());
+  REQUIRE(layer1.GlimpseSize() == layer2.GlimpseSize());
+  REQUIRE(layer1.InSize() == layer2.InSize());
 }
 
 /**
  * Test that the function that can access the stdev parameter of the
  * Reinforce Normal layer works.
  */
-BOOST_AUTO_TEST_CASE(ReinforceNormalLayerParametersTest)
+TEST_CASE("ReinforceNormalLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter : stdev.
   ReinforceNormal<> layer(4.0);
 
   // Make sure we can get the parameter successfully.
-  BOOST_REQUIRE_EQUAL(layer.StandardDeviation(), 4.0);
+  REQUIRE(layer.StandardDeviation() == 4.0);
 }
 
 /**
  * Test that the function that can access the parameters of the
  * VR Class Reward layer works.
  */
-BOOST_AUTO_TEST_CASE(VRClassRewardLayerParametersTest)
+TEST_CASE("VRClassRewardLayerParametersTest", "[ANNLayerTest]")
 {
   // Parameter order : scale, sizeAverage.
   VRClassReward<> layer(2, false);
 
   // Make sure we can get the parameters successfully.
-  BOOST_REQUIRE_EQUAL(layer.Scale(), 2);
-  BOOST_REQUIRE_EQUAL(layer.SizeAverage(), false);
+  REQUIRE(layer.Scale() == 2);
+  REQUIRE(layer.SizeAverage() == false);
 }
 
 /**
  * Simple test for Adaptive pooling for Max Pooling layer.
  */
-BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
+TEST_CASE("AdaptiveMaxPoolingTestCase", "[ANNLayerTest]")
 {
   // For rectangular input.
   arma::mat input = arma::mat(12, 1);
@@ -3626,12 +4052,12 @@ BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
   module1.InputWidth() = 4;
   module1.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 28);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 4);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 28);
+  REQUIRE(output.n_elem == 4);
+  REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module1.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 28.0);
+  REQUIRE(arma::accu(delta) == 28.0);
 
   // For Square input.
   input = arma::mat(9, 1);
@@ -3648,12 +4074,12 @@ BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
   module2.InputWidth() = 3;
   module2.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 15.0);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 2);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 15.0);
+  REQUIRE(output.n_elem == 2);
+  REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module2.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 15.0);
+  REQUIRE(arma::accu(delta) == 15.0);
 
   // For Square input.
   input = arma::mat(16, 1);
@@ -3670,12 +4096,12 @@ BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
   module3.InputWidth() = 4;
   module3.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 30.0);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 9);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 30.0);
+  REQUIRE(output.n_elem == 9);
+  REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module3.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 30.0);
+  REQUIRE(arma::accu(delta) == 30.0);
 
   // For Rectangular input.
   input = arma::mat(20, 1);
@@ -3690,18 +4116,18 @@ BOOST_AUTO_TEST_CASE(AdaptiveMaxPoolingTestCase)
   module4.InputWidth() = 5;
   module4.Forward(input, output);
   // Calculated using torch.nn.AdaptiveMaxPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 2);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 4);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 2);
+  REQUIRE(output.n_elem == 4);
+  REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module4.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 2.0);
+  REQUIRE(arma::accu(delta) == 2.0);
 }
 
 /**
  * Simple test for Adaptive pooling for Mean Pooling layer.
  */
-BOOST_AUTO_TEST_CASE(AdaptiveMeanPoolingTestCase)
+TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
 {
   // For rectangular input.
   arma::mat input = arma::mat(12, 1);
@@ -3724,12 +4150,12 @@ BOOST_AUTO_TEST_CASE(AdaptiveMeanPoolingTestCase)
   module1.InputWidth() = 4;
   module1.Forward(input, output);
   // Calculated using torch.nn.AdaptiveAvgPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 19.75);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 4);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 19.75);
+  REQUIRE(output.n_elem == 4);
+  REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module1.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 7.0);
+  REQUIRE(arma::accu(delta) == 7.0);
 
   // For Square input.
   input = arma::mat(9, 1);
@@ -3746,12 +4172,12 @@ BOOST_AUTO_TEST_CASE(AdaptiveMeanPoolingTestCase)
   module2.InputWidth() = 3;
   module2.Forward(input, output);
   // Calculated using torch.nn.AdaptiveAvgPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 4.5);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 2);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 4.5);
+  REQUIRE(output.n_elem == 2);
+  REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module2.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 0.0);
+  REQUIRE(arma::accu(delta) == 0.0);
 
   // For Square input.
   input = arma::mat(16, 1);
@@ -3768,12 +4194,12 @@ BOOST_AUTO_TEST_CASE(AdaptiveMeanPoolingTestCase)
   module3.InputWidth() = 4;
   module3.Forward(input, output);
   // Calculated using torch.nn.AdaptiveAvgPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 10.5);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 9);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 10.5);
+  REQUIRE(output.n_elem == 9);
+  REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module3.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 10.5);
+  REQUIRE(arma::accu(delta) == 10.5);
 
   // For Rectangular input.
   input = arma::mat(24, 1);
@@ -3788,26 +4214,841 @@ BOOST_AUTO_TEST_CASE(AdaptiveMeanPoolingTestCase)
   module4.InputWidth() = 6;
   module4.Forward(input, output);
   // Calculated using torch.nn.AdaptiveAvgPool2d().
-  BOOST_REQUIRE_EQUAL(arma::accu(output), 2.25);
-  BOOST_REQUIRE_EQUAL(output.n_elem, 9);
-  BOOST_REQUIRE_EQUAL(output.n_cols, 1);
+  REQUIRE(arma::accu(output) == 2.25);
+  REQUIRE(output.n_elem == 9);
+  REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module4.Backward(input, output, delta);
-  BOOST_REQUIRE_EQUAL(arma::accu(delta), 1.5);
+  REQUIRE(arma::accu(delta) == 1.5);
 }
 
-BOOST_AUTO_TEST_CASE(TransposedConvolutionalLayerOptionalParameterTest)
+TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
 {
   Sequential<>* decoder = new Sequential<>();
 
   // Check if we can create an object without specifying output.
-  BOOST_REQUIRE_NO_THROW(decoder->Add<TransposedConvolution<>>(24, 16,
+  REQUIRE_NOTHROW(decoder->Add<TransposedConvolution<>>(24, 16,
       5, 5, 1, 1, 0, 0, 10, 10));
 
-  BOOST_REQUIRE_NO_THROW(decoder->Add<TransposedConvolution<>>(16, 1,
+  REQUIRE_NOTHROW(decoder->Add<TransposedConvolution<>>(16, 1,
       15, 15, 1, 1, 1, 1, 14, 14));
 
-    delete decoder;
+  delete decoder;
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, result, runningMean, runningVar, delta;
+
+  // The input test matrix is of the form 3 x 2 x 4 x 1 where
+  // number of images are 3 and number of feature maps are 2.
+  input = { { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 22, 16, 63 },
+            { 32, 13, 42 } };
+
+  // Output calculated using torch.nn.BatchNorm2d().
+  result = { { -0.4786, 3.2634, -0.1338 },
+             { -0.4702, -0.3525, 0.0427 },
+             { -0.4618, -0.3777, 0.0427 },
+             { -0.4534, -0.3104, -0.3104 },
+             { -1.5429, -0.8486, -0.9643 },
+             { 0.2507, 1.0029, 0.8293 },
+             { -0.3279, -0.675, 2.0443 },
+             { 0.2507 , -0.8486 , 0.8293 } };
+
+  // Check correctness of batch normalization.
+  BatchNorm<> module1(2, 1e-5, false, 0.1);
+  module1.Reset();
+  module1.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
+
+  // Check backward function.
+  module1.Backward(input, output, delta);
+  REQUIRE(arma::accu(delta) == Approx(0.0102676).epsilon(1e-5));
+
+  // Check values for running mean and running variance.
+  // Calculated using torch.nn.BatchNorm2d().
+  runningMean = arma::mat(2, 1);
+  runningVar = arma::mat(2, 1);
+  runningMean(0) = 5.7917;
+  runningMean(1) = 2.76667;
+  runningVar(0) = 1543.6545;
+  runningVar(1) = 33.488;
+
+  CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
+  CheckMatrices(runningVar, module1.TrainingVariance(), 1e-2);
+
+  // Check correctness of layer when running mean and variance
+  // are updated using cumulative average.
+  BatchNorm<> module2(2);
+  module2.Reset();
+  module2.Forward(input, output);
+  CheckMatrices(output, result, 1e-1);
+
+  // Check values for running mean and running variance.
+  // Calculated using torch.nn.BatchNorm2d().
+  runningMean(0) = 57.9167;
+  runningMean(1) = 27.6667;
+  runningVar(0) = 15427.5380;
+  runningVar(1) = 325.8787;
+
+  CheckMatrices(runningMean, module2.TrainingMean(), 1e-2);
+  CheckMatrices(runningVar, module2.TrainingVariance(), 1e-2);
+
+  // Check correctness when model is testing.
+  arma::mat deterministicOutput;
+  module1.Deterministic() = true;
+  module1.Forward(input, deterministicOutput);
+
+  result.clear();
+  result = { { -0.12195, 11.20426, 0.92158 },
+             { -0.0965, 0.259824, 1.4560 },
+             { -0.071054, 0.183567, 1.45607 },
+             { -0.045601, 0.3870852, 0.38708 },
+             { -0.305288, 1.7683, 1.4227 },
+             { 5.05166, 7.29812, 6.7797 },
+             { 3.323614, 2.2867, 10.4086 },
+             { 5.05166, 1.7683, 6.7797 } };
+
+  CheckMatrices(result, deterministicOutput, 1e-1);
+
+  // Check correctness by updating the running mean and variance again.
+  module1.Deterministic() = false;
+
+  // Clean up.
+  output.clear();
+  input.clear();
+
+  // The input test matrix is of the form 2 x 2 x 3 x 1 where
+  // number of images are 2 and number of feature maps are 2.
+  input = { { 12, 443 },
+            { 134, 45 },
+            { 11, 13 },
+            { 14, 55 },
+            { 110, 4 },
+            { 1, 45 } };
+
+  result = { { -0.629337, 2.14791 },
+             { 0.156797, -0.416694 },
+             { -0.63578, -0.622893 },
+             { -0.637481, 0.4440386 },
+             { 1.894857, -0.901267 },
+             { -0.980402, 0.180253 } };
+
+  module1.Forward(input, output);
+  CheckMatrices(result, output, 1e-3);
+
+  // Check correctness for the second module as well.
+  module2.Forward(input, output);
+  CheckMatrices(result, output, 1e-3);
+
+  // Calculated using torch.nn.BatchNorm2d().
+  runningMean(0) = 16.1792;
+  runningMean(1) = 6.30667;
+  runningVar(0) = 4276.5849;
+  runningVar(1) = 202.595;
+
+  CheckMatrices(runningMean, module1.TrainingMean(), 1e-3);
+  CheckMatrices(runningVar, module1.TrainingVariance(), 1e-1);
+
+  // Check correctness of running mean and variance when their
+  // values are updated using cumulative average.
+  runningMean(0) = 83.79166;
+  runningMean(1) = 32.9166;
+  runningVar(0) = 22164.1035;
+  runningVar(1) = 1025.2227;
+
+  CheckMatrices(runningMean, module2.TrainingMean(), 1e-3);
+  CheckMatrices(runningVar, module2.TrainingVariance(), 1e-3);
+
+  // Check backward function.
+  module1.Backward(input, output, delta);
+
+  deterministicOutput.clear();
+  module1.Deterministic() = true;
+  module1.Forward(input, deterministicOutput);
+
+  result.clear();
+  result = { { -0.06388436, 6.524754114 },
+             { 1.799655281, 0.44047968 },
+             { -0.07913291, -0.04784981 },
+             { 0.5405045, 3.4210097 },
+             { 7.2851023, -0.1620577 },
+             { -0.37282639, 2.7184474 } };
+
+  // Calculated using torch.nn.BatchNorm2d().
+  CheckMatrices(result, deterministicOutput, 1e-1);
+}
+
+/**
+ * Batch Normalization layer numerical gradient test.
+ */
+TEST_CASE("GradientBatchNormWithMiniBatchesTest", "[ANNLayerTest]")
+{
+  // Add function gradient instantiation.
+  // To make this test robust, check it ten times.
+  bool pass = false;
+  for (size_t trial = 0; trial < 10; trial++)
+  {
+    struct GradientFunction
+    {
+      GradientFunction() :
+          input(arma::randn(16, 1024)),
+          target(arma::zeros(1, 1024))
+      {
+        model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+        model->Predictors() = input;
+        model->Responses() = target;
+        model->Add<IdentityLayer<>>();
+        model->Add<Convolution<>>(1, 2, 3, 3, 1, 1, 0, 0, 4, 4);
+        model->Add<BatchNorm<>>(2);
+        model->Add<Linear<>>(2 * 2 * 2, 2);
+        model->Add<LogSoftMax<>>();
+      }
+
+      ~GradientFunction()
+      {
+        delete model;
+      }
+
+      double Gradient(arma::mat& gradient) const
+      {
+        double error = model->Evaluate(model->Parameters(), 0, 1024, false);
+        model->Gradient(model->Parameters(), 0, gradient, 1024);
+        return error;
+      }
+
+      arma::mat& Parameters() { return model->Parameters(); }
+
+      FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+      arma::mat input, target;
+    } function;
+
+    double gradient = CheckGradient(function);
+    if (gradient < 1e-1)
+    {
+      pass = true;
+      break;
+    }
+  }
+
+  REQUIRE(pass);
+}
+
+TEST_CASE("ConvolutionLayerTestCase", "[ANNLayerTest]")
+{
+  arma::mat input, output;
+
+  // The input test matrix is of the form 3 x 2 x 4 x 1 where
+  // number of images are 3 and number of feature maps are 2.
+  input = { { 1, 446, 42 },
+            { 2, 16, 63 },
+            { 3, 13, 63 },
+            { 4, 21, 21 },
+            { 1, 13, 11 },
+            { 32, 45, 42 },
+            { 22, 16 , 63 },
+            { 32, 13 , 42 } };
+
+  Convolution<> layer(2, 4, 1, 1, 1, 1, 0, 0, 4, 1);
+  layer.Reset();
+
+  // Set weights to 1.0 and bias to 0.0.
+  layer.Parameters().zeros();
+  arma::mat weight(2 * 4, 1);
+  weight.fill(1.0);
+  layer.Parameters().submat(arma::span(0, 2 * 4 - 1), arma::span()) = weight;
+  layer.Forward(input, output);
+
+  // Value calculated using torch.nn.Conv2d().
+  REQUIRE(arma::accu(output) == 4108);
+
+  // Set bias to one.
+  layer.Parameters().fill(1.0);
+  layer.Forward(input, output);
+
+  // Value calculated using torch.nn.Conv2d().
+  REQUIRE(arma::accu(output) == 4156);
+}
+
+TEST_CASE("BatchNormDeterministicTest", "[ANNLayerTest]")
+{
+  FFN<> module;
+  module.Add<BatchNorm<>>(2, 1e-5, false);
+  module.Add<LogSoftMax<>>();
+
+  arma::mat input(4, 3), output;
+  module.ResetParameters();
+
+  // The model should switch to Deterministic mode for predicting.
+  module.Predict(input, output);
+  REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == true);
+
+  output.ones();
+  module.Train(input, output);
+  // The model should switch to training mode for predicting.
+  REQUIRE(boost::get<BatchNorm<>*>(module.Model()[0])->Deterministic() == 0);
+}
+
+/**
+ * Linear module weight initialization test.
+ */
+TEST_CASE("LinearLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 10, outSize = 4;
+  Linear<> linear = Linear<>(inSize, outSize);
+  linear.Reset();
+  RandomInitialization().Initialize(linear.Weight());
+  linear.Bias().ones();
+
+  REQUIRE(std::equal(linear.Weight().begin(),
+      linear.Weight().end(), linear.Parameters().begin()));
+
+  REQUIRE(std::equal(linear.Bias().begin(),
+      linear.Bias().end(), linear.Parameters().begin() + inSize * outSize));
+
+  REQUIRE(linear.Weight().n_rows == outSize);
+  REQUIRE(linear.Weight().n_cols == inSize);
+  REQUIRE(linear.Bias().n_rows == outSize);
+  REQUIRE(linear.Bias().n_cols == 1);
+  REQUIRE(linear.Parameters().n_rows == inSize * outSize + outSize);
+}
+
+/**
+ * Atrous Convolution module weight initialization test.
+ */
+TEST_CASE("AtrousConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
+  AtrousConvolution<> module = AtrousConvolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 6, 7, std::make_tuple(8, 9),
+      std::make_tuple(10, 11), 12, 13, 14, 15);
+  module.Reset();
+  RandomInitialization().Initialize(module.Weight());
+  module.Bias().ones();
+
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
+
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - outSize));
+
+  REQUIRE(module.Weight().n_rows == kernelWidth);
+  REQUIRE(module.Weight().n_cols == kernelHeight);
+  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Bias().n_rows == outSize);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Convolution module weight initialization test.
+ */
+TEST_CASE("ConvolutionLayerWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 2, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 5;
+  Convolution<> module = Convolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 6, 7, std::tuple<size_t, size_t>(8, 9),
+      std::tuple<size_t, size_t>(10, 11), 12, 13, "none");
+  module.Reset();
+  RandomInitialization().Initialize(module.Weight());
+  module.Bias().ones();
+
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
+
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - outSize));
+
+  REQUIRE(module.Weight().n_rows == kernelWidth);
+  REQUIRE(module.Weight().n_cols == kernelHeight);
+  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Bias().n_rows == outSize);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Transposed Convolution module weight initialization test.
+ */
+TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
+{
+  size_t inSize = 3, outSize = 3;
+  size_t kernelWidth = 4, kernelHeight = 4;
+  TransposedConvolution<> module = TransposedConvolution<>(inSize, outSize,
+      kernelWidth, kernelHeight, 1, 1, 1, 1, 5, 5, 6, 6);
+  module.Reset();
+  RandomInitialization().Initialize(module.Weight());
+  module.Bias().ones();
+
+  REQUIRE(std::equal(module.Weight().begin(),
+      module.Weight().end(), module.Parameters().begin()));
+
+  REQUIRE(std::equal(module.Bias().begin(),
+      module.Bias().end(), module.Parameters().end() - outSize));
+
+  REQUIRE(module.Weight().n_rows == kernelWidth);
+  REQUIRE(module.Weight().n_cols == kernelHeight);
+  REQUIRE(module.Weight().n_slices == inSize * outSize);
+  REQUIRE(module.Bias().n_rows == outSize);
+  REQUIRE(module.Bias().n_cols == 1);
+  REQUIRE(module.Parameters().n_rows
+      == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Simple Test for PixelShuffle layer.
+ */
+TEST_CASE("PixelShuffleLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input1, output1, gy1, g1, outputExpected1, gExpected1;
+  arma::mat input2, output2, gy2, g2, outputExpected2, gExpected2;
+  PixelShuffle<> module1(2, 2, 2, 4);
+  PixelShuffle<> module2(2, 2, 2, 4);
+
+  // Input is a single image, of size (2,2) and having 4 channels.
+  input1 << 1 << 3 << 2 << 4 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << arma::endr;
+  gy1 << 1 << 5 << 9 << 13 << 2 << 6 << 10 << 14 << 3 << 7 << 11 << 15 << 4 << 8
+      << 12 << 16 << arma::endr;
+
+  // Calculated using torch.nn.PixelShuffle().
+  outputExpected1 << 1 << 0 << 3 << 0 << 0 << 0 << 0 << 0 << 2 << 0 << 4 << 0
+      << 0 << 0 << 0 << 0 << arma::endr;
+  gExpected1 << 1 << 9 << 3 << 11 << 5 << 13 << 7 << 15 << 2 << 10 << 4 << 12
+      << 6 << 14 << 8 << 16 << arma::endr;
+
+  input1 = input1.t();
+  outputExpected1 = outputExpected1.t();
+  gy1 = gy1.t();
+  gExpected1 = gExpected1.t();
+
+  // Check the Forward pass of the layer.
+  module1.Forward(input1, output1);
+  CheckMatrices(output1, outputExpected1);
+
+  // Check the Backward pass of the layer.
+  module1.Backward(input1, gy1, g1);
+  CheckMatrices(g1, gExpected1);
+
+  // Input is a batch of 2 images, each of size (2,2) and having 4 channels.
+  input2 << 1 << 3 << 2 << 4 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << arma::endr << 5 << 7 << 6 << 8 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << 0 << 0 << arma::endr;
+  gy2 << 1 << 5 << 9 << 13 << 2 << 6 << 10 << 14 << 3 << 7 << 11 << 15 << 4 << 8
+      << 12 << 16 << arma::endr << 17 << 21 << 25 << 29 << 18 << 22 << 26 << 30
+      << 19 << 23 << 27 << 31 << 20 << 24 << 28 << 32 << arma::endr;
+
+  // Calculated using torch.nn.PixelShuffle().
+  outputExpected2 << 1 << 0 << 3 << 0 << 0 << 0 << 0 << 0 << 2 << 0 << 4 << 0
+      << 0 << 0 << 0 << 0 << arma::endr << 5 << 0 << 7 << 0 << 0 << 0 << 0 << 0
+      << 6 << 0 << 8 << 0 << 0 << 0 << 0 << 0 << arma::endr;
+  gExpected2 << 1 << 9 << 3 << 11 << 5 << 13 << 7 << 15 << 2 << 10 << 4 << 12
+      << 6 << 14 << 8 << 16 << arma::endr << 17 << 25 << 19 << 27 << 21 << 29
+      << 23 << 31 << 18 << 26 << 20 << 28 << 22 << 30 << 24 << 32 << arma::endr;
+
+  input2 = input2.t();
+  outputExpected2 = outputExpected2.t();
+  gy2 = gy2.t();
+  gExpected2 = gExpected2.t();
+
+  // Check the Forward pass of the layer.
+  module2.Forward(input2, output2);
+  CheckMatrices(output2, outputExpected2);
+
+  // Check the Backward pass of the layer.
+  module2.Backward(input2, gy2, g2);
+  CheckMatrices(g2, gExpected2);
+}
+
+/**
+ * Test that the function that can access the parameters of the
+ * PixelShuffle layer works.
+ */
+TEST_CASE("PixelShuffleLayerParametersTest", "[ANNLayerTest]")
+{
+  // Create the layer using the empty constructor.
+  PixelShuffle<> layer;
+
+  // Set the different input parameters of the layer.
+  layer.UpscaleFactor() = 2;
+  layer.InputHeight() = 2;
+  layer.InputWidth() = 2;
+  layer.InputChannels() = 4;
+
+  // Make sure we can get the parameters successfully.
+  REQUIRE(layer.UpscaleFactor() == 2);
+  REQUIRE(layer.InputHeight() == 2);
+  REQUIRE(layer.InputWidth() == 2);
+  REQUIRE(layer.InputChannels() == 4);
+
+  arma::mat input, output;
+  // Input is a batch of 2 images, each of size (2,2) and having 4 channels.
+  input << 1 << 3 << 2 << 4 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << arma::endr << 5 << 7 << 6 << 8 << 0 << 0 << 0 << 0 << 0 << 0
+      << 0 << 0 << 0 << 0 << 0 << 0 << arma::endr;
+  input = input.t();
+  layer.Forward(input, output);
+
+  // Check whether output parameters are returned correctly.
+  REQUIRE(layer.OutputHeight() == 4);
+  REQUIRE(layer.OutputWidth() == 4);
+  REQUIRE(layer.OutputChannels() == 1);
+}
+
+/*
+ * Simple Test for SpatialDropout layer.
+ */
+TEST_CASE("SpatialDropoutLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input, output, gy, g, temp;
+  arma::mat outputsExpected = arma::zeros(8, 12);
+  arma::mat gsExpected = arma::zeros(8, 12);
+
+  // Set the seed to a random value.
+  arma::arma_rng::set_seed_random();
+  SpatialDropout<> module(3, 0.2);
+
+  // Input is a batch of 2 images, each of size (2,2) and having 4 channels.
+  input = { 0.4963, 0.0885, 0.7682, 0.1320, 0.3074, 0.4901, 0.6341, 0.8964,
+      0.4556, 0.3489, 0.6323, 0.4017 };
+
+  gy = { 1, 3, 2, 4, 5, 7, 6, 8, 9, 11, 10, 12 };
+
+  // Following values have been calculated using torch.nn.Dropout2d(p=0.2).
+  temp = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  outputsExpected.row(0) = temp;
+  temp = { 0, 0, 0, 0, 0.3842, 0.6126, 0.7926, 1.1205, 0.5695, 0.4361, 0.7904,
+      0.5021 };
+  outputsExpected.row(1) = temp;
+  temp = { 0.6204, 0.1106, 0.9603, 0.1650, 0, 0, 0, 0, 0.5695, 0.4361,
+      0.7904, 0.5021 };
+  outputsExpected.row(2) = temp;
+  temp = { 0.6204, 0.1106, 0.9603, 0.1650, 0.3842, 0.6126, 0.7926, 1.1205, 0,
+      0, 0, 0 };
+  outputsExpected.row(3) = temp;
+  temp = { 0, 0, 0, 0, 0, 0, 0, 0, 0.5695, 0.4361, 0.7904, 0.5021 };
+  outputsExpected.row(4) = temp;
+  temp = { 0, 0, 0, 0, 0.3842, 0.6126, 0.7926, 1.1205, 0, 0, 0, 0 };
+  outputsExpected.row(5) = temp;
+  temp = { 0.6204, 0.1106, 0.9603, 0.1650, 0, 0, 0, 0, 0, 0, 0, 0 };
+  outputsExpected.row(6) = temp;
+  temp = { 0.6204, 0.1106, 0.9603, 0.1650, 0.3842, 0.6126, 0.7926, 1.1205,
+      0.5695, 0.4361, 0.7904, 0.5021 };
+  outputsExpected.row(7) = temp;
+  temp = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  gsExpected.row(0) = temp;
+  temp = { 0, 0, 0, 0, 6.2500, 8.7500, 7.5000, 10.0000, 11.2500, 13.7500,
+      12.5000, 15.0000 };
+  gsExpected.row(1) = temp;
+  temp = { 1.2500, 3.7500, 2.5000, 5.0000, 0, 0, 0, 0, 11.2500, 13.7500,
+      12.5000, 15.0000 };
+  gsExpected.row(2) = temp;
+  temp = { 1.2500, 3.7500, 2.5000, 5.0000, 6.2500, 8.7500, 7.5000, 10.0000, 0,
+      0, 0, 0 };
+  gsExpected.row(3) = temp;
+  temp = { 0, 0, 0, 0, 0, 0, 0, 0, 11.2500, 13.7500, 12.5000, 15.0000 };
+  gsExpected.row(4) = temp;
+  temp = { 0, 0, 0, 0, 6.2500, 8.7500, 7.5000, 10.0000, 0, 0, 0, 0 };
+  gsExpected.row(5) = temp;
+  temp = { 1.2500, 3.7500, 2.5000, 5.0000, 0, 0, 0, 0, 0, 0, 0, 0 };
+  gsExpected.row(6) = temp;
+  temp = { 1.2500, 3.7500, 2.5000, 5.0000, 6.2500, 8.7500, 7.5000, 10.0000,
+      11.2500, 13.7500, 12.5000, 15.0000 };
+  gsExpected.row(7) = temp;
+
+  input = input.t();
+  gy = gy.t();
+  outputsExpected = outputsExpected.t();
+  gsExpected = gsExpected.t();
+
+  // Compute the Forward and Backward passes and store the results.
+  module.Forward(input, output);
+  module.Backward(input, gy, g);
+
+  // Check through all possible cases, to find a match and then compare results.
+  for (size_t i = 0; i < outputsExpected.n_cols; ++i)
+  {
+    if (arma::approx_equal(outputsExpected.col(i), output, "absdiff", 1e-1))
+    {
+      // Check the correctness of the Forward pass of the layer.
+      CheckMatrices(output, outputsExpected.col(i), 1e-1);
+      // Check the correctness of the Backward pass of the layer.
+      CheckMatrices(g, gsExpected.col(i), 1e-1);
+    }
+  }
+
+  // Check if the output is same as input when using deterministic mode.
+  module.Deterministic() = true;
+  output.clear();
+  module.Forward(input, output);
+  CheckMatrices(output, input, 1e-1);
+}
+
+/**
+ * Test that the function that can access the parameters of the
+ * SpatialDropout layer works.
+ */
+TEST_CASE("SpatialDropoutLayerParametersTest", "[ANNLayerTest]")
+{
+  // Create the layer using the empty constructor.
+  SpatialDropout<> layer;
+
+  // Set the input parameters.
+  layer.Size() = 3;
+  layer.Ratio(0.2);
+
+  // Check whether the input parameters have been set correctly.
+  REQUIRE(layer.Size() == 3);
+  REQUIRE(layer.Ratio() == 0.2);
+}
+
+/**
+ * Simple Positional Encoding layer test.
+ */
+TEST_CASE("SimplePositionalEncodingTest", "[ANNLayerTest]")
+{
+  const size_t seqLength = 5;
+  const size_t embedDim = 4;
+  const size_t batchSize = 2;
+
+  arma::mat input = arma::randu(embedDim * seqLength, batchSize);
+  arma::mat gy = 0.01 * arma::randu(embedDim * seqLength, batchSize);
+  arma::mat output, g;
+
+  PositionalEncoding<> module(embedDim, seqLength);
+
+  // Check Forward function.
+  module.Forward(input, output);
+  arma::mat pe = output - input;
+  CheckMatrices(arma::mean(pe, 1), module.Encoding());
+
+  // Check Backward function.
+  module.Backward(input, gy, g);
+  REQUIRE(std::equal(gy.begin(), gy.end(), g.begin()));
+}
+
+/**
+ * Jacobian test for Positional Encoding layer.
+ */
+TEST_CASE("JacobianPositionalEncodingTest", "[ANNLayerTest]")
+{
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t embedDim = 4;
+    const size_t seqLength = math::RandInt(5, 10);
+    arma::mat input;
+    input.set_size(embedDim * seqLength, 1);
+
+    PositionalEncoding<> module(embedDim, seqLength);
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Simple Multihead Attention test.
+ */
+TEST_CASE("SimpleMultiheadAttentionTest", "[ANNLayerTest]")
+{
+  size_t tLen = 5;
+  size_t sLen = tLen;
+  size_t embedDim = 4;
+  size_t numHeads = 2;
+  size_t bsz = 3;
+
+  arma::mat query = 0.1 * arma::randu(embedDim * tLen, bsz);
+  arma::mat output;
+
+  arma::mat attnMask = arma::zeros(tLen, sLen);
+  for (size_t i = 0; i < tLen; ++i)
+  {
+    for (size_t j = 0; j < sLen; ++j)
+    {
+      if (i < j)
+        attnMask(i, j) = std::numeric_limits<double>::lowest();
+    }
+  }
+
+  arma::mat keyPaddingMask = arma::zeros(1, sLen);
+  keyPaddingMask(sLen - 1) = std::numeric_limits<double>::lowest();
+
+  MultiheadAttention<> module(tLen, sLen, embedDim, numHeads);
+  module.AttentionMask() = attnMask;
+  module.KeyPaddingMask() = keyPaddingMask;
+  module.Reset();
+  module.Parameters().randu();
+
+  // Forward test.
+  arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
+
+  module.Forward(input, output);
+  REQUIRE(output.n_rows == embedDim * tLen);
+  REQUIRE(output.n_cols == bsz);
+
+  // Backward test.
+  arma::mat gy = 0.01 * arma::randu(embedDim * tLen, bsz);
+  arma::mat g;
+  module.Backward(input, gy, g);
+  REQUIRE(g.n_rows == input.n_rows);
+  REQUIRE(g.n_cols == input.n_cols);
+
+  // Gradient test.
+  arma::mat error = 0.05 * arma::randu(embedDim * tLen, bsz);
+  arma::mat gradient;
+  module.Gradient(input, error, gradient);
+  REQUIRE(gradient.n_rows == module.Parameters().n_rows);
+  REQUIRE(gradient.n_cols == module.Parameters().n_cols);
+}
+
+/**
+ * Jacobian MultiheadAttention module test.
+ */
+TEST_CASE("JacobianMultiheadAttentionTest", "[ANNLayerTest]")
+{
+  // Check when query = key = value.
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat input = arma::join_cols(arma::join_cols(query, query), query);
+
+    MultiheadAttention<> module(tgtSeqLen, tgtSeqLen, embedDim, nHeads);
+    module.Parameters().randu();
+
+    double error = CustomJacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+
+  // Check when key = value.
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t srcSeqLen = math::RandInt(2, 5);
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat input = arma::join_cols(arma::join_cols(query, key), key);
+
+    MultiheadAttention<> module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
+    module.Parameters().randu();
+
+    double error = CustomJacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+
+  // Check when query, key and value are not same.
+  for (size_t i = 0; i < 5; ++i)
+  {
+    const size_t tgtSeqLen = 2;
+    const size_t srcSeqLen = math::RandInt(2, 5);
+    const size_t embedDim = 4;
+    const size_t nHeads = 2;
+    const size_t batchSize = 1;
+
+    arma::mat query = arma::randu(embedDim * tgtSeqLen, batchSize);
+    arma::mat key = 0.091 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat value = 0.045 * arma::randu(embedDim * srcSeqLen, batchSize);
+    arma::mat input = arma::join_cols(arma::join_cols(query, key), value);
+
+    MultiheadAttention<> module(tgtSeqLen, srcSeqLen, embedDim, nHeads);
+    module.Parameters().randu();
+
+    double error = JacobianTest(module, input);
+    REQUIRE(error <= 1e-5);
+  }
+}
+
+/**
+ * Numerical gradient test for MultiheadAttention layer.
+ */
+TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest]")
+{
+  struct GradientFunction
+  {
+    GradientFunction() :
+        tgtSeqLen(2),
+        srcSeqLen(2),
+        embedDim(4),
+        nHeads(2),
+        vocabSize(5),
+        batchSize(2)
+    {
+      input = arma::randu(embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
+      target = arma::zeros(vocabSize, batchSize);
+      for (size_t i = 0; i < target.n_elem; ++i)
+      {
+        const size_t label = mlpack::math::RandInt(1, vocabSize);
+        target(i) = label;
+      }
+
+      attnMask = arma::zeros(tgtSeqLen, srcSeqLen);
+      for (size_t i = 0; i < tgtSeqLen; ++i)
+      {
+        for (size_t j = 0; j < srcSeqLen; ++j)
+        {
+          if (i < j)
+            attnMask(i, j) = std::numeric_limits<double>::lowest();
+        }
+      }
+
+      keyPaddingMask = arma::zeros(1, srcSeqLen);
+      keyPaddingMask(srcSeqLen - 1) = std::numeric_limits<double>::lowest();
+
+      model = new FFN<NegativeLogLikelihood<>, XavierInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      attnModule = new MultiheadAttention<>(tgtSeqLen, srcSeqLen,
+          embedDim, nHeads);
+      attnModule->AttentionMask() = attnMask;
+      attnModule->KeyPaddingMask() = keyPaddingMask;
+      model->Add(attnModule);
+      model->Add<Linear<>>(embedDim * tgtSeqLen, vocabSize);
+      model->Add<LogSoftMax<>>();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, batchSize);
+      model->Gradient(model->Parameters(), 0, gradient, batchSize);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, XavierInitialization>* model;
+    MultiheadAttention<>* attnModule;
+
+    arma::mat input, target, attnMask, keyPaddingMask;
+    const size_t tgtSeqLen;
+    const size_t srcSeqLen;
+    const size_t embedDim;
+    const size_t nHeads;
+    const size_t vocabSize;
+    const size_t batchSize;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 3e-06);
+}

@@ -77,7 +77,7 @@ T*& GetRawParam(
  * @param output Place to store pointer to value.
  */
 template<typename T>
-void GetRawParam(const util::ParamData& d,
+void GetRawParam(util::ParamData& d,
                  const void* /* input */,
                  void* output)
 {

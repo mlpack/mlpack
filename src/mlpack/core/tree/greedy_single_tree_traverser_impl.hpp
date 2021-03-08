@@ -24,8 +24,7 @@ template<typename TreeType, typename RuleType>
 GreedySingleTreeTraverser<TreeType, RuleType>::GreedySingleTreeTraverser(
     RuleType& rule) :
     rule(rule),
-    numPrunes(0),
-    minBaseCases(0)
+    numPrunes(0)
 { /* Nothing to do. */ }
 
 template<typename TreeType, typename RuleType>
@@ -47,14 +46,15 @@ void GreedySingleTreeTraverser<TreeType, RuleType>::Traverse(
   else
     numDescendants = referenceNode.NumPoints();
 
-  // If number of descendants are more than minBaseCases than we can go along
-  // with best child otherwise we need to traverse for each descendant to
-  // ensure that we calculate at least minBaseCases number of base cases.
+  // If number of descendants are more than rule.MinimumBaseCases() than we can
+  // go along with best child otherwise we need to traverse for each descendant
+  // to ensure that we calculate at least rule.MinimumBaseCases() number of base
+  // cases.
   if (!referenceNode.IsLeaf())
   {
-    if (numDescendants > minBaseCases)
+    if (numDescendants > rule.MinimumBaseCases())
     {
-      // We are prunning all but one child.
+      // We are pruning all but one child.
       numPrunes += referenceNode.NumChildren() - 1;
       // Recurse the best child.
       Traverse(queryIndex, referenceNode.Child(bestChild));
@@ -62,7 +62,7 @@ void GreedySingleTreeTraverser<TreeType, RuleType>::Traverse(
     else
     {
       // Run the base case over first minBaseCases number of descendants.
-      for (size_t i = 0; i <= minBaseCases; ++i)
+      for (size_t i = 0; i <= rule.MinimumBaseCases(); ++i)
         rule.BaseCase(queryIndex, referenceNode.Descendant(i));
     }
   }

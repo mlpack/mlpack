@@ -23,7 +23,7 @@ namespace go {
  * special handling is necessary.
  */
 template<typename T>
-void GetParam(const util::ParamData& d,
+void GetParam(util::ParamData& d,
               const void* /* input */,
               void* output)
 {

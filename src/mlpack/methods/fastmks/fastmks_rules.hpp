@@ -124,6 +124,10 @@ class FastMKSRules
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
 
+  //! Get the minimum number of base cases we need to perform to have acceptable
+  //! results.
+  size_t MinimumBaseCases() const { return k; }
+
  private:
   //! The reference dataset.
   const typename TreeType::Mat& referenceSet;

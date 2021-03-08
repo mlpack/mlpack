@@ -10,13 +10,14 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "kmeans.hpp"
 #include "allow_empty_clusters.hpp"
 #include "kill_empty_clusters.hpp"
 #include "refined_start.hpp"
+#include "kmeans_plus_plus_initialization.hpp"
 #include "elkan_kmeans.hpp"
 #include "hamerly_kmeans.hpp"
 #include "pelleg_moore_kmeans.hpp"
@@ -27,27 +28,34 @@ using namespace mlpack::kmeans;
 using namespace mlpack::util;
 using namespace std;
 
-// Define parameters for the executable.
-PROGRAM_INFO("K-Means Clustering",
-    // Short description.
+// Program Name.
+BINDING_NAME("K-Means Clustering");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of several strategies for efficient k-means clustering. "
     "Given a dataset and a value of k, this computes and returns a k-means "
-    "clustering on that data.",
-    // Long description.
+    "clustering on that data.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program performs K-Means clustering on the given dataset.  It can "
     "return the learned cluster assignments, and the centroids of the clusters."
     "  Empty clusters are not allowed by default; when a cluster becomes empty,"
     " the point furthest from the centroid of the cluster with maximum variance"
     " is taken to fill that cluster."
     "\n\n"
-    "Optionally, the Bradley and Fayyad approach (\"Refining initial points for"
-    " k-means clustering\", 1998) can be used to select initial points by "
-    "specifying the " + PRINT_PARAM_STRING("refined_start") + " parameter.  "
-    "This approach works by taking random samplings of the dataset; to specify "
-    "the number of samplings, the " + PRINT_PARAM_STRING("samplings") +
-    " parameter is used, and to specify the percentage of the dataset to be "
-    "used in each sample, the " + PRINT_PARAM_STRING("percentage") +
-    " parameter is used (it should be a value between 0.0 and 1.0)."
+    "Optionally, the strategy to choose initial centroids can be specified.  "
+    "The k-means++ algorithm can be used to choose initial centroids with "
+    "the " + PRINT_PARAM_STRING("kmeans_plus_plus") + " parameter.  The "
+    "Bradley and Fayyad approach (\"Refining initial points for k-means "
+    "clustering\", 1998) can be used to select initial points by specifying "
+    "the " + PRINT_PARAM_STRING("refined_start") + " parameter.  This approach "
+    "works by taking random samplings of the dataset; to specify the number of "
+    "samplings, the " + PRINT_PARAM_STRING("samplings") + " parameter is used, "
+    "and to specify the percentage of the dataset to be used in each sample, "
+    "the " + PRINT_PARAM_STRING("percentage") + " parameter is used (it should "
+    "be a value between 0.0 and 1.0)."
     "\n\n"
     "There are several options available for the algorithm used for each Lloyd "
     "iteration, specified with the " + PRINT_PARAM_STRING("algorithm") + " "
@@ -74,8 +82,10 @@ PROGRAM_INFO("K-Means Clustering",
     "Initial clustering assignments may be specified using the " +
     PRINT_PARAM_STRING("initial_centroids") + " parameter, and the maximum "
     "number of iterations may be specified with the " +
-    PRINT_PARAM_STRING("max_iterations") + " parameter."
-    "\n\n"
+    PRINT_PARAM_STRING("max_iterations") + " parameter.");
+
+// Example.
+BINDING_EXAMPLE(
     "As an example, to use Hamerly's algorithm to perform k-means clustering "
     "with k=10 on the dataset " + PRINT_DATASET("data") + ", saving the "
     "centroids to " + PRINT_DATASET("centroids") + " and the assignments for "
@@ -91,21 +101,24 @@ PROGRAM_INFO("K-Means Clustering",
     "following command may be used:"
     "\n\n" +
     PRINT_CALL("kmeans", "input", "data", "initial_centroids", "initial",
-        "clusters", 10, "max_iterations", 500, "centroid", "final"),
-    SEE_ALSO("K-Means tutorial", "@doxygen/kmtutorial.html"),
-    SEE_ALSO("@dbscan", "#dbscan"),
-    SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
-        "http://www.aaai.org/Papers/ICML/2003/ICML03-022.pdf"),
-    SEE_ALSO("Making k-means even faster (pdf)",
+        "clusters", 10, "max_iterations", 500, "centroid", "final"));
+
+// See also...
+BINDING_SEE_ALSO("K-Means tutorial", "@doxygen/kmtutorial.html");
+BINDING_SEE_ALSO("@dbscan", "#dbscan");
+BINDING_SEE_ALSO("k-means++", "https://en.wikipedia.org/wiki/K-means%2B%2B");
+BINDING_SEE_ALSO("Using the triangle inequality to accelerate k-means (pdf)",
+        "http://www.aaai.org/Papers/ICML/2003/ICML03-022.pdf");
+BINDING_SEE_ALSO("Making k-means even faster (pdf)",
         "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.586.2554"
-        "&rep=rep1&type=pdf"),
-    SEE_ALSO("Accelerating exact k-means algorithms with geometric reasoning "
-        "(pdf)", "http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/"
-        "usr0/ftp/2000/CMU-CS-00-105.pdf"),
-    SEE_ALSO("A dual-tree algorithm for fast k-means clustering with large k "
-        "(pdf)", "http://www.ratml.org/pub/pdf/2017dual.pdf"),
-    SEE_ALSO("mlpack::kmeans::KMeans class documentation",
-        "@doxygen/classmlpack_1_1kmeans_1_1KMeans.html"));
+        "&rep=rep1&type=pdf");
+BINDING_SEE_ALSO("Accelerating exact k-means algorithms with geometric"
+        " reasoning (pdf)", "http://reports-archive.adm.cs.cmu.edu/anon/anon"
+        "/usr/ftp/usr0/ftp/2000/CMU-CS-00-105.pdf");
+BINDING_SEE_ALSO("A dual-tree algorithm for fast k-means clustering with large "
+        "k (pdf)", "http://www.ratml.org/pub/pdf/2017dual.pdf");
+BINDING_SEE_ALSO("mlpack::kmeans::KMeans class documentation",
+        "@doxygen/classmlpack_1_1kmeans_1_1KMeans.html");
 
 // Required options.
 PARAM_MATRIX_IN_REQ("input", "Input dataset to perform clustering on.", "i");
@@ -139,6 +152,8 @@ PARAM_INT_IN("samplings", "Number of samplings to perform for refined start "
     "(use when --refined_start is specified).", "S", 100);
 PARAM_DOUBLE_IN("percentage", "Percentage of dataset to use for each refined "
     "start sampling (use when --refined_start is specified).", "p", 0.02);
+PARAM_FLAG("kmeans_plus_plus", "Use the k-means++ initialization strategy to "
+    "choose initial points.", "K");
 
 PARAM_STRING_IN("algorithm", "Algorithm to use for the Lloyd iteration "
     "('naive', 'pelleg-moore', 'elkan', 'hamerly', 'dualtree', or "
@@ -163,25 +178,33 @@ void RunKMeans(const InitialPartitionPolicy& ipp);
 static void mlpackMain()
 {
   // Initialize random seed.
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
+
+  RequireOnlyOnePassed({ "refined_start", "kmeans_plus_plus" }, true,
+      "Only one initialization strategy can be specified!", true);
 
   // Now, start building the KMeans type that we'll be using.  Start with the
   // initial partition policy.  The call to FindEmptyClusterPolicy<> results in
   // a call to RunKMeans<> and the algorithm is completed.
-  if (CLI::HasParam("refined_start"))
+  if (IO::HasParam("refined_start"))
   {
     RequireParamValue<int>("samplings", [](int x) { return x > 0; }, true,
         "number of samplings must be positive");
-    const int samplings = CLI::GetParam<int>("samplings");
+    const int samplings = IO::GetParam<int>("samplings");
     RequireParamValue<double>("percentage",
         [](double x) { return x > 0.0 && x <= 1.0; }, true, "percentage to "
         "sample must be greater than 0.0 and less than or equal to 1.0");
-    const double percentage = CLI::GetParam<double>("percentage");
+    const double percentage = IO::GetParam<double>("percentage");
 
     FindEmptyClusterPolicy<RefinedStart>(RefinedStart(samplings, percentage));
+  }
+  else if (IO::HasParam("kmeans_plus_plus"))
+  {
+    FindEmptyClusterPolicy<KMeansPlusPlusInitialization>(
+        KMeansPlusPlusInitialization());
   }
   else
   {
@@ -194,14 +217,14 @@ static void mlpackMain()
 template<typename InitialPartitionPolicy>
 void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp)
 {
-  if (CLI::HasParam("allow_empty_clusters") ||
-      CLI::HasParam("kill_empty_clusters"))
+  if (IO::HasParam("allow_empty_clusters") ||
+      IO::HasParam("kill_empty_clusters"))
     RequireOnlyOnePassed({ "allow_empty_clusters", "kill_empty_clusters" },
                          true);
 
-  if (CLI::HasParam("allow_empty_clusters"))
+  if (IO::HasParam("allow_empty_clusters"))
     FindLloydStepType<InitialPartitionPolicy, AllowEmptyClusters>(ipp);
-  else if (CLI::HasParam("kill_empty_clusters"))
+  else if (IO::HasParam("kill_empty_clusters"))
     FindLloydStepType<InitialPartitionPolicy, KillEmptyClusters>(ipp);
   else
     FindLloydStepType<InitialPartitionPolicy, MaxVarianceNewCluster>(ipp);
@@ -216,7 +239,7 @@ void FindLloydStepType(const InitialPartitionPolicy& ipp)
       "dualtree", "dualtree-covertree", "naive" }, true, "unknown k-means "
       "algorithm");
 
-  const string algorithm = CLI::GetParam<string>("algorithm");
+  const string algorithm = IO::GetParam<string>("algorithm");
   if (algorithm == "elkan")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, ElkanKMeans>(ipp);
   else if (algorithm == "hamerly")
@@ -241,7 +264,7 @@ template<typename InitialPartitionPolicy,
 void RunKMeans(const InitialPartitionPolicy& ipp)
 {
   // Now, do validation of input options.
-  if (!CLI::HasParam("initial_centroids"))
+  if (!IO::HasParam("initial_centroids"))
   {
     RequireParamValue<int>("clusters", [](int x) { return x > 0; }, true,
         "number of clusters must be positive");
@@ -251,8 +274,8 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
     ReportIgnoredParam({{ "initial_centroids", true }}, "clusters");
   }
 
-  int clusters = CLI::GetParam<int>("clusters");
-  if (clusters == 0 && CLI::HasParam("initial_centroids"))
+  int clusters = IO::GetParam<int>("clusters");
+  if (clusters == 0 && IO::HasParam("initial_centroids"))
   {
     Log::Info << "Detecting number of clusters automatically from input "
         << "centroids." << endl;
@@ -260,26 +283,26 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
 
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
     "maximum iterations must be positive or 0 (for no limit)");
-  const int maxIterations = CLI::GetParam<int>("max_iterations");
+  const int maxIterations = IO::GetParam<int>("max_iterations");
 
   // Make sure we have an output file if we're not doing the work in-place.
-  RequireAtLeastOnePassed({ "in_place", "output", "centroid" }, false,
+  RequireOnlyOnePassed({ "in_place", "output", "centroid" }, false,
       "no results will be saved");
 
-  arma::mat dataset = CLI::GetParam<arma::mat>("input");  // Load our dataset.
+  arma::mat dataset = IO::GetParam<arma::mat>("input");  // Load our dataset.
   arma::mat centroids;
 
-  const bool initialCentroidGuess = CLI::HasParam("initial_centroids");
+  const bool initialCentroidGuess = IO::HasParam("initial_centroids");
   // Load initial centroids if the user asked for it.
   if (initialCentroidGuess)
   {
-    centroids = std::move(CLI::GetParam<arma::mat>("initial_centroids"));
+    centroids = std::move(IO::GetParam<arma::mat>("initial_centroids"));
     if (clusters == 0)
       clusters = centroids.n_cols;
 
     ReportIgnoredParam({{ "refined_start", true }}, "initial_centroids");
 
-    if (!CLI::HasParam("refined_start"))
+    if (!IO::HasParam("refined_start"))
       Log::Info << "Using initial centroid guesses." << endl;
   }
 
@@ -289,7 +312,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
          EmptyClusterPolicy,
          LloydStepType> kmeans(maxIterations, metric::EuclideanDistance(), ipp);
 
-  if (CLI::HasParam("output") || CLI::HasParam("in_place"))
+  if (IO::HasParam("output") || IO::HasParam("in_place"))
   {
     // We need to get the assignments.
     arma::Row<size_t> assignments;
@@ -298,7 +321,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
     Timer::Stop("clustering");
 
     // Now figure out what to do with our results.
-    if (CLI::HasParam("in_place"))
+    if (IO::HasParam("in_place"))
     {
       // Add the column of assignments to the dataset; but we have to convert
       // them to type double first.
@@ -309,16 +332,16 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
       dataset.insert_rows(dataset.n_rows, converted);
 
       // Save the dataset.
-      CLI::MakeInPlaceCopy("output", "input");
-      CLI::GetParam<arma::mat>("output") = std::move(dataset);
+      IO::MakeInPlaceCopy("output", "input");
+      IO::GetParam<arma::mat>("output") = std::move(dataset);
     }
     else
     {
-      if (CLI::HasParam("labels_only"))
+      if (IO::HasParam("labels_only"))
       {
         // Save only the labels.  TODO: figure out how to get this to output an
         // arma::Mat<size_t> instead of an arma::mat.
-        CLI::GetParam<arma::mat>("output") =
+        IO::GetParam<arma::mat>("output") =
             arma::conv_to<arma::mat>::from(assignments);
       }
       else
@@ -331,7 +354,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
         dataset.insert_rows(dataset.n_rows, converted);
 
         // Now save, in the different file.
-        CLI::GetParam<arma::mat>("output") = std::move(dataset);
+        IO::GetParam<arma::mat>("output") = std::move(dataset);
       }
     }
   }
@@ -343,6 +366,6 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
   }
 
   // Should we write the centroids to a file?
-  if (CLI::HasParam("centroid"))
-    CLI::GetParam<arma::mat>("centroid") = std::move(centroids);
+  if (IO::HasParam("centroid"))
+    IO::GetParam<arma::mat>("centroid") = std::move(centroids);
 }

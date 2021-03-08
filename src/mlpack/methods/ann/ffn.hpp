@@ -331,7 +331,7 @@ class FFN
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   /**
    * Perform the forward pass of the data in real batch mode.
@@ -521,23 +521,6 @@ class FFN
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the FFN class.  Multiple template arguments
-//! makes this ugly...
-namespace boost {
-namespace serialization {
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename... CustomLayer>
-struct version<
-    mlpack::ann::FFN<OutputLayerType, InitializationRuleType, CustomLayer...>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 2);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "ffn_impl.hpp"

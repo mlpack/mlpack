@@ -21,7 +21,6 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/math/random.hpp>
-#include <boost/program_options.hpp>
 
 namespace mlpack {
 namespace distribution {

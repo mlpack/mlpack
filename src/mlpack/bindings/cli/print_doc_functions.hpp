@@ -71,7 +71,7 @@ inline std::string PrintModel(const std::string& model);
  * Print the type of a parameter that a user would specify from the
  * command-line.
  */
-inline std::string PrintType(const util::ParamData& param);
+inline std::string PrintType(util::ParamData& param);
 
 /**
  * Base case for recursion.
@@ -102,8 +102,9 @@ inline std::string ProgramCall(const std::string& programName);
 /**
  * Print what a user would type to invoke the given option name.  Note that the
  * name *must* exist in the CLI module.  (Note that because of the way
- * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
- * declarataions need to come before the PROGRAM_INFO() declaration.)
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() is structured, this doesn't mean
+ * that all of the PARAM_*() declarataions need to come before
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
 inline std::string ParamString(const std::string& paramName);
 

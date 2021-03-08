@@ -79,7 +79,7 @@ inline std::string PrintInputOptions(/* option */);
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
- * not exist in CLI.
+ * not exist in IO.
  */
 template<typename T, typename... Args>
 std::string PrintOptionalInputs(const std::string& paramName,
@@ -88,7 +88,7 @@ std::string PrintOptionalInputs(const std::string& paramName,
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
- * not exist in CLI.
+ * not exist in IO.
  */
 template<typename T, typename... Args>
 std::string PrintInputOptions(const std::string& paramName,

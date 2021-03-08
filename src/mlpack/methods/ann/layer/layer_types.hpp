@@ -31,23 +31,30 @@
 #include <mlpack/methods/ann/layer/c_relu.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/linear_no_bias.hpp>
+#include <mlpack/methods/ann/layer/linear3d.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lookup.hpp>
+#include <mlpack/methods/ann/layer/multihead_attention.hpp>
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
+#include <mlpack/methods/ann/layer/lp_pooling.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
+#include <mlpack/methods/ann/layer/pixel_shuffle.hpp>
+#include <mlpack/methods/ann/layer/positional_encoding.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
+#include <mlpack/methods/ann/layer/spatial_dropout.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 #include <mlpack/methods/ann/layer/hardshrink.hpp>
 #include <mlpack/methods/ann/layer/celu.hpp>
+#include <mlpack/methods/ann/layer/isrlu.hpp>
 #include <mlpack/methods/ann/layer/softshrink.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 
@@ -96,6 +103,11 @@ template<typename InputDataType,
 class NoisyLinear;
 
 template<typename InputDataType,
+         typename OutputDataType,
+         typename RegularizerType>
+class Linear3D;
+
+template<typename InputDataType,
          typename OutputDataType
 >
 class VirtualBatchNorm;
@@ -104,6 +116,11 @@ template<typename InputDataType,
          typename OutputDataType
 >
 class MiniBatchDiscrimination;
+
+template <typename InputDataType,
+          typename OutputDataType,
+          typename RegularizerType>
+class MultiheadAttention;
 
 template<typename InputDataType,
          typename OutputDataType
@@ -204,8 +221,12 @@ template <typename InputDataType,
 class AdaptiveMeanPooling;
 
 using MoreTypes = boost::variant<
+        Linear3D<arma::mat, arma::mat, NoRegularizer>*,
+        LpPooling<arma::mat, arma::mat>*,
+        PixelShuffle<arma::mat, arma::mat>*,
         Glimpse<arma::mat, arma::mat>*,
         Highway<arma::mat, arma::mat>*,
+        MultiheadAttention<arma::mat, arma::mat, NoRegularizer>*,
         Recurrent<arma::mat, arma::mat>*,
         RecurrentAttention<arma::mat, arma::mat>*,
         ReinforceNormal<arma::mat, arma::mat>*,
@@ -217,7 +238,9 @@ using MoreTypes = boost::variant<
         VRClassReward<arma::mat, arma::mat>*,
         VirtualBatchNorm<arma::mat, arma::mat>*,
         RBF<arma::mat, arma::mat, GaussianFunction>*,
-        BaseLayer<GaussianFunction, arma::mat, arma::mat>*
+        BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
+        PositionalEncoding<arma::mat, arma::mat>*,
+        ISRLU<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
@@ -273,6 +296,7 @@ using LayerTypes = boost::variant<
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
     Softmax<arma::mat, arma::mat>*,
+    SpatialDropout<arma::mat, arma::mat>*,
     TransposedConvolution<NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,

@@ -67,8 +67,8 @@ typename VecTypeA::elem_type IoU<UseCoordinates>::Evaluate(
 template<bool UseCoordinates>
 template<typename Archive>
 void IoU<UseCoordinates>::serialize(
-    Archive& ar,
-    const unsigned int /* version */)
+    Archive& /* ar */,
+    const uint32_t /* version */)
 {
   // Nothing to do here.
 }

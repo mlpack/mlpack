@@ -14,8 +14,7 @@
 
 #include <mlpack/core.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
 
 #define BASH_RED "\033[0;31m"
 #define BASH_GREEN "\033[0;32m"
@@ -26,31 +25,29 @@
 using namespace mlpack;
 using namespace mlpack::util;
 
-BOOST_AUTO_TEST_SUITE(PrefixedOutStreamTest);
-
 /**
- * Test the output of CLI using PrefixedOutStream.  We will pass bogus
+ * Test the output of IO using PrefixedOutStream.  We will pass bogus
  * input to a stringstream so that none of it gets to the screen.
  */
-BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic)
+TEST_CASE("TestPrefixedOutStreamBasic", "[PrefixedOutStreamTest]")
 {
   std::stringstream ss;
   PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
 
   pss << "This shouldn't break anything" << std::endl;
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR "This shouldn't break anything\n");
 
   ss.str("");
   pss << "Test the new lines...";
   pss << "shouldn't get 'Info' here." << std::endl;
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR
       "Test the new lines...shouldn't get 'Info' here.\n");
 
   pss << "But now I should." << std::endl << std::endl;
   pss << "";
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR
       "Test the new lines...shouldn't get 'Info' here.\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "But now I should.\n"
@@ -62,7 +59,7 @@ BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic)
  * Test that we can correctly output Armadillo objects to PrefixedOutStream
  * objects.
  */
-BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream)
+TEST_CASE("TestArmadilloPrefixedOutStream", "[PrefixedOutStreamTest]")
 {
   // We will test this with both a vector and a matrix.
   arma::vec test("1.0 1.5 2.0 2.5 3.0 3.5 4.0");
@@ -73,7 +70,7 @@ BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream)
   pss << test;
   // This should result in nothing being on the current line (since it clears
   // it).
-  BOOST_REQUIRE_EQUAL(ss.str(), BASH_GREEN "[INFO ] " BASH_CLEAR "   1.0000\n"
+  REQUIRE(ss.str() == BASH_GREEN "[INFO ] " BASH_CLEAR "   1.0000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   1.5000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   2.0000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000\n"
@@ -85,13 +82,13 @@ BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream)
   pss << trans(test);
 
   // This should result in there being stuff on the line.
-  BOOST_REQUIRE_EQUAL(ss.str(), BASH_GREEN "[INFO ] " BASH_CLEAR
+  REQUIRE(ss.str() == BASH_GREEN "[INFO ] " BASH_CLEAR
       "   1.0000   1.5000   2.0000   2.5000   3.0000   3.5000   4.0000\n");
 
   arma::mat test2("1.0 1.5 2.0; 2.5 3.0 3.5; 4.0 4.5 4.99999");
   ss.str("");
   pss << test2;
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR "   1.0000   1.5000   2.0000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
@@ -101,7 +98,7 @@ BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream)
   // onto their own lines.
   ss.str("");
   pss << "hello" << test2;
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR "hello   1.0000   1.5000   2.0000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
@@ -110,7 +107,7 @@ BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream)
 /**
  * Test that we can correctly output things in general.
  */
-BOOST_AUTO_TEST_CASE(TestPrefixedOutStream)
+TEST_CASE("TestPrefixedOutStream", "[PrefixedOutStreamTest]")
 {
   std::stringstream ss;
   PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
@@ -118,23 +115,23 @@ BOOST_AUTO_TEST_CASE(TestPrefixedOutStream)
   pss << "hello world I am ";
   pss << 7;
 
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR "hello world I am 7");
 
   pss << std::endl;
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR "hello world I am 7\n");
 
   ss.str("");
   pss << std::endl;
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR "\n");
 }
 
 /**
  * Test format modifiers.
  */
-BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamModifiers)
+TEST_CASE("TestPrefixedOutStreamModifiers", "[PrefixedOutStreamTest]")
 {
   std::stringstream ss;
   PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
@@ -142,7 +139,7 @@ BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamModifiers)
   pss << "I have a precise number which is ";
   pss << std::setw(6) << std::setfill('0') << (int)156;
 
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR
       "I have a precise number which is 000156");
 }
@@ -150,7 +147,7 @@ BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamModifiers)
 /**
  * Test formatted floating-point output.
  */
-BOOST_AUTO_TEST_CASE(TestFormattedOutput)
+TEST_CASE("TestFormattedOutput", "[PrefixedOutStreamTest]")
 {
   std::stringstream ss;
   PrefixedOutStream pss(ss, BASH_GREEN "[INFO ]" BASH_CLEAR);
@@ -158,14 +155,14 @@ BOOST_AUTO_TEST_CASE(TestFormattedOutput)
   const double pi = std::acos(-1.0);
   pss << std::setprecision(10) << pi;
 
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ]" BASH_CLEAR "3.141592654");
 }
 
 /**
  * Test custom precision output of arma objects.
  */
-BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
+TEST_CASE("TestArmaCustomPrecision", "[PrefixedOutStreamTest]")
 {
   std::stringstream ss;
   PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
@@ -181,7 +178,7 @@ BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
 
   pss << test;
 
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR "   1.000000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   1.500000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   2.000000\n"
@@ -194,7 +191,7 @@ BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
 
   pss << trans(test);
 
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR
       "   1.000000   1.500000   2.000000   2.500000"
       "   3.000000   3.500000   4.000000\n");
@@ -205,7 +202,7 @@ BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
 
   pss << test2;
 
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR
       "   1.00000000   1.50000000   2.00000000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR
@@ -218,7 +215,7 @@ BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
   ss.str("");
   pss << trans(test2);
 
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR
       "    1.00000000    2.50000000   40.00000000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR
@@ -233,10 +230,8 @@ BOOST_AUTO_TEST_CASE(TestArmaCustomPrecision)
   ss.str("");
 
   pss << test2;
-  BOOST_REQUIRE_EQUAL(ss.str(),
+  REQUIRE(ss.str() ==
       BASH_GREEN "[INFO ] " BASH_CLEAR "   1.0000   1.5000   2.0000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
 }
-
-BOOST_AUTO_TEST_SUITE_END();

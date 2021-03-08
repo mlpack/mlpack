@@ -39,8 +39,10 @@ namespace mlpack {
 namespace neighbor {
 
 // Forward declaration.
-template<typename SortPolicy>
-class TrainVisitor;
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+class LeafSizeRAWrapper;
 
 /**
  * The RASearch class: This class provides a generic manner to perform
@@ -358,7 +360,7 @@ class RASearch
 
   //! Serialize the object.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Permutations of reference points during tree building.
@@ -394,8 +396,7 @@ class RASearch
   MetricType metric;
 
   //! For access to mappings when building models.
-  template<typename SortPol>
-  friend class TrainVisitor;
+  friend class LeafSizeRAWrapper<TreeType>;
 }; // class RASearch
 
 } // namespace neighbor

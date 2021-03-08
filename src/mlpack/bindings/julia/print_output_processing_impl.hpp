@@ -14,7 +14,7 @@
 
 #include "print_output_processing.hpp"
 
-#include "strip_type.hpp"
+#include <mlpack/bindings/util/strip_type.hpp>
 #include "get_julia_type.hpp"
 
 namespace mlpack {
@@ -22,13 +22,14 @@ namespace bindings {
 namespace julia {
 
 /**
- * Print the output processing (basically calling CLI::GetParam<>()) for a
+ * Print the output processing (basically calling IO::GetParam<>()) for a
  * non-serializable type.
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const std::string& /* functionName */,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
@@ -53,7 +54,7 @@ void PrintOutputProcessing(
   if (std::is_same<T, std::string>::value)
     std::cout << "Base.unsafe_string(";
 
-  std::cout << "CLIGetParam" << type << "(\"" << d.name << "\")";
+  std::cout << "IOGetParam" << type << "(\"" << d.name << "\")";
 
   if (std::is_same<T, std::string>::value)
     std::cout << ")";
@@ -64,7 +65,7 @@ void PrintOutputProcessing(
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const std::string& /* functionName */,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
@@ -88,7 +89,7 @@ void PrintOutputProcessing(
     extra = ", points_are_rows";
   }
 
-  std::cout << "CLIGetParam" << uChar << matTypeSuffix << "(\"" << d.name
+  std::cout << "IOGetParam" << uChar << matTypeSuffix << "(\"" << d.name
       << "\"" << extra << ")";
 }
 
@@ -97,16 +98,16 @@ void PrintOutputProcessing(
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const std::string& functionName,
     const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<data::HasSerialize<T>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  std::string type = StripType(d.cppType);
-  std::cout << functionName << "_internal.CLIGetParam"
-      << type << "(\"" << d.name << "\")";
+  std::string type = util::StripType(d.cppType);
+  std::cout << functionName << "_internal.IOGetParam"
+      << type << "(\"" << d.name << "\", modelPtrs)";
 }
 
 /**
@@ -114,12 +115,12 @@ void PrintOutputProcessing(
  */
 template<typename T>
 void PrintOutputProcessing(
-    const util::ParamData& d,
+    util::ParamData& d,
     const std::string& /* functionName */,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
-  std::cout << "CLIGetParamMatWithInfo(\"" << d.name << "\")";
+  std::cout << "IOGetParamMatWithInfo(\"" << d.name << "\")";
 }
 
 } // namespace julia

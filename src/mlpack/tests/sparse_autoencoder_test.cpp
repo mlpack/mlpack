@@ -12,15 +12,13 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp>
 
-#include <boost/test/unit_test.hpp>
-#include "test_tools.hpp"
+#include "catch.hpp"
+#include "test_catch_tools.hpp"
 
 using namespace mlpack;
 using namespace mlpack::nn;
 
-BOOST_AUTO_TEST_SUITE(SparseAutoencoderTest);
-
-BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionEvaluate)
+TEST_CASE("SparseAutoencoderFunctionEvaluate", "[SparseAutoencoderTest]")
 {
   const size_t vSize = 5;
   const size_t hSize = 3;
@@ -41,21 +39,27 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionEvaluate)
   SparseAutoencoderFunction saf1(data1, vSize, hSize, 0, 0);
 
   // Test using first dataset. Values were calculated using Octave.
-  BOOST_REQUIRE_CLOSE(saf1.Evaluate(arma::ones(r, c)), 1.190472606540, 1e-5);
-  BOOST_REQUIRE_CLOSE(saf1.Evaluate(arma::zeros(r, c)), 0.150000000000, 1e-5);
-  BOOST_REQUIRE_CLOSE(saf1.Evaluate(-arma::ones(r, c)), 0.048800332266, 1e-5);
+  REQUIRE(saf1.Evaluate(arma::ones(r, c)) ==
+      Approx(1.190472606540).epsilon(1e-7));
+  REQUIRE(saf1.Evaluate(arma::zeros(r, c)) ==
+      Approx(0.150000000000).epsilon(1e-7));
+  REQUIRE(saf1.Evaluate(-arma::ones(r, c)) ==
+      Approx(0.048800332266).epsilon(1e-7));
 
   // Create a SparseAutoencoderFunction. Regularization and KL divergence terms
   // ignored.
   SparseAutoencoderFunction saf2(data2, vSize, hSize, 0, 0);
 
   // Test using second dataset. Values were calculated using Octave.
-  BOOST_REQUIRE_CLOSE(saf2.Evaluate(arma::ones(r, c)), 1.197585812647, 1e-5);
-  BOOST_REQUIRE_CLOSE(saf2.Evaluate(arma::zeros(r, c)), 0.150000000000, 1e-5);
-  BOOST_REQUIRE_CLOSE(saf2.Evaluate(-arma::ones(r, c)), 0.063466617408, 1e-5);
+  REQUIRE(saf2.Evaluate(arma::ones(r, c)) ==
+      Approx(1.197585812647).epsilon(1e-7));
+  REQUIRE(saf2.Evaluate(arma::zeros(r, c)) ==
+      Approx(0.150000000000).epsilon(1e-7));
+  REQUIRE(saf2.Evaluate(-arma::ones(r, c)) ==
+      Approx(0.063466617408).epsilon(1e-7));
 }
 
-BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRandomEvaluate)
+TEST_CASE("SparseAutoencoderFunctionRandomEvaluate", "[SparseAutoencoderTest]")
 {
   const size_t points = 1000;
   const size_t trials = 50;
@@ -100,11 +104,13 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRandomEvaluate)
     reconstructionError /= points;
 
     // Compare with the value returned by the function.
-    BOOST_REQUIRE_CLOSE(saf.Evaluate(parameters), reconstructionError, 1e-5);
+    REQUIRE(saf.Evaluate(parameters) ==
+        Approx(reconstructionError).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRegularizationEvaluate)
+TEST_CASE("SparseAutoencoderFunctionRegularizationEvaluate",
+          "[SparseAutoencoderTest]")
 {
   const size_t points = 1000;
   const size_t trials = 50;
@@ -138,14 +144,15 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRegularizationEvaluate)
     const double smallRegTerm = 0.25 * wL2SquaredNorm;
     const double bigRegTerm = 10 * wL2SquaredNorm;
 
-    BOOST_REQUIRE_CLOSE(safNoReg.Evaluate(parameters) + smallRegTerm,
-        safSmallReg.Evaluate(parameters), 1e-5);
-    BOOST_REQUIRE_CLOSE(safNoReg.Evaluate(parameters) + bigRegTerm,
-        safBigReg.Evaluate(parameters), 1e-5);
+    REQUIRE(safNoReg.Evaluate(parameters) + smallRegTerm ==
+        Approx(safSmallReg.Evaluate(parameters)).epsilon(1e-7));
+    REQUIRE(safNoReg.Evaluate(parameters) + bigRegTerm ==
+        Approx(safBigReg.Evaluate(parameters)).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
+TEST_CASE("SparseAutoencoderFunctionKLDivergenceEvaluate",
+          "[SparseAutoencoderTest]")
 {
   const size_t points = 1000;
   const size_t trials = 50;
@@ -194,14 +201,14 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
     const double bigDivTerm = 20 * arma::accu(rho * arma::log(rho / rhoCap) +
         (1 - rho) * arma::log((1 - rho) / (1 - rhoCap)));
 
-    BOOST_REQUIRE_CLOSE(safNoDiv.Evaluate(parameters) + smallDivTerm,
-        safSmallDiv.Evaluate(parameters), 1e-5);
-    BOOST_REQUIRE_CLOSE(safNoDiv.Evaluate(parameters) + bigDivTerm,
-        safBigDiv.Evaluate(parameters), 1e-5);
+    REQUIRE(safNoDiv.Evaluate(parameters) + smallDivTerm ==
+        Approx(safSmallDiv.Evaluate(parameters)).epsilon(1e-7));
+    REQUIRE(safNoDiv.Evaluate(parameters) + bigDivTerm ==
+        Approx(safBigDiv.Evaluate(parameters)).epsilon(1e-7));
   }
 }
 
-BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
+TEST_CASE("SparseAutoencoderFunctionGradient", "[SparseAutoencoderTest]")
 {
   const size_t points = 1000;
   const size_t vSize = 20;
@@ -261,11 +268,9 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
       parameters(i, j) += epsilon;
 
       // Compare numerical and backpropagation gradient values.
-      BOOST_REQUIRE_CLOSE(numGradient1, gradient1(i, j), 1e-2);
-      BOOST_REQUIRE_CLOSE(numGradient2, gradient2(i, j), 1e-2);
-      BOOST_REQUIRE_CLOSE(numGradient3, gradient3(i, j), 1e-2);
+      REQUIRE(numGradient1 == Approx(gradient1(i, j)).epsilon(1e-4));
+      REQUIRE(numGradient2 == Approx(gradient2(i, j)).epsilon(1e-4));
+      REQUIRE(numGradient3 == Approx(gradient3(i, j)).epsilon(1e-4));
     }
   }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

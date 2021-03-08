@@ -24,7 +24,7 @@ namespace go {
  */
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
     const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
@@ -41,7 +41,7 @@ std::string GetPrintableParam(
  */
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<util::IsStdVector<T>>::type* = 0)
 {
   const T& t = boost::any_cast<T>(data.value);
@@ -57,7 +57,7 @@ std::string GetPrintableParam(
  */
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
 {
   // Get the matrix.
@@ -73,7 +73,7 @@ std::string GetPrintableParam(
  */
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
     const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
 {
@@ -87,7 +87,7 @@ std::string GetPrintableParam(
  */
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
 {
@@ -111,7 +111,7 @@ std::string GetPrintableParam(
  * @param output Output storage for the string.
  */
 template<typename T>
-void GetPrintableParam(const util::ParamData& data,
+void GetPrintableParam(util::ParamData& data,
                        const void* /* input */,
                        void* output)
 {

@@ -23,7 +23,7 @@ namespace go {
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::disable_if<util::IsStdVector<T>>::type*,
     const typename boost::disable_if<data::HasSerialize<T>>::type*,
@@ -62,7 +62,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type*)
 {
   if (std::is_same<T, std::vector<int>>::value)
@@ -84,38 +84,18 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& data,
+    util::ParamData& /* data */,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
-  if (std::is_same<typename T::elem_type, double>::value)
+  if (T::is_col || T::is_row)
   {
-    if (T::is_col || T::is_row)
-    {
-      return "A 1-d gonum Matrix (that is, a Matrix where either the number"
-             " of rows or number of columns is 1).";
-    }
-    else
-    {
-      return "A 2-d gonum Matrix. If the type is not already `float64`, it "
-             "will be converted.";
-    }
-  }
-  else if (std::is_same<typename T::elem_type, size_t>::value)
-  {
-    if (T::is_col || T::is_row)
-    {
-      return "A 1-d gonum Matrix (that is, a Matrix where either the number"
-             " of rows or number of columns is 1).";
-    }
-    else
-    {
-      return "A 2-d gonum Matrix. If the type is not already `int64`, it "
-             "will be converted.";
-    }
+    return "A 1-d gonum Matrix (that is, a Matrix where either the number"
+           " of rows or number of columns is 1).";
   }
   else
   {
-    throw std::invalid_argument("unknown matrix type " + data.cppType);
+    return "A 2-d gonum Matrix. If the type is not already `float64`, it "
+           "will be converted.";
   }
 }
 
@@ -124,7 +104,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
@@ -141,7 +121,7 @@ std::string PrintTypeDoc(
  */
 template<typename T>
 std::string PrintTypeDoc(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {

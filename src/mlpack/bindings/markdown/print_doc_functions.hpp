@@ -87,16 +87,17 @@ inline std::string ProgramCall(const std::string& programName);
 
 /**
  * Print what a user would type to invoke the given option name.  Note that the
- * name *must* exist in the CLI module.  (Note that because of the way
- * ProgramInfo is structured, this doesn't mean that all of the PARAM_*()
- * declarataions need to come before the PROGRAM_INFO() declaration.)
+ * name *must* exist in the IO module.  (Note that because of the way
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() is structured, this doesn't mean
+ * that all of the PARAM_*() declarataions need to come before
+ * BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.)
  */
 inline std::string ParamString(const std::string& paramName);
 
 /**
  * Print the user-encountered type of an option.
  */
-inline std::string ParamType(const util::ParamData& d);
+inline std::string ParamType(util::ParamData& d);
 
 /**
  * Return whether or not a runtime check on parameters should be ignored.

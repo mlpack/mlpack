@@ -5,6 +5,7 @@ set(DIRS
   markdown
   python
   go
+  R
   tests
 )
 
