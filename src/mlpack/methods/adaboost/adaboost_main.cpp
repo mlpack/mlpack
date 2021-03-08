@@ -226,6 +226,13 @@ static void mlpackMain()
     Timer::Start("adaboost_training");
     m->Train(trainingData, labels, numClasses, iterations, tolerance);
     Timer::Stop("adaboost_training");
+    if(IO::HasParam("test"))
+    {
+      mat testingData = std::move(IO::GetParam<arma::mat>("test"));
+      CheckInputShape("adaboost", trainingData.n_rows, trainingData.n_cols, 1, labels.n_elem, testingData.n_rows, testingData.n_cols);
+    }
+    else
+      CheckInputShape("adaboost", trainingData.n_rows, trainingData.n_cols, 1, labels.n_elem, 0, 0);
   }
   else
   {
@@ -233,13 +240,7 @@ static void mlpackMain()
     m = IO::GetParam<AdaBoostModel*>("input_model");
   }
 
-  if(IO::HasParam("test"))
-  {
-    mat testingData = std::move(IO::GetParam<arma::mat>("test"));
-    CheckInputShape("adaboost", trainingData.n_rows, trainingData.n_cols, 1, labels.n_elem, testingData.n_rows, testingData.n_cols);
-  }
-  else
-    CheckInputShape("adaboost", trainingData.n_rows, trainingData.n_cols, 1, labels.n_elem, -1, -1);
+  
 
   // Perform classification, if desired.
   if (IO::HasParam("test"))
