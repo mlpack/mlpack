@@ -42,7 +42,7 @@ BINDING_LONG_DESC(
     "\n\n"
     "The labels should be either supplied with the " +
     PRINT_PARAM_STRING("labels") + " parameter else the program will assume "
-    "the last column of the dataset specified with "
+    "the last column of the dataset specified with " +
     PRINT_PARAM_STRING("input") + " as the target labels."
     "\n\n"
     "To store the predicted labels " + PRINT_PARAM_STRING("output") +
