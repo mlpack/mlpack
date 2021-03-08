@@ -27,7 +27,6 @@ class PersistenceModel
  public:
   /**
    * Creates the model.
-   *
    */
   PersistenceModel();
   
