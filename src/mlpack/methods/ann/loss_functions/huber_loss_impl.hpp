@@ -29,17 +29,17 @@ HuberLoss<InputDataType, OutputDataType>::HuberLoss(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
-HuberLoss<InputDataType, OutputDataType>::Forward(const InputType& input,
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+HuberLoss<InputDataType, OutputDataType>::Forward(const PredictionType& prediction,
                                                   const TargetType& target)
 {
-  InputType loss;
-  loss.zeros(size(input));
-  typedef typename InputType::elem_type ElemType;
-  for (size_t i = 0; i < input.n_elem; ++i)
+  PredictionType loss;
+  loss.zeros(size(prediction));
+  typedef typename PredictionType::elem_type ElemType;
+  for (size_t i = 0; i < prediction.n_elem; ++i)
   {
-    const ElemType absError = std::abs(target[i] - input[i]);
+    const ElemType absError = std::abs(target[i] - prediction[i]);
     loss[i] = absError > delta
         ? delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
   }
@@ -49,38 +49,39 @@ HuberLoss<InputDataType, OutputDataType>::Forward(const InputType& input,
   if (reduction)
     return lossSum;
 
-  return lossSum / input.n_elem;
+  return lossSum / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void HuberLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  typedef typename InputType::elem_type ElemType;
+  typedef typename PredictionType::elem_type ElemType;
 
-  output.set_size(size(input));
-  for (size_t i = 0; i < output.n_elem; ++i)
+  loss.set_size(size(prediction));
+  for (size_t i = 0; i < loss.n_elem; ++i)
   {
-    const ElemType absError = std::abs(target[i] - input[i]);
-    output[i] = absError > delta
-        ? - delta * (target[i] - input[i]) / absError : input[i] - target[i];
+    const ElemType absError = std::abs(target[i] - prediction[i]);
+    loss[i] = absError > delta ?
+        - delta * (target[i] - prediction[i]) / absError :
+        prediction[i] - target[i];
   }
 
   if (!reduction)
-    output = output / input.n_elem;
+    loss = loss / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void HuberLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(delta);
-  ar & BOOST_SERIALIZATION_NVP(reduction);
+  ar(CEREAL_NVP(delta));
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

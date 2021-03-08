@@ -1,26 +1,26 @@
 /**
- * @file methods/ann/loss_functions/l1_loss_impl.hpp
- * @author Himanshu Pathak
+ * @file methods/ann/loss_functions/binary_cross_entropy_loss_impl.hpp
+ * @author Konstantin Sidorov
  *
- * Implementation of the L1 Loss function.
+ * Implementation of the binary-cross-entropy performance function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_L1_LOSS_IMPL_HPP
-#define MLPACK_METHODS_ANN_LOSS_FUNCTION_L1_LOSS_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_IMPL_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "l1_loss.hpp"
+#include "binary_cross_entropy_loss.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-L1Loss<InputDataType, OutputDataType>::L1Loss(
-    const bool reduction) : reduction(reduction)
+BCELoss<InputDataType, OutputDataType>::BCELoss(
+    const double eps, const bool reduction) : eps(eps), reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -28,11 +28,13 @@ L1Loss<InputDataType, OutputDataType>::L1Loss(
 template<typename InputDataType, typename OutputDataType>
 template<typename PredictionType, typename TargetType>
 typename PredictionType::elem_type
-L1Loss<InputDataType, OutputDataType>::Forward(
+BCELoss<InputDataType, OutputDataType>::Forward(
     const PredictionType& prediction,
     const TargetType& target)
 {
-  PredictionType loss = arma::abs(prediction - target);
+  PredictionType loss =  -(target % arma::log(prediction + eps) +
+      (1. - target) % arma::log(1. - prediction + eps));
+
   typename PredictionType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
@@ -43,23 +45,23 @@ L1Loss<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename PredictionType, typename TargetType, typename LossType>
-void L1Loss<InputDataType, OutputDataType>::Backward(
+void BCELoss<InputDataType, OutputDataType>::Backward(
     const PredictionType& prediction,
     const TargetType& target,
     LossType& loss)
 {
-  loss = arma::sign(prediction - target);
-
+  loss = (1. - target) / (1. - prediction + eps) - target / (prediction + eps);
   if (!reduction)
-    loss = loss / prediction.n_elem;
+    loss /= prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void L1Loss<InputDataType, OutputDataType>::serialize(
+void BCELoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
+  ar(CEREAL_NVP(eps));
   ar(CEREAL_NVP(reduction));
 }
 

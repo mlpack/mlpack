@@ -27,41 +27,41 @@ HingeEmbeddingLoss<InputDataType, OutputDataType>::HingeEmbeddingLoss(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 HingeEmbeddingLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  InputType loss = (1 - target) / 2 + input % (target);
-  typename InputType::elem_type lossSum = arma::accu(loss);
+  PredictionType loss = (1 - target) / 2 + prediction % (target);
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
     return lossSum;
 
-  return lossSum / input.n_elem;
+  return lossSum / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void HingeEmbeddingLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output = target;
+  loss = target;
 
   if (!reduction)
-    output = output / input.n_elem;
+    loss = loss / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void HingeEmbeddingLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(reduction);
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

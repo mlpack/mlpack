@@ -27,41 +27,43 @@ MeanSquaredLogarithmicError<InputDataType, OutputDataType>
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  InputType loss = arma::square(arma::log(1. + target) - arma::log(1. + input));
-  typename InputType::elem_type lossSum = arma::accu(loss);
+  PredictionType loss = arma::square(arma::log(1. + target) -
+      arma::log(1. + prediction));
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
     return lossSum;
 
-  return lossSum / input.n_elem;
+  return lossSum / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output = 2 * (arma::log(1. + input) - arma::log(1. + target)) / (1. + input);
+  loss = 2 * (arma::log(1. + prediction) - arma::log(1. + target))
+      / (1. + prediction);
 
   if (!reduction)
-    output = output / input.n_elem;
+    loss = loss / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(reduction);
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

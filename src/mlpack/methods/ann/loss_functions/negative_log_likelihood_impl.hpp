@@ -26,22 +26,22 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::NegativeLogLikelihood(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  InputType loss;
+  PredictionType loss;
   loss.zeros(size(target));
   for (size_t i = 0; i < target.n_cols; ++i)
   {
     size_t currentTarget = target(i);
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_cols,
+    Log::Assert(currentTarget >= 0 && currentTarget < prediction.n_cols,
         "Target class out of range.");
-    loss(i) = -input(i, currentTarget);
+    loss(i) = -prediction(i, currentTarget);
   }
-  typename InputType::elem_type lossSum = arma::accu(loss);
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
 
   if (reduction)
     return lossSum;
@@ -50,32 +50,32 @@ NegativeLogLikelihood<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::Backward(
-      const InputType& input,
+      const PredictionType& prediction,
       const TargetType& target,
-      OutputType& output)
+      LossType& loss)
 {
-  output.zeros(size(input));
+  loss.zeros(size(prediction));
   for (size_t i = 0; i < target.n_cols; ++i)
   {
     size_t currentTarget = target(i);
-    Log::Assert(currentTarget >= 0 && currentTarget < input.n_cols,
+    Log::Assert(currentTarget >= 0 && currentTarget < prediction.n_cols,
         "Target class out of range.");
-    output(i, currentTarget) = -1;
+    loss(i, currentTarget) = -1;
   }
 
   if (!reduction)
-    output = output / target.n_elem;
+    loss = loss / target.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void NegativeLogLikelihood<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(reduction);
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann
