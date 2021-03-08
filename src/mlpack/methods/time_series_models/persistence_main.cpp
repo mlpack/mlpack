@@ -64,6 +64,38 @@ BINDING_SEE_ALSO("Persistence Model on Wikipedia",
 
 // Parameters for program.
 PARAM_MATRIX_IN_REQ("input", "Input dataset.", "i");
-PARAM_MATRIX_IN("labels", "Labels to be predicted.", "l");
-PARAM_MATRIX_OUT("output", "Matrix to save the predictions to.", "o");
+PARAM_ROW_IN("labels", "Labels to be predicted.", "l");
+PARAM_ROW_OUT("output", "Vector to save the predictions to.", "o");
 
+
+static void mlpackMain()
+{
+  // Load input dataset.
+  arma::mat& dataset = std::move(IO::GetParam<arma::mat>("input"));
+
+  // Issue a warning if the user did not specify an output file.
+  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
+
+  // Making the predictions.
+  if(IO::HasParam("labels"))
+  {
+    arma::rowvec& labels = std::move(IO::GetParam<arma::mat>("labels"));
+    arma::rowvec& predictions(labels.n_elem);
+
+    PersistenceModel model;
+    model.Predict(labels, predicions);
+  }
+  else
+  {
+    arma::rowvec& predictions(dataset.n_rows);
+
+    PersistenceModel model;
+    model.Predict(dataset, predictions);
+  }
+
+  // Save predictions, if desired.
+  if(IO::HasParam("output"))
+  {
+    IO::GetParam<arma::rowvec>("output") = std::move(predictions);
+  }
+}
