@@ -15,3 +15,9 @@ endforeach()
 # Append sources (with directory name) to list of all mlpack sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+add_cli_executable(persistence)
+add_python_binding(persistence)
+add_julia_binding(persistence)
+add_go_binding(persistence)
+add_r_binding(persistence)
