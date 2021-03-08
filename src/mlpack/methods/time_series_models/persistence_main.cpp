@@ -48,4 +48,22 @@ BINDING_LONG_DESC(
     "To store the predicted labels " + PRINT_PARAM_STRING("output") +
     " parameter can be specified.")
 
+//Example.
+BINDING_EXAMPLE(
+    "For example, to make predictions using the Persistence Model on " +
+    PRINT_DATASET("data") + " and " + PRINT_DATASET("labels") + ", storing "
+    "the predicted output to " + PRINT_DATASET("predictions") +
+    ", the following command can be used:"
+    "\n\n" +
+    PRINT_CALL("persistence", "input", "data", "labels", "labels",
+        "output", "predictions"));
+
+// See also...
+BINDING_SEE_ALSO("Persistence Model on Wikipedia",
+        "https://en.wikipedia.org/wiki/Forecasting#Na%C3%AFve_approach");
+
+// Parameters for program.
+PARAM_MATRIX_IN_REQ("input", "Input dataset.", "i");
+PARAM_MATRIX_IN("labels", "Labels to be predicted.", "l");
+PARAM_MATRIX_OUT("output", "Matrix to save the predictions to.", "o");
 
