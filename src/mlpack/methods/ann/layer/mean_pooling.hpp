@@ -186,22 +186,20 @@ class MeanPooling
                  const arma::Mat<eT>& error,
                  arma::Mat<eT>& output)
   {
-    const size_t rStep = input.n_rows / error.n_rows - offset;
-    const size_t cStep = input.n_cols / error.n_cols - offset;
 
     arma::Mat<eT> unpooledError;
-    for (size_t j = 0; j < input.n_cols - cStep; j += cStep)
+    for (size_t j = 0; j < input.n_cols - kernelHeight; j += strideHeight)
     {
-      for (size_t i = 0; i < input.n_rows - rStep; i += rStep)
+      for (size_t i = 0; i < input.n_rows - kernelWidth; i += strideWidth)
       {
-        const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
-            arma::span(j, j + cStep - 1));
+        const arma::Mat<eT>& inputArea = input(arma::span(i, i + kernelWidth - 1),
+            arma::span(j, j + kernelHeight - 1));
 
         unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
-        unpooledError.fill(error(i / rStep, j / cStep) / inputArea.n_elem);
+        unpooledError.fill(error(i / strideWidth, j / strideHeight) / inputArea.n_elem);
 
-        output(arma::span(i, i + rStep - 1 - offset),
-            arma::span(j, j + cStep - 1 - offset)) += unpooledError;
+        output(arma::span(i, i + kernelWidth - 1 - offset),
+            arma::span(j, j + kernelHeight - 1 - offset)) += unpooledError;
       }
     }
   }
