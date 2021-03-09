@@ -299,7 +299,7 @@ inline void ReportIgnoredParam(const std::string& paramName,
   }
 }
 
-inline void CheckInputShape(const std::string& method,
+inline void CheckInputShape(const std::string method,
                         const size_t x_rows,
                         const size_t x_cols, 
                         const size_t y_cols, 
