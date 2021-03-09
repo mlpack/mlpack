@@ -23,6 +23,7 @@ void BERTTokenizerRunner(input_type input_list, output_type tokenized_output_tru
 	// Storing the predicted tokenization.
 	std::vector<std::vector<std::string>> tokenized_output_pred;
 	// Initializing the BERT Tokenizer, along with giving path of vocab file.
+    // bert-vocab.txt only consists of few tokens so that less memory is used.
     auto tokenizer = FullTokenizer("data/bert-vocab.txt");
 
     // Initializing temporary variables, used for storing processed tokens.
@@ -98,12 +99,12 @@ TEST_CASE("BERTTokenizer-PunctTests", "[BERTTokenizerTest]")
  */
 TEST_CASE("BERTTokenizer-CapitalLetterTests", "[BERTTokenizerTest]")
 {
-    std::vector<std::string> input_list = {"[CLS] hello How ARE You?",
-                              "[CLS] This is a sentence. [SEP] Hoping it works [MASK] Fingers crossed [SEP]"};
+    std::vector<std::string> input_list = {"[CLS] hello How ARE You? [SEP]",
+                              "[CLS] This is a sentence. [MASK] Fingers crossed"};
     std::vector<std::vector<std::string>> tokenized_output_true = 
     {
-        {"[CLS]", "hello", "how", "are", "you", "?"},
-        {"[CLS]", "this", "is", "a", "sentence", ".", "[SEP]", "hoping", "it", "works", "[MASK]", "fingers", "crossed", "[SEP]"}
+        {"[CLS]", "hello", "how", "are", "you", "?", "[SEP]"},
+        {"[CLS]", "this", "is", "a", "sentence", ".", "[MASK]", "fingers", "crossed"}
     };
 
     BERTTokenizerRunner(input_list, tokenized_output_true);
@@ -116,9 +117,9 @@ TEST_CASE("BERTTokenizer-CapitalLetterTests", "[BERTTokenizerTest]")
 TEST_CASE("BERTTokenizer-BERTIdTest", "[BERTTokenizerTest]")
 {
     auto tokenizer = mlpack::data::FullTokenizer("data/bert-vocab.txt");
-    std::vector<std::wstring> tokens = { L"make", L"plug", L"token" };
+    std::vector<std::wstring> tokens = { L"how", L"are", L"you" };
     std::vector<size_t> pred_ids = tokenizer.convertTokensToIds(tokens);
-    std::vector<size_t> true_ids = {2191, 13354, 19204};
+    std::vector<size_t> true_ids = {24, 15, 34};
     // Testing output of convertTokensToIds function.
     for (size_t i = 0; i < ids.size(); i++) {
         REQUIRE(pred_ids[i] == true_ids[i]);
