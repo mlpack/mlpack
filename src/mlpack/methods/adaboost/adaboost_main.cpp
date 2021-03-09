@@ -247,11 +247,11 @@ static void mlpackMain()
   {
     mat testingData = std::move(IO::GetParam<arma::mat>("test"));
 
-    if (testingData.n_rows != m->Dimensionality())
+    if (testingData.n_rows != m->Dimensionality() && testingData.n_cols > 0)
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
           << "must be the same as the model dimensionality ("
-          << m->Dimensionality() << ")!" << endl;
-
+          << m->Dimensionality() << ")! Also number of test examples are " << testingData.n_cols << endl;
+    
     Row<size_t> predictedLabels(testingData.n_cols);
     mat probabilities;
 
