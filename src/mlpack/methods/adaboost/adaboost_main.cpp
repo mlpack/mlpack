@@ -229,10 +229,10 @@ static void mlpackMain()
     if(IO::HasParam("test"))
     {
       mat testingData = std::move(IO::GetParam<arma::mat>("test"));
-      CheckInputShape("adaboost", trainingData.n_rows, trainingData.n_cols, labels.n_elem, testingData.n_rows);
+      CheckInputShape(trainingData.n_rows, trainingData.n_cols, labels.n_elem, testingData.n_rows);
     }
     else
-      CheckInputShape("adaboost", trainingData.n_rows, trainingData.n_cols, labels.n_elem, 0);
+      CheckInputShape(trainingData.n_rows, trainingData.n_cols, labels.n_elem, 0);
   }
   else
   {
