@@ -9,15 +9,10 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_BERT_TOKENIZER_HPP
-#define MLPACK_CORE_DATA_BERT_TOKENIZER_HPP
+#ifndef MLPACK_CORE_DATA_TOKENIZERS_BERT_TOKENIZER_HPP
+#define MLPACK_CORE_DATA_TOKENIZERS_BERT_TOKENIZER_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core.hpp>
-#include <vector>
-#include <unordered_map>
-#include <boost/algorithm/string.hpp>
-#include <string>
 
 namespace mlpack {
 namespace data {
