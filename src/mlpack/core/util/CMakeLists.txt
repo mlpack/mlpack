@@ -26,6 +26,7 @@ set(SOURCES
   prefixedoutstream_impl.hpp
   program_doc.hpp
   program_doc.cpp
+  size_checks.hpp
   sfinae_utility.hpp
   singletons.cpp
   timers.hpp

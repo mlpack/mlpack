@@ -22,7 +22,7 @@ double SilhouetteScore::Overall(const DataType& X,
                                 const arma::Row<size_t>& labels,
                                 const Metric& metric)
 {
-  AssertSizes(X, labels, "SilhouetteScore::Overall()");
+  util::CheckSameSizes(X, labels, "SilhouetteScore::Overall()");
   return arma::mean(SamplesScore(X, labels, metric));
 }
 
@@ -30,7 +30,7 @@ template<typename DataType>
 arma::rowvec SilhouetteScore::SamplesScore(const DataType& distances,
                                            const arma::Row<size_t>& labels)
 {
-  AssertSizes(distances, labels, "SilhouetteScore::SamplesScore()");
+  util::CheckSameSizes(distances, labels, "SilhouetteScore::SamplesScore()");
 
   // Stores the silhouette scores of individual samples.
   arma::rowvec sampleScores(distances.n_rows);
@@ -76,7 +76,7 @@ arma::rowvec SilhouetteScore::SamplesScore(const DataType& X,
                                            const arma::Row<size_t>& labels,
                                            const Metric& metric)
 {
-  AssertSizes(X, labels, "SilhouetteScore::SamplesScore()");
+  util::CheckSameSizes(X, labels, "SilhouetteScore::SamplesScore()");
   DataType distances = PairwiseDistances(X, metric);
   return SamplesScore(distances, labels);
 }
