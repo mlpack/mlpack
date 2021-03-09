@@ -301,11 +301,9 @@ inline void ReportIgnoredParam(const std::string& paramName,
 
 inline void CheckInputShape(const std::string& method,
                         const size_t x_rows,
-                        const size_t x_cols,
-                        const size_t y_rows, 
+                        const size_t x_cols, 
                         const size_t y_cols, 
-                        const size_t xt_rows,
-                        const size_t xt_cols)
+                        const size_t xt_rows)
 {
   if(x_cols!=y_cols)
   {
@@ -316,6 +314,7 @@ inline void CheckInputShape(const std::string& method,
   {
     Log::Fatal << "Unequal number of features of a datapoint in train and test sets";
   }
+  
   return;
 }
 } // namespace util

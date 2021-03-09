@@ -229,10 +229,8 @@ void ReportIgnoredParam(const std::string& paramName,
 void CheckInputShape(const std::string& method,
                         const size_t x_rows,
                         const size_t x_cols,
-                        const size_t y_rows, 
                         const size_t y_cols, 
-                        const size_t xt_rows,
-                        const size_t xt_cols);
+                        const size_t xt_rows);
 
 } // namespace util
 } // namespace mlpack
