@@ -80,8 +80,6 @@ option(BUILD_R_BINDINGS "Build R bindings." OFF)
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
 
-option(BUILD_WITH_COVERAGE
-    "Build with support for code coverage tools (gcc only)." OFF)
 option(MATHJAX
     "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
 option(FORCE_CXX11
@@ -194,38 +192,6 @@ if(CMAKE_COMPILER_IS_GNUCC)
   find_package(Threads)
   set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES}
       ${CMAKE_THREAD_LIBS_INIT})
-endif()
-
-# Setup build for test coverage
-if(BUILD_WITH_COVERAGE)
-  # Currently coverage only works with GNU g++.
-  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    # Find gcov and lcov
-    find_program(GCOV gcov)
-    find_program(LCOV lcov)
-
-    if(NOT GCOV)
-      message(FATAL_ERROR
-          "gcov not found! gcov is required when BUILD_WITH_COVERAGE=ON.")
-    endif()
-
-    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "supc++")
-    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "quadmath")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
-    message(STATUS "Adding debug compile options for code coverage.")
-    # Remove optimizations for better line coverage
-    set(DEBUG ON)
-
-    if(LCOV)
-      configure_file(CMake/mlpack_coverage.in mlpack_coverage @ONLY)
-      add_custom_target(mlpack_coverage DEPENDS mlpack_test COMMAND ${PROJECT_BINARY_DIR}/mlpack_coverage)
-    else()
-      message(WARNING "'lcov' not found; local coverage report is disabled. "
-          "Install 'lcov' and rerun cmake to generate local coverage report.")
-    endif()
-  else()
-    message(FATAL_ERROR "BUILD_WITH_COVERAGE can only work with GNU environment.")
-  endif()
 endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
