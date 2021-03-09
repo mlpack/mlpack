@@ -1,8 +1,8 @@
 # Define the files that we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  BERT_tokenizer.hpp
-  BERT_tokenizer_impl.hpp
+  bert_tokenizer.hpp
+  bert_tokenizer_impl.hpp
   char_extract.hpp
   split_by_any_of.hpp
 )

@@ -23,7 +23,7 @@ void BERTTokenizerRunner(input_type input_list, output_type tokenized_output_tru
 	// Storing the predicted tokenization.
 	std::vector<std::vector<std::string>> tokenized_output_pred;
 	// Initializing the BERT Tokenizer, along with giving path of vocab file.
-    auto tokenizer = FullTokenizer("data/BERT-vocab.txt");
+    auto tokenizer = FullTokenizer("data/bert-vocab.txt");
 
     // Initializing temporary variables, used for storing processed tokens.
     vector<string> temp;
@@ -115,7 +115,7 @@ TEST_CASE("BERTTokenizer-CapitalLetterTests", "[BERTTokenizerTest]")
  */
 TEST_CASE("BERTTokenizer-BERTIdTest", "[BERTTokenizerTest]")
 {
-    auto tokenizer = mlpack::data::FullTokenizer("data/BERT-vocab.txt");
+    auto tokenizer = mlpack::data::FullTokenizer("data/bert-vocab.txt");
     std::vector<std::wstring> tokens = { L"make", L"plug", L"token" };
     std::vector<size_t> pred_ids = tokenizer.convertTokensToIds(tokens);
     std::vector<size_t> true_ids = {2191, 13354, 19204};

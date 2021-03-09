@@ -1,5 +1,5 @@
 /**
- * @file core/data/tokenizers/BERT_tokenizer.hpp
+ * @file core/data/tokenizers/bert_tokenizer.hpp
  * @author Ayush Singh
  *
  * Definition of BERT Tokenizer.
@@ -252,6 +252,6 @@ class FullTokenizer {
 } // namespace mlpack
 
 // Include implementation.
-#include "BERT_tokenizer_impl.hpp"
+#include "bert_tokenizer_impl.hpp"
 
 #endif

@@ -1,5 +1,5 @@
 /**
- * @file core/data/tokenizers/BERT_tokenizer_impl.hpp
+ * @file core/data/tokenizers/bert_tokenizer_impl.hpp
  * @author Ayush Singh
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -11,7 +11,7 @@
 #define MLPACK_CORE_DATA_BERT_TOKENIZER_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "BERT_tokenizer.hpp"
+#include "bert_tokenizer.hpp"
 
 namespace mlpack {
 namespace data {
