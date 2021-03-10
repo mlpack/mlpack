@@ -1,4 +1,5 @@
-def preprocess_params(params, return_dic=False):
+def process_params(model, return_dic=False):
+  params = model.params()
   params_decoded = params.decode("utf-8").replace("true", "True")\
     .replace("false", "False")
   if return_dic:
