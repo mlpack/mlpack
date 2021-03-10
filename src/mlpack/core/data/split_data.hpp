@@ -18,39 +18,47 @@
 namespace mlpack {
 namespace data {
 
+/**
+ * This helper function splits any `input` data into training and testing parts.
+ * In order to shuffle the input data before spliting, an array of shuffled
+ * indices of the input data is passed in the form of argument `order`.
+ */
 template<typename InputType>
 void SplitHelper(const InputType& input,
-                 InputType& trainData,
-                 InputType& testData,
+                 InputType& train,
+                 InputType& test,
                  const double testRatio,
                  const arma::uvec* order = nullptr)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
 
-  trainData.set_size(input.n_rows, trainSize);
-  testData.set_size(input.n_rows, testSize);
+  // Initialising the sizes of outputs if not already initialized.
+  train.set_size(input.n_rows, trainSize);
+  test.set_size(input.n_rows, testSize);
 
+  // Shuffling and spliting simultaneously.
   if (order)
   {
     if (trainSize > 0)
     {
       for (size_t i = 0; i < trainSize; ++i)
-        trainData.col(i) = input.col( (*order)(i) );
+        train.col(i) = input.col( (*order)(i) );
     }
     if (trainSize < input.n_cols)
     {
       for (size_t i = trainSize; i < input.n_cols; ++i)
-        testData.col(i - trainSize) = input.col( (*order)(i) );
+        test.col(i - trainSize) = input.col( (*order)(i) );
     }
   }
+  // Spliting only.
   else
   {
     if (trainSize > 0)
-      trainData = input.cols(0, trainSize - 1);
+      train = input.cols(0, trainSize - 1);
 
     if (trainSize < input.n_cols)
-      testData = input.cols(trainSize, input.n_cols - 1);
+      test = input.cols(trainSize, input.n_cols - 1);
   }
 }
 
@@ -253,7 +261,7 @@ void Split(const arma::Mat<T>& input,
            const double testRatio,
            const bool shuffleData = true)
 {
-  if(shuffleData)
+  if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
         input.n_cols - 1, input.n_cols));
@@ -297,7 +305,7 @@ void Split(const arma::Mat<T>& input,
            const double testRatio,
            const bool shuffleData = true)
 {
-  if(shuffleData)
+  if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
         input.n_cols - 1, input.n_cols));
@@ -447,7 +455,7 @@ void Split(const FieldType& input,
            const double testRatio,
            const bool shuffleData = true)
 {
-  if(shuffleData)
+  if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
         input.n_cols - 1, input.n_cols));
@@ -499,7 +507,7 @@ void Split(const FieldType& input,
            const double testRatio,
            const bool shuffleData = true)
 {
-  if(shuffleData)
+  if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
         input.n_cols - 1, input.n_cols));
