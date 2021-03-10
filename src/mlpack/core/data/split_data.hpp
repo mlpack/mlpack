@@ -101,6 +101,39 @@ void StratifiedSplit(const arma::Mat<T>& input,
                      const double testRatio,
                      const bool shuffleData = true)
 {
+  /**
+   * Basic idea:
+   * Let us say we have to stratify a dataset based on labels:
+   * 0 0 0 0 0 (5 0s)
+   * 1 1 1 1 1 1 1 1 1 1 1 (11 1s)
+   *
+   * Let our test ratio be 0.2.
+   * Then, the number of 0 labels in our test set = floor(5 * 0.2) = 1.
+   * The number of 1 labels in our test set = floor(11 * 0.2) = 2.
+   *
+   * In our first pass over the dataset,
+   * We visit each label and keep count of each label in our 'labelCounts' uvec.
+   *
+   * We then take a second pass over the dataset.
+   * We now maintain an additional uvec 'testLabelCounts' to hold the label
+   * counts of our test set.
+   *
+   * In this pass, when we encounter a label we check the 'testLabelCounts' uvec
+   * for the count of this label in the test set.
+   * If this count is less than the required number of labels in the test set,
+   * we add the data to the test set and increment the label count in the uvec.
+   * If this count is equal to or more than the required count in the test set,
+   * we add this data to the train set.
+   *
+   * Based on the above steps, we get the following labels in the split set:
+   * Train set (4 0s, 9 1s)
+   * 0 0 0 0
+   * 1 1 1 1 1 1 1 1 1
+   *
+   * Test set (1 0s, 2 1s)
+   * 0
+   * 1 1
+   */
   const bool typeCheck = (arma::is_Row<LabelsType>::value)
       || (arma::is_Col<LabelsType>::value);
   if (!typeCheck)
