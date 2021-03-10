@@ -304,16 +304,22 @@ inline void CheckInputShape(const size_t x_rows,
                         const size_t y_cols, 
                         const size_t xt_rows)
 {
+  if(x_rows==0)
+  {
+    Log::Fatal <<"No training data available";
+    return;
+  }
   if(x_cols!=y_cols)
   {
     Log::Fatal << "Number of data points in training data and labels don't match. Number of data points in feature matrix are " << x_cols 
-          <<"as opposed to " <<  y_cols <<"in true labels"; 
+          <<"as opposed to " <<  y_cols <<"in true labels";
+    return; 
   }
   if(xt_rows!=0 && xt_rows!=x_rows)
   {
     Log::Fatal << "Unequal number of features of a datapoint in train and test sets";
+    return;
   }
-  
   return;
 }
 } // namespace util
