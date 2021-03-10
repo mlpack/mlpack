@@ -20,13 +20,13 @@ namespace data {
 
 template<typename InputType, typename LabelsType>
 void SplitHelper(const InputType& input,
-           const LabelsType& inputLabel,
-           InputType& trainData,
-           InputType& testData,
-           LabelsType& trainLabel,
-           LabelsType& testLabel,
-           const double testRatio,
-           const bool shuffleData = true)
+                const LabelsType& inputLabel,
+                InputType& trainData,
+                InputType& testData,
+                LabelsType& trainLabel,
+                LabelsType& testLabel,
+                const double testRatio,
+                const bool shuffleData = true)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
