@@ -72,6 +72,9 @@ void PrintClassDefn(
    *   def __getstate__(self):
    *     return SerializeOut(self.modelptr, "<ModelType>")
    *
+   *   def _params(self):
+   *     return SerializeOutJSON(self.modelptr, "<ModelType>")
+   *
    *   def __setstate__(self, state):
    *     SerializeIn(self.modelptr, state, "<ModelType>")
    *
@@ -90,6 +93,10 @@ void PrintClassDefn(
   std::cout << std::endl;
   std::cout << "  def __getstate__(self):" << std::endl;
   std::cout << "    return SerializeOut(self.modelptr, \"" << printedType
+      << "\")" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  def _params(self):" << std::endl;
+  std::cout << "    return SerializeOutJSON(self.modelptr, \"" << printedType
       << "\")" << std::endl;
   std::cout << std::endl;
   std::cout << "  def __setstate__(self, state):" << std::endl;
