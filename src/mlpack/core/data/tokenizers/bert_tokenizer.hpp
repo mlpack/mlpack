@@ -38,13 +38,13 @@ namespace data {
  */
 
 // All the characters which cause break in tex in a string.
-const std::wstring stripChar = L" \t\n\r\v\f";
+#define stripChar L" \t\n\r\v\f"
 
 // The datatype in which the vocab file is stored. Used for mapping token with its id.
-using Vocab = std::unordered_map<std::wstring, size_t>;
+#define Vocab std::unordered_map<std::wstring, size_t>
 
 // The datatype in which the vocab file is stored. Used for mapping id with its token.
-using InvVocab = std::unordered_map<size_t, std::wstring>;
+#define InvVocab std::unordered_map<size_t, std::wstring>
 
 /**
  * This class is used for basic tokenization purposes.
