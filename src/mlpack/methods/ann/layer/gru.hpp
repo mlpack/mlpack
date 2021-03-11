@@ -76,13 +76,13 @@ class GRU
   GRU(const GRU& layer);
 
   // Move constructor.
-  GRU(GRU&&);
+  GRU(GRU&& layer);
 
   // Copy assignment operator.
-  GRU &operator=(const GRU& layer);
+  GRU& operator=(const GRU& layer);
 
   // Move assignment operator.
-  GRU &operator=(GRU&& layer);
+  GRU& operator=(GRU&& layer);
 
 
   /**

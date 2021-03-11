@@ -87,6 +87,18 @@ GRU<InputDataType, OutputDataType>::GRU(const GRU& layer) :
     backwardStep(layer.backwardStep),
     gradientStep(layer.gradientStep),
     weights(layer.weights),
+    outParameter(layer.outParameter),
+    allZeros(layer.allZeros),
+    prevOutput(layer.prevOutput),
+    backIterator(layer.backIterator),
+    gradIterator(layer.gradIterator),
+    prevError(layer.prevError),
+    input2GateModule(layer.input2GateModule),
+    output2GateModule(layer.output2GateModule),
+    outputHidden2GateModule(layer.outputHidden2GateModule),
+    inputGateModule(layer.inputGateModule),
+    hiddenStateModule(layer.hiddenStateModule),
+    forgetGateModule(layer.forgetGateModule),
     deterministic(layer.deterministic)    
 
 {
@@ -104,6 +116,18 @@ GRU<InputDataType, OutputDataType>::GRU(GRU&& layer) :
     backwardStep(std::move(layer.backwardStep)),
     gradientStep(std::move(layer.gradientStep)),
     weights(std::move(layer.weights)),
+    outParameter(std::move(layer.outParameter)),
+    allZeros(std::move(layer.allZeros)),
+    prevOutput(std::move(layer.prevOutput)),
+    backIterator(std::move(layer.backIterator)),
+    gradIterator(std::move(layer.gradIterator)),
+    prevError(std::move(layer.prevError)),
+    input2GateModule(std::move(layer.input2GateModule)),
+    output2GateModule(std::move(layer.output2GateModule)),
+    outputHidden2GateModule(std::move(layer.outputHidden2GateModule)),
+    inputGateModule(std::move(layer.inputGateModule)),
+    hiddenStateModule(std::move(layer.hiddenStateModule)),
+    forgetGateModule(std::move(layer.forgetGateModule)),
     deterministic(std::move(layer.deterministic))
 
 {
@@ -125,6 +149,18 @@ GRU<InputDataType, OutputDataType>&
     backwardStep = layer.backwardStep;
     gradientStep = layer.gradientStep;
     weights = layer.weights;
+    outParameter = layer.outParameter;
+    allZeros = layer.allZeros;
+    prevOutput = layer.prevOutput;
+    backIterator = layer.backIterator;
+    gradIterator = layer.gradIterator;
+    prevError = layer.prevError;
+    input2GateModule = layer.input2GateModule;
+    output2GateModule = layer.output2GateModule;
+    outputHidden2GateModule = layer.outputHidden2GateModule;
+    inputGateModule = layer.inputGateModule;
+    hiddenStateModule = layer.hiddenStateModule;
+    forgetGateModule = layer.forgetGateModule;
     deterministic = layer.deterministic;
 
   }
@@ -146,6 +182,18 @@ GRU<InputDataType, OutputDataType>&
     backwardStep = std::move(layer.backwardStep);
     gradientStep = std::move(layer.gradientStep);
     weights = std::move(layer.weights);
+    outParameter = std::move(layer.outParamater);
+    allZeros = std::move(layer.allZeros);
+    prevOutput = std::move(layer.prevOutput);
+    backIterator = std::move(layer.backIterator);
+    gradIterator = std::move(layer.gradIterator);
+    prevError = std::move(layer.prevError);
+    input2GateModule = std::move(layer.input2GateModule);
+    output2GateModule = std::move(layer.output2GateModule);
+    outputHidden2GateModule = std::move(layer.outputHidden2GateModule);
+    inputGateModule = std::move(layer.inputGateModule);
+    hiddenStateModule = std::move(layer.hiddenStateModule);
+    forgetGateModule = std::move(layer.forgetGateModule);
     deterministic = std::move(layer.deterministic);
 
   }
