@@ -388,7 +388,7 @@ TEST_CASE("SplitMatrixLabeledData", "[SplitDataTest]")
   CheckMatrices(labels, labels_concat);
 }
 
-/*
+/**
  * Split with input of type field<mat> and label of type field<vec>.
  */
 TEST_CASE("SplitLabeledDataResultField", "[SplitDataTest]")
