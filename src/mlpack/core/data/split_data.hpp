@@ -28,7 +28,7 @@ void SplitHelper(const InputType& input,
                  InputType& train,
                  InputType& test,
                  const double testRatio,
-                 const arma::uvec* order = nullptr)
+                 const arma::uvec& order = arma::uvec())
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
@@ -38,17 +38,17 @@ void SplitHelper(const InputType& input,
   test.set_size(input.n_rows, testSize);
 
   // Shuffling and spliting simultaneously.
-  if (order)
+  if (!order.is_empty())
   {
     if (trainSize > 0)
     {
       for (size_t i = 0; i < trainSize; ++i)
-        train.col(i) = input.col( (*order)(i) );
+        train.col(i) = input.col(order(i));
     }
     if (trainSize < input.n_cols)
     {
       for (size_t i = trainSize; i < input.n_cols; ++i)
-        test.col(i - trainSize) = input.col( (*order)(i) );
+        test.col(i - trainSize) = input.col(order(i));
     }
   }
   // Spliting only.
@@ -265,8 +265,8 @@ void Split(const arma::Mat<T>& input,
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
         input.n_cols - 1, input.n_cols));
-    SplitHelper(input, trainData, testData, testRatio, &order);
-    SplitHelper(inputLabel, trainLabel, testLabel, testRatio, &order);
+    SplitHelper(input, trainData, testData, testRatio, order);
+    SplitHelper(inputLabel, trainLabel, testLabel, testRatio, order);
   }
   else
   {
@@ -309,7 +309,7 @@ void Split(const arma::Mat<T>& input,
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
         input.n_cols - 1, input.n_cols));
-    SplitHelper(input, trainData, testData, testRatio, &order);
+    SplitHelper(input, trainData, testData, testRatio, order);
   }
   else
   {
@@ -459,8 +459,8 @@ void Split(const FieldType& input,
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
         input.n_cols - 1, input.n_cols));
-    SplitHelper(input, trainData, testData, testRatio, &order);
-    SplitHelper(inputLabel, trainLabel, testLabel, testRatio, &order);
+    SplitHelper(input, trainData, testData, testRatio, order);
+    SplitHelper(inputLabel, trainLabel, testLabel, testRatio, order);
   }
   else
   {
@@ -511,7 +511,7 @@ void Split(const FieldType& input,
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
         input.n_cols - 1, input.n_cols));
-    SplitHelper(input, trainData, testData, testRatio, &order);
+    SplitHelper(input, trainData, testData, testRatio, order);
   }
   else
   {
