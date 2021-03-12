@@ -53,7 +53,7 @@ inline void CheckMatrices(const arma::Mat<size_t>& a,
 template <typename FieldType,
           typename = std::enable_if_t<
               arma::is_arma_type<typename FieldType::object_type>::value>>
-// Check the values of two field types
+// Check the values of two field types.
 inline void CheckFields(const FieldType& a,
                         const FieldType& b)
 {
