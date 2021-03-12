@@ -316,8 +316,8 @@ class HMM
    *
    * @param emissionLogProb emission probability at time t.
    * @param logLikelihood Log-likelihood of the given sequence of emission
-   *     probability up to time t-1.  This will be overwritten with the log-likelihood
-   *     of the given emission probability up to time t.
+   *     probability up to time t-1.  This will be overwritten with the
+   *     log-likelihood of the given emission probability up to time t.
    * @param forwardLogProb Vector in which forward probabilities will be saved.
    *     Passing forwardLogProb as an empty vector indicates the start of the
    *     sequence (i.e. time t=0).
@@ -441,27 +441,29 @@ class HMM
  protected:
   /**
    * Given emission probabilities, computes forward probabilities at time t=0.
+   * The template parameter allows passing an Armadillo subview without
+   * instantiating it.
    *
    * @param emissionLogProb Emission probability at time t=0.
    * @param logScales Vector in which the log of scaling factors will be saved.
    * @return Forward probabilities
    */
-  arma::vec ForwardAtT0(
-      const arma::vec& emissionLogProb,
-      double& logScales) const;
+  arma::vec ForwardAtT0(const arma::vec& emissionLogProb,
+                        double& logScales) const;
 
   /**
    * Given emission probabilities, computes forward probabilities for time t>0.
+   * The template parameter allows passing an Armadillo subview without
+   * instantiating it.
    *
    * @param emissionLogProb Emission probability at time t>0.
    * @param logScales Vector in which the log of scaling factors will be saved.
    * @param prevForwardLogProb Previous forward probabilities.
    * @return Forward probabilities
    */
-  arma::vec ForwardAtTn(
-      const arma::vec& emissionLogProb,
-      double& logScales,
-      const arma::vec& prevForwardLogProb) const;
+  arma::vec ForwardAtTn(const arma::vec& emissionLogProb,
+                        double& logScales,
+                        const arma::vec& prevForwardLogProb) const;
 
   // Helper functions.
   /**

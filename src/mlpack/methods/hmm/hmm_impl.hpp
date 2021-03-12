@@ -603,8 +603,7 @@ double HMM<Distribution>::EmissionLogLikelihood(
     arma::vec& forwardLogProb) const
 {
   bool isStartOfSeq = forwardLogProb.empty();
-  double curLogScale = EmissionLogScaleFactor(emissionLogProb,
-                                              forwardLogProb);
+  double curLogScale = EmissionLogScaleFactor(emissionLogProb, forwardLogProb);
   logLikelihood = isStartOfSeq ? curLogScale : curLogScale + logLikelihood;
   return logLikelihood;
 }
@@ -745,7 +744,8 @@ arma::vec HMM<Distribution>::ForwardAtTn(const arma::vec& emissionLogProb,
   arma::vec forwardLogProb(logTransition.n_rows);
   forwardLogProb.fill(-std::numeric_limits<double>::infinity());
   // Now compute the probabilities for each successive observation.
-  for (size_t state = 0; state < logTransition.n_rows; state++) {
+  for (size_t state = 0; state < logTransition.n_rows; state++)
+  {
     // The forward probability of state j at time t is the sum over all
     // states of the probability of the previous state transitioning to
     // the current state and emitting the given observation.
@@ -782,21 +782,12 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   // behavior, you could append a single starting state to every single data
   // sequence and that should produce results in line with MATLAB.
 
-  forwardLogProb.col(0) = ForwardAtT0(logProbs.unsafe_col(0), logScales(0));
+  forwardLogProb.col(0) = ForwardAtT0(logProbs.row(0).t(), logScales(0));
 
   // Now compute the probabilities for each successive observation.
   for (size_t t = 1; t < dataSeq.n_cols; t++)
   {
-    for (size_t state = 0; state < logTransition.n_rows; state++)
-    {
-      // The forward probability of state j at time t is the sum over all states
-      // of the probability of the previous state transitioning to the current
-      // state and emitting the given observation.
-      arma::vec tmp = forwardLogProb.col(t - 1) + logTransition.col(state);
-      forwardLogProb(state, t) = math::AccuLog(tmp) + logProbs(t, state);
-    }
-
-    forwardLogProb.col(t) = ForwardAtTn(logProbs.unsafe_col(t), logScales(t),
+    forwardLogProb.col(t) = ForwardAtTn(logProbs.row(t).t(), logScales(t),
         forwardLogProb.col(t - 1));
   }
 }
