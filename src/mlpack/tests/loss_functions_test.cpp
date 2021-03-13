@@ -342,7 +342,7 @@ TEST_CASE("SimpleBinaryCrossEntropyWithLogitsLossTest", "[LossFunctionsTest]")
   target2.reshape(2, 3);
   double error2 = module2.Forward(input2, target2);
   double loss2 = -std::log(1 / (1 + std::exp(1.5)));
-  REQUIRE(error2 - loss2) == Approx(0.0).margin(2e-5));
+  REQUIRE((error2 - loss2) == Approx(0.0).margin(2e-5));
 
   // Test the Backward function.
   module1.Backward(input1, target1, output);
