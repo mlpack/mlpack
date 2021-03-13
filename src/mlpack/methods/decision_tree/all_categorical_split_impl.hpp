@@ -26,8 +26,8 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    arma::Col<typename VecType::elem_type>& classProbabilities,
-    AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
+    arma::vec& classProbabilities,
+    AuxiliarySplitInfo& /* aux */)
 {
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
@@ -110,20 +110,19 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 }
 
 template<typename FitnessFunction>
-template<typename ElemType>
 size_t AllCategoricalSplit<FitnessFunction>::NumChildren(
-    const arma::Col<ElemType>& classProbabilities,
-    const AuxiliarySplitInfo<ElemType>& /* aux */)
+    const arma::vec& classProbabilities,
+    const AuxiliarySplitInfo& /* aux */)
 {
-  return classProbabilities[0];
+  return size_t(classProbabilities[0]);
 }
 
 template<typename FitnessFunction>
 template<typename ElemType>
 size_t AllCategoricalSplit<FitnessFunction>::CalculateDirection(
     const ElemType& point,
-    const arma::Col<ElemType>& /* classProbabilities */,
-    const AuxiliarySplitInfo<ElemType>& /* aux */)
+    const arma::vec& /* classProbabilities */,
+    const AuxiliarySplitInfo& /* aux */)
 {
   return (size_t) point;
 }

@@ -19,17 +19,33 @@
 namespace mlpack {
 namespace tree {
 
+/**
+ * The RandomForest class provides an implementation of random forests,
+ * described in Breiman's seminal paper:
+ *
+ * @code
+ * @article{breiman2001random,
+ *   title={Random forests},
+ *   author={Breiman, Leo},
+ *   journal={Machine Learning},
+ *   volume={45},
+ *   number={1},
+ *   pages={5--32},
+ *   year={2001},
+ *   publisher={Springer}
+ * }
+ * @endcode
+ */
 template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
-         template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         typename ElemType = double>
+         template<typename> class CategoricalSplitType = AllCategoricalSplit>
 class RandomForest
 {
  public:
   //! Allow access to the underlying decision tree type.
   typedef DecisionTree<FitnessFunction, NumericSplitType, CategoricalSplitType,
-      DimensionSelectionType, ElemType> DecisionTreeType;
+      DimensionSelectionType> DecisionTreeType;
 
   /**
    * Construct the random forest without any training or specifying the number

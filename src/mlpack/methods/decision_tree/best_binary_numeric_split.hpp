@@ -28,7 +28,6 @@ class BestBinaryNumericSplit
 {
  public:
   // No extra info needed for split.
-  template<typename ElemType>
   class AuxiliarySplitInfo { };
 
   /**
@@ -36,6 +35,10 @@ class BestBinaryNumericSplit
    * improves on 'bestGain', then we return the improved gain.  Otherwise we
    * return the value 'bestGain'.  If a split is made, then classProbabilities
    * and aux may be modified.
+   *
+   * It's not necessary that `ElemType` is the same as the type of the data in
+   * `VecType`---if they are different, casting will be done to store the
+   * auxiliary information.
    *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
@@ -60,15 +63,14 @@ class BestBinaryNumericSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      arma::Col<typename VecType::elem_type>& classProbabilities,
-      AuxiliarySplitInfo<typename VecType::elem_type>& aux);
+      arma::vec& classProbabilities,
+      AuxiliarySplitInfo& aux);
 
   /**
    * Returns 2, since the binary split always has two children.
    */
-  template<typename ElemType>
-  static size_t NumChildren(const arma::Col<ElemType>& /* classProbabilities */,
-                            const AuxiliarySplitInfo<ElemType>& /* aux */)
+  static size_t NumChildren(const arma::vec& /* classProbabilities */,
+                            const AuxiliarySplitInfo& /* aux */)
   {
     return 2;
   }
@@ -83,8 +85,8 @@ class BestBinaryNumericSplit
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const arma::Col<ElemType>& classProbabilities,
-      const AuxiliarySplitInfo<ElemType>& /* aux */);
+      const arma::vec& classProbabilities,
+      const AuxiliarySplitInfo& /* aux */);
 };
 
 } // namespace tree
