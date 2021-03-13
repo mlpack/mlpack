@@ -416,7 +416,7 @@ Split(const arma::Mat<T>& input,
  * The input dataset must be of type arma::field. It should have the shape -
  * (n_rows = 1, n_cols = Number of samples, n_slices = 1).
  *
- * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
+ * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>.
  *
  * @code
  * arma::field<arma::mat> input = loadData();
