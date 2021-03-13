@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
 #include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_logits_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
@@ -316,6 +317,48 @@ TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
     else
       REQUIRE(el + 1 == Approx(0.0).margin(2e-6));
   }
+  REQUIRE(output.n_rows == input2.n_rows);
+  REQUIRE(output.n_cols == input2.n_cols);
+}
+
+/*
+ * Simple test for the binary-cross-entropy with Logits loss function.
+ */
+TEST_CASE("SimpleBinaryCrossEntropyWithLogitsLossTest", "[LossFunctionsTest]")
+{
+  arma::mat input1, input2, input3, output, target1, target2, target3;
+  BCELoss<> module1(1e-6, false);
+  BCELoss<> module2(1e-6, true);
+  // Test the Forward function on a user generator input and compare it against
+  // the manually calculated result.
+  input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
+  target1 = arma::zeros(1, 8);
+  double error1 = module1.Forward(input1, target1);
+  REQUIRE(error1 - 7.792616 == Approx(0.0).margin(2e-5));
+
+  input2 = arma::mat("1.5 1.5 1.5 1.5 1.5");
+  target2 = arma::ones(1, 5);
+  input2.reshape(2, 3);
+  target2.reshape(2, 3);
+  double error2 = module2.Forward(input2, target2);
+  double loss2 = -std::log(1 / (1 + std::exp(1.5)));
+  REQUIRE(error2 - loss2) == Approx(0.0).margin(2e-5));
+
+  // Test the Backward function.
+  module1.Backward(input1, target1, output);
+  for (double el : output)
+  {
+    REQUIRE(el - 0.077807 == Approx(0.0).margin(5e-6));
+  }
+  REQUIRE(output.n_rows == input1.n_rows);
+  REQUIRE(output.n_cols == input1.n_cols);
+
+  module1.Backward(input2, target2, output);
+  for (double el : output)
+  {
+    REQUIRE(el - -0.036485 == Approx(0.0).margin(5e-6));
+  }
+
   REQUIRE(output.n_rows == input2.n_rows);
   REQUIRE(output.n_cols == input2.n_cols);
 }

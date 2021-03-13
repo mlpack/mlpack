@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Binary Cross Entropy Logits Loss
+
   * Added Pixel Shuffle layer (#2563).
 
   * Add "check_input_matrices" option to python bindings that checks

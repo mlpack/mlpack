@@ -3,6 +3,8 @@
 set(SOURCES
   binary_cross_entropy_loss.hpp
   binary_cross_entropy_loss_impl.hpp
+  binary_cross_entropy_logits_loss.hpp
+  binary_cross_entropy_logits_loss_impl.hpp
   cosine_embedding_loss.hpp
   cosine_embedding_loss_impl.hpp
   dice_loss.hpp
