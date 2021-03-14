@@ -348,7 +348,7 @@ TEST_CASE("SimpleBinaryCrossEntropyWithLogitsLossTest", "[LossFunctionsTest]")
   module1.Backward(input1, target1, output);
   for (double el : output)
   {
-    REQUIRE(el - 0.077807 == Approx(0.0).margin(5e-6));
+    REQUIRE(el - (-0.377540) == Approx(0.0).margin(5e-6));
   }
   REQUIRE(output.n_rows == input1.n_rows);
   REQUIRE(output.n_cols == input1.n_cols);
