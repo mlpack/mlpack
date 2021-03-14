@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file core.hpp
  *
  * Include all of the base components required to write mlpack methods, and the

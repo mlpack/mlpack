@@ -1,8 +1,8 @@
 #!/bin/sh
 
-if [ $(uname) = "SunOS" ]
+if test `uname` = "SunOS" ;
 then
-sed -i '1 s/$/ -ftrack-macro-expansion=0/' ./src/Makevars
+sed '1 s/$/ -ftrack-macro-expansion=0/' ./src/Makevars > ./src/Makevars.tmp && cat ./src/Makevars.tmp > ./src/Makevars && rm ./src/Makevars.tmp
 fi
 
 exit 0
