@@ -1,16 +1,16 @@
 /**
- * @file methods/ann/loss_functions/cross_entropy_error.hpp
- * @author Konstantin Sidorov
+ * @file methods/ann/loss_functions/binary_cro_entropy_logits_loss.hpp
+ * @author Mayank Raj
  *
- * Definition of the binary-cross-entropy performance function.
+ * Definition of the binary-cross-entropy with logits performance function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_HPP
-#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_LOGITS_ERROR_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_LOGITS_ERROR_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -18,7 +18,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The binary-cross-entropy performance function measures the
+ * The binary-cross-entropy with logits performance function measures the
  * Binary Cross Entropy between the target and the output.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -30,21 +30,21 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class BCELoss
+class BCELossWithLogits
 {
  public:
   /**
-   * Create the BinaryCrossEntropyLoss object.
+   * Create the BinaryCrossEntropyLogitsLoss object.
    *
    * @param eps The minimum value used for computing logarithms
    *            and denominators in a numerically stable way.
    * @param reduction Reduction type. If true, it returns the mean of 
    *                  the loss. Else, it returns the sum.
    */
-  BCELoss(const double eps = 1e-10, const bool reduction = true);
+  BCELossWithLogits(const double eps = 1e-10, const bool reduction = true);
 
   /**
-   * Computes the cross-entropy function.
+   * Computes the cross-entropy logits function.
    *
    * @param prediction Predictions used for evaluating the specified loss
    *     function.
@@ -97,22 +97,12 @@ class BCELoss
 
   //! Reduction type. If true, performs mean of loss else sum.
   bool reduction;
-}; // class BCELoss
-
-/**
- * Adding alias of BCELoss.
- */
-template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
->
-using CrossEntropyError = BCELoss<
-    InputDataType, OutputDataType>;
+}; // class BCELossWithLogits
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "binary_cross_entropy_loss_impl.hpp"
+#include "binary_cross_entropy_logits_loss_impl.hpp"
 
 #endif
