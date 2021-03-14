@@ -1,25 +1,25 @@
 /**
- * @file methods/ann/loss_functions/binary_cross_entropy_loss_impl.hpp
- * @author Konstantin Sidorov
+ * @file methods/ann/loss_functions/binary_cross_entropy_logits_loss_impl.hpp
+ * @author Mayank Raj
  *
- * Implementation of the binary-cross-entropy performance function.
+ * Implementation of the binary-cross-entropy with logits performance function.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_IMPL_HPP
-#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_ERROR_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_LOGITS_ERROR_IMPL_HPP
+#define MLPACK_METHODS_ANN_LOSS_FUNCTIONS_CROSS_ENTROPY_LOGITS_ERROR_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "binary_cross_entropy_loss.hpp"
+#include "binary_cross_entropy_logits_loss.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-BCELoss<InputDataType, OutputDataType>::BCELoss(
+BCELossWithLogits<InputDataType, OutputDataType>::BCELossWithLogits(
     const double eps, const bool reduction) : eps(eps), reduction(reduction)
 {
   // Nothing to do here.
@@ -28,14 +28,15 @@ BCELoss<InputDataType, OutputDataType>::BCELoss(
 template<typename InputDataType, typename OutputDataType>
 template<typename PredictionType, typename TargetType>
 typename PredictionType::elem_type
-BCELoss<InputDataType, OutputDataType>::Forward(
+BCELossWithLogits<InputDataType, OutputDataType>::Forward(
     const PredictionType& prediction,
     const TargetType& target)
 {
   typedef typename PredictionType::elem_type ElemType;
 
-  ElemType loss = -arma::accu(target % arma::log(prediction + eps) + 
-      (1. - target) % arma::log(1. - prediction + eps));
+  ElemType sigmoid = 1 / (1 + arma::exp(-prediction));
+  ElemType loss = -arma::accu(target % arma::log(sigmoid + eps) + 
+      (1. - target) % arma::log(1. - sigmoid + eps));
   if (reduction)
     loss /= prediction.n_elem;
   return loss;
@@ -43,19 +44,23 @@ BCELoss<InputDataType, OutputDataType>::Forward(
 
 template<typename InputDataType, typename OutputDataType>
 template<typename PredictionType, typename TargetType, typename LossType>
-void BCELoss<InputDataType, OutputDataType>::Backward(
+void BCELossWithLogits<InputDataType, OutputDataType>::Backward(
     const PredictionType& prediction,
     const TargetType& target,
     LossType& loss)
 {
-  loss = (1. - target) / (1. - prediction + eps) - target / (prediction + eps);
+  typedef typename PredictionType::elem_type ElemType;
+
+  ElemType sigmoid = 1 / (1 + arma::exp(-prediction));
+
+  loss = ((1. - target) / (1. - prediction + eps) - target / (prediction + eps)) % sigmoid % (1 - sigmoid);
   if (reduction)
     loss /= prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void BCELoss<InputDataType, OutputDataType>::serialize(
+void BCELossWithLogits<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
