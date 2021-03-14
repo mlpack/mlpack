@@ -1,5 +1,5 @@
 /**
- * @file parametric_relu.hpp
+ * @file methods/ann/layer/parametric_relu.hpp
  * @author Prasanna Patil
  *
  * Definition of PReLU layer first introduced in the,
@@ -51,7 +51,7 @@ class PReLU
    * alpha in the range 0 to 1. Default (alpha = 0.03). This parameter
    * is trainable.
    *
-   * @param alpha Non zero gradient
+   * @param userAlpha Non zero gradient
    */
   PReLU(const double userAlpha = 0.03);
 
@@ -119,11 +119,14 @@ class PReLU
   //! Modify the non zero gradient.
   double& Alpha() { return alpha(0); }
 
+  //! Get size of weights.
+  size_t WeightSize() const { return 1; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

@@ -1,5 +1,5 @@
 /**
- * @file hardshrink.hpp
+ * @file methods/ann/layer/hardshrink_impl.hpp
  * @author Lakshya Ojha
  *
  * Implementation of Hard Shrink activation function.
@@ -49,9 +49,9 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void HardShrink<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(lambda);
+  ar(CEREAL_NVP(lambda));
 }
 
 } // namespace ann

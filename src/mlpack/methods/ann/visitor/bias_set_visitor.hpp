@@ -1,5 +1,5 @@
 /**
- * @file bias_set_visitor.hpp
+ * @file methods/ann/visitor/bias_set_visitor.hpp
  * @author Toshal Agrawal
  *
  * This file provides an abstraction for the Bias() function for different

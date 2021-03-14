@@ -1,5 +1,5 @@
 /**
- * @file reinforce_normal_impl.hpp
+ * @file methods/ann/layer/reinforce_normal_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the ReinforceNormalLayer class, which implements the
@@ -21,7 +21,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 ReinforceNormal<InputDataType, OutputDataType>::ReinforceNormal(
-    const double stdev) : stdev(stdev)
+    const double stdev) : stdev(stdev), reward(0.0), deterministic(false)
 {
   // Nothing to do here.
 }
@@ -34,8 +34,7 @@ void ReinforceNormal<InputDataType, OutputDataType>::Forward(
   if (!deterministic)
   {
     // Multiply by standard deviations and re-center the means to the mean.
-    output = arma::randn<arma::Mat<eT> >(input.n_rows, input.n_cols) *
-        stdev + input;
+    output = output.randn(input.n_rows, input.n_cols) * stdev + input;
 
     moduleInputParameter.push_back(input);
   }
@@ -63,9 +62,9 @@ void ReinforceNormal<InputDataType, OutputDataType>::Backward(
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void ReinforceNormal<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const unsigned int /* version */)
+    Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(stdev);
+  ar(CEREAL_NVP(stdev));
 }
 
 } // namespace ann

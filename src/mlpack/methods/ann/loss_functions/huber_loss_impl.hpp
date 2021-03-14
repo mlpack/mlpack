@@ -1,5 +1,5 @@
 /**
- * @file huber_loss_impl.hpp
+ * @file methods/ann/loss_functions/huber_loss_impl.hpp
  * @author Mrityunjay Tripathi
  *
  * Implementation of the Huber loss function.
@@ -29,34 +29,39 @@ HuberLoss<InputDataType, OutputDataType>::HuberLoss(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-double HuberLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+HuberLoss<InputDataType, OutputDataType>::Forward(const PredictionType& prediction,
+                                                  const TargetType& target)
 {
-  double loss = 0;
-  for (size_t i = 0; i < input.n_elem; ++i)
+  typedef typename PredictionType::elem_type ElemType;
+  ElemType loss = 0;
+  for (size_t i = 0; i < prediction.n_elem; ++i)
   {
-      const double absError = std::abs(target[i] - input[i]);
+      const ElemType absError = std::abs(target[i] - prediction[i]);
       loss += absError > delta
           ? delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
   }
-  return mean ? loss / input.n_elem : loss;
+  return mean ? loss / prediction.n_elem : loss;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void HuberLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output.set_size(size(input));
-  for (size_t i = 0; i < output.n_elem; ++i)
+  typedef typename PredictionType::elem_type ElemType;
+
+  loss.set_size(size(prediction));
+  for (size_t i = 0; i < loss.n_elem; ++i)
   {
-    const double absError = std::abs(target[i] - input[i]);
-    output[i] = absError > delta
-        ? - delta * (target[i] - input[i]) / absError : input[i] - target[i];
-    if (mean) output[i] /= output.n_elem;
+    const ElemType absError = std::abs(target[i] - prediction[i]);
+    loss[i] = absError > delta
+        ? - delta * (target[i] - prediction[i]) / absError : prediction[i] - target[i];
+    if (mean)
+      loss[i] /= loss.n_elem;
   }
 }
 
@@ -64,10 +69,10 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void HuberLoss<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(delta);
-  ar & BOOST_SERIALIZATION_NVP(mean);
+  ar(CEREAL_NVP(delta));
+  ar(CEREAL_NVP(mean));
 }
 
 } // namespace ann

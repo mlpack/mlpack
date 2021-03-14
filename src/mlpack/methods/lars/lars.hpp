@@ -1,5 +1,5 @@
 /**
- * @file lars.hpp
+ * @file methods/lars/lars.hpp
  * @author Nishant Mehta (niche)
  *
  * Definition of the LARS class, which performs Least Angle Regression and the
@@ -171,6 +171,34 @@ class LARS
        const double tolerance = 1e-16);
 
   /**
+   * Construct the LARS object by copying the given LARS object.
+   *
+   * @param other LARS object to copy.
+   */
+  LARS(const LARS& other);
+
+  /**
+   * Construct the LARS object by taking ownership of the given LARS object.
+   *
+   * @param other LARS object to take ownership of.
+   */
+  LARS(LARS&& other);
+
+  /**
+   * Copy the given LARS object.
+   *
+   * @param other LARS object to copy.
+   */
+  LARS& operator=(const LARS& other);
+
+  /**
+   * Take ownership of the given LARS object.
+   *
+   * @param other LARS object to take ownership of.
+   */
+  LARS& operator=(LARS&& other);
+
+  /**
    * Run LARS.  The input matrix (like all mlpack matrices) should be
    * column-major -- each column is an observation and each row is a dimension.
    * However, because LARS is more efficient on a row-major matrix, this method
@@ -221,6 +249,26 @@ class LARS
                arma::rowvec& predictions,
                const bool rowMajor = false) const;
 
+  //! Get the L1 regularization coefficient.
+  double Lambda1() const { return lambda1; }
+  //! Modify the L1 regularization coefficient.
+  double& Lambda1() { return lambda1; }
+
+  //! Get the L2 regularization coefficient.
+  double Lambda2() const { return lambda2; }
+  //! Modify the L2 regularization coefficient.
+  double& Lambda2() { return lambda2; }
+
+  //! Get whether to use the Cholesky decomposition.
+  bool UseCholesky() const { return useCholesky; }
+  //! Modify whether to use the Cholesky decomposition.
+  bool& UseCholesky() { return useCholesky; }
+
+  //! Get the tolerance for maximum correlation during training.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance for maximum correlation during training.
+  double& Tolerance() { return tolerance; }
+
   //! Access the set of active dimensions.
   const std::vector<size_t>& ActiveSet() const { return activeSet; }
 
@@ -242,16 +290,16 @@ class LARS
    * Serialize the LARS model.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   /**
    * Compute cost error of the given data matrix using the
    * currently-trained LARS model. Only ||y-beta*X||2 is used to calculate
    * cost error.
    *
-   * @param data Column-major input data (or row-major input data if rowMajor =
+   * @param matX Column-major input data (or row-major input data if rowMajor =
    *     true).
-   * @param responses A vector of targets.
+   * @param y responses A vector of targets.
    * @param rowMajor Should be true if the data points matrix is row-major and
    *   false otherwise.
    * @return The minimum cost error.

@@ -1,5 +1,5 @@
 /**
- * @file get_printable_type_impl.hpp
+ * @file bindings/cli/get_printable_type_impl.hpp
  * @author Ryan Curtin
  *
  * Get the printable type of a parameter.  This type is not the C++ type but
@@ -24,7 +24,7 @@ namespace cli {
  */
 template<typename T>
 std::string GetPrintableType(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::disable_if<util::IsStdVector<T>>::type*,
     const typename boost::disable_if<data::HasSerialize<T>>::type*,
@@ -48,7 +48,7 @@ std::string GetPrintableType(
  */
 template<typename T>
 std::string GetPrintableType(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<util::IsStdVector<T>::value>::type*)
 {
   if (std::is_same<T, std::vector<int>>::value)
@@ -64,7 +64,7 @@ std::string GetPrintableType(
  */
 template<typename T>
 std::string GetPrintableType(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
   if (std::is_same<T, arma::mat>::value)
@@ -88,7 +88,7 @@ std::string GetPrintableType(
  */
 template<typename T>
 std::string GetPrintableType(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const typename std::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
@@ -100,7 +100,7 @@ std::string GetPrintableType(
  */
 template<typename T>
 std::string GetPrintableType(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type*,
     const typename boost::enable_if<data::HasSerialize<T>>::type*)
 {

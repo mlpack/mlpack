@@ -1,5 +1,5 @@
 /**
- * @file bernoulli_distribution.hpp
+ * @file methods/ann/dists/bernoulli_distribution.hpp
  * @author Atharva Khandait
  *
  * Definition of the Bernoulli distribution class.
@@ -55,7 +55,7 @@ class BernoulliDistribution
    *
    * @param param The matrix of probabilities or pre probabilities of
    *        the multiple distributions.
-   * @param applyLogsitic If true, we apply Logistic function to the param
+   * @param applyLogistic If true, we apply Logistic function to the param
    *        matrix (pre probability) to get probability.
    * @param eps The minimum value used for computing logarithms and
    *        denominators.
@@ -114,13 +114,13 @@ class BernoulliDistribution
    * Serialize the distribution.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
     // We just need to serialize each of the members.
-    ar & BOOST_SERIALIZATION_NVP(probability);
-    ar & BOOST_SERIALIZATION_NVP(logits);
-    ar & BOOST_SERIALIZATION_NVP(applyLogistic);
-    ar & BOOST_SERIALIZATION_NVP(eps);
+    ar(CEREAL_NVP(probability));
+    ar(CEREAL_NVP(logits));
+    ar(CEREAL_NVP(applyLogistic));
+    ar(CEREAL_NVP(eps));
   }
 
  private:

@@ -1,5 +1,5 @@
 /**
- * @file hmm_loglik_main.cpp
+ * @file methods/hmm/hmm_loglik_main.cpp
  * @author Ryan Curtin
  *
  * Compute the log-likelihood of a given sequence for a given HMM.
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
@@ -27,31 +27,40 @@ using namespace mlpack::gmm;
 using namespace arma;
 using namespace std;
 
-PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Log-Likelihood",
-    // Short description.
+// Program Name.
+BINDING_NAME("Hidden Markov Model (HMM) Sequence Log-Likelihood");
+
+// Short description.
+BINDING_SHORT_DESC(
     "A utility for computing the log-likelihood of a sequence for Hidden Markov"
     " Models (HMMs).  Given a pre-trained HMM and an observation sequence, this"
     " computes and returns the log-likelihood of that sequence being observed "
-    "from that HMM.",
-    // Long description.
+    "from that HMM.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This utility takes an already-trained HMM, specified with the " +
     PRINT_PARAM_STRING("input_model") + " parameter, and evaluates the "
     "log-likelihood of a sequence of observations, given with the " +
     PRINT_PARAM_STRING("input") + " parameter.  The computed log-likelihood is"
-    " given as output."
-    "\n\n"
+    " given as output.");
+
+// Example.
+BINDING_EXAMPLE(
     "For example, to compute the log-likelihood of the sequence " +
     PRINT_DATASET("seq") + " with the pre-trained HMM " + PRINT_MODEL("hmm") +
     ", the following command may be used: "
     "\n\n" +
-    PRINT_CALL("hmm_loglik", "input", "seq", "input_model", "hmm"),
-    SEE_ALSO("@hmm_train", "#hmm_train"),
-    SEE_ALSO("@hmm_generate", "#hmm_generate"),
-    SEE_ALSO("@hmm_viterbi", "#hmm_viterbi"),
-    SEE_ALSO("Hidden Mixture Models on Wikipedia",
-        "https://en.wikipedia.org/wiki/Hidden_Markov_model"),
-    SEE_ALSO("mlpack::hmm::HMM class documentation",
-        "@doxygen/classmlpack_1_1hmm_1_1HMM.html"));
+    PRINT_CALL("hmm_loglik", "input", "seq", "input_model", "hmm"));
+
+// See also...
+BINDING_SEE_ALSO("@hmm_train", "#hmm_train");
+BINDING_SEE_ALSO("@hmm_generate", "#hmm_generate");
+BINDING_SEE_ALSO("@hmm_viterbi", "#hmm_viterbi");
+BINDING_SEE_ALSO("Hidden Mixture Models on Wikipedia",
+        "https://en.wikipedia.org/wiki/Hidden_Markov_model");
+BINDING_SEE_ALSO("mlpack::hmm::HMM class documentation",
+        "@doxygen/classmlpack_1_1hmm_1_1HMM.html");
 
 PARAM_MATRIX_IN_REQ("input", "File containing observations,", "i");
 PARAM_MODEL_IN_REQ(HMMModel, "input_model", "File containing HMM.", "m");
@@ -66,7 +75,7 @@ struct Loglik
   static void Apply(HMMType& hmm, void* /* extraInfo */)
   {
     // Load the data sequence.
-    mat dataSeq = std::move(CLI::GetParam<mat>("input"));
+    mat dataSeq = std::move(IO::GetParam<mat>("input"));
 
     // Detect if we need to transpose the data, in the case where the input data
     // has one dimension.
@@ -86,12 +95,12 @@ struct Loglik
 
     const double loglik = hmm.LogLikelihood(dataSeq);
 
-    CLI::GetParam<double>("log_likelihood") = loglik;
+    IO::GetParam<double>("log_likelihood") = loglik;
   }
 };
 
 static void mlpackMain()
 {
   // Load model, and calculate the log-likelihood of the sequence.
-  CLI::GetParam<HMMModel*>("input_model")->PerformAction<Loglik>((void*) NULL);
+  IO::GetParam<HMMModel*>("input_model")->PerformAction<Loglik>((void*) NULL);
 }

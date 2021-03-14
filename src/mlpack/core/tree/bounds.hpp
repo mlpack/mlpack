@@ -1,5 +1,5 @@
 /**
- * @file bounds.hpp
+ * @file core/tree/bounds.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  *

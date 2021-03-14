@@ -1,5 +1,5 @@
 /**
- * @file naive_convolution.hpp
+ * @file methods/ann/convolution_rules/naive_convolution.hpp
  * @author Shangtong Zhang
  * @author Marcus Edel
  *
@@ -110,7 +110,7 @@ class NaiveConvolution
     size_t outputCols = (input.n_cols - 1) * dH + 2 * (filter.n_cols - 1)
         * dilationH + 1;
 
-    for (size_t i = 0; i < dW; i++)
+    for (size_t i = 0; i < dW; ++i)
     {
       if (((((i + outputRows - 2 * (filter.n_rows - 1) * dilationW - 1) % dW)
           + dW) % dW) == i){
@@ -118,7 +118,7 @@ class NaiveConvolution
         break;
       }
     }
-    for (size_t i = 0; i < dH; i++)
+    for (size_t i = 0; i < dH; ++i)
     {
       if (((((i + outputCols - 2 * (filter.n_cols - 1) * dilationH - 1) % dH)
           + dH) % dH) == i){
@@ -166,7 +166,7 @@ class NaiveConvolution
         input.n_slices);
     output.slice(0) = convOutput;
 
-    for (size_t i = 1; i < input.n_slices; i++)
+    for (size_t i = 1; i < input.n_slices; ++i)
     {
       NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
           output.slice(i), dW, dH, dilationW, dilationH);
@@ -202,7 +202,7 @@ class NaiveConvolution
         filter.n_slices);
     output.slice(0) = convOutput;
 
-    for (size_t i = 1; i < filter.n_slices; i++)
+    for (size_t i = 1; i < filter.n_slices; ++i)
     {
       NaiveConvolution<BorderMode>::Convolution(input, filter.slice(i),
           output.slice(i), dW, dH, dilationW, dilationH);
@@ -238,7 +238,7 @@ class NaiveConvolution
         input.n_slices);
     output.slice(0) = convOutput;
 
-    for (size_t i = 1; i < input.n_slices; i++)
+    for (size_t i = 1; i < input.n_slices; ++i)
     {
       NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter,
           output.slice(i), dW, dH, dilationW, dilationH);

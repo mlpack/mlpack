@@ -1,5 +1,5 @@
 /**
- * @file linear_svm.cpp
+ * @file methods/linear_svm/linear_svm_impl.hpp
  * @author Ayush Chamoli
  *
  * Implementation of Linear SVM.
@@ -173,18 +173,12 @@ void LinearSVM<MatType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  if (data.n_rows != FeatureSize())
-  {
-    std::ostringstream oss;
-    oss << "LinearSVM::Classify(): dataset has " << data.n_rows
-        << " dimensions, but model has " << FeatureSize() << " dimensions!";
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameDimensionality(data, FeatureSize(), "LinearSVM::Classify()");
 
   if (fitIntercept)
   {
     scores = parameters.rows(0, parameters.n_rows - 2).t() * data
-        + arma::repmat(parameters.row(data.n_rows - 1).t(), 1,
+        + arma::repmat(parameters.row(parameters.n_rows - 1).t(), 1,
         data.n_cols);
   }
   else
@@ -214,7 +208,7 @@ double LinearSVM<MatType>::ComputeAccuracy(
 
   // Increment count for every correctly predicted label.
   size_t count = 0;
-  for (size_t i = 0; i < labels.n_elem ; i++)
+  for (size_t i = 0; i < labels.n_elem ; ++i)
     if (testLabels(i) == labels(i))
       count++;
 

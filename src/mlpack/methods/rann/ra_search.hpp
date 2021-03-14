@@ -1,5 +1,5 @@
 /**
- * @file ra_search.hpp
+ * @file methods/rann/ra_search.hpp
  * @author Parikshit Ram
  *
  * Defines the RASearch class, which performs an abstract rank-approximate
@@ -7,6 +7,7 @@
  *
  * The details of this method can be found in the following paper:
  *
+ * @code
  * @inproceedings{ram2009rank,
  *   title={{Rank-Approximate Nearest Neighbor Search: Retaining Meaning and
  *       Speed in High Dimensions}},
@@ -14,6 +15,7 @@
  *   booktitle={{Advances of Neural Information Processing Systems}},
  *   year={2009}
  * }
+ * @endcode
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -37,8 +39,10 @@ namespace mlpack {
 namespace neighbor {
 
 // Forward declaration.
-template<typename SortPolicy>
-class TrainVisitor;
+template<template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+class LeafSizeRAWrapper;
 
 /**
  * The RASearch class: This class provides a generic manner to perform
@@ -48,6 +52,7 @@ class TrainVisitor;
  * stratified manner in the tree as mentioned in the algorithms in Figure 2 of
  * the following paper:
  *
+ * @code
  * @inproceedings{ram2009rank,
  *   title={{Rank-Approximate Nearest Neighbor Search: Retaining Meaning and
  *       Speed in High Dimensions}},
@@ -55,6 +60,7 @@ class TrainVisitor;
  *   booktitle={{Advances of Neural Information Processing Systems}},
  *   year={2009}
  * }
+ * @endcode
  *
  * RASearch is currently known to not work with ball trees (#356).
  *
@@ -160,7 +166,6 @@ class RASearch
    * Tree-building may (at least with BinarySpaceTree) modify the ordering
    * of a matrix, so be aware that the results you get from Search() will
    * correspond to the modified matrix.
-   * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
    * @param singleMode Whether single-tree computation should be used (as
@@ -272,7 +277,6 @@ class RASearch
    * If the tree type you are using modifies the data matrix, be aware that the
    * results returned from this function will be with respect to the modified
    * data matrix.
-   * @endnote
    *
    * @param queryTree Tree built on query points.
    * @param k Number of neighbors to search for.
@@ -356,7 +360,7 @@ class RASearch
 
   //! Serialize the object.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Permutations of reference points during tree building.
@@ -392,8 +396,7 @@ class RASearch
   MetricType metric;
 
   //! For access to mappings when building models.
-  template<typename SortPol>
-  friend class TrainVisitor;
+  friend class LeafSizeRAWrapper<TreeType>;
 }; // class RASearch
 
 } // namespace neighbor

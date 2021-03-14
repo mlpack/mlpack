@@ -1,5 +1,5 @@
 /**
- * @file hard_tanh.hpp
+ * @file methods/ann/layer/hard_tanh.hpp
  * @author Dhawal Arora
  *
  * Definition and implementation of the HardTanH layer.
@@ -107,7 +107,7 @@ class HardTanH
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

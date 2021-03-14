@@ -1,5 +1,5 @@
 /**
- * @file octree.hpp
+ * @file core/tree/octree/octree.hpp
  * @author Ryan Curtin
  *
  * Definition of generalized octree (Octree).
@@ -235,14 +235,14 @@ class Octree
   Octree& operator=(Octree&& other);
 
   /**
-   * Initialize the tree from a boost::serialization archive.
+   * Initialize the tree from a cereal archive.
    *
    * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive.
    */
   template<typename Archive>
   Octree(
       Archive& ar,
-      const typename std::enable_if_t<Archive::is_loading::value>* = 0);
+      const typename std::enable_if_t<cereal::is_loading<Archive>()>* = 0);
 
   /**
    * Destroy the tree.
@@ -398,19 +398,19 @@ class Octree
 
   //! Serialize the tree.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  protected:
   /**
    * A default constructor.  This is meant to only be used with
-   * boost::serialization, which is allowed with the friend declaration below.
+   * cereal, which is allowed with the friend declaration below.
    * This does not return a valid treee!  The method must be protected, so that
    * the serialization shim can work with the default constructor.
    */
   Octree();
 
   //! Friend access is given for the default constructor.
-  friend class boost::serialization::access;
+  friend class cereal::access;
 
  private:
   /**

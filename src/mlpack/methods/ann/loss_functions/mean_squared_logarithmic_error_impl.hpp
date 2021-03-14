@@ -1,5 +1,5 @@
 /**
- * @file mean_squared_logarithmic_error_impl.hpp
+ * @file methods/ann/loss_functions/mean_squared_logarithmic_error_impl.hpp
  * @author Saksham Rastogi
  *
  * Implementation of the mean squared logarithmic error function.
@@ -26,30 +26,32 @@ MeanSquaredLogarithmicError<InputDataType, OutputDataType>
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-double MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Forward(
-    const InputType& input, const TargetType& target)
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
   return arma::accu(arma::square(arma::log(1. + target) -
-      arma::log(1. + input))) / target.n_cols;
+      arma::log(1. + prediction))) / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  output = 2 * (arma::log(1. + input) - arma::log(1. + target)) /
-      ((1. + input) * target.n_cols);
+  loss = 2 * (arma::log(1. + prediction) - arma::log(1. + target)) /
+      ((1. + prediction) * target.n_cols);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // Nothing to do here.
 }

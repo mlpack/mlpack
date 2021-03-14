@@ -1,5 +1,5 @@
 /**
- * @file naive_bayes_classifier.hpp
+ * @file methods/naive_bayes/naive_bayes_classifier.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Shihao Jing (shihao.jing810@gmail.com)
  *
@@ -216,7 +216,7 @@ class NaiveBayesClassifier
 
   //! Serialize the classifier.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Sample mean for each class.

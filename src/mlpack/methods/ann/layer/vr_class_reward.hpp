@@ -1,5 +1,5 @@
 /**
- * @file vr_class_reward.hpp
+ * @file methods/ann/layer/vr_class_reward.hpp
  * @author Marcus Edel
  *
  * Definition of the VRClassReward class, which implements the variance
@@ -83,11 +83,6 @@ class VRClassReward
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
-  //! Get the value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
   /*
    * Add a new module to the model.
    *
@@ -103,11 +98,20 @@ class VRClassReward
    */
   void Add(LayerTypes<> layer) { network.push_back(layer); }
 
+  //! Get the network modules.
+  std::vector<LayerTypes<> >& Model() { return network; }
+
+  //! Get the value of parameter sizeAverage.
+  bool SizeAverage() const { return sizeAverage; }
+
+  //! Get the value of scale parameter.
+  double Scale() const { return scale; }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& /* ar */, const uint32_t /* version */);
 
  private:
   //! Locally-stored value to scale the reward.
@@ -124,9 +128,6 @@ class VRClassReward
 
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
 
   //! Locally-stored network modules.
   std::vector<LayerTypes<> > network;

@@ -1,5 +1,5 @@
 /**
- * @file weight_norm.hpp
+ * @file methods/ann/layer/weight_norm.hpp
  * @author Toshal Agrawal
  *
  * Definition of the WeightNorm layer class.
@@ -141,7 +141,7 @@ class WeightNorm
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of bias elements in the weights of wrapped layer.

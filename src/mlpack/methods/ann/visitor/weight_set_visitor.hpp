@@ -1,5 +1,5 @@
 /**
- * @file weight_set_visitor.hpp
+ * @file methods/ann/visitor/weight_set_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the Weight() function for different

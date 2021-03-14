@@ -1,5 +1,5 @@
 /**
- * @file softmax_regression_function.hpp
+ * @file methods/softmax_regression/softmax_regression_function.hpp
  * @author Siddharth Agrawal
  *
  * The function to be optimized for softmax regression. Any mlpack optimizer
@@ -27,7 +27,6 @@ class SoftmaxRegressionFunction
    *
    * @param data Input training data, each column associate with one sample
    * @param labels Labels associated with the feature data.
-   * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
    * @param fitIntercept Intercept term flag.
@@ -85,7 +84,7 @@ class SoftmaxRegressionFunction
   /**
    * Evaluate the probabilities matrix with the passed parameters.
    * probabilities(i, j) =
-   *     exp(\theta_i * data_j) / sum_k(exp(\theta_k * data_j)).
+   *     @f$ exp(\theta_i * data_j) / sum_k(exp(\theta_k * data_j)) @f$.
    * It represents the probability of data_j belongs to class i.
    *
    * @param parameters Current values of the model parameters.
@@ -176,8 +175,7 @@ class SoftmaxRegressionFunction
     return initialPoint.n_cols;
   }
   /**
-   * Return the number of separable functions 
-      (the number of predictor points).
+   * Return the number of separable functions (the number of predictor points).
    */
   size_t NumFunctions() const { return data.n_cols; }
 

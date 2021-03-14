@@ -1,5 +1,5 @@
 /**
- * @file dual_tree_traverser_impl.hpp
+ * @file core/tree/cover_tree/dual_tree_traverser_impl.hpp
  * @author Ryan Curtin
  *
  * A dual-tree traverser for the cover tree.

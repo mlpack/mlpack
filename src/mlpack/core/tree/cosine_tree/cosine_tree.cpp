@@ -1,5 +1,5 @@
 /**
- * @file cosine_tree_impl.hpp
+ * @file core/tree/cosine_tree/cosine_tree.cpp
  * @author Siddharth Agrawal
  *
  * Implementation of cosine tree.
@@ -30,7 +30,7 @@ CosineTree::CosineTree(const arma::mat& dataset) :
   l2NormsSquared.zeros(numColumns);
 
   // Set indices and calculate squared norms of the columns.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     indices[i] = i;
     double l2Norm = arma::norm(dataset.col(i), 2);
@@ -60,7 +60,7 @@ CosineTree::CosineTree(CosineTree& parentNode,
   l2NormsSquared.zeros(numColumns);
 
   // Set indices and squared norms of the columns.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     indices[i] = parentNode.indices[subIndices[i]];
     l2NormsSquared(i) = parentNode.l2NormsSquared(subIndices[i]);
@@ -381,7 +381,7 @@ void CosineTree::ModifiedGramSchmidt(CosineNodeQueue& treeQueue,
 
   // For every vector in the current basis, remove its projection from the
   // centroid.
-  for ( ; i != treeQueue.end(); i++)
+  for ( ; i != treeQueue.end(); ++i)
   {
     currentNode = *i;
 
@@ -430,7 +430,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
     projectionSize = treeQueue.size();
 
   // For each sample, calculate the weighted projection onto the current basis.
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     // Initialize projection as a vector of zeros.
     arma::vec projection;
@@ -441,7 +441,7 @@ double CosineTree::MonteCarloError(CosineTree* node,
 
     size_t k = 0;
     // Compute the projection of the sampled vector onto the existing subspace.
-    for ( ; j != treeQueue.end(); j++, k++)
+    for ( ; j != treeQueue.end(); ++j, ++k)
     {
       currentNode = *j;
 
@@ -497,7 +497,7 @@ void CosineTree::ConstructBasis(CosineNodeQueue& treeQueue)
 
   // Transfer basis vectors from the queue to the basis matrix.
   size_t j = 0;
-  for ( ; i != treeQueue.end(); i++, j++)
+  for ( ; i != treeQueue.end(); ++i, ++j)
   {
     currentNode = *i;
     basis.col(j) = currentNode->BasisVector();
@@ -528,7 +528,7 @@ void CosineTree::CosineNodeSplit()
   // We deviate from the paper here and use < instead of <= in order to handle
   // the edge case where cosineMax == cosineMin, and force there to be at least
   // one point in the right node.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     if (cosineMax - cosines(i) < cosines(i) - cosineMin)
       leftIndices.push_back(i);
@@ -550,7 +550,7 @@ void CosineTree::ColumnSamplesLS(std::vector<size_t>& sampledIndices,
   cDistribution.zeros(numColumns + 1);
 
   // Calculate cumulative length-squared distribution for the node.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     cDistribution(i + 1) = cDistribution(i) +
         (l2NormsSquared(i) / frobNormSquared);
@@ -560,7 +560,7 @@ void CosineTree::ColumnSamplesLS(std::vector<size_t>& sampledIndices,
   sampledIndices.resize(numSamples);
   probabilities.zeros(numSamples);
 
-  for (size_t i = 0; i < numSamples; i++)
+  for (size_t i = 0; i < numSamples; ++i)
   {
     // Generate a random value for sampling.
     double randValue = arma::randu();
@@ -586,7 +586,7 @@ size_t CosineTree::ColumnSampleLS()
   cDistribution.zeros(numColumns + 1);
 
   // Calculate cumulative length-squared distribution for the node.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     cDistribution(i + 1) = cDistribution(i) +
         (l2NormsSquared(i) / frobNormSquared);
@@ -633,7 +633,7 @@ void CosineTree::CalculateCosines(arma::vec& cosines)
   // Initialize cosine vector as a vector of zeros.
   cosines.zeros(numColumns);
 
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     // If norm is zero, store cosine value as zero. Else, calculate cosine value
     // between two vectors.
@@ -656,7 +656,7 @@ void CosineTree::CalculateCentroid()
   centroid.zeros(dataset->n_rows);
 
   // Calculate centroid of columns in the node.
-  for (size_t i = 0; i < numColumns; i++)
+  for (size_t i = 0; i < numColumns; ++i)
   {
     centroid += dataset->col(indices[i]);
   }

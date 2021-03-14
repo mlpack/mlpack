@@ -1,5 +1,5 @@
 /**
- * @file get_binding_name.cpp
+ * @file bindings/markdown/get_binding_name.cpp
  * @author Ryan Curtin
  *
  * Given the name of a binding as it appears in CMake, return the corresponding
@@ -35,6 +35,16 @@ std::string GetBindingName(const std::string& language,
   else if (language == "julia")
   {
     // For Julia bindings, the name is unchanged.
+    return name;
+  }
+  else if (language == "go")
+  {
+    // For Go bindings, the name is unchanged.
+    return name;
+  }
+  else if (language == "r")
+  {
+    // For R bindings, the name is unchanged.
     return name;
   }
   else

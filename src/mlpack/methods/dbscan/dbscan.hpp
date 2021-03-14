@@ -1,5 +1,5 @@
 /**
- * @file dbscan.hpp
+ * @file methods/dbscan/dbscan.hpp
  * @author Ryan Curtin
  *
  * An implementation of the DBSCAN clustering method, which is flexible enough

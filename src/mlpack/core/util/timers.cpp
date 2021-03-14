@@ -1,5 +1,5 @@
 /**
- * @file timers.cpp
+ * @file core/util/timers.cpp
  * @author Matthew Amidon
  * @author Marcus Edel
  * @author Ryan Curtin
@@ -12,7 +12,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include "timers.hpp"
-#include "cli.hpp"
+#include "io.hpp"
 #include "log.hpp"
 
 #include <map>
@@ -27,7 +27,7 @@ using namespace chrono;
  */
 void Timer::Start(const string& name)
 {
-  CLI::GetSingleton().timer.StartTimer(name, this_thread::get_id());
+  IO::GetSingleton().timer.StartTimer(name, this_thread::get_id());
 }
 
 /**
@@ -35,7 +35,7 @@ void Timer::Start(const string& name)
  */
 void Timer::Stop(const string& name)
 {
-  CLI::GetSingleton().timer.StopTimer(name, this_thread::get_id());
+  IO::GetSingleton().timer.StopTimer(name, this_thread::get_id());
 }
 
 /**
@@ -43,25 +43,25 @@ void Timer::Stop(const string& name)
  */
 microseconds Timer::Get(const string& name)
 {
-  return CLI::GetSingleton().timer.GetTimer(name);
+  return IO::GetSingleton().timer.GetTimer(name);
 }
 
 // Enable timing.
 void Timer::EnableTiming()
 {
-  CLI::GetSingleton().timer.Enabled() = true;
+  IO::GetSingleton().timer.Enabled() = true;
 }
 
 // Disable timing.
 void Timer::DisableTiming()
 {
-  CLI::GetSingleton().timer.Enabled() = false;
+  IO::GetSingleton().timer.Enabled() = false;
 }
 
 // Reset all timers.  Save state of enabled.
 void Timer::ResetAll()
 {
-  CLI::GetSingleton().timer.Reset();
+  IO::GetSingleton().timer.Reset();
 }
 
 // Reset a Timers object.

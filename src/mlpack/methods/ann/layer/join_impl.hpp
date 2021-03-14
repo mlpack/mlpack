@@ -1,5 +1,5 @@
 /**
- * @file join_impl.hpp
+ * @file methods/ann/layer/join_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Join module.
@@ -51,10 +51,10 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Join<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSizeRows);
-  ar & BOOST_SERIALIZATION_NVP(inSizeCols);
+  ar(CEREAL_NVP(inSizeRows));
+  ar(CEREAL_NVP(inSizeCols));
 }
 
 } // namespace ann

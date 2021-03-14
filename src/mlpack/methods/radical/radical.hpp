@@ -1,5 +1,5 @@
 /**
- * @file radical.hpp
+ * @file methods/radical/radical.hpp
  * @author Nishant Mehta
  *
  * Declaration of Radical class (RADICAL is Robust, Accurate, Direct ICA

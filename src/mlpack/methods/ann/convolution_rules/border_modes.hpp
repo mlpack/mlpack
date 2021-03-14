@@ -1,5 +1,5 @@
 /**
- * @file border_modes.hpp
+ * @file methods/ann/convolution_rules/border_modes.hpp
  * @author Marcus Edel
  *
  * This file provides the border modes that can be used to compute different

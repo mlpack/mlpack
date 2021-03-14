@@ -1,5 +1,5 @@
 /**
- * @file c_relu_impl.hpp
+ * @file methods/ann/layer/c_relu_impl.hpp
  * @author Jeffin Sam
  *
  * Implementation of CReLU layer.
@@ -48,7 +48,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void CReLU<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // Nothing to do here.
 }

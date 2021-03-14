@@ -1,5 +1,5 @@
 /**
- * @file highway.hpp
+ * @file methods/ann/layer/highway.hpp
  * @author Konstantin Sidorov
  * @author Saksham Bansal
  *
@@ -94,7 +94,7 @@ class Highway
    * f(x) by propagating x backwards through f. Using the results from the
    * feed-forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -174,11 +174,20 @@ class Highway
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the number of input units.
+  size_t InSize() const { return inSize; }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

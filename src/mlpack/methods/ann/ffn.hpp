@@ -1,5 +1,5 @@
 /**
- * @file ffn.hpp
+ * @file methods/ann/ffn.hpp
  * @author Marcus Edel
  * @author Shangtong Zhang
  *
@@ -192,8 +192,6 @@ class FFN
    * is usually called by the optimizer to train the model.
    *
    * @param parameters Matrix model parameters.
-   * @param deterministic Whether or not to train or test the model. Note some
-   *        layer act differently in training or testing mode.
    */
   double Evaluate(const arma::mat& parameters);
 
@@ -333,7 +331,7 @@ class FFN
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
   /**
    * Perform the forward pass of the data in real batch mode.
@@ -372,6 +370,7 @@ class FFN
    * for advanced users. User should try to use Predict and Train unless those
    * two functions can't satisfy some special requirements.
    *
+   * @param inputs Inputs of current pass.
    * @param targets The training target.
    * @param gradients Computed gradients.
    * @return Training error of the current pass.
@@ -522,23 +521,6 @@ class FFN
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the FFN class.  Multiple template arguments
-//! makes this ugly...
-namespace boost {
-namespace serialization {
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename... CustomLayer>
-struct version<
-    mlpack::ann::FFN<OutputLayerType, InitializationRuleType, CustomLayer...>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 2);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "ffn_impl.hpp"

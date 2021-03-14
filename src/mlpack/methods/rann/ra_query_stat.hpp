@@ -1,5 +1,5 @@
 /**
- * @file ra_query_stat.hpp
+ * @file methods/rann/ra_query_stat.hpp
  * @author Parikshit Ram
  *
  * Defines the RAQueryStat class, which is the statistic used for
@@ -62,10 +62,10 @@ class RAQueryStat
 
   //! Serialize the statistic.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(bound);
-    ar & BOOST_SERIALIZATION_NVP(numSamplesMade);
+    ar(CEREAL_NVP(bound));
+    ar(CEREAL_NVP(numSamplesMade));
   }
 
  private:

@@ -1,5 +1,5 @@
 /**
- * @file reset_cell_visitor.hpp
+ * @file methods/ann/visitor/reset_cell_visitor.hpp
  * @author Sumedh Ghaisas
  *
  * Boost static visitor abstraction for calling ResetCell function on RNN cells. 

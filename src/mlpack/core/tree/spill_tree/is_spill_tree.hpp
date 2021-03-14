@@ -1,5 +1,5 @@
 /**
- * @file is_spill_tree.hpp
+ * @file core/tree/spill_tree/is_spill_tree.hpp
  *
  * Definition of IsSpillTree.
  *

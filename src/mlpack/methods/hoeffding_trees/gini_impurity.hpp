@@ -1,5 +1,5 @@
 /**
- * @file gini_impurity.hpp
+ * @file methods/hoeffding_trees/gini_impurity.hpp
  * @author Ryan Curtin
  *
  * The GiniImpurity class, which is a fitness function (FitnessFunction) for

@@ -1,5 +1,5 @@
 /**
- * @file fast_lstm.hpp
+ * @file methods/ann/layer/fast_lstm.hpp
  * @author Marcus Edel
  *
  * Definition of the Fast LSTM class, which implements a Fast LSTM network
@@ -72,6 +72,18 @@ class FastLSTM
 
   //! Create the Fast LSTM object.
   FastLSTM();
+
+  //! Copy Constructor
+  FastLSTM(const FastLSTM& layer);
+
+  //! Move Constructor
+  FastLSTM(FastLSTM&& layer);
+
+  //! Copy assignment operator
+  FastLSTM& operator=(const FastLSTM& layer);
+
+  //! Move assignment operator
+  FastLSTM& operator=(FastLSTM&& layer);
 
   /**
    * Create the Fast LSTM layer object using the specified parameters.
@@ -158,11 +170,29 @@ class FastLSTM
   //! Modify the gradient.
   OutputDataType& Gradient() { return grad; }
 
+  //! Get the number of input units.
+  size_t InSize() const { return inSize; }
+
+  //! Get the number of output units.
+  size_t OutSize() const { return outSize; }
+
+  //! Get the size of the weight matrix.
+  size_t WeightSize() const
+  {
+    return 4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize;
+  }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /**

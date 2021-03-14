@@ -1,5 +1,5 @@
 /**
- * @file fastmks_rules.hpp
+ * @file methods/fastmks/fastmks_rules.hpp
  * @author Ryan Curtin
  *
  * Rules for the single or dual tree traversal for fast max-kernel search.
@@ -123,6 +123,10 @@ class FastMKSRules
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
+
+  //! Get the minimum number of base cases we need to perform to have acceptable
+  //! results.
+  size_t MinimumBaseCases() const { return k; }
 
  private:
   //! The reference dataset.

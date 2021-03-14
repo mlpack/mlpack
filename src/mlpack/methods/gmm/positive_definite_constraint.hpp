@@ -1,5 +1,5 @@
 /**
- * @file positive_definite_constraint.hpp
+ * @file methods/gmm/positive_definite_constraint.hpp
  * @author Ryan Curtin
  *
  * Restricts a covariance matrix to being positive definite.
@@ -97,7 +97,7 @@ class PositiveDefiniteConstraint
 
   //! Serialize the constraint (which stores nothing, so, nothing to do).
   template<typename Archive>
-  static void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  static void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace gmm

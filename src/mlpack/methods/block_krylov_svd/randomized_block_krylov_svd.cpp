@@ -1,5 +1,5 @@
 /**
- * @file randomized_block_krylov_svd.cpp
+ * @file methods/block_krylov_svd/randomized_block_krylov_svd.cpp
  * @author Marcus Edel
  *
  * Implementation of the randomized block krylov SVD method.

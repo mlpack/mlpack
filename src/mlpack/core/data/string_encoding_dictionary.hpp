@@ -1,5 +1,5 @@
 /**
- * @file string_encoding_dictionary.hpp
+ * @file core/data/string_encoding_dictionary.hpp
  * @author Jeffin Sam
  * @author Mikhail Lozhnikov
  *
@@ -94,9 +94,9 @@ class StringEncodingDictionary
    * Serialize the class to the given archive.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(mapping);
+    ar(CEREAL_NVP(mapping));
   }
 
  private:
@@ -213,33 +213,33 @@ class StringEncodingDictionary<boost::string_view>
    * Serialize the class to the given archive.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
     size_t numTokens = tokens.size();
 
-    ar & BOOST_SERIALIZATION_NVP(numTokens);
+    ar(CEREAL_NVP(numTokens));
 
-    if (Archive::is_loading::value)
+    if (cereal::is_loading<Archive>())
     {
       tokens.resize(numTokens);
 
       for (std::string& token : tokens)
       {
-        ar & BOOST_SERIALIZATION_NVP(token);
+        ar(CEREAL_NVP(token));
 
         size_t tokenValue = 0;
-        ar & BOOST_SERIALIZATION_NVP(tokenValue);
+        ar(CEREAL_NVP(tokenValue));
         mapping[token] = tokenValue;
       }
     }
-    if (Archive::is_saving::value)
+    if (cereal::is_saving<Archive>())
     {
       for (std::string& token : tokens)
       {
-        ar & BOOST_SERIALIZATION_NVP(token);
+        ar(CEREAL_NVP(token));
 
         size_t tokenValue = mapping.at(token);
-        ar & BOOST_SERIALIZATION_NVP(tokenValue);
+        ar(CEREAL_NVP(tokenValue));
       }
     }
   }
@@ -328,10 +328,10 @@ class StringEncodingDictionary<int>
    * Serialize the class to the given archive.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(mapping);
-    ar & BOOST_SERIALIZATION_NVP(size);
+    ar(CEREAL_NVP(mapping));
+    ar(CEREAL_NVP(size));
   }
 
  private:

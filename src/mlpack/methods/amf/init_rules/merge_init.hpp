@@ -1,5 +1,5 @@
 /**
- * @file merge_init.hpp
+ * @file methods/amf/init_rules/merge_init.hpp
  * @author Ziyang Jiang
  *
  * Initialization rule for alternating matrix factorization (AMF). This simple

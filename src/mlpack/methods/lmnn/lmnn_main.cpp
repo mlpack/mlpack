@@ -1,5 +1,5 @@
 /**
- * @file lmnn_main.cpp
+ * @file methods/lmnn/lmnn_main.cpp
  * @author Manish Kumar
  *
  * Executable for Large Margin Nearest Neighbors.
@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
@@ -21,14 +21,18 @@
 
 #include <ensmallen.hpp>
 
-// Define parameters.
-PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
-    // Short description.
+// Program Name.
+BINDING_NAME("Large Margin Nearest Neighbors (LMNN)");
+
+// Short description.
+BINDING_SHORT_DESC(
     "An implementation of Large Margin Nearest Neighbors (LMNN), a distance "
     "learning technique.  Given a labeled dataset, this learns a transformation"
     " of the data that improves k-nearest-neighbor performance; this can be "
-    "useful as a preprocessing step.",
-    // Long description.
+    "useful as a preprocessing step.");
+
+// Long description.
+BINDING_LONG_DESC(
     "This program implements Large Margin Nearest Neighbors, a distance "
     "learning technique.  The method seeks to improve k-nearest-neighbor "
     "classification on a dataset.  The method employes the strategy of "
@@ -111,8 +115,10 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "literature on L-BFGS.  In addition, a normalized starting point can be "
     "used by specifying the " + PRINT_PARAM_STRING("normalize") + " parameter."
     "\n\n"
-    "By default, the AMSGrad optimizer is used."
-    "\n\n"
+    "By default, the AMSGrad optimizer is used.");
+
+// Example.
+BINDING_EXAMPLE(
     "Example - Let's say we want to learn distance on iris dataset with "
     "number of targets as 3 using BigBatch_SGD optimizer. A simple call for "
     "the same will look like: "
@@ -124,15 +130,17 @@ PROGRAM_INFO("Large Margin Nearest Neighbors (LMNN)",
     "with dataset having labels as last column can be made as: "
     "\n\n" +
     PRINT_CALL("mlpack_lmnn", "input", "letter_recognition", "k", 5,
-    "range", 10, "regularization", 0.4, "output", "output"),
-    SEE_ALSO("@nca", "#nca"),
-    SEE_ALSO("Large margin nearest neighbor on Wikipedia",
-        "https://en.wikipedia.org/wiki/Large_margin_nearest_neighbor"),
-    SEE_ALSO("Distance metric learning for large margin nearest neighbor "
+    "range", 10, "regularization", 0.4, "output", "output"));
+
+// See also...
+BINDING_SEE_ALSO("@nca", "#nca");
+BINDING_SEE_ALSO("Large margin nearest neighbor on Wikipedia",
+        "https://en.wikipedia.org/wiki/Large_margin_nearest_neighbor");
+BINDING_SEE_ALSO("Distance metric learning for large margin nearest neighbor "
         "classification (pdf)", "http://papers.nips.cc/paper/2795-distance-"
-        "metric-learning-for-large-margin-nearest-neighbor-classification.pdf"),
-    SEE_ALSO("mlpack::lmnn::LMNN C++ class documentation",
-        "@doxygen/classmlpack_1_1lmnn_1_1LMNN.html"));
+        "metric-learning-for-large-margin-nearest-neighbor-classification.pdf");
+BINDING_SEE_ALSO("mlpack::lmnn::LMNN C++ class documentation",
+        "@doxygen/classmlpack_1_1lmnn_1_1LMNN.html");
 
 PARAM_MATRIX_IN_REQ("input", "Input dataset to run LMNN on.", "i");
 PARAM_MATRIX_IN("distance", "Initial distance matrix to be used as "
@@ -198,12 +206,12 @@ double KNNAccuracy(const arma::mat& dataset,
   // Keep count.
   size_t count = 0;
 
-  for (size_t i = 0; i < dataset.n_cols; i++)
+  for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     arma::vec Map;
     Map.zeros(uniqueLabels.n_cols);
 
-    for (size_t j = 0; j < k; j++)
+    for (size_t j = 0; j < k; ++j)
     {
       Map(labels(neighbors(j, i))) +=
           1 / std::pow(distances(j, i) + 1, 2);
@@ -223,14 +231,14 @@ double KNNAccuracy(const arma::mat& dataset,
 
 static void mlpackMain()
 {
-  if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  if (IO::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
   RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
 
-  const string optimizerType = CLI::GetParam<string>("optimizer");
+  const string optimizerType = IO::GetParam<string>("optimizer");
   RequireParamInSet<string>("optimizer", { "amsgrad", "bbsgd", "sgd",
        "lbfgs" }, true, "unknown optimizer type");
 
@@ -275,27 +283,27 @@ static void mlpackMain()
   RequireParamValue<int>("rank", [](int x)
       { return x >= 0; }, true, "rank must be nonnegative");
 
-  const size_t k = (size_t) CLI::GetParam<int>("k");
-  const double regularization = CLI::GetParam<double>("regularization");
-  const double stepSize = CLI::GetParam<double>("step_size");
-  const size_t passes = (size_t) CLI::GetParam<int>("passes");
-  const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
-  const double tolerance = CLI::GetParam<double>("tolerance");
-  const bool normalize = CLI::HasParam("normalize");
-  const bool center = CLI::HasParam("center");
-  const bool printAccuracy = CLI::HasParam("print_accuracy");
-  const bool shuffle = !CLI::HasParam("linear_scan");
-  const size_t batchSize = (size_t) CLI::GetParam<int>("batch_size");
-  const size_t range = (size_t) CLI::GetParam<int>("range");
-  const size_t rank = (size_t) CLI::GetParam<int>("rank");
+  const size_t k = (size_t) IO::GetParam<int>("k");
+  const double regularization = IO::GetParam<double>("regularization");
+  const double stepSize = IO::GetParam<double>("step_size");
+  const size_t passes = (size_t) IO::GetParam<int>("passes");
+  const size_t maxIterations = (size_t) IO::GetParam<int>("max_iterations");
+  const double tolerance = IO::GetParam<double>("tolerance");
+  const bool normalize = IO::HasParam("normalize");
+  const bool center = IO::HasParam("center");
+  const bool printAccuracy = IO::HasParam("print_accuracy");
+  const bool shuffle = !IO::HasParam("linear_scan");
+  const size_t batchSize = (size_t) IO::GetParam<int>("batch_size");
+  const size_t range = (size_t) IO::GetParam<int>("range");
+  const size_t rank = (size_t) IO::GetParam<int>("rank");
 
   // Load data.
-  arma::mat data = std::move(CLI::GetParam<arma::mat>("input"));
+  arma::mat data = std::move(IO::GetParam<arma::mat>("input"));
 
   // Carry out mean-centering on the dataset, if necessary.
   if (center)
   {
-    for (size_t i = 0; i < data.n_rows; i++)
+    for (size_t i = 0; i < data.n_rows; ++i)
     {
       data.row(i) -= arma::mean(data.row(i));
     }
@@ -303,14 +311,14 @@ static void mlpackMain()
 
   // Do we want to load labels separately?
   arma::Row<size_t> rawLabels(data.n_cols);
-  if (CLI::HasParam("labels"))
+  if (IO::HasParam("labels"))
   {
-    rawLabels = std::move(CLI::GetParam<arma::Row<size_t>>("labels"));
+    rawLabels = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
   }
   else
   {
     Log::Info << "Using last column of input dataset as labels." << endl;
-    for (size_t i = 0; i < data.n_cols; i++)
+    for (size_t i = 0; i < data.n_cols; ++i)
       rawLabels[i] = (size_t) data(data.n_rows - 1, i);
 
     data.shed_row(data.n_rows - 1);
@@ -323,9 +331,9 @@ static void mlpackMain()
 
   arma::mat distance;
 
-  if (CLI::HasParam("distance"))
+  if (IO::HasParam("distance"))
   {
-    distance = std::move(CLI::GetParam<arma::mat>("distance"));
+    distance = std::move(IO::GetParam<arma::mat>("distance"));
   }
   else if (rank)
   {
@@ -415,14 +423,14 @@ static void mlpackMain()
   }
 
   // Save the output.
-  if (CLI::HasParam("output"))
-    CLI::GetParam<arma::mat>("output") = distance;
-  if (CLI::HasParam("transformed_data"))
-    CLI::GetParam<arma::mat>("transformed_data") = std::move(distance * data);
-  if (CLI::HasParam("centered_data"))
+  if (IO::HasParam("output"))
+    IO::GetParam<arma::mat>("output") = distance;
+  if (IO::HasParam("transformed_data"))
+    IO::GetParam<arma::mat>("transformed_data") = distance * data;
+  if (IO::HasParam("centered_data"))
   {
     if (center)
-      CLI::GetParam<arma::mat>("centered_data") = std::move(data);
+      IO::GetParam<arma::mat>("centered_data") = std::move(data);
     else
       Log::Info << "Mean-centering was not performed. Centered dataset "
           "will not be saved." << endl;

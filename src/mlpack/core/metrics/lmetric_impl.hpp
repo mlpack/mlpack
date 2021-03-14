@@ -1,5 +1,5 @@
 /**
- * @file lmetric_impl.hpp
+ * @file core/metrics/lmetric_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of template specializations of LMetric class.
@@ -26,7 +26,7 @@ typename VecTypeA::elem_type LMetric<Power, TakeRoot>::Evaluate(
     const VecTypeB& b)
 {
   typename VecTypeA::elem_type sum = 0;
-  for (size_t i = 0; i < a.n_elem; i++)
+  for (size_t i = 0; i < a.n_elem; ++i)
     sum += std::pow(fabs(a[i] - b[i]), Power);
 
   if (!TakeRoot) // The compiler should optimize this correctly at compile-time.
@@ -81,7 +81,7 @@ typename VecTypeA::elem_type LMetric<3, true>::Evaluate(
     const VecTypeB& b)
 {
   typename VecTypeA::elem_type sum = 0;
-  for (size_t i = 0; i < a.n_elem; i++)
+  for (size_t i = 0; i < a.n_elem; ++i)
     sum += std::pow(fabs(a[i] - b[i]), 3.0);
 
   return std::pow(arma::accu(arma::pow(arma::abs(a - b), 3.0)), 1.0 / 3.0);

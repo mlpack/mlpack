@@ -1,5 +1,5 @@
 /**
- * @file brnn.hpp
+ * @file methods/ann/brnn.hpp
  * @author Saksham Bansal
  *
  * Definition of the BRNN class, which implements bidirectional recurrent
@@ -66,7 +66,9 @@ class BRNN
    *
    * @param rho Maximum number of steps to backpropagate through time (BPTT).
    * @param single Predict only the last element of the input sequence.
+   * @param mergeLayer Merge layer to be used to evaluate the network.
    * @param outputLayer Output layer used to evaluate the network.
+   * @param mergeOutput Output Merge layer to be used.
    * @param initializeRule Optional instantiated InitializationRule object
    *        for initializing the network parameter.
    */
@@ -314,7 +316,7 @@ class BRNN
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   // Helper functions.
@@ -415,25 +417,6 @@ class BRNN
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the BRNN class.
-namespace boost {
-namespace serialization {
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename MergeLayerType,
-         typename MergeOutputType,
-         typename... CustomLayer>
-struct version<
-    mlpack::ann::BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
-        InitializationRuleType, CustomLayer...>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "brnn_impl.hpp"

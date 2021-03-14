@@ -1,5 +1,5 @@
 /**
- * @file output_height_visitor.hpp
+ * @file methods/ann/visitor/output_height_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the OutputHeight() function for

@@ -1,5 +1,5 @@
 /**
- * @file flexible_relu_impl.hpp
+ * @file methods/ann/layer/flexible_relu_impl.hpp
  * @author Aarush Gupta
  * @author Manthan-R-Sheth
  *
@@ -75,9 +75,9 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void FlexibleReLU<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version*/)
+    const uint32_t /* version*/)
 {
-  ar & BOOST_SERIALIZATION_NVP(alpha);
+  ar(CEREAL_NVP(alpha));
 }
 
 } // namespace ann

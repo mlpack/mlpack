@@ -1,5 +1,5 @@
 /**
- * @file typedef.hpp
+ * @file methods/hoeffding_trees/typedef.hpp
  * @author Ryan Curtin
  *
  * Useful typedefs.

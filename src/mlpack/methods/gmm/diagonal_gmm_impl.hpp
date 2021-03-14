@@ -1,6 +1,6 @@
 /**
  * @author Kim SangYeon
- * @file diagonal_gmm_impl.hpp
+ * @file methods/gmm/diagonal_gmm_impl.hpp
  *
  * Implementation of template-based DiagonalGMM methods.
  *
@@ -191,12 +191,12 @@ double DiagonalGMM::Train(const arma::mat& observations,
 
 //! Serialize the object.
 template<typename Archive>
-void DiagonalGMM::serialize(Archive& ar, const unsigned int /* version */)
+void DiagonalGMM::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(gaussians);
-  ar & BOOST_SERIALIZATION_NVP(dimensionality);
-  ar & BOOST_SERIALIZATION_NVP(dists);
-  ar & BOOST_SERIALIZATION_NVP(weights);
+  ar(CEREAL_NVP(gaussians));
+  ar(CEREAL_NVP(dimensionality));
+  ar(CEREAL_NVP(dists));
+  ar(CEREAL_NVP(weights));
 }
 
 } // namespace gmm

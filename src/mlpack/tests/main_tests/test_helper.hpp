@@ -1,5 +1,5 @@
 /**
- * @file test_helper.hpp
+ * @file tests/main_tests/test_helper.hpp
  * @author Eugene Freyman
  *
  * Helper functions for testing.
@@ -28,9 +28,9 @@ namespace util {
 template<typename T>
 void SetInputParam(const std::string& name, T&& value)
 {
-  CLI::GetParam<typename std::remove_reference<T>::type>(name) =
+  IO::GetParam<typename std::remove_reference<T>::type>(name) =
     std::forward<T>(value);
-  CLI::SetPassed(name);
+  IO::SetPassed(name);
 }
 
 } // namespace util

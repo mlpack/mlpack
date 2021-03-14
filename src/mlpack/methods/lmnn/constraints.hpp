@@ -1,5 +1,5 @@
 /**
- * @file constraints.hpp
+ * @file methods/lmnn/constraints.hpp
  * @author Manish Kumar
  *
  * Declaration of the Constraints class.
@@ -53,6 +53,7 @@ class Constraints
    * @param outputMatrix Coordinates matrix to store target neighbors.
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
+   * @param norms Input dataset norms.
    */
   void TargetNeighbors(arma::Mat<size_t>& outputMatrix,
                        const arma::mat& dataset,
@@ -66,6 +67,7 @@ class Constraints
    * @param outputMatrix Coordinates matrix to store target neighbors.
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
+   * @param norms Input dataset norms.
    * @param begin Index of the initial point of dataset.
    * @param batchSize Number of data points to use.
    */
@@ -83,6 +85,7 @@ class Constraints
    * @param outputMatrix Coordinates matrix to store impostors.
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
+   * @param norms Input dataset norms.
    */
   void Impostors(arma::Mat<size_t>& outputMatrix,
                  const arma::mat& dataset,
@@ -97,6 +100,7 @@ class Constraints
    * @param outputDistance matrix to store distance.
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
+   * @param norms Input dataset norms.
    */
   void Impostors(arma::Mat<size_t>& outputNeighbors,
                  arma::mat& outputDistance,
@@ -111,6 +115,7 @@ class Constraints
    * @param outputMatrix Coordinates matrix to store impostors.
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
+   * @param norms Input dataset norms.
    * @param begin Index of the initial point of dataset.
    * @param batchSize Number of data points to use.
    */
@@ -129,6 +134,7 @@ class Constraints
    * @param outputDistance matrix to store distance.
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
+   * @param norms Input dataset norms.
    * @param begin Index of the initial point of dataset.
    * @param batchSize Number of data points to use.
    */
@@ -149,6 +155,7 @@ class Constraints
    * @param outputDistance matrix to store distance.
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
+   * @param norms Input dataset norms.
    * @param points Indices of data points to calculate impostors on.
    * @param numPoints Number of points to actually calculate impostors on.
    */
@@ -167,6 +174,7 @@ class Constraints
    * @param outputMatrix Coordinates matrix to store triplets.
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
+   * @param norms Input dataset norms.
    */
   void Triplets(arma::Mat<size_t>& outputMatrix,
                 const arma::mat& dataset,

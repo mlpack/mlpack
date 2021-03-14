@@ -1,5 +1,5 @@
 /**
- * @file r_plus_plus_tree_descent_heuristic_impl.hpp
+ * @file core/tree/rectangle_tree/r_plus_plus_tree_descent_heuristic_impl.hpp
  * @author Mikhail Lozhnikov
  *
  * Implementation of RPlusPlusTreeDescentHeuristic, a class that chooses the

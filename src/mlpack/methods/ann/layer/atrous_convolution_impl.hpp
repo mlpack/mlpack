@@ -1,5 +1,5 @@
 /**
- * @file atrous_convolution_impl.hpp
+ * @file methods/ann/layer/atrous_convolution_impl.hpp
  * @author Aarush Gupta
  * @author Shikhar Jaiswal
  *
@@ -122,13 +122,10 @@ AtrousConvolution<
     dilationWidth(dilationWidth),
     dilationHeight(dilationHeight)
 {
-  weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-      1);
+  weights.set_size(WeightSize(), 1);
 
   // Transform paddingType to lowercase.
-  std::string paddingTypeLow = paddingType;
-  std::transform(paddingType.begin(), paddingType.end(), paddingTypeLow.begin(),
-      [](unsigned char c){ return std::tolower(c); });
+  const std::string paddingTypeLow = util::ToLower(paddingType);
 
   size_t padWLeft = std::get<0>(padW);
   size_t padWRight = std::get<1>(padW);
@@ -369,13 +366,13 @@ void AtrousConvolution<
 
       if (dilationHeight > 1)
       {
-        for (size_t i = 1; i < output.n_cols; i++){
+        for (size_t i = 1; i < output.n_cols; ++i){
           output.shed_cols(i, i + dilationHeight - 2);
         }
       }
       if (dilationWidth > 1)
       {
-        for (size_t i = 1; i < output.n_rows; i++){
+        for (size_t i = 1; i < output.n_rows; ++i){
           output.shed_rows(i, i + dilationWidth - 2);
         }
       }
@@ -417,37 +414,24 @@ void AtrousConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::serialize(Archive& ar, const unsigned int version)
+>::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(inSize);
-  ar & BOOST_SERIALIZATION_NVP(outSize);
-  ar & BOOST_SERIALIZATION_NVP(batchSize);
-  ar & BOOST_SERIALIZATION_NVP(kernelWidth);
-  ar & BOOST_SERIALIZATION_NVP(kernelHeight);
-  ar & BOOST_SERIALIZATION_NVP(strideWidth);
-  ar & BOOST_SERIALIZATION_NVP(strideHeight);
+  ar(CEREAL_NVP(inSize));
+  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(batchSize));
+  ar(CEREAL_NVP(kernelWidth));
+  ar(CEREAL_NVP(kernelHeight));
+  ar(CEREAL_NVP(strideWidth));
+  ar(CEREAL_NVP(strideHeight));
+  ar(CEREAL_NVP(inputWidth));
+  ar(CEREAL_NVP(inputHeight));
+  ar(CEREAL_NVP(outputWidth));
+  ar(CEREAL_NVP(outputHeight));
+  ar(CEREAL_NVP(dilationWidth));
+  ar(CEREAL_NVP(dilationHeight));
+  ar(CEREAL_NVP(padding));
 
-  // These are now stored in the padding layer.
-  if (version < 2 && Archive::is_loading::value)
-  {
-    size_t padWLeft, padWRight, padHBottom, padHTop;
-    ar & BOOST_SERIALIZATION_NVP(padWLeft);
-    ar & BOOST_SERIALIZATION_NVP(padWRight);
-    ar & BOOST_SERIALIZATION_NVP(padHBottom);
-    ar & BOOST_SERIALIZATION_NVP(padHTop);
-  }
-
-  ar & BOOST_SERIALIZATION_NVP(inputWidth);
-  ar & BOOST_SERIALIZATION_NVP(inputHeight);
-  ar & BOOST_SERIALIZATION_NVP(outputWidth);
-  ar & BOOST_SERIALIZATION_NVP(outputHeight);
-  ar & BOOST_SERIALIZATION_NVP(dilationWidth);
-  ar & BOOST_SERIALIZATION_NVP(dilationHeight);
-
-  if (version > 0)
-    ar & BOOST_SERIALIZATION_NVP(padding);
-
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
         1);

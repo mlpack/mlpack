@@ -1,5 +1,5 @@
 /**
- * @file mish_function.hpp
+ * @file methods/ann/activation_functions/mish_function.hpp
  * @author Kartik Dutt
  *
  * Definition and implementation of the Mish function as described by
@@ -35,7 +35,7 @@ namespace ann /** Artificial Neural Network. */ {
  * @f{eqnarray*}{
  * f(x) = x * tanh(ln(1+e^x))
  * f'(x) = tanh(ln(1+e^x)) + x * ((1 - tanh^2(ln(1+e^x))) * frac{1}{1 + e^{-x}})
- * }
+ * @f}
  */
 class MishFunction
 {
@@ -80,8 +80,8 @@ class MishFunction
 
   /**
    * Computes the first derivatives of the Mish function.
-   * 
-   * @param y Input activations.
+   *
+   * @param y Input data.
    * @param x The resulting derivatives.
    */
   template <typename InputVecType, typename OutputVecType>

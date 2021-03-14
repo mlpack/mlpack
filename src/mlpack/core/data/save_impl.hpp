@@ -1,5 +1,5 @@
 /**
- * @file save_impl.hpp
+ * @file core/data/save_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of save functionality.
@@ -15,11 +15,11 @@
 // In case it hasn't already been included.
 #include "save.hpp"
 #include "extension.hpp"
+#include "detect_file_type.hpp"
 
-#include <boost/serialization/serialization.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/binary.hpp>
 
 namespace mlpack {
 namespace data {
@@ -27,23 +27,133 @@ namespace data {
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Col<eT>& vec,
-          const bool fatal)
+          const bool fatal,
+          arma::file_type inputSaveType)
 {
   // Don't transpose: one observation per line (for CSVs at least).
-  return Save(filename, vec, fatal, false);
+  return Save(filename, vec, fatal, false, inputSaveType);
 }
 
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Row<eT>& rowvec,
-          const bool fatal)
+          const bool fatal,
+          arma::file_type inputSaveType)
 {
-  return Save(filename, rowvec, fatal, true);
+  return Save(filename, rowvec, fatal, true, inputSaveType);
 }
 
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
+          const bool fatal,
+          bool transpose,
+          arma::file_type inputSaveType)
+{
+  Timer::Start("saving_data");
+
+  arma::file_type saveType = inputSaveType;
+  std::string stringType = "";
+
+  if (inputSaveType == arma::auto_detect)
+  {
+    // Detect the file type using only the extension.
+    saveType = DetectFromExtension(filename);
+    if (saveType == arma::file_type_unknown)
+    {
+      if (fatal)
+        Log::Fatal << "Could not detect type of file '" << filename << "' for "
+            << "writing.  Save failed." << std::endl;
+      else
+        Log::Warn << "Could not detect type of file '" << filename << "' for "
+            << "writing.  Save failed." << std::endl;
+
+      return false;
+    }
+  }
+
+  stringType = GetStringType(saveType);
+
+  // Catch errors opening the file.
+  std::fstream stream;
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+  stream.open(filename.c_str(), std::fstream::out | std::fstream::binary);
+#else
+  stream.open(filename.c_str(), std::fstream::out);
+#endif
+  if (!stream.is_open())
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Cannot open file '" << filename << "' for writing. "
+          << "Save failed." << std::endl;
+    else
+      Log::Warn << "Cannot open file '" << filename << "' for writing; save "
+          << "failed." << std::endl;
+
+    return false;
+  }
+
+  // Try to save the file.
+  Log::Info << "Saving " << stringType << " to '" << filename << "'."
+      << std::endl;
+
+  // Transpose the matrix.
+  if (transpose)
+  {
+    arma::Mat<eT> tmp = trans(matrix);
+
+#ifdef ARMA_USE_HDF5
+    // We can't save with streams for HDF5.
+    const bool success = (saveType == arma::hdf5_binary) ?
+        tmp.quiet_save(filename, saveType) :
+        tmp.quiet_save(stream, saveType);
+#else
+    const bool success = tmp.quiet_save(stream, saveType);
+#endif
+    if (!success)
+    {
+      Timer::Stop("saving_data");
+      if (fatal)
+        Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
+      else
+        Log::Warn << "Save to '" << filename << "' failed." << std::endl;
+
+      return false;
+    }
+  }
+  else
+  {
+#ifdef ARMA_USE_HDF5
+    // We can't save with streams for HDF5.
+    const bool success = (saveType == arma::hdf5_binary) ?
+        matrix.quiet_save(filename, saveType) :
+        matrix.quiet_save(stream, saveType);
+#else
+    const bool success = matrix.quiet_save(stream, saveType);
+#endif
+    if (!success)
+    {
+      Timer::Stop("saving_data");
+      if (fatal)
+        Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
+      else
+        Log::Warn << "Save to '" << filename << "' failed." << std::endl;
+
+      return false;
+    }
+  }
+
+  Timer::Stop("saving_data");
+
+  // Finally return success.
+  return true;
+}
+
+// Save a Sparse Matrix
+template<typename eT>
+bool Save(const std::string& filename,
+          const arma::SpMat<eT>& matrix,
           const bool fatal,
           bool transpose)
 {
@@ -88,45 +198,15 @@ bool Save(const std::string& filename,
   arma::file_type saveType;
   std::string stringType;
 
-  if (extension == "csv")
+  if (extension == "txt" || extension == "tsv")
   {
-    saveType = arma::csv_ascii;
-    stringType = "CSV data";
-  }
-  else if (extension == "txt")
-  {
-    saveType = arma::raw_ascii;
+    saveType = arma::coord_ascii;
     stringType = "raw ASCII formatted data";
   }
   else if (extension == "bin")
   {
     saveType = arma::arma_binary;
     stringType = "Armadillo binary formatted data";
-  }
-  else if (extension == "pgm")
-  {
-    saveType = arma::pgm_binary;
-    stringType = "PGM data";
-  }
-  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
-           extension == "he5")
-  {
-#ifdef ARMA_USE_HDF5
-    saveType = arma::hdf5_binary;
-    stringType = "HDF5 data";
-#else
-    Timer::Stop("saving_data");
-    if (fatal)
-      Log::Fatal << "Attempted to save HDF5 data to '" << filename << "', but "
-          << "Armadillo was compiled without HDF5 support.  Save failed."
-          << std::endl;
-    else
-      Log::Warn << "Attempted to save HDF5 data to '" << filename << "', but "
-          << "Armadillo was compiled without HDF5 support.  Save failed."
-          << std::endl;
-
-    return false;
-#endif
   }
   else
   {
@@ -153,42 +233,24 @@ bool Save(const std::string& filename,
   Log::Info << "Saving " << stringType << " to '" << filename << "'."
       << std::endl;
 
+  arma::SpMat<eT> tmp = matrix;
+
   // Transpose the matrix.
   if (transpose)
   {
-    arma::Mat<eT> tmp = trans(matrix);
-
-    // We can't save with streams for HDF5.
-    const bool success = (saveType == arma::hdf5_binary) ?
-        tmp.quiet_save(filename, saveType) :
-        tmp.quiet_save(stream, saveType);
-    if (!success)
-    {
-      Timer::Stop("saving_data");
-      if (fatal)
-        Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
-      else
-        Log::Warn << "Save to '" << filename << "' failed." << std::endl;
-
-      return false;
-    }
+    tmp = trans(matrix);
   }
-  else
-  {
-    // We can't save with streams for HDF5.
-    const bool success = (saveType == arma::hdf5_binary) ?
-        matrix.quiet_save(filename, saveType) :
-        matrix.quiet_save(stream, saveType);
-    if (!success)
-    {
-      Timer::Stop("saving_data");
-      if (fatal)
-        Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
-      else
-        Log::Warn << "Save to '" << filename << "' failed." << std::endl;
 
-      return false;
-    }
+  const bool success = tmp.quiet_save(stream, saveType);
+  if (!success)
+  {
+    Timer::Stop("saving_data");
+    if (fatal)
+      Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
+    else
+      Log::Warn << "Save to '" << filename << "' failed." << std::endl;
+
+    return false;
   }
 
   Timer::Stop("saving_data");
@@ -213,16 +275,16 @@ bool Save(const std::string& filename,
       f = format::xml;
     else if (extension == "bin")
       f = format::binary;
-    else if (extension == "txt")
-      f = format::text;
+    else if (extension == "json")
+      f = format::json;
     else
     {
       if (fatal)
         Log::Fatal << "Unable to detect type of '" << filename << "'; incorrect"
-            << " extension? (allowed: xml/bin/txt)" << std::endl;
+            << " extension? (allowed: xml/bin/json)" << std::endl;
       else
         Log::Warn << "Unable to detect type of '" << filename << "'; save "
-            << "failed.  Incorrect extension? (allowed: xml/bin/txt)"
+            << "failed.  Incorrect extension? (allowed: xml/bin/json)"
             << std::endl;
 
       return false;
@@ -256,23 +318,23 @@ bool Save(const std::string& filename,
   {
     if (f == format::xml)
     {
-      boost::archive::xml_oarchive ar(ofs);
-      ar << boost::serialization::make_nvp(name.c_str(), t);
+      cereal::XMLOutputArchive ar(ofs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
-    else if (f == format::text)
+    else if (f == format::json)
     {
-      boost::archive::text_oarchive ar(ofs);
-      ar << boost::serialization::make_nvp(name.c_str(), t);
+      cereal::JSONOutputArchive ar(ofs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
     else if (f == format::binary)
     {
-      boost::archive::binary_oarchive ar(ofs);
-      ar << boost::serialization::make_nvp(name.c_str(), t);
+      cereal::BinaryOutputArchive ar(ofs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
 
     return true;
   }
-  catch (boost::archive::archive_exception& e)
+  catch (cereal::Exception& e)
   {
     if (fatal)
       Log::Fatal << e.what() << std::endl;
@@ -328,15 +390,11 @@ bool Save(const std::vector<std::string>& files,
   }
 
   arma::Mat<unsigned char> img;
-  bool status = Save(files[0], img, info, fatal);
+  bool status = true;
 
-  // Decide matrix dimension using the image height and width.
-  matrix.set_size(info.Width() * info.Height() * info.Channels(), files.size());
-  matrix.col(0) = img;
-
-  for (size_t i = 1; i < files.size() ; i++)
+  for (size_t i = 0; i < files.size() ; ++i)
   {
-    arma::Mat<unsigned char> colImg(matrix.colptr(i), matrix.n_rows, 1,
+    arma::Mat<eT> colImg(matrix.colptr(i), matrix.n_rows, 1,
         false, true);
     status &= Save(files[i], colImg, info, fatal);
   }

@@ -1,5 +1,5 @@
 /**
- * @file loss_visitor_impl.hpp
+ * @file methods/ann/visitor/loss_visitor_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the Loss() function layer abstraction.

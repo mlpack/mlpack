@@ -1,5 +1,5 @@
 /**
- * @file random_selection.hpp
+ * @file methods/nystroem_method/random_selection.hpp
  * @author Ryan Curtin
  *
  * Randomly select some points (with replacement) to use for the Nystroem

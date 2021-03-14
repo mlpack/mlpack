@@ -1,5 +1,5 @@
 /**
- * @file layer_norm.hpp
+ * @file methods/ann/layer/layer_norm.hpp
  * @author Shikhar Jaiswal
  *
  * Definition of the Layer Normalization class.
@@ -142,11 +142,23 @@ class LayerNorm
   //! Get the variance across single training data.
   OutputDataType Variance() { return variance; }
 
+  //! Get the number of input units.
+  size_t InSize() const { return size; }
+
+  //! Get the value of epsilon.
+  double Epsilon() const { return eps; }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return size;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

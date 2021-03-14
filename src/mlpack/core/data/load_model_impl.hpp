@@ -1,5 +1,5 @@
 /**
- * @file load_model_impl.hpp
+ * @file core/data/load_model_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of model-specific Load() function.
@@ -20,13 +20,13 @@
 
 #include "extension.hpp"
 
-#include <boost/serialization/serialization.hpp>
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/trim.hpp>
+
+#include <cereal/archives/xml.hpp>
+#include <cereal/archives/binary.hpp>
+#include <cereal/archives/json.hpp>
 
 namespace mlpack {
 namespace data {
@@ -47,8 +47,8 @@ bool Load(const std::string& filename,
       f = format::xml;
     else if (extension == "bin")
       f = format::binary;
-    else if (extension == "txt")
-      f = format::text;
+    else if (extension == "json")
+      f = format::json;
     else
     {
       if (fatal)
@@ -84,28 +84,27 @@ bool Load(const std::string& filename,
 
     return false;
   }
-
   try
   {
     if (f == format::xml)
     {
-      boost::archive::xml_iarchive ar(ifs);
-      ar >> boost::serialization::make_nvp(name.c_str(), t);
+      cereal::XMLInputArchive ar(ifs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
-    else if (f == format::text)
+    else if (f == format::json)
     {
-      boost::archive::text_iarchive ar(ifs);
-      ar >> boost::serialization::make_nvp(name.c_str(), t);
+     cereal::JSONInputArchive ar(ifs);
+     ar(cereal::make_nvp(name.c_str(), t));
     }
     else if (f == format::binary)
     {
-      boost::archive::binary_iarchive ar(ifs);
-      ar >> boost::serialization::make_nvp(name.c_str(), t);
+      cereal::BinaryInputArchive ar(ifs);
+      ar(cereal::make_nvp(name.c_str(), t));
     }
 
     return true;
   }
-  catch (boost::archive::archive_exception& e)
+  catch (cereal::Exception& e)
   {
     if (fatal)
       Log::Fatal << e.what() << std::endl;

@@ -1,5 +1,5 @@
 /**
- * @file cellbound.hpp
+ * @file core/tree/cellbound.hpp
  * @author Mikhail Lozhnikov
  *
  * Definition of the CellBound class. The class describes a bound that consists
@@ -252,7 +252,7 @@ class CellBound
    * Serialize the bound object.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version);
+  void serialize(Archive& ar, const uint32_t version);
 
  private:
   //! The precision of the tree element type.

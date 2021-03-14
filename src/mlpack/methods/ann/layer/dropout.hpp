@@ -1,5 +1,5 @@
 /**
- * @file dropout.hpp
+ * @file methods/ann/layer/dropout.hpp
  * @author Marcus Edel
  *
  * Definition of the Dropout class, which implements a regularizer that
@@ -60,6 +60,18 @@ class Dropout
    */
   Dropout(const double ratio = 0.5);
 
+  //! Copy Constructor
+  Dropout(const Dropout& layer);
+
+  //! Move Constructor
+  Dropout(const Dropout&&);
+
+  //! Copy assignment operator
+  Dropout& operator=(const Dropout& layer);
+
+  //! Move assignment operator
+  Dropout& operator=(Dropout&& layer);
+
   /**
    * Ordinary feed forward pass of the dropout layer.
    *
@@ -72,7 +84,7 @@ class Dropout
   /**
    * Ordinary feed backward pass of the dropout layer.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -110,7 +122,7 @@ class Dropout
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

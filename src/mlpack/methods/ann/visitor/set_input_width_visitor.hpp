@@ -1,5 +1,5 @@
 /**
- * @file set_input_width_visitor.hpp
+ * @file methods/ann/visitor/set_input_width_visitor.hpp
  * @author Marcus Edel
  *
  * This file provides an abstraction for the InputWidth() function for different

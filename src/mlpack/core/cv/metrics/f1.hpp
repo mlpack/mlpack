@@ -1,5 +1,5 @@
 /**
- * @file f1.hpp
+ * @file core/cv/metrics/f1.hpp
  * @author Kirill Mishchenko
  *
  * The F1 metric.

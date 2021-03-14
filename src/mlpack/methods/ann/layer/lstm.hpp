@@ -1,5 +1,5 @@
 /**
- * @file lstm.hpp
+ * @file methods/ann/layer/lstm.hpp
  * @author Marcus Edel
  *
  * Definition of the LSTM class, which implements a LSTM network layer.
@@ -75,6 +75,18 @@ class LSTM
   LSTM(const size_t inSize,
        const size_t outSize,
        const size_t rho = std::numeric_limits<size_t>::max());
+
+  //! Copy constructor.
+  LSTM(const LSTM& layer);
+
+  //! Move constructor.
+  LSTM(LSTM&&);
+
+  //! Copy assignment operator.
+  LSTM& operator=(const LSTM& layer);
+
+  //! Move assignment operator.
+  LSTM& operator=(LSTM&& layer);
 
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
@@ -165,11 +177,26 @@ class LSTM
   //! Modify the gradient.
   OutputDataType& Gradient() { return grad; }
 
+  //! Get the number of input units.
+  size_t InSize() const { return inSize; }
+
+  //! Get the number of output units.
+  size_t OutSize() const { return outSize; }
+
+  //! Get the size of the weights.
+  size_t WeightSize() const { return (4 * outSize * inSize + 7 * outSize + 4 * outSize * outSize); }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

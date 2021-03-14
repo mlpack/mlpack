@@ -1,5 +1,5 @@
 /**
- * @file given_init.hpp
+ * @file methods/amf/init_rules/given_init.hpp
  * @author Ryan Curtin
  *
  * Initialization rule for alternating matrix factorization (AMF). This simple
@@ -200,10 +200,10 @@ class GivenInitialization
 
   //! Serialize the object (in this case, there is nothing to serialize).
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(w);
-    ar & BOOST_SERIALIZATION_NVP(h);
+    ar(CEREAL_NVP(w));
+    ar(CEREAL_NVP(h));
   }
 
  private:

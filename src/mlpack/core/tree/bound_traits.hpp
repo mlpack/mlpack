@@ -1,5 +1,5 @@
 /**
- * @file bound_traits.hpp
+ * @file core/tree/bound_traits.hpp
  * @author Ryan Curtin
  *
  * A class for template metaprogramming traits for bounds.

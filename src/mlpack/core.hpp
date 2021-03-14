@@ -53,7 +53,7 @@
  *  - @ref sample
  *  - @ref sample_ml_app
  *  - @ref cv
- *  - @ref hpt
+ *  - @ref hpt_guide
  *  - @ref verinfo
  *
  * @section remarks Final Remarks
@@ -69,7 +69,7 @@
 // Now the core mlpack classes.
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/log.hpp>
-#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/deprecated.hpp>
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>

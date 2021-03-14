@@ -1,5 +1,5 @@
 /**
- * @file concatenate.hpp
+ * @file methods/ann/layer/concatenate.hpp
  * @author Atharva Khandait
  *
  * Definition of the Concatenate class that concatenate a constant matrix to
@@ -41,6 +41,18 @@ class Concatenate
    */
   Concatenate();
 
+  //! Copy constructor.
+  Concatenate(const Concatenate& layer);
+
+  //! Move constructor.
+  Concatenate(Concatenate&& layer);
+
+  //! Operator= copy constructor.
+  Concatenate& operator=(const Concatenate& layer);
+
+  //! Operator= move constructor.
+  Concatenate& operator=(Concatenate&& layer);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -56,7 +68,7 @@ class Concatenate
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -82,14 +94,14 @@ class Concatenate
 
   //! Get the concat matrix.
   OutputDataType const& Concat() const { return concat; }
-  //! Modify the delta.
+  //! Modify the concat.
   OutputDataType& Concat() { return concat; }
 
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */)
+  void serialize(Archive& /* ar */, const uint32_t /* version */)
   {
     // Nothing to do here.
   }

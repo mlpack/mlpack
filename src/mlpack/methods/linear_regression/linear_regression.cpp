@@ -1,5 +1,5 @@
 /**
- * @file linear_regression.cpp
+ * @file methods/linear_regression/linear_regression.cpp
  * @author James Cline
  * @author Michael Fox
  *

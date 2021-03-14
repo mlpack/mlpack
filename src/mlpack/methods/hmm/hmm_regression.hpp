@@ -1,5 +1,5 @@
 /**
- * @file hmm_regression.hpp
+ * @file methods/hmm/hmm_regression.hpp
  * @author Michael Fox
  *
  * Definition of HMMRegression class.
@@ -29,7 +29,7 @@ namespace hmm /** Hidden Markov Models. */ {
  * normally distributed with zero mean and state-dependent variance. Let Q_t be
  * a finite-state Markov chain, X_t a vector of predictors and Y_t a response.
  * The HMMR is
- * Y_t = X_t \beta_{Q_t} + \sigma_{Q_t} \epsilon_t
+ * @f$ Y_t = X_t \beta_{Q_t} + \sigma_{Q_t} \epsilon_t @f$
  *
  * This HMMR class supports training (supervised and unsupervised), prediction
  * of state sequences via the Viterbi algorithm, estimation of state
@@ -150,7 +150,6 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    * Train() can be called multiple times with different sequences; each time it
    * is called, it uses the current parameters of the HMM as a starting point
    * for training.
-   * @endnote
    *
    * @param predictors Vector of predictor sequences.
    * @param responses Vector of response sequences.
@@ -170,7 +169,6 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    * Train() can be called multiple times with different sequences; each time it
    * is called, it uses the current parameters of the HMMR as a starting point
    * for training.
-   * @endnote
    *
    * @param predictors Vector of predictor sequences.
    * @param responses Vector of response sequences.
@@ -256,7 +254,6 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    *
    * @param predictors Vector of predictor sequences.
    * @param responses Vector of response sequences.
-   * @param initial Distribution of initial state.
    * @param ahead Number of steps ahead (k) for expectations.
    * @param filterSeq Vector in which the expected emission sequence will be
    *    stored.
@@ -274,8 +271,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    * that the expectation may not be meaningful for discrete emissions.
    *
    * @param predictors Vector of predictor sequences.
-   * @param responses Vector of response sequences..
-   * @param initial Distribution of initial state.
+   * @param responses Vector of response sequences.
    * @param smoothSeq Vector in which the expected emission sequence will be
    *    stored.
    */

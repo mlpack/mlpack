@@ -1,5 +1,5 @@
 /**
- * @file gamma_distribution.cpp
+ * @file core/dists/gamma_distribution.cpp
  * @author Yannis Mentekidis
  * @author Rohan Raj
  *
@@ -78,7 +78,7 @@ void GammaDistribution::Train(const arma::mat& rdata,
   arma::vec meanxVec(rdata.n_rows, arma::fill::zeros);
   arma::vec logMeanxVec(rdata.n_rows, arma::fill::zeros);
 
-  for (size_t i = 0; i < rdata.n_cols; i++)
+  for (size_t i = 0; i < rdata.n_cols; ++i)
   {
     meanLogxVec += probabilities(i) * arma::log(rdata.col(i));
     meanxVec += probabilities(i) * rdata.col(i);

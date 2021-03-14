@@ -1,5 +1,5 @@
 /**
- * @file lmnn_impl.hpp
+ * @file methods/lmnn/lmnn_impl.hpp
  * @author Manish Kumar
  *
  * Implementation of Large Margin Nearest Neighbor class.

@@ -1,5 +1,5 @@
 /**
- * @file log_add_impl.hpp
+ * @file core/math/log_add_impl.hpp
  * @author Arash Abghari
  *
  * Implementation of logarithmic addition functions.

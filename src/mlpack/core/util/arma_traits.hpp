@@ -1,5 +1,5 @@
 /**
- * @file arma_traits.hpp
+ * @file core/util/arma_traits.hpp
  * @author Ryan Curtin
  *
  * Some traits used for template metaprogramming (SFINAE) with Armadillo types.
@@ -81,14 +81,34 @@ struct IsVector<arma::subview_row<eT> >
   const static bool value = true;
 };
 
-// I'm not so sure about this one.  An SpSubview object can be a row or column,
-// but it can also be a matrix subview.
 
-// template<>
-template<typename eT>
-struct IsVector<arma::SpSubview<eT> >
-{
-  const static bool value = true;
-};
+#if ((ARMA_VERSION_MAJOR >= 10) || \
+    ((ARMA_VERSION_MAJOR == 9) && (ARMA_VERSION_MINOR >= 869)))
+
+  // Armadillo 9.869+ has SpSubview_col and SpSubview_row
+
+  template<typename eT>
+  struct IsVector<arma::SpSubview_col<eT> >
+  {
+    const static bool value = true;
+  };
+
+  template<typename eT>
+  struct IsVector<arma::SpSubview_row<eT> >
+  {
+    const static bool value = true;
+  };
+
+#else
+
+  // fallback for older Armadillo versions
+
+  template<typename eT>
+  struct IsVector<arma::SpSubview<eT> >
+  {
+    const static bool value = true;
+  };
+
+#endif
 
 #endif

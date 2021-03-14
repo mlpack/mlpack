@@ -1,5 +1,5 @@
 /**
- * @file confusion_matrix_impl.hpp
+ * @file core/data/confusion_matrix.hpp
  * @author Jeffin Sam
  *
  * Compute confusion matrix to evaluate the accuracy of a classification.

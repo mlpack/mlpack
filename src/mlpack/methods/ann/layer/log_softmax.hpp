@@ -1,5 +1,5 @@
 /**
- * @file log_softmax.hpp
+ * @file methods/ann/layer/log_softmax.hpp
  * @author Marcus Edel
  *
  * Definition of the LogSoftmax class.
@@ -79,7 +79,7 @@ class LogSoftMax
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& /* ar */, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

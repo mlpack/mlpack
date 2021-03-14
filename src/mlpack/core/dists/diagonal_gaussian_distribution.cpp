@@ -1,5 +1,5 @@
 /**
- * @file diagonal_gaussian_distribution.cpp
+ * @file core/dists/diagonal_gaussian_distribution.cpp
  * @author Kim SangYeon
  *
  * Implementation of Gaussian distribution class with diagonal covariance.

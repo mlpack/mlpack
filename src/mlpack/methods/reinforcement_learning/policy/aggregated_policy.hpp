@@ -1,5 +1,5 @@
 /**
- * @file aggregated_policy.hpp
+ * @file methods/reinforcement_learning/policy/aggregated_policy.hpp
  * @author Shangtong Zhang
  *
  * This file is the implementation of AggregatedPolicy class.

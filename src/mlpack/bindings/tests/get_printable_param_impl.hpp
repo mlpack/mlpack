@@ -1,5 +1,5 @@
 /**
- * @file get_printable_param_impl.hpp
+ * @file bindings/tests/get_printable_param_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of parameter printing functions.
@@ -21,7 +21,7 @@ namespace tests {
 //! Print an option.
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
     const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
@@ -36,7 +36,7 @@ std::string GetPrintableParam(
 //! Print a vector option.
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
 {
   const T& t = boost::any_cast<T>(data.value);
@@ -50,7 +50,7 @@ std::string GetPrintableParam(
 //! Print a matrix option (this just prints 'matrix type').
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
 {
   return "matrix type";
@@ -59,7 +59,7 @@ std::string GetPrintableParam(
 //! Print a model option (this just prints the filename).
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& data,
+    util::ParamData& data,
     const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
     const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
 {
@@ -72,7 +72,7 @@ std::string GetPrintableParam(
 //! Print a mapped matrix option (this just prints 'matrix/DatasetInfo tuple').
 template<typename T>
 std::string GetPrintableParam(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const typename boost::enable_if<std::is_same<T,
         std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {

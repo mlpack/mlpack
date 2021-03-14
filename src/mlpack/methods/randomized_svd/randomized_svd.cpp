@@ -1,5 +1,5 @@
 /**
- * @file randomized_svd.cpp
+ * @file methods/randomized_svd/randomized_svd.cpp
  * @author Marcus Edel
  *
  * Implementation of the randomized SVD method.

@@ -1,5 +1,5 @@
 /**
- * @file kmeans_selection.hpp
+ * @file methods/nystroem_method/kmeans_selection.hpp
  * @author Marcus Edel
  *
  * Use the centroids of the K-Means clustering method for use in the Nystroem

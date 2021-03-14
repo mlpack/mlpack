@@ -1,5 +1,5 @@
 /**
- * @file policy_traits.hpp
+ * @file core/data/string_encoding_policies/policy_traits.hpp
  * @author Jeffin Sam
  * @author Mikhail Lozhnikov
  *

@@ -1,5 +1,5 @@
 /**
- * @file log_cosh_loss.hpp
+ * @file methods/ann/loss_functions/log_cosh_loss.hpp
  * @author Kartik Dutt
  *
  * Definition of the Log-Hyperbolic-Cosine loss function.
@@ -20,7 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * The Log-Hyperbolic-Cosine loss function is often used to improve
- * variational auto encoder. This function is the log of hyperbolic 
+ * variational auto encoder. This function is the log of hyperbolic
  * cosine of difference between true values and predicted values.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -51,23 +51,26 @@ class LogCoshLoss
   /**
    * Computes the Log-Hyperbolic-Cosine loss function.
    *
-   * @param input Input data used for evaluating the specified function.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
    * @param target Target data to compare with.
    */
-  template<typename InputType, typename TargetType>
-  double Forward(const InputType& input, const TargetType& target);
+  template<typename PredictionType, typename TargetType>
+  typename PredictionType::elem_type Forward(const PredictionType& prediction,
+                                             const TargetType& target);
 
   /**
    * Ordinary feed backward pass of a neural network.
    *
-   * @param input The propagated input activation.
+   * @param prediction Predictions used for evaluating the specified loss
+   *     function.
    * @param target The target vector.
-   * @param output The calculated error.
+   * @param loss The calculated error.
    */
-  template<typename InputType, typename TargetType, typename OutputType>
-  void Backward(const InputType& input,
+  template<typename PredictionType, typename TargetType, typename LossType>
+  void Backward(const PredictionType& prediction,
                 const TargetType& target,
-                OutputType& output);
+                LossType& loss);
 
   //! Get the output parameter.
   OutputDataType& OutputParameter() const { return outputParameter; }
@@ -83,7 +86,7 @@ class LogCoshLoss
    * Serialize the loss function.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored output parameter object.

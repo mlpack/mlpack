@@ -1,5 +1,5 @@
 /**
- * @file dtb.hpp
+ * @file methods/emst/dtb.hpp
  * @author Bill March (march@gatech.edu)
  *
  * Contains an implementation of the DualTreeBoruvka algorithm for finding a
@@ -132,7 +132,7 @@ class DualTreeBoruvka
    * Create the tree from the given dataset.  This copies the dataset to an
    * internal copy, because tree-building modifies the dataset.
    *
-   * @param data Dataset to build a tree for.
+   * @param dataset Dataset to build a tree for.
    * @param naive Whether the computation should be done in O(n^2) naive mode.
    * @param metric An optional instantiated metric to use.
    */
@@ -152,7 +152,6 @@ class DualTreeBoruvka
    * of a matrix, be sure you pass the modified matrix to this object!  In
    * addition, mapping the points of the matrix back to their original indices
    * is not done when this constructor is used.
-   * @endnote
    *
    * @param tree Pre-built tree.
    * @param metric An optional instantiated metric to use.

@@ -1,5 +1,5 @@
 /**
- * @file nca_softmax_impl.h
+ * @file methods/nca/nca_softmax_error_function_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of the Softmax error function.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_IMPL_H
-#define MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_IMPL_H
+#ifndef MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_IMPL_H
+#define MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_IMPL_H
 
 // In case it hasn't been included already.
 #include "nca_softmax_error_function.hpp"
@@ -74,7 +74,7 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
 
   // It's quicker to do this now than one point at a time later.
   stretchedDataset = coordinates * dataset;
-  for (size_t i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; ++i)
   {
     for (size_t k = 0; k < dataset.n_cols; ++k)
     {
@@ -129,9 +129,9 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   //     (p_i p_ik + p_k p_ki) x_ik x_ik^T
   arma::mat sum;
   sum.zeros(stretchedDataset.n_rows, stretchedDataset.n_rows);
-  for (size_t i = 0; i < stretchedDataset.n_cols; i++)
+  for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
-    for (size_t k = (i + 1); k < stretchedDataset.n_cols; k++)
+    for (size_t k = (i + 1); k < stretchedDataset.n_cols; ++k)
     {
       // Calculate p_ik and p_ki first.
       double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
@@ -174,7 +174,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 
   // Compute the stretched dataset.
   stretchedDataset = coordinates * dataset;
-  for (size_t i = begin; i < begin + batchSize; i++)
+  for (size_t i = begin; i < begin + batchSize; ++i)
   {
     numerator = 0;
     denominator = 0;
@@ -265,9 +265,9 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
   // order of O((n * (n + 1)) / 2), which really isn't all that great.
   p.zeros(stretchedDataset.n_cols);
   denominators.zeros(stretchedDataset.n_cols);
-  for (size_t i = 0; i < stretchedDataset.n_cols; i++)
+  for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
-    for (size_t j = (i + 1); j < stretchedDataset.n_cols; j++)
+    for (size_t j = (i + 1); j < stretchedDataset.n_cols; ++j)
     {
       // Evaluate exp(-d(x_i, x_j)).
       double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
@@ -290,7 +290,7 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
   p /= denominators;
 
   // Clean up any bad values.
-  for (size_t i = 0; i < stretchedDataset.n_cols; i++)
+  for (size_t i = 0; i < stretchedDataset.n_cols; ++i)
   {
     if (denominators[i] == 0.0)
     {

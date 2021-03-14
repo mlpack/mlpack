@@ -1,5 +1,5 @@
 /**
- * @file unmap.hpp
+ * @file methods/neighbor_search/unmap.hpp
  * @author Ryan Curtin
  *
  * Convenience methods to unmap results.

@@ -1,9 +1,9 @@
 /**
- * @file concat.hpp
+ * @file methods/ann/layer/concat.hpp
  * @author Marcus Edel
  * @author Mehul Kumar Nirala
  *
- * Definition of the Concat class, which acts as a concatenation contain.
+ * Definition of the Concat class, which acts as a concatenation container.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -87,7 +87,7 @@ class Concat
    * input, calculating the function f(x) by propagating x backwards through f.
    * Using the results from the feed forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -100,10 +100,10 @@ class Concat
    * This is the overload of Backward() that runs only a specific layer with
    * the given input.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
-   * @param The index of the layer to run.
+   * @param index The index of the layer to run.
    */
   template<typename eT>
   void Backward(const arma::Mat<eT>& /* input */,
@@ -141,14 +141,6 @@ class Concat
   /*
    * Add a new module to the model.
    *
-   * @param layer The Layer to be added to the model.
-   */
-  template<typename LayerType>
-  void Add(const LayerType& layer) { network.push_back(new LayerType(layer)); }
-
-  /*
-   * Add a new module to the model.
-   *
    * @param args The layer parameter.
    */
   template <class LayerType, class... Args>
@@ -173,9 +165,9 @@ class Concat
   }
 
   //! Return the initial point for the optimization.
-  const arma::mat& Parameters() const { return parameters; }
+  const arma::mat& Parameters() const { return weights; }
   //! Modify the initial point for the optimization.
-  arma::mat& Parameters() { return parameters; }
+  arma::mat& Parameters() { return weights; }
 
   //! Get the value of run parameter.
   bool Run() const { return run; }
@@ -201,11 +193,17 @@ class Concat
   //! Modify the gradient.
   arma::mat& Gradient() { return gradient; }
 
+  //! Get the axis of concatenation.
+  size_t const& ConcatAxis() const { return axis; }
+
+  //! Get the size of the weight matrix.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& ar,  const uint32_t /* version */);
 
  private:
   //! Parameter which indicates the input size of modules.
@@ -230,8 +228,8 @@ class Concat
   //! Locally-stored network modules.
   std::vector<LayerTypes<CustomLayers...> > network;
 
-  //! Locally-stored model parameters.
-  arma::mat parameters;
+  //! Locally-stored model weights.
+  OutputDataType weights;
 
   //! Locally-stored delta visitor.
   DeltaVisitor deltaVisitor;

@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Convert the output of an mlpack executable into a man page.  This assumes that
-# the CLI subsystem is used to output help, that the executable is properly
+# the IO subsystem is used to output help, that the executable is properly
 # documented, and that the program is run in the directory that the executable
 # is in.  Usually, this is used by CMake on Linux/UNIX systems to generate the
 # man pages.

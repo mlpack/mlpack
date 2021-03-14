@@ -1,5 +1,5 @@
 /**
- * @file random_init.hpp
+ * @file methods/amf/init_rules/random_init.hpp
  * @author Mohan Rajendran
  *
  * Initialization rule for alternating matrix factorization (AMF). This simple
@@ -82,7 +82,7 @@ class RandomInitialization
 
   //! Serialize the object (in this case, there is nothing to serialize).
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace amf

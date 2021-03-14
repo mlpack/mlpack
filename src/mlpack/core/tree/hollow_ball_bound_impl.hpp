@@ -1,5 +1,5 @@
 /**
- * @file hollow_ball_bound_impl.hpp
+ * @file core/tree/hollow_ball_bound_impl.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  * Implementation of HollowBallBound ball bound metric policy class.
@@ -80,15 +80,17 @@ template<typename TMetricType, typename ElemType>
 HollowBallBound<TMetricType, ElemType>& HollowBallBound<TMetricType, ElemType>::
 operator=(const HollowBallBound& other)
 {
-  if (ownsMetric)
-    delete metric;
+  if (this != &other)
+  {
+    if (ownsMetric)
+      delete metric;
 
-  radii = other.radii;
-  center = other.center;
-  hollowCenter = other.hollowCenter;
-  metric = other.metric;
-  ownsMetric = false;
-
+    radii = other.radii;
+    center = other.center;
+    hollowCenter = other.hollowCenter;
+    metric = other.metric;
+    ownsMetric = false;
+  }
   return *this;
 }
 
@@ -109,6 +111,29 @@ HollowBallBound<TMetricType, ElemType>::HollowBallBound(
   other.hollowCenter = arma::Col<ElemType>();
   other.metric = NULL;
   other.ownsMetric = false;
+}
+
+//! Move assignment operator.
+template<typename TMetricType, typename ElemType>
+HollowBallBound<TMetricType, ElemType>& HollowBallBound<TMetricType, ElemType>::
+operator=(HollowBallBound&& other)
+{
+  if (this != &other)
+  {
+    radii = other.radii;
+    center = std::move(other.center);
+    hollowCenter = std::move(other.hollowCenter);
+    metric = other.metric;
+    ownsMetric = other.ownsMetric;
+
+    other.radii.Hi() = 0.0;
+    other.radii.Lo() = 0.0;
+    other.center = arma::Col<ElemType>();
+    other.hollowCenter = arma::Col<ElemType>();
+    other.metric = nullptr;
+    other.ownsMetric = false;
+  }
+  return *this;
 }
 
 //! Destructor to release allocated memory.
@@ -427,21 +452,20 @@ template<typename TMetricType, typename ElemType>
 template<typename Archive>
 void HollowBallBound<TMetricType, ElemType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(radii);
-  ar & BOOST_SERIALIZATION_NVP(center);
-  ar & BOOST_SERIALIZATION_NVP(hollowCenter);
-
-  if (Archive::is_loading::value)
+  ar(CEREAL_NVP(radii));
+  ar(CEREAL_NVP(center));
+  ar(CEREAL_NVP(hollowCenter));
+  ar(CEREAL_POINTER(metric));
+  if (cereal::is_loading<Archive>())
   {
     // If we're loading, delete the local metric since we'll have a new one.
     if (ownsMetric)
       delete metric;
-  }
 
-  ar & BOOST_SERIALIZATION_NVP(metric);
-  ar & BOOST_SERIALIZATION_NVP(ownsMetric);
+    ownsMetric = true;
+  }
 }
 
 } // namespace bound

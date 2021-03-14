@@ -1,5 +1,5 @@
 /**
- * @file all_dimension_select.hpp
+ * @file methods/decision_tree/all_dimension_select.hpp
  * @author Ryan Curtin
  *
  * Selects all dimensions for a split.

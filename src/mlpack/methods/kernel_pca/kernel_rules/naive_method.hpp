@@ -1,5 +1,5 @@
 /**
- * @file naive_method.hpp
+ * @file methods/kernel_pca/kernel_rules/naive_method.hpp
  * @author Ajinkya Kale
  *
  * Use the naive method to construct the kernel matrix.
@@ -29,14 +29,14 @@ class NaiveKernelRule
    * @param transformedData Matrix to output results into.
    * @param eigval KPCA eigenvalues will be written to this vector.
    * @param eigvec KPCA eigenvectors will be written to this matrix.
-   * @param rank Rank to be used for matrix approximation.
+   * @param * (rank) Rank to be used for matrix approximation.
    * @param kernel Kernel to be used for computation.
    */
   static void ApplyKernelMatrix(const arma::mat& data,
                                 arma::mat& transformedData,
                                 arma::vec& eigval,
                                 arma::mat& eigvec,
-                                const size_t /* unused */,
+                                const size_t /* rank */,
                                 KernelType kernel = KernelType())
 {
   // Construct the kernel matrix.

@@ -1,5 +1,5 @@
 /**
- * @file random_dimension_select.hpp
+ * @file methods/decision_tree/random_dimension_select.hpp
  * @author Ryan Curtin
  *
  * Selects one single random dimension to split on.

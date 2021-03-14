@@ -1,5 +1,5 @@
 /**
- * @file reset_visitor_impl.hpp
+ * @file methods/ann/visitor/reset_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Reset() function layer abstraction.

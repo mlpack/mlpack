@@ -1,5 +1,5 @@
 /**
- * @file kernel_pca_impl.hpp
+ * @file methods/kernel_pca/kernel_pca_impl.hpp
  * @author Ajinkya Kale
  * @author Marcus Edel
  *

@@ -1,5 +1,5 @@
 /**
- * @file bilinear_interpolation.hpp
+ * @file methods/ann/layer/bilinear_interpolation.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -74,7 +74,7 @@ class BilinearInterpolation
    * we just have to down-sample the gradient to make its size compatible with
    * the input size.
    *
-   * @param input The input matrix.
+   * @param * (input) The input matrix.
    * @param gradient The computed backward gradient.
    * @param output The resulting down-sampled output.
    */
@@ -93,11 +93,42 @@ class BilinearInterpolation
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the row size of the input.
+  size_t const& InRowSize() const { return inRowSize; }
+  //! Modify the row size of the input.
+  size_t& InRowSize() { return inRowSize; }
+
+  //! Get the column size of the input.
+  size_t const& InColSize() const { return inColSize; }
+  //! Modify the column size of the input.
+  size_t& InColSize() { return inColSize; }
+
+  //! Get the row size of the output.
+  size_t const& OutRowSize() const { return outRowSize; }
+  //! Modify the row size of the output.
+  size_t& OutRowSize() { return outRowSize; }
+
+  //! Get the column size of the output.
+  size_t const& OutColSize() const { return outColSize; }
+  //! Modify the column size of the output.
+  size_t& OutColSize() { return outColSize; }
+
+  //! Get the depth of the input.
+  size_t const& InDepth() const { return depth; }
+  //! Modify the depth of the input.
+  size_t& InDepth() { return depth; }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inRowSize;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally stored row size of the input.

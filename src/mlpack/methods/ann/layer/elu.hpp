@@ -1,9 +1,9 @@
 /**
- * @file elu.hpp
+ * @file methods/ann/layer/elu.hpp
  * @author Vivek Pal
  * @author Dakshit Agrawal
  *
- * Definition of the ELU activation function as descibed by Djork-Arne Clevert,
+ * Definition of the ELU activation function as described by Djork-Arne Clevert,
  * Thomas Unterthiner and Sepp Hochreiter.
  *
  * Definition of the SELU function as introduced by
@@ -177,7 +177,7 @@ class ELU
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

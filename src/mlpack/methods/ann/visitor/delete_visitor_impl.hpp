@@ -1,5 +1,5 @@
 /**
- * @file delete_visitor_impl.hpp
+ * @file methods/ann/visitor/delete_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the Delete() function layer abstraction.

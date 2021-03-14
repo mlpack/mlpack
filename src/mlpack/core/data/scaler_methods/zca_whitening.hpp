@@ -1,5 +1,5 @@
 /**
- * @file zca_whitening.hpp
+ * @file core/data/scaler_methods/zca_whitening.hpp
  * @author Jeffin Sam
  *
  * Whitening scaling to scale features, Using ZCA Whitening.
@@ -102,9 +102,9 @@ class ZCAWhitening
   double Epsilon() const { return pca.Epsilon(); }
 
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(pca);
+    ar(CEREAL_NVP(pca));
   }
 
  private:

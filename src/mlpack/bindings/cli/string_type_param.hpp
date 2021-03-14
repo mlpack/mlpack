@@ -1,5 +1,5 @@
 /**
- * @file string_type_param.hpp
+ * @file bindings/cli/string_type_param.hpp
  * @author Ryan Curtin
  *
  * Given a util::ParamData object, return a string containing the type of the input
@@ -48,7 +48,7 @@ std::string StringTypeParamImpl(
  * we don't have a primitive type.
  */
 template<typename T>
-void StringTypeParam(const util::ParamData& /* data */,
+void StringTypeParam(util::ParamData& /* data */,
                      const void* /* input */,
                      void* output)
 {
@@ -58,32 +58,32 @@ void StringTypeParam(const util::ParamData& /* data */,
 
 //! Return "int".
 template<>
-inline void StringTypeParam<int>(const util::ParamData& /* data */,
+inline void StringTypeParam<int>(util::ParamData& /* data */,
                                  const void* /* input */,
                                  void* output);
 
 //! Return "bool".
 template<>
-inline void StringTypeParam<bool>(const util::ParamData& /* data */,
+inline void StringTypeParam<bool>(util::ParamData& /* data */,
                                   const void* /* input */,
                                   void* output);
 
 //! Return "string".
 template<>
-inline void StringTypeParam<std::string>(const util::ParamData& /* data */,
+inline void StringTypeParam<std::string>(util::ParamData& /* data */,
                                          const void* /* input */,
                                          void* output);
 
 //! Return "double".
 template<>
-inline void StringTypeParam<double>(const util::ParamData& /* data */,
+inline void StringTypeParam<double>(util::ParamData& /* data */,
                                     const void* /* input */,
                                     void* output);
 
 //! Return "string";
 template<>
 inline void StringTypeParam<std::tuple<mlpack::data::DatasetInfo, arma::mat>>(
-    const util::ParamData& /* data */,
+    util::ParamData& /* data */,
     const void* /* input */,
     void* output);
 

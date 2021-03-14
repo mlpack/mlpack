@@ -1,6 +1,8 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  env_type.hpp
+  env_type.cpp
   mountain_car.hpp
   cart_pole.hpp
   continuous_mountain_car.hpp

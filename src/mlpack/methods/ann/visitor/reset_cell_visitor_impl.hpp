@@ -1,5 +1,5 @@
 /**
- * @file reset_cell_visitor_impl.hpp
+ * @file methods/ann/visitor/reset_cell_visitor_impl.hpp
  * @author Sumedh Ghaisas
  *
  * Implementation of the ResetCell() function layer abstraction.

@@ -1,5 +1,5 @@
 /**
- * @file traits.hpp
+ * @file core/tree/rectangle_tree/traits.hpp
  * @author Andrew Wells
  *
  * Specialization of the TreeTraits class for the RectangleTree type of tree.

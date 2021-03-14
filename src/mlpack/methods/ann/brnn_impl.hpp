@@ -1,5 +1,5 @@
 /**
- * @file brnn_impl.hpp
+ * @file methods/ann/brnn_impl.hpp
  * @author Saksham Bansal
  *
  * Definition of the BRNN class, which implements bidirectional recurrent
@@ -25,8 +25,6 @@
 #include "visitor/gradient_visitor.hpp"
 #include "visitor/weight_set_visitor.hpp"
 #include "visitor/run_set_visitor.hpp"
-
-#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -110,7 +108,7 @@ typename std::enable_if<
       ::value, void>::type
 BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::WarnMessageMaxIterations
-(OptimizerType& optimizer, size_t samples) const
+(OptimizerType& /* optimizer */, size_t /* samples */) const
 {
   return;
 }
@@ -721,11 +719,11 @@ template<typename OutputLayerType, typename MergeLayerType,
 template<typename Archive>
 void BRNN<OutputLayerType, MergeLayerType, MergeOutputType,
     InitializationRuleType, CustomLayers...>::serialize(
-    Archive& ar, const unsigned int version)
+    Archive& ar, const uint32_t version)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(backwardRNN);
-  ar & BOOST_SERIALIZATION_NVP(forwardRNN);
+  ar(CEREAL_NVP(parameter));
+  ar(CEREAL_NVP(backwardRNN));
+  ar(CEREAL_NVP(forwardRNN));
 
   // TODO: are there more parameters to be serialized?
 }

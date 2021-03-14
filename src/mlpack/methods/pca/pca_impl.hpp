@@ -1,5 +1,5 @@
 /**
- * @file pca_impl.hpp
+ * @file methods/pca/pca_impl.hpp
  * @author Ajinkya Kale
  * @author Ryan Curtin
  * @author Marcus Edel
@@ -72,6 +72,21 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
                                      arma::vec& eigVal)
 {
   arma::mat eigvec;
+  Apply(data, transformedData, eigVal, eigvec);
+}
+    
+/**
+ * Apply Principal Component Analysis to the provided data set.
+ *
+ * @param data - Data matrix.
+ * @param transformedData Data with PCA applied.
+ */
+template<typename DecompositionPolicy>
+void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
+                                     arma::mat& transformedData)
+{
+  arma::mat eigvec;
+  arma::vec eigVal;
   Apply(data, transformedData, eigVal, eigvec);
 }
 

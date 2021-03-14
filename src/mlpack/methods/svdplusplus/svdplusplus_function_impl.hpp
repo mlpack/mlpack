@@ -1,5 +1,5 @@
 /**
- * @file svdplusplus_function_impl.hpp
+ * @file methods/svdplusplus/svdplusplus_function_impl.hpp
  * @author Siddharth Agrawal
  * @author Wenhao Huang
  *
@@ -155,7 +155,7 @@ void SVDPlusPlusFunction<MatType>::Gradient(const arma::mat& parameters,
 
   gradient.zeros(rank + 1, numUsers + 2 * numItems);
 
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
     // Indices for accessing the the correct parameter columns.
     const size_t user = data(0, i);
@@ -305,7 +305,7 @@ double StandardSGD::Optimize(
   double overallObjective = 0;
 
   // Calculate the first objective function.
-  for (size_t i = 0; i < numFunctions; i++)
+  for (size_t i = 0; i < numFunctions; ++i)
     overallObjective += function.Evaluate(parameters, i);
 
   const arma::mat data = function.Dataset();
@@ -318,7 +318,7 @@ double StandardSGD::Optimize(
   const size_t rank = function.Rank();
 
   // Now iterate!
-  for (size_t i = 1; i != maxIterations; i++, currentFunction++)
+  for (size_t i = 1; i != maxIterations; ++i, currentFunction++)
   {
     // Is this iteration the start of a sequence?
     if ((currentFunction % numFunctions) == 0)

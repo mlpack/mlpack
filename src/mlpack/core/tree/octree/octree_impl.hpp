@@ -1,5 +1,5 @@
 /**
- * @file octree_impl.hpp
+ * @file core/tree/octree/octree_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of generalized octree (Octree).
@@ -141,7 +141,7 @@ Octree<MetricType, StatisticType, MatType>::Octree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(this->dataset->n_cols);
-  for (size_t i = 0; i < this->dataset->n_cols; i++)
+  for (size_t i = 0; i < this->dataset->n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 
@@ -267,7 +267,7 @@ Octree<MetricType, StatisticType, MatType>::Octree(
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(this->dataset->n_cols);
-  for (size_t i = 0; i < this->dataset->n_cols; i++)
+  for (size_t i = 0; i < this->dataset->n_cols; ++i)
     newFromOld[oldFromNew[i]] = i;
 }
 
@@ -485,11 +485,11 @@ template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
 Octree<MetricType, StatisticType, MatType>::Octree(
     Archive& ar,
-    const typename std::enable_if_t<Archive::is_loading::value>*) :
+    const typename std::enable_if_t<cereal::is_loading<Archive>()>*) :
     Octree() // Create an empty tree.
 {
   // De-serialize the tree into this object.
-  ar >> BOOST_SERIALIZATION_NVP(*this);
+  ar(CEREAL_NVP(*this));
 }
 
 template<typename MetricType, typename StatisticType, typename MatType>
@@ -710,10 +710,10 @@ template<typename MetricType, typename StatisticType, typename MatType>
 template<typename Archive>
 void Octree<MetricType, StatisticType, MatType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // If we're loading and we have children, they need to be deleted.
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < children.size(); ++i)
       delete children[i];
@@ -725,21 +725,48 @@ void Octree<MetricType, StatisticType, MatType>::serialize(
     parent = NULL;
   }
 
-  ar & BOOST_SERIALIZATION_NVP(begin);
-  ar & BOOST_SERIALIZATION_NVP(count);
-  ar & BOOST_SERIALIZATION_NVP(bound);
-  ar & BOOST_SERIALIZATION_NVP(stat);
-  ar & BOOST_SERIALIZATION_NVP(parentDistance);
-  ar & BOOST_SERIALIZATION_NVP(furthestDescendantDistance);
-  ar & BOOST_SERIALIZATION_NVP(metric);
-  ar & BOOST_SERIALIZATION_NVP(dataset);
+  bool hasParent = (parent != NULL);
 
-  ar & BOOST_SERIALIZATION_NVP(children);
+  ar(CEREAL_NVP(begin));
+  ar(CEREAL_NVP(count));
+  ar(CEREAL_NVP(bound));
+  ar(CEREAL_NVP(stat));
+  ar(CEREAL_NVP(parentDistance));
+  ar(CEREAL_NVP(furthestDescendantDistance));
+  ar(CEREAL_NVP(metric));
+  ar(CEREAL_NVP(hasParent));
+  if (!hasParent)
+  {
+    MatType*& datasetTemp = const_cast<MatType*&>(dataset);
+    ar(CEREAL_POINTER(datasetTemp));
+  }
 
-  if (Archive::is_loading::value)
+  ar(CEREAL_VECTOR_POINTER(children));
+
+  if (cereal::is_loading<Archive>())
   {
     for (size_t i = 0; i < children.size(); ++i)
       children[i]->parent = this;
+  }
+
+  // We have to correct the dataset pointers in all of the children.
+  if (!hasParent)
+  {
+    std::stack<Octree*> stack;
+    for (size_t i = 0; i < children.size(); ++i)
+    {
+      stack.push(children[i]);
+    }
+    while (!stack.empty())
+    {
+      Octree* node = stack.top();
+      stack.pop();
+      node->dataset = dataset;
+      for (size_t i = 0; i < node->children.size(); ++i)
+      {
+        stack.push(node->children[i]);
+      }
+    }
   }
 }
 

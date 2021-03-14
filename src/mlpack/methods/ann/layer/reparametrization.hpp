@@ -1,5 +1,5 @@
 /**
- * @file reparametrization.hpp
+ * @file methods/ann/layer/reparametrization.hpp
  * @author Atharva Khandait
  *
  * Definition of the Reparametrization layer class which samples from a gaussian
@@ -71,6 +71,18 @@ class Reparametrization
                     const bool stochastic = true,
                     const bool includeKl = true,
                     const double beta = 1);
+    
+  //! Copy Constructor.
+  Reparametrization(const Reparametrization& layer);
+    
+  //! Move Constructor.
+  Reparametrization(Reparametrization&& layer);
+    
+  //! Copy assignment operator.
+  Reparametrization& operator=(const Reparametrization& layer);
+    
+  //! Move assignment operator.
+  Reparametrization& operator=(Reparametrization&& layer);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -121,11 +133,25 @@ class Reparametrization
         - arma::pow(mean, 2) + 1) / mean.n_cols;
   }
 
+  //! Get the value of the stochastic parameter.
+  bool Stochastic() const { return stochastic; }
+
+  //! Get the value of the includeKl parameter.
+  bool IncludeKL() const { return includeKl; }
+
+  //! Get the value of the beta hyperparameter.
+  double Beta() const { return beta; }
+
+  size_t InputShape() const
+  {
+    return 2 * latentSize;
+  }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of output units.

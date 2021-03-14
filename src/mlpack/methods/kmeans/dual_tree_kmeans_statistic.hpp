@@ -1,5 +1,5 @@
 /**
- * @file dtnn_statistic.hpp
+ * @file methods/kmeans/dual_tree_kmeans_statistic.hpp
  * @author Ryan Curtin
  *
  * Statistic for dual-tree nearest neighbor search based k-means clustering.

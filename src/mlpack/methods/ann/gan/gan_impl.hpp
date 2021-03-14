@@ -1,5 +1,5 @@
 /**
- * @file gan_impl.hpp
+ * @file methods/ann/gan/gan_impl.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
  *
@@ -19,7 +19,6 @@
 #include <mlpack/methods/ann/init_rules/network_init.hpp>
 #include <mlpack/methods/ann/visitor/output_parameter_visitor.hpp>
 #include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
-#include <boost/serialization/variant.hpp>
 
 namespace mlpack {
 namespace ann /** Artifical Neural Network.  */ {
@@ -357,14 +356,20 @@ EvaluateWithGradient(const arma::mat& /* parameters */,
     // Pass the error from Discriminator to Generator.
     responses.cols(numFunctions, numFunctions + batchSize - 1) =
         arma::ones(1, batchSize);
-    discriminator.Gradient(discriminator.parameter, numFunctions,
-        noiseGradientDiscriminator, batchSize);
+
+    discriminator.outputLayer.Backward(
+        boost::apply_visitor(outputParameterVisitor,
+        discriminator.network.back()), discriminator.responses.cols(
+        numFunctions, numFunctions + batchSize - 1), discriminator.error);
+    discriminator.Backward();
+
     generator.error = boost::apply_visitor(deltaVisitor,
         discriminator.network[1]);
 
     generator.Predictors() = noise;
+    generator.Backward();
     generator.ResetGradients(gradientGenerator);
-    generator.Gradient(generator.parameter, 0, gradientGenerator, batchSize);
+    generator.Gradient(generator.Predictors().cols(0, batchSize - 1));
 
     gradientGenerator *= multiplier;
   }
@@ -481,16 +486,16 @@ template<
 >
 template<typename Archive>
 void GAN<Model, InitializationRuleType, Noise, PolicyType>::
-serialize(Archive& ar, const unsigned int /* version */)
+serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar & BOOST_SERIALIZATION_NVP(parameter);
-  ar & BOOST_SERIALIZATION_NVP(generator);
-  ar & BOOST_SERIALIZATION_NVP(discriminator);
-  ar & BOOST_SERIALIZATION_NVP(reset);
-  ar & BOOST_SERIALIZATION_NVP(genWeights);
-  ar & BOOST_SERIALIZATION_NVP(discWeights);
+  ar(CEREAL_NVP(parameter));
+  ar(CEREAL_NVP(generator));
+  ar(CEREAL_NVP(discriminator));
+  ar(CEREAL_NVP(reset));
+  ar(CEREAL_NVP(genWeights));
+  ar(CEREAL_NVP(discWeights));
 
-  if (Archive::is_loading::value)
+  if (cereal::is_loading<Archive>())
   {
     // Share the parameters between the network.
     generator.Parameters() = arma::mat(parameter.memptr(), genWeights, 1, false,

@@ -1,5 +1,5 @@
 /**
- * @file flexible_relu.hpp
+ * @file methods/ann/layer/flexible_relu.hpp
  * @author Aarush Gupta
  * @author Manthan-R-Sheth
  *
@@ -139,7 +139,7 @@ class FlexibleReLU
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version*/);
+  void serialize(Archive& ar, const uint32_t /* version*/);
 
  private:
   //! Locally-stored delta object.

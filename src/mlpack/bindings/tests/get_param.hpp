@@ -1,5 +1,5 @@
 /**
- * @file get_param.hpp
+ * @file bindings/tests/get_param.hpp
  * @author Ryan Curtin
  *
  * Use template metaprogramming to get the right type of parameter.
@@ -34,11 +34,11 @@ T& GetParam(util::ParamData& d)
  * here!
  *
  * @param d Parameter information.
- * @param input Unused parameter.
+ * @param * (input) Unused parameter.
  * @param output Place to store pointer to value.
  */
 template<typename T>
-void GetParam(const util::ParamData& d, const void* /* input */, void* output)
+void GetParam(util::ParamData& d, const void* /* input */, void* output)
 {
   // Cast to the correct type.
   *((T**) output) = &GetParam<T>(const_cast<util::ParamData&>(d));

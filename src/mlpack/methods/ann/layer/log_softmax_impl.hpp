@@ -1,5 +1,5 @@
 /**
- * @file log_softmax_impl.hpp
+ * @file methods/ann/layer/log_softmax_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the LogSoftmax class.
@@ -75,7 +75,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void LogSoftMax<InputDataType, OutputDataType>::serialize(
     Archive& /* ar */,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // Nothing to do here.
 }

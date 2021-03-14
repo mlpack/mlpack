@@ -1,5 +1,5 @@
 /**
- * @file traits.hpp
+ * @file core/tree/binary_space_tree/traits.hpp
  * @author Ryan Curtin
  *
  * Specialization of the TreeTraits class for the BinarySpaceTree type of tree.

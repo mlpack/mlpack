@@ -1,5 +1,5 @@
 /**
- * @file constant.hpp
+ * @file methods/ann/layer/constant.hpp
  * @author Marcus Edel
  *
  * Definition of the Constant class, which outputs a constant value given
@@ -57,8 +57,8 @@ class Constant
    * Ordinary feed backward pass of a neural network. The backward pass of the
    * constant layer is returns always a zero output error matrix.
    *
-   * @param input The propagated input activation.
-   * @param gy The backpropagated error.
+   * @param * (input) The propagated input activation.
+   * @param * (gy) The backpropagated error.
    * @param g The calculated gradient.
    */
   template<typename DataType>
@@ -76,11 +76,20 @@ class Constant
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get the output size.
+  size_t OutSize() const { return outSize; }
+
+  //! Get the size of the weights.
+  size_t WeightSize() const
+  {
+    return 0;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

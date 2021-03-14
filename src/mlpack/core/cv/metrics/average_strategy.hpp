@@ -1,5 +1,5 @@
 /**
- * @file average_strategy.hpp
+ * @file core/cv/metrics/average_strategy.hpp
  * @author Kirill Mishchenko
  *
  * Strategies for averaging.

@@ -1,5 +1,5 @@
 /**
- * @file kernel_traits.hpp
+ * @file core/kernels/kernel_traits.hpp
  * @author Ryan Curtin
  *
  * This provides the KernelTraits class, a template class to get information

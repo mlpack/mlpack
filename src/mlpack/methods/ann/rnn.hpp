@@ -1,5 +1,5 @@
 /**
- * @file rnn.hpp
+ * @file methods/ann/rnn.hpp
  * @author Marcus Edel
  *
  * Definition of the RNN class, which implements recurrent neural networks.
@@ -69,6 +69,18 @@ class RNN
       const bool single = false,
       OutputLayerType outputLayer = OutputLayerType(),
       InitializationRuleType initializeRule = InitializationRuleType());
+
+  //! Copy constructor.
+  RNN(const RNN&);
+
+  //! Move constructor.
+  RNN(RNN&&);
+
+  //! Copy assignment operator.
+  RNN& operator=(const RNN&);
+
+  //! Move assignment operator
+  RNN& operator=(RNN&&);
 
   //! Destructor to release allocated memory.
   ~RNN();
@@ -315,7 +327,7 @@ class RNN
 
   //! Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   // Helper functions.
@@ -412,6 +424,9 @@ class RNN
   //! Locally-stored weight size visitor.
   WeightSizeVisitor weightSizeVisitor;
 
+  //! Locally-stored copy visitor
+  CopyVisitor<CustomLayers...> copyVisitor;
+
   //! Locally-stored reset visitor.
   ResetVisitor resetVisitor;
 
@@ -437,23 +452,6 @@ class RNN
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the RNN class.  Multiple template arguments
-//! makes this ugly...
-namespace boost {
-namespace serialization {
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename... CustomLayer>
-struct version<
-    mlpack::ann::RNN<OutputLayerType, InitializationRuleType, CustomLayer...>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "rnn_impl.hpp"

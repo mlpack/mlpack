@@ -1,5 +1,5 @@
 /**
- * @file julia_option.hpp
+ * @file bindings/julia/julia_option.hpp
  * @author Ryan Curtin
  *
  * The Julia option type.
@@ -20,6 +20,7 @@
 #include "print_input_processing.hpp"
 #include "print_output_processing.hpp"
 #include "print_doc.hpp"
+#include "print_model_type_import.hpp"
 #include "default_param.hpp"
 
 namespace mlpack {
@@ -38,7 +39,7 @@ class JuliaOption
  public:
   /**
    * Construct a JuliaOption object.  When constructed, it will register itself
-   * with CLI. The testName parameter is not used and added for compatibility
+   * with IO. The testName parameter is not used and added for compatibility
    * reasons.
    */
   JuliaOption(const T defaultValue,
@@ -51,7 +52,7 @@ class JuliaOption
               const bool noTranspose = false,
               const std::string& /* testName */ = "")
   {
-    // Create the ParamData object to give to CLI.
+    // Create the ParamData object to give to IO.
     util::ParamData data;
 
     data.desc = description;
@@ -76,38 +77,40 @@ class JuliaOption
 
     // Restore the parameters for this program.
     if (identifier != "verbose")
-      CLI::RestoreSettings(programName, false);
+      IO::RestoreSettings(programName, false);
 
     // Set the function pointers that we'll need.  All of these function
     // pointers will be used by both the program that generates the pyx, and
     // also the binding itself.  (The binding itself will only use GetParam,
     // GetPrintableParam, and GetRawParam.)
-    CLI::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
+    IO::GetSingleton().functionMap[data.tname]["GetParam"] = &GetParam<T>;
+    IO::GetSingleton().functionMap[data.tname]["GetPrintableParam"] =
         &GetPrintableParam<T>;
 
     // These are used by the jl generator.
-    CLI::GetSingleton().functionMap[data.tname]["PrintParamDefn"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintParamDefn"] =
         &PrintParamDefn<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintInputParam"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintInputParam"] =
         &PrintInputParam<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintOutputProcessing"] =
         &PrintOutputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
+    IO::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
-    CLI::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
+    IO::GetSingleton().functionMap[data.tname]["PrintDoc"] = &PrintDoc<T>;
+    IO::GetSingleton().functionMap[data.tname]["PrintModelTypeImport"] =
+        &PrintModelTypeImport<T>;
 
     // This is needed for the Markdown binding output.
-    CLI::GetSingleton().functionMap[data.tname]["DefaultParam"] =
+    IO::GetSingleton().functionMap[data.tname]["DefaultParam"] =
         &DefaultParam<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
-    // import more than one .so that uses CLI, so we have to keep the options
+    // import more than one .so that uses IO, so we have to keep the options
     // separate.  programName is a global variable from mlpack_main.hpp.
-    CLI::Add(std::move(data));
+    IO::Add(std::move(data));
     if (identifier != "verbose")
-      CLI::StoreSettings(programName);
-    CLI::ClearSettings();
+      IO::StoreSettings(programName);
+    IO::ClearSettings();
   }
 };
 

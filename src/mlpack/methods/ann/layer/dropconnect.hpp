@@ -1,5 +1,5 @@
 /**
- * @file dropconnect.hpp
+ * @file methods/ann/layer/dropconnect.hpp
  * @author Palash Ahuja
  * @author Marcus Edel
  *
@@ -103,8 +103,8 @@ class DropConnect
    * Calculate the gradient using the output delta and the input activation.
    *
    * @param input The propagated input.
-   * @param d The calculated error.
-   * @param g The calculated gradient.
+   * @param error The calculated error.
+   * @param * (gradient) The calculated gradient.
    */
   template<typename eT>
   void Gradient(const arma::Mat<eT>& input,
@@ -115,9 +115,9 @@ class DropConnect
   std::vector<LayerTypes<> >& Model() { return network; }
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return parameters; }
+  OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return parameters; }
+  OutputDataType& Parameters() { return weights; }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -150,11 +150,14 @@ class DropConnect
     scale = 1.0 / (1.0 - ratio);
   }
 
+  //! Return the size of the weight matrix.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! The probability of setting a value to zero.
@@ -164,7 +167,7 @@ class DropConnect
   double scale;
 
   //! Locally-stored weight object.
-  OutputDataType parameters;
+  OutputDataType weights;
 
   //! Locally-stored delta object.
   OutputDataType delta;

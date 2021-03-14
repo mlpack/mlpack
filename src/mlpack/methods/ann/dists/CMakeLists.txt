@@ -3,6 +3,8 @@
 set(SOURCES
   bernoulli_distribution.hpp
   bernoulli_distribution_impl.hpp
+  normal_distribution.hpp
+  normal_distribution_impl.hpp
 )
 
 # Add directory name to sources.

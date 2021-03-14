@@ -1,5 +1,5 @@
 /**
- * @file svdplusplus_method.hpp
+ * @file methods/cf/decomposition_policies/svdplusplus_method.hpp
  * @author Wenhao Huang
  *
  * Implementation of the svdplusplus method for use in the Collaborative
@@ -46,7 +46,7 @@ class SVDPlusPlusPolicy
    *
    * @param maxIterations Number of iterations.
    * @param alpha Learning rate for optimization.
-   * @param Regularization parameter for optimization.
+   * @param lambda Regularization parameter for optimization.
    */
   SVDPlusPlusPolicy(const size_t maxIterations = 10,
                     const double alpha = 0.001,
@@ -62,13 +62,13 @@ class SVDPlusPlusPolicy
    * Apply Collaborative Filtering to the provided data set using the
    * svdplusplus.
    *
-   * @param data Data matrix: dense matrix (coordinate lists) 
+   * @param data Data matrix: dense matrix (coordinate lists)
    *    or sparse matrix(cleaned).
-   * @param cleanedData item user table in form of sparse matrix.
+   * @param * (cleanedData) item user table in form of sparse matrix.
    * @param rank Rank parameter for matrix factorization.
    * @param maxIterations Maximum number of iterations.
-   * @param minResidue Residue required to terminate.
-   * @param mit Whether to terminate only when maxIterations is reached.
+   * @param * (minResidue) Residue required to terminate.
+   * @param * (mit) Whether to terminate only when maxIterations is reached.
    */
   void Apply(const arma::mat& data,
              const arma::sp_mat& /* cleanedData */,
@@ -163,7 +163,7 @@ class SVDPlusPlusPolicy
     // Temporarily store feature vector of queried users.
     arma::mat query(h.n_rows, users.n_elem);
     // Select feature vectors of queried users.
-    for (size_t i = 0; i < users.n_elem; i++)
+    for (size_t i = 0; i < users.n_elem; ++i)
       query.col(i) = h.col(users(i));
 
     NeighborSearchPolicy neighborSearch(h);
@@ -203,17 +203,17 @@ class SVDPlusPlusPolicy
    * Serialization.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar & BOOST_SERIALIZATION_NVP(maxIterations);
-    ar & BOOST_SERIALIZATION_NVP(alpha);
-    ar & BOOST_SERIALIZATION_NVP(lambda);
-    ar & BOOST_SERIALIZATION_NVP(w);
-    ar & BOOST_SERIALIZATION_NVP(h);
-    ar & BOOST_SERIALIZATION_NVP(p);
-    ar & BOOST_SERIALIZATION_NVP(q);
-    ar & BOOST_SERIALIZATION_NVP(y);
-    ar & BOOST_SERIALIZATION_NVP(implicitData);
+    ar(CEREAL_NVP(maxIterations));
+    ar(CEREAL_NVP(alpha));
+    ar(CEREAL_NVP(lambda));
+    ar(CEREAL_NVP(w));
+    ar(CEREAL_NVP(h));
+    ar(CEREAL_NVP(p));
+    ar(CEREAL_NVP(q));
+    ar(CEREAL_NVP(y));
+    ar(CEREAL_NVP(implicitData));
   }
 
  private:

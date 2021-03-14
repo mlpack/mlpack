@@ -1,5 +1,5 @@
 /**
- * @file n_step_q_learning_worker.hpp
+ * @file methods/reinforcement_learning/worker/n_step_q_learning_worker.hpp
  * @author Shangtong Zhang
  *
  * This file is the definition of NStepQLearningWorker class,
@@ -303,7 +303,7 @@ class NStepQLearningWorker
         // Compute the training target for current state.
         arma::mat input = std::get<0>(transition).Encode();
         network.Forward(input, actionValue);
-        actionValue[std::get<1>(transition)] = target;
+        actionValue[std::get<1>(transition).action] = target;
 
         // Compute gradient.
         arma::mat gradients;

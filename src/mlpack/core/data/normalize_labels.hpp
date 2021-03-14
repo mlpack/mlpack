@@ -1,5 +1,5 @@
 /**
- * @file normalize_labels.hpp
+ * @file core/data/normalize_labels.hpp
  * @author Ryan Curtin
  *
  * Often labels are not given as {0, 1, 2, ...} but instead {1, 2, ...} or even

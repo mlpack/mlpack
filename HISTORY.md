@@ -1,5 +1,183 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Pixel Shuffle layer (#2563).
+
+  * Add "check_input_matrices" option to python bindings that checks
+    for NaN and inf values in all the input matrices (#2787).
+
+  * Add Adjusted R squared functionality to R2Score::Evaluate (#2624).
+
+  * Disabled all the bindings by default in CMake (#2782).
+
+  * Added an implementation to Stratify Data (#2671).
+
+  * Add `BUILD_DOCS` CMake option to control whether Doxygen documentation is
+    built (default ON) (#2730).
+
+  * Add Triplet Margin Loss function (#2762).
+
+  * Add finalizers to Julia binding model types to fix memory handling (#2756).
+
+  * HMM: add functions to calculate likelihood for data stream with/without
+    pre-calculated emission probability (#2142).
+
+  * Replace Boost serialization library with Cereal (#2458).
+
+  * Add `PYTHON_INSTALL_PREFIX` CMake option to specify installation root for
+    Python bindings (#2797).
+
+  * Removed `boost::visitor` from model classes for `knn`, `kfn`, `cf`,
+    `range_search`, `krann`, and `kde` bindings (#2803).
+
+  * Add k-means++ initialization strategy (#2813).
+
+  * `NegativeLogLikelihood<>` now expects classes in the range `0` to
+    `numClasses - 1` (#2534).
+
+  * Add `Lambda1()`, `Lambda2()`, `UseCholesky()`, and `Tolerance()` members to
+    `LARS` so parameters for training can be modified (#2861).
+
+### mlpack 3.4.2
+###### 2020-10-26
+  * Added Mean Absolute Percentage Error.
+
+  * Added Softmin activation function as layer in ann/layer.
+
+  * Fix spurious ARMA_64BIT_WORD compilation warnings on 32-bit systems (#2665).
+
+### mlpack 3.4.1
+###### 2020-09-07
+  * Fix incorrect parsing of required matrix/model parameters for command-line
+    bindings (#2600).
+
+  * Add manual type specification support to `data::Load()` and `data::Save()`
+    (#2084, #2135, #2602).
+
+  * Remove use of internal Armadillo functionality (#2596, #2601, #2602).
+
+### mlpack 3.4.0
+###### 2020-09-01
+  * Issue warnings when metrics produce NaNs in KFoldCV (#2595).
+
+  * Added bindings for _R_ during Google Summer of Code (#2556).
+
+  * Added common striptype function for all bindings (#2556).
+
+  * Refactored common utility function of bindings to bindings/util (#2556).
+
+  * Renamed InformationGain to HoeffdingInformationGain in
+    methods/hoeffding_trees/information_gain.hpp (#2556).
+
+  * Added macro for changing stream of printing and warnings/errors (#2556).
+
+  * Added Spatial Dropout layer (#2564).
+
+  * Force CMake to show error when it didn't find Python/modules (#2568).
+
+  * Refactor `ProgramInfo()` to separate out all the different
+    information (#2558).
+
+  * Add bindings for one-hot encoding (#2325).
+
+  * Added Soft Actor-Critic to RL methods (#2487).
+
+  * Added Categorical DQN to q_networks (#2454).
+
+  * Added N-step DQN to q_networks (#2461).
+
+  * Add Silhoutte Score metric and Pairwise Distances (#2406).
+
+  * Add Go bindings for some missed models (#2460).
+
+  * Replace boost program_options dependency with CLI11 (#2459).
+
+  * Additional functionality for the ARFF loader (#2486); use case sensitive
+    categories (#2516).
+
+  * Add `bayesian_linear_regression` binding for the command-line, Python,
+    Julia, and Go.  Also called "Bayesian Ridge", this is equivalent to a
+    version of linear regression where the regularization parameter is
+    automatically tuned (#2030).
+
+  * Fix defeatist search for spill tree traversals (#2566, #1269).
+
+  * Fix incremental training of logistic regression models (#2560).
+
+  * Change default configuration of `BUILD_PYTHON_BINDINGS` to `OFF` (#2575).
+
+### mlpack 3.3.2
+###### 2020-06-18
+  * Added Noisy DQN to q_networks (#2446).
+
+  * Add Go bindings (#1884).
+
+  * Added Dueling DQN to q_networks, Noisy linear layer to ann/layer
+    and Empty loss to ann/loss_functions (#2414).
+
+  * Storing and adding accessor method for action in q_learning (#2413).
+
+  * Added accessor methods for ANN layers (#2321).
+
+  * Addition of `Elliot` activation function (#2268).
+
+  * Add adaptive max pooling and adaptive mean pooling layers (#2195).
+
+  * Add parameter to avoid shuffling of data in preprocess_split (#2293).
+
+  * Add `MatType` parameter to `LSHSearch`, allowing sparse matrices to be used
+    for search (#2395).
+
+  * Documentation fixes to resolve Doxygen warnings and issues (#2400).
+
+  * Add Load and Save of Sparse Matrix (#2344).
+
+  * Add Intersection over Union (IoU) metric for bounding boxes (#2402).
+
+  * Add Non Maximal Supression (NMS) metric for bounding boxes (#2410).
+
+  * Fix `no_intercept` and probability computation for linear SVM bindings
+    (#2419).
+
+  * Fix incorrect neighbors for `k > 1` searches in `approx_kfn` binding, for
+    the `QDAFN` algorithm (#2448).
+
+  * Fix serialization of kernels with state for FastMKS (#2452).
+
+  * Add `RBF` layer in ann module to make `RBFN` architecture (#2261).
+
+### mlpack 3.3.1
+###### 2020-04-29
+  * Minor Julia and Python documentation fixes (#2373).
+
+  * Updated terminal state and fixed bugs for Pendulum environment (#2354,
+    #2369).
+
+  * Added `EliSH` activation function (#2323).
+
+  * Add L1 Loss function (#2203).
+
+  * Pass CMAKE_CXX_FLAGS (compilation options) correctly to Python build
+    (#2367).
+
+  * Expose ensmallen Callbacks for sparseautoencoder (#2198).
+
+  * Bugfix for LARS class causing invalid read (#2374).
+
+  * Add serialization support from Julia; use `mlpack.serialize()` and
+    `mlpack.deserialize()` to save and load from `IOBuffer`s.
+
+### mlpack 3.3.0
+###### 2020-04-07
+  * Added `Normal Distribution` to `ann/dists` (#2382).
+
+  * Templated return type of `Forward function` of loss functions (#2339).
+
+  * Added `R2 Score` regression metric (#2323).
+
+  * Added `poisson negative log likelihood` loss function (#2196).
+
+  * Added `huber` loss function (#2199).
+
   * Added `mean squared logarithmic error` loss function for neural networks
     (#2210).
 
@@ -34,6 +212,9 @@
 
   * CMake fix for finding STB include directory (#2145).
 
+  * Add bindings for loading and saving images (#2019); `mlpack_image_converter`
+    from the command-line, `mlpack.image_converter()` from Python.
+
   * Add normalization support for CF binding (#2136).
 
   * Add Mish activation function (#2158).
@@ -50,14 +231,16 @@
 
   * Add Valid and Same Padding for Transposed Convolution layer (#2163).
 
-  * Add Log-Hyperbolic-Cosine Loss function (#2207)
+  * Add CELU activation function (#2191)
+
+  * Add Log-Hyperbolic-Cosine Loss function (#2207).
 
   * Change neural network types to avoid unnecessary use of rvalue references
     (#2259).
 
   * Bump minimum Boost version to 1.58 (#2305).
 
-  * Refactor STB support so HAS_STB macro is not needed when compiling against
+  * Refactor STB support so `HAS_STB` macro is not needed when compiling against
     mlpack (#2312).
 
   * Add Hard Shrink Activation Function (#2186).
@@ -65,6 +248,13 @@
   * Add Soft Shrink Activation Function (#2174).
 
   * Add Hinge Embedding Loss Function (#2229).
+
+  * Add Cosine Embedding Loss Function (#2209).
+
+  * Add Margin Ranking Loss Function (#2264).
+
+  * Bugfix for incorrect parameter vector sizes in logistic regression and
+    softmax regression (#2359).
 
 ### mlpack 3.2.2
 ###### 2019-11-26

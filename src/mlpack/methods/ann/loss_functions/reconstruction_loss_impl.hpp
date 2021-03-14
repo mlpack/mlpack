@@ -1,5 +1,5 @@
 /**
- * @file reconstruction_loss_impl.hpp
+ * @file methods/ann/loss_functions/reconstruction_loss_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the reconstruction loss performance function.
@@ -29,30 +29,31 @@ ReconstructionLoss<
 }
 
 template<typename InputDataType, typename OutputDataType, typename DistType>
-template<typename InputType, typename TargetType>
-double ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
-    const InputType& input, const TargetType& target)
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
+ReconstructionLoss<InputDataType, OutputDataType, DistType>::Forward(
+    const PredictionType& prediction, const TargetType& target)
 {
-  dist = DistType(input);
+  dist = DistType(prediction);
   return -dist.LogProbability(target);
 }
 
 template<typename InputDataType, typename OutputDataType, typename DistType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void ReconstructionLoss<InputDataType, OutputDataType, DistType>::Backward(
-    const InputType& /* input */,
+    const PredictionType& /* prediction */,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  dist.LogProbBackward(target, output);
-  output *= -1;
+  dist.LogProbBackward(target, loss);
+  loss *= -1;
 }
 
 template<typename InputDataType, typename OutputDataType, typename DistType>
 template<typename Archive>
 void ReconstructionLoss<InputDataType, OutputDataType, DistType>::serialize(
     Archive& /* ar */,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   // Nothing to do here.
 }

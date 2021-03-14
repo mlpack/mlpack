@@ -1,5 +1,5 @@
 /**
- * @file data_dependent_random_initializer.hpp
+ * @file methods/sparse_coding/data_dependent_random_initializer.hpp
  * @author Nishant Mehta
  *
  * A sensible heuristic for initializing dictionaries for sparse coding.

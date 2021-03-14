@@ -1,5 +1,5 @@
 /**
- * @file cf.hpp
+ * @file methods/cf/cf.hpp
  * @author Mudit Raj Gupta
  * @author Sumedh Ghaisas
  *
@@ -91,7 +91,7 @@ class CFType
    *     arma::mat (table of (user, item, rating)) or arma::sp_mat (sparse
    *     rating matrix where row is item and column is user).
    *
-   * @param data Data matrix: dense matrix (coordinate lists) 
+   * @param data Data matrix: dense matrix (coordinate lists)
    *    or sparse matrix(cleaned).
    * @param decomposition Instantiated DecompositionPolicy object.
    * @param numUsersForSimilarity Size of the neighborhood.
@@ -260,7 +260,7 @@ class CFType
    * Serialize the CFType model to the given archive.
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Number of users for similarity.

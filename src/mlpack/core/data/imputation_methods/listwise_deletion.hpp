@@ -1,5 +1,5 @@
 /**
- * @file listwise_deletion.hpp
+ * @file core/data/imputation_methods/listwise_deletion.hpp
  * @author Keon Kim
  *
  * Definition and Implementation of the empty ListwiseDeletion class.

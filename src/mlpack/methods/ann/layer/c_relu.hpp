@@ -1,5 +1,5 @@
 /**
- * @file c_relu_impl.hpp
+ * @file methods/ann/layer/c_relu.hpp
  * @author Jeffin Sam
  *
  * Implementation of CReLU layer.
@@ -58,7 +58,7 @@ class CReLU
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
-   * Works only for 2D Tenosrs.
+   * Works only for 2D Tensors.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
@@ -88,11 +88,14 @@ class CReLU
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
 
+  //! Get size of weights.
+  size_t WeightSize() const { return 0; }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const unsigned int /* version */);
+  void serialize(Archive& /* ar */, const uint32_t /* version */);
 
  private:
   //! Locally-stored delta object.

@@ -1,5 +1,5 @@
 /**
- * @file output_height_visitor_impl.hpp
+ * @file methods/ann/visitor/output_height_visitor_impl.hpp
  * @author Marcus Edel
  *
  * Implementation of the OutputHeight() function layer abstraction.

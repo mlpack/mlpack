@@ -1,5 +1,5 @@
 /**
- * @file address.hpp
+ * @file core/tree/address.hpp
  * @author Mikhail Lozhnikov
  *
  * This file contains a series of functions for translating points to addresses
@@ -79,7 +79,7 @@ void PointToAddress(AddressType& address, const VecType& point)
   assert(point.n_elem == address.n_elem);
   assert(address.n_elem > 0);
 
-  for (size_t i = 0; i < point.n_elem; i++)
+  for (size_t i = 0; i < point.n_elem; ++i)
   {
     int e;
     VecElemType normalizedVal = std::frexp(point(i), &e);
@@ -128,8 +128,8 @@ void PointToAddress(AddressType& address, const VecType& point)
 
   // Interleave the bits of the new representation across all the elements
   // in the address vector.
-  for (size_t i = 0; i < order; i++)
-    for (size_t j = 0; j < point.n_elem; j++)
+  for (size_t i = 0; i < order; ++i)
+    for (size_t j = 0; j < point.n_elem; ++j)
     {
       size_t bit = (i * point.n_elem + j) % order;
       size_t row = (i * point.n_elem + j) / order;
@@ -176,8 +176,8 @@ void AddressToPoint(VecType& point, const AddressType& address)
   // Calculate the number of bits for the mantissa.
   const int numMantBits = order - numExpBits - 1;
 
-  for (size_t i = 0; i < order; i++)
-    for (size_t j = 0; j < address.n_elem; j++)
+  for (size_t i = 0; i < order; ++i)
+    for (size_t j = 0; j < address.n_elem; ++j)
     {
       size_t bit = (i * address.n_elem + j) % order;
       size_t row = (i * address.n_elem + j) / order;
@@ -186,7 +186,7 @@ void AddressToPoint(VecType& point, const AddressType& address)
           (order - 1 - i));
     }
 
-  for (size_t i = 0; i < rearrangedAddress.n_elem; i++)
+  for (size_t i = 0; i < rearrangedAddress.n_elem; ++i)
   {
     bool sgn = rearrangedAddress(i) & ((AddressElemType) 1 << (order - 1));
 
@@ -238,7 +238,7 @@ int CompareAddresses(const AddressType1& addr1, const AddressType2& addr2)
 
   assert(addr1.n_elem == addr2.n_elem);
 
-  for (size_t i = 0; i < addr1.n_elem; i++)
+  for (size_t i = 0; i < addr1.n_elem; ++i)
   {
     if (addr1[i] < addr2[i])
       return -1;

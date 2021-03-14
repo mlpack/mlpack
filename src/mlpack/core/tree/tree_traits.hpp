@@ -1,5 +1,5 @@
 /**
- * @file tree_traits.hpp
+ * @file core/tree/tree_traits.hpp
  * @author Ryan Curtin
  *
  * This file implements the basic, unspecialized TreeTraits class, which

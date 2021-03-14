@@ -1,5 +1,5 @@
 /**
- * @file copy.hpp
+ * @file methods/ann/augmented/tasks/copy.hpp
  * @author Konstantin Sidorov
  *
  * Definition of the CopyTask class, which implements a generator of
@@ -27,23 +27,23 @@ namespace tasks /* Task utilities for augmented */ {
  * The parameters are:
  * - maximum sequence length;
  * - number of sequence repetitions.
- * 
+ *
  * Input/output sequences are aligned to have the same length:
  * input sequence is padded with zeros from the right end,
  * output sequence is padded with zeros from the left end.
  * The sequences are formed of 2-dimensional vectors
  * of the format [sequence element, input flag],
  * where input flag = 0 iff first vector element is a sequence element.
- * 
+ *
  * Generated datasets are compliant with mlpack format -
  * every dataset element is shaped as a vector of
  * length (elem-length) * (input sequence length + target sequence length),
  * where elem-lemgth is 2 for input sequences and 1 for output sequences.
- * 
+ *
  * Example of generated dataset (sequence length = 3, repetition count = 2):
  * - Input sequence: [1,0,0,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1]
  * - Output sequences: [0,0,0,1,0,1,1,0,1]
- * 
+ *
  */
 class CopyTask
 {
@@ -66,6 +66,7 @@ class CopyTask
    * @param input The variable to store input sequences.
    * @param labels The variable to store output sequences.
    * @param batchSize The dataset size.
+   * @param fixedLength Set to true to denoted fixed length dataset.
    */
   void Generate(arma::field<arma::mat>& input,
                 arma::field<arma::mat>& labels,
@@ -75,7 +76,7 @@ class CopyTask
   /**
    * Generate dataset of a given size and store it in
    * arma::mat object.
-   * 
+   *
    * @param input The variable to store input sequences.
    * @param labels The variable to store output sequences.
    * @param batchSize The dataset size.

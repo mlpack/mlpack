@@ -1,5 +1,5 @@
 /**
- * @file linear.hpp
+ * @file methods/ann/layer/linear_no_bias.hpp
  * @author Marcus Edel
  *
  * Definition of the LinearNoBias class also known as fully-connected layer or
@@ -45,6 +45,7 @@ class LinearNoBias
    *
    * @param inSize The number of input units.
    * @param outSize The number of output units.
+   * @param regularizer The regularizer to use, optional.
    */
   LinearNoBias(const size_t inSize,
                const size_t outSize,
@@ -70,7 +71,7 @@ class LinearNoBias
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param input The propagated input activation.
+   * @param * (input) The propagated input activation.
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
@@ -122,11 +123,23 @@ class LinearNoBias
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const
+  {
+    return inSize * outSize;
+  }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer
    */
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   //! Locally-stored number of input units.

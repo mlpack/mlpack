@@ -1,5 +1,5 @@
 /**
- * @file reward_clipping.hpp
+ * @file methods/reinforcement_learning/environment/reward_clipping.hpp
  * @author Shashank Shekhar
  *
  * Reward clipping wrapper for RL environments.
