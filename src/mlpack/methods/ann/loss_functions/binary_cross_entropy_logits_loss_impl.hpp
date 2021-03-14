@@ -53,7 +53,7 @@ void BCELossWithLogits<InputDataType, OutputDataType>::Backward(
 
   ElemType sigmoid = 1 / (1 + arma::exp(-prediction));
 
-  loss = ((1. - target) / (1. - prediction + eps) - target / (prediction + eps)) % sigmoid % (1 - sigmoid);
+  loss = ((1. - target) / (1. - sigmoid + eps) - target / (sigmoid + eps)) % sigmoid % (1 - sigmoid);
   if (reduction)
     loss /= prediction.n_elem;
 }
