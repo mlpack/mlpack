@@ -21,7 +21,8 @@ using namespace arma;
 TEST_CASE("Radical_Test_Radical3D", "[RadicalTest]")
 {
   mat matX;
-  data::Load("data_3d_mixed.txt", matX);
+  if (!data::Load("data_3d_mixed.txt", matX))
+    FAIL("Cannot load dataset data_3d_mixed.txt");
 
   Radical rad(0.175, 5, 100, matX.n_rows - 1);
 
@@ -39,7 +40,8 @@ TEST_CASE("Radical_Test_Radical3D", "[RadicalTest]")
   }
 
   mat matS;
-  data::Load("data_3d_ind.txt", matS);
+  if (!data::Load("data_3d_ind.txt", matS))
+    FAIL("Cannot load dataset data_3d_ind.txt");
   rad.DoRadical(matS, matY, matW);
 
   matYT = trans(matY);

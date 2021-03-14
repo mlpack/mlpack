@@ -267,3 +267,32 @@ void IO::ClearSettings()
   GetSingleton().aliases = persistentAliases;
   GetSingleton().functionMap = persistentFunctions;
 }
+
+void IO::CheckInputMatrices()
+{
+  typedef typename std::tuple<data::DatasetInfo, arma::mat> TupleType;
+  std::map<std::string, util::ParamData>::iterator itr;
+
+  for (itr = IO::Parameters().begin(); itr != IO::Parameters().end(); ++itr)
+  {
+    std::string paramName = itr->first;
+    std::string paramType = itr->second.cppType;
+    if (paramType == "arma::mat")
+    {
+      IO::CheckInputMatrix(IO::GetParam<arma::mat>(paramName), paramName);
+    }
+    else if (paramType == "arma::vec")
+    {
+      IO::CheckInputMatrix(IO::GetParam<arma::vec>(paramName), paramName);
+    }
+    else if (paramType == "arma::rowvec")
+    {
+      IO::CheckInputMatrix(IO::GetParam<arma::rowvec>(paramName), paramName);
+    }
+    else if (paramType == "std::tuple<mlpack::data::DatasetInfo, arma::mat>")
+    {
+      IO::CheckInputMatrix(
+          std::get<1>(IO::GetParam<TupleType>(paramName)), paramName);
+    }
+  }
+}

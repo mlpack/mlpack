@@ -193,7 +193,7 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
 
     // Normalize the new initial probabilities.
     if (dataSeq.size() > 1)
-      logInitial = newLogInitial - log(dataSeq.size());
+      logInitial = newLogInitial - std::log(dataSeq.size());
     else
       logInitial = newLogInitial;
 

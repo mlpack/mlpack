@@ -224,6 +224,16 @@ void PrintPYX(const util::BindingDetails& doc,
     cout << "  IO.SetPassed(<const string> '" << d.name << "')" << endl;
   }
 
+  // Checking the type of check_input_matrices parameter.
+  cout << "  if not isinstance(check_input_matrices, bool):" << endl;
+  cout << "    raise TypeError(" <<"\"'check_input_matrices\' must have type "
+      << "\'bool'!\")" << endl;
+  cout << endl;
+
+  // Before calling mlpackMain(), we check input matrices for NaN values if needed.
+  cout << "  if check_input_matrices:" << endl;
+  cout << "    IO.CheckInputMatrices()" << endl;
+
   // Call the method.
   cout << "  # Call the mlpack program." << endl;
   cout << "  mlpackMain()" << endl;

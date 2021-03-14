@@ -15,7 +15,6 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 
 <p align="center">
   <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/build.svg?jobUrl=http%3A%2F%2Fci.mlpack.org%2Fjob%2Fmlpack%2520-%2520git%2520commit%2520test%2F&label=Linux%20build&style=flat-square" alt="Jenkins"></a>
-  <a href="https://coveralls.io/github/mlpack/mlpack?branch=master"><img src="https://img.shields.io/coveralls/mlpack/mlpack/master.svg?style=flat-square" alt="Coveralls"></a>
   <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
   <a href="http://numfocus.org/donate-to-mlpack"><img src="https://img.shields.io/badge/sponsored%20by-NumFOCUS-orange.svg?style=flat-square&colorA=E1523D&colorB=007D8A" alt="NumFOCUS"></a>
 </p>
@@ -203,6 +202,7 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_CLI_EXECUTABLES=(ON/OFF): whether or not to build command-line programs
     BUILD_PYTHON_BINDINGS=(ON/OFF): whether or not to build Python bindings
     PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
+    PYTHON_INSTALL_PREFIX=(/path/to/python/): Path to root of Python installation
     BUILD_JULIA_BINDINGS=(ON/OFF): whether or not to build Julia bindings
     JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable
     BUILD_GO_BINDINGS=(ON/OFF): whether or not to build Go bindings
