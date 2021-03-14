@@ -49,7 +49,6 @@ void BCELossWithLogits<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     LossType& loss)
 {
-  typedef typename PredictionType::elem_type ElemType;
 
   ElemType sigmoid = 1 / (1 + arma::exp(-prediction));
 
