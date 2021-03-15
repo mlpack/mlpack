@@ -14,8 +14,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
-
-#include "rvm_regression.hpp"
+#include "rvm_regression_model.hpp"
 
 using namespace arma;
 using namespace std;
@@ -120,29 +119,6 @@ BINDING_EXAMPLE(
 
 // See also...
 
-// When we save a model, we must also save the class mappings.  So we use this
-// auxiliary structure to store both the rvm and the mapping, and we'll
-// save this.
-class RVMRegressionModel
-{
- private:
-  RVMRegression<> r;
-  Col<size_t> map;
-
- public:
-  RVMRegression<>& R() { return r; }
-  const RVMRegression<>& R() const { return r; }
-
-  Col<size_t>& Map() { return map; }
-  const Col<size_t>& Map() const { return map; }
-
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(r));
-    ar(CEREAL_NVP(map));
-  }
-};
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_ROW_IN("responses", "Matrix of responses/observations (y).", "r");
@@ -169,13 +145,12 @@ PARAM_DOUBLE_IN("degree", "Degree of polynomial, for 'polynomial' kernel.", "D",
     1.0);
 
 // Run RVMRegression on the specified dataset for the given kernel type.
-template<typename KernelType>
-void RunRVM(const mat& matX,
+
+void RunRVM(const std::string kernelType,
+	    const mat& matX,
 	    const rowvec& responses,
-	    const KernelType& kernel,
 	    const bool center,
-	    const bool scale,
-	    const bool ard)
+	    const bool scale)
 
 {
   RVMRegressionModel* estimator;
@@ -187,10 +162,10 @@ void RunRVM(const mat& matX,
   else 
   {
     // Create and train the RVM.
-    estimator = new RVMRegressionModel();
-    estimator->R().Train(matX, responses);
+    estimator = new RVMRegressionModel(kernelType, center, scale, true);// Refaire de l'ordre dans les paramètres.
+    estimator->Train(matX, responses);
 
-    std::cout << "RMSE " << estimator->R().RMSE(matX, responses) << std::endl;
+    std::cout << "Training done " << std::endl;
   }
   
   if (IO::HasParam("test"))
@@ -203,7 +178,7 @@ void RunRVM(const mat& matX,
     if (IO::HasParam("stds"))
     {
       rowvec std;
-      estimator->R().Predict(testPoints, predictions, std);
+      estimator->Predict(testPoints, predictions, std);
 
       // Save the standard deviation of the test points (one per line).
       IO::GetParam<mat>("stds") = std::move(std);
@@ -211,7 +186,7 @@ void RunRVM(const mat& matX,
 
     else
     {
-      estimator->R().Predict(testPoints, predictions);
+      estimator->Predict(testPoints, predictions);
     }
 
     // Save test predictions (one per line).
@@ -250,6 +225,7 @@ static void mlpackMain()
 
   // If kernel is passed, ensure it is valid.
   string kernelType;
+  bool ard;
   if (IO::HasParam("kernel"))
   {
     // Get the kernel type and make sure it is valid.
@@ -257,36 +233,15 @@ static void mlpackMain()
         "hyptan", "laplacian", "epanechnikov", "cosine" }, true,
         "unknown kernel type");
     kernelType = IO::GetParam<string>("kernel");
+    ard = false;
   }
 
   else
   {
-    kernelType = "ard";
+    kernelType = "linear";
+    ard = true;
   }
 
-  // Instanciation of the estimator according to the kernel specifications.
-  if (kernelType == "linear")
-  {    
-      LinearKernel kernel;
-      RunRVM<LinearKernel>(matX, responses, kernel, center, scale, false);
-  }
-
-  else if (kernelType == "gaussian")
-  {
-    const double bandwidth = IO::GetParam<double>("bandwidth");
-    GaussianKernel kernel(bandwidth);
-    RunRVM<GaussianKernel>(matX, responses, kernel, center, scale, false);
-  }
-
-  else if (kernelType == "ard")
-  {
-    LinearKernel kernel;
-    RunRVM<LinearKernel>(matX, responses, kernel, center, scale, true);
-  }
-
-  else
-  {
-    std::cout << "Default case, FIX ME" << std::endl;
-  }
+  RunRVM(kernelType, matX, responses, center, scale);
 }
 
