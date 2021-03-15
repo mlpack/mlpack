@@ -4150,12 +4150,18 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   module1.InputWidth() = 4;
   module1.Forward(input, output);
   // Calculated using torch.nn.AdaptiveAvgPool2d().
+  //  [[3.0000, 5.5000],
+  //  [4.0000, 7.2500]]
   REQUIRE(arma::accu(output) == 19.75);
   REQUIRE(output.n_elem == 4);
   REQUIRE(output.n_cols == 1);
+
   // Test the Backward Function.
+  //  [0.7500, 0.7500, 1.3750, 1.3750],
+  //  [1.7500, 1.7500, 3.1875, 3.1875],
+  //  [1.0000, 1.0000, 1.8125, 1.8125]
   module1.Backward(input, output, delta);
-  REQUIRE(arma::accu(delta) == 7.0);
+  REQUIRE(arma::accu(delta) == 19.75);
 
   // For Square input.
   input = arma::mat(9, 1);
@@ -4177,7 +4183,10 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module2.Backward(input, output, delta);
-  REQUIRE(arma::accu(delta) == 0.0);
+  //  [0.5833, 0.5833, 0.5833],
+  //  [0.7500, 0.7500, 0.7500],
+  //  [0.1667, 0.1667, 0.1667]
+  REQUIRE(arma::accu(delta) == 4.5);
 
   // For Square input.
   input = arma::mat(16, 1);
@@ -4198,6 +4207,11 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   REQUIRE(output.n_elem == 9);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
+  //  [0.7500, 1.5000, 1.3125, 0.5625],
+  //  [1.0000, 1.7500, 1.3125, 0.5625],
+  //  [0.2500, 0.2500, 0.0000, 0.0000],
+  //  [0.4375, 0.4375, 0.0000, 0.0000],
+  //  [0.1875, 0.1875, 0.0000, 0.0000]
   module3.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 10.5);
 
@@ -4218,8 +4232,12 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   REQUIRE(output.n_elem == 9);
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
+  //  [0.3750, 0.3750, 0.0000, 0.0000, 0.1875, 0.1875],
+  //  [0.3750, 0.3750, 0.0000, 0.0000, 0.1875, 0.1875],
+  //  [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
+  //  [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
   module4.Backward(input, output, delta);
-  REQUIRE(arma::accu(delta) == 1.5);
+  REQUIRE(arma::accu(delta) == 2.25);
 }
 
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
