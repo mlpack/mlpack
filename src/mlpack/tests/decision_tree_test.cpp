@@ -718,8 +718,8 @@ TEST_CASE("SimpleGeneralizationFMatTest", "[DecisionTreeTest]")
   arma::rowvec weights(labels.n_cols, arma::fill::ones);
 
   // Build decision tree.
-  DecisionTree<> d(inputData, labels, 3, 10); // Leaf size of 10.
-  DecisionTree<> wd(inputData, labels, 3, weights, 10); // Leaf size of 10.
+  DecisionTree<> d(inputData, labels, 3, 10 /* Leaf size of 10. */);
+  DecisionTree<> wd(inputData, labels, 3, weights, 10 /* Leaf size of 10. */);
 
   // Load testing data.
   arma::mat testData;
