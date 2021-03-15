@@ -21,7 +21,7 @@
 #include <mlpack/methods/ann/loss_functions/earth_mover_distance.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/loss_functions/sigmoid_cross_entropy_error.hpp>
-#include <mlpack/methods/ann/loss_functions/cross_entropy_error.hpp>
+#include <mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/reconstruction_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_logarithmic_error.hpp>
@@ -34,6 +34,7 @@
 #include <mlpack/methods/ann/loss_functions/soft_margin_loss.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_absolute_percentage_error.hpp>
 #include <mlpack/methods/ann/loss_functions/triplet_margin_loss.hpp>
+#include <mlpack/methods/ann/loss_functions/hinge_loss.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 
@@ -268,27 +269,36 @@ TEST_CASE("SimpleMeanSquaredErrorTest", "[LossFunctionsTest]")
 }
 
 /*
- * Simple test for the cross-entropy error performance function.
+ * Simple test for the binary-cross-entropy lossfunction.
  */
-TEST_CASE("SimpleCrossEntropyErrorTest", "[LossFunctionsTest]")
+TEST_CASE("SimpleBinaryCrossEntropyLossTest", "[LossFunctionsTest]")
 {
-  arma::mat input1, input2, output, target1, target2;
-  CrossEntropyError<> module(1e-6);
-
+  arma::mat input1, input2, input3, output, target1, target2, target3;
+  BCELoss<> module1(1e-6, false);
+  BCELoss<> module2(1e-6, true);
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
   target1 = arma::zeros(1, 8);
-  double error1 = module.Forward(input1, target1);
+  double error1 = module1.Forward(input1, target1);
   REQUIRE(error1 - 8 * std::log(2) == Approx(0.0).margin(2e-5));
+
+  input2 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5");
+  target2 = arma::zeros(1, 6);
+  input2.reshape(2, 3);
+  target2.reshape(2, 3);
+  double error2 = module2.Forward(input2, target2);
+  REQUIRE(error2 - std::log(2) == Approx(0.0).margin(2e-5));
 
   input2 = arma::mat("0 1 1 0 1 0 0 1");
   target2 = arma::mat("0 1 1 0 1 0 0 1");
-  double error2 = module.Forward(input2, target2);
-  REQUIRE(error2 == Approx(0.0).margin(1e-5));
+  double error3 = module1.Forward(input2, target2);
+  REQUIRE(error3 == Approx(0.0).margin(1e-5));
+  double error4 = module2.Forward(input2, target2);
+  REQUIRE(error4 == Approx(0.0).margin(1e-5));
 
   // Test the Backward function.
-  module.Backward(input1, target1, output);
+  module1.Backward(input1, target1, output);
   for (double el : output)
   {
     // For the 0.5 constant vector we should get 1 / (1 - 0.5) = 2 everywhere.
@@ -297,7 +307,7 @@ TEST_CASE("SimpleCrossEntropyErrorTest", "[LossFunctionsTest]")
   REQUIRE(output.n_rows == input1.n_rows);
   REQUIRE(output.n_cols == input1.n_cols);
 
-  module.Backward(input2, target2, output);
+  module1.Backward(input2, target2, output);
   for (size_t i = 0; i < 8; ++i)
   {
     double el = output.at(0, i);
@@ -945,4 +955,81 @@ TEST_CASE("TripletMarginLossTest")
   // Test whether the output is negative.
   REQUIRE(arma::accu(output) == -12);
   REQUIRE(output.n_elem == 1);
+}
+
+/**
+ * Simple test for the Hinge loss function.
+ */
+TEST_CASE("HingeLossTest", "[LossFunctionsTest]")
+{
+  arma::mat input, target, target_b, output;
+  double loss, loss_b;
+  HingeLoss<> module1;
+  HingeLoss<> module2(false);
+
+  // Test the Forward function. Loss should be 0 if input = target.
+  input = arma::ones(10, 1);
+  target = arma::ones(10, 1);
+  loss = module1.Forward(input, target);
+  REQUIRE(loss == 0);
+
+  // Test the Backward function for input = target.
+  module1.Backward(input, target, output);
+  for (double el : output)
+  {
+    // For input = target we should get 0.0 everywhere.
+    REQUIRE(el == Approx(0.0).epsilon(1e-5));
+  }
+
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+
+  // Randomly generated input.
+  input = { { 0.90599973, -0.33040298, 0.07123354},
+            { 0.71988434, 0.49657596, 0.39873373},
+            { -0.57646927, 0.3951491 , -0.1003365},
+            { 0.12528634, 0.68122971, 0.85448826} };
+
+  // Randomly generated target.
+  target = { { -1, -1, 1},
+             { -1, 1, 1},
+             { 1, -1, -1},
+             { 1, -1, -1} };
+
+  // Binary target can be obtained by replacing -1 with 0 in target.
+  target_b = { { 0, 0, 1},
+               { 0, 1, 1},
+               { 1, 0, 0},
+               { 1, 0, 0} };
+
+  // Test for binary labels as target.
+  loss = module1.Forward(input, target);
+  loss_b = module1.Forward(input, target_b);
+
+  // Loss should be same due to internal conversion of binary labels.
+  REQUIRE(loss == loss_b);
+
+  // Test for sum reduction.
+  // Test the Forward function.
+  // Loss calculated by referring to implementation of tf.keras.losses.hinge.
+  loss = module1.Forward(input, target);
+  REQUIRE(loss == Approx(14.61065).epsilon(1e-3));
+
+  // Test the Backward function
+  module1.Backward(input, target, output);
+  REQUIRE(arma::accu(output) == Approx(-5).epsilon(1e-3));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
+
+  // Test for mean reduction.
+  // Test for the Forward function.
+  // Loss calculated by referring to implementation of tf.keras.losses.hinge.
+  loss = module2.Forward(input, target);
+  REQUIRE(loss == Approx(1.21755).epsilon(1e-3));
+
+  // Test the Backward function.
+  module2.Backward(input, target, output);
+  REQUIRE(arma::accu(output) == Approx(-0.41667).epsilon(1e-3));
+  REQUIRE(output.n_rows == input.n_rows);
+  REQUIRE(output.n_cols == input.n_cols);
 }

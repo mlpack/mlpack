@@ -120,8 +120,7 @@ Convolution<
   weights.set_size(WeightSize(), 1);
 
   // Transform paddingType to lowercase.
-  std::string paddingTypeLow = paddingType;
-  util::ToLower(paddingType, paddingTypeLow);
+  const std::string paddingTypeLow = util::ToLower(paddingType);
 
   if (paddingTypeLow == "valid")
   {

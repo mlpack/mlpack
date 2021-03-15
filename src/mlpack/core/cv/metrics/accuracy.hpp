@@ -13,6 +13,7 @@
 #define MLPACK_CORE_CV_METRICS_ACCURACY_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace cv {

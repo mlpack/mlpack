@@ -38,10 +38,12 @@
 #include <mlpack/methods/ann/layer/multiply_constant.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
+#include <mlpack/methods/ann/layer/lp_pooling.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
+#include <mlpack/methods/ann/layer/pixel_shuffle.hpp>
 #include <mlpack/methods/ann/layer/positional_encoding.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
@@ -52,6 +54,7 @@
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 #include <mlpack/methods/ann/layer/hardshrink.hpp>
 #include <mlpack/methods/ann/layer/celu.hpp>
+#include <mlpack/methods/ann/layer/isrlu.hpp>
 #include <mlpack/methods/ann/layer/softshrink.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 
@@ -219,6 +222,8 @@ class AdaptiveMeanPooling;
 
 using MoreTypes = boost::variant<
         Linear3D<arma::mat, arma::mat, NoRegularizer>*,
+        LpPooling<arma::mat, arma::mat>*,
+        PixelShuffle<arma::mat, arma::mat>*,
         Glimpse<arma::mat, arma::mat>*,
         Highway<arma::mat, arma::mat>*,
         MultiheadAttention<arma::mat, arma::mat, NoRegularizer>*,
@@ -234,7 +239,8 @@ using MoreTypes = boost::variant<
         VirtualBatchNorm<arma::mat, arma::mat>*,
         RBF<arma::mat, arma::mat, GaussianFunction>*,
         BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
-        PositionalEncoding<arma::mat, arma::mat>*
+        PositionalEncoding<arma::mat, arma::mat>*,
+        ISRLU<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
