@@ -26,9 +26,11 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
-GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
+GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::GAN(
     Model generator,
     Model discriminator,
     InitializationRuleType& initializeRule,
@@ -68,9 +70,11 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
-GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
+GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::GAN(
     const GAN& network):
     predictors(network.predictors),
     responses(network.responses),
@@ -101,9 +105,11 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
-GAN<Model, InitializationRuleType, Noise, PolicyType>::GAN(
+GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::GAN(
     GAN&& network):
     predictors(std::move(network.predictors)),
     responses(std::move(network.responses)),
@@ -134,17 +140,19 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
-void GAN<Model, InitializationRuleType, Noise, PolicyType>::ResetData(
-    arma::mat trainData)
+void GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::ResetData(
+    InputType trainData)
 {
   currentBatch = 0;
 
   numFunctions = trainData.n_cols;
   noise.set_size(noiseDim, batchSize);
 
-  deterministic = true;
+  deterministic = false;
   ResetDeterministic();
 
   /**
@@ -176,9 +184,11 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
-void GAN<Model, InitializationRuleType, Noise, PolicyType>::Reset()
+void GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::Reset()
 {
   genWeights = 0;
   discWeights = 0;
@@ -214,15 +224,17 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
 template<typename OptimizerType, typename... CallbackTypes>
-double GAN<Model, InitializationRuleType, Noise, PolicyType>::Train(
-    arma::mat trainData,
+double GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::Train(
+    InputType predictors,
     OptimizerType& Optimizer,
     CallbackTypes&&... callbacks)
 {
-  ResetData(std::move(trainData));
+  ResetData(std::move(predictors));
 
   return Optimizer.Optimize(*this, parameter, callbacks...);
 }
@@ -231,13 +243,138 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
+  >
+template<typename Policy,
+         typename DiscOptimizerType,
+         typename GenOptimizerType,
+         typename... CallbackTypes>
+typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
+                        std::is_same<Policy, DCGAN>::value, double>::type
+GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::Train(
+    InputType predictors,
+    DiscOptimizerType& discriminatorOptimizer,
+    GenOptimizerType& generatorOptimizer,
+    CallbackTypes&&... callbacks)
+{
+  ResetData(std::move(predictors));
+  const size_t maxIterations = discriminatorOptimizer.MaxIterations();
+
+  // We pass two batches during training hence maxIterations is doubled.
+  discriminatorOptimizer.MaxIterations() =
+      discriminatorOptimizer.MaxIterations() * 2;
+
+  //TODO : find a way to sync shuffle between disc and gen
+  // Avoid shuffling of predictors during training.
+  discriminatorOptimizer.Shuffle() = false;
+  generatorOptimizer.Shuffle() = false;
+
+  // Predictors and responses for generator and discriminator network.
+  InputType discriminatorPredictors;
+  OutputType discriminatorResponses;
+
+  double ObjValue = 0;
+
+  //const size_t actualMaxIterations = (maxIterations == 0) ?
+    //  std::numeric_limits<size_t>::max() : maxIterations;
+  for (size_t i = 0; i < maxIterations; i++)
+  {
+    // Is this iteration the start of a sequence?
+    if (currentBatch % numFunctions == 0 && i > 0)
+    {
+      currentBatch = 0;
+    }
+
+    // Find the effective batch size; we have to take the minimum of three
+    // things:
+    // - the batch size can't be larger than the user-specified batch size;
+    // - the batch size can't be larger than the number of functions left.
+    const size_t effectiveBatchSize = std::min(batchSize, numFunctions -
+        currentBatch);
+
+    // Training data for dicriminator.
+    if (effectiveBatchSize != batchSize)
+    {
+      noise.set_size(noiseDim, effectiveBatchSize);
+      discriminatorOptimizer.BatchSize() = effectiveBatchSize;
+      discriminatorOptimizer.MaxIterations() = effectiveBatchSize * 2;
+    }
+    noise.imbue( [&]() { return noiseFunction();} );
+    InputType fakeImages;
+    generator.Forward(noise, fakeImages);
+
+    discriminatorPredictors = arma::join_rows(
+         predictors.cols(currentBatch,  currentBatch + effectiveBatchSize -
+        1), fakeImages);
+
+    discriminatorResponses = arma::join_rows(arma::ones(1, effectiveBatchSize),
+        arma::zeros(1, effectiveBatchSize));
+
+    // Train the discriminator.
+    ObjValue+= discriminator.Train(discriminatorPredictors, discriminatorResponses,
+        discriminatorOptimizer, callbacks...);
+
+    if (effectiveBatchSize != batchSize)
+    {
+      noise.set_size(noiseDim, batchSize);
+      discriminatorOptimizer.BatchSize() = batchSize;
+      discriminatorOptimizer.MaxIterations() = batchSize * 2;
+    }
+
+    if (preTrainSize == 0)
+    {
+      // Calculate error for generator network.
+      discriminatorResponses = arma::ones(1, batchSize);
+
+      noise.imbue( [&]() { return noiseFunction();} );
+      generator.Forward(std::move(noise));
+
+      discriminator.Forward(std::move(boost::apply_visitor(
+          outputParameterVisitor, generator.network.back())));
+
+      discriminator.outputLayer.Backward(
+          std::move(boost::apply_visitor(outputParameterVisitor,
+          discriminator.network.back())), std::move(discriminatorResponses),
+          discriminator.error);
+      discriminator.Backward();
+
+      generator.error = boost::apply_visitor(deltaVisitor,
+          discriminator.network[1]);
+
+      // Train the generator network.
+      ObjValue+= generator.Train(noise, generatorOptimizer, callbacks...);
+    }
+
+    if (preTrainSize > 0)
+    {
+      preTrainSize--;
+    }
+
+    currentBatch += effectiveBatchSize;
+  }
+
+  // Changing maxIterations back to normal.
+  discriminatorOptimizer.MaxIterations() =
+      discriminatorOptimizer.MaxIterations() / 2;
+  return ObjValue;
+}
+
+
+template<
+  typename Model,
+  typename InitializationRuleType,
+  typename Noise,
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
                         std::is_same<Policy, DCGAN>::value, double>::type
-GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
-    const arma::mat& /* parameters */,
+GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::Evaluate(
+    const InputType& /* parameters */,
     const size_t i,
     const size_t /* batchSize */)
 {
@@ -286,13 +423,15 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
 template<typename GradType, typename Policy>
 typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
                         std::is_same<Policy, DCGAN>::value, double>::type
-GAN<Model, InitializationRuleType, Noise, PolicyType>::
-EvaluateWithGradient(const arma::mat& /* parameters */,
+GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::
+EvaluateWithGradient(const InputType& /* parameters */,
                      const size_t i,
                      GradType& gradient,
                      const size_t /* batchSize */)
@@ -389,15 +528,17 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
 template<typename Policy>
 typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
                         std::is_same<Policy, DCGAN>::value, void>::type
-GAN<Model, InitializationRuleType, Noise, PolicyType>::
-Gradient(const arma::mat& parameters,
+GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::
+Gradient(const InputType& parameters,
          const size_t i,
-         arma::mat& gradient,
+         OutputType& gradient,
          const size_t batchSize)
 {
   this->EvaluateWithGradient(parameters, i, gradient, batchSize);
@@ -407,9 +548,11 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
-void GAN<Model, InitializationRuleType, Noise, PolicyType>::Shuffle()
+void GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::Shuffle()
 {
   const arma::uvec ordering = arma::shuffle(arma::linspace<arma::uvec>(0,
       numFunctions - 1, numFunctions));
@@ -420,10 +563,12 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
-void GAN<Model, InitializationRuleType, Noise, PolicyType>::Forward(
-    const arma::mat& input)
+void GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::Forward(
+    const InputType& input)
 {
   if (parameter.is_empty())
   {
@@ -441,10 +586,12 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
-void GAN<Model, InitializationRuleType, Noise, PolicyType>::
-Predict(arma::mat input, arma::mat& output)
+void GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::
+Predict(InputType& input, OutputType& output)
 {
   if (parameter.is_empty())
   {
@@ -467,9 +614,11 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
-void GAN<Model, InitializationRuleType, Noise, PolicyType>::
+void GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::
 ResetDeterministic()
 {
   this->discriminator.deterministic = deterministic;
@@ -482,10 +631,12 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType
+  typename PolicyType,
+  typename InputType,
+  typename OutputType
 >
 template<typename Archive>
-void GAN<Model, InitializationRuleType, Noise, PolicyType>::
+void GAN<Model, InitializationRuleType, Noise, PolicyType, InputType, OutputType>::
 serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(parameter));

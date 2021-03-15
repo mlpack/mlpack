@@ -205,6 +205,11 @@ TEST_CASE("GANMNISTTest", "[GANNetworkTest]")
   GaussianInitialization gaussian(0, 1);
   ens::Adam optimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
       tolerance, shuffle);
+  // For dual optimizer
+  ens::Adam genOptimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
+      tolerance, shuffle);
+  ens::Adam discOptimizer(stepSize, batchSize, 0.9, 0.999, eps, numIterations,
+      tolerance, shuffle);
   std::function<double()> noiseFunction = [] () {
       return math::RandNormal(0, 1);};
   GAN<FFN<SigmoidCrossEntropyError<> >, GaussianInitialization,
@@ -213,10 +218,15 @@ TEST_CASE("GANMNISTTest", "[GANNetworkTest]")
       discriminatorPreTrain, multiplier);
 
   Log::Info << "Training..." << std::endl;
-  std::stringstream stream;
-  double objVal = gan.Train(trainData, optimizer, ens::ProgressBar(70, stream));
-  REQUIRE(stream.str().length() > 0);
-  REQUIRE(std::isfinite(objVal) == true);
+  std::stringstream streamA;
+  std::stringstream streamB;
+  double objValSingle = gan.Train(trainData, optimizer, ens::ProgressBar(70, streamA));
+  double objValDual = gan.Train(trainData, discOptimizer, genOptimizer, ens::ProgressBar(70, streamB));
+
+  REQUIRE(streamA.str().length() > 0);
+  REQUIRE(streamB.str().length() > 0);
+  REQUIRE(std::isfinite(objValSingle) == true);
+  REQUIRE(std::isfinite(objValDual) == true);
 
   // Generate samples.
   Log::Info << "Sampling..." << std::endl;

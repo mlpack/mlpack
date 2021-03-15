@@ -112,6 +112,27 @@ class FFN
       ::value, void>::type
   WarnMessageMaxIterations(OptimizerType& optimizer, size_t samples) const;
 
+   /**
+   * Train the feedforward network on the given input data using the given
+   * optimizer in unsupervised mode.
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization. If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, be sure to use std::move to avoid unnecessary copy.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param predictors Input training variables.
+   * @param optimizer Instantiated optimizer used to train the model.
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
+  template<typename OptimizerType, typename... CallbackTypes>
+  double Train(arma::mat predictors,
+               OptimizerType& optimizer,
+               CallbackTypes&&... callbacks);
+
   /**
    * Train the feedforward network on the given input data using the given
    * optimizer.
@@ -402,6 +423,14 @@ class FFN
    */
   void ResetData(arma::mat predictors, arma::mat responses);
 
+   /**
+   * Prepare the network for the given data.
+   * This function won't actually trigger training process.
+   *
+   * @param predictors Input data variables.
+   */
+  void ResetData(arma::mat predictors);
+
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
    * backward pass for module.
@@ -464,6 +493,10 @@ class FFN
   //! The number of separable functions (the number of predictor points).
   size_t numFunctions;
 
+  //! Flag that checks whether the given network is trained in supervised
+  //! mode or not.
+  bool supervised;
+
   //! The current error for the backward pass.
   arma::mat error;
 
@@ -514,7 +547,9 @@ class FFN
     typename Model,
     typename InitializerType,
     typename NoiseType,
-    typename PolicyType
+    typename PolicyType,
+    typename InputType,
+    typename OutputType
   >
   friend class GAN;
 }; // class FFN
