@@ -82,6 +82,10 @@ static void mlpackMain()
   if(IO::HasParam("labels"))
   {
     arma::rowvec labels = std::move(IO::GetParam<arma::mat>("labels"));
+
+    // Sanity check.
+    assert((labels.n_elem == dataset.n_rows));
+
     predictions.set_size(labels.n_elem);
 
     PersistenceModel model;
