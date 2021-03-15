@@ -745,7 +745,7 @@ TEST_CASE("SimpleGeneralizationFMatTest", "[DecisionTreeTest]")
 
   REQUIRE(correct > 0.75);
 
-  // reset the prediction
+  // Reset the prediction.
   predictions.zeros();
   wd.Classify(testData, predictions);
 
