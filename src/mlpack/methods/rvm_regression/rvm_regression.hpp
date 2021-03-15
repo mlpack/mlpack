@@ -148,7 +148,6 @@ public:
    *    standard deviation of each feature.
    * @param ard If true fit a ARD regression model. kernel is ignored.
    **/
-  RVMRegression() {}  
   RVMRegression(const KernelType& kernel,
 		const bool centerData = false,
                 const bool scaleData = false,

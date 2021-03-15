@@ -53,9 +53,6 @@ template<typename KernelType>
 void RVMRegression<KernelType>::Train(const arma::mat& data,
                                       const arma::rowvec& responses)
 {
-  std::cout << "center : " << centerData
-	    << "scale : " << scaleData
-	    << std::endl;
   arma::mat phi;
   arma::rowvec t;
 
