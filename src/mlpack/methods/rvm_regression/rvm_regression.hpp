@@ -148,10 +148,17 @@ public:
    *    standard deviation of each feature.
    * @param ard If true fit a ARD regression model. kernel is ignored.
    **/
-  RVMRegression(const KernelType& kernel=mlpack::kernel::LinearKernel(),
+  RVMRegression() {}  
+  RVMRegression(const KernelType& kernel,
 		const bool centerData = false,
                 const bool scaleData = false,
 		const bool ard = true);
+
+  /**
+   * Default constructor. Does nothing. Usefull for RVMRegressionModel default
+   * initialization.
+   */
+  RVMRegression() {}  
    
   /**
    * Run Relevance Vector Machine for regression. The input matrix 
