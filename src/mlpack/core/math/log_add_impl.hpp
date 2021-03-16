@@ -47,8 +47,10 @@ T LogAdd(T x, T y)
     r = y;
   }
 
-  return (r == -std::numeric_limits<T>::infinity() ||
-          d == -std::numeric_limits<T>::infinity()) ? r : r + log(1 + exp(d));
+  if (std::isinf(d) || std::isinf(r))
+    return r;
+
+  return r + log(1 + exp(d));
 }
 
 /**
