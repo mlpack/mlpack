@@ -34,7 +34,7 @@ BCELossWithLogits<InputDataType, OutputDataType>::Forward(
 {
   typedef typename PredictionType::elem_type ElemType;
 
-  ElemType sigmoid = arma::pow(1 + arma::exp(-prediction), -1);
+  OutputDataType sigmoid = arma::pow(1 + arma::exp(-prediction), -1);
   ElemType loss = -arma::accu(target % arma::log(sigmoid + eps) + 
       (1. - target) % arma::log(1. - sigmoid + eps));
   if (reduction)
