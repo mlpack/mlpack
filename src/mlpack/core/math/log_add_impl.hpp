@@ -74,7 +74,7 @@ typename T::elem_type AccuLog(const T& x)
  * the log of that.  If InPlace is true, then the values of `y` will also be
  * added to the sum.
  */
-template<typename T, bool InPlace = false>
+template<typename T, bool InPlace>
 void LogSumExp(const T& x, arma::Col<typename T::elem_type>& y)
 {
   arma::Col<typename T::elem_type> maxs;
@@ -107,7 +107,7 @@ void LogSumExp(const T& x, arma::Col<typename T::elem_type>& y)
  * log of that.  If InPlace is true, then the values of `y` will also be added
  * to the sum.
  */
-template<typename T, bool InPlace = false>
+template<typename T, bool InPlace>
 void LogSumExpT(const T& x, arma::Col<typename T::elem_type>& y)
 {
   arma::Row<typename T::elem_type> maxs;
