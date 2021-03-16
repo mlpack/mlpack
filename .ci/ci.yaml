@@ -31,7 +31,7 @@ jobs:
         CMakeArgs: '-DDEBUG=OFF -DPROFILE=OFF -DBUILD_MARKDOWN_BINDINGS=ON -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF'
 
   steps:
-    - template: linux-steps.yaml
+  - template: linux-steps.yaml
 
 - job: macOS
   timeoutInMinutes: 360

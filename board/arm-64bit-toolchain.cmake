@@ -7,10 +7,15 @@ elseif(UNIX OR APPLE)
     set(UTIL_SEARCH_CMD which)
 endif()
 
+## You need to add the full path in TOOLCHAIN_PREFIX, if you do not use the
+## standard gcc toolchain 
 set(TOOLCHAIN_PREFIX aarch64-linux-gnu-)
-set(VERSION_NUMBER "" CACHE STRING "Enter the version number of the compiler")
-message("GCC VERSION IS ${VERSION_NUMBER}")
 
+## In some distribution, a dynamic link for aarch64-linux-gnu-gcc may not be
+## found or created, instead it might be labelled with the version at the end
+## For instance: aarch64-linux-gnu-gcc-5
+## Therefore, if dynamic link exists, you do not have to specify the version
+set(VERSION_NUMBER "" CACHE STRING "Enter the version number of the compiler")
 
 execute_process(
   COMMAND ${UTIL_SEARCH_CMD} ${TOOLCHAIN_PREFIX}gcc${VERSION_NUMBER}
@@ -18,9 +23,7 @@ execute_process(
   OUTPUT_VARIABLE BINUTILS_PATH
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-message("BINUTIL IS   ${BINUTILS_PATH}")
 
-#get_filename_component(ARM_TOOLCHAIN_DIR ${BINUTILS_PATH} DIRECTORY)
 # Without that flag CMake is not able to pass test compilation check
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
@@ -35,10 +38,19 @@ set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
 set(CMAKE_OBJCOPY ${TOOLCHAIN_PREFIX}objcopy${VERSION_NUMBER} CACHE INTERNAL "objcopy tool")
 set(CMAKE_SIZE_UTIL ${TOOLCHAIN_PREFIX}size${VERSION_NUMBER} CACHE INTERNAL "size tool")
 
-#set(CMAKE_SYSROOT /usr/aarch64-linux-gnu/lib/)
+## There is no need to specify the CMAKE_SYSROOT if you are using the 
+## standard toolchain. If you download you own toolchain you have to specify
+## the path for sysroot as follows:
+## set(CMAKE_SYSROOT /PathToToolchain/aarch64-buildroot-linux-gnu/sysroot)
+## Or it can be specified from commandline
+set(CMAKE_SYSROOT "" CACHE STRING "Enter path for sysroot")
+
+## Here are the standard ROOT_PATH if you are using the standard toolchain
+## if you are using a different toolchain you have to specify that too
 set(CMAKE_FIND_ROOT_PATH ${CMAKE_FIND_ROOT_PATH} 
-	/usr/aarch64-linux-gnu/
-	/usr/aarch64-linux-gnu/lib)
+  /usr/aarch64-linux-gnu/ 
+)
+
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
