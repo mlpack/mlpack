@@ -92,15 +92,10 @@ void DiagonalGMM::LogProbability(const arma::mat& observation,
 
   // Save log(weights) as a vector.
   arma::vec logWeights = arma::log(weights);
-  // Compute Log Probability.
 
-  logProb = logProb.t();
-
-  for (size_t j = 0; j < observation.n_cols; j++)
-  {
-    const arma::vec sumVec = logWeights + logProb.unsafe_col(j);
-    logProbs(j) = math::AccuLog(sumVec);
-  }
+  // Compute log-probability.
+  logProb += repmat(logWeights.t(), logProb.n_rows, 1);
+  math::LogSumExp(logProb, logProbs);
 }
 
 /**
