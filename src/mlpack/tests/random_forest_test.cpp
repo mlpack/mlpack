@@ -522,3 +522,39 @@ TEST_CASE("WarmStartTreesTest", "[RandomForestTest]")
 
   REQUIRE(rf.NumTrees() == 25 + 20);
 }
+
+/**
+ * Test that RandomForest::Train() when passed warmStart = True does not drop
+ * prediction quality on train data. Note that prediction quality may drop due
+ * to overfitting in some cases.
+ */
+TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
+{
+  arma::mat trainingData;
+  arma::Row<size_t> trainingLabels;
+  data::DatasetInfo di;
+  MockCategoricalData(trainingData, trainingLabels, di);
+
+  // Train a random forest.
+  RandomForest<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
+      1e-7, 0, MultipleRandomDimensionSelect(4));
+  
+  // Get performance statistics on train data.
+  arma::Row<size_t> oldPredictions;
+  rf.Classify(trainingData, oldPredictions);
+
+  // Calculate the number of correct points.
+  size_t oldCorrect = arma::accu(oldPredictions == trainingLabels);
+
+  rf.Train(trainingData, di, trainingLabels, 5, 20 /* 20 trees */, 1, 1e-7, 0,
+      MultipleRandomDimensionSelect(4), true /* warmStart */);
+
+  // Get performance statistics on train data.
+  arma::Row<size_t> newPredictions;
+  rf.Classify(trainingData, newPredictions);
+
+  // Calculate the number of correct points.
+  size_t newCorrect = arma::accu(newPredictions == trainingLabels);
+
+  REQUIRE(newCorrect - oldCorrect >= 0);
+}
