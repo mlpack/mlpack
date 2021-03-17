@@ -377,6 +377,9 @@ class RandomForest
 
   //! The trees in the forest.
   std::vector<DecisionTreeType> trees;
+
+  //! The average gain of the forest.
+  double avgGain = 0.0;
 };
 
 } // namespace tree

@@ -520,6 +520,5 @@ TEST_CASE("WarmStartTreesTest", "[RandomForestTest]")
   rf.Train(trainingData, di, trainingLabels, 5, 20 /* 20 trees */, 1, 1e-7, 0,
       MultipleRandomDimensionSelect(4), true /* warmStart */);
 
-  // TODO: It needs to be updated to 25 + 20 once implementation is ready.
-  REQUIRE(rf.NumTrees() == 20);
+  REQUIRE(rf.NumTrees() == 25 + 20);
 }
