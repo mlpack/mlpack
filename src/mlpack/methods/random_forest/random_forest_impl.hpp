@@ -474,7 +474,7 @@ double RandomForest<
 {
   size_t oldNumTrees = trees.size();
   // Convert avgGain to total gain.
-  avgGain *= oldNumTrees;
+  double totalGain = avgGain * oldNumTrees;
 
   if (warmStart)
   {
@@ -488,7 +488,7 @@ double RandomForest<
   }
 
   // Train each tree individually.
-  #pragma omp parallel for reduction( + : avgGain)
+  #pragma omp parallel for reduction( + : totalGain)
   for (omp_size_t i = 0; i < numTrees; ++i)
   {
     Timer::Start("bootstrap");
@@ -506,13 +506,13 @@ double RandomForest<
     {
       if (UseDatasetInfo)
       {
-        avgGain += tmpTree.Train(bootstrapDataset, datasetInfo,
+        totalGain += tmpTree.Train(bootstrapDataset, datasetInfo,
             bootstrapLabels, numClasses, bootstrapWeights, minimumLeafSize,
             minimumGainSplit, maximumDepth, dimensionSelector);
       }
       else
       {
-        avgGain += tmpTree.Train(bootstrapDataset, bootstrapLabels, numClasses,
+        totalGain += tmpTree.Train(bootstrapDataset, bootstrapLabels, numClasses,
             bootstrapWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
             dimensionSelector);
       }
@@ -521,13 +521,13 @@ double RandomForest<
     {
       if (UseDatasetInfo)
       {
-        avgGain += tmpTree.Train(bootstrapDataset, datasetInfo,
+        totalGain += tmpTree.Train(bootstrapDataset, datasetInfo,
             bootstrapLabels, numClasses, minimumLeafSize, minimumGainSplit,
             maximumDepth, dimensionSelector);
       }
       else
       {
-        avgGain += tmpTree.Train(bootstrapDataset, bootstrapLabels, numClasses,
+        totalGain += tmpTree.Train(bootstrapDataset, bootstrapLabels, numClasses,
             minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
       }
     }
@@ -541,7 +541,7 @@ double RandomForest<
     Timer::Stop("train_tree");
   }
 
-  avgGain /= trees.size();
+  avgGain = totalGain / trees.size();
   return avgGain;
 }
 
