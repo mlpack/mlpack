@@ -498,3 +498,28 @@ TEST_CASE("DifferentTreesTest", "[RandomForestTest]")
 
   REQUIRE(success == true);
 }
+
+/**
+ * Test that RandomForest::Train() when passed warmStart = True trains on top
+ * of exixting forest and adds the newly trained trees to the previously
+ * exixting forest.
+ */
+TEST_CASE("WarmStartTreesTest", "[RandomForestTest]")
+{
+  arma::mat trainingData;
+  arma::Row<size_t> trainingLabels;
+  data::DatasetInfo di;
+  MockCategoricalData(trainingData, trainingLabels, di);
+
+  // Train a random forest.
+  RandomForest<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
+      1e-7, 0, MultipleRandomDimensionSelect(4));
+  
+  REQUIRE(rf.NumTrees() == 25);
+
+  rf.Train(trainingData, di, trainingLabels, 5, 20 /* 20 trees */, 1, 1e-7, 0,
+      MultipleRandomDimensionSelect(4), true /* warmStart */);
+
+  // TODO: It needs to be updated to 25 + 20 once implementation is ready.
+  REQUIRE(rf.NumTrees() == 20);
+}

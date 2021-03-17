@@ -488,6 +488,10 @@ double RandomForest<
          DimensionSelectionType& dimensionSelector)
 {
   // Train each tree individually.
+  if (WarmStart)
+  {
+    std::cout << "Warm start\n";
+  }
   trees.resize(numTrees); // This will fill the vector with untrained trees.
   double avgGain = 0.0;
 
