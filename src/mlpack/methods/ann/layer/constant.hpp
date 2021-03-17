@@ -79,6 +79,12 @@ class Constant
   //! Get the output size.
   size_t OutSize() const { return outSize; }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const
+  {
+    return 0;
+  }
+
   /**
    * Serialize the layer.
    */

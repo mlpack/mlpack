@@ -27,6 +27,46 @@ MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
 }
 
 template<typename InputDataType, typename OutputDataType>
+MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
+    const MultiplyConstant& layer) :
+    scalar(layer.scalar)
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+MultiplyConstant<InputDataType, OutputDataType>::MultiplyConstant(
+    MultiplyConstant&& layer) :
+    scalar(std::move(layer.scalar))
+{
+  // Nothing to do here.
+}
+
+template<typename InputDataType, typename OutputDataType>
+MultiplyConstant<InputDataType, OutputDataType>&
+MultiplyConstant<InputDataType, OutputDataType>::operator=(
+    const MultiplyConstant& layer)
+{
+  if (this != &layer)
+  {
+    scalar = layer.scalar;
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
+MultiplyConstant<InputDataType, OutputDataType>&
+MultiplyConstant<InputDataType, OutputDataType>::operator=(
+    MultiplyConstant&& layer)
+{
+  if (this != &layer)
+  {
+    scalar = std::move(layer.scalar);
+  }
+  return *this;
+}
+
+template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void MultiplyConstant<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)

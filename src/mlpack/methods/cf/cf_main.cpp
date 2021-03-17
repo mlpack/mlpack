@@ -194,279 +194,6 @@ PARAM_STRING_IN("interpolation", "Algorithm used for weight interpolation.",
 PARAM_STRING_IN("neighbor_search", "Algorithm used for neighbor search.",
     "S", "euclidean");
 
-template <typename NeighborSearchType,
-          typename InterpolationType>
-void ComputeRecommendations(CFModel* cf,
-                            const size_t numRecs,
-                            arma::Mat<size_t>& recommendations)
-{
-  // Reading users.
-  if (IO::HasParam("query"))
-  {
-    // User matrix.
-    arma::Mat<size_t> users =
-        std::move(IO::GetParam<arma::Mat<size_t>>("query"));
-    if (users.n_rows > 1)
-      users = users.t();
-    if (users.n_rows > 1)
-      Log::Fatal << "List of query users must be one-dimensional!"
-                 << std::endl;
-
-    Log::Info << "Generating recommendations for "
-              << users.n_elem << " users."
-              << endl;
-
-    cf->GetRecommendations<NeighborSearchType, InterpolationType>
-        (numRecs, recommendations, users.row(0).t());
-  }
-  else
-  {
-    Log::Info << "Generating recommendations for all users." << endl;
-    cf->GetRecommendations<NeighborSearchType, InterpolationType>
-        (numRecs, recommendations);
-  }
-}
-
-template <typename NeighborSearchType>
-void ComputeRecommendations(CFModel* cf,
-                            const size_t numRecs,
-                            arma::Mat<size_t>& recommendations)
-{
-  // Verify the Interpolation algorithms.
-  RequireParamInSet<string>("interpolation", { "average",
-      "regression", "similarity" }, true, "unknown interpolation algorithm");
-
-  // Taking Interpolation Alternatives
-  const string interpolationAlgorithm = IO::GetParam<string>("interpolation");
-
-  // Determining the Interpolation Algorithm
-  if (interpolationAlgorithm == "average")
-  {
-    ComputeRecommendations<NeighborSearchType, AverageInterpolation>
-        (cf, numRecs, recommendations);
-  }
-  else if (interpolationAlgorithm == "regression")
-  {
-    ComputeRecommendations<NeighborSearchType, RegressionInterpolation>
-        (cf, numRecs, recommendations);
-  }
-  else if (interpolationAlgorithm == "similarity")
-  {
-    ComputeRecommendations<NeighborSearchType, SimilarityInterpolation>
-        (cf, numRecs, recommendations);
-  }
-}
-
-void ComputeRecommendations(CFModel* cf,
-                            const size_t numRecs,
-                            arma::Mat<size_t>& recommendations)
-{
-  //  Verifying the Neighbor Search algorithms
-  RequireParamInSet<string>("neighbor_search", { "cosine",
-      "euclidean", "pearson" }, true, "unknown neighbor search algorithm");
-
-  //  Taking Neighbor Search alternatives
-  const string neighborSearchAlgorithm = IO::GetParam<string>
-      ("neighbor_search");
-
-
-  // Determining the Neighbor Search Algorithms
-  if (neighborSearchAlgorithm == "cosine")
-  {
-    ComputeRecommendations<CosineSearch>(cf, numRecs, recommendations);
-  }
-  else if (neighborSearchAlgorithm == "euclidean")
-  {
-    ComputeRecommendations<EuclideanSearch>(cf, numRecs, recommendations);
-  }
-  else if (neighborSearchAlgorithm == "pearson")
-  {
-    ComputeRecommendations<PearsonSearch>(cf, numRecs, recommendations);
-  }
-}
-
-template <typename NeighborSearchType,
-          typename InterpolationType>
-void ComputeRMSE(CFModel* cf)
-{
-  // Now, compute each test point.
-  arma::mat testData = std::move(IO::GetParam<arma::mat>("test"));
-
-  // Assemble the combination matrix to get RMSE value.
-  arma::Mat<size_t> combinations(2, testData.n_cols);
-  for (size_t i = 0; i < testData.n_cols; ++i)
-  {
-    combinations(0, i) = size_t(testData(0, i));
-    combinations(1, i) = size_t(testData(1, i));
-  }
-
-  // Now compute the RMSE.
-  arma::vec predictions;
-  cf->Predict<NeighborSearchType, InterpolationType>
-      (combinations, predictions);
-
-  // Compute the root of the sum of the squared errors, divide by the number of
-  // points to get the RMSE.  It turns out this is just the L2-norm divided by
-  // the square root of the number of points, if we interpret the predictions
-  // and the true values as vectors.
-  const double rmse = arma::norm(predictions - testData.row(2).t(), 2) /
-      std::sqrt((double) testData.n_cols);
-
-  Log::Info << "RMSE is " << rmse << "." << endl;
-}
-
-template <typename NeighborSearchType>
-void ComputeRMSE(CFModel* cf)
-{
-  //  Verifying the Interpolation algorithms
-  RequireParamInSet<string>("interpolation", { "average",
-      "regression", "similarity" }, true, "unknown interpolation algorithm");
-
-  //  Taking Interpolation Alternatives
-  const string interpolationAlgorithm = IO::GetParam<string>("interpolation");
-
-  if (interpolationAlgorithm == "average")
-  {
-    ComputeRMSE<NeighborSearchType, AverageInterpolation>(cf);
-  }
-  else if (interpolationAlgorithm == "regression")
-  {
-    ComputeRMSE<NeighborSearchType, RegressionInterpolation>(cf);
-  }
-  else if (interpolationAlgorithm == "similarity")
-  {
-    ComputeRMSE<NeighborSearchType, SimilarityInterpolation>(cf);
-  }
-}
-
-void ComputeRMSE(CFModel* cf)
-{
-  //  Verifying the Neighbor Search algorithms
-  RequireParamInSet<string>("neighbor_search", { "cosine",
-      "euclidean", "pearson" }, true, "unknown neighbor search algorithm");
-
-  //  Taking Neighbor Search alternatives
-  const string neighborSearchAlgorithm = IO::GetParam<string>
-    ("neighbor_search");
-
-  if (neighborSearchAlgorithm == "cosine")
-  {
-    ComputeRMSE<CosineSearch>(cf);
-  }
-  else if (neighborSearchAlgorithm == "euclidean")
-  {
-    ComputeRMSE<EuclideanSearch>(cf);
-  }
-  else if (neighborSearchAlgorithm == "pearson")
-  {
-    ComputeRMSE<PearsonSearch>(cf);
-  }
-}
-
-void PerformAction(CFModel* c)
-{
-  if (IO::HasParam("query") || IO::HasParam("all_user_recommendations"))
-  {
-    // Get parameters for generating recommendations.
-    const size_t numRecs = (size_t) IO::GetParam<int>("recommendations");
-
-    // Get the recommendations.
-    arma::Mat<size_t> recommendations;
-    ComputeRecommendations(c, numRecs, recommendations);
-
-    // Save the output.
-    IO::GetParam<arma::Mat<size_t>>("output") = recommendations;
-  }
-
-  if (IO::HasParam("test"))
-    ComputeRMSE(c);
-
-  IO::GetParam<CFModel*>("output_model") = c;
-}
-
-template<typename DecompositionPolicy>
-void PerformAction(arma::mat& dataset,
-                   const size_t rank,
-                   const size_t maxIterations,
-                   const double minResidue)
-{
-  const size_t neighborhood = (size_t) IO::GetParam<int>("neighborhood");
-
-  // Make sure the normalization strategy is valid.
-  RequireParamInSet<string>("normalization", { "overall_mean", "item_mean",
-      "user_mean", "z_score", "none" }, true, "unknown normalization type");
-
-  CFModel* c = new CFModel();
-
-  const string normalizationType = IO::GetParam<string>("normalization");
-
-  c->template Train<DecompositionPolicy>(dataset, neighborhood, rank,
-      maxIterations, minResidue, IO::HasParam("iteration_only_termination"),
-      normalizationType);
-
-  try
-  {
-    PerformAction(c);
-  }
-  catch (std::exception& e)
-  {
-    // Clean the memory before throwing completely.
-    delete c;
-    throw;
-  }
-}
-
-void AssembleFactorizerType(const std::string& algorithm,
-                            arma::mat& dataset,
-                            const size_t rank)
-{
-  const size_t maxIterations = (size_t) IO::GetParam<int>("max_iterations");
-  const double minResidue = IO::GetParam<double>("min_residue");
-
-  if (algorithm == "NMF")
-  {
-    PerformAction<NMFPolicy>(dataset, rank, maxIterations, minResidue);
-  }
-  else if (algorithm == "BatchSVD")
-  {
-    PerformAction<BatchSVDPolicy>(dataset, rank, maxIterations, minResidue);
-  }
-  else if (algorithm == "SVDIncompleteIncremental")
-  {
-    PerformAction<SVDIncompletePolicy>(dataset, rank, maxIterations,
-        minResidue);
-  }
-  else if (algorithm == "SVDCompleteIncremental")
-  {
-    PerformAction<SVDCompletePolicy>(dataset, rank, maxIterations, minResidue);
-  }
-  else if (algorithm == "RegSVD")
-  {
-    ReportIgnoredParam("min_residue", "Regularized SVD terminates only "
-        "when max_iterations is reached");
-    PerformAction<RegSVDPolicy>(dataset, rank, maxIterations, minResidue);
-  }
-  else if (algorithm == "RandSVD")
-  {
-    ReportIgnoredParam("min_residue", "Randomized SVD terminates only "
-        "when max_iterations is reached");
-    PerformAction<RandomizedSVDPolicy>(dataset, rank, maxIterations,
-        minResidue);
-  }
-  else if (algorithm == "BiasSVD")
-  {
-    ReportIgnoredParam("min_residue", "Bias SVD terminates only "
-        "when max_iterations is reached");
-    PerformAction<BiasSVDPolicy>(dataset, rank, maxIterations, minResidue);
-  }
-  else if (algorithm == "SVDPP")
-  {
-    ReportIgnoredParam("min_residue", "SVD++ terminates only "
-        "when max_iterations is reached");
-    PerformAction<SVDPlusPlusPolicy>(dataset, rank, maxIterations, minResidue);
-  }
-}
-
 static void mlpackMain()
 {
   if (IO::GetParam<int>("seed") == 0)
@@ -496,6 +223,7 @@ static void mlpackMain()
         "recommendations must be positive");
 
   // Either load from a model, or train a model.
+  CFModel* cf;
   if (IO::HasParam("training"))
   {
     // Train a model.
@@ -523,23 +251,179 @@ static void mlpackMain()
     // Get parameters.
     const size_t rank = (size_t) IO::GetParam<int>("rank");
 
+    cf = new CFModel();
+
     // Perform decomposition to prepare for recommendations.
     Log::Info << "Performing CF matrix decomposition on dataset..." << endl;
 
     const string algo = IO::GetParam<string>("algorithm");
+    if (algo == "NMF")
+    {
+      cf->DecompositionType() = CFModel::NMF;
+    }
+    else if (algo == "BatchSVD")
+    {
+      cf->DecompositionType() = CFModel::BATCH_SVD;
+    }
+    else if (algo == "SVDIncompleteIncremental")
+    {
+      cf->DecompositionType() = CFModel::SVD_INCOMPLETE;
+    }
+    else if (algo == "SVDCompleteIncremental")
+    {
+      cf->DecompositionType() = CFModel::SVD_COMPLETE;
+    }
+    else if (algo == "RegSVD")
+    {
+      ReportIgnoredParam("min_residue", "Regularized SVD terminates only "
+          "when max_iterations is reached");
+      cf->DecompositionType() = CFModel::REG_SVD;
+    }
+    else if (algo == "RandSVD")
+    {
+      ReportIgnoredParam("min_residue", "Randomized SVD terminates only "
+          "when max_iterations is reached");
+      cf->DecompositionType() = CFModel::RANDOMIZED_SVD;
+    }
+    else if (algo == "BiasSVD")
+    {
+      ReportIgnoredParam("min_residue", "Bias SVD terminates only "
+          "when max_iterations is reached");
+      cf->DecompositionType() = CFModel::BIAS_SVD;
+    }
+    else if (algo == "SVDPP")
+    {
+      ReportIgnoredParam("min_residue", "SVD++ terminates only "
+          "when max_iterations is reached");
+      cf->DecompositionType() = CFModel::SVD_PLUS_PLUS;
+    }
 
     // Perform the factorization and do whatever the user wanted.
-    AssembleFactorizerType(algo, dataset, rank);
+    const size_t neighborhood = (size_t) IO::GetParam<int>("neighborhood");
+
+    // Make sure the normalization strategy is valid.
+    RequireParamInSet<string>("normalization", { "overall_mean", "item_mean",
+        "user_mean", "z_score", "none" }, true, "unknown normalization type");
+
+    const string normalizationType = IO::GetParam<string>("normalization");
+    if (normalizationType == "none")
+      cf->NormalizationType() = CFModel::NO_NORMALIZATION;
+    else if (normalizationType == "item_mean")
+      cf->NormalizationType() = CFModel::ITEM_MEAN_NORMALIZATION;
+    else if (normalizationType == "user_mean")
+      cf->NormalizationType() = CFModel::USER_MEAN_NORMALIZATION;
+    else if (normalizationType == "overall_mean")
+      cf->NormalizationType() = CFModel::OVERALL_MEAN_NORMALIZATION;
+    else if (normalizationType == "z_score")
+      cf->NormalizationType() = CFModel::Z_SCORE_NORMALIZATION;
+
+    cf->Train(dataset,
+              neighborhood,
+              rank,
+              size_t(IO::GetParam<int>("max_iterations")),
+              IO::GetParam<double>("min_residue"),
+              IO::HasParam("iteration_only_termination"));
   }
   else
   {
     // Load from a model after validating parameters.
-    RequireAtLeastOnePassed({ "query", "all_user_recommendations",
-        "test" }, true);
+    RequireAtLeastOnePassed({ "query", "all_user_recommendations", "test" },
+        true);
 
     // Load an input model.
-    CFModel* c = std::move(IO::GetParam<CFModel*>("input_model"));
-
-    PerformAction(c);
+    cf = std::move(IO::GetParam<CFModel*>("input_model"));
   }
+
+  // Get the types of the neighbor search method and the interpolation.  (These
+  // may or may not be used.)
+  NeighborSearchTypes nsType;
+  RequireParamInSet<string>("neighbor_search", { "cosine",
+      "euclidean", "pearson" }, true, "unknown neighbor search algorithm");
+  if (IO::GetParam<std::string>("neighbor_search") == "cosine")
+    nsType = COSINE_SEARCH;
+  else if (IO::GetParam<std::string>("neighbor_search") == "euclidean")
+    nsType = EUCLIDEAN_SEARCH;
+  else // if (IO::GetParam<std::string>("neighbor_search") == "pearson")
+    nsType = PEARSON_SEARCH;
+
+  InterpolationTypes interpolationType;
+  RequireParamInSet<string>("interpolation", { "average",
+      "regression", "similarity" }, true, "unknown interpolation algorithm");
+  if (IO::GetParam<std::string>("interpolation") == "average")
+    interpolationType = AVERAGE_INTERPOLATION;
+  else if (IO::GetParam<std::string>("interpolation") == "regression")
+    interpolationType = REGRESSION_INTERPOLATION;
+  else // if (IO::GetParam<std::string>("interpolation") == "similarity")
+    interpolationType = SIMILARITY_INTERPOLATION;
+
+  if (IO::HasParam("query") || IO::HasParam("all_user_recommendations"))
+  {
+    // Get parameters for generating recommendations.
+    const size_t numRecs = (size_t) IO::GetParam<int>("recommendations");
+
+    // Get the recommendations.
+    arma::Mat<size_t> recommendations;
+
+    // Reading users.
+    if (IO::HasParam("query"))
+    {
+      // User matrix.
+      arma::Mat<size_t> users =
+          std::move(IO::GetParam<arma::Mat<size_t>>("query"));
+      if (users.n_rows > 1)
+      {
+        users = users.t();
+      }
+
+      if (users.n_rows > 1)
+      {
+        Log::Fatal << "List of query users must be one-dimensional!"
+            << std::endl;
+      }
+
+      Log::Info << "Generating recommendations for " << users.n_elem
+          << " users." << endl;
+
+      cf->GetRecommendations(nsType, interpolationType, numRecs,
+          recommendations, users.row(0).t());
+    }
+    else
+    {
+      Log::Info << "Generating recommendations for all users." << endl;
+      cf->GetRecommendations(nsType, interpolationType, numRecs,
+          recommendations);
+    }
+
+    // Save the output.
+    IO::GetParam<arma::Mat<size_t>>("output") = recommendations;
+  }
+
+  if (IO::HasParam("test"))
+  {
+    // Now, compute each test point.
+    arma::mat testData = std::move(IO::GetParam<arma::mat>("test"));
+
+    // Assemble the combination matrix to get RMSE value.
+    arma::Mat<size_t> combinations(2, testData.n_cols);
+    for (size_t i = 0; i < testData.n_cols; ++i)
+    {
+      combinations(0, i) = size_t(testData(0, i));
+      combinations(1, i) = size_t(testData(1, i));
+    }
+
+    // Now compute the RMSE.
+    arma::vec predictions;
+    cf->Predict(nsType, interpolationType, combinations, predictions);
+
+    // Compute the root of the sum of the squared errors, divide by the number
+    // of points to get the RMSE.  It turns out this is just the L2-norm divided
+    // by the square root of the number of points, if we interpret the
+    // predictions and the true values as vectors.
+    const double rmse = arma::norm(predictions - testData.row(2).t(), 2) /
+        std::sqrt((double) testData.n_cols);
+
+    Log::Info << "RMSE is " << rmse << "." << endl;
+  }
+
+  IO::GetParam<CFModel*>("output_model") = cf;
 }
