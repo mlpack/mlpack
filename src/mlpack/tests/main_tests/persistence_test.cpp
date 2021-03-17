@@ -66,7 +66,7 @@ TEST_CASE_METHOD(PersistenceTestFixture, "DimensionsTest",
  * Persistence model requires atleast one row for making predictions. Thus,
  * making sure an error is thrown when dataset has zero rows.
  */
-TEST_CASE_METHOD(PersistenceTestFixture, "DimensionsTest",
+TEST_CASE_METHOD(PersistenceTestFixture, "EmptyDataTest",
                  "[PersistenceMainTest][BindingTests]")
 {
   arma::mat dataset(0, 3, arma::fill::randu);
