@@ -336,8 +336,8 @@ TEST_CASE("SimpleBinaryCrossEntropyWithLogitsLossTest", "[LossFunctionsTest]")
   double error1 = module1.Forward(input1, target1);
   REQUIRE(error1 - 3.792615 == Approx(0.0).margin(2e-5));
 
-  input2 = arma::mat("1.5 1.5 1.5 1.5 1.5");
-  target2 = arma::ones(1, 5);
+  input2 = arma::mat("1.5 1.5 1.5 1.5 1.5 1.5");
+  target2 = arma::ones(1, 6);
   input2.reshape(2, 3);
   target2.reshape(2, 3);
   double error2 = module2.Forward(input2, target2);
