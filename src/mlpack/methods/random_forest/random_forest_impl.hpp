@@ -160,7 +160,8 @@ double RandomForest<
          const size_t minimumLeafSize,
          const double minimumGainSplit,
          const size_t maximumDepth,
-         DimensionSelectionType dimensionSelector)
+         DimensionSelectionType dimensionSelector,
+         bool warmStart)
 {
   // Pass off to Train().
   data::DatasetInfo info; // Ignored by Train().
@@ -192,7 +193,8 @@ double RandomForest<
          const size_t minimumLeafSize,
          const double minimumGainSplit,
          const size_t maximumDepth,
-         DimensionSelectionType dimensionSelector)
+         DimensionSelectionType dimensionSelector,
+         bool warmStart)
 {
   // Pass off to Train().
   arma::rowvec weights; // Ignored by Train().
@@ -223,7 +225,8 @@ double RandomForest<
          const size_t minimumLeafSize,
          const double minimumGainSplit,
          const size_t maximumDepth,
-         DimensionSelectionType dimensionSelector)
+         DimensionSelectionType dimensionSelector,
+         bool warmStart)
 {
   // Pass off to Train().
   data::DatasetInfo info; // Ignored by Train().
@@ -255,7 +258,8 @@ double RandomForest<
          const size_t minimumLeafSize,
          const double minimumGainSplit,
          const size_t maximumDepth,
-         DimensionSelectionType dimensionSelector)
+         DimensionSelectionType dimensionSelector,
+         bool warmStart)
 {
   // Pass off to Train().
   return Train<true, true, false>(dataset, datasetInfo, labels, numClasses, weights,

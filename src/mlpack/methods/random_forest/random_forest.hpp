@@ -179,7 +179,8 @@ class RandomForest
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               bool warmStart = false);
 
   /**
    * Train the random forest on the given labeled training data with the given
@@ -211,7 +212,8 @@ class RandomForest
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               bool warmStart = false);
 
   /**
    * Train the random forest on the given weighted labeled training data with
@@ -241,7 +243,8 @@ class RandomForest
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               bool warmStart = false);
 
   /**
    * Train the random forest on the given weighted labeled training data with
@@ -274,7 +277,8 @@ class RandomForest
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               bool warmStart = false);
 
   /**
    * Predict the class of the given point.  If the random forest has not been
