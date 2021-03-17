@@ -366,13 +366,14 @@ class RandomForest
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param warmStart When set to `true`, it fits new trees and add them to the
+   *     previous forest else a new forest is trained from scratch.
    * @tparam UseWeights Whether or not to use the weights parameter.
    * @tparam UseDatasetInfo Whether or not to use the datasetInfo parameter.
-   * @tparam WarmStart Whether or not train on top of exixting trained forest.
    * @tparam MatType The type of data matrix (i.e. arma::mat).
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<bool UseWeights, bool UseDatasetInfo, bool WarmStart = false, typename MatType>
+  template<bool UseWeights, bool UseDatasetInfo, typename MatType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
                const arma::Row<size_t>& labels,
@@ -382,7 +383,8 @@ class RandomForest
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector);
+               DimensionSelectionType& dimensionSelector,
+               bool warmStart = false);
 
   //! The trees in the forest.
   std::vector<DecisionTreeType> trees;

@@ -44,8 +44,9 @@ RandomForest<
   // Pass off work to the Train() method.
   data::DatasetInfo info; // Ignored.
   arma::rowvec weights; // Fake weights, not used.
-  Train<false, false, false>(dataset, info, labels, numClasses, weights, numTrees,
-      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+  Train<false, false>(dataset, info, labels, numClasses, weights, numTrees,
+      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector,
+      false);
 }
 
 template<
@@ -74,9 +75,9 @@ RandomForest<
 {
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
-  Train<false, true, false>(dataset, datasetInfo, labels, numClasses, weights,
+  Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
       numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, false);
 }
 
 template<
@@ -105,8 +106,9 @@ RandomForest<
 {
   // Pass off work to the Train() method.
   data::DatasetInfo info; // Ignored by Train().
-  Train<true, false, false>(dataset, info, labels, numClasses, weights, numTrees,
-      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+  Train<true, false>(dataset, info, labels, numClasses, weights, numTrees,
+      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector,
+      false);
 }
 
 template<
@@ -135,8 +137,9 @@ RandomForest<
                 DimensionSelectionType dimensionSelector)
 {
   // Pass off work to the Train() method.
-  Train<true, true, false>(dataset, datasetInfo, labels, numClasses, weights, numTrees,
-      minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
+  Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector, false);
 }
 
 template<
@@ -166,14 +169,9 @@ double RandomForest<
   // Pass off to Train().
   data::DatasetInfo datasetInfo; // Ignored by Train().
   arma::rowvec weights; // Ignored by Train().
-  if (warmStart)
-    return Train<false, false, true>(dataset, datasetInfo, labels, numClasses, weights,
-        numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-        dimensionSelector);
-  else
-    return Train<false, false, false>(dataset, datasetInfo, labels, numClasses, weights,
-        numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-        dimensionSelector);
+  return Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector, warmStart);
 }
 
 template<
@@ -203,14 +201,9 @@ double RandomForest<
 {
   // Pass off to Train().
   arma::rowvec weights; // Ignored by Train().
-  if (warmStart)
-    return Train<false, false, true>(dataset, datasetInfo, labels, numClasses, weights,
-        numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-        dimensionSelector);
-  else
-    return Train<false, false, false>(dataset, datasetInfo, labels, numClasses, weights,
-        numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-        dimensionSelector);
+  return Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector, warmStart);
 }
 
 template<
@@ -240,14 +233,9 @@ double RandomForest<
 {
   // Pass off to Train().
   data::DatasetInfo datasetInfo; // Ignored by Train().
-  if (warmStart)
-    return Train<false, false, true>(dataset, datasetInfo, labels, numClasses, weights,
-        numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-        dimensionSelector);
-  else
-    return Train<false, false, false>(dataset, datasetInfo, labels, numClasses, weights,
-        numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-        dimensionSelector);
+  return Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector, warmStart);
 }
 
 template<
@@ -277,14 +265,9 @@ double RandomForest<
          bool warmStart)
 {
   // Pass off to Train().
-  if (warmStart)
-    return Train<false, false, true>(dataset, datasetInfo, labels, numClasses, weights,
-        numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-        dimensionSelector);
-  else
-    return Train<false, false, false>(dataset, datasetInfo, labels, numClasses, weights,
-        numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
-        dimensionSelector);
+  return Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
+      numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector, warmStart);
 }
 
 template<
@@ -470,7 +453,7 @@ template<
     template<typename> class CategoricalSplitType,
     typename ElemType
 >
-template<bool UseWeights, bool UseDatasetInfo, bool WarmStart, typename MatType>
+template<bool UseWeights, bool UseDatasetInfo, typename MatType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
@@ -486,13 +469,14 @@ double RandomForest<
          const size_t minimumLeafSize,
          const double minimumGainSplit,
          const size_t maximumDepth,
-         DimensionSelectionType& dimensionSelector)
+         DimensionSelectionType& dimensionSelector,
+         bool warmStart)
 {
   size_t oldNumTrees = trees.size();
   // Convert avgGain to total gain.
   avgGain *= oldNumTrees;
 
-  if (WarmStart)
+  if (warmStart)
   {
     // This will extend the vector with untrained trees.
     trees.resize(trees.size() + numTrees);
@@ -549,7 +533,7 @@ double RandomForest<
     }
 
     // Storing the trained tree at the desired index.
-    if (WarmStart)
+    if (warmStart)
       trees[oldNumTrees + i] = tmpTree;
     else
       trees[i] = tmpTree;
