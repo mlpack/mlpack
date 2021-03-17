@@ -163,6 +163,7 @@ add_executable(mlpack_test
   main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
+  main_tests/persistence_test.cpp
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_imputer_test.cpp
   main_tests/preprocess_one_hot_encode_test.cpp

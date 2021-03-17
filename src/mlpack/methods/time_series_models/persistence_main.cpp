@@ -84,7 +84,8 @@ static void mlpackMain()
     arma::rowvec labels = std::move(IO::GetParam<arma::mat>("labels"));
 
     // Sanity check.
-    assert((labels.n_elem == dataset.n_rows));
+    Log::Fatal << "The size of dataset " << dataset.n_rows << " is not equal "
+               << "to that of labels " << labels.n_elem << ".";
 
     predictions.set_size(labels.n_elem);
 
