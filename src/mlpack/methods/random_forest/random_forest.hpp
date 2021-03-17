@@ -168,6 +168,8 @@ class RandomForest
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param warmStart When set to `true`, it fits new trees and add them to the
+   *     previous forest else a new forest is trained from scratch.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -200,6 +202,8 @@ class RandomForest
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param warmStart When set to `true`, it fits new trees and add them to the
+   *     previous forest else a new forest is trained from scratch.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -231,6 +235,8 @@ class RandomForest
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param warmStart When set to `true`, it fits new trees and add them to the
+   *     previous forest else a new forest is trained from scratch.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -264,6 +270,8 @@ class RandomForest
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param warmStart When set to `true`, it fits new trees and add them to the
+   *     previous forest else a new forest is trained from scratch.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -360,6 +368,7 @@ class RandomForest
    * @param dimensionSelector Instantiated dimension selection policy.
    * @tparam UseWeights Whether or not to use the weights parameter.
    * @tparam UseDatasetInfo Whether or not to use the datasetInfo parameter.
+   * @tparam WarmStart Whether or not train on top of exixting trained forest.
    * @tparam MatType The type of data matrix (i.e. arma::mat).
    * @return The average entropy of all the decision trees trained under forest.
    */
