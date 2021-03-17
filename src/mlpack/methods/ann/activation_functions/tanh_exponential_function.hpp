@@ -22,7 +22,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @f{eqnarray*}{
  * f(x) = x * tanh(e^x)\\
- * f'(x) = tanh(e^x) + x*e^x*(sech(e^x))^2\\
+ * f'(x) = tanh(e^x) - x*e^x*(tanh(e^x)^2 - 1)\\
  * @f}
  */
  class TanhExpFunction
@@ -59,8 +59,8 @@ namespace ann /** Artificial Neural Network. */ {
    */
   static double Deriv(const double y)
   {
-    return std::tanh(std::exp(y)) +
-    y*std::exp(y)*std::pow(std::sech(std::exp(y)),2);
+    return std::tanh(std::exp(y)) -
+    y*std::exp(y)*(std::pow(std::tanh(std::exp(y)),2) - 1);
   }
 
   /**
@@ -72,8 +72,8 @@ namespace ann /** Artificial Neural Network. */ {
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x = arma::tanh(arma::exp(y)) +
-    y*arma::exp(y)*arma::pow(arma::sech(arma::exp(y)),2);
+    x = arma::tanh(arma::exp(y)) -
+        y*arma::exp(y)*(arma::pow(arma::tanh(arma::exp(y)),2) - 1);
   }
 }; // class TanhExpFunction
 
