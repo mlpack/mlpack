@@ -332,7 +332,7 @@ TEST_CASE("SimpleBinaryCrossEntropyWithLogitsLossTest", "[LossFunctionsTest]")
   // Test the Forward function on a user generator input and compare it against
   // the manually calculated result.
   input1 = arma::mat("0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5");
-  target1 = arma::zeros(1, 8);
+  target1 = arma::ones(1, 8);
   double error1 = module1.Forward(input1, target1);
   REQUIRE(error1 - 3.792615 == Approx(0.0).margin(2e-5));
 
