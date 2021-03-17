@@ -359,7 +359,7 @@ class RandomForest
    * @tparam MatType The type of data matrix (i.e. arma::mat).
    * @return The average entropy of all the decision trees trained under forest.
    */
-  template<bool UseWeights, bool UseDatasetInfo, typename MatType>
+  template<bool UseWeights, bool UseDatasetInfo, bool WarmStart = false, typename MatType>
   double Train(const MatType& data,
                const data::DatasetInfo& datasetInfo,
                const arma::Row<size_t>& labels,

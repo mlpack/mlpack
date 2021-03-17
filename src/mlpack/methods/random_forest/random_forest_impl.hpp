@@ -44,7 +44,7 @@ RandomForest<
   // Pass off work to the Train() method.
   data::DatasetInfo info; // Ignored.
   arma::rowvec weights; // Fake weights, not used.
-  Train<false, false>(dataset, info, labels, numClasses, weights, numTrees,
+  Train<false, false, false>(dataset, info, labels, numClasses, weights, numTrees,
       minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 }
 
@@ -74,7 +74,7 @@ RandomForest<
 {
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
-  Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
+  Train<false, true, false>(dataset, datasetInfo, labels, numClasses, weights,
       numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
 }
@@ -105,7 +105,7 @@ RandomForest<
 {
   // Pass off work to the Train() method.
   data::DatasetInfo info; // Ignored by Train().
-  Train<true, false>(dataset, info, labels, numClasses, weights, numTrees,
+  Train<true, false, false>(dataset, info, labels, numClasses, weights, numTrees,
       minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 }
 
@@ -135,7 +135,7 @@ RandomForest<
                 DimensionSelectionType dimensionSelector)
 {
   // Pass off work to the Train() method.
-  Train<true, true>(dataset, datasetInfo, labels, numClasses, weights, numTrees,
+  Train<true, true, false>(dataset, datasetInfo, labels, numClasses, weights, numTrees,
       minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 }
 
@@ -165,7 +165,7 @@ double RandomForest<
   // Pass off to Train().
   data::DatasetInfo info; // Ignored by Train().
   arma::rowvec weights; // Ignored by Train().
-  return Train<false, false>(dataset, info, labels, numClasses, weights,
+  return Train<false, false, false>(dataset, info, labels, numClasses, weights,
       numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
 }
@@ -196,7 +196,7 @@ double RandomForest<
 {
   // Pass off to Train().
   arma::rowvec weights; // Ignored by Train().
-  return Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
+  return Train<false, true, false>(dataset, datasetInfo, labels, numClasses, weights,
       numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
 }
@@ -227,7 +227,7 @@ double RandomForest<
 {
   // Pass off to Train().
   data::DatasetInfo info; // Ignored by Train().
-  return Train<false, false>(dataset, info, labels, numClasses, weights,
+  return Train<false, false, false>(dataset, info, labels, numClasses, weights,
       numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
 }
@@ -258,7 +258,7 @@ double RandomForest<
          DimensionSelectionType dimensionSelector)
 {
   // Pass off to Train().
-  return Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
+  return Train<true, true, false>(dataset, datasetInfo, labels, numClasses, weights,
       numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
 }
@@ -445,7 +445,7 @@ template<
     template<typename> class CategoricalSplitType,
     typename ElemType
 >
-template<bool UseWeights, bool UseDatasetInfo, typename MatType>
+template<bool UseWeights, bool UseDatasetInfo, bool WarmStart, typename MatType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
