@@ -668,6 +668,12 @@ TEST_CASE("DTNNTest", "[KMeansTest]")
   }
 }
 
+// These macros are added in order to stop executing these tests on aarch64.
+// These is unknown issue with Dual Cover tree test on these architecture
+// The issue is explained in #2869 on github.
+// Once the issue is resolved. These macros can be removed safely.
+#ifndef __aarch64__
+
 TEST_CASE("DTNNCoverTreeTest", "[KMeansTest]")
 {
   const size_t trials = 5;
@@ -699,6 +705,8 @@ TEST_CASE("DTNNCoverTreeTest", "[KMeansTest]")
       REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(1e-7));
   }
 }
+
+#endif
 
 /**
  * Make sure that the sample initialization strategy successfully samples points

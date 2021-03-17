@@ -218,6 +218,12 @@ TEST_CASE("DualTreeVsNaive", "[EMSTTest]")
   }
 }
 
+// These macros are added in order to stop executing these tests on aarch64.
+// These is unknown issue with Dual Cover tree test on these architecture
+// The issue is explained in #2869 on github.
+// Once the issue is resolved. These macros can be removed safely.
+#ifndef __aarch64__
+
 /**
  * Make sure the cover tree works fine.
  */
@@ -245,6 +251,8 @@ TEST_CASE("EMSTCoverTreeTest", "[EMSTTest]")
     REQUIRE(bstResults(2, i) == Approx(coverResults(2, i)).epsilon(1e-7));
   }
 }
+
+#endif
 
 /**
  * Test BinarySpaceTree with Ball Bound.

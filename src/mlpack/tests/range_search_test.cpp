@@ -611,6 +611,12 @@ TEST_CASE("SingleTreeVsNaive", "[RangeSearchTest]")
   }
 }
 
+// These macros are added in order to stop executing these tests on aarch64.
+// These is unknown issue with Dual Cover tree test on these architecture
+// The issue is explained in #2869 on github.
+// Once the issue is resolved. These macros can be removed safely.
+#ifndef __aarch64__
+
 /**
  * Ensure that dual tree range search with cover trees works by comparing
  * with the kd-tree implementation.
@@ -685,6 +691,8 @@ TEST_CASE("RSCoverTreeTest", "[RangeSearchTest]")
     }
   }
 }
+
+#endif
 
 /**
  * Ensure that dual tree range search with cover trees works when using

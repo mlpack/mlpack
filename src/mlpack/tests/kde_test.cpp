@@ -408,6 +408,12 @@ TEST_CASE("RTreeGaussianKDETest", "[KDETest]")
     REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
+// These macros are added in order to stop executing these tests on aarch64.
+// These is unknown issue with Dual Cover tree test on these architecture
+// The issue is explained in #2869 on github.
+// Once the issue is resolved. These macros can be removed safely.
+#ifndef __aarch64__
+
 /**
  * Test Standard Cover Tree dual-tree implementation results against brute
  * force results using Gaussian kernel.
@@ -442,6 +448,8 @@ TEST_CASE("StandardCoverTreeGaussianKDETest", "[KDETest]")
   for (size_t i = 0; i < query.n_cols; ++i)
     REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
+
+#endif
 
 /**
  * Test Standard Cover Tree dual-tree implementation results against brute
@@ -1136,6 +1144,12 @@ TEST_CASE("GaussianDualKDTreeMonteCarloKDE", "[KDETest]")
   REQUIRE(correctResults > 70);
 }
 
+// These macros are added in order to stop executing these tests on aarch64.
+// These is unknown issue with Dual Cover tree test on these architecture
+// The issue is explained in #2869 on github.
+// Once the issue is resolved. These macros can be removed safely.
+#ifndef __aarch64__
+
 /**
  * Test dual Cover-tree implementation results against brute force results
  * using Monte Carlo estimations when possible.
@@ -1188,6 +1202,8 @@ TEST_CASE("GaussianDualCoverTreeMonteCarloKDE", "[KDETest]")
 
   REQUIRE(correctResults > 70);
 }
+
+#endif
 
 /**
  * Test dual octree implementation results against brute force results

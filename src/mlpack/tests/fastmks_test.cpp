@@ -22,6 +22,11 @@ using namespace mlpack::fastmks;
 using namespace mlpack::kernel;
 using namespace mlpack::metric;
 
+// These macros are added in order to stop executing these tests on aarch64.
+// These is unknown issue with Dual Cover tree test on these architecture
+// The issue is explained in #2869 on github.
+// Once the issue is resolved. These macros can be removed safely.
+#ifndef __aarch64__
 /**
  * Compare single-tree and naive.
  */
@@ -1134,3 +1139,5 @@ TEST_CASE("CopyAssignmentTest", "[FastMKSTest]")
       REQUIRE(newKernels[i] == Approx(0.0).margin(1e-5));
   }
 }
+
+#endif

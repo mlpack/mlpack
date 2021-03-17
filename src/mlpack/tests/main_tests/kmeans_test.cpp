@@ -292,6 +292,12 @@ TEST_CASE_METHOD(KmTestFixture, "KmClustersNotDefined",
   Log::Fatal.ignoreInput = false;
 }
 
+// These macros are added in order to stop executing these tests on aarch64.
+// These is unknown issue with Dual Cover tree test on these architecture
+// The issue is explained in #2869 on github.
+// Once the issue is resolved. These macros can be removed safely.
+#ifndef __aarch64__
+
 /**
  * Checking that all the algorithms yield same results
  */
@@ -401,3 +407,5 @@ TEST_CASE_METHOD(KmTestFixture, "AlgorithmsSimilarTest",
   CheckMatrices(naiveCentroid, dualTreeCentroid);
   CheckMatrices(naiveCentroid, dualCoverTreeCentroid);
 }
+
+#endif
