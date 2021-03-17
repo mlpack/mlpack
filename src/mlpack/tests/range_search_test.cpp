@@ -692,8 +692,6 @@ TEST_CASE("RSCoverTreeTest", "[RangeSearchTest]")
   }
 }
 
-#endif
-
 /**
  * Ensure that dual tree range search with cover trees works when using
  * two datasets.
@@ -845,6 +843,8 @@ TEST_CASE("CoverTreeSingleTreeTest", "[RangeSearchTest]")
     }
   }
 }
+
+#endif
 
 /**
  * Ensure that single-tree ball tree range search works.

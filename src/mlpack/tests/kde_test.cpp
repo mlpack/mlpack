@@ -449,8 +449,6 @@ TEST_CASE("StandardCoverTreeGaussianKDETest", "[KDETest]")
     REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
 
-#endif
-
 /**
  * Test Standard Cover Tree dual-tree implementation results against brute
  * force results using Epanechnikov kernel.
@@ -485,6 +483,8 @@ TEST_CASE("StandardCoverTreeEpanechnikovKDETest", "[KDETest]")
   for (size_t i = 0; i < query.n_cols; ++i)
     REQUIRE(bfEstimations[i] == Approx(treeEstimations[i]).epsilon(relError));
 }
+
+#endif
 
 /**
  * Test duplicated value in reference matrix.
