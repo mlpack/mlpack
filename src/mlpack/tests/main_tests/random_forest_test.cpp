@@ -459,7 +459,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMaxDepthTest",
  * Make sure that training and input_model are both passed when warm_start is
  * false.
  */
-TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingModelWarmStart"
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingModelWarmStart",
                  "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
@@ -488,7 +488,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingModelWarmStart"
  * Ensuring that model does gets trained on top of existing one when warm_start
  * and input_model are both passed.
  */
-TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestWarmStart"
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestWarmStart",
                  "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
