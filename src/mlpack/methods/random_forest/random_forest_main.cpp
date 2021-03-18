@@ -130,6 +130,8 @@ PARAM_INT_IN("subspace_dim", "Dimensionality of random subspace to use for "
     "d", 0);
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_FLAG("warm_start", "If true and passed along with `training` and "
+    "`input_model` then trains more trees on top of existing model.", "w");
 
 /**
  * This is the class that we will serialize.  It is a pretty simple wrapper
@@ -167,7 +169,8 @@ static void mlpackMain()
     math::RandomSeed((size_t) std::time(NULL));
 
   // Check for incompatible input parameters.
-  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  if (!IO::HasParam("warm_start"))
+    RequireOnlyOnePassed({ "training", "input_model" }, true);
 
   ReportIgnoredParam({{ "training", false }}, "print_training_accuracy");
   ReportIgnoredParam({{ "test", false }}, "test_labels");
@@ -201,10 +204,17 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "minimum_leaf_size");
 
   RandomForestModel* rfModel;
+  // Handles the case when we are either training on top of existing forest
+  // else we are making predictions only.
+  if (IO::HasParam("warm_start") or IO::HasParam("input_model"))
+    rfModel = IO::GetParam<RandomForestModel*>("input_model");
+  // Handles the case when we are training new forest from scratch.
+  else
+    rfModel = new RandomForestModel();
+
   if (IO::HasParam("training"))
   {
     Timer::Start("rf_training");
-    rfModel = new RandomForestModel();
 
     // Train the model on the given input data.
     arma::mat data = std::move(IO::GetParam<arma::mat>("training"));
@@ -232,8 +242,15 @@ static void mlpackMain()
     const size_t numClasses = arma::max(labels) + 1;
 
     // Train the model.
-    rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
-        minimumGainSplit, maxDepth, mrds);
+    if (IO::HasParam("warm_start"))
+    {
+      bool warmStart = IO::GetParam<bool>("warm_start");
+      rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
+          minimumGainSplit, maxDepth, mrds, warmStart);
+    }
+    else
+        rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
+            minimumGainSplit, maxDepth, mrds);
     Timer::Stop("rf_training");
 
     // Did we want training accuracy?
@@ -250,11 +267,6 @@ static void mlpackMain()
           << endl;
       Timer::Stop("rf_prediction");
     }
-  }
-  else
-  {
-    // Then we must be loading a model.
-    rfModel = IO::GetParam<RandomForestModel*>("input_model");
   }
 
   if (IO::HasParam("test"))
