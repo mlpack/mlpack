@@ -13,6 +13,7 @@
 #define MLPACK_METHODS_RVM_REGRESSION_IMPL_HPP
 
 #include "rvm_regression.hpp"
+#include <mlpack/core/util/timers.hpp>
 
 namespace mlpack {
 namespace regression {
@@ -53,6 +54,8 @@ template<typename KernelType>
 void RVMRegression<KernelType>::Train(const arma::mat& data,
                                       const arma::rowvec& responses)
 {
+  Timer::Start("rvm_regression");
+  
   arma::mat phi;
   arma::rowvec t;
 
@@ -130,6 +133,7 @@ void RVMRegression<KernelType>::Train(const arma::mat& data,
     if (scaleData)
       dataScale = dataScale(activeSet);
   }
+  Timer::Stop("rvm_regression");
 }
 
 template<typename KernelType>
@@ -204,7 +208,7 @@ void RVMRegression<KernelType>::applyKernel(const arma::mat& matX,
   {
     std::cout << "Error gramm : " << matX.n_rows << "!=" 
               << matY.n_rows << std::endl;
-    throw std::invalid_argument("Number of features not consistent");
+    throw std::invalid_argument("Number of features not consistent.");
   }
 
   kernelMatrix = arma::mat(matX.n_cols, matY.n_cols);
@@ -319,9 +323,15 @@ void RVMRegression<KernelType>::serialize(Archive& ar,
 {
   ar(CEREAL_NVP(centerData));
   ar(CEREAL_NVP(scaleData));
-  ar(CEREAL_NVP(relevantVectors));
+  ar(CEREAL_NVP(dataOffset));
+  ar(CEREAL_NVP(dataScale));
+  ar(CEREAL_NVP(ard));
+  ar(CEREAL_NVP(activeSet));
   ar(CEREAL_NVP(omega));
+  ar(CEREAL_NVP(relevantVectors));
   ar(CEREAL_NVP(responsesOffset));
+  ar(CEREAL_NVP(beta));
+  ar(CEREAL_NVP(matCovariance));
   ar(CEREAL_NVP(kernel));
 }
 

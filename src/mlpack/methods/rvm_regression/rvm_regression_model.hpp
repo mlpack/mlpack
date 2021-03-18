@@ -33,8 +33,7 @@ class RVMRegressionModel
  RVMRegressionModel(const std::string kernelType,
 		    const bool centerData,
 		    const bool scaleData,
-		    const bool ard, //unused.
-		    const double bandwidth = 0.0);
+		    const double bandwidth = 1.0);
 
   //! Create an empty CF model.
   RVMRegressionModel() { }
