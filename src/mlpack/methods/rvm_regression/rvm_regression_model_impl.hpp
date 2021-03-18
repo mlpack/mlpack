@@ -17,7 +17,6 @@
 RVMRegressionModel::RVMRegressionModel(const std::string kernelType,
 				       const bool centerData,
 				       const bool scaleData,
-				       const bool ard,
 				       const double bandwidth)
 {
   if (kernelType == "linear")
@@ -128,7 +127,7 @@ template <typename T>
 void* GetValueVisitor::operator()(T *t) const
 {
   if (!t)
-    throw std::runtime_error("no cf model initialized");
+    throw std::runtime_error("no rvm model initialized");
 
   return (void*) t;
 }

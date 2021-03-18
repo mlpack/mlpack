@@ -223,7 +223,7 @@ public:
    * Get the precesion (or inverse variance) of the coeffcients.
    * @return \f$ \alpha_{i} \f$ 
    **/
-  const arma::rowvec& Alpha() const { return alpha; }
+  const arma::colvec& Alpha() const { return alpha; }
 
   /**
    * Get the estimated variance.
@@ -273,20 +273,14 @@ public:
   void serialize(Archive& ar, const unsigned int /* version */);
 
 private:
+  //! kernel Kernel used.
+  KernelType kernel;
+  
   //! Center the data if true.
   bool centerData;
 
   //! Scale the data by standard deviations if true.
   bool scaleData;
-
-  //! Mean vector computed over the points.
-  arma::colvec dataOffset;
-
-  //! Std vector computed over the points.
-  arma::colvec dataScale;
-
-  //! Mean of the response vector computed over the points.
-  double responsesOffset;
 
   //! Indicates that ARD mode is used.
   bool ard;
@@ -300,8 +294,14 @@ private:
   //! Maximum number of iterations for convergency.
   int nIterMax;  
 
-  //! kernel Kernel used.
-  KernelType kernel;
+  //! Mean vector computed over the points.
+  arma::colvec dataOffset;
+
+  //! Std vector computed over the points.
+  arma::colvec dataScale;
+
+  //! Mean of the response vector computed over the points.
+  double responsesOffset;
 
   //! Kernel length scale.
   double gamma;

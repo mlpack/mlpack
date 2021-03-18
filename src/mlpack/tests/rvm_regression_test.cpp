@@ -1,188 +1,175 @@
-#include <iostream>
-// Includes all relevant components of mlpack.
+/**
+ * @file tests/rvm_regression_test.cpp
+ * @author Clement Mercoer
+ *
+ * Tests for RVMRegression class.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 
-#include <math.h>
-#include <ctime>
-
-#include <mlpack/core/data/load.hpp>
-
-#include <boost/test/unit_test.hpp>
+#include <mlpack/core.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 #include <mlpack/methods/rvm_regression/rvm_regression.hpp>
 
-using namespace mlpack;
+#include "serialization.hpp"
+
 using namespace mlpack::regression;
 
-BOOST_AUTO_TEST_SUITE(RVMRegressionTest);
-
-void GenerateProblem(arma::mat& X,
+void GenerateProblemSparse(arma::mat& matX,
                      arma::rowvec& y,
                      size_t nPoints,
                      size_t nDims,
                      float sigma = 0.0)
 {
-  X = arma::randn(nDims, nPoints);
-  arma::colvec omega = arma::randn(nDims);
-  omega(0) = 0;
-  omega(1) = 0;
+  matX = arma::randn(nDims, nPoints);
+  arma::colvec omega = arma::zeros<arma::rowvec>(nDims);
+  omega.head(nDims / 5) = arma::randn(nDims / 5) * 10; 
+  
   // Compute y and add noise.
-  y = omega.t() * X + arma::randn(nPoints).t() * sigma;
+  y = omega.t() * matX + arma::randn(nPoints).t() * sigma;
 }
 
-// Ensure that predictions are close enough to the target
-// for a free noise dataset in ard mode and with linear kernel.
-BOOST_AUTO_TEST_CASE(RVMRegressionRegressionTest)
+TEST_CASE("OptionsMakeRVMDifferent", "[RVMRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y, predictions;
+  size_t nPoints = 200, nDims = 25;
+  GenerateProblemSparse(matX, y, nPoints, nDims, 1);
 
-  GenerateProblem(matX, y, 200, 10);
-
-  // RVM with linear kernel.
-  kernel::LinearKernel kernel;
-  RVMRegression<kernel::LinearKernel> rvmLinear(kernel, false, false, false);
-  rvmLinear.Train(matX, y);
-  rvmLinear.Predict(matX, predictions);
-
-  // Check the predictions are close enough to the targets.
-  for (size_t i = 0; i < y.size(); ++i)
-    BOOST_REQUIRE_CLOSE(predictions[i], y[i], 1e-6);
-
-  // ARD Regression.
-  RVMRegression<kernel::LinearKernel> rvmArd(kernel, false, false, false);
-  rvmArd.Train(matX, y);
-  rvmArd.Predict(matX, predictions);
-
-  // Check the predictions are close enough to the targets.
-  for (size_t i = 0; i < y.size(); ++i)
-    BOOST_REQUIRE_CLOSE(predictions[i], y[i], 1e-6);
-
-  // Check that the estimated variance is zero.
-  BOOST_REQUIRE_SMALL(rvmArd.Variance(), 1e-6);
-  BOOST_REQUIRE_SMALL(rvmLinear.Variance(), 1e-6);
-}
-
-// Verify centerData and scaleData equal false do not affect the solution.
-BOOST_AUTO_TEST_CASE(TestCenter0ScaleData0)
-{
-  arma::mat matX;
-  arma::rowvec y;
-  size_t nDims = 30, nPoints = 100;
-
-  GenerateProblem(matX, y, nPoints, nDims, 0.5);
-
-  kernel::LinearKernel kernel;
-  RVMRegression<kernel::LinearKernel> estimator(kernel, false, false, false);
-
-  estimator.Train(matX, y);
-
-  // Check dataOffset is empty.
-  BOOST_REQUIRE(estimator.DataOffset().n_elem == 0);
-
-  // To be neutral responseOffset must be 0.
-  BOOST_REQUIRE(estimator.ResponsesOffset() == 0);
-
-  // Check dataScale is empty.
-  BOOST_REQUIRE(estimator.DataScale().n_elem == 0);
-}
-
-// Verify that centering and normalization are correct.
-BOOST_AUTO_TEST_CASE(TestCenterDataTrueScaleDataTrue)
-{
-  arma::mat matX;
-  arma::rowvec y;
-  size_t nDims = 5, nPoints = 100;
-  GenerateProblem(matX, y, nPoints, nDims, 0.5);
-
-  kernel::LinearKernel kernel;
-  RVMRegression<kernel::LinearKernel> estimator(kernel, true, true, true);
-
-  estimator.Train(matX, y);
-
-  arma::colvec xMean = arma::mean(matX, 1);
-  arma::colvec xStd = arma::stddev(matX, 1, 1);
-  // Keep the actiive basis functions only.
-  xMean = xMean(estimator.ActiveSet());
-  xStd = xStd(estimator.ActiveSet());
-  double yMean = arma::mean(y);
-
-  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataOffset() - xMean)), 1e-6);
-  BOOST_REQUIRE_SMALL((double) abs(sum(estimator.DataScale() - xStd)), 1e-6);
-  BOOST_REQUIRE_CLOSE(estimator.ResponsesOffset(), yMean, 1e-6);
-}
-
-// Make sure a model with center ans scale option set is different than a model
-// without it set.
-BOOST_AUTO_TEST_CASE(OptionsMakeModelDifferent)
-{
-  arma::mat matX;
-  arma::rowvec y;
-  size_t nDims = 10, nPoints = 100;
-  GenerateProblem(matX, y, nPoints, nDims, 0.5);
-
-  kernel::LinearKernel kernel;
-  RVMRegression<kernel::LinearKernel> rvm(kernel, false, false, true),
-      rvmC(kernel, true, false, true), rvmCS(kernel, true, true, true);
-
-  rvm.Train(matX, y);
-  rvmC.Train(matX, y);
-  rvmCS.Train(matX, y);
+  mlpack::kernel::LinearKernel kernel;
+  RVMRegression<mlpack::kernel::LinearKernel> ard10(kernel);
+  RVMRegression<mlpack::kernel::LinearKernel> ard11(kernel, true, true, true);
+  RVMRegression<mlpack::kernel::LinearKernel> rvm10(kernel, true, false, false);
+  RVMRegression<mlpack::kernel::LinearKernel> rvm11(kernel, true, true, false);
+  ard10.Train(matX, y);
+  ard11.Train(matX, y);
+  rvm10.Train(matX, y);
+  rvm11.Train(matX, y);
 
   for (size_t i = 0; i < nDims; ++i)
-    BOOST_REQUIRE((rvm.Omega()(i) != rvmC.Omega()(i)) &&
-                  (rvm.Omega()(i) != rvmCS.Omega()(i)) &&
-                  (rvmC.Omega()(i) != rvmCS.Omega()(i)));
+  {
+    REQUIRE(ard10.Alpha()(i) != ard11.Alpha()(i));
+  }  
+  for (size_t i = 0; i < nPoints; ++i)
+  {
+    REQUIRE(rvm10.Alpha()(i) != rvm11.Alpha()(i));
+  }  
 }
 
-// Check that Train() does not fail with two colinear vectors.
-BOOST_AUTO_TEST_CASE(SingularMatix)
+// Check that Train() does not fail with two colinear vectors. Try it for ARD
+// regression, Linear RVM and Gaussian RVM.
+TEST_CASE("SingularMatixRVM", "[RVMRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y;
 
-  GenerateProblem(matX, y, 200, 10);
+  GenerateProblemSparse(matX, y, 200, 25);
+
   // Now the first and the second rows are indentical.
   matX.row(1) = matX.row(0);
 
-  kernel::LinearKernel kernel;
-  RVMRegression<kernel::LinearKernel> estimator(kernel, true, false, true);
-  estimator.Train(matX, y);
+  
+  mlpack::kernel::LinearKernel linear;
+  mlpack::kernel::GaussianKernel gaussian(10);
+
+  // ARD regression.
+    RVMRegression<mlpack::kernel::LinearKernel> ard11(linear, true, true, true);
+  // Linear kernel RVM.
+  RVMRegression<mlpack::kernel::LinearKernel>
+    rvm10(linear, true, false, false);
+  // Gaussian kernel RVM.
+  RVMRegression<mlpack::kernel::GaussianKernel>
+      rvmGaussian10(gaussian, true, false, false);
+
+  ard11.Train(matX, y);
+  rvm10.Train(matX, y);
+  rvmGaussian10.Train(matX, y);
 }
 
 // Check that std are well computed/coherent. At least higher than the
 // estimated predictive variance.
-BOOST_AUTO_TEST_CASE(PredictiveUncertainties)
+TEST_CASE("PredictiveUncertaintiesRVM", "[RVMRegressionTest]")
+{
+  arma::mat matX;
+  arma::rowvec y, responses, std;
+  double estStd;
+  
+  GenerateProblemSparse(matX, y, 200, 40, 2.0);
+
+  mlpack::kernel::LinearKernel linear;
+
+  // ARD regression.
+  RVMRegression<mlpack::kernel::LinearKernel> ard00(linear, false, false, true);
+  // Linear kernel RVM.
+  RVMRegression<mlpack::kernel::LinearKernel>
+    rvm00(linear, false, false, false);
+
+  ard00.Train(matX, y);
+  rvm00.Train(matX, y);
+
+  // ARD predict.
+  ard00.Predict(matX, responses, std);
+  estStd = sqrt(ard00.Variance());
+
+  // Check that the estimated variance is close to 1.
+  REQUIRE(estStd == Approx(2).epsilon(0.3));
+
+  for (size_t i = 0; i < matX.n_cols; i++)
+    REQUIRE(std[i] > estStd);
+
+  // RVM Linear predict.
+  rvm00.Predict(matX, responses, std);
+  estStd = sqrt(rvm00.Variance());
+
+  // Check that the estimated variance is close to 1.
+  REQUIRE(estStd == Approx(2).epsilon(0.3));
+
+  for (size_t i = 0; i < matX.n_cols; i++)
+    REQUIRE(std[i] > estStd);
+}
+
+TEST_CASE("SerializeRVM", "[RVMRegressionTest]")
 {
   arma::mat matX;
   arma::rowvec y;
 
-  GenerateProblem(matX, y, 100, 10, 1);
+  GenerateProblemSparse(matX, y, 200, 25, 2.0);
 
-  // ARD case.
-  kernel::LinearKernel kernel;
-  RVMRegression<kernel::LinearKernel> estimator(kernel, true, false, true);
-  estimator.Train(matX, y);
+  mlpack::kernel::LinearKernel linear;
 
-  arma::rowvec responses, std;
-  estimator.Predict(matX, responses, std);
-  const double estStd = sqrt(estimator.Variance());
+  // ARD regression.
+  RVMRegression<mlpack::kernel::LinearKernel> ard(linear, true, false, true);
 
-  for (size_t i = 0; i < matX.n_cols; i++)
-    BOOST_REQUIRE_GT(std[i], estStd);
+  ard.Train(matX, y);
 
-  // Check that the estimated variance is close to 1.
-  BOOST_REQUIRE_CLOSE(estStd, 1, 20);
+  arma::rowvec beforePredictions, beforeStd;
+  ard.Predict(matX, beforePredictions, beforeStd);
 
-  // Liner Kernel case.
-  estimator = RVMRegression<kernel::LinearKernel>(kernel, true, false, false);
+  // Serialization.
+  RVMRegression<mlpack::kernel::LinearKernel> xmlArd, jsonArd, binArd;
+  mlpack::SerializeObjectAll(ard, xmlArd, jsonArd, binArd);
 
-  for (size_t i = 0; i < matX.n_cols; i++)
-    BOOST_REQUIRE_GT(std[i], estStd);
+  // Now check that we get the same results serializing other things.
+  arma::rowvec xmlPredictions, jsonPredictions, binPredictions;
+  arma::rowvec xmlStd, jsonStd, binStd;
 
-  // Check that the estimated variance is close to 1.
-  BOOST_REQUIRE_CLOSE(estStd, 1, 20);
+  xmlArd.Predict(matX, xmlPredictions, xmlStd);
 
+  jsonArd.Predict(matX, jsonPredictions, jsonStd);
+  binArd.Predict(matX, binPredictions, binStd);
+
+  for (size_t i = 0; i < y.n_elem; ++i)
+  {
+    REQUIRE(beforePredictions[i] * 3 == (xmlPredictions[i] +
+					 jsonPredictions[i] +
+					 binPredictions[i]));
+    REQUIRE(beforeStd[i] * 3 == (xmlStd[i] +
+				 jsonStd[i] +
+				 binStd[i]));
+  }
 }
-
-BOOST_AUTO_TEST_SUITE_END();

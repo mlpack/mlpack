@@ -97,6 +97,7 @@ add_executable(mlpack_test
   regularized_svd_test.cpp
   reward_clipping_test.cpp
   rl_components_test.cpp
+  rvm_regression_test.cpp
   scaling_test.cpp
   serialization.cpp
   serialization.hpp
@@ -167,6 +168,7 @@ add_executable(mlpack_test
   main_tests/preprocess_split_test.cpp
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
+  main_tests/rvm_regression_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/range_search_test.cpp
