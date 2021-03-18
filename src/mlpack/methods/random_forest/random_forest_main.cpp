@@ -172,12 +172,8 @@ static void mlpackMain()
   if (!IO::HasParam("warm_start"))
     RequireOnlyOnePassed({ "training", "input_model" }, true);
   else
-  {
     // When warm_start is passed, training and input_model must also be passed.
-    std::vector<std::string> params = {"warm_start", "training",
-        "input_model"};
-    RequireNoneOrAllPassed(params, true);
-  }
+    RequireNoneOrAllPassed({"warm_start", "training", "input_model"}, true);
 
   ReportIgnoredParam({{ "training", false }}, "print_training_accuracy");
   ReportIgnoredParam({{ "test", false }}, "test_labels");

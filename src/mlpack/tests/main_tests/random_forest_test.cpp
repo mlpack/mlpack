@@ -510,6 +510,9 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestWarmStart",
       IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
 
   SetInputParam("warm_start", true);
+  // Input pre-trained model.
+  SetInputParam("input_model",
+                IO::GetParam<RandomForestModel*>("output_model"));
 
   mlpackMain();
 
