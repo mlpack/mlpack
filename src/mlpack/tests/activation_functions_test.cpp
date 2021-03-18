@@ -1227,7 +1227,7 @@ TEST_CASE("HardSwishFunctionTest", "[ActivationFunctionsTest]")
  */
 TEST_CASE("TanhExpFunctionTest", "[ActivationFunctionsTest]")
 {
-  const arma::colvec desiredActivations("-0.26903 3.20000 0.4.50000 0.0000 \
+  const arma::colvec desiredActivations("-0.26903 3.20000 4.50000 0.0000 \
                                          0.99133 -0.35214 2.0 0.0000");
 
   const arma::colvec desiredDerivatives("-0.13126 1.0000 1.0000 0 \
