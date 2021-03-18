@@ -204,7 +204,8 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMaximumDepthTest",
 }
 
 /**
- * Make sure only one of training data or pre-trained model is passed.
+ * Make sure only one of training data or pre-trained model is passed, when
+ * warm_start is not passed.
  */
 TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingVerTest",
                  "[RandomForestMainTest][BindingTests]")
