@@ -36,7 +36,7 @@ namespace ann /** Artificial Neural Network. */ {
    */
   static double Fn(const double x)
   {
-    return x*std::tanh(std::exp(x));
+    return x * std::tanh(std::exp(x));
   }
 
   /**
