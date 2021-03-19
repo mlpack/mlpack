@@ -17,12 +17,6 @@ set(TOOLCHAIN_PREFIX aarch64-linux-gnu-)
 ## Therefore, if dynamic link exists, you do not have to specify the version
 set(VERSION_NUMBER "" CACHE STRING "Enter the version number of the compiler")
 
-execute_process(
-  COMMAND ${UTIL_SEARCH_CMD} ${TOOLCHAIN_PREFIX}gcc${VERSION_NUMBER}
-  OUTPUT_VARIABLE BINUTILS_PATH
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
 # Without that flag CMake is not able to pass test compilation check
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 

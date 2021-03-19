@@ -164,10 +164,10 @@ TEST_CASE("AKFNSingleCoverTreeTest", "[AKFNTest]")
  * Errors are produced if the results are not according to relative error.
  */
 
-// These macros are added in order to stop executing these tests on aarch64.
-// These is unknown issue with Dual Cover tree test on these architecture
+// This macro is added in order to stop executing these tests on aarch64.
+// It is a known issue with Dual Cover tree test on this architecture.
 // The issue is explained in #2869 on github.
-// Once the issue is resolved. These macros can be removed safely.
+// Once the issue is resolved. This macro can be removed safely.
 #ifndef __aarch64__
 TEST_CASE("AKFNDualCoverTreeTest", "[AKFNTest]")
 {
@@ -222,10 +222,10 @@ TEST_CASE("AKFNSingleBallTreeTest", "[AKFNTest]")
     REQUIRE_RELATIVE_ERR(distancesBallTree(i), distancesExact(i), 0.05);
 }
 
-// These macros are added in order to stop executing these tests on aarch64.
-// These is unknown issue with Dual Cover tree test on these architecture
+// This macro is added in order to stop executing these tests on aarch64.
+// It is a known issue with Dual Cover tree test on this architecture.
 // The issue is explained in #2869 on github.
-// Once the issue is resolved. These macros can be removed safely.
+// Once the issue is resolved. This macro can be removed safely.
 #ifndef __aarch64__
 
 /**
