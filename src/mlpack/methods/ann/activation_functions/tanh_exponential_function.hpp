@@ -59,7 +59,7 @@ namespace ann /** Artificial Neural Network. */ {
    */
   static double Deriv(const double y)
   {
-    return std::tanh(std::exp(y)) - y % std::exp(y) %
+    return std::tanh(std::exp(y)) - y * std::exp(y) *
         (std::pow(std::tanh(std::exp(y)), 2) - 1);
   }
 
