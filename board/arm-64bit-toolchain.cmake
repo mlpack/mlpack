@@ -38,7 +38,7 @@ set(CMAKE_OBJCOPY ${TOOLCHAIN_PREFIX}objcopy${VERSION_NUMBER} CACHE INTERNAL "ob
 set(CMAKE_SIZE_UTIL ${TOOLCHAIN_PREFIX}size${VERSION_NUMBER} CACHE INTERNAL "size tool")
 
 ## There is no need to specify the CMAKE_SYSROOT if you are using the 
-## standard toolchain. If you download you own toolchain you have to specify
+## standard toolchain. If you download your own toolchain you have to specify
 ## the path for sysroot as follows:
 ## set(CMAKE_SYSROOT /PathToToolchain/aarch64-buildroot-linux-gnu/sysroot)
 ## Or it can be specified from commandline
