@@ -41,7 +41,7 @@ set(CMAKE_SIZE_UTIL ${TOOLCHAIN_PREFIX}size${VERSION_NUMBER} CACHE INTERNAL "siz
 ## standard toolchain. If you download your own toolchain you have to specify
 ## the path for sysroot as follows:
 ## set(CMAKE_SYSROOT /PathToToolchain/aarch64-buildroot-linux-gnu/sysroot)
-## Or it can be specified from commandline
+## or it can be specified from command-line.
 set(CMAKE_SYSROOT "" CACHE STRING "Enter path for sysroot")
 
 ## Here are the standard ROOT_PATH if you are using the standard toolchain
