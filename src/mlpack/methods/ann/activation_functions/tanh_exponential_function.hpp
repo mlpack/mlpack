@@ -72,8 +72,8 @@ namespace ann /** Artificial Neural Network. */ {
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x = arma::tanh(arma::exp(y)) -
-        y*arma::exp(y)*(arma::pow(arma::tanh(arma::exp(y)),2) - 1);
+    x = arma::tanh(arma::exp(y)) - y * arma::exp(y) *
+        (arma::pow(arma::tanh(arma::exp(y)), 2) - 1);
   }
 }; // class TanhExpFunction
 
