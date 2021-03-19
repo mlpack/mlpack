@@ -16,8 +16,8 @@ namespace regression{
 
 /**
  * A sparse bayesian approach to the maximum likelihood estimation of the 
- * parameters \f$ \omega \f$ of the linear regression model. The Complexity is 
- * governed by the addition of a ARD prior impososed on the precisions 
+ * parameters \f$ \omega \f$ of the linear regression model. The complexity is 
+ * governed by impostion ofan  ARD prior on the precisions 
  * \f$ \alpha_{i} \f$ over the \f$ \omega_{i} \f$:  
  *
  * \f[
@@ -79,13 +79,14 @@ namespace regression{
  * arma::rowvec yTrain; // Train target values.
  
  * // Train ARD regression. Regularization strength is optimally tunned with the
- * // training data alone by applying the Train method.
+ * // training data alone by applying the Train method. Set ard to true.
   
- * RVMRegression<> estimator();
+ * mlpack::kernel::LinearKernel kernel;
+ * RVMRegression<> estimator(kernel, true, false, true);
  * estimator.Train(xTrain, yTrain);
  
- * // Train RVM regression model with rbf kernel.
- * mlpack::kernel::GaussianKernel kerne(). // Declare a default kernel.
+ * // Train RVM regression model with rbf kernel. Set ard to false.
+ * mlpack::kernel::GaussianKernel kerne(). 
  * RVMRegression<mlpack::kernel::GaussianKernel> 
  *     estimator(kernel, false, false, false);
 
@@ -101,6 +102,9 @@ namespace regression{
  * // Compute the standard deviations of the predictions.
  * arma::rowvec stds;
  * estimator.Predict(xTest, responses, stds)
+
+ * Investigates the sparsity of the solution with the ActiveSet() and the 
+ * RelevantVectors() methods for ard and RVM respectively.
  * @endcode
  */
   template<typename KernelType=mlpack::kernel::LinearKernel>
@@ -124,7 +128,6 @@ public:
    * @param tol Level from which the solution is considered sufficientlly 
    *    stable.  
    * @param nIterMax Maximum number of iterations for convergency.
-
    **/
   RVMRegression(const KernelType& kernel,
                 const bool centerData,
@@ -135,13 +138,13 @@ public:
 		const int nIterMax);
 
   /**
-   * Defaut constructor for ARD regression. The class Performs a linear 
+   * Defaut constructor for ARD regression. The class performs a linear 
    * regression with an ARD prior promoting sparsity in the final solution. 
    * Regulariation parameters are automaticaly set to their optimal values by 
    * the maximmization of the marginal likelihood. ARD regression is computed 
    * whatever the kernel given at initalization.
    *
-   * @param kernel Kernel to be used for computation.
+   * @param kernel Kernel to be used for computation..
    * @param centerData Whether or not center the data according to the 
    *    examples.
    * @param scaleData Whether or to scaleData the data according to the 
@@ -183,10 +186,12 @@ public:
                arma::rowvec& predictions) const;
 
   /**
-   * Predict \f$\hat{y}_{i}\f$ and the standard deviation of the predictive posterior 
-   *    distribution for each data point in the given data matrix using the
-   *    currently-trained RVM model. Only the coefficients of the active basis 
-   *    funcions are used for prediction. This allows fast predictions.
+   * Predict \f$\hat{y}_{i}\f$ and the standard deviation of the predictive 
+   *    posterior distribution for each data point in the given data matrix 
+   *    using the currently-trained RVM model. Only the coefficients of the 
+   *    active basis funcions are used for prediction. This allows fast pre-
+   *    dictions.
+   *
    * @param points The data points to apply the model.
    * @param predictions y, which will contained calculated values on completion.
    * @param std Standard deviations of the predictions.
@@ -214,19 +219,22 @@ public:
   const arma::colvec& Omega() const { return omega; };
 
   /**
-   * Get the precesion (or inverse variance) beta of the model.
+   * Get the precision (or inverse variance) beta of the model.
+   *
    * @return \f$ \beta \f$ 
    **/
   double Beta() const { return beta; }
 
    /**
    * Get the precesion (or inverse variance) of the coeffcients.
+   *
    * @return \f$ \alpha_{i} \f$ 
    **/
   const arma::colvec& Alpha() const { return alpha; }
 
   /**
    * Get the estimated variance.
+   *
    * @return 1.0 / \f$ \beta \f$
    **/
   double Variance() const { return 1.0 / Beta(); }
@@ -256,12 +264,14 @@ public:
 
   /**
    * Get the mean value of the train responses.
+   *
    * @return responsesOffset
    */
   double ResponsesOffset() const { return responsesOffset; }
 
   /**
    * Get the relevant vectors.
+   *
    * @return relevantVectors
    */
   const arma::mat& RelevantVectors() const { return relevantVectors; }
