@@ -48,7 +48,7 @@ namespace ann /** Artificial Neural Network. */ {
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = x*arma::tanh(arma::exp(x));
+    y = x * arma::tanh(arma::exp(x));
   }
 
   /**
