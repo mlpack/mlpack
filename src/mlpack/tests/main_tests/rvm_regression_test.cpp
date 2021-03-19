@@ -72,85 +72,84 @@ TEST_CASE_METHOD(RVMRegressionTestFixture,
 	  RVMPtr<mlpack::kernel::LinearKernel>()->DataScale().n_elem == 0);
 }
 
+
+// Check predictions of saved model and in code model are equal.
+TEST_CASE_METHOD(RVMRegressionTestFixture,
+                 "RVMRegressionSavedEqualCode",
+                 "[RVMRegressionMainTest][BindingTests]")
+{
+  int n = 10, m = 4;
+  arma::mat matX = arma::randu<arma::mat>(m, n);
+  arma::mat matXtest = arma::randu<arma::mat>(m, 2 * n);
+  const arma::rowvec omega = arma::randu<arma::rowvec>(m);
+  arma::rowvec y =  omega * matX;
+
+  mlpack::kernel::LinearKernel kernel;  
+  RVMRegression<mlpack::kernel::LinearKernel> model(kernel, true, true, true);
+  model.Train(matX, y);
+
+  arma::rowvec responses, uncertainties;
+  model.Predict(matXtest, responses, uncertainties);
+
+  SetInputParam("input", std::move(matX));
+  SetInputParam("responses", std::move(y));
+  SetInputParam("center", true);
+  SetInputParam("scale", true);
+
+  mlpackMain();
+
+  IO::GetSingleton().Parameters()["input"].wasPassed = false;
+  IO::GetSingleton().Parameters()["responses"].wasPassed = false;
+
+  SetInputParam("input_model",
+                IO::GetParam<RVMRegressionModel*>("output_model"));
+  SetInputParam("test", std::move(matXtest));
+
+  mlpackMain();
+
+  arma::mat ytest = std::move(responses);
+  arma::mat uncertaintiesTest = std::move(uncertainties);
+
+  // Check that initial output and output using saved model are same.
+  CheckMatrices(ytest, IO::GetParam<arma::mat>("predictions"));
+  CheckMatrices(uncertaintiesTest, IO::GetParam<arma::mat>("stds"));
+}
+
 /**
- * Check predictions of saved model and in code model are equal.
+ * Check a crash happens if neither input or input_model are specified.
+ * Check a crash happens if both input and input_model are specified.
  */
-// TEST_CASE_METHOD(RVMRegressionTestFixture,
-//                  "RVMRegressionSavedEqualCode",
-//                  "[RVMRegressionMainTest][BindingTests]")
-// {
-//   int n = 10, m = 4;
-//   arma::mat matX = arma::randu<arma::mat>(m, n);
-//   arma::mat matXtest = arma::randu<arma::mat>(m, 2 * n);
-//   const arma::rowvec omega = arma::randu<arma::rowvec>(m);
-//   arma::rowvec y =  omega * matX;
+TEST_CASE_METHOD(RVMRegressionTestFixture,
+                 "RVMCheckParamsPassed",
+                 "[RVMRegressionMainTest][BindingTests]")
+{
+  int n = 10, m = 4;
+  arma::mat matX = arma::randu<arma::mat>(m, n);
+  arma::mat matXtest = arma::randu<arma::mat>(m, 2 * n);
+  const arma::rowvec omega = arma::randu<arma::rowvec>(m);
+  arma::rowvec y =  omega * matX;
 
-//   mlpack::kernel::LinearKernel kernel;  
-//   RVMRegression<mlpack::kernel::LinearKernel> model(kernel);
-//   model.Train(matX, y);
 
-//   arma::rowvec responses;
-//   model.Predict(matXtest, responses);
+  // Check that std::runtime_error is thrown if neither input or input_model
+  // is specified.
+  SetInputParam("responses", std::move(y));
 
-//   SetInputParam("input", std::move(matX));
-//   SetInputParam("responses", std::move(y));
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
 
-//   mlpackMain();
+  // Continue only with input passed.
+  SetInputParam("input", std::move(matX));
+  mlpackMain();
 
-//   IO::GetSingleton().Parameters()["input"].wasPassed = false;
-//   IO::GetSingleton().Parameters()["responses"].wasPassed = false;
+  // Now pass the previous trained model and one input matrix at the same time.
+  // An error should occur.
+  SetInputParam("input", std::move(matX));
+  SetInputParam("input_model",
+                IO::GetParam<RVMRegressionModel*>("output_model"));
+  SetInputParam("test", std::move(matXtest));
 
-//   SetInputParam("input_model",
-//                 IO::GetParam<BayesianLinearRegression*>("output_model"));
-//   SetInputParam("test", std::move(matXtest));
-
-//   mlpackMain();
-
-//   arma::mat ytest = std::move(responses);
-//   // Check that initial output and output using saved model are same.
-//   CheckMatrices(ytest, IO::GetParam<arma::mat>("predictions"));
-// }
-
-// /**
-//  * Check a crash happens if neither input or input_model are specified.
-//  * Check a crash happens if both input and input_model are specified.
-//  */
-// TEST_CASE_METHOD(BRTestFixture,
-//                  "CheckParamsPassed",
-//                  "[BayesianLinearRegressionMainTest][BindingTests]")
-// {
-//   int n = 10, m = 4;
-//   arma::mat matX = arma::randu<arma::mat>(m, n);
-//   arma::mat matXtest = arma::randu<arma::mat>(m, 2 * n);
-//   const arma::rowvec omega = arma::randu<arma::rowvec>(m);
-//   arma::rowvec y =  omega * matX;
-
-//   BayesianLinearRegression model;
-//   model.Train(matX, y);
-
-//   arma::rowvec responses;
-//   model.Predict(matXtest, responses);
-
-//   // Check that std::runtime_error is thrown if neither input or input_model
-//   // is specified.
-//   SetInputParam("responses", std::move(y));
-
-//   Log::Fatal.ignoreInput = true;
-//   REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
-//   Log::Fatal.ignoreInput = false;
-
-//   // Continue only with input passed.
-//   SetInputParam("input", std::move(matX));
-//   mlpackMain();
-
-//   // Now pass the previous trained model and one input matrix at the same time.
-//   // An error should occur.
-//   SetInputParam("input", std::move(matX));
-//   SetInputParam("input_model",
-//                 IO::GetParam<BayesianLinearRegression*>("output_model"));
-//   SetInputParam("test", std::move(matXtest));
-
-//   Log::Fatal.ignoreInput = true;
-//   REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
-//   Log::Fatal.ignoreInput = false;
-// }
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
