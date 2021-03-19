@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef TANH_EXPONENTIAL_FUNCTION_HPP_INCLUDED
-#define TANH_EXPONENTIAL_FUNCTION_HPP_INCLUDED
+#ifndef MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_TANH_EXPONENTIAL_FUNCTION_HPP
+#define MLPACK_METHODS_ANN_ACTIVATION_FUNCTIONS_TANH_EXPONENTIAL_FUNCTION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -80,4 +80,4 @@ namespace ann /** Artificial Neural Network. */ {
 } // namespace ann
 } // namespace mlpack
 
-#endif // TANH_EXPONENTIAL_FUNCTION_HPP_INCLUDED
+#endif
