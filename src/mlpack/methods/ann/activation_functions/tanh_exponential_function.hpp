@@ -48,7 +48,7 @@ namespace ann /** Artificial Neural Network. */ {
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = x * arma::tanh(arma::exp(x));
+    y = x % arma::tanh(arma::exp(x));
   }
 
   /**
@@ -59,7 +59,7 @@ namespace ann /** Artificial Neural Network. */ {
    */
   static double Deriv(const double y)
   {
-    return std::tanh(std::exp(y)) - y * std::exp(y) *
+    return std::tanh(std::exp(y)) - y % std::exp(y) %
         (std::pow(std::tanh(std::exp(y)), 2) - 1);
   }
 
@@ -72,7 +72,7 @@ namespace ann /** Artificial Neural Network. */ {
   template<typename InputVecType, typename OutputVecType>
   static void Deriv(const InputVecType& y, OutputVecType& x)
   {
-    x = arma::tanh(arma::exp(y)) - y * arma::exp(y) *
+    x = arma::tanh(arma::exp(y)) - y % arma::exp(y) %
         (arma::pow(arma::tanh(arma::exp(y)), 2) - 1);
   }
 }; // class TanhExpFunction
