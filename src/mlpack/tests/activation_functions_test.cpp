@@ -1227,10 +1227,15 @@ TEST_CASE("HardSwishFunctionTest", "[ActivationFunctionsTest]")
  */
 TEST_CASE("TanhExpFunctionTest", "[ActivationFunctionsTest]")
 {
-  const arma::colvec desiredActivations("-0.26903 3.20000 4.50000 -0.0000 \
+
+  const arma::colvec activationData("-2 3.2 4.5 1 -1 2 0");
+
+  // Hand-calculated values.
+  const arma::colvec desiredActivations("-0.26903 3.20000 4.50000 \
                                          0.99133 -0.35214 2.0 0.0000");
 
-  const arma::colvec desiredDerivatives("0.52305 1.0000 1.0000 0.76159 \
+  // Hand-calculated values.
+  const arma::colvec desiredDerivatives("0.52305 1.0000 1.0000 \
                                          1.03924 0.44982 1.00002 0.76159");
 
   CheckActivationCorrect<TanhExpFunction>(activationData, desiredActivations);
