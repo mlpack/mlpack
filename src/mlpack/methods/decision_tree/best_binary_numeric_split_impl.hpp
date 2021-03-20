@@ -12,6 +12,8 @@
 #ifndef MLPACK_METHODS_DECISION_TREE_BEST_BINARY_NUMERIC_SPLIT_IMPL_HPP
 #define MLPACK_METHODS_DECISION_TREE_BEST_BINARY_NUMERIC_SPLIT_IMPL_HPP
 
+#include <random>
+
 namespace mlpack {
 namespace tree {
 
@@ -39,11 +41,11 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   arma::Row<size_t> sortedLabels(labels.n_elem);
   arma::rowvec sortedWeights;
   for (size_t i = 0; i < sortedLabels.n_elem; ++i)
-    sortedLabels[i] = labels[sortedIndices[i]];
+    sortedLabels(i) = labels(sortedIndices(i));
 
   // Sanity check: if the first element is the same as the last, we can't split
   // in this dimension.
-  if (data[sortedIndices[0]] == data[sortedIndices[sortedIndices.n_elem - 1]])
+  if (data(sortedIndices(0)) == data(sortedIndices(sortedIndices.n_elem - 1)))
     return DBL_MAX;
 
   // Only initialize if we are using weights.
@@ -52,7 +54,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     sortedWeights.set_size(sortedLabels.n_elem);
     // The weights must keep the same order as the labels.
     for (size_t i = 0; i < sortedLabels.n_elem; ++i)
-      sortedWeights[i] = weights[sortedIndices[i]];
+      sortedWeights(i) = weights(sortedIndices(i));
   }
 
   // Loop through all possible split points, choosing the best one.  Also, force
@@ -77,15 +79,15 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     // These points have to be on the left.
     for (size_t i = 0; i < minimum - 1; ++i)
     {
-      classWeightSums(sortedLabels[i], 0) += sortedWeights[i];
-      totalLeftWeight += sortedWeights[i];
+      classWeightSums(sortedLabels(i), 0) += sortedWeights(i);
+      totalLeftWeight += sortedWeights(i);
     }
 
     // These points have to be on the right.
     for (size_t i = minimum - 1; i < data.n_elem; ++i)
     {
-      classWeightSums(sortedLabels[i], 1) += sortedWeights[i];
-      totalRightWeight += sortedWeights[i];
+      classWeightSums(sortedLabels(i), 1) += sortedWeights(i);
+      totalRightWeight += sortedWeights(i);
     }
   }
   else
@@ -96,11 +98,11 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     // Initialize the counts.
     // These points have to be on the left.
     for (size_t i = 0; i < minimum - 1; ++i)
-      ++classCounts(sortedLabels[i], 0);
+      ++classCounts(sortedLabels(i), 0);
 
     // These points have to be on the right.
     for (size_t i = minimum - 1; i < data.n_elem; ++i)
-      ++classCounts(sortedLabels[i], 1);
+      ++classCounts(sortedLabels(i), 1);
   }
 
   for (size_t index = minimum; index < data.n_elem - minimum; ++index)
@@ -108,19 +110,19 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     // Update class weight sums or counts.
     if (UseWeights)
     {
-      classWeightSums(sortedLabels[index - 1], 1) -= sortedWeights[index - 1];
-      classWeightSums(sortedLabels[index - 1], 0) += sortedWeights[index - 1];
-      totalLeftWeight += sortedWeights[index - 1];
-      totalRightWeight -= sortedWeights[index - 1];
+      classWeightSums(sortedLabels(index - 1), 1) -= sortedWeights(index - 1);
+      classWeightSums(sortedLabels(index - 1), 0) += sortedWeights(index - 1);
+      totalLeftWeight += sortedWeights(index - 1);
+      totalRightWeight -= sortedWeights(index - 1);
     }
     else
     {
-      --classCounts(sortedLabels[index - 1], 1);
-      ++classCounts(sortedLabels[index - 1], 0);
+      --classCounts(sortedLabels(index - 1), 1);
+      ++classCounts(sortedLabels(index - 1), 0);
     }
 
     // Make sure that the value has changed.
-    if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
+    if (data(sortedIndices(index)) == data(sortedIndices(index - 1)))
       continue;
 
     // Calculate the gain for the left and right child.  Only use weights if
@@ -156,8 +158,8 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       classProbabilities.set_size(1);
       // The actual split value will be halfway between the value at index - 1
       // and index.
-      classProbabilities[0] = (data[sortedIndices[index - 1]] +
-          data[sortedIndices[index]]) / 2.0;
+      classProbabilities(0) = (data(sortedIndices(index - 1)) +
+          data(sortedIndices(index))) / 2.0;
 
       return gain;
     }
@@ -166,8 +168,8 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // We still have a better split.
       bestFoundGain = gain;
       classProbabilities.set_size(1);
-      classProbabilities[0] = (data[sortedIndices[index - 1]] +
-          data[sortedIndices[index]]) / 2.0;
+      classProbabilities(0) = (data(sortedIndices(index - 1)) +
+          data(sortedIndices(index))) / 2.0;
       improved = true;
     }
   }
@@ -192,7 +194,146 @@ size_t BestBinaryNumericSplit<FitnessFunction>::CalculateDirection(
     const arma::Col<ElemType>& classProbabilities,
     const AuxiliarySplitInfo<ElemType>& /* aux */)
 {
-  if (point <= classProbabilities[0])
+  if (point <= classProbabilities(0))
+    return 0; // Go left.
+  else
+    return 1; // Go right.
+}
+
+template<typename FitnessFunction>
+template<bool UseWeights, typename VecType, typename WeightVecType>
+double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
+    const double bestGain,
+    const VecType& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const WeightVecType& weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    arma::Col<typename VecType::elem_type>& classProbabilities,
+    AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
+{
+  double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
+  // Forcing a minimum leaf size of 1 (empty children don't make sense).
+  const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
+
+  // First sanity check: if we don't have enough points, we can't split.
+  if (data.n_elem < (minimum * 2))
+    return DBL_MAX;
+  if (bestGain == 0.0)
+    return DBL_MAX; // It can't be outperformed.
+
+  typename VecType::elem_type maxValue = arma::max(data);
+  typename VecType::elem_type minValue = arma::min(data);
+
+  // Sanity check: if the maximum element is the same as the mininimum, we
+  // can't split in this dimension.
+  if (maxValue == minValue)
+    return DBL_MAX;
+
+  /*
+  Just for making review easy, the following bit of code is taken directly from
+  https://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
+  to generate a random number. (To be removed before merge)
+  */
+  // Picking a random pivot to split the dimension.
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_real_distribution<> distribution(minValue, maxValue);
+  double randomPivot = distribution(gen);
+
+  // We need to count the number of points for each class.
+  arma::Mat<size_t> classCounts;
+  arma::mat classWeightSums;
+  double totalWeight = 0.0;
+  double totalLeftWeight = 0.0;
+  double totalRightWeight = 0.0;
+  size_t leftLeafSize = 0;
+  size_t rightLeafSize = 0;
+  if (UseWeights)
+  {
+    classWeightSums.zeros(numClasses, 2);
+    totalWeight = arma::accu(weights);
+    bestFoundGain *= totalWeight;
+
+    for (size_t i = 0; i < data.n_elem; ++i)
+    {
+      if (data(i) < randomPivot)
+      {
+        ++leftLeafSize;
+        classWeightSums(labels(i), 0) += weights(i);
+        totalLeftWeight += weights(i);
+      }
+      else
+      {
+        ++rightLeafSize;
+        classWeightSums(labels(i), 1) += weights(i);
+        totalRightWeight += weights(i);
+      }
+    }
+  }
+  else
+  {
+    classCounts.zeros(numClasses, 2);
+    bestFoundGain *= data.n_elem;
+
+    for (size_t i = 0; i < data.n_elem; i++)
+    {
+      if (data(i) < randomPivot)
+      {
+        ++leftLeafSize;
+        ++classCounts(labels(i), 0);
+      }
+      else
+      {
+        ++rightLeafSize;
+        ++classCounts(labels(i), 1);
+      }
+    }
+  }
+
+  // Calculate the gain for the left and right child.  Only use weights if
+  // needed.
+  const double leftGain = UseWeights ?
+      FitnessFunction::template EvaluatePtr<true>(classWeightSums.colptr(0),
+          numClasses, totalLeftWeight) :
+      FitnessFunction::template EvaluatePtr<false>(classCounts.colptr(0),
+          numClasses, leftLeafSize);
+  const double rightGain = UseWeights ?
+      FitnessFunction::template EvaluatePtr<true>(classWeightSums.colptr(1),
+          numClasses, totalRightWeight) :
+      FitnessFunction::template EvaluatePtr<false>(classCounts.colptr(1),
+          numClasses, rightLeafSize);
+
+  double gain;
+  if (UseWeights)
+    gain = totalLeftWeight * leftGain + totalRightWeight * rightGain;
+  else
+    // Calculate the gain at this split point.
+    gain = double(leftLeafSize) * leftGain + double(rightLeafSize) * rightGain;
+
+  if (gain < bestFoundGain)
+    return DBL_MAX;
+
+  classProbabilities.set_size(1);
+  classProbabilities(0) = randomPivot;
+
+  if (UseWeights)
+    gain /= totalWeight;
+  else
+    gain /= labels.n_elem;
+
+  return gain;
+}
+
+template<typename FitnessFunction>
+template<typename ElemType>
+size_t RandomBinaryNumericSplit<FitnessFunction>::CalculateDirection(
+    const ElemType& point,
+    const arma::Col<ElemType>& classProbabilities,
+    const AuxiliarySplitInfo<ElemType>& /* aux */)
+{
+  if (point <= classProbabilities(0))
     return 0; // Go left.
   else
     return 1; // Go right.
