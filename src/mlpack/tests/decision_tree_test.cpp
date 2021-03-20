@@ -377,6 +377,66 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
 }
 
 /**
+ * Check that the RandomBinaryNumericSplit won't split if not enough points are
+ * given.
+ */
+TEST_CASE("RandomBinaryNumericSplitMinSamplesTest", "[DecisionTreeTest]")
+{
+  arma::vec values("0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0");
+  arma::Row<size_t> labels("0 0 0 0 0 1 1 1 1 1 1");
+  arma::rowvec weights(labels.n_elem);
+
+  arma::vec classProbabilities;
+  RandomBinaryNumericSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
+  const double gain = RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, values, labels, 2, weights, 8, 1e-7, classProbabilities,
+      aux);
+  // This should make no difference because it won't split at all.
+  const double weightedGain =
+      RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
+      labels, 2, weights, 8, 1e-7, classProbabilities, aux);
+
+  // Make sure that no split was made.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(gain == weightedGain);
+  REQUIRE(classProbabilities.n_elem == 0);
+}
+
+/**
+ * Check that the RandomBinaryNumericSplit doesn't split a dimension that gives
+ * no gain.
+ */
+TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
+{
+  arma::vec values(100);
+  arma::Row<size_t> labels(100);
+  arma::rowvec weights;
+  for (size_t i = 0; i < 100; i += 2)
+  {
+    values[i] = i;
+    labels[i] = 0;
+    values[i + 1] = i;
+    labels[i + 1] = 1;
+  }
+
+  arma::vec classProbabilities;
+  RandomBinaryNumericSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
+  const double gain = RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+      bestGain, values, labels, 2, weights, 10, 1e-7, classProbabilities,
+      aux);
+
+  // Make sure there was no split.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(classProbabilities.n_elem == 0);
+}
+
+/**
  * Check that the AllCategoricalSplit will split when the split is obviously
  * better.
  */
