@@ -22,14 +22,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::DecisionTree(
     MatType data,
     const data::DatasetInfo& datasetInfo,
@@ -62,14 +60,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::DecisionTree(
     MatType data,
     LabelsType labels,
@@ -100,14 +96,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::DecisionTree(
     MatType data,
     const data::DatasetInfo& datasetInfo,
@@ -144,14 +138,12 @@ template<typename FitnessFunction,
         template<typename> class NumericSplitType,
         template<typename> class CategoricalSplitType,
         typename DimensionSelectionType,
-        typename ElemType,
         bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
         NumericSplitType,
         CategoricalSplitType,
         DimensionSelectionType,
-        ElemType,
         NoRecursion>::DecisionTree(
     const DecisionTree& other,
     MatType data,
@@ -185,14 +177,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::DecisionTree(
     MatType data,
     LabelsType labels,
@@ -229,14 +219,12 @@ template<typename FitnessFunction,
         template<typename> class NumericSplitType,
         template<typename> class CategoricalSplitType,
         typename DimensionSelectionType,
-        typename ElemType,
         bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
         NumericSplitType,
         CategoricalSplitType,
         DimensionSelectionType,
-        ElemType,
         NoRecursion>::DecisionTree(
     const DecisionTree& other,
     MatType data,
@@ -275,13 +263,11 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::DecisionTree(const size_t numClasses) :
     splitDimension(0),
     dimensionTypeOrMajorityClass(0),
@@ -296,13 +282,11 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::DecisionTree(const DecisionTree& other) :
     NumericAuxiliarySplitInfo(other),
     CategoricalAuxiliarySplitInfo(other),
@@ -320,13 +304,11 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::DecisionTree(DecisionTree&& other) :
     NumericAuxiliarySplitInfo(std::move(other)),
     CategoricalAuxiliarySplitInfo(std::move(other)),
@@ -344,19 +326,16 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>&
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::operator=(const DecisionTree& other)
 {
   if (this == &other)
@@ -388,19 +367,16 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>&
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::operator=(DecisionTree&& other)
 {
   if (this == &other)
@@ -432,13 +408,11 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
              DimensionSelectionType,
-             ElemType,
              NoRecursion>::~DecisionTree()
 {
   for (size_t i = 0; i < children.size(); ++i)
@@ -450,14 +424,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::Train(
     MatType data,
     const data::DatasetInfo& datasetInfo,
@@ -493,14 +465,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::Train(
     MatType data,
     LabelsType labels,
@@ -535,14 +505,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::Train(
     MatType data,
     const data::DatasetInfo& datasetInfo,
@@ -584,14 +552,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType, typename LabelsType, typename WeightsType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::Train(
     MatType data,
     LabelsType labels,
@@ -632,14 +598,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<bool UseWeights, typename MatType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::Train(
     MatType& data,
     const size_t begin,
@@ -818,14 +782,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<bool UseWeights, typename MatType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::Train(
     MatType& data,
     const size_t begin,
@@ -976,14 +938,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename VecType>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::Classify(const VecType& point) const
 {
   if (children.size() == 0)
@@ -1000,14 +960,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename VecType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
-                  ElemType,
                   NoRecursion>::Classify(const VecType& point,
                                          size_t& prediction,
                                          arma::vec& probabilities) const
@@ -1028,14 +986,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
-                  ElemType,
                   NoRecursion>::Classify(const MatType& data,
                                          arma::Row<size_t>& predictions) const
 {
@@ -1056,14 +1012,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
-                  ElemType,
                   NoRecursion>::Classify(const MatType& data,
                                          arma::Row<size_t>& predictions,
                                          arma::mat& probabilities) const
@@ -1095,14 +1049,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename Archive>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
-                  ElemType,
                   NoRecursion>::serialize(Archive& ar,
                                           const uint32_t /* version */)
 {
@@ -1126,14 +1078,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<typename VecType>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::CalculateDirection(const VecType& point) const
 {
   if ((data::Datatype) dimensionTypeOrMajorityClass ==
@@ -1150,13 +1100,11 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
                     DimensionSelectionType,
-                    ElemType,
                     NoRecursion>::NumClasses() const
 {
   // Recurse to the nearest child and return the number of elements in the
@@ -1171,14 +1119,12 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         typename ElemType,
          bool NoRecursion>
 template<bool UseWeights, typename RowType, typename WeightsRowType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
                   CategoricalSplitType,
                   DimensionSelectionType,
-                  ElemType,
                   NoRecursion>::CalculateClassProbabilities(
     const RowType& labels,
     const size_t numClasses,
