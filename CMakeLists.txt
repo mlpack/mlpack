@@ -20,25 +20,33 @@ option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
 if(CMAKE_CROSSCOMPILING)
   set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
+  option(AUTO_DOWNLOAD_DEPS "Download dependencies before cross-compiling." OFF)
   set(GFORTRAN_LIBRARY "" CACHE STRING "Path for gfortran library.")
   set(GCC_VERSION ""  CACHE STRING "")
 endif()
 
-if (CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
+if(CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
-elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
+elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER "") AND AUTO_DOWNLOAD_DEPS)
+  execute_process(
+    COMMAND bash -c "../board/download_dependencies.sh ${BOARD_NAME}"
+    RESULT_VARIABLE SCRIPT_RESULT
+   )
+  if(NOT SCRIPT_RESULT EQUAL "0")
+    message(FATAL_ERROR "Dependencies did not download correctly, please restart CMake.")
+  endif()
   include(board/flags-config.cmake)
   flags(${BOARD_NAME})
 
-  set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/../OpenBLAS-0.3.13/libopenblas.a" CACHE STRING "OpenBLAS PATH")
-  set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/../cereal-1.3.0/include" CACHE STRING "Cereal header PATH")
-  set(Boost_INCLUDE_DIRS "${CMAKE_BINARY_DIR}/../boost_1_75_0" CACHE STRING "Boost header PATH")
-  set(ARMADILLO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/../armadillo-8.400.0/include" CACHE STRING "Armadillo header PATH")
-  message("OPENBLAS LIBRARIES" ${OPENBLAS_LIBRARIES})
-  message("CEREAL INCLUDE PATH" ${CEREAL_INCLUDE_DIR})
-  message("Boost INCLUDE PATH" ${Boost_INCLUDE_DIRS})
-  message("GFortran library PATH:" ${GFORTRAN_LIBRARY})
-  message("Armadillo Include path:" ${ARMADILLO_INCLUDE_DIR})
+  set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/OpenBLAS-0.3.13/libopenblas.a" CACHE STRING "OpenBLAS path")
+  set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/cereal-1.3.0/include" CACHE STRING "Cereal header path")
+  set(Boost_INCLUDE_DIRS "${CMAKE_BINARY_DIR}/boost_1_75_0" CACHE STRING "Boost header path")
+  set(ARMADILLO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/armadillo-8.400.0/include" CACHE STRING "Armadillo header path")
+  message("Openblas libraries" ${OPENBLAS_LIBRARIES})
+  message("Cereal include path" ${CEREAL_INCLUDE_DIR})
+  message("Boost include path" ${Boost_INCLUDE_DIRS})
+  message("GFortran library path:" ${GFORTRAN_LIBRARY})
+  message("Armadillo include path:" ${ARMADILLO_INCLUDE_DIR})
 endif()
 
 # Set minimum library version required by mlpack.
@@ -286,7 +294,7 @@ endif()
 
 # Remove support for older 32bit system, if we need to have 32bit system
 # Since we are cross compiling, We will download it into the deps folder,
-if (NOT CMAKE_CROSSCOMPILING)
+if(NOT CMAKE_CROSSCOMPILING)
   find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 endif()
 
@@ -300,7 +308,9 @@ else()
 endif()
 
 # Find stb_image.h and stb_image_write.h.
-find_package(StbImage)
+if(NOT CMAKE_CROSSCOMPILING)
+  find_package(StbImage)
+endif()
 # Download stb_image for image loading.
 if (NOT STB_IMAGE_FOUND)
   if (DOWNLOAD_STB_IMAGE)
@@ -358,7 +368,10 @@ endif ()
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
-find_package(Ensmallen "${ENSMALLEN_VERSION}")
+if(NOT CMAKE_CROSSCOMPILING)
+  find_package(Ensmallen "${ENSMALLEN_VERSION}")
+endif()
+
 if (NOT ENSMALLEN_FOUND)
   if (DOWNLOAD_ENSMALLEN)
     file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
