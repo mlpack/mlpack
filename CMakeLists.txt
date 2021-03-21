@@ -416,7 +416,7 @@ if (NOT ENSMALLEN_FOUND)
     # Release versions will have ensmallen packaged with the release so we can
     # just reference that.
     if (EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen/ensmallen.hpp")
-      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIR}
+      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
           "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen")
     else ()
       message(FATAL_ERROR
