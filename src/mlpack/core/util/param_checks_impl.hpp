@@ -304,9 +304,9 @@ inline void CheckInputShape(const size_t x_rows,
                         const size_t y_cols, 
                         const size_t xt_rows)
 {
-  if(x_rows==0)
+  if(x_rows == 0 || x_cols == 0) 
   {
-    Log::Fatal <<"No training data available";
+    Log::Fatal << "No training data";
     return;
   }
   if(x_cols!=y_cols)

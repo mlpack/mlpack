@@ -195,7 +195,7 @@ static void mlpackMain()
       // Load labels.
       labelsIn = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
     }
-    else
+    if(labelsIn.n_elem==0)
     {
       // Extract the labels as the last dimension of the training data.
       Log::Info << "Using the last dimension of training set as labels."
@@ -210,7 +210,13 @@ static void mlpackMain()
 
     // Normalize the labels.
     data::NormalizeLabels(labelsIn, labels, m->Mappings());
-
+    if(IO::HasParam("test"))
+    {
+      mat testingData = IO::GetParam<arma::mat>("test");
+      CheckInputShape(trainingData.n_rows, trainingData.n_cols, labels.n_elem, testingData.n_rows);
+    }
+    else
+      CheckInputShape(trainingData.n_rows, trainingData.n_cols, labels.n_elem, 0);
     // Get other training parameters.
     const double tolerance = IO::GetParam<double>("tolerance");
     const size_t iterations = (size_t) IO::GetParam<int>("iterations");
@@ -219,20 +225,14 @@ static void mlpackMain()
       m->WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::DECISION_STUMP;
     else if (weakLearner == "perceptron")
       m->WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::PERCEPTRON;
-
+    
     const size_t numClasses = m->Mappings().n_elem;
     Log::Info << numClasses << " classes in dataset." << endl;
 
     Timer::Start("adaboost_training");
     m->Train(trainingData, labels, numClasses, iterations, tolerance);
     Timer::Stop("adaboost_training");
-    if(IO::HasParam("test"))
-    {
-      mat testingData = std::move(IO::GetParam<arma::mat>("test"));
-      CheckInputShape(trainingData.n_rows, trainingData.n_cols, labels.n_elem, testingData.n_rows);
-    }
-    else
-      CheckInputShape(trainingData.n_rows, trainingData.n_cols, labels.n_elem, 0);
+    
   }
   else
   {
@@ -246,7 +246,12 @@ static void mlpackMain()
   if (IO::HasParam("test"))
   {
     mat testingData = std::move(IO::GetParam<arma::mat>("test"));
-
+    if(testingData.n_cols==0||testingData.n_rows==0)
+    {
+      Log::Fatal<<"No testing data";
+      return;
+    }
+    
     if (testingData.n_rows != m->Dimensionality() && testingData.n_cols > 0)
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
           << "must be the same as the model dimensionality ("
@@ -270,7 +275,8 @@ static void mlpackMain()
 
     Row<size_t> results;
     data::RevertLabels(predictedLabels, m->Mappings(), results);
-
+    if(results.n_elem==0)
+      Log::Fatal<<"debugging "<<testingData.n_cols;   
     // Save the predicted labels.
     if (IO::HasParam("output"))
       IO::GetParam<arma::Row<size_t>>("output") = results;
