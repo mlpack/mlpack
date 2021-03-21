@@ -215,13 +215,10 @@ void ReportIgnoredParam(const std::string& paramName,
  *
  * Obviously for all the data points we must have both X and y for all the points in linear regression. 
  *
- * @param method Name of the method for which santity task is to be performed.
  * @param x_rows the number of rows in training matrix X
  * @param x_cols the number of columns in training matrix X
- * @param y_rows the number of rows in training label matrix y
  * @param y_cols the number of rows in training label matrix y
  * @param xt_rows the number of rows in test matrix
- * @param xt_cols the number of rows in test matrix
  * 
  * 
  */
