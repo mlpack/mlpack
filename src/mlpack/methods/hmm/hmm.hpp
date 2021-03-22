@@ -441,8 +441,6 @@ class HMM
  protected:
   /**
    * Given emission probabilities, computes forward probabilities at time t=0.
-   * The template parameter allows passing an Armadillo subview without
-   * instantiating it.
    *
    * @param emissionLogProb Emission probability at time t=0.
    * @param logScales Vector in which the log of scaling factors will be saved.
@@ -453,8 +451,6 @@ class HMM
 
   /**
    * Given emission probabilities, computes forward probabilities for time t>0.
-   * The template parameter allows passing an Armadillo subview without
-   * instantiating it.
    *
    * @param emissionLogProb Emission probability at time t>0.
    * @param logScales Vector in which the log of scaling factors will be saved.
