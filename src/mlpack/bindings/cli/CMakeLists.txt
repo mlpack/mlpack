@@ -51,7 +51,7 @@ if (BUILD_CLI_EXECUTABLES)
     ${name}_main.cpp
   )
 
-  if(CMAKE_CROSSCOMPILING)
+  if(BUILD_SHARED_LIBS)
     target_link_libraries(mlpack_${name} -static
      mlpack
      ${ARMADILLO_LIBRARIES}
