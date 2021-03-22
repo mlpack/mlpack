@@ -112,36 +112,36 @@ class RVMRegression
 {
 public:
   /**
-   * Set the parameters of the RVMRegression (Relevance Vector Machine for 
-   * regression) object for a given kernel. There are numerous available kernels 
-   * in the mlpack::kernel namespace. Regulariation parameters are automaticaly 
-   * set to their optimal values by maximization the marginal likelihood. 
+   * Set the parameters of the RVMRegression (Relevance Vector Machine for
+   * regression) object for a given kernel. There are numerous available kernels
+   * in the mlpack::kernel namespace. Regulariation parameters are automaticaly
+   * set to their optimal values by maximization the marginal likelihood.
    *
    * @param kernel Kernel to be used for computation.
-   * @param centerData Whether or not center the data according to the *
+   * @param centerData Whether or not center the data according to the
    *    examples.
-   * @param scaleData Whether or to scaleData the data according to the 
+   * @param scaleData Whether or to scaleData the data according to the
    *    standard deviation of each feature.
    * @param ard If true fit a ARD regression model. kernel is ignored.
    * @param alphaTresh Value from which the posterior distributions of the w_i
-   * are considered to be centered auround zero with certainty. 
-   * @param tol Level from which the solution is considered sufficientlly 
-   *    stable.  
-   * @param nIterMax Maximum number of iterations for convergency.
+   * are considered to be centered auround zero with certainty.
+   * @param tolerance Level from which the solution is considered sufficientlly
+   *    stable.
+   * @param maxIterations Maximum number of iterations for convergency.
    **/
   RVMRegression(const KernelType& kernel,
                 const bool centerData,
                 const bool scaleData,
                 const bool ard,
 		const double alphaTresh,
-		const double tol,
-		const int nIterMax);
+		const double tolerance,
+		const size_t maxIterations);
 
   /**
    * Defaut constructor for ARD regression. The class performs a linear 
-   * regression with an ARD prior promoting sparsity in the final solution. 
-   * Regulariation parameters are automaticaly set to their optimal values by 
-   * the maximmization of the marginal likelihood. ARD regression is computed 
+   * regression with an ARD prior promoting sparsity in the final solution.
+   * Regulariation parameters are automaticaly set to their optimal values by
+   * the maximmization of the marginal likelihood. ARD regression is computed
    * whatever the kernel given at initalization.
    *
    * @param kernel Kernel to be used for computation..
@@ -276,6 +276,28 @@ public:
    */
   const arma::mat& RelevantVectors() const { return relevantVectors; }
 
+  //! Get whether the data will be centered during training.
+  bool CenterData() const { return centerData; }
+  //! Modify whether the data will be centered during training.
+  bool& CenterData() { return centerData; }
+
+  //! Get whether the data will be scaled by standard deviations during
+  //! training.
+  bool ScaleData() const { return scaleData; }
+  //! Modify whether the data will be scaled by standard deviations during
+  //! training.
+  bool& ScaleData() { return scaleData; }
+
+  //! Get the maximum number of iterations for training.
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum number of iterations for training.
+  size_t& MaxIterations() { return maxIterations; }
+
+  //! Get the tolerance for training to converge.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance for training to converge.
+  double& Tolerance() { return tolerance; }
+
   /**
    * Serialize the RVM regression model.
    */
@@ -299,10 +321,10 @@ private:
   double alphaThresh;
 
   //! Level from which the solution is considered sufficientlly stable.
-  double tol;
+  double tolerance;
 
   //! Maximum number of iterations for convergency.
-  int nIterMax;  
+  size_t maxIterations;  
 
   //! Mean vector computed over the points.
   arma::colvec dataOffset;
