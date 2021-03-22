@@ -206,6 +206,7 @@ void ReportIgnoredParam(
 void ReportIgnoredParam(const std::string& paramName,
                         const std::string& reason);
 
+
 /**
  * If the input has correct shapes(kind of santity checks). 
  *
@@ -219,14 +220,11 @@ void ReportIgnoredParam(const std::string& paramName,
  * @param x_cols the number of columns in training matrix X
  * @param y_cols the number of rows in training label matrix y
  * @param xt_rows the number of rows in test matrix
- * 
- * 
  */
-
 void CheckInputShape(const size_t x_rows,
-                        const size_t x_cols,
-                        const size_t y_cols, 
-                        const size_t xt_rows);
+                    const size_t x_cols,
+                    const size_t y_cols, 
+                    const size_t xt_rows);
 
 } // namespace util
 } // namespace mlpack

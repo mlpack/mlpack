@@ -68,17 +68,6 @@ TEST_CASE_METHOD(AdaBoostTestFixture, "AdaBoostOutputDimensionTest",
   SetInputParam("test", std::move(testData));
 
   mlpackMain();
-
-  // Check that number of predicted labels is equal to the input test points.
-  if(IO::GetParam<arma::Row<size_t>>("output").n_cols!=testSize)
-  {
-    size_t rrs, ccls;
-    rrs = IO::GetParam<arma::Row<size_t>>("output").n_rows;
-    ccls = IO::GetParam<arma::Row<size_t>>("output").n_cols;
-    Log::Fatal<<rrs<<" "<<ccls<<" "<<testSize;
-  }
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
 }
 
 /**
