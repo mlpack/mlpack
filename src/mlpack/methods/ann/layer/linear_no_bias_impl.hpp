@@ -38,7 +38,7 @@ LinearNoBias<InputDataType, OutputDataType, RegularizerType>::LinearNoBias(
     outSize(outSize),
     regularizer(regularizer)
 {
-  weights.set_size(outSize * inSize, 1);
+  weights.set_size(WeightSize(), 1);
 }
 
 template<typename InputDataType, typename OutputDataType,

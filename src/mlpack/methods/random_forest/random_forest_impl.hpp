@@ -22,16 +22,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename MatType>
 RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::RandomForest(const MatType& dataset,
                 const arma::Row<size_t>& labels,
                 const size_t numClasses,
@@ -52,16 +50,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename MatType>
 RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
                 const arma::Row<size_t>& labels,
@@ -83,16 +79,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename MatType>
 RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::RandomForest(const MatType& dataset,
                 const arma::Row<size_t>& labels,
                 const size_t numClasses,
@@ -113,16 +107,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename MatType>
 RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
                 const arma::Row<size_t>& labels,
@@ -143,16 +135,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::Train(const MatType& dataset,
          const arma::Row<size_t>& labels,
          const size_t numClasses,
@@ -174,16 +164,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const arma::Row<size_t>& labels,
@@ -205,16 +193,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::Train(const MatType& dataset,
          const arma::Row<size_t>& labels,
          const size_t numClasses,
@@ -236,16 +222,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const arma::Row<size_t>& labels,
@@ -267,16 +251,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename VecType>
 size_t RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::Classify(const VecType& point) const
 {
   // Pass off to another Classify() overload.
@@ -291,16 +273,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename VecType>
 void RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::Classify(const VecType& point,
             size_t& prediction,
             arma::vec& probabilities) const
@@ -338,16 +318,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename MatType>
 void RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::Classify(const MatType& data,
             arma::Row<size_t>& predictions) const
 {
@@ -373,16 +351,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename MatType>
 void RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::Classify(const MatType& data,
             arma::Row<size_t>& predictions,
             arma::mat& probabilities) const
@@ -411,16 +387,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename Archive>
 void RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
   size_t numTrees;
@@ -442,16 +416,14 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<bool UseWeights, bool UseDatasetInfo, typename MatType>
 double RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const arma::Row<size_t>& labels,

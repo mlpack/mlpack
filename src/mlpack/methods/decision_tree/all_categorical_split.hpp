@@ -29,7 +29,6 @@ class AllCategoricalSplit
 {
  public:
   // No extra info needed for split.
-  template<typename ElemType>
   class AuxiliarySplitInfo { };
 
   /**
@@ -64,8 +63,8 @@ class AllCategoricalSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      arma::Col<typename VecType::elem_type>& classProbabilities,
-      AuxiliarySplitInfo<typename VecType::elem_type>& aux);
+      arma::vec& classProbabilities,
+      AuxiliarySplitInfo& aux);
 
   /**
    * Return the number of children in the split.
@@ -73,9 +72,8 @@ class AllCategoricalSplit
    * @param classProbabilities Auxiliary information for the split.
    * @param * (aux) Auxiliary information for the split (Unused).
    */
-  template<typename ElemType>
-  static size_t NumChildren(const arma::Col<ElemType>& classProbabilities,
-                            const AuxiliarySplitInfo<ElemType>& /* aux */);
+  static size_t NumChildren(const arma::vec& classProbabilities,
+                            const AuxiliarySplitInfo& /* aux */);
 
   /**
    * Calculate the direction a point should percolate to.
@@ -87,8 +85,8 @@ class AllCategoricalSplit
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const arma::Col<ElemType>& classProbabilities,
-      const AuxiliarySplitInfo<ElemType>& /* aux */);
+      const arma::vec& classProbabilities,
+      const AuxiliarySplitInfo& /* aux */);
 };
 
 } // namespace tree

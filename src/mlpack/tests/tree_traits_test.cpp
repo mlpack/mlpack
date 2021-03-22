@@ -31,7 +31,7 @@ using namespace mlpack::metric;
 // weird things and will cause bizarre problems.
 
 // Test the defaults.
-TEST_CASE("DefaultsTraitsTest", "[TreeTraitsTestt]")
+TEST_CASE("DefaultsTraitsTest", "[TreeTraitsTest]")
 {
   // An irrelevant non-tree type class is used here so that the default
   // implementation of TreeTraits is chosen.
@@ -48,7 +48,7 @@ TEST_CASE("DefaultsTraitsTest", "[TreeTraitsTestt]")
 }
 
 // Test the binary space tree traits.
-TEST_CASE("BinarySpaceTreeTraitsTest", "[TreeTraitsTestt]")
+TEST_CASE("BinarySpaceTreeTraitsTest", "[TreeTraitsTest]")
 {
   typedef BinarySpaceTree<LMetric<2, false>> TreeType;
 
@@ -74,7 +74,7 @@ TEST_CASE("BinarySpaceTreeTraitsTest", "[TreeTraitsTestt]")
 }
 
 // Test the cover tree traits.
-TEST_CASE("CoverTreeTraitsTest", "[TreeTraitsTestt]")
+TEST_CASE("CoverTreeTraitsTest", "[TreeTraitsTest]")
 {
   // Children may be overlapping.
   bool b = TreeTraits<CoverTree<>>::HasOverlappingChildren;

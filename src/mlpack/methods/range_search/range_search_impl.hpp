@@ -312,14 +312,8 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
 {
-  if (querySet.n_rows != referenceSet->n_rows)
-  {
-    std::ostringstream oss;
-    oss << "RangeSearch::Search(): dimensionalities of query set ("
-        << querySet.n_rows << ") and reference set (" << referenceSet->n_rows
-        << ") do not match!";
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameDimensionality(querySet, *referenceSet,
+      "RangeSearch::Search()", "query set");
 
   // If there are no points, there is no search to be done.
   if (referenceSet->n_cols == 0)

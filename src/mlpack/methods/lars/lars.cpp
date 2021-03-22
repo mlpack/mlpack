@@ -178,6 +178,10 @@ double LARS::Train(const arma::mat& matX,
   isIgnored.clear();
   matUtriCholFactor.reset();
 
+  // Update values in case lambda1 or lambda2 changed.
+  lasso = (lambda1 != 0);
+  elasticNet = (lambda1 != 0 && lambda2 != 0);
+
   // This matrix may end up holding the transpose -- if necessary.
   arma::mat dataTrans;
   // dataRef is row-major.

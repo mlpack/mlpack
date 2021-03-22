@@ -34,6 +34,15 @@
   * `NegativeLogLikelihood<>` now expects classes in the range `0` to
     `numClasses - 1` (#2534).
 
+  * Add `Lambda1()`, `Lambda2()`, `UseCholesky()`, and `Tolerance()` members to
+    `LARS` so parameters for training can be modified (#2861).
+
+  * Remove unused `ElemType` template parameter from `DecisionTree` and
+    `RandomForest` (#2874).
+
+  * Fix Python binding build when the CMake variable `USE_OPENMP` is set to
+    `OFF` (#2884).
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.

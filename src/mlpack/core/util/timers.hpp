@@ -129,23 +129,23 @@ class Timers
   void PrintTimer(const std::string& timerName);
 
   /**
-   * Initializes a timer, available like a normal value specified on
-   * the command line.  Timers are of type timeval.  If a timer is started, then
+   * Initializes a timer, available like a normal value specified on
+   * the command line.  Timers are of type timeval.  If a timer is started, then
    * stopped, then re-started, then stopped, the final timer value will be the
    * length of both runs of the timer.
-   *
-   * @param timerName The name of the timer in question.
+   *
+   * @param timerName The name of the timer in question.
    * @param threadId Id of the thread accessing the timer.
-   */
+   */
   void StartTimer(const std::string& timerName,
                   const std::thread::id& threadId = std::thread::id());
 
   /**
-   * Halts the timer, and replaces its value with the delta time from its start.
-   *
-   * @param timerName The name of the timer in question.
+   * Halts the timer, and replaces its value with the delta time from its start.
+   *
+   * @param timerName The name of the timer in question.
    * @param threadId Id of the thread accessing the timer.
-   */
+   */
   void StopTimer(const std::string& timerName,
                  const std::thread::id& threadId = std::thread::id());
 

@@ -173,13 +173,7 @@ void LinearSVM<MatType>::Classify(
     const MatType& data,
     arma::mat& scores) const
 {
-  if (data.n_rows != FeatureSize())
-  {
-    std::ostringstream oss;
-    oss << "LinearSVM::Classify(): dataset has " << data.n_rows
-        << " dimensions, but model has " << FeatureSize() << " dimensions!";
-    throw std::invalid_argument(oss.str());
-  }
+  util::CheckSameDimensionality(data, FeatureSize(), "LinearSVM::Classify()");
 
   if (fitIntercept)
   {
