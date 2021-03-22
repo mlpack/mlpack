@@ -36,14 +36,15 @@ set(CMAKE_SIZE_UTIL ${TOOLCHAIN_PREFIX}size${VERSION_NUMBER} CACHE INTERNAL "siz
 ## the path for sysroot as follows:
 ## set(CMAKE_SYSROOT /PathToToolchain/aarch64-buildroot-linux-gnu/sysroot)
 ## or it can be specified from command-line.
-set(CMAKE_SYSROOT "" CACHE STRING "Enter path for sysroot")
+set(CMAKE_SYSROOT /usr/aarch64-linux-gnu/ CACHE STRING "Enter path for sysroot")
 
 ## Here are the standard ROOT_PATH if you are using the standard toolchain
 ## if you are using a different toolchain you have to specify that too
-set(CMAKE_FIND_ROOT_PATH ${CMAKE_FIND_ROOT_PATH} 
+set(CMAKE_FIND_ROOT_PATH
   /usr/aarch64-linux-gnu/ 
 )
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
