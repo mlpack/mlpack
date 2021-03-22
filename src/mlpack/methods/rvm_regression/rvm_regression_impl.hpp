@@ -1,5 +1,5 @@
 /**
- * @file rvm_regression_impl.cpp
+ * @file rvm_regression_impl.hpp
  * @author Clement Mercier
  *
  * Implementation of the Relevance Vector Machine.
@@ -24,16 +24,16 @@ RVMRegression<KernelType>::RVMRegression(const KernelType& kernel,
                                          const bool scaleData,
                                          const bool ard,
                                          double alphaThresh,
-                                         double tol,
-                                         int nIterMax) :
+                                         double tolerance,
+                                         size_t maxIterations) :
 
   kernel(kernel),
   centerData(centerData),
   scaleData(scaleData),
   ard(ard),
   alphaThresh(1e4),
-  tol(1e-5),
-  nIterMax(50) 
+  tolerance(1e-5),
+  maxIterations(50) 
   { /*Nothing to do */ }
 
 template <typename KernelType>
@@ -46,8 +46,8 @@ RVMRegression<KernelType>::RVMRegression(const KernelType& kernel,
   scaleData(scaleData),
   ard(ard),
   alphaThresh(1e4),
-  tol(1e-5),
-  nIterMax(50) 
+  tolerance(1e-5),
+  maxIterations(50) 
   { /*Nothing to do*/ }
 
 template<typename KernelType>
@@ -87,7 +87,7 @@ void RVMRegression<KernelType>::Train(const arma::mat& data,
   arma::uvec allCols(phi.n_cols);
   for (size_t i = 0; i < phi.n_cols; ++i) { allCols(i) = i; }
 
-  while ((crit > tol) && (i < nIterMax))
+  while ((crit > tolerance) && (i < maxIterations))
   {
     crit = -normOmega;
     activeSet = find(alpha < alphaThresh);

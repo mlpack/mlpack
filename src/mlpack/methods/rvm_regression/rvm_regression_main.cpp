@@ -122,7 +122,8 @@ BINDING_EXAMPLE(
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 PARAM_ROW_IN("responses", "Matrix of responses/observations (y).", "r");
-PARAM_MODEL_IN(RVMRegressionModel, "input_model", "Trained RVMRegression model to use.", "m");
+PARAM_MODEL_IN(RVMRegressionModel, "input_model", "Trained RVMRegression model "
+	       " to use.", "m");
 PARAM_MODEL_OUT(RVMRegressionModel, "output_model", "Output "
                 "RVMRegression model.", "M");
 PARAM_MATRIX_IN("test", "Matrix containing points to regress on (test "
