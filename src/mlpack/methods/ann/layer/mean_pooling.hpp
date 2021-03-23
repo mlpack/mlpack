@@ -166,38 +166,38 @@ class MeanPooling
       for (size_t i = 0, rowidx = 0; i < output.n_rows;
            ++i, rowidx += strideWidth)
       {
-		arma::mat subInput;
-		if (rowidx + kernelWidth - 1 < output.n_rows && colidx + kernelHeight - 1 < output.n_cols)
-		{
+        arma::mat subInput;
+        if (rowidx + kernelWidth - 1 < output.n_rows && colidx + kernelHeight - 1 < output.n_cols)
+        {
           subInput = input(
               arma::span(rowidx, rowidx + kernelWidth - 1),
               arma::span(colidx, colidx + kernelHeight - 1));
 
           output(i, j) = arma::mean(arma::mean(subInput));
-		}
-		else if (floor)
-		{
+        }
+        else if (floor)
+        {
           continue;
-		}
-		else if (rowidx + kernelWidth - 1 < output.n_rows && colidx + kernelHeight - 1 >= output.n_cols)
-		{
+        }
+        else if (rowidx + kernelWidth - 1 < output.n_rows && colidx + kernelHeight - 1 >= output.n_cols)
+        {
           subInput = input(
               arma::span(rowidx, rowidx + kernelWidth - 1),
               arma::span(colidx, output.n_cols - 1));
-		}
-		else if (rowidx + kernelWidth - 1 >= output.n_rows && colidx + kernelHeight - 1 < output.n_cols)
-		{
+        }
+        else if (rowidx + kernelWidth - 1 >= output.n_rows && colidx + kernelHeight - 1 < output.n_cols)
+        {
           subInput = input(
               arma::span(rowidx, output.n_rows - 1),
               arma::span(colidx, colidx + kernelHeight - 1));
-		}
-		else if (rowidx + kernelWidth - 1 >= output.n_rows && colidx + kernelHeight - 1 >= output.n_cols)
-		{
+        }
+        else if (rowidx + kernelWidth - 1 >= output.n_rows && colidx + kernelHeight - 1 >= output.n_cols)
+        {
           subInput = input(
               arma::span(rowidx, output.n_rows - 1),
               arma::span(colidx, output.n_cols - 1));
-		}
-		output(i, j) = arma::mean(arma::mean(subInput));
+        }
+        output(i, j) = arma::mean(arma::mean(subInput));
       }
     }
   }
@@ -220,30 +220,30 @@ class MeanPooling
       for (size_t i = 0; i < input.n_rows; i += kernelWidth)
       { 
         arma::Mat<eT>& inputArea;
-		if (j + kernelWidth < input.n_rows && i + kernelHeight < input.n_cols)
-		{
+        if (j + kernelWidth < input.n_rows && i + kernelHeight < input.n_cols)
+        {
           inputArea = input(arma::span(i, i + kernelHeight - 1),
               arma::span(j, j + kernelWidth - 1));
-		}
-		else if (floor)
-		{
-		  continue;
-		}
-		else if (j + kernelWidth < input.n_rows && i + kernelHeight >= input.n_cols)
-		{
+        }
+        else if (floor)
+        {
+          continue;
+        }
+        else if (j + kernelWidth < input.n_rows && i + kernelHeight >= input.n_cols)
+        {
           inputArea = input(arma::span(i, i + kernelHeight - 1),
               arma::span(j, input.n_cols - 1));
-		}
-		if (j + kernelWidth >= input.n_rows && i + kernelHeight < input.n_cols)
-		{
+        }
+        if (j + kernelWidth >= input.n_rows && i + kernelHeight < input.n_cols)
+        {
           inputArea = input(arma::span(i, input.n_rows - 1),
               arma::span(j, j + kernelWidth - 1));
-		}
-		if (j + kernelWidth >= input.n_rows && i + kernelHeight >= input.n_cols)
-		{
+        }
+        if (j + kernelWidth >= input.n_rows && i + kernelHeight >= input.n_cols)
+        {
           inputArea = input(arma::span(i, input.n_rows - 1),
               arma::span(j, input.n_cols - 1));
-		}
+        }
 
         unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
         unpooledError.fill(error(i / rStep, j / cStep) / inputArea.n_elem);
