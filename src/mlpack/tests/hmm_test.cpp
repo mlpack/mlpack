@@ -1079,10 +1079,11 @@ TEST_CASE("GaussianHMMPredictTest", "[HMMTest]")
   {
     double loglikelihood = 0;
     arma::vec forwardLogProb;
-    for (size_t t = 0; t<emissionProb.size(); ++t)
+    for (size_t t = 0; t < emissionProb.size(); ++t)
     {
       loglikelihood = hmm.EmissionLogLikelihood(emissionProb.at(t),
-                                                loglikelihood, forwardLogProb);
+                                                loglikelihood,
+                                                forwardLogProb);
     }
     REQUIRE(loglikelihood == Approx(loglikelihoodRef).epsilon(1e-1));
   }
