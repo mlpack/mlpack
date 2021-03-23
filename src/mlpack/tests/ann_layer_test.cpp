@@ -3884,6 +3884,40 @@ TEST_CASE("LpMaxPoolingTestCase", "[ANNLayerTest]")
 }
 
 /**
+ * Simple test for Mean Pooling layer.
+ */
+TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
+{
+  // For rectangular input to pooling layers.
+  arma::mat input1;
+  input <<  1  <<  2  <<  3  <<  4  <<  5  <<  6  <<  7  <<endr
+        <<  8  <<  9  <<  1  <<  2  <<  3  <<  4  <<  5  <<endr
+        <<  6  <<  7  <<  8  <<  9  <<  1  <<  2  <<  3  <<endr
+        <<  1  <<  2  <<  3  <<  4  <<  5  <<  6  <<  7  <<endr;
+
+  input.reshape(28, 1);
+  MeanPooling<> module1(2, 2, 2, 2, false);
+  MeanPooling<> module2(2, 2, 2, 2, true);
+  module1.InputWidth() = 4;
+  module1.InputHeight() = 7;
+  module2.InputWidth() = 4;
+  module2.InputHeight() = 7;
+
+  // Calculated using torch.nn.MeanPool2d().
+  arma::mat result1, result2;
+  result1  <<  5.0000  <<  2.5000  <<  4.5000  <<  6.0000  <<  endr
+           <<  4.0000  <<  6.0000  <<  3.5000  <<  5.0000  <<  endr;
+  result2  <<  5.0000  <<  2.5000  <<  4.5000  <<  endr
+           <<  4.0000  <<  6.0000  <<  3.5000  <<  endr;
+
+  arma::mat output1, output2;
+  module1.Forward(input1, output1);
+  module2.Forward(input2, output2);  
+  CheckMatrices(output, result, 1e-1);
+  CheckMatrices(output, result, 1e-1);
+}
+
+/**
  * Simple test for Max Pooling layer.
  */
 TEST_CASE("MaxPoolingTestCase", "[ANNLayerTest]")
