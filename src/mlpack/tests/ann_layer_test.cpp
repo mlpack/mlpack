@@ -3890,10 +3890,10 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
 {
   // For rectangular input to pooling layers.
   arma::mat input;
-  input <<  1  <<  2  <<  3  <<  4  <<  5  <<  6  <<  7  <<endr
-        <<  8  <<  9  <<  1  <<  2  <<  3  <<  4  <<  5  <<endr
-        <<  6  <<  7  <<  8  <<  9  <<  1  <<  2  <<  3  <<endr
-        <<  1  <<  2  <<  3  <<  4  <<  5  <<  6  <<  7  <<endr;
+  input <<  1  <<  2  <<  3  <<  4  <<  5  <<  6  <<  7  <<  arma::endr
+        <<  8  <<  9  <<  1  <<  2  <<  3  <<  4  <<  5  <<  arma::endr
+        <<  6  <<  7  <<  8  <<  9  <<  1  <<  2  <<  3  <<  arma::endr
+        <<  1  <<  2  <<  3  <<  4  <<  5  <<  6  <<  7  <<  arma::endr;
 
   input.reshape(28, 1);
   MeanPooling<> module1(2, 2, 2, 2, false);
@@ -3905,10 +3905,10 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
 
   // Calculated using torch.nn.MeanPool2d().
   arma::mat result1, result2;
-  result1  <<  5.0000  <<  2.5000  <<  4.5000  <<  6.0000  <<  endr
-           <<  4.0000  <<  6.0000  <<  3.5000  <<  5.0000  <<  endr;
-  result2  <<  5.0000  <<  2.5000  <<  4.5000  <<  endr
-           <<  4.0000  <<  6.0000  <<  3.5000  <<  endr;
+  result1  <<  5.0000  <<  2.5000  <<  4.5000  <<  6.0000  <<  arma::endr
+           <<  4.0000  <<  6.0000  <<  3.5000  <<  5.0000  <<  arma::endr;
+  result2  <<  5.0000  <<  2.5000  <<  4.5000  <<  arma::endr
+           <<  4.0000  <<  6.0000  <<  3.5000  <<  arma::endr;
 
   arma::mat output1, output2;
   module1.Forward(input, output1);
