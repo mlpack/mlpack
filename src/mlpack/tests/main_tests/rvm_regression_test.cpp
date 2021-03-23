@@ -72,7 +72,6 @@ TEST_CASE_METHOD(RVMRegressionTestFixture,
 	  RVMPtr<mlpack::kernel::LinearKernel>()->DataScale().n_elem == 0);
 }
 
-
 // Check predictions of saved model and in code model are equal.
 TEST_CASE_METHOD(RVMRegressionTestFixture,
                  "RVMRegressionSavedEqualCode",
