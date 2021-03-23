@@ -3913,8 +3913,8 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   arma::mat output1, output2;
   module1.Forward(input, output1);
   module2.Forward(input, output2);  
-  CheckMatrices(output, result1, 1e-1);
-  CheckMatrices(output, result2, 1e-1);
+  CheckMatrices(output1, result1, 1e-1);
+  CheckMatrices(output2, result2, 1e-1);
 }
 
 /**
