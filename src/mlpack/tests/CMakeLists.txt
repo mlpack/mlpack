@@ -175,7 +175,7 @@ add_executable(mlpack_test
   main_tests/test_helper.hpp
 )
 
-if(BUILD_SHARED_LIBS)
+if(NOT BUILD_SHARED_LIBS)
 # Link dependencies statically of test executable, when cross compiling.
   target_link_libraries(mlpack_test -static
     mlpack
