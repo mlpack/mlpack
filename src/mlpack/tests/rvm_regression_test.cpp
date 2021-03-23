@@ -1,6 +1,6 @@
 /**
  * @file tests/rvm_regression_test.cpp
- * @author Clement Mercoer
+ * @author Clement Mercier
  *
  * Tests for RVMRegression class.
  *
@@ -13,18 +13,16 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
-
 #include <mlpack/methods/rvm_regression/rvm_regression.hpp>
-
 #include "serialization.hpp"
 
 using namespace mlpack::regression;
 
 void GenerateProblemSparse(arma::mat& matX,
-                     arma::rowvec& y,
-                     size_t nPoints,
-                     size_t nDims,
-                     float sigma = 0.0)
+                           arma::rowvec& y,
+	                   size_t nPoints,
+			   size_t nDims,
+			   float sigma = 0.0)
 {
   matX = arma::randn(nDims, nPoints);
   arma::colvec omega = arma::zeros<arma::rowvec>(nDims);
@@ -72,13 +70,12 @@ TEST_CASE("SingularMatixRVM", "[RVMRegressionTest]")
 
   // Now the first and the second rows are indentical.
   matX.row(1) = matX.row(0);
-
   
   mlpack::kernel::LinearKernel linear;
   mlpack::kernel::GaussianKernel gaussian(10);
 
   // ARD regression.
-    RVMRegression<mlpack::kernel::LinearKernel> ard11(linear, true, true, true);
+  RVMRegression<mlpack::kernel::LinearKernel> ard11(linear, true, true, true);
   // Linear kernel RVM.
   RVMRegression<mlpack::kernel::LinearKernel>
     rvm10(linear, true, false, false);
