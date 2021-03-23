@@ -3889,7 +3889,7 @@ TEST_CASE("LpMaxPoolingTestCase", "[ANNLayerTest]")
 TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
 {
   // For rectangular input to pooling layers.
-  arma::mat input1;
+  arma::mat input;
   input <<  1  <<  2  <<  3  <<  4  <<  5  <<  6  <<  7  <<endr
         <<  8  <<  9  <<  1  <<  2  <<  3  <<  4  <<  5  <<endr
         <<  6  <<  7  <<  8  <<  9  <<  1  <<  2  <<  3  <<endr
@@ -3911,8 +3911,8 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
            <<  4.0000  <<  6.0000  <<  3.5000  <<  endr;
 
   arma::mat output1, output2;
-  module1.Forward(input1, output1);
-  module2.Forward(input2, output2);  
+  module1.Forward(input, output1);
+  module2.Forward(input, output2);  
   CheckMatrices(output, result, 1e-1);
   CheckMatrices(output, result, 1e-1);
 }
