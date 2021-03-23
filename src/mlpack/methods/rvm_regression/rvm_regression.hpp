@@ -335,6 +335,9 @@ private:
   //! Mean of the response vector computed over the points.
   double responsesOffset;
 
+  //! Noise inverse variance.
+  double beta;
+
   //! Kernel length scale.
   double gamma;
 
@@ -343,9 +346,6 @@ private:
 
   //! Precision of the prior pdfs (independant gaussian).
   arma::colvec alpha;
-
-  //! Noise inverse variance.
-  double beta;
 
   //! Solution vector.
   arma::colvec omega;
