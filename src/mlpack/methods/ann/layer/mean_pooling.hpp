@@ -200,8 +200,8 @@ class MeanPooling
     {
       for (size_t i = 0; i < input.n_rows; i += kernelWidth)
       { 
-        size_t rowEnd = rowidx + kernelWidth - 1;
-        size_t colEnd = colidx + kernelHeight - 1;
+        size_t rowEnd = i + kernelWidth - 1;
+        size_t colEnd = j + kernelHeight - 1;
 
         if(rowEnd > input.n_rows - 1)
           rowEnd = input.n_rows - 1;
@@ -209,8 +209,8 @@ class MeanPooling
           colEnd = input.n_cols - 1;
 
         arma::mat InputArea = input(
-            arma::span(rowidx, rowEnd),
-            arma::span(colidx, colEnd));
+            arma::span(i, rowEnd),
+            arma::span(j, colEnd));
 
         unpooledError = arma::Mat<eT>(InputArea.n_rows, InputArea.n_cols);
         unpooledError.fill(error(i / kernelWidth, j / kernelHeight) / InputArea.n_elem);
