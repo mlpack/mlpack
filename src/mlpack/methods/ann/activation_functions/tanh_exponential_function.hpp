@@ -4,6 +4,19 @@
  *
  * Definition and implementation of the Tanh exponential  function.
  *
+ * For more information see the following paper
+ *
+ * @code
+ * @misc{The Institution of Engineering and Technology 2015 ,
+ *    title = {TanhExp: A Smooth Activation Function with High Convergence Speed for Lightweight Neural Networks},
+ *    author = {Xinyu Liu and Xiaoguang Di},
+ *    year = {2020},
+ *    url = {https://arxiv.org/pdf/2003.09855v2.pdf},
+ *    eprint = {2003.09855v2},
+ *    archivePrefix = {arXiv},
+ *    primaryClass = {cs.LG} }
+ * @endcode
+ *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see

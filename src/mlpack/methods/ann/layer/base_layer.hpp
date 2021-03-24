@@ -292,7 +292,7 @@ template <
 using HardSwishFunctionLayer = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
-    /**
+/**
  * Standard TanhExp-Layer using the TanhExp activation function.
  */
 template <
