@@ -3889,26 +3889,35 @@ TEST_CASE("LpMaxPoolingTestCase", "[ANNLayerTest]")
 TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
 {
   // For rectangular input to pooling layers.
-  arma::mat input;
+  arma::mat input = arma::mat(28, 1);
   input <<  1  <<  2  <<  3  <<  4  <<  5  <<  6  <<  7  <<  arma::endr
+        <<  0  <<  0  <<  0  <<  0  <<  0  <<  0  <<  0  <<  arma::endr
         <<  8  <<  9  <<  1  <<  2  <<  3  <<  4  <<  5  <<  arma::endr
-        <<  6  <<  7  <<  8  <<  9  <<  1  <<  2  <<  3  <<  arma::endr
-        <<  1  <<  2  <<  3  <<  4  <<  5  <<  6  <<  7  <<  arma::endr;
+        <<  0  <<  0  <<  6  <<  7  <<  8  <<  9  <<  0  <<  arma::endr;
+  input.zeros();
+  input(0) = input(16) = 1;
+  input(1) = input(17) = 2;
+  input(2) = input(18) = 3;
+  input(3) = input(19) = 4;
+  input(4) = input(20) = 5;
+  input(5) = input(23) = 6;
+  input(6) = input(24) = 7;
+  input(14) = input(25) = 8;
+  input(15) = input(26) = 9;
 
-  input.reshape(28, 1);
   MeanPooling<> module1(2, 2, 2, 2, false);
   MeanPooling<> module2(2, 2, 2, 2, true);
-  module1.InputWidth() = 4;
-  module1.InputHeight() = 7;
-  module2.InputWidth() = 4;
-  module2.InputHeight() = 7;
+  module1.InputWidth() = 7;
+  module1.InputHeight() = 4;
+  module2.InputWidth() = 7;
+  module2.InputHeight() = 4;
 
   // Calculated using torch.nn.MeanPool2d().
   arma::mat result1, result2;
-  result1  <<  5.0000  <<  2.5000  <<  4.5000  <<  6.0000  <<  arma::endr
-           <<  4.0000  <<  6.0000  <<  3.5000  <<  5.0000  <<  arma::endr;
-  result2  <<  5.0000  <<  2.5000  <<  4.5000  <<  arma::endr
-           <<  4.0000  <<  6.0000  <<  3.5000  <<  arma::endr;
+  result1  <<  0.7500  <<  1.7500  <<  2.7500  <<  3.5000  <<  arma::endr
+           <<  4.2500  <<  4.0000  <<  6.0000  <<  2.5000  <<  arma::endr;
+  result2  <<  0.7500  <<  1.7500  <<  2.7500  <<  arma::endr
+           <<  4.2500  <<  4.0000  <<  6.0000  <<  arma::endr;
 
   arma::mat output1, output2;
   module1.Forward(input, output1);
@@ -4189,7 +4198,7 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module1.Backward(input, output, delta);
-  REQUIRE(arma::accu(delta) == 7.0);
+  REQUIRE(arma::accu(delta) == 19.75);
 
   // For Square input.
   input = arma::mat(9, 1);
@@ -4211,7 +4220,7 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module2.Backward(input, output, delta);
-  REQUIRE(arma::accu(delta) == 0.0);
+  REQUIRE(arma::accu(delta) == 4.50);
 
   // For Square input.
   input = arma::mat(16, 1);
@@ -4253,7 +4262,7 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   REQUIRE(output.n_cols == 1);
   // Test the Backward Function.
   module4.Backward(input, output, delta);
-  REQUIRE(arma::accu(delta) == 1.5);
+  REQUIRE(arma::accu(delta) == 2.25);
 }
 
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
