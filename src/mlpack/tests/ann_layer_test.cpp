@@ -3910,14 +3910,16 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
 
   // Calculated using torch.nn.MeanPool2d().
   arma::mat result1, result2;
-  result1  <<  0.7500  <<  1.7500  <<  2.7500  <<  3.5000  <<  arma::endr
-           <<  4.2500  <<  4.0000  <<  6.0000  <<  2.5000  <<  arma::endr;
-  result2  <<  0.7500  <<  1.7500  <<  2.7500  <<  arma::endr
-           <<  4.2500  <<  4.0000  <<  6.0000  <<  arma::endr;
+  result1  <<  3.5000  <<  0.0000  <<  2.0000  <<  7.5000  <<  arma::endr
+           <<  3.5000  <<  4.2500  <<  3.2500  <<  4.5000  <<  arma::endr;
+  result2  <<  3.5000  <<  0.0000  <<  2.0000  <<  arma::endr
+           <<  3.5000  <<  4.2500  <<  3.2500  <<  arma::endr;
 
   arma::mat output1, output2;
   module1.Forward(input, output1);
-  module2.Forward(input, output2);  
+  module2.Forward(input, output2);
+  output1.reshape(2, 4);
+  output2.reshape(2, 3);
   CheckMatrices(output1, result1, 1e-1);
   CheckMatrices(output2, result2, 1e-1);
 }
