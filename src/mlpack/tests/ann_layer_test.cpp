@@ -3890,10 +3890,6 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
 {
   // For rectangular input to pooling layers.
   arma::mat input = arma::mat(28, 1);
-  input <<  1  <<  2  <<  3  <<  4  <<  5  <<  6  <<  7  <<  arma::endr
-        <<  0  <<  0  <<  0  <<  0  <<  0  <<  0  <<  0  <<  arma::endr
-        <<  8  <<  9  <<  1  <<  2  <<  3  <<  4  <<  5  <<  arma::endr
-        <<  0  <<  0  <<  6  <<  7  <<  8  <<  9  <<  0  <<  arma::endr;
   input.zeros();
   input(0) = input(16) = 1;
   input(1) = input(17) = 2;
