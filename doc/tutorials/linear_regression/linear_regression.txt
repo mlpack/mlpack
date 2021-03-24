@@ -46,6 +46,7 @@ A list of all the sections this tutorial contains.
    - \ref cli_ex2_lrtut
    - \ref cli_ex3_lrtut
    - \ref cli_ex4_lrtut
+   - \ref cli_ex5_lrtut
  - \ref linreg_lrtut
    - \ref linreg_ex1_lrtut
    - \ref linreg_ex2_lrtut
@@ -141,7 +142,67 @@ dataset is one dimensional, and the last column has the \f$y\f$ values, or
 responses, for each row. You can specify these responses in a separate file if
 you want, using the \c --input_responses, or \c -r, option.
 
-@subsection cli_ex2_lrtut Compute model and predict at the same time
+@subsection cli_ex2_lrtut Example Multivariate Linear regression
+
+Multivariate linear regression involves more than just one variable coefficients, in this example
+we will try to fit the data which contain four variables from \c dataset_2.csv using our executables.
+
+@code 
+$ mlpack_linear_regression --training_file dataset_2.csv -v -M lr.xml
+[INFO ] Loading 'dataset_2.csv' as CSV data.  Size is 5 x 5.
+[INFO ] 
+[INFO ] Execution parameters:
+[INFO ]   help: 0
+[INFO ]   info: 
+[INFO ]   input_model_file: 
+[INFO ]   lambda: 0
+[INFO ]   output_model_file: lr.xml
+[INFO ]   output_predictions_file: 
+[INFO ]   test_file: 
+[INFO ]   training_file: dataset_2.csv
+[INFO ]   training_responses_file: 
+[INFO ]   verbose: 1
+[INFO ]   version: 0
+[INFO ] Program timers:
+[INFO ]   load_regressors: 0.000060s
+[INFO ]   loading_data: 0.000050s
+[INFO ]   regression: 0.000049s
+[INFO ]   total_time: 0.000118s
+
+$ cat dataset_2.csv
+0,0,0,0,14
+1,1,1,1,24
+2,1,0,2,27
+1,2,2,2,32
+-1,-3,0,2,17
+
+$ cat lr.xml 
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="17">
+<model class_id="0" tracking_level="0" version="0">
+	<parameters class_id="1" tracking_level="0" version="0">
+		<n_rows>5</n_rows>
+		<n_cols>1</n_cols>
+		<n_elem>5</n_elem>
+		<vec_state>1</vec_state>
+		<item>1.40000000000000195e+01</item>
+		<item>1.99999999999994471e+00</item>
+		<item>1.00000000000004308e+00</item>
+		<item>2.99999999999995159e+00</item>
+		<item>4.00000000000002487e+00</item>
+	</parameters>
+	<lambda>0.00000000000000000e+00</lambda>
+	<intercept>1</intercept>
+</model>
+</boost_serialization>
+@endcode
+
+If we take a look at the \c lr.xml output we can see the \c \<item\> part has four items which
+the first is correspond to \f$\beta_0\f$ , the second correspond to \f$\beta_1\f$ , and so on. At the end is equivalent
+to \f$f(y) = \beta_0 + \beta_1*x_1 + \beta_2x_2 + \beta_3x_3 + \beta_4x_4\f$ or \f$f(y)=14+2x_1+1x_2+3x_3+4x_4\f$
+
+@subsection cli_ex3_lrtut Compute model and predict at the same time
 
 @code
 $ mlpack_linear_regression --training_file dataset.csv --test_file predict.csv \
@@ -195,7 +256,7 @@ about the \c predict.csv dataset is that it has the same dimensionality as the
 dataset used to create the model, one.  If the model generating dataset has
 \f$d\f$ dimensions, so must the dataset we want to predict for.
 
-@subsection cli_ex3_lrtut Prediction using a precomputed model
+@subsection cli_ex4_lrtut Prediction using a precomputed model
 
 @code
 $ mlpack_linear_regression --input_model_file lr.xml --test_file predict.csv -v
@@ -252,7 +313,7 @@ $ cat predictions.csv
 4.0000000000e+00
 @endcode
 
-@subsection cli_ex4_lrtut Using ridge regression
+@subsection cli_ex5_lrtut Using ridge regression
 
 Sometimes, the input matrix of predictors has a covariance matrix that is not
 invertible, or the system is overdetermined.  In this case, ridge regression is
