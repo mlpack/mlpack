@@ -198,9 +198,9 @@ $ cat lr.xml
 </boost_serialization>
 @endcode
 
-If we take a look at the \c lr.xml output we can see the \c \<item\> part has four items which
+If we take a look at the \c lr.xml output we can see the \c \<item\> part has five items which
 the first is correspond to \f$\beta_0\f$ , the second correspond to \f$\beta_1\f$ , and so on. At the end is equivalent
-to \f$f(y) = \beta_0 + \beta_1*x_1 + \beta_2x_2 + \beta_3x_3 + \beta_4x_4\f$ or \f$f(y)=14+2x_1+1x_2+3x_3+4x_4\f$
+to \f$f(y) = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_3 + \beta_4x_4\f$ or \f$f(y)=14+2x_1+1x_2+3x_3+4x_4\f$.
 
 @subsection cli_ex3_lrtut Compute model and predict at the same time
 
