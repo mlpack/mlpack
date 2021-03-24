@@ -161,13 +161,13 @@ class MeanPooling
   void Pooling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     for (size_t j = 0, colidx = 0; j < output.n_cols;
-         ++j, colidx += strideHeight)
+         ++j, colidx += strideWidth)
     {
       for (size_t i = 0, rowidx = 0; i < output.n_rows;
-           ++i, rowidx += strideWidth)
+           ++i, rowidx += strideHeight)
       {
-        size_t rowEnd = rowidx + kernelWidth - 1;
-        size_t colEnd = colidx + kernelHeight - 1;
+        size_t rowEnd = rowidx + kernelHeight - 1;
+        size_t colEnd = colidx + kernelWidth - 1;
 
         if(rowEnd > input.n_rows - 1)
           rowEnd = input.n_rows - 1;
@@ -196,12 +196,12 @@ class MeanPooling
   {
 
     arma::Mat<eT> unpooledError;
-    for (size_t j = 0; j < input.n_cols; j += kernelHeight)
+    for (size_t j = 0; j < input.n_cols; j += kernelWidth)
     {
-      for (size_t i = 0; i < input.n_rows; i += kernelWidth)
+      for (size_t i = 0; i < input.n_rows; i += kernelHeight)
       { 
-        size_t rowEnd = i + kernelWidth - 1;
-        size_t colEnd = j + kernelHeight - 1;
+        size_t rowEnd = i + kernelHeight - 1;
+        size_t colEnd = j + kernelWidth - 1;
 
         if(rowEnd > input.n_rows - 1)
           rowEnd = input.n_rows - 1;
@@ -213,7 +213,7 @@ class MeanPooling
             arma::span(j, colEnd));
 
         unpooledError = arma::Mat<eT>(InputArea.n_rows, InputArea.n_cols);
-        unpooledError.fill(error(i / kernelWidth, j / kernelHeight) / InputArea.n_elem);
+        unpooledError.fill(error(i / kernelHeight, j / kernelWidth) / InputArea.n_elem);
 
         output(arma::span(i, i + InputArea.n_rows - 1),
             arma::span(j, j + InputArea.n_cols - 1)) += unpooledError;
