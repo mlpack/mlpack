@@ -30,15 +30,23 @@ std::string GetStringType(const arma::file_type& type);
  * from Armadillo's function guess_file_type_internal(), but we avoid using
  * internal Armadillo functionality.
  *
+ * If the file is detected as a CSV, and the CSV is detected to have a header
+ * row, the stream `f` will be fast-forwarded to point at the second line of the
+ * file.
+ *
  * @param f Opened istream to look into to guess the file type.
+ * @param filename Name of file, for output purposes.
  */
-arma::file_type GuessFileType(std::istream& f);
+arma::file_type GuessFileType(std::istream& f, const std::string& filename);
 
 /**
  * Attempt to auto-detect the type of a file given its extension, and by
  * inspecting the parts of the file to disambiguate between types when
  * necessary.  (For instance, a .csv file could be delimited by spaces, commas,
  * or tabs.)  This is meant to be used during loading.
+ *
+ * If the file is detected as a CSV, and the CSV is detected to have a header
+ * row, `stream` will be fast-forwarded to point at the second line of the file.
  *
  * @param stream Opened file stream to look into for autodetection.
  * @param filename Name of the file.
