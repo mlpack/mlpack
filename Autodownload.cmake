@@ -1,17 +1,8 @@
-function(get_deps LINK DEPS_NAME)
+function(get_deps LINK DEPS_NAME PACKAGE)
 
   message("Print link to download" ${LINK})
   message("Print deps name" ${DEPS_NAME})
-
-  if(DEPS_NAME EQUAL "ensmallen")
-    set(PACKAGE EQUAL "ensmallen-latest")
-  elseif(DEPS_NAME EQUAL "cereal")
-    set(PACKAGE EQUAL "cereal")
-  elseif(DEPS_NAME EQUAL "armadillo")
-    set(PACKAGE EQUAL "armadillo-10.3.0")
-  elseif(DEPS_NAME EQUAL "boost")
-    set(PACKAGE EQUAL "boost")
-  endif()
+  message("Print deps name" ${PACKAGE})
 
   file(DOWNLOAD ${LINK}
          "${CMAKE_BINARY_DIR}/deps/${PACKAGE}.tar.xz"
@@ -34,13 +25,13 @@ function(get_deps LINK DEPS_NAME)
       endif ()
       list(LENGTH DIRECTORIES DIRECTORIES_LEN)
       if (DIRECTORIES_LEN EQUAL 1)
-      
+ 
         if(${DEPS_NAME} EQUAL "armadillo")
           list(GET DIRECTORIES 0 ARMADILLO_INCLUDE_DIR)
           set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
               "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/include")
           message(STATUS
-              "Successfully downloaded armadillo into ${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/")
+              "Successfully downloaded ${DEPS_NAME} into ${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/")
 
           # Now we have to also ensure these header files get installed.
           install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/include/armadillo_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/armadillo_bits")
@@ -51,16 +42,43 @@ function(get_deps LINK DEPS_NAME)
           set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
              "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include")
           message(STATUS
-             "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
+             "Successfully downloaded ${DEPS_NAME}$ into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
 
           # Now we have to also ensure these header files get installed.
           install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits")
           install(FILES "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-        endif()
 
         elseif(${DEPS_NAME} EQUAL "cereal")
+          list(GET DIRECTORIES 0 CEREAL_INCLUDE_DIR)
+          set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+              "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include")
+          message(STATUS
+              "Successfully downloaded ${DEPS_NAME} into ${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/")
 
+          # Now we have to also ensure these header files get installed.
+          install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include/cereal" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cereal")
+
+        elseif(${DEPS_NAME} EQUAL "stb")
+          list(GET DIRECTORIES 0 CEREAL_INCLUDE_DIR)
+          set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+              "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include")
+          message(STATUS
+              "Successfully downloaded ${DEPS_NAME} into ${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/")
+
+          # Now we have to also ensure these header files get installed.
+          install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include/cereal" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cereal")
+
+        elseif(${DEPS_NAME} EQUAL "boost")
+          list(GET DIRECTORIES 0 CEREAL_INCLUDE_DIR)
+          set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+              "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include")
+          message(STATUS
+              "Successfully downloaded ${DEPS_NAME} into ${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/")
+
+          # Now we have to also ensure these header files get installed.
+          install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include/cereal" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cereal")
         endif()
+
 
         else ()
           message(FATAL_ERROR 
