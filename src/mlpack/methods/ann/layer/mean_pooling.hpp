@@ -196,17 +196,22 @@ class MeanPooling
   {
 
     arma::Mat<eT> unpooledError;
-    for (size_t j = 0; j < input.n_cols; j += kernelHeight)
+    for (size_t j = 0; j < input.n_cols; j += strideHeight)
     {
-      for (size_t i = 0; i < input.n_rows; i += kernelWidth)
+      for (size_t i = 0; i < input.n_rows; i += strideWidth)
       { 
         size_t rowEnd = i + kernelWidth - 1;
         size_t colEnd = j + kernelHeight - 1;
 
         if(rowEnd > input.n_rows - 1)
           rowEnd = input.n_rows - 1;
+        else if(floor)
+          continue;
+
         if(colEnd > input.n_cols - 1)
           colEnd = input.n_cols - 1;
+        else if(floor)
+          continue;
 
         arma::mat InputArea = input(
             arma::span(i, rowEnd),
