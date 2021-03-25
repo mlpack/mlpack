@@ -42,8 +42,8 @@ elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
 
   set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/OpenBLAS-0.3.13/libopenblas.a" CACHE STRING "OpenBLAS path")
   set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/cereal-1.3.0/include" CACHE STRING "Cereal header path")
-  set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/boost_1_75_0" CACHE STRING "Boost header path")
-  set(ARMADILLO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/armadillo-8.400.0/include" CACHE STRING "Armadillo header path")
+#  set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/boost_1_75_0" CACHE STRING "Boost header path")
+#  set(ARMADILLO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/armadillo-8.400.0/include" CACHE STRING "Armadillo header path")
   message("Openblas libraries" ${OPENBLAS_LIBRARIES})
   message("Cereal include path" ${CEREAL_INCLUDE_DIR})
   message("Boost include path" ${Boost_INCLUDE_DIR})
@@ -56,6 +56,8 @@ set(ARMADILLO_VERSION "8.400.0")
 set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
 set(CEREAL_VERSION "1.1.2")
+
+include(Autodownload.cmake)
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -296,11 +298,16 @@ endif()
 
 # Remove support for older 32bit system, if we need to have 32bit system
 # Since we are cross compiling, We will download it into the deps folder,
-find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
+#find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
+#if(NOT ARMADILLO_FOUND)
+  message("Download armadillo now")
+  get_deps(https://freefr.dl.sourceforge.net/project/arma/armadillo-10.3.0.tar.xz armadillo)
+#endif()
 
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIR})
 
+# We do not have to link with Armadillo if we are cross compiling
 if(CMAKE_CROSSCOMPILING)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OPENBLAS_LIBRARIES} ${GFORTRAN_LIBRARY})
 else()
@@ -308,9 +315,7 @@ else()
 endif()
 
 # Find stb_image.h and stb_image_write.h.
-if(NOT CMAKE_CROSSCOMPILING)
-  find_package(StbImage)
-endif()
+find_package(StbImage)
 # Download stb_image for image loading.
 if (NOT STB_IMAGE_FOUND)
   if (DOWNLOAD_STB_IMAGE)
@@ -369,61 +374,64 @@ endif ()
 # Once ensmallen is readily available in package repos, the automatic downloader
 # here can be removed.
 find_package(Ensmallen "${ENSMALLEN_VERSION}")
+if(NOT ENSMALLEN_FOUND)
+  GET_DEPS(http://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen)
+endif()
 
-if (NOT ENSMALLEN_FOUND)
-  if (DOWNLOAD_ENSMALLEN)
-    file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
-        "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
-        STATUS ENS_DOWNLOAD_STATUS_LIST LOG ENS_DOWNLOAD_LOG
-        SHOW_PROGRESS)
-    list(GET ENS_DOWNLOAD_STATUS_LIST 0 ENS_DOWNLOAD_STATUS)
-    if (ENS_DOWNLOAD_STATUS EQUAL 0)
-      execute_process(COMMAND ${CMAKE_COMMAND} -E
-          tar xzf "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
-          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
+# if (NOT ENSMALLEN_FOUND)
+#   if (DOWNLOAD_ENSMALLEN)
+#     file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
+#         "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
+#         STATUS ENS_DOWNLOAD_STATUS_LIST LOG ENS_DOWNLOAD_LOG
+#         SHOW_PROGRESS)
+#     list(GET ENS_DOWNLOAD_STATUS_LIST 0 ENS_DOWNLOAD_STATUS)
+#     if (ENS_DOWNLOAD_STATUS EQUAL 0)
+#       execute_process(COMMAND ${CMAKE_COMMAND} -E
+#           tar xzf "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
+#           WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
 
-      # Get the name of the directory.
-      file (GLOB ENS_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
-          "${CMAKE_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*")
-      # list(FILTER) is not available on 3.5 or older, but try to keep
-      # configuring without filtering the list anyway (it might work if only
-      # the file ensmallen-latest.tar.gz is present.
-      if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
-        list(FILTER ENS_DIRECTORIES EXCLUDE REGEX "ensmallen-.*\.tar\.gz")
-      endif ()
-      list(LENGTH ENS_DIRECTORIES ENS_DIRECTORIES_LEN)
-      if (ENS_DIRECTORIES_LEN EQUAL 1)
-        list(GET ENS_DIRECTORIES 0 ENSMALLEN_INCLUDE_DIR)
-        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-            "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include")
-        message(STATUS
-            "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
+#       # Get the name of the directory.
+#       file (GLOB ENS_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
+#           "${CMAKE_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*")
+#       # list(FILTER) is not available on 3.5 or older, but try to keep
+#       # configuring without filtering the list anyway (it might work if only
+#       # the file ensmallen-latest.tar.gz is present.
+#       if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
+#         list(FILTER ENS_DIRECTORIES EXCLUDE REGEX "ensmallen-.*\.tar\.gz")
+#       endif ()
+#       list(LENGTH ENS_DIRECTORIES ENS_DIRECTORIES_LEN)
+#       if (ENS_DIRECTORIES_LEN EQUAL 1)
+#         list(GET ENS_DIRECTORIES 0 ENSMALLEN_INCLUDE_DIR)
+#         set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+#             "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include")
+#         message(STATUS
+#             "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
 
-        # Now we have to also ensure these header files get installed.
-        install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits")
-        install(FILES "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-      else ()
-        message(FATAL_ERROR "Problem unpacking ensmallen!  Expected only one directory ensmallen-x.y.z/; found ${ENS_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
-      endif ()
-    else ()
-      list(GET ENS_DOWNLOAD_STATUS_LIST 1 ENS_DOWNLOAD_ERROR)
-      message(FATAL_ERROR
-          "Could not download ensmallen! Error code ${ENS_DOWNLOAD_STATUS}: ${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWNLOAD_LOG}")
-    endif ()
-  else ()
-    # Release versions will have ensmallen packaged with the release so we can
-    # just reference that.
-    if (EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen/ensmallen.hpp")
-      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
-          "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen")
-    else ()
-      message(FATAL_ERROR
-          "Cannot find ensmallen headers!  Try setting ENSMALLEN_INCLUDE_DIR!")
-    endif ()
-  endif ()
-else ()
-  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
-endif ()
+#         # Now we have to also ensure these header files get installed.
+#         install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits")
+#         install(FILES "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+#       else ()
+#         message(FATAL_ERROR "Problem unpacking ensmallen!  Expected only one directory ensmallen-x.y.z/; found ${ENS_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
+#       endif ()
+#     else ()
+#       list(GET ENS_DOWNLOAD_STATUS_LIST 1 ENS_DOWNLOAD_ERROR)
+#       message(FATAL_ERROR
+#           "Could not download ensmallen! Error code ${ENS_DOWNLOAD_STATUS}: ${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWNLOAD_LOG}")
+#     endif ()
+#   else ()
+#     # Release versions will have ensmallen packaged with the release so we can
+#     # just reference that.
+#     if (EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen/ensmallen.hpp")
+#       set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
+#           "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen")
+#     else ()
+#       message(FATAL_ERROR
+#           "Cannot find ensmallen headers!  Try setting ENSMALLEN_INCLUDE_DIR!")
+#     endif ()
+#   endif ()
+# else ()
+#   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
+# endif ()
 
 find_package(cereal "${CEREAL_VERSION}" REQUIRED)
 
