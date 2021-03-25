@@ -54,7 +54,7 @@ std::string GetStringType(const arma::file_type& type)
  * @param f Opened istream to look into to guess the file type.
  * @param filename Name of file, for output purposes.
  */
-arma::file_type GuessFileType(std::istream& f, const std::string filename)
+arma::file_type GuessFileType(std::istream& f)
 {
   f.clear();
   const std::fstream::pos_type pos1 = f.tellg();
@@ -187,7 +187,7 @@ arma::file_type AutoDetect(std::fstream& stream, const std::string& filename)
 
   if (extension == "csv" || extension == "tsv")
   {
-    detectedLoadType = GuessFileType(stream, filename);
+    detectedLoadType = GuessFileType(stream);
     if (detectedLoadType == arma::csv_ascii)
     {
       if (extension == "tsv")
@@ -245,7 +245,7 @@ arma::file_type AutoDetect(std::fstream& stream, const std::string& filename)
     }
     else // It's not arma_ascii.  Now we let Armadillo guess.
     {
-      detectedLoadType = GuessFileType(stream, filename);
+      detectedLoadType = GuessFileType(stream);
 
       if (detectedLoadType != arma::raw_ascii &&
           detectedLoadType != arma::csv_ascii)

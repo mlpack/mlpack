@@ -35,9 +35,8 @@ std::string GetStringType(const arma::file_type& type);
  * file.
  *
  * @param f Opened istream to look into to guess the file type.
- * @param filename Name of file, for output purposes.
  */
-arma::file_type GuessFileType(std::istream& f, const std::string& filename);
+arma::file_type GuessFileType(std::istream& f);
 
 /**
  * Attempt to auto-detect the type of a file given its extension, and by
