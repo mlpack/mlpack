@@ -3929,9 +3929,9 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
 
   arma::mat delta1, delta2; 
   module1.Backward(input, output1, delta1);
-  REQUIRE(arma::accu(delta) == 25.5);
+  REQUIRE(arma::accu(delta1) == 25.5);
   module2.Backward(input, output2, delta2);
-  REQUIRE(arma::accu(delta) == 19.5);
+  REQUIRE(arma::accu(delta2) == 19.5);
 }
 
 /**
