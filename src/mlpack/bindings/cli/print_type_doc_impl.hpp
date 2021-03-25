@@ -100,8 +100,7 @@ std::string PrintTypeDoc(
         "corresponds to one dimension (this is the typical storage format for "
         "on-disk data).  CSV files will be checked for a header; if no header "
         "is found, the first row will be loaded as a data point.  All values of"
-        " the matrix will be loaded as double-" "precision floating point "
-        "data.";
+        " the matrix will be loaded as double-precision floating point data.";
   }
   else if (std::is_same<T, arma::Mat<size_t>>::value)
   {
