@@ -163,8 +163,8 @@ double RandomForest<
          const size_t minimumLeafSize,
          const double minimumGainSplit,
          const size_t maximumDepth,
-         DimensionSelectionType dimensionSelector,
-         bool warmStart)
+         const bool warmStart,
+         DimensionSelectionType dimensionSelector)
 {
   // Pass off to Train().
   data::DatasetInfo datasetInfo; // Ignored by Train().
@@ -196,12 +196,12 @@ double RandomForest<
          const size_t minimumLeafSize,
          const double minimumGainSplit,
          const size_t maximumDepth,
-         DimensionSelectionType dimensionSelector,
-         bool warmStart)
+         const bool warmStart,
+         DimensionSelectionType dimensionSelector)
 {
   // Pass off to Train().
   arma::rowvec weights; // Ignored by Train().
-  return Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
+  return Train<false, true>(dataset, datasetInfo, labels, numClasses, weights,
       numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector, warmStart);
 }
@@ -228,8 +228,8 @@ double RandomForest<
          const size_t minimumLeafSize,
          const double minimumGainSplit,
          const size_t maximumDepth,
-         DimensionSelectionType dimensionSelector,
-         bool warmStart)
+         const bool warmStart,
+         DimensionSelectionType dimensionSelector)
 {
   // Pass off to Train().
   data::DatasetInfo datasetInfo; // Ignored by Train().
@@ -261,8 +261,8 @@ double RandomForest<
          const size_t minimumLeafSize,
          const double minimumGainSplit,
          const size_t maximumDepth,
-         DimensionSelectionType dimensionSelector,
-         bool warmStart)
+         const bool warmStart,
+         DimensionSelectionType dimensionSelector)
 {
   // Pass off to Train().
   return Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
@@ -470,7 +470,7 @@ double RandomForest<
          const double minimumGainSplit,
          const size_t maximumDepth,
          DimensionSelectionType& dimensionSelector,
-         bool warmStart)
+         const bool warmStart)
 {
   size_t oldNumTrees = trees.size();
   // Convert avgGain to total gain.

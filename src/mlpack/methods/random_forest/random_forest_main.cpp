@@ -249,11 +249,11 @@ static void mlpackMain()
     {
       bool warmStart = IO::GetParam<bool>("warm_start");
       rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
-          minimumGainSplit, maxDepth, mrds, warmStart);
+          minimumGainSplit, maxDepth, warmStart, mrds);
     }
     else
         rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
-            minimumGainSplit, maxDepth, mrds);
+            minimumGainSplit, maxDepth, false, mrds);
     Timer::Stop("rf_training");
 
     // Did we want training accuracy?

@@ -457,14 +457,14 @@ TEST_CASE("RandomForestCategoricalTrainReturnEntropy", "[RandomForestTest]")
   // Test random forest on unweighted categorical dataset.
   RandomForest<> rf;
   double entropy = rf.Train(fullData, di, fullLabels, 5, 15 /* 15 trees */, 1,
-      1e-7, 0, MultipleRandomDimensionSelect(3));
+      1e-7, 0, false, MultipleRandomDimensionSelect(3));
 
   REQUIRE(std::isfinite(entropy) == true);
 
   // Test random forest on weighted categorical dataset.
   RandomForest<> wrf;
   entropy = wrf.Train(fullData, di, fullLabels, 5, weights, 15 /* 15 trees */,
-      1, 1e-7, 0, MultipleRandomDimensionSelect(3));
+      1, 1e-7, 0, false, MultipleRandomDimensionSelect(3));
 
   REQUIRE(std::isfinite(entropy) == true);
 }
@@ -518,7 +518,7 @@ TEST_CASE("WarmStartTreesTest", "[RandomForestTest]")
   REQUIRE(rf.NumTrees() == 25);
 
   rf.Train(trainingData, di, trainingLabels, 5, 20 /* 20 trees */, 1, 1e-7, 0,
-      MultipleRandomDimensionSelect(4), true /* warmStart */);
+      true /* warmStart */, MultipleRandomDimensionSelect(4));
 
   REQUIRE(rf.NumTrees() == 25 + 20);
 }
@@ -547,7 +547,7 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
   size_t oldCorrect = arma::accu(oldPredictions == trainingLabels);
 
   rf.Train(trainingData, di, trainingLabels, 5, 20 /* 20 trees */, 1, 1e-7, 0,
-      MultipleRandomDimensionSelect(4), true /* warmStart */);
+      true /* warmStart */, MultipleRandomDimensionSelect(4));
 
   // Get performance statistics on train data.
   arma::Row<size_t> newPredictions;

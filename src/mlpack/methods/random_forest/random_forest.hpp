@@ -167,9 +167,9 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest else a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
-   * @param warmStart When set to `true`, it fits new trees and add them to the
-   *     previous forest else a new forest is trained from scratch.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -180,9 +180,9 @@ class RandomForest
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
+               const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType(),
-               bool warmStart = false);
+                   DimensionSelectionType());
 
   /**
    * Train the random forest on the given labeled training data with the given
@@ -201,9 +201,9 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest else a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
-   * @param warmStart When set to `true`, it fits new trees and add them to the
-   *     previous forest else a new forest is trained from scratch.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -215,9 +215,9 @@ class RandomForest
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
+               const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType(),
-               bool warmStart = false);
+                   DimensionSelectionType());
 
   /**
    * Train the random forest on the given weighted labeled training data with
@@ -234,9 +234,9 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest else a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
-   * @param warmStart When set to `true`, it fits new trees and add them to the
-   *     previous forest else a new forest is trained from scratch.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -248,9 +248,9 @@ class RandomForest
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
+               const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType(),
-               bool warmStart = false);
+                   DimensionSelectionType());
 
   /**
    * Train the random forest on the given weighted labeled training data with
@@ -269,9 +269,9 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest else a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
-   * @param warmStart When set to `true`, it fits new trees and add them to the
-   *     previous forest else a new forest is trained from scratch.
    * @return The average entropy of all the decision trees trained under forest.
    */
   template<typename MatType>
@@ -284,9 +284,9 @@ class RandomForest
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
+               const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType(),
-               bool warmStart = false);
+                   DimensionSelectionType());
 
   /**
    * Predict the class of the given point.  If the random forest has not been
@@ -384,7 +384,7 @@ class RandomForest
                const double minimumGainSplit,
                const size_t maximumDepth,
                DimensionSelectionType& dimensionSelector,
-               bool warmStart = false);
+               const bool warmStart = false);
 
   //! The trees in the forest.
   std::vector<DecisionTreeType> trees;
