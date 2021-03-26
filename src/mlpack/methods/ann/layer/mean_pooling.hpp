@@ -223,7 +223,7 @@ class MeanPooling
             arma::span(j, colEnd));
 
         unpooledError = arma::Mat<eT>(InputArea.n_rows, InputArea.n_cols);
-        unpooledError.fill(error(i / kernelWidth, j / kernelHeight) / InputArea.n_elem);
+        unpooledError.fill(error(rowEnd / kernelWidth, colEnd / kernelHeight) / InputArea.n_elem);
 
         output(arma::span(i, i + InputArea.n_rows - 1),
             arma::span(j, j + InputArea.n_cols - 1)) += unpooledError;
