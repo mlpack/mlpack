@@ -536,7 +536,7 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
   MockCategoricalData(trainingData, trainingLabels, di);
 
   // Train a random forest.
-  RandomForest<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
+  RandomForest<> rf(trainingData, di, trainingLabels, 5, 3 /* 3 trees */, 1,
       1e-7, 0, MultipleRandomDimensionSelect(4));
   
   // Get performance statistics on train data.
