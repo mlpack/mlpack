@@ -3912,12 +3912,12 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   arma::mat result1, result2;
   result1  <<  0.7500  <<  4.2500  <<  arma::endr
            <<  1.7500  <<  4.0000  <<  arma::endr
-           <<  2.7000  <<  6.0000  <<  arma::endr
-           <<  3.50000 <<  2.5000  <<  arma::endr;
+           <<  2.7500  <<  6.0000  <<  arma::endr
+           <<  3.5000  <<  2.5000  <<  arma::endr;
 
   result2  <<  0.7500  <<  4.2500  <<  arma::endr
            <<  1.7500  <<  4.0000  <<  arma::endr
-           <<  2.7000  <<  6.0000  <<  arma::endr;
+           <<  2.7500  <<  6.0000  <<  arma::endr;
 
   arma::mat output1, output2;
   module1.Forward(input, output1);
