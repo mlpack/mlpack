@@ -144,8 +144,19 @@ you want, using the \c --input_responses, or \c -r, option.
 
 @subsection cli_ex2_lrtut Example Multivariate Linear regression
 
-Multivariate linear regression involves more than just one variable coefficients, in this example
-we will try to fit the data which contain four variables from \c dataset_2.csv using our executables.
+Multivariate linear regression involves more than just one variable coefficients. In this example
+we will try to fit the data which contains four variables from \c dataset_2.csv using our executables.
+
+@code
+$ cat dataset_2.csv
+0,0,0,0,14
+1,1,1,1,24
+2,1,0,2,27
+1,2,2,2,32
+-1,-3,0,2,17
+@endcode
+
+Now lets run the \c mlpack_linear_regression as usual:
 
 @code 
 $ mlpack_linear_regression --training_file dataset_2.csv -v -M lr.xml
@@ -169,33 +180,25 @@ $ mlpack_linear_regression --training_file dataset_2.csv -v -M lr.xml
 [INFO ]   regression: 0.000049s
 [INFO ]   total_time: 0.000118s
 
-$ cat dataset_2.csv
-0,0,0,0,14
-1,1,1,1,24
-2,1,0,2,27
-1,2,2,2,32
--1,-3,0,2,17
-
 $ cat lr.xml 
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<!DOCTYPE boost_serialization>
-<boost_serialization signature="serialization::archive" version="17">
-<model class_id="0" tracking_level="0" version="0">
-	<parameters class_id="1" tracking_level="0" version="0">
-		<n_rows>5</n_rows>
-		<n_cols>1</n_cols>
-		<n_elem>5</n_elem>
-		<vec_state>1</vec_state>
-		<item>1.40000000000000195e+01</item>
-		<item>1.99999999999994471e+00</item>
-		<item>1.00000000000004308e+00</item>
-		<item>2.99999999999995159e+00</item>
-		<item>4.00000000000002487e+00</item>
-	</parameters>
-	<lambda>0.00000000000000000e+00</lambda>
-	<intercept>1</intercept>
-</model>
-</boost_serialization>
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<model>
+		<cereal_class_version>0</cereal_class_version>
+		<parameters>
+			<n_rows>5</n_rows>
+			<n_cols>1</n_cols>
+			<vec_state>1</vec_state>
+			<elem>14.00000000000002</elem>
+			<elem>1.9999999999999447</elem>
+			<elem>1.0000000000000431</elem>
+			<elem>2.9999999999999516</elem>
+			<elem>4.0000000000000249</elem>
+		</parameters>
+		<lambda>0</lambda>
+		<intercept>true</intercept>
+	</model>
+</cereal>
 @endcode
 
 If we take a look at the \c lr.xml output we can see the \c \<item\> part has five items which
