@@ -169,7 +169,7 @@ class MeanPooling
         size_t rowEnd = rowidx + kernelWidth - 1;
         size_t colEnd = colidx + kernelHeight - 1;
 
-        if(rowEnd > input.n_rows - 1)
+        if (rowEnd > input.n_rows - 1)
           rowEnd = input.n_rows - 1;
         if(colEnd > input.n_cols - 1)
           colEnd = input.n_cols - 1;
@@ -203,15 +203,20 @@ class MeanPooling
         size_t rowEnd = i + kernelWidth - 1;
         size_t colEnd = j + kernelHeight - 1;
 
-        if(rowEnd > input.n_rows - 1)
+        if (rowEnd > input.n_rows - 1)
+        {
+          if (floor)
+            continue;
           rowEnd = input.n_rows - 1;
-        else if(floor)
-          continue;
+        }
 
-        if(colEnd > input.n_cols - 1)
+
+        if (colEnd > input.n_cols - 1)
+        {
+          if (floor)
+            continue;
           colEnd = input.n_cols - 1;
-        else if(floor)
-          continue;
+        }
 
         arma::mat InputArea = input(
             arma::span(i, rowEnd),
