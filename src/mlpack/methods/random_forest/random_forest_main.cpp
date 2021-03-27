@@ -245,15 +245,9 @@ static void mlpackMain()
     const size_t numClasses = arma::max(labels) + 1;
 
     // Train the model.
-    if (IO::HasParam("warm_start"))
-    {
-      bool warmStart = IO::GetParam<bool>("warm_start");
-      rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
-          minimumGainSplit, maxDepth, warmStart, mrds);
-    }
-    else
-        rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
-            minimumGainSplit, maxDepth, false, mrds);
+    rfModel->rf.Train(data, labels, numClasses, numTrees, minimumLeafSize,
+        minimumGainSplit, maxDepth, IO::HasParam("warm_start"), mrds);
+
     Timer::Stop("rf_training");
 
     // Did we want training accuracy?
