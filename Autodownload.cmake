@@ -17,12 +17,12 @@ function(get_deps LINK DEPS_NAME PACKAGE)
 
         # Get the name of the directory.
         file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
-            "${CMAKE_BINARY_DIR}/deps/${PACKAGE}.tar")
+            "${CMAKE_BINARY_DIR}/deps/${PACKAGE}")
         # list(FILTER) is not available on 3.5 or older, but try to keep
         # configuring without filtering the list anyway (it might work if only
         # the file ensmallen-latest.tar.gz is present.
         if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
-          list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.xz")
+          list(FILTER DIRECTORIES EXCLUDE REGEX "ensmallen-.*\.tar\.xz")
         endif ()
         list(LENGTH DIRECTORIES DIRECTORIES_LEN)
         if (DIRECTORIES_LEN EQUAL 1)
