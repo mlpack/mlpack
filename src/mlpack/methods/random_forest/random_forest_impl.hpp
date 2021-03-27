@@ -269,7 +269,7 @@ double RandomForest<
          DimensionSelectionType dimensionSelector)
 {
   // Pass off to Train().
-  return Train<false, false>(dataset, datasetInfo, labels, numClasses, weights,
+  return Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
       numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector, warmStart);
 }
