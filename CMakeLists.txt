@@ -379,15 +379,13 @@ endif()
 find_package(Ensmallen "${ENSMALLEN_VERSION}")
 if(NOT ENSMALLEN_FOUND)
   get_deps(http://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
-endif()
-
-# else ()
-#   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
-# endif ()
+else ()
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
+endif ()
 
 find_package(cereal "${CEREAL_VERSION}")
 if(NOT CEREAL_FOUND)
-  get_deps(https://codeload.github.com/USCiLab/cereal/tar.gz/refs/tags/v1.3.0 cereal cereal-1.3.0.tar.xz)
+  get_deps(https://codeload.github.com/USCiLab/cereal/tar.gz/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
 endif()
 
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
@@ -421,7 +419,7 @@ set(Boost_ADDITIONAL_VERSIONS
 set(Boost_NO_BOOST_CMAKE 1)
 find_package(Boost "${BOOST_VERSION}")
 if(NOT CEREAL_FOUND)
-  get_deps(https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.gz boost boost_1_75_0.tar.xz)
+  get_deps(https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.gz boost boost_1_75_0.tar.gz)
 endif()
 
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
