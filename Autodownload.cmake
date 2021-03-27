@@ -1,9 +1,5 @@
 function(get_deps LINK DEPS_NAME PACKAGE)
 
-  message("Print link to download: " ${LINK})
-  message("Print deps name: " ${DEPS_NAME})
-  message("Print deps name: " ${PACKAGE})
-
   file(DOWNLOAD ${LINK}
          "${CMAKE_BINARY_DIR}/deps/${PACKAGE}"
           STATUS DOWNLOAD_STATUS_LIST LOG DOWNLOAD_LOG
@@ -17,51 +13,53 @@ function(get_deps LINK DEPS_NAME PACKAGE)
 
         # Get the name of the directory.
         file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
-            "${CMAKE_BINARY_DIR}/deps/${PACKAGE}")
+            "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*.*")
         # list(FILTER) is not available on 3.5 or older, but try to keep
         # configuring without filtering the list anyway (it might work if only
         # the file ensmallen-latest.tar.gz is present.
         if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
-          list(FILTER DIRECTORIES EXCLUDE REGEX "ensmallen-.*\.tar\.xz")
+          list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.xz")
         endif ()
         list(LENGTH DIRECTORIES DIRECTORIES_LEN)
-        if (DIRECTORIES_LEN EQUAL 1)
+        message("Print directories: " ${DIRECTORIES})
+        if (DIRECTORIES_LEN GREATER 0)
           if (${DEPS_NAME} MATCHES "armadillo")
-            list(GET DIRECTORIES 0 ARMADILLO_INCLUDE_DIR)
-            set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-                "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/include")
-            message(STATUS
-                "Successfully downloaded ${DEPS_NAME} into ${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/")
-
-            # Now we have to also ensure these header files get installed.
-            install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/include/armadillo_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/armadillo_bits")
-            install(FILES "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_INCLUDE_DIR}/include/armadillo" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+            list(GET DIRECTORIES 0 ARMADILLO_DIR)
+            set(ARMADILLO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_DIR}/include")
+            find_package(Armadillo)
 
           elseif (${DEPS_NAME} MATCHES "ensmallen")
-            list(GET DIRECTORIES 0 ENSMALLEN_INCLUDE_DIR)
-            set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-               "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include")
-            message(STATUS
-               "Successfully downloaded ${DEPS_NAME}$ into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
+            list(GET DIRECTORIES 0 ENSMALLEN_DIR)
+            set(ENSMALLEN_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_DIR}/include")
+            find_package(Ensmallen)
 
-            # Now we have to also ensure these header files get installed.
-            install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits")
-            install(FILES "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+            # set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            #    "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include" PARENT_SCOPE)
+            # message(STATUS
+            #    "Successfully downloaded ${DEPS_NAME}$ into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
+
+            # # Now we have to also ensure these header files get installed.
+            # install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits")
+            # install(FILES "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
           elseif (${DEPS_NAME} MATCHES "cereal")
-            list(GET DIRECTORIES 0 CEREAL_INCLUDE_DIR)
-            set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-                "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include")
-            message(STATUS
-                "Successfully downloaded ${DEPS_NAME} into ${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/")
+            list(GET DIRECTORIES 0 CEREAL_DIR)
+            set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${CEREAL_DIR}/")
+            find_package(cereal)
 
-            # Now we have to also ensure these header files get installed.
-            install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include/cereal" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cereal")
+            # set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
+            #     "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include" PARENT_SCOPE)
+            # message(STATUS
+            #     "Successfully downloaded ${DEPS_NAME} into ${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/")
+
+            # # Now we have to also ensure these header files get installed.
+            # install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${CEREAL_INCLUDE_DIR}/include/cereal" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cereal")
 
           elseif(${DEPS_NAME} MATCHES "boost")
             list(GET DIRECTORIES 0 Boost_INCLUDE_DIR)
             set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-                "${CMAKE_BINARY_DIR}/deps/${Boost_INCLUDE_DIR}")
+                "${CMAKE_BINARY_DIR}/deps/${Boost_INCLUDE_DIR}" PARENT_SCOPE)
+            find_package(Boost)
             message(STATUS
                 "Successfully downloaded ${DEPS_NAME} into ${CMAKE_BINARY_DIR}/deps/${Boost_INCLUDE_DIR}/")
 
@@ -86,7 +84,7 @@ function(get_deps LINK DEPS_NAME PACKAGE)
               HASH_CHECK_FAIL)
           if (HASH_CHECK_FAIL EQUAL 0)
             set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-                "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
+                "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/" PARENT_SCOPE)
             message(STATUS
                 "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
             # Now we have to also ensure these header files get installed.
