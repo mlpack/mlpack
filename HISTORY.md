@@ -1,6 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
-  * Added warm start feature to Random Forest (#2881).
+  * Added warm start feature to Random Forest (#2881); this feature is
+    accessible from mlpack's bindings to different languages.
 
   * Added Pixel Shuffle layer (#2563).
 
