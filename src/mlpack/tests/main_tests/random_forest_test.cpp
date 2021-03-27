@@ -500,8 +500,8 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestWarmStart",
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Input training data.
-  SetInputParam("training", std::move(inputData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
 
   mlpackMain();
 
@@ -509,7 +509,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestWarmStart",
   size_t oldNumTrees =
       IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
 
+  // Input training data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("labels", std::move(labels));
   SetInputParam("warm_start", true);
+
   // Input pre-trained model.
   SetInputParam("input_model",
                 IO::GetParam<RandomForestModel*>("output_model"));
