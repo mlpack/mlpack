@@ -39,16 +39,6 @@ elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
   endif()
   include(board/flags-config.cmake)
   flags(${BOARD_NAME})
-
-#  set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/OpenBLAS-0.3.13/libopenblas.a" CACHE STRING "OpenBLAS path")
-#  set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/cereal-1.3.0/include" CACHE STRING "Cereal header path")
-#  set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/boost_1_75_0" CACHE STRING "Boost header path")
-#  set(ARMADILLO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/armadillo-8.400.0/include" CACHE STRING "Armadillo header path")
-  message("Openblas libraries" ${OPENBLAS_LIBRARIES})
-  message("Cereal include path" ${CEREAL_INCLUDE_DIR})
-  message("Boost include path" ${Boost_INCLUDE_DIR})
-  message("GFortran library path:" ${GFORTRAN_LIBRARY})
-  message("Armadillo include path:" ${ARMADILLO_INCLUDE_DIR})
 endif()
 
 # Set minimum library version required by mlpack.
@@ -301,6 +291,7 @@ endif()
 find_package(Armadillo "${ARMADILLO_VERSION}")
 if(NOT ARMADILLO_FOUND)
   get_deps(https://freefr.dl.sourceforge.net/project/arma/armadillo-10.3.0.tar.xz armadillo armadillo-10.3.0.tar.xz)
+  find_package(Armadillo)
 endif()
 
 # Include directories for the previous dependencies.
@@ -326,12 +317,10 @@ else ()
   set(STB_AVAILABLE "1")
 endif ()
 
-# Find ensmallen.
-# Once ensmallen is readily available in package repos, the automatic downloader
-# here can be removed.
 find_package(Ensmallen "${ENSMALLEN_VERSION}")
 if(NOT ENSMALLEN_FOUND)
   get_deps(http://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
+  find_package(Ensmallen)
 else ()
   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 endif ()
@@ -339,6 +328,7 @@ endif ()
 find_package(cereal "${CEREAL_VERSION}")
 if(NOT CEREAL_FOUND)
   get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
+  find_package(cereal)
 endif()
 
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
@@ -371,8 +361,9 @@ set(Boost_ADDITIONAL_VERSIONS
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
 find_package(Boost "${BOOST_VERSION}")
-if(NOT CEREAL_FOUND)
+if(NOT Boost_FOUND)
   get_deps(https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.gz boost boost_1_75_0.tar.gz)
+  find_package(Boost)
 endif()
 
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})

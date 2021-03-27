@@ -30,23 +30,19 @@ function(get_deps LINK DEPS_NAME PACKAGE)
         if (DIRECTORIES_LEN GREATER 0)
           if (${DEPS_NAME} MATCHES "armadillo")
             list(GET DIRECTORIES 0 ARMADILLO_DIR)
-            set(ARMADILLO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_DIR}/include")
-            find_package(Armadillo)
+            set(ARMADILLO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_DIR}/include" CACHE INTERNAL "")
 
           elseif (${DEPS_NAME} MATCHES "ensmallen")
             list(GET DIRECTORIES 0 ENSMALLEN_DIR)
-            set(ENSMALLEN_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_DIR}/include")
-            find_package(Ensmallen)
+            set(ENSMALLEN_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_DIR}/include" CACHE INTERNAL "")
 
           elseif (${DEPS_NAME} MATCHES "cereal")
             list(GET DIRECTORIES 0 CEREAL_DIR)
-            set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${CEREAL_DIR}/")
-            find_package(cereal)
+            set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${CEREAL_DIR}/include" CACHE INTERNAL "")
 
           elseif(${DEPS_NAME} MATCHES "boost")
             list(GET DIRECTORIES 0 Boost_DIR)
-            set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${Boost_DIR}/")
-            find_package(Boost)
+            set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${Boost_DIR}/" CACHE INTERNAL "")
 
           endif()
 
@@ -69,7 +65,7 @@ function(get_deps LINK DEPS_NAME PACKAGE)
               HASH_CHECK_FAIL)
           if (HASH_CHECK_FAIL EQUAL 0)
             set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-                "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/" PARENT_SCOPE)
+                "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/" CACHE INTERNAL "")
             message(STATUS
                 "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
             # Now we have to also ensure these header files get installed.
