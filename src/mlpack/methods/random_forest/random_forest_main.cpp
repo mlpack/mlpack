@@ -207,9 +207,9 @@ static void mlpackMain()
   ReportIgnoredParam({{ "training", false }}, "minimum_leaf_size");
 
   RandomForestModel* rfModel;
-  // Handles the case when we are either training on top of existing forest
-  // else we are making predictions only.
-  if (IO::HasParam("warm_start") or IO::HasParam("input_model"))
+  // Input model is loaded when we are either doing warm-started training or
+  // else we are making predictions only or both.
+  if (IO::HasParam("input_model"))
     rfModel = IO::GetParam<RandomForestModel*>("input_model");
   // Handles the case when we are training new forest from scratch.
   else
