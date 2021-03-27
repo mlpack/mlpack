@@ -319,59 +319,12 @@ find_package(StbImage)
 if (NOT STB_IMAGE_FOUND)
   get_deps(http://mlpack.org/files/stb-2.22/stb_image.h stb stb_image.h)
   get_deps(http://mlpack.org/files/stb-1.13/stb_image_write.h stb stb_image_write.h)
-endif()
-
-#   if (DOWNLOAD_STB_IMAGE)
-#     set(STB_DIR "stb")
-#     install(DIRECTORY DESTINATION "${CMAKE_BINARY_DIR}/deps/${STB_DIR}")
-#     file(DOWNLOAD http://mlpack.org/files/stb-2.22/stb_image.h
-#         "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h"
-#         STATUS STB_IMAGE_DOWNLOAD_STATUS_LIST LOG STB_IMAGE_DOWNLOAD_LOG
-#         SHOW_PROGRESS)
-#     list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 0 STB_IMAGE_DOWNLOAD_STATUS)
-#     file(DOWNLOAD http://mlpack.org/files/stb-1.13/stb_image_write.h
-#         "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h"
-#         STATUS STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST
-#         LOG STB_IMAGE_WRITE_DOWNLOAD_LOG
-#         SHOW_PROGRESS)
-#     list(GET STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST 0
-#         STB_IMAGE_WRITE_DOWNLOAD_STATUS)
-#     if (STB_IMAGE_DOWNLOAD_STATUS EQUAL 0 AND
-#         STB_IMAGE_WRITE_DOWNLOAD_STATUS EQUAL 0)
-#       check_hash (http://mlpack.org/files/stb/hash.md5 "${CMAKE_BINARY_DIR}/deps/${STB_DIR}"
-#           HASH_CHECK_FAIL)
-#       if (HASH_CHECK_FAIL EQUAL 0)
-#         set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-#             "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-#         message(STATUS
-#             "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-#         # Now we have to also ensure these header files get installed.
-#         install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-#         install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-#         add_definitions(-DHAS_STB)
-#         set(STB_AVAILABLE "1")
-#       else ()
-#         message(WARNING
-#             "stb/stb_image.h is not installed. Image utilities will not be available!")
-#       endif ()
-#     else ()
-#         file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-#         list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
-#         message(WARNING
-#             "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
-#         message(WARNING
-#             "stb/stb_image.h is not installed. Image utilities will not be available!")
-#     endif ()
-#   else ()
-#     message(WARNING
-#         "stb/stb_image.h is not installed. Image utilities will not be available!")
-#   endif ()
-# else ()
-#   # Already has STB installed.
-#   add_definitions(-DHAS_STB)
-#   set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${STB_IMAGE_INCLUDE_DIR})
-#   set(STB_AVAILABLE "1")
-# endif ()
+else ()
+  # Already has STB installed.
+  add_definitions(-DHAS_STB)
+  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${STB_IMAGE_INCLUDE_DIR})
+  set(STB_AVAILABLE "1")
+endif ()
 
 # Find ensmallen.
 # Once ensmallen is readily available in package repos, the automatic downloader
@@ -385,7 +338,7 @@ endif ()
 
 find_package(cereal "${CEREAL_VERSION}")
 if(NOT CEREAL_FOUND)
-  get_deps(https://codeload.github.com/USCiLab/cereal/tar.gz/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
+  get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
 endif()
 
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
