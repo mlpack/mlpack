@@ -137,11 +137,22 @@ arma::file_type GuessFileType(std::istream& f)
     while (std::getline(str, token, ','))
     {
       // Let's see if we can parse the token into a number.
-      try
+      double num;
+      std::string rest;
+
+      // Try to parse into a number.
+      std::stringstream s(token);
+      s >> num;
+      if (s.fail())
       {
-        (void) std::stod(token);
+        allNumeric = false;
+        break;
       }
-      catch (std::invalid_argument& s)
+
+      // Now check to see there isn't anything else.  (This catches cases like,
+      // e.g., "1a".)
+      s >> rest;
+      if (rest.length() > 0)
       {
         allNumeric = false;
         break;
