@@ -114,22 +114,23 @@ $ cat dataset.csv
 4,4
 
 $ cat lr.xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<!DOCTYPE boost_serialization>
-<boost_serialization signature="serialization::archive" version="12">
-<linearRegressionModel class_id="0" tracking_level="0" version="0">
-  <parameters class_id="1" tracking_level="0" version="0">
-    <n_rows>2</n_rows>
-    <n_cols>1</n_cols>
-    <n_elem>2</n_elem>
-    <vec_state>1</vec_state>
-    <item>-3.97205464519563669e-16</item>
-    <item>1.00000000000000022e+00</item>
-  </parameters>
-  <lambda>0.00000000000000000e+00</lambda>
-  <intercept>1</intercept>
-</linearRegressionModel>
-</boost_serialization>
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<model>
+		<cereal_class_version>0</cereal_class_version>
+		<parameters>
+			<n_rows>2</n_rows>
+			<n_cols>1</n_cols>
+			<vec_state>1</vec_state>
+			<elem>0</elem>
+			<elem>1</elem>
+		</parameters>
+		<lambda>0</lambda>
+		<intercept>true</intercept>
+	</model>
+</cereal>
+
+
 @endcode
 
 As you can see, the function for this input is \f$f(y)=0+1x_1\f$.  We can see
@@ -208,33 +209,34 @@ to \f$f(y) = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_3 + \beta_4x_4\f$ or \
 @subsection cli_ex3_lrtut Compute model and predict at the same time
 
 @code
-$ mlpack_linear_regression --training_file dataset.csv --test_file predict.csv \
+$ mlpack_linear_regression --training_file dataset.csv --test_file predict.csv --output_predictions_file predictions.csv \
 > -v
+[WARN ] '--output_predictions_file (-o)' ignored because '--test_file (-T)' is specified!
 [INFO ] Loading 'dataset.csv' as CSV data.  Size is 2 x 5.
 [INFO ] Loading 'predict.csv' as raw ASCII formatted data.  Size is 1 x 3.
 [INFO ] Saving CSV data to 'predictions.csv'.
-[INFO ]
+[INFO ] 
 [INFO ] Execution parameters:
-[INFO ]   help: false
-[INFO ]   info: ""
-[INFO ]   input_model_file: ""
+[INFO ]   help: 0
+[INFO ]   info: 
+[INFO ]   input_model_file: 
 [INFO ]   lambda: 0
-[INFO ]   output_model_file: ""
-[INFO ]   output_predictions: predictions.csv
-[INFO ]   test_file: predict.csv
-[INFO ]   training_file: dataset.csv
-[INFO ]   training_responses: ""
-[INFO ]   verbose: true
-[INFO ]   version: false
-[INFO ]
+[INFO ]   output_model_file: 
+[INFO ]   output_predictions_file: 'predictions.csv' (1x3 matrix)
+[INFO ]   test_file: 'predict.csv' (0x0 matrix)
+[INFO ]   training_file: 'dataset.csv' (0x0 matrix)
+[INFO ]   training_responses_file: ''
+[INFO ]   verbose: 1
+[INFO ]   version: 0
 [INFO ] Program timers:
-[INFO ]   load_regressors: 0.000371s
-[INFO ]   load_test_points: 0.000229s
-[INFO ]   loading_data: 0.000491s
-[INFO ]   prediction: 0.000075s
-[INFO ]   regression: 0.000449s
-[INFO ]   saving_data: 0.000186s
-[INFO ]   total_time: 0.002731s
+[INFO ]   load_regressors: 0.000069s
+[INFO ]   load_test_points: 0.000031s
+[INFO ]   loading_data: 0.000079s
+[INFO ]   prediction: 0.000001s
+[INFO ]   regression: 0.000054s
+[INFO ]   saving_data: 0.000055s
+[INFO ]   total_time: 0.000203s
+
 
 $ cat dataset.csv
 0,0
@@ -262,48 +264,49 @@ dataset used to create the model, one.  If the model generating dataset has
 @subsection cli_ex4_lrtut Prediction using a precomputed model
 
 @code
-$ mlpack_linear_regression --input_model_file lr.xml --test_file predict.csv -v
+$ mlpack_linear_regression --input_model_file lr.xml --test_file predict.csv --output_predictions_file predictions.csv -v
+[WARN ] '--output_predictions_file (-o)' ignored because '--test_file (-T)' is specified!
 [INFO ] Loading 'predict.csv' as raw ASCII formatted data.  Size is 1 x 3.
 [INFO ] Saving CSV data to 'predictions.csv'.
-[INFO ]
+[INFO ] 
 [INFO ] Execution parameters:
-[INFO ]   help: false
-[INFO ]   info: ""
+[INFO ]   help: 0
+[INFO ]   info: 
 [INFO ]   input_model_file: lr.xml
 [INFO ]   lambda: 0
-[INFO ]   output_model_file: ""
-[INFO ]   output_predictions: predictions.csv
-[INFO ]   test_file: predict.csv
-[INFO ]   training_file: ""
-[INFO ]   training_responses: ""
-[INFO ]   verbose: true
-[INFO ]   version: false
-[INFO ]
+[INFO ]   output_model_file: 
+[INFO ]   output_predictions_file: 'predictions.csv' (1x3 matrix)
+[INFO ]   test_file: 'predict.csv' (0x0 matrix)
+[INFO ]   training_file: ''
+[INFO ]   training_responses_file: ''
+[INFO ]   verbose: 1
+[INFO ]   version: 0
 [INFO ] Program timers:
-[INFO ]   load_model: 0.000264s
-[INFO ]   load_test_points: 0.000186s
-[INFO ]   loading_data: 0.000157s
-[INFO ]   prediction: 0.000098s
-[INFO ]   saving_data: 0.000157s
-[INFO ]   total_time: 0.001688s
+[INFO ]   load_model: 0.000051s
+[INFO ]   load_test_points: 0.000052s
+[INFO ]   loading_data: 0.000044s
+[INFO ]   prediction: 0.000010s
+[INFO ]   saving_data: 0.000079s
+[INFO ]   total_time: 0.000160s
+
 
 $ cat lr.xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<!DOCTYPE boost_serialization>
-<boost_serialization signature="serialization::archive" version="12">
-<linearRegressionModel class_id="0" tracking_level="0" version="0">
-  <parameters class_id="1" tracking_level="0" version="0">
-    <n_rows>2</n_rows>
-    <n_cols>1</n_cols>
-    <n_elem>2</n_elem>
-    <vec_state>1</vec_state>
-    <item>-3.97205464519563669e-16</item>
-    <item>1.00000000000000022e+00</item>
-  </parameters>
-  <lambda>0.00000000000000000e+00</lambda>
-  <intercept>1</intercept>
-</linearRegressionModel>
-</boost_serialization>
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<model>
+		<cereal_class_version>0</cereal_class_version>
+		<parameters>
+			<n_rows>2</n_rows>
+			<n_cols>1</n_cols>
+			<vec_state>1</vec_state>
+			<elem>0</elem>
+			<elem>1</elem>
+		</parameters>
+		<lambda>0</lambda>
+		<intercept>true</intercept>
+	</model>
+</cereal>
+
 
 $ cat predict.csv
 2
