@@ -168,7 +168,7 @@ class RandomForest
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
    * @param warmStart When set to `true`, it adds `numTrees` new trees to the
-   *     existing random forest else a new forest is trained from scratch.
+   *     existing random forest otherwise a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
