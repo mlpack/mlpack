@@ -35,7 +35,7 @@ class RandomForest
    * Construct the random forest without any training or specifying the number
    * of trees.  Predict() will throw an exception until Train() is called.
    */
-  RandomForest() { }
+  RandomForest();
 
   /**
    * Create a random forest, training on the given labeled training data with

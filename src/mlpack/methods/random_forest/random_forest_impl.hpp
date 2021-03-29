@@ -25,6 +25,25 @@ template<
     template<typename> class CategoricalSplitType,
     typename ElemType
 >
+RandomForest<
+    FitnessFunction,
+    DimensionSelectionType,
+    NumericSplitType,
+    CategoricalSplitType,
+    ElemType
+>::RandomForest():
+    avgGain(0.0)
+{
+  // Nothing to do here.
+}
+
+template<
+    typename FitnessFunction,
+    typename DimensionSelectionType,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType,
+    typename ElemType
+>
 template<typename MatType>
 RandomForest<
     FitnessFunction,
