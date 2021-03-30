@@ -171,7 +171,7 @@ class MeanPooling
 
         if (rowEnd > input.n_rows - 1)
           rowEnd = input.n_rows - 1;
-        if(colEnd > input.n_cols - 1)
+        if (colEnd > input.n_cols - 1)
           colEnd = input.n_cols - 1;
 
         arma::mat subInput = input(
