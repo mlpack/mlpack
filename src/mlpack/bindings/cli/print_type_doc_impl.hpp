@@ -98,8 +98,9 @@ std::string PrintTypeDoc(
         "of the data is detected by the extension of the filename.  The storage"
         " should be such that one row corresponds to one point, and one column "
         "corresponds to one dimension (this is the typical storage format for "
-        "on-disk data).  All values of the matrix will be loaded as double-"
-        "precision floating point data.";
+        "on-disk data).  CSV files will be checked for a header; if no header "
+        "is found, the first row will be loaded as a data point.  All values of"
+        " the matrix will be loaded as double-precision floating point data.";
   }
   else if (std::is_same<T, arma::Mat<size_t>>::value)
   {
@@ -111,8 +112,10 @@ std::string PrintTypeDoc(
         "compiled with HDF5 support.  The type of the data is detected by the "
         "extension of the filename.  The storage should be such that one row "
         "corresponds to one point, and one column corresponds to one dimension "
-        "(this is the typical storage format for on-disk data).  All values of "
-        "the matrix will be loaded as unsigned integers.";
+        "(this is the typical storage format for on-disk data).  CSV files will"
+        " be checked for a header; if no header is found, the first row will be"
+        " loaded as a data point.  All values of the matrix will be loaded as "
+        "unsigned integers.";
   }
   else if (std::is_same<T, arma::rowvec>::value ||
            std::is_same<T, arma::vec>::value)

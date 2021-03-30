@@ -47,6 +47,10 @@ std::string GetStringType(const arma::file_type& type)
  * from Armadillo's function guess_file_type_internal(), but we avoid using
  * internal Armadillo functionality.
  *
+ * If the file is detected as a CSV, and the CSV is detected to have a header
+ * row, the stream `f` will be fast-forwarded to point at the second line of the
+ * file.
+ *
  * @param f Opened istream to look into to guess the file type.
  */
 arma::file_type GuessFileType(std::istream& f)
@@ -114,6 +118,53 @@ arma::file_type GuessFileType(std::istream& f)
     }
   }
 
+  if (hasComma && (hasBracket == false))
+  {
+    // If we believe we have a CSV file, then we want to try to skip any header
+    // row.  We'll detect a header row by simply seeing if anything in the first
+    // line doesn't parse as a number.
+    //
+    // TODO: this is not a foolproof algorithm, so there should eventually be a
+    // way added for the user to explicitly indicate that there is or isn't a
+    // header.
+    std::string firstLine;
+    std::getline(f, firstLine);
+
+    std::stringstream str(firstLine);
+    std::string token;
+    bool allNumeric = true;
+    // We'll abuse 'getline()' to split on commas.
+    while (std::getline(str, token, ','))
+    {
+      // Let's see if we can parse the token into a number.
+      double num;
+      std::string rest;
+
+      // Try to parse into a number.
+      std::stringstream s(token);
+      s >> num;
+      if (s.fail())
+      {
+        allNumeric = false;
+        break;
+      }
+
+      // Now check to see there isn't anything else.  (This catches cases like,
+      // e.g., "1a".)
+      s >> rest;
+      if (rest.length() > 0)
+      {
+        allNumeric = false;
+        break;
+      }
+    }
+
+    // If we could parse everything into a number, then let's rewind `f` so that
+    // it's at the start of the file.
+    if (allNumeric)
+      f.seekg(pos1);
+  }
+
   delete[] dataMem;
 
   if (hasBinary)
@@ -131,12 +182,14 @@ arma::file_type GuessFileType(std::istream& f)
  * necessary.  (For instance, a .csv file could be delimited by spaces, commas,
  * or tabs.)  This is meant to be used during loading.
  *
+ * If the file is detected as a CSV, and the CSV is detected to have a header
+ * row, `stream` will be fast-forwarded to point at the second line of the file.
+ *
  * @param stream Opened file stream to look into for autodetection.
  * @param filename Name of the file.
  * @return The detected file type.
  */
-arma::file_type AutoDetect(std::fstream& stream,
-                           const std::string& filename)
+arma::file_type AutoDetect(std::fstream& stream, const std::string& filename)
 {
   // Get the extension.
   std::string extension = Extension(filename);
