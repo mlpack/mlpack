@@ -48,6 +48,10 @@ namespace data /** Functions to load and save matrices and models. */ {
  * `inputLoadType` parameter with the correct type above (e.g.
  * `arma::csv_ascii`.)
  *
+ * If the detected file type is CSV (`arma::csv_ascii`), the first row will be
+ * checked for a CSV header.  If a CSV header is not detected, the first row
+ * will be treated as data; otherwise, the first row will be skipped.
+ *
  * If the parameter 'fatal' is set to true, a std::runtime_error exception will
  * be thrown if the matrix does not load successfully.  The parameter
  * 'transpose' controls whether or not the matrix is transposed after loading.
