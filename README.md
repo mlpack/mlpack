@@ -51,17 +51,6 @@ variety of other needs.
 </div>
 <br>
 
-### 0. Contents
-
-  1. [Introduction](#1-introduction)
-  2. [Citation details](#2-citation-details)
-  3. [Dependencies](#3-dependencies)
-  4. [Building mlpack from source](#4-building-mlpack-from-source)
-  5. [Running mlpack programs](#5-running-mlpack-programs)
-  6. [Using mlpack from Python](#6-using-mlpack-from-python)
-  7. [Further documentation](#7-further-documentation)
-  8. [Bug reporting](#8-bug-reporting)
-
 ###  1. Introduction
 
 The mlpack website can be found at https://www.mlpack.org and it contains
