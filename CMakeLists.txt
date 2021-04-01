@@ -299,15 +299,17 @@ if (NOT STB_IMAGE_FOUND)
   get_deps(http://mlpack.org/files/stb-2.22/stb_image.h stb stb_image.h)
   get_deps(http://mlpack.org/files/stb-1.13/stb_image_write.h stb stb_image_write.h)
   find_package(StbImage)
-endif ()
+endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
+add_definitions(-DHAS_STB)
+set(STB_AVAILABLE "1")
 
 # Find ensmallen, if not download it.
 find_package(Ensmallen "${ENSMALLEN_VERSION}")
 if(NOT ENSMALLEN_FOUND)
   get_deps(http://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
   find_package(Ensmallen)
-endif ()
+endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 
 # Find cereal, if not download it.
