@@ -28,8 +28,7 @@ RandomForest<
     FitnessFunction,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType,
-    ElemType
+    CategoricalSplitType
 >::RandomForest():
     avgGain(0.0)
 {
@@ -40,8 +39,7 @@ template<
     typename FitnessFunction,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType,
-    typename ElemType
+    template<typename> class CategoricalSplitType
 >
 template<typename MatType>
 RandomForest<
