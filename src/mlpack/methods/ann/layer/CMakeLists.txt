@@ -48,6 +48,8 @@ set(SOURCES
   highway_impl.hpp
   isrlu.hpp
   isrlu_impl.hpp
+  instance_norm.hpp
+  instance_norm_impl.hpp
   join.hpp
   join_impl.hpp
   layer.hpp

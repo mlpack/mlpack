@@ -25,6 +25,7 @@
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
+#include <mlpack/methods/ann/layer/instance_norm.hpp>
 #include <mlpack/methods/ann/layer/join.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
@@ -260,6 +261,7 @@ using LayerTypes = boost::variant<
     BaseLayer<SoftplusFunction, arma::mat, arma::mat>*,
     BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
     BatchNorm<arma::mat, arma::mat>*,
+    InstanceNorm<arma::mat, arma::mat>*,
     BilinearInterpolation<arma::mat, arma::mat>*,
     CELU<arma::mat, arma::mat>*,
     Concat<arma::mat, arma::mat>*,
