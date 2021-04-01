@@ -33,6 +33,7 @@
 #include <mlpack/methods/ann/activation_functions/poisson1_function.hpp>
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
+#include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
 
 #include "catch.hpp"
 
@@ -1219,4 +1220,24 @@ TEST_CASE("HardSwishFunctionTest", "[ActivationFunctionsTest]")
   CheckActivationCorrect<HardSwishFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<HardSwishFunction>
       (desiredActivations, desiredDerivatives);
+}
+
+/**
+ * Basic test of the TanhExp function.
+ */
+TEST_CASE("TanhExpFunctionTest", "[ActivationFunctionsTest]")
+{
+
+  const arma::colvec activationData("-2 3.2 4.5 1 -1 2 0");
+
+  // Hand-calculated values.
+  const arma::colvec desiredActivations("-0.26903 3.20000 4.50000 \
+                                         0.991329 -0.352135 2.0 0.0000");
+
+  // Hand-calculated values.
+  const arma::colvec desiredDerivatives("0.523051 1.0000 1.0000 \
+                                         1.03924 0.449818 1.00002 0.761594");
+
+  CheckActivationCorrect<TanhExpFunction>(activationData, desiredActivations);
+  CheckDerivativeCorrect<TanhExpFunction>(desiredActivations, desiredDerivatives);
 }

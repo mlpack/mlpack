@@ -18,12 +18,12 @@ using namespace mlpack::regression;
 
 BayesianLinearRegression::BayesianLinearRegression(const bool centerData,
                                                    const bool scaleData,
-                                                   const size_t nIterMax,
-                                                   const double tol) :
+                                                   const size_t maxIterations,
+                                                   const double tolerance) :
   centerData(centerData),
   scaleData(scaleData),
-  nIterMax(nIterMax),
-  tol(tol),
+  maxIterations(maxIterations),
+  tolerance(tolerance),
   responsesOffset(0.0),
   alpha(0.0),
   beta(0.0),
@@ -60,7 +60,7 @@ double BayesianLinearRegression::Train(const arma::mat& data,
   unsigned short i = 0;
   double deltaAlpha = 1.0, deltaBeta = 1.0, crit = 1.0;
 
-  while ((crit > tol) && (i < nIterMax))
+  while ((crit > tolerance) && (i < maxIterations))
   {
     deltaAlpha = -alpha;
     deltaBeta = -beta;

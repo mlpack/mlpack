@@ -153,19 +153,22 @@ the output shape is represented by the number of possible actions, which in this
 (`foward` and `backward`).
 
 We can also use mlpack's ann module to setup a custom FFN network. For example, here we use a single
-hidden layer.
+hidden layer. However, the Q-Learning agent expects the object to have a `ResetNoise` method which `SimpleDQN` has.
+We can't pass mlpack's FFN network directly. Instead, we have to wrap it into `SimpleDQN` object.
 
 @code
 int main()
 {
   // Set up the network.
-  FFN<MeanSquaredError<>, GaussianInitialization> model(MeanSquaredError<>(),
+  FFN<MeanSquaredError<>, GaussianInitialization> network(MeanSquaredError<>(),
       GaussianInitialization(0, 0.001));
-  model.Add<Linear<>>(4, 128);
-  model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(128, 128);
-  model.Add<ReLULayer<>>();
-  model.Add<Linear<>>(128, 2);
+  network.Add<Linear<>>(4, 128);
+  network.Add<ReLULayer<>>();
+  network.Add<Linear<>>(128, 128);
+  network.Add<ReLULayer<>>();
+  network.Add<Linear<>>(128, 2);
+
+  SimpleDQN<> model(network);
 
 @endcode
 
