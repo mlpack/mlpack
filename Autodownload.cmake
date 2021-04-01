@@ -43,7 +43,12 @@ function(get_deps LINK DEPS_NAME PACKAGE)
           elseif(${DEPS_NAME} MATCHES "boost")
             list(GET DIRECTORIES 0 Boost_DIR)
             set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${Boost_DIR}/" CACHE INTERNAL "")
-
+          
+          elseif(${DEPS_NAME} MATCHES "OpenBLAS")
+            list(GET DIRECTORIES 0 OPENBLAS_DIR)
+            execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
+                            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/${OPENBLAS_DIR})
+            set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/${OPENBLAS_DIR}/libopenblas.a" CACHE INTERNAL "")
           endif()
 
         else ()
@@ -64,15 +69,7 @@ function(get_deps LINK DEPS_NAME PACKAGE)
               "${CMAKE_BINARY_DIR}/deps/${STB_DIR}"
               HASH_CHECK_FAIL)
           if (HASH_CHECK_FAIL EQUAL 0)
-            set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-                "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/" CACHE INTERNAL "")
-            message(STATUS
-                "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-            # Now we have to also ensure these header files get installed.
-            install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-            install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-            add_definitions(-DHAS_STB)
-            set(STB_AVAILABLE "1")
+            set(STB_IMAGE_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${STB_DIR}" CACHE INTERNAL "")
           else ()
             message(WARNING
                 "stb/stb_image.h is not installed. Image utilities will not be available!")

@@ -3,7 +3,7 @@ project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
 include(CMake/CheckHash.cmake)
-
+include(Autodownload.cmake)
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
@@ -19,8 +19,7 @@ option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
 if(CMAKE_CROSSCOMPILING)
-  set(BOARD_NAME "" CACHE STRING "Enter the board name to compile mlpack for.")
-  option(AUTO_DOWNLOAD_DEPS "Download dependencies before cross-compiling." OFF)
+  set(BOARD_NAME "" CACHE INTERNAL "Enter the board name to compile mlpack for.")
   set(GFORTRAN_LIBRARY "" CACHE STRING "Path for gfortran library.")
   set(GCC_VERSION ""  CACHE STRING "")
 endif()
@@ -28,15 +27,6 @@ endif()
 if(CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
   message(FATAL_ERROR "Please enter the board name")
 elseif(CMAKE_CROSSCOMPILING AND (BOARD_NAME STRGREATER ""))
-  if(AUTO_DOWNLOAD_DEPS)
-    execute_process(
-      COMMAND bash -c "../board/download_dependencies.sh ${BOARD_NAME}"
-      RESULT_VARIABLE SCRIPT_RESULT
-     )
-    if(NOT SCRIPT_RESULT EQUAL "0")
-      message(FATAL_ERROR "Dependencies did not download correctly, please restart CMake.")
-    endif()
-  endif()
   include(board/flags-config.cmake)
   flags(${BOARD_NAME})
 endif()
@@ -46,8 +36,6 @@ set(ARMADILLO_VERSION "8.400.0")
 set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
 set(CEREAL_VERSION "1.1.2")
-
-include(Autodownload.cmake)
 
 if (WIN32)
   option(BUILD_SHARED_LIBS
@@ -140,7 +128,7 @@ else ()
 endif ()
 
 # This is as of yet unused.
-#option(PGO "Use profile-guided optimization if not a debug build" ON)
+# option(PGO "Use profile-guided optimization if not a debug build" ON)
 
 # Set the CFLAGS and CXXFLAGS depending on the options the user specified.
 # Only GCC-like compilers support -Wextra, and other compilers give tons of
@@ -299,6 +287,7 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIR})
 
 # We do not have to link with Armadillo if we are cross compiling
 if(CMAKE_CROSSCOMPILING)
+  get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v0.3.13/OpenBLAS-0.3.13.tar.gz OpenBLAS OpenBLAS-0.3.13.tar.gz)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OPENBLAS_LIBRARIES} ${GFORTRAN_LIBRARY})
 else()
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARY})
@@ -310,20 +299,15 @@ find_package(StbImage)
 if (NOT STB_IMAGE_FOUND)
   get_deps(http://mlpack.org/files/stb-2.22/stb_image.h stb stb_image.h)
   get_deps(http://mlpack.org/files/stb-1.13/stb_image_write.h stb stb_image_write.h)
-else ()
-  # Already has STB installed.
-  add_definitions(-DHAS_STB)
-  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${STB_IMAGE_INCLUDE_DIR})
-  set(STB_AVAILABLE "1")
+  find_package(StbImage)
 endif ()
 
 find_package(Ensmallen "${ENSMALLEN_VERSION}")
 if(NOT ENSMALLEN_FOUND)
   get_deps(http://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
   find_package(Ensmallen)
-else ()
-  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 endif ()
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 
 find_package(cereal "${CEREAL_VERSION}")
 if(NOT CEREAL_FOUND)
