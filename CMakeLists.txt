@@ -281,7 +281,6 @@ if(NOT ARMADILLO_FOUND)
   get_deps(https://freefr.dl.sourceforge.net/project/arma/armadillo-10.3.0.tar.xz armadillo armadillo-10.3.0.tar.xz)
   find_package(Armadillo)
 endif()
-
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIR})
 
@@ -301,7 +300,9 @@ if (NOT STB_IMAGE_FOUND)
   get_deps(http://mlpack.org/files/stb-1.13/stb_image_write.h stb stb_image_write.h)
   find_package(StbImage)
 endif ()
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
+# Find ensmallen, if not download it.
 find_package(Ensmallen "${ENSMALLEN_VERSION}")
 if(NOT ENSMALLEN_FOUND)
   get_deps(http://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
@@ -309,12 +310,12 @@ if(NOT ENSMALLEN_FOUND)
 endif ()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 
+# Find cereal, if not download it.
 find_package(cereal "${CEREAL_VERSION}")
 if(NOT CEREAL_FOUND)
   get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
   find_package(cereal)
 endif()
-
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 
 # Unfortunately this configuration variable is necessary and will need to be
