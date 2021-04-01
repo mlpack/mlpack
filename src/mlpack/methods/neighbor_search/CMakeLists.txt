@@ -40,4 +40,3 @@ add_julia_binding(kfn)
 add_go_binding(kfn)
 add_r_binding(kfn)
 add_markdown_docs(kfn "cli;python;julia;go;r" "geometry")
-

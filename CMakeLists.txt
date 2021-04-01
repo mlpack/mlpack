@@ -3,7 +3,7 @@ project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
 include(CMake/CheckHash.cmake)
-include(Autodownload.cmake)
+include(CMake/Autodownload.cmake)
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
