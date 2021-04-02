@@ -76,7 +76,8 @@ TEST_CASE("JacobianBernoulliDistributionTest", "[ANNDistTest]")
     }
 
     module.LogProbBackward(target, jacobianB);
-    REQUIRE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))) <= 1e-5);
+      REQUIRE(arma::approx_equal(jacobianA, jacobianB,"both", 1e-5,1e-5));
+
   }
 }
 
@@ -121,7 +122,7 @@ TEST_CASE("JacobianBernoulliDistributionLogisticTest", "[ANNDistTest]")
     }
 
     module.LogProbBackward(target, jacobianB);
-    REQUIRE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))) <= 3e-5);
+      REQUIRE(arma::approx_equal(jacobianA, jacobianB,"both", 5e-3,5e-3));
   }
 }
 
@@ -222,7 +223,7 @@ TEST_CASE("JacobianNormalDistributionMeanTest", "[ANNDistTest]")
       jacobianB.col(k) = deltaMu % deriv;
     }
 
-    REQUIRE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))) <= 5e-3);
+      REQUIRE(arma::approx_equal(jacobianA, jacobianB,"both", 5e-3,5e-3));
   }
 }
 
@@ -288,6 +289,6 @@ TEST_CASE("JacobianNormalDistributionStandardDeviationTest", "[ANNDistTest]")
       jacobianB.col(k) = deltaSigma % deriv;
     }
 
-    REQUIRE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))) <= 5e-3);
+      REQUIRE(arma::approx_equal(jacobianA, jacobianB,"both", 5e-3,5e-3));
   }
 }
