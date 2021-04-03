@@ -256,7 +256,8 @@ TEST_CASE("SimpleDropoutLayerTest", "[ANNLayerTest]")
   // Test the Forward function.
   arma::mat output;
   module.Forward(input, output);
-  REQUIRE(arma::as_scalar(arma::abs(arma::mean(output) - (1 - p))) <= 0.05);
+  REQUIRE(arma::as_scalar(arma::abs(arma::mean(output) - (1 - p))) <= 0.05); 
+ // REQUIRE(arma::as_scalar(arma::approx_equal(mean(output), (1-p), "both", 0.05, 0.05 )));
 
   // Test the Backward function.
   arma::mat delta;
@@ -349,7 +350,8 @@ TEST_CASE("SimpleAlphaDropoutLayerTest", "[ANNLayerTest]")
   // Test the Backward function when training phase.
   arma::mat delta;
   module.Backward(input, input, delta);
-  REQUIRE(arma::as_scalar(arma::abs(arma::mean(delta) - 0)) <= 0.05);
+  REQUIRE(arma::as_scalar(arma::max(arma::abs(arma::mean(delta) - 0) <= 0.05)));
+
 
   // Test the Forward function when testing phase.
   module.Deterministic() = true;
