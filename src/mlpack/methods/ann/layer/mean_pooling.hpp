@@ -210,7 +210,6 @@ class MeanPooling
           rowEnd = input.n_rows - 1;
         }
 
-
         if (colEnd > input.n_cols - 1)
         {
           if (floor)
@@ -218,9 +217,7 @@ class MeanPooling
           colEnd = input.n_cols - 1;
         }
 
-        arma::mat InputArea = input(
-            arma::span(i, rowEnd),
-            arma::span(j, colEnd));
+        arma::mat InputArea = input(arma::span(i, rowEnd), arma::span(j, colEnd));
 
         unpooledError = arma::Mat<eT>(InputArea.n_rows, InputArea.n_cols);
         unpooledError.fill(error(rowidx, colidx) / InputArea.n_elem);
