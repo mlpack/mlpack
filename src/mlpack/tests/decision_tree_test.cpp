@@ -25,6 +25,54 @@ using namespace mlpack::tree;
 using namespace mlpack::distribution;
 
 /**
+ * Make sure the MSE gain is zero when the labels are perfect.
+ */
+TEST_CASE("MADGainPerfectTest", "[DecisionTreeRegressionTest]")
+{
+  arma::rowvec weights(10, arma::fill::ones);
+  arma::rowvec labels;
+  labels.ones(10);
+
+  REQUIRE(MADGain::Evaluate<false>(labels, weights) ==
+          Approx(0.0).margin(1e-5));
+}
+
+/**
+ * Make sure that for a normal distribution of labels,
+ * MAD_gain = mean of absolute values of the distribution.
+ */
+TEST_CASE("MADGainNormalTest", "[DecisionTreeRegressionTest")
+{
+  arma::rowvec weights(10, arma::fill::ones);
+  arma::rowvec labels(10, arma::fill::randn); // Mean = 0.
+
+  // Theoretical gain.
+  const double theoreticalGain = 0.0;
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    theoreticalGain += std::abs(labels[i]);
+  theoreticalGain /= (double) labels.n_elem;
+
+  // Calculated gain.
+  const double calculatedGain = MADGain::Evaluate<false>(labels, weights);
+
+  REQUIRE(calculatedGain == Approx(theoreticalGain).margin(1e-5));
+}
+
+/**
+ * The MAD gain of an empty vector is 0.
+ */
+TEST_CASE("MADGainEmptyTest", "[DecisionTreeRegressionTest]")
+{
+  arma::rowvec weights = arma::ones<arma::rowvec>(10);
+  arma::rowvec predictors;
+  REQUIRE(MADGain::Evaluate<false>(predictors, weights) ==
+          Approx(0.0).margin(1e-5));
+
+  REQUIRE(MADGain::Evaluate<true>(predictors, weights) ==
+          Approx(0.0).margin(1e-5));
+}
+
+/**
  * Make sure the Gini gain is zero when the labels are perfect.
  */
 TEST_CASE("GiniGainPerfectTest", "[DecisionTreeTest]")
