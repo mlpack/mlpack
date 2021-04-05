@@ -13,6 +13,7 @@
 #include <mlpack/methods/decision_tree/decision_tree.hpp>
 #include <mlpack/methods/decision_tree/information_gain.hpp>
 #include <mlpack/methods/decision_tree/gini_gain.hpp>
+#include <mlpack/methods/decision_tree/mad_gain.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 
@@ -47,9 +48,9 @@ TEST_CASE("MADGainNormalTest", "[DecisionTreeRegressionTest")
   arma::rowvec labels(10, arma::fill::randn); // Mean = 0.
 
   // Theoretical gain.
-  const double theoreticalGain = 0.0;
+  double theoreticalGain = 0.0;
   for (size_t i = 0; i < labels.n_elem; ++i)
-    theoreticalGain += std::abs(labels[i]);
+    theoreticalGain -= std::abs(labels[i]);
   theoreticalGain /= (double) labels.n_elem;
 
   // Calculated gain.
