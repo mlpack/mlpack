@@ -39,13 +39,13 @@ TEST_CASE("MADGainPerfectTest", "[DecisionTreeRegressionTest]")
 }
 
 /**
- * Make sure that for a normal distribution of labels,
- * MAD_gain = mean of absolute values of the distribution.
+ * Make sure that when mean of labels is zero, MAD_gain = mean of
+ * absolute values of the distribution.
  */
 TEST_CASE("MADGainNormalTest", "[DecisionTreeRegressionTest")
 {
   arma::rowvec weights(10, arma::fill::ones);
-  arma::rowvec labels(10, arma::fill::randn); // Mean = 0.
+  arma::rowvec labels = { 1, 2, 3, 4, 5, -1, -2, -3, -4, -5 }; // Mean = 0.
 
   // Theoretical gain.
   double theoreticalGain = 0.0;
