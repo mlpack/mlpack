@@ -77,7 +77,6 @@ TEST_CASE("JacobianBernoulliDistributionTest", "[ANNDistTest]")
 
     module.LogProbBackward(target, jacobianB);
     REQUIRE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))) <= 1e-5);
-
   }
 }
 
@@ -122,7 +121,7 @@ TEST_CASE("JacobianBernoulliDistributionLogisticTest", "[ANNDistTest]")
     }
 
     module.LogProbBackward(target, jacobianB);
-    REQUIRE(arma::approx_equal(jacobianA, jacobianB, "both", 5e-3, 5e-3));
+    REQUIRE(arma::approx_equal(jacobianA, jacobianB, "both", 3e-5, 3e-5));
   }
 }
 

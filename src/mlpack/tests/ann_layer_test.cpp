@@ -351,7 +351,6 @@ TEST_CASE("SimpleAlphaDropoutLayerTest", "[ANNLayerTest]")
   module.Backward(input, input, delta);
   REQUIRE(arma::as_scalar(arma::max(arma::abs(arma::mean(delta) - 0) <= 0.05)));
 
-
   // Test the Forward function when testing phase.
   module.Deterministic() = true;
   module.Forward(input, output);
