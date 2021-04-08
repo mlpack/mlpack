@@ -54,7 +54,6 @@ TEST_CASE("MSEGainVarianceTest", "[DecisionTreeRegressionTest]")
   const double calculatedGain = MSEGain::Evaluate<false>(labels, weights);
 
   REQUIRE(calculatedGain == Approx(theoreticalGain).margin(1e-9));
-  std::cout << "MSEGain\n";
 }
 
 /**
