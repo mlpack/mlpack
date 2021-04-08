@@ -14,6 +14,7 @@
 #include <mlpack/methods/decision_tree/information_gain.hpp>
 #include <mlpack/methods/decision_tree/gini_gain.hpp>
 #include <mlpack/methods/decision_tree/mad_gain.hpp>
+#include <mlpack/methods/decision_tree/mse_gain.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
 
@@ -27,6 +28,51 @@ using namespace mlpack::distribution;
 
 /**
  * Make sure the MSE gain is zero when the labels are perfect.
+ */
+TEST_CASE("MSEGainPerfectTest", "[DecisionTreeRegressionTest]")
+{
+  arma::rowvec weights(10, arma::fill::ones);
+  arma::rowvec labels;
+  labels.ones(10);
+
+  REQUIRE(MSEGain::Evaluate<false>(labels, weights) ==
+          Approx(0.0).margin(1e-5));
+}
+
+/**
+ * Make sure that the MSE gain is equal to negative of variance.
+ */
+TEST_CASE("MSEGainVarianceTest", "[DecisionTreeRegressionTest]")
+{
+  arma::rowvec weights(100, arma::fill::ones);
+  arma::rowvec labels(100, arma::fill::randn);
+
+  // Theoretical gain.
+  double theoreticalGain = - arma::var(labels) * 99.0 / 100.0;
+
+  // Calculated gain.
+  const double calculatedGain = MSEGain::Evaluate<false>(labels, weights);
+
+  REQUIRE(calculatedGain == Approx(theoreticalGain).margin(1e-9));
+  std::cout << "MSEGain\n";
+}
+
+/**
+ * The MSE gain of an empty vector is 0.
+ */
+TEST_CASE("MSEGainEmptyTest", "[DecisionTreeRegressionTest]")
+{
+  arma::rowvec weights = arma::ones<arma::rowvec>(10);
+  arma::rowvec labels;
+  REQUIRE(MSEGain::Evaluate<false>(labels, weights) ==
+          Approx(0.0).margin(1e-5));
+
+  REQUIRE(MSEGain::Evaluate<true>(labels, weights) ==
+          Approx(0.0).margin(1e-5));
+}
+
+/**
+ * Make sure the MAD gain is zero when the labels are perfect.
  */
 TEST_CASE("MADGainPerfectTest", "[DecisionTreeRegressionTest]")
 {
@@ -65,11 +111,11 @@ TEST_CASE("MADGainNormalTest", "[DecisionTreeRegressionTest")
 TEST_CASE("MADGainEmptyTest", "[DecisionTreeRegressionTest]")
 {
   arma::rowvec weights = arma::ones<arma::rowvec>(10);
-  arma::rowvec predictors;
-  REQUIRE(MADGain::Evaluate<false>(predictors, weights) ==
+  arma::rowvec labels;
+  REQUIRE(MADGain::Evaluate<false>(labels, weights) ==
           Approx(0.0).margin(1e-5));
 
-  REQUIRE(MADGain::Evaluate<true>(predictors, weights) ==
+  REQUIRE(MADGain::Evaluate<true>(labels, weights) ==
           Approx(0.0).margin(1e-5));
 }
 
