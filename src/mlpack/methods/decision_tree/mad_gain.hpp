@@ -109,12 +109,12 @@ class MADGain
 
       accWeights[0] += accWeights[1] + accWeights[2] + accWeights[3];
       weightedMean[0] += weightedMean[1] + weightedMean[2] + weightedMean[3];
-      weightedMean[0] /= (double) (end - begin);
-      std::cout << "WeightedMean: " << weightedMean[0] << std::endl;
 
       // Catch edge case: if there are no weights, the impurity is zero.
       if (accWeights[0] == 0.0)
         return 0.0;
+
+      weightedMean[0] /= accWeights[0];
 
       for (size_t i = begin; i < end; ++i)
       {
@@ -155,7 +155,6 @@ class MADGain
 
       mean[0] += mean[1] + mean[2] + mean[3];
       mean[0] /= (double) (end - begin);
-      std::cout << "Mean: " << mean[0] << std::endl;
 
       for (size_t i = begin; i < end; ++i)
         mad += std::abs(labels[i] - mean[0]);
