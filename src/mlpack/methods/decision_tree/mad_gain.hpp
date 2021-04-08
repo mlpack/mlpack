@@ -15,6 +15,7 @@ n.
 #define MLPACK_METHODS_DECISION_TREE_MAD_GAIN_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "utils.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -51,113 +52,31 @@ class MADGain
 
     if (UseWeights)
     {
-      double accWeights[4] = { 0.0, 0.0, 0.0, 0.0 };
-      double weightedMean[4] = { 0.0, 0.0, 0.0, 0.0 };
+      double accWeights = 0.0;
+      double weightedMean = 0.0;
 
-      // SIMD loop: sums four elements simultaneously (if the compiler manages
-      // to vectorize the loop).
-      for (size_t i = begin + 3; i < end; i += 4)
-      {
-        const double weight1 = weights[i - 3];
-        const double weight2 = weights[i - 2];
-        const double weight3 = weights[i - 1];
-        const double weight4 = weights[i];
-
-        weightedMean[0] += weight1 * labels[i - 3];
-        weightedMean[1] += weight2 * labels[i - 2];
-        weightedMean[2] += weight3 * labels[i - 1];
-        weightedMean[3] += weight4 * labels[i];
-
-        accWeights[0] += weight1;
-        accWeights[1] += weight2;
-        accWeights[2] += weight3;
-        accWeights[3] += weight4;
-      }
-
-      // Handle leftovers.
-      if ((end - begin) % 4 == 1)
-      {
-        const double weight1 = weights[end - 1];
-        weightedMean[0] += weight1 * labels[end - 1];
-        accWeights[0] += weight1;
-      }
-      else if ((end - begin) % 4 == 2)
-      {
-        const double weight1 = weights[end - 2];
-        const double weight2 = weights[end - 1];
-
-        weightedMean[0] += weight1 * labels[end - 2];
-        weightedMean[1] += weight2 * labels[end - 1];
-
-        accWeights[0] += weight1;
-        accWeights[1] += weight2;
-      }
-      else if ((end - begin) % 4 == 3)
-      {
-        const double weight1 = weights[end - 3];
-        const double weight2 = weights[end - 2];
-        const double weight3 = weights[end - 1];
-
-        weightedMean[0] += weight1 * labels[end - 3];
-        weightedMean[1] += weight2 * labels[end - 2];
-        weightedMean[2] += weight1 * labels[end - 1];
-
-        accWeights[0] += weight1;
-        accWeights[1] += weight2;
-        accWeights[2] += weight3;
-      }
-
-      accWeights[0] += accWeights[1] + accWeights[2] + accWeights[3];
-      weightedMean[0] += weightedMean[1] + weightedMean[2] + weightedMean[3];
+      WeightedSum(labels, weights, begin, end, accWeights, weightedMean);
 
       // Catch edge case: if there are no weights, the impurity is zero.
-      if (accWeights[0] == 0.0)
+      if (accWeights == 0.0)
         return 0.0;
 
-      weightedMean[0] /= accWeights[0];
+      weightedMean /= accWeights;
 
       for (size_t i = begin; i < end; ++i)
       {
-        const double f = weights[i] * (std::abs(labels[i] - weightedMean[0]));
-        mad += f / accWeights[0];
+        mad += weights[i] * (std::abs(labels[i] - weightedMean));
       }
-    }
+      mad /= accWeights;
+      }
     else
     {
-      double mean[4] = { 0.0, 0.0, 0.0, 0.0 };
-
-      // SIMD loop: add counts for four elements simultaneously (if the compiler
-      // manages to vectorize the loop).
-      for (size_t i = begin + 3; i < end; i += 4)
-      {
-        mean[0] += labels[i - 3];
-        mean[1] += labels[i - 2];
-        mean[2] += labels[i - 1];
-        mean[3] += labels[i];
-      }
-
-      // Handle leftovers.
-      if (labels.n_elem % 4 == 1)
-      {
-        mean[0] += labels[end - 1];
-      }
-      else if (labels.n_elem % 4 == 2)
-      {
-        mean[0] += labels[end - 2];
-        mean[1] += labels[end - 1];
-      }
-      else if (labels.n_elem % 4 == 3)
-      {
-        mean[0] += labels[end - 3];
-        mean[1] += labels[end - 2];
-        mean[2] += labels[end - 1];
-      }
-
-      mean[0] += mean[1] + mean[2] + mean[3];
-      mean[0] /= (double) (end - begin);
+      double mean = 0.0;
+      Sum(labels, begin, end, mean);
+      mean /= (double) (end - begin);
 
       for (size_t i = begin; i < end; ++i)
-        mad += std::abs(labels[i] - mean[0]);
+        mad += std::abs(labels[i] - mean);
 
       mad /= (double) (end - begin);
     }
