@@ -29,7 +29,7 @@ RandomForest<
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
->::RandomForest():
+>::RandomForest() :
     avgGain(0.0)
 {
   // Nothing to do here.
@@ -54,8 +54,8 @@ RandomForest<
                 const size_t minimumLeafSize,
                 const double minimumGainSplit,
                 const size_t maximumDepth,
-                DimensionSelectionType dimensionSelector):
-                    avgGain(0.0)
+                DimensionSelectionType dimensionSelector) :
+    avgGain(0.0)
 {
   // Pass off work to the Train() method.
   data::DatasetInfo info; // Ignored.
@@ -115,8 +115,8 @@ RandomForest<
                 const size_t minimumLeafSize,
                 const double minimumGainSplit,
                 const size_t maximumDepth,
-                DimensionSelectionType dimensionSelector):
-                    avgGain(0.0)
+                DimensionSelectionType dimensionSelector) :
+    avgGain(0.0)
 {
   // Pass off work to the Train() method.
   data::DatasetInfo info; // Ignored by Train().
@@ -146,8 +146,8 @@ RandomForest<
                 const size_t minimumLeafSize,
                 const double minimumGainSplit,
                 const size_t maximumDepth,
-                DimensionSelectionType dimensionSelector):
-                    avgGain(0.0)
+                DimensionSelectionType dimensionSelector) :
+    avgGain(0.0)
 {
   // Pass off work to the Train() method.
   Train<true, true>(dataset, datasetInfo, labels, numClasses, weights,
