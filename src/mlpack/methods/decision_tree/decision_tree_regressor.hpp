@@ -223,6 +223,40 @@ class DecisionTreeRegressor :
       const std::enable_if_t<arma::is_arma_type<
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
+  /**
+   * Copy another tree.  This may use a lot of memory---be sure that it's what
+   * you want to do.
+   *
+   * @param other Tree to copy.
+   */
+  DecisionTreeRegressor(const DecisionTreeRegressor& other);
+
+  /**
+   * Take ownership of another tree.
+   *
+   * @param other Tree to take ownership of.
+   */
+  DecisionTreeRegressor(DecisionTreeRegressor&& other);
+
+  /**
+   * Copy another tree.  This may use a lot of memory---be sure that it's what
+   * you want to do.
+   *
+   * @param other Tree to copy.
+   */
+  DecisionTreeRegressor& operator=(const DecisionTreeRegressor& other);
+
+  /**
+   * Take ownership of another tree.
+   *
+   * @param other Tree to take ownership of.
+   */
+  DecisionTreeRegressor& operator=(DecisionTreeRegressor&& other);
+
+  /**
+   * Clean up memory.
+   */
+  ~DecisionTreeRegressor();
 };
 
 
