@@ -16,17 +16,18 @@ namespace mlpack {
 namespace tree {
 
 template<typename FitnessFunction>
-template<bool UseWeights, typename VecType, typename WeightVecType>
+template<bool UseWeights, typename VecType, typename ElemType, typename WeightVecType>
 double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
     const size_t numCategories,
-    const arma::Row<size_t>& labels,
+    const arma::Row<ElemType>& labels,
+    const size_t begin,
     const size_t numClasses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    arma::vec& classProbabilities,
+    double& splitInfo,
     AuxiliarySplitInfo& /* aux */)
 {
   // Count the number of elements in each potential child.
@@ -58,7 +59,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   // Calculate the gain of the split.  First we have to calculate the labels
   // that would be assigned to each child.
   arma::uvec childPositions(numCategories, arma::fill::zeros);
-  std::vector<arma::Row<size_t>> childLabels(numCategories);
+  std::vector<arma::Row<ElemType>> childLabels(numCategories);
   std::vector<arma::Row<double>> childWeights(numCategories);
   for (size_t i = 0; i < numCategories; ++i)
   {
@@ -75,12 +76,12 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
     if (UseWeights)
     {
-      childLabels[category][childPositions[category]] = labels[i];
+      childLabels[category][childPositions[category]] = labels[begin + i];
       childWeights[category][childPositions[category]++] = weights[i];
     }
     else
     {
-      childLabels[category][childPositions[category]++] = labels[i];
+      childLabels[category][childPositions[category]++] = labels[begin + i];
     }
   }
 
@@ -99,9 +100,8 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
   if (overallGain > bestGain + minimumGainSplit + epsilon)
   {
-    // This is better, so set up the class probabilities vector and return.
-    classProbabilities.set_size(1);
-    classProbabilities[0] = numCategories;
+    // This is better, so store it in splitInfo and return.
+    splitInfo = numCategories;
     return overallGain;
   }
 

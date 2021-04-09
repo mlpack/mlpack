@@ -642,15 +642,17 @@ double DecisionTree<FitnessFunction,
       double dimGain = -DBL_MAX;
       if (datasetInfo.Type(i) == data::Datatype::categorical)
       {
+        classProbabilities.set_size(1);
         dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain,
             data.cols(begin, begin + count - 1).row(i),
             datasetInfo.NumMappings(i),
-            labels.subvec(begin, begin + count - 1),
+            labels,
+            begin,
             numClasses,
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
             minimumGainSplit,
-            classProbabilities,
+            classProbabilities[0],
             *this);
       }
       else if (datasetInfo.Type(i) == data::Datatype::numeric)
