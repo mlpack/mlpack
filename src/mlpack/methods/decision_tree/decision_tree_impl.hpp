@@ -692,7 +692,7 @@ double DecisionTree<FitnessFunction,
     // Get the number of children we will have.
     size_t numChildren = 0;
     if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
-      numChildren = CategoricalSplit::NumChildren(classProbabilities, *this);
+      numChildren = CategoricalSplit::NumChildren(classProbabilities[0], *this);
     else
       numChildren = NumericSplit::NumChildren(classProbabilities, *this);
 
@@ -702,7 +702,7 @@ double DecisionTree<FitnessFunction,
     {
       for (size_t j = begin; j < begin + count; ++j)
         childAssignments[j - begin] = CategoricalSplit::CalculateDirection(
-            data(bestDim, j), classProbabilities, *this);
+            data(bestDim, j), classProbabilities[0], *this);
     }
     else
     {
@@ -1091,7 +1091,7 @@ size_t DecisionTree<FitnessFunction,
   if ((data::Datatype) dimensionTypeOrMajorityClass ==
       data::Datatype::categorical)
     return CategoricalSplit::CalculateDirection(point[splitDimension],
-        classProbabilities, *this);
+        classProbabilities[0], *this);
   else
     return NumericSplit::CalculateDirection(point[splitDimension],
         classProbabilities, *this);

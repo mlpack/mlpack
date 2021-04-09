@@ -34,9 +34,9 @@ class AllCategoricalSplit
   /**
    * Check if we can split a node.  If we can split a node in a way that
    * improves on 'bestGain', then we return the improved gain.  Otherwise we
-   * return the value 'bestGain'.  If a split is made, then classProbabilities
-   * and aux may be modified.  For this particular split type, aux will be empty
-   * and classProbabilities will hold one element---the number of children.
+   * return the value 'bestGain'.  If a split is made, then splitInfo and
+   * aux may be modified.  For this particular split type, aux will be empty
+   * and splitInfo will store the number of children of the node.
    *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
@@ -69,23 +69,23 @@ class AllCategoricalSplit
   /**
    * Return the number of children in the split.
    *
-   * @param classProbabilities Auxiliary information for the split.
+   * @param splitInfo Auxiliary information for the split.
    * @param * (aux) Auxiliary information for the split (Unused).
    */
-  static size_t NumChildren(const arma::vec& classProbabilities,
+  static size_t NumChildren(const double& splitInfo,
                             const AuxiliarySplitInfo& /* aux */);
 
   /**
    * Calculate the direction a point should percolate to.
    *
    * @param point the Point to use.
-   * @param classProbabilities Column Vector of class probabilities.
+   * @param splitInfo Auxiliary information for the split.
    * @param * (aux) Auxiliary information for the split (Unused).
    */
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const arma::vec& classProbabilities,
+      const double& splitInfo,
       const AuxiliarySplitInfo& /* aux */);
 };
 

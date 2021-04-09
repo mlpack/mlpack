@@ -111,17 +111,17 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
 template<typename FitnessFunction>
 size_t AllCategoricalSplit<FitnessFunction>::NumChildren(
-    const arma::vec& classProbabilities,
+    const double& splitInfo,
     const AuxiliarySplitInfo& /* aux */)
 {
-  return size_t(classProbabilities[0]);
+  return (size_t) splitInfo;
 }
 
 template<typename FitnessFunction>
 template<typename ElemType>
 size_t AllCategoricalSplit<FitnessFunction>::CalculateDirection(
     const ElemType& point,
-    const arma::vec& /* classProbabilities */,
+    const double& /* splitInfo */,
     const AuxiliarySplitInfo& /* aux */)
 {
   return (size_t) point;
