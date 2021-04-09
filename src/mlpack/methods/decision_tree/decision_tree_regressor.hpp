@@ -257,6 +257,122 @@ class DecisionTreeRegressor :
    * Clean up memory.
    */
   ~DecisionTreeRegressor();
+
+  /**
+   * Train the decision tree on the given data.  This will overwrite the
+   * existing model.  The data may have numeric and categorical types, specified
+   * by the datasetInfo parameter.  Setting minimumLeafSize and
+   * minimumGainSplit too small may cause the tree to overfit, but setting them
+   * too large may cause it to underfit.
+   *
+   * Use std::move if data or labels are no longer needed to avoid copies.
+   *
+   * @param data Dataset to train on.
+   * @param datasetInfo Type information for each dimension.
+   * @param labels Labels for each training point.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The final entropy of decision tree.
+   */
+  template<typename MatType, typename LabelsType>
+  double Train(MatType data,
+               const data::DatasetInfo& datasetInfo,
+               LabelsType labels,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
+
+  /**
+   * Train the decision tree on the given data, assuming that all dimensions are
+   * numeric.  This will overwrite the given model. Setting minimumLeafSize and
+   * minimumGainSplit too small may cause the tree to overfit, but setting them
+   * too large may cause it to underfit.
+   *
+   * Use std::move if data or labels are no longer needed to avoid copies.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for each training point.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The final entropy of decision tree.
+   */
+  template<typename MatType, typename LabelsType>
+  double Train(MatType data,
+               LabelsType labels,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType());
+
+  /**
+   * Train the decision tree on the given weighted data.  This will overwrite
+   * the existing model.  The data may have numeric and categorical types,
+   * specified by the datasetInfo parameter.  Setting minimumLeafSize and
+   * minimumGainSplit too small may cause the tree to overfit, but setting them
+   * too large may cause it to underfit.
+   *
+   * Use std::move if data, labels or weights are no longer needed to avoid
+   * copies.
+   *
+   * @param data Dataset to train on.
+   * @param datasetInfo Type information for each dimension.
+   * @param labels Labels for each training point.
+   * @param weights Weights of all the labels
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The final entropy of decision tree.
+   */
+  template<typename MatType, typename LabelsType, typename WeightsType>
+  double Train(MatType data,
+               const data::DatasetInfo& datasetInfo,
+               LabelsType labels,
+               WeightsType weights,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType(),
+               const std::enable_if_t<arma::is_arma_type<typename
+                   std::remove_reference<WeightsType>::type>::value>* = 0);
+
+  /**
+   * Train the decision tree on the given weighted data, assuming that all
+   * dimensions are numeric.  This will overwrite the given model. Setting
+   * minimumLeafSize and minimumGainSplit too small may cause the tree to
+   * overfit, but setting them too large may cause it to underfit.
+   *
+   * Use std::move if data, labels or weights are no longer needed to avoid
+   * copies.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for each training point.
+   * @param weights Weights of all the labels
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @param dimensionSelector Instantiated dimension selection policy.
+   * @return The final entropy of decision tree.
+   */
+  template<typename MatType, typename LabelsType, typename WeightsType>
+  double Train(MatType data,
+               LabelsType labels,
+               WeightsType weights,
+               const size_t minimumLeafSize = 10,
+               const double minimumGainSplit = 1e-7,
+               const size_t maximumDepth = 0,
+               DimensionSelectionType dimensionSelector =
+                   DimensionSelectionType(),
+               const std::enable_if_t<arma::is_arma_type<typename
+                   std::remove_reference<WeightsType>::type>::value>* = 0);
 };
 
 
