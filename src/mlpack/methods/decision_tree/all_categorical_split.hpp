@@ -47,23 +47,23 @@ class AllCategoricalSplit
    * @param weights Weights associated with labels.
    * @param minimumLeafSize Minimum number of points in a leaf node for
    *      splitting.
-   * @param classProbabilities Class probabilities vector, which may be filled
-   *      with split information a successful split.
+   * @param splitInfo Stores split information on a successful split.
    * @param minimumGainSplit Minimum  gain split.
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
    */
-  template<bool UseWeights, typename VecType, typename WeightVecType>
+  template<bool UseWeights, typename VecType, typename ElemType, typename WeightVecType>
   static double SplitIfBetter(
       const double bestGain,
       const VecType& data,
       const size_t numCategories,
-      const arma::Row<size_t>& labels,
+      const arma::Row<ElemType>& labels,
+      const size_t begin,
       const size_t numClasses,
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      arma::vec& classProbabilities,
+      double& splitInfo,
       AuxiliarySplitInfo& aux);
 
   /**
