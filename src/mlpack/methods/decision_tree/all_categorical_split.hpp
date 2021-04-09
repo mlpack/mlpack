@@ -20,7 +20,9 @@ namespace tree {
 
 /**
  * The AllCategoricalSplit is a splitting function that will split categorical
- * features into many children: one child for each category.
+ * features into many children: one child for each category. This is a generic
+ * splitting strategy and can be used for both regression and classification
+ * trees.
  *
  * @tparam FitnessFunction Fitness function to evaluate gain with.
  */
@@ -43,6 +45,7 @@ class AllCategoricalSplit
    * @param data The dimension of data points to check for a split in.
    * @param numCategories Number of categories in the categorical data.
    * @param labels Labels for each point.
+   * @param begin Start index of labels.
    * @param numClasses Number of classes in the dataset.
    * @param weights Weights associated with labels.
    * @param minimumLeafSize Minimum number of points in a leaf node for
