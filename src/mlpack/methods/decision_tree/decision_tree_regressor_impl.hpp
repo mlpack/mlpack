@@ -420,6 +420,176 @@ DecisionTreeRegressor<FitnessFunction,
     delete children[i];
 }
 
+//! Train on the given data.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion>
+template<typename MatType, typename LabelsType>
+double DecisionTreeRegressor<FitnessFunction,
+                             NumericSplitType,
+                             CategoricalSplitType,
+                             DimensionSelectionType,
+                             NoRecursion>::Train(
+    MatType data,
+    const data::DatasetInfo& datasetInfo,
+    LabelsType labels,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector)
+{
+  // Sanity check on data.
+  util::CheckSameSizes(data, labels, "DecisionTreeRegressor::Train()");
+
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+
+  // Copy or move data.
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
+
+  // Pass off work to the Train() method.
+  arma::rowvec weights; // Fake weights, not used.
+  return Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels,
+      numClasses, weights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector);
+}
+
+//! Train on the given data, assuming all dimensions are numeric.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion>
+template<typename MatType, typename LabelsType>
+double DecisionTreeRegressor<FitnessFunction,
+                             NumericSplitType,
+                             CategoricalSplitType,
+                             DimensionSelectionType,
+                             NoRecursion>::Train(
+    MatType data,
+    LabelsType labels,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector)
+{
+  // Sanity check on data.
+  util::CheckSameSizes(data, labels, "DecisionTreeRegressor::Train()");
+
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+
+  // Copy or move data.
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
+
+  // Pass off work to the Train() method.
+  arma::rowvec weights; // Fake weights, not used.
+  return Train<false>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses,
+      weights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector);
+}
+
+//! Train on the given weighted data.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion>
+template<typename MatType, typename LabelsType, typename WeightsType>
+double DecisionTreeRegressor<FitnessFunction,
+                             NumericSplitType,
+                             CategoricalSplitType,
+                             DimensionSelectionType,
+                             NoRecursion>::Train(
+    MatType data,
+    const data::DatasetInfo& datasetInfo,
+    LabelsType labels,
+    WeightsType weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector,
+    const std::enable_if_t<
+        arma::is_arma_type<
+        typename std::remove_reference<
+        WeightsType>::type>::value>*)
+{
+  // Sanity check on data.
+  util::CheckSameSizes(data, labels, "DecisionTreeRegressor::Train()");
+
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
+
+  // Copy or move data.
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
+
+  // Pass off work to the Train() method.
+  return Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpLabels,
+      numClasses, tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector);
+}
+
+//! Train on the given weighted all numeric data.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion>
+template<typename MatType, typename LabelsType, typename WeightsType>
+double DecisionTreeRegressor<FitnessFunction,
+                             NumericSplitType,
+                             CategoricalSplitType,
+                             DimensionSelectionType,
+                             NoRecursion>::Train(
+    MatType data,
+    LabelsType labels,
+    WeightsType weights,
+    const size_t minimumLeafSize,
+    const double minimumGainSplit,
+    const size_t maximumDepth,
+    DimensionSelectionType dimensionSelector,
+    const std::enable_if_t<
+        arma::is_arma_type<
+        typename std::remove_reference<
+        WeightsType>::type>::value>*)
+{
+  // Sanity check on data.
+  util::CheckSameSizes(data, labels, "DecisionTreeRegressor::Train()");
+
+  using TrueMatType = typename std::decay<MatType>::type;
+  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueWeightsType = typename std::decay<WeightsType>::type;
+
+  // Copy or move data.
+  TrueMatType tmpData(std::move(data));
+  TrueLabelsType tmpLabels(std::move(labels));
+  TrueWeightsType tmpWeights(std::move(weights));
+
+  // Set the correct dimensionality for the dimension selector.
+  dimensionSelector.Dimensions() = tmpData.n_rows;
+
+  // Pass off work to the Train() method.
+  return Train<true>(tmpData, 0, tmpData.n_cols, tmpLabels, numClasses,
+      tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      dimensionSelector);
+}
+
 
 } // namespace tree
 } // namespace mlpack
