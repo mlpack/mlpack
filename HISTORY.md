@@ -1,5 +1,8 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added `Multi Label Soft Margin Loss` loss function for neural networks
+   (#2345).
+   
   * Added Pixel Shuffle layer (#2563).
 
   * Add "check_input_matrices" option to python bindings that checks
