@@ -25,7 +25,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    arma::vec& classProbabilities,
+    double& splitInfo,
     AuxiliarySplitInfo& /* aux */)
 {
   // First sanity check: if we don't have enough points, we can't split.
@@ -151,12 +151,10 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     // Corner case: is this the best possible split?
     if (gain >= 0.0)
     {
-      // We can take a shortcut: no split will be better than this, so just take
-      // this one.
-      classProbabilities.set_size(1);
-      // The actual split value will be halfway between the value at index - 1
-      // and index.
-      classProbabilities[0] = (data[sortedIndices[index - 1]] +
+      // We can take a shortcut: no split will be better than this, so just
+      // take this one. The actual split value will be halfway between the
+      // value at index - 1 and index.
+      splitInfo = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
 
       return gain;
@@ -165,8 +163,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     {
       // We still have a better split.
       bestFoundGain = gain;
-      classProbabilities.set_size(1);
-      classProbabilities[0] = (data[sortedIndices[index - 1]] +
+      splitInfo = (data[sortedIndices[index - 1]] +
           data[sortedIndices[index]]) / 2.0;
       improved = true;
     }
@@ -189,10 +186,10 @@ template<typename FitnessFunction>
 template<typename ElemType>
 size_t BestBinaryNumericSplit<FitnessFunction>::CalculateDirection(
     const ElemType& point,
-    const arma::vec& classProbabilities,
+    const double& splitInfo,
     const AuxiliarySplitInfo& /* aux */)
 {
-  if (point <= classProbabilities[0])
+  if (point <= splitInfo)
     return 0; // Go left.
   else
     return 1; // Go right.
