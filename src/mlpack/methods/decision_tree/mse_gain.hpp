@@ -88,6 +88,7 @@ class MSEGain
    */
   template<bool UseWeights, typename WeightVecType>
   static double Evaluate(const arma::rowvec& labels,
+                         const size_t /* numClasses */,
                          const WeightVecType& weights)
   {
     // Corner case: if there are no elements, the impurity is zero.
