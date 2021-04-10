@@ -1,5 +1,5 @@
 /**
- * @file methods/decision_tree/mse_gain.hpp
+ * @file methods/decision_tree/mad_gain.hpp
  * @author Rishabh Garg
  *
  * The mean absolute deviation gain class, a fitness funtion for regression
@@ -92,6 +92,7 @@ class MADGain
    */
   template<bool UseWeights, typename WeightVecType>
   static double Evaluate(const arma::rowvec& labels,
+                         const size_t /* numClasses */,
                          const WeightVecType& weights)
   {
     // Corner case: if there are no elements, the impurity is zero.
