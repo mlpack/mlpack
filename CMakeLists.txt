@@ -288,6 +288,16 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIR})
 # We do not have to link with Armadillo if we are cross compiling
 if(CMAKE_CROSSCOMPILING)
   get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v0.3.13/OpenBLAS-0.3.13.tar.gz OpenBLAS OpenBLAS-0.3.13.tar.gz)
+ 
+  ## I am open to this solution find_library() but only if it works :D.
+  # find_library(GFORTRAN_LIBRARY NAMES gfortran PATHS ${CMAKE_SYSROOT}/usr/lib)
+
+  ## This solution is good only if you use buildroot toolchain, for other toolchains users should overwrite these
+  ## variables in all cases
+  set(GFORTRAN_LIBRARY "${CMAKE_SYSROOT}/usr/lib/libgfortran.a")
+  set(PTHREAD_LIBRARY "${CMAKE_SYSROOT}/usr/lib/libpthread.a")
+  message(STATUS "GFORTRAN_LIBRARY ${GFORTRAN_LIBRARY}")
+  message(STATUS "PTHREAD_LIBRARY ${PTHREAD_LIBRARY}")
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OPENBLAS_LIBRARIES} ${GFORTRAN_LIBRARY} ${PTHREAD_LIBRARY})
 else()
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARY})
