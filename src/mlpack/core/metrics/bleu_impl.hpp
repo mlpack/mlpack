@@ -180,7 +180,7 @@ ElemType BLEU<ElemType, PrecisionType>::Evaluate(
 
   ratio = ElemType(translationLength);
   if (referenceLength > 0)
-    ration /= referenceLength;
+    ratio /= referenceLength;
 
   brevityPenalty = (ratio > 1.0) ? 1.0 : std::exp(1.0 - 1.0 / ratio);
   bleuScore = geometricMean * brevityPenalty;
