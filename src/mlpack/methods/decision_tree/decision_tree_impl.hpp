@@ -636,13 +636,13 @@ double DecisionTree<FitnessFunction,
 
   if (maximumDepth != 1)
   {
+    classProbabilities.set_size(1);
     for (size_t i = dimensionSelector.Begin(); i != end;
          i = dimensionSelector.Next())
     {
       double dimGain = -DBL_MAX;
       if (datasetInfo.Type(i) == data::Datatype::categorical)
       {
-        classProbabilities.set_size(1);
         dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain,
             data.cols(begin, begin + count - 1).row(i),
             datasetInfo.NumMappings(i),
@@ -664,7 +664,7 @@ double DecisionTree<FitnessFunction,
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
             minimumGainSplit,
-            classProbabilities,
+            classProbabilities[0],
             *this);
       }
 
@@ -694,7 +694,7 @@ double DecisionTree<FitnessFunction,
     if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
       numChildren = CategoricalSplit::NumChildren(classProbabilities[0], *this);
     else
-      numChildren = NumericSplit::NumChildren(classProbabilities, *this);
+      numChildren = NumericSplit::NumChildren(classProbabilities[0], *this);
 
     // Calculate all child assignments.
     arma::Row<size_t> childAssignments(count);
@@ -709,7 +709,7 @@ double DecisionTree<FitnessFunction,
       for (size_t j = begin; j < begin + count; ++j)
       {
         childAssignments[j - begin] = NumericSplit::CalculateDirection(
-            data(bestDim, j), classProbabilities, *this);
+            data(bestDim, j), classProbabilities[0], *this);
       }
     }
 
@@ -823,6 +823,7 @@ double DecisionTree<FitnessFunction,
 
   if (maximumDepth != 1)
   {
+    classProbabilities.set_size(1);
     for (size_t i = dimensionSelector.Begin(); i != dimensionSelector.End();
          i = dimensionSelector.Next())
     {
@@ -836,7 +837,7 @@ double DecisionTree<FitnessFunction,
                                         weights,
                                     minimumLeafSize,
                                     minimumGainSplit,
-                                    classProbabilities,
+                                    classProbabilities[0],
                                     *this);
 
       // If the splitter did not report that it improved, then move to the next
@@ -857,7 +858,8 @@ double DecisionTree<FitnessFunction,
   if (bestDim != data.n_rows)
   {
     // We know that the split is numeric.
-    size_t numChildren = NumericSplit::NumChildren(classProbabilities, *this);
+    size_t numChildren =
+        NumericSplit::NumChildren(classProbabilities[0], *this);
     splitDimension = bestDim;
     dimensionTypeOrMajorityClass = (size_t) data::Datatype::numeric;
 
@@ -867,7 +869,7 @@ double DecisionTree<FitnessFunction,
     for (size_t j = begin; j < begin + count; ++j)
     {
       childAssignments[j - begin] = NumericSplit::CalculateDirection(
-          data(bestDim, j), classProbabilities, *this);
+          data(bestDim, j), classProbabilities[0], *this);
     }
 
     // Calculate counts of children in each node.
@@ -1094,7 +1096,7 @@ size_t DecisionTree<FitnessFunction,
         classProbabilities[0], *this);
   else
     return NumericSplit::CalculateDirection(point[splitDimension],
-        classProbabilities, *this);
+        classProbabilities[0], *this);
 }
 
 // Get the number of classes in the tree.
@@ -1109,7 +1111,7 @@ size_t DecisionTree<FitnessFunction,
                     DimensionSelectionType,
                     NoRecursion>::NumClasses() const
 {
-  // Recurse to the nearest child and return the number of elements in the
+  // Recurse to the nearest leaf and return the number of elements in the
   // probability vector.
   if (children.size() == 0)
     return classProbabilities.n_elem;
