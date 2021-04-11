@@ -59,6 +59,8 @@ class DDPG
   ActionType action;
 
   size_t totalSteps;
+
+  mlpack::ann::MeanSquaredError<> lossFunction;
 };
 
 } // namespace rl
