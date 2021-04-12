@@ -29,14 +29,12 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
   // Use type_info name to get unique file name for serialization test files.
   std::string fileName = FilterFileName(typeid(IArchiveType).name());
   std::ofstream ofs(fileName, std::ios::binary);
-  bool success = true;
 
   {
     OArchiveType o(ofs);
     o(CEREAL_NVP(x));
   }
 
-  REQUIRE(success == true);
   ofs.close();
 
   // Now load it.
@@ -51,8 +49,6 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
   ifs.close();
 
   remove(fileName.c_str());
-
-  REQUIRE(success == true);
 
   REQUIRE(x.n_rows == orig.n_rows);
   REQUIRE(x.n_cols == orig.n_cols);
@@ -99,19 +95,16 @@ void TestArmadilloSerialization(MatType& x)
   // First save it.
   std::string fileName = FilterFileName(typeid(IArchiveType).name());
   std::ofstream ofs(fileName, std::ios::binary);
-  bool success = true;
 
   {
     OArchiveType o(ofs);
     o(CEREAL_NVP(x));
   }
 
-  REQUIRE(success == true);
   ofs.close();
 
   // Now load it.
   MatType orig(x);
-  success = true;
   std::ifstream ifs(fileName, std::ios::binary);
 
   {
@@ -121,8 +114,6 @@ void TestArmadilloSerialization(MatType& x)
   ifs.close();
 
   remove(fileName.c_str());
-
-  REQUIRE(success == true);
 
   REQUIRE(x.n_rows == orig.n_rows);
   REQUIRE(x.n_cols == orig.n_cols);
@@ -156,7 +147,6 @@ void SerializeObject(T& t, T& newT)
 {
   std::string fileName = FilterFileName(typeid(T).name());
   std::ofstream ofs(fileName, std::ios::binary);
-  bool success = true;
 
   {
     OArchiveType o(ofs);
@@ -165,8 +155,6 @@ void SerializeObject(T& t, T& newT)
     o(CEREAL_NVP(x));
   }
   ofs.close();
-
-  REQUIRE(success == true);
 
   std::ifstream ifs(fileName, std::ios::binary);
 
@@ -178,8 +166,6 @@ void SerializeObject(T& t, T& newT)
   ifs.close();
 
   remove(fileName.c_str());
-
-  REQUIRE(success == true);
 }
 
 // Test mlpack serialization with all three archive types.
@@ -200,15 +186,12 @@ void SerializePointerObject(T* t, T*& newT)
 {
   std::string fileName = FilterFileName(typeid(T).name());
   std::ofstream ofs(fileName, std::ios::binary);
-  bool success = true;
 
   {
     OArchiveType o(ofs);
     o(CEREAL_POINTER(t));
   }
   ofs.close();
-
-  REQUIRE(success == true);
 
   std::ifstream ifs(fileName, std::ios::binary);
 
@@ -218,8 +201,6 @@ void SerializePointerObject(T* t, T*& newT)
   }
   ifs.close();
   remove(fileName.c_str());
-
-  REQUIRE(success == true);
 }
 
 template<typename T>
