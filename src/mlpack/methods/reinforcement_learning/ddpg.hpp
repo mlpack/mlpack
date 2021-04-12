@@ -1,9 +1,9 @@
 #ifndef MLPACK_METHODS_RL_DDPG_HPP
 #define MLPACK_METHODS_RL_DDPG_HPP
 
-#include <vector>
-#include "ra_util.hpp"
-#include <training_config.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+
 #include "training_config.hpp"
 #include "replay/random_replay.hpp"
 
@@ -51,7 +51,16 @@ class DDPG
   ReplayType& replayMethod;
 
   UpdaterType qNetworkUpdater;
+  #if ENS_VERSION_MAJOR >= 2
+  typename UpdaterType::template Policy<arma::mat, arma::mat>*
+    qNetworkUpdatePolicy;
+  #endif
+
   UpdaterType policyNetworkUpdater;
+  #if ENS_VERSION_MAJOR >= 2
+  typename UpdaterType::template Policy<arma::mat, arma::mat>*
+    policyNetworkUpdatePolicy;
+  #endif
 
   EnvironmentType environment;
   

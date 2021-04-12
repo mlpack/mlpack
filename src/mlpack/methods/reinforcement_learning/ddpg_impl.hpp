@@ -10,16 +10,16 @@ namespace rl {
 
 template <
   typename EnvironmentType,
-  typename NetworkType,
+  typename QNetworkType,
+  typename PolicyNetworkType,
   typename UpdaterType,
-  typename PolicyType,
   typename ReplayType
 >
 DDPG<
   EnvironmentType,
-  NetworkType,
+  QNetworkType,
+  PolicyNetworkType,
   UpdaterType,
-  PolicyType,
   ReplayType
 >::DDPG(TrainingConfig& config,
         QNetworkType& qNetwork,
@@ -33,7 +33,13 @@ DDPG<
     policyNetwork(policyNetwork),
     replayMethod(replayMethod),
     qNetworkUpdater(std::move(qNetworkUpdater)),
+    #if ENS_VERSION_MAJOR >= 2
+    qNetworkUpdatePolicy(NULL),
+    #endif
     policyNetworkUpdater(std::move(policyNetworkUpdater)),
+    #if ENS_VERSION_MAJOR >= 2
+    policyNetworkUpdatePolicy(NULL),
+    #endif
     environment(std::move(environment))
 {
   if (qNetwork.Parameters().is_empty())
@@ -44,24 +50,39 @@ DDPG<
   targetQNetwork = qNetwork;
   targetPolicyNetwork = policyNetwork;
 
+  #if ENS_VERSION_MAJOR == 1
   qNetworkUpdater.Initialize(qNetwork.Parameters().n_rows,
                              qNetwork.Parameters().n_cols);
+  #else
+  qNetworkUpdatePolicy = new typename UpdaterType::template
+      Policy<arma::mat, arma::mat>(qNetworkUpdater,
+                                   qNetwork.Parameters().n_rows,
+                                   qNetwork.Parameters().n_cols);
+  #endif
+
+  #if ENS_VERSION_MAJOR == 1
   policyNetworkUpdater.Initialize(policyNetwork.Parameters().n_rows,
                                   policyNetwork.Parameters().n_cols);
+  #else
+  policyNetworkUpdatePolicy = new typename UpdaterType::template
+      Policy<arma::mat, arma::mat>(policyNetworkUpdater,
+                                   policyNetwork.Parameters().n_rows,
+                                   policyNetwork.Parameters().n_cols);
+  #endif
 }
 
 template <
   typename EnvironmentType,
-  typename NetworkType,
+  typename QNetworkType,
+  typename PolicyNetworkType,
   typename UpdaterType,
-  typename PolicyType,
   typename ReplayType
 >
 void DDPG<
   EnvironmentType,
-  NetworkType,
+  QNetworkType,
+  PolicyNetworkType,
   UpdaterType,
-  PolicyType,
   ReplayType
 >::SelectAction()
 {
@@ -79,16 +100,16 @@ void DDPG<
 
 template <
   typename EnvironmentType,
-  typename NetworkType,
+  typename QNetworkType,
+  typename PolicyNetworkType,
   typename UpdaterType,
-  typename PolicyType,
   typename ReplayType
 >
 void DDPG<
   EnvironmentType,
-  NetworkType,
+  QNetworkType,
+  PolicyNetworkType,
   UpdaterType,
-  PolicyType,
   ReplayType
 >::SoftUpdateTargetNetwork(double tau)
 {
@@ -100,16 +121,16 @@ void DDPG<
 
 template <
   typename EnvironmentType,
-  typename NetworkType,
+  typename QNetworkType,
+  typename PolicyNetworkType,
   typename UpdaterType,
-  typename PolicyType,
   typename ReplayType
 >
 void DDPG<
   EnvironmentType,
-  NetworkType,
+  QNetworkType,
+  PolicyNetworkType,
   UpdaterType,
-  PolicyType,
   ReplayType
 >::TrainAgent()
 {
@@ -120,8 +141,8 @@ void DDPG<
   arma::mat sampledNextStates;
   arma::irowvec isTerminal;
 
-  replayMethod.Sample(sampledStates, sampledActions, sampledRewards,
-      sampledNextStates, isTerminal);
+  replayMethod.Sample(sampledStates, sampledActionsVector,
+      sampledRewards, sampledNextStates, isTerminal);
 
   /*
     Critic network update.
@@ -138,12 +159,13 @@ void DDPG<
 
   // Compute TD target.
   arma::rowvec tdTarget = sampledRewards + config.Discount() * (
-      (1 - isTerminal) * qTarget);
+      (1 - isTerminal) % qTarget);
 
   // Compute Q values given sampled current states and sampled current actions.
   arma::mat sampledActions(action.size, sampledActionsVector.size());
-  for (auto& a: sampledActionsVector)
-    sampledActions.col(i) = arma::conv_to<arma::colvec>::from(a.action);
+  for (size_t i = 0; i < sampledActionsVector.size(); i++)
+    sampledActions.col(i) = arma::conv_to<arma::colvec>::from(
+      sampledActionsVector[i].action);
   
   arma::mat Q;
   arma::mat qInput = arma::join_vert(sampledActions, sampledStates);
@@ -155,7 +177,11 @@ void DDPG<
   qNetwork.Backward(qInput, gradLoss, gradQ);
 
   // Update by applying gradient.
+  #if ENS_VERSION_MAJOR == 1
   qNetworkUpdater.Update(qNetwork.Parameters(), config.StepSize(), gradQ);
+  #else
+  qNetworkUpdatePolicy->Update(qNetwork.Parameters(), config.StepSize(), gradQ);
+  #endif
 
   /*
     Actor network update.
@@ -175,33 +201,46 @@ void DDPG<
     qInput = arma::join_vert(predictedAction, state);
     qNetwork.Forward(qInput, Q);
 
-    // Compute gradient.
-    qNetwork.Backward()
-    policyNetwork.Backward(state, )
+    // Compute gradient & use -1 to change grad ascent into grad descent.
+    arma::mat gradPolicy;
+    qNetwork.Backward(qInput, -1, gradQ);
+    policyNetwork.Backward(state, gradQ, gradPolicy);
 
     if (i == 0)
     {
-      gradient.copy_size(grad);
+      gradient.copy_size(gradPolicy);
       gradient.fill(0.0);
     }
 
-    gradient += grad;
+    gradient += gradPolicy;
   }
   gradient /= sampledStates.n_cols;
+
+  // Update by applying gradient.
+  #if ENS_VERSION_MAJOR == 1
+  policyNetworkUpdater.Update(policyNetwork.Parameters(),
+      config.StepSize(), gradient);
+  #else
+  policyNetworkUpdatePolicy->Update(policyNetwork.Parameters(),
+      config.StepSize(), gradient);
+  #endif
+  
+  // Soft-update target network.
+  SoftUpdateTargetNetwork(config.Rho());
 }
 
 template <
   typename EnvironmentType,
-  typename NetworkType,
+  typename QNetworkType,
+  typename PolicyNetworkType,
   typename UpdaterType,
-  typename PolicyType,
   typename ReplayType
 >
 double DDPG<
   EnvironmentType,
-  NetworkType,
+  QNetworkType,
+  PolicyNetworkType,
   UpdaterType,
-  PolicyType,
   ReplayType
 >::Episode()
 {
@@ -213,7 +252,7 @@ double DDPG<
     if (config.StepLimit() && steps >= config.StepLimit())
       break;
     
-    this->SelectAction();
+    SelectAction();
 
     StateType nextState;
     double reward = environment.Sample(state, action, nextState);
@@ -231,7 +270,7 @@ double DDPG<
     if (totalSteps < config.ExplorationSteps())
       continue;
     
-    this->TrainAgent();
+    TrainAgent();
   }
 }
 
