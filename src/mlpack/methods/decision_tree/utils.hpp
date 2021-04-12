@@ -106,16 +106,16 @@ void Sum(const arma::rowvec& labels,
   }
 
   // Handle leftovers.
-  if (labels.n_elem % 4 == 1)
+  if ((end - begin) % 4 == 1)
   {
     total[0] += labels[end - 1];
   }
-  else if (labels.n_elem % 4 == 2)
+  else if ((end - begin) % 4 == 2)
   {
     total[0] += labels[end - 2];
     total[1] += labels[end - 1];
   }
-  else if (labels.n_elem % 4 == 3)
+  else if ((end - begin) % 4 == 3)
   {
     total[0] += labels[end - 3];
     total[1] += labels[end - 2];
