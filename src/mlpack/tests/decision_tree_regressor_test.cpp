@@ -213,3 +213,96 @@ TEST_CASE("AllCategoricalSplitNoGainTest1", "[DecisionTreeRegressorTest]")
   REQUIRE(gain == DBL_MAX);
   REQUIRE(gain == weightedGain);
 }
+
+/**
+ * Check that the BestBinaryNumericSplit will split on an obviously splittable
+ * dimension.
+ */
+TEST_CASE("BestBinaryNumericSplitSimpleSplitTest1", "[DecisionTreeRegressorTest]")
+{
+  arma::rowvec predictors = { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
+  arma::rowvec labels = { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
+  arma::rowvec weights(labels.n_elem);
+  weights.ones();
+
+  double splitInfo;
+  BestBinaryNumericSplit<MADGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = MADGain::Evaluate<false>(labels, 0, weights);
+  const double gain = BestBinaryNumericSplit<MADGain>::SplitIfBetter<false>(
+      bestGain, predictors, labels, 0, weights, 3, 1e-7, splitInfo,
+      aux);
+  const double weightedGain =
+      BestBinaryNumericSplit<MADGain>::SplitIfBetter<true>(bestGain, predictors,
+      labels, 0, weights, 3, 1e-7, splitInfo, aux);
+
+  // Make sure that a split was made.
+  REQUIRE(gain > bestGain);
+
+  // Make sure weight works and is not different than the unweighted one.
+  REQUIRE(gain == weightedGain);
+
+  // The class probabilities, for this split, hold the splitting point, which
+  // should be between 4 and 5.
+  REQUIRE(splitInfo > 0.4);
+  REQUIRE(splitInfo < 0.5);
+  std::cout << "Done\n";
+}
+
+/**
+ * Check that the BestBinaryNumericSplit won't split if not enough points are
+ * given.
+ */
+TEST_CASE("BestBinaryNumericSplitMinSamplesTest1", "[DecisionTreeRegressorTest]")
+{
+  arma::rowvec predictors = { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
+  arma::rowvec labels = { 0.5, 0.5, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
+  arma::rowvec weights(labels.n_elem);
+
+  double splitInfo;
+  BestBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
+  const double gain = BestBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
+      bestGain, predictors, labels, 0, weights, 8, 1e-7, splitInfo, aux);
+  // This should make no difference because it won't split at all.
+  const double weightedGain =
+      BestBinaryNumericSplit<MSEGain>::SplitIfBetter<true>(bestGain, predictors,
+      labels, 0, weights, 8, 1e-7, splitInfo, aux);
+
+  // Make sure that no split was made.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(gain == weightedGain);
+}
+
+/**
+ * Check that the BestBinaryNumericSplit doesn't split a dimension that gives no
+ * gain.
+ */
+TEST_CASE("BestBinaryNumericSplitNoGainTest1", "[DecisionTreeRegressorTest]")
+{
+  arma::rowvec predictors(100);
+  arma::rowvec labels(100);
+  arma::rowvec weights;
+  for (size_t i = 0; i < 100; i += 2)
+  {
+    predictors[i] = i;
+    labels[i] = 0.0;
+    predictors[i + 1] = i;
+    labels[i + 1] = 1.0;
+  }
+
+  double splitInfo;
+  BestBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
+  const double gain = BestBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
+      bestGain, predictors, labels, 0, weights, 10, 1e-7, splitInfo,
+      aux);
+
+  // Make sure there was no split.
+  REQUIRE(gain == DBL_MAX);
+}
