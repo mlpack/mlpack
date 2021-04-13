@@ -39,7 +39,6 @@ void TestArmadilloSerialization(arma::Cube<CubeType>& x)
 
   // Now load it.
   arma::Cube<CubeType> orig(x);
-  success = true;
   std::ifstream ifs(fileName, std::ios::binary);
 
   {
