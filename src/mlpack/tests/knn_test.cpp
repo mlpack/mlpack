@@ -787,12 +787,6 @@ TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]")
   }
 }
 
-// This macro is added in order to stop executing these tests on aarch64.
-// It is a known issue with Dual Cover tree test on this architecture.
-// The issue is explained in #2869 on github.
-// Once the issue is resolved. This macro can be removed safely.
-#ifndef __aarch64__
-
 /**
  * Test the cover tree dual-tree nearest neighbors method against the naive
  * method.
@@ -826,7 +820,6 @@ TEST_CASE("KNNDualCoverTreeTest", "[KNNTest]")
   }
 }
 
-#endif
 /**
  * Test the ball tree single-tree nearest-neighbors method against the naive
  * method.  This uses only a random reference dataset.

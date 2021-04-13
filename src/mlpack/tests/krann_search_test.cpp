@@ -341,12 +341,6 @@ TEST_CASE("SingleCoverTreeTest", "[KRANNTest]")
   REQUIRE(numQueriesFail < maxNumQueriesFail);
 }
 
-// This macro is added in order to stop executing these tests on aarch64.
-// It is a known issue with Dual Cover tree test on this architecture.
-// The issue is explained in #2869 on github.
-// Once the issue is resolved. This macro can be removed safely.
-#ifndef __aarch64__
-
 // Test dual-tree rank-approximate search with cover trees.
 TEST_CASE("DualCoverTreeTest", "[KRANNTest]")
 {
@@ -374,7 +368,8 @@ TEST_CASE("DualCoverTreeTest", "[KRANNTest]")
   RACoverTreeSearch tsdRann(&refTree, false, 1.0, 0.95, false, false, 5);
 
   arma::Mat<size_t> qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false)) // No transpose.
+  // No transpose.
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 100;
@@ -417,7 +412,6 @@ TEST_CASE("DualCoverTreeTest", "[KRANNTest]")
   REQUIRE(numQueriesFail < maxNumQueriesFail);
 }
 
-#endif
 // Test single-tree rank-approximate search with ball trees.
 // This is known to not work right now.
 /*

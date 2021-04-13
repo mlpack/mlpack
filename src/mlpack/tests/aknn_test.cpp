@@ -160,12 +160,6 @@ TEST_CASE("AKNNSingleCoverTreeTest", "[AKNNTest]")
     REQUIRE_RELATIVE_ERR(distancesCoverTree[i], distancesExact[i], 0.05);
 }
 
-// This macro is added in order to stop executing these tests on aarch64.
-// It is a known issue with Dual Cover tree test on this architecture.
-// The issue is explained in #2869 on github.
-// Once the issue is resolved. This macro can be removed safely.
-#ifndef __aarch64__
-
 /**
  * Test the cover tree dual-tree nearest neighbors method against the exact
  * method.
@@ -193,8 +187,6 @@ TEST_CASE("AKNNDualCoverTreeTest", "[AKNNTest]")
   for (size_t i = 0; i < neighborsCoverTree.n_elem; ++i)
     REQUIRE_RELATIVE_ERR(distancesCoverTree[i], distancesExact[i], 0.05);
 }
-
-#endif
 
 /**
  * Test the ball tree single-tree nearest-neighbors method against the exact
@@ -229,12 +221,6 @@ TEST_CASE("AKNNSingleBallTreeTest", "[AKNNTest]")
  *
  * Errors are produced if the results are not according to relative error.
  */
-
-// This macro is added in order to stop executing these tests on aarch64.
-// It is a known issue with Dual Cover tree test on this architecture.
-// The issue is explained in #2869 on github.
-// Once the issue is resolved. This macro can be removed safely.
-#ifndef __aarch64__
 TEST_CASE("AKNNDualBallTreeTest", "[AKNNTest]")
 {
   arma::mat dataset;
@@ -256,7 +242,6 @@ TEST_CASE("AKNNDualBallTreeTest", "[AKNNTest]")
     REQUIRE_RELATIVE_ERR(distancesBallTree(i), distancesExact(i), 0.05);
 }
 
-#endif
 /**
  * Test the spill tree hybrid sp-tree search (defeatist search on overlapping
  * nodes, and backtracking in non-overlapping nodes) against the naive method.

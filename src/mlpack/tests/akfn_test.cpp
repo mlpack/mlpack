@@ -163,12 +163,6 @@ TEST_CASE("AKFNSingleCoverTreeTest", "[AKFNTest]")
  *
  * Errors are produced if the results are not according to relative error.
  */
-
-// This macro is added in order to stop executing these tests on aarch64.
-// It is a known issue with Dual Cover tree test on this architecture.
-// The issue is explained in #2869 on github.
-// Once the issue is resolved. This macro can be removed safely.
-#ifndef __aarch64__
 TEST_CASE("AKFNDualCoverTreeTest", "[AKFNTest]")
 {
   arma::mat dataset;
@@ -194,7 +188,6 @@ TEST_CASE("AKFNDualCoverTreeTest", "[AKFNTest]")
     REQUIRE_RELATIVE_ERR(distancesCoverTree[i], distancesExact[i], 0.05);
 }
 
-#endif
 /**
  * Test the ball tree single-tree furthest-neighbors method against the exact
  * method.  This uses only a random reference dataset.
@@ -222,12 +215,6 @@ TEST_CASE("AKFNSingleBallTreeTest", "[AKFNTest]")
     REQUIRE_RELATIVE_ERR(distancesBallTree(i), distancesExact(i), 0.05);
 }
 
-// This macro is added in order to stop executing these tests on aarch64.
-// It is a known issue with Dual Cover tree test on this architecture.
-// The issue is explained in #2869 on github.
-// Once the issue is resolved. This macro can be removed safely.
-#ifndef __aarch64__
-
 /**
  * Test the ball tree dual-tree furthest neighbors method against the exact
  * method.
@@ -254,5 +241,3 @@ TEST_CASE("AKFNDualBallTreeTest", "[AKFNTest]")
   for (size_t i = 0; i < neighborsBallTree.n_elem; ++i)
     REQUIRE_RELATIVE_ERR(distancesBallTree(i), distancesExact(i), 0.05);
 }
-
-#endif

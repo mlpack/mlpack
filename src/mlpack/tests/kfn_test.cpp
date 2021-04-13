@@ -459,11 +459,6 @@ TEST_CASE("KFNSingleCoverTreeTest", "[KFNTest]")
   }
 }
 
-// This macro is added in order to stop executing these tests on aarch64.
-// It is a known issue with Dual Cover tree test on this architecture.
-// The issue is explained in #2869 on github.
-// Once the issue is resolved. This macro can be removed safely.
-#ifndef __aarch64__
 /**
  * Test the cover tree dual-tree furthest neighbors method against the naive
  * method.
@@ -499,7 +494,6 @@ TEST_CASE("KFNDualCoverTreeTest", "[KFNTest]")
   }
 }
 
-#endif
 /**
  * Test the ball tree single-tree furthest-neighbors method against the naive
  * method.  This uses only a random reference dataset.

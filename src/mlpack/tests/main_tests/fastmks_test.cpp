@@ -42,12 +42,6 @@ struct FastMKSTestFixture
   }
 };
 
-// This macro is added in order to stop executing these tests on aarch64.
-// It is a known issue with Dual Cover tree test on this architecture.
-// The issue is explained in #2869 on github.
-// Once the issue is resolved. This macro can be removed safely.
-#ifndef __aarch64__
-
 /*
  * Check that we can't provide reference and query matrices
  * with different dimensions.
@@ -714,5 +708,3 @@ TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSBandwidthTest",
   CheckMatricesNotEqual(triKernel,
       IO::GetParam<arma::mat>("kernels"));
 }
-
-#endif

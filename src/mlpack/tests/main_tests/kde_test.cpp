@@ -131,12 +131,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDETriangularBallTreeResultsMain",
     REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(relError));
 }
 
-// This macro is added in order to stop executing these tests on aarch64.
-// It is a known issue with Dual Cover tree test on this architecture.
-// The issue is explained in #2869 on github.
-// Once the issue is resolved. This macro can be removed safely.
-#ifndef __aarch64__
-
 /**
   * Ensure that the estimations we get for KDEMain, are the same as the ones we
   * get from the KDE class without any wrappers in the monochromatic case.
@@ -178,8 +172,6 @@ TEST_CASE_METHOD(KDETestFixture, "KDEMonoResultsMain",
   for (size_t i = 0; i < reference.n_cols; ++i)
     REQUIRE(kdeEstimations[i] == Approx(mainEstimations[i]).epsilon(relError));
 }
-
-#endif
 
 /**
   * Ensuring that absence of input data is checked.
