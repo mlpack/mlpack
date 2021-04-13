@@ -52,7 +52,7 @@ QLearning<
   targetNetwork = learningNetwork;
 
   // Set up q-learning network.
-  if (leaningNetwork.Parameters().is_empty())
+  if (learningNetwork.Parameters().is_empty())
     learningNetwork.ResetParameters();
       
   targetNetwork.ResetParameters();
