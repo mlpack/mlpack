@@ -191,8 +191,6 @@ The full list of options mlpack allows:
  - DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
        (default ON)
  - DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it (default ON)
- - BUILD_WITH_COVERAGE=(ON/OFF): Build with support for code coverage tools
-      (gcc only) (default OFF)
  - PYTHON_EXECUTABLE=(/path/to/python_version): Path to specific Python executable
  - PYTHON_INSTALL_PREFIX=(/path/to/python/): Path to root of Python installation
  - JULIA_EXECUTABLE=(/path/to/julia): Path to specific Julia executable

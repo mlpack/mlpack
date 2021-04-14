@@ -44,8 +44,8 @@ function(append_model SERIALIZATION_FILE PROGRAM_MAIN_FILE)
           else ()
             string(APPEND GOMODEL_SAFE_TYPE ${MODEL_CHAR})
           endif()
-        endif()
-     endforeach()
+        endforeach()
+      endif()
 
       # See if the model type already exists.
       file(READ "${SERIALIZATION_FILE}" SERIALIZATION_FILE_CONTENTS)
@@ -77,7 +77,7 @@ function(append_model SERIALIZATION_FILE PROGRAM_MAIN_FILE)
             " C.mlpackSet${MODEL_SAFE_TYPE}"
             "Ptr(C.CString(identifier), (unsafe.Pointer)(ptr.mem))\n"
             "}\n\n")
-      endif ()
+      endif()
     endforeach ()
   endif()
 endfunction()

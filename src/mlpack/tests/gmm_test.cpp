@@ -27,7 +27,7 @@ using namespace mlpack;
 using namespace mlpack::gmm;
 
 /**
- * Test GMM::Probability() for a single observation for a few cases.
+ * Test GMM::Probability() with a single observation at a time for a few cases.
  */
 
 TEST_CASE("GMMProbabilityTest", "[GMMTest]")

@@ -26,8 +26,8 @@ void BayesianLinearRegression::serialize(Archive& ar,
 {
   ar(CEREAL_NVP(centerData));
   ar(CEREAL_NVP(scaleData));
-  ar(CEREAL_NVP(nIterMax));
-  ar(CEREAL_NVP(tol));
+  ar(CEREAL_NVP(maxIterations));
+  ar(CEREAL_NVP(tolerance));
   ar(CEREAL_NVP(dataOffset));
   ar(CEREAL_NVP(dataScale));
   ar(CEREAL_NVP(responsesOffset));
