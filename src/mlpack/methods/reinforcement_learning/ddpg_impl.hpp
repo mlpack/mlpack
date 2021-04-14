@@ -187,6 +187,16 @@ void DDPG<
     Actor network update.
   */
 
+  // Get first hidden layer weight corresponding to action input
+  // to compute grad of qNetwork w.r.t action.
+  size_t actionSize = predictedNextActions.n_rows;
+  size_t firstHiddenSize = boost::get<mlpack::ann::Linear<> *>
+      (qNetwork.Model()[0])->OutputSize();
+
+  arma::mat firstHiddenWeightAction = arma::reshape(
+      qNetwork.Parameters().rows(0, firstHiddenSize * actionSize - 1),
+      firstHiddenSize, actionSize);
+
   // Compute gradient for each samples and then take the average.
   arma::mat gradient;
   for (size_t i = 0; i < sampledStates.n_cols; i++)
@@ -201,10 +211,17 @@ void DDPG<
     qInput = arma::join_vert(predictedAction, state);
     qNetwork.Forward(qInput, Q);
 
-    // Compute gradient & use -1 to change grad ascent into grad descent.
-    arma::mat gradPolicy;
+    // Compute gradient of qNetwork w.r.t action.
+    // Use -1 to change grad ascent into grad descent.
     qNetwork.Backward(qInput, -1, gradQ);
-    policyNetwork.Backward(state, gradQ, gradPolicy);
+    
+    arma::colvec gradQBias = gradQ(qInput.n_rows * firstHiddenSize, 0,
+        arma::size(firstHiddenSize, 1));
+    arma::colvec gradQwrtAction = firstHiddenWeightAction.t() * gradQBias;
+
+    // Compute the gradient of policyNetwork.
+    arma::mat gradPolicy;
+    policyNetwork.Backward(state, gradQwrtAction, gradPolicy);
 
     if (i == 0)
     {
@@ -272,6 +289,8 @@ double DDPG<
     
     TrainAgent();
   }
+
+  return totalReturn;
 }
 
 } // namespace rl
