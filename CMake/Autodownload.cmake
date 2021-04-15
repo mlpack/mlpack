@@ -1,84 +1,63 @@
-function(get_deps LINK DEPS_NAME PACKAGE)
+## This function auto-download mlpack dependencies.
+## You need to pass the LINK to download from, the name of
+## the dependency, and the name of the compressed package such as
+## armadillo.tar.gz
+## At each download, this module set a generic INCLUDE_DIR path,
+## which mean that you need to set the main path for the include
+## directories for each package.
 
+function(get_deps LINK DEPS_NAME PACKAGE)
   file(DOWNLOAD ${LINK}
          "${CMAKE_BINARY_DIR}/deps/${PACKAGE}"
           STATUS DOWNLOAD_STATUS_LIST LOG DOWNLOAD_LOG
           SHOW_PROGRESS)
     list(GET DOWNLOAD_STATUS_LIST 0 DOWNLOAD_STATUS)
     if (DOWNLOAD_STATUS EQUAL 0)
-      if (NOT ${DEPS_NAME} MATCHES "stb")
-        execute_process(COMMAND ${CMAKE_COMMAND} -E
-            tar xf "${CMAKE_BINARY_DIR}/deps/${PACKAGE}"
-            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
+      execute_process(COMMAND ${CMAKE_COMMAND} -E
+          tar xf "${CMAKE_BINARY_DIR}/deps/${PACKAGE}"
+          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
 
-        # Get the name of the directory.
+      # Get the name of the directory.
+      file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
+          "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*.*")
+      if(${DEPS_NAME} MATCHES "boost")
         file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
-            "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*.*")
-        if(${DEPS_NAME} MATCHES "boost")
-          file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
-              "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*_*")
-        endif()
-        # list(FILTER) is not available on 3.5 or older, but try to keep
-        # configuring without filtering the list anyway (it might work if only
-        # the file ensmallen-latest.tar.gz is present.
-        if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
-          list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.gz")
-          list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.xz")
-        endif ()
-        list(LENGTH DIRECTORIES DIRECTORIES_LEN)
-        message("Print directories: " ${DIRECTORIES})
-        if (DIRECTORIES_LEN GREATER 0)
-          if (${DEPS_NAME} MATCHES "armadillo")
-            list(GET DIRECTORIES 0 ARMADILLO_DIR)
-            set(ARMADILLO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${ARMADILLO_DIR}/include" CACHE INTERNAL "")
-
-          elseif (${DEPS_NAME} MATCHES "ensmallen")
-            list(GET DIRECTORIES 0 ENSMALLEN_DIR)
-            set(ENSMALLEN_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_DIR}/include" CACHE INTERNAL "")
-
-          elseif (${DEPS_NAME} MATCHES "cereal")
-            list(GET DIRECTORIES 0 CEREAL_DIR)
-            set(CEREAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${CEREAL_DIR}/include" CACHE INTERNAL "")
-
-          elseif(${DEPS_NAME} MATCHES "boost")
-            list(GET DIRECTORIES 0 Boost_DIR)
-            set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${Boost_DIR}/" CACHE INTERNAL "")
-          
-          elseif(${DEPS_NAME} MATCHES "OpenBLAS")
-            list(GET DIRECTORIES 0 OPENBLAS_DIR)
-            execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
-                            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/${OPENBLAS_DIR})
-            set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/${OPENBLAS_DIR}/libopenblas.a" CACHE INTERNAL "")
-          endif()
-
-        else ()
-          message(FATAL_ERROR 
-                  "Problem unpacking ${DEPS_NAME}! Expected only one directory ${DEPS_NAME};. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
-        endif ()
-      endif ()
-      if (${DEPS_NAME} MATCHES "stb")
-        set(STB_DIR "stb")
-        file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/deps/stb")
-        if(PACKAGE MATCHES "stb_image.h")
-          execute_process(COMMAND mv "deps/stb_image.h" "deps/stb")
-        elseif(PACKAGE MATCHES "stb_image_write.h")
-          execute_process(COMMAND mv "deps/stb_image_write.h" "deps/stb")
-        endif()
-        if(EXISTS "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" AND EXISTS "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h")
-          check_hash (http://mlpack.org/files/stb/hash.md5
-              "${CMAKE_BINARY_DIR}/deps/${STB_DIR}"
-              HASH_CHECK_FAIL)
-          if (HASH_CHECK_FAIL EQUAL 0)
-            set(STB_IMAGE_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${STB_DIR}" CACHE INTERNAL "")
-          else ()
-            message(WARNING
-                "stb/stb_image.h is not installed. Image utilities will not be available!")
-          endif()
-        endif()
+            "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*_*")
+      elseif(${DEPS_NAME} MATCHES "stb")
+        file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
+            "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}")
       endif()
+      # list(FILTER) is not available on 3.5 or older, but try to keep
+      # configuring without filtering the list anyway (it might work if only
+      # the file ensmallen-latest.tar.gz is present.
+      if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
+        list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.gz")
+        list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.xz")
+      endif ()
+      list(LENGTH DIRECTORIES DIRECTORIES_LEN)
+      message("Print directories: " ${DIRECTORIES})
+      if (DIRECTORIES_LEN GREATER 0)
+        list(GET DIRECTORIES 0 DEPENDENCY_DIR)
+        set(GENERIC_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/include" CACHE INTERNAL "")
+
+        if (${DEPS_NAME} MATCHES "boost")
+          list(GET DIRECTORIES 0 DEPENDENCY_DIR)
+          set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/" CACHE INTERNAL "")
+
+        elseif(${DEPS_NAME} MATCHES "OpenBLAS")
+          list(GET DIRECTORIES 0 OPENBLAS_DIR)
+          execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
+                          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/${OPENBLAS_DIR})
+          set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/libopenblas.a" CACHE INTERNAL "")
+        endif()
+
+      else ()
+        message(FATAL_ERROR 
+                "Problem unpacking ${DEPS_NAME}! Expected only one directory ${DEPS_NAME};. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
+      endif ()
     else ()
       list(GET DOWNLOAD_STATUS_LIST 1 DOWNLOAD_ERROR)
       message(FATAL_ERROR
-          "Could not download armadillo! Error code ${DOWNLOAD_STATUS}: ${DOWNLOAD_ERROR}!  Error log: ${DOWNLOAD_LOG}")
+          "Could not download ${DEPS_NAME}! Error code ${DOWNLOAD_STATUS}: ${DOWNLOAD_ERROR}!  Error log: ${DOWNLOAD_LOG}")
     endif ()
 endfunction()
