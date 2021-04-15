@@ -48,8 +48,9 @@ function(get_deps LINK DEPS_NAME PACKAGE)
           if(NOT MSVC)
             list(GET DIRECTORIES 0 OPENBLAS_DIR)
             execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
-                            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/${OPENBLAS_DIR})
-            set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/libopenblas.a" CACHE INTERNAL "")
+                            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR})
+            file(GLOB OPENBLAS "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/libopenblas.a")
+            set(OPENBLAS_LIBRARIES ${OPENBLAS} CACHE INTERNAL "")
           endif()
         endif()
 
