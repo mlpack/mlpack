@@ -1,5 +1,5 @@
 /**
- * @file methods/rvm_regression_impl.hpp
+ * @file methods/rvm_regression_model_impl.hpp
  * @author Clement Mercier
  *
  * A serializable RVM model used by the main program.
@@ -17,7 +17,10 @@
 RVMRegressionModel::RVMRegressionModel(const std::string kernelType,
 				       const bool centerData,
 				       const bool scaleData,
-				       const double bandwidth)
+				       const double bandwidth,
+				       const double offset,
+				       const double kernel_scale,
+				       const double degree)
 {
   if (kernelType == "linear")
   {    
@@ -25,18 +28,66 @@ RVMRegressionModel::RVMRegressionModel(const std::string kernelType,
     rVariant = new RVMRegression<LinearKernel>(
         kernel, centerData, scaleData, false);
   }
+
   else if (kernelType == "gaussian")
   {
     GaussianKernel kernel(bandwidth);
     rVariant = new RVMRegression<GaussianKernel>(
         kernel, centerData, scaleData, false);
   }
+
+  else if (kernelType == "laplacian")
+  {
+    LaplacianKernel kernel(bandwidth);
+    rVariant = new RVMRegression<LaplacianKernel>(
+        kernel, centerData, scaleData, false);
+  }
+
+  else if (kernelType == "epanechnikov")
+  {
+    EpanechnikovKernel kernel(bandwidth);
+    rVariant = new RVMRegression<EpanechnikovKernel>(
+        kernel, centerData, scaleData, false);
+  }
+
+  else if (kernelType == "spherical")
+  {
+    SphericalKernel kernel(bandwidth);
+    rVariant = new RVMRegression<SphericalKernel>(
+        kernel, centerData, scaleData, false);
+  }
+
+  else if (kernelType == "hyptan")
+  {
+    std::cout << "hyptan kernel unavailable as long as its Evualuate "
+        "method is not const." << std::endl;
+    exit(0);
+    // HyperbolicTangentKernel kernel(kernel_scale, offset);
+    // rVariant = new RVMRegression<HyperbolicTangentKernel>(
+    //     kernel, centerData, scaleData, false);
+  }
+
+  else if (kernelType == "polynomial")
+  {
+    PolynomialKernel kernel(degree, offset);
+    rVariant = new RVMRegression<PolynomialKernel>(
+        kernel, centerData, scaleData, false);
+  }
+
+  else if (kernelType == "cosine")
+  {
+    CosineDistance kernel;
+    rVariant = new RVMRegression<CosineDistance>(
+        kernel, centerData, scaleData, false);
+  }
+
   else if (kernelType == "ard")
   {
     LinearKernel kernel;
     rVariant = new RVMRegression<LinearKernel>(
         kernel, centerData, scaleData, true);
   }
+
   else
   {
     std::cout << "ard, linear or gaussian only." << std::endl;

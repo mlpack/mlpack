@@ -1,5 +1,5 @@
 /**
- * @file bayesian_linear_regression_main.cpp
+ * @file rvm_regression_main.cpp
  * @author Clement Mercier
  *
  * Executable for BayesianLinearRegression.
@@ -13,7 +13,14 @@
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/cosine_distance.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/kernels/spherical_kernel.hpp>
+#include <mlpack/core/kernels/laplacian_kernel.hpp>
+#include <mlpack/core/kernels/polynomial_kernel.hpp>
+#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
+// #include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
+
 #include "rvm_regression_model.hpp"
 
 using namespace arma;
@@ -72,9 +79,9 @@ BINDING_LONG_DESC(
     " * 'polynomial': polynomial kernel; requires offset and degree:\n"
     "    K(x, y) = (x^T y + offset) ^ degree\n"
     "\n"
-    " * 'hyptan': hyperbolic tangent kernel; requires scale and offset:\n"
-    "    K(x, y) = tanh(scale * (x^T y) + offset)\n"
-    "\n"
+    // " * 'hyptan': hyperbolic tangent kernel; requires scale and offset:\n"
+    // "    K(x, y) = tanh(scale * (x^T y) + offset)\n"
+    // "\n"
     " * 'laplacian': Laplacian kernel; requires bandwidth:\n"
     "    K(x, y) = exp(-(|| x - y ||) / bandwidth)\n"
     "\n"
@@ -135,15 +142,15 @@ PARAM_MATRIX_OUT("stds", "If specified, this is where the standard deviations "
 PARAM_FLAG("center", "Center the data and fit the intercept if enabled.", "c");
 PARAM_FLAG("scale", "Scale each feature by their standard deviations if "
            "enabled.", "s");
+PARAM_DOUBLE_IN("bandwidth", "Bandwidth, for 'gaussian', 'laplacian', "
+		"'spherical' and 'epanechnikov' kernels.", "b", 1.0);
 PARAM_STRING_IN("kernel", "The kernel to use; see the above documentation "
     "for the list of usable kernels.", "k", "");
 PARAM_DOUBLE_IN("kernel_scale", "Scale, for 'hyptan' kernel.", "S", 1.0);
 PARAM_DOUBLE_IN("offset", "Offset, for 'hyptan' and 'polynomial' kernels.", "O",
     0.0);
-PARAM_DOUBLE_IN("bandwidth", "Bandwidth, for 'gaussian' and 'laplacian' "
-    "kernels.", "b", 1.0);
 PARAM_DOUBLE_IN("degree", "Degree of polynomial, for 'polynomial' kernel.", "D",
-    1.0);
+    2.0);
 
 
 static void mlpackMain()
@@ -185,7 +192,9 @@ static void mlpackMain()
   {
     // Get the kernel type and make sure it is valid.
     RequireParamInSet<string>("kernel", { "linear", "gaussian", "polynomial",
-        "hyptan", "laplacian", "epanechnikov", "cosine" }, true,
+					  "hyptan", "laplacian", "epanechnikov",
+					  "cosine", "spherical" },
+        true,
         "unknown kernel type");
     kernelType = IO::GetParam<string>("kernel");
   }
@@ -203,7 +212,11 @@ static void mlpackMain()
   else 
   {
     // Create and train the RVM.
-    estimator = new RVMRegressionModel(kernelType, center, scale);
+    estimator = new RVMRegressionModel(kernelType, center, scale,
+				       IO::GetParam<double>("bandwidth"),
+				       IO::GetParam<double>("offset"),
+				       IO::GetParam<double>("kernel_scale"),
+				       IO::GetParam<double>("degree"));
     estimator->Train(matX, responses);
   }
   
