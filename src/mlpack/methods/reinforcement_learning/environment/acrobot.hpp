@@ -302,13 +302,9 @@ class Acrobot
     const double diff = maximum - minimum;
 
     if (value > maximum)
-    {
       value = value - diff;
-    }
     else if (value < minimum)
-    {
       value = value + diff;
-    }
 
     return value;
   };

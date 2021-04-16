@@ -131,9 +131,7 @@ void AsyncLearning<
       double episodeReturn;
       if (worker.Step(learningNetwork, targetNetwork, totalSteps,
           policy, episodeReturn) && !task)
-      {
         stop = measure(episodeReturn);
-      }
     }
   }
 
