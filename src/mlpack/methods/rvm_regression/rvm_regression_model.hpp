@@ -27,13 +27,22 @@ class RVMRegressionModel
 {
   private:
   boost::variant<RVMRegression<LinearKernel>*,
-		 RVMRegression<GaussianKernel>*> rVariant;
+		 RVMRegression<GaussianKernel>*,
+		 RVMRegression<LaplacianKernel>*,
+		 RVMRegression<EpanechnikovKernel>*,
+		 RVMRegression<SphericalKernel>*,
+		 // RVMRegression<HyperbolicTangentKernel>*,
+		 RVMRegression<PolynomialKernel>*,
+		 RVMRegression<CosineDistance>*> rVariant;
 
  public:
  RVMRegressionModel(const std::string kernelType,
 		    const bool centerData,
 		    const bool scaleData,
-		    const double bandwidth = 1.0);
+		    const double bandwidth = 1.0,
+		    const double offset = 0.0,
+		    const double kernel_scale = 1.0,
+		    const double degree = 2.0);
 
   //! Create an empty CF model.
   RVMRegressionModel() { }
