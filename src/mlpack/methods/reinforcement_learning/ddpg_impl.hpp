@@ -55,7 +55,7 @@ DDPG<
                              qNetwork.Parameters().n_cols);
   #else
   qNetworkUpdatePolicy = new typename UpdaterType::template
-      Policy<arma::mat, arma::mat>(qNetworkUpdater,
+      Policy<arma::mat, arma::mat>(this->qNetworkUpdater,
                                    qNetwork.Parameters().n_rows,
                                    qNetwork.Parameters().n_cols);
   #endif
@@ -65,7 +65,7 @@ DDPG<
                                   policyNetwork.Parameters().n_cols);
   #else
   policyNetworkUpdatePolicy = new typename UpdaterType::template
-      Policy<arma::mat, arma::mat>(policyNetworkUpdater,
+      Policy<arma::mat, arma::mat>(this->policyNetworkUpdater,
                                    policyNetwork.Parameters().n_rows,
                                    policyNetwork.Parameters().n_cols);
   #endif
