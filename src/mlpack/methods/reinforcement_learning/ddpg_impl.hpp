@@ -40,7 +40,9 @@ DDPG<
     #if ENS_VERSION_MAJOR >= 2
     policyNetworkUpdatePolicy(NULL),
     #endif
-    environment(std::move(environment))
+    environment(std::move(environment)),
+    totalSteps(0),
+    deterministic(false)
 {
   if (qNetwork.Parameters().is_empty())
     qNetwork.ResetParameters();
@@ -91,9 +93,12 @@ void DDPG<
   policyNetwork.Predict(state.Encode(), outputAction);
 
   // Add noise to convert the deterministic policy into exploration policy
-  arma::colvec noise = arma::randn<arma::colvec>(outputAction.n_rows) * 0.1;
-  noise = arma::clamp(noise, -0.25, 0.25);
-  outputAction = outputAction + noise;
+  if (!deterministic)
+  {
+    arma::colvec noise = arma::randn<arma::colvec>(outputAction.n_rows) * 0.1;
+    noise = arma::clamp(noise, -0.25, 0.25);
+    outputAction = outputAction + noise;
+  }
 
   action.action = arma::conv_to<decltype(action.action)>::from(outputAction);
 }
@@ -284,7 +289,7 @@ double DDPG<
     state = nextState;
 
     // Make sure to populate the replay buffer before sampling.
-    if (totalSteps < config.ExplorationSteps())
+    if (deterministic || totalSteps < config.ExplorationSteps())
       continue;
     
     TrainAgent();

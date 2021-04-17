@@ -39,6 +39,9 @@ class DDPG
   
   double Episode();
 
+  bool& Deterministic() { return &deterministic; }
+  const bool& Deterministic() { return deterministic; }
+
  private:
   TrainingConfig& config;
 
@@ -68,6 +71,7 @@ class DDPG
   ActionType action;
 
   size_t totalSteps;
+  bool deterministic;
 
   mlpack::ann::MeanSquaredError<> lossFunction;
 };
