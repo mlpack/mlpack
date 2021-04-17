@@ -191,11 +191,12 @@ static void mlpackMain()
   if (IO::HasParam("kernel"))
   {
     // Get the kernel type and make sure it is valid.
-    RequireParamInSet<string>("kernel", { "linear", "gaussian", "polynomial",
-					  "hyptan", "laplacian", "epanechnikov",
-					  "cosine", "spherical" },
-        true,
-        "unknown kernel type");
+    RequireParamInSet<string>("kernel",
+			      { "linear", "gaussian", "polynomial",
+				"hyptan", "laplacian", "epanechnikov",
+				"cosine", "spherical" },
+			      true, "unknown kernel type");
+    
     kernelType = IO::GetParam<string>("kernel");
   }
   else
@@ -229,6 +230,7 @@ static void mlpackMain()
 
     if (IO::HasParam("stds"))
     {
+      Log::Info << "Uncertainties computed." << endl;
       rowvec std;
       estimator->Predict(testPoints, predictions, std);
 
