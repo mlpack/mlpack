@@ -1,8 +1,15 @@
-# Flags for each supported board
+# This function provides a set of specific flags for each supported board
+# Depending on the processor type. The objective is to optimize for size.
+# Thus, all of the fllowing flags are chosen carefully to reduce binary 
+# footprints.
 
 function(flags BOARD_NAME)
   # Set all minimization flags for all platforms
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -fdata-sections -ffunction-sections -fomit-frame-pointer -fno-unwind-tables -fno-asynchronous-unwind-tables -fvisibility=hidden -fshort-enums -finline-small-functions -findirect-inlining -fno-common") 
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -fdata-sections -ffunction-sections)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fomit-frame-pointer -fno-unwind-tables")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-asynchronous-unwind-tables -fvisibility=hidden")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fshort-enums -finline-small-functions")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -findirect-inlining -fno-common") 
   #-flto -fuse-ld=gold # There is an issue with gold link when compiling on 
   # Ubuntu 16. At that point gcc linker did not integrate the flto support 
   # inside and it was a separate plugin that need to be added. Therefore, 
