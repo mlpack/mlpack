@@ -58,11 +58,11 @@ if (BUILD_CLI_EXECUTABLES)
      ${COMPILER_SUPPORT_LIBRARIES}
    )
   else()
-  target_link_libraries(mlpack_${name}
-    mlpack
-    ${ARMADILLO_LIBRARIES}
-    ${COMPILER_SUPPORT_LIBRARIES}
-  )
+    target_link_libraries(mlpack_${name}
+      mlpack
+      ${ARMADILLO_LIBRARIES}
+      ${COMPILER_SUPPORT_LIBRARIES}
+    )
   endif()
   # Make sure that we set BINDING_TYPE to cli so the command-line program is
   # compiled with the correct int main() call.
