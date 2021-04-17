@@ -181,7 +181,7 @@ if(NOT BUILD_SHARED_LIBS)
     mlpack
     ${ARMADILLO_LIBRARIES}
     ${COMPILER_SUPPORT_LIBRARIES}
-)
+  )
 else()
   # Link dependencies of test executable.
   target_link_libraries(mlpack_test
