@@ -93,8 +93,9 @@ class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 
   //! Prepare map for recursion.
   void PruneMap(CoverTree& queryNode,
-                std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>&
-                    referenceMap,
+                std::map<int,
+                         std::vector<DualCoverTreeMapEntry>,
+                         std::greater<int>>& referenceMap,
                 std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>&
                     childMap);
 
