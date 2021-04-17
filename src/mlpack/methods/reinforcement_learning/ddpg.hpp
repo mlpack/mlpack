@@ -41,8 +41,8 @@ class DDPG
   
   double Episode();
 
-  bool& Deterministic() { return &deterministic; }
-  const bool& Deterministic() { return deterministic; }
+  bool& Deterministic() { return deterministic; }
+  const bool& Deterministic() const { return deterministic; }
 
  private:
   TrainingConfig& config;
