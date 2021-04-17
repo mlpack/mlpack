@@ -2,7 +2,7 @@
 ## You need to pass the LINK to download from, the name of
 ## the dependency, and the name of the compressed package such as
 ## armadillo.tar.gz
-## At each download, this module set a generic INCLUDE_DIR path,
+## At each download, this module set a GENERIC_INCLUDE_DIR path,
 ## which mean that you need to set the main path for the include
 ## directories for each package.
 

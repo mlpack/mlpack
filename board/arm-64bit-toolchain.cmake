@@ -1,3 +1,10 @@
+## This file handle corss-compilation configurations for aarch64,
+## known as arm64. The objective of this file is to find and assign
+## cross-compiler and the entire toolchain.
+## It works best with buildroot toolchain, when using it the user
+## needs to set the: TOOLCHAIN_PREFIX and CMAKE_SYSROOT from the
+## command line.
+
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_PROCESSOR ARM)
 
