@@ -110,12 +110,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
-# Disable any downloads if needed.
-if (DISABLE_DOWNLOADS)
-  set(DOWNLOAD_ENSMALLEN OFF)
-  set(DOWNLOAD_STB_IMAGE OFF)
-endif ()
-
 # If we are on a Unix-like system, use the GNU install directories module.
 # Otherwise set the values manually.
 if (UNIX)
@@ -278,8 +272,8 @@ endif()
 # Remove support for older 32bit system, if we need to have 32bit system
 # Since we are cross compiling, We will download it into the deps folder,
 find_package(Armadillo "${ARMADILLO_VERSION}")
-if(NOT ARMADILLO_FOUND)
-  get_deps(https://freefr.dl.sourceforge.net/project/arma/armadillo-10.3.0.tar.xz armadillo armadillo-10.3.0.tar.xz)
+if(NOT ARMADILLO_FOUND AND (NOT DISABLE_DOWNLOADS))
+  get_deps(http://files.mlpack.org/armadillo-10.3.0.tar.gz armadillo armadillo-10.3.0.tar.gz)
   set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
   find_package(Armadillo REQUIRED)
 endif()
@@ -299,18 +293,18 @@ endif()
 # Find stb_image.h and stb_image_write.h.
 find_package(StbImage)
 # Download stb_image for image loading.
-if (NOT STB_IMAGE_FOUND)
+if (NOT STB_IMAGE_FOUND AND (NOT DISABLE_DOWNLOADS))
   get_deps(http://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
   set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
   find_package(StbImage REQUIRED)
+  add_definitions(-DHAS_STB)
+  set(STB_AVAILABLE "1")
 endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
-add_definitions(-DHAS_STB)
-set(STB_AVAILABLE "1")
 
 # Find ensmallen, if not download it.
 find_package(Ensmallen "${ENSMALLEN_VERSION}")
-if(NOT ENSMALLEN_FOUND)
+if(NOT ENSMALLEN_FOUND AND (NOT DISABLE_DOWNLOADS))
   get_deps(http://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
    set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
    find_package(Ensmallen REQUIRED)
@@ -319,7 +313,7 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 
 # Find cereal, if not download it.
 find_package(cereal "${CEREAL_VERSION}")
-if(NOT CEREAL_FOUND)
+if(NOT CEREAL_FOUND AND (NOT DISABLE_DOWNLOADS))
   get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
   set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
   find_package(cereal REQUIRED)
@@ -354,7 +348,7 @@ set(Boost_ADDITIONAL_VERSIONS
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
 find_package(Boost "${BOOST_VERSION}")
-if(NOT Boost_FOUND)
+if(NOT Boost_FOUND AND (NOT DISABLE_DOWNLOADS))
   get_deps(https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.gz boost boost_1_75_0.tar.gz)
   find_package(Boost REQUIRED)
 endif()
