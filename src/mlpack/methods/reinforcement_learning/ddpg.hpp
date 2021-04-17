@@ -31,6 +31,8 @@ class DDPG
        UpdaterType policyNetworkUpdater = UpdaterType(),
        EnvironmentType environment = EnvironmentType());
   
+  ~DDPG();
+  
   void SelectAction();
 
   void SoftUpdateTargetNetwork(double tau);

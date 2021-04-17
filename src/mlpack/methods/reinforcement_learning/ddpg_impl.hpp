@@ -80,6 +80,27 @@ template <
   typename UpdaterType,
   typename ReplayType
 >
+DDPG<
+  EnvironmentType,
+  QNetworkType,
+  PolicyNetworkType,
+  UpdaterType,
+  ReplayType
+>::~DDPG()
+{
+  #if ENS_VERSION_MAJOR >= 2
+  delete qNetworkUpdatePolicy;
+  delete policyNetworkUpdatePolicy;
+  #endif
+}
+
+template <
+  typename EnvironmentType,
+  typename QNetworkType,
+  typename PolicyNetworkType,
+  typename UpdaterType,
+  typename ReplayType
+>
 void DDPG<
   EnvironmentType,
   QNetworkType,
