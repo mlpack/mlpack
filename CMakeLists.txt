@@ -39,6 +39,9 @@ set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
 set(CEREAL_VERSION "1.1.2")
 
+# If BUILD_SHARED_LIBS is OFF then mlpack library will be build statically
+# In addition, all mlpack CLI bindings are going to be linked statically as
+# well.
 if (WIN32)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries are compiled)." OFF)

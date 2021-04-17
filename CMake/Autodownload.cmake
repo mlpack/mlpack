@@ -41,12 +41,10 @@ function(get_deps LINK DEPS_NAME PACKAGE)
         set(GENERIC_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/include" CACHE INTERNAL "")
 
         if (${DEPS_NAME} MATCHES "boost")
-          list(GET DIRECTORIES 0 DEPENDENCY_DIR)
           set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/" CACHE INTERNAL "")
 
         elseif(${DEPS_NAME} MATCHES "OpenBLAS")
           if(NOT MSVC)
-            list(GET DIRECTORIES 0 OPENBLAS_DIR)
             execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
                             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR})
             file(GLOB OPENBLAS "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/libopenblas.a")
