@@ -87,8 +87,9 @@ class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
    * Helper function for traversal of the two trees.
    */
   void Traverse(CoverTree& queryNode,
-                std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>&
-                    referenceMap);
+                std::map<int,
+                         std::vector<DualCoverTreeMapEntry>,
+                         std::greater<int>>& referenceMap);
 
   //! Prepare map for recursion.
   void PruneMap(CoverTree& queryNode,
