@@ -5,6 +5,7 @@
 ## At each download, this module set a GENERIC_INCLUDE_DIR path,
 ## which mean that you need to set the main path for the include
 ## directories for each package.
+## Note that, the package should be compressed only as .tar.gz
 
 function(get_deps LINK DEPS_NAME PACKAGE)
   file(DOWNLOAD ${LINK}
@@ -28,11 +29,10 @@ function(get_deps LINK DEPS_NAME PACKAGE)
             "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}")
       endif()
       # list(FILTER) is not available on 3.5 or older, but try to keep
-      # configuring without filtering the list anyway (it might work if only
-      # the file ensmallen-latest.tar.gz is present.
+      # configuring without filtering the list anyway 
+      # (it works only the file is present as .tar.gz).
       if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
         list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.gz")
-        list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.xz")
       endif ()
       list(LENGTH DIRECTORIES DIRECTORIES_LEN)
       message("Print directories: " ${DIRECTORIES})
