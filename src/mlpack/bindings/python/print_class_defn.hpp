@@ -72,14 +72,17 @@ void PrintClassDefn(
    *   def __getstate__(self):
    *     return SerializeOut(self.modelptr, "<ModelType>")
    *
-   *   def _params(self):
-   *     return SerializeOutJSON(self.modelptr, "<ModelType>")
-   *
    *   def __setstate__(self, state):
    *     SerializeIn(self.modelptr, state, "<ModelType>")
    *
    *   def __reduce_ex__(self):
    *     return (self.__class__, (), self.__getstate__())
+   *
+   *   def get_params(self):
+   *     return SerializeOutJSON(self.modelptr, "<ModelType>")
+   * 
+   *   def set_params(self, state):
+   *     SerializeInJSON(seld.modelptr, state, "<ModelType>")
    * @endcode
    */
   std::cout << "cdef class " << strippedType << "Type:" << std::endl;
@@ -103,8 +106,11 @@ void PrintClassDefn(
   std::cout << "    return (self.__class__, (), self.__getstate__())"
       << std::endl;
   std::cout << std::endl;
-  std::cout << "  def params(self):" << std::endl;
+  std::cout << "  def get_params(self):" << std::endl;
   std::cout << "    return SerializeOutJSON(self.modelptr, \"" << printedType
+      << "\")" << std::endl;
+  std::cout << "  def set_params(self, state):" << std::endl;
+  std::cout << "    SerializeInJSON(self.modelptr, state, \"" << printedType
       << "\")" << std::endl;
   std::cout << std::endl;
 }

@@ -1,9 +1,11 @@
 from random import randint
 import numpy as np
+import json
 import pprint
+from copy import deepcopy
 
-def process_params(model, return_str=False, pretty_print=False):
-  params = model.params()
+def process_params(model, return_str=False, pretty_print=False, remove_version=False):
+  params = model.get_params()
   params_decoded = params.decode("utf-8").replace("true", "True")\
     .replace("false", "False")
 
@@ -32,7 +34,8 @@ def process_params(model, return_str=False, pretty_print=False):
   params_dic = eval(params_decoded)
 
   # remove "cereal_class_version".
-  scrub(params_dic, "cereal_class_version")
+  if remove_version:
+    scrub(params_dic, "cereal_class_version")
 
   # convert armadillo dictionary to numpy array
   arma_to_np(params_dic)
@@ -47,9 +50,80 @@ def process_params(model, return_str=False, pretty_print=False):
   else:
     return params_dic
 
+def feed_params(model, params_dic):
+  """
+  This function takes in a model and the parameters dictionary,
+  and sets the parameters of the model as the given parameters.
+  """
+  # deepcopy to prevent changes to the user dictionary.
+  params_dic_copy = deepcopy(params_dic)
+
+  # this list for keeping track of the random numbers generated to replace
+  # '"elem":' string, because python dictionaries cannot hold same keys.
+  rand_gen = []
+  np_to_arma(params_dic_copy, rand_gen)
+
+  # dumping to string.
+  params_str = json.dumps(params_dic_copy)
+
+  # replacing random numbers with '"elem":' to match JSON given by cereal.
+  for rand_num in rand_gen:
+    params_str = params_str.replace('"{}":'.format(rand_num), '"elem":')
+
+  # setting parameters to the model.
+  model.set_params(params_str.encode("utf-8"))
+
+def np_to_arma(obj, rand_gen):
+  """
+  This function replaces a numpy array to json representation
+  of armadillo vector. This is reverse of "arma_to_np(obj)".
+  """
+  if isinstance(obj, dict):
+    for key in obj.keys():
+      """
+      Checking if this is a numpy array.
+      """
+      if isinstance(obj[key], np.ndarray):
+        # n_rows, n_cols have to be strings.
+        n_rows, n_cols = str(1),str(1)
+
+        dic = dict()
+
+        if len(obj[key].shape) == 1:
+          n_rows = obj[key].shape[0]
+          dic["vec_state"] = str(1)
+        elif len(obj[key].shape) == 2:
+          n_rows, n_cols = obj[key].shape
+          dic["vec_state"] = str(2)
+        else:
+          raise RuntimeError("Invalid number of dimensions in array {}".format(len(onj[key].shape)))
+
+        dic["n_rows"] = str(n_cols) # implicit transpose
+        dic["n_cols"] = str(n_rows) # implicit transpose
+
+        elems = obj[key].flatten().astype(float)
+
+        # writing elements of vector with random generated keys,
+        # these keys will be replaced by '"elem":' in "feed_params()" function.
+        for elem in elems:
+          random_key = random_with_N_digits(4)
+          while(random_key in rand_gen):
+            random_key = random_with_N_digits(4)
+          rand_gen.append(random_key)
+          dic[str(random_key)] = elem
+
+        obj[key] = dic
+      else:
+        np_to_arma(obj[key], rand_gen)
+  elif isinstance(obj, list):
+    for i in range(len(obj)):
+      np_to_arma(obj[i], rand_gen)
+  else:
+    pass
+
 def arma_to_np(obj):
   """
-  This function replaces the armadillo dictionary vector to
+  This function replaces the JSON representation of armadillo vector to
   numpy array in the given dictionary.
   """
   if isinstance(obj, dict):

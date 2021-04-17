@@ -50,6 +50,14 @@ std::string SerializeOutJSON(T* t, const std::string& name)
   return oss.str();
 }
 
+template<typename T>
+void SerializeInJSON(T* t, const std::string& str, const std::string& name)
+{
+  std::istringstream iss(str);
+  cereal::JSONInputArchive b(iss);
+  b(cereal::make_nvp(name.c_str(), *t));
+}
+
 } // namespace python
 } // namespace bindings
 } // namespace mlpack

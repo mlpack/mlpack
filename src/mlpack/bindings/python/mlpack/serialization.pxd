@@ -13,3 +13,4 @@ cdef extern from "serialization.hpp" namespace "mlpack::bindings::python" nogil:
   string SerializeOut[T](T* t, string name) nogil
   void SerializeIn[T](T* t, string str, string name) nogil
   string SerializeOutJSON[T](T* t, string name) nogil
+  void SerializeInJSON[T](T* t, string str, string name) nogil
