@@ -191,7 +191,7 @@ void RVMRegression<KernelType>::Predict(const arma::mat& points,
   
   predictions = omega.t() * matX;
   if (centerData) predictions += responsesOffset;
-  // Compute standard devaiations.
+  // Compute standard deviations.
   std = sqrt(Variance() + sum(matX % (matCovariance * matX)));
 }
 
