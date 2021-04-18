@@ -7,7 +7,7 @@
 ## directories for each package.
 ## Note that, the package should be compressed only as .tar.gz
 
-function(get_deps LINK DEPS_NAME PACKAGE)
+macro(get_deps LINK DEPS_NAME PACKAGE)
   file(DOWNLOAD ${LINK}
          "${CMAKE_BINARY_DIR}/deps/${PACKAGE}"
           STATUS DOWNLOAD_STATUS_LIST LOG DOWNLOAD_LOG
@@ -21,6 +21,7 @@ function(get_deps LINK DEPS_NAME PACKAGE)
       # Get the name of the directory.
       file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
           "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*.*")
+      # Clean this line when boost is removed
       if(${DEPS_NAME} MATCHES "boost")
         file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
             "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*_*")
@@ -38,17 +39,17 @@ function(get_deps LINK DEPS_NAME PACKAGE)
       message("Print directories: " ${DIRECTORIES})
       if (DIRECTORIES_LEN GREATER 0)
         list(GET DIRECTORIES 0 DEPENDENCY_DIR)
-        set(GENERIC_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/include" CACHE INTERNAL "")
-
+        set(GENERIC_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/include")
+        # Clean this line when boost is removed.
         if (${DEPS_NAME} MATCHES "boost")
-          set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/" CACHE INTERNAL "")
+          set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/")
 
         elseif(${DEPS_NAME} MATCHES "OpenBLAS")
           if(NOT MSVC)
             execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
                             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR})
             file(GLOB OPENBLAS "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/libopenblas.a")
-            set(OPENBLAS_LIBRARIES ${OPENBLAS} CACHE INTERNAL "")
+            set(OPENBLAS_LIBRARIES ${OPENBLAS})
           endif()
         endif()
 
@@ -61,4 +62,4 @@ function(get_deps LINK DEPS_NAME PACKAGE)
       message(FATAL_ERROR
           "Could not download ${DEPS_NAME}! Error code ${DOWNLOAD_STATUS}: ${DOWNLOAD_ERROR}!  Error log: ${DOWNLOAD_LOG}")
     endif ()
-endfunction()
+endmacro()

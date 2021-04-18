@@ -23,7 +23,6 @@ if(CMAKE_CROSSCOMPILING)
   set(BOARD_NAME "" CACHE INTERNAL "Enter the board name to compile mlpack for.")
   set(GFORTRAN_LIBRARY "" CACHE STRING "Path for gfortran library.")
   set(PTHREAD_LIBRARY "" CACHE STRING "Path for Pthread library")
-  set(GCC_VERSION ""  CACHE STRING "")
 endif()
 
 if(CMAKE_CROSSCOMPILING AND (BOARD_NAME STREQUAL ""))
