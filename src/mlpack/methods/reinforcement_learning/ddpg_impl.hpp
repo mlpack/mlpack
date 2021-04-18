@@ -1,3 +1,15 @@
+/**
+ * @file methods/reinforcement_learning/ddpg_impl.hpp
+ * @author Tri Wahyu Guntara
+ *
+ * This file is the implementation of DDPG class, which implements the
+ * Deep Deterministic Policy Gradient algorithm.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef MLPACK_METHODS_RL_DDPG_IMPL_HPP
 #define MLPACK_METHODS_RL_DDPG_IMPL_HPP
 
@@ -44,6 +56,8 @@ DDPG<
     totalSteps(0),
     deterministic(false)
 {
+  // Reset the network parameters. Check whether it is empty
+  // in case the network is loaded from some pre-trained networks.
   if (qNetwork.Parameters().is_empty())
     qNetwork.ResetParameters();
   if (policyNetwork.Parameters().is_empty())
@@ -109,11 +123,11 @@ void DDPG<
   ReplayType
 >::SelectAction()
 {
-  // Get the deterministic action at current state from policy
+  // Get the deterministic action at current state from policy.
   arma::colvec outputAction;
   policyNetwork.Predict(state.Encode(), outputAction);
 
-  // Add noise to convert the deterministic policy into exploration policy
+  // Add noise to convert the deterministic policy into exploration policy.
   if (!deterministic)
   {
     arma::colvec noise = arma::randn<arma::colvec>(outputAction.n_rows) * 0.1;
@@ -137,12 +151,12 @@ void DDPG<
   PolicyNetworkType,
   UpdaterType,
   ReplayType
->::SoftUpdateTargetNetwork(double tau)
+>::SoftUpdateTargetNetwork(double rho)
 {
-  targetQNetwork.Parameters() = tau * qNetwork.Parameters() + 
-      (1 - tau) * targetQNetwork.Parameters();
-  targetPolicyNetwork.Parameters() = tau * policyNetwork.Parameters() +
-      (1 - tau) * targetPolicyNetwork.Parameters();
+  targetQNetwork.Parameters() = rho * qNetwork.Parameters() + 
+      (1 - rho) * targetQNetwork.Parameters();
+  targetPolicyNetwork.Parameters() = rho * policyNetwork.Parameters() +
+      (1 - rho) * targetPolicyNetwork.Parameters();
 }
 
 template <
@@ -287,16 +301,20 @@ double DDPG<
   ReplayType
 >::Episode()
 {
+  // Episode initialization.
   state = environment.InitialSample();
   size_t steps= 0;
   double totalReturn = 0.;
 
   while (!environment.IsTerminal(state)) {
+    // For non-episodic task, an episode length is determined by
+    // `mlpack::rl::TrainingConfig.stepLimit`.
     if (config.StepLimit() && steps >= config.StepLimit())
       break;
     
     SelectAction();
 
+    // Interact with the environment to advance to next state.
     StateType nextState;
     double reward = environment.Sample(state, action, nextState);
 
@@ -304,6 +322,7 @@ double DDPG<
     steps++;
     totalSteps++;
 
+    // Store the transition tuple for replay.
     replayMethod.Store(state, action, reward, nextState,
       environment.IsTerminal(nextState), config.Discount());
 
