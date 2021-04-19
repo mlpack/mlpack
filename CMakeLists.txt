@@ -21,8 +21,6 @@ option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 set(BOARD_NAME "" CACHE INTERNAL "Enter the board name to compile mlpack for.")
 
 if(CMAKE_CROSSCOMPILING)
-  set(GFORTRAN_LIBRARY "" CACHE STRING "Path for gfortran library.")
-  set(PTHREAD_LIBRARY "" CACHE STRING "Path for pthread library")
   include(board/flags-config.cmake)
   if(BOARD_NAME STRGREATER  "")
     flags(${BOARD_NAME})
