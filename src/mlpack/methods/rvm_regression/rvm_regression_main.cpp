@@ -63,8 +63,8 @@ BINDING_LONG_DESC(
     "responses to the test points can be saved with the " +
     PRINT_PARAM_STRING("predictions") + " output parameter. The "
     "corresponding standard deviations can be saved by precising the " +
-    PRINT_PARAM_STRING("stds") + " parameter."
-    "If the " + PRINT_PARAM_STRING("kernel") + "is not specified the model "
+    PRINT_PARAM_STRING("stds") + " parameter. "
+    "If the " + PRINT_PARAM_STRING("kernel") + " is not specified the model "
     "optimized is a bayesian linear regression whose the solution is associa- "
     "ted to an ARD prior leading to sparse solution in the features domain."
     "\n"
@@ -76,7 +76,7 @@ BINDING_LONG_DESC(
     " * 'gaussian': a Gaussian kernel; requires bandwidth:\n"
     "    K(x, y) = exp(-(|| x - y || ^ 2) / (2 * (bandwidth ^ 2)))\n"
     "\n"
-    " * 'polynomial': polynomial kernel; requires offset and degree:\n"
+    " * 'polynomial': Polynomial kernel; requires offset and degree:\n"
     "    K(x, y) = (x^T y + offset) ^ degree\n"
     "\n"
     // " * 'hyptan': hyperbolic tangent kernel; requires scale and offset:\n"
@@ -88,8 +88,11 @@ BINDING_LONG_DESC(
     " * 'epanechnikov': Epanechnikov kernel; requires bandwidth:\n"
     "    K(x, y) = max(0, 1 - || x - y ||^2 / bandwidth^2)\n"
     "\n"
-    " * 'cosine': cosine distance:\n"
+    " * 'cosine': Cosine distance:\n"
     "    K(x, y) = 1 - (x^T y) / (|| x || * || y ||)\n"
+    "\n"
+    " * 'sperical': Spherical kernel; requires bandwidth:\n"
+    "                                                \n"
     "\n"
     "The parameters for each of the kernels should be specified with the "
     "options " + PRINT_PARAM_STRING("bandwidth") + ", " +
