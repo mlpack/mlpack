@@ -40,7 +40,7 @@ set(CEREAL_VERSION "1.1.2")
 # well.
 if (WIN32)
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
 
   set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
   set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
