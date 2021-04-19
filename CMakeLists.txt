@@ -46,7 +46,7 @@ if (WIN32)
   set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
 elseif(CMAKE_CROSSCOMPILING)
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
 else()
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries and binaries are compiled)." ON)
