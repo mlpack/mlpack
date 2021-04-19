@@ -38,16 +38,16 @@ set(CEREAL_VERSION "1.1.2")
 # well.
 if (WIN32)
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
 
   set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
   set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
 elseif(CMAKE_CROSSCOMPILING)
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
 else()
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries are compiled)." ON)
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." ON)
 endif()
 
 # Detect whether the user passed BUILD_PYTHON_BINDINGS in order to determine if
@@ -285,7 +285,7 @@ if(CMAKE_CROSSCOMPILING)
   find_library(PTHREAD NAMES libpthread.a PATHS ${CMAKE_SYSROOT}/usr/lib)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OPENBLAS_LIBRARIES} ${GFORTRAN} ${PTHREAD})
 else()
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARY})
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 endif()
 
 # Find stb_image.h and stb_image_write.h.
