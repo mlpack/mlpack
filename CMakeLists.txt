@@ -49,7 +49,7 @@ elseif(CMAKE_CROSSCOMPILING)
       "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
 else()
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries are compiled)." ON)
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." ON)
 endif()
 
 # Detect whether the user passed BUILD_PYTHON_BINDINGS in order to determine if
