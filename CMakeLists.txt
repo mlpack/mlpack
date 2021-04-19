@@ -50,6 +50,15 @@ else()
       "Compile shared libraries (if OFF, static libraries and binaries are compiled)." ON)
 endif()
 
+# Support preference of static libs by adjusting CMAKE_FIND_LIBRARY_SUFFIXES
+if(NOT BUILD_SHARED_LIBS)
+  if(WIN32)
+    list(INSERT CMAKE_FIND_LIBRARY_SUFFIXES 0 .lib .a)
+  else()
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+  endif()
+endif()
+
 # Detect whether the user passed BUILD_PYTHON_BINDINGS in order to determine if
 # we should fail if Python isn't found.
 if (BUILD_PYTHON_BINDINGS)
