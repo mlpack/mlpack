@@ -92,6 +92,6 @@ class RandomBinaryNumericSplit
 } // namespace mlpack
 
 // Include implementation.
-#include "best_binary_numeric_split_impl.hpp"
+#include "random_binary_numeric_split_impl.hpp"
 
 #endif
