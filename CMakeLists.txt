@@ -285,7 +285,7 @@ if(NOT ARMADILLO_FOUND AND (NOT DISABLE_DOWNLOADS))
   find_package(Armadillo REQUIRED)
 endif()
 # Include directories for the previous dependencies.
-set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIR})
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 
 # We do not have to link with Armadillo if we are cross compiling
 if(CMAKE_CROSSCOMPILING)
