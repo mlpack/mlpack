@@ -289,8 +289,6 @@ if (CMAKE_CROSSCOMPILING)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OPENBLAS_LIBRARIES} ${GFORTRAN} ${PTHREAD})
 endif()
 
-# Remove support for older 32bit system, if we need to have 32bit system
-# Since we are cross compiling, We will download it into the deps folder,
 if (DISABLE_DOWNLOADS)
   find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 else()
@@ -303,7 +301,7 @@ else()
 endif()
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
-# We do have to link with Armadillo if we are NOT cross compiling
+# We do have to link with Armadillo if we are NOT cross compiling.
 if (NOT CMAKE_CROSSCOMPILING)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 endif()
