@@ -21,7 +21,7 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
       # Get the name of the directory.
       file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
           "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*.*")
-      # Clean this line when boost is removed
+      # Clean this line when boost is removed.
       if(${DEPS_NAME} MATCHES "boost")
         file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
             "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*_*")
