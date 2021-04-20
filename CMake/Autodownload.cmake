@@ -43,16 +43,7 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
         # Clean this line when boost is removed.
         if (${DEPS_NAME} MATCHES "boost")
           set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/")
-
-        elseif(${DEPS_NAME} MATCHES "OpenBLAS")
-          if(NOT MSVC)
-            execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
-                            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR})
-            file(GLOB OPENBLAS "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/libopenblas.a")
-            set(OPENBLAS_LIBRARIES ${OPENBLAS})
-          endif()
         endif()
-
       else ()
         message(FATAL_ERROR 
                 "Problem unpacking ${DEPS_NAME}! Expected only one directory ${DEPS_NAME};. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")

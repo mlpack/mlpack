@@ -272,35 +272,45 @@ endif()
 #   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
+#   CEREAL_INCLUDE_DIR - include directory for cereal
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
 
+if(CMAKE_CROSSCOMPILING)
+  get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v0.3.13/OpenBLAS-0.3.13.tar.gz OpenBLAS OpenBLAS-0.3.13.tar.gz)
+  if(NOT MSVC)
+    execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13)
+    file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a")
+    # set(OPENBLAS_LIBRARIES ${OPENBLAS})
+  endif()
+  find_library(GFORTRAN NAMES libgfortran.a PATHS ${CMAKE_SYSROOT}/usr/lib)
+  find_library(PTHREAD NAMES libpthread.a PATHS ${CMAKE_SYSROOT}/usr/lib)
+  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OPENBLAS_LIBRARIES} ${GFORTRAN} ${PTHREAD})
+endif()
+
 # Remove support for older 32bit system, if we need to have 32bit system
 # Since we are cross compiling, We will download it into the deps folder,
-find_package(Armadillo "${ARMADILLO_VERSION}")
-if(NOT ARMADILLO_FOUND AND (NOT DISABLE_DOWNLOADS))
+if(DISABLE_DOWNLOADS)
+  find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
+elseif(NOT ARMADILLO_FOUND AND (NOT DISABLE_DOWNLOADS))
   get_deps(http://files.mlpack.org/armadillo-10.3.0.tar.gz armadillo armadillo-10.3.0.tar.gz)
   set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
   find_package(Armadillo REQUIRED)
 endif()
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
-
-# We do not have to link with Armadillo if we are cross compiling
-if(CMAKE_CROSSCOMPILING)
-  get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v0.3.13/OpenBLAS-0.3.13.tar.gz OpenBLAS OpenBLAS-0.3.13.tar.gz)
-  find_library(GFORTRAN NAMES libgfortran.a PATHS ${CMAKE_SYSROOT}/usr/lib)
-  find_library(PTHREAD NAMES libpthread.a PATHS ${CMAKE_SYSROOT}/usr/lib)
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OPENBLAS_LIBRARIES} ${GFORTRAN} ${PTHREAD})
-else()
+# We do have to link with Armadillo if we are NOT cross compiling
+if(NOT CMAKE_CROSSCOMPILING)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 endif()
 
 # Find stb_image.h and stb_image_write.h.
-find_package(StbImage)
-# Download stb_image for image loading.
-if (NOT STB_IMAGE_FOUND AND (NOT DISABLE_DOWNLOADS))
+if(DISABLE_DOWNLOADS)
+  find_package(StbImage REQUIRED)
+# Download stb_image for image loading if not found.
+elseif(NOT STB_IMAGE_FOUND AND (NOT DISABLE_DOWNLOADS))
   get_deps(http://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
   set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
   find_package(StbImage REQUIRED)
@@ -309,18 +319,20 @@ if (NOT STB_IMAGE_FOUND AND (NOT DISABLE_DOWNLOADS))
 endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
-# Find ensmallen, if not download it.
-find_package(Ensmallen "${ENSMALLEN_VERSION}")
-if(NOT ENSMALLEN_FOUND AND (NOT DISABLE_DOWNLOADS))
+# Find ensmallen.
+if(DISABLE_DOWNLOADS)
+  find_package(Ensmallen "${ENSMALLEN_VERSION}" REQUIRED)
+elseif(NOT ENSMALLEN_FOUND AND (NOT DISABLE_DOWNLOADS))
   get_deps(http://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
    set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
    find_package(Ensmallen REQUIRED)
 endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 
-# Find cereal, if not download it.
-find_package(cereal "${CEREAL_VERSION}")
-if(NOT CEREAL_FOUND AND (NOT DISABLE_DOWNLOADS))
+# Find cereal.
+if(DISABLE_DOWNLOADS)
+  find_package(cereal "${CEREAL_VERSION}" REQUIRED)
+elseif(NOT CEREAL_FOUND AND (NOT DISABLE_DOWNLOADS))
   get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
   set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
   find_package(cereal REQUIRED)
@@ -354,8 +366,9 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost "${BOOST_VERSION}")
-if(NOT Boost_FOUND AND (NOT DISABLE_DOWNLOADS))
+if(DISABLE_DOWNLOADS)
+  find_package(Boost "${BOOST_VERSION}" REQUIRED)
+elseif(NOT Boost_FOUND AND (NOT DISABLE_DOWNLOADS))
   get_deps(https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.gz boost boost_1_75_0.tar.gz)
   find_package(Boost REQUIRED)
 endif()
