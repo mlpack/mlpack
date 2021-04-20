@@ -1,9 +1,9 @@
-## This function auto-download mlpack dependencies.
+## This function auto-downloads mlpack dependencies.
 ## You need to pass the LINK to download from, the name of
 ## the dependency, and the name of the compressed package such as
 ## armadillo.tar.gz
-## At each download, this module set a GENERIC_INCLUDE_DIR path,
-## which mean that you need to set the main path for the include
+## At each download, this module sets a GENERIC_INCLUDE_DIR path,
+## which means that you need to set the main path for the include
 ## directories for each package.
 ## Note that, the package should be compressed only as .tar.gz
 
@@ -21,7 +21,7 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
       # Get the name of the directory.
       file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
           "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*.*")
-      # Clean this line when boost is removed
+      # Clean this line when boost is removed.
       if (${DEPS_NAME} MATCHES "boost")
         file (GLOB DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
             "${CMAKE_BINARY_DIR}/deps/${DEPS_NAME}*_*")
@@ -31,7 +31,7 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
       endif()
       # list(FILTER) is not available on 3.5 or older, but try to keep
       # configuring without filtering the list anyway 
-      # (it works only the file is present as .tar.gz).
+      # (it works only if the file is present as .tar.gz).
       if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
         list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.gz")
       endif ()
@@ -46,7 +46,7 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
         endif()
       else ()
         message(FATAL_ERROR 
-                "Problem unpacking ${DEPS_NAME}! Expected only one directory ${DEPS_NAME};. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
+                "Problem unpacking ${DEPS_NAME}! Expected only one directory ${DEPS_NAME};. Try to remove the directory ${CMAKE_BINARY_DIR}/deps and reconfigure.")
       endif ()
     else ()
       list(GET DOWNLOAD_STATUS_LIST 1 DOWNLOAD_ERROR)

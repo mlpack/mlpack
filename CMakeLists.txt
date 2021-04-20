@@ -50,9 +50,9 @@ else()
       "Compile shared libraries (if OFF, static libraries and binaries are compiled)." ON)
 endif()
 
-# Support preference of static libs by adjusting CMAKE_FIND_LIBRARY_SUFFIXES
+# Support preference of static libs by adjusting CMAKE_FIND_LIBRARY_SUFFIXES.
 if (NOT BUILD_SHARED_LIBS)
-  if (WIN32)
+  if(WIN32)
     list(INSERT CMAKE_FIND_LIBRARY_SUFFIXES 0 .lib .a)
   else()
     set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
