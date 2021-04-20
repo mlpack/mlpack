@@ -1,4 +1,4 @@
-## This file handle corss-compilation configurations for aarch64,
+## This file handles cross-compilation configurations for aarch64,
 ## known as arm64. The objective of this file is to find and assign
 ## cross-compiler and the entire toolchain.
 ## It works best with buildroot toolchain, when using it the user
