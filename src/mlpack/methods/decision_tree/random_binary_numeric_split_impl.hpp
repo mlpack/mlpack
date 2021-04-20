@@ -12,7 +12,7 @@
 #ifndef MLPACK_METHODS_DECISION_TREE_RANDOM_BINARY_NUMERIC_SPLIT_IMPL_HPP
 #define MLPACK_METHODS_DECISION_TREE_RANDOM_BINARY_NUMERIC_SPLIT_IMPL_HPP
 
-#include <random>
+#include <mlpack/core/math/random.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -48,16 +48,8 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   if (maxValue == minValue)
     return DBL_MAX;
 
-  /*
-  Just for making review easy, the following bit of code is taken directly from
-  https://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
-  to generate a random number. (To be removed before merge)
-  */
   // Picking a random pivot to split the dimension.
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_real_distribution<> distribution(minValue, maxValue);
-  double randomPivot = distribution(gen);
+  double randomPivot = math::Random(minValue, maxValue);
 
   // We need to count the number of points for each class.
   arma::Mat<size_t> classCounts;
