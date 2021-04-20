@@ -20,9 +20,9 @@ option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 set(BOARD_NAME "" CACHE INTERNAL "Enter the board name to compile mlpack for.")
 
-if(CMAKE_CROSSCOMPILING)
+if (CMAKE_CROSSCOMPILING)
   include(board/flags-config.cmake)
-  if(BOARD_NAME STRGREATER  "")
+  if (BOARD_NAME STRGREATER  "")
     flags(${BOARD_NAME})
   endif()
 endif()
@@ -51,8 +51,8 @@ else()
 endif()
 
 # Support preference of static libs by adjusting CMAKE_FIND_LIBRARY_SUFFIXES
-if(NOT BUILD_SHARED_LIBS)
-  if(WIN32)
+if (NOT BUILD_SHARED_LIBS)
+  if (WIN32)
     list(INSERT CMAKE_FIND_LIBRARY_SUFFIXES 0 .lib .a)
   else()
     set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
@@ -135,7 +135,7 @@ endif ()
 # Set the CFLAGS and CXXFLAGS depending on the options the user specified.
 # Only GCC-like compilers support -Wextra, and other compilers give tons of
 # output for -Wall, so only -Wall and -Wextra on GCC.
-if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   # Ensure that we can't compile with clang 3.4, since this causes strange
   # issues.
   if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.5)
@@ -162,7 +162,7 @@ endif ()
 
 # If we are using MINGW, we need sections and big-obj, otherwise we create too
 # many sections.
-if(CMAKE_COMPILER_IS_GNUCC AND WIN32)
+if (CMAKE_COMPILER_IS_GNUCC AND WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
 endif()
@@ -171,7 +171,7 @@ endif()
 # OS (at least on some systems). Further, gcc sometimes optimizes calls to
 # math.h functions, making -lm unnecessary with gcc, but it may still be
 # necessary with clang.
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   if (APPLE)
     # Detect OS X version. Use '/usr/bin/sw_vers -productVersion' to
     # extract V from '10.V.x'.
@@ -184,7 +184,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
      # OSX Lion (10.7) and OS X Mountain Lion (10.8) doesn't automatically
      # select the right stdlib.
-    if(${MACOSX_VERSION} LESS 9)
+    if (${MACOSX_VERSION} LESS 9)
       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
       set(CMAKE_SHARED_LINKER_FLAGS
           "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
@@ -205,14 +205,14 @@ endif()
 
 # If we're using gcc, then we need to link against pthreads to use std::thread,
 # which we do in the tests.
-if(CMAKE_COMPILER_IS_GNUCC)
+if (CMAKE_COMPILER_IS_GNUCC)
   find_package(Threads)
   set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES}
       ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
-if(DEBUG)
+if (DEBUG)
   if (NOT MSVC)
     add_definitions(-DDEBUG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
@@ -221,10 +221,10 @@ if(DEBUG)
 
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
   # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
-  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(Bfd)
     find_package(LibDL)
-    if(LIBBFD_FOUND AND LIBDL_FOUND)
+    if (LIBBFD_FOUND AND LIBDL_FOUND)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic")
       set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${LIBBFD_INCLUDE_DIRS}
           ${LIBDL_INCLUDE_DIRS})
@@ -248,19 +248,19 @@ else()
 endif()
 
 # Profiling CFLAGS.  Turn profiling information on.
-if(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
+if (CMAKE_COMPILER_IS_GNUCC AND PROFILE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 endif()
 
 # If the user asked for running test cases with verbose output, turn that on.
-if(TEST_VERBOSE)
+if (TEST_VERBOSE)
   add_definitions(-DTEST_VERBOSE)
 endif()
 
 # If the user asked for extra Armadillo debugging output, turn that on.
-if(ARMA_EXTRA_DEBUG)
+if (ARMA_EXTRA_DEBUG)
   add_definitions(-DARMA_EXTRA_DEBUG)
 endif()
 
@@ -277,9 +277,9 @@ endif()
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
 
-if(CMAKE_CROSSCOMPILING)
+if (CMAKE_CROSSCOMPILING)
   get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v0.3.13/OpenBLAS-0.3.13.tar.gz OpenBLAS OpenBLAS-0.3.13.tar.gz)
-  if(NOT MSVC)
+  if (NOT MSVC)
     execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
                     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13)
     file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a")
@@ -291,11 +291,11 @@ endif()
 
 # Remove support for older 32bit system, if we need to have 32bit system
 # Since we are cross compiling, We will download it into the deps folder,
-if(DISABLE_DOWNLOADS)
+if (DISABLE_DOWNLOADS)
   find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 else()
   find_package(Aramdillo "${ARMADILLO_VERSION}")
-  if(NOT ARMADILLO_FOUND)
+  if (NOT ARMADILLO_FOUND)
     get_deps(http://files.mlpack.org/armadillo-10.3.0.tar.gz armadillo armadillo-10.3.0.tar.gz)
     set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_package(Armadillo REQUIRED)
@@ -304,16 +304,16 @@ endif()
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 # We do have to link with Armadillo if we are NOT cross compiling
-if(NOT CMAKE_CROSSCOMPILING)
+if (NOT CMAKE_CROSSCOMPILING)
   set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 endif()
 
 # Find stb_image.h and stb_image_write.h.
-if(DISABLE_DOWNLOADS)
+if (DISABLE_DOWNLOADS)
   find_package(StbImage REQUIRED)
 else()
   find_package(StbImage)
-  if(NOT STB_IMAGE_FOUND)
+  if (NOT STB_IMAGE_FOUND)
     get_deps(http://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
     set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_package(StbImage REQUIRED)
@@ -324,11 +324,11 @@ endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
 # Find ensmallen.
-if(DISABLE_DOWNLOADS)
+if (DISABLE_DOWNLOADS)
   find_package(Ensmallen "${ENSMALLEN_VERSION}" REQUIRED)
 else()
   find_package(Ensmallen "${ENSMALLEN_VERSION}")
-  if(NOT ENSMALLEN_FOUND)
+  if (NOT ENSMALLEN_FOUND)
     get_deps(http://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
     set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_package(Ensmallen REQUIRED)
@@ -337,11 +337,11 @@ endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 
 # Find cereal.
-if(DISABLE_DOWNLOADS)
+if (DISABLE_DOWNLOADS)
   find_package(cereal "${CEREAL_VERSION}" REQUIRED)
 else()
   find_package(cereal "${CEREAL_VERSION}")
-  if(NOT CEREAL_FOUND)
+  if (NOT CEREAL_FOUND)
     get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
     set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_package(cereal REQUIRED)
@@ -376,11 +376,11 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-if(DISABLE_DOWNLOADS)
+if (DISABLE_DOWNLOADS)
   find_package(Boost "${BOOST_VERSION}" REQUIRED)
 else()
   find_package(Boost "${BOOST_VERSION}")
-  if(NOT Boost_FOUND)
+  if (NOT Boost_FOUND)
     get_deps(https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.gz boost boost_1_75_0.tar.gz)
     find_package(Boost REQUIRED)
   endif()
@@ -407,7 +407,7 @@ if (OPENMP_FOUND)
   add_definitions(-DHAS_OPENMP)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-  if(OpenMP_CXX_FOUND)
+  if (OpenMP_CXX_FOUND)
     set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
   endif ()
 else ()
