@@ -301,10 +301,7 @@ else()
 endif()
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
-# We do have to link with Armadillo if we are NOT cross compiling.
-if (NOT CMAKE_CROSSCOMPILING)
-  set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
-endif()
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
 # Find stb_image.h and stb_image_write.h.
 if (DISABLE_DOWNLOADS)
