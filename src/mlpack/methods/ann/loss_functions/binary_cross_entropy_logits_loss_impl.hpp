@@ -64,6 +64,7 @@ void BCELossWithLogits<InputDataType, OutputDataType>::serialize(
     const uint32_t /* version */)
 {
   ar(CEREAL_NVP(eps));
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann
