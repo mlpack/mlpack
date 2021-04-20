@@ -1,16 +1,16 @@
 /**
- * @file methods/decision_tree/best_binary_numeric_split.hpp
- * @author Ryan Curtin
+ * @file methods/decision_tree/random_binary_numeric_split.hpp
+ * @author Rishabh Garg
  *
- * A tree splitter that finds the best binary numeric split.
+ * A tree splitter that finds a random binary numeric split.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_DECISION_TREE_BEST_BINARY_NUMERIC_SPLIT_HPP
-#define MLPACK_METHODS_DECISION_TREE_BEST_BINARY_NUMERIC_SPLIT_HPP
+#ifndef MLPACK_METHODS_DECISION_TREE_RANDOM_BINARY_NUMERIC_SPLIT_HPP
+#define MLPACK_METHODS_DECISION_TREE_RANDOM_BINARY_NUMERIC_SPLIT_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -18,13 +18,14 @@ namespace mlpack {
 namespace tree {
 
 /**
- * The BestBinaryNumericSplit is a splitting function for decision trees that
- * will exhaustively search a numeric dimension for the best binary split.
+ * The RandomBinaryNumericSplit is a splitting function for decision trees that
+ * will split based on a randomly selected point between the minimum
+ * and maximum value of the numerical dimension.
  *
  * @tparam FitnessFunction Fitness function to use to calculate gain.
  */
 template<typename FitnessFunction>
-class BestBinaryNumericSplit
+class RandomBinaryNumericSplit
 {
  public:
   // No extra info needed for split.
