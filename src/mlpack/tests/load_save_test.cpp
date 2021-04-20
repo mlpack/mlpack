@@ -2485,3 +2485,22 @@ TEST_CASE("DatasetMapperNonUniqueTest", "[LoadSaveTest]")
   REQUIRE(dm.UnmapString(nan, 0, 1) == "goodbye");
   REQUIRE(dm.UnmapString(nan, 0, 2) == "cheese");
 }
+
+/**
+ * Make sure if we load a CSV with a header, that that header doesn't get loaded
+ * as a point.
+ */
+TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest]")
+{
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "a, b, c, d" << endl;
+  f << "1, 2, 3, 4" << endl;
+  f << "5, 6, 7, 8" << endl;
+
+  arma::mat dataset;
+  data::Load("test.csv", dataset);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 2);
+}

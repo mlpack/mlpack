@@ -16,10 +16,10 @@ namespace mlpack {
 namespace util {
 
 /**
- * Convert a string to lowercase letters.
- *
- * @param input The string to convert.
- */
+ * Convert a string to lowercase letters.
+ *
+ * @param input The string to convert.
+ */
 inline std::string ToLower(const std::string& input)
 {
   std::string output;

@@ -19,23 +19,39 @@
 namespace mlpack {
 namespace tree {
 
+/**
+ * The RandomForest class provides an implementation of random forests,
+ * described in Breiman's seminal paper:
+ *
+ * @code
+ * @article{breiman2001random,
+ *   title={Random forests},
+ *   author={Breiman, Leo},
+ *   journal={Machine Learning},
+ *   volume={45},
+ *   number={1},
+ *   pages={5--32},
+ *   year={2001},
+ *   publisher={Springer}
+ * }
+ * @endcode
+ */
 template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
-         template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         typename ElemType = double>
+         template<typename> class CategoricalSplitType = AllCategoricalSplit>
 class RandomForest
 {
  public:
   //! Allow access to the underlying decision tree type.
   typedef DecisionTree<FitnessFunction, NumericSplitType, CategoricalSplitType,
-      DimensionSelectionType, ElemType> DecisionTreeType;
+      DimensionSelectionType> DecisionTreeType;
 
   /**
    * Construct the random forest without any training or specifying the number
    * of trees.  Predict() will throw an exception until Train() is called.
    */
-  RandomForest() { }
+  RandomForest();
 
   /**
    * Create a random forest, training on the given labeled training data with
@@ -167,6 +183,8 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest otherwise a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
@@ -178,6 +196,7 @@ class RandomForest
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
+               const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -198,6 +217,8 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest else a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
@@ -210,6 +231,7 @@ class RandomForest
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
+               const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -228,6 +250,8 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest else a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
@@ -240,6 +264,7 @@ class RandomForest
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
+               const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -260,6 +285,8 @@ class RandomForest
    * @param minimumLeafSize Minimum number of points in each tree's leaf nodes.
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
+   * @param warmStart When set to `true`, it adds `numTrees` new trees to the
+   *     existing random forest else a new forest is trained from scratch.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The average entropy of all the decision trees trained under forest.
    */
@@ -273,6 +300,7 @@ class RandomForest
                const size_t minimumLeafSize = 1,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
+               const bool warmStart = false,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType());
 
@@ -354,6 +382,8 @@ class RandomForest
    * @param minimumGainSplit Minimum gain for splitting a decision tree node.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param warmStart When set to `true`, it fits new trees and add them to the
+   *     previous forest else a new forest is trained from scratch.
    * @tparam UseWeights Whether or not to use the weights parameter.
    * @tparam UseDatasetInfo Whether or not to use the datasetInfo parameter.
    * @tparam MatType The type of data matrix (i.e. arma::mat).
@@ -369,10 +399,14 @@ class RandomForest
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector);
+               DimensionSelectionType& dimensionSelector,
+               const bool warmStart = false);
 
   //! The trees in the forest.
   std::vector<DecisionTreeType> trees;
+
+  //! The average gain of the forest.
+  double avgGain;
 };
 
 } // namespace tree

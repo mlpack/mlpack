@@ -166,9 +166,17 @@ class MeanPooling
       for (size_t i = 0, rowidx = 0; i < output.n_rows;
            ++i, rowidx += strideWidth)
       {
+        size_t rowEnd = rowidx + kernelWidth - 1;
+        size_t colEnd = colidx + kernelHeight - 1;
+
+        if (rowEnd > input.n_rows - 1)
+          rowEnd = input.n_rows - 1;
+        if (colEnd > input.n_cols - 1)
+          colEnd = input.n_cols - 1;
+
         arma::mat subInput = input(
-            arma::span(rowidx, rowidx + kernelWidth - 1 - offset),
-            arma::span(colidx, colidx + kernelHeight - 1 - offset));
+            arma::span(rowidx, rowEnd),
+            arma::span(colidx, colEnd));
 
         output(i, j) = arma::mean(arma::mean(subInput));
       }
@@ -186,22 +194,36 @@ class MeanPooling
                  const arma::Mat<eT>& error,
                  arma::Mat<eT>& output)
   {
-    const size_t rStep = input.n_rows / error.n_rows - offset;
-    const size_t cStep = input.n_cols / error.n_cols - offset;
 
     arma::Mat<eT> unpooledError;
-    for (size_t j = 0; j < input.n_cols - cStep; j += cStep)
+    for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, colidx++)
     {
-      for (size_t i = 0; i < input.n_rows - rStep; i += rStep)
-      {
-        const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
-            arma::span(j, j + cStep - 1));
+      for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, rowidx++)
+      { 
+        size_t rowEnd = i + kernelWidth - 1;
+        size_t colEnd = j + kernelHeight - 1;
 
-        unpooledError = arma::Mat<eT>(inputArea.n_rows, inputArea.n_cols);
-        unpooledError.fill(error(i / rStep, j / cStep) / inputArea.n_elem);
+        if (rowEnd > input.n_rows - 1)
+        {
+          if (floor)
+            continue;
+          rowEnd = input.n_rows - 1;
+        }
 
-        output(arma::span(i, i + rStep - 1 - offset),
-            arma::span(j, j + cStep - 1 - offset)) += unpooledError;
+        if (colEnd > input.n_cols - 1)
+        {
+          if (floor)
+            continue;
+          colEnd = input.n_cols - 1;
+        }
+
+        arma::mat InputArea = input(arma::span(i, rowEnd), arma::span(j, colEnd));
+
+        unpooledError = arma::Mat<eT>(InputArea.n_rows, InputArea.n_cols);
+        unpooledError.fill(error(rowidx, colidx) / InputArea.n_elem);
+
+        output(arma::span(i, i + InputArea.n_rows - 1),
+            arma::span(j, j + InputArea.n_cols - 1)) += unpooledError;
       }
     }
   }
@@ -244,9 +266,6 @@ class MeanPooling
 
   //! If true use maximum a posteriori during the forward pass.
   bool deterministic;
-
-  //! Locally-stored stored rounding offset.
-  size_t offset;
 
   //! Locally-stored number of input units.
   size_t batchSize;

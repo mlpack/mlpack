@@ -1,6 +1,9 @@
 ### mlpack ?.?.?
 ###### ????-??-??
   * Added Binary Cross Entropy Logits Loss
+  
+  * Added warm start feature to Random Forest (#2881); this feature is
+    accessible from mlpack's bindings to different languages.
 
   * Added Pixel Shuffle layer (#2563).
 
@@ -38,6 +41,12 @@
 
   * Add `Lambda1()`, `Lambda2()`, `UseCholesky()`, and `Tolerance()` members to
     `LARS` so parameters for training can be modified (#2861).
+
+  * Remove unused `ElemType` template parameter from `DecisionTree` and
+    `RandomForest` (#2874).
+
+  * Fix Python binding build when the CMake variable `USE_OPENMP` is set to
+    `OFF` (#2884).
 
 ### mlpack 3.4.2
 ###### 2020-10-26
