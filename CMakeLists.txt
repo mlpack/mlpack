@@ -283,7 +283,6 @@ if(CMAKE_CROSSCOMPILING)
     execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
                     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13)
     file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a")
-    # set(OPENBLAS_LIBRARIES ${OPENBLAS})
   endif()
   find_library(GFORTRAN NAMES libgfortran.a PATHS ${CMAKE_SYSROOT}/usr/lib)
   find_library(PTHREAD NAMES libpthread.a PATHS ${CMAKE_SYSROOT}/usr/lib)
