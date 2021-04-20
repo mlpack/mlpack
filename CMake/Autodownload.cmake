@@ -31,7 +31,7 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
       endif()
       # list(FILTER) is not available on 3.5 or older, but try to keep
       # configuring without filtering the list anyway 
-      # (it works only the file is present as .tar.gz).
+      # (it works only if the file is present as .tar.gz).
       if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
         list(FILTER DIRECTORIES EXCLUDE REGEX ".*\.tar\.gz")
       endif ()
