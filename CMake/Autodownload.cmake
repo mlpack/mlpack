@@ -46,7 +46,7 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
         endif()
       else ()
         message(FATAL_ERROR 
-                "Problem unpacking ${DEPS_NAME}! Expected only one directory ${DEPS_NAME};. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
+                "Problem unpacking ${DEPS_NAME}! Expected only one directory ${DEPS_NAME};. Try to remove the directory ${CMAKE_BINARY_DIR}/deps and reconfigure.")
       endif ()
     else ()
       list(GET DOWNLOAD_STATUS_LIST 1 DOWNLOAD_ERROR)
