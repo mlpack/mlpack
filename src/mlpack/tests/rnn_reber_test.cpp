@@ -20,7 +20,7 @@
 #include <mlpack/core/math/random.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 #include "custom_layer.hpp"
 
 using namespace mlpack;
@@ -106,7 +106,7 @@ template<typename MatType>
 void ReberReverseTranslation(const MatType& translation, char& symbol)
 {
   arma::Col<char> symbols;
-  symbols << 'B' << 'T' << 'S' << 'X' << 'P' << 'V' << 'E' << arma::endr;
+  symbols = { 'B', 'T', 'S', 'X', 'P', 'V', 'E' };
   const int idx = arma::as_scalar(arma::find(translation == 1, 1, "first"));
 
   symbol = symbols(idx);
@@ -121,7 +121,7 @@ void ReberReverseTranslation(const MatType& translation, char& symbol)
 void ReberTranslation(const char symbol, arma::colvec& translation)
 {
   arma::Col<char> symbols;
-  symbols << 'B' << 'T' << 'S' << 'X' << 'P' << 'V' << 'E' << arma::endr;
+  symbols = { 'B', 'T', 'S', 'X', 'P', 'V', 'E' };
   const int idx = arma::as_scalar(arma::find(symbols == symbol, 1, "first"));
 
   translation = arma::zeros<arma::colvec>(7);
@@ -179,7 +179,6 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
     else if (c == 'P' && state == 1)
     {
       numPs++;
-      state = 1;
     }
     else if (c == 'T' && state == 1)
     {
@@ -206,7 +205,6 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
     else if (c == 'P' && state == 5)
     {
       numPs--;
-      state = 5;
     }
   }
 
@@ -261,12 +259,12 @@ arma::Mat<char> GenerateReberGrammarData(
   // Reber state transition matrix. (The last two columns are the indices to the
   // next path).
   arma::Mat<char> transitions;
-  transitions << 'T' << 'P' << '1' << '2' << arma::endr
-              << 'X' << 'S' << '3' << '1' << arma::endr
-              << 'V' << 'T' << '4' << '2' << arma::endr
-              << 'X' << 'S' << '2' << '5' << arma::endr
-              << 'P' << 'V' << '3' << '5' << arma::endr
-              << 'E' << 'E' << '0' << '0' << arma::endr;
+  transitions = { { 'T', 'P', '1', '2' },
+                  { 'X', 'S', '3', '1' },
+                  { 'V', 'T', '4', '2' },
+                  { 'X', 'S', '2', '5' },
+                  { 'P', 'V', '3', '5' },
+                  { 'E', 'E', '0', '0' } };
 
 
   std::string trainReber, testReber;

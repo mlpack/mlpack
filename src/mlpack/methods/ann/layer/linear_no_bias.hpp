@@ -123,6 +123,18 @@ class LinearNoBias
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the size of the weights.
+  size_t WeightSize() const
+  {
+    return inSize * outSize;
+  }
+
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer
    */

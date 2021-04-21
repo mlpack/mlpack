@@ -187,8 +187,29 @@ TEST_CASE("R2ScoreTest", "[CVTest]")
 
   double expectedR2 = 0.99999779;
 
-  REQUIRE(R2Score::Evaluate(lr, data, responses)
+  REQUIRE(R2Score<false>::Evaluate(lr, data, responses)
           == Approx(expectedR2).epsilon(1e-7));
+}
+
+/**
+ * Test the Adjusted R squared metric.
+ */
+TEST_CASE("AdjR2ScoreTest", "[CVTest]")
+{
+  // Making two variables that define the linear function is
+  // f(x1, x2) = x1 + x2.
+  arma::mat X;
+  X = { { 1, 2, 3, 4, 5, 6 },
+        { 2, 3, 4, 5, 6, 7 } };
+  arma::rowvec Y;
+  Y = { 3, 5, 7, 9, 11, 13 };
+
+  LinearRegression lr(X, Y);
+
+  // Theoretically Adjusted R squared should be equal 1
+  double expAdjR2 = 1;
+  REQUIRE(std::abs(R2Score<true>::Evaluate(lr, X, Y) - expAdjR2)
+          <= 1e-7);
 }
 
 /**
@@ -750,10 +771,10 @@ TEST_CASE("KFoldCVWithDTTestUnevenBinsWeighted", "[CVTest]")
 TEST_CASE("SilhouetteScoreTest", "[CVTest]")
 {
   arma::mat X;
-  X << 0 << 1 << 1 << 0 << 0 << arma::endr
-    << 0 << 1 << 2 << 0 << 0 << arma::endr
-    << 1 << 1 << 3 << 2 << 0 << arma::endr;
-  arma::Row<size_t> labels = {0, 1, 2, 0, 0};
+  X = { { 0, 1, 1, 0, 0 },
+        { 0, 1, 2, 0, 0 },
+        { 1, 1, 3, 2, 0 } };
+  arma::Row<size_t> labels = { 0, 1, 2, 0, 0 };
   metric::EuclideanDistance metric;
   double silhouetteScore = SilhouetteScore::Overall(X, labels, metric);
   REQUIRE(silhouetteScore == Approx(0.1121684822489150).epsilon(1e-7));

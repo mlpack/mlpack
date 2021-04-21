@@ -27,20 +27,20 @@ CosineEmbeddingLoss<InputDataType, OutputDataType>::CosineEmbeddingLoss(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 CosineEmbeddingLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  typedef typename InputType::elem_type ElemType;
+  typedef typename PredictionType::elem_type ElemType;
 
-  const size_t cols = input.n_cols;
-  const size_t batchSize = input.n_elem / cols;
-  if (arma::size(input) != arma::size(target))
+  const size_t cols = prediction.n_cols;
+  const size_t batchSize = prediction.n_elem / cols;
+  if (arma::size(prediction) != arma::size(target))
     Log::Fatal << "Input Tensors must have same dimensions." << std::endl;
 
-  arma::colvec inputTemp1 = arma::vectorise(input);
+  arma::colvec inputTemp1 = arma::vectorise(prediction);
   arma::colvec inputTemp2 = arma::vectorise(target);
   ElemType loss = 0.0;
 
@@ -65,23 +65,23 @@ CosineEmbeddingLoss<InputDataType, OutputDataType>::Forward(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType, typename OutputType>
+template<typename PredictionType, typename TargetType, typename LossType>
 void CosineEmbeddingLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  typedef typename InputType::elem_type ElemType;
+  typedef typename PredictionType::elem_type ElemType;
 
-  const size_t cols = input.n_cols;
-  if (arma::size(input) != arma::size(target))
+  const size_t cols = prediction.n_cols;
+  if (arma::size(prediction) != arma::size(target))
     Log::Fatal << "Input Tensors must have same dimensions." << std::endl;
 
-  arma::colvec inputTemp1 = arma::vectorise(input);
+  arma::colvec inputTemp1 = arma::vectorise(prediction);
   arma::colvec inputTemp2 = arma::vectorise(target);
-  output.set_size(arma::size(inputTemp1));
+  loss.set_size(arma::size(inputTemp1));
 
-  arma::colvec outputTemp(output.memptr(), inputTemp1.n_elem,
+  arma::colvec outputTemp(loss.memptr(), inputTemp1.n_elem,
       false, false);
   for (size_t i = 0; i < inputTemp1.n_elem; i += cols)
   {

@@ -177,6 +177,12 @@ class Highway
   //! Get the number of input units.
   size_t InSize() const { return inSize; }
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer.
    */

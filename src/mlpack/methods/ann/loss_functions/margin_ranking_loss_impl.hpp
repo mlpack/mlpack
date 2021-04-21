@@ -26,37 +26,41 @@ MarginRankingLoss<InputDataType, OutputDataType>::MarginRankingLoss(
 }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename InputType, typename TargetType>
-typename InputType::elem_type
+template<typename PredictionType, typename TargetType>
+typename PredictionType::elem_type
 MarginRankingLoss<InputDataType, OutputDataType>::Forward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target)
 {
-  const int inputRows = input.n_rows;
-  const InputType& input1 = input.rows(0, inputRows / 2 - 1);
-  const InputType& input2 = input.rows(inputRows / 2, inputRows - 1);
+  const int predictionRows = prediction.n_rows;
+  const PredictionType& prediction1 = prediction.rows(0,
+      predictionRows / 2 - 1);
+  const PredictionType& prediction2 = prediction.rows(predictionRows / 2,
+      predictionRows - 1);
   return arma::accu(arma::max(arma::zeros(size(target)),
-      -target % (input1 - input2) + margin)) / target.n_cols;
+      -target % (prediction1 - prediction2) + margin)) / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template <
-    typename InputType,
+    typename PredictionType,
     typename TargetType,
-    typename OutputType
+    typename LossType
 >
 void MarginRankingLoss<InputDataType, OutputDataType>::Backward(
-    const InputType& input,
+    const PredictionType& prediction,
     const TargetType& target,
-    OutputType& output)
+    LossType& loss)
 {
-  const int inputRows = input.n_rows;
-  const InputType& input1 = input.rows(0, inputRows / 2 - 1);
-  const InputType& input2 = input.rows(inputRows / 2, inputRows - 1);
-  output = -target % (input1 - input2) + margin;
-  output.elem(arma::find(output >= 0)).ones();
-  output.elem(arma::find(output < 0)).zeros();
-  output = (input2 - input1) % output / target.n_cols;
+  const int predictionRows = prediction.n_rows;
+  const PredictionType& prediction1 = prediction.rows(0,
+      predictionRows / 2 - 1);
+  const PredictionType& prediction2 = prediction.rows(predictionRows / 2,
+      predictionRows - 1);
+  loss = -target % (prediction1 - prediction2) + margin;
+  loss.elem(arma::find(loss >= 0)).ones();
+  loss.elem(arma::find(loss < 0)).zeros();
+  loss = (prediction2 - prediction1) % loss / target.n_cols;
 }
 
 template<typename InputDataType, typename OutputDataType>

@@ -98,17 +98,8 @@ inline std::string GetPrintableType(
         std::tuple<data::DatasetInfo, arma::mat>>>::type*)
 {
   std::string type = "*mat.Dense";
-  if (std::is_same<typename T::elem_type, double>::value)
-  {
-    if (T::is_row || T::is_col)
-      type = "*mat.Dense (1d)";
-  }
-  else if (std::is_same<typename T::elem_type, size_t>::value)
-  {
-    type = "*mat.Dense (with ints)";
-    if (T::is_row || T::is_col)
-      type = "*mat.Dense (1d with ints)";
-  }
+  if (T::is_row || T::is_col)
+    type = "*mat.Dense (1d)";
 
   return type;
 }

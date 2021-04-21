@@ -204,7 +204,8 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMaximumDepthTest",
 }
 
 /**
- * Make sure only one of training data or pre-trained model is passed.
+ * Make sure only one of training data or pre-trained model is passed, when
+ * warm_start is not passed.
  */
 TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingVerTest",
                  "[RandomForestMainTest][BindingTests]")
@@ -452,4 +453,75 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMaxDepthTest",
   delete rf1;
   delete rf2;
   delete rf3;
+}
+
+/**
+ * Make sure that training and input_model are both passed when warm_start is
+ * false.
+ */
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingModelWarmStart",
+                 "[RandomForestMainTest][BindingTests]")
+{
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("labels", std::move(labels));
+
+  mlpackMain();
+
+  // Setting warm_start flag.
+  SetInputParam("warm_start", false);
+
+  Log::Fatal.ignoreInput = true;
+  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  Log::Fatal.ignoreInput = false;
+}
+
+/**
+ * Ensuring that model does gets trained on top of existing one when warm_start
+ * and input_model are both passed.
+ */
+TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestWarmStart",
+                 "[RandomForestMainTest][BindingTests]")
+{
+  arma::mat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load train dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Input training data.
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
+
+  mlpackMain();
+
+  // Old number of trees in the model.
+  size_t oldNumTrees =
+      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
+
+  // Input training data.
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("warm_start", true);
+
+  // Input pre-trained model.
+  SetInputParam("input_model",
+                IO::GetParam<RandomForestModel*>("output_model"));
+
+  mlpackMain();
+
+  size_t newNumTrees =
+      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
+
+  REQUIRE(oldNumTrees + 10 == newNumTrees);
 }

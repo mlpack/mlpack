@@ -13,7 +13,7 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::neighbor;

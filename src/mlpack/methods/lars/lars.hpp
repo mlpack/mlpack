@@ -249,6 +249,26 @@ class LARS
                arma::rowvec& predictions,
                const bool rowMajor = false) const;
 
+  //! Get the L1 regularization coefficient.
+  double Lambda1() const { return lambda1; }
+  //! Modify the L1 regularization coefficient.
+  double& Lambda1() { return lambda1; }
+
+  //! Get the L2 regularization coefficient.
+  double Lambda2() const { return lambda2; }
+  //! Modify the L2 regularization coefficient.
+  double& Lambda2() { return lambda2; }
+
+  //! Get whether to use the Cholesky decomposition.
+  bool UseCholesky() const { return useCholesky; }
+  //! Modify whether to use the Cholesky decomposition.
+  bool& UseCholesky() { return useCholesky; }
+
+  //! Get the tolerance for maximum correlation during training.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance for maximum correlation during training.
+  double& Tolerance() { return tolerance; }
+
   //! Access the set of active dimensions.
   const std::vector<size_t>& ActiveSet() const { return activeSet; }
 

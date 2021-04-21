@@ -5,13 +5,13 @@
 if (DEFINED ENV{DESTDIR})
   execute_process(COMMAND ${PYTHON_EXECUTABLE}
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py" install
-          --prefix=${CMAKE_INSTALL_PREFIX} --root=$ENV{DESTDIR}
+          --prefix=${PYTHON_INSTALL_PREFIX} --root=$ENV{DESTDIR}
       WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/"
       RESULT_VARIABLE setup_res)
 else ()
   execute_process(COMMAND ${PYTHON_EXECUTABLE}
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py" install
-          --prefix=${CMAKE_INSTALL_PREFIX}
+          --prefix=${PYTHON_INSTALL_PREFIX}
       WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/"
       RESULT_VARIABLE setup_res)
 endif ()

@@ -45,7 +45,6 @@ MeanPooling<InputDataType, OutputDataType>::MeanPooling(
     outputHeight(0),
     reset(false),
     deterministic(false),
-    offset(0),
     batchSize(0)
 {
   // Nothing to do here.
@@ -67,8 +66,6 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
         (double) kernelWidth) / (double) strideWidth + 1);
     outputHeight = std::floor((inputHeight -
         (double) kernelHeight) / (double) strideHeight + 1);
-
-    offset = 0;
   }
   else
   {
@@ -76,8 +73,6 @@ void MeanPooling<InputDataType, OutputDataType>::Forward(
         (double) kernelWidth) / (double) strideWidth + 1);
     outputHeight = std::ceil((inputHeight -
         (double) kernelHeight) / (double) strideHeight + 1);
-
-    offset = 1;
   }
 
   outputTemp = arma::zeros<arma::Cube<eT> >(outputWidth, outputHeight,

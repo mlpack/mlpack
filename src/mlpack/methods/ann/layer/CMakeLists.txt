@@ -46,6 +46,8 @@ set(SOURCES
   hard_tanh_impl.hpp
   highway.hpp
   highway_impl.hpp
+  isrlu.hpp
+  isrlu_impl.hpp
   join.hpp
   join_impl.hpp
   layer.hpp
@@ -63,6 +65,8 @@ set(SOURCES
   log_softmax_impl.hpp
   lookup.hpp
   lookup_impl.hpp
+  lp_pooling.hpp
+  lp_pooling_impl.hpp
   lstm.hpp
   lstm_impl.hpp
   max_pooling.hpp
@@ -81,6 +85,8 @@ set(SOURCES
   noisylinear_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
+  pixel_shuffle.hpp
+  pixel_shuffle_impl.hpp
   positional_encoding.hpp
   positional_encoding_impl.hpp
   recurrent.hpp

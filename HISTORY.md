@@ -1,6 +1,50 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added warm start feature to Random Forest (#2881); this feature is
+    accessible from mlpack's bindings to different languages.
+
+  * Added Pixel Shuffle layer (#2563).
+
+  * Add "check_input_matrices" option to python bindings that checks
+    for NaN and inf values in all the input matrices (#2787).
+
+  * Add Adjusted R squared functionality to R2Score::Evaluate (#2624).
+
+  * Disabled all the bindings by default in CMake (#2782).
+
   * Added an implementation to Stratify Data (#2671).
+
+  * Add `BUILD_DOCS` CMake option to control whether Doxygen documentation is
+    built (default ON) (#2730).
+
+  * Add Triplet Margin Loss function (#2762).
+
+  * Add finalizers to Julia binding model types to fix memory handling (#2756).
+
+  * HMM: add functions to calculate likelihood for data stream with/without
+    pre-calculated emission probability (#2142).
+
+  * Replace Boost serialization library with Cereal (#2458).
+
+  * Add `PYTHON_INSTALL_PREFIX` CMake option to specify installation root for
+    Python bindings (#2797).
+
+  * Removed `boost::visitor` from model classes for `knn`, `kfn`, `cf`,
+    `range_search`, `krann`, and `kde` bindings (#2803).
+
+  * Add k-means++ initialization strategy (#2813).
+
+  * `NegativeLogLikelihood<>` now expects classes in the range `0` to
+    `numClasses - 1` (#2534).
+
+  * Add `Lambda1()`, `Lambda2()`, `UseCholesky()`, and `Tolerance()` members to
+    `LARS` so parameters for training can be modified (#2861).
+
+  * Remove unused `ElemType` template parameter from `DecisionTree` and
+    `RandomForest` (#2874).
+
+  * Fix Python binding build when the CMake variable `USE_OPENMP` is set to
+    `OFF` (#2884).
 
 ### mlpack 3.4.2
 ###### 2020-10-26
@@ -22,7 +66,6 @@
 
 ### mlpack 3.4.0
 ###### 2020-09-01
-
   * Issue warnings when metrics produce NaNs in KFoldCV (#2595).
 
   * Added bindings for _R_ during Google Summer of Code (#2556).

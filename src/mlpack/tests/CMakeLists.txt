@@ -26,7 +26,6 @@ add_executable(mlpack_test
   cv_test.cpp
   dbscan_test.cpp
   dcgan_test.cpp
-  decision_stump_test.cpp
   decision_tree_test.cpp
   det_test.cpp
   distribution_test.cpp
@@ -35,6 +34,7 @@ add_executable(mlpack_test
   facilities_test.cpp
   fastmks_test.cpp
   feedforward_network_test.cpp
+  feedforward_network_2_test.cpp
   gan_test.cpp
   gmm_test.cpp
   hmm_test.cpp
@@ -99,8 +99,9 @@ add_executable(mlpack_test
   reward_clipping_test.cpp
   rl_components_test.cpp
   scaling_test.cpp
-  serialization_catch.cpp
-  serialization_catch.hpp
+  size_checks_test.cpp
+  serialization.cpp
+  serialization.hpp
   serialization_test.cpp
   sfinae_test.cpp
   softmax_regression_test.cpp
@@ -129,7 +130,6 @@ add_executable(mlpack_test
   main_tests/bayesian_linear_regression_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
-  main_tests/decision_stump_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/det_test.cpp
   main_tests/emst_test.cpp
@@ -179,7 +179,6 @@ add_executable(mlpack_test
 target_link_libraries(mlpack_test
   mlpack
   ${ARMADILLO_LIBRARIES}
-  ${BOOST_LIBRARIES}
   ${COMPILER_SUPPORT_LIBRARIES}
 )
 

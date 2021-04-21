@@ -62,53 +62,57 @@ HoeffdingTreeModel::HoeffdingTreeModel(HoeffdingTreeModel&& other) :
 HoeffdingTreeModel& HoeffdingTreeModel::operator=(
     const HoeffdingTreeModel& other)
 {
-  // Clear this model.
-  delete giniHoeffdingTree;
-  delete giniBinaryTree;
-  delete infoHoeffdingTree;
-  delete infoBinaryTree;
+  if (this != &other)
+  {
+    // Clear this model.
+    delete giniHoeffdingTree;
+    delete giniBinaryTree;
+    delete infoHoeffdingTree;
+    delete infoBinaryTree;
 
-  giniHoeffdingTree = NULL;
-  giniBinaryTree = NULL;
-  infoHoeffdingTree = NULL;
-  infoBinaryTree = NULL;
+    giniHoeffdingTree = NULL;
+    giniBinaryTree = NULL;
+    infoHoeffdingTree = NULL;
+    infoBinaryTree = NULL;
 
-  // Create the right tree.
-  type = other.type;
-  if (other.giniHoeffdingTree && (type == GINI_HOEFFDING))
-    giniHoeffdingTree = new GiniHoeffdingTreeType(*other.giniHoeffdingTree);
-  else if (other.giniBinaryTree && (type == GINI_BINARY))
-    giniBinaryTree = new GiniBinaryTreeType(*other.giniBinaryTree);
-  else if (other.infoHoeffdingTree && (type == INFO_HOEFFDING))
-    infoHoeffdingTree = new InfoHoeffdingTreeType(*other.infoHoeffdingTree);
-  else if (other.infoBinaryTree && (type == INFO_BINARY))
-    infoBinaryTree = new InfoBinaryTreeType(*other.infoBinaryTree);
-
+    // Create the right tree.
+    type = other.type;
+    if (other.giniHoeffdingTree && (type == GINI_HOEFFDING))
+      giniHoeffdingTree = new GiniHoeffdingTreeType(*other.giniHoeffdingTree);
+    else if (other.giniBinaryTree && (type == GINI_BINARY))
+      giniBinaryTree = new GiniBinaryTreeType(*other.giniBinaryTree);
+    else if (other.infoHoeffdingTree && (type == INFO_HOEFFDING))
+      infoHoeffdingTree = new InfoHoeffdingTreeType(*other.infoHoeffdingTree);
+    else if (other.infoBinaryTree && (type == INFO_BINARY))
+      infoBinaryTree = new InfoBinaryTreeType(*other.infoBinaryTree);
+  }
   return *this;
 }
 
 // Move operator.
 HoeffdingTreeModel& HoeffdingTreeModel::operator=(HoeffdingTreeModel&& other)
 {
-  // Clear this model.
-  delete giniHoeffdingTree;
-  delete giniBinaryTree;
-  delete infoHoeffdingTree;
-  delete infoBinaryTree;
+  if (this != &other)
+  {
+    // Clear this model.
+    delete giniHoeffdingTree;
+    delete giniBinaryTree;
+    delete infoHoeffdingTree;
+    delete infoBinaryTree;
 
-  type = other.type;
-  giniHoeffdingTree = other.giniHoeffdingTree;
-  giniBinaryTree = other.giniBinaryTree;
-  infoHoeffdingTree = other.infoHoeffdingTree;
-  infoBinaryTree = other.infoBinaryTree;
+    type = other.type;
+    giniHoeffdingTree = other.giniHoeffdingTree;
+    giniBinaryTree = other.giniBinaryTree;
+    infoHoeffdingTree = other.infoHoeffdingTree;
+    infoBinaryTree = other.infoBinaryTree;
 
-  // Clear the other model.
-  other.type = GINI_HOEFFDING;
-  other.giniHoeffdingTree = NULL;
-  other.giniBinaryTree = NULL;
-  other.infoHoeffdingTree = NULL;
-  other.infoBinaryTree = NULL;
-
+    // Clear the other model.
+    other.type = GINI_HOEFFDING;
+    other.giniHoeffdingTree = NULL;
+    other.giniBinaryTree = NULL;
+    other.infoHoeffdingTree = NULL;
+    other.infoBinaryTree = NULL;
+  }
   return *this;
 }
 

@@ -152,6 +152,12 @@ class Linear
     return (inSize * outSize) + outSize;
   }
 
+  //! Get the shape of the input.  
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer
    */

@@ -16,7 +16,7 @@
 #include <mlpack/core/tree/rectangle_tree.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kde;

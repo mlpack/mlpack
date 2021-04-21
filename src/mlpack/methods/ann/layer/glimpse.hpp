@@ -182,6 +182,12 @@ class Glimpse
   //! Get the used glimpse size (height = width).
   size_t GlimpseSize() const { return size;}
 
+  //! Get the shape of the input.
+  size_t InputShape() const
+  {
+    return inSize;
+  }
+
   /**
    * Serialize the layer.
    */

@@ -111,6 +111,9 @@ class CELU
   //! Modify the value of deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
+  //! Get size of weights.
+  size_t WeightSize() { return 0; }
+
   /**
    * Serialize the layer.
    */

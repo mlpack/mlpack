@@ -43,11 +43,14 @@ namespace util {
  * @param fatal If true, output goes to Log::Fatal instead of Log::Warn and an
  *     exception is thrown.
  * @param customErrorMessage Error message to append.
+ * @param allowNone If true, then no error message will be thrown if none of the
+ *     parameters in the constraints were passed.
  */
 void RequireOnlyOnePassed(
     const std::vector<std::string>& constraints,
     const bool fatal = true,
-    const std::string& customErrorMessage = "");
+    const std::string& customErrorMessage = "",
+    const bool allowNone = false);
 
 /**
  * Require that at least one of the given parameters in the constraints set was

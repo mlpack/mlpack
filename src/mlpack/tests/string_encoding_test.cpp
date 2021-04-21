@@ -21,7 +21,7 @@
 #include <memory>
 #include "test_catch_tools.hpp"
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::data;

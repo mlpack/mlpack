@@ -21,7 +21,7 @@
 #include <ensmallen.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 #include "custom_layer.hpp"
 
 using namespace mlpack;
@@ -65,7 +65,8 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  if (!data::Load("thyroid_train.csv", trainData))
+    FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
@@ -77,7 +78,8 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   }
 
   arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
+  if (!data::Load("thyroid_test.csv", testData))
+    FAIL("Cannot open thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);

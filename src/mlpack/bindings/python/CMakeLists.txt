@@ -18,7 +18,6 @@ macro (post_python_bindings)
             -D GENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
             -D GENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
             -D PACKAGE_VERSION="${PACKAGE_VERSION}"
-            -D Boost_LIBRARY_DIRS="${Boost_LIBRARY_DIRS}"
             -D ARMADILLO_LIBRARIES="${ARMADILLO_LIBRARIES}"
             -D MLPACK_LIBRARY=$<TARGET_LINKER_FILE:mlpack>
             -D MLPACK_LIBDIR=$<TARGET_LINKER_FILE_DIR:mlpack>
@@ -215,14 +214,20 @@ add_custom_command(TARGET python POST_BUILD
 add_dependencies(python python_configured)
 
 # Configure installation script file.
+if (NOT PYTHON_INSTALL_PREFIX)
+  set(PYTHON_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+endif ()
+
 execute_process(COMMAND ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/print_python_version.py" "${CMAKE_INSTALL_PREFIX}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/print_python_version.py"
+    "${PYTHON_INSTALL_PREFIX}"
     OUTPUT_VARIABLE CMAKE_PYTHON_PATH)
 string(STRIP "${CMAKE_PYTHON_PATH}" CMAKE_PYTHON_PATH)
 install(CODE "set(ENV{PYTHONPATH} ${CMAKE_PYTHON_PATH})")
 install(CODE "set(PYTHON_EXECUTABLE \"${PYTHON_EXECUTABLE}\")")
 install(CODE "set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")")
-install(CODE "set(CMAKE_INSTALL_PREFIX \"${CMAKE_INSTALL_PREFIX}\")")
+
+install(CODE "set(PYTHON_INSTALL_PREFIX \"${PYTHON_INSTALL_PREFIX}\")")
 install(CODE "execute_process(COMMAND mkdir -p $ENV{DESTDIR}${CMAKE_PYTHON_PATH})")
 install(SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/PythonInstall.cmake")
 
@@ -240,14 +245,6 @@ if (WIN32)
   foreach (dll ${DLL_COPY_LIBS})
     file(COPY ${dll} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
   endforeach ()
-
-  # We also need to copy the boost DLLs over.
-  file(GLOB boost_ser_dll_files "${Boost_LIBRARY_DIRS}/*serialization*.dll")
-  file(COPY ${boost_ser_dll_files} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
-  file(GLOB boost_po_dll_files "${Boost_LIBRARY_DIRS}/*program*options*.dll")
-  file(COPY ${boost_po_dll_files} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
-  file(GLOB boost_utf_dll_files "${Boost_LIBRARY_DIRS}/*unit*test*framework*.dll")
-  file(COPY ${boost_utf_dll_files} DESTINATION ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)
 endif ()
 
 # Add a macro to build a python binding.

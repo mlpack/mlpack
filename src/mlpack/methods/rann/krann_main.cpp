@@ -25,9 +25,6 @@ using namespace mlpack::tree;
 using namespace mlpack::metric;
 using namespace mlpack::util;
 
-// Convenience typedef.
-typedef RAModel<NearestNeighborSort> RANNModel;
-
 // Program Name.
 BINDING_NAME("K-Rank-Approximate-Nearest-Neighbors (kRANN)");
 
@@ -86,8 +83,8 @@ PARAM_MATRIX_OUT("distances", "Matrix to output distances into.", "d");
 PARAM_UMATRIX_OUT("neighbors", "Matrix to output neighbors into.", "n");
 
 // The option exists to load or save models.
-PARAM_MODEL_IN(RANNModel, "input_model", "Pre-trained kNN model.", "m");
-PARAM_MODEL_OUT(RANNModel, "output_model", "If specified, the kNN model will be"
+PARAM_MODEL_IN(RAModel, "input_model", "Pre-trained kNN model.", "m");
+PARAM_MODEL_OUT(RAModel, "output_model", "If specified, the kNN model will be"
     " output here.", "M");
 
 // The user may specify a query file of query points and a number of nearest
@@ -170,12 +167,12 @@ static void mlpackMain()
       "alpha must be in range [0.0, 1.0]");
 
   // We either have to load the reference data, or we have to load the model.
-  RANNModel* rann;
+  RAModel* rann;
   const bool naive = IO::HasParam("naive");
   const bool singleMode = IO::HasParam("single_mode");
   if (IO::HasParam("reference"))
   {
-    rann = new RANNModel();
+    rann = new RAModel();
 
     // Get all the parameters.
     const string treeType = IO::GetParam<string>("tree_type");
@@ -184,27 +181,27 @@ static void mlpackMain()
         "unknown tree type");
     const bool randomBasis = IO::HasParam("random_basis");
 
-    RANNModel::TreeTypes tree = RANNModel::KD_TREE;
+    RAModel::TreeTypes tree = RAModel::KD_TREE;
     if (treeType == "kd")
-      tree = RANNModel::KD_TREE;
+      tree = RAModel::KD_TREE;
     else if (treeType == "cover")
-      tree = RANNModel::COVER_TREE;
+      tree = RAModel::COVER_TREE;
     else if (treeType == "r")
-      tree = RANNModel::R_TREE;
+      tree = RAModel::R_TREE;
     else if (treeType == "r-star")
-      tree = RANNModel::R_STAR_TREE;
+      tree = RAModel::R_STAR_TREE;
     else if (treeType == "x")
-      tree = RANNModel::X_TREE;
+      tree = RAModel::X_TREE;
     else if (treeType == "hilbert-r")
-      tree = RANNModel::HILBERT_R_TREE;
+      tree = RAModel::HILBERT_R_TREE;
     else if (treeType == "r-plus")
-      tree = RANNModel::R_PLUS_TREE;
+      tree = RAModel::R_PLUS_TREE;
     else if (treeType == "r-plus-plus")
-      tree = RANNModel::R_PLUS_PLUS_TREE;
+      tree = RAModel::R_PLUS_PLUS_TREE;
     else if (treeType == "ub")
-      tree = RANNModel::UB_TREE;
+      tree = RAModel::UB_TREE;
     else if (treeType == "oct")
-      tree = RANNModel::OCTREE;
+      tree = RAModel::OCTREE;
 
     rann->TreeType() = tree;
     rann->RandomBasis() = randomBasis;
@@ -218,10 +215,10 @@ static void mlpackMain()
   else
   {
     // Load the model from file.
-    rann = IO::GetParam<RANNModel*>("input_model");
+    rann = IO::GetParam<RAModel*>("input_model");
 
     Log::Info << "Using rank-approximate kNN model from '"
-        << IO::GetPrintableParam<RANNModel*>("input_model") << "' (trained on "
+        << IO::GetPrintableParam<RAModel*>("input_model") << "' (trained on "
         << rann->Dataset().n_rows << "x" << rann->Dataset().n_cols
         << " dataset)." << endl;
 
@@ -285,5 +282,5 @@ static void mlpackMain()
   }
 
   // Save the output model.
-  IO::GetParam<RANNModel*>("output_model") = rann;
+  IO::GetParam<RAModel*>("output_model") = rann;
 }

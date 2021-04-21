@@ -9,7 +9,6 @@ include(CMake/CheckHash.cmake)
 option(DEBUG "Compile with debugging information." OFF)
 option(PROFILE "Compile with profiling information." OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
-option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
@@ -17,6 +16,7 @@ option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
 option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
+option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
 # Set minimum library version required by mlpack.
 set(ARMADILLO_VERSION "8.400.0")
@@ -51,7 +51,7 @@ if (BUILD_JULIA_BINDINGS)
 else()
   set(FORCE_BUILD_JULIA_BINDINGS OFF)
 endif()
-option(BUILD_JULIA_BINDINGS "Build Julia bindings." ON)
+option(BUILD_JULIA_BINDINGS "Build Julia bindings." OFF)
 
 # Detect whether the user passed BUILD_GO_BINDINGS in order to determine if
 # we should fail if Go isn't found.
@@ -60,7 +60,7 @@ if (BUILD_GO_BINDINGS)
 else()
   set(FORCE_BUILD_GO_BINDINGS OFF)
 endif()
-option(BUILD_GO_BINDINGS "Build Go bindings." ON)
+option(BUILD_GO_BINDINGS "Build Go bindings." OFF)
 
 # If building Go bindings then build go shared libraries.
 if (BUILD_GO_BINDINGS)
@@ -74,13 +74,11 @@ if (BUILD_R_BINDINGS)
 else()
   set(FORCE_BUILD_R_BINDINGS OFF)
 endif()
-option(BUILD_R_BINDINGS "Build R bindings." ON)
+option(BUILD_R_BINDINGS "Build R bindings." OFF)
 # Build Markdown bindings for documentation.  This is used as part of website
 # generation.
 option(BUILD_MARKDOWN_BINDINGS "Build Markdown bindings for website documentation." OFF)
 
-option(BUILD_WITH_COVERAGE
-    "Build with support for code coverage tools (gcc only)." OFF)
 option(MATHJAX
     "Use MathJax for HTML Doxygen output (disabled by default)." OFF)
 option(FORCE_CXX11
@@ -195,38 +193,6 @@ if(CMAKE_COMPILER_IS_GNUCC)
       ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
-# Setup build for test coverage
-if(BUILD_WITH_COVERAGE)
-  # Currently coverage only works with GNU g++.
-  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    # Find gcov and lcov
-    find_program(GCOV gcov)
-    find_program(LCOV lcov)
-
-    if(NOT GCOV)
-      message(FATAL_ERROR
-          "gcov not found! gcov is required when BUILD_WITH_COVERAGE=ON.")
-    endif()
-
-    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "supc++")
-    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} "quadmath")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -fprofile-arcs -fkeep-inline-functions")
-    message(STATUS "Adding debug compile options for code coverage.")
-    # Remove optimizations for better line coverage
-    set(DEBUG ON)
-
-    if(LCOV)
-      configure_file(CMake/mlpack_coverage.in mlpack_coverage @ONLY)
-      add_custom_target(mlpack_coverage DEPENDS mlpack_test COMMAND ${PROJECT_BINARY_DIR}/mlpack_coverage)
-    else()
-      message(WARNING "'lcov' not found; local coverage report is disabled. "
-          "Install 'lcov' and rerun cmake to generate local coverage report.")
-    endif()
-  else()
-    message(FATAL_ERROR "BUILD_WITH_COVERAGE can only work with GNU environment.")
-  endif()
-endif()
-
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
 if(DEBUG)
   if (NOT MSVC)
@@ -288,7 +254,6 @@ endif()
 #   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
-#   BOOST_LIBRARYDIR - library directory for Boost
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
@@ -419,8 +384,10 @@ set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
-  "1.74.0" "1.74"  
-  "17.3.0" "17.3"		
+  "1.76.0" "1.76"
+  "1.75.0" "1.75"
+  "1.74.0" "1.74"
+  "1.73.0" "1.73"
   "1.72.0" "1.72"
   "1.71.0" "1.71"
   "1.70.0" "1.70"
@@ -442,31 +409,11 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost "${BOOST_VERSION}"
-    COMPONENTS
-    REQUIRED
-)
-
-link_directories(${Boost_LIBRARY_DIRS})
-
-# In Visual Studio, automatic linking is performed, so we don't need to worry
-# about it.  Clear the list of libraries to link against and let Visual Studio
-# handle it.
-if (MSVC)
-  link_directories(${Boost_LIBRARY_DIRS})
-  set(CMAKE_MSVCIDE_RUN_PATH ${CMAKE_MSVCIDE_RUN_PATH} ${Boost_LIBRARY_DIRS})
-  message("boost lib dirs ${Boost_LIBRARY_DIRS}")
-  set(Boost_LIBRARIES "")
-endif ()
+find_package(Boost "${BOOST_VERSION}")
 
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${Boost_LIBRARIES})
-set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS})
-
-# For Boost testing framework (will have no effect on non-testing executables).
-# This specifies to Boost that we are dynamically linking to the Boost test
-# library.
-add_definitions(-DBOOST_TEST_DYN_LINK)
+set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES})
+set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS})
 
 # Detect OpenMP support in a compiler. If the compiler supports OpenMP, flags
 # to compile with OpenMP are returned and added and the HAS_OPENMP definition
@@ -486,6 +433,9 @@ if (OPENMP_FOUND)
   add_definitions(-DHAS_OPENMP)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  if(OpenMP_CXX_FOUND)
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
+  endif ()
 else ()
   # Disable warnings for all the unknown OpenMP pragmas.
   if (NOT MSVC)
@@ -617,43 +567,45 @@ add_dependencies(mlpack_headers mlpack_arma_config)
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
-find_package(Doxygen)
-if (DOXYGEN_FOUND)
-  if (MATHJAX)
-    find_package(MathJax)
-    if (NOT MATHJAX_FOUND)
-      message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
-          "Be careful, formulas will not be shown without the internet.")
+if (BUILD_DOCS)
+  find_package(Doxygen)
+  if (DOXYGEN_FOUND)
+    if (MATHJAX)
+      find_package(MathJax)
+      if (NOT MATHJAX_FOUND)
+        message(STATUS "Using MathJax at the MathJax Content Delivery Network. "
+            "Be careful, formulas will not be shown without the internet.")
+      endif ()
     endif ()
+    # Preprocess the Doxyfile.  This is done before 'make doc'.
+    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
+        PRE_BUILD
+        COMMAND ${CMAKE_COMMAND}
+            -D DESTDIR=${CMAKE_BINARY_DIR}
+            -D MATHJAX="${MATHJAX}"
+            -D MATHJAX_FOUND="${MATHJAX_FOUND}"
+            -D MATHJAX_PATH="${MATHJAX_PATH}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
+        COMMENT "Creating Doxyfile to generate Doxygen documentation"
+    )
+
+    # Generate documentation.
+    add_custom_target(doc
+        COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
+        DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+        COMMENT "Generating API documentation with Doxygen"
+    )
+
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+        COMPONENT doc
+        OPTIONAL
+    )
   endif ()
-  # Preprocess the Doxyfile.  This is done before 'make doc'.
-  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
-      PRE_BUILD
-      COMMAND ${CMAKE_COMMAND}
-          -D DESTDIR=${CMAKE_BINARY_DIR}
-          -D MATHJAX="${MATHJAX}"
-          -D MATHJAX_FOUND="${MATHJAX_FOUND}"
-          -D MATHJAX_PATH="${MATHJAX_PATH}"
-          -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
-      COMMENT "Creating Doxyfile to generate Doxygen documentation"
-  )
-
-  # Generate documentation.
-  add_custom_target(doc
-      COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
-      DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
-      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-      COMMENT "Generating API documentation with Doxygen"
-  )
-
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/doc/html"
-      DESTINATION "${CMAKE_INSTALL_DOCDIR}"
-      COMPONENT doc
-      OPTIONAL
-  )
-endif ()
+endif()
 
 # Create the pkg-config file, if we have pkg-config.
 find_package(PkgConfig)

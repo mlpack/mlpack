@@ -14,7 +14,7 @@
 #include <mlpack/methods/fastmks/fastmks_model.hpp>
 
 #include "catch.hpp"
-#include "serialization_catch.hpp"
+#include "serialization.hpp"
 
 using namespace mlpack;
 using namespace mlpack::tree;
