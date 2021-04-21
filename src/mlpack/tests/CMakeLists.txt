@@ -1,3 +1,5 @@
+include(CTest)
+
 # mlpack test executable.
 add_executable(mlpack_test
   activation_functions_test.cpp
