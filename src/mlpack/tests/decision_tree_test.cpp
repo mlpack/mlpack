@@ -406,37 +406,6 @@ TEST_CASE("RandomBinaryNumericSplitMinSamplesTest", "[DecisionTreeTest]")
 }
 
 /**
- * Check that the RandomBinaryNumericSplit doesn't split a dimension that gives
- * no gain.
- */
-TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
-{
-  arma::vec values(100);
-  arma::Row<size_t> labels(100);
-  arma::rowvec weights;
-  for (size_t i = 0; i < 100; i += 2)
-  {
-    values[i] = i;
-    labels[i] = 0;
-    values[i + 1] = i;
-    labels[i + 1] = 1;
-  }
-
-  arma::vec classProbabilities;
-  RandomBinaryNumericSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
-
-  // Call the method to do the splitting.
-  const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
-  const double gain = RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, weights, 10, 1e-7, classProbabilities,
-      aux);
-
-  // Make sure there was no split.
-  REQUIRE(gain == DBL_MAX);
-  REQUIRE(classProbabilities.n_elem == 0);
-}
-
-/**
  * Check that the AllCategoricalSplit will split when the split is obviously
  * better.
  */
