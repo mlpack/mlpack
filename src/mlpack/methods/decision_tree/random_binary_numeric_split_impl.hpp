@@ -27,8 +27,8 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    arma::Col<typename VecType::elem_type>& classProbabilities,
-    AuxiliarySplitInfo<typename VecType::elem_type>& /* aux */)
+    arma::vec& classProbabilities,
+    AuxiliarySplitInfo& /* aux */)
 {
   double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
   // Forcing a minimum leaf size of 1 (empty children don't make sense).
@@ -136,8 +136,8 @@ template<typename FitnessFunction>
 template<typename ElemType>
 size_t RandomBinaryNumericSplit<FitnessFunction>::CalculateDirection(
     const ElemType& point,
-    const arma::Col<ElemType>& classProbabilities,
-    const AuxiliarySplitInfo<ElemType>& /* aux */)
+    const arma::vec& classProbabilities,
+    const AuxiliarySplitInfo& /* aux */)
 {
   if (point <= classProbabilities(0))
     return 0; // Go left.
