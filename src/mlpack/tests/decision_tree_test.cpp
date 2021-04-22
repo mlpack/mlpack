@@ -406,6 +406,48 @@ TEST_CASE("RandomBinaryNumericSplitMinSamplesTest", "[DecisionTreeTest]")
 }
 
 /**
+ * Check that RandomBinaryNumericSplit generally gives a split different than
+ * the BestBinaryNumericSplit.
+ */
+ TEST_CASE("RandomBinaryNumericSplitDiffSplitTest", "[DecisionTreeTest]")
+ {
+  arma::vec values(1000);
+  arma::Row<size_t> labels(1000);
+  arma::rowvec weights;
+  for (size_t i = 0; i < 1000; i += 2)
+  {
+    values[i] = math::Random(0, 5);
+    labels[i] = 0;
+    values[i + 1] = math::Random(0, 5);
+    labels[i + 1] = 1;
+  }
+
+  arma::vec classProbabilities, classProbabilities1;
+  BestBinaryNumericSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  RandomBinaryNumericSplit<GiniGain>::template AuxiliarySplitInfo<double> aux1;
+
+  const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
+
+  for(int i = 0; i < 5; i++)
+  {
+    // Call BestBinaryNumericSplit to do the splitting.
+    double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities,
+        aux);
+
+    // Call RandomBinaryNumericSplit to do the splitting.
+    gain = RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities1,
+        aux1);
+
+    if (classProbabilities[0] == classProbabilities1[0])
+      break;
+  }
+
+  REQUIRE(classProbabilities[0] != classProbabilities1[0]);
+ }
+
+/**
  * Check that the AllCategoricalSplit will split when the split is obviously
  * better.
  */
