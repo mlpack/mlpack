@@ -4,26 +4,6 @@
  *
  * A tree splitter that finds a random binary numeric split.
  *
- * @code
- * @article{10.1007/s10994-006-6226-1,
- *   author = {Geurts, Pierre and Ernst, Damien and Wehenkel, Louis},
- *   title = {Extremely Randomized Trees},
- *   year = {2006},
- *   issue_date = {April 2006},
- *   publisher = {Kluwer Academic Publishers},
- *   address = {USA},
- *   volume = {63},
- *   number = {1},
- *   issn = {0885-6125},
- *   url = {https://doi.org/10.1007/s10994-006-6226-1},
- *   doi = {10.1007/s10994-006-6226-1},
- *   journal = {Mach. Learn.},
- *   month = apr,
- *   pages = {3–42},
- *   numpages = {40},
- * }
- * @endcode
- *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -57,6 +37,26 @@ class RandomBinaryNumericSplit
    * improves on 'bestGain', then we return the improved gain.  Otherwise we
    * return the value 'bestGain'.  If a split is made, then classProbabilities
    * and aux may be modified.
+   *
+   * @code
+   * @article{10.1007/s10994-006-6226-1,
+   *   author = {Geurts, Pierre and Ernst, Damien and Wehenkel, Louis},
+   *   title = {Extremely Randomized Trees},
+   *   year = {2006},
+   *   issue_date = {April 2006},
+   *   publisher = {Kluwer Academic Publishers},
+   *   address = {USA},
+   *   volume = {63},
+   *   number = {1},
+   *   issn = {0885-6125},
+   *   url = {https://doi.org/10.1007/s10994-006-6226-1},
+   *   doi = {10.1007/s10994-006-6226-1},
+   *   journal = {Mach. Learn.},
+   *   month = apr,
+   *   pages = {3–42},
+   *   numpages = {40},
+   * }
+   * @endcode
    *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
