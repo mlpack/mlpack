@@ -508,44 +508,62 @@ double RandomForest<
   #pragma omp parallel for reduction( + : totalGain)
   for (omp_size_t i = 0; i < numTrees; ++i)
   {
-    Timer::Start("bootstrap");
     MatType bootstrapDataset;
     arma::Row<size_t> bootstrapLabels;
     arma::rowvec bootstrapWeights;
-    Bootstrap<UseWeights>(dataset, labels, weights, bootstrapDataset,
-        bootstrapLabels, bootstrapWeights);
-    Timer::Stop("bootstrap");
+    if (UseBootstrap)
+    {
+      Timer::Start("bootstrap");
+      Bootstrap<UseWeights>(dataset, labels, weights, bootstrapDataset,
+          bootstrapLabels, bootstrapWeights);
+      Timer::Stop("bootstrap");
+    }
 
     Timer::Start("train_tree");
     if (UseWeights)
     {
       if (UseDatasetInfo)
       {
-        totalGain += trees[oldNumTrees + i].Train(bootstrapDataset,
-            datasetInfo, bootstrapLabels, numClasses, bootstrapWeights,
-            minimumLeafSize, minimumGainSplit, maximumDepth,
-            dimensionSelector);
+        totalGain += UseBootstrap ?
+            trees[oldNumTrees + i].Train(bootstrapDataset, datasetInfo,
+                bootstrapLabels, numClasses, bootstrapWeights, minimumLeafSize,
+                minimumGainSplit, maximumDepth, dimensionSelector) :
+            trees[oldNumTrees + i].Train(dataset, datasetInfo, labels,
+                numClasses, weights, minimumLeafSize, minimumGainSplit,
+                maximumDepth, dimensionSelector);
       }
       else
       {
-        totalGain += trees[oldNumTrees + i].Train(bootstrapDataset,
-            bootstrapLabels, numClasses, bootstrapWeights, minimumLeafSize,
-            minimumGainSplit, maximumDepth, dimensionSelector);
+        totalGain += UseBootstrap ?
+            trees[oldNumTrees + i].Train(bootstrapDataset, bootstrapLabels,
+                numClasses, bootstrapWeights, minimumLeafSize,
+                minimumGainSplit, maximumDepth, dimensionSelector) :
+            trees[oldNumTrees + i].Train(dataset, labels, numClasses,
+                weights, minimumLeafSize, minimumGainSplit, maximumDepth,
+                dimensionSelector);
       }
     }
     else
     {
       if (UseDatasetInfo)
       {
-        totalGain += trees[oldNumTrees + i].Train(bootstrapDataset,
-            datasetInfo, bootstrapLabels, numClasses, minimumLeafSize,
-            minimumGainSplit, maximumDepth, dimensionSelector);
+        totalGain += UseBootstrap ?
+            trees[oldNumTrees + i].Train(bootstrapDataset, datasetInfo,
+                bootstrapLabels, numClasses, minimumLeafSize, minimumGainSplit,
+                maximumDepth, dimensionSelector) :
+            trees[oldNumTrees + i].Train(dataset, datasetInfo, labels,
+                numClasses, minimumLeafSize, minimumGainSplit, maximumDepth,
+                dimensionSelector);
       }
       else
       {
-        totalGain += trees[oldNumTrees + i].Train(bootstrapDataset,
-            bootstrapLabels, numClasses, minimumLeafSize, minimumGainSplit,
-            maximumDepth, dimensionSelector);
+        totalGain += UseBootstrap ?
+            trees[oldNumTrees + i].Train(bootstrapDataset, bootstrapLabels,
+                numClasses, minimumLeafSize, minimumGainSplit, maximumDepth,
+                dimensionSelector) :
+            trees[oldNumTrees + i].Train(dataset, labels, numClasses,
+                minimumLeafSize, minimumGainSplit, maximumDepth,
+                dimensionSelector);
       }
     }
 
