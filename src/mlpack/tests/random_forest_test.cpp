@@ -409,13 +409,13 @@ TEST_CASE("RandomForestNumericTrainReturnEntropy", "[RandomForestTest]")
     weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
 
   // Test random forest on unweighted numeric dataset.
-  RandomForest<GiniGain, RandomDimensionSelect> rf;
+  RandomForest<GiniGain, true, RandomDimensionSelect> rf;
   double entropy = rf.Train(dataset, labels, 3, 10, 1);
 
   REQUIRE(std::isfinite(entropy) == true);
 
   // Test random forest on weighted numeric dataset.
-  RandomForest<GiniGain, RandomDimensionSelect> wrf;
+  RandomForest<GiniGain, true, RandomDimensionSelect> wrf;
   entropy = wrf.Train(dataset, labels, 3, weights, 10, 1);
 
   REQUIRE(std::isfinite(entropy) == true);
@@ -488,7 +488,7 @@ TEST_CASE("DifferentTreesTest", "[RandomForestTest]")
   // multiple trials.
   while (!success && trial < 5)
   {
-    RandomForest<GiniGain, RandomDimensionSelect> rf;
+    RandomForest<GiniGain, true, RandomDimensionSelect> rf;
     rf.Train(d, l, 2, 2, 5);
 
     success = (rf.Tree(0).SplitDimension() != rf.Tree(1).SplitDimension());

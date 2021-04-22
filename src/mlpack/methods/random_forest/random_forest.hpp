@@ -37,6 +37,7 @@ namespace tree {
  * @endcode
  */
 template<typename FitnessFunction = GiniGain,
+         bool UseBootstrap = true,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit>

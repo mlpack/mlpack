@@ -20,12 +20,14 @@ namespace tree {
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
 RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -37,6 +39,7 @@ RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -44,6 +47,7 @@ template<
 template<typename MatType>
 RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -67,6 +71,7 @@ RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -74,6 +79,7 @@ template<
 template<typename MatType>
 RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -97,6 +103,7 @@ RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -104,6 +111,7 @@ template<
 template<typename MatType>
 RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -127,6 +135,7 @@ RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -134,6 +143,7 @@ template<
 template<typename MatType>
 RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -157,6 +167,7 @@ RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -164,6 +175,7 @@ template<
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -187,6 +199,7 @@ double RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -194,6 +207,7 @@ template<
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -217,6 +231,7 @@ double RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -224,6 +239,7 @@ template<
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -247,6 +263,7 @@ double RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -254,6 +271,7 @@ template<
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -277,6 +295,7 @@ double RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -284,6 +303,7 @@ template<
 template<typename VecType>
 size_t RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -299,6 +319,7 @@ size_t RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -306,6 +327,7 @@ template<
 template<typename VecType>
 void RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -344,6 +366,7 @@ void RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -351,6 +374,7 @@ template<
 template<typename MatType>
 void RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -377,6 +401,7 @@ void RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -384,6 +409,7 @@ template<
 template<typename MatType>
 void RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -413,6 +439,7 @@ void RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -420,6 +447,7 @@ template<
 template<typename Archive>
 void RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
@@ -443,6 +471,7 @@ void RandomForest<
 
 template<
     typename FitnessFunction,
+    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
@@ -450,6 +479,7 @@ template<
 template<bool UseWeights, bool UseDatasetInfo, typename MatType>
 double RandomForest<
     FitnessFunction,
+    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
     CategoricalSplitType
