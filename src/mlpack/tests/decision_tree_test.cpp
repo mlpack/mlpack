@@ -289,7 +289,7 @@ TEST_CASE("BestBinaryNumericSplitSimpleSplitTest", "[DecisionTreeTest]")
   weights.ones();
 
   arma::vec classProbabilities;
-  BestBinaryNumericSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  BestBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
@@ -327,7 +327,7 @@ TEST_CASE("BestBinaryNumericSplitMinSamplesTest", "[DecisionTreeTest]")
   arma::rowvec weights(labels.n_elem);
 
   arma::vec classProbabilities;
-  BestBinaryNumericSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  BestBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
@@ -363,7 +363,7 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
   }
 
   arma::vec classProbabilities;
-  BestBinaryNumericSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  BestBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
@@ -459,7 +459,7 @@ TEST_CASE("AllCategoricalSplitSimpleSplitTest", "[DecisionTreeTest]")
   weights.ones();
 
   arma::vec classProbabilities;
-  AllCategoricalSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  AllCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
@@ -495,7 +495,7 @@ TEST_CASE("AllCategoricalSplitMinSamplesTest", "[DecisionTreeTest]")
   weights.ones();
 
   arma::vec classProbabilities;
-  AllCategoricalSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  AllCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
@@ -528,7 +528,7 @@ TEST_CASE("AllCategoricalSplitNoGainTest", "[DecisionTreeTest]")
   }
 
   arma::vec classProbabilities;
-  AllCategoricalSplit<GiniGain>::template AuxiliarySplitInfo<double> aux;
+  AllCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
@@ -757,6 +757,66 @@ TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
   REQUIRE(correct > 0.75);
 
   // reset the prediction
+  predictions.zeros();
+  wd.Classify(testData, predictions);
+
+  REQUIRE(predictions.n_elem == testData.n_cols);
+
+  // Figure out the accuracy.
+  double wdcorrect = 0.0;
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    if (predictions[i] == trueTestLabels[i])
+      ++wdcorrect;
+  wdcorrect /= predictions.n_elem;
+
+  REQUIRE(wdcorrect > 0.75);
+}
+
+/**
+ * Test that the decision tree generalizes reasonably when built on float data.
+ */
+TEST_CASE("SimpleGeneralizationFMatTest", "[DecisionTreeTest]")
+{
+  arma::fmat inputData;
+  if (!data::Load("vc2.csv", inputData))
+    FAIL("Cannot load test dataset vc2.csv!");
+
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load labels for vc2_labels.txt");
+
+  // Initialize an all-ones weight matrix.
+  arma::rowvec weights(labels.n_cols, arma::fill::ones);
+
+  // Build decision tree.
+  DecisionTree<> d(inputData, labels, 3, 10 /* Leaf size of 10. */);
+  DecisionTree<> wd(inputData, labels, 3, weights, 10 /* Leaf size of 10. */);
+
+  // Load testing data.
+  arma::mat testData;
+  if (!data::Load("vc2_test.csv", testData))
+    FAIL("Cannot load test dataset vc2_test.csv!");
+
+  arma::Mat<size_t> trueTestLabels;
+  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+    FAIL("Cannot load labels for vc2_test_labels.txt");
+
+  // Get the predicted test labels.
+  arma::Row<size_t> predictions;
+  d.Classify(testData, predictions);
+
+  REQUIRE(predictions.n_elem == testData.n_cols);
+
+  // Figure out the accuracy.
+  double correct = 0.0;
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    if (predictions[i] == trueTestLabels[i])
+      ++correct;
+  correct /= predictions.n_elem;
+
+  REQUIRE(correct > 0.75);
+
+  // Reset the prediction.
   predictions.zeros();
   wd.Classify(testData, predictions);
 

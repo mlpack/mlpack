@@ -31,18 +31,20 @@ namespace tree {
  *
  * The class inherits from the auxiliary split information in order to prevent
  * an empty auxiliary split information struct from taking any extra size.
+ *
+ * Note that `ElemType` is a template parameter controlling the type that is
+ * used to store split information.  In general, you would want to set this to
+ * be the same as the type of the data that you will be using, but it's not
+ * required to do that.
  */
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
          typename DimensionSelectionType = AllDimensionSelect,
-         typename ElemType = double,
          bool NoRecursion = false>
 class DecisionTree :
-    public NumericSplitType<FitnessFunction>::template
-        AuxiliarySplitInfo<ElemType>,
-    public CategoricalSplitType<FitnessFunction>::template
-        AuxiliarySplitInfo<ElemType>
+    public NumericSplitType<FitnessFunction>::AuxiliarySplitInfo,
+    public CategoricalSplitType<FitnessFunction>::AuxiliarySplitInfo
 {
  public:
   //! Allow access to the numeric split type.
@@ -501,9 +503,9 @@ class DecisionTree :
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
   //! We'll define some convenience typedefs here.
-  typedef typename NumericSplit::template AuxiliarySplitInfo<ElemType>
+  typedef typename NumericSplit::AuxiliarySplitInfo
       NumericAuxiliarySplitInfo;
-  typedef typename CategoricalSplit::template AuxiliarySplitInfo<ElemType>
+  typedef typename CategoricalSplit::AuxiliarySplitInfo
       CategoricalAuxiliarySplitInfo;
 
   /**
@@ -579,13 +581,11 @@ class DecisionTree :
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
-         typename DimensionSelectType = AllDimensionSelect,
-         typename ElemType = double>
+         typename DimensionSelectType = AllDimensionSelect>
 using DecisionStump = DecisionTree<FitnessFunction,
                                    NumericSplitType,
                                    CategoricalSplitType,
                                    DimensionSelectType,
-                                   ElemType,
                                    false>;
 
 /**
@@ -596,7 +596,6 @@ typedef DecisionTree<InformationGain,
                      BestBinaryNumericSplit,
                      AllCategoricalSplit,
                      AllDimensionSelect,
-                     double,
                      true> ID3DecisionStump;
 } // namespace tree
 } // namespace mlpack

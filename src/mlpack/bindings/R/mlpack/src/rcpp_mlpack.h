@@ -15,7 +15,7 @@
 
 #include <Rcpp.h>
 
-// To suppress Found ‘__assert_fail’, possibly from ‘assert’ (C).
+// To suppress Found '__assert_fail', possibly from 'assert' (C).
 #define BOOST_DISABLE_ASSERTS
 
 // Rcpp has its own stream object which cooperates more nicely with R's i/o
