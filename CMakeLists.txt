@@ -33,9 +33,8 @@ set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
 set(CEREAL_VERSION "1.1.2")
 
-# If BUILD_SHARED_LIBS is OFF then mlpack library will be build statically
-# In addition, all mlpack CLI bindings are going to be linked statically as
-# well.
+# If BUILD_SHARED_LIBS is OFF then the mlpack library will be built statically.
+# In addition, all mlpack CLI bindings will be linked statically as well.
 if (WIN32)
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
@@ -306,7 +305,6 @@ endif()
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
-message(STATUS "ARMADILLO LIBRARIES: ${ARMADILLO_LIBRARIES}")
 
 # Find stb_image.h and stb_image_write.h.
 if (DISABLE_DOWNLOADS)
