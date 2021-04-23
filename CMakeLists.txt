@@ -280,8 +280,10 @@ endif()
 if (CMAKE_CROSSCOMPILING)
   get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v0.3.13/OpenBLAS-0.3.13.tar.gz OpenBLAS OpenBLAS-0.3.13.tar.gz)
   if (NOT MSVC)
-    execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13)
+    if(NOT EXISTS "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a")
+      execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
+                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13)
+    endif()
     file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a")
     set(BLA_VENDOR OpenBLAS)
     set(BLA_STATIC ON)
