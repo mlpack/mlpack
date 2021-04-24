@@ -437,10 +437,10 @@ template<typename FitnessFunction = GiniGain,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class CategoricalSplitType = AllCategoricalSplit>
 using ExtraTrees = RandomForest<FitnessFunction,
-                               DimensionSelectionType,
-                               RandomBinaryNumericSplit,
-                               CategoricalSplitType,
-                               false>;
+                                DimensionSelectionType,
+                                RandomBinaryNumericSplit,
+                                CategoricalSplitType,
+                                false>;
 
 } // namespace tree
 } // namespace mlpack
