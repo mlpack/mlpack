@@ -558,3 +558,54 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
 
   REQUIRE(newCorrect - oldCorrect >= 0);
 }
+
+/**
+ * Ensure that the Extra Trees algorithm gives decent accuracy.
+ */
+TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
+{
+  // Load the vc2 dataset.
+  arma::mat dataset;
+  if (!data::Load("iris_train.csv", dataset))
+    FAIL("Cannot load dataset iris_train.csv");
+  arma::Row<size_t> labels;
+  if (!data::Load("iris_train_labels.csv", labels))
+    FAIL("Cannot load dataset iris_train_labels.csv");
+
+  // Add some noise.
+  arma::mat noise(dataset.n_rows, 1000, arma::fill::randu);
+  arma::Row<size_t> noiseLabels(1000);
+  for (size_t i = 0; i < noiseLabels.n_elem; ++i)
+    noiseLabels[i] = math::RandInt(3); // Random label.
+
+  // Concatenate data matrices.
+  arma::mat data = arma::join_rows(dataset, noise);
+  arma::Row<size_t> fullLabels = arma::join_rows(labels, noiseLabels);
+
+  // Now set weights.
+  arma::rowvec weights(dataset.n_cols + 1000);
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+    weights[i] = math::Random(0.9, 1.0);
+  for (size_t i = dataset.n_cols; i < dataset.n_cols + 1000; ++i)
+    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+
+  // Train extra tree.
+  ExtraTrees<> et(data, fullLabels, 3, weights, 20, 1);
+
+  // Get performance statistics on test data.
+  arma::mat testDataset;
+  if (!data::Load("iris_test.csv", testDataset))
+    FAIL("Cannot load dataset iris_test.csv");
+  arma::Row<size_t> testLabels;
+  if (!data::Load("iris_test_labels.csv", testLabels))
+    FAIL("Cannot load dataset iris_test_labels.csv");
+
+  arma::Row<size_t> predictions;
+  et.Classify(testDataset, predictions);
+
+  // Calculate the prediction accuracy.
+  double accuracy = arma::accu(predictions == testLabels);
+  accuracy /= predictions.n_elem;
+
+  REQUIRE(accuracy >= 0.94);
+}
