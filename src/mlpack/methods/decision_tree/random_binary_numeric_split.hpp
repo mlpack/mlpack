@@ -81,7 +81,8 @@ class RandomBinaryNumericSplit
       const size_t minimumLeafSize,
       const double minimumGainSplit,
       arma::vec& classProbabilities,
-      AuxiliarySplitInfo& aux);
+      AuxiliarySplitInfo& aux,
+      const bool splitIfBetterGain = false);
 
   /**
    * Returns 2, since the binary split always has two children.

@@ -28,7 +28,8 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     arma::vec& classProbabilities,
-    AuxiliarySplitInfo& /* aux */)
+    AuxiliarySplitInfo& /* aux */,
+    const bool splitIfBetterGain)
 {
   double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
   // Forcing a minimum leaf size of 1 (empty children don't make sense).
@@ -120,6 +121,9 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   else
     // Calculate the gain at this split point.
     gain = double(leftLeafSize) * leftGain + double(rightLeafSize) * rightGain;
+
+  if (gain < bestFoundGain and splitIfBetterGain)
+    return DBL_MAX;
 
   classProbabilities.set_size(1);
   classProbabilities(0) = randomPivot;
