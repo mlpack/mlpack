@@ -410,6 +410,38 @@ class RandomForest
   double avgGain;
 };
 
+/**
+ * Convenience typedef for Extra Trees. (Extremely Randomised Trees Forest)
+ *
+ * @code
+ * @article{10.1007/s10994-006-6226-1,
+ *   author = {Geurts, Pierre and Ernst, Damien and Wehenkel, Louis},
+ *   title = {Extremely Randomized Trees},
+ *   year = {2006},
+ *   issue_date = {April 2006},
+ *   publisher = {Kluwer Academic Publishers},
+ *   address = {USA},
+ *   volume = {63},
+ *   number = {1},
+ *   issn = {0885-6125},
+ *   url = {https://doi.org/10.1007/s10994-006-6226-1},
+ *   doi = {10.1007/s10994-006-6226-1},
+ *   journal = {Mach. Learn.},
+ *   month = apr,
+ *   pages = {3–42},
+ *   numpages = {40},
+ * }
+ * @endcode
+ */
+template<typename FitnessFunction = GiniGain,
+         typename DimensionSelectionType = MultipleRandomDimensionSelect,
+         template<typename> class CategoricalSplitType = AllCategoricalSplit>
+using ExtraTrees = RandomForest<FitnessFunction,
+                               DimensionSelectionType,
+                               RandomBinaryNumericSplit,
+                               CategoricalSplitType,
+                               false>;
+
 } // namespace tree
 } // namespace mlpack
 
