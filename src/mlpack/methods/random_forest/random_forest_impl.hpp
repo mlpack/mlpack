@@ -20,17 +20,17 @@ namespace tree {
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::RandomForest() :
     avgGain(0.0)
 {
@@ -39,18 +39,18 @@ RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename MatType>
 RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::RandomForest(const MatType& dataset,
                 const arma::Row<size_t>& labels,
                 const size_t numClasses,
@@ -71,18 +71,18 @@ RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename MatType>
 RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
                 const arma::Row<size_t>& labels,
@@ -103,18 +103,18 @@ RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename MatType>
 RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::RandomForest(const MatType& dataset,
                 const arma::Row<size_t>& labels,
                 const size_t numClasses,
@@ -135,18 +135,18 @@ RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename MatType>
 RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::RandomForest(const MatType& dataset,
                 const data::DatasetInfo& datasetInfo,
                 const arma::Row<size_t>& labels,
@@ -167,18 +167,18 @@ RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::Train(const MatType& dataset,
          const arma::Row<size_t>& labels,
          const size_t numClasses,
@@ -199,18 +199,18 @@ double RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const arma::Row<size_t>& labels,
@@ -231,18 +231,18 @@ double RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::Train(const MatType& dataset,
          const arma::Row<size_t>& labels,
          const size_t numClasses,
@@ -263,18 +263,18 @@ double RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename MatType>
 double RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const arma::Row<size_t>& labels,
@@ -295,18 +295,18 @@ double RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename VecType>
 size_t RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::Classify(const VecType& point) const
 {
   // Pass off to another Classify() overload.
@@ -319,18 +319,18 @@ size_t RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename VecType>
 void RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::Classify(const VecType& point,
             size_t& prediction,
             arma::vec& probabilities) const
@@ -366,18 +366,18 @@ void RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename MatType>
 void RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::Classify(const MatType& data,
             arma::Row<size_t>& predictions) const
 {
@@ -401,18 +401,18 @@ void RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename MatType>
 void RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::Classify(const MatType& data,
             arma::Row<size_t>& predictions,
             arma::mat& probabilities) const
@@ -439,18 +439,18 @@ void RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<typename Archive>
 void RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
   size_t numTrees;
@@ -471,18 +471,18 @@ void RandomForest<
 
 template<
     typename FitnessFunction,
-    bool UseBootstrap,
     typename DimensionSelectionType,
     template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
+    template<typename> class CategoricalSplitType,
+    bool UseBootstrap
 >
 template<bool UseWeights, bool UseDatasetInfo, typename MatType>
 double RandomForest<
     FitnessFunction,
-    UseBootstrap,
     DimensionSelectionType,
     NumericSplitType,
-    CategoricalSplitType
+    CategoricalSplitType,
+    UseBootstrap
 >::Train(const MatType& dataset,
          const data::DatasetInfo& datasetInfo,
          const arma::Row<size_t>& labels,

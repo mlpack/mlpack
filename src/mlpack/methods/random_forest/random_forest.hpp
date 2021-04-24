@@ -37,10 +37,10 @@ namespace tree {
  * @endcode
  */
 template<typename FitnessFunction = GiniGain,
-         bool UseBootstrap = true,
          typename DimensionSelectionType = MultipleRandomDimensionSelect,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
-         template<typename> class CategoricalSplitType = AllCategoricalSplit>
+         template<typename> class CategoricalSplitType = AllCategoricalSplit,
+         bool UseBootstrap = true>
 class RandomForest
 {
  public:
