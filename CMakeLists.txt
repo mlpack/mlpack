@@ -5,6 +5,10 @@ include(CMake/cotire.cmake)
 include(CMake/CheckHash.cmake)
 include(CMake/Autodownload.cmake)
 
+if (CMAKE_CROSSCOMPILING)
+  include(board/flags-config.cmake)
+endif()
+
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information." OFF)
@@ -18,14 +22,6 @@ option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
 option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
-set(BOARD_NAME "" CACHE INTERNAL "Enter the board name to compile mlpack for.")
-
-if (CMAKE_CROSSCOMPILING)
-  include(board/flags-config.cmake)
-  if (BOARD_NAME STRGREATER  "")
-    flags(${BOARD_NAME})
-  endif()
-endif()
 
 # Set minimum library version required by mlpack.
 set(ARMADILLO_VERSION "8.400.0")
