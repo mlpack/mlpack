@@ -170,7 +170,8 @@ The full list of options mlpack allows:
  - PROFILE=(ON/OFF): compile with profiling symbols (default OFF)
  - ARMA_EXTRA_DEBUG=(ON/OFF): compile with extra Armadillo debugging symbols
        (default OFF)
- - BUILD_TESTS=(ON/OFF): compile the \c mlpack_test program (default ON)
+ - BUILD_TESTS=(ON/OFF): compile the \c mlpack_test program when `make` is run
+       (default ON)
  - BUILD_CLI_EXECUTABLES=(ON/OFF): compile the mlpack command-line executables
        (i.e. \c mlpack_knn, \c mlpack_kfn, \c mlpack_logistic_regression, etc.)
        (default ON)
@@ -225,14 +226,10 @@ and libraries. These also use the '-D' flag.
 @section build_build Building mlpack
 
 Once CMake is configured, building the library is as simple as typing 'make'.
-This will build all library components as well as 'mlpack_test'.
+This will build all library components.
 
 @code
 $ make
-Scanning dependencies of target mlpack
-[  1%] Building CXX object
-src/mlpack/CMakeFiles/mlpack.dir/core/optimizers/aug_lagrangian/aug_lagrangian_test_functions.cpp.o
-<...>
 @endcode
 
 It's often useful to specify \c -jN to the \c make command, which will build on
@@ -247,17 +244,24 @@ $ make mlpack_pca mlpack_knn mlpack_kfn
 @endcode
 
 One particular component of interest is mlpack_test, which runs the mlpack test
-suite.  You can build this component with
+suite.  This is not built when @c make is run.  You can build this component
+with
 
 @code
 $ make mlpack_test
 @endcode
 
 We use <a href="https://github.com/catchorg/Catch2">Catch2</a> to write our tests.
-To run all tests, you can simply run:
+To run all tests, you can simply use CTest:
 
 @code
-$ ./bin/mlpack_test
+$ ctest .
+@endcode
+
+Or, you can run the test suite manually:
+
+@code
+$ bin/mlpack_test
 @endcode
 
 To run all tests in a particular file you can run:
@@ -266,7 +270,7 @@ To run all tests in a particular file you can run:
 $ ./bin/mlpack_test "[testname]"
 @endcode
 
-where testname is the name of the test suite. 
+where testname is the name of the test suite.
 For example to run all collaborative filtering tests implemented in cf_test.cpp you can run:
 
 @code
