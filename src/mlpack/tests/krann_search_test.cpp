@@ -368,7 +368,8 @@ TEST_CASE("DualCoverTreeTest", "[KRANNTest]")
   RACoverTreeSearch tsdRann(&refTree, false, 1.0, 0.95, false, false, 5);
 
   arma::Mat<size_t> qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false)) // No transpose.
+  // No transpose.
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 100;
