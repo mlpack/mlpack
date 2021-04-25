@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Extra Trees Algorithm (#2883).
+
   * Added warm start feature to Random Forest (#2881); this feature is
     accessible from mlpack's bindings to different languages.
 
