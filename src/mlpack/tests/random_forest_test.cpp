@@ -607,5 +607,5 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
   double accuracy = arma::accu(predictions == testLabels);
   accuracy /= predictions.n_elem;
 
-  REQUIRE(accuracy >= 0.94);
+  REQUIRE(accuracy >= 0.91);
 }
