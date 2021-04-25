@@ -6,44 +6,18 @@
 ## command line.
 
 set(CMAKE_SYSTEM_NAME Linux)
-set(CMAKE_SYSTEM_PROCESSOR ARM)
 
-if(CMAKE_SYSROOT AND TOOLCHAIN_PREFIX)
+if(NOT CMAKE_SYSROOT AND NOT TOOLCHAIN_PREFIX)
+  message(FATAL_ERROR "Neither of CMAKE_SYSROOT or TOOLCHAIN_PREFIX is set, please set both of them and try again")
+elseif(NOT CMAKE_SYSROOT)
+  message(FATAL_ERROR "Can not proceed CMAKE_SYSROOT is not set")
+elseif(NOT TOOLCHAIN_PREFIX)
+  message(FATAL_ERROR "Cant not proceed TOOLCHAIN_PREFIX is not set")
+else()
   message(STATUS "TOOLCHAIN_PREFIX is defined as: ${TOOLCHAIN_PREFIX}")
   message(STATUS "CMAKE_SYSROOT is defined as: ${CMAKE_SYSROOT}")
-#  message(FATAL_ERROR "neither!")
-elseif(NOT CMAKE_SYSROOT)
-  message(FATAL_ERROR "not cmake_sysroot")
-elseif(NOT TOOLCHAIN_PREFIX)
-  message(FATAL_ERROR "not toolchain_prefix")
-else()
-  set(TOOLCHAIN_PREFIX aarch64-linux-gnu-)
-  set(CMAKE_SYSROOT /usr/aarch64-linux-gnu/ CACHE STRING "Enter path for sysroot")
 endif()
 
-# option(BUILDROOT "Use the buildroot toolchain to cross-compile." OFF)
-# option(LINARO "Use the linaro toolchain to cross-compile." OFF)
-
-# if(BUILDROOT)
-#   set(CMAKE_SYSROOT ${TOOLCHAIN_PATH}/aarch64-buildroot-linux-gnu/sysroot)
-#   set(TOOLCHAIN_PREFIX ${TOOLCHAIN_PATH}/bin/aarch64-buildroot-linux-gnu-)
-#   message(STATUS "TOOLCHAIN_PREFIX is defined as: ${TOOLCHAIN_PREFIX}")
-#   message(STATUS "CMAKE_SYSROOT is defined as: ${CMAKE_SYSROOT}")
-# elseif(LINARO)
-#   set(CMAKE_SYSROOT ${TOOLCHAIN_PATH}/aarch64-linux-gnu)
-#   set(TOOLCHAIN_PREFIX ${TOOLCHAIN_PATH}/bin/aarch64-linux-gnu-)
-#   message(STATUS "TOOLCHAIN_PREFIX is defined as: ${TOOLCHAIN_PREFIX}")
-#   message(STATUS "CMAKE_SYSROOT is defined as: ${CMAKE_SYSROOT}")
-# else ()
-  ## standard gcc toolchain
-#  set(TOOLCHAIN_PREFIX aarch64-linux-gnu-)
-  ## There is no need to specify the CMAKE_SYSROOT if you are using the 
-  ## standard toolchain. If you download your own toolchain you have to specify
-  ## the path for sysroot as follows:
-  ## set(CMAKE_SYSROOT /PathToToolchain/aarch64-buildroot-linux-gnu/sysroot)
-  ## or it can be specified from command-line.
-#  set(CMAKE_SYSROOT /usr/aarch64-linux-gnu/ CACHE STRING "Enter path for sysroot")
-# endif()
 ## In some distribution, a dynamic link for aarch64-linux-gnu-gcc may not be
 ## found or created, instead it might be labeled with the version at the end
 ## For instance: aarch64-linux-gnu-gcc-5
