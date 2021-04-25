@@ -6,17 +6,8 @@
 ## command line.
 
 set(CMAKE_SYSTEM_NAME Linux)
-
-if(NOT CMAKE_SYSROOT AND NOT TOOLCHAIN_PREFIX)
-  message(FATAL_ERROR "Neither of CMAKE_SYSROOT or TOOLCHAIN_PREFIX is set, please set both of them and try again")
-elseif(NOT CMAKE_SYSROOT)
-  message(FATAL_ERROR "Can not proceed CMAKE_SYSROOT is not set")
-elseif(NOT TOOLCHAIN_PREFIX)
-  message(FATAL_ERROR "Cant not proceed TOOLCHAIN_PREFIX is not set")
-else()
-  message(STATUS "TOOLCHAIN_PREFIX is defined as: ${TOOLCHAIN_PREFIX}")
-  message(STATUS "CMAKE_SYSROOT is defined as: ${CMAKE_SYSROOT}")
-endif()
+set(CMAKE_SYSROOT "" CACHE STRING "CMAKE_SYSROOT")
+set(TOOLCHAIN_PREFIX "" CACHE STRING "TOOLCHAIN_PREFIX")
 
 ## In some distribution, a dynamic link for aarch64-linux-gnu-gcc may not be
 ## found or created, instead it might be labeled with the version at the end

@@ -7,6 +7,13 @@ include(CMake/Autodownload.cmake)
 
 if (CMAKE_CROSSCOMPILING)
   include(board/flags-config.cmake)
+  if(NOT CMAKE_SYSROOT AND (NOT TOOLCHAIN_PREFIX))
+    message(FATAL_ERROR "Neither of CMAKE_SYSROOT or TOOLCHAIN_PREFIX is set, please set both of them and try again")
+  elseif(NOT CMAKE_SYSROOT)
+    message(FATAL_ERROR "Can not proceed CMAKE_SYSROOT is not set")
+  elseif(NOT TOOLCHAIN_PREFIX)
+    message(FATAL_ERROR "Cant not proceed TOOLCHAIN_PREFIXN is not set")
+  endif()
 endif()
 
 # First, define all the compilation options.
