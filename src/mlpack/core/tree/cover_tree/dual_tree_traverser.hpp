@@ -100,7 +100,8 @@ class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
                          std::vector<DualCoverTreeMapEntry>,
                          std::greater<int>>& childMap);
 
-  void ReferenceRecursion(CoverTree& queryNode,
+  void ReferenceRecursion(
+      CoverTree& queryNode,
     std::map<int, std::vector<DualCoverTreeMapEntry>,
         std::greater<int>>& referenceMap);
 };
