@@ -4,17 +4,7 @@ project(mlpack C CXX)
 include(CMake/cotire.cmake)
 include(CMake/CheckHash.cmake)
 include(CMake/Autodownload.cmake)
-
-if (CMAKE_CROSSCOMPILING)
-  include(board/flags-config.cmake)
-  if(NOT CMAKE_SYSROOT AND (NOT TOOLCHAIN_PREFIX))
-    message(FATAL_ERROR "Neither of CMAKE_SYSROOT or TOOLCHAIN_PREFIX is set, please set both of them and try again")
-  elseif(NOT CMAKE_SYSROOT)
-    message(FATAL_ERROR "Can not proceed CMAKE_SYSROOT is not set")
-  elseif(NOT TOOLCHAIN_PREFIX)
-    message(FATAL_ERROR "Cant not proceed TOOLCHAIN_PREFIXN is not set")
-  endif()
-endif()
+include(CMake/ConfigureCrossCompile.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -280,24 +270,7 @@ endif()
 #   MATHJAX_ROOT - root of MathJax installation
 
 if (CMAKE_CROSSCOMPILING)
-  set(BLA_STATIC ON)
-  # find_package(BLAS)  This one is giving a placeholder even if it is not found
-  if (NOT BLAS_FOUND)
-    get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v0.3.13/OpenBLAS-0.3.13.tar.gz OpenBLAS OpenBLAS-0.3.13.tar.gz)
-    if (NOT MSVC)
-      if(NOT EXISTS "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a")
-        execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
-                        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13)
-      endif()
-      file(GLOB OPENBLAS_LIBARAIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a")
-      set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBARAIES})
-      set(BLA_VENDOR OpenBLAS)
-    endif()
-    message(STATUS "OPENBLAS LIBRARY: ${BLAS_openblas_LIBRARY}")
-  endif()
-  find_library(GFORTRAN NAMES libgfortran.a)
-  find_library(PTHREAD NAMES libpthread.a)
-  set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES} ${GFORTRAN} ${PTHREAD})
+  search_openblas(0.3.13)
 endif()
 
 if (DISABLE_DOWNLOADS)
