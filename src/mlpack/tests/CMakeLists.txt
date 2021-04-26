@@ -206,4 +206,4 @@ add_custom_command(TARGET mlpack_test
 
 add_test(NAME "catch_test" COMMAND mlpack_test WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
-set_tests_properties(mlpack_test PROPERTIES TIMEOUT 0)
+set_tests_properties("catch_test" PROPERTIES TIMEOUT 0)
