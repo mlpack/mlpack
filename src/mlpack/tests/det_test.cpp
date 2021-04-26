@@ -341,7 +341,7 @@ TEST_CASE("TestComputeValue", "[DETTest]")
   REQUIRE(d3 == Approx(testDTree.ComputeValue(q3)).epsilon(1e-12));
   REQUIRE(0.0 == Approx(testDTree.ComputeValue(q4)).epsilon(1e-12));
 
-  alpha = testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
+  testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
 
   double d = 1.0 / exp(log(4.0) + log(7.0) + log(7.0));
 
