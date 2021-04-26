@@ -280,15 +280,20 @@ endif()
 #   MATHJAX_ROOT - root of MathJax installation
 
 if (CMAKE_CROSSCOMPILING)
-  get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v0.3.13/OpenBLAS-0.3.13.tar.gz OpenBLAS OpenBLAS-0.3.13.tar.gz)
-  if (NOT MSVC)
-    if(NOT EXISTS "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a")
-      execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
-                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13)
+  set(BLA_STATIC ON)
+  # find_package(BLAS)  This one is giving a placeholder even if it is not found
+  if (NOT BLAS_FOUND)
+    get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v0.3.13/OpenBLAS-0.3.13.tar.gz OpenBLAS OpenBLAS-0.3.13.tar.gz)
+    if (NOT MSVC)
+      if(NOT EXISTS "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a")
+        execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
+                        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13)
+      endif()
+      file(GLOB OPENBLAS_LIBARAIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a")
+      set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBARAIES})
+      set(BLA_VENDOR OpenBLAS)
     endif()
-    file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-0.3.13/libopenblas.a")
-    set(BLA_VENDOR OpenBLAS)
-    set(BLA_STATIC ON)
+    message(STATUS "OPENBLAS LIBRARY: ${BLAS_openblas_LIBRARY}")
   endif()
   find_library(GFORTRAN NAMES libgfortran.a)
   find_library(PTHREAD NAMES libpthread.a)
