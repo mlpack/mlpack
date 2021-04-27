@@ -51,8 +51,8 @@ void SetParam(
 }
 
 /**
- * Set a matrix parameter, a matrix/dataset info parameter, or a serializable
- * object.  These set the filename referring to the parameter.
+ * Set a matrix parameter, a matrix/dataset info parameter.
+ * These set the filename referring to the parameter.
  */
 template<typename T>
 void SetParam(
