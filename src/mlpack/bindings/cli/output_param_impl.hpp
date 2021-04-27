@@ -53,7 +53,7 @@ void OutputParamImpl(
     util::ParamData& data,
     const typename boost::enable_if<arma::is_arma_type<T>>::type* /* junk */)
 {
-  typedef std::tuple<T, std::string> TupleType;
+  typedef std::tuple<T, std::string, size_t, size_t> TupleType;
   const T& output = std::get<0>(*boost::any_cast<TupleType>(&data.value));
   const std::string& filename =
       std::get<1>(*boost::any_cast<TupleType>(&data.value));
@@ -95,7 +95,7 @@ void OutputParamImpl(
         std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
 {
   // Output the matrix with the mappings.
-  typedef std::tuple<T, std::string> TupleType;
+  typedef std::tuple<T, std::string, size_t, size_t> TupleType;
   const T& tuple = std::get<0>(*boost::any_cast<TupleType>(&data.value));
   const std::string& filename =
       std::get<1>(*boost::any_cast<TupleType>(&data.value));

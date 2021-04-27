@@ -79,7 +79,7 @@ std::string GetPrintableParam(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
 {
   // Extract the string from the tuple that's being held.
-  typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
+  typedef std::tuple<T, typename ParameterType<T>::type, size_t, size_t> TupleType;
   const TupleType* tuple = boost::any_cast<TupleType>(&data.value);
 
   std::ostringstream oss;
@@ -87,10 +87,8 @@ std::string GetPrintableParam(
 
   if (std::get<1>(*tuple) != "")
   {
-    // Make sure the matrix is loaded so that we can print its size.
-    T& mat = GetParam<T>(const_cast<util::ParamData&>(data));
-    std::string matDescription = GetMatrixSize(mat);
-
+    std::string matDescription = std::to_string(std::get<2>(*tuple)) + "x";
+                matDescription += std::to_string(std::get<3>(*tuple)) + " matrix";
     oss << " (" << matDescription << ")";
   }
 

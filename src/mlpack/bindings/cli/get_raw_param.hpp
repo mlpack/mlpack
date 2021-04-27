@@ -48,7 +48,7 @@ T& GetRawParam(
                                    arma::mat>>::value>::type* = 0)
 {
   // Don't load the matrix.
-  typedef std::tuple<T, std::string> TupleType;
+  typedef std::tuple<T, std::string, size_t, size_t> TupleType;
   T& value = std::get<0>(*boost::any_cast<TupleType>(&d.value));
   return value;
 }

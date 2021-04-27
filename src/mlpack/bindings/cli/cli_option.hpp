@@ -100,7 +100,10 @@ class CLIOption
     else
     {
       typename ParameterType<typename std::remove_pointer<N>::type>::type tmp;
-      data.value = boost::any(std::tuple<N, decltype(tmp)>(defaultValue, tmp));
+      if(arma::is_arma_type<N>::value)
+      	data.value = boost::any(std::tuple<N, decltype(tmp), size_t, size_t>(defaultValue, tmp, 0, 0));
+      else
+      	data.value = boost::any(std::tuple<N, decltype(tmp)>(defaultValue, tmp));
     }
 
     const std::string tname = data.tname;
