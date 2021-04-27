@@ -34,6 +34,7 @@
 #include <mlpack/methods/ann/activation_functions/gaussian_function.hpp>
 #include <mlpack/methods/ann/activation_functions/hard_swish_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_exponential_function.hpp>
+#include <mlpack/methods/ann/activation_functions/silu_function.hpp>
 
 #include "catch.hpp"
 
@@ -1240,4 +1241,26 @@ TEST_CASE("TanhExpFunctionTest", "[ActivationFunctionsTest]")
 
   CheckActivationCorrect<TanhExpFunction>(activationData, desiredActivations);
   CheckDerivativeCorrect<TanhExpFunction>(desiredActivations, desiredDerivatives);
+}
+
+/**
+ * Basic test of the SILU(Sigmoid Weighted Linear Unit) Function
+ */
+TEST_CASE("SILUFunctionTest","[ActivationFunctionsTest]") 
+{
+  // Random generated values.
+  const arma::colvec activationData("-2 2 4.5 -5.7 -1 1 0 10");
+
+  // Calculated with PyTorch.
+  arma::colvec desiredActivation("-0.23840583860874176 1.7615940570831299 4.450558662414551 \
+                                  -0.01900840364396572 -0.2689414322376251 0.7310585975646973 \
+                                  0.0 9.99954605102539");
+
+  // Calculated with PyTorch.
+  arma::colvec desiredDerivate("0.38191673159599304 1.073788046836853 1.0392179489135742 \
+                                0.49049633741378784 0.36713290214538574 0.8354039788246155 \
+                                0.5 1.0004087686538696");
+    
+  CheckActivationCorrect<SILUFunction>(activationData,desiredActivation);
+  CheckDerivativeCorrect<SILUFunction>(desiredActivation,desiredDerivate);
 }
