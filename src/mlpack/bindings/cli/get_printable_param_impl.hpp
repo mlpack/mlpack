@@ -87,6 +87,8 @@ std::string GetPrintableParam(
 
   if (std::get<1>(*tuple) != "")
   {
+    // make sure that the matrix is loaded, so that we can print its size.
+    GetParam<T>(const_cast<util::ParamData&>(data));
     std::string matDescription = std::to_string(std::get<2>(*tuple)) + "x";
                 matDescription += std::to_string(std::get<3>(*tuple)) + " matrix";
     oss << " (" << matDescription << ")";
