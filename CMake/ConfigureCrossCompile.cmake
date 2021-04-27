@@ -11,11 +11,11 @@ endif()
 
 macro(search_openblas version)
   set(BLA_STATIC ON)
-  # find_package(BLAS)  This one is giving a placeholder even if it is not found
-  if (NOT BLAS_FOUND)
+  find_package(BLAS)
+  if (NOT BLAS_FOUND OR (NOT BLAS_LIBARAIES))
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${version}/OpenBLAS-${version}.tar.gz OpenBLAS OpenBLAS-${version}.tar.gz)
     if (NOT MSVC)
-      if(NOT EXISTS "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
+      if (NOT EXISTS "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
         execute_process(COMMAND make TARGET=ARMV8 BINARY=64 HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER} NO_SHARED=1
                         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
       endif()
