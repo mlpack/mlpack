@@ -46,6 +46,9 @@
   * Fix Python binding build when the CMake variable `USE_OPENMP` is set to
     `OFF` (#2884).
 
+  * The `mlpack_test` target is no longer built as part of `make all`.  Use
+    `make mlpack_test` to build the tests.
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.

@@ -56,12 +56,12 @@ steps:
   displayName: 'CMake'
 
 # Build mlpack
-- script: cd build && make
+- script: cd build && make && make mlpack_test
   condition: eq(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF')
   displayName: 'Build'
 
 # Build mlpack
-- script: cd build && make -j2
+- script: cd build && make -j2 && make -j2 mlpack_test
   condition: ne(variables['CMakeArgs'], '-DDEBUG=ON -DPROFILE=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_JULIA_BINDINGS=OFF -DBUILD_GO_BINDINGS=OFF -DBUILD_R_BINDINGS=OFF')
   displayName: 'Build'
 

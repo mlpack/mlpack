@@ -234,7 +234,7 @@ also be built.  OpenMP will be used for parallelization when possible by
 default.
 
 Once CMake is configured, building the library is as simple as typing 'make'.
-This will build all library components as well as 'mlpack_test'.
+This will build all library components and bindings.
 
     $ make
 
@@ -242,6 +242,12 @@ If you do not want to build everything in the library, individual components
 of the build can be specified:
 
     $ make mlpack_pca mlpack_knn mlpack_kfn
+
+If you want to build the tests, just make the `mlpack_test` target, and use
+`ctest` to run the tests:
+
+    $ make mlpack_test
+    $ ctest .
 
 If the build fails and you cannot figure out why, register an account on Github
 and submit an issue. The mlpack developers will quickly help you figure it out:
