@@ -140,8 +140,6 @@ find_package_handle_standard_args(Armadillo REQUIRED_VARS ${_ARMA_REQUIRED_VARS}
 if (ARMADILLO_FOUND)
   set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
   set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${_ARMA_SUPPORT_LIBRARIES})
-  message(STATUS "SHOW me from the inside ${ARMADILLO_LIBRARIES}")
-  message(STATUS "SHOW me from the inside SUPPORT ${_ARMA_SUPPORT_LIBRARIES}")
 endif ()
 
 # Clean up internal variables
