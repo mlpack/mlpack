@@ -182,7 +182,7 @@ The full list of options mlpack allows:
        and Gonum exist. (default OFF)
  - BUILD_JULIA_BINDINGS=(ON/OFF): compile Julia bindings, if Julia is found
        (default OFF)
- - BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
+ - BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries and executables as opposed to
        static libraries (default ON)
  - TEST_VERBOSE=(ON/OFF): run test cases in \c mlpack_test with verbose output
        (default OFF)
