@@ -56,7 +56,7 @@ class SphericalKernel
    * @tparam VecTypeB Type of second vector.
    * @param a First vector.
    * @param b Second vector.
-   * @return the convolution integral value.
+   * @return The convolution integral value.
    */
   template<typename VecTypeA, typename VecTypeB>
   double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b) const
@@ -72,17 +72,14 @@ class SphericalKernel
     {
       case 1:
         return 1.0 / volumeSquared * (2.0 * bandwidth - distance);
-        break;
       case 2:
         return 1.0 / volumeSquared *
           (2.0 * bandwidth * bandwidth * acos(distance/(2.0 * bandwidth)) -
           distance / 4.0 * sqrt(4.0*bandwidth*bandwidth-distance*distance));
-        break;
       default:
         Log::Fatal << "The spherical kernel does not support convolution\
           integrals above dimension two, yet..." << std::endl;
         return -1.0;
-        break;
     }
   }
   double Normalizer(size_t dimension) const

@@ -397,9 +397,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
   // take the better of the two.
 
   double worstDistance = SortPolicy::BestDistance();
-  double bestDistance = SortPolicy::WorstDistance();
   double bestPointDistance = SortPolicy::WorstDistance();
-  double auxDistance = SortPolicy::WorstDistance();
 
   // Loop over points held in the node.
   for (size_t i = 0; i < queryNode.NumPoints(); ++i)
@@ -411,7 +409,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
       bestPointDistance = distance;
   }
 
-  auxDistance = bestPointDistance;
+  double auxDistance = bestPointDistance;
 
   // Loop over children of the node, and use their cached information to
   // assemble bounds.
@@ -428,7 +426,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
 
   // Add triangle inequality adjustment to best distance.  It is possible this
   // could be tighter for some certain types of trees.
-  bestDistance = SortPolicy::CombineWorst(auxDistance,
+  double bestDistance = SortPolicy::CombineWorst(auxDistance,
       2 * queryNode.FurthestDescendantDistance());
 
   // Add triangle inequality adjustment to best distance of points in node.

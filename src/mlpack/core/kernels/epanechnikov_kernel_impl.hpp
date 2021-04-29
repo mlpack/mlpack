@@ -58,7 +58,6 @@ double EpanechnikovKernel::ConvolutionIntegral(const VecTypeA& a,
           (3.0 * bandwidth) + 2.0 * distance * distance * distance /
           (3.0 * bandwidth * bandwidth) -
           std::pow(distance, 5.0) / (30.0 * std::pow(bandwidth, 4.0)));
-      break;
     case 2:
       return 1.0 / volumeSquared *
           ((2.0 / 3.0 * bandwidth * bandwidth - distance * distance) *
@@ -67,12 +66,10 @@ double EpanechnikovKernel::ConvolutionIntegral(const VecTypeA& a,
           (distance / 6.0 + 2.0 / 9.0 * distance *
           std::pow(distance / bandwidth, 2.0) - distance / 72.0 *
           std::pow(distance / bandwidth, 4.0)));
-      break;
     default:
       Log::Fatal << "EpanechnikovKernel::ConvolutionIntegral(): dimension "
           << a.n_rows << " not supported.";
       return -1.0; // This line will not execute.
-      break;
   }
 }
 
