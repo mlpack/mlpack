@@ -53,9 +53,9 @@ if (BUILD_CLI_EXECUTABLES)
   # Build mlpack CLI binding binaries statically.
   if(NOT BUILD_SHARED_LIBS)
     target_link_libraries(mlpack_${name} -static
-     mlpack
-     ${ARMADILLO_LIBRARIES}
-     ${COMPILER_SUPPORT_LIBRARIES}
+      mlpack
+      ${ARMADILLO_LIBRARIES}
+      ${COMPILER_SUPPORT_LIBRARIES}
    )
   else()
     # Build mlpack CLI binding binaries dynamically.
