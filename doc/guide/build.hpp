@@ -209,7 +209,7 @@ The full list of options mlpack allows:
 Each option can be specified to CMake with the '-D' flag.  Other tools can also
 be used to configure CMake, but those are not documented here.
 
-For example, if you would like to build mlpack and its CLI binding statically, then
+For example, if you would like to build mlpack and its CLI bindings statically, then
 you need to execute the following commands:
 
 @code
