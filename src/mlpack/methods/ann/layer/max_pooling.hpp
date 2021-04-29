@@ -205,9 +205,8 @@ class MaxPooling
 
         if (!deterministic)
         {
-          arma::Mat<size_t> subIndices = indices(arma::span(rowidx,
-              rowidx + kernelWidth - 1 - offset),
-              arma::span(colidx, colidx + kernelHeight - 1 - offset));
+          arma::Mat<size_t> subIndices = indices(arma::span(rowidx, rowEnd),
+              arma::span(colidx, colEnd));
 
           poolingIndices(i, j) = subIndices(idx);
         }
