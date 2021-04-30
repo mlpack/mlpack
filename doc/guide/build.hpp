@@ -183,7 +183,7 @@ The full list of options mlpack allows:
        and Gonum exist. (default OFF)
  - BUILD_JULIA_BINDINGS=(ON/OFF): compile Julia bindings, if Julia is found
        (default OFF)
- - BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
+ - BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries and executables as opposed to
        static libraries (default ON)
  - TEST_VERBOSE=(ON/OFF): run test cases in \c mlpack_test with verbose output
        (default OFF)
@@ -210,6 +210,14 @@ The full list of options mlpack allows:
 Each option can be specified to CMake with the '-D' flag.  Other tools can also
 be used to configure CMake, but those are not documented here.
 
+For example, if you would like to build mlpack and its CLI bindings statically, then
+you need to execute the following commands:
+
+@code
+$ cd build
+$ cmake -D BUILD_SHARED_LIBS=OFF ../
+@endcode
+
 In addition, the following directories may be specified, to find include files
 and libraries. These also use the '-D' flag.
 
@@ -217,10 +225,12 @@ and libraries. These also use the '-D' flag.
  - ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): location of Armadillo
        library
  - BOOST_ROOT=(/path/to/boost/): path to root of boost installation
+ - CEREAL_INCLUDE_DIR=(/path/to/cereal/include): path to include directory for
+       cereal
  - ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
        for ensmallen
  - STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
-      STB image library
+       STB image library
  - MATHJAX_ROOT=(/path/to/mathjax): path to root of MathJax installation
 
 @section build_build Building mlpack
