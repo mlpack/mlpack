@@ -56,7 +56,7 @@ if (BUILD_CLI_EXECUTABLES)
       mlpack
       ${ARMADILLO_LIBRARIES}
       ${COMPILER_SUPPORT_LIBRARIES}
-   )
+    )
   else()
     # Build mlpack CLI binding binaries dynamically.
     target_link_libraries(mlpack_${name}
