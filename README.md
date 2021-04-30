@@ -211,8 +211,8 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_R_BINDINGS=(ON/OFF): whether or not to build R bindings
     R_EXECUTABLE=(/path/to/R): Path to specific R executable
     BUILD_TESTS=(ON/OFF): whether or not to build tests
-    BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries and executables as opposed to
-       static libraries
+    BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries and executables as
+        opposed to static libraries
     DISABLE_DOWNLOADS=(ON/OFF): whether to disable all downloads during build
     DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
     ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
