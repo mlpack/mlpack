@@ -366,6 +366,9 @@ older versions of mlpack:
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
   - [API documentation (Doxygen)](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
 
+To learn about the development goals of mlpack in the short- and medium-term
+future, see the [vision document](https://www.mlpack.org/papers/vision.pdf).
+
 ### 8. Bug reporting
 
    (see also [mlpack help](https://www.mlpack.org/questions.html))
