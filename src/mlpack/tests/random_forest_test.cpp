@@ -564,7 +564,7 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
  */
 TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
 {
-  // Load the vc2 dataset.
+  // Load the iris dataset.
   arma::mat dataset;
   if (!data::Load("iris_train.csv", dataset))
     FAIL("Cannot load dataset iris_train.csv");
