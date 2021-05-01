@@ -70,6 +70,9 @@ class RandomBinaryNumericSplit
    *      with split information a successful split.
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
+   * @param splitIfBetterGain When set to true, it will split only when gain is
+   *      better than the current best gain. Otherwise, it always makes a
+   *      split regardless of gain.
    */
   template<bool UseWeights, typename VecType, typename WeightVecType>
   static double SplitIfBetter(
