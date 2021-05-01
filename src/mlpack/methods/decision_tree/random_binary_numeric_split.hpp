@@ -86,6 +86,11 @@ class RandomBinaryNumericSplit
 
   /**
    * Returns 2, since the binary split always has two children.
+   *
+   * @param classProbabilities Class probabilities vector, which may be filled
+   *      with split information a successful split. (Not used here.)
+   * @param aux Auxiliary split information, which may be modified on a
+   *      successful split. (Not used here.)
    */
   static size_t NumChildren(const arma::vec& /* classProbabilities */,
                             const AuxiliarySplitInfo& /* aux */)
