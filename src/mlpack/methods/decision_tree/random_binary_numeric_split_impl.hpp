@@ -122,7 +122,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     // Calculate the gain at this split point.
     gain = double(leftLeafSize) * leftGain + double(rightLeafSize) * rightGain;
 
-  if (gain < bestFoundGain and splitIfBetterGain)
+  if (gain < bestFoundGain && splitIfBetterGain)
     return DBL_MAX;
 
   classProbabilities.set_size(1);
