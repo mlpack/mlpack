@@ -12,7 +12,7 @@ set(TOOLCHAIN_PREFIX "" CACHE STRING "TOOLCHAIN_PREFIX")
 ## In some distribution, a dynamic link for aarch64-linux-gnu-gcc may not be
 ## found or created, instead it might be labeled with the version at the end
 ## For instance: aarch64-linux-gnu-gcc-5
-## Therefore, if dynamic link exists, you do not have to specify the version
+## Therefore, if dynamic link exists, you do not have to specify the version.
 set(VERSION_NUMBER "" CACHE STRING "Enter the version number of the compiler")
 
 # Without that flag CMake is not able to pass test compilation check
