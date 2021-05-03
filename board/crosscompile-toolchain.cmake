@@ -15,7 +15,7 @@ set(TOOLCHAIN_PREFIX "" CACHE STRING "TOOLCHAIN_PREFIX")
 ## Therefore, if dynamic link exists, you do not have to specify the version.
 set(VERSION_NUMBER "" CACHE STRING "Enter the version number of the compiler")
 
-# Without that flag CMake is not able to pass test compilation check
+# Without that flag CMake is not able to pass test compilation check.
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 set(CMAKE_AR "${TOOLCHAIN_PREFIX}gcc-ar${VERSION_NUMBER}" CACHE FILEPATH "" FORCE)
