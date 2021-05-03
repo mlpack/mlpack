@@ -411,7 +411,7 @@ class RandomForest
 };
 
 /**
- * Convenience typedef for Extra Trees. (Extremely Randomised Trees Forest)
+ * Convenience typedef for Extra Trees. (Extremely Randomized Trees Forest)
  *
  * @code
  * @article{10.1007/s10994-006-6226-1,
