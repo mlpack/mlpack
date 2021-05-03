@@ -30,7 +30,7 @@ set(CMAKE_OBJCOPY ${TOOLCHAIN_PREFIX}objcopy${VERSION_NUMBER} CACHE INTERNAL "ob
 set(CMAKE_SIZE_UTIL ${TOOLCHAIN_PREFIX}size${VERSION_NUMBER} CACHE INTERNAL "size tool")
 
 ## Here are the standard ROOT_PATH if you are using the standard toolchain
-## if you are using a different toolchain you have to specify that too
+## if you are using a different toolchain you have to specify that too.
 set(CMAKE_FIND_ROOT_PATH "${CMAKE_SYSROOT}")
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --sysroot=${CMAKE_SYSROOT}" CACHE INTERNAL "" FORCE)
