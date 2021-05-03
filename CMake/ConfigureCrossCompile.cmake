@@ -3,7 +3,7 @@
 # from the command line: the CMAKE_SYSROOT, TOOLCHAIN_PREFIX and the
 # board type.
 # This file will compile OpenBLAS if it is downloaded and it is not
-# available on you system in order to find the BLAS library.
+# available on your system in order to find the BLAS library.
 
 if (CMAKE_CROSSCOMPILING)
   include(board/flags-config.cmake)
