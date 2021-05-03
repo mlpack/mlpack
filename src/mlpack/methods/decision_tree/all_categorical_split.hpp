@@ -55,13 +55,12 @@ class AllCategoricalSplit
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
    */
-  template<bool UseWeights, typename VecType, typename ElemType, typename WeightVecType>
+  template<bool UseWeights, typename VecType, typename LabelsType, typename WeightVecType>
   static double SplitIfBetter(
       const double bestGain,
       const VecType& data,
       const size_t numCategories,
-      const arma::Row<ElemType>& labels,
-      const size_t begin,
+      const LabelsType& labels,
       const size_t numClasses,
       const WeightVecType& weights,
       const size_t minimumLeafSize,

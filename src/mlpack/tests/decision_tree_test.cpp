@@ -493,11 +493,11 @@ TEST_CASE("AllCategoricalSplitSimpleSplitTest", "[DecisionTreeTest]")
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 4, labels, 0, 3, weights, 3, 1e-7, classProbabilities[0],
+      bestGain, values, 4, labels, 3, weights, 3, 1e-7, classProbabilities[0],
       aux);
   const double weightedGain =
       AllCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 4,
-      labels, 0, 3, weights, 3, 1e-7, classProbabilities[0], aux);
+      labels, 3, weights, 3, 1e-7, classProbabilities[0], aux);
 
   // Make sure that a split was made.
   REQUIRE(gain > bestGain);
@@ -529,7 +529,7 @@ TEST_CASE("AllCategoricalSplitMinSamplesTest", "[DecisionTreeTest]")
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 4, labels, 0, 3, weights, 4, 1e-7,
+      bestGain, values, 4, labels, 3, weights, 4, 1e-7,
       classProbabilities[0], aux);
 
   // Make sure it's not split.
@@ -561,11 +561,11 @@ TEST_CASE("AllCategoricalSplitNoGainTest", "[DecisionTreeTest]")
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 10, labels, 0, 3, weights, 10, 1e-7,
+      bestGain, values, 10, labels, 3, weights, 10, 1e-7,
       classProbabilities[0], aux);
   const double weightedGain =
       AllCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 10,
-      labels, 0, 3, weights, 10, 1e-7, classProbabilities[0], aux);
+      labels, 3, weights, 10, 1e-7, classProbabilities[0], aux);
 
   // Make sure that there was no split.
   REQUIRE(gain == DBL_MAX);
