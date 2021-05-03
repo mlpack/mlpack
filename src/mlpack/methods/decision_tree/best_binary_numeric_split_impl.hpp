@@ -234,6 +234,11 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
       continue;
 
+    /* TODO: The following function calculates the gain for each split each time from scratch
+             This can be greatly improved using advanced techniques like prefix sum and
+             prefix sum of squares etc. This will have drastic effects on runtime and is
+             definitely something we would want in future.
+     */
     // Calculate the gain for the left and right child.
     const double leftGain = FitnessFunction::template Evaluate<UseWeights>(sortedLabels,
         sortedWeights, 0, index);
