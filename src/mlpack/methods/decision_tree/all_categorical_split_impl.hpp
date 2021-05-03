@@ -16,13 +16,12 @@ namespace mlpack {
 namespace tree {
 
 template<typename FitnessFunction>
-template<bool UseWeights, typename VecType, typename ElemType, typename WeightVecType>
+template<bool UseWeights, typename VecType, typename LabelsType, typename WeightVecType>
 double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
     const size_t numCategories,
-    const arma::Row<ElemType>& labels,
-    const size_t begin,
+    const LabelsType& labels,
     const size_t numClasses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
@@ -59,7 +58,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   // Calculate the gain of the split.  First we have to calculate the labels
   // that would be assigned to each child.
   arma::uvec childPositions(numCategories, arma::fill::zeros);
-  std::vector<arma::Row<ElemType>> childLabels(numCategories);
+  std::vector<arma::Row<typename LabelsType::elem_type>> childLabels(numCategories);
   std::vector<arma::Row<double>> childWeights(numCategories);
   for (size_t i = 0; i < numCategories; ++i)
   {
@@ -76,12 +75,12 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
 
     if (UseWeights)
     {
-      childLabels[category][childPositions[category]] = labels[begin + i];
+      childLabels[category][childPositions[category]] = labels[i];
       childWeights[category][childPositions[category]++] = weights[i];
     }
     else
     {
-      childLabels[category][childPositions[category]++] = labels[begin + i];
+      childLabels[category][childPositions[category]++] = labels[i];
     }
   }
 

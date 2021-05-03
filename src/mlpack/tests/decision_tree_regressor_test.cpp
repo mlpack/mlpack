@@ -141,10 +141,10 @@ TEST_CASE("AllCategoricalSplitSimpleSplitTest1", "[DecisionTreeRegressorTest]")
   // Call the method to do the splitting.
   const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictor, 2, labels, 0, 0, weights, 3, 1e-7, splitInfo, aux);
+      bestGain, predictor, 2, labels, 0, weights, 3, 1e-7, splitInfo, aux);
   const double weightedGain =
       AllCategoricalSplit<MSEGain>::SplitIfBetter<true>(bestGain, predictor, 2,
-      labels, 0, 0, weights, 3, 1e-7, splitInfo, aux);
+      labels, 0, weights, 3, 1e-7, splitInfo, aux);
 
   // Make sure that a split was made.
   REQUIRE(gain > bestGain);
@@ -172,7 +172,7 @@ TEST_CASE("AllCategoricalSplitMinSamplesTest1", "[DecisionTreeRegressorTest]")
   // Call the method to do the splitting.
   const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictors, 4, labels, 0, 0, weights, 4, 1e-7, splitInfo, aux);
+      bestGain, predictors, 4, labels, 0, weights, 4, 1e-7, splitInfo, aux);
 
   // Make sure it's not split.
   REQUIRE(gain == DBL_MAX);
@@ -203,11 +203,11 @@ TEST_CASE("AllCategoricalSplitNoGainTest1", "[DecisionTreeRegressorTest]")
   // Call the method to do the splitting.
   const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictors, 10, labels, 0, 0, weights, 10, 1e-7,
+      bestGain, predictors, 10, labels, 0, weights, 10, 1e-7,
       splitInfo, aux);
   const double weightedGain =
       AllCategoricalSplit<MSEGain>::SplitIfBetter<true>(bestGain, predictors,
-      10, labels, 0, 0, predictors, 10, 1e-7, splitInfo, aux);
+      10, labels, 0, predictors, 10, 1e-7, splitInfo, aux);
 
   // Make sure that there was no split.
   REQUIRE(gain == DBL_MAX);
