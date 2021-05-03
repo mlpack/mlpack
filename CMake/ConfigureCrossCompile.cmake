@@ -1,3 +1,10 @@
+# This file adds the necessary configurations to cross compile
+# mlpack for embedde system. You need to set the following variables
+# from the command line: the CMAKE_SYSROOT, TOOLCHAIN_PREFIX and the
+# board type.
+# This file will compile OpenBLAS if it is downloaded and it is not
+# available on you system in order to find the BLAS library.
+
 if (CMAKE_CROSSCOMPILING)
   include(board/flags-config.cmake)
   if(NOT CMAKE_SYSROOT AND (NOT TOOLCHAIN_PREFIX))
@@ -23,6 +30,8 @@ macro(search_openblas version)
       endif()
       file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/libopenblas.a")
       set(BLAS_LIBRARIES ${OPENBLAS_LIBRARIES})
+      set(BLAS_openblas_LIBRARIES ${OPENBLAS_LIBRARIES})
+      message(STATUS "SHOW BLAS libraries: ${BLAS_LIBRARIES}")
       set(BLA_VENDOR OpenBLAS)
       set(BLAS_FOUND ON)
     endif()
