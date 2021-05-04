@@ -269,6 +269,8 @@ endif()
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
 
+# Download and compile OpenBLAS if we are cross compiling mlpack for a specific
+# architecture. The function takes the version of OpenBLAS as variable.
 if (CMAKE_CROSSCOMPILING)
   search_openblas(0.3.13)
 endif()
