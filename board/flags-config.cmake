@@ -1,5 +1,5 @@
 # This function provides a set of specific flags for each supported board
-# Depending on the processor type. The objective is to optimize for size.
+# depending on the processor type. The objective is to optimize for size.
 # Thus, all of the following flags are chosen carefully to reduce binary 
 # footprints.
 
