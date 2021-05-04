@@ -1,7 +1,6 @@
 # This file adds the necessary configurations to cross compile
 # mlpack for embedded systems. You need to set the following variables
-# from the command line: the CMAKE_SYSROOT, TOOLCHAIN_PREFIX and the
-# board type.
+# from the command line: CMAKE_SYSROOT and TOOLCHAIN_PREFIX.
 # This file will compile OpenBLAS if it is downloaded and it is not
 # available on your system in order to find the BLAS library.
 
