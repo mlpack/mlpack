@@ -1,6 +1,6 @@
 # This function provides a set of specific flags for each supported board
 # Depending on the processor type. The objective is to optimize for size.
-# Thus, all of the fllowing flags are chosen carefully to reduce binary 
+# Thus, all of the following flags are chosen carefully to reduce binary 
 # footprints.
 
 # Set generic minimization flags for all platforms.
