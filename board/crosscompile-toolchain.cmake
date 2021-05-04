@@ -9,28 +9,22 @@
 ## https://toolchains.bootlin.com/
 
 set(CMAKE_SYSTEM_NAME Linux)
-set(CMAKE_SYSROOT "" CACHE STRING "CMAKE_SYSROOT")
-set(TOOLCHAIN_PREFIX "" CACHE STRING "TOOLCHAIN_PREFIX")
-
-## In some distribution, a dynamic link for aarch64-linux-gnu-gcc may not be
-## found or created, instead it might be labeled with the version at the end
-## For instance: aarch64-linux-gnu-gcc-5
-## Therefore, if dynamic link exists, you do not have to specify the version.
-set(VERSION_NUMBER "" CACHE STRING "Enter the version number of the compiler")
+set(CMAKE_SYSROOT)
+set(TOOLCHAIN_PREFIX "" CACHE STRING "Path for Toolchain for cross compiler and other compilation tools.")
 
 # Without that flag CMake is not able to pass test compilation check.
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-set(CMAKE_AR "${TOOLCHAIN_PREFIX}gcc-ar${VERSION_NUMBER}" CACHE FILEPATH "" FORCE)
-set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc${VERSION_NUMBER})
-set(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}g++${VERSION_NUMBER})
-set(CMAKE_LINKER ${TOOLCHAIN_PREFIX}ld${VERSION_NUMBER})
+set(CMAKE_AR "${TOOLCHAIN_PREFIX}gcc-ar" CACHE FILEPATH "" FORCE)
+set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc)
+set(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}g++)
+set(CMAKE_LINKER ${TOOLCHAIN_PREFIX}ld)
 set(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> qcs <TARGET> <LINK_FLAGS> <OBJECTS>")
 set(CMAKE_C_ARCHIVE_FINISH  true)
 set(CMAKE_FORTRAN_COMPILER ${TOOLCHAIN_PREFIX}gfortran)
 set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
-set(CMAKE_OBJCOPY ${TOOLCHAIN_PREFIX}objcopy${VERSION_NUMBER} CACHE INTERNAL "objcopy tool")
-set(CMAKE_SIZE_UTIL ${TOOLCHAIN_PREFIX}size${VERSION_NUMBER} CACHE INTERNAL "size tool")
+set(CMAKE_OBJCOPY ${TOOLCHAIN_PREFIX}objcopy CACHE INTERNAL "objcopy tool")
+set(CMAKE_SIZE_UTIL ${TOOLCHAIN_PREFIX}size CACHE INTERNAL "size tool")
 
 ## Here are the standard ROOT_PATH if you are using the standard toolchain
 ## if you are using a different toolchain you have to specify that too.
