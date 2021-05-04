@@ -12,7 +12,7 @@ set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSROOT)
 set(TOOLCHAIN_PREFIX "" CACHE STRING "Path for Toolchain for cross compiler and other compilation tools.")
 
-# Without that flag CMake is not able to pass test compilation check.
+# Ensure that CMake tries to build static libraries when testing the compiler.
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 set(CMAKE_AR "${TOOLCHAIN_PREFIX}gcc-ar" CACHE FILEPATH "" FORCE)
