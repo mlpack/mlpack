@@ -16,7 +16,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -findirect-inlining -fno-common")
 # this can be added when mlpack Azure CI moves toward Ubuntu 20.
 
 set(BOARD_NAME "" CACHE STRING "Specify Board name to optimize for.")
-string(TOUPPER BOARD_NAME BOARD)
+string(TOUPPER ${BOARD_NAME} BOARD)
 
 # Set specific platforms CMAKE CXX flags.
 if(BOARD MATCHES "RPI0" OR BOARD MATCHES "RPI1")
