@@ -4,6 +4,9 @@
 ## It works best with buildroot toolchain, when using it the user
 ## needs to set the: TOOLCHAIN_PREFIX and CMAKE_SYSROOT from the
 ## command line.
+## Currently, we recommend using buildroot toolchain for
+## cross-compilation. Here is the link to download the toolchains:
+## https://toolchains.bootlin.com/
 
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSROOT "" CACHE STRING "CMAKE_SYSROOT")
