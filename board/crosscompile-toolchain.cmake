@@ -12,7 +12,7 @@
 
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSROOT)
-set(TOOLCHAIN_PREFIX "" CACHE STRING "Path for Toolchain for cross compiler and other compilation tools.")
+set(TOOLCHAIN_PREFIX "" CACHE STRING "Path for toolchain for cross compiler and other compilation tools.")
 
 # Ensure that CMake tries to build static libraries when testing the compiler.
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
