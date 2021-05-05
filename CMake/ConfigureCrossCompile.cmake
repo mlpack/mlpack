@@ -14,7 +14,7 @@ if (CMAKE_CROSSCOMPILING)
   elseif(NOT CMAKE_SYSROOT)
     message(FATAL_ERROR "Can not proceed CMAKE_SYSROOT is not set")
   elseif(NOT TOOLCHAIN_PREFIX)
-    message(FATAL_ERROR "Cant not proceed TOOLCHAIN_PREFIX is not set")
+    message(FATAL_ERROR "Cannot configure: TOOLCHAIN_PREFIX must be set when performing cross-compiling!")
   endif()
 endif()
 
