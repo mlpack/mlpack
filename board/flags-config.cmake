@@ -64,5 +64,6 @@ elseif(BOARD MATCHES "NORTHWOOD")
   set(OPENBLAS_TARGET "NORTHWOOD")
   set(OPENBLAS_BINARY "32")
 elseif(BOARD)
+  ## TODO: update documentation with a list of the supported boards.
   message(FATAL_ERROR "Given BOARD_NAME is not known; please choose a supported board from the list")
 endif()
