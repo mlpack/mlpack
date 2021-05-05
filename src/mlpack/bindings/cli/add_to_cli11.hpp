@@ -46,7 +46,7 @@ void AddToCLI11(const std::string& cliName,
   app.add_option_function<std::string>(cliName.c_str(),
       [&param](const std::string& value)
       {
-        using TupleType = std::tuple<T, typename ParameterType<T>::type, size_t, size_t>;
+        using TupleType = std::tuple<T, typename ParameterType<T>::type>;
         TupleType& tuple = *boost::any_cast<TupleType>(&param.value);
         std::get<1>(tuple) = boost::any_cast<std::string>(value);
         param.wasPassed = true;
@@ -108,7 +108,7 @@ void AddToCLI11(const std::string& cliName,
   app.add_option_function<std::string>(cliName.c_str(),
       [&param](const std::string& value)
       {
-        using TupleType = std::tuple<T, typename ParameterType<T>::type, size_t, size_t>;
+        using TupleType = std::tuple<T, typename ParameterType<T>::type>;
         TupleType& tuple = *boost::any_cast<TupleType>(&param.value);
         std::get<1>(tuple) = boost::any_cast<std::string>(value);
         param.wasPassed = true;

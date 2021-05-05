@@ -51,8 +51,8 @@ void SetParam(
 }
 
 /**
- * Set a matrix parameter, a matrix/dataset info parameter.
- * These set the filename referring to the parameter.
+ * Set a matrix parameter, a matrix/dataset info parameter, or a serializable
+ * object.  These set the filename referring to the parameter.
  */
 template<typename T>
 void SetParam(
@@ -63,7 +63,7 @@ void SetParam(
         std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // We're setting the string filename.
-  typedef std::tuple<T, typename ParameterType<T>::type, size_t, size_t> TupleType;
+  typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
   TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
   std::get<1>(tuple) = boost::any_cast<std::string>(value);
 }

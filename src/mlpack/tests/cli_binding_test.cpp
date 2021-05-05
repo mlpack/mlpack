@@ -82,7 +82,7 @@ TEST_CASE("GetParamLoadedMatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "hello.csv";
   arma::mat m(5, 5, arma::fill::ones);
-  tuple<arma::mat, string, size_t, size_t> tuple = make_tuple(m, filename, 0, 0);
+  tuple<arma::mat, string> tuple = make_tuple(m, filename);
   d.value = boost::any(tuple);
   // Mark it as already loaded.
   d.input = true;
@@ -106,7 +106,7 @@ TEST_CASE("GetParamUnloadedMatTest", "[CLIOptionTest]")
   arma::mat test(5, 5, arma::fill::ones);
   data::Save("test.csv", test);
   arma::mat m;
-  tuple<arma::mat, string, size_t, size_t> tuple = make_tuple(m, filename, 0, 0);
+  tuple<arma::mat, string> tuple = make_tuple(m, filename);
   d.value = boost::any(tuple);
   // Make sure it is not loaded yet.
   d.input = true;
@@ -132,7 +132,7 @@ TEST_CASE("GetParamUmatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "hello.csv";
   arma::Mat<size_t> m(5, 5, arma::fill::ones);
-  tuple<arma::Mat<size_t>, string, size_t, size_t> tuple = make_tuple(m, filename, 0, 0);
+  tuple<arma::Mat<size_t>, string> tuple = make_tuple(m, filename);
   d.value = boost::any(tuple);
   // Mark it as already loaded.
   d.input = true;
@@ -157,7 +157,7 @@ TEST_CASE("GetParamUnloadedUmatTest", "[CLIOptionTest]")
   arma::Mat<size_t> test(5, 5, arma::fill::ones);
   data::Save("test.csv", test);
   arma::Mat<size_t> m;
-  tuple<arma::Mat<size_t>, string, size_t, size_t> tuple = make_tuple(m, filename, 0, 0);
+  tuple<arma::Mat<size_t>, string> tuple = make_tuple(m, filename);
   d.value = boost::any(tuple);
   // Make sure it is not loaded yet.
   d.input = true;
@@ -200,7 +200,7 @@ TEST_CASE("GetParamDatasetInfoMatTest", "[CLIOptionTest]")
   arma::mat m;
 
   tuple<data::DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
-  tuple<decltype(tuple1), string, size_t, size_t> tuple2 = make_tuple(tuple1, filename, 0, 0);
+  tuple<decltype(tuple1), string> tuple2 = make_tuple(tuple1, filename);
 
   d.value = boost::any(tuple2);
   // Make sure it is not loaded yet.
@@ -274,7 +274,7 @@ TEST_CASE("RawParamMatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "hello.csv";
   arma::mat m(5, 5, arma::fill::ones);
-  tuple<arma::mat, string, size_t, size_t> tuple = make_tuple(m, filename, 0, 0);
+  tuple<arma::mat, string> tuple = make_tuple(m, filename);
   d.value = boost::any(tuple);
   d.input = true;
   d.loaded = false;
@@ -324,7 +324,7 @@ TEST_CASE("GetRawParamDatasetInfoTest", "[CLIOptionTest]")
   arma::mat m(3, 3, arma::fill::randu);
 
   tuple<data::DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
-  tuple<decltype(tuple1), string, size_t, size_t> tuple2 = make_tuple(tuple1, filename, 0, 0);
+  tuple<decltype(tuple1), string> tuple2 = make_tuple(tuple1, filename);
 
   d.value = boost::any(tuple2);
   // Make sure it is not loaded yet.
@@ -350,7 +350,7 @@ TEST_CASE("OutputParamMatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "test.csv";
   arma::mat m(3, 3, arma::fill::randu);
-  tuple<arma::mat, string, size_t, size_t> t = make_tuple(m, filename, 0, 0);
+  tuple<arma::mat, string> t = make_tuple(m, filename);
 
   d.value = boost::any(t);
   d.input = false;
@@ -376,7 +376,7 @@ TEST_CASE("OutputParamUmatTest", "[CLIOptionTest]")
   // Create value.
   string filename = "test.csv";
   arma::Mat<size_t> m(3, 3, arma::fill::randu);
-  tuple<arma::Mat<size_t>, string, size_t, size_t> t = make_tuple(m, filename, 0, 0);
+  tuple<arma::Mat<size_t>, string> t = make_tuple(m, filename);
 
   d.value = boost::any(t);
   d.input = false;
@@ -467,7 +467,7 @@ TEST_CASE("SetParamMatrixTest", "[CLIOptionTest]")
   // Create initial value.
   string filename = "hello.csv";
   arma::mat m(5, 5, arma::fill::randu);
-  d.value = boost::any(make_tuple(m, filename, size_t(0), size_t(0)));
+  d.value = boost::any(make_tuple(m, filename));
 
   // Get a new string.
   string newFilename = "new.csv";
@@ -475,9 +475,10 @@ TEST_CASE("SetParamMatrixTest", "[CLIOptionTest]")
 
   SetParam<arma::mat>((util::ParamData&) d, (const void*) &a2,
       (void*) NULL);
+
   // Make sure the change went through.
-  tuple<arma::mat, string, size_t, size_t>& t =
-      *boost::any_cast<tuple<arma::mat, string, size_t, size_t>>(&d.value);
+  tuple<arma::mat, string>& t =
+      *boost::any_cast<tuple<arma::mat, string>>(&d.value);
   REQUIRE(get<1>(t) == "new.csv");
 }
 
@@ -517,8 +518,7 @@ TEST_CASE("SetParamDatasetInfoMatTest", "[CLIOptionTest]")
   arma::mat m(3, 3, arma::fill::randu);
   DatasetInfo di(3);
   tuple<DatasetInfo, arma::mat> t1 = make_tuple(di, m);
-  tuple<tuple<DatasetInfo, arma::mat>, string, size_t, size_t> t2 = make_tuple(t1, filename, 
-      size_t(0), size_t(0));
+  tuple<tuple<DatasetInfo, arma::mat>, string> t2 = make_tuple(t1, filename);
   d.value = boost::any(t2);
   d.noTranspose = false;
 
@@ -530,8 +530,8 @@ TEST_CASE("SetParamDatasetInfoMatTest", "[CLIOptionTest]")
       (const void*) &a2, (void*) NULL);
 
   // Check that the name is right.
-  tuple<tuple<DatasetInfo, arma::mat>, string, size_t, size_t>& t3 =
-      *boost::any_cast<tuple<tuple<DatasetInfo, arma::mat>, string, size_t, size_t>>(&d.value);
+  tuple<tuple<DatasetInfo, arma::mat>, string>& t3 =
+      *boost::any_cast<tuple<tuple<DatasetInfo, arma::mat>, string>>(&d.value);
 
   REQUIRE(get<1>(t3) == "new_filename.csv");
 }
@@ -556,7 +556,7 @@ TEST_CASE("GetAllocatedMemoryNonModelTest", "[CLIOptionTest]")
   // Also test with a matrix type.
   arma::mat test(10, 10, arma::fill::ones);
   string filename = "test.csv";
-  tuple<arma::mat, string, size_t, size_t> t = make_tuple(test, filename, 0, 0);
+  tuple<arma::mat, string> t = make_tuple(test, filename);
   d.value = boost::any(t);
 
   result = (void*) 1;
@@ -602,7 +602,7 @@ TEST_CASE("DeleteAllocatedMemoryNonModelTest", "[CLIOptionTest]")
 
   arma::mat test(10, 10, arma::fill::ones);
   string filename = "test.csv";
-  tuple<arma::mat, string, size_t, size_t> t = make_tuple(test, filename, 0, 0);
+  tuple<arma::mat, string> t = make_tuple(test, filename);
   d.value = boost::any(t);
 
   DeleteAllocatedMemory<arma::mat>((util::ParamData&) d,

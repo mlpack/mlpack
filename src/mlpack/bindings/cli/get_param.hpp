@@ -51,12 +51,10 @@ T& GetParam(
   // contains the filename.  It's possible we could load empty matrices many
   // times, but I am not bothered by that---it shouldn't be something that
   // happens.
-  typedef std::tuple<T, typename ParameterType<T>::type, size_t, size_t> TupleType;
+  typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
   TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
   const std::string& value = std::get<1>(tuple);
   T& matrix = std::get<0>(tuple);
-  size_t& n_rows = std::get<2>(tuple);
-  size_t& n_cols = std::get<3>(tuple);
   if (d.input && !d.loaded)
   {
     // Call correct data::Load() function.
@@ -64,8 +62,6 @@ T& GetParam(
       data::Load(value, matrix, true);
     else
       data::Load(value, matrix, true, !d.noTranspose);
-    n_rows = matrix.n_rows;
-    n_cols = matrix.n_cols;
     d.loaded = true;
   }
 
@@ -85,17 +81,13 @@ T& GetParam(
 {
   // If this is an input parameter, we need to load both the matrix and the
   // dataset info.
-  typedef std::tuple<T, std::string, size_t, size_t> TupleType;
+  typedef std::tuple<T, std::string> TupleType;
   TupleType* tuple = boost::any_cast<TupleType>(&d.value);
   const std::string& value = std::get<1>(*tuple);
   T& t = std::get<0>(*tuple);
-  size_t& n_rows = std::get<2>(*tuple);
-  size_t& n_cols = std::get<3>(*tuple);
   if (d.input && !d.loaded)
   {
     data::Load(value, std::get<1>(t), std::get<0>(t), true, !d.noTranspose);
-    n_rows = std::get<1>(t).n_rows;
-    n_cols = std::get<1>(t).n_cols;
     d.loaded = true;
   }
 
