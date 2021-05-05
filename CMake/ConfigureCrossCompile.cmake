@@ -10,7 +10,7 @@
 if (CMAKE_CROSSCOMPILING)
   include(board/flags-config.cmake)
   if (NOT CMAKE_SYSROOT AND (NOT TOOLCHAIN_PREFIX))
-    message(FATAL_ERROR "Neither of CMAKE_SYSROOT or TOOLCHAIN_PREFIX is set, please set both of them and try again")
+    message(FATAL_ERROR "Neither CMAKE_SYSROOT nor TOOLCHAIN_PREFIX are set; please set both of them and try again.")
   elseif(NOT CMAKE_SYSROOT)
     message(FATAL_ERROR "Cannot configure: CMAKE_SYSROOT must be set when performing cross-compiling!")
   elseif(NOT TOOLCHAIN_PREFIX)
