@@ -200,17 +200,16 @@ TEST_CASE("CheckCopyMovingSelectNetworkTest", "[FeedForwardNetworkTest]")
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
   trainData.shed_row(trainData.n_rows - 1);
-  arma::mat SelectedLabel = trainLabels.submat(0,0,trainData.n_rows/2,0);
-  trainLabels=SelectedLabel;
+  trainLabels=trainLabels.col(0);
   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
-  model->Add<Select<> >(0, trainData.n_rows/2);
+  model->Add<Select<> >(0, 0);
   //model->Add<Linear<> >(trainData.n_rows , 8);
   model->Add<SigmoidLayer<> >();
   //model->Add<Linear<> >(8, 3);
   model->Add<LogSoftMax<> >();
 
   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
-  model->Add<Select<> >(0, trainData.n_rows/2);
+  model->Add<Select<> >(0, 0);
   //model1->Add<Linear<> >(trainData.n_rows , 8);
   model1->Add<SigmoidLayer<> >();
   //model1->Add<Linear<> >(8, 3);
