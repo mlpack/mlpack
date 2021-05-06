@@ -4,6 +4,7 @@ project(mlpack C CXX)
 include(CMake/cotire.cmake)
 include(CMake/CheckHash.cmake)
 include(CMake/Autodownload.cmake)
+include(CMake/ConfigureCrossCompile.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -33,6 +34,9 @@ if (WIN32)
 
   set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
   set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
+elseif(CMAKE_CROSSCOMPILING)
+  option(BUILD_SHARED_LIBS
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
 else()
   option(BUILD_SHARED_LIBS
       "Compile shared libraries (if OFF, static libraries and binaries are compiled)." ON)
@@ -265,6 +269,12 @@ endif()
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
 
+# Download and compile OpenBLAS if we are cross compiling mlpack for a specific
+# architecture. The function takes the version of OpenBLAS as variable.
+if (CMAKE_CROSSCOMPILING)
+  search_openblas(0.3.13)
+endif()
+
 if (DISABLE_DOWNLOADS)
   find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 else()
@@ -356,7 +366,7 @@ if (DISABLE_DOWNLOADS)
 else()
   find_package(Boost "${BOOST_VERSION}")
   if (NOT Boost_FOUND)
-    get_deps(https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.gz boost boost_1_75_0.tar.gz)
+    get_deps(https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz boost boost_1_76_0.tar.gz)
     find_package(Boost REQUIRED)
   endif()
 endif()
