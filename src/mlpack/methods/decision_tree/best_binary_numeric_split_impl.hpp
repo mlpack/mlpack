@@ -39,11 +39,11 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   arma::Row<size_t> sortedLabels(labels.n_elem);
   arma::rowvec sortedWeights;
   for (size_t i = 0; i < sortedLabels.n_elem; ++i)
-    sortedLabels(i) = labels(sortedIndices(i));
+    sortedLabels[i] = labels[sortedIndices[i]];
 
   // Sanity check: if the first element is the same as the last, we can't split
   // in this dimension.
-  if (data(sortedIndices(0)) == data(sortedIndices(sortedIndices.n_elem - 1)))
+  if (data[sortedIndices[0]] == data[sortedIndices[sortedIndices.n_elem - 1]])
     return DBL_MAX;
 
   // Only initialize if we are using weights.
@@ -52,7 +52,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     sortedWeights.set_size(sortedLabels.n_elem);
     // The weights must keep the same order as the labels.
     for (size_t i = 0; i < sortedLabels.n_elem; ++i)
-      sortedWeights(i) = weights(sortedIndices(i));
+      sortedWeights[i] = weights[sortedIndices[i]];
   }
 
   // Loop through all possible split points, choosing the best one.  Also, force
@@ -77,15 +77,15 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     // These points have to be on the left.
     for (size_t i = 0; i < minimum - 1; ++i)
     {
-      classWeightSums(sortedLabels(i), 0) += sortedWeights(i);
-      totalLeftWeight += sortedWeights(i);
+      classWeightSums(sortedLabels[i], 0) += sortedWeights[i];
+      totalLeftWeight += sortedWeights[i];
     }
 
     // These points have to be on the right.
     for (size_t i = minimum - 1; i < data.n_elem; ++i)
     {
-      classWeightSums(sortedLabels(i), 1) += sortedWeights(i);
-      totalRightWeight += sortedWeights(i);
+      classWeightSums(sortedLabels[i], 1) += sortedWeights[i];
+      totalRightWeight += sortedWeights[i];
     }
   }
   else
@@ -96,11 +96,11 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     // Initialize the counts.
     // These points have to be on the left.
     for (size_t i = 0; i < minimum - 1; ++i)
-      ++classCounts(sortedLabels(i), 0);
+      ++classCounts(sortedLabels[i], 0);
 
     // These points have to be on the right.
     for (size_t i = minimum - 1; i < data.n_elem; ++i)
-      ++classCounts(sortedLabels(i), 1);
+      ++classCounts(sortedLabels[i], 1);
   }
 
   for (size_t index = minimum; index < data.n_elem - minimum; ++index)
@@ -108,19 +108,19 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     // Update class weight sums or counts.
     if (UseWeights)
     {
-      classWeightSums(sortedLabels(index - 1), 1) -= sortedWeights(index - 1);
-      classWeightSums(sortedLabels(index - 1), 0) += sortedWeights(index - 1);
-      totalLeftWeight += sortedWeights(index - 1);
-      totalRightWeight -= sortedWeights(index - 1);
+      classWeightSums(sortedLabels[index - 1], 1) -= sortedWeights[index - 1];
+      classWeightSums(sortedLabels[index - 1], 0) += sortedWeights[index - 1];
+      totalLeftWeight += sortedWeights[index - 1];
+      totalRightWeight -= sortedWeights[index - 1];
     }
     else
     {
-      --classCounts(sortedLabels(index - 1), 1);
-      ++classCounts(sortedLabels(index - 1), 0);
+      --classCounts(sortedLabels[index - 1], 1);
+      ++classCounts(sortedLabels[index - 1], 0);
     }
 
     // Make sure that the value has changed.
-    if (data(sortedIndices(index)) == data(sortedIndices(index - 1)))
+    if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
       continue;
 
     // Calculate the gain for the left and right child.  Only use weights if
@@ -156,8 +156,8 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       classProbabilities.set_size(1);
       // The actual split value will be halfway between the value at index - 1
       // and index.
-      classProbabilities(0) = (data(sortedIndices(index - 1)) +
-          data(sortedIndices(index))) / 2.0;
+      classProbabilities[0] = (data[sortedIndices[index - 1]] +
+          data[sortedIndices[index]]) / 2.0;
 
       return gain;
     }
@@ -166,8 +166,8 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       // We still have a better split.
       bestFoundGain = gain;
       classProbabilities.set_size(1);
-      classProbabilities(0) = (data(sortedIndices(index - 1)) +
-          data(sortedIndices(index))) / 2.0;
+      classProbabilities[0] = (data[sortedIndices[index - 1]] +
+          data[sortedIndices[index]]) / 2.0;
       improved = true;
     }
   }
@@ -192,7 +192,7 @@ size_t BestBinaryNumericSplit<FitnessFunction>::CalculateDirection(
     const arma::vec& classProbabilities,
     const AuxiliarySplitInfo& /* aux */)
 {
-  if (point <= classProbabilities(0))
+  if (point <= classProbabilities[0])
     return 0; // Go left.
   else
     return 1; // Go right.
