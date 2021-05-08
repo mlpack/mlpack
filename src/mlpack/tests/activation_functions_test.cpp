@@ -661,6 +661,48 @@ void CheckSoftminDerivativeCorrect(const arma::colvec input,
 }
 
 /**
+ * Implementation of the Flatten T Swish activation function test. The function is
+ * implemented as Flatten T Swish layer in the file flatten_t_swish.hpp.
+ *
+ * @param input Input data used for evaluating the Flatten T Swish activation function.
+ * @param target Target data used to evaluate the Flatten T Swish activation.
+ */
+void CheckFlattenTSwishActivationCorrect(const arma::colvec input, const arma::colvec target)
+{
+  FlattenTSwish<> fts(0.4);
+  arma::colvec activations;
+
+  fts.Forward(input,activations);
+  for(size_t i = 0; i < activations.n_elem; ++i) 
+  {
+    REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Implementation of the Softmin activation function derivative test.
+ * The function is implemented as Softmin layer in the file softmin.hpp.
+ *
+ * @param input Input data used for evaluating the Softmin activation function.
+ * @param target Target data used to evaluate the Softmin activation.
+ */
+
+void CheckFlattenTSwishDerivateCorrect(const arma::colvec input, const arma::colvec target)
+{
+  FlattenTSwish<> fts;
+
+  // Set the error to 1 to get the actual derivative.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+
+  arma::colvec derivate;
+  fts.Backward(input,error,derivate);
+  for(size_t i = 0; i < derivate.n_elem; ++i) 
+  {
+    REQUIRE(derivate.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
  * Basic test of the tanh function.
  */
 TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")
@@ -1263,4 +1305,24 @@ TEST_CASE("SILUFunctionTest","[ActivationFunctionsTest]")
     
   CheckActivationCorrect<SILUFunction>(activationData,desiredActivation);
   CheckDerivativeCorrect<SILUFunction>(desiredActivation,desiredDerivate);
+}
+
+/**
+ * Basic test of Flatten T Swish function.
+ */
+TEST_CASE("FlattenTSwishFunctionTest","[ActivationFunctionsTest]")
+{
+  // Random Value.
+  arma::colvec input("-4.0 -1.0 2 3 4 5 6");
+
+  // Hand Calculated and using PyTorch.
+  arma::colvec desiredActivation("0.4000000059604645 0.4000000059604645 2.1615941524505615 \
+                                  3.2577223777770996 4.328054904937744 5.3665361404418945 6.385164737701416");
+
+  // Hand Calculated and using PyTorch.
+  arma::colvec desiredDerivation("0.694792 0.694792 1.096893 1.079178 1.042602 \
+                                  1.020182 1.009048");
+
+  CheckFlattenTSwishActivationCorrect(input,desiredActivation);
+  CheckFlattenTSwishDerivateCorrect(desiredActivation,desiredDerivation);
 }
