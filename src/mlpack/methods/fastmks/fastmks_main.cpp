@@ -262,7 +262,7 @@ static void mlpackMain()
         // Delete the memory, if needed.
         if (IO::HasParam("reference"))
           delete model;
-        throw e;
+        throw;
       }
     }
 

@@ -14,7 +14,7 @@ src="https://cdn.rawgit.com/mlpack/mlpack.org/e7d36ed8/mlpack-black.svg" style="
 </h5>
 
 <p align="center">
-  <a href="http://ci.mlpack.org/job/mlpack%20-%20git%20commit%20test/"><img src="https://img.shields.io/jenkins/build.svg?jobUrl=http%3A%2F%2Fci.mlpack.org%2Fjob%2Fmlpack%2520-%2520git%2520commit%2520test%2F&label=Linux%20build&style=flat-square" alt="Jenkins"></a>
+  <a href="https://dev.azure.com/mlpack/mlpack/_build?definitionId=1"><img alt="Azure DevOps builds (job)" src="https://img.shields.io/azure-devops/build/mlpack/84320e87-76e3-4b6e-8b6e-3adaf6b36eed/1/master?job=Linux&label=Linux%20Build&style=flat-square"></a>
   <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
   <a href="http://numfocus.org/donate-to-mlpack"><img src="https://img.shields.io/badge/sponsored%20by-NumFOCUS-orange.svg?style=flat-square&colorA=E1523D&colorB=007D8A" alt="NumFOCUS"></a>
 </p>
@@ -141,10 +141,10 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
 ### 4. Building mlpack from source
 
-This document discusses how to build mlpack from source. These build directions 
+This document discusses how to build mlpack from source. These build directions
 will work for any Linux-like shell environment (for example Ubuntu, macOS,
-FreeBSD etc). However, mlpack is in the repositories of many Linux distributions 
-and so it may be easier to use the package manager for your system.  For example, 
+FreeBSD etc). However, mlpack is in the repositories of many Linux distributions
+and so it may be easier to use the package manager for your system.  For example,
 on Ubuntu, you can install the mlpack library and command-line executables (e.g.
 mlpack_pca, mlpack_kmeans etc.) with the following command:
 
@@ -182,7 +182,7 @@ sufficient.
 
 The next step is to run CMake to configure the project.  Running CMake is the
 equivalent to running `./configure` with autotools. If you run CMake with no
-options, it will configure the project to build with no debugging symbols and 
+options, it will configure the project to build with no debugging symbols and
 no profiling information:
 
     $ cmake ../
@@ -211,8 +211,8 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_R_BINDINGS=(ON/OFF): whether or not to build R bindings
     R_EXECUTABLE=(/path/to/R): Path to specific R executable
     BUILD_TESTS=(ON/OFF): whether or not to build tests
-    BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
-       static libraries
+    BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries and executables as
+        opposed to static libraries
     DISABLE_DOWNLOADS=(ON/OFF): whether to disable all downloads during build
     DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
     ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
@@ -224,6 +224,11 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
        (default ON)
 
+For example, to build mlpack library and CLI bindings statically the following
+command can be used:
+
+    $ cmake  -D BUILD_SHARED_LIBS=OFF ../
+
 Other tools can also be used to configure CMake, but those are not documented
 here.  See [this section of the build guide](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html#build_config)
 for more details, including a full list of options, and their default values.
@@ -234,14 +239,20 @@ also be built.  OpenMP will be used for parallelization when possible by
 default.
 
 Once CMake is configured, building the library is as simple as typing 'make'.
-This will build all library components as well as 'mlpack_test'.
+This will build all library components and bindings.
 
     $ make
 
-If you do not want to build everything in the library, individual components 
+If you do not want to build everything in the library, individual components
 of the build can be specified:
 
     $ make mlpack_pca mlpack_knn mlpack_kfn
+
+If you want to build the tests, just make the `mlpack_test` target, and use
+`ctest` to run the tests:
+
+    $ make mlpack_test
+    $ ctest .
 
 If the build fails and you cannot figure out why, register an account on Github
 and submit an issue. The mlpack developers will quickly help you figure it out:
@@ -251,7 +262,7 @@ and submit an issue. The mlpack developers will quickly help you figure it out:
 Alternately, mlpack help can be found in IRC at `#mlpack` on chat.freenode.net.
 
 If you wish to install mlpack to `/usr/local/include/mlpack/`, `/usr/local/lib/`,
-and `/usr/local/bin/`, make sure you have root privileges (or write permissions 
+and `/usr/local/bin/`, make sure you have root privileges (or write permissions
 to those three directories), and simply type
 
     $ make install
@@ -354,6 +365,9 @@ older versions of mlpack:
   - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
   - [API documentation (Doxygen)](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
+
+To learn about the development goals of mlpack in the short- and medium-term
+future, see the [vision document](https://www.mlpack.org/papers/vision.pdf).
 
 ### 8. Bug reporting
 

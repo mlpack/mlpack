@@ -1,5 +1,8 @@
+include(CTest)
+
 # mlpack test executable.
 add_executable(mlpack_test
+  EXCLUDE_FROM_ALL
   activation_functions_test.cpp
   adaboost_test.cpp
   akfn_test.cpp
@@ -176,12 +179,21 @@ add_executable(mlpack_test
   main_tests/test_helper.hpp
 )
 
-# Link dependencies of test executable.
-target_link_libraries(mlpack_test
-  mlpack
-  ${ARMADILLO_LIBRARIES}
-  ${COMPILER_SUPPORT_LIBRARIES}
-)
+if(NOT BUILD_SHARED_LIBS)
+# Build mlpack test executable statically.
+  target_link_libraries(mlpack_test -static
+    mlpack
+    ${ARMADILLO_LIBRARIES}
+    ${COMPILER_SUPPORT_LIBRARIES}
+  )
+else()
+  # Build mlpack test executable dynamically.
+  target_link_libraries(mlpack_test
+    mlpack
+    ${ARMADILLO_LIBRARIES}
+    ${COMPILER_SUPPORT_LIBRARIES}
+  )
+endif()
 
 set_target_properties(mlpack_test PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "../core.hpp")
 cotire(mlpack_test)
@@ -204,3 +216,5 @@ add_custom_command(TARGET mlpack_test
 )
 
 add_test(NAME "catch_test" COMMAND mlpack_test WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+set_tests_properties("catch_test" PROPERTIES TIMEOUT 0)

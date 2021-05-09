@@ -373,10 +373,6 @@ static void mlpackMain()
     oss << IO::GetPrintableParam<arma::mat>("test");
     std::string testOutput = oss.str();
 
-    if (!IO::HasParam("training"))
-    {
-      numClasses = model->svm.NumClasses();
-    }
     // Get the test dataset, and get predictions.
     testSet = std::move(IO::GetParam<arma::mat>("test"));
     arma::Row<size_t> predictions;
