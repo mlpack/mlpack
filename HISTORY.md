@@ -1,7 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
   * Added Extra Trees Algorithm (#2883). Currently, it can be used using the
-  * class `mlpack::tree::ExtraTrees`, but only through C++.
+    class `mlpack::tree::ExtraTrees`, but only through C++.
 
   * Add Flatten T Swish activation function (`flatten-t-swish.hpp`)
 
