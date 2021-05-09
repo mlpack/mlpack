@@ -211,8 +211,8 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_R_BINDINGS=(ON/OFF): whether or not to build R bindings
     R_EXECUTABLE=(/path/to/R): Path to specific R executable
     BUILD_TESTS=(ON/OFF): whether or not to build tests
-    BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries as opposed to
-       static libraries
+    BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries and executables as
+        opposed to static libraries
     DISABLE_DOWNLOADS=(ON/OFF): whether to disable all downloads during build
     DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
     ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
@@ -224,6 +224,11 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_DOCS=(ON/OFF): build Doxygen documentation, if Doxygen is available
        (default ON)
 
+For example, to build mlpack library and CLI bindings statically the following
+command can be used:
+
+    $ cmake  -D BUILD_SHARED_LIBS=OFF ../
+
 Other tools can also be used to configure CMake, but those are not documented
 here.  See [this section of the build guide](https://www.mlpack.org/doc/mlpack-git/doxygen/build.html#build_config)
 for more details, including a full list of options, and their default values.
@@ -234,7 +239,7 @@ also be built.  OpenMP will be used for parallelization when possible by
 default.
 
 Once CMake is configured, building the library is as simple as typing 'make'.
-This will build all library components as well as 'mlpack_test'.
+This will build all library components and bindings.
 
     $ make
 
@@ -242,6 +247,12 @@ If you do not want to build everything in the library, individual components
 of the build can be specified:
 
     $ make mlpack_pca mlpack_knn mlpack_kfn
+
+If you want to build the tests, just make the `mlpack_test` target, and use
+`ctest` to run the tests:
+
+    $ make mlpack_test
+    $ ctest .
 
 If the build fails and you cannot figure out why, register an account on Github
 and submit an issue. The mlpack developers will quickly help you figure it out:
@@ -354,6 +365,9 @@ older versions of mlpack:
   - [Tutorials](https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html)
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
   - [API documentation (Doxygen)](https://www.mlpack.org/doc/mlpack-git/doxygen/index.html)
+
+To learn about the development goals of mlpack in the short- and medium-term
+future, see the [vision document](https://www.mlpack.org/papers/vision.pdf).
 
 ### 8. Bug reporting
 

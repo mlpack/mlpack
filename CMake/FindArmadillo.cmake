@@ -77,13 +77,14 @@ else()
   # don't link to armadillo in this case
   set(ARMADILLO_LIBRARY "")
 endif()
+
 # Link to support libraries in either case on MSVC.
 if(NOT _ARMA_USE_WRAPPER OR MSVC)
   if(_ARMA_USE_LAPACK)
     if(ARMADILLO_FIND_QUIETLY OR NOT ARMADILLO_FIND_REQUIRED)
       find_package(LAPACK QUIET)
     else()
-      find_package(LAPCK REQUIRED)
+      find_package(LAPACK REQUIRED)
     endif()
     if(LAPACK_FOUND)
       set(_ARMA_SUPPORT_LIBRARIES "${_ARMA_SUPPORT_LIBRARIES}" "${LAPACK_LIBRARIES}")
@@ -154,5 +155,6 @@ unset(__ARMA_SUPPORT_INCLUDE_DIRS)
 
 # Hide internal variables
 mark_as_advanced(
-  ARMADILLO_INCLUDE_DIR
-  ARMADILLO_LIBRARY)
+    ARMADILLO_INCLUDE_DIR
+    ARMADILLO_LIBRARY
+    ARMADILLO_LIBRARIES)

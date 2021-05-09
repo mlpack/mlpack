@@ -89,31 +89,26 @@ CFWrapperBase* TrainHelper(const DecompositionPolicy& decomposition,
       return new CFWrapper<DecompositionPolicy, NoNormalization>(data,
           decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
           mit);
-      break;
 
     case CFModel::ITEM_MEAN_NORMALIZATION:
       return new CFWrapper<DecompositionPolicy, ItemMeanNormalization>(data,
           decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
           mit);
-      break;
 
     case CFModel::USER_MEAN_NORMALIZATION:
       return new CFWrapper<DecompositionPolicy, UserMeanNormalization>(data,
           decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
           mit);
-      break;
 
     case CFModel::OVERALL_MEAN_NORMALIZATION:
       return new CFWrapper<DecompositionPolicy, OverallMeanNormalization>(data,
           decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
           mit);
-      break;
 
     case CFModel::Z_SCORE_NORMALIZATION:
       return new CFWrapper<DecompositionPolicy, ZScoreNormalization>(data,
           decomposition, numUsersForSimilarity, rank, maxIterations, minResidue,
           mit);
-      break;
   }
 
   // This shouldn't ever happen.
