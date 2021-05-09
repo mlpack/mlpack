@@ -41,7 +41,7 @@ void InPlaceCopyInternal(
 
 /**
  * Modify the filename for any type that needs to be loaded from disk to match
- * the filename of the input parameter. For matrix/datasetinfo parameter.
+ * the filename of the input parameter, for a matrix/DatasetInfo parameter.
  *
  * @param d ParamData object we want to make into an in-place copy.
  * @param input ParamData object whose filename we should copy.
