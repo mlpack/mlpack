@@ -459,7 +459,7 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
 
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
 
-  for(int i = 0; i < 5; i++)
+  for (int i = 0; i < 5; ++i)
   {
     // Call BestBinaryNumericSplit to do the splitting.
     double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(

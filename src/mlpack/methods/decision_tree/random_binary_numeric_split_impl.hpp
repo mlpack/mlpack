@@ -87,7 +87,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     classCounts.zeros(numClasses, 2);
     bestFoundGain *= data.n_elem;
 
-    for (size_t i = 0; i < data.n_elem; i++)
+    for (size_t i = 0; i < data.n_elem; ++i)
     {
       if (data(i) < randomPivot)
       {
