@@ -384,23 +384,22 @@ TEST_CASE("RandomBinaryNumericSplitMinSamplesTest", "[DecisionTreeTest]")
   arma::Row<size_t> labels("0 0 0 0 0 1 1 1 1 1 1");
   arma::rowvec weights(labels.n_elem);
 
-  arma::vec classProbabilities;
+  arma::vec classProbabilities(1);
   RandomBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, weights, 8, 1e-7, classProbabilities,
+      bestGain, values, labels, 2, weights, 8, 1e-7, classProbabilities[0],
       aux);
   // This should make no difference because it won't split at all.
   const double weightedGain =
       RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<true>(bestGain, values,
-      labels, 2, weights, 8, 1e-7, classProbabilities, aux);
+      labels, 2, weights, 8, 1e-7, classProbabilities[0], aux);
 
   // Make sure that no split was made.
   REQUIRE(gain == DBL_MAX);
   REQUIRE(gain == weightedGain);
-  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**
@@ -420,18 +419,17 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
     labels[i + 1] = 1;
   }
 
-  arma::vec classProbabilities;
+  arma::vec classProbabilities(1);
   RandomBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
   const double gain = RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, labels, 2, weights, 10, 1e-7, classProbabilities,
+      bestGain, values, labels, 2, weights, 10, 1e-7, classProbabilities[0],
       aux, true);
 
   // Make sure there was no split.
   REQUIRE(gain == DBL_MAX);
-  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**
@@ -451,7 +449,7 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
     labels[i + 1] = 1;
   }
 
-  arma::vec classProbabilities, classProbabilities1;
+  arma::vec classProbabilities(1), classProbabilities1(1);
   BestBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
   RandomBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux1;
 
@@ -461,12 +459,12 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
   {
     // Call BestBinaryNumericSplit to do the splitting.
     double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities,
+        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities[0],
         aux);
 
     // Call RandomBinaryNumericSplit to do the splitting.
     gain = RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities1,
+        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities1[0],
         aux1);
 
     if (classProbabilities[0] == classProbabilities1[0])

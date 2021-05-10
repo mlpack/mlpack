@@ -34,7 +34,7 @@ class RandomBinaryNumericSplit
   /**
    * Check if we can split a node.  If we can split a node in a way that
    * improves on 'bestGain', then we return the improved gain.  Otherwise we
-   * return the value 'bestGain'.  If a split is made, then classProbabilities
+   * return the value 'bestGain'.  If a split is made, then splitInfo
    * and aux may be modified.
    *
    * @code
@@ -66,8 +66,7 @@ class RandomBinaryNumericSplit
    * @param minimumLeafSize Minimum number of points in a leaf node for
    *      splitting.
    * @param minimumGainSplit Minimum gain split.
-   * @param classProbabilities Class probabilities vector, which may be filled
-   *      with split information a successful split.
+   * @param splitInfo Stores split information on a successful split.
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
    * @param splitIfBetterGain When set to true, it will split only when gain is
@@ -83,19 +82,18 @@ class RandomBinaryNumericSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      arma::vec& classProbabilities,
+      double& splitInfo,
       AuxiliarySplitInfo& aux,
       const bool splitIfBetterGain = false);
 
   /**
    * Returns 2, since the binary split always has two children.
    *
-   * @param classProbabilities Class probabilities vector, which may be filled
-   *      with split information a successful split. (Not used here.)
+   * @param splitInfo Auxiliary information for the split.
    * @param aux Auxiliary split information, which may be modified on a
-   *      successful split. (Not used here.)
+   *      successful split.
    */
-  static size_t NumChildren(const arma::vec& /* classProbabilities */,
+  static size_t NumChildren(const double& /* splitInfo */,
                             const AuxiliarySplitInfo& /* aux */)
   {
     return 2;
@@ -105,13 +103,13 @@ class RandomBinaryNumericSplit
    * Given a point, calculate which child it should go to (left or right).
    *
    * @param point Point to calculate direction of.
-   * @param classProbabilities Auxiliary information for the split.
+   * @param splitInfo Auxiliary information for the split.
    * @param * (aux) Auxiliary information for the split (Unused).
    */
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const arma::vec& classProbabilities,
+      const double& splitInfo,
       const AuxiliarySplitInfo& /* aux */);
 };
 
