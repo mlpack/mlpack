@@ -373,6 +373,144 @@ class DecisionTreeRegressor :
                    DimensionSelectionType(),
                const std::enable_if_t<arma::is_arma_type<typename
                    std::remove_reference<WeightsType>::type>::value>* = 0);
+
+  /**
+   * Make prediction for the given point, using the entire tree.  The predicted
+   * label is returned.
+   *
+   * @param point Point to predict.
+   */
+  template<typename VecType>
+  double Predict(const VecType& point) const;
+
+  /**
+   * Make prediction for the given points, using the entire tree. The predicted
+   * labels for each point are stored in the given vector.
+   *
+   * @param data Set of points to predict.
+   * @param predictions This will be filled with predictions for each point.
+   */
+  template<typename MatType>
+  void Predict(const MatType& data,
+                arma::Row<double>& predictions) const;
+
+  /**
+   * Serialize the tree.
+   */
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */);
+
+  //! Get the number of children.
+  size_t NumChildren() const { return children.size(); }
+
+  //! Get the child of the given index.
+  const DecisionTreeRegressor& Child(const size_t i) const { return *children[i]; }
+  //! Modify the child of the given index (be careful!).
+  DecisionTreeRegressor& Child(const size_t i) { return *children[i]; }
+
+  //! Get the split dimension (only meaningful if this is a non-leaf in a
+  //! trained tree).
+  size_t SplitDimension() const { return splitDimension; }
+
+  /**
+   * Given a point and that this node is not a leaf, calculate the index of the
+   * child node this point would go towards.  This method is primarily used by
+   * the Predict() function, but it can be used in a standalone sense too.
+   *
+   * @param point Point to predict.
+   */
+  template<typename VecType>
+  size_t CalculateDirection(const VecType& point) const;
+
+ private:
+  //! The vector of children.
+  std::vector<DecisionTreeRegressor*> children;
+  //! The dimension this node splits on.
+  size_t splitDimension;
+  //! The type of the dimension that we have split on (only meaningful if this
+  //! is a non-leaf in a trained tree).
+  size_t dimensionType;
+  /**
+   * This variable may hold different things. If the node has no children, then
+   * it is guaranteed to hold the prediction label for that node.  If the node
+   * has children, then it may be used arbitrarily by the split type's
+   * CalculateDirection() and SplitIfBetter() function. In this case, it stores
+   * the point at which the split was made.
+   */
+  double splitPointOrPrediction;
+
+  //! Note that this class will also hold the members of the NumericSplit and
+  //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
+  //! We'll define some convenience typedefs here.
+  typedef typename NumericSplit::AuxiliarySplitInfo
+      NumericAuxiliarySplitInfo;
+  typedef typename CategoricalSplit::AuxiliarySplitInfo
+      CategoricalAuxiliarySplitInfo;
+
+  /**
+   * Calculate the prediction label for the leaf nodes.
+   */
+  template<bool UseWeights, typename LabelsType, typename WeightsType>
+  void CalculatePrediction(const LabelsType& labels,
+                           const WeightsType& weights);
+
+  /**
+   * Corresponding to the public Train() method, this method is designed for
+   * avoiding unnecessary copies during training.  This function is called to
+   * train children.
+   *
+   * @param data Dataset to train on.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *      this node.
+   * @param count Number of points in this node.
+   * @param datasetInfo Type information for each dimension.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @return The final entropy of decision tree.
+   */
+  template<bool UseWeights, typename MatType, typename LabelsType>
+  double Train(MatType& data,
+               const size_t begin,
+               const size_t count,
+               const data::DatasetInfo& datasetInfo,
+               LabelsType& labels,
+               const size_t numClasses,
+               arma::rowvec& weights,
+               const size_t minimumLeafSize,
+               const double minimumGainSplit,
+               const size_t maximumDepth,
+               DimensionSelectionType& dimensionSelector);
+
+  /**
+   * Corresponding to the public Train() method, this method is designed for
+   * avoiding unnecessary copies during training.  This method is called for
+   * training children.
+   *
+   * @param data Dataset to train on.
+   * @param begin Index of the starting point in the dataset that belongs to
+   *      this node.
+   * @param count Number of points in this node.
+   * @param labels Labels for each training point.
+   * @param numClasses Number of classes in the dataset.
+   * @param minimumLeafSize Minimum number of points in each leaf node.
+   * @param minimumGainSplit Minimum gain for the node to split.
+   * @param maximumDepth Maximum depth for the tree.
+   * @return The final entropy of decision tree.
+   */
+  template<bool UseWeights, typename MatType, typename LabelsType>
+  double Train(MatType& data,
+               const size_t begin,
+               const size_t count,
+               LabelsType& labels,
+               const size_t numClasses,
+               arma::rowvec& weights,
+               const size_t minimumLeafSize,
+               const double minimumGainSplit,
+               const size_t maximumDepth,
+               DimensionSelectionType& dimensionSelector);
 };
 
 
