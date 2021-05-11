@@ -15,6 +15,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+#include <mlpack/core/data/split_data.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -78,6 +79,56 @@ inline void LogisticRegressionTestData(arma::mat& data,
     testData.col(i) = g2.Random();
     testResponses[i] = 1;
   }
+}
+
+inline void LoadBostonHousingDataset(arma::mat& trainData,
+                              arma::mat& testData,
+                              arma::Row<double>& trainLabels,
+                              arma::Row<double>& testLabels,
+                              data::DatasetInfo& info)
+{
+  arma::mat dataset;
+  arma::Row<double> labels;
+
+  if (!data::Load("boston_housing_price.csv", dataset, info))
+    FAIL("Cannot load test dataset boston_housing_price.csv!");
+  if (!data::Load("boston_housing_price_labels.csv", labels))
+    FAIL("Cannot load test dataset boston_housing_price_labels.csv!");
+
+  data::Split(dataset, labels, trainData, testData,
+      trainLabels, testLabels, 0.3);
+}
+
+inline double RMSE(const arma::Row<double>& predictions,
+                   const arma::Row<double>& trueLabels)
+{
+  double rmse = 0.0;
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+  {
+    rmse += std::pow(predictions[i] - trueLabels[i], 2);
+  }
+  rmse /= predictions.n_elem;
+  rmse = sqrt(rmse);
+  return rmse;
+}
+
+/**
+ * Calculates the R2 score of the predictions with true labels.
+ */
+inline double R2Score(const arma::Row<double>& predictions,
+                      const arma::Row<double>& trueLabels)
+{
+  double mean = arma::mean(trueLabels);
+  double SStot = 0.0;
+  double SSres = 0.0;
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+    SSres += std::pow(predictions[i] - trueLabels[i], 2);
+  for (size_t i = 0; i < predictions.n_elem; ++i)
+  {
+    SStot += std::pow(trueLabels[i] - mean, 2);
+  }
+
+  return 1 - SSres / SStot;
 }
 
 #endif
