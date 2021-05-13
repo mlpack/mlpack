@@ -32,13 +32,7 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
     lambda(lambda)
 {
   // Sanity check.
-  if (responses.n_elem != predictors.n_cols)
-  {
-    Log::Fatal << "LogisticRegressionFunction::LogisticRegressionFunction(): "
-        << "predictors matrix has " << predictors.n_cols << " points, but "
-        << "responses vector has " << responses.n_elem << " elements (should be"
-        << " " << predictors.n_cols << ")!" << std::endl;
-  }
+  util::CheckSameSizes(predictors, responses, "LogisticRegressionFunction::LogisticRegressionFunction()");
 }
 
 /**
