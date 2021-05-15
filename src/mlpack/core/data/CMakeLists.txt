@@ -34,6 +34,8 @@ set(SOURCES
   confusion_matrix.hpp
   one_hot_encoding.hpp
   one_hot_encoding_impl.hpp
+  new_parser.hpp
+  new_parser_impl.hpp
 )
 
 # add directory name to sources
