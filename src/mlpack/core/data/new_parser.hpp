@@ -27,7 +27,7 @@ load_data(const std::string name, const arma::file_type type);
 
 
     }   // namespace data
-}   // namepsace mlpack
+}	// namespace mlpack
 
 // Include implementation
 #include "new_parser_impl.hpp"
