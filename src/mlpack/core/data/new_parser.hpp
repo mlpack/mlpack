@@ -1,5 +1,5 @@
-#ifndef MLPACK_CORE_DATA_DISKIO_CURRY_HPP
-#define MLPACK_CORE_DATA_DISKIO_CURRY_HPP
+#ifndef MLPACK_CORE_DATA_NEW_PARSER_HPP
+#define MLPACK_CORE_DATA_NEW_PARSER_HPP
 
 namespace mlpack {
 namespace data {
