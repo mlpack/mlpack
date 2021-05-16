@@ -1,7 +1,7 @@
 #ifndef MLPACK_CORE_DATA_DISKIO_CURRY__IMPL_HPP
 #define MLPACK_CORE_DATA_DISKIO_CURRY_IMPL_HPP
 
-#include "diskio_curry.hpp"
+#include "new_parser.hpp"
 
 namespace mlpack {
 namespace data {

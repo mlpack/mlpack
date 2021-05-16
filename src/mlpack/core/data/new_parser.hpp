@@ -30,6 +30,6 @@ load_data(const std::string name, const arma::file_type type);
 }   // namepsace mlpack
 
 // Include implementation
-#include "diskio_curry_impl.hpp"
+#include "new_parser_impl.hpp"
 
 #endif
