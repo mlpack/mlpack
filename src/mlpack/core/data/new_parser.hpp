@@ -1,3 +1,9 @@
+/*
+ * Fucntions defined in this files originate from armadillo
+ * https://gitlab.com/conradsnicta/armadillo-code/-/blob/10.5.x/include/armadillo_bits/diskio_meat.hpp
+ * and are adapted for mlpack
+*/
+
 #ifndef MLPACK_CORE_DATA_NEW_PARSER_HPP
 #define MLPACK_CORE_DATA_NEW_PARSER_HPP
 
