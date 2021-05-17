@@ -37,6 +37,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "adaboost.hpp"
 #include "adaboost_model.hpp"
+#include <mlpack/core/util/size_checks.hpp>
 
 using namespace mlpack;
 using namespace std;
@@ -238,10 +239,8 @@ static void mlpackMain()
   {
     mat testingData = std::move(IO::GetParam<arma::mat>("test"));
 
-    if (testingData.n_rows != m->Dimensionality())
-      Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
-          << "must be the same as the model dimensionality ("
-          << m->Dimensionality() << ")!" << endl;
+    //Sanity check
+    util::CheckSameDimensionality(testingData, (size_t)m->Dimensionality(), "AdaBoostModel::Test()", "Test Data");
 
     Row<size_t> predictedLabels(testingData.n_cols);
     mat probabilities;
