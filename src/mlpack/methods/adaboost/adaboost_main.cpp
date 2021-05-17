@@ -206,8 +206,9 @@ static void mlpackMain()
       trainingData.shed_row(trainingData.n_rows - 1);
     }
 
-    //Sanity check on data and labels
-    util::CheckSameSizes(trainingData, labelsIn, "AdaBoostModel::AdaBoostModel()");
+    // Sanity check on data and labels
+    util::CheckSameSizes(trainingData, labelsIn, 
+            "AdaBoostModel::AdaBoostModel()");
 
     // Helpers for normalizing the labels.
     Row<size_t> labels;
@@ -242,8 +243,9 @@ static void mlpackMain()
   {
     mat testingData = std::move(IO::GetParam<arma::mat>("test"));
 
-    //Sanity check for dimensions
-    util::CheckSameDimensionality(testingData, (size_t)m->Dimensionality(), "AdaBoostModel::Test()", "Test Data");
+    // Sanity check for dimensions
+    util::CheckSameDimensionality(testingData, (size_t)m->Dimensionality(), 
+            "AdaBoostModel::Test()", "Test Data");
 
     Row<size_t> predictedLabels(testingData.n_cols);
     mat probabilities;
