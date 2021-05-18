@@ -208,7 +208,7 @@ static void mlpackMain()
 
     // Sanity check on data and labels
     util::CheckSameSizes(trainingData, labelsIn, 
-            "AdaBoostModel::AdaBoostModel()");
+        "AdaBoostModel::AdaBoostModel()");
 
     // Helpers for normalizing the labels.
     Row<size_t> labels;
@@ -245,7 +245,7 @@ static void mlpackMain()
 
     // Sanity check for dimensions
     util::CheckSameDimensionality(testingData, (size_t)m->Dimensionality(), 
-            "AdaBoostModel::Test()", "Test Data");
+        "AdaBoostModel::Test()", "Test Data");
 
     Row<size_t> predictedLabels(testingData.n_cols);
     mat probabilities;

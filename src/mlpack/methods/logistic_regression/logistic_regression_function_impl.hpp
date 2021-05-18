@@ -33,7 +33,7 @@ LogisticRegressionFunction<MatType>::LogisticRegressionFunction(
 {
   // Sanity check.
   util::CheckSameSizes(predictors, responses, 
-          "LogisticRegressionFunction::LogisticRegressionFunction()");
+      "LogisticRegressionFunction::LogisticRegressionFunction()");
 }
 
 /**
