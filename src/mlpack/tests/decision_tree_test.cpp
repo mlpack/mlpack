@@ -454,10 +454,10 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
   }
 
   arma::vec classProbabilities, classProbabilities1;
-  BestBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
-  RandomBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux1;
+  //BestBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux;
+  //RandomBinaryNumericSplit<GiniGain>::AuxiliarySplitInfo aux1;
 
-  const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
+  //const double bestGain = GiniGain::Evaluate<false>(labels, 2, weights);
 
   for (int i = 0; i < 5; ++i)
   {
