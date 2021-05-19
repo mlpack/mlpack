@@ -471,6 +471,9 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
         bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities1,
         aux1);
 
+    // The variable is not used; suppress warnings.
+    (void) gain;
+
     if (classProbabilities[0] == classProbabilities1[0])
       break;
   }
