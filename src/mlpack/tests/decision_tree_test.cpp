@@ -462,17 +462,14 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
   for (int i = 0; i < 5; ++i)
   {
     // Call BestBinaryNumericSplit to do the splitting.
-    double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+    (void) BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
         bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities,
         aux);
 
     // Call RandomBinaryNumericSplit to do the splitting.
-    gain = RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+    (void) RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
         bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities1,
         aux1);
-
-    // The variable is not used; suppress warnings.
-    (void) gain;
 
     if (classProbabilities[0] == classProbabilities1[0])
       break;
