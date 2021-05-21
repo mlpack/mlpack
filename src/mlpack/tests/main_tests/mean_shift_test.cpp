@@ -118,9 +118,10 @@ TEST_CASE_METHOD(
   mlpackMain();
 
   // Now check that the output has 1 extra row for labels.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == numRows + 1);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_rows ==
+      (arma::uword) (numRows + 1));
   // Check number of output points are the same.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == numCols);
+  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == (arma::uword) numCols);
 }
 
 /**
