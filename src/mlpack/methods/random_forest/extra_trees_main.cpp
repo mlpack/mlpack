@@ -92,7 +92,7 @@ BINDING_EXAMPLE(
     PRINT_DATASET("predictions") + ", one "
                                    "could call "
                                    "\n\n" +
-    PRINT_CALL("random_forest", "input_model", "rf_model", "test", "test_set",
+    PRINT_CALL("extra_trees", "input_model", "et_model", "test", "test_set",
                "test_labels", "test_labels", "predictions", "predictions"));
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
 BINDING_SEE_ALSO("@hoeffding_tree", "#hoeffding_tree");
