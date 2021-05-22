@@ -81,7 +81,7 @@ BINDING_EXAMPLE(
     PRINT_MODEL("rf_model") + " and printing the training "
                               "error, one could call"
                               "\n\n" +
-    PRINT_CALL("random_forest", "training", "data", "labels", "labels",
+    PRINT_CALL("extra_trees", "training", "data", "labels", "labels",
                "minimum_leaf_size", 20, "num_trees", 10, "output_model", "rf_model",
                "print_training_accuracy", true) +
     "\n\n"
