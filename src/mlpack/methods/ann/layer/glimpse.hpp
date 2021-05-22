@@ -399,10 +399,10 @@ class GlimpseType : public Layer<InputType, OutputType>
   size_t inputDepth;
 
   //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
+  arma::Cube<typename InputType::elem_type> inputTemp;
 
   //! Locally-stored transformed output parameter.
-  arma::cube outputTemp;
+  arma::Cube<typename OutputType::elem_type> outputTemp;
 
   //! The x and y coordinate of the center of the output glimpse.
   OutputType location;

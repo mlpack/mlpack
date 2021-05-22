@@ -185,13 +185,13 @@ class HighwayType : public Layer<InputType, OutputType>
   bool reset;
 
   //! Locally-stored network modules.
-  std::vector<Layer<arma::mat, arma::mat>*> network;
+  std::vector<Layer<InputType, OutputType>*> network;
 
   //! The list of network modules we are responsible for.
   std::vector<bool> networkOwnerships;
 
   //! Locally-stored empty list of modules.
-  std::vector<Layer<arma::mat, arma::mat>*> empty;
+  std::vector<Layer<InputType, OutputType>*> empty;
 
   //! Locally-stored weight object.
   OutputType weights;

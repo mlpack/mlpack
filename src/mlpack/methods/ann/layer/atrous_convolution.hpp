@@ -46,10 +46,10 @@ template <
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
     typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class AtrousConvolution
+class AtrousConvolution : public Layer<InputType, OutputType>
 {
  public:
   //! Create the AtrousConvolution object.
@@ -137,8 +137,7 @@ class AtrousConvolution
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -149,10 +148,9 @@ class AtrousConvolution
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -162,39 +160,42 @@ class AtrousConvolution
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void Gradient(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& /* input */,
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the weight of the layer.
-  arma::cube const& Weight() const { return weight; }
+  const arma::Cube<typename OutputType::elem_type>& Weight() const
+  {
+    return weight;
+  }
   //! Modify the weight of the layer.
-  arma::cube& Weight() { return weight; }
+  arma::Cube<typename OutputType::elem_type>& Weight() { return weight; }
 
   //! Get the bias of the layer.
-  arma::mat const& Bias() const { return bias; }
+  const OutputType& Bias() const { return bias; }
   //! Modify the bias of the layer.
-  arma::mat& Bias() { return bias; }
+  OutputType& Bias() { return bias; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  const OutputType& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  const OutputType& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  const OutputType& Gradient() const { return gradient; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Gradient() { return gradient; }
 
   //! Get the input width.
   size_t InputWidth() const { return inputWidth; }
@@ -350,13 +351,13 @@ class AtrousConvolution
   size_t strideHeight;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored weight object.
-  arma::cube weight;
+  arma::Cube<typename OutputType::elem_type> weight;
 
   //! Locally-stored bias term object.
-  arma::mat bias;
+  OutputType bias;
 
   //! Locally-stored input width.
   size_t inputWidth;
@@ -377,28 +378,28 @@ class AtrousConvolution
   size_t dilationHeight;
 
   //! Locally-stored transformed output parameter.
-  arma::cube outputTemp;
+  arma::Cube<typename OutputType::elem_type> outputTemp;
 
   //! Locally-stored transformed padded input parameter.
-  arma::cube inputPaddedTemp;
+  arma::Cube<typename OutputType::elem_type> inputPaddedTemp;
 
   //! Locally-stored transformed error parameter.
-  arma::cube gTemp;
+  arma::Cube<typename OutputType::elem_type> gTemp;
 
   //! Locally-stored transformed gradient parameter.
-  arma::cube gradientTemp;
+  arma::Cube<typename OutputType::elem_type> gradientTemp;
 
   //! Locally-stored padding layer.
   ann::Padding<> padding;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType gradient;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 }; // class AtrousConvolution
 
 } // namespace ann

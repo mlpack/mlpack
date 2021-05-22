@@ -99,7 +99,6 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-
   //! Get the input size.
   size_t InputSize() const { return inSize; }
 

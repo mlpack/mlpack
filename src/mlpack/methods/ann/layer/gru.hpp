@@ -46,16 +46,16 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * This cell can be used in RNN networks.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class GRU
+class GRU : public Layer<InputType, OutputType>
 {
  public:
   //! Create the GRU object.
@@ -79,8 +79,7 @@ class GRU
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -91,10 +90,9 @@ class GRU
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -127,27 +125,27 @@ class GRU
   size_t& Rho() { return rho; }
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputType const& Gradient() const { return gradient; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Gradient() { return gradient; }
 
   //! Get the model modules.
-  std::vector<LayerTypes<> >& Model() { return network; }
+  std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
 
   //! Get the number of input units.
   size_t InSize() const { return inSize; }
@@ -175,37 +173,28 @@ class GRU
   size_t batchSize;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored input 2 gate module.
-  LayerTypes<> input2GateModule;
+  Layer<InputType, OutputType>* input2GateModule;
 
   //! Locally-stored output 2 gate module.
-  LayerTypes<> output2GateModule;
+  Layer<InputType, OutputType>* output2GateModule;
 
   //! Locally-stored output hidden state 2 gate module.
-  LayerTypes<> outputHidden2GateModule;
+  Layer<InputType, OutputType>* outputHidden2GateModule;
 
   //! Locally-stored input gate module.
-  LayerTypes<> inputGateModule;
+  Layer<InputType, OutputType>* inputGateModule;
 
   //! Locally-stored hidden state module.
-  LayerTypes<> hiddenStateModule;
+  Layer<InputType, OutputType>* hiddenStateModule;
 
   //! Locally-stored forget gate module.
-  LayerTypes<> forgetGateModule;
-
-  //! Locally-stored output parameter visitor.
-  OutputParameterVisitor outputParameterVisitor;
-
-  //! Locally-stored delta visitor.
-  DeltaVisitor deltaVisitor;
-
-  //! Locally-stored delete visitor.
-  DeleteVisitor deleteVisitor;
+  Layer<InputType, OutputType>* forgetGateModule;
 
   //! Locally-stored list of network modules.
-  std::vector<LayerTypes<> > network;
+  std::vector<Layer<InputType, OutputType>*> network;
 
   //! Locally-stored number of forward steps.
   size_t forwardStep;
@@ -217,34 +206,34 @@ class GRU
   size_t gradientStep;
 
   //! Locally-stored output parameters.
-  std::list<arma::mat> outParameter;
+  std::list<OutputType> outParameter;
 
   //! Matrix of all zeroes to initialize the output
-  arma::mat allZeros;
+  OutputType allZeros;
 
   //! Iterator pointed to the last output produced by the cell
-  std::list<arma::mat>::iterator prevOutput;
+  std::list<OutputType>::iterator prevOutput;
 
   //! Iterator pointed to the last output processed by backward
-  std::list<arma::mat>::iterator backIterator;
+  std::list<OutputType>::iterator backIterator;
 
   //! Iterator pointed to the last output processed by gradient
-  std::list<arma::mat>::iterator gradIterator;
+  std::list<OutputType>::iterator gradIterator;
 
   //! Locally-stored previous error.
-  arma::mat prevError;
+  OutputType prevError;
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType gradient;
+  OutputType gradient;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 }; // class GRU
 
 } // namespace ann

@@ -57,8 +57,9 @@ void MaxPoolingType<InputType, OutputType>::Forward(
 {
   batchSize = input.n_cols;
   inSize = input.n_elem / (inputWidth * inputHeight * batchSize);
-  inputTemp = arma::cube(const_cast<InputType&>(input).memptr(),
-      inputWidth, inputHeight, batchSize * inSize, false, false);
+  inputTemp = arma::Cube<typename InputType::elem_type>(
+      const_cast<InputType&>(input).memptr(), inputWidth, inputHeight,
+      batchSize * inSize, false, false);
 
   if (floor)
   {
@@ -77,8 +78,8 @@ void MaxPoolingType<InputType, OutputType>::Forward(
     offset = 1;
   }
 
-  outputTemp = arma::zeros<arma::cube>(outputWidth, outputHeight,
-      batchSize * inSize);
+  outputTemp = arma::zeros<arma::Cube<typename OutputType::elem_type>>(
+      outputWidth, outputHeight, batchSize * inSize);
 
   if (!deterministic)
   {
@@ -122,11 +123,12 @@ template<typename InputType, typename OutputType>
 void MaxPoolingType<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  arma::cube mappedError = arma::cube(((OutputType&) gy).memptr(),
+  arma::Cube<typename OutputType::elem_type> mappedError =
+      arma::Cube<typename OutputType::elem_type>(((OutputType&) gy).memptr(),
       outputWidth, outputHeight, outSize, false, false);
 
-  gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
-      inputTemp.n_cols, inputTemp.n_slices);
+  gTemp = arma::zeros<arma::Cube<typename InputType::elem_type>>(
+      inputTemp.n_rows, inputTemp.n_cols, inputTemp.n_slices);
 
   for (size_t s = 0; s < mappedError.n_slices; s++)
   {
@@ -145,6 +147,8 @@ void MaxPoolingType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(kernelWidth));
   ar(CEREAL_NVP(kernelHeight));
   ar(CEREAL_NVP(strideWidth));

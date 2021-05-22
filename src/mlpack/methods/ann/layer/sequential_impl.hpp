@@ -214,15 +214,11 @@ template<typename Archive>
 void SequentialType<InputType, OutputType, Residual>::serialize(
         Archive& ar, const uint32_t /* version */)
 {
-  // If loading, delete the old layers.
-  if (cereal::is_loading<Archive>())
-  {
-    for (size_t i = 0; i < network.size(); ++i)
-      delete network[i];
-  }
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
   ar(CEREAL_NVP(model));
-  // ar(CEREAL_VECTOR_VARIANT_POINTER(network));
+  // TODO: handle ownsLayers?
+  ar(CEREAL_VECTOR_POINTER(network));
   ar(CEREAL_NVP(ownsLayers));
 }
 

@@ -63,6 +63,8 @@ template<typename Archive>
 void SelectType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(index));
   ar(CEREAL_NVP(elements));
 }

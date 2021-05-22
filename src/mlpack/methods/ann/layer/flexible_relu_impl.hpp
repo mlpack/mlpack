@@ -33,6 +33,8 @@ FlexibleReLUType<InputType, OutputType>::FlexibleReLUType(const double alpha) :
 template<typename InputType, typename OutputType>
 void FlexibleReLUType<InputType, OutputType>::Reset()
 {
+  // TODO: why are we setting alpha to an alias of itself?  This should be
+  // unneeded.
   alpha = arma::mat(alpha.memptr(), 1, 1, false, false);
 
   // Set value of alpha to the one given by user.
@@ -72,6 +74,8 @@ void FlexibleReLUType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version*/)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(alpha));
 }
 

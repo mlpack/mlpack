@@ -103,14 +103,12 @@ template<typename Archive>
 void MultiplyMergeType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  // Be sure to clear other layers before loading.
-  if (cereal::is_loading<Archive>())
-    network.clear();
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
-  // ar(CEREAL_VECTOR_VARIANT_POINTER(network));
   ar(CEREAL_NVP(model));
   ar(CEREAL_NVP(run));
   ar(CEREAL_NVP(ownsLayer));
+  ar(CEREAL_VECTOR_POINTER(network));
 }
 
 } // namespace ann

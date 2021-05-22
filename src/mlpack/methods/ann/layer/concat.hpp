@@ -64,8 +64,8 @@ class ConcatType : public Layer<InputType, OutputType>
    */
   ~ConcatType();
 
-	//! Clone the ConcatType object. This handles polymorphism correctly.
-	ConcatType* Clone() const { return new ConcatType(*this); }
+  //! Clone the ConcatType object. This handles polymorphism correctly.
+  ConcatType* Clone() const { return new ConcatType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

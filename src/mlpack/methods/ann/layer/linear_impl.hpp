@@ -135,9 +135,14 @@ template<typename Archive>
 void LinearType<InputType, OutputType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
   ar(CEREAL_NVP(weights));
+
+  if (Archive::is_loading::value)
+    Reset();
 }
 
 } // namespace ann

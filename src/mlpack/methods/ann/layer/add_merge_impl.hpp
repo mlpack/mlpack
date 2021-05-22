@@ -16,150 +16,127 @@
 // In case it hasn't yet been included.
 #include "add_merge.hpp"
 
-#include "../visitor/forward_visitor.hpp"
-#include "../visitor/backward_visitor.hpp"
-#include "../visitor/gradient_visitor.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
+template<typename InputType, typename OutputType>
+AddMerge<InputType, OutputType>::AddMerge(
     const bool model, const bool run) :
     model(model), run(run), ownsLayers(!model)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-AddMerge<InputDataType, OutputDataType, CustomLayers...>::AddMerge(
+template<typename InputType, typename OutputType>
+AddMerge<InputType, OutputType>::AddMerge(
     const bool model, const bool run, const bool ownsLayers) :
     model(model), run(run), ownsLayers(ownsLayers)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-AddMerge<InputDataType, OutputDataType, CustomLayers...>::~AddMerge()
+template<typename InputType, typename OutputType>
+AddMerge<InputType, OutputType>::~AddMerge()
 {
   if (!model && ownsLayers)
   {
-    std::for_each(network.begin(), network.end(),
-        boost::apply_visitor(deleteVisitor));
+    for (size_t i = 0; i < network.size(); ++i)
+      delete network[i];
   }
 }
 
-template <typename InputDataType, typename OutputDataType,
-          typename... CustomLayers>
 template<typename InputType, typename OutputType>
-void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Forward(
+void AddMerge<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(ForwardVisitor(input,
-          boost::apply_visitor(outputParameterVisitor, network[i])),
-          network[i]);
+      network[i]->Forward(input, network->OutputParameter());
     }
   }
 
-  output = boost::apply_visitor(outputParameterVisitor, network.front());
+  output = network.front()->OutputParameter();
   for (size_t i = 1; i < network.size(); ++i)
   {
-    output += boost::apply_visitor(outputParameterVisitor, network[i]);
+    output += network[i]->OutputParameter();
   }
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void AddMerge<InputType, OutputType>::Backward(
+    const InputType& /* input */,
+    const OutputType& gy,
+    OutputType& g)
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-          outputParameterVisitor, network[i]), gy,
-          boost::apply_visitor(deltaVisitor, network[i])), network[i]);
+      network[i]->Backward(network[i]->OutputParameter(), gy,
+          network[i]->Delta());
     }
 
-    g = boost::apply_visitor(deltaVisitor, network[0]);
+    g = network[0]->Delta();
     for (size_t i = 1; i < network.size(); ++i)
     {
-      g += boost::apply_visitor(deltaVisitor, network[i]);
+      g += network[i]->Delta();
     }
   }
   else
     g = gy;
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Backward(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g,
+template<typename InputType, typename OutputType>
+void AddMerge<InputType, OutputType>::Backward(
+    const InputType& /* input */,
+    const OutputType& gy,
+    OutputType& g,
     const size_t index)
 {
-  boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-      outputParameterVisitor, network[index]), gy,
-      boost::apply_visitor(deltaVisitor, network[index])), network[index]);
-  g = boost::apply_visitor(deltaVisitor, network[index]);
+  network[index]->Backward(network[index]->OutputParameter(), gy,
+      network[index]->Delta());
+  g = network[index]->Delta();
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& /* gradient */ )
+template<typename InputType, typename OutputType>
+void AddMerge<InputType, OutputType>::Gradient(
+    const InputType& input,
+    const OutputType& error,
+    OutputType& /* gradient */ )
 {
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      boost::apply_visitor(GradientVisitor(input, error), network[i]);
+      network[i]->Gradient(input, error, network[i]->Gradient());
     }
   }
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
-template<typename eT>
-void AddMerge<InputDataType, OutputDataType, CustomLayers...>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& error,
-    arma::Mat<eT>& /* gradient */,
+template<typename InputType, typename OutputType>
+void AddMerge<InputType, OutputType>::Gradient(
+    const InputType& input,
+    const OutputType& error,
+    OutputType& /* gradient */,
     const size_t index)
 {
-  boost::apply_visitor(GradientVisitor(input, error), network[index]);
+  network[index]->Gradient(input, error, network[index]->Gradient());
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename... CustomLayers>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void AddMerge<InputDataType, OutputDataType, CustomLayers...>::serialize(
+void AddMerge<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  // Be sure to clear other layers before loading.
-  if (cereal::is_loading<Archive>())
-    network.clear();
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
-  ar(CEREAL_VECTOR_VARIANT_POINTER(network));
+  ar(CEREAL_VECTOR_POINTER(network));
   ar(CEREAL_NVP(model));
   ar(CEREAL_NVP(run));
   ar(CEREAL_NVP(ownsLayers));
+  ar(CEREAL_NVP(weights));
 }
 
 } // namespace ann

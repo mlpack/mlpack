@@ -43,7 +43,7 @@ class ReinforceNormalType : public Layer<InputType, OutputType>
   ReinforceNormalType(const double stdev = 1.0);
 
   //! Clone the ReinforceNormalType object. This handles polymorphism correctly.
-	ReinforceNormalType* Clone() const { return new ReinforceNormalType(*this); }
+  ReinforceNormalType* Clone() const { return new ReinforceNormalType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

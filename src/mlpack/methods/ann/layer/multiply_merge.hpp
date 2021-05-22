@@ -51,8 +51,8 @@ class MultiplyMergeType : public Layer<InputType, OutputType>
   //! Destructor to release allocated memory.
   ~MultiplyMergeType();
 
-	//! Clone the MultiplyMergeType object. This handles polymorphism correctly.
-	MultiplyMergeType* Clone() const { return new MultiplyMergeType(*this); }
+  //! Clone the MultiplyMergeType object. This handles polymorphism correctly.
+  MultiplyMergeType* Clone() const { return new MultiplyMergeType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -155,15 +155,6 @@ class MultiplyMergeType : public Layer<InputType, OutputType>
 
   //! Locally-stored empty list of modules.
   std::vector<Layer<>*> empty;
-
-  //! Locally-stored delete visitor module object.
-  // DeleteVisitor deleteVisitor;
-
-  //! Locally-stored output parameter visitor module object.
-  // OutputParameterVisitor outputParameterVisitor;
-
-  //! Locally-stored delta visitor module object.
-  // DeltaVisitor deltaVisitor;
 
   //! Locally-stored delta object.
   OutputType delta;

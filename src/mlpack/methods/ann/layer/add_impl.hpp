@@ -57,10 +57,10 @@ template<typename Archive>
 void AddType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(outSize));
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
-  if (cereal::is_loading<Archive>())
-    weights.set_size(outSize, 1);
+  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(weights));
 }
 
 } // namespace ann

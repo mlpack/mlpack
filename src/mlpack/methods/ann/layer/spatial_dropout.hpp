@@ -50,6 +50,7 @@ class SpatialDropoutType : public Layer<InputType, OutputType>
  public:
   //! Create the SpatialDropout object.
   SpatialDropoutType();
+
   /**
    * Create the SpatialDropout object using the specified parameters.
    *

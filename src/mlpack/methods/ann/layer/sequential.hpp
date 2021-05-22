@@ -89,7 +89,7 @@ class SequentialType : public Layer<InputType, OutputType>
   ~SequentialType();
 
   //! Clone the SequentialType object. This handles polymorphism correctly.
-	SequentialType* Clone() const { return new SequentialType(*this); }
+  SequentialType* Clone() const { return new SequentialType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

@@ -175,6 +175,8 @@ template<typename Archive>
 void BilinearInterpolationType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(inRowSize));
   ar(CEREAL_NVP(inColSize));
   ar(CEREAL_NVP(outRowSize));

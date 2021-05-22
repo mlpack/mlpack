@@ -66,6 +66,13 @@ class LogSoftMaxType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+    // Nothing to do.
+  }
+
  private:
 }; // class LogSoftmaxType
 
@@ -76,6 +83,8 @@ typedef LogSoftMaxType<arma::mat, arma::mat> LogSoftMax;
 
 } // namespace ann
 } // namespace mlpack
+
+CEREAL_REGISTER_TYPE(mlpack::ann::LogSoftMax);
 
 // Include implementation.
 #include "log_softmax_impl.hpp"

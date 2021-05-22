@@ -239,19 +239,15 @@ template<typename Archive>
 void ConcatType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(model));
   ar(CEREAL_NVP(run));
 
   // Do we have to load or save a model?
   if (model)
   {
-    // Clear memory first, if needed.
-    if (cereal::is_loading<Archive>())
-    {
-      for (size_t i = 0; i < network.size(); ++i)
-        delete network[i];
-    }
-    // ar(CEREAL_VECTOR_VARIANT_POINTER(network));
+    ar(CEREAL_VECTOR_POINTER(network));
   }
 }
 

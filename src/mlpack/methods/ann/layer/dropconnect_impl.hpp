@@ -98,13 +98,13 @@ template<typename Archive>
 void DropConnectType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  // Delete the old network first, if needed.
-  if (cereal::is_loading<Archive>())
-    delete baseLayer;
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
   ar(CEREAL_NVP(ratio));
   ar(CEREAL_NVP(scale));
-  ar(CEREAL_VARIANT_POINTER(baseLayer));
+  ar(CEREAL_NVP(weights));
+  // TODO: I don't think baseLayer needs to be deleted...
+  ar(CEREAL_POINTER(baseLayer));
 
   if (cereal::is_loading<Archive>())
   {

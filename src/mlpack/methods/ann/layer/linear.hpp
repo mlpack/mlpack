@@ -179,6 +179,8 @@ typedef LinearType<arma::mat, arma::mat, NoRegularizer> Linear;
 } // namespace ann
 } // namespace mlpack
 
+CEREAL_REGISTER_TYPE(mlpack::ann::Linear);
+
 // Include implementation.
 #include "linear_impl.hpp"
 

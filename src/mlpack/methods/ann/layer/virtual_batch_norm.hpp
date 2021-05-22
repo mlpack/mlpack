@@ -51,7 +51,8 @@ class VirtualBatchNormType : public Layer<InputType, OutputType>
   VirtualBatchNormType();
 
   /**
-   * Create the VirtualBatchNorm layer object for a specified number of input units.
+   * Create the VirtualBatchNorm layer object for a specified number of input
+   * units.
    *
    * @param referenceBatch The data from which the normalization
    *        statistics are computed.

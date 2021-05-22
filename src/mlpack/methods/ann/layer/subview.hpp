@@ -160,6 +160,8 @@ class SubviewType : public Layer<InputType, OutputType>
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
+    ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
     ar(CEREAL_NVP(inSize));
     ar(CEREAL_NVP(beginRow));
     ar(CEREAL_NVP(endRow));

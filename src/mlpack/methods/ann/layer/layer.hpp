@@ -60,7 +60,9 @@ class Layer
    Layer() : outputWidth(0), outputHeight(0) { /* Nothing to do here */ }
 
    //! Default deconstructor.
-   virtual ~Layer() = default;
+   virtual ~Layer() {
+      std::cout << "destructor! this " << this << "\n";
+  }
 
    //! Copy constructor.
    Layer(const Layer& /* layer */) { /* Nothing to do here */ }
@@ -239,6 +241,17 @@ class Layer
   virtual size_t const& InputHeight() const { return inputHeight; }
   //! Modify the input height.
   virtual size_t& InputHeight() { return inputHeight; }
+
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(outputWidth);
+    ar(outputHeight);
+    ar(inputWidth);
+    ar(inputHeight);
+    ar(reward);
+    // Not yet sure if more needs to be serialized...
+  }
 
  private:
   //! Locally-stored output width.

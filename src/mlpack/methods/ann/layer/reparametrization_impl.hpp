@@ -90,6 +90,8 @@ template<typename Archive>
 void ReparametrizationType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(latentSize));
   ar(CEREAL_NVP(stochastic));
   ar(CEREAL_NVP(includeKl));

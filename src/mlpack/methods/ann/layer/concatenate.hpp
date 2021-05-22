@@ -54,7 +54,7 @@ class ConcatenateType : public Layer<InputType, OutputType>
   ConcatenateType& operator=(ConcatenateType&& layer);
 
   //! Clone the ConcatenateType object. This handles polymorphism correctly.
-	ConcatenateType* Clone() const { return new ConcatenateType(*this); }
+  ConcatenateType* Clone() const { return new ConcatenateType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -104,7 +104,7 @@ class ConcatenateType : public Layer<InputType, OutputType>
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */)
   {
-    // Nothing to do here.
+    ar(cereal::base_class<Layer<InputType, OutputType>>(this));
   }
 
  private:

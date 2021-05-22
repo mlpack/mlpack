@@ -718,11 +718,10 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   model.Predict(testData, predictions);
   xmlModel.Predict(testData, xmlPredictions);
   jsonModel.Predict(testData, jsonPredictions);
-  jsonModel.Predict(testData, binaryPredictions);
+  binaryModel.Predict(testData, binaryPredictions);
 
-  // TODO: serialization
-  //CheckMatrices(predictions, xmlPredictions, jsonPredictions,
-  //    binaryPredictions);
+  CheckMatrices(predictions, xmlPredictions, jsonPredictions,
+      binaryPredictions);
 }
 
 /**

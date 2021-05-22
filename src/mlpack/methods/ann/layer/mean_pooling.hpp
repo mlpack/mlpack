@@ -248,13 +248,13 @@ class MeanPoolingType : public Layer<InputType, OutputType>
   size_t batchSize;
 
   //! Locally-stored output parameter.
-  arma::cube outputTemp;
+  arma::Cube<typename OutputType::elem_type> outputTemp;
 
   //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
+  arma::Cube<typename InputType::elem_type> inputTemp;
 
   //! Locally-stored transformed output parameter.
-  arma::cube gTemp;
+  arma::Cube<typename OutputType::elem_type> gTemp;
 
   //! Locally-stored delta object.
   OutputType delta;

@@ -50,14 +50,14 @@ namespace ann /** Artificial Neural Network. */ {
  * \see FastLSTM for a faster LSTM version which combines the calculation of the
  * input, forget, output gates and hidden state in a single step.
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
 class LSTM
 {
@@ -158,24 +158,24 @@ class LSTM
   size_t& Rho() { return rho; }
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return grad; }
+  OutputType const& Gradient() const { return grad; }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return grad; }
+  OutputType& Gradient() { return grad; }
 
   //! Get the number of input units.
   size_t InSize() const { return inSize; }
@@ -209,10 +209,10 @@ class LSTM
   size_t gradientStep;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored previous output.
-  OutputDataType prevOutput;
+  OutputType prevOutput;
 
   //! Locally-stored batch size.
   size_t batchSize;
@@ -225,112 +225,112 @@ class LSTM
   size_t gradientStepIdx;
 
   //! Locally-stored cell activation error.
-  OutputDataType cellActivationError;
+  OutputType cellActivationError;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored gradient object.
-  OutputDataType grad;
+  OutputType grad;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 
   //! Weights between the output and input gate.
-  OutputDataType output2GateInputWeight;
+  OutputType output2GateInputWeight;
 
   //! Weights between the input and gate.
-  OutputDataType input2GateInputWeight;
+  OutputType input2GateInputWeight;
 
   //! Bias between the input and input gate.
-  OutputDataType input2GateInputBias;
+  OutputType input2GateInputBias;
 
   //! Weights between the cell and input gate.
-  OutputDataType cell2GateInputWeight;
+  OutputType cell2GateInputWeight;
 
   //! Weights between the output and forget gate.
-  OutputDataType output2GateForgetWeight;
+  OutputType output2GateForgetWeight;
 
   //! Weights between the input and gate.
-  OutputDataType input2GateForgetWeight;
+  OutputType input2GateForgetWeight;
 
   //! Bias between the input and gate.
-  OutputDataType input2GateForgetBias;
+  OutputType input2GateForgetBias;
 
   //! Bias between the input and gate.
-  OutputDataType cell2GateForgetWeight;
+  OutputType cell2GateForgetWeight;
 
   //! Weights between the output and gate.
-  OutputDataType output2GateOutputWeight;
+  OutputType output2GateOutputWeight;
 
   //! Weights between the input and gate.
-  OutputDataType input2GateOutputWeight;
+  OutputType input2GateOutputWeight;
 
   //! Bias between the input and gate.
-  OutputDataType input2GateOutputBias;
+  OutputType input2GateOutputBias;
 
   //! Weights between cell and output gate.
-  OutputDataType cell2GateOutputWeight;
+  OutputType cell2GateOutputWeight;
 
   //! Locally-stored input gate parameter.
-  OutputDataType inputGate;
+  OutputType inputGate;
 
   //! Locally-stored forget gate parameter.
-  OutputDataType forgetGate;
+  OutputType forgetGate;
 
   //! Locally-stored hidden layer parameter.
-  OutputDataType hiddenLayer;
+  OutputType hiddenLayer;
 
   //! Locally-stored output gate parameter.
-  OutputDataType outputGate;
+  OutputType outputGate;
 
   //! Locally-stored input gate activation.
-  OutputDataType inputGateActivation;
+  OutputType inputGateActivation;
 
   //! Locally-stored forget gate activation.
-  OutputDataType forgetGateActivation;
+  OutputType forgetGateActivation;
 
   //! Locally-stored output gate activation.
-  OutputDataType outputGateActivation;
+  OutputType outputGateActivation;
 
   //! Locally-stored hidden layer activation.
-  OutputDataType hiddenLayerActivation;
+  OutputType hiddenLayerActivation;
 
   //! Locally-stored input to hidden weight.
-  OutputDataType input2HiddenWeight;
+  OutputType input2HiddenWeight;
 
   //! Locally-stored input to hidden bias.
-  OutputDataType input2HiddenBias;
+  OutputType input2HiddenBias;
 
   //! Locally-stored output to hidden weight.
-  OutputDataType output2HiddenWeight;
+  OutputType output2HiddenWeight;
 
   //! Locally-stored cell parameter.
-  OutputDataType cell;
+  OutputType cell;
 
   //! Locally-stored cell activation error.
-  OutputDataType cellActivation;
+  OutputType cellActivation;
 
   //! Locally-stored forget gate error.
-  OutputDataType forgetGateError;
+  OutputType forgetGateError;
 
   //! Locally-stored output gate error.
-  OutputDataType outputGateError;
+  OutputType outputGateError;
 
   //! Locally-stored previous error.
-  OutputDataType prevError;
+  OutputType prevError;
 
   //! Locally-stored output parameters.
-  OutputDataType outParameter;
+  OutputType outParameter;
 
   //! Locally-stored input cell error parameter.
-  OutputDataType inputCellError;
+  OutputType inputCellError;
 
   //! Locally-stored input gate error.
-  OutputDataType inputGateError;
+  OutputType inputGateError;
 
   //! Locally-stored hidden layer error.
-  OutputDataType hiddenError;
+  OutputType hiddenError;
 
   //! Locally-stored current rho size.
   size_t rhoSize;

@@ -28,10 +28,10 @@ namespace ann /**Artificial Neural Network*/ {
  * @f{eqnarray*}{
  * f(x) &=& \max(0,x)+alpha \\
  * f'(x) &=& \left\{
- * 	 \begin{array}{lr}
- * 	   1 & : x > 0 \\
- * 	   0 & : x \le 0
- * 	 \end{array}
+ *   \begin{array}{lr}
+ *      1 & : x > 0 \\
+ *      0 & : x \le 0
+ *   \end{array}
  * \right.
  * @f}
  *
@@ -128,6 +128,7 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
   OutputType alpha;
 
   //! Parameter controlling the range of the ReLU function.
+  // TODO: I don't think this parameter is needed.
   double userAlpha;
 }; // class FlexibleReLUType
 

@@ -363,6 +363,8 @@ template<typename Archive>
 void FastLSTMType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(weights));
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
@@ -382,6 +384,10 @@ void FastLSTMType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(forgetGateError));
   ar(CEREAL_NVP(prevError));
   ar(CEREAL_NVP(outParameter));
+
+  // Restore aliases.
+  if (Archive::is_loading::value)
+    Reset();
 }
 
 } // namespace ann

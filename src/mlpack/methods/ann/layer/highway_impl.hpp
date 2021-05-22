@@ -203,17 +203,11 @@ template<typename Archive>
 void HighwayType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  // If loading, delete the old layers and set size for weights.
-  if (cereal::is_loading<Archive>())
-  {
-    for (size_t i = 0; i < network.size(); ++i)
-      delete network[i];
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
-    weights.set_size(inSize * inSize + inSize, 1);
-  }
-
+  ar(CEREAL_NVP(weights));
   ar(CEREAL_NVP(model));
-  // ar(CEREAL_VECTOR_VARIANT_POINTER(network));
+  ar(CEREAL_VECTOR_POINTER(network));
 }
 
 } // namespace ann

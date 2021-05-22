@@ -37,7 +37,7 @@ class JoinType : public Layer<InputType, OutputType>
   JoinType();
 
   //! Clone the JoinType object. This handles polymorphism correctly.
-	JoinType* Clone() const { return new JoinType(*this); }
+  JoinType* Clone() const { return new JoinType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

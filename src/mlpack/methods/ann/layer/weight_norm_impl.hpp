@@ -137,18 +137,14 @@ template<typename Archive>
 void WeightNormType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  if (cereal::is_loading<Archive>())
-  {
-    delete wrappedLayer;
-  }
-
-  // ar(CEREAL_VARIANT_POINTER(wrappedLayer));
+  ar(CEREAL_POINTER(wrappedLayer));
   ar(CEREAL_NVP(layerWeightSize));
+  ar(CEREAL_NVP(weights));
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())
   {
-    weights.set_size(layerWeightSize + 1, 1);
+    Reset();
   }
 }
 

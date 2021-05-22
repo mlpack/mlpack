@@ -200,13 +200,14 @@ template<typename Archive>
 void Linear3DType<InputType, OutputType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(weights));
 
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
-  if (cereal::is_loading<Archive>())
-    weights.set_size(outSize * inSize + outSize, 1);
+  if (Archive::is_loading::value)
+    Reset();
 }
 
 } // namespace ann

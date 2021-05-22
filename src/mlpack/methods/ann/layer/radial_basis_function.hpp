@@ -38,19 +38,19 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam Activation Type of the activation function (mlpack::ann::Gaussian).
  */
 
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat,
     typename Activation = GaussianFunction
 >
-class RBF
+class RBF : public Layer<InputType, OutputType>
 {
  public:
   //! Create the RBF object.
@@ -67,7 +67,7 @@ class RBF
    */
   RBF(const size_t inSize,
       const size_t outSize,
-      arma::mat& centres,
+      InputType& centres,
       double betas = 0);
 
   /**
@@ -76,28 +76,25 @@ class RBF
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of the radial basis function.
-   *
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& /* gy */,
-                arma::Mat<eT>& /* g */);
+  void Backward(const InputType& /* input */,
+                const OutputType& /* gy */,
+                OutputType& /* g */);
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputType& OutputParameter() { return outputParameter; }
   //! Get the parameters.
 
   //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
+  InputType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
+  InputType& InputParameter() { return inputParameter; }
 
   //! Get the input size.
   size_t InputSize() const { return inSize; }
@@ -106,9 +103,9 @@ class RBF
   size_t OutputSize() const { return outSize; }
 
   //! Get the detla.
-  OutputDataType const& Delta() const { return delta; }
+  OutputType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputType& Delta() { return delta; }
 
   /**
    * Serialize the layer.
@@ -124,10 +121,10 @@ class RBF
   size_t outSize;
 
   //! Locally-stored delta object.
-  OutputDataType delta;
+  OutputType delta;
 
   //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType outputParameter;
 
   //! Locally-stored the sigmas values.
   double sigmas;
@@ -136,13 +133,13 @@ class RBF
   double betas;
 
   //! Locally-stored the learnable centre of the shape.
-  InputDataType centres;
+  InputType centres;
 
   //! Locally-stored input parameter object.
-  InputDataType inputParameter;
+  InputType inputParameter;
 
   //! Locally-stored the output distances of the shape.
-  OutputDataType distances;
+  OutputType distances;
 }; // class RBF
 
 } // namespace ann

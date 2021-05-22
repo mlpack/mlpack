@@ -85,13 +85,11 @@ template<typename Archive>
 void LookupType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(vocabSize));
   ar(CEREAL_NVP(embeddingSize));
-
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
-  if (cereal::is_loading<Archive>())
-    weights.set_size(embeddingSize, vocabSize);
+  ar(CEREAL_NVP(weights));
 }
 
 } // namespace ann

@@ -18,8 +18,8 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-MiniBatchDiscrimination<InputDataType, OutputDataType
+template<typename InputType, typename OutputType>
+MiniBatchDiscrimination<InputType, OutputType
 >::MiniBatchDiscrimination() :
   A(0),
   B(0),
@@ -29,8 +29,8 @@ MiniBatchDiscrimination<InputDataType, OutputDataType
   // Nothing to do here.
 }
 
-template <typename InputDataType, typename OutputDataType>
-MiniBatchDiscrimination<InputDataType, OutputDataType
+template <typename InputType, typename OutputType>
+MiniBatchDiscrimination<InputType, OutputType
 >::MiniBatchDiscrimination(
     const size_t inSize,
     const size_t outSize,
@@ -43,20 +43,20 @@ MiniBatchDiscrimination<InputDataType, OutputDataType
   weights.set_size(A * B * C, 1);
 }
 
-template<typename InputDataType, typename OutputDataType>
-void MiniBatchDiscrimination<InputDataType, OutputDataType>::Reset()
+template<typename InputType, typename OutputType>
+void MiniBatchDiscrimination<InputType, OutputType>::Reset()
 {
   weight = arma::mat(weights.memptr(), B * C, A, false, false);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void MiniBatchDiscrimination<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
   batchSize = input.n_cols;
   tempM = weight * input;
-  M = arma::cube(tempM.memptr(), B, C, batchSize, false, false);
+  M = arma::Cube<typename InputType::elem_type>(tempM.memptr(), B, C, batchSize,
+      false, false);
   distances.set_size(B, batchSize, batchSize);
   output.set_size(B, batchSize);
 
@@ -76,7 +76,7 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
       else
       {
         distances.slice(i).col(j) =
-          arma::exp(-arma::sum(abs(M.slice(i) - M.slice(j)), 1));
+            arma::exp(-arma::sum(abs(M.slice(i) - M.slice(j)), 1));
         output.col(i) += distances.slice(i).col(j);
       }
     }
@@ -85,13 +85,12 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Forward(
   output = join_cols(input, output); // (A + B) x batchSize
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void MiniBatchDiscrimination<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void MiniBatchDiscrimination<InputType, OutputType>::Backward(
+    const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   g = gy.head_rows(A);
-  arma::Mat<eT> gM = gy.tail_rows(B);
+  arma::Mat<typename OutputType::elem_type> gM = gy.tail_rows(B);
   deltaM.zeros(B, C, batchSize);
 
   for (size_t i = 0; i < M.n_slices; ++i)
@@ -102,7 +101,8 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Backward(
       {
         continue;
       }
-      arma::mat t = arma::sign(M.slice(i) - M.slice(j));
+      arma::Mat<typename InputType::elem_type> t =
+          arma::sign(M.slice(i) - M.slice(j));
       t.each_col() %=
           distances.slice(std::min(i, j)).col(std::max(i, j)) % gM.col(i);
       deltaM.slice(i) -= t;
@@ -110,35 +110,35 @@ void MiniBatchDiscrimination<InputDataType, OutputDataType>::Backward(
     }
   }
 
-  deltaTemp = arma::mat(deltaM.memptr(), B * C, batchSize, false, false);
+  deltaTemp = arma::Mat<typename OutputType::elem_type>(deltaM.memptr(), B * C,
+      batchSize, false, false);
   g += weight.t() * deltaTemp;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void MiniBatchDiscrimination<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& /* error */,
-    arma::Mat<eT>& gradient)
+template<typename InputType, typename OutputType>
+void MiniBatchDiscrimination<InputType, OutputType>::Gradient(
+    const InputType& input,
+    const OutputType& /* error */,
+    OutputType& gradient)
 {
   gradient = arma::vectorise(deltaTemp * input.t());
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void MiniBatchDiscrimination<InputDataType, OutputDataType>::serialize(
+void MiniBatchDiscrimination<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(A));
   ar(CEREAL_NVP(B));
   ar(CEREAL_NVP(C));
+  ar(CEREAL_NVP(weights));
 
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
+  // Restore the `weight` alias.
   if (cereal::is_loading<Archive>())
-  {
-    weights.set_size(A * B * C, 1);
-  }
+    Reset();
 }
 
 } // namespace ann

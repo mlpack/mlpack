@@ -176,9 +176,12 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
   OutputType& Parameters() { return weights; }
 
   //! Get the weight of the layer.
-  arma::cube const& Weight() const { return weight; }
+  arma::Cube<typename OutputType::elem_type> const& Weight() const
+  {
+    return weight;
+  }
   //! Modify the weight of the layer.
-  arma::cube& Weight() { return weight; }
+  arma::Cube<typename OutputType::elem_type>& Weight() { return weight; }
 
   //! Get the bias of the layer.
   OutputType const& Bias() const { return bias; }
@@ -414,7 +417,7 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
   OutputType weights;
 
   //! Locally-stored weight object.
-  arma::cube weight;
+  arma::Cube<typename OutputType::elem_type> weight;
 
   //! Locally-stored bias term object.
   OutputType bias;
@@ -432,19 +435,19 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
   size_t outputHeight;
 
   //! Locally-stored transformed output parameter.
-  arma::cube outputTemp;
+  arma::Cube<typename OutputType::elem_type> outputTemp;
 
   //! Locally-stored transformed padded input parameter.
-  arma::cube inputPaddedTemp;
+  arma::Cube<typename InputType::elem_type> inputPaddedTemp;
 
   //! Locally-stored transformed expanded input parameter.
-  arma::cube inputExpandedTemp;
+  arma::Cube<typename InputType::elem_type> inputExpandedTemp;
 
   //! Locally-stored transformed error parameter.
-  arma::cube gTemp;
+  arma::Cube<typename OutputType::elem_type> gTemp;
 
   //! Locally-stored transformed gradient parameter.
-  arma::cube gradientTemp;
+  arma::Cube<typename OutputType::elem_type> gradientTemp;
 
   //! Locally-stored padding layer for forward propagation.
   ann::Padding paddingForward;

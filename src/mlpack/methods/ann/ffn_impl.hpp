@@ -48,10 +48,12 @@ template<typename OutputLayerType,
          typename OutputType>
 FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::~FFN()
 {
-  //network.clear();
+  std::cout << "delete this " << this << " network size " << network.size() <<
+"\n";
   for (size_t i = 0; i < network.size(); ++i)
     delete network[i];
 }
+
 template<typename OutputLayerType,
          typename InitializationRuleType,
          typename InputType,
@@ -547,37 +549,32 @@ template<typename Archive>
 void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
 serialize(Archive& ar, const uint32_t /* version */)
 {
-  /* ar(CEREAL_NVP(parameter)); */
-  /* ar(CEREAL_NVP(width)); */
-  /* ar(CEREAL_NVP(height)); */
+  ar(CEREAL_NVP(width));
+  ar(CEREAL_NVP(height));
 
-  /* ar(CEREAL_NVP(reset)); */
+  ar(CEREAL_NVP(reset));
 
-  /* // Be sure to clear other layers before loading. */
-  /* if (cereal::is_loading<Archive>()) */
-  /* { */
-  /*   std::for_each(network.begin(), network.end(), */
-  /*       boost::apply_visitor(deleteVisitor)); */
-  /*   network.clear(); */
-  /* } */
+  std::cout << "serialize this " << this << ", network size " << network.size()
+<< "; loading " << Archive::is_loading::value << "\n";
+  ar(CEREAL_VECTOR_POINTER(network));
 
-  /* ar(CEREAL_VECTOR_VARIANT_POINTER(network)); */
+  // TODO: do we need to serialize this?
+  ar(CEREAL_NVP(parameter));
 
-  /* // If we are loading, we need to initialize the weights. */
-  /* if (cereal::is_loading<Archive>()) */
-  /* { */
-  /*   size_t offset = 0; */
-  /*   for (size_t i = 0; i < network.size(); ++i) */
-  /*   { */
-  /*     offset += boost::apply_visitor(WeightSetVisitor(parameter, offset), */
-  /*         network[i]); */
+  // TODO: I'm assuming we don't need to serialize delta, inputParameter,
+  // outputParameter, or gradient.
 
-  /*     boost::apply_visitor(resetVisitor, network[i]); */
-  /*   } */
+  // If we are loading, we need to initialize the weights.
+  if (cereal::is_loading<Archive>())
+  {
+    deterministic = true;
+    ResetDeterministic();
 
-  /*   deterministic = true; */
-  /*   ResetDeterministic(); */
-  /* } */
+    // Reset each layer so its weights are set right.
+    // TODO: should we just do that in serialize()?
+    for (size_t i = 0; i < network.size(); ++i)
+      network[i]->Reset();
+  }
 }
 
 template<typename OutputLayerType,

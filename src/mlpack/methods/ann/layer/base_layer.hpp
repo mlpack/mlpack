@@ -120,9 +120,10 @@ class BaseLayer : public Layer<InputType, OutputType>
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const uint32_t /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    /* Nothing to do here */
+    ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+    // Nothing to serialize.
   }
 
  private:
