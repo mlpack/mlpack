@@ -164,7 +164,7 @@ static void mlpackMain()
     // Check for incompatible input parameters.
     if (!IO::HasParam("warn_start"))
         RequireOnlyOnePassed({"training", "input_model"}, true);
-    // When warn_start is passed, training and input_model must also be passed.
+    // When warm_start is passed, training and input_model must also be passed.
     RequireNoneOrAllPassed({"warn_start", "training", "input_model"}, true);
 
     ReportIgnoredParam({{"training", false}}, "print_training_accuracy");
