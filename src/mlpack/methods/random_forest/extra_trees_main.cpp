@@ -1,21 +1,18 @@
 
-* @file methods / random_forest / extra_trees_main.cpp 
-* @author Pranshu Srivastava
-*
-* A program to implement the extra trees algorithm *
-* 
-* mlpack is free software; you may redistribute it and / or modify it under the
-* terms of the 3 -clause BSD license.You should have received a copy of the
-* 3 - clause BSD license along with mlpack.If not,see
-* http : //www.opensource.org/licenses/BSD-3-Clause for more information.
-* /
+*@file methods / random_forest / extra_trees_main.cpp *@author Pranshu Srivastava **A program to implement the extra trees algorithm ***mlpack is free software;
+you may redistribute it and / or modify it under the
+                                         *terms of the 3 -
+                                     clause BSD license.You should have received a copy of the * 3 - clause BSD license along with mlpack.If not,
+    see
+            *http : //www.opensource.org/licenses/BSD-3-Clause for more information.
+                    * /
 #include <mlpack/core.hpp>
 #include <mlpack/methods/random_forest/random_forest.hpp>
-#include<mlpack/methods/random_forest/random_binary_numeric_split.hpp>
+#include <mlpack/methods/random_forest/random_binary_numeric_split.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
-using namespace mlpack;
+                    using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::util;
 using namespace mlpack::tree::ExtraTrees;
@@ -38,20 +35,20 @@ BINDING_LONG_DESC(
     "The training set and the associated labels are specified with the" +
     PRINT_PARAM_STRING("training") + "and" + PRINT_PARAM_STRING("labels") +
     " parameters, respectively. The labels should be in the range of [0,"
-    "num_classes -1] Optionally if" +
+    "num_classes -1].Optionally if" +
     PRINT_PARAM_STRING("labels") + "is not "
-    "specified, the labels are assumed to be the last dimension of the training"
-    "dataset."
-    "\n\n"
-    "When a model is trained, the " +
+                                   "specified, the labels are assumed to be the last dimension of the training"
+                                   "dataset."
+                                   "\n\n"
+                                   "When a model is trained, the " +
     PRINT_PARAM_STRING("output_model") + " "
-    "output parameter may be used to save the trained model. A model may be"
-    "loaded for predictions with the" +
+                                         "output parameter may be used to save the trained model. A model may be"
+                                         "loaded for predictions with the" +
     PRINT_PARAM_STRING("input_model") +
     "parameter. The " PRINT_PARAM_STRING("input_model") + "parameter may not be"
-    "specified when the " +
+                                                          "specified when the " +
     PRINT_PARAM_STRING("training ") + "parameter"
-    "is specified. The " +
+                                      "is specified. The " +
     PRINT_PARAM_STRING("minimum_leaf_size") +
     "parameter specifies the minimum number of training points that must fall into"
     "into each leaf for it to be split. The " +
@@ -60,16 +57,16 @@ BINDING_LONG_DESC(
     "values will force higher-confidence split_size. The " +
     PRINT_PARAM_STRING("maximum_depth") +
     "parameter specifies the maximum depth of a tree. " PRINT_PARAM_STRING("subspace_dim") + " parameter is used to control the "
-    "number of random dimensions chosen for an individual node's split.  If " +
+                                                                                             "number of random dimensions chosen for an individual node's split.  If " +
     PRINT_PARAM_STRING("print_training_accuracy") + " is specified, the "
-    "calculated accuracy on the training set will be printed."
-    "\n\n"
-    "Test data may be specified with the " +
+                                                    "calculated accuracy on the training set will be printed."
+                                                    "\n\n"
+                                                    "Test data may be specified with the " +
     PRINT_PARAM_STRING("test") + " "
-    "parameter, and if performance measures are desired for that test set, "
-    "labels for the test points may be specified with the " +
+                                 "parameter, and if performance measures are desired for that test set, "
+                                 "labels for the test points may be specified with the " +
     PRINT_PARAM_STRING("test_labels") + " parameter.  Predictions for each "
-    "test point may be saved via the " +
+                                        "test point may be saved via the " +
     PRINT_PARAM_STRING("predictions") +
     "output parameter.  Class probabilities for each prediction may be saved "
     "with the " +
@@ -200,7 +197,7 @@ static void mlpackMain()
         Log::Info << "Training random forest with " << numTrees << " trees..." << endl;
         const size_t numClasses = max(labels) + 1;
         //Training the model.
-        model->model.Train(data, labels, numClasses, numTrees, maxDepth);
+        model->model.Train(data, labels, numClasses, numTrees, maxDepth, IO::HasParam("warm_start"));
         Timer::Stop("rf_training");
         if (IO::HasParam("test"))
         {

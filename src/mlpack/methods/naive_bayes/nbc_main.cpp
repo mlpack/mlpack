@@ -1,4 +1,3 @@
-
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file methods/naive_bayes/nbc_main.cpp
