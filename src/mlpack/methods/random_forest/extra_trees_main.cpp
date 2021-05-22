@@ -144,7 +144,7 @@ class ExtraTreesModel
 {
     //The model itself
     ExtraTrees<> et(data, fullLabels, 3, weights, 20, 1);
-    ExtraTreesModel();
+    ExtraTreesModel() { /* Nothing to do here. */};
     //Serialize the model
     template <typename Archive>
     void serialize(Archive &ar, const uint32_t /* version */)
