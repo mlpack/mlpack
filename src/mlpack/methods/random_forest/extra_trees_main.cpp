@@ -73,15 +73,15 @@ BINDING_LONG_DESC(
     PRINT_PARAM_STRING("probabilities") + " output parameter.");
 //Example.
 BINDING_EXAMPLE(
-    "For example, to train a random forest with a minimum leaf size of 20 "
+    "For example, to train a extra trees algorithm with a minimum leaf size of 20 "
     "using 10 trees on the dataset contained in " +
     PRINT_DATASET("data") +
     "with labels " + PRINT_DATASET("labels") + ", saving the output random "
                                                "forest to " +
-    PRINT_MODEL("rf_model") + " and printing the training "
+    PRINT_MODEL("et_model") + " and printing the training "
                               "error, one could call"
                               "\n\n" +
-    PRINT_CALL("random_forest", "training", "data", "labels", "labels",
+    PRINT_CALL("extra_trees", "training", "data", "labels", "labels",
                "minimum_leaf_size", 20, "num_trees", 10, "output_model", "rf_model",
                "print_training_accuracy", true) +
     "\n\n"
@@ -92,7 +92,7 @@ BINDING_EXAMPLE(
     PRINT_DATASET("predictions") + ", one "
                                    "could call "
                                    "\n\n" +
-    PRINT_CALL("random_forest", "input_model", "rf_model", "test", "test_set",
+    PRINT_CALL("extra trees", "input_model", "rf_model", "test", "test_set",
                "test_labels", "test_labels", "predictions", "predictions"));
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
 BINDING_SEE_ALSO("@hoeffding_tree", "#hoeffding_tree");
@@ -116,7 +116,7 @@ PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
                                       "on the training set will be predicted (verbose must also be specified).",
            "a");
 
-PARAM_INT_IN("num_trees", "Number of trees in the random forest.", "N", 10);
+PARAM_INT_IN("num_trees", "Number of trees in the extra trees.", "N", 10);
 PARAM_INT_IN("minimum_leaf_size", "Minimum number of points in each leaf "
                                   "node.",
              "n", 1);
@@ -144,7 +144,10 @@ class ExtraTreesModel
 {
     //The model itself
     ExtraTrees<> et(data, fullLabels, 3, weights, 20, 1);
-    ExtraTreesModel();
+    ExtraTreesModel()
+    { /* Nothing yo do. */
+    }
+
     //Serialize the model
     template <typename Archive>
     void serialize(Archive &ar, const uint32_t /* version */)
@@ -153,19 +156,19 @@ class ExtraTreesModel
     }
 };
 
-PARAM_MODEL_IN(ExtraTreesModel, "input_model", "Pre-trained random forest to "
+PARAM_MODEL_IN(ExtraTreesModel, "input_model", "Pre-trained extra trees algorithm to "
                                                "use for classification.",
                "m");
-PARAM_MODEL_OUT(RandomForestModel, "output_model", "Model to save trained "
-                                                   "random forest to.",
+PARAM_MODEL_OUT(ExtraTreesModel, "output_model", "Model to save trained "
+                                                 "extra trees to.",
                 "M");
 static void mlpackMain()
 {
     // Check for incompatible input parameters.
-    if (!IO::HasParam("warn_start"))
+    if (!IO::HasParam("warm_start"))
         RequireOnlyOnePassed({"training", "input_model"}, true);
-    // When warn_start is passed, training and input_model must also be passed.
-    RequireNoneOrAllPassed({"warn_start", "training", "input_model"}, true);
+    // When warm_start is passed, training and input_model must also be passed.
+    RequireNoneOrAllPassed({"warm_start", "training", "input_model"}, true);
 
     ReportIgnoredParam({{"training", false}}, "print_training_accuracy");
     ReportIgnoredParam({{"test", false}}, "test_labels");
@@ -176,17 +179,44 @@ static void mlpackMain()
     {
         RequireAtLeastOnePassed({{"labels"}, true, "must pass labels when training set is given"});
     }
-    if (IO
-        : HasParam("input_model"))
+    RequireParamValue<int>(
+        "num_trees", [](int x) { return x > 0; }, true,
+        "number of trees in forest must be positive");
+
+    ReportIgnoredParam({{"test", false}}, "predictions");
+    ReportIgnoredParam({{"test", false}}, "probabilities");
+
+    RequireParamValue<int>(
+        "minimum_leaf_size", [](int x) { return x > 0; }, true,
+        "minimum leaf size must be greater than 0");
+    RequireParamValue<int>(
+        "maximum_depth", [](int x) { return x >= 0; }, true,
+        "maximum depth must not be negative");
+    RequireParamValue<int>(
+        "subspace_dim", [](int x) { return x >= 0; }, true,
+        "subspace dimensionality must be nonnegative");
+    RequireParamValue<double>(
+        "minimum_gain_split",
+        [](double x) { return x >= 0.0; }, true,
+        "minimum gain for splitting must be nonnegative");
+    ReportIgnoredParam({{"training", false}}, "num_trees");
+    ReportIgnoredParam({{"training", false}}, "minimum_leaf_size");
+    ExtraTreesModel *etModel;
+    if (IO::HasParam("input_model"))
         model = IO::GetParam << ExtraTreesModel > ("input_model");
     else
-        model = new ExtraTreesModel();
+        etmodel = new ExtraTreesModel();
     if (IO ::HasParam("training"))
     {
-        Timer::Start("rf_training");
+        Timer::Start("et_training");
         //Training the model on the given input data.
-        mat data = move(IO::.GetParam<mat>("training"));
-        Row<size_t> labels = move(IO::GetParam<Row<size_t>>("labels"));
+        mat data = std::move(IO::.GetParam<mat>("training"));
+        Row<size_t> labels = std::move(IO::GetParam<Row<size_t>>("labels"));
+        // Make sure the subspace dimensionality is valid.
+        RequireParamValue<int>(
+            "subspace_dim",
+            [data](int x) { return (size_t)x <= data.n_rows; }, true, "subspace "
+            "dimensionality must not be greater than data dimensionality");
         const size_t numTrees = (size_t)IO::GetParam<int>("num_trees");
         const size_t minimumLeafSize = (size_t)IO::GetParam<int>("minimum_leaf_size");
         const size_t maxDepth = (size_t)IO::GetParam<int>("maximum_depth");
@@ -194,22 +224,22 @@ static void mlpackMain()
         const size_t randomDims = (IO::GetParam<int>("subspace_dim") == 0) ? (size_t)std::sqrt(data.n_rows) : (size_t)IO::GetParam<int>("subspace_dim");
         MultipleRandomDimensionSelect mrds(randomDims);
 
-        Log::Info << "Training random forest with " << numTrees << " trees..." << endl;
+        Log::Info << "Training extra trees with " << numTrees << " trees..." << endl;
         const size_t numClasses = max(labels) + 1;
         //Training the model.
-        model->model.Train(data, labels, numClasses, numTrees, maxDepth, IO::HasParam("warm_start"));
-        Timer::Stop("rf_training");
+        etmodel->model.Train(data, labels, numClasses, numTrees, minimumLeafSizd,minimumGainSplit,maxDepth, IO::HasParam("warm_start"));
+        Timer::Stop("et_training");
         if (IO::HasParam("test"))
         {
             mat testData = move(IO::GetParam<mat>("test"));
             Timer::Start("rf_prediction");
             //Get Predictions and probabilities.
             mat probabilities;
-            model->model.Classify(testData, predictions, probabilities);
+            etmodel->model.Classify(testData, predictions, probabilities);
         }
         //Save the outputs.
-        IO::GetParam<mat>("probabilities") = move(probabilities);
-        IO::GetParam<Row<size_t>>("predictions") = move(predictions);
+        IO::GetParam<mat>("probabilities") =std:: move(probabilities);
+        IO::GetParam<Row<size_t>>("predictions") = std::move(predictions);
     }
     //Save the output model.
     IO::GetParam<ExtraTreesModel *>("output_model") = model;

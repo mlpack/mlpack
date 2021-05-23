@@ -89,7 +89,7 @@ BINDING_EXAMPLE(
     "predictions for each point to " + PRINT_DATASET("predictions") + ", one "
     "could call "
     "\n\n" +
-    PRINT_CALL("random_forest", "input_model", "rf_model", "test", "test_set",
+    PRINT_CALL("random forest", "input_model", "rf_model", "test", "test_set",
         "test_labels", "test_labels", "predictions", "predictions"));
 
 // See also...
