@@ -92,7 +92,11 @@ BINDING_EXAMPLE(
     PRINT_DATASET("predictions") + ", one "
                                    "could call "
                                    "\n\n" +
+<<<<<<< HEAD
     PRINT_CALL("extra trees", "input_model", "rf_model", "test", "test_set",
+=======
+    PRINT_CALL("extra_trees", "input_model", "et_model", "test", "test_set",
+>>>>>>> ace0a8c55dd025ee6e42526afa80adc78d0078cb
                "test_labels", "test_labels", "predictions", "predictions"));
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
 BINDING_SEE_ALSO("@hoeffding_tree", "#hoeffding_tree");
@@ -144,10 +148,14 @@ class ExtraTreesModel
 {
     //The model itself
     ExtraTrees<> et(data, fullLabels, 3, weights, 20, 1);
+<<<<<<< HEAD
     ExtraTreesModel()
     { /* Nothing yo do. */
     }
 
+=======
+    ExtraTreesModel() { /* Nothing to do here. */};
+>>>>>>> ace0a8c55dd025ee6e42526afa80adc78d0078cb
     //Serialize the model
     template <typename Archive>
     void serialize(Archive &ar, const uint32_t /* version */)
@@ -168,7 +176,11 @@ static void mlpackMain()
     if (!IO::HasParam("warm_start"))
         RequireOnlyOnePassed({"training", "input_model"}, true);
     // When warm_start is passed, training and input_model must also be passed.
+<<<<<<< HEAD
     RequireNoneOrAllPassed({"warm_start", "training", "input_model"}, true);
+=======
+    RequireNoneOrAllPassed({"warn_start", "training", "input_model"}, true);
+>>>>>>> ace0a8c55dd025ee6e42526afa80adc78d0078cb
 
     ReportIgnoredParam({{"training", false}}, "print_training_accuracy");
     ReportIgnoredParam({{"test", false}}, "test_labels");
@@ -234,13 +246,14 @@ static void mlpackMain()
             mat testData = move(IO::GetParam<mat>("test"));
             Timer::Start("rf_prediction");
             //Get Predictions and probabilities.
+            ROW<size_t> predictions;
             mat probabilities;
-            etmodel->model.Classify(testData, predictions, probabilities);
+            etmodel->et.Classify(testData, predictions, probabilities);
         }
         //Save the outputs.
         IO::GetParam<mat>("probabilities") =std:: move(probabilities);
         IO::GetParam<Row<size_t>>("predictions") = std::move(predictions);
     }
     //Save the output model.
-    IO::GetParam<ExtraTreesModel *>("output_model") = model;
+    IO::GetParam<ExtraTreesModel *>("output_model") = etmodel;
 }
