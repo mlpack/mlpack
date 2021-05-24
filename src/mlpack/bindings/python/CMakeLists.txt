@@ -203,6 +203,7 @@ add_custom_command(TARGET python POST_BUILD
             mlpack/io.pxd
             mlpack/io_util.hpp
             mlpack/matrix_utils.py
+            mlpack/preprocess_json_params.py
             mlpack
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
