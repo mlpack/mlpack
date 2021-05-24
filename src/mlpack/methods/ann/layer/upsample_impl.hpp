@@ -20,235 +20,254 @@ namespace ann /** Artificial Neural Network. */ {
 
 
 template<typename InputDataType, typename OutputDataType>
-Upsample<InputDataType, OutputDataType>::
-Upsample():
-    inRowSize(0),
-    inColSize(0),
-    outRowSize(0),
-    outColSize(0),
-    depth(0),
-    mode("nearest"),
-    batchSize(0)
-{
+  Upsample<InputDataType, OutputDataType>::
+  Upsample():
+  inRowSize(0),
+  inColSize(0),
+  outRowSize(0),
+  outColSize(0),
+  depth(0),
+  mode("nearest"),
+  batchSize(0)
+  {
   // Nothing to do here.
-}
+  }
 
 template<typename InputDataType, typename OutputDataType>
-Upsample<InputDataType, OutputDataType>::
-Upsample(
+  Upsample<InputDataType, OutputDataType>::
+  Upsample(
     const size_t inRowSize,
     const size_t inColSize,
     const size_t outRowSize,
     const size_t outColSize,
     const size_t depth,
     const string mode):
-    inRowSize(inRowSize),
-    inColSize(inColSize),
-    outRowSize(outRowSize),
-    outColSize(outColSize),
-    depth(depth),
-    mode(mode),
-    batchSize(0)
-{
+  inRowSize(inRowSize),
+  inColSize(inColSize),
+  outRowSize(outRowSize),
+  outColSize(outColSize),
+  depth(depth),
+  mode(mode),
+  batchSize(0)
+  {
   // Nothing to do here.
-}
+  }
 
 template<typename InputDataType, typename OutputDataType>
-void Upsample<InputDataType, OutputDataType>::Reset()
-{
-  if(mode == "bilinear")
+  void Upsample<InputDataType, OutputDataType>::Reset()
   {
+    if(mode == "bilinear")
+    {
+      double scaleRow = (double) inRowSize / (double) outRowSize;
+      double scaleCol = (double) inColSize / (double) outColSize;
+      coeffs_pre = arma::cube(2, 2, outRowSize * outColSize);
+      index_pre = arma::cube(1, 2, outRowSize * outColSize);
+
+      for (size_t i = 0; i < outRowSize; i++)
+      {
+        double rOrigin = (i + 0.5) * scaleRow;
+
+        for(size_t j = 0; j < outColSize; j++)
+        {
+
+          double cOrigin = (j + 0.5) * scaleCol;
+          size_t c_end = (size_t) std::floor(cOrigin + 0.5);
+          size_t r_end = (size_t) std::floor(rOrigin + 0.5);
+
+          double deltaC = 0.5 + cOrigin - c_end;
+          double deltaR = 0.5 + rOrigin - r_end; 
+          if(deltaR >= 1)
+            deltaR -= 1;
+
+          if(deltaC >= 1)
+            deltaC -= 1;
+
+
+          size_t current_idx = j * outRowSize + i;
+          coeffs_pre.slice(current_idx)(0, 0) = (1 - deltaR) * (1 - deltaC);
+          coeffs_pre.slice(current_idx)(0, 1) = deltaR * (1 - deltaC);
+          coeffs_pre.slice(current_idx)(1, 0) = (1 - deltaR) * deltaC;
+          coeffs_pre.slice(current_idx)(1, 1) = deltaR * deltaC;
+          index_pre.slice(current_idx)(0, 0) = c_end + 1;
+          index_pre.slice(current_idx)(0, 1) = r_end + 1;
+        }
+      }
+    }
+  }
+
+
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+  void Upsample<InputDataType, OutputDataType>::Forward(
+    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+  {
+    batchSize = input.n_cols;
+    if (output.is_empty())
+      output.set_size(outRowSize * outColSize * depth, batchSize);
+    else
+    {
+      assert(output.n_rows == outRowSize * outColSize * depth);
+      assert(output.n_cols == batchSize);
+    }
+
+    assert(inRowSize >= 2);
+    assert(inColSize >= 2);
+
+    arma::cube inputAsCube(const_cast<arma::Mat<eT>&>(input).memptr(),
+      inRowSize, inColSize, depth * batchSize, false, false);
+    arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
+      depth * batchSize, false, true);
+
     double scaleRow = (double) inRowSize / (double) outRowSize;
     double scaleCol = (double) inColSize / (double) outColSize;
-    coeffs_pre = arma::cube(2, 2, outRowSize * outColSize);
-    index_pre = arma::cube(2, 2, outRowSize * outColSize);
 
-    for (size_t i = 0; i < outRowSize; i++)
+    arma::mat22 vals;
+
+    if(mode == "nearest")
     {
-      double yOrigin = (i + 0.5) * scaleRow;
 
-      for(size_t j = 0; j < outColSize; j++)
+      for (size_t i = 0; i < outRowSize; ++i)
       {
+        double rOrigin = (i + 0.5) * scaleRow;
 
-        double xOrigin = (j + 0.5) * scaleCol;
-        size_t x_right = (size_t) std::floor(xOrigin + 0.5);
-        size_t y_down = (size_t) std::floor(yOrigin + 0.5);
-        size_t x_left = x_right;
-        size_t y_up = y_down; 
-        double deltaR = 0.5 + xOrigin - x_right;
-        double deltaC = 0.5 + yOrigin - y_down; 
-        if(deltaR >= 1)
-          deltaR -= 1;
-        
-        if(deltaC >= 1)
-        deltaC -= 1;
-
-        if(x_right >= inColSize)
-          x_right = inColSize - 1;
-        if(y_down >= inRowSize)
-          y_down = inRowSize - 1;
-        
-        if(x_left > 0)
-          x_left -= 1;
-        if(y_up > 0)
-          y_up -= 1;
-
-        size_t current_idx = j * outRowSize + i;
-        coeffs_pre.slice(current_idx)(0, 0) = (1 - deltaR) * (1 - deltaC);
-        coeffs_pre.slice(current_idx)(1, 0) = (1 - deltaR) * deltaC;
-        coeffs_pre.slice(current_idx)(0, 1) = deltaR * (1 - deltaC);
-        coeffs_pre.slice(current_idx)(1, 1) = deltaR * deltaC;
-        index_pre.slice(current_idx)(0, 0) = x_left * inRowSize + y_up;
-        index_pre.slice(current_idx)(1, 0) = x_left * inRowSize + y_down;
-        index_pre.slice(current_idx)(0, 1) = x_right * inRowSize + y_up;
-        index_pre.slice(current_idx)(1, 1) = x_right * inRowSize + y_down;
-      }
-    }
-  }
-}
-
-
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Upsample<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
-{
-  batchSize = input.n_cols;
-  if (output.is_empty())
-    output.set_size(outRowSize * outColSize * depth, batchSize);
-  else
-  {
-    assert(output.n_rows == outRowSize * outColSize * depth);
-    assert(output.n_cols == batchSize);
-  }
-
-  assert(inRowSize >= 2);
-  assert(inColSize >= 2);
-
-  arma::cube inputAsCube(const_cast<arma::Mat<eT>&>(input).memptr(),
-      inRowSize, inColSize, depth * batchSize, false, false);
-  arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
-                          depth * batchSize, false, true);
-
-  double scaleRow = (double) inRowSize / (double) outRowSize;
-  double scaleCol = (double) inColSize / (double) outColSize;
-
-  arma::mat22 vals;
-  for (size_t i = 0; i < outRowSize; ++i)
-  {
-    double yOrigin = (i + 0.5) * scaleRow;
-
-    for (size_t j = 0; j < outColSize; ++j)
-    {
-      double xOrigin = (j + 0.5) * scaleCol;
-
-      if(mode == "nearest"){
-
-        for (size_t k = 0; k < depth * batchSize; ++k)
+        for (size_t j = 0; j < outColSize; ++j)
         {
-          outputAsCube(i, j, k) = inputAsCube.slice(k)(
-            std::floor(xOrigin), std::floor(yOrigin));
-        }
-      }
-
-      else if(mode == "bilinear"){
-        size_t current_idx = i * outRowSize + j;
-
-        for (size_t k = 0; k < depth * batchSize; ++k)
-        { 
-          arma::idx = index_pre.slice(current_idx);
-          vals[0] = inputAsCube.slice(k)(idx(0));
-          vals[1] = inputAsCube.slice(k)(idx(1));
-          vals[2] = inputAsCube.slice(k)(idx(2));
-          vals[3] = inputAsCube.slice(k)(idx(3));
-
-          outputAsCube(i, j, k) = arma::accu(vals % coeffs_pre.slice(current_idx));
-        }
-      }
-    }
-  }
-}
-
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void Upsample<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /*input*/,
-    const arma::Mat<eT>& gradient,
-    arma::Mat<eT>& output)
-{
-  if (output.is_empty())
-    output.set_size(inRowSize * inColSize * depth, batchSize);
-  else
-  {
-    assert(output.n_rows == inRowSize * inColSize * depth);
-    assert(output.n_cols == batchSize);
-  }
-
-  assert(outRowSize >= 2);
-  assert(outColSize >= 2);
-
-  arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
-      outColSize, depth * batchSize, false, false);
-  arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
-                          depth * batchSize, false, true);
-
-  if (gradient.n_elem == output.n_elem)
-  {
-    outputAsCube = gradientAsCube;
-  }
-  else
-  {
-    double scaleRow = (double)(outRowSize) / inRowSize;
-    double scaleCol = (double)(outColSize) / inColSize;
-
-    arma::mat22 coeffs;
-    for (size_t i = 0; i < inRowSize; ++i)
-    {
-      double yOrigin = (i + 0.5) * scaleRow;
-
-      for (size_t j = 0; j < inColSize; ++j)
-      {
-        double xOrigin = (j + 0.5) * scaleCol;
-        if(mode == "nearest")
-        {
+          double cOrigin = (j + 0.5) * scaleCol;
 
           for (size_t k = 0; k < depth * batchSize; ++k)
           {
-            outputAsCube(i, j, k) = gradientAsCube.slice(k)(
-              std::floor(xOrigin), std::floor(yOrigin));
+            outputAsCube(i, j, k) = inputAsCube.slice(k)(
+              std::floor(cOrigin), std::floor(rOrigin));
           }
         }
-        else if(mode == "bilinear")
-        {
-          size_t current_idx = j * outRowSize + i;
-          for (size_t k = 0; k < depth * batchSize; ++k)
-          { 
-            arma::mat idx = index_pre.slice(current_idx);
-            vals[0] = gradientAsCube.slice(k)(idx(0));
-            vals[1] = gradientAsCube.slice(k)(idx(1));
-            vals[2] = gradientAsCube.slice(k)(idx(2));
-            vals[3] = gradientAsCube.slice(k)(idx(3)); 
-        
-           outputAsCube(i, j, k) = arma::accu(vals % coeffs_pre.slice(current_idx));
+      }
+    }
+    else if(mode == "bilinear")
+    {
+      for (size_t k = 0; k < depth * batchSize; ++k)
+      {
+        arma::mat grid = arma::mat(inRowSize + 2, inColSize + 2);
+        grid(span(1, inRowSize), span(1, inColSize)) = inputAsCube.slice(k);
+        grid(span(1, inRowSize), 0) = grid(span(1, inRowSize), 1);
+        grid(span(1, inRowSize), inColSize + 1) = grid(span(1, inRowSize), inColSize);
+        grid(0, span(1, inColSize)) = grid(1, span(1, inColSize));
+        grid(inRowSize + 1, span(1, inColSize)) = grid(inRowSize, span(1, inColSize));
+        grid(0, 0) = grid(1, 1);
+        grid(inRowSize + 1, inColSize + 1) = grid(inRowSize, inColSize);
+        grid(0, inColSize + 1) = grid(1, inColSize);
+        grid(inRowSize + 1, 0) = grid(inRowSize, 1);
 
+        for (size_t i = 0; i < outRowSize; ++i)
+        {
+          for (size_t j = 0; j < outColSize; ++j)
+          {
+            size_t current_idx = j * outRowSize + i;
+            size_t c_right = index_pre.slice(current_idx)(0, 0);
+            size_t r_down = index_pre.slice(current_idx)(0, 1);
+
+            vals[0] = grid(r_down - 1, c_right - 1);
+            vals[1] = grid(r_down - 1, c_right);
+            vals[2] = grid(r_down, c_right - 1);
+            vals[3] = grid(r_down, c_right);
+            outputAsCube(i, j, k) = arma::accu(vals % coeffs_pre.slice(current_idx));
           }
         }
       }
     }
   }
-}
+
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+  void Upsample<InputDataType, OutputDataType>::Backward(
+    const arma::Mat<eT>& /*input*/,
+    const arma::Mat<eT>& gradient,
+    arma::Mat<eT>& output)
+  {
+    if (output.is_empty())
+      output.set_size(inRowSize * inColSize * depth, batchSize);
+    else
+    {
+      assert(output.n_rows == inRowSize * inColSize * depth);
+      assert(output.n_cols == batchSize);
+    }
+
+    assert(outRowSize >= 2);
+    assert(outColSize >= 2);
+
+    arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
+      outColSize, depth * batchSize, false, false);
+    arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
+      depth * batchSize, false, true);
+
+    if (gradient.n_elem == output.n_elem)
+    {
+      outputAsCube = gradientAsCube;
+    }
+    else
+    {
+      if(mode == "nearest")
+      {      
+
+        double scaleRow = (double)(outRowSize) / inRowSize;
+        double scaleCol = (double)(outColSize) / inColSize;
+        for (size_t i = 0; i < inRowSize; ++i)
+        {
+          double rOrigin = (i + 0.5) * scaleRow;
+
+          for (size_t j = 0; j < inColSize; ++j)
+          {
+            double cOrigin = (j + 0.5) * scaleCol;
+
+            if (cOrigin >= outColSize)
+              cOrigin--;
+            if(rOrigin >= outRowSize)
+              rOrigin--;
+
+            for (size_t k = 0; k < depth * batchSize; ++k)
+            {
+              outputAsCube(i, j, k) += arma::accu(gradientAsCube.slice(k).submat(
+                rOrigin, cOrigin, rOrigin + 1, cOrigin + 1));
+            }
+          }
+        }
+      }
+      else if(mode == "bilinear")
+      {
+        double scaleRow = (double)(inRowSize) / outRowSize;
+        double scaleCol = (double)(inColSize) / outColSize;
+        for (size_t i = 0; i < outRowSize; ++i)
+        {
+          for (size_t j = 0; j < outColSize; ++j)
+          {
+            size_t current_idx = i * outRowSize + j;
+
+            for (size_t k = 0; k < depth * batchSize; ++k)
+            { 
+              arma::mat idx = index_pre.slice(current_idx);
+              vals[0] = inputAsCube.slice(k)(idx(0));
+              vals[1] = inputAsCube.slice(k)(idx(1));
+              vals[2] = inputAsCube.slice(k)(idx(2));
+              vals[3] = inputAsCube.slice(k)(idx(3));
+              outputAsCube.slice(k).submat(vals[0], vals[2], vals[1], vals[3]) =
+              gradientAsCube.slice(k) * coeffs_pre.slice(current_idx);
+            }
+          }
+        }
+      }
+    }
+  }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void Upsample<InputDataType, OutputDataType>::serialize(
+  void Upsample<InputDataType, OutputDataType>::serialize(
     Archive& ar, const uint32_t /* version */)
-{
-  ar(CEREAL_NVP(inRowSize));
-  ar(CEREAL_NVP(inColSize));
-  ar(CEREAL_NVP(outRowSize));
-  ar(CEREAL_NVP(outColSize));
-  ar(CEREAL_NVP(depth));
-}
+  {
+    ar(CEREAL_NVP(inRowSize));
+    ar(CEREAL_NVP(inColSize));
+    ar(CEREAL_NVP(outRowSize));
+    ar(CEREAL_NVP(outColSize));
+    ar(CEREAL_NVP(depth));
+  }
 
 } // namespace ann
 } // namespace mlpack
