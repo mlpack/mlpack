@@ -31,6 +31,7 @@ def process_params_out(model, params, return_str=False):
   # for pretty printing.
   pp = pprint.PrettyPrinter()
 
+  # value_resolver defined later.
   params_dic = json.loads(params, object_pairs_hook=value_resolver)
 
   # remove "cereal_class_version".
@@ -68,11 +69,12 @@ def process_params_in(model, params_dic):
   # convert numpy to armadillo.
   np_to_arma(params_dic_copy)
 
+  # inserting scrubbed parameters back into dictionary.
   for param_name, details in model.scrubbed_params.items():
     for val, path in zip(details["values"], details["full_paths"]):
       insert_in_dic(params_dic_copy, path, param_name, val)
 
-  # dumping to string.
+  # dumping to string. restore_value defined later.
   params_str = json.dumps(params_dic_copy,  cls=restore_value)
   return params_str
 
@@ -177,7 +179,8 @@ def scrub(obj, bad_key, values, full_paths, ref_path):
 
 def value_resolver(pairs):
   '''
-  This function converts multiple "elem" occurences to a list.
+  This function converts multiple "elem" occurences to a list when
+  used with json.loads().
   Eg:
   str({
     vec_state: 1,
@@ -211,7 +214,8 @@ def value_resolver(pairs):
 
 class restore_value(json.JSONEncoder):
   '''
-  This is a custom encoder.
+  This is a custom encoder that converts a dictionary to
+  correct json format for ingesting in cereal.
   Eg:
   dict({
     vec_state: 1,
@@ -249,6 +253,10 @@ class restore_value(json.JSONEncoder):
     return super().encode(o)
 
 def insert_in_dic(dic, path, key, val):
+  '''
+  This function inserts a particluar key-value pair in a dictionray
+  after following a particular path.
+  '''
   temp = dic[path[0]]
   for idx in range(1,len(path)):
     if "listidx_" in path[idx]:
@@ -256,4 +264,5 @@ def insert_in_dic(dic, path, key, val):
     else:
       temp = temp[path[idx]]
   temp[key] = val
+  # moving key-value pair to the start.
   temp.move_to_end(key, last=False)
