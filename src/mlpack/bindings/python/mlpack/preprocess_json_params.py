@@ -4,9 +4,8 @@ preprocess_json_params.py: utility functions for json paramter preprocessing
                            (see set_cpp_param() and get_cpp_param() methods
                             in print_class_defn.hpp)
 
-This file defines the to_matrix() function, which can be used to convert Pandas
-dataframes or other types of array-like objects to numpy ndarrays for use in
-mlpack bindings.
+The "process_params_out" and "process_params_in" utilities are used to handle
+interconversion between the output json from cereal and python dictionary.
 
 mlpack is free software; you may redistribute it and/or modify it under the
 terms of the 3-clause BSD license.  You should have received a copy of the
