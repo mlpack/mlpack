@@ -45,9 +45,11 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
   if (DIRECTORIES_LEN GREATER 0)
     list(GET DIRECTORIES 0 DEPENDENCY_DIR)
     set(GENERIC_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/include")
-    # Clean this line when boost is removed.
+    install(DIRECTORY "${GENERIC_INCLUDE_DIR}" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+    # Clean these lines when boost is removed.
     if (${DEPS_NAME} MATCHES "boost")
       set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/deps/${DEPENDENCY_DIR}/")
+      install(DIRECTORY "${Boost_INCLUDE_DIR}" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
     endif()
   else ()
     message(FATAL_ERROR
