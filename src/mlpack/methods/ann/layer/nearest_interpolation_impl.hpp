@@ -20,7 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 
 template<typename InputDataType, typename OutputDataType>
-  NearestInterpolation<InputDataType, OutputDataType>::
+NearestInterpolation<InputDataType, OutputDataType>::
   NearestInterpolation():
   inRowSize(0),
   inColSize(0),
@@ -112,6 +112,8 @@ void NearestInterpolation<InputDataType, OutputDataType>::Backward(
     assert(outRowSize >= 2);
     assert(outColSize >= 2);
 
+    arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
+      depth * batchSize, false, true);
     arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
       outColSize, depth * batchSize, false, false);
 
@@ -124,8 +126,6 @@ void NearestInterpolation<InputDataType, OutputDataType>::Backward(
     }
     else
     {
-      arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
-        depth * batchSize, false, true);
       for (size_t i = 0; i < outRowSize; ++i)
       {
         double rOrigin = (i + 0.5) * scaleRow;

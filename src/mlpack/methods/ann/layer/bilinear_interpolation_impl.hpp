@@ -49,6 +49,7 @@ BilinearInterpolation<InputDataType, OutputDataType>::
   depth(depth),
   batchSize(0)
   {
+  	double scaleRow = (double) inRowSize / (double) outRowSize;
     double scaleCol = (double) inColSize / (double) outColSize;
     coeffs_pre = arma::cube(2, 2, outRowSize * outColSize);
     index_pre = arma::cube(1, 2, outRowSize * outColSize);
@@ -111,11 +112,11 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
     for (size_t k = 0; k < depth * batchSize; ++k)
     {
       arma::mat grid = arma::mat(inRowSize + 2, inColSize + 2);
-      grid(span(1, inRowSize), span(1, inColSize)) = inputAsCube.slice(k);
-      grid(span(1, inRowSize), 0) = grid(span(1, inRowSize), 1);
-      grid(span(1, inRowSize), inColSize + 1) = grid(span(1, inRowSize), inColSize);
-      grid(0, span(1, inColSize)) = grid(1, span(1, inColSize));
-      grid(inRowSize + 1, span(1, inColSize)) = grid(inRowSize, span(1, inColSize));
+      grid(arma::span(1, inRowSize), arma::span(1, inColSize)) = inputAsCube.slice(k);
+      grid(arma::span(1, inRowSize), 0) = grid(arma::span(1, inRowSize), 1);
+      grid(arma::span(1, inRowSize), inColSize + 1) = grid(arma::span(1, inRowSize), inColSize);
+      grid(0, arma::span(1, inColSize)) = grid(1, arma::span(1, inColSize));
+      grid(inRowSize + 1, arma::span(1, inColSize)) = grid(inRowSize, arma::span(1, inColSize));
       grid(0, 0) = grid(1, 1);
       grid(inRowSize + 1, inColSize + 1) = grid(inRowSize, inColSize);
       grid(0, inColSize + 1) = grid(1, inColSize);
@@ -129,8 +130,8 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
           size_t c_right = index_pre.slice(current_idx)(0, 0);
           size_t r_down = index_pre.slice(current_idx)(0, 1);
 
-          outputAsCube(i, j, k) = arma::accu(grid(span(r_down - 1, r_down),
-            span(c_right - 1, c_right)) % coeffs_pre.slice(current_idx));
+          outputAsCube(i, j, k) = arma::accu(grid(arma::span(r_down - 1, r_down),
+            arma::span(c_right - 1, c_right)) % coeffs_pre.slice(current_idx));
         }
       }
     }
@@ -176,7 +177,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
             size_t current_idx = i * outRowSize + j;
             size_t c_right = index_pre.slice(current_idx)(0, 0);
             size_t r_down = index_pre.slice(current_idx)(0, 1);
-            temp(span(r_down - 1, r_down), span(c_right - 1, c_right)) +=
+            temp(arma::span(r_down - 1, r_down), arma::span(c_right - 1, c_right)) +=
             coeffs_pre.slice(current_idx) * gradientAsCube.slice(k)(i, j) ;
           }
         }
@@ -184,7 +185,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
         temp.row(inRowSize) += temp.row(inRowSize + 1)
         temp.col(1) += temp.col(0);
         temp.col(inColSize) += temp.col(inColSize + 1);
-        outputAsCube.slice(k) += temp(span(1, inRowSize), span(1, inColSize));
+        outputAsCube.slice(k) += temp(arma::span(1, inRowSize), arma::span(1, inColSize));
       }
     }
   }
