@@ -73,6 +73,7 @@
 #include "spatial_dropout.hpp"
 #include "subview.hpp"
 #include "transposed_convolution.hpp"
+#include "upsample.hpp"
 #include "virtual_batch_norm.hpp"
 #include "vr_class_reward.hpp"
 #include "weight_norm.hpp"

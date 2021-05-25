@@ -2083,6 +2083,45 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
 }
 
 /*
+ * Simple test for the Upsample layer
+ */
+TEST_CASE("SimpleUpsampleLayerTest", "[ANNLayerTest]")
+{
+  // Tested output against tensorflow.image.resize_bilinear()
+  arma::mat input, output, unzoomedOutput, expectedOutput;
+  size_t inRowSize = 2;
+  size_t inColSize = 2;
+  size_t outRowSize = 7;
+  size_t outColSize = 11;
+  size_t depth = 1;
+  string mode = "bilinear";
+  input.zeros(inRowSize * inColSize * depth, 1);
+  input[0] = 1.0;
+  input[1] = 3.0;
+  input[2] = 2.0;
+  input[3] = 4.0;
+  Upsample<> layer(inRowSize, inColSize, outRowSize, outColSize,
+      depth, mode);
+  expectedOutput << 1.0000 << 1.0000 << 1.2143 << 1.5000 << 1.7857 << 2.0000 << 2.0000 << endr
+                 << 1.2000 << 1.2000 << 1.4143 << 1.7000 << 1.9857 << 2.2000 << 2.2000 << endr
+                 << 2.0000 << 2.0000 << 2.2143 << 2.5000 << 2.7857 << 3.0000 << 3.0000 << endr
+                 << 2.8000 << 2.8000 << 3.0143 << 3.3000 << 3.5857 << 3.8000 << 3.8000 << endr
+                 << 3.0000 << 3.0000 << 3.2143 << 3.5000 << 3.7857 << 4.0000 << 4.0000 << endr");
+
+  expectedOutput.reshape(25, 1);
+  layer.Forward(input, output);
+  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
+
+  expectedOutput.clear();
+  expectedOutput << 13.2268 << 19.0432 << endr
+				 << 24.7068 << 30.5232 << endr;
+  expectedOutput.reshape(4, 1);
+  layer.Backward(output, output, unzoomedOutput);
+  CheckMatrices(unzoomedOutput - expectedOutput,
+      arma::zeros(input.n_rows), 1e-12);
+}
+
+/*
  * Simple test for the BilinearInterpolation layer
  */
 TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
