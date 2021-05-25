@@ -165,8 +165,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
     {
       for (size_t k = 0; k < depth * batchSize; ++k)
       {
-        arma::mat temp;
-        temp.set_size(inRowSize + 2, inColSize + 2);
+        arma::mat temp(inRowSize + 2, inColSize + 2);
         for (size_t i = 0; i < outRowSize; ++i)
         {
           for (size_t j = 0; j < outColSize; ++j)
