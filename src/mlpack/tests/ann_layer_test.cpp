@@ -2114,7 +2114,7 @@ TEST_CASE("SimpleUpsampleLayerTest", "[ANNLayerTest]")
 
   expectedOutput.clear();
   expectedOutput << 13.2268 << 19.0432 << arma::endr
-				 << 24.7068 << 30.5232 << arma::endr;
+				         << 24.7068 << 30.5232 << arma::endr;
   expectedOutput.reshape(4, 1);
   layer.Backward(output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,

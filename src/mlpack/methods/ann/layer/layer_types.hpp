@@ -242,7 +242,7 @@ using MoreTypes = boost::variant<
         BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
         PositionalEncoding<arma::mat, arma::mat>*,
         ISRLU<arma::mat, arma::mat>*,
-		Upsample<arma::mat, arma::mat>*
+		    Upsample<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
