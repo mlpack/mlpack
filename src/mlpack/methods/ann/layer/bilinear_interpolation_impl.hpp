@@ -22,7 +22,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 
 template<typename InputDataType, typename OutputDataType>
-  BilinearInterpolation<InputDataType, OutputDataType>::
+BilinearInterpolation<InputDataType, OutputDataType>::
   BilinearInterpolation():
   inRowSize(0),
   inColSize(0),
@@ -35,7 +35,7 @@ template<typename InputDataType, typename OutputDataType>
   }
 
 template<typename InputDataType, typename OutputDataType>
-  BilinearInterpolation<InputDataType, OutputDataType>::
+BilinearInterpolation<InputDataType, OutputDataType>::
   BilinearInterpolation(
     const size_t inRowSize,
     const size_t inColSize,
@@ -85,8 +85,8 @@ template<typename InputDataType, typename OutputDataType>
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-  void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
+  const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     batchSize = input.n_cols;
     if (output.is_empty())
@@ -138,10 +138,10 @@ template<typename eT>
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-  void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /*input*/,
-    const arma::Mat<eT>& gradient,
-    arma::Mat<eT>& output)
+void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
+  const arma::Mat<eT>& /*input*/,
+  const arma::Mat<eT>& gradient,
+  arma::Mat<eT>& output)
   {
     if (output.is_empty())
       output.set_size(inRowSize * inColSize * depth, batchSize);
@@ -191,8 +191,8 @@ template<typename eT>
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-  void BilinearInterpolation<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const uint32_t /* version */)
+void BilinearInterpolation<InputDataType, OutputDataType>::serialize(
+  Archive& ar, const uint32_t /* version */)
   {
     ar(CEREAL_NVP(inRowSize));
     ar(CEREAL_NVP(inColSize));
