@@ -156,7 +156,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
       outColSize, depth * batchSize, false, false);
     arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
       depth * batchSize, false, true);
-
+    arma::mat temp(inRowSize + 2, inColSize + 2);
     if (gradient.n_elem == output.n_elem)
     {
       outputAsCube = gradientAsCube;
@@ -165,7 +165,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
     {
       for (size_t k = 0; k < depth * batchSize; ++k)
       {
-        arma::mat temp(inRowSize + 2, inColSize + 2);
+        temp.zeros();
         for (size_t i = 0; i < outRowSize; ++i)
         {
           for (size_t j = 0; j < outColSize; ++j)
