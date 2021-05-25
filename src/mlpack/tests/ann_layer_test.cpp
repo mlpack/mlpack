@@ -2130,8 +2130,8 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
       depth);
   layer1.Forward(input1, output1); 
   layer.Backward(output1, output1, unzoomedOutput1);
-  REQUIRE(arma::accu(output1) -  == Approx(1368.50000).margin(1e-05));
-  REQUIRE(arma::accu(unzoomedOutput1) -  == Approx(1368.50000).margin(1e-05));
+  REQUIRE(arma::accu(output1) - 1368.50000 == Approx(0.0).margin(1e-05));
+  REQUIRE(arma::accu(unzoomedOutput1) - 1368.50000 == Approx(0.0).margin(1e-05));
 }
 
 /*
