@@ -39,6 +39,7 @@
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/lp_pooling.hpp>
+#include <mlpack/methods/ann/layer/nearest_interpolation.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
@@ -51,7 +52,6 @@
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/spatial_dropout.hpp>
 #include <mlpack/methods/ann/layer/subview.hpp>
-#include <mlpack/methods/ann/layer/upsample.hpp>
 #include <mlpack/methods/ann/layer/virtual_batch_norm.hpp>
 #include <mlpack/methods/ann/layer/hardshrink.hpp>
 #include <mlpack/methods/ann/layer/celu.hpp>

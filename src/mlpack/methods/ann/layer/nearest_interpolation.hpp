@@ -1,5 +1,5 @@
 /**
- * @file methods/ann/layer/upsample.hpp
+ * @file methods/ann/layer/nearest_interpolation.hpp
  * @author Abhinav Anand
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -7,8 +7,8 @@
  * 3-clause BSD license along with mlpack. If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_UPSAMPLE_HPP
-#define MLPACK_METHODS_ANN_LAYER_UPSAMPLE_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_NEAREST_INTERPOLATION_HPP
+#define MLPACK_METHODS_ANN_LAYER_NEAREST_INTERPOLATION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -16,12 +16,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Definition and Implementation of the Upsample Layer.
+ * Definition and Implementation of the Nearest Interpoltion Layer.
  *
- * Upsample is an mathematical technique, primarily used for
- * scaling purposes. The upsampling is done using one of the
- * following methods - nearest, bilinear and bicubic. The input
- * should be a 2D matrix and it can have a number of channels/units.
+ * Nearest Interpoltion is an mathematical technique, primarily used for
+ * scaling purposes. The input should be a 2D matrix and it can have
+ * a number of channels/units.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -32,32 +31,30 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class Upsample
+class NearestInterpolation
 {
  public:
-  //! Create the Upsample object.
-  Upsample();
+  //! Create the NearestInterpolation object.
+  NearestInterpolation();
 
   /**
-   * The constructor for the Upsample.
+   * The constructor for the NearestInterpolation.
    *
    * @param inRowSize Number of input rows.
    * @param inColSize Number of input columns.
    * @param outRowSize Number of output rows.
    * @param outColSize Number of output columns.
    * @param depth Number of input slices.
-   * @param mode Mode of interpolation.
    */
-  Upsample(const size_t inRowSize,
+  NearestInterpolation(const size_t inRowSize,
            const size_t inColSize,
            const size_t outRowSize,
            const size_t outColSize,
-           const size_t depth,
-           const string mode = "nearest");
+           const size_t depth);
 
   /**
    * Forward pass through the layer. The layer interpolates
-   * the matrix using the given Bilinear Interpolation method.
+   * the matrix using the given Nearest Interpolation method.
    *
    * @param input The input matrix.
    * @param output The resulting interpolated output matrix.
@@ -116,11 +113,6 @@ class Upsample
   //! Modify the depth of the input.
   size_t& InDepth() { return depth; }
 
-  //! Get the mode of interpolation.
-  string const& Mode() const { return mode; }
-  //! Modify the mode of interpolation.
-  string& Mode() { return mode; }
-
   //! Get the shape of the input.
   size_t InputShape() const
   {
@@ -144,24 +136,18 @@ class Upsample
   size_t outColSize;
   //! Locally stored depth of the input.
   size_t depth;
-  //! Locally stored mode of interpolation.
-  string mode.
   //! Locally stored number of input points.
   size_t batchSize;
-  // Locally-stored coeffs precomputation.
-  OutputDataType coeffs_pre;
-  // Locally-stored submat index precomputation.
-  OutputDataType index_pre;
   //! Locally-stored delta object.
   OutputDataType delta;
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class Upsample
+}; // class NearestInterpolation
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "upsample_impl.hpp"
+#include "nearest_interpolation_impl.hpp"
 
 #endif

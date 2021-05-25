@@ -2,6 +2,7 @@
  * @file methods/ann/layer/bilinear_interpolation.hpp
  * @author Kris Singh
  * @author Shikhar Jaiswal
+ * @author Abhinav Anand
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license. You should have received a copy of the
@@ -145,6 +146,10 @@ class BilinearInterpolation
   size_t batchSize;
   //! Locally-stored delta object.
   OutputDataType delta;
+  // Locally-stored coeffs precomputation.
+  OutputDataType coeffs_pre;
+  // Locally-stored submat index precomputation.
+  OutputDataType index_pre;
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 }; // class BilinearInterpolation
