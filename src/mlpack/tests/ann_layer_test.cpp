@@ -2087,7 +2087,7 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
 {
-  // Tested output against tensorflow.image.resize_bilinear()
+  // Tested output against  torch.nn.Upsample(mode="nearest")
   arma::mat input, output, unzoomedOutput, expectedOutput;
   size_t inRowSize = 2;
   size_t inColSize = 2;
@@ -2139,7 +2139,7 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
 {
-  // Tested output against tensorflow.image.resize_bilinear()
+  // Tested output against  torch.nn.Upsample(mode="bilinear")
   arma::mat input, output, unzoomedOutput, expectedOutput;
   size_t inRowSize = 2;
   size_t inColSize = 2;
