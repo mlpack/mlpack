@@ -82,7 +82,6 @@ void Upsample<InputDataType, OutputDataType>::Reset()
           if(deltaC >= 1)
             deltaC -= 1;
 
-
           size_t current_idx = j * outRowSize + i;
           coeffs_pre.slice(current_idx)(0, 0) = (1 - deltaC) * (1 - deltaR);
           coeffs_pre.slice(current_idx)(0, 1) = (1 - deltaR) * deltaC;
@@ -193,15 +192,9 @@ void Upsample<InputDataType, OutputDataType>::Backward(
 
     assert(outRowSize >= 2);
     assert(outColSize >= 2);
-    arma::cube outputAsCube;
+
     arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
       outColSize, depth * batchSize, false, false);
-    if (mode == "nearest")
-      outputAsCube(output.memptr(), inRowSize, inColSize,
-        depth * batchSize, false, true);
-    else if (mode == "bilinear")
-      outputAsCube(output.memptr(), inRowSize + 2, inColSize + 2,
-        depth * batchSize, false, true);
 
     double scaleRow = (double)(inRowSize) / outRowSize;
     double scaleCol = (double)(inColSize) / outColSize;
@@ -214,6 +207,8 @@ void Upsample<InputDataType, OutputDataType>::Backward(
     {
       if(mode == "nearest")
       {      
+        arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
+          depth * batchSize, false, true);
         for (size_t i = 0; i < outRowSize; ++i)
         {
           double rOrigin = (i + 0.5) * scaleRow;
@@ -224,13 +219,16 @@ void Upsample<InputDataType, OutputDataType>::Backward(
 
             for (size_t k = 0; k < depth * batchSize; ++k)
             {
-              outputAsCube(std::floor(rOrigin), std::floor(cOrigin), k) += gradientAsCube(i, j, k);
+              outputAsCube(std::floor(rOrigin), std::floor(cOrigin), k) +=
+                gradientAsCube(i, j, k);
             }
           }
         }
       }
       else if(mode == "bilinear")
       {
+        arma::cube outputAsCube(output.memptr(), inRowSize + 2, inColSize + 2,
+          depth * batchSize, false, true);
         output.zeros(); 
         for (size_t i = 0; i < outRowSize; ++i)
         {
@@ -240,29 +238,29 @@ void Upsample<InputDataType, OutputDataType>::Backward(
 
             for (size_t k = 0; k < depth * batchSize; ++k)
             { 
-             size_t current_idx = j * outRowSize + i;
-             size_t c_right = index_pre.slice(current_idx)(0, 0);
-             size_t r_down = index_pre.slice(current_idx)(0, 1);
+              size_t current_idx = j * outRowSize + i;
+              size_t c_right = index_pre.slice(current_idx)(0, 0);
+              size_t r_down = index_pre.slice(current_idx)(0, 1);
 
-             outputAsCube1.slice(k)(span(r_down - 1, r_down), span(c_right - 1, c_right)) +=
-              coeffs_pre.slice(current_idx) * gradientAsCube.slice(k)(i, j) ;  }
-           }
-         }
-       }
-     }
-   }
+              outputAsCube1.slice(k)(span(r_down - 1, r_down), span(c_right - 1, c_right)) +=
+                coeffs_pre.slice(current_idx) * gradientAsCube.slice(k)(i, j) ;  }
+            }
+          }
+        }
+      }
+    }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void Upsample<InputDataType, OutputDataType>::serialize(
   Archive& ar, const uint32_t /* version */)
-   {
-    ar(CEREAL_NVP(inRowSize));
-    ar(CEREAL_NVP(inColSize));
-    ar(CEREAL_NVP(outRowSize));
-    ar(CEREAL_NVP(outColSize));
-    ar(CEREAL_NVP(depth));
-  }
+    {
+      ar(CEREAL_NVP(inRowSize));
+      ar(CEREAL_NVP(inColSize));
+      ar(CEREAL_NVP(outRowSize));
+      ar(CEREAL_NVP(outColSize));
+      ar(CEREAL_NVP(depth));
+    }
 
 } // namespace ann
 } // namespace mlpack
