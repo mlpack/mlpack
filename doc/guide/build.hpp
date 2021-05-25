@@ -63,6 +63,10 @@ $ sudo make install
 If the \c cmake \c .. command fails, you are probably missing a dependency, so
 check the output and install any necessary libraries.  (See \ref build_dep.)
 
+@note If you are using RHEL7/CentOS 7, the default version of gcc is too old.
+One solution is to use \c devtoolset-8; more information is available at
+https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/ .
+
 On many Linux systems, mlpack will install by default to @c /usr/local/lib and
 you may need to set the @c LD_LIBRARY_PATH environment variable:
 
