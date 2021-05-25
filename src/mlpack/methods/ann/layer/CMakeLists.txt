@@ -85,6 +85,8 @@ set(SOURCES
   multiply_merge_impl.hpp
   noisylinear.hpp
   noisylinear_impl.hpp
+  nearest_interpolation.hpp
+  nearest_interpolation_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
   pixel_shuffle.hpp
@@ -126,8 +128,6 @@ set(SOURCES
   softshrink_impl.hpp
   softmin.hpp
   softmin_impl.hpp
-  upsample.hpp
-  upsample_impl.hpp
 )
 
 # Add directory name to sources.
