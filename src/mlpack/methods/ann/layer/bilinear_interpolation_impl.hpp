@@ -171,11 +171,11 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
         {
           for (size_t j = 0; j < outColSize; ++j)
           {
-            size_t current_idx = i * outRowSize + j;
+            size_t current_idx = j * outRowSize + i;
             size_t c_right = index_pre.slice(current_idx)(0, 0);
             size_t r_down = index_pre.slice(current_idx)(0, 1);
             temp(arma::span(r_down - 1, r_down), arma::span(c_right - 1, c_right)) +=
-            coeffs_pre.slice(current_idx) * gradientAsCube.slice(k)(i, j) ;
+            coeffs_pre.slice(current_idx) * gradientAsCube(i, j, k) ;
           }
         }
         temp.row(1) += temp.row(0);

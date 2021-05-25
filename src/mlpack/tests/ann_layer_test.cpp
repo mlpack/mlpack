@@ -2108,7 +2108,7 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
                  << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000 << 4.0000 << 4.0000 << arma::endr;
   expectedOutput.reshape(35, 1);
   layer.Forward(input, output);
-  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
+  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-4);
 
   expectedOutput.clear();
   expectedOutput << 12.0000 << 18.0000 << arma::endr
@@ -2116,7 +2116,7 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
   expectedOutput.reshape(4, 1);
   layer.Backward(output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,
-      arma::zeros(input.n_rows), 1e-12);
+      arma::zeros(input.n_rows), 1e-4);
 }
 
 /*
@@ -2145,7 +2145,7 @@ TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
                  << 3.0000 << 3.0000 << 3.2143 << 3.5000 << 3.7857 << 4.0000 << 4.0000 << arma::endr;
   expectedOutput.reshape(35, 1);
   layer.Forward(input, output);
-  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
+  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-4);
 
   expectedOutput.clear();
   expectedOutput << 13.2268 << 19.0432 << arma::endr
@@ -2153,7 +2153,7 @@ TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
   expectedOutput.reshape(4, 1);
   layer.Backward(output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,
-      arma::zeros(input.n_rows), 1e-12);
+      arma::zeros(input.n_rows), 1e-4);
 }
 
 /**
