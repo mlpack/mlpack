@@ -23,7 +23,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 BilinearInterpolation<InputDataType, OutputDataType>::
-  BilinearInterpolation():
+BilinearInterpolation():
   inRowSize(0),
   inColSize(0),
   outRowSize(0),
@@ -36,7 +36,7 @@ BilinearInterpolation<InputDataType, OutputDataType>::
 
 template<typename InputDataType, typename OutputDataType>
 BilinearInterpolation<InputDataType, OutputDataType>::
-  BilinearInterpolation(
+BilinearInterpolation(
     const size_t inRowSize,
     const size_t inColSize,
     const size_t outRowSize,
@@ -60,39 +60,39 @@ BilinearInterpolation<InputDataType, OutputDataType>::
     // constructor and use them directly in the forward and backward
     // functions. In bilinear interpolation we will pad the input
     // matrix to make the calculations more simple.
-  	double scaleRow = (double) inRowSize / (double) outRowSize;
+    double scaleRow = (double) inRowSize / (double) outRowSize;
     double scaleCol = (double) inColSize / (double) outColSize;
-    coeffs_pre = arma::cube(2, 2, outRowSize * outColSize);
-    index_pre = arma::cube(1, 2, outRowSize * outColSize);
+    coeffsPre = arma::cube(2, 2, outRowSize * outColSize);
+    indexPre = arma::cube(1, 2, outRowSize * outColSize);
 
-    for (size_t i = 0; i < outRowSize; i++)
+    for (size_t i = 0; i < outRowSize; ++i)
     {
       double rOrigin = (i + 0.5) * scaleRow;
 
-      for(size_t j = 0; j < outColSize; j++)
+      for(size_t j = 0; j < outColSize; ++j)
       {
 
         double cOrigin = (j + 0.5) * scaleCol;
-        size_t c_end = (size_t) std::floor(cOrigin + 0.5);
-        size_t r_end = (size_t) std::floor(rOrigin + 0.5);
+        size_t cEnd = (size_t) std::floor(cOrigin + 0.5);
+        size_t rEnd = (size_t) std::floor(rOrigin + 0.5);
 
-        double deltaC = 0.5 + cOrigin - c_end;
-        double deltaR = 0.5 + rOrigin - r_end; 
-        if(deltaR >= 1)
+        double deltaC = 0.5 + cOrigin - cEnd;
+        double deltaR = 0.5 + rOrigin - rEnd; 
+        if (deltaR >= 1)
           deltaR -= 1;
 
-        if(deltaC >= 1)
+        if (deltaC >= 1)
           deltaC -= 1;
 
-        size_t current_idx = j * outRowSize + i;
-        // Value of di's for each point in Output matix
-        coeffs_pre.slice(current_idx)(0, 0) = (1 - deltaC) * (1 - deltaR);
-        coeffs_pre.slice(current_idx)(0, 1) = (1 - deltaR) * deltaC;
-        coeffs_pre.slice(current_idx)(1, 0) = deltaR * (1 - deltaC);
-        coeffs_pre.slice(current_idx)(1, 1) = deltaR * deltaC;
-        // Bottom Right corner of the Pi's for each point in Output matix
-        index_pre.slice(current_idx)(0, 0) = c_end + 1;
-        index_pre.slice(current_idx)(0, 1) = r_end + 1;
+        size_t currentIdx = j * outRowSize + i;
+        // Value of di's for each point in Output matrix.
+        coeffsPre.slice(currentIdx)(0, 0) = (1 - deltaC) * (1 - deltaR);
+        coeffsPre.slice(currentIdx)(0, 1) = (1 - deltaR) * deltaC;
+        coeffsPre.slice(currentIdx)(1, 0) = deltaR * (1 - deltaC);
+        coeffsPre.slice(currentIdx)(1, 1) = deltaR * deltaC;
+        // Bottom Right corner of the Pi's for each point in Output matrix.
+        indexPre.slice(currentIdx)(0, 0) = cEnd + 1;
+        indexPre.slice(currentIdx)(0, 1) = rEnd + 1;
       }
     }
   }
@@ -121,7 +121,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
 
     for (size_t k = 0; k < depth * batchSize; ++k)
     {
-      // Padded Input Matrix
+      // The input is padded on all sides using replication of the input boundary.
       arma::mat grid = arma::mat(inRowSize + 2, inColSize + 2);
       grid(arma::span(1, inRowSize), arma::span(1, inColSize)) = inputAsCube.slice(k);
       grid(arma::span(1, inRowSize), 0) = grid(arma::span(1, inRowSize), 1);
@@ -137,12 +137,12 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
       {
         for (size_t j = 0; j < outColSize; ++j)
         {
-          size_t current_idx = j * outRowSize + i;
-          size_t c_right = index_pre.slice(current_idx)(0, 0);
-          size_t r_down = index_pre.slice(current_idx)(0, 1);
+          size_t currentIdx = j * outRowSize + i;
+          size_t cEnd = indexPre.slice(currentIdx)(0, 0);
+          size_t rEnd = indexPre.slice(currentIdx)(0, 1);
 
-          outputAsCube(i, j, k) = arma::accu(grid(arma::span(r_down - 1, r_down),
-            arma::span(c_right - 1, c_right)) % coeffs_pre.slice(current_idx));
+          outputAsCube(i, j, k) = arma::accu(grid(arma::span(rEnd - 1, rEnd),
+            arma::span(cEnd - 1, cEnd)) % coeffsPre.slice(currentIdx));
         }
       }
     }
@@ -185,16 +185,16 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
         {
           for (size_t j = 0; j < outColSize; ++j)
           {
-            size_t current_idx = j * outRowSize + i;
-            // Bottom right corner of the mapped unit matrix
-            size_t c_right = index_pre.slice(current_idx)(0, 0);
-            size_t r_down = index_pre.slice(current_idx)(0, 1);
+            size_t currentIdx = j * outRowSize + i;
+            // Bottom right corner of the mapped unit matrix.
+            size_t cEnd = indexPre.slice(currentIdx)(0, 0);
+            size_t rEnd = indexPre.slice(currentIdx)(0, 1);
 
-            temp(arma::span(r_down - 1, r_down), arma::span(c_right - 1, c_right)) +=
-            coeffs_pre.slice(current_idx) * gradientAsCube(i, j, k) ;
+            temp(arma::span(rEnd - 1, rEnd), arma::span(cEnd - 1, cEnd)) +=
+            coeffsPre.slice(currentIdx) * gradientAsCube(i, j, k) ;
           }
         }
-        // dding the contribution of the corner points in the output matrix
+        // Adding the contribution of the corner points to the output matrix.
         temp.row(1) += temp.row(0);
         temp.row(inRowSize) += temp.row(inRowSize + 1);
         temp.col(1) += temp.col(0);

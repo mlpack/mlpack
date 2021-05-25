@@ -150,9 +150,9 @@ class BilinearInterpolation
   OutputDataType outputParameter;
 
   // Locally-stored coeffs precomputation.
-  arma::cube coeffs_pre;
+  arma::cube coeffsPre;
   // Locally-stored submat index precomputation.
-  arma::cube index_pre;
+  arma::cube indexPre;
 }; // class BilinearInterpolation
 
 } // namespace ann
