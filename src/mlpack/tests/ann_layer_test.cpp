@@ -2094,7 +2094,7 @@ TEST_CASE("SimpleUpsampleLayerTest", "[ANNLayerTest]")
   size_t outRowSize = 7;
   size_t outColSize = 11;
   size_t depth = 1;
-  string mode = "bilinear";
+  std::string mode = "bilinear";
   input.zeros(inRowSize * inColSize * depth, 1);
   input[0] = 1.0;
   input[1] = 3.0;
@@ -2102,19 +2102,19 @@ TEST_CASE("SimpleUpsampleLayerTest", "[ANNLayerTest]")
   input[3] = 4.0;
   Upsample<> layer(inRowSize, inColSize, outRowSize, outColSize,
       depth, mode);
-  expectedOutput << 1.0000 << 1.0000 << 1.2143 << 1.5000 << 1.7857 << 2.0000 << 2.0000 << endr
-                 << 1.2000 << 1.2000 << 1.4143 << 1.7000 << 1.9857 << 2.2000 << 2.2000 << endr
-                 << 2.0000 << 2.0000 << 2.2143 << 2.5000 << 2.7857 << 3.0000 << 3.0000 << endr
-                 << 2.8000 << 2.8000 << 3.0143 << 3.3000 << 3.5857 << 3.8000 << 3.8000 << endr
-                 << 3.0000 << 3.0000 << 3.2143 << 3.5000 << 3.7857 << 4.0000 << 4.0000 << endr");
+  expectedOutput << 1.0000 << 1.0000 << 1.2143 << 1.5000 << 1.7857 << 2.0000 << 2.0000 << arma::endr
+                 << 1.2000 << 1.2000 << 1.4143 << 1.7000 << 1.9857 << 2.2000 << 2.2000 << arma::endr
+                 << 2.0000 << 2.0000 << 2.2143 << 2.5000 << 2.7857 << 3.0000 << 3.0000 << arma::endr
+                 << 2.8000 << 2.8000 << 3.0143 << 3.3000 << 3.5857 << 3.8000 << 3.8000 << arma::endr
+                 << 3.0000 << 3.0000 << 3.2143 << 3.5000 << 3.7857 << 4.0000 << 4.0000 << arma::endr;
 
   expectedOutput.reshape(25, 1);
   layer.Forward(input, output);
   CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
 
   expectedOutput.clear();
-  expectedOutput << 13.2268 << 19.0432 << endr
-				 << 24.7068 << 30.5232 << endr;
+  expectedOutput << 13.2268 << 19.0432 << arma::endr
+				 << 24.7068 << 30.5232 << arma::endr;
   expectedOutput.reshape(4, 1);
   layer.Backward(output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,
