@@ -20,7 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * Upsample is an mathematical technique, primarily used for
  * scaling purposes. The upsampling is done using one of the
- * following methods - nearst, bilinear and bicubic. The input
+ * following methods - nearest, bilinear and bicubic. The input
  * should be a 2D matrix and it can have a number of channels/units.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -46,13 +46,14 @@ class Upsample
    * @param outRowSize Number of output rows.
    * @param outColSize Number of output columns.
    * @param depth Number of input slices.
+   * @param mode Mode of interpolation.
    */
   Upsample(const size_t inRowSize,
-                        const size_t inColSize,
-                        const size_t outRowSize,
-                        const size_t outColSize,
-                        const size_t depth,
-                        const string mode = "nearest");
+           const size_t inColSize,
+           const size_t outRowSize,
+           const size_t outColSize,
+           const size_t depth,
+           const string mode = "nearest");
 
   /**
    * Forward pass through the layer. The layer interpolates
@@ -161,6 +162,6 @@ class Upsample
 } // namespace mlpack
 
 // Include implementation.
-#include "bilinear_interpolation_impl.hpp"
+#include "upsample_impl.hpp"
 
 #endif

@@ -20,7 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 
 template<typename InputDataType, typename OutputDataType>
-  Upsample<InputDataType, OutputDataType>::
+Upsample<InputDataType, OutputDataType>::
   Upsample():
   inRowSize(0),
   inColSize(0),
@@ -30,11 +30,11 @@ template<typename InputDataType, typename OutputDataType>
   mode("nearest"),
   batchSize(0)
   {
-  // Nothing to do here.
+    // Nothing to do here.
   }
 
 template<typename InputDataType, typename OutputDataType>
-  Upsample<InputDataType, OutputDataType>::
+Upsample<InputDataType, OutputDataType>::
   Upsample(
     const size_t inRowSize,
     const size_t inColSize,
@@ -50,11 +50,11 @@ template<typename InputDataType, typename OutputDataType>
   mode(mode),
   batchSize(0)
   {
-  // Nothing to do here.
+    // Nothing to do here.
   }
 
 template<typename InputDataType, typename OutputDataType>
-  void Upsample<InputDataType, OutputDataType>::Reset()
+void Upsample<InputDataType, OutputDataType>::Reset()
   {
     if(mode == "bilinear")
     {
@@ -84,9 +84,9 @@ template<typename InputDataType, typename OutputDataType>
 
 
           size_t current_idx = j * outRowSize + i;
-          coeffs_pre.slice(current_idx)(0, 0) = (1 - deltaR) * (1 - deltaC);
-          coeffs_pre.slice(current_idx)(0, 1) = deltaR * (1 - deltaC);
-          coeffs_pre.slice(current_idx)(1, 0) = (1 - deltaR) * deltaC;
+          coeffs_pre.slice(current_idx)(0, 0) = (1 - deltaC) * (1 - deltaR);
+          coeffs_pre.slice(current_idx)(0, 1) = (1 - deltaR) * deltaC;
+          coeffs_pre.slice(current_idx)(1, 0) = deltaR * (1 - deltaC);
           coeffs_pre.slice(current_idx)(1, 1) = deltaR * deltaC;
           index_pre.slice(current_idx)(0, 0) = c_end + 1;
           index_pre.slice(current_idx)(0, 1) = r_end + 1;
@@ -98,8 +98,8 @@ template<typename InputDataType, typename OutputDataType>
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-  void Upsample<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+void Upsample<InputDataType, OutputDataType>::Forward(
+  const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     batchSize = input.n_cols;
     if (output.is_empty())
@@ -120,8 +120,6 @@ template<typename eT>
 
     double scaleRow = (double) inRowSize / (double) outRowSize;
     double scaleCol = (double) inColSize / (double) outColSize;
-
-    arma::mat22 vals;
 
     if(mode == "nearest")
     {
@@ -165,11 +163,8 @@ template<typename eT>
             size_t c_right = index_pre.slice(current_idx)(0, 0);
             size_t r_down = index_pre.slice(current_idx)(0, 1);
 
-            vals[0] = grid(r_down - 1, c_right - 1);
-            vals[1] = grid(r_down - 1, c_right);
-            vals[2] = grid(r_down, c_right - 1);
-            vals[3] = grid(r_down, c_right);
-            outputAsCube(i, j, k) = arma::accu(vals % coeffs_pre.slice(current_idx));
+            outputAsCube(i, j, k) = arma::accu(grid(span(r_down - 1, r_down),
+              span(c_right - 1, c_right)) % coeffs_pre.slice(current_idx));
           }
         }
       }
@@ -178,13 +173,18 @@ template<typename eT>
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-  void Upsample<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /*input*/,
-    const arma::Mat<eT>& gradient,
-    arma::Mat<eT>& output)
+void Upsample<InputDataType, OutputDataType>::Backward(
+  const arma::Mat<eT>& /*input*/,
+  const arma::Mat<eT>& gradient,
+  arma::Mat<eT>& output)
   {
     if (output.is_empty())
-      output.set_size(inRowSize * inColSize * depth, batchSize);
+    {
+      if (mode == "nearest")
+        output.set_size(inRowSize * inColSize * depth, batchSize);
+      else if (mode == "bilinear")
+        output.set_size((inRowSize + 2) * (inColSize + 2) * depth, batchSize);
+    }
     else
     {
       assert(output.n_rows == inRowSize * inColSize * depth);
@@ -193,11 +193,18 @@ template<typename eT>
 
     assert(outRowSize >= 2);
     assert(outColSize >= 2);
-
+    arma::cube outputAsCube;
     arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
       outColSize, depth * batchSize, false, false);
-    arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
-      depth * batchSize, false, true);
+    if (mode == "nearest")
+      outputAsCube(output.memptr(), inRowSize, inColSize,
+        depth * batchSize, false, true);
+    else if (mode == "bilinear")
+      outputAsCube(output.memptr(), inRowSize + 2, inColSize + 2,
+        depth * batchSize, false, true);
+
+    double scaleRow = (double)(inRowSize) / outRowSize;
+    double scaleCol = (double)(inColSize) / outColSize;
 
     if (gradient.n_elem == output.n_elem)
     {
@@ -207,34 +214,24 @@ template<typename eT>
     {
       if(mode == "nearest")
       {      
-
-        double scaleRow = (double)(outRowSize) / inRowSize;
-        double scaleCol = (double)(outColSize) / inColSize;
-        for (size_t i = 0; i < inRowSize; ++i)
+        for (size_t i = 0; i < outRowSize; ++i)
         {
           double rOrigin = (i + 0.5) * scaleRow;
 
-          for (size_t j = 0; j < inColSize; ++j)
+          for (size_t j = 0; j < outColSize; ++j)
           {
             double cOrigin = (j + 0.5) * scaleCol;
 
-            if (cOrigin >= outColSize)
-              cOrigin--;
-            if(rOrigin >= outRowSize)
-              rOrigin--;
-
             for (size_t k = 0; k < depth * batchSize; ++k)
             {
-              outputAsCube(i, j, k) += arma::accu(gradientAsCube.slice(k).submat(
-                rOrigin, cOrigin, rOrigin + 1, cOrigin + 1));
+              outputAsCube(std::floor(rOrigin), std::floor(cOrigin), k) += gradientAsCube(i, j, k);
             }
           }
         }
       }
       else if(mode == "bilinear")
       {
-        double scaleRow = (double)(inRowSize) / outRowSize;
-        double scaleCol = (double)(inColSize) / outColSize;
+        output.zeros(); 
         for (size_t i = 0; i < outRowSize; ++i)
         {
           for (size_t j = 0; j < outColSize; ++j)
@@ -243,25 +240,23 @@ template<typename eT>
 
             for (size_t k = 0; k < depth * batchSize; ++k)
             { 
-              arma::mat idx = index_pre.slice(current_idx);
-              vals[0] = inputAsCube.slice(k)(idx(0));
-              vals[1] = inputAsCube.slice(k)(idx(1));
-              vals[2] = inputAsCube.slice(k)(idx(2));
-              vals[3] = inputAsCube.slice(k)(idx(3));
-              outputAsCube.slice(k).submat(vals[0], vals[2], vals[1], vals[3]) =
-              gradientAsCube.slice(k) * coeffs_pre.slice(current_idx);
-            }
-          }
-        }
-      }
-    }
-  }
+             size_t current_idx = j * outRowSize + i;
+             size_t c_right = index_pre.slice(current_idx)(0, 0);
+             size_t r_down = index_pre.slice(current_idx)(0, 1);
+
+             outputAsCube1.slice(k)(span(r_down - 1, r_down), span(c_right - 1, c_right)) +=
+              coeffs_pre.slice(current_idx) * gradientAsCube.slice(k)(i, j) ;  }
+           }
+         }
+       }
+     }
+   }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-  void Upsample<InputDataType, OutputDataType>::serialize(
-    Archive& ar, const uint32_t /* version */)
-  {
+void Upsample<InputDataType, OutputDataType>::serialize(
+  Archive& ar, const uint32_t /* version */)
+   {
     ar(CEREAL_NVP(inRowSize));
     ar(CEREAL_NVP(inColSize));
     ar(CEREAL_NVP(outRowSize));
