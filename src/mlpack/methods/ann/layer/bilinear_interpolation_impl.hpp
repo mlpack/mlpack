@@ -106,9 +106,6 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
     arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
       depth * batchSize, false, true);
 
-    double scaleRow = (double) inRowSize / (double) outRowSize;
-    double scaleCol = (double) inColSize / (double) outColSize;
-
     for (size_t k = 0; k < depth * batchSize; ++k)
     {
       arma::mat grid = arma::mat(inRowSize + 2, inColSize + 2);
@@ -182,7 +179,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
           }
         }
         temp.row(1) += temp.row(0);
-        temp.row(inRowSize) += temp.row(inRowSize + 1)
+        temp.row(inRowSize) += temp.row(inRowSize + 1);
         temp.col(1) += temp.col(0);
         temp.col(inColSize) += temp.col(inColSize + 1);
         outputAsCube.slice(k) += temp(arma::span(1, inRowSize), arma::span(1, inColSize));
