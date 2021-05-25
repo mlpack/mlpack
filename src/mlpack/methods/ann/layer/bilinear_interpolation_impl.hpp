@@ -49,6 +49,17 @@ BilinearInterpolation<InputDataType, OutputDataType>::
   depth(depth),
   batchSize(0)
   {
+    // Let Po denote any output matrix point. This value at this
+    // point will be determined by four points in the padded input
+    // matrix. Let these be denoted by [P1, P2, P3, P4]. This will
+    // form a unit square. So if we know the bottom right corner then
+    // we can determine the other points.
+    // Po = P1*d1 + P2*d2 + P3*d3 + P4*d4 where di's is a constant.
+    // The di's and Pi's depend on the dimensions of input matrix
+    // and output matrix. So, we can precompute these points in the
+    // constructor and use them directly in the forward and backward
+    // functions. In bilinear interpolation we will pad the input
+    // matrix to make the calculations more simple.
   	double scaleRow = (double) inRowSize / (double) outRowSize;
     double scaleCol = (double) inColSize / (double) outColSize;
     coeffs_pre = arma::cube(2, 2, outRowSize * outColSize);
@@ -74,10 +85,12 @@ BilinearInterpolation<InputDataType, OutputDataType>::
           deltaC -= 1;
 
         size_t current_idx = j * outRowSize + i;
+        // Value of di's for each point in Output matix
         coeffs_pre.slice(current_idx)(0, 0) = (1 - deltaC) * (1 - deltaR);
         coeffs_pre.slice(current_idx)(0, 1) = (1 - deltaR) * deltaC;
         coeffs_pre.slice(current_idx)(1, 0) = deltaR * (1 - deltaC);
         coeffs_pre.slice(current_idx)(1, 1) = deltaR * deltaC;
+        // Bottom Right corner of the Pi's for each point in Output matix
         index_pre.slice(current_idx)(0, 0) = c_end + 1;
         index_pre.slice(current_idx)(0, 1) = r_end + 1;
       }
@@ -108,6 +121,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
 
     for (size_t k = 0; k < depth * batchSize; ++k)
     {
+      // Padded Input Matrix
       arma::mat grid = arma::mat(inRowSize + 2, inColSize + 2);
       grid(arma::span(1, inRowSize), arma::span(1, inColSize)) = inputAsCube.slice(k);
       grid(arma::span(1, inRowSize), 0) = grid(arma::span(1, inRowSize), 1);
@@ -156,6 +170,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
       outColSize, depth * batchSize, false, false);
     arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
       depth * batchSize, false, true);
+    // Padded Output matrix
     arma::mat temp(inRowSize + 2, inColSize + 2);
     if (gradient.n_elem == output.n_elem)
     {
@@ -171,12 +186,15 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
           for (size_t j = 0; j < outColSize; ++j)
           {
             size_t current_idx = j * outRowSize + i;
+            // Bottom right corner of the mapped unit matrix
             size_t c_right = index_pre.slice(current_idx)(0, 0);
             size_t r_down = index_pre.slice(current_idx)(0, 1);
+
             temp(arma::span(r_down - 1, r_down), arma::span(c_right - 1, c_right)) +=
             coeffs_pre.slice(current_idx) * gradientAsCube(i, j, k) ;
           }
         }
+        // dding the contribution of the corner points in the output matrix
         temp.row(1) += temp.row(0);
         temp.row(inRowSize) += temp.row(inRowSize + 1);
         temp.col(1) += temp.col(0);
