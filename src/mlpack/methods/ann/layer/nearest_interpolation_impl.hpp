@@ -77,16 +77,16 @@ void NearestInterpolation<InputDataType, OutputDataType>::Forward(
 
     for (size_t i = 0; i < outRowSize; ++i)
     {
-      double rOrigin = (i + 0.5) * scaleRow;
+      size_t rOrigin = std::floor(i * scaleRow);
 
       for (size_t j = 0; j < outColSize; ++j)
       {
-        double cOrigin = (j + 0.5) * scaleCol;
+        size_t cOrigin = std::floor(j * scaleCol);
 
         for (size_t k = 0; k < depth * batchSize; ++k)
         {
           outputAsCube(i, j, k) = inputAsCube.slice(k)(
-            std::floor(rOrigin), std::floor(cOrigin));
+            rOrigin, cOrigin);
         }
       }
     }
@@ -128,15 +128,15 @@ void NearestInterpolation<InputDataType, OutputDataType>::Backward(
     {
       for (size_t i = 0; i < outRowSize; ++i)
       {
-        double rOrigin = (i + 0.5) * scaleRow;
+        double rOrigin = std::floor(i * scaleRow);
 
         for (size_t j = 0; j < outColSize; ++j)
         {
-          double cOrigin = (j + 0.5) * scaleCol;
+          double cOrigin = std::floor(j* scaleCol);
 
           for (size_t k = 0; k < depth * batchSize; ++k)
           {
-            outputAsCube(std::floor(rOrigin), std::floor(cOrigin), k) +=
+            outputAsCube(rOrigin, cOrigin, k) +=
               gradientAsCube(i, j, k);
           }
         }
