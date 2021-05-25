@@ -2130,8 +2130,8 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
       depth);
   layer1.Forward(input1, output1); 
   layer.Backward(output1, output1, unzoomedOutput1);
-  REQUIRE(arma::accu(output1) - 1368.50000 == Approx(0.0).margin(1e-05));
-  REQUIRE(arma::accu(unzoomedOutput1) - 1368.50000 == Approx(0.0).margin(1e-05));
+  REQUIRE(arma::accu(output1) - 1317.00 == Approx(0.0).margin(1e-05));
+  REQUIRE(arma::accu(unzoomedOutput1) - 1317.00 == Approx(0.0).margin(1e-05));
 }
 
 /*
@@ -2169,6 +2169,21 @@ TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
   layer.Backward(output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,
       arma::zeros(input.n_rows), 1e-4);
+
+  arma::mat input1, output1, unzoomedOutput1, expectedOutput1;
+  inRowSize = 2;
+  inColSize = 3;
+  outRowSize = 17;
+  outColSize = 23;
+  input1 << 1 << 2 << 3 << arma::endr
+         << 4 << 5 << 6 << arma::endr;
+  input.reshape(6, 1);
+  NearestInterpolation<> layer1(inRowSize, inColSize, outRowSize, outColSize,
+      depth);
+  layer1.Forward(input1, output1); 
+  layer.Backward(output1, output1, unzoomedOutput1);
+  REQUIRE(arma::accu(output1) - 1368.50 == Approx(0.0).margin(1e-05));
+  REQUIRE(arma::accu(unzoomedOutput1) - 1368.50 == Approx(0.0).margin(1e-05));
 }
 
 /**
