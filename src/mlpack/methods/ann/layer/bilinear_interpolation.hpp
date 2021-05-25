@@ -146,12 +146,13 @@ class BilinearInterpolation
   size_t batchSize;
   //! Locally-stored delta object.
   OutputDataType delta;
-  // Locally-stored coeffs precomputation.
-  OutputDataType coeffs_pre;
-  // Locally-stored submat index precomputation.
-  OutputDataType index_pre;
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+
+  // Locally-stored coeffs precomputation.
+  arma::cube coeffs_pre;
+  // Locally-stored submat index precomputation.
+  arma::cube index_pre;
 }; // class BilinearInterpolation
 
 } // namespace ann

@@ -162,13 +162,13 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
 
     if (gradient.n_elem == output.n_elem)
     {
-      tempAsCube = gradientAsCube;
+      outputAsCube = gradientAsCube;
     }
     else
     {
       for (size_t k = 0; k < depth * batchSize; ++k)
       {
-        arma::temp;
+        arma::mat temp;
         temp.set_size(inRowSize + 2, inColSize + 2);
         for (size_t i = 0; i < outRowSize; ++i)
         {
