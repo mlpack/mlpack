@@ -118,7 +118,7 @@ class Upsample
 
   //! Get the mode of interpolation.
   string const& Mode() const { return mode; }
-  //! Modify the depth of interpolation.
+  //! Modify the mode of interpolation.
   string& Mode() { return mode; }
 
   //! Get the shape of the input.
