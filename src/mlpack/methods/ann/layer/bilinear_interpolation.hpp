@@ -84,6 +84,10 @@ class BilinearInterpolation
                 const arma::Mat<eT>& gradient,
                 arma::Mat<eT>& output);
 
+  //! Get the size of the weights.
+  size_t WeightSize() const {return (inRowSize + 3) * (inColSize + 2)
+    + 6 * outRowSize * outColSize}
+
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -93,6 +97,11 @@ class BilinearInterpolation
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
+
+  //! Get the parameters.
+  OutputDataType const& Parameters() const { return weights; }
+  //! Modify the parameters.
+  OutputDataType& Parameters() { return weights; }
 
   //! Get the row size of the input.
   size_t const& InRowSize() const { return inRowSize; }
@@ -132,6 +141,9 @@ class BilinearInterpolation
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Element Type of the input.
+  typedef typename OutputDataType::elem_type ElemType;
+
   //! Locally stored row size of the input.
   size_t inRowSize;
   //! Locally stored column size of the input.
@@ -148,11 +160,15 @@ class BilinearInterpolation
   OutputDataType delta;
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
+  //! Locally-stored weights parameter.
+  OutputDataType weights;
 
   // Locally-stored coeffs precomputation.
-  arma::cube coeffsPre;
+  arma::cube<ElemType> coeffsPre;
   // Locally-stored submat index precomputation.
-  arma::cube indexPre;
+  arma::cube<ElemType> indexPre;
+  // Locally-stored temp for padded output matrix.
+  arma::cube<ElemType> temp;
 }; // class BilinearInterpolation
 
 } // namespace ann

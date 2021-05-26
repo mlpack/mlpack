@@ -60,10 +60,15 @@ BilinearInterpolation(
     // constructor and use them directly in the forward and backward
     // functions. In bilinear interpolation we will pad the input
     // matrix to make the calculations more simple.
+    weights.set_size(WeightSize(), 1);
     double scaleRow = (double) inRowSize / (double) outRowSize;
     double scaleCol = (double) inColSize / (double) outColSize;
-    coeffsPre = arma::cube(2, 2, outRowSize * outColSize);
-    indexPre = arma::cube(1, 2, outRowSize * outColSize);
+    coeffsPre = arma::cube(weights.memptr(), 2, 2,
+      outRowSize * outColSize, false, false);
+    indexPre = arma::cube(weights.memptr() + 4 * outRowSize * outColSize,
+      1, 2, outRowSize * outColSize, false, false);
+    temp = arma::mat(weights.memptr() + 6 * outRowSize * outColSize,
+      inRowSize + 2, inColSize + 2, false, false);
 
     for (size_t i = 0; i < outRowSize; ++i)
     {
@@ -170,8 +175,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
       outColSize, depth * batchSize, false, false);
     arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
       depth * batchSize, false, true);
-    // Padded Output matrix
-    arma::mat temp(inRowSize + 2, inColSize + 2);
+
     if (gradient.n_elem == output.n_elem)
     {
       outputAsCube = gradientAsCube;
