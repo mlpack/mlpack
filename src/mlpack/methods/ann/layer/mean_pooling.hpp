@@ -195,35 +195,74 @@ class MeanPooling
                  arma::Mat<eT>& output)
   {
 
-    arma::Mat<eT> unpooledError;
-    for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, colidx++)
+    size_t condition = kernelHeight * kernelWidth - strideHeight * strideWidth -
+      kernelWidth - kernelHeight;
+    size_t kernalArea = kernelHeight * kernelWidth;
+    if (condition > 0)
     {
-      for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, rowidx++)
-      { 
-        size_t rowEnd = i + kernelWidth - 1;
-        size_t colEnd = j + kernelHeight - 1;
-
-        if (rowEnd > input.n_rows - 1)
+      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, colidx++)
+      {
+        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, rowidx++)
         {
-          if (floor)
-            continue;
-          rowEnd = input.n_rows - 1;
+          size_t rowEnd = i + kernelWidth - 1;
+          size_t colEnd = j + kernelHeight - 1;
+
+          if (rowEnd >= input.n_rows || colEnd >= input.n_cols)
+            break;
+
+          output(i, j) += error(rowidx, colidx) / kernalArea;
+
+          if (rowEnd + 1 < input.n_rows)
+          {
+            output(rowEnd + 1, j) -= error(rowidx, colidx) / kernalArea;
+
+            if (colEnd + 1 < input.n_cols)
+              output(rowEnd + 1, colEnd + 1) += error(rowidx, colidx) / kernalArea;
+          }
         }
 
-        if (colEnd > input.n_cols - 1)
+        if (colEnd + 1 < input.n_cols)
+          output(i, colEnd + 1) -= error(rowidx, colidx) / kernalArea;
+      }
+
+      for (size_t i = 1; i < input.n_rows; ++i)
+        output.row(i) += output.row(i - 1);
+
+      for (size_t j = 1; j < input.n_cols; ++j)
+        output.col(j) += output.col(j - 1);
+    }
+    else
+    {
+      arma::Mat<eT> unpooledError;
+      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, colidx++)
+      {
+        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, rowidx++)
         {
-          if (floor)
-            continue;
-          colEnd = input.n_cols - 1;
+          size_t rowEnd = i + kernelWidth - 1;
+          size_t colEnd = j + kernelHeight - 1;
+
+          if (rowEnd > input.n_rows - 1)
+          {
+            if (floor)
+              continue;
+            rowEnd = input.n_rows - 1;
+          }
+
+          if (colEnd > input.n_cols - 1)
+          {
+            if (floor)
+              continue;
+            colEnd = input.n_cols - 1;
+          }
+
+          arma::mat InputArea = input(arma::span(i, rowEnd), arma::span(j, colEnd));
+
+          unpooledError = arma::Mat<eT>(InputArea.n_rows, InputArea.n_cols);
+          unpooledError.fill(error(rowidx, colidx) / InputArea.n_elem);
+
+          output(arma::span(i, i + InputArea.n_rows - 1),
+              arma::span(j, j + InputArea.n_cols - 1)) += unpooledError;
         }
-
-        arma::mat InputArea = input(arma::span(i, rowEnd), arma::span(j, colEnd));
-
-        unpooledError = arma::Mat<eT>(InputArea.n_rows, InputArea.n_cols);
-        unpooledError.fill(error(rowidx, colidx) / InputArea.n_elem);
-
-        output(arma::span(i, i + InputArea.n_rows - 1),
-            arma::span(j, j + InputArea.n_cols - 1)) += unpooledError;
       }
     }
   }
