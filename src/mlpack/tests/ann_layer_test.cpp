@@ -2178,7 +2178,7 @@ TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
   input1 << 1 << 2 << 3 << arma::endr
          << 4 << 5 << 6 << arma::endr;
   input1.reshape(6, 1);
-  NearestInterpolation<> layer1(inRowSize, inColSize, outRowSize, outColSize,
+  BilinearInterpolation<> layer1(inRowSize, inColSize, outRowSize, outColSize,
       depth);
   layer1.Forward(input1, output1); 
   layer1.Backward(output1, output1, unzoomedOutput1);
