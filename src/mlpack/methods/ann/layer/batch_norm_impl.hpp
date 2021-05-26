@@ -12,8 +12,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ANN_LAYER_BATCHNORM_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_BATCHNORM_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_BATCH_NORM_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_BATCH_NORM_IMPL_HPP
 
 // In case it is not included.
 #include "batch_norm.hpp"
@@ -26,6 +26,7 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm() :
     size(0),
     eps(1e-8),
     average(true),
+    affine(true),
     momentum(0.0),
     loading(false),
     deterministic(false),
@@ -40,17 +41,22 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm(
     const size_t size,
     const double eps,
     const bool average,
+    const bool affine,
     const double momentum) :
     size(size),
     eps(eps),
     average(average),
+    affine(affine),
     momentum(momentum),
     loading(false),
     deterministic(false),
     count(0),
     averageFactor(0.0)
 {
-  weights.set_size(WeightSize(), 1);
+  if (affine)
+  {
+    weights.set_size(WeightSize(), 1);
+  }
   runningMean.zeros(size, 1);
   runningVariance.ones(size, 1);
 }
@@ -58,15 +64,18 @@ BatchNorm<InputDataType, OutputDataType>::BatchNorm(
 template<typename InputDataType, typename OutputDataType>
 void BatchNorm<InputDataType, OutputDataType>::Reset()
 {
-  // Gamma acts as the scaling parameters for the normalized output.
-  gamma = arma::mat(weights.memptr(), size, 1, false, false);
-  // Beta acts as the shifting parameters for the normalized output.
-  beta = arma::mat(weights.memptr() + gamma.n_elem, size, 1, false, false);
-
-  if (!loading)
+  if (affine)
   {
-    gamma.fill(1.0);
-    beta.fill(0.0);
+    // Gamma acts as the scaling parameters for the normalized output.
+    gamma = arma::mat(weights.memptr(), size, 1, false, false);
+    // Beta acts as the shifting parameters for the normalized output.
+    beta = arma::mat(weights.memptr() + gamma.n_elem, size, 1, false, false);
+
+    if (!loading)
+    {
+      gamma.fill(1.0);
+      beta.fill(0.0);
+    }
   }
 
   deterministic = false;
@@ -129,10 +138,13 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
     normalized.set_size(arma::size(inputTemp));
     normalized = outputTemp;
 
-    outputTemp.each_slice() %= arma::repmat(gamma.t(),
-        inputSize, 1);
-    outputTemp.each_slice() += arma::repmat(beta.t(),
-        inputSize, 1);
+    if (affine)
+    {
+      outputTemp.each_slice() %= arma::repmat(gamma.t(),
+          inputSize, 1);
+      outputTemp.each_slice() += arma::repmat(beta.t(),
+          inputSize, 1);
+    }
 
     count += 1;
     averageFactor = average ? 1.0 / count : momentum;
@@ -159,10 +171,13 @@ void BatchNorm<InputDataType, OutputDataType>::Forward(
         input.n_rows / size, 1);
     outputTemp.each_slice() /= arma::sqrt(arma::repmat(runningVariance.t(),
         input.n_rows / size, 1) + eps);
-    outputTemp.each_slice() %= arma::repmat(gamma.t(),
-        input.n_rows / size, 1);
-    outputTemp.each_slice() += arma::repmat(beta.t(),
-        input.n_rows / size, 1);
+    if (affine)
+    {
+      outputTemp.each_slice() %= arma::repmat(gamma.t(),
+          input.n_rows / size, 1);
+      outputTemp.each_slice() += arma::repmat(beta.t(),
+          input.n_rows / size, 1);
+    }
   }
 }
 
@@ -182,8 +197,16 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
       input.n_rows / size, size, input.n_cols, false, false);
 
   // Step 1: dl / dxhat.
-  arma::cube norm = gyTemp.each_slice() % arma::repmat(gamma.t(),
-      input.n_rows / size, 1);
+  arma::cube norm;
+  if(affine)
+  { 
+    norm = gyTemp.each_slice() % arma::repmat(gamma.t(),
+       input.n_rows / size, 1);
+  }
+  else
+  {
+    norm = gyTemp;
+  }
 
   // Step 2: sum dl / dxhat * (x - mu) * -0.5 * stdInv^3.
   arma::mat temp = arma::sum(norm % inputMean, 2);
@@ -211,17 +234,20 @@ void BatchNorm<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
-  gradient.set_size(size + size, 1);
-  arma::cube errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(),
-      error.n_rows / size, size, error.n_cols, false, false);
+  if (affine)
+  {
+    gradient.set_size(size + size, 1);
+    arma::cube errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(),
+       error.n_rows / size, size, error.n_cols, false, false);
 
-  // Step 5: dl / dy * xhat.
-  arma::mat temp = arma::sum(arma::sum(normalized % errorTemp, 0), 2);
-  gradient.submat(0, 0, gamma.n_elem - 1, 0) = temp.t();
+    // Step 5: dl / dy * xhat.
+    arma::mat temp = arma::sum(arma::sum(normalized % errorTemp, 0), 2);
+    gradient.submat(0, 0, gamma.n_elem - 1, 0) = temp.t();
 
-  // Step 6: dl / dy.
-  temp = arma::sum(arma::sum(errorTemp, 0), 2);
-  gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) = temp.t();
+    // Step 6: dl / dy.
+    temp = arma::sum(arma::sum(errorTemp, 0), 2);
+    gradient.submat(gamma.n_elem, 0, gradient.n_elem - 1, 0) = temp.t();
+  }
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -244,6 +270,7 @@ void BatchNorm<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(averageFactor));
   ar(CEREAL_NVP(momentum));
   ar(CEREAL_NVP(average));
+  ar(CEREAL_NVP(affine));
   ar(CEREAL_NVP(runningMean));
   ar(CEREAL_NVP(runningVariance));
 }

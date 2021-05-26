@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/layer/instance_norm.hpp
  * @author Anjishnu Mukherjee
+ * @author Shah Anwaar Khalid
  *
  * Definition of the Instance Normalization layer class.
  *
@@ -9,8 +10,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_INSTANCENORM_HPP
-#define MLPACK_METHODS_ANN_LAYER_INSTANCENORM_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_INSTANCE_NORM_HPP
+#define MLPACK_METHODS_ANN_LAYER_INSTANCE_NORM_HPP
 
 #include <mlpack/prereqs.hpp>
 #include "layer_types.hpp"
@@ -61,16 +62,17 @@ class InstanceNorm
    * Create the InstanceNorm layer object with the specified parameters.
    *
    * @param size The number of input units / channels.
-   * @param numFunctions The number of columns in input.
+   * @param batchSize Size of the minibatch.
    * @param eps The epsilon added to variance to ensure numerical stability.
    * @param average Boolean to determine whether cumulative average is used for
-   *                updating the parameters or momentum is used.
-   * @param momentum Parameter used to to update the running mean and variance.
+   *                updating the parameters or momentum.
+   * @param momentum Parameter used to update the running mean and variance.
    */
   InstanceNorm(const size_t size,
-               const size_t numFunctions,
+               const size_t batchSize,
                const double eps = 1e-5,
                const bool average = true,
+               const bool affine = true,
                const double momentum = 0.1);
 
   /**
@@ -147,15 +149,34 @@ class InstanceNorm
 
   //! Get the number of input units / channels.
   size_t InputSize() const { return size; }
+  //! Modify the input units/ channels.
+  size_t InputSize() {return size; }
 
   //! Get the epsilon value.
   double Epsilon() const { return eps; }
+  //! Modify the epsilon value.
+  double Epsilon() { return eps; }
+
 
   //! Get the momentum value.
   double Momentum() const { return momentum; }
+  //! Modify the momentum value.
+  double Momentum() { return momentum; }
 
   //! Get the average parameter.
   bool Average() const { return average; }
+  //! Modify the average parameter.
+  bool Average() { return average; }
+
+  //! Get the affine parameter.
+  bool Affine() const { return affine; }
+  //! Modify the affine parameter.
+  bool Affine() { return affine; }
+  
+  //! Get the batchSize parameter.
+  bool Batchsize() const { return batchSize; }
+  //! Modify the batchSize parameter.
+  bool Batchsize() { return batchSize; }
 
   /**
    * Serialize the layer
@@ -186,11 +207,14 @@ class InstanceNorm
   //! and variance
   bool average;
 
+  //! If true, the module has learnable affine parameters.
+  bool affine;
+
   //! Locally-stored value for momentum.
   double momentum;
 
   //! Locally stored vale for numFunctions
-  size_t numFunctions;
+  size_t batchSize;
 
   /**
    * If true then mean and variance over the training set will be considered

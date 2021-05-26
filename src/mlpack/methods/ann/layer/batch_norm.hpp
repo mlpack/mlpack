@@ -66,11 +66,14 @@ class BatchNorm
    * @param eps The epsilon added to variance to ensure numerical stability.
    * @param average Boolean to determine whether cumulative average is used for
    *                updating the parameters or momentum is used.
+   * @param affine  Boolean value that when set to True,
+   *                the module has learnable affine parameters.
    * @param momentum Parameter used to to update the running mean and variance.
    */
   BatchNorm(const size_t size,
             const double eps = 1e-8,
             const bool average = true,
+            const bool affine = true,
             const double momentum = 0.1);
 
   /**
@@ -160,6 +163,9 @@ class BatchNorm
   //! Get the average parameter.
   bool Average() const { return average; }
 
+  //! Get the affine parameter.
+  bool Affine() const { return affine; }
+
   //! Get size of weights.
   size_t WeightSize() const { return 2 * size; }
 
@@ -179,6 +185,9 @@ class BatchNorm
   //! If true use average else use momentum for computing running mean
   //! and variance
   bool average;
+
+  //! If true, the module has learnable affine parameters. 
+  bool affine;
 
   //! Locally-stored value for momentum.
   double momentum;

@@ -1,6 +1,7 @@
 /**
  * @file methods/ann/layer/instance_norm_impl.hpp
  * @author Anjishnu Mukherjee
+ * @author Shah Anwaar Khalid
  *
  * Implementation of the Instance Normalization Layer.
  *
@@ -10,8 +11,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_ANN_LAYER_INSTANCENORM_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_INSTANCENORM_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_INSTANCE_NORM_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_INSTANCE_NORM_IMPL_HPP
 
 // In case it is not included.
 #include "instance_norm.hpp"
@@ -24,6 +25,7 @@ InstanceNorm<InputDataType, OutputDataType>::InstanceNorm() :
     size(0),
     eps(1e-8),
     average(true),
+    affine(true),
     momentum(0.0),
     deterministic(false),
     reset(false)
@@ -34,19 +36,21 @@ InstanceNorm<InputDataType, OutputDataType>::InstanceNorm() :
 template <typename InputDataType, typename OutputDataType>
 InstanceNorm<InputDataType, OutputDataType>::InstanceNorm(
     const size_t size,
-    const size_t numFunctions,
+    const size_t batchSize,
     const double eps,
     const bool average,
+    const bool affine,
     const double momentum) :
     size(size),
-    numFunctions(numFunctions),
+    batchSize(batchSize),
     eps(eps),
     average(average),
+    affine(affine),
     momentum(momentum),
     deterministic(false),
     reset(false)
 {
-    batchNorm = ann::BatchNorm<> (size * numFunctions, eps, average, momentum);
+    batchNorm = ann::BatchNorm<> (size * batchSize, eps, average, affine, momentum);
     runningMean.zeros(size, 1);
     runningVariance.ones(size, 1);
     runningVariance = batchNorm.TrainingVariance();
@@ -61,6 +65,12 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
   // Instance Norm with (N, C, H, W) is same as Batch Norm with (1, N*C, H, W),
   // where N is the batchSize, C is the number of channels, H and W are the
   // height and width of each image respectively.
+  if(input.n_cols != batchSize)
+  {
+    Log::Fatal<<"Must use the same BatchSize that was used in the constructor"
+                <<std::endl;
+      std::cout<<"Hello"<<std::endl;
+  }
   if (!reset)
   {
     batchNorm.Reset();
@@ -73,21 +83,16 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
   if (deterministic)
     batchNorm.Deterministic() = true;
 
-  arma::mat inputCopy(const_cast<arma::Mat<eT>&>(input).memptr(), shapeA*shapeB,
+  arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), shapeA*shapeB,
         1, false, false);
-  batchNorm.Forward(inputCopy, output);
+  batchNorm.Forward(inputTemp, output);
   output.reshape(shapeA, shapeB);
-  arma::mat runningTemp = arma::zeros(size, 1);
   runningMean = batchNorm.TrainingMean();
   runningMean.reshape(size, shapeB);
-  runningTemp = arma::mean(runningMean, 1);
-  runningMean.set_size(size, 1);
-  runningMean = runningTemp;
+  runningMean = arma::mean(runningMean, 1);
   runningVariance = batchNorm.TrainingVariance();
   runningVariance.reshape(size, shapeB);
-  runningTemp = arma::mean(runningVariance, 1);
-  runningVariance.set_size(size, 1);
-  runningVariance = runningTemp;
+  runningVariance = arma::mean(runningVariance, 1);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -97,11 +102,11 @@ void InstanceNorm<InputDataType, OutputDataType>::Backward(
     const arma::Mat<eT>& gy,
     arma::Mat<eT>& g)
 {
-  arma::mat inputCopy(const_cast<arma::Mat<eT>&>(input).memptr(), shapeA*shapeB,
+  arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), shapeA*shapeB,
       1, false, false);
-  arma::mat gyCopy(const_cast<arma::Mat<eT>&>(gy).memptr(), shapeA*shapeB,
+  arma::mat gyTemp(const_cast<arma::Mat<eT>&>(gy).memptr(), shapeA*shapeB,
       1, false, false);
-  batchNorm.Backward(inputCopy, gyCopy, g);
+  batchNorm.Backward(inputTemp, gyTemp, g);
   g.reshape(shapeA, shapeB);
 }
 
@@ -112,11 +117,11 @@ void InstanceNorm<InputDataType, OutputDataType>::Gradient(
     const arma::Mat<eT>& error,
     arma::Mat<eT>& gradient)
 {
-  arma::mat inputCopy(const_cast<arma::Mat<eT>&>(input).memptr(), shapeA*shapeB,
+  arma::mat inputTemp(const_cast<arma::Mat<eT>&>(input).memptr(), shapeA*shapeB,
       1, false, false);
-  arma::mat errorCopy(const_cast<arma::Mat<eT>&>(error).memptr(), shapeA*shapeB,
+  arma::mat errorTemp(const_cast<arma::Mat<eT>&>(error).memptr(), shapeA*shapeB,
       1, false, false);
-  batchNorm.Gradient(inputCopy, errorCopy, gradient);
+  batchNorm.Gradient(inputTemp, errorTemp, gradient);
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -127,6 +132,7 @@ void InstanceNorm<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(size));
   ar(CEREAL_NVP(eps));
   ar(CEREAL_NVP(average));
+  ar(CEREAL_NVP(affine));
   ar(CEREAL_NVP(momentum));
   ar(CEREAL_NVP(deterministic));
   ar(CEREAL_NVP(runningMean));

@@ -4262,7 +4262,7 @@ TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")
              { 0.2507 , -0.8486 , 0.8293 } };
 
   // Check correctness of batch normalization.
-  BatchNorm<> module1(2, 1e-5, false, 0.1);
+  BatchNorm<> module1(2, 1e-5, false, true, 0.1);
   module1.Reset();
   module1.Forward(input, output);
   CheckMatrices(output, result, 1e-1);
@@ -5121,7 +5121,7 @@ TEST_CASE("InstanceNormLayerTest", "[ANNLayerTest]")
                 <<-1.8367 << -1.8367 << arma::endr;
 
   // Check Forward and Backward pass in non-deterministic mode.
-  InstanceNorm<> module(3, input.n_cols, 1e-5, false, 0.1);
+  InstanceNorm<> module(3, input.n_cols, 1e-5, false, true, 0.1);
   output.zeros(arma::size(input));
   module.Forward(input, output);
   CheckMatrices(output, result, 1e-1);
@@ -5142,7 +5142,7 @@ TEST_CASE("InstanceNormLayerTest", "[ANNLayerTest]")
   CheckMatrices(runningVar, module.TrainingVariance(), 1e-1);
 
   // Check Forward pass in deterministic mode.
-  InstanceNorm<> module1(3, input.n_cols, 1e-5, false, 0.1);
+  InstanceNorm<> module1(3, input.n_cols, 1e-5, false, true, 0.1);
   module1.Deterministic() = true;
   output.zeros(arma::size(input));
   module1.Forward(input, output);
