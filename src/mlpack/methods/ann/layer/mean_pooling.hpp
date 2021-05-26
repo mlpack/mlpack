@@ -197,7 +197,7 @@ class MeanPooling
 
     size_t condition = kernelHeight * kernelWidth - strideHeight * strideWidth -
       kernelWidth - kernelHeight;
-    size_t kernalArea = kernelHeight * kernelWidth;
+
     if (condition > 0)
     {
       for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, colidx++)
@@ -207,9 +207,21 @@ class MeanPooling
           size_t rowEnd = i + kernelWidth - 1;
           size_t colEnd = j + kernelHeight - 1;
 
-          if (rowEnd >= input.n_rows || colEnd >= input.n_cols)
-            break;
+          if (rowEnd > input.n_rows - 1)
+          {
+            if (floor)
+              continue;
+            rowEnd = input.n_rows - 1;
+          }
 
+          if (colEnd > input.n_cols - 1)
+          {
+            if (floor)
+              continue;
+            colEnd = input.n_cols - 1;
+          }
+
+          size_t kernalArea = (rowEnd - i + 1) * (colEnd - j + 1);
           output(i, j) += error(rowidx, colidx) / kernalArea;
 
           if (rowEnd + 1 < input.n_rows)
