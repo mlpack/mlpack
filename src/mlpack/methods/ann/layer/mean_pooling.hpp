@@ -163,6 +163,7 @@ class MeanPooling
     arma::mat inputPre = input;
     size_t inRow = input.n_rows;
     size_t inCol = input.n_cols;
+    size_t kernalArea = kernelWidth * kernelHeight;
 
     for(int i = 1; i < inCol; i++)
       inputPre.col(i) += inputPre.col(i - 1);
@@ -195,7 +196,7 @@ class MeanPooling
         if(colidx >= 1)
           val -= inputPre(rowEnd, colidx - 1);
 
-        output(i, j) = val / input.n_elem;
+        output(i, j) = val / kernalArea;
       }
     }
   }
