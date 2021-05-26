@@ -85,8 +85,8 @@ class BilinearInterpolation
                 arma::Mat<eT>& output);
 
   //! Get the size of the weights.
-  size_t WeightSize() const {return (inRowSize + 3) * (inColSize + 2)
-    + 6 * outRowSize * outColSize}
+  size_t WeightSize() const { return (inRowSize + 3) * (inColSize + 2)
+    + 6 * outRowSize * outColSize; }
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
@@ -164,11 +164,11 @@ class BilinearInterpolation
   OutputDataType weights;
 
   // Locally-stored coeffs precomputation.
-  arma::cube<ElemType> coeffsPre;
+  arma::Cube<ElemType> coeffsPre;
   // Locally-stored submat index precomputation.
-  arma::cube<ElemType> indexPre;
+  arma::Cube<ElemType> indexPre;
   // Locally-stored temp for padded output matrix.
-  arma::cube<ElemType> temp;
+  arma::Mat<ElemType> temp;
 }; // class BilinearInterpolation
 
 } // namespace ann
