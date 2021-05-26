@@ -219,10 +219,10 @@ class MeanPooling
             if (colEnd + 1 < input.n_cols)
               output(rowEnd + 1, colEnd + 1) += error(rowidx, colidx) / kernalArea;
           }
-        }
 
-        if (colEnd + 1 < input.n_cols)
-          output(i, colEnd + 1) -= error(rowidx, colidx) / kernalArea;
+          if (colEnd + 1 < input.n_cols)
+            output(i, colEnd + 1) -= error(rowidx, colidx) / kernalArea;
+        }
       }
 
       for (size_t i = 1; i < input.n_rows; ++i)
