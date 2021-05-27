@@ -61,8 +61,8 @@ BilinearInterpolation(
     // functions. In bilinear interpolation we will pad the input
     // matrix to make the calculations more simple.
     weights.set_size(WeightSize(), 1);
-    double scaleRow = (double) inRowSize / (double) outRowSize;
-    double scaleCol = (double) inColSize / (double) outColSize;
+    const double scaleRow = (double) inRowSize / (double) outRowSize;
+    const double scaleCol = (double) inColSize / (double) outColSize;
     coeffsPre = arma::cube(weights.memptr(), 2, 2,
       outRowSize * outColSize, false, false);
     indexPre = arma::cube(weights.memptr() + 4 * outRowSize * outColSize,
@@ -78,8 +78,8 @@ BilinearInterpolation(
       {
 
         double cOrigin = (j + 0.5) * scaleCol;
-        size_t cEnd = (size_t) std::floor(cOrigin + 0.5);
-        size_t rEnd = (size_t) std::floor(rOrigin + 0.5);
+        const size_t cEnd = (size_t) std::floor(cOrigin + 0.5);
+        const size_t rEnd = (size_t) std::floor(rOrigin + 0.5);
 
         double deltaC = 0.5 + cOrigin - cEnd;
         double deltaR = 0.5 + rOrigin - rEnd; 
@@ -142,12 +142,11 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
       {
         for (size_t j = 0; j < outColSize; ++j)
         {
-          size_t currentIdx = j * outRowSize + i;
-          size_t cEnd = indexPre.slice(currentIdx)(0, 0);
-          size_t rEnd = indexPre.slice(currentIdx)(0, 1);
+          const size_t cEnd = indexPre.slice(currentIdx)(0, 0);
+          const size_t rEnd = indexPre.slice(currentIdx)(0, 1);
 
           outputAsCube(i, j, k) = arma::accu(grid(arma::span(rEnd - 1, rEnd),
-            arma::span(cEnd - 1, cEnd)) % coeffsPre.slice(currentIdx));
+            arma::span(cEnd - 1, cEnd)) % coeffsPre.slice(j * outRowSize + i));
         }
       }
     }
@@ -189,13 +188,12 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
         {
           for (size_t j = 0; j < outColSize; ++j)
           {
-            size_t currentIdx = j * outRowSize + i;
             // Bottom right corner of the mapped unit matrix.
-            size_t cEnd = indexPre.slice(currentIdx)(0, 0);
-            size_t rEnd = indexPre.slice(currentIdx)(0, 1);
+            const size_t cEnd = indexPre.slice(currentIdx)(0, 0);
+            const size_t rEnd = indexPre.slice(currentIdx)(0, 1);
 
             temp(arma::span(rEnd - 1, rEnd), arma::span(cEnd - 1, cEnd)) +=
-            coeffsPre.slice(currentIdx) * gradientAsCube(i, j, k) ;
+            coeffsPre.slice(j * outRowSize + i) * gradientAsCube(i, j, k) ;
           }
         }
         // Adding the contribution of the corner points to the output matrix.

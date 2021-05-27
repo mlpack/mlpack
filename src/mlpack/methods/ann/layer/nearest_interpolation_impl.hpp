@@ -77,11 +77,11 @@ void NearestInterpolation<InputDataType, OutputDataType>::Forward(
 
     for (size_t i = 0; i < outRowSize; ++i)
     {
-      size_t rOrigin = std::floor(i * scaleRow);
+      const size_t rOrigin = std::floor(i * scaleRow);
 
       for (size_t j = 0; j < outColSize; ++j)
       {
-        size_t cOrigin = std::floor(j * scaleCol);
+        const size_t cOrigin = std::floor(j * scaleCol);
 
         for (size_t k = 0; k < depth * batchSize; ++k)
         {
@@ -128,11 +128,11 @@ void NearestInterpolation<InputDataType, OutputDataType>::Backward(
     {
       for (size_t i = 0; i < outRowSize; ++i)
       {
-        double rOrigin = std::floor(i * scaleRow);
+        const size_t rOrigin = std::floor(i * scaleRow);
 
         for (size_t j = 0; j < outColSize; ++j)
         {
-          double cOrigin = std::floor(j* scaleCol);
+          const size_t cOrigin = std::floor(j* scaleCol);
 
           for (size_t k = 0; k < depth * batchSize; ++k)
           {
