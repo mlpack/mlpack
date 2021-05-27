@@ -4657,6 +4657,45 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
 }
 
 /**
+ * Simple Test for ChannelShuffle layer.
+ */
+TEST_CASE("ChannelShuffleLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input1, output1, outputExpected1;
+  ChannelShuffle<> module1(2, 2, 6, 2);
+
+  input1 << 1  << 2  << arma::endr
+         << 3  << 4  << arma::endr
+         << 5  << 6  << arma::endr
+         << 7  << 8  << arma::endr
+         << 9  << 10 << arma::endr
+         << 11 << 12 << arma::endr
+         << 13 << 14 << arma::endr
+         << 15 << 16 << arma::endr
+         << 17 << 18 << arma::endr
+         << 19 << 20 << arma::endr
+         << 21 << 22 << arma::endr
+         << 23 << 24 << arma::endr;
+  input1.reshape(24, 1);
+  outputExpected1 << 1  << 2  << arma::endr
+                  << 3  << 4  << arma::endr
+                  << 13 << 14 << arma::endr
+                  << 15 << 16 << arma::endr
+                  << 5  << 6  << arma::endr
+                  << 7  << 8  << arma::endr
+                  << 17 << 18 << arma::endr
+                  << 19 << 20 << arma::endr
+                  << 9  << 10 << arma::endr
+                  << 11 << 12 << arma::endr
+                  << 21 << 22 << arma::endr
+                  << 23 << 24 << arma::endr;
+  // Check the Forward pass of the layer.
+  module1.Forward(input1, output1);
+  CheckMatrices(output1, outputExpected1);
+
+}
+
+/**
  * Simple Test for PixelShuffle layer.
  */
 TEST_CASE("PixelShuffleLayerTest", "[ANNLayerTest]")
