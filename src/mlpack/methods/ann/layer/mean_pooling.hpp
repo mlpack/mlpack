@@ -160,7 +160,7 @@ class MeanPooling
   template<typename eT>
   void Pooling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
-    arma::Mt<eT> inputPre = input;
+    arma::Mat<eT> inputPre = input;
 
     for(size_t i = 1; i < input.n_cols; ++i)
       inputPre.col(i) += inputPre.col(i - 1);
