@@ -4689,11 +4689,11 @@ TEST_CASE("ChannelShuffleLayerTest", "[ANNLayerTest]")
                   << 6  << 22 << arma::endr
                   << 7  << 23 << arma::endr
                   << 8  << 24 << arma::endr;
+  outputExpected1.reshape(24, 1);
   // Check the Forward pass of the layer.
   module1.Forward(input1, output1);
   CheckMatrices(output1, outputExpected1);
 
-  outputExpected1.reshape(24, 1);
   // Check the Backward pass of the layer.
   module1.Backward(output1, output1, outputBackward1);
   CheckMatrices(input1, outputBackward1);
