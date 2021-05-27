@@ -142,6 +142,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Forward(
       {
         for (size_t j = 0; j < outColSize; ++j)
         {
+          const size_t currentIdx = j * outRowSize + i;
           const size_t cEnd = indexPre.slice(currentIdx)(0, 0);
           const size_t rEnd = indexPre.slice(currentIdx)(0, 1);
 
@@ -188,6 +189,7 @@ void BilinearInterpolation<InputDataType, OutputDataType>::Backward(
         {
           for (size_t j = 0; j < outColSize; ++j)
           {
+            const size_t currentIdx = j * outRowSize + i;
             // Bottom right corner of the mapped unit matrix.
             const size_t cEnd = indexPre.slice(currentIdx)(0, 0);
             const size_t rEnd = indexPre.slice(currentIdx)(0, 1);
