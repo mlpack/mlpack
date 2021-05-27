@@ -4694,7 +4694,7 @@ TEST_CASE("ChannelShuffleLayerTest", "[ANNLayerTest]")
   CheckMatrices(output1, outputExpected1);
 
   // Check the Backward pass of the layer.
-  module1.backward(output1, output1, outputBackward1);
+  module1.Backward(output1, output1, outputBackward1);
   CheckMatrices(input1, outputBackward1);
 
 }
