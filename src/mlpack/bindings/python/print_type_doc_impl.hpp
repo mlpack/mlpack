@@ -155,9 +155,13 @@ std::string PrintTypeDoc(
 {
   return "An mlpack model pointer.  This type can be pickled to or from disk, "
       "and internally holds a pointer to C++ memory containing the mlpack "
-      "model.  Note that this means that the mlpack model itself cannot be "
-      "easily inspected in Python; however, the pickled model can be loaded "
-      "in C++ and inspected there.";
+      "model.  This model pointer has 2 methods using which the parameters "
+      "of the model can be inspected as well as changed through Python.  "
+      "The get_cpp_params() method returns a python ordered dictionary that "
+      "contains all the parameters of the model.  The user can inspect the "
+      "parameters as well change the parameter values in the dictionary "
+      "(without deleting any keys) and pass that back into the model "
+      "using the set_cpp_params() method.";
 }
 
 } // namespace python
