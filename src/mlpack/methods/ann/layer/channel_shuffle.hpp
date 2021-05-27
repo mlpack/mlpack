@@ -39,13 +39,15 @@ class ChannelShuffle
   /**
    * The constructor for the Channel Shuffle.
    *
+   * @param inRowSize Number of input rows.
+   * @param inColSize Number of input columns.
    * @param depth Number of input slices.
    * @param group Number of groups for shuffling channels.
    */
   ChannelShuffle(const size_t inRowSize,
                  const size_t inColSize,
                  const size_t depth,
-                 const size_t group);
+                 const size_t groupCount);
 
   /**
    * Forward pass through the layer.
@@ -98,9 +100,9 @@ class ChannelShuffle
   size_t& InDepth() { return depth; }
 
   //! Get the number of groups the channels is divided into.
-  size_t const& InGroup() const { return group; }
+  size_t const& InGroupCount() const { return groupCount; }
   //! Modify the number of groups the channels is divided into.
-  size_t& InGroup() { return group; }
+  size_t& InGroupCount() { return groupCount; }
 
   //! Get the shape of the input.
   size_t InputShape() const
@@ -122,7 +124,7 @@ class ChannelShuffle
   //! Locally stored depth of the input.
   size_t depth;
   //! Locally stored the number of groups the channels is divided into.
-  size_t group;
+  size_t groupCount;
   //! Locally stored number of input points.
   size_t batchSize;
   //! Locally-stored delta object.
