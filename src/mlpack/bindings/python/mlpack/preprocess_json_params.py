@@ -257,7 +257,7 @@ def insert_in_dic(dic, path, key, val):
   after following a particular path.
   '''
   temp = dic[path[0]]
-  for idx in range(1,len(path)):
+  for idx in range(1, len(path)):
     if "listidx_" in path[idx]:
       temp = temp[int(path[idx].replace("listidx_", ""))]
     else:
