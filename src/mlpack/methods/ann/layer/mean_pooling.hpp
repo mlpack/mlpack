@@ -160,14 +160,12 @@ class MeanPooling
   template<typename eT>
   void Pooling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
-    arma::mat inputPre = input;
-    size_t inRow = input.n_rows;
-    size_t inCol = input.n_cols;
+    arma::Mt<eT> inputPre = input;
 
-    for(int i = 1; i < inCol; i++)
+    for(size_t i = 1; i < input.n_cols; ++i)
       inputPre.col(i) += inputPre.col(i - 1);
   
-    for(int i = 1; i < inRow; i++)
+    for(size_t i = 1; i < input.n_rows; ++i)
       inputPre.row(i) += inputPre.row(i - 1);
 
     for (size_t j = 0, colidx = 0; j < output.n_cols;
@@ -185,15 +183,15 @@ class MeanPooling
         if (colEnd > input.n_cols - 1)
           colEnd = input.n_cols - 1;
 
-        size_t kernalArea = (rowEnd - rowidx + 1) * (colEnd - colidx + 1);
+        const kernalArea = (rowEnd - rowidx + 1) * (colEnd - colidx + 1);
         val += inputPre(rowEnd, colEnd);
-        if(rowidx >= 1)
+        if (rowidx >= 1)
         {
-          if(colidx >= 1)
+          if (colidx >= 1)
             val += inputPre(rowidx - 1, colidx - 1);
           val -= inputPre(rowidx - 1, colEnd);
         }
-        if(colidx >= 1)
+        if (colidx >= 1)
           val -= inputPre(rowEnd, colidx - 1);
 
         output(i, j) = val / kernalArea;
