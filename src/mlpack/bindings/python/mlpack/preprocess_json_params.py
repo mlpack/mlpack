@@ -25,7 +25,8 @@ def process_params_out(model, params, return_str=False):
   params:
   1) model - the model to process params.
   2) params - json parameters of the model (which we get through cereal).
-  3) return_str (bool) - if True then a pretty string version of the params is returned.
+  3) return_str (bool) - if True then a pretty string version of the 
+                         params is returned.
   '''
   # for pretty printing.
   pp = pprint.PrettyPrinter()
@@ -34,14 +35,16 @@ def process_params_out(model, params, return_str=False):
   params_dic = json.loads(params, object_pairs_hook=value_resolver)
 
   # remove "cereal_class_version".
-  cereal_class_version = [] # this stores the cereal_class_version value for all deleted pairs.
+  # this stores the cereal_class_version value for all deleted pairs.
+  cereal_class_version = []
   ref_path = []
-  # 'full_paths' will store the complete path in the dictionary for all occurrences.
-  # this will be used during the reversed process, to insert 'cereal_class_version'
-  # at the correct places to avoid any errors.
+  # 'full_paths' will store the complete path in the dictionary for all
+  # occurrences. This will be used during the reversed process, to insert
+  # 'cereal_class_version' at the correct places to avoid any errors.
   full_paths = []
 
-  scrub(params_dic, "cereal_class_version", cereal_class_version, full_paths, ref_path)
+  scrub(params_dic, "cereal_class_version", cereal_class_version, full_paths,
+      ref_path)
 
   # storing 'cereal_class_version' occurrences paths and values.
   model.scrubbed_params["cereal_class_version"] = {
@@ -112,7 +115,8 @@ def np_to_arma(obj):
     for i in range(len(obj)):
       np_to_arma(obj[i])
   else:
-    # we cannot recurse further if we do not have a dictionary or list object, so just pass.
+    # we cannot recurse further if we do not have a
+    # dictionary or list object, so just pass.
     pass
 
 def arma_to_np(obj):
@@ -128,7 +132,9 @@ def arma_to_np(obj):
         if "vec_state" in obj[key].keys():
           n_rows = int(obj[key]["n_rows"])
           n_cols = int(obj[key]["n_cols"])
-          obj[key] = np.array(obj[key]["elem"]).reshape(n_cols, n_rows).astype(type(obj[key]["elem"][0])) # implicit transpose
+          # implicit transpose
+          obj[key] = np.array(obj[key]["elem"])\
+              .reshape(n_cols, n_rows).astype(type(obj[key]["elem"][0]))
         else:
           arma_to_np(obj[key])
       else:
@@ -137,7 +143,8 @@ def arma_to_np(obj):
     for i in range(len(obj)):
       arma_to_np(obj[i])
   else:
-    # we cannot recurse further if we do not have a dictionary or list object, so just pass.
+    # we cannot recurse further if we do not have a
+    # dictionary or list object, so just pass.
     pass
 
 def scrub(obj, bad_key, values, full_paths, ref_path):
@@ -148,10 +155,12 @@ def scrub(obj, bad_key, values, full_paths, ref_path):
   1) obj (dict) - dictionary to traverse.
   2) bad_key (str) - key to remove.
   3) values (list) - list of values of all occurrences of bad_key
-                     (this will be used to insert bad_key back into dictionary).
-  4) full_paths (list) - this is a list that contains full path to all occurrences of
-                         bad_key (used to insert bad_key back into dictionary).
-  5) ref_path (list) - this for keeping track of the current path in the dictionary.
+                    (this will be used to insert bad_key back into dictionary).
+  4) full_paths (list) - this is a list that contains full path to all
+                         occurrences of bad_key (used to insert bad_key back 
+                         into dictionary).
+  5) ref_path (list) - this for keeping track of the current path in the
+                       dictionary.
   """
   if isinstance(obj, OrderedDict):
     for key in list(obj.keys()):
@@ -238,13 +247,18 @@ class restore_value(json.JSONEncoder):
   def encode(self, o):
     if isinstance(o, dict):
       if "elem" in o.keys():
-        to_return = '{%s' % ', '.join(': '.join((json.encoder.py_encode_basestring(k), self.encode(v))) for k, v in o.items() if k != "elem")
+        to_return = '{%s' % ', '.join(
+            ': '.join((json.encoder.py_encode_basestring(k), self.encode(v)))\
+                for k, v in o.items() if k != "elem")
         for val in o["elem"]:
-          to_return += ', ' + json.encoder.py_encode_basestring("elem") + f': {val}'
+          to_return += ', ' + json.encoder.py_encode_basestring("elem") +\
+              f': {val}'
         to_return += "}"
         return to_return
       else:
-        to_return = '{%s}' % ', '.join(': '.join((json.encoder.py_encode_basestring(k), self.encode(v))) for k, v in o.items())
+        to_return = '{%s}' % ', '.join(
+            ': '.join((json.encoder.py_encode_basestring(k), self.encode(v)))\
+                for k, v in o.items())
         return to_return
     if isinstance(o, list):
       to_return = '[%s]' % ', '.join((self.encode(k) for k in o))
