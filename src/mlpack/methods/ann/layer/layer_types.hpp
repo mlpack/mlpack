@@ -225,7 +225,7 @@ using MoreTypes = boost::variant<
         Linear3D<arma::mat, arma::mat, NoRegularizer>*,
         LpPooling<arma::mat, arma::mat>*,
         PixelShuffle<arma::mat, arma::mat>*,
-        Channel_Shuffle<arma::mat, arma::mat>*,
+        ChannelShuffle<arma::mat, arma::mat>*,
         Glimpse<arma::mat, arma::mat>*,
         Highway<arma::mat, arma::mat>*,
         MultiheadAttention<arma::mat, arma::mat, NoRegularizer>*,

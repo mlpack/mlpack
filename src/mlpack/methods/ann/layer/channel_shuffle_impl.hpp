@@ -38,6 +38,8 @@ ChannelShuffle(
     const size_t inColSize,
     const size_t depth,
     const size_t groupCount):
+    inRowSize(inRowSize),
+    inColSize(inColSize),
     depth(depth),
     groupCount(groupCount),
     batchSize(0)
@@ -54,7 +56,7 @@ void ChannelShuffle<InputDataType, OutputDataType>::Forward(
     const arma::Mat<eT>& input, arma::Mat<eT>& output)
 {
   batchSize = input.n_cols;
-  cons
+
   if (output.is_empty())
     output.set_size(inRowSize * inColSize * depth, batchSize);
   else
