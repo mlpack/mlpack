@@ -106,15 +106,15 @@ void ChannelShuffle<InputDataType, OutputDataType>::Backward(
                           depth * batchSize, false, true);
 
   const size_t groupSize= depth / groupCount;
-  size_t outChannelIdx = 0;
+  size_t gradientChannelIdx = 0;
   for (int k = 0; k < batchSize; ++k)
   {
     for (int i = 0; i < groupSize; ++i)
     {
-      for (int g = 0; g < groupCount; ++g, ++outChannelIdx)
+      for (int g = 0; g < groupCount; ++g, ++gradientChannelIdx)
       {
-        size_t gradientChannelIdx = k * batchSize + g * groupSize + i;
-        outputAsCube.slice(outChannelIdx) = inputAsCube.slice(gradientChannelIdx);
+        size_t outChannelIdx = k * batchSize + g * groupSize + i;
+        outputAsCube.slice(outChannelIdx) = gradientAsCube.slice(gradientChannelIdx);
       }
     }
   }
