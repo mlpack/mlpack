@@ -74,7 +74,7 @@ def process_params_in(model, params_dic):
       insert_in_dic(params_dic_copy, path, param_name, val)
 
   # dumping to string. restore_value defined later.
-  params_str = json.dumps(params_dic_copy,  cls=restore_value)
+  params_str = json.dumps(params_dic_copy, cls=restore_value)
   return params_str
 
 def np_to_arma(obj):
