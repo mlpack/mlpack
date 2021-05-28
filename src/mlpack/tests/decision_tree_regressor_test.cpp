@@ -312,204 +312,332 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest1", "[DecisionTreeRegressorTest]")
  * A basic construction of the decision tree---ensure that we can create the
  * tree and that it split at least once.
  */
-TEST_CASE("BasicConstructionTest_", "[DecisionTreeRegressorTest]")
-{
-  arma::mat dataset(10, 100, arma::fill::randu);
-  arma::Row<double> labels(100);
-  for (size_t i = 0; i < 50; ++i)
-  {
-    dataset(3, i) = i;
-    labels[i] = 0.0;
-  }
-  for (size_t i = 50; i < 100; ++i)
-  {
-    dataset(3, i) = i;
-    labels[i] = 1.0;
-  }
+// TEST_CASE("BasicConstructionTest_", "[DecisionTreeRegressorTest]")
+// {
+//   arma::mat dataset(10, 100, arma::fill::randu);
+//   arma::Row<double> labels(100);
+//   for (size_t i = 0; i < 50; ++i)
+//   {
+//     dataset(3, i) = i;
+//     labels[i] = 0.0;
+//   }
+//   for (size_t i = 50; i < 100; ++i)
+//   {
+//     dataset(3, i) = i;
+//     labels[i] = 1.0;
+//   }
 
-  // Use default parameters.
-  DecisionTreeRegressor<> d(dataset, labels);
+//   // Use default parameters.
+//   DecisionTreeRegressor<> d(dataset, labels);
 
-  // Now require that we have some children.
-  REQUIRE(d.NumChildren() > 0);
-}
+//   // Now require that we have some children.
+//   REQUIRE(d.NumChildren() > 0);
+// }
 
 /**
  * Construct a tree with weighted labels.
  */
-TEST_CASE("BasicConstructionTestWithWeight_", "[DecisionTreeRegressorTest]")
-{
-  arma::mat dataset(10, 100, arma::fill::randu);
-  arma::Row<double> labels(100);
-  for (size_t i = 0; i < 50; ++i)
-  {
-    dataset(3, i) = i;
-    labels[i] = 0.0;
-  }
-  for (size_t i = 50; i < 100; ++i)
-  {
-    dataset(3, i) = i;
-    labels[i] = 1.0;
-  }
-  arma::rowvec weights(labels.n_elem);
-  weights.ones();
+// TEST_CASE("BasicConstructionTestWithWeight_", "[DecisionTreeRegressorTest]")
+// {
+//   arma::mat dataset(10, 100, arma::fill::randu);
+//   arma::Row<double> labels(100);
+//   for (size_t i = 0; i < 50; ++i)
+//   {
+//     dataset(3, i) = i;
+//     labels[i] = 0.0;
+//   }
+//   for (size_t i = 50; i < 100; ++i)
+//   {
+//     dataset(3, i) = i;
+//     labels[i] = 1.0;
+//   }
+//   arma::rowvec weights(labels.n_elem);
+//   weights.ones();
 
-  // Use default parameters.
-  DecisionTreeRegressor<> wd(dataset, labels, weights);
-  DecisionTreeRegressor<> d(dataset, labels);
+//   // Use default parameters.
+//   DecisionTreeRegressor<> wd(dataset, labels, weights);
+//   DecisionTreeRegressor<> d(dataset, labels);
 
-  // Now require that we have some children.
-  REQUIRE(wd.NumChildren() > 0);
-  REQUIRE(wd.NumChildren() == d.NumChildren());
-}
+//   // Now require that we have some children.
+//   REQUIRE(wd.NumChildren() > 0);
+//   REQUIRE(wd.NumChildren() == d.NumChildren());
+// }
 
 /**
  * Construct the decision tree on numeric data only and see that we can fit it
  * exactly and achieve perfect performance on the training set.
  */
-TEST_CASE("PerfectTrainingSet_", "[DecisionTreeRegressorTest]")
-{
-  arma::mat dataset(10, 100, arma::fill::randu);
-  arma::Row<double> labels(100);
-  for (size_t i = 0; i < 50; ++i)
-  {
-    dataset(3, i) = i;
-    labels[i] = 0.0;
-  }
-  for (size_t i = 50; i < 100; ++i)
-  {
-    dataset(3, i) = i;
-    labels[i] = 1.0;
-  }
+// TEST_CASE("PerfectTrainingSet_", "[DecisionTreeRegressorTest]")
+// {
+//   arma::mat dataset(10, 100, arma::fill::randu);
+//   arma::Row<double> labels(100);
+//   for (size_t i = 0; i < 50; ++i)
+//   {
+//     dataset(3, i) = i;
+//     labels[i] = 0.0;
+//   }
+//   for (size_t i = 50; i < 100; ++i)
+//   {
+//     dataset(3, i) = i;
+//     labels[i] = 1.0;
+//   }
 
-  DecisionTreeRegressor<> d(dataset, labels, 1, 0.0); // Minimum leaf size of 1.
+//   DecisionTreeRegressor<> d(dataset, labels, 1, 0.0); // Minimum leaf size of 1.
 
-  // Make sure that we can get perfect accuracy on the training set.
-  for (size_t i = 0; i < 100; ++i)
-  {
-    double prediction;
-    prediction = d.Predict(dataset.col(i));
+//   // Make sure that we can get perfect accuracy on the training set.
+//   for (size_t i = 0; i < 100; ++i)
+//   {
+//     double prediction;
+//     prediction = d.Predict(dataset.col(i));
 
-    REQUIRE(prediction == Approx(labels[i]).epsilon(1e-7));
-  }
-}
+//     REQUIRE(prediction == Approx(labels[i]).epsilon(1e-7));
+//   }
+// }
 
 /**
  * Construct the decision tree with weighted labels
  */
-TEST_CASE("PerfectTrainingSetWithWeight_", "[DecisionTreeRegressorTest]")
-{
-  // Completely random dataset with no structure.
-  arma::mat dataset(10, 100, arma::fill::randu);
-  arma::Row<double> labels(100);
-  for (size_t i = 0; i < 50; ++i)
-  {
-    dataset(3, i) = i;
-    labels[i] = 0.0;
-  }
-  for (size_t i = 50; i < 100; ++i)
-  {
-    dataset(3, i) = i;
-    labels[i] = 1.0;
-  }
-  arma::rowvec weights(labels.n_elem);
-  weights.ones();
+// TEST_CASE("PerfectTrainingSetWithWeight_", "[DecisionTreeRegressorTest]")
+// {
+//   // Completely random dataset with no structure.
+//   arma::mat dataset(10, 100, arma::fill::randu);
+//   arma::Row<double> labels(100);
+//   for (size_t i = 0; i < 50; ++i)
+//   {
+//     dataset(3, i) = i;
+//     labels[i] = 0.0;
+//   }
+//   for (size_t i = 50; i < 100; ++i)
+//   {
+//     dataset(3, i) = i;
+//     labels[i] = 1.0;
+//   }
+  // arma::rowvec weights(labels.n_elem);
+  // weights.ones();
 
-  // Minimum leaf size of 1.
-  DecisionTreeRegressor<> d(dataset, labels, weights, 1, 0.0);
+  // // Minimum leaf size of 1.
+  // DecisionTreeRegressor<> d(dataset, labels, weights, 1, 0.0);
 
-  // This part of code is dupliacte with no weighted one.
-  for (size_t i = 0; i < 100; ++i)
-  {
-    size_t prediction;
-    prediction = d.Predict(dataset.col(i));
+  // // This part of code is dupliacte with no weighted one.
+  // for (size_t i = 0; i < 100; ++i)
+  // {
+  //   size_t prediction;
+  //   prediction = d.Predict(dataset.col(i));
 
-    REQUIRE(prediction == Approx(labels[i]).epsilon(1e-7));
-  }
-}
+  //   REQUIRE(prediction == Approx(labels[i]).epsilon(1e-7));
+  // }
+// }
 
 /**
  * Test that the decision tree generalizes reasonably.
  */
-TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
-{
-  // Loading data.
-  data::DatasetInfo info;
-  arma::mat trainData, testData;
-  arma::Row<double> trainLabels, testLabels;
-  LoadBostonHousingDataset(trainData, testData, trainLabels, testLabels, info);
+// TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
+// {
+//   // Loading data.
+//   data::DatasetInfo info;
+//   arma::mat trainData, testData;
+//   arma::Row<double> trainLabels, testLabels;
+//   LoadBostonHousingDataset(trainData, testData, trainLabels, testLabels, info);
 
-  // Initialize an all-ones weight matrix.
-  arma::rowvec weights(trainLabels.n_cols, arma::fill::ones);
+//   // Initialize an all-ones weight matrix.
+//   arma::rowvec weights(trainLabels.n_cols, arma::fill::ones);
 
-  // Build decision tree.
-  DecisionTreeRegressor<> d(trainData, info, trainLabels);
-  DecisionTreeRegressor<> wd(trainData, info, trainLabels, weights);
+//   // Build decision tree.
+//   DecisionTreeRegressor<> d(trainData, info, trainLabels, 1, 1e-7, 20);
+//   DecisionTreeRegressor<> wd(trainData, info, trainLabels, weights, 1, 1e-7, 20);
 
-  // Get the predicted test labels.
-  arma::Row<double> predictions;
-  d.Predict(testData, predictions);
+//   // Get the predicted test labels.
+//   arma::Row<double> predictions;
+//   d.Predict(testData, predictions);
 
-  REQUIRE(predictions.n_elem == testData.n_cols);
+//   REQUIRE(predictions.n_elem == testData.n_cols);
 
-  // Figure out rmse.
-  double rmse = RMSE(predictions, testLabels);
+//   // Figure out rmse.
+//   double rmse = RMSE(predictions, testLabels);
 
-  REQUIRE(rmse < 9.21);
-  std::cout << predictions << std::endl << testLabels;
+//   REQUIRE(rmse < 9.21);
+//   // std::cout << predictions << std::endl << testLabels;
+//   arma::Row<double> trainPred;
+//   d.Predict(trainData, trainPred);
+//   std::cout << trainPred;
 
-  // Reset the prediction.
-  predictions.zeros();
-  wd.Predict(testData, predictions);
+//   DecisionTreeRegressor<> dt = d;
+//   // Print number of childrens;
+//   std::cout << dt.Child(0).NumChildren() << std::endl;
+//   std::cout << dt.Child(1).NumChildren() << std::endl;
 
-  REQUIRE(predictions.n_elem == testData.n_cols);
+//   // Reset the prediction.
+//   predictions.zeros();
+//   wd.Predict(testData, predictions);
 
-  // Figure out the rmse.
-  double wdrmse = RMSE(predictions, testLabels);
+//   REQUIRE(predictions.n_elem == testData.n_cols);
 
-  REQUIRE(wdrmse < 9.21);
-}
+//   // Figure out the rmse.
+//   double wdrmse = RMSE(predictions, testLabels);
+
+//   REQUIRE(wdrmse < 9.21);
+// }
 
 /**
  * Test that the decision tree generalizes reasonably when built on float data.
  */
-TEST_CASE("SimpleGeneralizationFMatTest_", "[DecisionTreeRegressorTest]")
+// TEST_CASE("SimpleGeneralizationFMatTest_", "[DecisionTreeRegressorTest]")
+// {
+//   // Loading data.
+//   data::DatasetInfo info;
+//   arma::mat trainData, testData;
+//   arma::Row<double> trainLabels, testLabels;
+//   LoadBostonHousingDataset(trainData, testData, trainLabels, testLabels, info);
+
+//   // Initialize an all-ones weight matrix.
+//   arma::rowvec weights(trainLabels.n_cols, arma::fill::ones);
+
+//   // Build decision tree.
+//   DecisionTreeRegressor<> d(trainData, trainLabels);
+//   DecisionTreeRegressor<> wd(trainData, trainLabels, weights);
+
+//   // Get the predicted test labels.
+//   arma::Row<double> predictions;
+//   d.Predict(testData, predictions);
+
+//   REQUIRE(predictions.n_elem == testData.n_cols);
+
+//   // Figure out the rmse.
+//   double rmse = RMSE(predictions, testLabels);
+
+//   REQUIRE(rmse < 9.21);
+//   std::cout << R2Score(predictions, testLabels) << std::endl;
+
+//   // Reset the prediction.
+//   predictions.zeros();
+//   wd.Predict(testData, predictions);
+
+//   REQUIRE(predictions.n_elem == testData.n_cols);
+
+//   // Figure out the rmse.
+//   double wdrmse = RMSE(predictions, testLabels);
+
+//   REQUIRE(wdrmse < 9.21);
+// }
+
+TEST_CASE("multisplittest", "[DecisionTreeRegressorTest]")
 {
-  // Loading data.
-  data::DatasetInfo info;
-  arma::mat trainData, testData;
-  arma::Row<double> trainLabels, testLabels;
-  LoadBostonHousingDataset(trainData, testData, trainLabels, testLabels, info);
+  arma::mat dataset(10, 500, arma::fill::randu);
+  arma::Row<double> labels(500);
 
-  // Initialize an all-ones weight matrix.
-  arma::rowvec weights(trainLabels.n_cols, arma::fill::ones);
+  for (size_t i = 0; i < 100; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 0.0;
+  }
+  for (size_t i = 100; i < 200; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 1.0;
+  }
+  for (size_t i = 200; i < 300; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 2.0;
+  }
+  for (size_t i = 300; i < 400; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 1.0;
+  }
+  for (size_t i = 400; i < 500; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 0.0;
+  }
 
-  // Build decision tree.
-  DecisionTreeRegressor<> d(trainData, trainLabels);
-  DecisionTreeRegressor<> wd(trainData, trainLabels, weights);
+  arma::rowvec weights(labels.n_elem);
+  weights.ones();
 
-  // Get the predicted test labels.
-  arma::Row<double> predictions;
-  d.Predict(testData, predictions);
+  // Minimum leaf size of 1.
+  std::cout << "****************Start**************\n";
+  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
+  std::cout << "****************End****************\n";
+}
 
-  REQUIRE(predictions.n_elem == testData.n_cols);
+TEST_CASE("multisplittest1", "[DecisionTreeRegressorTest]")
+{
+  arma::mat dataset(10, 250, arma::fill::randu);
+  arma::Row<double> labels(500);
 
-  // Figure out the rmse.
-  double rmse = RMSE(predictions, testLabels);
+  for (size_t i = 0; i < 50; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 0.0;
+  }
+  for (size_t i = 50; i < 100; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 1.0;
+  }
+  for (size_t i = 100; i < 150; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 2.0;
+  }
+  for (size_t i = 150; i < 200; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 1.0;
+  }
+  for (size_t i = 200; i < 250; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 0.0;
+  }
 
-  REQUIRE(rmse < 9.21);
-  std::cout << R2Score(predictions, testLabels) std::endl;
+  arma::rowvec weights(labels.n_elem);
+  weights.ones();
 
-  // Reset the prediction.
-  predictions.zeros();
-  wd.Predict(testData, predictions);
+  // Minimum leaf size of 1.
+  std::cout << "****************Start**************\n";
+  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
+  std::cout << "****************End****************\n";
+}
 
-  REQUIRE(predictions.n_elem == testData.n_cols);
+TEST_CASE("multisplittest2", "[DecisionTreeRegressorTest]")
+{
+  arma::mat dataset(10, 500, arma::fill::randu);
+  arma::Row<double> labels(500);
 
-  // Figure out the rmse.
-  double wdrmse = RMSE(predictions, testLabels);
+  for (size_t i = 0; i < 100; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 0.0;
+  }
+  for (size_t i = 100; i < 200; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 5.0;
+  }
+  for (size_t i = 200; i < 300; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 10.0;
+  }
+  for (size_t i = 300; i < 400; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 15.0;
+  }
+  for (size_t i = 400; i < 500; i++)
+  {
+    dataset(3, i) = i;
+    labels(i) = 20.0;
+  }
 
-  REQUIRE(wdrmse < 9.21);
+  arma::rowvec weights(labels.n_elem);
+  weights.ones();
+
+  // Minimum leaf size of 1.
+  std::cout << "****************Start**************\n";
+  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
+  std::cout << "****************End****************\n";
 }
 
 // /**
@@ -589,45 +717,45 @@ TEST_CASE("SimpleGeneralizationFMatTest_", "[DecisionTreeRegressorTest]")
  * low-weighted data is random noise), and that the tree still builds correctly
  * enough to get good results.
  */
-TEST_CASE("WeightedDecisionTreeTest_", "[DecisionTreeRegressorTest]")
-{
-  // Loading data.
-  data::DatasetInfo info;
-  arma::mat trainData, testData;
-  arma::Row<double> trainLabels, testLabels;
-  LoadBostonHousingDataset(trainData, testData, trainLabels, testLabels, info);
+// TEST_CASE("WeightedDecisionTreeTest_", "[DecisionTreeRegressorTest]")
+// {
+//   // Loading data.
+//   data::DatasetInfo info;
+//   arma::mat trainData, testData;
+//   arma::Row<double> trainLabels, testLabels;
+//   LoadBostonHousingDataset(trainData, testData, trainLabels, testLabels, info);
 
-  // Add some noise.
-  arma::mat noise(trainData.n_rows, 500, arma::fill::randu);
-  arma::Row<double> noiseLabels(500);
-  for (size_t i = 0; i < noiseLabels.n_elem; ++i)
-    noiseLabels[i] = 15 + math::Random(0, 10); // Random label.
+//   // Add some noise.
+//   arma::mat noise(trainData.n_rows, 500, arma::fill::randu);
+//   arma::Row<double> noiseLabels(500);
+//   for (size_t i = 0; i < noiseLabels.n_elem; ++i)
+//     noiseLabels[i] = 15 + math::Random(0, 10); // Random label.
 
-  // Concatenate data matrices.
-  arma::mat data = arma::join_rows(trainData, noise);
-  arma::Row<double> fullLabels = arma::join_rows(trainLabels, noiseLabels);
+//   // Concatenate data matrices.
+//   arma::mat data = arma::join_rows(trainData, noise);
+//   arma::Row<double> fullLabels = arma::join_rows(trainLabels, noiseLabels);
 
-  // Now set weights.
-  arma::rowvec weights(trainData.n_cols + 500);
-  for (size_t i = 0; i < trainData.n_cols; ++i)
-    weights[i] = math::Random(0.9, 1.0);
-  for (size_t i = trainData.n_cols; i < trainData.n_cols + 500; ++i)
-    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
+//   // Now set weights.
+//   arma::rowvec weights(trainData.n_cols + 500);
+//   for (size_t i = 0; i < trainData.n_cols; ++i)
+//     weights[i] = math::Random(0.9, 1.0);
+//   for (size_t i = trainData.n_cols; i < trainData.n_cols + 500; ++i)
+//     weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
 
-  // Now build the decision tree.  I think the syntax is right here.
-  DecisionTreeRegressor<> d(data, fullLabels, weights);
+//   // Now build the decision tree.  I think the syntax is right here.
+//   DecisionTreeRegressor<> d(data, fullLabels, weights);
 
-  // Now we can check that we get good performance on the VC2 test set.
-  arma::Row<double> predictions;
-  d.Predict(testData, predictions);
+//   // Now we can check that we get good performance on the VC2 test set.
+//   arma::Row<double> predictions;
+//   d.Predict(testData, predictions);
 
-  REQUIRE(predictions.n_elem == testData.n_cols);
+//   REQUIRE(predictions.n_elem == testData.n_cols);
 
-  // Figure out the accuracy.
-  double rmse = RMSE(predictions, testLabels);
+//   // Figure out the accuracy.
+//   double rmse = RMSE(predictions, testLabels);
 
-  REQUIRE(rmse < 9.21);
-}
+//   REQUIRE(rmse < 9.21);
+// }
 
 // /**
 //  * Test that we can build a decision tree on a simple categorical dataset using
