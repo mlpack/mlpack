@@ -195,15 +195,60 @@ class MeanPooling
                  arma::Mat<eT>& output)
   {
 
-    size_t condition = kernelHeight * kernelWidth - strideHeight * strideWidth -
+    const size_t condition = kernelHeight * kernelWidth - strideHeight * strideWidth -
       kernelWidth - kernelHeight;
 
     if (condition > 0)
     {
-      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, colidx++)
+      // If this condition is true then theoritically the prefix sum method of
+      // unpooling is faster. The aim of unpooling is to add
+      // `error(i, j) / kernalArea` to `inputArea(kernal)`. This requires
+      // inputArea.n_elem additions. So, total operations required will be
+      // `error.n_elem * inputArea.n_elem` operations.
+      // To improve this method we will use an idea of prefix sums. Let's see
+      // this method in 1-D matrix then we will extend it to 2-D matrix.
+      // Let the input be a 1-D matrix input = `[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]` of size 10
+      // and we want to add `10` to idx = 1 to idx = 5. In brute force method we can run
+      // a loop from idx = 1 to idx = 5 and add `10` to each element. In prefix method
+      // We will add `+10` to idx = 1 and `-10` to idx = (5 + 1). Now the input will look
+      // like `[0, +10, 0, 0, 0, 0, -10, 0, 0, 0]`. After that we can just do prefix
+      // sum `input[i] += input[i - 1]`. Then the input becomes
+      // `[0, +10, +10, +10, +10, +10, 0, 0, 0, 0]`. So the total computation require
+      // by this method is (2 additions + Prefix operations).
+      // Note that if there are `k` such operation of adding a number of some
+      // continuous subarray. Then the brute force method will require
+      // `k * size(subarray)` operations. But the prefix method will require
+      // `2 * k + Prefix` operations, because the Prefix can be performed once at
+      // the end.
+      // Now for 2-D matrix. Lets say we want to add `e` to all elements from
+      // input(x1 : x2, y1 : y2). So the inputArea = (x2 - x1 + 1) * (y2 - y1 + 1).
+      // In prefix method the following operations will be performed:
+      //    1. Add `+e` to input(x1, y1).
+      //    2. Add `-e` to input(x1 + 1, y1).
+      //    3. Add `-e` to input(x1, y1 + 1).
+      //    4. Add `+e` to input(x1 + 1, y1 + 1).
+      //    5. Perform Prefix sum over columns i.e input(i, j) += input(i, j - 1)
+      //    6. Perform Prefix sum over rows i.e input(i, j) += input(i - 1, j)
+      // So lets say if we had `k` number of such operations. The brute force
+      // method will require `kernalArea * k` operations.
+      // The prefix method will require `4 * k + Prefix operation`.
+
+      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, ++colidx)
       {
-        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, rowidx++)
+        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, ++rowidx)
         {
+          // We have to add error(i, j) to output(span(rowidx, rowEnd), span(colidx, colEnd)).
+          // The steps of prefix sum method:
+          //
+          // 1. For each (i, j) perform:
+          //    1.1 Add +error(i, j) to output(rowidx, colidx)
+          //    1.2 Add -error(i, j) to output(rowidx, colidx + 1)
+          //    1.3 Add -error(i, j) to output(rowidx + 1, colidx)
+          //    1.4 Add +error(i, j) to output(rowidx + 1, colidx + 1)
+          //
+          // 2. Do prefix sum column wise i.e output(i, j) += output(i, j - 1)
+          // 2. Do prefix sum row wise i.e output(i, j) += output(i - 1, j)
+
           size_t rowEnd = i + kernelWidth - 1;
           size_t colEnd = j + kernelHeight - 1;
 
@@ -246,9 +291,9 @@ class MeanPooling
     else
     {
       arma::Mat<eT> unpooledError;
-      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, colidx++)
+      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, ++colidx)
       {
-        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, rowidx++)
+        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, ++rowidx)
         {
           size_t rowEnd = i + kernelWidth - 1;
           size_t colEnd = j + kernelHeight - 1;
