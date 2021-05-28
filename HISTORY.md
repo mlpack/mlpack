@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added dict-style inspection of mlpack models in python bindings (#2868).
+
   * Added warm start feature to Random Forest (#2881); this feature is
     accessible from mlpack's bindings to different languages.
 
