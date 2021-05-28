@@ -162,10 +162,10 @@ class MeanPooling
   {
     arma::Mat<eT> inputPre = input;
 
-    for(size_t i = 1; i < input.n_cols; ++i)
+    for (size_t i = 1; i < input.n_cols; ++i)
       inputPre.col(i) += inputPre.col(i - 1);
   
-    for(size_t i = 1; i < input.n_rows; ++i)
+    for (size_t i = 1; i < input.n_rows; ++i)
       inputPre.row(i) += inputPre.row(i - 1);
 
     for (size_t j = 0, colidx = 0; j < output.n_cols;
