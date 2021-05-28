@@ -3,6 +3,8 @@ project(mlpack C CXX)
 
 include(CMake/cotire.cmake)
 include(CMake/CheckHash.cmake)
+include(CMake/Autodownload.cmake)
+include(CMake/ConfigureCrossCompile.cmake)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -24,15 +26,29 @@ set(ENSMALLEN_VERSION "2.10.0")
 set(BOOST_VERSION "1.58")
 set(CEREAL_VERSION "1.1.2")
 
+# If BUILD_SHARED_LIBS is OFF then the mlpack library will be built statically.
+# In addition, all mlpack CLI bindings will be linked statically as well.
 if (WIN32)
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries are compiled)." OFF)
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
 
   set(DLL_COPY_DIRS "" CACHE STRING "List of directories (separated by ';') containing DLLs to copy for runtime.")
   set(DLL_COPY_LIBS "" CACHE STRING "List of DLLs (separated by ';') that should be copied for runtime.")
-else ()
+elseif(CMAKE_CROSSCOMPILING)
   option(BUILD_SHARED_LIBS
-      "Compile shared libraries (if OFF, static libraries are compiled)." ON)
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." OFF)
+else()
+  option(BUILD_SHARED_LIBS
+      "Compile shared libraries (if OFF, static libraries and binaries are compiled)." ON)
+endif()
+
+# Support preference of static libs by adjusting CMAKE_FIND_LIBRARY_SUFFIXES.
+if (NOT BUILD_SHARED_LIBS)
+  if(WIN32)
+    list(INSERT CMAKE_FIND_LIBRARY_SUFFIXES 0 .lib .a)
+  else()
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+  endif()
 endif()
 
 # Detect whether the user passed BUILD_PYTHON_BINDINGS in order to determine if
@@ -90,14 +106,13 @@ enable_testing()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Ensure that GCC is new enough, if the compiler is GCC.
+if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
+  message(FATAL_ERROR "GCC version (${CMAKE_CXX_COMPILER_VERSION}) is too old! 5.x or newer is required.")
+endif ()
+
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
-
-# Disable any downloads if needed.
-if (DISABLE_DOWNLOADS)
-  set(DOWNLOAD_ENSMALLEN OFF)
-  set(DOWNLOAD_STB_IMAGE OFF)
-endif ()
 
 # If we are on a Unix-like system, use the GNU install directories module.
 # Otherwise set the values manually.
@@ -112,12 +127,12 @@ else ()
 endif ()
 
 # This is as of yet unused.
-#option(PGO "Use profile-guided optimization if not a debug build" ON)
+# option(PGO "Use profile-guided optimization if not a debug build" ON)
 
 # Set the CFLAGS and CXXFLAGS depending on the options the user specified.
 # Only GCC-like compilers support -Wextra, and other compilers give tons of
 # output for -Wall, so only -Wall and -Wextra on GCC.
-if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   # Ensure that we can't compile with clang 3.4, since this causes strange
   # issues.
   if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.5)
@@ -144,7 +159,7 @@ endif ()
 
 # If we are using MINGW, we need sections and big-obj, otherwise we create too
 # many sections.
-if(CMAKE_COMPILER_IS_GNUCC AND WIN32)
+if (CMAKE_COMPILER_IS_GNUCC AND WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections -Wa,-mbig-obj")
 endif()
@@ -153,7 +168,7 @@ endif()
 # OS (at least on some systems). Further, gcc sometimes optimizes calls to
 # math.h functions, making -lm unnecessary with gcc, but it may still be
 # necessary with clang.
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   if (APPLE)
     # Detect OS X version. Use '/usr/bin/sw_vers -productVersion' to
     # extract V from '10.V.x'.
@@ -166,7 +181,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
      # OSX Lion (10.7) and OS X Mountain Lion (10.8) doesn't automatically
      # select the right stdlib.
-    if(${MACOSX_VERSION} LESS 9)
+    if (${MACOSX_VERSION} LESS 9)
       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
       set(CMAKE_SHARED_LINKER_FLAGS
           "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
@@ -187,14 +202,14 @@ endif()
 
 # If we're using gcc, then we need to link against pthreads to use std::thread,
 # which we do in the tests.
-if(CMAKE_COMPILER_IS_GNUCC)
+if (CMAKE_COMPILER_IS_GNUCC)
   find_package(Threads)
   set(COMPILER_SUPPORT_LIBRARIES ${COMPILER_SUPPORT_LIBRARIES}
       ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
-if(DEBUG)
+if (DEBUG)
   if (NOT MSVC)
     add_definitions(-DDEBUG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -ftemplate-backtrace-limit=0")
@@ -203,10 +218,10 @@ if(DEBUG)
 
   # mlpack uses it's own mlpack::backtrace class based on Binary File Descriptor
   # <bfd.h> and linux Dynamic Loader <libdl.h> and more portable version in future
-  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(Bfd)
     find_package(LibDL)
-    if(LIBBFD_FOUND AND LIBDL_FOUND)
+    if (LIBBFD_FOUND AND LIBDL_FOUND)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic")
       set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${LIBBFD_INCLUDE_DIRS}
           ${LIBDL_INCLUDE_DIRS})
@@ -230,19 +245,19 @@ else()
 endif()
 
 # Profiling CFLAGS.  Turn profiling information on.
-if(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
+if (CMAKE_COMPILER_IS_GNUCC AND PROFILE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 endif()
 
 # If the user asked for running test cases with verbose output, turn that on.
-if(TEST_VERBOSE)
+if (TEST_VERBOSE)
   add_definitions(-DTEST_VERBOSE)
 endif()
 
 # If the user asked for extra Armadillo debugging output, turn that on.
-if(ARMA_EXTRA_DEBUG)
+if (ARMA_EXTRA_DEBUG)
   add_definitions(-DARMA_EXTRA_DEBUG)
 endif()
 
@@ -254,136 +269,79 @@ endif()
 #   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
+#   CEREAL_INCLUDE_DIR - include directory for cereal
 #   ENSMALLEN_INCLUDE_DIR - include directory for ensmallen
 #   STB_IMAGE_INCLUDE_DIR - include directory for STB image library
 #   MATHJAX_ROOT - root of MathJax installation
-find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
 
+# Download and compile OpenBLAS if we are cross compiling mlpack for a specific
+# architecture. The function takes the version of OpenBLAS as variable.
+if (CMAKE_CROSSCOMPILING)
+  search_openblas(0.3.13)
+endif()
+
+if (DISABLE_DOWNLOADS)
+  find_package(Armadillo "${ARMADILLO_VERSION}" REQUIRED)
+else()
+  find_package(Armadillo "${ARMADILLO_VERSION}")
+  if (NOT ARMADILLO_FOUND)
+    get_deps(http://files.mlpack.org/armadillo-10.3.0.tar.gz armadillo armadillo-10.3.0.tar.gz)
+    set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    find_package(Armadillo REQUIRED)
+  endif()
+endif()
 # Include directories for the previous dependencies.
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
 
 # Find stb_image.h and stb_image_write.h.
-find_package(StbImage)
-# Download stb_image for image loading.
-if (NOT STB_IMAGE_FOUND)
-  if (DOWNLOAD_STB_IMAGE)
-    set(STB_DIR "stb")
-    install(DIRECTORY DESTINATION "${CMAKE_BINARY_DIR}/deps/${STB_DIR}")
-    file(DOWNLOAD http://mlpack.org/files/stb-2.22/stb_image.h
-        "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h"
-        STATUS STB_IMAGE_DOWNLOAD_STATUS_LIST LOG STB_IMAGE_DOWNLOAD_LOG
-        SHOW_PROGRESS)
-    list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 0 STB_IMAGE_DOWNLOAD_STATUS)
-    file(DOWNLOAD http://mlpack.org/files/stb-1.13/stb_image_write.h
-        "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h"
-        STATUS STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST
-        LOG STB_IMAGE_WRITE_DOWNLOAD_LOG
-        SHOW_PROGRESS)
-    list(GET STB_IMAGE_WRITE_DOWNLOAD_STATUS_LIST 0
-        STB_IMAGE_WRITE_DOWNLOAD_STATUS)
-    if (STB_IMAGE_DOWNLOAD_STATUS EQUAL 0 AND
-        STB_IMAGE_WRITE_DOWNLOAD_STATUS EQUAL 0)
-      check_hash (http://mlpack.org/files/stb/hash.md5 "${CMAKE_BINARY_DIR}/deps/${STB_DIR}"
-          HASH_CHECK_FAIL)
-      if (HASH_CHECK_FAIL EQUAL 0)
-        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-            "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-        message(STATUS
-            "Successfully downloaded stb into ${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-        # Now we have to also ensure these header files get installed.
-        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-        install(FILES "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/stb_image_write.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-        add_definitions(-DHAS_STB)
-        set(STB_AVAILABLE "1")
-      else ()
-        message(WARNING
-            "stb/stb_image.h is not installed. Image utilities will not be available!")
-      endif ()
-    else ()
-        file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/deps/${STB_DIR}/")
-        list(GET STB_IMAGE_DOWNLOAD_STATUS_LIST 1 STB_DOWNLOAD_ERROR)
-        message(WARNING
-            "Could not download stb! Error code ${STB_DOWNLOAD_STATUS}: ${STB_DOWNLOAD_ERROR}!  Error log: ${STB_DOWNLOAD_LOG}")
-        message(WARNING
-            "stb/stb_image.h is not installed. Image utilities will not be available!")
-    endif ()
-  else ()
-    message(WARNING
-        "stb/stb_image.h is not installed. Image utilities will not be available!")
-  endif ()
-else ()
-  # Already has STB installed.
+if (DISABLE_DOWNLOADS)
+  find_package(StbImage)
+else()
+  find_package(StbImage)
+  if (NOT STB_IMAGE_FOUND)
+    get_deps(http://mlpack.org/files/stb.tar.gz stb stb.tar.gz)
+    set(STB_IMAGE_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    find_package(StbImage REQUIRED)
+  endif()
+endif()
+
+if (STB_IMAGE_FOUND)
   add_definitions(-DHAS_STB)
-  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${STB_IMAGE_INCLUDE_DIR})
   set(STB_AVAILABLE "1")
-endif ()
+endif()
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${STB_IMAGE_INCLUDE_DIR}")
 
 # Find ensmallen.
-# Once ensmallen is readily available in package repos, the automatic downloader
-# here can be removed.
-find_package(Ensmallen "${ENSMALLEN_VERSION}")
-if (NOT ENSMALLEN_FOUND)
-  if (DOWNLOAD_ENSMALLEN)
-    file(DOWNLOAD http://www.ensmallen.org/files/ensmallen-latest.tar.gz
-        "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
-        STATUS ENS_DOWNLOAD_STATUS_LIST LOG ENS_DOWNLOAD_LOG
-        SHOW_PROGRESS)
-    list(GET ENS_DOWNLOAD_STATUS_LIST 0 ENS_DOWNLOAD_STATUS)
-    if (ENS_DOWNLOAD_STATUS EQUAL 0)
-      execute_process(COMMAND ${CMAKE_COMMAND} -E
-          tar xzf "${CMAKE_BINARY_DIR}/deps/ensmallen-latest.tar.gz"
-          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
+if (DISABLE_DOWNLOADS)
+  find_package(Ensmallen "${ENSMALLEN_VERSION}" REQUIRED)
+else()
+  find_package(Ensmallen "${ENSMALLEN_VERSION}")
+  if (NOT ENSMALLEN_FOUND)
+    get_deps(http://www.ensmallen.org/files/ensmallen-latest.tar.gz ensmallen ensmallen-latest.tar.gz)
+    set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    find_package(Ensmallen REQUIRED)
+  endif()
+endif()
+set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
 
-      # Get the name of the directory.
-      file (GLOB ENS_DIRECTORIES RELATIVE "${CMAKE_BINARY_DIR}/deps/"
-          "${CMAKE_BINARY_DIR}/deps/ensmallen-[0-9]*.[0-9]*.[0-9]*")
-      # list(FILTER) is not available on 3.5 or older, but try to keep
-      # configuring without filtering the list anyway (it might work if only
-      # the file ensmallen-latest.tar.gz is present.
-      if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.6.0")
-        list(FILTER ENS_DIRECTORIES EXCLUDE REGEX "ensmallen-.*\.tar\.gz")
-      endif ()
-      list(LENGTH ENS_DIRECTORIES ENS_DIRECTORIES_LEN)
-      if (ENS_DIRECTORIES_LEN EQUAL 1)
-        list(GET ENS_DIRECTORIES 0 ENSMALLEN_INCLUDE_DIR)
-        set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS}
-            "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include")
-        message(STATUS
-            "Successfully downloaded ensmallen into ${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/")
-
-        # Now we have to also ensure these header files get installed.
-        install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen_bits/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ensmallen_bits")
-        install(FILES "${CMAKE_BINARY_DIR}/deps/${ENSMALLEN_INCLUDE_DIR}/include/ensmallen.hpp" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-      else ()
-        message(FATAL_ERROR "Problem unpacking ensmallen!  Expected only one directory ensmallen-x.y.z/; found ${ENS_DIRECTORIES}. Try removing the directory ${CMAKE_BINARY_DIR}/deps and reconfiguring.")
-      endif ()
-    else ()
-      list(GET ENS_DOWNLOAD_STATUS_LIST 1 ENS_DOWNLOAD_ERROR)
-      message(FATAL_ERROR
-          "Could not download ensmallen! Error code ${ENS_DOWNLOAD_STATUS}: ${ENS_DOWNLOAD_ERROR}!  Error log: ${ENS_DOWNLOAD_LOG}")
-    endif ()
-  else ()
-    # Release versions will have ensmallen packaged with the release so we can
-    # just reference that.
-    if (EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen/ensmallen.hpp")
-      set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS}
-          "${CMAKE_SOURCE_DIR}/src/mlpack/core/optimizers/ensmallen")
-    else ()
-      message(FATAL_ERROR
-          "Cannot find ensmallen headers!  Try setting ENSMALLEN_INCLUDE_DIR!")
-    endif ()
-  endif ()
-else ()
-  set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} "${ENSMALLEN_INCLUDE_DIR}")
-endif ()
-
-find_package(cereal "${CEREAL_VERSION}" REQUIRED)
+# Find cereal.
+if (DISABLE_DOWNLOADS)
+  find_package(cereal "${CEREAL_VERSION}" REQUIRED)
+else()
+  find_package(cereal "${CEREAL_VERSION}")
+  if (NOT CEREAL_FOUND)
+    get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.0.tar.gz cereal cereal-1.3.0.tar.gz)
+    set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
+    find_package(cereal REQUIRED)
+  endif()
+endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
 
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
+  "1.76.0" "1.76"
   "1.75.0" "1.75"
   "1.74.0" "1.74"
   "1.73.0" "1.73"
@@ -408,8 +366,19 @@ set(Boost_ADDITIONAL_VERSIONS
 # TODO for the brave: transition all mlpack's CMake to 'target-based modern
 # CMake'.  Good luck!  You'll need it.
 set(Boost_NO_BOOST_CMAKE 1)
-find_package(Boost "${BOOST_VERSION}")
-
+if (DISABLE_DOWNLOADS)
+  find_package(Boost "${BOOST_VERSION}" REQUIRED)
+else()
+  find_package(Boost "${BOOST_VERSION}")
+  if (NOT Boost_FOUND)
+    if (CMAKE_COMPILER_IS_GNUCC AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0))
+      get_deps(http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz boost boost_1_58_0.tar.gz)
+    else()
+      get_deps(https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz boost boost_1_76_0.tar.gz)
+    endif()
+    find_package(Boost REQUIRED)
+  endif()
+endif()
 set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES})
 set(MLPACK_LIBRARY_DIRS ${MLPACK_LIBRARY_DIRS})
@@ -432,7 +401,7 @@ if (OPENMP_FOUND)
   add_definitions(-DHAS_OPENMP)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-  if(OpenMP_CXX_FOUND)
+  if (OpenMP_CXX_FOUND)
     set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
   endif ()
 else ()

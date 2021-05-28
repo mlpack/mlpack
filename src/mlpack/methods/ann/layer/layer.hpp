@@ -32,6 +32,7 @@
 #include "dropout.hpp"
 #include "elu.hpp"
 #include "fast_lstm.hpp"
+#include "flatten_t_swish.hpp"
 #include "flexible_relu.hpp"
 #include "glimpse.hpp"
 #include "gru.hpp"

@@ -2,6 +2,11 @@
 ###### ????-??-??
   * Added dict-style inspection of mlpack models in python bindings (#2868).
 
+  * Added Extra Trees Algorithm (#2883). Currently, it can be used using the
+    class `mlpack::tree::ExtraTrees`, but only through C++.
+
+  * Add Flatten T Swish activation function (`flatten-t-swish.hpp`)
+
   * Added warm start feature to Random Forest (#2881); this feature is
     accessible from mlpack's bindings to different languages.
 
@@ -47,6 +52,9 @@
 
   * Fix Python binding build when the CMake variable `USE_OPENMP` is set to
     `OFF` (#2884).
+
+  * The `mlpack_test` target is no longer built as part of `make all`.  Use
+    `make mlpack_test` to build the tests.
 
 ### mlpack 3.4.2
 ###### 2020-10-26

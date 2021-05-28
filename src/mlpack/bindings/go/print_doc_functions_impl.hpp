@@ -432,13 +432,6 @@ inline std::string ProgramCall(const std::string& programName)
   std::ostringstream ossOptions;
   ossOptions << "param := mlpack." << goProgramName << "Options()\n";
   oss << util::HyphenateString(ossOptions.str(), 4);
-  std::vector<std::string> outputOptions;
-  for (auto it = parameters.begin(); it != parameters.end(); ++it)
-  {
-    util::ParamData& d = it->second;
-    if (!d.input)
-      outputOptions.push_back(it->first);
-  }
   std::string result = oss.str();
   oss.str("");
   std::ostringstream ossInputs;

@@ -80,9 +80,9 @@ SingleTreeTraverser<RuleType>::Traverse(
   // and then the vector is all the nodes in that scale which need to be
   // investigated.  Because no point in a scale can add a point in its own
   // scale, we know that the vector for each scale is final when we get to it.
-  // In addition, map is organized in such a way that rbegin() will return the
-  // largest scale.
-  std::map<int, std::vector<MapEntryType> > mapQueue;
+  // In addition, the map is organized in such a way that begin() will return
+  // the largest scale.
+  std::map<int, std::vector<MapEntryType>, std::greater<int>> mapQueue;
 
   // Create the score for the children.
   double rootChildScore = rule.Score(queryIndex, referenceNode);
@@ -123,14 +123,13 @@ SingleTreeTraverser<RuleType>::Traverse(
   // Now begin the iteration through the map, but only if it has anything in it.
   if (mapQueue.empty())
     return;
-  typename std::map<int, std::vector<MapEntryType> >::reverse_iterator rit =
-      mapQueue.rbegin();
+  int maxScale = mapQueue.cbegin()->first;
 
   // We will treat the leaves differently (below).
-  while ((*rit).first != INT_MIN)
+  while (maxScale != INT_MIN)
   {
     // Get a reference to the current scale.
-    std::vector<MapEntryType>& scaleVector = (*rit).second;
+    std::vector<MapEntryType>& scaleVector = mapQueue[maxScale];
 
     // Before traversing all the points in this scale, sort by score.
     std::sort(scaleVector.begin(), scaleVector.end());
@@ -170,7 +169,9 @@ SingleTreeTraverser<RuleType>::Traverse(
       // trees using TreeTraits::FirstPointIsCentroid; this is an optimization
       // that (theoretically) the compiler should get right.
       if (point != parent)
+      {
         baseCase = rule.BaseCase(queryIndex, point);
+      }
 
       // Don't add the self-leaf.
       size_t j = 0;
@@ -193,7 +194,8 @@ SingleTreeTraverser<RuleType>::Traverse(
     }
 
     // Now clear the memory for this scale; it isn't needed anymore.
-    mapQueue.erase((*rit).first);
+    mapQueue.erase(maxScale);
+    maxScale = mapQueue.begin()->first;
   }
 
   // Now deal with the leaves.

@@ -11,6 +11,8 @@ set(SOURCES
   gini_gain.hpp
   information_gain.hpp
   multiple_random_dimension_select.hpp
+  random_binary_numeric_split.hpp
+  random_binary_numeric_split_impl.hpp
   random_dimension_select.hpp
 )
 
