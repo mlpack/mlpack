@@ -84,8 +84,6 @@ typedef LogSoftMaxType<arma::mat, arma::mat> LogSoftMax;
 } // namespace ann
 } // namespace mlpack
 
-CEREAL_REGISTER_TYPE(mlpack::ann::LogSoftMax);
-
 // Include implementation.
 #include "log_softmax_impl.hpp"
 

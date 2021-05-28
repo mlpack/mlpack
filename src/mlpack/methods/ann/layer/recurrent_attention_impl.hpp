@@ -15,14 +15,6 @@
 // In case it hasn't yet been included.
 #include "recurrent_attention.hpp"
 
-#include "../visitor/load_output_parameter_visitor.hpp"
-#include "../visitor/save_output_parameter_visitor.hpp"
-#include "../visitor/backward_visitor.hpp"
-#include "../visitor/forward_visitor.hpp"
-#include "../visitor/gradient_set_visitor.hpp"
-#include "../visitor/gradient_update_visitor.hpp"
-#include "../visitor/gradient_visitor.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -97,7 +89,7 @@ void RecurrentAttention<InputType, OutputType>::Forward(
     }
   }
 
-  output = boost::apply_visitor(outputParameterVisitor, rnnModule);
+  output = rnnModule->OutputParameter();
 
   forwardStep = 0;
   backwardStep = 0;

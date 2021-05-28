@@ -138,8 +138,6 @@ typedef DropoutType<arma::mat, arma::mat> Dropout;
 } // namespace ann
 } // namespace mlpack
 
-CEREAL_REGISTER_TYPE(mlpack::ann::Dropout);
-
 // Include implementation.
 #include "dropout_impl.hpp"
 

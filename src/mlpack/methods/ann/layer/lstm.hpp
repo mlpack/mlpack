@@ -59,7 +59,7 @@ template <
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class LSTM
+class LSTM : public Layer<InputType, OutputType>
 {
  public:
   //! Create the LSTM object.
@@ -95,7 +95,6 @@ class LSTM
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input, OutputType& output);
 
   /**
@@ -107,7 +106,6 @@ class LSTM
    * @param cellState Cell state of the LSTM.
    * @param useCellState Use the cellState passed in the LSTM cell.
    */
-  template<typename InputType, typename OutputType>
   void Forward(const InputType& input,
                OutputType& output,
                OutputType& cellState,
@@ -122,10 +120,9 @@ class LSTM
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename InputType, typename ErrorType, typename GradientType>
   void Backward(const InputType& input,
-                const ErrorType& gy,
-                GradientType& g);
+                const OutputType& gy,
+                OutputType& g);
 
   /*
    * Reset the layer parameter.
@@ -147,10 +144,9 @@ class LSTM
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename InputType, typename ErrorType, typename GradientType>
   void Gradient(const InputType& input,
-                const ErrorType& error,
-                GradientType& gradient);
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the maximum number of steps to backpropagate through time (BPTT).
   size_t Rho() const { return rho; }

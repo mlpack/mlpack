@@ -34,7 +34,7 @@ template<
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class AddMerge
+class AddMerge : public Layer<InputType, OutputType>
 {
  public:
   /**

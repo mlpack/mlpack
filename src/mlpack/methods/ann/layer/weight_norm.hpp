@@ -53,6 +53,11 @@ class WeightNormType : public Layer<InputType, OutputType>
 {
  public:
   /**
+   * Create an empty WeightNorm layer.
+   */
+  WeightNormType();
+
+  /**
    * Create the WeightNorm layer object.
    *
    * @param layer The layer whose weights are needed to be normalized.
@@ -61,6 +66,15 @@ class WeightNormType : public Layer<InputType, OutputType>
 
   //! Destructor to release allocated memory.
   ~WeightNormType();
+
+  //! Create a WeightNorm layer by copying the given layer.
+  WeightNormType(const WeightNormType& other);
+  //! Create a WeightNorm layer by taking ownership of the other layer.
+  WeightNormType(WeightNormType&& other);
+  //! Copy the given layer.
+  WeightNormType& operator=(const WeightNormType& other);
+  //! Take ownership of the data in the given layer.
+  WeightNormType& operator=(WeightNormType&& other);
 
   //! Clone the WeightNormType object. This handles polymorphism correctly.
   WeightNormType* Clone() const { return new WeightNormType(*this); }

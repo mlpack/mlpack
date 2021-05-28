@@ -35,6 +35,11 @@ class ConstantType : public Layer<InputType, OutputType>
 {
  public:
   /**
+   * Create an empty Constant layer.
+   */
+  ConstantType();
+
+  /**
    * Create the Constant object that outputs a given constant scalar value
    * given any input value.
    *
@@ -43,8 +48,18 @@ class ConstantType : public Layer<InputType, OutputType>
    */
   ConstantType(const size_t outSize, const double scalar = 0);
 
+  //! Copy another ConstantType.
+  ConstantType(const ConstantType& layer);
+  //! Take ownership of another ConstantType.
+  ConstantType(ConstantType&& layer);
+  //! Copy another ConstantType.
+  ConstantType& operator=(const ConstantType& layer);
+  //! Take ownership of another ConstantType.
+  ConstantType& operator=(ConstantType&& layer);
+
   //! Clone the ConstantType object. This handles polymorphism correctly.
   ConstantType* Clone() const { return new ConstantType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network. The forward pass fills the
    * output with the specified constant parameter.

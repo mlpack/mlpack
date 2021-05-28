@@ -21,6 +21,17 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputType, typename OutputType>
 WeightNormType<InputType, OutputType>::
+WeightNormType() : wrappedLayer(new LinearType<InputType, OutputType>())
+{
+  layerWeightSize = wrappedLayer->WeightSize();
+  weights.set_size(layerWeightSize + 1, 1);
+
+  layerWeights.set_size(layerWeightSize, 1);
+  layerGradients.set_size(layerWeightSize, 1);
+}
+
+template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>::
 WeightNormType(Layer<InputType, OutputType>* layer) : wrappedLayer(layer)
 {
   layerWeightSize = wrappedLayer->WeightSize();
@@ -28,6 +39,68 @@ WeightNormType(Layer<InputType, OutputType>* layer) : wrappedLayer(layer)
 
   layerWeights.set_size(layerWeightSize, 1);
   layerGradients.set_size(layerWeightSize, 1);
+}
+
+template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>::WeightNormType(
+    const WeightNormType<InputType, OutputType>& other) :
+    wrappedLayer(other.wrappedLayer->Clone()),
+    layerWeightSize(other.layerWeightSize),
+    weights(other.weights),
+    layerGradients(other.layerGradients),
+    layerWeights(other.layerWeights)
+{
+  // Nothing else to do.
+}
+
+template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>::WeightNormType(
+    WeightNormType<InputType, OutputType>&& other) :
+    wrappedLayer(std::move(other.wrappedLayer)),
+    layerWeightSize(other.layerWeightSize),
+    weights(std::move(other.weights)),
+    layerGradients(std::move(other.layerGradients)),
+    layerWeights(std::move(other.layerWeights))
+{
+  // Reset the other layer.
+  other = WeightNormType<InputType, OutputType>();
+}
+
+template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>&
+WeightNormType<InputType, OutputType>::operator=(
+    const WeightNormType<InputType, OutputType>& other)
+{
+  if (this != &other)
+  {
+    wrappedLayer = other.wrappedLayer->Clone();
+    layerWeightSize = other.layerWeightSize;
+    weights = other.weights;
+    layerWeights = other.layerWeights;
+    layerGradients = other.layerGradients;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>&
+WeightNormType<InputType, OutputType>::operator=(
+    WeightNormType<InputType, OutputType>&& other)
+{
+  if (this != &other)
+  {
+    wrappedLayer = std::move(other.wrappedLayer);
+    layerWeightSize = other.layerWeightSize;
+    weights = std::move(other.weights);
+    layerWeights = std::move(other.layerWeights);
+    layerGradients = std::move(other.layerGradients);
+
+    // Reset the other layer.
+    other = WeightNormType<InputType, OutputType>();
+  }
+
+  return *this;
 }
 
 template<typename InputType, typename OutputType>

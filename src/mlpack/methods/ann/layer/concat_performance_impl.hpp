@@ -39,23 +39,24 @@ template<
     typename InputType,
     typename OutputType
 >
-template<typename eT>
-double ConcatPerformance<
+void ConcatPerformance<
     OutputLayerType,
     InputType,
     OutputType
->::Forward(const arma::Mat<eT>& input, arma::Mat<eT>& target)
+>::Forward(const InputType& input, OutputType& target)
 {
   const size_t elements = input.n_elem / inSize;
 
   double output = 0;
-  for (size_t i = 0; i < input.n_elem; i+= elements)
+  for (size_t i = 0; i < input.n_elem; i += elements)
   {
-    arma::mat subInput = input.submat(i, 0, i + elements - 1, 0);
+    InputType subInput = input.submat(i, 0, i + elements - 1, 0);
     output += outputLayer.Forward(subInput, target);
   }
 
-  return output;
+  // TODO: what to do with output?
+  //return output;
+  return;
 }
 
 template<
@@ -63,20 +64,19 @@ template<
     typename InputType,
     typename OutputType
 >
-template<typename eT>
 void ConcatPerformance<
     OutputLayerType,
     InputType,
     OutputType
 >::Backward(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& target,
-    arma::Mat<eT>& output)
+    const InputType& input,
+    const OutputType& target,
+    OutputType& output)
 {
   const size_t elements = input.n_elem / inSize;
 
-  arma::mat subInput = input.submat(0, 0, elements - 1, 0);
-  arma::mat subOutput;
+  InputType subInput = input.submat(0, 0, elements - 1, 0);
+  OutputType subOutput;
 
   outputLayer.Backward(subInput, target, subOutput);
 

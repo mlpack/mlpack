@@ -12,6 +12,9 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 
+namespace mlpack {
+namespace ann {
+
 /**
  * A layer is an abstract class implementing common neural networks operations,
  * such as convolution, batch norm, etc. These operations require managing
@@ -291,5 +294,8 @@ class Layer
   std::vector<Layer<InputType, OutputType>*> model;
 
 };
+
+} // namespace ann
+} // namespace mlpack
 
 #endif

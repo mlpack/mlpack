@@ -54,7 +54,7 @@ class ConcatPerformance : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  double Forward(const InputType& input, OutputType& target);
+  void Forward(const InputType& input, OutputType& target);
 
   /**
    * Ordinary feed backward pass of a neural network. The negative log

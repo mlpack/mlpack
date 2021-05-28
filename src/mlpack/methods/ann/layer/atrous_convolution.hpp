@@ -159,7 +159,6 @@ class AtrousConvolution : public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
   void Gradient(const InputType& /* input */,
                 const OutputType& error,
                 OutputType& gradient);
@@ -198,65 +197,65 @@ class AtrousConvolution : public Layer<InputType, OutputType>
   OutputType& Gradient() { return gradient; }
 
   //! Get the input width.
-  size_t InputWidth() const { return inputWidth; }
+  const size_t& InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  size_t InputHeight() const { return inputHeight; }
+  const size_t& InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  size_t OutputWidth() const { return outputWidth; }
+  const size_t& OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  size_t OutputHeight() const { return outputHeight; }
+  const size_t& OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
   //! Get the input size.
-  size_t InputSize() const { return inSize; }
+  const size_t& InputSize() const { return inSize; }
 
   //! Get the output size.
-  size_t OutputSize() const { return outSize; }
+  const size_t& OutputSize() const { return outSize; }
 
   //! Get the kernel width.
-  size_t KernelWidth() const { return kernelWidth; }
+  const size_t& KernelWidth() const { return kernelWidth; }
   //! Modify the kernel width.
   size_t& KernelWidth() { return kernelWidth; }
 
   //! Get the kernel height.
-  size_t KernelHeight() const { return kernelHeight; }
+  const size_t& KernelHeight() const { return kernelHeight; }
   //! Modify the kernel height.
   size_t& KernelHeight() { return kernelHeight; }
 
   //! Get the stride width.
-  size_t StrideWidth() const { return strideWidth; }
+  const size_t& StrideWidth() const { return strideWidth; }
   //! Modify the stride width.
   size_t& StrideWidth() { return strideWidth; }
 
   //! Get the stride height.
-  size_t StrideHeight() const { return strideHeight; }
+  const size_t& StrideHeight() const { return strideHeight; }
   //! Modify the stride height.
   size_t& StrideHeight() { return strideHeight; }
 
   //! Get the dilation rate on the X axis.
-  size_t DilationWidth() const { return dilationWidth; }
+  const size_t& DilationWidth() const { return dilationWidth; }
   //! Modify the dilation rate on the X axis.
   size_t& DilationWidth() { return dilationWidth; }
 
   //! Get the dilation rate on the Y axis.
-  size_t DilationHeight() const { return dilationHeight; }
+  const size_t& DilationHeight() const { return dilationHeight; }
   //! Modify the dilation rate on the Y axis.
   size_t& DilationHeight() { return dilationHeight; }
 
   //! Get the internal Padding layer.
-  ann::Padding<> const& Padding() const { return padding; }
+  PaddingType<InputType, OutputType> const& Padding() const { return padding; }
   //! Modify the internal Padding layer.
-  ann::Padding<>& Padding() { return padding; }
+  PaddingType<InputType, OutputType>& Padding() { return padding; }
 
   //! Get size of the weight matrix.
   size_t WeightSize() const
@@ -390,7 +389,7 @@ class AtrousConvolution : public Layer<InputType, OutputType>
   arma::Cube<typename OutputType::elem_type> gradientTemp;
 
   //! Locally-stored padding layer.
-  ann::Padding<> padding;
+  PaddingType<InputType, OutputType> padding;
 
   //! Locally-stored delta object.
   OutputType delta;

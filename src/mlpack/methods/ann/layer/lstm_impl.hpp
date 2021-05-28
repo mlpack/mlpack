@@ -26,7 +26,7 @@ LSTM<InputType, OutputType>::LSTM()
 
 template<typename InputType, typename OutputType>
 LSTM<InputType, OutputType>::LSTM(
-    const LSTM& layer) : 
+    const LSTM& layer) :
     inSize(layer.inSize),
     outSize(layer.outSize),
     rho(layer.rho),
@@ -45,7 +45,7 @@ LSTM<InputType, OutputType>::LSTM(
 
 template<typename InputType, typename OutputType>
 LSTM<InputType, OutputType>::LSTM(
-    LSTM&& layer) : 
+    LSTM&& layer) :
     inSize(std::move(layer.inSize)),
     outSize(std::move(layer.outSize)),
     rho(std::move(layer.rho)),
@@ -63,8 +63,8 @@ LSTM<InputType, OutputType>::LSTM(
 }
 
 template <typename InputType, typename OutputType>
-LSTM<InputType, OutputType>& 
-LSTM<InputType, OutputType> :: operator=(const LSTM& layer)
+LSTM<InputType, OutputType>&
+LSTM<InputType, OutputType>::operator=(const LSTM& layer)
 {
   if (this != &layer)
   {
@@ -82,12 +82,12 @@ LSTM<InputType, OutputType> :: operator=(const LSTM& layer)
     rhoSize = layer.rho;
     bpttSteps = layer.bpttSteps;
   }
-  return *this; 
+  return *this;
 }
 
 template <typename InputType, typename OutputType>
-LSTM<InputType, OutputType>& 
-LSTM<InputType, OutputType> :: operator=(LSTM&& layer)
+LSTM<InputType, OutputType>&
+LSTM<InputType, OutputType>::operator=(LSTM&& layer)
 {
   if (this != &layer)
   {
@@ -105,7 +105,7 @@ LSTM<InputType, OutputType> :: operator=(LSTM&& layer)
     rhoSize = std::move(layer.rho);
     bpttSteps = std::move(layer.bpttSteps);
   }
-  return *this; 
+  return *this;
 }
 
 template <typename InputType, typename OutputType>
@@ -245,7 +245,6 @@ void LSTM<InputType, OutputType>::Reset()
 
 // Forward when cellState is not needed.
 template<typename InputType, typename OutputType>
-template<typename InputType, typename OutputType>
 void LSTM<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
@@ -256,11 +255,10 @@ void LSTM<InputType, OutputType>::Forward(
 
 // Forward when cellState is needed overloaded LSTM::Forward().
 template<typename InputType, typename OutputType>
-template<typename InputType, typename OutputType>
 void LSTM<InputType, OutputType>::Forward(const InputType& input,
-                                                  OutputType& output,
-                                                  OutputType& cellState,
-                                                  bool useCellState)
+                                          OutputType& output,
+                                          OutputType& cellState,
+                                          bool useCellState)
 {
   // Check if the batch size changed, the number of cols is defines the input
   // batch size.
@@ -370,11 +368,10 @@ void LSTM<InputType, OutputType>::Forward(const InputType& input,
 }
 
 template<typename InputType, typename OutputType>
-template<typename InputType, typename ErrorType, typename GradientType>
 void LSTM<InputType, OutputType>::Backward(
-  const InputType& /* input */, const ErrorType& gy, GradientType& g)
+  const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  ErrorType gyLocal;
+  OutputType gyLocal;
   if (gradientStepIdx > 0)
   {
     gyLocal = gy + prevError;
@@ -382,8 +379,8 @@ void LSTM<InputType, OutputType>::Backward(
   else
   {
     // Make an alias.
-    gyLocal = ErrorType(((ErrorType&) gy).memptr(), gy.n_rows, gy.n_cols, false,
-        false);
+    gyLocal = OutputType(((OutputType&) gy).memptr(), gy.n_rows, gy.n_cols,
+        false, false);
   }
 
   outputGateError =
@@ -448,11 +445,10 @@ void LSTM<InputType, OutputType>::Backward(
 }
 
 template<typename InputType, typename OutputType>
-template<typename InputType, typename ErrorType, typename GradientType>
 void LSTM<InputType, OutputType>::Gradient(
     const InputType& input,
-    const ErrorType& /* error */,
-    GradientType& gradient)
+    const OutputType& /* error */,
+    OutputType& gradient)
 {
   // Input2GateOutputWeight and input2GateOutputBias gradients.
   gradient.submat(0, 0, input2GateOutputWeight.n_elem - 1, 0) =

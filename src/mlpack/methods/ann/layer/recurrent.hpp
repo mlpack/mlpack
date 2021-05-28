@@ -14,11 +14,6 @@
 
 #include <mlpack/core.hpp>
 
-#include "../visitor/delete_visitor.hpp"
-#include "../visitor/delta_visitor.hpp"
-#include "../visitor/copy_visitor.hpp"
-#include "../visitor/output_parameter_visitor.hpp"
-
 #include "layer_types.hpp"
 #include "add_merge.hpp"
 #include "sequential.hpp"
@@ -37,7 +32,7 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     typename InputType = arma::mat,
-    typename OutputType = arma::mat,
+    typename OutputType = arma::mat
 >
 class Recurrent : public Layer<InputType, OutputType>
 {
@@ -107,7 +102,7 @@ class Recurrent : public Layer<InputType, OutputType>
   std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
 
     //! The value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
+  const bool& Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
@@ -141,9 +136,6 @@ class Recurrent : public Layer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delete visitor module object.
-  DeleteVisitor deleteVisitor;
-
   //! Locally-stored start module.
   Layer<InputType, OutputType>* startModule;
 
@@ -179,10 +171,10 @@ class Recurrent : public Layer<InputType, OutputType>
   OutputType parameters;
 
   //! Locally-stored initial module.
-  Sequential<InputType, OutputType>* initialModule;
+  SequentialType<InputType, OutputType>* initialModule;
 
   //! Locally-stored recurrent module.
-  Sequential<InputType, OutputType>* recurrentModule;
+  SequentialType<InputType, OutputType>* recurrentModule;
 
   //! Locally-stored model modules.
   std::vector<Layer<InputType, OutputType>*> network;

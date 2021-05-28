@@ -16,10 +16,6 @@
 // In case it hasn't yet been included.
 #include "gru.hpp"
 
-#include "../visitor/forward_visitor.hpp"
-#include "../visitor/backward_visitor.hpp"
-#include "../visitor/gradient_visitor.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -44,21 +40,23 @@ GRU<InputType, OutputType>::GRU(
     deterministic(false)
 {
   // Input specific linear layers(for zt, rt, ot).
-  input2GateModule = new Linear<>(inSize, 3 * outSize);
+  input2GateModule = new LinearType<InputType, OutputType>(inSize, 3 * outSize);
 
   // Previous output gates (for zt and rt).
-  output2GateModule = new LinearNoBias<>(outSize, 2 * outSize);
+  output2GateModule = new LinearNoBiasType<InputType, OutputType>(outSize,
+      2 * outSize);
 
   // Previous output gate for ot.
-  outputHidden2GateModule = new LinearNoBias<>(outSize, outSize);
+  outputHidden2GateModule = new LinearNoBiasType<InputType, OutputType>(outSize,
+      outSize);
 
   network.push_back(input2GateModule);
   network.push_back(output2GateModule);
   network.push_back(outputHidden2GateModule);
 
-  inputGateModule = new SigmoidLayer<>();
-  forgetGateModule = new SigmoidLayer<>();
-  hiddenStateModule = new TanHLayer<>();
+  inputGateModule = new SigmoidLayer<InputType, OutputType>();
+  forgetGateModule = new SigmoidLayer<InputType, OutputType>();
+  hiddenStateModule = new TanHLayer<InputType, OutputType>();
 
   network.push_back(inputGateModule);
   network.push_back(hiddenStateModule);
@@ -139,7 +137,7 @@ void GRU<InputType, OutputType>::Forward(
   // cmul2 is (1 - input gate) * hidden gate.
   output = (inputGateModule->OutputParameter()
       % (*prevOutput - hiddenStateModule->OutputParameter())) +
-      % hiddenStateModule->OutputParameter();
+      hiddenStateModule->OutputParameter();
 
   forwardStep++;
   if (forwardStep == rho)
@@ -225,7 +223,7 @@ void GRU<InputType, OutputType>::Backward(
 
   // Delta ot.
   OutputType dOt = gyLocal % (arma::ones<OutputType>(outSize, batchSize) -
-      inputGateModule->OutputParameter();
+      inputGateModule->OutputParameter());
 
   // Delta of input gate.
   inputGateModule->Backward(inputGateModule->OutputParameter(), dZt,

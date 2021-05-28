@@ -31,9 +31,6 @@
 
 #include <mlpack/prereqs.hpp>
 
-#include "../visitor/delta_visitor.hpp"
-#include "../visitor/output_parameter_visitor.hpp"
-
 #include "layer_types.hpp"
 #include "add_merge.hpp"
 #include "sequential.hpp"
@@ -101,10 +98,9 @@ class GRU : public Layer<InputType, OutputType>
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& /* error */,
-                arma::Mat<eT>& /* gradient */);
+  void Gradient(const InputType& input,
+                const OutputType& /* error */,
+                OutputType& /* gradient */);
 
   /*
    * Resets the cell to accept a new input. This breaks the BPTT chain starts a
@@ -115,7 +111,7 @@ class GRU : public Layer<InputType, OutputType>
   void ResetCell(const size_t size);
 
   //! The value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
+  const bool& Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
@@ -212,13 +208,13 @@ class GRU : public Layer<InputType, OutputType>
   OutputType allZeros;
 
   //! Iterator pointed to the last output produced by the cell
-  std::list<OutputType>::iterator prevOutput;
+  typename std::list<OutputType>::iterator prevOutput;
 
   //! Iterator pointed to the last output processed by backward
-  std::list<OutputType>::iterator backIterator;
+  typename std::list<OutputType>::iterator backIterator;
 
   //! Iterator pointed to the last output processed by gradient
-  std::list<OutputType>::iterator gradIterator;
+  typename std::list<OutputType>::iterator gradIterator;
 
   //! Locally-stored previous error.
   OutputType prevError;

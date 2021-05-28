@@ -144,7 +144,8 @@ AtrousConvolution<
     InitializeSamePadding(padWLeft, padWRight, padHTop, padHBottom);
   }
 
-  padding = ann::Padding<>(padWLeft, padWRight, padHTop, padHBottom);
+  padding = PaddingType<InputType, OutputType>(padWLeft, padWRight, padHTop,
+      padHBottom);
 }
 
 template<
@@ -329,7 +330,7 @@ void AtrousConvolution<
       ((OutputType&) error).memptr(), outputWidth, outputHeight, outSize *
       batchSize, false, false);
   arma::Cube<typename InputType::elem_type> inputTemp(
-      const_cast<arma::Mat<eT>&>(input).memptr(), inputWidth, inputHeight,
+      const_cast<InputType&>(input).memptr(), inputWidth, inputHeight,
       inSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
@@ -417,7 +418,7 @@ void AtrousConvolution<
     OutputType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputDataType, OutputDataType>>(this));
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));

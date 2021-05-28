@@ -131,7 +131,7 @@ class BatchNorm : public Layer<InputType, OutputType>
   OutputType& Gradient() { return gradient; }
 
   //! Get the value of deterministic parameter.
-  bool Deterministic() const { return deterministic; }
+  const bool& Deterministic() const { return deterministic; }
   //! Modify the value of deterministic parameter.
   bool& Deterministic() { return deterministic; }
 

@@ -15,11 +15,6 @@
 // In case it hasn't yet been included.
 #include "recurrent.hpp"
 
-#include "../visitor/add_visitor.hpp"
-#include "../visitor/backward_visitor.hpp"
-#include "../visitor/gradient_visitor.hpp"
-#include "../visitor/gradient_zero_visitor.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -60,9 +55,9 @@ Recurrent<InputType, OutputType>::Recurrent(
     deterministic(false),
     ownsLayer(true)
 {
-  initialModule = new Sequential<>();
-  mergeModule = new AddMerge<>(false, false, false);
-  recurrentModule = new Sequential<>(false, false);
+  initialModule = new SequentialType<InputType, OutputType>();
+  mergeModule = new AddMerge<InputType, OutputType>(false, false, false);
+  recurrentModule = new SequentialType<InputType, OutputType>(false, false);
 
   initialModule->Add(inputModule);
   initialModule->Add(startModule);
@@ -95,9 +90,9 @@ Recurrent<InputType, OutputType>::Recurrent(
   feedbackModule = network.feedbackModule->Clone();
   transferModule = network.transferModule->Clone();
 
-  initialModule = new Sequential<>();
-  mergeModule = new AddMerge<>(false, false, false);
-  recurrentModule = new Sequential<>(false, false);
+  initialModule = new SequentialType<InputType, OutputType>();
+  mergeModule = new AddMerge<InputType, OutputType>(false, false, false);
+  recurrentModule = new SequentialType<InputType, OutputType>(false, false);
 
   initialModule->Add(inputModule);
   initialModule->Add(startModule);
@@ -116,7 +111,7 @@ Recurrent<InputType, OutputType>::Recurrent(
 }
 
 template<typename InputType, typename OutputType>
-void Recurrent<InputType, OutputType, CustomLayers...>::Forward(
+void Recurrent<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   if (forwardStep == 0)
@@ -152,9 +147,8 @@ void Recurrent<InputType, OutputType, CustomLayers...>::Forward(
   }
 }
 
-template<typename InputType, typename OutputType,
-         typename... CustomLayers>
-void Recurrent<InputType, OutputType, CustomLayers...>::Backward(
+template<typename InputType, typename OutputType>
+void Recurrent<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   if (!recurrentError.is_empty())
@@ -185,9 +179,8 @@ void Recurrent<InputType, OutputType, CustomLayers...>::Backward(
   backwardStep++;
 }
 
-template<typename InputType, typename OutputType,
-         typename... CustomLayers>
-void Recurrent<InputType, OutputType, CustomLayers...>::Gradient(
+template<typename InputType, typename OutputType>
+void Recurrent<InputType, OutputType>::Gradient(
     const InputType& input,
     const OutputType& error,
     OutputType& /* gradient */)
@@ -219,10 +212,9 @@ void Recurrent<InputType, OutputType, CustomLayers...>::Gradient(
   }
 }
 
-template<typename InputType, typename OutputType,
-         typename... CustomLayers>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void Recurrent<InputType, OutputType, CustomLayers...>::serialize(
+void Recurrent<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
@@ -246,9 +238,9 @@ void Recurrent<InputType, OutputType, CustomLayers...>::serialize(
   // Set up the network.
   if (cereal::is_loading<Archive>())
   {
-    initialModule = new Sequential<>();
-    mergeModule = new AddMerge<>(false, false, false);
-    recurrentModule = new Sequential<>(false, false);
+    initialModule = new SequentialType<InputType, OutputType>();
+    mergeModule = new AddMerge<InputType, OutputType>(false, false, false);
+    recurrentModule = new SequentialType<InputType, OutputType>(false, false);
 
     initialModule->Add(inputModule);
     initialModule->Add(startModule);

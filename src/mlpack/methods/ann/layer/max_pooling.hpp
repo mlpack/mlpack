@@ -70,6 +70,10 @@ class MaxPoolingType : public Layer<InputType, OutputType>
                  const size_t strideHeight = 1,
                  const bool floor = true);
 
+  // TODO: copy constructor / move constructor
+
+  MaxPoolingType* Clone() const { return new MaxPoolingType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.

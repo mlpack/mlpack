@@ -208,6 +208,14 @@ void HighwayType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(weights));
   ar(CEREAL_NVP(model));
   ar(CEREAL_VECTOR_POINTER(network));
+
+  // Reset the memory.
+  if (Archive::is_loading::value)
+  {
+    networkOwnerships.clear();
+    networkOwnerships.resize(network.size(), true);
+    Reset();
+  }
 }
 
 } // namespace ann

@@ -13,12 +13,6 @@
 #define MLPACK_METHODS_ANN_LAYER_RECURRENT_ATTENTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
-
-#include "../visitor/delta_visitor.hpp"
-#include "../visitor/output_parameter_visitor.hpp"
-#include "../visitor/reset_visitor.hpp"
-#include "../visitor/weight_size_visitor.hpp"
 
 #include "layer_types.hpp"
 #include "add_merge.hpp"
@@ -110,10 +104,10 @@ class RecurrentAttention : public Layer<InputType, OutputType>
                 OutputType& /* gradient */);
 
   //! Get the model modules.
-  std::vector<LayerTypes<>>& Model() { return network; }
+  std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
 
     //! The value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
+  const bool& Deterministic() const { return deterministic; }
   //! Modify the value of the deterministic parameter.
   bool& Deterministic() { return deterministic; }
 
