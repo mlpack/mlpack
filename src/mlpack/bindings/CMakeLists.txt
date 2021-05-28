@@ -24,7 +24,6 @@ macro(group_bindings name methods)
   set(${name}_valid_methods "")
 
   foreach (method ${methods})
-    message(WARNING ${method})
     set(filename "${CMAKE_CURRENT_SOURCE_DIR}/${name}_${method}_main.cpp")
     if(EXISTS ${filename})
       list(APPEND ${name}_method_main_files ${CMAKE_CURRENT_SOURCE_DIR}/${name}_${method}_main.cpp)

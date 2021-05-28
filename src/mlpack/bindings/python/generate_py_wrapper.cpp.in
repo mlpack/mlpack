@@ -1,0 +1,13 @@
+#include <mlpack/core.hpp>
+#include <mlpack/bindings/python/print_py_wrapper.hpp>
+
+using namespace mlpack;
+using namespace mlpack::bindings;
+using namespace mlpack::bindings::python;
+using namespace std;
+using namespace mlpack::util;
+
+int main(int /* argc */, char** /* argv */)
+{
+  PrintWrapperPY();
+}
