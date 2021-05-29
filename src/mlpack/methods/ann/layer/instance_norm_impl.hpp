@@ -69,7 +69,6 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
   {
     Log::Fatal<<"Must use the same BatchSize that was used in the constructor"
                 <<std::endl;
-      std::cout<<"Hello"<<std::endl;
   }
   if (!reset)
   {
