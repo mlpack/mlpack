@@ -93,6 +93,8 @@ set(BINDING_SOURCES
   default_param_impl.hpp
   generate_pyx.hpp
   generate_pyx.cpp
+  generate_py_wrapper.hpp
+  generate_py_wrapper.cpp
   get_arma_type.hpp
   get_cython_type.hpp
   get_numpy_type.hpp
@@ -100,6 +102,8 @@ set(BINDING_SOURCES
   get_param.hpp
   get_printable_param.hpp
   get_python_type.hpp
+  get_class_name.hpp
+  get_methods.hpp
   import_decl.hpp
   print_class_defn.hpp
   print_defn.hpp
@@ -307,8 +311,8 @@ macro (add_python_binding group_name)
       -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_py_wrapper.cpp.in
       -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_${group_name}.cpp
       -DGROUP_NAME=${group_name}
-      -DGROUP_VALID_METHODS=${group_name}_valid_methods
-      -DGROUP_METHOD_FILES=${group_name}_method_main_files
+      -DGROUP_VALID_METHODS="${${group_name}_valid_methods}"
+      -DGROUP_METHOD_FILES="${${group_name}_method_main_files}"
       -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
   DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_py_wrapper.cpp.in
           ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)

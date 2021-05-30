@@ -7,7 +7,8 @@ namespace mlpack {
 namespace bindings {
 namespace python {
 
-void PrintWrapperPY();
+void PrintWrapperPY(const std::string& groupName,
+                    const std::string& validMethods);
 
 } // namespace mlpack
 } // namespace bindings

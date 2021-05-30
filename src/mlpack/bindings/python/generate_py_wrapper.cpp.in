@@ -9,5 +9,5 @@ using namespace mlpack::util;
 
 int main(int /* argc */, char** /* argv */)
 {
-  PrintWrapperPY();
+  PrintWrapperPY("${GROUP_NAME}","${GROUP_VALID_METHODS}");
 }
