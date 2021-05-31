@@ -120,8 +120,7 @@ void PrintPYX(const util::BindingDetails& doc,
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
     util::ParamData& d = it->second;
-    if (d.input)
-      IO::GetSingleton().functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
+    IO::GetSingleton().functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
   }
 
   // Print the definition.

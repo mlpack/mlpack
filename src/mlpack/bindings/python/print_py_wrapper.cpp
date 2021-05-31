@@ -16,26 +16,27 @@ void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
 					const std::string& groupName,
 				    const std::string& validMethods)
 {
-	typedef std::map<std::string, util::ParamData>::iterator ParamIter;
-	for(auto& name : groupProgramNames)
-	{
-		IO::RestoreSettings(name);
-		std::map<std::string, util::ParamData>& parameters = IO::Parameters();
-		for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
-		{
-			cout << it->first << endl;
-		}
-		IO::ClearSettings();
-	}
+	// typedef std::map<std::string, util::ParamData>::iterator ParamIter;
+	// for(auto& name : groupProgramNames)
+	// {
+	// 	IO::RestoreSettings(name);
+	// 	std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+	// 	for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
+	// 	{
+	// 		cout << it->first << endl;
+	// 	}
+	// 	IO::ClearSettings();
+	// }
 
 	vector<string> methods = GetMethods(validMethods);
+	typedef vector<string>::iterator MethodItr;
 
 	string importString = "";
 
-	for(auto& method : methods)
+	for(MethodItr itr = methods.begin(); itr != methods.end(); ++itr)
 	{
-		importString += "from " + groupName + "_" + method + " ";
-		importString += "import " + groupName + "_" + method + "\n";
+		importString += "from " + groupName + "_" + *itr + " ";
+		importString += "import " + groupName + "_" + *itr + "\n";
 	}
 
 	cout << importString << endl;
