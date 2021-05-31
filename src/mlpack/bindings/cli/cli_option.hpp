@@ -73,6 +73,7 @@ class CLIOption
             const bool required = false,
             const bool input = true,
             const bool noTranspose = false,
+            const bool methodSpecific = true,
             const std::string& /*testName*/ = "")
   {
     // Create the ParamData object to give to CLI.
@@ -89,6 +90,7 @@ class CLIOption
     data.loaded = false;
     data.persistent = false; // All CLI parameters are not persistent.
     data.cppType = cppName;
+    data.methodSpecific = methodSpecific;
 
     // Apply default value.
     if (std::is_same<typename std::remove_pointer<N>::type,

@@ -26,6 +26,10 @@
   #define DEBUG
 #endif
 
+#ifdef MAKING_WRAPPER
+#undef MAKING_WRAPPER
+#endif
+
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/bindings/python/print_pyx.hpp>

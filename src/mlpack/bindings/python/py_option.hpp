@@ -28,7 +28,19 @@ namespace bindings {
 namespace python {
 
 // Defined in mlpack_main.hpp.
-extern std::string programName;
+std::string programName;
+
+std::vector<std::string> groupProgramNames;
+
+class ChangeProgramName
+{
+  public:
+  ChangeProgramName(const std::string& newName)
+  {
+    programName = newName;
+    groupProgramNames.push_back(newName);
+  }
+};
 
 /**
  * The Python option class.
@@ -50,6 +62,7 @@ class PyOption
            const bool required = false,
            const bool input = true,
            const bool noTranspose = false,
+           const bool methodSpecific = true,
            const std::string& /*testName*/ = "")
   {
     // Create the ParamData object to give to IO.
@@ -64,6 +77,7 @@ class PyOption
     data.required = required;
     data.input = input;
     data.loaded = false;
+    data.methodSpecific = methodSpecific;
     // Only "verbose", "copy_all_inputs" and "check_input_matrices"
     // will be persistent.
     if (identifier == "verbose" || identifier == "copy_all_inputs" ||

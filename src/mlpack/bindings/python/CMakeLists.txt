@@ -104,6 +104,7 @@ set(BINDING_SOURCES
   get_python_type.hpp
   get_class_name.hpp
   get_methods.hpp
+  get_program_name.hpp
   import_decl.hpp
   print_class_defn.hpp
   print_defn.hpp
@@ -305,6 +306,11 @@ macro (add_python_binding group_name)
     endif()
   endforeach()
 
+  foreach(loc ${${group_name}_method_main_files})
+    file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/main_includes_group.hpp
+    "#include <${loc}>\n")
+  endforeach()
+
   # generate wrappers for this group now.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_${group_name}.cpp
   COMMAND ${CMAKE_COMMAND}
@@ -312,14 +318,12 @@ macro (add_python_binding group_name)
       -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_${group_name}.cpp
       -DGROUP_NAME=${group_name}
       -DGROUP_VALID_METHODS="${${group_name}_valid_methods}"
-      -DGROUP_METHOD_FILES="${${group_name}_method_main_files}"
       -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
   DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_py_wrapper.cpp.in
           ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
-
   # if(NOT EXISTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_${group_name}.cpp)
   #   message(FATAL_ERROR "file is not existing!!!")
-  # endif()
+  # endif() 
 
   add_executable(generate_py_wrapper_${group_name}
   ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_${group_name}.cpp

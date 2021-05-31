@@ -82,6 +82,8 @@ struct ParamData
   boost::any value;
   //! The true name of the type, as it would be written in C++.
   std::string cppType;
+  //! Is the parameter method specific.
+  bool methodSpecific;
 };
 
 } // namespace util
