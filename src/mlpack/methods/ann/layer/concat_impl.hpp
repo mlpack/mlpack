@@ -19,6 +19,7 @@
 #include "../visitor/forward_visitor.hpp"
 #include "../visitor/backward_visitor.hpp"
 #include "../visitor/gradient_visitor.hpp"
+#include "../visitor/reset_visitor.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -97,6 +98,17 @@ Concat<InputDataType, OutputDataType, CustomLayers...>::~Concat()
         boost::apply_visitor(deleteVisitor));
   }
 }
+
+template<typename InputDataType, typename OutputDataType,
+         typename... CustomLayers>
+void Concat<InputDataType, OutputDataType, CustomLayers...>::Reset()
+{
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    boost::apply_visitor(ResetVisitor(), network[i]);
+  }
+}
+
 
 template<typename InputDataType, typename OutputDataType,
          typename... CustomLayers>

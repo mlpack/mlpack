@@ -71,6 +71,11 @@ class Concat
    * Destroy the layers held by the model.
    */
   ~Concat();
+/**
+ * Reset the layer parameters. This method is called to
+ * assign the allocated memory to the internal learnable parameters.
+ */
+  void Reset();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function

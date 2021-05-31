@@ -19,6 +19,7 @@
 #include "../visitor/forward_visitor.hpp"
 #include "../visitor/backward_visitor.hpp"
 #include "../visitor/gradient_visitor.hpp"
+#include "../visitor/reset_visitor.hpp"
 #include "../visitor/set_input_height_visitor.hpp"
 #include "../visitor/set_input_width_visitor.hpp"
 #include "../visitor/input_shape_visitor.hpp"
@@ -92,6 +93,16 @@ Sequential<
   {
     for (LayerTypes<CustomLayers...>& layer : network)
       boost::apply_visitor(deleteVisitor, layer);
+  }
+}
+template <typename InputDataType, typename OutputDataType, bool Residual,
+          typename... CustomLayers>
+void Sequential<
+      InputDataType, OutputDataType, Residual, CustomLayers...>::Reset()
+{
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    boost::apply_visitor(ResetVisitor(), network[i]);
   }
 }
 
