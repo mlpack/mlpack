@@ -431,52 +431,52 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest1", "[DecisionTreeRegressorTest]")
 /**
  * Test that the decision tree generalizes reasonably.
  */
-// TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
-// {
-//   // Loading data.
-//   data::DatasetInfo info;
-//   arma::mat trainData, testData;
-//   arma::Row<double> trainLabels, testLabels;
-//   LoadBostonHousingDataset(trainData, testData, trainLabels, testLabels, info);
+TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
+{
+  // Loading data.
+  data::DatasetInfo info;
+  arma::mat trainData, testData;
+  arma::Row<double> trainLabels, testLabels;
+  LoadBostonHousingDataset(trainData, testData, trainLabels, testLabels, info);
+  std::cout << "Shape: "<< trainData.n_rows << " " << trainData.n_cols << std::endl;
 
-//   // Initialize an all-ones weight matrix.
-//   arma::rowvec weights(trainLabels.n_cols, arma::fill::ones);
+  // Initialize an all-ones weight matrix.
+  arma::rowvec weights(trainLabels.n_cols, arma::fill::ones);
 
-//   // Build decision tree.
-//   DecisionTreeRegressor<> d(trainData, info, trainLabels, 1, 1e-7, 20);
-//   DecisionTreeRegressor<> wd(trainData, info, trainLabels, weights, 1, 1e-7, 20);
+  // Build decision tree.
+  DecisionTreeRegressor<MADGain> d(trainData, info, trainLabels, 1, 1e-7, 0);
+  DecisionTreeRegressor<MADGain> wd(trainData, info, trainLabels, weights, 1, 1e-7, 0);
 
-//   // Get the predicted test labels.
-//   arma::Row<double> predictions;
-//   d.Predict(testData, predictions);
+  // Get the predicted test labels.
+  arma::Row<double> predictions;
+  d.Predict(testData, predictions);
 
-//   REQUIRE(predictions.n_elem == testData.n_cols);
+  REQUIRE(predictions.n_elem == testData.n_cols);
 
-//   // Figure out rmse.
-//   double rmse = RMSE(predictions, testLabels);
+  // Figure out rmse.
+  double rmse = RMSE(predictions, testLabels);
 
-//   REQUIRE(rmse < 9.21);
-//   // std::cout << predictions << std::endl << testLabels;
-//   arma::Row<double> trainPred;
-//   d.Predict(trainData, trainPred);
-//   std::cout << trainPred;
+  REQUIRE(rmse < 9.21);
+  // std::cout << predictions << std::endl << testLabels;
+  arma::Row<double> trainPred;
+  d.Predict(trainData, trainPred);
+  std::cout << trainPred;
 
-//   DecisionTreeRegressor<> dt = d;
-//   // Print number of childrens;
-//   std::cout << dt.Child(0).NumChildren() << std::endl;
-//   std::cout << dt.Child(1).NumChildren() << std::endl;
+  std::cout << "Train RMSE: " << RMSE(trainLabels, trainPred) << std::endl;
 
-//   // Reset the prediction.
-//   predictions.zeros();
-//   wd.Predict(testData, predictions);
+  // DecisionTreeRegressor<> dt = d;
 
-//   REQUIRE(predictions.n_elem == testData.n_cols);
+  // Reset the prediction.
+  predictions.zeros();
+  wd.Predict(testData, predictions);
 
-//   // Figure out the rmse.
-//   double wdrmse = RMSE(predictions, testLabels);
+  REQUIRE(predictions.n_elem == testData.n_cols);
 
-//   REQUIRE(wdrmse < 9.21);
-// }
+  // Figure out the rmse.
+  double wdrmse = RMSE(predictions, testLabels);
+
+  REQUIRE(wdrmse < 9.21);
+}
 
 /**
  * Test that the decision tree generalizes reasonably when built on float data.
@@ -520,123 +520,137 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest1", "[DecisionTreeRegressorTest]")
 //   REQUIRE(wdrmse < 9.21);
 // }
 
-TEST_CASE("multisplittest", "[DecisionTreeRegressorTest]")
-{
-  arma::mat dataset(10, 500, arma::fill::randu);
-  arma::Row<double> labels(500);
+// TEST_CASE("multisplittest", "[DecisionTreeRegressorTest]")
+// {
+//   arma::mat dataset(10, 500, arma::fill::randu);
+//   arma::Row<double> labels(500);
 
-  for (size_t i = 0; i < 100; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 0.0;
-  }
-  for (size_t i = 100; i < 200; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 1.0;
-  }
-  for (size_t i = 200; i < 300; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 2.0;
-  }
-  for (size_t i = 300; i < 400; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 1.0;
-  }
-  for (size_t i = 400; i < 500; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 0.0;
-  }
+//   for (size_t i = 0; i < 100; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 0.0;
+//   }
+//   for (size_t i = 100; i < 200; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 1.0;
+//   }
+//   for (size_t i = 200; i < 300; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 2.0;
+//   }
+//   for (size_t i = 300; i < 400; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 1.0;
+//   }
+//   for (size_t i = 400; i < 500; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 0.0;
+//   }
+
+//   arma::rowvec weights(labels.n_elem);
+//   weights.ones();
+
+//   // Minimum leaf size of 1.
+//   std::cout << "****************Start**************\n";
+//   DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
+//   std::cout << "****************End****************\n";
+// }
+
+// TEST_CASE("multisplittest1", "[DecisionTreeRegressorTest]")
+// {
+//   arma::mat dataset(10, 250, arma::fill::randu);
+//   arma::Row<double> labels(500);
+
+//   for (size_t i = 0; i < 50; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 0.0;
+//   }
+//   for (size_t i = 50; i < 100; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 1.0;
+//   }
+//   for (size_t i = 100; i < 150; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 2.0;
+//   }
+//   for (size_t i = 150; i < 200; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 1.0;
+//   }
+//   for (size_t i = 200; i < 250; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 0.0;
+//   }
+
+//   arma::rowvec weights(labels.n_elem);
+//   weights.ones();
+
+//   // Minimum leaf size of 1.
+//   std::cout << "****************Start**************\n";
+//   DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
+//   std::cout << "****************End****************\n";
+// }
+
+// TEST_CASE("multisplittest2", "[DecisionTreeRegressorTest]")
+// {
+//   arma::mat dataset(10, 500, arma::fill::randu);
+//   arma::Row<double> labels(500);
+
+//   for (size_t i = 0; i < 100; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 0.0;
+//   }
+//   for (size_t i = 100; i < 200; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 5.0;
+//   }
+//   for (size_t i = 200; i < 300; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 10.0;
+//   }
+//   for (size_t i = 300; i < 400; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 15.0;
+//   }
+//   for (size_t i = 400; i < 500; i++)
+//   {
+//     dataset(3, i) = i;
+//     labels(i) = 20.0;
+//   }
+
+//   arma::rowvec weights(labels.n_elem);
+//   weights.ones();
+
+//   // Minimum leaf size of 1.
+//   std::cout << "****************Start**************\n";
+//   DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
+//   std::cout << "****************End****************\n";
+// }
+
+TEST_CASE("handmadedata", "[DecisionTreeRegressorTest]")
+{
+  // drug dosage (in mg).
+  arma::mat dataset = {{2, 3, 5, 10, 14, 16, 20, 22, 28, 30, 32, 35, 39}};
+  // percentage effectiveness.
+  arma::rowvec labels = {0, 0, 0, 5, 99, 99, 99, 95, 55, 45, 7, 0, 0};
 
   arma::rowvec weights(labels.n_elem);
   weights.ones();
-
-  // Minimum leaf size of 1.
   std::cout << "****************Start**************\n";
-  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
-  std::cout << "****************End****************\n";
-}
-
-TEST_CASE("multisplittest1", "[DecisionTreeRegressorTest]")
-{
-  arma::mat dataset(10, 250, arma::fill::randu);
-  arma::Row<double> labels(500);
-
-  for (size_t i = 0; i < 50; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 0.0;
-  }
-  for (size_t i = 50; i < 100; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 1.0;
-  }
-  for (size_t i = 100; i < 150; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 2.0;
-  }
-  for (size_t i = 150; i < 200; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 1.0;
-  }
-  for (size_t i = 200; i < 250; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 0.0;
-  }
-
-  arma::rowvec weights(labels.n_elem);
-  weights.ones();
-
-  // Minimum leaf size of 1.
-  std::cout << "****************Start**************\n";
-  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
-  std::cout << "****************End****************\n";
-}
-
-TEST_CASE("multisplittest2", "[DecisionTreeRegressorTest]")
-{
-  arma::mat dataset(10, 500, arma::fill::randu);
-  arma::Row<double> labels(500);
-
-  for (size_t i = 0; i < 100; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 0.0;
-  }
-  for (size_t i = 100; i < 200; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 5.0;
-  }
-  for (size_t i = 200; i < 300; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 10.0;
-  }
-  for (size_t i = 300; i < 400; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 15.0;
-  }
-  for (size_t i = 400; i < 500; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 20.0;
-  }
-
-  arma::rowvec weights(labels.n_elem);
-  weights.ones();
-
-  // Minimum leaf size of 1.
-  std::cout << "****************Start**************\n";
-  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
+  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 5);
   std::cout << "****************End****************\n";
 }
 
