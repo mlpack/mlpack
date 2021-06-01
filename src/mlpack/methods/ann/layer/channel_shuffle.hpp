@@ -16,9 +16,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Definition and Implementation of the Channel Shuffle Layer.
+ * Definition and implementation of the Channel Shuffle Layer.
  *
- * Channel Shuffle divide the channels/units in a tensor into groups
+ * Channel Shuffle divides the channels/units in a tensor into groups
  * and rearrange while keeping the original tensor shape.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
