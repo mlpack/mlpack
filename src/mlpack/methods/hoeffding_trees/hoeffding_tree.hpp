@@ -164,14 +164,14 @@ class HoeffdingTree
 
   /**
    * Copy assignment operator.
-   * 
+   *
    * @param other Tree to copy.
    */
   HoeffdingTree& operator=(const HoeffdingTree& other);
 
   /**
    * Move assignment operator.
-   * 
+   *
    * @param other Tree to move.
    */
   HoeffdingTree& operator=(HoeffdingTree&& other);
@@ -183,20 +183,31 @@ class HoeffdingTree
 
   /**
    * Train on a set of points, either in streaming mode or in batch mode, with
-   * the given labels.
+   * the given labels.  If `resetTree` is set to `true`, then reset the state of
+   * the tree to an empty tree before training.
+   *
+   * Note that the tree will be automatically reset if the dimensionality of
+   * `data` does not match the dimensionality that the tree was currently
+   * trained with.
    *
    * @param data Data points to train on.
    * @param labels Labels of data points.
    * @param batchTraining If true, perform training in batch.
+   * @param resetTree If true, reset the tree to an empty tree before training.
    */
   template<typename MatType>
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
-             const bool batchTraining = true);
+             const bool batchTraining = true,
+             const bool resetTree = false);
 
   /**
    * Train on a set of points, either in streaming mode or in batch mode, with
-   * the given labels and the given DatasetInfo.  This will reset the tree.
+   * the given labels and the given `DatasetInfo`.  This will reset the tree.
+   * This only needs to be called when the `DatasetInfo` has changed---if you
+   * are training incrementally but have already passed the DatasetInfo once,
+   * use the overload of `Train()` that does not take a `DatasetInfo` and make
+   * sure `resetTree` is set to `false`.
    */
   template<typename MatType>
   void Train(const MatType& data,
@@ -205,7 +216,8 @@ class HoeffdingTree
              const bool batchTraining = true);
 
   /**
-   * Train on a single point in streaming mode, with the given label.
+   * Train on a single point in streaming mode, with the given label.  The tree
+   * will not be reset before training.
    *
    * @param point Point to train on.
    * @param label Label of point to train on.
@@ -379,6 +391,24 @@ class HoeffdingTree
   typename NumericSplitType<FitnessFunction>::SplitInfo numericSplit;
   //! If the split has occurred, these are the children.
   std::vector<HoeffdingTree*> children;
+
+  /**
+   * Perform training (typically after a reset, but not necessarily).  This
+   * assumes datasetInfo and dimensionMappings are set correctly.
+   */
+  template<typename MatType>
+  void TrainInternal(const MatType& data,
+                     const arma::Row<size_t>& labels,
+                     const bool batchTraining);
+
+  /**
+   * Reset the tree.  This assumes datasetInfo is set correctly.
+   */
+  void ResetTree(
+      const CategoricalSplitType<FitnessFunction>& categoricalSplitIn =
+          CategoricalSplitType<FitnessFunction>(0, 0),
+      const NumericSplitType<FitnessFunction>& numericSplitIn =
+          NumericSplitType<FitnessFunction>(0));
 };
 
 } // namespace tree
