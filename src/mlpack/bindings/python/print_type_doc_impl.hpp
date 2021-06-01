@@ -158,9 +158,10 @@ std::string PrintTypeDoc(
       "model.  This model pointer has 2 methods with which the parameters "
       "of the model can be inspected as well as changed through Python.  "
       "The `get_cpp_params()` method returns a python ordered dictionary that "
-      "contains all the parameters of the model.  The user can inspect the "
-      "parameters as well change the parameter values in the dictionary "
-      "(without deleting any keys) and pass that back into the model "
+      "contains all the parameters of the model.  These parameters can "
+      "be inspected and changed.  To set new parameters for a model, "
+      "pass the modified dictionary (without deleting any keys) to the "
+      "`set_cpp_params()` method."
 }
 
 } // namespace python
