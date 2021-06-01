@@ -161,7 +161,6 @@ std::string PrintTypeDoc(
       "contains all the parameters of the model.  The user can inspect the "
       "parameters as well change the parameter values in the dictionary "
       "(without deleting any keys) and pass that back into the model "
-      "using the set_cpp_params() method.";
 }
 
 } // namespace python
