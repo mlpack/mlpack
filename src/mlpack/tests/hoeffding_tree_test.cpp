@@ -1494,31 +1494,35 @@ TEST_CASE("HoeffdingTreeEmptyConstructorTrainTest", "[HoeffdingTreeTest]")
   REQUIRE_NOTHROW(ht.Train(data, labels));
 
   // Now, create a categorical dataset and retrain.
-  data = arma::mat(4, 3000);
-  labels.set_size(3000);
+  arma::mat data2 = arma::mat(4, 3000);
+  arma::Row<size_t> labels2(3000);
   data::DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
-    data(0, i) = mlpack::math::Random();
-    data(1, i) = mlpack::math::Random();
-    data(2, i) = mlpack::math::Random();
-    data(3, i) = 0.0;
-    labels[i] = 0;
+    data2(0, i) = mlpack::math::Random();
+    data2(1, i) = mlpack::math::Random();
+    data2(2, i) = mlpack::math::Random();
+    data2(3, i) = 0.0;
+    labels2[i] = 0;
 
-    data(0, i + 1) = mlpack::math::Random();
-    data(1, i + 1) = mlpack::math::Random() - 1.0;
-    data(2, i + 1) = mlpack::math::Random() + 0.5;
-    data(3, i + 1) = 0.0;
-    labels[i + 1] = 2;
+    data2(0, i + 1) = mlpack::math::Random();
+    data2(1, i + 1) = mlpack::math::Random() - 1.0;
+    data2(2, i + 1) = mlpack::math::Random() + 0.5;
+    data2(3, i + 1) = 0.0;
+    labels2[i + 1] = 2;
 
-    data(0, i + 2) = mlpack::math::Random();
-    data(1, i + 2) = mlpack::math::Random() + 1.0;
-    data(2, i + 2) = mlpack::math::Random() + 0.8;
-    data(3, i + 2) = 0.0;
-    labels[i + 2] = 1;
+    data2(0, i + 2) = mlpack::math::Random();
+    data2(1, i + 2) = mlpack::math::Random() + 1.0;
+    data2(2, i + 2) = mlpack::math::Random() + 0.8;
+    data2(3, i + 2) = 0.0;
+    labels2[i + 2] = 1;
   }
 
   // Ensure we can train without throwing an exception.
-  REQUIRE_NOTHROW(ht.Train(data, info, labels));
+  REQUIRE_NOTHROW(ht.Train(data2, info, labels2));
+
+  // Train while specifying the number of classes.
+  REQUIRE_NOTHROW(ht.Train(data, labels, false, true, 2));
+  REQUIRE_NOTHROW(ht.Train(data2, info, labels2, false, 3));
 }

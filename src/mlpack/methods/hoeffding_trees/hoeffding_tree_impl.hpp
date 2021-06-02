@@ -349,11 +349,13 @@ void HoeffdingTree<
 >::Train(const MatType& data,
          const arma::Row<size_t>& labels,
          const bool batchTraining,
-         const bool resetTree)
+         const bool resetTree,
+         const size_t numClassesIn)
 {
   // We need to reset the tree either if the user asked for it, or if they
   // passed data whose dimensionality is different than our datasetInfo object.
-  if (resetTree || data.n_rows != datasetInfo->Dimensionality())
+  if (resetTree || data.n_rows != datasetInfo->Dimensionality() ||
+      numClassesIn != 0)
   {
     // Create a new datasetInfo, which assumes that all features are numeric.
     if (ownsInfo)
@@ -362,7 +364,7 @@ void HoeffdingTree<
     ownsInfo = true;
 
     // Set the number of classes correctly.
-    numClasses = arma::max(labels) + 1;
+    numClasses = (numClassesIn != 0) ? numClassesIn : arma::max(labels) + 1;
 
     ResetTree();
   }
@@ -382,7 +384,8 @@ void HoeffdingTree<
 >::Train(const MatType& data,
          const data::DatasetInfo& info,
          const arma::Row<size_t>& labels,
-         const bool batchTraining)
+         const bool batchTraining,
+         const size_t numClassesIn)
 {
   // Take over new DatasetInfo.
   if (ownsInfo)
@@ -391,7 +394,7 @@ void HoeffdingTree<
   ownsInfo = false;
 
   // Set the number of classes correctly.
-  numClasses = arma::max(labels) + 1;
+  numClasses = (numClassesIn != 0) ? numClassesIn : arma::max(labels) + 1;
 
   ResetTree();
 

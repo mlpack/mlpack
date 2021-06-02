@@ -188,18 +188,22 @@ class HoeffdingTree
    *
    * Note that the tree will be automatically reset if the dimensionality of
    * `data` does not match the dimensionality that the tree was currently
-   * trained with.
+   * trained with.  The tree will also be reset if `numClasses` is passed.
    *
    * @param data Data points to train on.
    * @param labels Labels of data points.
    * @param batchTraining If true, perform training in batch.
    * @param resetTree If true, reset the tree to an empty tree before training.
+   * @param numClasses The number of classes in `labels`.  Passing this will
+   *      reset the tree.  If not given and `resetTree` is `true`, then the
+   *      number of classes will be computed from `labels`.
    */
   template<typename MatType>
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
              const bool batchTraining = true,
-             const bool resetTree = false);
+             const bool resetTree = false,
+             const size_t numClasses = 0);
 
   /**
    * Train on a set of points, either in streaming mode or in batch mode, with
@@ -208,12 +212,20 @@ class HoeffdingTree
    * are training incrementally but have already passed the DatasetInfo once,
    * use the overload of `Train()` that does not take a `DatasetInfo` and make
    * sure `resetTree` is set to `false`.
+   *
+   * @param data Data points to train on.
+   * @param info DatasetInfo object with information about each dimension.
+   * @param labels Labels of data points.
+   * @param batchTraining If true, perform training in batch.
+   * @param numClasses Number of classes in `labels`.  If not specified, it is
+   *      computed from `labels`.
    */
   template<typename MatType>
   void Train(const MatType& data,
              const data::DatasetInfo& info,
              const arma::Row<size_t>& labels,
-             const bool batchTraining = true);
+             const bool batchTraining = true,
+             const size_t numClasses = 0);
 
   /**
    * Train on a single point in streaming mode, with the given label.  The tree
