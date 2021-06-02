@@ -27,7 +27,7 @@ Concatenate<InputDataType, OutputDataType>::Concatenate() :
 }
 
 template<typename InputDataType, typename OutputDataType>
-Concatenate<InputDataType, OutputDataType>::Concatenate(const Concatenate& layer) : 
+Concatenate<InputDataType, OutputDataType>::Concatenate(const Concatenate& layer) :
   inRows(layer.inRows),
   weights(layer.weights),
   delta(layer.delta),
@@ -37,7 +37,7 @@ Concatenate<InputDataType, OutputDataType>::Concatenate(const Concatenate& layer
 }
 
 template<typename InputDataType, typename OutputDataType>
-Concatenate<InputDataType, OutputDataType>::Concatenate(Concatenate&& layer) : 
+Concatenate<InputDataType, OutputDataType>::Concatenate(Concatenate&& layer) :
   inRows(layer.inRows),
   weights(std::move(layer.weights)),
   delta(std::move(layer.delta)),
@@ -51,7 +51,7 @@ Concatenate<InputDataType, OutputDataType>&
 Concatenate<InputDataType, OutputDataType>::
 operator=(const Concatenate& layer)
 {
-  if (this != &layer) 
+  if (this != &layer)
   {
     inRows = layer.inRows;
     weights = layer.weights;
@@ -67,7 +67,7 @@ Concatenate<InputDataType, OutputDataType>&
 Concatenate<InputDataType, OutputDataType>::
 operator=(Concatenate&& layer)
 {
-  if (this != &layer) 
+  if (this != &layer)
   {
     inRows = layer.inRows;
     weights = std::move(layer.weights);
