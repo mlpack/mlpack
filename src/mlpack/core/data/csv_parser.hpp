@@ -90,6 +90,6 @@ namespace data
 }	// namespace mlpack
 
 // Include implementation
-#include "new_parser_impl.hpp"
+#include "csv_parser_impl.hpp"
 
 #endif
