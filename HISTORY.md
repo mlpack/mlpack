@@ -55,7 +55,7 @@
     `make mlpack_test` to build the tests.
 
   * Fixes to `HoeffdingTree`: ensure that training still works when empty
-    constructor is used.
+    constructor is used (#2964).
 
 ### mlpack 3.4.2
 ###### 2020-10-26
