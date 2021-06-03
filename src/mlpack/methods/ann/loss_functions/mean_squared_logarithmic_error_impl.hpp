@@ -20,7 +20,8 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 MeanSquaredLogarithmicError<InputDataType, OutputDataType>
-::MeanSquaredLogarithmicError()
+::MeanSquaredLogarithmicError(
+    const bool reduction) : reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -32,8 +33,14 @@ MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Forward(
     const PredictionType& prediction,
     const TargetType& target)
 {
-  return arma::accu(arma::square(arma::log(1. + target) -
-      arma::log(1. + prediction))) / target.n_cols;
+  PredictionType loss = arma::square(arma::log(1. + target) -
+      arma::log(1. + prediction));
+  typename PredictionType::elem_type lossSum = arma::accu(loss);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -43,17 +50,20 @@ void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::Backward(
     const TargetType& target,
     LossType& loss)
 {
-  loss = 2 * (arma::log(1. + prediction) - arma::log(1. + target)) /
-      ((1. + prediction) * target.n_cols);
+  loss = 2 * (arma::log(1. + prediction) - arma::log(1. + target))
+      / (1. + prediction);
+
+  if (!reduction)
+    loss = loss / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void MeanSquaredLogarithmicError<InputDataType, OutputDataType>::serialize(
-    Archive& /* ar */,
+    Archive& ar,
     const uint32_t /* version */)
 {
-  // Nothing to do here.
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann

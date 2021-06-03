@@ -21,9 +21,9 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputDataType, typename OutputDataType>
 HuberLoss<InputDataType, OutputDataType>::HuberLoss(
   const double delta,
-  const bool mean):
+  const bool reduction):
   delta(delta),
-  mean(mean)
+  reduction(reduction)
 {
   // Nothing to do here.
 }
@@ -34,15 +34,22 @@ typename PredictionType::elem_type
 HuberLoss<InputDataType, OutputDataType>::Forward(const PredictionType& prediction,
                                                   const TargetType& target)
 {
+  PredictionType loss;
+  loss.zeros(size(prediction));
   typedef typename PredictionType::elem_type ElemType;
-  ElemType loss = 0;
   for (size_t i = 0; i < prediction.n_elem; ++i)
   {
-      const ElemType absError = std::abs(target[i] - prediction[i]);
-      loss += absError > delta
-          ? delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
+    const ElemType absError = std::abs(target[i] - prediction[i]);
+    loss[i] = absError > delta
+        ? delta * (absError - 0.5 * delta) : 0.5 * std::pow(absError, 2);
   }
-  return mean ? loss / prediction.n_elem : loss;
+
+  ElemType lossSum = arma::accu(loss);
+
+  if (reduction)
+    return lossSum;
+
+  return lossSum / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -58,11 +65,13 @@ void HuberLoss<InputDataType, OutputDataType>::Backward(
   for (size_t i = 0; i < loss.n_elem; ++i)
   {
     const ElemType absError = std::abs(target[i] - prediction[i]);
-    loss[i] = absError > delta
-        ? - delta * (target[i] - prediction[i]) / absError : prediction[i] - target[i];
-    if (mean)
-      loss[i] /= loss.n_elem;
+    loss[i] = absError > delta ?
+        - delta * (target[i] - prediction[i]) / absError :
+        prediction[i] - target[i];
   }
+
+  if (!reduction)
+    loss = loss / prediction.n_elem;
 }
 
 template<typename InputDataType, typename OutputDataType>
@@ -72,7 +81,7 @@ void HuberLoss<InputDataType, OutputDataType>::serialize(
     const uint32_t /* version */)
 {
   ar(CEREAL_NVP(delta));
-  ar(CEREAL_NVP(mean));
+  ar(CEREAL_NVP(reduction));
 }
 
 } // namespace ann
