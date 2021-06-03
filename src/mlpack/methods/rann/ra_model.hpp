@@ -41,7 +41,7 @@ class RAWrapperBase
   virtual RAWrapperBase* Clone() const = 0;
 
   //! Destruct the RAWrapperBase (nothing to do).
-  virtual ~RAWrapperBase() { };
+  virtual ~RAWrapperBase() {};
 
   //! Return a reference to the dataset.
   virtual const arma::mat& Dataset() const = 0;

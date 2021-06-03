@@ -21,27 +21,28 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 Concatenate<InputDataType, OutputDataType>::Concatenate() :
-  inRows(0)
+    inRows(0)
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
-Concatenate<InputDataType, OutputDataType>::Concatenate(const Concatenate& layer) :
-  inRows(layer.inRows),
-  weights(layer.weights),
-  delta(layer.delta),
-  concat(layer.concat)
+Concatenate<InputDataType, OutputDataType>::Concatenate(
+    const Concatenate& layer) :
+    inRows(layer.inRows),
+    weights(layer.weights),
+    delta(layer.delta),
+    concat(layer.concat)
 {
   // Nothing to to here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 Concatenate<InputDataType, OutputDataType>::Concatenate(Concatenate&& layer) :
-  inRows(layer.inRows),
-  weights(std::move(layer.weights)),
-  delta(std::move(layer.delta)),
-  concat(std::move(layer.concat))
+    inRows(layer.inRows),
+    weights(std::move(layer.weights)),
+    delta(std::move(layer.delta)),
+    concat(std::move(layer.concat))
 {
   // Nothing to do here.
 }

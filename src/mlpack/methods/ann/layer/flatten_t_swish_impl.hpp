@@ -50,7 +50,7 @@ void FlattenTSwish<InputDataType, OutputDataType>::Backward(
   DataType derivate, sigmoid;
   LogisticFunction::Fn(input, sigmoid);
   derivate.set_size(arma::size(input));
-  for(size_t i = 0; i < input.n_elem; ++i)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     if (input(i) >= 0)
     {

@@ -158,7 +158,8 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 /**
  * Check whether copying and moving network with Reparametrization is working or not.
  */
-TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTest]")
+TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
+          "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -285,7 +286,7 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
 TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 {
   // Create training input by 5x5 matrix.
-  arma::mat input = arma::randu(10,1);
+  arma::mat input = arma::randu(10, 1);
   // Create training output by 1 matrix.
   arma::mat output = arma::mat("1");
 
@@ -1000,9 +1001,10 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   model.Add<LogSoftMax<> >();
 
   std::string expectedMsg = "FFN<>::Train(): ";
-              expectedMsg += "the first layer of the network expects ";
-              expectedMsg += std::to_string(trainData.n_rows - 3) + " elements, ";
-              expectedMsg += "but the input has " + std::to_string(trainData.n_rows) + " dimensions! ";
+  expectedMsg += "the first layer of the network expects ";
+  expectedMsg += std::to_string(trainData.n_rows - 3) + " elements, ";
+  expectedMsg += "but the input has " + std::to_string(trainData.n_rows) +
+      " dimensions! ";
 
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
 

@@ -264,9 +264,7 @@ operator=(KDE&& other)
     // Move the other object.
     this->kernel = std::move(other.kernel);
     this->metric = std::move(other.metric);
-    // TODO: This should be: this->referenceTree = other.referenceTree;
     this->referenceTree = std::move(other.referenceTree);
-    // TODO: This should be: this->oldFromNewReferences = other.oldFromNewReferences;
     this->oldFromNewReferences = std::move(other.oldFromNewReferences);
     this->relError = other.relError;
     this->absError = other.absError;
