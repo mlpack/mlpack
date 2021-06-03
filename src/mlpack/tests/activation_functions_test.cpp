@@ -674,7 +674,7 @@ void CheckFlattenTSwishActivationCorrect(const arma::colvec input,
   FlattenTSwish<> fts(0.4);
   arma::colvec activations;
 
-  fts.Forward(input,activations);
+  fts.Forward(input, activations);
   for (size_t i = 0; i < activations.n_elem; ++i)
   {
     REQUIRE(activations.at(i) == Approx(target.at(i)).epsilon(1e-5));
@@ -697,7 +697,7 @@ void CheckFlattenTSwishDerivateCorrect(const arma::colvec input,
   arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
 
   arma::colvec derivate;
-  fts.Backward(input,error,derivate);
+  fts.Backward(input, error, derivate);
   for (size_t i = 0; i < derivate.n_elem; ++i)
   {
     REQUIRE(derivate.at(i) == Approx(target.at(i)).epsilon(1e-5));
@@ -1290,7 +1290,7 @@ TEST_CASE("TanhExpFunctionTest", "[ActivationFunctionsTest]")
 /**
  * Basic test of the SILU(Sigmoid Weighted Linear Unit) Function
  */
-TEST_CASE("SILUFunctionTest","[ActivationFunctionsTest]")
+TEST_CASE("SILUFunctionTest", "[ActivationFunctionsTest]")
 {
   // Random generated values.
   const arma::colvec activationData("-2 2 4.5 -5.7 -1 1 0 10");
@@ -1314,7 +1314,7 @@ TEST_CASE("SILUFunctionTest","[ActivationFunctionsTest]")
 /**
  * Basic test of Flatten T Swish function.
  */
-TEST_CASE("FlattenTSwishFunctionTest","[ActivationFunctionsTest]")
+TEST_CASE("FlattenTSwishFunctionTest", "[ActivationFunctionsTest]")
 {
   // Random Value.
   arma::colvec input("-4.0 -1.0 2 3 4 5 6");
