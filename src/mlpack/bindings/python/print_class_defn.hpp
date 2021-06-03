@@ -100,6 +100,10 @@ void PrintClassDefn(
   std::cout << "    return (self.__class__, (), self.__getstate__())"
       << std::endl;
   std::cout << std::endl;
+  std::cout << "  def __getparams__(self):" << std::endl;
+  std::cout << "    return SerializeToXML(self.modelptr, \"" << printedType
+      << "\")" << std::endl;
+  std::cout << std::endl;
 }
 
 /**
