@@ -46,6 +46,7 @@ A list of all the sections this tutorial contains.
    - \ref cli_ex2_lrtut
    - \ref cli_ex3_lrtut
    - \ref cli_ex4_lrtut
+   - \ref cli_ex5_lrtut
  - \ref linreg_lrtut
    - \ref linreg_ex1_lrtut
    - \ref linreg_ex2_lrtut
@@ -113,22 +114,23 @@ $ cat dataset.csv
 4,4
 
 $ cat lr.xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<!DOCTYPE boost_serialization>
-<boost_serialization signature="serialization::archive" version="12">
-<linearRegressionModel class_id="0" tracking_level="0" version="0">
-  <parameters class_id="1" tracking_level="0" version="0">
-    <n_rows>2</n_rows>
-    <n_cols>1</n_cols>
-    <n_elem>2</n_elem>
-    <vec_state>1</vec_state>
-    <item>-3.97205464519563669e-16</item>
-    <item>1.00000000000000022e+00</item>
-  </parameters>
-  <lambda>0.00000000000000000e+00</lambda>
-  <intercept>1</intercept>
-</linearRegressionModel>
-</boost_serialization>
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<model>
+		<cereal_class_version>0</cereal_class_version>
+		<parameters>
+			<n_rows>2</n_rows>
+			<n_cols>1</n_cols>
+			<vec_state>1</vec_state>
+			<elem>0</elem>
+			<elem>1</elem>
+		</parameters>
+		<lambda>0</lambda>
+		<intercept>true</intercept>
+	</model>
+</cereal>
+
+
 @endcode
 
 As you can see, the function for this input is \f$f(y)=0+1x_1\f$.  We can see
@@ -141,36 +143,102 @@ dataset is one dimensional, and the last column has the \f$y\f$ values, or
 responses, for each row. You can specify these responses in a separate file if
 you want, using the \c --input_responses, or \c -r, option.
 
-@subsection cli_ex2_lrtut Compute model and predict at the same time
+@subsection cli_ex2_lrtut Train a multivariate linear regression model
+
+Multivariate linear regression means that the response variable is predicted by
+more than just one input variable. In this example we will try to fit a
+multivariate linear regression model to data that contains four variables, stored in
+\c dataset_2.csv.
 
 @code
-$ mlpack_linear_regression --training_file dataset.csv --test_file predict.csv \
+$ cat dataset_2.csv
+0,0,0,0,14
+1,1,1,1,24
+2,1,0,2,27
+1,2,2,2,32
+-1,-3,0,2,17
+@endcode
+
+Now let's run \c mlpack_linear_regression as usual:
+
+@code 
+$ mlpack_linear_regression --training_file dataset_2.csv -v -M lr.xml
+[INFO ] Loading 'dataset_2.csv' as CSV data.  Size is 5 x 5.
+[INFO ] 
+[INFO ] Execution parameters:
+[INFO ]   help: 0
+[INFO ]   info: 
+[INFO ]   input_model_file: 
+[INFO ]   lambda: 0
+[INFO ]   output_model_file: lr.xml
+[INFO ]   output_predictions_file: 
+[INFO ]   test_file: 
+[INFO ]   training_file: dataset_2.csv
+[INFO ]   training_responses_file: 
+[INFO ]   verbose: 1
+[INFO ]   version: 0
+[INFO ] Program timers:
+[INFO ]   load_regressors: 0.000060s
+[INFO ]   loading_data: 0.000050s
+[INFO ]   regression: 0.000049s
+[INFO ]   total_time: 0.000118s
+
+$ cat lr.xml 
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<model>
+		<cereal_class_version>0</cereal_class_version>
+		<parameters>
+			<n_rows>5</n_rows>
+			<n_cols>1</n_cols>
+			<vec_state>1</vec_state>
+			<elem>14.00000000000002</elem>
+			<elem>1.9999999999999447</elem>
+			<elem>1.0000000000000431</elem>
+			<elem>2.9999999999999516</elem>
+			<elem>4.0000000000000249</elem>
+		</parameters>
+		<lambda>0</lambda>
+		<intercept>true</intercept>
+	</model>
+</cereal>
+@endcode
+
+If we take a look at the \c lr.xml output we can see the \c \<parameters\> part has five elements which
+the first corresponds to \f$\beta_0\f$ , the second corresponds to \f$\beta_1\f$ , and so on. This is equivalent
+to \f$f(y) = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_3 + \beta_4x_4\f$ or \f$f(y)=14+2x_1+1x_2+3x_3+4x_4\f$.
+
+@subsection cli_ex3_lrtut Compute model and predict at the same time
+
+@code
+$ mlpack_linear_regression --training_file dataset.csv --test_file predict.csv --output_predictions_file predictions.csv \
 > -v
+[WARN ] '--output_predictions_file (-o)' ignored because '--test_file (-T)' is specified!
 [INFO ] Loading 'dataset.csv' as CSV data.  Size is 2 x 5.
 [INFO ] Loading 'predict.csv' as raw ASCII formatted data.  Size is 1 x 3.
 [INFO ] Saving CSV data to 'predictions.csv'.
-[INFO ]
+[INFO ] 
 [INFO ] Execution parameters:
-[INFO ]   help: false
-[INFO ]   info: ""
-[INFO ]   input_model_file: ""
+[INFO ]   help: 0
+[INFO ]   info: 
+[INFO ]   input_model_file: 
 [INFO ]   lambda: 0
-[INFO ]   output_model_file: ""
-[INFO ]   output_predictions: predictions.csv
-[INFO ]   test_file: predict.csv
-[INFO ]   training_file: dataset.csv
-[INFO ]   training_responses: ""
-[INFO ]   verbose: true
-[INFO ]   version: false
-[INFO ]
+[INFO ]   output_model_file: 
+[INFO ]   output_predictions_file: 'predictions.csv' (1x3 matrix)
+[INFO ]   test_file: 'predict.csv' (0x0 matrix)
+[INFO ]   training_file: 'dataset.csv' (0x0 matrix)
+[INFO ]   training_responses_file: ''
+[INFO ]   verbose: 1
+[INFO ]   version: 0
 [INFO ] Program timers:
-[INFO ]   load_regressors: 0.000371s
-[INFO ]   load_test_points: 0.000229s
-[INFO ]   loading_data: 0.000491s
-[INFO ]   prediction: 0.000075s
-[INFO ]   regression: 0.000449s
-[INFO ]   saving_data: 0.000186s
-[INFO ]   total_time: 0.002731s
+[INFO ]   load_regressors: 0.000069s
+[INFO ]   load_test_points: 0.000031s
+[INFO ]   loading_data: 0.000079s
+[INFO ]   prediction: 0.000001s
+[INFO ]   regression: 0.000054s
+[INFO ]   saving_data: 0.000055s
+[INFO ]   total_time: 0.000203s
+
 
 $ cat dataset.csv
 0,0
@@ -195,51 +263,52 @@ about the \c predict.csv dataset is that it has the same dimensionality as the
 dataset used to create the model, one.  If the model generating dataset has
 \f$d\f$ dimensions, so must the dataset we want to predict for.
 
-@subsection cli_ex3_lrtut Prediction using a precomputed model
+@subsection cli_ex4_lrtut Prediction using a precomputed model
 
 @code
-$ mlpack_linear_regression --input_model_file lr.xml --test_file predict.csv -v
+$ mlpack_linear_regression --input_model_file lr.xml --test_file predict.csv --output_predictions_file predictions.csv -v
+[WARN ] '--output_predictions_file (-o)' ignored because '--test_file (-T)' is specified!
 [INFO ] Loading 'predict.csv' as raw ASCII formatted data.  Size is 1 x 3.
 [INFO ] Saving CSV data to 'predictions.csv'.
-[INFO ]
+[INFO ] 
 [INFO ] Execution parameters:
-[INFO ]   help: false
-[INFO ]   info: ""
+[INFO ]   help: 0
+[INFO ]   info: 
 [INFO ]   input_model_file: lr.xml
 [INFO ]   lambda: 0
-[INFO ]   output_model_file: ""
-[INFO ]   output_predictions: predictions.csv
-[INFO ]   test_file: predict.csv
-[INFO ]   training_file: ""
-[INFO ]   training_responses: ""
-[INFO ]   verbose: true
-[INFO ]   version: false
-[INFO ]
+[INFO ]   output_model_file: 
+[INFO ]   output_predictions_file: 'predictions.csv' (1x3 matrix)
+[INFO ]   test_file: 'predict.csv' (0x0 matrix)
+[INFO ]   training_file: ''
+[INFO ]   training_responses_file: ''
+[INFO ]   verbose: 1
+[INFO ]   version: 0
 [INFO ] Program timers:
-[INFO ]   load_model: 0.000264s
-[INFO ]   load_test_points: 0.000186s
-[INFO ]   loading_data: 0.000157s
-[INFO ]   prediction: 0.000098s
-[INFO ]   saving_data: 0.000157s
-[INFO ]   total_time: 0.001688s
+[INFO ]   load_model: 0.000051s
+[INFO ]   load_test_points: 0.000052s
+[INFO ]   loading_data: 0.000044s
+[INFO ]   prediction: 0.000010s
+[INFO ]   saving_data: 0.000079s
+[INFO ]   total_time: 0.000160s
+
 
 $ cat lr.xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<!DOCTYPE boost_serialization>
-<boost_serialization signature="serialization::archive" version="12">
-<linearRegressionModel class_id="0" tracking_level="0" version="0">
-  <parameters class_id="1" tracking_level="0" version="0">
-    <n_rows>2</n_rows>
-    <n_cols>1</n_cols>
-    <n_elem>2</n_elem>
-    <vec_state>1</vec_state>
-    <item>-3.97205464519563669e-16</item>
-    <item>1.00000000000000022e+00</item>
-  </parameters>
-  <lambda>0.00000000000000000e+00</lambda>
-  <intercept>1</intercept>
-</linearRegressionModel>
-</boost_serialization>
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<model>
+		<cereal_class_version>0</cereal_class_version>
+		<parameters>
+			<n_rows>2</n_rows>
+			<n_cols>1</n_cols>
+			<vec_state>1</vec_state>
+			<elem>0</elem>
+			<elem>1</elem>
+		</parameters>
+		<lambda>0</lambda>
+		<intercept>true</intercept>
+	</model>
+</cereal>
+
 
 $ cat predict.csv
 2
@@ -252,7 +321,7 @@ $ cat predictions.csv
 4.0000000000e+00
 @endcode
 
-@subsection cli_ex4_lrtut Using ridge regression
+@subsection cli_ex5_lrtut Using ridge regression
 
 Sometimes, the input matrix of predictors has a covariance matrix that is not
 invertible, or the system is overdetermined.  In this case, ridge regression is

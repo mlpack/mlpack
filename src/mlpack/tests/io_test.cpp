@@ -974,7 +974,7 @@ TEST_CASE_METHOD(IOTestDestroyer, "UnmappedParamTest",
 
   // Now check that we can get unmapped parameters.
   REQUIRE(IO::GetPrintableParam<arma::mat>("matrix") ==
-      "'test_data_3_1000.csv' (3x1000 matrix)");
+      "'test_data_3_1000.csv' (1000x3 matrix)");
   // This will have size 0x0 since it's an output parameter, and it hasn't been
   // set since ParseCommandLine() was called.
   REQUIRE(IO::GetPrintableParam<arma::mat>("matrix2") ==

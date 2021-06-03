@@ -168,11 +168,12 @@ TEST_CASE_METHOD(
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  REQUIRE(IO::GetParam<arma::mat>("training").n_cols == inputSize);
+  REQUIRE(IO::GetParam<arma::mat>("training").n_cols ==
+      (arma::uword) inputSize);
   REQUIRE(IO::GetParam<arma::mat>("test").n_cols == 0);
 
   REQUIRE(IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols ==
-      labelSize);
+      (arma::uword) labelSize);
   REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols == 0);
 }
 
@@ -205,10 +206,11 @@ TEST_CASE_METHOD(
 
   // Now check that the output has desired dimensions.
   REQUIRE(IO::GetParam<arma::mat>("training").n_cols == 0);
-  REQUIRE(IO::GetParam<arma::mat>("test").n_cols == inputSize);
+  REQUIRE(IO::GetParam<arma::mat>("test").n_cols == (arma::uword) inputSize);
 
   REQUIRE(IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols == 0);
-  REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols == labelSize);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols ==
+      (arma::uword) labelSize);
 }
 
 /**
@@ -275,11 +277,12 @@ TEST_CASE_METHOD(
   mlpackMain();
 
   // Now check that the output has desired dimensions.
-  REQUIRE(IO::GetParam<arma::mat>("training").n_cols == inputSize);
+  REQUIRE(IO::GetParam<arma::mat>("training").n_cols ==
+      (arma::uword) inputSize);
   REQUIRE(IO::GetParam<arma::mat>("test").n_cols == 0);
 
   REQUIRE(IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols ==
-      labelSize);
+      (arma::uword) labelSize);
   REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols == 0);
 }
 
@@ -314,10 +317,11 @@ TEST_CASE_METHOD(
 
   // Now check that the output has desired dimensions.
   REQUIRE(IO::GetParam<arma::mat>("training").n_cols == 0);
-  REQUIRE(IO::GetParam<arma::mat>("test").n_cols == inputSize);
+  REQUIRE(IO::GetParam<arma::mat>("test").n_cols == (arma::uword) inputSize);
 
   REQUIRE(IO::GetParam<arma::Mat<size_t>>("training_labels").n_cols == 0);
-  REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols == labelSize);
+  REQUIRE(IO::GetParam<arma::Mat<size_t>>("test_labels").n_cols ==
+      (arma::uword) labelSize);
 }
 
 /**

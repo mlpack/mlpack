@@ -142,6 +142,8 @@ Copyright:
   Copyright 2020, Gaurav Ghati <gauravghatii@gmail.com>
   Copyright 2020, Anmolpreet Singh <anmol323c@gmail.com>
   Copyright 2021, Tru Hoang <trugiahoang@gmail.com>
+  Copyright 2021, Mark Fischinger <markfischinger@gmail.com>
+  Copyright 2021, Muhammad Fawwaz Mayda <maydafawwaz@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.
