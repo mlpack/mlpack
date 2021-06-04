@@ -186,7 +186,7 @@ class BatchNorm
   //! and variance
   bool average;
 
-  //! If true, the module has learnable affine parameters. 
+  //! If true, the module has learnable affine parameters.
   bool affine;
 
   //! Locally-stored value for momentum.

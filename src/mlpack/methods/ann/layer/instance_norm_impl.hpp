@@ -50,7 +50,11 @@ InstanceNorm<InputDataType, OutputDataType>::InstanceNorm(
     deterministic(false),
     reset(false)
 {
-    batchNorm = ann::BatchNorm<> (size * batchSize, eps, average, affine, momentum);
+    batchNorm = ann::BatchNorm<> (size * batchSize,
+                                  eps,
+                                  average,
+                                  affine,
+                                  momentum);
     runningMean.zeros(size, 1);
     runningVariance.ones(size, 1);
     runningVariance = batchNorm.TrainingVariance();
@@ -65,7 +69,7 @@ void InstanceNorm<InputDataType, OutputDataType>::Forward(
   // Instance Norm with (N, C, H, W) is same as Batch Norm with (1, N*C, H, W),
   // where N is the batchSize, C is the number of channels, H and W are the
   // height and width of each image respectively.
-  if(input.n_cols != batchSize)
+  if (input.n_cols != batchSize)
   {
     Log::Fatal<<"Must use the same BatchSize that was used in the constructor"
                 <<std::endl;

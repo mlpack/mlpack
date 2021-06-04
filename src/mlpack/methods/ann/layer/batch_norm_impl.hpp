@@ -198,8 +198,8 @@ void BatchNorm<InputDataType, OutputDataType>::Backward(
 
   // Step 1: dl / dxhat.
   arma::cube norm;
-  if(affine)
-  { 
+  if (affine)
+  {
     norm = gyTemp.each_slice() % arma::repmat(gamma.t(),
        input.n_rows / size, 1);
   }
