@@ -262,7 +262,6 @@ using LayerTypes = boost::variant<
     BaseLayer<SoftplusFunction, arma::mat, arma::mat>*,
     BaseLayer<RectifierFunction, arma::mat, arma::mat>*,
     BatchNorm<arma::mat, arma::mat>*,
-    InstanceNorm<arma::mat, arma::mat>*,
     BilinearInterpolation<arma::mat, arma::mat>*,
     CELU<arma::mat, arma::mat>*,
     Concat<arma::mat, arma::mat>*,
