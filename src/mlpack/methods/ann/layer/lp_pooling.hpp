@@ -196,11 +196,12 @@ class LpPooling
                  const arma::Mat<eT>& error,
                  arma::Mat<eT>& output)
   {
-
     arma::Mat<eT> unpooledError;
-    for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, colidx++)
+    for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight,
+         colidx++)
     {
-      for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, rowidx++)
+      for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth,
+           rowidx++)
       {
         size_t rowEnd = i + kernelWidth - 1;
         size_t colEnd = j + kernelHeight - 1;
@@ -219,7 +220,8 @@ class LpPooling
           colEnd = input.n_cols - 1;
         }
 
-        arma::mat InputArea = input(arma::span(i, rowEnd), arma::span(j, colEnd));
+        arma::mat InputArea = input(arma::span(i, rowEnd),
+            arma::span(j, colEnd));
 
         size_t sum = pow(arma::accu(arma::pow(InputArea, normType)),
             (normType - 1) / normType);

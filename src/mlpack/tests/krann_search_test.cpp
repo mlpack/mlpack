@@ -43,7 +43,7 @@ TEST_CASE("NaiveGuaranteeTest", "[KRANNTest]")
   RASearch<> rsRann(refData, true, false, 1.0);
 
   arma::mat qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false)) // No transpose.
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 1000;
@@ -105,7 +105,7 @@ TEST_CASE("SingleTreeSearch", "[KRANNTest]")
 
   // The relative ranks for the given query reference pair
   arma::Mat<size_t> qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false)) // No transpose.
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 1000;
@@ -166,7 +166,7 @@ TEST_CASE("DualTreeSearch", "[KRANNTest]")
   RASearch<> tsdRann(refData, false, false, 1.0, 0.95, false, false, 5);
 
   arma::Mat<size_t> qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false)) // No transpose.
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 1000;
@@ -300,7 +300,7 @@ TEST_CASE("SingleCoverTreeTest", "[KRANNTest]")
 
   // The relative ranks for the given query reference pair.
   arma::Mat<size_t> qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false)) // No transpose.
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   size_t numRounds = 100;
@@ -666,7 +666,7 @@ TEST_CASE("RAModelTest", "[KRANNTest]")
   models[19] = RAModel(RAModel::TreeTypes::OCTREE, true);
 
   arma::Mat<size_t> qrRanks;
-  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false)) // No transpose.
+  if (!data::Load("rann_test_qr_ranks.csv", qrRanks, false, false))
     FAIL("Cannot load dataset rann_test_qr_ranks.csv");
 
   for (size_t j = 0; j < 3; ++j)

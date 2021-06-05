@@ -77,12 +77,11 @@ void PixelShuffle<InputDataType, OutputDataType>::Forward(
           size_t width_index = w / upscaleFactor;
           size_t channel_index = (upscaleFactor * (h % upscaleFactor)) +
               (w % upscaleFactor) + (c * std::pow(upscaleFactor, 2));
-          outputTemp(w, h, c + n * sizeOut) = inputTemp(width_index, height_index,
-              channel_index + n * size);
+          outputTemp(w, h, c + n * sizeOut) = inputTemp(width_index,
+              height_index, channel_index + n * size);
         }
       }
     }
-
   }
 }
 
@@ -109,12 +108,11 @@ void PixelShuffle<InputDataType, OutputDataType>::Backward(
           size_t width_index = w / upscaleFactor;
           size_t channel_index = (upscaleFactor * (h % upscaleFactor)) +
               (w % upscaleFactor) + (c * std::pow(upscaleFactor, 2));
-          gTemp(width_index, height_index, channel_index + n * size) = gyTemp(w, h,
-              c + n * sizeOut);
+          gTemp(width_index, height_index, channel_index + n * size) =
+              gyTemp(w, h, c + n * sizeOut);
         }
       }
     }
-
   }
 }
 

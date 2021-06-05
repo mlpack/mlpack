@@ -231,7 +231,8 @@ void PrintPYX(const util::BindingDetails& doc,
       << "\'bool'!\")" << endl;
   cout << endl;
 
-  // Before calling mlpackMain(), we check input matrices for NaN values if needed.
+  // Before calling mlpackMain(), we check input matrices for NaN values if
+  // needed.
   cout << "  if check_input_matrices:" << endl;
   cout << "    IO.CheckInputMatrices()" << endl;
 
