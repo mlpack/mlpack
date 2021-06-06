@@ -1,5 +1,7 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added dict-style inspection of mlpack models in python bindings (#2868).
+
   * Added Extra Trees Algorithm (#2883). Currently, it can be used using the
     class `mlpack::tree::ExtraTrees`, but only through C++.
 
@@ -53,6 +55,9 @@
 
   * The `mlpack_test` target is no longer built as part of `make all`.  Use
     `make mlpack_test` to build the tests.
+
+  * Fixes to `HoeffdingTree`: ensure that training still works when empty
+    constructor is used (#2964).
 
 ### mlpack 3.4.2
 ###### 2020-10-26

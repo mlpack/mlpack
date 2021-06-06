@@ -149,9 +149,8 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     OptimizerType& optimizer,
     CallbackTypes&&... callbacks)
 {
-  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
-                                                              predictors.n_rows, 
-                                                              "RNN<>::Train()");
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(
+      network, predictors.n_rows, "RNN<>::Train()");
 
   numFunctions = responses.n_cols;
 
@@ -197,9 +196,8 @@ double RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Train(
     arma::cube responses,
     CallbackTypes&&... callbacks)
 {
-  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
-                                                              predictors.n_rows, 
-                                                              "RNN<>::Train()");
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(
+      network, predictors.n_rows, "RNN<>::Train()");
 
   numFunctions = responses.n_cols;
 
@@ -233,9 +231,8 @@ template<typename OutputLayerType, typename InitializationRuleType,
 void RNN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     arma::cube predictors, arma::cube& results, const size_t batchSize)
 {
-  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(network, 
-                                                              predictors.n_rows, 
-                                                              "RNN<>::Predict()");
+  CheckInputShape<std::vector<LayerTypes<CustomLayers...> > >(
+      network, predictors.n_rows, "RNN<>::Predict()");
 
   ResetCells();
 

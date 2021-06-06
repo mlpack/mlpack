@@ -29,8 +29,9 @@ KLDivergence<InputDataType, OutputDataType>::KLDivergence(const bool takeMean) :
 template<typename InputDataType, typename OutputDataType>
 template<typename PredictionType, typename TargetType>
 typename PredictionType::elem_type
-KLDivergence<InputDataType, OutputDataType>::Forward(const PredictionType& prediction,
-                                                     const TargetType& target)
+KLDivergence<InputDataType, OutputDataType>::Forward(
+    const PredictionType& prediction,
+    const TargetType& target)
 {
   if (takeMean)
   {
@@ -52,7 +53,8 @@ void KLDivergence<InputDataType, OutputDataType>::Backward(
 {
   if (takeMean)
   {
-    loss = arma::mean(arma::mean(arma::log(prediction) - arma::log(target) + 1));
+    loss = arma::mean(arma::mean(
+        arma::log(prediction) - arma::log(target) + 1));
   }
   else
   {

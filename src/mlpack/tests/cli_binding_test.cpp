@@ -539,7 +539,8 @@ TEST_CASE("SetParamDatasetInfoMatTest", "[CLIOptionTest]")
   typedef tuple<string, size_t, size_t> TupleType;
   TupleType testTuple{filename, 0, 0};
   tuple<DatasetInfo, arma::mat> t1 = make_tuple(di, m);
-  tuple<tuple<DatasetInfo, arma::mat>, TupleType> t2 = make_tuple(t1, testTuple);
+  tuple<tuple<DatasetInfo, arma::mat>, TupleType> t2 = make_tuple(t1,
+      testTuple);
   d.value = boost::any(t2);
   d.noTranspose = false;
 
@@ -552,7 +553,8 @@ TEST_CASE("SetParamDatasetInfoMatTest", "[CLIOptionTest]")
 
   // Check that the name is right.
   tuple<tuple<DatasetInfo, arma::mat>, TupleType>& t3 =
-      *boost::any_cast<tuple<tuple<DatasetInfo, arma::mat>, TupleType>>(&d.value);
+      *boost::any_cast<tuple<tuple<DatasetInfo, arma::mat>, TupleType>>(
+      &d.value);
 
   REQUIRE(get<0>(get<1>(t3)) == "new_filename.csv");
 }

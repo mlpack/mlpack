@@ -15,8 +15,6 @@ option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
-option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
-option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
