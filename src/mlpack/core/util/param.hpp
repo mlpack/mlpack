@@ -56,7 +56,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  */
 #define BINDING_NAME(NAME) static \
     mlpack::util::ProgramName \
-    JOIN(io_programname_dummy_object, __COUNTER__) = mlpack::util::ProgramName(NAME);
+    io_programname_dummy_object = mlpack::util::ProgramName(NAME);
 
 /**
  * Specify the short description of a binding.  Only one instance of this macro
@@ -75,7 +75,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  */
 #define BINDING_SHORT_DESC(SHORT_DESC) static \
     mlpack::util::ShortDescription \
-    JOIN(io_programshort_desc_dummy_object, __COUNTER__) = mlpack::util::ShortDescription( \
+    io_programshort_desc_dummy_object = mlpack::util::ShortDescription( \
     SHORT_DESC);
 
 /**
@@ -97,7 +97,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  */
 #define BINDING_LONG_DESC(LONG_DESC) static \
     mlpack::util::LongDescription \
-    JOIN(io_programlong_desc_dummy_object, __COUNTER__) = mlpack::util::LongDescription( \
+    io_programlong_desc_dummy_object = mlpack::util::LongDescription( \
     []() { return std::string(LONG_DESC); });
 
 /**
@@ -187,10 +187,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_FLAG(ID, DESC, ALIAS) \
-    PARAM_IN(bool, ID, DESC, ALIAS, false, false, false);
-
-#define PARAM_FLAG_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_IN(bool, ID, DESC, ALIAS, false, false, true);
+    PARAM_IN(bool, ID, DESC, ALIAS, false, false);
 
 /**
  * Define an integer input parameter.
@@ -218,10 +215,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_INT_IN(ID, DESC, ALIAS, DEF) \
-    PARAM_IN(int, ID, DESC, ALIAS, DEF, false, false)
-
-#define PARAM_INT_IN_METHSPEC(ID, DESC, ALIAS, DEF) \
-    PARAM_IN(int, ID, DESC, ALIAS, DEF, false, true)
+    PARAM_IN(int, ID, DESC, ALIAS, DEF, false)
 
 /**
  * Define an integer output parameter.  This parameter will be printed on stdout
@@ -279,10 +273,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_DOUBLE_IN(ID, DESC, ALIAS, DEF) \
-    PARAM_IN(double, ID, DESC, ALIAS, DEF, false, false)
-
-#define PARAM_DOUBLE_IN_METHSPEC(ID, DESC, ALIAS, DEF) \
-    PARAM_IN(double, ID, DESC, ALIAS, DEF, false, true)
+    PARAM_IN(double, ID, DESC, ALIAS, DEF, false)
 
 /**
  * Define a double output parameter.  This parameter will be printed on stdout
@@ -342,10 +333,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_STRING_IN(ID, DESC, ALIAS, DEF) \
-    PARAM_IN(std::string, ID, DESC, ALIAS, DEF, false, false)
-
-#define PARAM_STRING_IN_METHSPEC(ID, DESC, ALIAS, DEF) \
-    PARAM_IN(std::string, ID, DESC, ALIAS, DEF, false, true)
+    PARAM_IN(std::string, ID, DESC, ALIAS, DEF, false)
 
 /**
  * Define a string output parameter.
@@ -405,10 +393,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_MATRIX_IN(ID, DESC, ALIAS) \
-    PARAM_MATRIX(ID, DESC, ALIAS, false, true, true, false)
-
-#define PARAM_MATRIX_IN_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_MATRIX(ID, DESC, ALIAS, false, true, true, true)
+    PARAM_MATRIX(ID, DESC, ALIAS, false, true, true)
 
 /**
  * Define a required matrix input parameter.  From the command line, the user
@@ -436,10 +421,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_MATRIX_IN_REQ(ID, DESC, ALIAS) \
-    PARAM_MATRIX(ID, DESC, ALIAS, true, true, true, false)
-
-#define PARAM_MATRIX_IN_REQ_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_MATRIX(ID, DESC, ALIAS, true, true, true, true)
+    PARAM_MATRIX(ID, DESC, ALIAS, true, true, true)
 
 /**
  * Define a matrix output parameter.  When the program terminates, the matrix
@@ -472,7 +454,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_MATRIX_OUT(ID, DESC, ALIAS) \
-    PARAM_MATRIX(ID, DESC, ALIAS, false, true, false, false)
+    PARAM_MATRIX(ID, DESC, ALIAS, false, true, false)
 
 /**
  * Define a transposed matrix input parameter.  This is useful when data is
@@ -501,10 +483,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_TMATRIX_IN(ID, DESC, ALIAS) \
-    PARAM_MATRIX(ID, DESC, ALIAS, false, false, true, false)
-
-#define PARAM_TMATRIX_IN_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_MATRIX(ID, DESC, ALIAS, false, false, true, true)
+    PARAM_MATRIX(ID, DESC, ALIAS, false, false, true)
 
 /**
  * Define a required transposed matrix input parameter.  This is useful when
@@ -534,10 +513,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_TMATRIX_IN_REQ(ID, DESC, ALIAS) \
-    PARAM_MATRIX(ID, DESC, ALIAS, true, false, true, false)
-
-#define PARAM_TMATRIX_IN_REQ_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_MATRIX(ID, DESC, ALIAS, true, false, true, true)
+    PARAM_MATRIX(ID, DESC, ALIAS, true, false, true)
 
 /**
  * Define a transposed matrix output parameter.  This is useful when data is
@@ -572,7 +548,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_TMATRIX_OUT(ID, DESC, ALIAS) \
-    PARAM_MATRIX(ID, DESC, ALIAS, false, false, false, false)
+    PARAM_MATRIX(ID, DESC, ALIAS, false, false, false)
 
 /**
  * Define an unsigned matrix input parameter (arma::Mat<size_t>).  From the
@@ -600,10 +576,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UMATRIX_IN(ID, DESC, ALIAS) \
-    PARAM_UMATRIX(ID, DESC, ALIAS, false, true, true, false)
-
-#define PARAM_UMATRIX_IN_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_UMATRIX(ID, DESC, ALIAS, false, true, true, true)
+    PARAM_UMATRIX(ID, DESC, ALIAS, false, true, true)
 
 /**
  * Define a required unsigned matrix input parameter (arma::Mat<size_t>).  From
@@ -632,10 +605,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UMATRIX_IN_REQ(ID, DESC, ALIAS) \
-    PARAM_UMATRIX(ID, DESC, ALIAS, true, true, true, false)
-
-#define PARAM_UMATRIX_IN_REQ_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_UMATRIX(ID, DESC, ALIAS, true, true, true, true)
+    PARAM_UMATRIX(ID, DESC, ALIAS, true, true, true)
 
 /**
  * Define an unsigned matrix output parameter (arma::Mat<size_t>).  When the
@@ -669,7 +639,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UMATRIX_OUT(ID, DESC, ALIAS) \
-    PARAM_UMATRIX(ID, DESC, ALIAS, false, true, false, false)
+    PARAM_UMATRIX(ID, DESC, ALIAS, false, true, false)
 
 
 /**
@@ -698,10 +668,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_COL_IN(ID, DESC, ALIAS) \
-    PARAM_COL(ID, DESC, ALIAS, false, true, true, false)
-
-#define PARAM_COL_IN_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_COL(ID, DESC, ALIAS, false, true, true, true)
+    PARAM_COL(ID, DESC, ALIAS, false, true, true)
 
 /**
  * Define a required vector input parameter (type arma::vec).  From the command
@@ -729,11 +696,8 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_COL_IN_REQ(ID, DESC, ALIAS) \
-    PARAM_COL(ID, DESC, ALIAS, true, true, true, false)
+    PARAM_COL(ID, DESC, ALIAS, true, true, true)
 
-#define PARAM_COL_IN_REQ_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_COL(ID, DESC, ALIAS, true, true, true, true)
-    
 /**
  * Define a row vector input parameter (type arma::rowvec).  From the command
  * line, the user can specify the file that holds the vector, using the name of
@@ -760,10 +724,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_ROW_IN(ID, DESC, ALIAS) \
-    PARAM_ROW(ID, DESC, ALIAS, false, true, true, false)
-
-#define PARAM_ROW_IN_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_ROW(ID, DESC, ALIAS, false, true, true, true)
+    PARAM_ROW(ID, DESC, ALIAS, false, true, true)
 
 /**
  * Define an unsigned vector input parameter (type arma::Col<size_t>).  From the
@@ -791,10 +752,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UCOL_IN(ID, DESC, ALIAS) \
-    PARAM_UCOL(ID, DESC, ALIAS, false, true, true, false)
-
-#define PARAM_UCOL_IN_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_UCOL(ID, DESC, ALIAS, false, true, true, true)
+    PARAM_UCOL(ID, DESC, ALIAS, false, true, true)
 
 /**
  * Define an unsigned row vector input parameter (type arma::Row<size_t>).  From
@@ -823,10 +781,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UROW_IN(ID, DESC, ALIAS) \
-    PARAM_UROW(ID, DESC, ALIAS, false, true, true, false)
-
-#define PARAM_UROW_IN_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_UROW(ID, DESC, ALIAS, false, true, true, true)
+    PARAM_UROW(ID, DESC, ALIAS, false, true, true)
 
 /**
  * Define a vector output parameter (type arma::vec).  When the program
@@ -859,7 +814,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_COL_OUT(ID, DESC, ALIAS) \
-    PARAM_COL(ID, DESC, ALIAS, false, true, false, false)
+    PARAM_COL(ID, DESC, ALIAS, false, true, false)
 
 /**
  * Define a row vector output parameter (type arma::rowvec).  When the program
@@ -892,7 +847,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_ROW_OUT(ID, DESC, ALIAS) \
-    PARAM_ROW(ID, DESC, ALIAS, false, true, false, false)
+    PARAM_ROW(ID, DESC, ALIAS, false, true, false)
 
 /**
  * Define an unsigned vector output parameter (type arma::Col<size_t>).  When
@@ -925,7 +880,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UCOL_OUT(ID, DESC, ALIAS) \
-    PARAM_UCOL(ID, DESC, ALIAS, false, true, false, false)
+    PARAM_UCOL(ID, DESC, ALIAS, false, true, false)
 
 /**
  * Define an unsigned row vector output parameter (type arma::Row<size_t>).
@@ -958,7 +913,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_UROW_OUT(ID, DESC, ALIAS) \
-    PARAM_UROW(ID, DESC, ALIAS, false, true, false, false)
+    PARAM_UROW(ID, DESC, ALIAS, false, true, false)
 
 /**
  * Define a std::vector input parameter.
@@ -985,10 +940,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_VECTOR_IN(T, ID, DESC, ALIAS) \
-    PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), false, false)
-
-#define PARAM_VECTOR_IN_METHSPEC(T, ID, DESC, ALIAS) \
-    PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), false, true)
+    PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), false)
 
 /**
  * Define a vector output parameter.  This vector will be printed on stdout at
@@ -1065,12 +1017,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 #define PARAM_MATRIX_AND_INFO_IN(ID, DESC, ALIAS) \
     PARAM(TUPLE_TYPE, ID, DESC, ALIAS, \
         "std::tuple<mlpack::data::DatasetInfo, arma::mat>", false, true, true, \
-        TUPLE_TYPE(), false)
-
-#define PARAM_MATRIX_AND_INFO_IN_METHSPEC(ID, DESC, ALIAS) \
-    PARAM(TUPLE_TYPE, ID, DESC, ALIAS, \
-        "std::tuple<mlpack::data::DatasetInfo, arma::mat>", false, true, true, \
-        TUPLE_TYPE(), true)
+        TUPLE_TYPE())
 
 /**
  * Define an input model.  From the command line, the user can specify the file
@@ -1182,10 +1129,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_INT_IN_REQ(ID, DESC, ALIAS) \
-    PARAM_IN(int, ID, DESC, ALIAS, 0, true, false)
-
-#define PARAM_INT_IN_REQ_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_IN(int, ID, DESC, ALIAS, 0, true, true)
+    PARAM_IN(int, ID, DESC, ALIAS, 0, true)
 
 /**
  * Define a required double parameter.
@@ -1210,10 +1154,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_DOUBLE_IN_REQ(ID, DESC, ALIAS) \
-    PARAM_IN(double, ID, DESC, ALIAS, 0.0, true, false)
-
-#define PARAM_DOUBLE_IN_REQ_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_IN(double, ID, DESC, ALIAS, 0.0, true, true)
+    PARAM_IN(double, ID, DESC, ALIAS, 0.0, true)
 
 /**
  * Define a required string parameter.
@@ -1238,10 +1179,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_STRING_IN_REQ(ID, DESC, ALIAS) \
-    PARAM_IN(std::string, ID, DESC, ALIAS, "", true, false)
-
-#define PARAM_STRING_IN_REQ_METHSPEC(ID, DESC, ALIAS) \
-    PARAM_IN(std::string, ID, DESC, ALIAS, "", true, true)
+    PARAM_IN(std::string, ID, DESC, ALIAS, "", true)
 
 /**
  * Define a required vector parameter.
@@ -1268,44 +1206,40 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * https://github.com/mlpack/mlpack/issues/100 for more information.
  */
 #define PARAM_VECTOR_IN_REQ(T, ID, DESC, ALIAS) \
-    PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), true, false);
-
-
-#define PARAM_VECTOR_IN_REQ_METHSPEC(T, ID, DESC, ALIAS) \
-    PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), true, true);
+    PARAM_IN(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), true);
 
 /**
  * Defining useful macros using PARAM macro defined later.
  */
-#define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ, METHSPEC) \
-    PARAM(T, ID, DESC, ALIAS, #T, REQ, true, false, DEF, METHSPEC);
+#define PARAM_IN(T, ID, DESC, ALIAS, DEF, REQ) \
+    PARAM(T, ID, DESC, ALIAS, #T, REQ, true, false, DEF);
 
 #define PARAM_OUT(T, ID, DESC, ALIAS, DEF, REQ) \
     PARAM(T, ID, DESC, ALIAS, #T, REQ, false, false, DEF);
 
-#define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN, METHSPEC) \
+#define PARAM_MATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
     PARAM(arma::mat, ID, DESC, ALIAS, "arma::mat", REQ, IN, \
-        TRANS, arma::mat(), METHSPEC);
+        TRANS, arma::mat());
 
-#define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN, METHSPEC) \
+#define PARAM_UMATRIX(ID, DESC, ALIAS, REQ, TRANS, IN) \
     PARAM(arma::Mat<size_t>, ID, DESC, ALIAS, "arma::Mat<size_t>", \
-        REQ, IN, TRANS, arma::Mat<size_t>(), METHSPEC);
+        REQ, IN, TRANS, arma::Mat<size_t>());
 
-#define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN, METHSPEC) \
+#define PARAM_COL(ID, DESC, ALIAS, REQ, TRANS, IN) \
     PARAM(arma::vec, ID, DESC, ALIAS, "arma::vec", REQ, IN, TRANS, \
-        arma::vec(), METHSPEC);
+        arma::vec());
 
-#define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN, METHSPEC) \
+#define PARAM_UCOL(ID, DESC, ALIAS, REQ, TRANS, IN) \
     PARAM(arma::Col<size_t>, ID, DESC, ALIAS, "arma::Col<size_t>", \
-        REQ, IN, TRANS, arma::Col<size_t>(), METHSPEC);
+        REQ, IN, TRANS, arma::Col<size_t>());
 
-#define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN, METHSPEC) \
+#define PARAM_ROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
     PARAM(arma::rowvec, ID, DESC, ALIAS, "arma::rowvec", REQ, IN, \
-    TRANS, arma::rowvec(), METHSPEC);
+    TRANS, arma::rowvec());
 
-#define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN, METHSPEC) \
+#define PARAM_UROW(ID, DESC, ALIAS, REQ, TRANS, IN) \
     PARAM(arma::Row<size_t>, ID, DESC, ALIAS, "arma::Row<size_t>", \
-    REQ, IN, TRANS, arma::Row<size_t>(), METHSPEC);
+    REQ, IN, TRANS, arma::Row<size_t>());
 
 /**
  * Define the PARAM(), PARAM_MODEL() macro. Don't use this function; 
@@ -1324,31 +1258,31 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  * @param REQ Whether or not parameter is required (boolean value).
  */
 #ifdef __COUNTER__
-  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF, METHSPEC) \
+  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
       static mlpack::util::Option<T> \
       JOIN(io_option_dummy_object_in_, __COUNTER__) \
-      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, METHSPEC, testName);
+      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, testName);
 
   // There are no uses of required models, so that is not an option to this
   // macro (it would be easy to add).
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
       static mlpack::util::Option<TYPE*> \
       JOIN(io_option_dummy_model_, __COUNTER__) \
-      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, false, testName);
+      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, testName);
 #else
   // We have to do some really bizarre stuff since __COUNTER__ isn't defined. I
   // don't think we can absolutely guarantee success, but it should be "good
   // enough".  We use the __LINE__ macro and the type of the parameter to try
   // and get a good guess at something unique.
-  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF, METHSPEC) \
+  #define PARAM(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
       static mlpack::util::Option<T> \
       JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
-      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, METHSPEC, testName);
+      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, testName);
 
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
       static mlpack::util::Option<TYPE*> \
       JOIN(JOIN(io_option_dummy_object_model_, __LINE__), opt) \
-      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, false, \
+      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, \
       testName);
 #endif
 

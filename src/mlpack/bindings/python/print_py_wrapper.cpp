@@ -13,34 +13,29 @@ namespace bindings {
 namespace python {
 
 void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
-					const std::string& groupName,
-				    const std::string& validMethods)
+										const std::string& groupName,
+				    				const std::string& validMethods)
 {
-	// typedef std::map<std::string, util::ParamData>::iterator ParamIter;
-	// for(auto& name : groupProgramNames)
-	// {
-	// 	IO::RestoreSettings(name);
-	// 	std::map<std::string, util::ParamData>& parameters = IO::Parameters();
-	// 	for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
-	// 	{
-	// 		cout << it->first << endl;
-	// 	}
-	// 	IO::ClearSettings();
-	// }
+	map<string, map<string, ParamData>> accumulate;
 
 	vector<string> methods = GetMethods(validMethods);
 	typedef vector<string>::iterator MethodItr;
 
 	string importString = "";
 
-	for(MethodItr itr = methods.begin(); itr != methods.end(); ++itr)
+	for(int i=0; i<methods.size(); i++)
 	{
-		importString += "from " + groupName + "_" + *itr + " ";
-		importString += "import " + groupName + "_" + *itr + "\n";
+		importString += "from " + groupName + "_" + methods[i] + " ";
+		importString += "import " + groupName + "_" + methods[i] + "\n";
+		IO::RestoreSettings(groupProgramNames[i]);
+		accumulate[methods[i]] = IO::Parameters();
+		IO::ClearSettings();
 	}
 
 	cout << importString << endl;
 
+	vector<string> methodSpecificParams;
+	typedef map<string, ParamData>::iterator ParamItr;
 	string className = GetClassName(groupName);
 
 	cout << "class " << className << ":" << endl;

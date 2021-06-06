@@ -24,7 +24,6 @@
 #define BINDING_TYPE_JL 3
 #define BINDING_TYPE_GO 4
 #define BINDING_TYPE_R 5
-#define BINDING_TYPE_WRAPPER 127
 #define BINDING_TYPE_MARKDOWN 128
 #define BINDING_TYPE_UNKNOWN -1
 
@@ -219,7 +218,7 @@ static const std::string testName = "";
     JOIN(io_programname_dummy_object, __COUNTER__) = mlpack::util::ProgramName(NAME); \
 		mlpack::bindings::python::ChangeProgramName \
 		JOIN(changename_dummy_, __COUNTER__) = \
-    mlpack::bindings::python::ChangeProgramName(NAME);
+        mlpack::bindings::python::ChangeProgramName(NAME);
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");

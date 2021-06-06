@@ -43,7 +43,7 @@ BINDING_SEE_ALSO("Linear/ridge regression tutorial",
 PARAM_MODEL_IN(LinearRegression, "input_model", "Existing LinearRegression "
     "model to use.", "m");
 
-PARAM_MATRIX_IN_METHSPEC("test", "Matrix containing X' (test regressors).", "T");
+PARAM_MATRIX_IN("test", "Matrix containing X' (test regressors).", "T");
 
 // This is the future name of the parameter.
 PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "

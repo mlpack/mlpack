@@ -40,9 +40,9 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("Linear/ridge regression tutorial",
        "@doxygen/lrtutorial.html");
 
-PARAM_MATRIX_IN_METHSPEC("training", "Matrix containing training set X (regressors).",
+PARAM_MATRIX_IN("training", "Matrix containing training set X (regressors).",
     "t");
-PARAM_ROW_IN_METHSPEC("training_responses", "Optional vector containing y "
+PARAM_ROW_IN("training_responses", "Optional vector containing y "
     "(responses). If not given, the responses are assumed to be the last row "
     "of the input file.", "r");
 
