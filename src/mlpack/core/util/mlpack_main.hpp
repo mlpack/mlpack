@@ -24,6 +24,7 @@
 #define BINDING_TYPE_JL 3
 #define BINDING_TYPE_GO 4
 #define BINDING_TYPE_R 5
+#define BINDING_TYPE_PYX_COLLECT 6
 #define BINDING_TYPE_MARKDOWN 128
 #define BINDING_TYPE_UNKNOWN -1
 
@@ -483,6 +484,72 @@ PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
     " copied before the method is run.  This is useful for debugging problems "
     "where the input parameters are being modified by the algorithm, but can "
     "slow down the code.", "");
+
+#elif(BINDING_TYPE == BINDING_TYPE_PYX_COLLECT) // Making wrappers for python.
+// Matrices are transposed on load/save.
+#define BINDING_MATRIX_TRANSPOSED true
+
+#include <mlpack/bindings/python/py_option.hpp>
+#include <mlpack/bindings/python/print_doc_functions.hpp>
+
+/**
+ * PRINT_PARAM_STRING() returns a string that contains the correct
+ * language-specific representation of a parameter's name.
+ */
+#define PRINT_PARAM_STRING mlpack::bindings::python::ParamString
+
+/**
+ * PRINT_PARAM_VALUE() returns a string that contains a correct
+ * language-specific representation of a parameter's value.
+ */
+#define PRINT_PARAM_VALUE mlpack::bindings::python::PrintValue
+
+/**
+ * PRINT_DATASET() returns a string that contains a correct language-specific
+ * representation of a dataset name.
+ */
+#define PRINT_DATASET mlpack::bindings::python::PrintDataset
+
+/**
+ * PRINT_MODEL() returns a string that contains a correct language-specific
+ * representation of an mlpack model name.
+ */
+#define PRINT_MODEL mlpack::bindings::python::PrintModel
+
+/**
+ * PRINT_CALL() returns a string that contains the full language-specific
+ * representation of a call to an mlpack binding.  The first argument should be
+ * the name of the binding, and all other arguments should be names of
+ * parameters followed by values (in the case where the preceding parameter is
+ * not a flag).
+ */
+#define PRINT_CALL mlpack::bindings::python::ProgramCall
+
+/**
+ * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or
+ * not a specific parameter check should be ignored.
+ */
+#define BINDING_IGNORE_CHECK mlpack::bindings::python::IgnoreCheck
+
+namespace mlpack {
+namespace util {
+
+template<typename T>
+using Option = mlpack::bindings::python::PyOption<T>;
+
+}
+}
+
+static const std::string testName = "";
+#include <mlpack/core/util/param.hpp>
+
+#undef BINDING_NAME
+#define BINDING_NAME(NAME) static \
+    mlpack::util::ProgramName \
+    JOIN(io_programname_dummy_object, __COUNTER__) = mlpack::util::ProgramName(NAME); \
+		mlpack::bindings::python::ChangeProgramName \
+		JOIN(changename_dummy_, __COUNTER__) = \
+        mlpack::bindings::python::ChangeProgramName(NAME);
 
 #else
 

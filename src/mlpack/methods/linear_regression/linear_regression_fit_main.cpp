@@ -52,7 +52,8 @@ PARAM_MODEL_OUT(LinearRegression, "output_model", "Output LinearRegression "
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
     " the method reduces to linear regression.", "l", 0.0);
 
-#ifndef MAKING_WRAPPER
+ // we don't need mlpackMain() definiton while making wrappers.
+#if(BINDING_TYPE != BINDING_TYPE_PYX_COLLECT)
 static void mlpackMain()
 {
   const double lambda = IO::GetParam<double>("lambda");

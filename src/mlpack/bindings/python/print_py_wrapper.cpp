@@ -14,7 +14,7 @@ namespace python {
 
 void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
 										const std::string& groupName,
-				    				const std::string& validMethods)
+				    			  const std::string& validMethods)
 {
 	map<string, map<string, ParamData>> accumulate;
 

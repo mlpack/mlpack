@@ -306,8 +306,12 @@ macro (add_python_binding group_name)
     endif()
   endforeach()
 
+  if(EXISTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/${group_name}_main_includes.hpp)
+    file(REMOVE ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/${group_name}_main_includes.hpp)
+  endif()
+
   foreach(loc ${${group_name}_method_main_files})
-    file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/main_includes_group.hpp
+    file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/${group_name}_main_includes.hpp
     "#include <${loc}>\n")
   endforeach()
 
