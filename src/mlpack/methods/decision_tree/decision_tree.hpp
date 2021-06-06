@@ -203,10 +203,10 @@ class DecisionTree :
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
-   * Take ownership of another decision tree and train on the given data and labels
-   * with weights, assuming that the data is all of the numeric type. Setting
-   * minimumLeafSize and minimumGainSplit too small may cause the tree to
-   * overfit, but setting them too large may cause it to underfit.
+   * Take ownership of another decision tree and train on the given data and
+   * labels with weights, assuming that the data is all of the numeric type.
+   * Setting minimumLeafSize and minimumGainSplit too small may cause the tree
+   * to overfit, but setting them too large may cause it to underfit.
    *
    * Use std::move if data, labels or weights are no longer needed to avoid
    * copies.

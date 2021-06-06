@@ -28,7 +28,7 @@ HoeffdingTree<
     NumericSplitType,
     CategoricalSplitType
 >::HoeffdingTree(const MatType& data,
-                 const data::DatasetInfo& datasetInfo,
+                 const data::DatasetInfo& datasetInfoIn,
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
                  const bool batchTraining,
@@ -39,15 +39,14 @@ HoeffdingTree<
                  const CategoricalSplitType<FitnessFunction>&
                      categoricalSplitIn,
                  const NumericSplitType<FitnessFunction>& numericSplitIn) :
-    dimensionMappings(new std::unordered_map<size_t,
-        std::pair<size_t, size_t>>()),
-    ownsMappings(true),
+    dimensionMappings(NULL),
+    ownsMappings(false),
     numSamples(0),
     numClasses(numClasses),
     maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
     minSamples(minSamples),
-    datasetInfo(new data::DatasetInfo(datasetInfo)),
+    datasetInfo(new data::DatasetInfo(datasetInfoIn)),
     ownsInfo(true),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
@@ -56,24 +55,8 @@ HoeffdingTree<
     categoricalSplit(0),
     numericSplit()
 {
-  // Generate dimension mappings and create split objects.
-  for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
-  {
-    if (datasetInfo.Type(i) == data::Datatype::categorical)
-    {
-      categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
-          datasetInfo.NumMappings(i), numClasses, categoricalSplitIn));
-      (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
-          categoricalSplits.size() - 1);
-    }
-    else
-    {
-      numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses,
-          numericSplitIn));
-      (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
-          numericSplits.size() - 1);
-    }
-  }
+  // Reset the tree.
+  ResetTree(categoricalSplitIn, numericSplitIn);
 
   // Now train.
   Train(data, labels, batchTraining);
@@ -119,23 +102,7 @@ HoeffdingTree<
   // Do we need to generate the mappings too?
   if (ownsMappings)
   {
-    for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
-    {
-      if (datasetInfo.Type(i) == data::Datatype::categorical)
-      {
-        categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
-            datasetInfo.NumMappings(i), numClasses, categoricalSplitIn));
-        (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
-            categoricalSplits.size() - 1);
-      }
-      else
-      {
-        numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses,
-            numericSplitIn));
-        (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
-            numericSplits.size() - 1);
-      }
-    }
+    ResetTree(categoricalSplitIn, numericSplitIn);
   }
   else
   {
@@ -381,71 +348,28 @@ void HoeffdingTree<
     CategoricalSplitType
 >::Train(const MatType& data,
          const arma::Row<size_t>& labels,
-         const bool batchTraining)
+         const bool batchTraining,
+         const bool resetTree,
+         const size_t numClassesIn)
 {
-  if (batchTraining)
+  // We need to reset the tree either if the user asked for it, or if they
+  // passed data whose dimensionality is different than our datasetInfo object.
+  if (resetTree || data.n_rows != datasetInfo->Dimensionality() ||
+      numClassesIn != 0)
   {
-    // Pass all the points through the nodes, and then split only after that.
-    checkInterval = data.n_cols; // Only split on the last sample.
-    // Don't split if there are fewer than five points.
-    size_t oldMaxSamples = maxSamples;
-    maxSamples = std::max(size_t(data.n_cols - 1), size_t(5));
-    for (size_t i = 0; i < data.n_cols; ++i)
-      Train(data.col(i), labels[i]);
-    maxSamples = oldMaxSamples;
+    // Create a new datasetInfo, which assumes that all features are numeric.
+    if (ownsInfo)
+      delete datasetInfo;
+    datasetInfo = new data::DatasetInfo(data.n_rows);
+    ownsInfo = true;
 
-    // Now, if we did split, find out which points go to which child, and
-    // perform the same batch training.
-    if (children.size() > 0)
-    {
-      // We need to create a vector of indices that represent the points that
-      // must go to each child, so we need children.size() vectors, but we don't
-      // know how long they will be.  Therefore, we will create vectors each of
-      // size data.n_cols, but will probably not use all the memory we
-      // allocated, and then pass subvectors to the submat() function.
-      std::vector<arma::uvec> indices(children.size(), arma::uvec(data.n_cols));
-      arma::Col<size_t> counts =
-          arma::zeros<arma::Col<size_t>>(children.size());
+    // Set the number of classes correctly.
+    numClasses = (numClassesIn != 0) ? numClassesIn : arma::max(labels) + 1;
 
-      for (size_t i = 0; i < data.n_cols; ++i)
-      {
-        size_t direction = CalculateDirection(data.col(i));
-        size_t currentIndex = counts[direction];
-        indices[direction][currentIndex] = i;
-        counts[direction]++;
-      }
-
-      // Now pass each of these submatrices to the children to perform
-      // batch-mode training.
-      for (size_t i = 0; i < children.size(); ++i)
-      {
-        // If we don't have any points that go to the child in question, don't
-        // train that child.
-        if (counts[i] == 0)
-          continue;
-
-        // The submatrix here is non-contiguous, but I think this will be faster
-        // than copying the points to an ordered state.  We still have to
-        // assemble the labels vector, though.
-        arma::Row<size_t> childLabels = labels.cols(
-            indices[i].subvec(0, counts[i] - 1));
-
-        // Unfortunately, limitations of Armadillo's non-contiguous subviews
-        // prohibits us from successfully passing the non-contiguous subview to
-        // Train(), since the col() function is not provided.  So,
-        // unfortunately, instead, we'll just extract the non-contiguous
-        // submatrix.
-        MatType childData = data.cols(indices[i].subvec(0, counts[i] - 1));
-        children[i]->Train(childData, childLabels, true);
-      }
-    }
+    ResetTree();
   }
-  else
-  {
-    // We aren't training in batch mode; loop through the points.
-    for (size_t i = 0; i < data.n_cols; ++i)
-      Train(data.col(i), labels[i]);
-  }
+
+  TrainInternal(data, labels, batchTraining);
 }
 
 //! Train on a set of points.
@@ -460,7 +384,8 @@ void HoeffdingTree<
 >::Train(const MatType& data,
          const data::DatasetInfo& info,
          const arma::Row<size_t>& labels,
-         const bool batchTraining)
+         const bool batchTraining,
+         const size_t numClassesIn)
 {
   // Take over new DatasetInfo.
   if (ownsInfo)
@@ -468,40 +393,13 @@ void HoeffdingTree<
   datasetInfo = &info;
   ownsInfo = false;
 
-  // Generate mappings.
-  if (ownsMappings)
-    delete dimensionMappings;
+  // Set the number of classes correctly.
+  numClasses = (numClassesIn != 0) ? numClassesIn : arma::max(labels) + 1;
 
-  const CategoricalSplitType<FitnessFunction> categoricalSplitIn(0, 0);
-  const NumericSplitType<FitnessFunction> numericSplitIn(0);
-
-  dimensionMappings =
-      new std::unordered_map<size_t, std::pair<size_t, size_t>>();
-  for (size_t i = 0; i < datasetInfo->Dimensionality(); ++i)
-  {
-    if (datasetInfo->Type(i) == data::Datatype::categorical)
-    {
-      categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
-          datasetInfo->NumMappings(i), numClasses, categoricalSplitIn));
-      (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
-          categoricalSplits.size() - 1);
-    }
-    else
-    {
-      numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses,
-          numericSplitIn));
-      (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
-          numericSplits.size() - 1);
-    }
-  }
-
-  // Remove any old children.
-  for (size_t i = 0; i < children.size(); ++i)
-    delete children[i];
-  children.clear();
+  ResetTree();
 
   // Now train.
-  Train(data, labels, batchTraining);
+  TrainInternal(data, labels, batchTraining);
 }
 
 //! Train on one point.
@@ -1034,6 +932,140 @@ void HoeffdingTree<
       successProbability = 0.0;
     }
   }
+}
+
+template<
+    typename FitnessFunction,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
+>
+template<typename MatType>
+void HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::TrainInternal(const MatType& data,
+                 const arma::Row<size_t>& labels,
+                 const bool batchTraining)
+{
+  if (batchTraining)
+  {
+    // Pass all the points through the nodes, and then split only after that.
+    checkInterval = data.n_cols; // Only split on the last sample.
+    // Don't split if there are fewer than five points.
+    size_t oldMaxSamples = maxSamples;
+    maxSamples = std::max(size_t(data.n_cols - 1), size_t(5));
+    for (size_t i = 0; i < data.n_cols; ++i)
+      Train(data.col(i), labels[i]);
+    maxSamples = oldMaxSamples;
+
+    // Now, if we did split, find out which points go to which child, and
+    // perform the same batch training.
+    if (children.size() > 0)
+    {
+      // We need to create a vector of indices that represent the points that
+      // must go to each child, so we need children.size() vectors, but we don't
+      // know how long they will be.  Therefore, we will create vectors each of
+      // size data.n_cols, but will probably not use all the memory we
+      // allocated, and then pass subvectors to the submat() function.
+      std::vector<arma::uvec> indices(children.size(), arma::uvec(data.n_cols));
+      arma::Col<size_t> counts =
+          arma::zeros<arma::Col<size_t>>(children.size());
+
+      for (size_t i = 0; i < data.n_cols; ++i)
+      {
+        size_t direction = CalculateDirection(data.col(i));
+        size_t currentIndex = counts[direction];
+        indices[direction][currentIndex] = i;
+        counts[direction]++;
+      }
+
+      // Now pass each of these submatrices to the children to perform
+      // batch-mode training.
+      for (size_t i = 0; i < children.size(); ++i)
+      {
+        // If we don't have any points that go to the child in question, don't
+        // train that child.
+        if (counts[i] == 0)
+          continue;
+
+        // The submatrix here is non-contiguous, but I think this will be faster
+        // than copying the points to an ordered state.  We still have to
+        // assemble the labels vector, though.
+        arma::Row<size_t> childLabels = labels.cols(
+            indices[i].subvec(0, counts[i] - 1));
+
+        // Unfortunately, limitations of Armadillo's non-contiguous subviews
+        // prohibits us from successfully passing the non-contiguous subview to
+        // Train(), since the col() function is not provided.  So,
+        // unfortunately, instead, we'll just extract the non-contiguous
+        // submatrix.
+        MatType childData = data.cols(indices[i].subvec(0, counts[i] - 1));
+        children[i]->Train(childData, childLabels, true);
+      }
+    }
+  }
+  else
+  {
+    // We aren't training in batch mode; loop through the points.
+    for (size_t i = 0; i < data.n_cols; ++i)
+      Train(data.col(i), labels[i]);
+  }
+}
+
+template<
+    typename FitnessFunction,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
+>
+void HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::ResetTree(const CategoricalSplitType<FitnessFunction>& categoricalSplitIn,
+             const NumericSplitType<FitnessFunction>& numericSplitIn)
+{
+  // Generate mappings.
+  if (ownsMappings)
+    delete dimensionMappings;
+
+  categoricalSplits.clear();
+  numericSplits.clear();
+
+  dimensionMappings =
+      new std::unordered_map<size_t, std::pair<size_t, size_t>>();
+  ownsMappings = true;
+  for (size_t i = 0; i < datasetInfo->Dimensionality(); ++i)
+  {
+    if (datasetInfo->Type(i) == data::Datatype::categorical)
+    {
+      categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
+          datasetInfo->NumMappings(i), numClasses, categoricalSplitIn));
+      (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
+          categoricalSplits.size() - 1);
+    }
+    else
+    {
+      numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses,
+          numericSplitIn));
+      (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
+          numericSplits.size() - 1);
+    }
+  }
+
+  // Clear children.
+  for (size_t i = 0; i < children.size(); ++i)
+    delete children[i];
+  children.clear();
+
+  // Reset statistics.
+  numSamples = 0;
+  splitDimension = size_t(-1);
+  majorityClass = 0;
+  majorityProbability = 0.0;
+  categoricalSplit =
+      typename CategoricalSplitType<FitnessFunction>::SplitInfo(0);
+  numericSplit = typename NumericSplitType<FitnessFunction>::SplitInfo();
 }
 
 } // namespace tree
