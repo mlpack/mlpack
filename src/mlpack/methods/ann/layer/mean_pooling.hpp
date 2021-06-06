@@ -218,7 +218,7 @@ class MeanPooling
     // will be `4 * errorArea + 2 * inputArea`. The term `2 * inputArea` comes from
     // prefix sums performed (col-wise and row-wise). 
     // We can use this to determine which method to use.
-    const bool condition = (error.n_elem * kernalHeight * kernalWidth) >
+    const bool condition = (error.n_elem * kernelHeight * kernelWidth) >
         (4 * error.n_elem + 2 * input.n_elem);
 
     if (condition)
