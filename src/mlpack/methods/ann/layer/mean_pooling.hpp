@@ -210,10 +210,18 @@ class MeanPooling
                  const arma::Mat<eT>& error,
                  arma::Mat<eT>& output)
   {
-    const size_t condition = kernelHeight * kernelWidth - strideHeight * strideWidth -
-      kernelWidth - kernelHeight;
+    // This condition comes by comparing the number of operations involved in the brute
+    // force method and the prefix method. Let the area of error be errorArea and area
+    // of kernal be kernalArea. Total number of operations in brute force method will be
+    // `errorArea * kernalArea` and for each element in error we are doing kernalArea
+    // number of operations. Whereas in the prefix method the total number of operations
+    // will be `4 * errorArea + 2 * inputArea`. The term `2 * inputArea` comes from
+    // prefix sums performed (col-wise and row-wise). 
+    // We can use this to determine which method to use.
+    const bool condition = (error.n_elem * kernalHeight * kernalWidth) >
+        (4 * error.n_elem + 2 * input.n_elem);
 
-    if (condition > 0)
+    if (condition)
     {
       // If this condition is true then theoritically the prefix sum method of
       // unpooling is faster. The aim of unpooling is to add
