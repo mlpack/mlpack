@@ -106,119 +106,121 @@ template<
 class Inception3
 {
   public:
+   //! Create the Inception3 object
+   Inception3();
 
-  //! Create the Inception3 object
-  Inception3();
+   /**
+    * Create the Inception3 Object.
+    *
+    * @param inSize The number of input maps.
+    * @param inputWidth The width of input data.
+    * @param inputHeight The height of input data.
+    * @param outA Vector of output maps of all layers of network A.
+    * @param outB Vector of output maps of all layers of network B.
+    * @param outC Vector of output maps of all layers of network C.
+    * @param outD Vector of output maps of all layers of network D.
+    */
 
-  /**
-   * Create the Inception3 Object.
-   *
-   * @param inSize The number of input maps.
-   * @param inputWidth The width of input data.
-   * @param inputHeight The height of input data.
-   * @param outA Vector of output maps of all layers of network A.
-   * @param outB Vector of output maps of all layers of network B.
-   * @param outC Vector of output maps of all layers of network C.
-   * @param outD Vector of output maps of all layers of network D.
-   */
+   Inception3(const size_t inSize,
+              const size_t inputWidth,
+              const size_t inputHeight,
+              const arma::vec outA,
+              const arma::vec outB,
+              const arma::vec outC,
+              const arma::vec outD);
 
-  Inception3(const size_t inSize,
-             const size_t inputWidth,
-             const size_t inputHeight,
-             const arma::vec outA,
-             const arma::vec outB,
-             const arma::vec outC,
-             const arma::vec outD);
+   //! Destructor to release allocated memory.
+   ~Inception3();
 
-  //! Destructor to release allocated memory.
-  ~Inception3();
+   /**
+    * Reset the layer parameters. This method is called to assign
+    * the allocated memory to the internal learnable parameters.
+    */
+   void Reset();
 
-  /**
-   * Reset the layer parameters. This method is called to assign
-   * the allocated memory to the internal learnable parameters.
-   */
-  void Reset();
+   /**
+    * Forward pass of the Inception3 Layer.
+    * It calls the Forward() function of the concat layer object
+    *
+    * @param input Input Data for the layer.
+    * @param output Resulting output activation.
+    */
+   template<typename eT>
+   void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
-  /**
-   * Forward pass of the Inception3 Layer.
-   * It calls the Forward() function of the concat layer object
-   *
-   * @param input Input Data for the layer.
-   * @param output Resulting output activation.
-   */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+   /**
+    * Backward pass through the layer. This function calls the Backwar()
+    * function of the concat layer object.
+    *
+    * @param input The input activations.
+    * @param gy The backpropagated error.
+    * @param g The calculated gradient.
+    */
+   template<typename eT>
+   void Backward(const arma::Mat<eT>& input,
+                 const arma::Mat<eT>& gy,
+                 arma::Mat<eT>& g);
 
-  /**
-   * Backward pass through the layer. This function calls the Backwar()
-   * function of the concat layer object.
-   *
-   * @param input The input activations.
-   * @param gy The backpropagated error.
-   * @param g The calculated gradient.
-   */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+   /**
+    * Caculate the gradients. This will also call the gradient function
+    * of the concat layer object
+    *
+    * @param input The input activations.
+    * @param error The calculated error.
+    * @param gradient The calculated gradient.
+    */
 
-  /**
-   * Caculate the gradients. This will also call the gradient function
-   * of the concat layer object
-   *
-   * @param input The input activations.
-   * @param error The calculated error.
-   * @param gradient The calculated gradient.
-   */
+   template<typename eT>
+   void Gradient(const arma::Mat<eT>& input,
+                 const arma::Mat<eT>& error,
+                 arma::Mat<eT>& gradient);
 
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+   //! Get delta
+   OutputDataType const& Delta() const { return layer->Delta();}
+   //! Modify delta
+   OutputDataType& Delta() { return layer->Delta(); }
 
-  //! Get delta
-  OutputDataType const& Delta() const { return layer->Delta();}
-  //! Modify delta
-  OutputDataType& Delta() { return layer->Delta(); }
+   //! Get gradients
+   OutputDataType const& Gradient() const { return layer->Gradient(); }
+   //! Modify gradients
+   OutputDataType& Gradient() { return layer->Gradient(); }
 
-  //! Get gradients
-  OutputDataType const& Gradient() const { return layer->Gradient(); }
-  //! Modify gradients
-  OutputDataType& Gradient() { return layer->Gradient(); }
+   //! Input Parameter
+   InputDataType const& InputParameter() const 
+   { 
+     return layer->InputParameter();
+   }
+   //! Modify the input parameter
+   InputDataType& InputParameter() { return layer->InputParameter(); }
 
-  //! Input Parameter
-  InputDataType const& InputParameter() const { return layer->InputParameter(); }
-  //! Modify the input parameter
-  InputDataType& InputParameter() { return layer->InputParameter(); }
+   //! Return the layer modules
+   std::vector<LayerTypes<CustomLayers...> >& Model(){ return layer->Model(); }
 
-  //! Return the layer modules
-  std::vector<LayerTypes<CustomLayers...> >& Model(){ return layer->Model(); }
+   //! Get the output parameter
+   OutputDataType const& OutputParameter() const
+   {
+     return layer->OutputParameter();
+   }
 
-  //! Get the output parameter
-  OutputDataType const& OutputParameter() const
-  {
-    return layer->OutputParameter();
-  }
+   //! Modify the output parameter
+   OutputDataType& OutputParameter()
+   {
+     return layer->OutputParameter();
+   }
+   //! Get the parameters.
+   OutputDataType const& Parameters() const { return layer->Parameters(); }
+   //! Modify the parameters.
+   OutputDataType& Parameters() { return layer->Parameters(); }
 
-  //! Modify the output parameter
-  OutputDataType& OutputParameter()
-  {
-    return layer->OutputParameter();
-  }
-  //! Get the parameters.
-  OutputDataType const& Parameters() const { return layer->Parameters(); }
-  //! Modify the parameters.
-  OutputDataType& Parameters() { return layer->Parameters(); }
+   /**
+    * Serialize the layer.
+    */
+   template<typename Archive>
+   void serialize(Archive& ar, const unsigned int /* version */);
 
-  /**
-   * Serialize the layer.
-   */
-  template<typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
-
- private:
-  //! Locally-stored concat layer object.
-  Concat<InputDataType, OutputDataType>* layer;
+  private:
+   //! Locally-stored concat layer object.
+   Concat<InputDataType, OutputDataType>* layer;
 };
   //! Typedef for various blocks of the layer
   using Inception3A = Inception3< arma::mat, arma::mat, 1>;

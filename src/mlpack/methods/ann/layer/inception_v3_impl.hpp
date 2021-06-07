@@ -37,16 +37,16 @@ Inception3<InputDataType, OutputDataType, module, CustomLayers...>::Inception3(
     const arma::vec outC,
     const arma::vec outD)
 {
-  layer= new Concat<>(true);
+  layer= new Concat<> (true);
 
-  //! Build the Inception3A module 
-  if(module == 1)
+  //! Build the Inception3A module
+  if (module == 1)
   {
     //! Build Network A
     Sequential<> *networkA;
     networkA = new Sequential<>(true);
 
-    networkA->Add<Convolution<> >(inSize, outA[0], 1, 1, 1, 1, 0, 0, 
+    networkA->Add<Convolution<> >(inSize, outA[0], 1, 1, 1, 1, 0, 0,
       inputWidth, inputHeight);
     networkA->Add<BatchNorm<> >(outA[0]);
     networkA->Add<ReLULayer<> >();
@@ -57,7 +57,7 @@ Inception3<InputDataType, OutputDataType, module, CustomLayers...>::Inception3(
     Sequential<> *networkB;
     networkB = new Sequential<>(true);
 
-    networkB->Add<Convolution<> >(inSize, outB[0], 1, 1, 1, 1, 0, 0, 
+    networkB->Add<Convolution<> >(inSize, outB[0], 1, 1, 1, 1, 0, 0,
       inputWidth, inputHeight);
     networkB->Add<BatchNorm<> >(outB[0]);
     networkB->Add<ReLULayer<> >();
@@ -73,7 +73,7 @@ Inception3<InputDataType, OutputDataType, module, CustomLayers...>::Inception3(
     Sequential<> *networkC;
     networkC = new Sequential<>(true);
 
-    networkC->Add<Convolution<> >(inSize, outC[0], 1, 1, 1, 1, 0, 0, 
+    networkC->Add<Convolution<> >(inSize, outC[0], 1, 1, 1, 1, 0, 0,
       inputWidth, inputHeight);
     networkC->Add<BatchNorm<> >(outC[0]);
     networkC->Add<ReLULayer<> >();
@@ -95,7 +95,7 @@ Inception3<InputDataType, OutputDataType, module, CustomLayers...>::Inception3(
     networkD = new Sequential<>(true);
 
     networkD->Add<AdaptiveMeanPooling<> >(inputWidth, inputHeight);
-    
+   
     networkD->Add<Convolution<> >(inSize, outD[0], 1, 1, 1, 1, 0, 0,
         inputWidth, inputHeight);
     networkD->Add<BatchNorm<> >(outD[0]);
@@ -105,7 +105,7 @@ Inception3<InputDataType, OutputDataType, module, CustomLayers...>::Inception3(
   }
 
   //! Build Inception B module
-  else if(module == 2)
+  else if (module == 2)
   {
     //! Build Network A
     Sequential<>* networkA;
@@ -149,7 +149,7 @@ Inception3<InputDataType, OutputDataType, module, CustomLayers...>::Inception3(
   }
 
   //! Build Inception Block C module
-  else if(module == 3)
+  else if (module == 3)
   {
     //! Build Network A
     Sequential<> *networkA;
@@ -163,8 +163,8 @@ Inception3<InputDataType, OutputDataType, module, CustomLayers...>::Inception3(
     layer->Add(networkA);
 
     //! Build Network B
-   Sequential<> *networkB;
-   networkB = new Sequential<>(true);
+    Sequential<> *networkB;
+    networkB = new Sequential<>(true);
 
     networkB->Add<AdaptiveMeanPooling<> >(inputWidth, inputHeight);
 
@@ -226,10 +226,9 @@ Inception3<InputDataType, OutputDataType, module, CustomLayers...>::Inception3(
     networkD->Add<ReLULayer<> >();
 
     layer->Add(networkD);
-
   }
   //! Build Inception D module
-  else if(module == 4)
+  else if (module == 4)
   {
     //! Build Network A
     Sequential<> *networkA;
@@ -249,9 +248,9 @@ Inception3<InputDataType, OutputDataType, module, CustomLayers...>::Inception3(
     networkB->Add<ReLULayer<> >();
 
     networkB->Add<Convolution<> >(outB[0], outB[1], 3, 3, 2, 2, 0, 0,
-        inputWidth, inputHeight);                                    
+        inputWidth, inputHeight);
     networkB->Add<BatchNorm<> >(outB[1]);
-    networkB->Add<ReLULayer<> >();                                
+    networkB->Add<ReLULayer<> >();
 
     layer->Add(networkB);
 
@@ -280,13 +279,12 @@ Inception3<InputDataType, OutputDataType, module, CustomLayers...>::Inception3(
     networkC->Add<ReLULayer<> >();
 
     layer->Add(networkC);
-
   }
   //! Build Inception E module
-  else if(module == 5)
+  else if (module == 5)
   {
     //! Build Network A
-    Sequential<> *networkA; 
+    Sequential<> *networkA;
     networkA = new Sequential<>(true);
 
     networkA->Add<Convolution<> >(inSize, outA[0], 1, 1, 1, 1, 0, 0,
@@ -393,7 +391,8 @@ Inception3<InputDataType, OutputDataType, module, CustomLayers...>::Inception3(
 
 template<typename InputDataType, typename OutputDataType, int module,
       typename... CustomLayers>
-Inception3<InputDataType, OutputDataType, module, CustomLayers...>::~Inception3()
+Inception3<InputDataType, OutputDataType, module, CustomLayers...>::
+  ~Inception3()
 {
   delete layer;
 }
