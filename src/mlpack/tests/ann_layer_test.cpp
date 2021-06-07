@@ -3927,7 +3927,7 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   CheckMatrices(output1, result1, 1e-1);
   CheckMatrices(output2, result2, 1e-1);
 
-  arma::mat delta1, delta2; 
+  arma::mat delta1, delta2;
   module1.Backward(input, output1, delta1);
   REQUIRE(arma::accu(delta1) == 25.5);
   module2.Backward(input, output2, delta2);

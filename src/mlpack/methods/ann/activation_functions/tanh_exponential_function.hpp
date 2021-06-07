@@ -8,7 +8,8 @@
  *
  * @code
  * @misc{The Institution of Engineering and Technology 2015 ,
- *    title = {TanhExp: A Smooth Activation Function with High Convergence Speed for Lightweight Neural Networks},
+ *    title = {TanhExp: A Smooth Activation Function with High Convergence Speed
+ *             for Lightweight Neural Networks},
  *    author = {Xinyu Liu and Xiaoguang Di},
  *    year = {2020},
  *    url = {https://arxiv.org/pdf/2003.09855v2.pdf},
@@ -38,7 +39,7 @@ namespace ann /** Artificial Neural Network. */ {
  * f'(x) = tanh(e^x) - x*e^x*(tanh(e^x)^2 - 1)\\
  * @f}
  */
- class TanhExpFunction
+class TanhExpFunction
 {
  public:
   /**

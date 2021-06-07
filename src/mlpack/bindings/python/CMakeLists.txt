@@ -132,6 +132,7 @@ set(CYTHON_SOURCES
   mlpack/matrix_utils.py
   mlpack/serialization.hpp
   mlpack/serialization.pxd
+  mlpack/preprocess_json_params.py
 )
 
 set(TEST_SOURCES
@@ -202,6 +203,7 @@ add_custom_command(TARGET python POST_BUILD
             mlpack/io.pxd
             mlpack/io_util.hpp
             mlpack/matrix_utils.py
+            mlpack/preprocess_json_params.py
             mlpack
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 

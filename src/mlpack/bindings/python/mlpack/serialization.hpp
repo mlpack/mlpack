@@ -38,6 +38,26 @@ void SerializeIn(T* t, const std::string& str, const std::string& name)
   b(cereal::make_nvp(name.c_str(), *t));
 }
 
+template<typename T>
+std::string SerializeOutJSON(T* t, const std::string& name)
+{
+  std::ostringstream oss;
+  {
+    cereal::JSONOutputArchive b(oss);
+
+    b(cereal::make_nvp(name.c_str(), *t));
+  }
+  return oss.str();
+}
+
+template<typename T>
+void SerializeInJSON(T* t, const std::string& str, const std::string& name)
+{
+  std::istringstream iss(str);
+  cereal::JSONInputArchive b(iss);
+  b(cereal::make_nvp(name.c_str(), *t));
+}
+
 } // namespace python
 } // namespace bindings
 } // namespace mlpack
