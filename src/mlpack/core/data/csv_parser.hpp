@@ -20,32 +20,13 @@
 #ifndef MLPACK_CORE_DATA_CSV_PARSER_HPP
 #define MLPACK_CORE_DATA_CSV_PARSER_HPP
 
+#include <limits>
+#include <type_traits>
+
 namespace mlpack
 {
 namespace data
 {
-
-  // template<typename eT>
-  // inline
-  // bool
-  // convert_token(eT& val, const std::string& token);
-
-  // template<typename T>
-  // inline
-  // bool
-  // convert_token(std::complex<T>& val, const std::string& token);
-
-  // template<typename eT>
-  // inline
-  // bool
-  // load_csv_ascii(arma::Mat<eT>& x, std::istream& f, std::string&);
-
-  // template<typename eT>
-  // inline
-  // arma_cold
-  // bool
-  // load_data(const std::string name, const arma::file_type type);
-
   enum struct file_type : unsigned int
   {
     file_type_unknown,
@@ -61,32 +42,17 @@ namespace data
     hdf5_binary_trans, //!< [DO NOT USE - deprecated] as per hdf5_binary, but save/load the data with columns transposed to rows
     coord_ascii				 //!< simple co-ordinate format for sparse matrices (indices start at zero)
   };
+  
+  template<typename MatType>
+  bool ConvertToken(typename MatType::elem_type& val, const std::string& token);
+  
+  template<typename MatType>
+  bool LoadCSVV(MatType& x, std::fstream& f, std::string&);
+  
+  template <typename MatType>
+  bool LoadData(const std::string& name, MatType& x, const mlpack::data::file_type type);
 
-  template<typename T1>
-  struct is_real
-  {
-    static constexpr bool value = false;
-    static constexpr bool yes   = false;
-    static constexpr bool no    = true;
-  };
-
-  template<typename eT>
-  inline bool ConvertToken(eT& val, const std::string& token);
-  
-  template<typename eT>
-  inline bool LoadCSV(arma::Mat<eT>& x, std::istream& f, std::string&);
-  
-  template<typename eT>
-  inline bool LoadCSV(std::string& name, std::string& err_msg);
-  
-  template<typename eT>
-  inline bool Load(const std::string& name, const file_type type, const bool print_status);
-  
-  template <typename eT>
-  inline bool LoadData(const std::string& name, const file_type type, const bool print_status);
-  
-
-}   // namespace data
+ }   // namespace data
 }	// namespace mlpack
 
 // Include implementation
