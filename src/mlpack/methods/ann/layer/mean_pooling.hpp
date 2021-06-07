@@ -213,7 +213,7 @@ class MeanPooling
     // This condition comes by comparing the number of operations involved in the brute
     // force method and the prefix method. Let the area of error be errorArea and area
     // of kernal be kernalArea. Total number of operations in brute force method will be
-    // `errorArea * kernalArea` and for each element in error we are doing kernalArea
+    // `errorArea * kernalArea` and for each element in error we are doing `kernalArea`
     // number of operations. Whereas in the prefix method the total number of operations
     // will be `4 * errorArea + 2 * inputArea`. The term `2 * inputArea` comes from
     // prefix sums performed (col-wise and row-wise). 
@@ -226,7 +226,7 @@ class MeanPooling
       // If this condition is true then theoritically the prefix sum method of
       // unpooling is faster. The aim of unpooling is to add
       // `error(i, j) / kernalArea` to `inputArea(kernal)`. This requires
-      // inputArea.n_elem additions. So, total operations required will be
+      // `inputArea.n_elem` additions. So, total operations required will be
       // `error.n_elem * inputArea.n_elem` operations.
       // To improve this method we will use an idea of prefix sums. Let's see
       // this method in 1-D matrix then we will extend it to 2-D matrix.
