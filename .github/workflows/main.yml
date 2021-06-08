@@ -40,13 +40,13 @@ jobs:
             cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
             Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
 
-        - name: Cache R packages
-          if: runner.os != 'Windows' && runner.os != 'macOS'
-          uses: actions/cache@v1
-          with:
-            path: ${{ env.R_LIBS_USER }}
-            key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
-            restore-keys: ${{ runner.os }}-r-release-
+#        - name: Cache R packages
+#          if: runner.os != 'Windows' && runner.os != 'macOS'
+#          uses: actions/cache@v1
+#          with:
+#            path: ${{ env.R_LIBS_USER }}
+#            key: ${{ runner.os }}-r-release-${{ hashFiles('depends.Rds') }}
+#            restore-keys: ${{ runner.os }}-r-release-
 
         - name: Install Build Dependencies
           run: |
