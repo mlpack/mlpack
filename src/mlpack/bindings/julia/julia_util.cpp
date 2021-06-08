@@ -207,7 +207,7 @@ void IO_SetParamMatWithInfo(const char* paramName,
   // Do we need to find how many categories we have?
   if (hasCategoricals)
   {
-    arma::vec maxs = arma::max(m, 1);
+    arma::vec maxs = arma::max(m, 1) + 1;
 
     for (size_t i = 0; i < d.Dimensionality(); ++i)
     {
