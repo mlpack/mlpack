@@ -38,7 +38,7 @@ jobs:
         - name: Query dependencies
           run: |
             cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
-            Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
+            Rscript --verbose -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
 
         - name: Cache R packages
           if: runner.os != 'Windows'
@@ -132,10 +132,11 @@ jobs:
         run: |
           remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
+          remotes::install_cran("processx")
         shell: Rscript {0}
 
       - name: Check
-        run: Rscript -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'warning', check_dir = 'check')"
+        run: Rscript --verbose -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'warning', check_dir = 'check')"
 
       - name: Upload check results
         if: failure()
