@@ -4,6 +4,7 @@ set(SOURCES
   bootstrap.hpp
   random_forest.hpp
   random_forest_impl.hpp
+  extra_trees_main.cpp
 )
 
 # Add directory name to sources.

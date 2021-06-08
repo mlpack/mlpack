@@ -97,7 +97,7 @@ TEST_CASE_METHOD(DecisionStumpTestFixture,
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
-
+ 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
   for (size_t i = 0; i < inputData.n_cols; ++i)

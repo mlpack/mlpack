@@ -1,10 +1,6 @@
 
-*@file methods / random_forest / extra_trees_main.cpp *@author Pranshu Srivastava **A program to implement the extra trees algorithm ***mlpack is free software;
-you may redistribute it and / or modify it under the
-                                         *terms of the 3 -
-                                     clause BSD license.You should have received a copy of the * 3 - clause BSD license along with mlpack.If not,
-    see
-            *http : //www.opensource.org/licenses/BSD-3-Clause for more information.
+*@file methods / random_forest / extra_trees_main.cpp *@author Pranshu Srivastava **A program to implement the extra trees algorithm ***
+
                     * /
 #include <mlpack/core.hpp>
 #include <mlpack/methods/random_forest/random_forest.hpp>
@@ -12,7 +8,7 @@ you may redistribute it and / or modify it under the
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
-                    using namespace mlpack;
+using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::util;
 using namespace mlpack::tree::ExtraTrees;
@@ -27,6 +23,7 @@ BINDING_SHORT_DESC(
     "for classification. Given labelled data, an extra tree can be trained"
     "and saved for future use;or,  a pre-trained extra tree can be used for"
     "classification.")
+//Long description.
 BINDING_LONG_DESC(
     "This program is an implementation of the extra trees algorithm. "
     "It can be trained and saved for later use, or it maybe loaded and class probabilities"
@@ -92,11 +89,10 @@ BINDING_EXAMPLE(
     PRINT_DATASET("predictions") + ", one "
                                    "could call "
                                    "\n\n" +
-<<<<<<< HEAD
-    PRINT_CALL("extra trees", "input_model", "rf_model", "test", "test_set",
-=======
+
+    PRINT_CALL("extra_trees", "input_model", "rf_model", "test", "test_set",
+
     PRINT_CALL("extra_trees", "input_model", "et_model", "test", "test_set",
->>>>>>> ace0a8c55dd025ee6e42526afa80adc78d0078cb
                "test_labels", "test_labels", "predictions", "predictions"));
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
 BINDING_SEE_ALSO("@hoeffding_tree", "#hoeffding_tree");
@@ -148,14 +144,12 @@ class ExtraTreesModel
 {
     //The model itself
     ExtraTrees<> et(data, fullLabels, 3, weights, 20, 1);
-<<<<<<< HEAD
     ExtraTreesModel()
     { /* Nothing yo do. */
     }
 
-=======
     ExtraTreesModel() { /* Nothing to do here. */};
->>>>>>> ace0a8c55dd025ee6e42526afa80adc78d0078cb
+
     //Serialize the model
     template <typename Archive>
     void serialize(Archive &ar, const uint32_t /* version */)
@@ -176,9 +170,9 @@ static void mlpackMain()
     if (!IO::HasParam("warm_start"))
         RequireOnlyOnePassed({"training", "input_model"}, true);
     // When warm_start is passed, training and input_model must also be passed.
-<<<<<<< HEAD
+
     RequireNoneOrAllPassed({"warm_start", "training", "input_model"}, true);
-=======
+
     RequireNoneOrAllPassed({"warn_start", "training", "input_model"}, true);
 >>>>>>> ace0a8c55dd025ee6e42526afa80adc78d0078cb
 
