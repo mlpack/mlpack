@@ -176,7 +176,22 @@ static void mlpackMain()
     for (size_t i = 0; i < m.n_rows; ++i)
     {
       if (di.Type(i) == data::Datatype::numeric)
+      {
         m.row(i) *= 2.0;
+      }
+      else
+      {
+        // Make sure input data is valid.
+        for (size_t c = 0; c < m.n_cols; ++c)
+        {
+          if (ceil(m(i, c)) != m(i, c))
+            throw std::invalid_argument("non-integer value in categorical!");
+          else if (m(i, c) < 0)
+            throw std::invalid_argument("negative value in categorical!");
+          else if (size_t(m(i, c)) >= di.NumMappings(i))
+            throw std::invalid_argument("value outside number of categories!");
+        }
+      }
     }
 
     IO::GetParam<arma::mat>("matrix_and_info_out") = move(m);
