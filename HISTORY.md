@@ -59,6 +59,8 @@
   * Fixes to `HoeffdingTree`: ensure that training still works when empty
     constructor is used (#2964).
 
+  * Fix Julia model serialization bug (#2970).
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.
