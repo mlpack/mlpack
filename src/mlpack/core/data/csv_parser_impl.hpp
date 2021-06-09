@@ -36,10 +36,10 @@ namespace data
     const size_t N = size_t(token.length());
 
     if (N == 0)
-    { 
+    {
       val = typename MatType::elem_type(0);
 
-      return true; 
+      return true;
     }
 
     const char* str = token.c_str();
@@ -55,20 +55,23 @@ namespace data
 
       const size_t offset = ((neg || pos) && (N == 4)) ? 1 : 0;
 
-      const char sig_a = str[offset];      
+      const char sig_a = str[offset];
       const char sig_b = str[offset+1];
       const char sig_c = str[offset+2];
 
-      if (((sig_a == 'i') || (sig_a == 'I')) && ((sig_b == 'n') || (sig_b == 'N')) 
-            && ((sig_c == 'f') || (sig_c == 'F')))
+      if (((sig_a == 'i') || (sig_a == 'I')) &&
+          ((sig_b == 'n') || (sig_b == 'N')) &&
+	  ((sig_c == 'f') || (sig_c == 'F')))
       {
-        // val = if(neg == true) ? -INF : +INF 
-        val = neg ? -(std::numeric_limits<typename MatType::elem_type>::infinity()) : std::numeric_limits<typename MatType::elem_type>::infinity();
-        
+        // val = if(neg == true) ? -INF : +INF
+        val = neg ? -(std::numeric_limits<typename MatType::elem_type>::infinity()) :
+	            std::numeric_limits<typename MatType::elem_type>::infinity();
+
         return true;
       }
-      else if (((sig_a == 'n') || (sig_a == 'N')) && ((sig_b == 'a') || (sig_b == 'A')) 
-            && ((sig_c == 'n') || (sig_c == 'N')))
+      else if (((sig_a == 'n') || (sig_a == 'N')) &&
+	       ((sig_b == 'a') || (sig_b == 'A')) &&
+	       ((sig_c == 'n') || (sig_c == 'N')))
       {
         val = std::numeric_limits<typename MatType::elem_type>::quiet_NaN();
 
@@ -78,7 +81,8 @@ namespace data
 
     char* endptr = nullptr;
 
-    if (std::is_floating_point<typename MatType::elem_type>::value || std::is_integral<typename MatType::elem_type>::value)
+    if ((std::is_floating_point<typename MatType::elem_type>::value) ||
+        (std::is_integral<typename MatType::elem_type>::value))
     {
       val = typename MatType::elem_type(std::strtod(str, &endptr));
     }
@@ -96,8 +100,8 @@ namespace data
           return true;
         }
 
-        val = typename MatType::elem_type( std::strtoull(str, &endptr, 10) );
-      }      
+        val = typename MatType::elem_type( std::strtoull(str, &endptr, 10));
+      }
     }
 
     if (str == endptr)
@@ -128,13 +132,13 @@ namespace data
 
     std::string token;
 
-    while(f.good() && load_okay)
+    while (f.good() && load_okay)
     {
       std::getline(f, line_string);
 
       if (line_string.size() == 0)
-      { 
-        break; 
+      {
+        break;
       }
 
       line_stream.clear();
@@ -142,7 +146,7 @@ namespace data
 
       size_t line_n_cols = 0;
 
-      while(line_stream.good())
+      while (line_stream.good())
       {
         // reading each element of the row
         std::getline(line_stream, token, ',');
@@ -153,7 +157,7 @@ namespace data
       {
         f_n_cols = line_n_cols;
       }
-      
+
       ++f_n_rows;
     }
 
@@ -189,61 +193,9 @@ namespace data
       ++row;
     }
 
-    return load_okay;		
+    return load_okay;
   }
 
-  template <typename MatType>
-  bool LoadData(const std::string& name, MatType& x, const mlpack::data::file_type type)
-  {
-    // bool load_okay = false;
-    std::string err_msg;
-    std::string print_status;
-    std::fstream f;
-
-    f.open(name.c_str(), std::fstream::in);
-
-    switch (type)
-    {
-      case mlpack::data::file_type::csv_ascii:
-        return LoadCSVV<MatType>(x, f, print_status);
-
-      case mlpack::data::file_type::file_type_unknown:
-        return true;
-
-      case mlpack::data::file_type::auto_detect:
-        return true;
-
-      case mlpack::data::file_type::raw_ascii:
-        return true;
-
-      case mlpack::data::file_type::arma_ascii:
-        return true;
-
-      case mlpack::data::file_type::raw_binary:
-        return true;
-
-      case mlpack::data::file_type::arma_binary:
-        return true;
-
-      case mlpack::data::file_type::pgm_binary:
-        return true;
-
-      case mlpack::data::file_type::ppm_binary:
-        return true;
-
-      case mlpack::data::file_type::hdf5_binary:
-        return true;
-
-      case mlpack::data::file_type::hdf5_binary_trans:
-        return true;
-
-      case mlpack::data::file_type::coord_ascii:
-        return true;
-
-        break;
-    }
-    return false;
-  }
 } // namespace data
 } // namespace mlpack
 
