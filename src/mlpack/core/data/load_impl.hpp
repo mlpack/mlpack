@@ -171,7 +171,7 @@ bool Load(const std::string& filename,
     if(loadType == arma::csv_ascii)
       success = LoadCSVV(matrix, stream, print_status);
     else
-      matrix.load(stream, loadType);
+      success = matrix.load(stream, loadType);
   }
     // success = LoadData(filename, matrix, file_type::csv_ascii);
     // success = matrix.load(stream, loadType);
