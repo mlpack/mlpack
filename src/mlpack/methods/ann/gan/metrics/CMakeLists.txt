@@ -1,8 +1,8 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  inception_score
-  inception_score_impl
+  inception_score.hpp
+  inception_score_impl.hpp
 )
 
 # Add directory name to sources.
