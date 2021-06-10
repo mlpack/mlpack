@@ -5290,6 +5290,7 @@ TEST_CASE("GradientInstanceNormLayerTest", "[ANNLayerTest]")
     } function;
 
     double gradient = CheckGradient(function);
+    std::cout<<gradient<<std::endl;
     if (gradient < 1e-1)
     {
       pass = true;
