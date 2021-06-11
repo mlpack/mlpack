@@ -132,7 +132,7 @@ jobs:
         run: |
           remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
-          remotes::install_cran("processx")
+          remotes::install_cran("processx", force=TRUE)
         shell: Rscript {0}
 
       - name: Check
