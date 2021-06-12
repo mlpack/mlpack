@@ -459,12 +459,12 @@ TEST_CASE("RandomBinaryNumericSplitDiffSplitTest", "[DecisionTreeTest]")
   {
     // Call BestBinaryNumericSplit to do the splitting.
     (void) BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities,
+        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities[0],
         aux);
 
     // Call RandomBinaryNumericSplit to do the splitting.
     (void) RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
-        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities1,
+        bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities1[0],
         aux1);
 
     if (classProbabilities[0] == classProbabilities1[0])
