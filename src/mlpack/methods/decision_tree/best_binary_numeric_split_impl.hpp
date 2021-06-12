@@ -227,9 +227,34 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   // Force a minimum leaf size of 1 (empty children don't make sense).
   const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
 
+  double totalWeight = 0.0;
+  double totalLeftWeight = 0.0;
+  double totalRightWeight = 0.0;
+
+  if (UseWeights)
+  {
+    totalWeight = arma::accu(sortedWeights);
+    bestFoundGain *= totalWeight;
+
+    for (size_t i = 0; i < minimum - 1; ++i)
+      totalLeftWeight += sortedWeights[i];
+
+    for (size_t i = minimum - 1; i < data.n_elem; ++i)
+      totalRightWeight += sortedWeights[i];
+  }
+  else
+  {
+    bestFoundGain *= data.n_elem;
+  }
+
   // Loop through all possible split points, choosing the best one.
   for (size_t index = minimum; index < data.n_elem - minimum + 1; ++index)
   {
+    if (UseWeights)
+    {
+      totalLeftWeight += sortedWeights[index - 1];
+      totalRightWeight -= sortedWeights[index - 1];
+    }
     // Make sure that the value has changed.
     if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
       continue;
@@ -245,7 +270,17 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double rightGain = FitnessFunction::template Evaluate<UseWeights>(sortedLabels,
         sortedWeights, index, labels.n_elem);
 
-    double gain = leftGain + rightGain;
+    double gain;
+    if (UseWeights)
+    {
+      gain = totalLeftWeight * leftGain + totalRightWeight * rightGain;
+    }
+    else
+    {
+      // Calculate the gain at this split point.
+      gain = double(index) * leftGain +
+          double(sortedLabels.n_elem - index) * rightGain;
+    }
 
     // Corner case: is this the best possible split?
     if (gain >= 0.0)
@@ -272,6 +307,11 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   // (without introducing floating point errors).
   if (!improved)
     return DBL_MAX;
+
+  if (UseWeights)
+    bestFoundGain /= totalWeight;
+  else
+    bestFoundGain /= data.n_elem;
 
   return bestFoundGain;
 }
