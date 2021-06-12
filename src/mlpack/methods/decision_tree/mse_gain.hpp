@@ -73,8 +73,6 @@ class MSEGain
 
       for (size_t i = begin; i < end; ++i)
         mse += std::pow(labels[i] - mean, 2);
-
-      mse /= (double) (end - begin);
     }
 
     return -mse;
