@@ -62,10 +62,10 @@ TEST_CASE_METHOD(LCCTestFixture, "LCCDimensionsTest",
   mlpackMain();
 
   // Check that the output has correct dimensions.
-  REQUIRE(IO::GetParam<arma::mat>("codes").n_rows == atoms);
-  REQUIRE(IO::GetParam<arma::mat>("codes").n_cols == cols);
-  REQUIRE(IO::GetParam<arma::mat>("dictionary").n_rows == rows);
-  REQUIRE(IO::GetParam<arma::mat>("dictionary").n_cols == atoms);
+  REQUIRE(IO::GetParam<arma::mat>("codes").n_rows == (arma::uword) atoms);
+  REQUIRE(IO::GetParam<arma::mat>("codes").n_cols == (arma::uword) cols);
+  REQUIRE(IO::GetParam<arma::mat>("dictionary").n_rows == (arma::uword) rows);
+  REQUIRE(IO::GetParam<arma::mat>("dictionary").n_cols == (arma::uword) atoms);
 }
 
 /**

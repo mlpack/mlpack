@@ -44,7 +44,7 @@ class NSWrapperBase
   virtual NSWrapperBase* Clone() const = 0;
 
   //! Destruct the NSWrapperBase (nothing to do).
-  virtual ~NSWrapperBase() { };
+  virtual ~NSWrapperBase() { }
 
   //! Return a reference to the dataset.
   virtual const arma::mat& Dataset() const = 0;
