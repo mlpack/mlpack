@@ -471,14 +471,14 @@ TEST_CASE("DecisionTreeRegressorEnergyTest", "[DecisionTreeRegressorTest]")
   arma::rowvec r = m.row(0);
   m.shed_row(0);
 
-  DecisionTreeRegressor<> d(m, r, 1, 0.0, 4);
+  DecisionTreeRegressor<> d(m, r, 1, 0.0, 0);
 
   arma::rowvec p;
   d.Predict(m, p);
   arma::rowvec weights = arma::ones<arma::rowvec>(r.n_elem);
 
   const double mse = arma::accu(arma::square(p - r)) / p.n_elem;
-  REQUIRE(mse < 0.5);
+  REQUIRE(mse == Approx(0.0).epsilon(1e-4));
 }
 
 /**
