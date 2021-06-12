@@ -39,23 +39,6 @@ TEST_CASE("MSEGainPerfectTest", "[DecisionTreeRegressorTest]")
 }
 
 /**
- * Make sure that the MSE gain is equal to negative of variance.
- */
-TEST_CASE("MSEGainVarianceTest", "[DecisionTreeRegressorTest]")
-{
-  arma::rowvec weights(100, arma::fill::ones);
-  arma::rowvec labels(100, arma::fill::randn);
-
-  // Theoretical gain.
-  double theoreticalGain = - arma::var(labels) * 99.0 / 100.0;
-
-  // Calculated gain.
-  const double calculatedGain = MSEGain::Evaluate<false>(labels, 0, weights);
-
-  REQUIRE(calculatedGain == Approx(theoreticalGain).margin(1e-9));
-}
-
-/**
  * The MSE gain of an empty vector is 0.
  */
 TEST_CASE("MSEGainEmptyTest", "[DecisionTreeRegressorTest]")
@@ -248,7 +231,6 @@ TEST_CASE("BestBinaryNumericSplitSimpleSplitTest1", "[DecisionTreeRegressorTest]
   // should be between 4 and 5.
   REQUIRE(splitInfo > 0.4);
   REQUIRE(splitInfo < 0.5);
-  std::cout << "Done\n";
 }
 
 /**
@@ -431,51 +413,72 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest1", "[DecisionTreeRegressorTest]")
 /**
  * Test that the decision tree generalizes reasonably.
  */
-TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
+// TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
+// {
+//   const size_t minLeafSize = 1;
+//   const double minGainSplit = 1e-7;
+//   const size_t depth = 2;
+
+//   // Loading data.
+//   data::DatasetInfo info;
+//   arma::mat trainData, testData;
+//   arma::Row<double> trainLabels, testLabels;
+//   arma::rowvec weights = arma::ones<arma::rowvec>(355);
+//   LoadBostonHousingDataset(trainData, testData, trainLabels, testLabels, info);
+//   std::cout << "Shape: "<< trainData.n_rows << " " << trainData.n_cols << std::endl;
+//   // for(size_t i = 0; i < info.Dimensionality(); i++)
+//   // {
+//   //   std::cout << info.Type(i) << " ";
+//   // }
+//   // std::cout << std::endl;
+
+//   // Build decision tree.
+//   DecisionTreeRegressor<MSEGain> d(trainData, info, trainLabels, minLeafSize, minGainSplit, depth);
+
+//   // Get the predicted test labels.
+//   arma::Row<double> predictions;
+//   d.Predict(testData, predictions);
+
+//   REQUIRE(predictions.n_elem == testData.n_cols);
+
+//   // Figure out rmse.
+//   double rmse = RMSE(predictions, testLabels);
+
+//   // REQUIRE(rmse < 9.21);
+//   // std::cout << predictions << std::endl << testLabels;
+//   arma::Row<double> trainPred;
+//   d.Predict(trainData, trainPred);
+//   // std::cout << trainPred;
+
+//   // double splitInfo;
+//   // BestBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
+//   // const double bestGain = MSEGain::Evaluate<false>(trainLabels, 0, weights);
+//   // const double gain = BestBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
+//   //     bestGain, trainData.row(7), trainLabels, 0, weights, minLeafSize, minGainSplit,
+//   //     splitInfo, aux);
+//   // std::cout << "splitInfo: " << splitInfo << std::endl;
+//   // std::cout << "gain: " << gain << std::endl;
+
+//   std::cout << "Train RMSE: " << RMSE(trainLabels, trainPred) << std::endl;
+// }
+
+TEST_CASE("DecisionTreeRegressorEnergyTest", "[DecisionTreeRegressorTest]")
 {
-  // Loading data.
-  data::DatasetInfo info;
-  arma::mat trainData, testData;
-  arma::Row<double> trainLabels, testLabels;
-  LoadBostonHousingDataset(trainData, testData, trainLabels, testLabels, info);
-  std::cout << "Shape: "<< trainData.n_rows << " " << trainData.n_cols << std::endl;
+  arma::mat m;
+  if (!data::Load("energydata_complete.csv", m))
+    FAIL("Cannot load dataset energydata_complete.csv!");
 
-  // Initialize an all-ones weight matrix.
-  arma::rowvec weights(trainLabels.n_cols, arma::fill::ones);
+  arma::rowvec r = m.row(0);
+  m.shed_row(0);
 
-  // Build decision tree.
-  DecisionTreeRegressor<MADGain> d(trainData, info, trainLabels, 1, 1e-7, 0);
-  DecisionTreeRegressor<MADGain> wd(trainData, info, trainLabels, weights, 1, 1e-7, 0);
+  DecisionTreeRegressor<> d(m, r, 1, 0.0, 4);
 
-  // Get the predicted test labels.
-  arma::Row<double> predictions;
-  d.Predict(testData, predictions);
+  arma::rowvec p;
+  d.Predict(m, p);
+  arma::rowvec weights = arma::ones<arma::rowvec>(r.n_elem);
 
-  REQUIRE(predictions.n_elem == testData.n_cols);
-
-  // Figure out rmse.
-  double rmse = RMSE(predictions, testLabels);
-
-  REQUIRE(rmse < 9.21);
-  // std::cout << predictions << std::endl << testLabels;
-  arma::Row<double> trainPred;
-  d.Predict(trainData, trainPred);
-  std::cout << trainPred;
-
-  std::cout << "Train RMSE: " << RMSE(trainLabels, trainPred) << std::endl;
-
-  // DecisionTreeRegressor<> dt = d;
-
-  // Reset the prediction.
-  predictions.zeros();
-  wd.Predict(testData, predictions);
-
-  REQUIRE(predictions.n_elem == testData.n_cols);
-
-  // Figure out the rmse.
-  double wdrmse = RMSE(predictions, testLabels);
-
-  REQUIRE(wdrmse < 9.21);
+  const double mse = arma::accu(arma::square(p - r)) / p.n_elem;
+  REQUIRE(mse < 0.5);
 }
 
 /**
@@ -640,19 +643,19 @@ TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
 //   std::cout << "****************End****************\n";
 // }
 
-TEST_CASE("handmadedata", "[DecisionTreeRegressorTest]")
-{
-  // drug dosage (in mg).
-  arma::mat dataset = {{2, 3, 5, 10, 14, 16, 20, 22, 28, 30, 32, 35, 39}};
-  // percentage effectiveness.
-  arma::rowvec labels = {0, 0, 0, 5, 99, 99, 99, 95, 55, 45, 7, 0, 0};
+// TEST_CASE("handmadedata", "[DecisionTreeRegressorTest]")
+// {
+//   // drug dosage (in mg).
+//   arma::mat dataset = {{2, 3, 5, 10, 14, 16, 20, 22, 28, 30, 32, 35, 39}};
+//   // percentage effectiveness.
+//   arma::rowvec labels = {0, 0, 0, 5, 99, 99, 99, 95, 55, 45, 7, 0, 0};
 
-  arma::rowvec weights(labels.n_elem);
-  weights.ones();
-  std::cout << "****************Start**************\n";
-  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 5);
-  std::cout << "****************End****************\n";
-}
+//   arma::rowvec weights(labels.n_elem);
+//   weights.ones();
+//   std::cout << "****************Start**************\n";
+//   DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 5);
+//   std::cout << "****************End****************\n";
+// }
 
 // /**
 //  * Test that we can build a decision tree on a simple categorical dataset.
