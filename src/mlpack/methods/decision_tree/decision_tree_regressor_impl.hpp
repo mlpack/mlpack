@@ -840,7 +840,7 @@ double DecisionTreeRegressor<FitnessFunction,
 
       // If the splitter did not report that it improved, then move to the next
       // dimension.
-      std::cout << "dim: " << i << "   gain: " << dimGain << std::endl;
+      // std::cout << "dim: " << i << "   gain: " << dimGain << std::endl;
       if (dimGain == DBL_MAX)
         continue;
 
@@ -856,8 +856,8 @@ double DecisionTreeRegressor<FitnessFunction,
   // Did we split or not?  If so, then split the data and create the children.
   if (bestDim != data.n_rows)
   {
-    std::cout << "splitpoint: " << splitPointOrPrediction << std::endl;
-    std::cout << "bestDim: " << bestDim << std::endl;
+    // std::cout << "splitpoint: " << splitPointOrPrediction << std::endl;
+    // std::cout << "bestDim: " << bestDim << std::endl;
     // We know that the split is numeric.
     size_t numChildren = NumericSplit::NumChildren(splitPointOrPrediction, *this);
     splitDimension = bestDim;
