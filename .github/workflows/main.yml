@@ -135,6 +135,7 @@ jobs:
           remotes::install_cran("digest", force=TRUE)
           remotes::install_cran("ps", force=TRUE)
           remotes::install_cran("processx", force=TRUE)
+          remotes::install_cran("Rcpp", force=TRUE)
         shell: Rscript {0}
 
       - name: Check
