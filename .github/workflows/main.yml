@@ -137,6 +137,7 @@ jobs:
           remotes::install_cran("processx", force=TRUE)
           remotes::install_cran("Rcpp", force=TRUE)
           remotes::install_cran("rlang", force=TRUE)
+          remotes::install_cran("magrittr", force=TRUE)
           remotes::install_cran("testthat", force=TRUE)
         shell: Rscript {0}
 
