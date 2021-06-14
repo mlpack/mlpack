@@ -61,6 +61,8 @@
 
   * Fix Julia model serialization bug (#2970).
 
+  * Fix `LoadCSV()` to use pre-populated `DatasetInfo` objects (#2980).
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.
