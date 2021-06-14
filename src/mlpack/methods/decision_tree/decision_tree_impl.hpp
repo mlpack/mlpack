@@ -663,7 +663,7 @@ double DecisionTree<FitnessFunction,
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
             minimumGainSplit,
-            classProbabilities[0],
+            classProbabilities,
             *this);
       }
 
@@ -836,7 +836,7 @@ double DecisionTree<FitnessFunction,
                                         weights,
                                     minimumLeafSize,
                                     minimumGainSplit,
-                                    classProbabilities[0],
+                                    classProbabilities,
                                     *this);
 
       // If the splitter did not report that it improved, then move to the next

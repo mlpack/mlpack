@@ -82,7 +82,7 @@ class RandomBinaryNumericSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      double& splitInfo,
+      arma::vec& splitInfo,
       AuxiliarySplitInfo& aux,
       const bool splitIfBetterGain = false);
 

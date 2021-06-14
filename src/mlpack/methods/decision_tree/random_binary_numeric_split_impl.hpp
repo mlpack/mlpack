@@ -27,7 +27,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    double& splitInfo,
+    arma::vec& splitInfo,
     AuxiliarySplitInfo& /* aux */,
     const bool splitIfBetterGain)
 {
@@ -125,7 +125,8 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   if (gain < bestFoundGain && splitIfBetterGain)
     return DBL_MAX;
 
-  splitInfo = randomPivot;
+  splitInfo.set_size(1);
+  splitInfo[0] = randomPivot;
 
   if (UseWeights)
     gain /= totalWeight;
