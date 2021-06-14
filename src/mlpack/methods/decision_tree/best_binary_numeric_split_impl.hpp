@@ -188,7 +188,6 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
     const arma::Row<double>& labels,
-    const size_t numClasses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
