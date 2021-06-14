@@ -18,6 +18,7 @@
 #include "mse_gain.hpp"
 #include "best_binary_numeric_split.hpp"
 #include "all_categorical_split.hpp"
+#include "random_binary_numeric_split.hpp"
 #include "all_dimension_select.hpp"
 #include <type_traits>
 

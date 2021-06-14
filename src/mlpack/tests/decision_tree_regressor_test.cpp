@@ -326,6 +326,91 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
 }
 
 /**
+ * Check that the RandomBinaryNumericSplit always splits when splitIfBetterGain
+ * is false.
+ */
+TEST_CASE("RandomBinaryNumericSplitAlwaysSplit_",
+    "[DecisionTreeRegressorTest]")
+{
+  arma::vec values("0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0");
+  arma::rowvec labels("0 0 0 0 0 1 1 1 1 1 1");
+  arma::rowvec weights;
+  weights.ones(labels.n_elem);
+
+  double splitInfo;
+  RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = MSEGain::Evaluate<false>(labels, 2, weights);
+  const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
+      bestGain, values, labels, weights, 1, 1e-7, splitInfo, aux);
+  const double weightedGain =
+      RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<true>(bestGain, values,
+      labels, weights, 1, 1e-7, splitInfo, aux);
+
+  // Make sure that split was made.
+  REQUIRE(gain != DBL_MAX);
+  REQUIRE(weightedGain != DBL_MAX);
+}
+
+/**
+ * Check that the RandomBinaryNumericSplit won't split if not enough points are
+ * given.
+ */
+TEST_CASE("RandomBinaryNumericSplitMinSamplesTest_",
+    "[DecisionTreeRegressorTest]")
+{
+  arma::vec values("0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0");
+  arma::rowvec labels("0 0 0 0 0 1 1 1 1 1 1");
+  arma::rowvec weights(labels.n_elem);
+
+  double splitInfo;
+  RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = MSEGain::Evaluate<false>(labels, 2, weights);
+  const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
+      bestGain, values, labels, weights, 8, 1e-7, splitInfo, aux);
+  // This should make no difference because it won't split at all.
+  const double weightedGain =
+      RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<true>(bestGain, values,
+      labels, weights, 8, 1e-7, splitInfo, aux);
+
+  // Make sure that no split was made.
+  REQUIRE(gain == DBL_MAX);
+  REQUIRE(gain == weightedGain);
+}
+
+/**
+ * Check that the RandomBinaryNumericSplit doesn't split a dimension that gives
+ * no gain when splitIfBetterGain is true.
+ */
+TEST_CASE("RandomBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
+{
+  arma::vec values(100);
+  arma::Row<double> labels(100);
+  arma::rowvec weights;
+  for (size_t i = 0; i < 100; i += 2)
+  {
+    values[i] = i;
+    labels[i] = 0.0;
+    values[i + 1] = i;
+    labels[i + 1] = 1.0;
+  }
+
+  double splitInfo;
+  RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
+
+  // Call the method to do the splitting.
+  const double bestGain = MSEGain::Evaluate<false>(labels, 2, weights);
+  const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
+      bestGain, values, labels, weights, 10, 1e-7, splitInfo, aux, true);
+
+  // Make sure there was no split.
+  REQUIRE(gain == DBL_MAX);
+}
+
+/**
  * A basic construction of the decision tree---ensure that we can create the
  * tree and that it split at least once.
  */

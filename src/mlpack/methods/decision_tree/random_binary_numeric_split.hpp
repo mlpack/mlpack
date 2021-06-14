@@ -37,6 +37,8 @@ class RandomBinaryNumericSplit
    * return the value 'bestGain'.  If a split is made, then splitInfo
    * and aux may be modified.
    *
+   * It is used only for classification tasks.
+   *
    * @code
    * @article{10.1007/s10994-006-6226-1,
    *   author = {Geurts, Pierre and Ernst, Damien and Wehenkel, Louis},
@@ -83,6 +85,42 @@ class RandomBinaryNumericSplit
       const size_t minimumLeafSize,
       const double minimumGainSplit,
       arma::vec& splitInfo,
+      AuxiliarySplitInfo& aux,
+      const bool splitIfBetterGain = false);
+
+  /**
+   * Check if we can split a node.  If we can split a node in a way that
+   * improves on 'bestGain', then we return the improved gain.  Otherwise we
+   * return the value 'bestGain'.  If a split is made, then splitInfo
+   * and aux may be modified.
+   *
+   * It is used only for regression tasks.
+   *
+   * @param bestGain Best gain seen so far (we'll only split if we find gain
+   *      better than this).
+   * @param data The dimension of data points to check for a split in.
+   * @param labels Labels for each point.
+   * @param numClasses Number of classes in the dataset.
+   * @param weights Weights associated with labels.
+   * @param minimumLeafSize Minimum number of points in a leaf node for
+   *      splitting.
+   * @param minimumGainSplit Minimum gain split.
+   * @param splitInfo Stores split information on a successful split.
+   * @param aux Auxiliary split information, which may be modified on a
+   *      successful split.
+   * @param splitIfBetterGain When set to true, it will split only when gain is
+   *      better than the current best gain. Otherwise, it always makes a
+   *      split regardless of gain.
+   */
+  template<bool UseWeights, typename VecType, typename WeightVecType>
+  static double SplitIfBetter(
+      const double bestGain,
+      const VecType& data,
+      const arma::Row<double>& labels,
+      const WeightVecType& weights,
+      const size_t minimumLeafSize,
+      const double minimumGainSplit,
+      double& splitInfo,
       AuxiliarySplitInfo& aux,
       const bool splitIfBetterGain = false);
 
