@@ -128,6 +128,11 @@ jobs:
           key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
 
+      - name: Annihilate R environment
+        if: runner.os == 'macOS'
+        run: |
+            ls /Users/runner/work/_temp/Library/* && rm -rf /Users/runner/work/_temp/Library/*
+
       - name: Install dependencies
         run: |
           remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
