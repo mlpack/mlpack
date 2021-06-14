@@ -60,7 +60,7 @@ class BestBinaryNumericSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      double& splitInfo,
+      arma::vec& splitInfo,
       AuxiliarySplitInfo& aux);
 
   /**
