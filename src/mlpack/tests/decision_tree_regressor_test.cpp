@@ -251,11 +251,10 @@ TEST_CASE("BestBinaryNumericSplitSimpleSplitTest_", "[DecisionTreeRegressorTest]
   // Call the method to do the splitting.
   const double bestGain = MADGain::Evaluate<false>(labels, 0, weights);
   const double gain = BestBinaryNumericSplit<MADGain>::SplitIfBetter<false>(
-      bestGain, predictors, labels, 0, weights, 3, 1e-7, splitInfo,
-      aux);
+      bestGain, predictors, labels, weights, 3, 1e-7, splitInfo, aux);
   const double weightedGain =
       BestBinaryNumericSplit<MADGain>::SplitIfBetter<true>(bestGain, predictors,
-      labels, 0, weights, 3, 1e-7, splitInfo, aux);
+      labels, weights, 3, 1e-7, splitInfo, aux);
 
   // Make sure that a split was made.
   REQUIRE(gain > bestGain);
@@ -285,11 +284,11 @@ TEST_CASE("BestBinaryNumericSplitMinSamplesTest_", "[DecisionTreeRegressorTest]"
   // Call the method to do the splitting.
   const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
   const double gain = BestBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictors, labels, 0, weights, 8, 1e-7, splitInfo, aux);
+      bestGain, predictors, labels, weights, 8, 1e-7, splitInfo, aux);
   // This should make no difference because it won't split at all.
   const double weightedGain =
       BestBinaryNumericSplit<MSEGain>::SplitIfBetter<true>(bestGain, predictors,
-      labels, 0, weights, 8, 1e-7, splitInfo, aux);
+      labels, weights, 8, 1e-7, splitInfo, aux);
 
   // Make sure that no split was made.
   REQUIRE(gain == DBL_MAX);
@@ -319,7 +318,7 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
   // Call the method to do the splitting.
   const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
   const double gain = BestBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictors, labels, 0, weights, 10, 1e-7, splitInfo,
+      bestGain, predictors, labels, weights, 10, 1e-7, splitInfo,
       aux);
 
   // Make sure there was no split.

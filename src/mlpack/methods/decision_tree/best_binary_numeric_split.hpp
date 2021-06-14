@@ -75,7 +75,6 @@ class BestBinaryNumericSplit
    *      better than this).
    * @param data The dimension of data points to check for a split in.
    * @param labels Labels for each point.
-   * @param numClasses Number of classes in the dataset.
    * @param weights Weights associated with labels.
    * @param minimumLeafSize Minimum number of points in a leaf node for
    *      splitting.
@@ -89,7 +88,6 @@ class BestBinaryNumericSplit
       const double bestGain,
       const VecType& data,
       const arma::Row<double>& labels,
-      const size_t numClasses,
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
