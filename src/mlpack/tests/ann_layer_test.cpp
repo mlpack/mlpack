@@ -4677,6 +4677,7 @@ TEST_CASE("ChannelShuffleLayerTest", "[ANNLayerTest]")
          << 11 << 23 << arma::endr
          << 12 << 24 << arma::endr;
   input1.reshape(24, 1);
+  // Value calculated using torch.nn.ChannelShuffle().
   outputExpected1 << 1  << 17 << arma::endr
                   << 2  << 18 << arma::endr
                   << 3  << 19 << arma::endr
