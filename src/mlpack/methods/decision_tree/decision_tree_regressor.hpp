@@ -404,6 +404,9 @@ class DecisionTreeRegressor :
   //! Get the number of children.
   size_t NumChildren() const { return children.size(); }
 
+  //! Get the number of leaves in the tree.
+  size_t NumLeaves() const;
+
   //! Get the child of the given index.
   const DecisionTreeRegressor& Child(const size_t i) const { return *children[i]; }
   //! Modify the child of the given index (be careful!).
@@ -483,8 +486,7 @@ class DecisionTreeRegressor :
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector,
-               int& numLeaves);
+               DimensionSelectionType& dimensionSelector);
 
   /**
    * Corresponding to the public Train() method, this method is designed for
@@ -512,8 +514,7 @@ class DecisionTreeRegressor :
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector,
-               int& numLeaves);
+               DimensionSelectionType& dimensionSelector);
 };
 
 
