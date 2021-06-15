@@ -74,7 +74,7 @@ void PCA<DecompositionPolicy>::Apply(const arma::mat& data,
   arma::mat eigvec;
   Apply(data, transformedData, eigVal, eigvec);
 }
-    
+
 /**
  * Apply Principal Component Analysis to the provided data set.
  *

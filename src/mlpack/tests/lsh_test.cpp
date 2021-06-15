@@ -985,7 +985,6 @@ TEST_CASE("SparseLSHTest", "[LSHTest]")
   // Make sure that sparse LSH distances aren't garbage.
   for (size_t i = 0; i < sparseNeighbors.n_elem; ++i)
   {
-    REQUIRE(sparseNeighbors[i] >= 0);
     REQUIRE(sparseNeighbors[i] < rdata.n_cols);
     REQUIRE(sparseDistances[i] >= 0.0);
     REQUIRE(!std::isinf(sparseDistances[i]));

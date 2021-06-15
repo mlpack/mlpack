@@ -15,8 +15,6 @@ option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 option(BUILD_TESTS "Build tests." ON)
 option(BUILD_CLI_EXECUTABLES "Build command-line executables." ON)
 option(DISABLE_DOWNLOADS "Disable downloads of dependencies during build." OFF)
-option(DOWNLOAD_ENSMALLEN "If ensmallen is not found, download it." ON)
-option(DOWNLOAD_STB_IMAGE "Download stb_image for image loading." ON)
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(BUILD_DOCS "Build doxygen documentation (if doxygen is available)." ON)
 
@@ -105,6 +103,11 @@ enable_testing()
 # Set required standard to C++11.
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Ensure that GCC is new enough, if the compiler is GCC.
+if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
+  message(FATAL_ERROR "GCC version (${CMAKE_CXX_COMPILER_VERSION}) is too old! 5.x or newer is required.")
+endif ()
 
 # Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
@@ -366,7 +369,11 @@ if (DISABLE_DOWNLOADS)
 else()
   find_package(Boost "${BOOST_VERSION}")
   if (NOT Boost_FOUND)
-    get_deps(https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz boost boost_1_76_0.tar.gz)
+    if (CMAKE_COMPILER_IS_GNUCC AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0))
+      get_deps(http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz boost boost_1_58_0.tar.gz)
+    else()
+      get_deps(https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz boost boost_1_76_0.tar.gz)
+    endif()
     find_package(Boost REQUIRED)
   endif()
 endif()

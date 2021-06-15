@@ -398,7 +398,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMinSamplesTest",
 
   // Check that small min_samples creates larger model.
   REQUIRE((IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes() <
-      nodes);
+      (size_t) nodes);
 }
 
 /**
@@ -466,7 +466,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMaxSamplesTest",
   mlpackMain();
 
   // Check that large max_samples creates smaller model.
-  REQUIRE(nodes <
+  REQUIRE((size_t) nodes <
       (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
@@ -533,7 +533,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingConfidenceTest",
 
   mlpackMain();
   // Check that higher confidence creates smaller tree.
-  REQUIRE(nodes <
+  REQUIRE((size_t) nodes <
       (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
@@ -601,7 +601,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingPassesTest",
   mlpackMain();
 
   // Check that model with larger number of passes has greater number of nodes.
-  REQUIRE(nodes <
+  REQUIRE((size_t) nodes <
       (IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes());
 }
 
@@ -715,7 +715,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
 
   // Check that both models have different number of nodes.
   CHECK((IO::GetParam<HoeffdingTreeModel*>("output_model"))->NumNodes() !=
-      nodes);
+      (size_t) nodes);
 }
 
 /**

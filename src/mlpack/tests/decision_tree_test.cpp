@@ -440,8 +440,8 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
  * Check that RandomBinaryNumericSplit generally gives a split different than
  * the BestBinaryNumericSplit.
  */
- TEST_CASE("RandomBinaryNumericSplitDiffSplitTest", "[DecisionTreeTest]")
- {
+TEST_CASE("RandomBinaryNumericSplitDiffSplitTest", "[DecisionTreeTest]")
+{
   arma::vec values(1000);
   arma::Row<size_t> labels(1000);
   arma::rowvec weights;
@@ -462,12 +462,12 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
   for (int i = 0; i < 5; ++i)
   {
     // Call BestBinaryNumericSplit to do the splitting.
-    double gain = BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+    (void) BestBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
         bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities,
         aux);
 
     // Call RandomBinaryNumericSplit to do the splitting.
-    gain = RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
+    (void) RandomBinaryNumericSplit<GiniGain>::SplitIfBetter<false>(
         bestGain, values, labels, 2, weights, 3, 1e-7, classProbabilities1,
         aux1);
 
@@ -476,7 +476,7 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
   }
 
   REQUIRE(classProbabilities[0] != classProbabilities1[0]);
- }
+}
 
 /**
  * Check that the AllCategoricalSplit will split when the split is obviously

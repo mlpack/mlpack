@@ -80,7 +80,8 @@ void PrintPYX(const util::BindingDetails& doc,
   cout << "from io cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
       << "ResetTimers, EnableTimers" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
-  cout << "from serialization cimport SerializeIn, SerializeOut" << endl;
+  cout << "from preprocess_json_params import process_params_out, process_params_in" << endl;
+  cout << "from serialization cimport SerializeIn, SerializeOut, SerializeOutJSON, SerializeInJSON" << endl;
   cout << endl;
   cout << "import numpy as np" << endl;
   cout << "cimport numpy as np" << endl;
@@ -229,7 +230,8 @@ void PrintPYX(const util::BindingDetails& doc,
       << "\'bool'!\")" << endl;
   cout << endl;
 
-  // Before calling mlpackMain(), we check input matrices for NaN values if needed.
+  // Before calling mlpackMain(), we check input matrices for NaN values if
+  // needed.
   cout << "  if check_input_matrices:" << endl;
   cout << "    IO.CheckInputMatrices()" << endl;
 

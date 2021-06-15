@@ -62,10 +62,12 @@ void PrintClassDefn(
    * @code
    * cdef class <ModelType>Type:
    *   cdef <ModelType>* modelptr
-   *
+   *   cdef public dict scrubbed_params
+   * 
    *   def __cinit__(self):
    *     self.modelptr = new <ModelType>()
-   *
+   *     self.scrubbed_params = dict()
+   * 
    *   def __dealloc__(self):
    *     del self.modelptr
    *
@@ -77,13 +79,30 @@ void PrintClassDefn(
    *
    *   def __reduce_ex__(self):
    *     return (self.__class__, (), self.__getstate__())
+   *
+   *   def _get_cpp_params(self):
+   *     return SerializeOutJSON(self.modelptr, "<ModelType>")
+   * 
+   *   def _set_cpp_params(self, state):
+   *     SerializeInJSON(self.modelptr, state, "<ModelType>")
+   * 
+   *   def get_cpp_params(self, return_str=False):
+   *     params = self._get_cpp_params()
+   *     return process_params_out(self, params, return_str=return_str)
+   * 
+   *   def set_cpp_params(self, params_dic):
+   *     params_str = process_params_in(self, params_dic)
+   *     self._set_cpp_params(params_str)
+   * 
    * @endcode
    */
   std::cout << "cdef class " << strippedType << "Type:" << std::endl;
   std::cout << "  cdef " << printedType << "* modelptr" << std::endl;
+  std::cout << "  cdef public dict scrubbed_params" << std::endl;
   std::cout << std::endl;
   std::cout << "  def __cinit__(self):" << std::endl;
   std::cout << "    self.modelptr = new " << printedType << "()" << std::endl;
+  std::cout << "    self.scrubbed_params = dict()" << std::endl;
   std::cout << std::endl;
   std::cout << "  def __dealloc__(self):" << std::endl;
   std::cout << "    del self.modelptr" << std::endl;
@@ -99,6 +118,22 @@ void PrintClassDefn(
   std::cout << "  def __reduce_ex__(self, version):" << std::endl;
   std::cout << "    return (self.__class__, (), self.__getstate__())"
       << std::endl;
+  std::cout << std::endl;
+  std::cout << "  def _get_cpp_params(self):" << std::endl;
+  std::cout << "    return SerializeOutJSON(self.modelptr, \"" << printedType
+      << "\")" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  def _set_cpp_params(self, state):" << std::endl;
+  std::cout << "    SerializeInJSON(self.modelptr, state, \"" << printedType
+      << "\")" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  def get_cpp_params(self, return_str=False):" << std::endl;
+  std::cout << "    params = self._get_cpp_params()" << std::endl;
+  std::cout << "    return process_params_out(self, params, return_str=return_str)" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  def set_cpp_params(self, params_dic):" << std::endl;
+  std::cout << "    params_str = process_params_in(self, params_dic)" << std::endl;
+  std::cout << "    self._set_cpp_params(params_str.encode(\"utf-8\"))" << std::endl;
   std::cout << std::endl;
 }
 
