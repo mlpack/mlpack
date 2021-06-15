@@ -131,6 +131,7 @@ jobs:
         run: |
           install.packages('remotes')
           remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
+          remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
       - name: Check
