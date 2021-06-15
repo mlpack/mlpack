@@ -214,12 +214,25 @@ static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 #undef BINDING_NAME
-#define BINDING_NAME(NAME) static \
-    mlpack::util::ProgramName \
-    JOIN(io_programname_dummy_object, __COUNTER__) = mlpack::util::ProgramName(NAME); \
-		mlpack::bindings::python::ChangeProgramName \
-		JOIN(changename_dummy_, __COUNTER__) = \
-        mlpack::bindings::python::ChangeProgramName(NAME);
+#ifdef __COUNTER__
+  #define BINDING_NAME(NAME) static \
+      mlpack::util::ProgramName \
+      JOIN(io_programname_dummy_object_, __COUNTER__) = \
+      mlpack::util::ProgramName( \
+      NAME); \
+      mlpack::bindings::python::ChangeProgramName \
+		  JOIN(changename_dummy_, __COUNTER__) = \
+          mlpack::bindings::python::ChangeProgramName(NAME);
+#else
+  #define BINDING_NAME(NAME) static \
+      mlpack::util::ProgramName \
+      JOIN(JOIN(io_programname_dummy_object_, __LINE__), opt) = \
+      mlpack::util::ProgramName( \
+      NAME); \
+      mlpack::bindings::python::ChangeProgramName \
+		  JOIN(JOIN(io_programname_dummy_object_, __LINE__), opt) = \
+          mlpack::bindings::python::ChangeProgramName(NAME);
+#endif
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
@@ -544,12 +557,25 @@ static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 #undef BINDING_NAME
-#define BINDING_NAME(NAME) static \
-    mlpack::util::ProgramName \
-    JOIN(io_programname_dummy_object, __COUNTER__) = mlpack::util::ProgramName(NAME); \
-		mlpack::bindings::python::ChangeProgramName \
-		JOIN(changename_dummy_, __COUNTER__) = \
-        mlpack::bindings::python::ChangeProgramName(NAME);
+#ifdef __COUNTER__
+  #define BINDING_NAME(NAME) static \
+      mlpack::util::ProgramName \
+      JOIN(io_programname_dummy_object_, __COUNTER__) = \
+      mlpack::util::ProgramName( \
+      NAME); \
+      mlpack::bindings::python::ChangeProgramName \
+		  JOIN(changename_dummy_, __COUNTER__) = \
+          mlpack::bindings::python::ChangeProgramName(NAME);
+#else
+  #define BINDING_NAME(NAME) static \
+      mlpack::util::ProgramName \
+      JOIN(JOIN(io_programname_dummy_object_, __LINE__), opt) = \
+      mlpack::util::ProgramName( \
+      NAME); \
+      mlpack::bindings::python::ChangeProgramName \
+		  JOIN(JOIN(io_programname_dummy_object_, __LINE__), opt) = \
+          mlpack::bindings::python::ChangeProgramName(NAME);
+#endif
 
 #else
 

@@ -3,7 +3,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/bindings/python/print_py_wrapper.hpp>
-#include <${group_name}_main_includes.hpp>
+#include "${GROUP_NAME}_main_includes.hpp"
 
 using namespace mlpack;
 using namespace mlpack::bindings;
