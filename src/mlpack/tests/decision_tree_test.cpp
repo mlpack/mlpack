@@ -341,7 +341,7 @@ TEST_CASE("BestBinaryNumericSplitMinSamplesTest", "[DecisionTreeTest]")
   // Make sure that no split was made.
   REQUIRE(gain == DBL_MAX);
   REQUIRE(gain == weightedGain);
-  // REQUIRE(classProbabilities.n_elem == 0);    **TODO**
+  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**
@@ -372,7 +372,7 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
 
   // Make sure there was no split.
   REQUIRE(gain == DBL_MAX);
-  // REQUIRE(classProbabilities.n_elem == 0);    **TODO**
+  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**
@@ -400,7 +400,7 @@ TEST_CASE("RandomBinaryNumericSplitMinSamplesTest", "[DecisionTreeTest]")
   // Make sure that no split was made.
   REQUIRE(gain == DBL_MAX);
   REQUIRE(gain == weightedGain);
-  // REQUIRE(classProbabilities.n_elem == 0);     **TODO**
+  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**
@@ -431,7 +431,7 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest", "[DecisionTreeTest]")
 
   // Make sure there was no split.
   REQUIRE(gain == DBL_MAX);
-  // REQUIRE(classProbabilities.n_elem == 0);     **TODO**
+  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**
@@ -523,17 +523,18 @@ TEST_CASE("AllCategoricalSplitMinSamplesTest", "[DecisionTreeTest]")
   arma::rowvec weights(labels.n_elem);
   weights.ones();
 
-  arma::vec classProbabilities(1);
+  arma::vec classProbabilities;
   AllCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
       bestGain, values, 4, labels, 3, weights, 4, 1e-7,
-      classProbabilities[0], aux);
+      classProbabilities, aux);
 
   // Make sure it's not split.
   REQUIRE(gain == DBL_MAX);
+  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**
@@ -555,21 +556,22 @@ TEST_CASE("AllCategoricalSplitNoGainTest", "[DecisionTreeTest]")
     labels[i + 2] = 2;
   }
 
-  arma::vec classProbabilities(1);
+  arma::vec classProbabilities;
   AllCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
       bestGain, values, 10, labels, 3, weights, 10, 1e-7,
-      classProbabilities[0], aux);
+      classProbabilities, aux);
   const double weightedGain =
       AllCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 10,
-      labels, 3, weights, 10, 1e-7, classProbabilities[0], aux);
+      labels, 3, weights, 10, 1e-7, classProbabilities, aux);
 
   // Make sure that there was no split.
   REQUIRE(gain == DBL_MAX);
   REQUIRE(gain == weightedGain);
+  REQUIRE(classProbabilities.n_elem == 0);
 }
 
 /**

@@ -636,7 +636,6 @@ double DecisionTree<FitnessFunction,
 
   if (maximumDepth != 1)
   {
-    classProbabilities.set_size(1);
     for (size_t i = dimensionSelector.Begin(); i != end;
          i = dimensionSelector.Next())
     {
@@ -651,7 +650,7 @@ double DecisionTree<FitnessFunction,
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
             minimumGainSplit,
-            classProbabilities[0],
+            classProbabilities,
             *this);
       }
       else if (datasetInfo.Type(i) == data::Datatype::numeric)
@@ -822,7 +821,6 @@ double DecisionTree<FitnessFunction,
 
   if (maximumDepth != 1)
   {
-    classProbabilities.set_size(1);
     for (size_t i = dimensionSelector.Begin(); i != dimensionSelector.End();
          i = dimensionSelector.Next())
     {

@@ -54,7 +54,8 @@ class AllCategoricalSplit
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
    */
-  template<bool UseWeights, typename VecType, typename LabelsType, typename WeightVecType>
+  template<bool UseWeights, typename VecType, typename LabelsType,
+           typename WeightVecType, typename SplitInfoType>
   static double SplitIfBetter(
       const double bestGain,
       const VecType& data,
@@ -64,7 +65,7 @@ class AllCategoricalSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      double& splitInfo,
+      SplitInfoType& splitInfo,
       AuxiliarySplitInfo& aux);
 
   /**
