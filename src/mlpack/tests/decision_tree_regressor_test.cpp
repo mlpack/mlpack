@@ -15,6 +15,7 @@
 #include <mlpack/methods/decision_tree/mse_gain.hpp>
 #include <mlpack/methods/decision_tree/random_dimension_select.hpp>
 #include <mlpack/methods/decision_tree/multiple_random_dimension_select.hpp>
+#include <mlpack/core/math/random.hpp>
 
 #include "catch.hpp"
 #include "serialization.hpp"
@@ -530,77 +531,69 @@ TEST_CASE("PerfectTrainingSetWithWeight_", "[DecisionTreeRegressorTest]")
   }
 }
 
-// /**
-//  * Test that we can build a decision tree on a simple categorical dataset.
-//  */
-// TEST_CASE("CategoricalBuildTest", "[DecisionTreeTest]")
-// {
-//   arma::mat d;
-//   arma::Row<size_t> l;
-//   data::DatasetInfo di;
-//   MockCategoricalData(d, l, di);
+/**
+ * Test that we can build a decision tree on a simple categorical dataset.
+ */
+TEST_CASE("CategoricalBuildTest_", "[DecisionTreeRegressorTest]")
+{
+  arma::mat d;
+  arma::rowvec l;
+  data::DatasetInfo di;
+  MockCategoricalData(d, l, di);
 
-//   // Split into a training set and a test set.
-//   arma::mat trainingData = d.cols(0, 1999);
-//   arma::mat testData = d.cols(2000, 3999);
-//   arma::Row<size_t> trainingLabels = l.subvec(0, 1999);
-//   arma::Row<size_t> testLabels = l.subvec(2000, 3999);
+  // Split into a training set and a test set.
+  arma::mat trainingData = d.cols(0, 1999);
+  arma::mat testData = d.cols(2000, 3999);
+  arma::rowvec trainingLabels = l.subvec(0, 1999);
+  arma::rowvec testLabels = l.subvec(2000, 3999);
 
-//   // Build the tree.
-//   DecisionTree<> tree(trainingData, di, trainingLabels, 5, 10);
+  // Build the tree.
+  DecisionTreeRegressor<> tree(trainingData, di, trainingLabels, 10);
 
-//   // Now evaluate the accuracy of the tree.
-//   arma::Row<size_t> predictions;
-//   tree.Classify(testData, predictions);
+  // Now evaluate the quality of predictions.
+  arma::rowvec predictions;
+  tree.Predict(testData, predictions);
 
-//   REQUIRE(predictions.n_elem == testData.n_cols);
-//   size_t correct = 0;
-//   for (size_t i = 0; i < testData.n_cols; ++i)
-//     if (testLabels[i] == predictions[i])
-//       ++correct;
+  REQUIRE(predictions.n_elem == testData.n_cols);
 
-//   // Make sure we got at least 70% accuracy.
-//   const double correctPct = double(correct) / double(testData.n_cols);
-//   REQUIRE(correctPct > 0.70);
-// }
+  // Make sure we get reasonable rmse.
+  const double rmse = RMSE(predictions, testLabels);
+  REQUIRE(rmse < 1.0);
+}
 
-// /**
-//  * Test that we can build a decision tree with weights on a simple categorical
-//  * dataset.
-//  */
-// TEST_CASE("CategoricalBuildTestWithWeight", "[DecisionTreeTest]")
-// {
-//   arma::mat d;
-//   arma::Row<size_t> l;
-//   data::DatasetInfo di;
-//   MockCategoricalData(d, l, di);
+/**
+ * Test that we can build a decision tree with weights on a simple categorical
+ * dataset.
+ */
+TEST_CASE("CategoricalBuildTestWithWeight_", "[DecisionTreeRegressorTest]")
+{
+  arma::mat d;
+  arma::rowvec l;
+  data::DatasetInfo di;
+  MockCategoricalData(d, l, di);
 
-//   // Split into a training set and a test set.
-//   arma::mat trainingData = d.cols(0, 1999);
-//   arma::mat testData = d.cols(2000, 3999);
-//   arma::Row<size_t> trainingLabels = l.subvec(0, 1999);
-//   arma::Row<size_t> testLabels = l.subvec(2000, 3999);
+  // Split into a training set and a test set.
+  arma::mat trainingData = d.cols(0, 1999);
+  arma::mat testData = d.cols(2000, 3999);
+  arma::rowvec trainingLabels = l.subvec(0, 1999);
+  arma::rowvec testLabels = l.subvec(2000, 3999);
 
-//   arma::Row<double> weights = arma::ones<arma::Row<double>>(
-//       trainingLabels.n_elem);
+  arma::rowvec weights = arma::ones<arma::rowvec>(
+      trainingLabels.n_elem);
 
-//   // Build the tree.
-//   DecisionTree<> tree(trainingData, di, trainingLabels, 5, weights, 10);
+  // Build the tree.
+  DecisionTreeRegressor<> tree(trainingData, di, trainingLabels, weights, 10);
 
-//   // Now evaluate the accuracy of the tree.
-//   arma::Row<size_t> predictions;
-//   tree.Classify(testData, predictions);
+  // Now evaluate the quality of predictions.
+  arma::rowvec predictions;
+  tree.Predict(testData, predictions);
 
-//   REQUIRE(predictions.n_elem == testData.n_cols);
-//   size_t correct = 0;
-//   for (size_t i = 0; i < testData.n_cols; ++i)
-//     if (testLabels[i] == predictions[i])
-//       ++correct;
+  REQUIRE(predictions.n_elem == testData.n_cols);
 
-//   // Make sure we got at least 70% accuracy.
-//   const double correctPct = double(correct) / double(testData.n_cols);
-//   REQUIRE(correctPct > 0.70);
-// }
+  // Make sure we get reasonable rmse.
+  const double rmse = RMSE(predictions, testLabels);
+  REQUIRE(rmse < 1.0);
+}
 
 /**
  * Test that we can build a decision tree using weighted data (where the
@@ -647,62 +640,59 @@ TEST_CASE("PerfectTrainingSetWithWeight_", "[DecisionTreeRegressorTest]")
 //   REQUIRE(rmse < 9.21);
 // }
 
-// /**
-//  * Test that we can build a decision tree on a simple categorical dataset using
-//  * weights, with low-weight noise added.
-//  */
-// TEST_CASE("CategoricalWeightedBuildTest", "[DecisionTreeTest]")
-// {
-//   arma::mat d;
-//   arma::Row<size_t> l;
-//   data::DatasetInfo di;
-//   MockCategoricalData(d, l, di);
+/**
+ * Test that we can build a decision tree on a simple categorical dataset using
+ * weights, with low-weight noise added.
+ */
+TEST_CASE("CategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
+{
+  arma::mat d;
+  arma::rowvec l;
+  data::DatasetInfo di;
+  MockCategoricalData(d, l, di);
 
-//   // Split into a training set and a test set.
-//   arma::mat trainingData = d.cols(0, 1999);
-//   arma::mat testData = d.cols(2000, 3999);
-//   arma::Row<size_t> trainingLabels = l.subvec(0, 1999);
-//   arma::Row<size_t> testLabels = l.subvec(2000, 3999);
+  // Split into a training set and a test set.
+  arma::mat trainingData = d.cols(0, 1999);
+  arma::mat testData = d.cols(2000, 3999);
+  arma::rowvec trainingLabels = l.subvec(0, 1999);
+  arma::rowvec testLabels = l.subvec(2000, 3999);
 
-//   // Now create random points.
-//   arma::mat randomNoise(4, 2000);
-//   arma::Row<size_t> randomLabels(2000);
-//   for (size_t i = 0; i < 2000; ++i)
-//   {
-//     randomNoise(0, i) = math::Random();
-//     randomNoise(1, i) = math::Random();
-//     randomNoise(2, i) = math::RandInt(4);
-//     randomNoise(3, i) = math::RandInt(2);
-//     randomLabels[i] = math::RandInt(5);
-//   }
+  // Now create random points.
+  arma::mat randomNoise(5, 2000);
+  arma::rowvec randomLabels(2000);
+  for (size_t i = 0; i < 2000; ++i)
+  {
+    randomNoise(0, i) = math::Random();
+    randomNoise(1, i) = math::Random(-1, 1);
+    randomNoise(2, i) = math::Random();
+    randomNoise(3, i) = math::RandInt(0, 2);
+    randomNoise(4, i) = math::RandInt(0, 5);
+    randomLabels[i] = math::Random(-10, 18);
+  }
 
-//   // Generate weights.
-//   arma::rowvec weights(4000);
-//   for (size_t i = 0; i < 2000; ++i)
-//     weights[i] = math::Random(0.9, 1.0);
-//   for (size_t i = 2000; i < 4000; ++i)
-//     weights[i] = math::Random(0.0, 0.001);
+  // Generate weights.
+  arma::rowvec weights(4000);
+  for (size_t i = 0; i < 2000; ++i)
+    weights[i] = math::Random(0.9, 1.0);
+  for (size_t i = 2000; i < 4000; ++i)
+    weights[i] = math::Random(0.0, 0.001);
 
-//   arma::mat fullData = arma::join_rows(trainingData, randomNoise);
-//   arma::Row<size_t> fullLabels = arma::join_rows(trainingLabels, randomLabels);
+  arma::mat fullData = arma::join_rows(trainingData, randomNoise);
+  arma::rowvec fullLabels = arma::join_rows(trainingLabels, randomLabels);
 
-//   // Build the tree.
-//   DecisionTree<> tree(fullData, di, fullLabels, 5, weights, 10);
+  // Build the tree.
+  DecisionTreeRegressor<> tree(fullData, di, fullLabels, weights, 10);
 
-//   // Now evaluate the accuracy of the tree.
-//   arma::Row<size_t> predictions;
-//   tree.Classify(testData, predictions);
+  // Now evaluate the quality of predictions.
+  arma::rowvec predictions;
+  tree.Predict(testData, predictions);
 
-//   REQUIRE(predictions.n_elem == testData.n_cols);
-//   size_t correct = 0;
-//   for (size_t i = 0; i < testData.n_cols; ++i)
-//     if (testLabels[i] == predictions[i])
-//       ++correct;
+  REQUIRE(predictions.n_elem == testData.n_cols);
 
-//   // Make sure we got at least 70% accuracy.
-//   const double correctPct = double(correct) / double(testData.n_cols);
-//   REQUIRE(correctPct > 0.70);
-// }
+  // Make sure we get reasonable rmse.
+  const double rmse = RMSE(predictions, testLabels);
+  REQUIRE(rmse < 1.5);
+}
 
 // /**
 //  * Test that we can build a decision tree using weighted data (where the
