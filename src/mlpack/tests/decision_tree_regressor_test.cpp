@@ -974,6 +974,8 @@ TEST_CASE("MultiSplitTest1", "[DecisionTreeRegressorTest]")
 
   for (size_t i = 0; i < labels.n_elem; ++i)
     REQUIRE(preds[i] == labels[i]);
+
+  REQUIRE(d.NumLeaves() == 5);
 }
 
 /**
@@ -998,6 +1000,8 @@ TEST_CASE("MultiSplitTest2", "[DecisionTreeRegressorTest]")
 
   for (size_t i = 0; i < labels.n_elem; ++i)
     REQUIRE(preds[i] == labels[i]);
+
+  REQUIRE(d.NumLeaves() == 5);
 }
 
 /**
@@ -1038,6 +1042,8 @@ TEST_CASE("MultiSplitTest3", "[DecisionTreeRegressorTest]")
 
   for (size_t i = 0; i < labels.n_elem; ++i)
     REQUIRE(preds[i] == labels[i]);
+
+  REQUIRE(d.NumLeaves() == 5);
 }
 
 TEST_CASE("handmadedata", "[DecisionTreeRegressorTest]")
