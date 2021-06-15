@@ -117,33 +117,9 @@ inline void LoadBostonHousingDataset(arma::mat& trainData,
 inline double RMSE(const arma::Row<double>& predictions,
                    const arma::Row<double>& trueLabels)
 {
-  double rmse = 0.0;
-  for (size_t i = 0; i < predictions.n_elem; ++i)
-  {
-    rmse += std::pow(predictions[i] - trueLabels[i], 2);
-  }
-  rmse /= predictions.n_elem;
-  rmse = sqrt(rmse);
-  return rmse;
-}
-
-/**
- * Calculates the R2 score of the predictions with true labels.
- */
-inline double R2Score(const arma::Row<double>& predictions,
-                      const arma::Row<double>& trueLabels)
-{
-  double mean = arma::mean(trueLabels);
-  double SStot = 0.0;
-  double SSres = 0.0;
-  for (size_t i = 0; i < predictions.n_elem; ++i)
-    SSres += std::pow(predictions[i] - trueLabels[i], 2);
-  for (size_t i = 0; i < predictions.n_elem; ++i)
-  {
-    SStot += std::pow(trueLabels[i] - mean, 2);
-  }
-
-  return 1 - SSres / SStot;
+  double mse = arma::accu(arma::square(predictions - trueLabels)) /
+      predictions.n_elem;
+  return sqrt(mse);
 }
 
 #endif
