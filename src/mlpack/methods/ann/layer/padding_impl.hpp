@@ -30,7 +30,9 @@ Padding<InputDataType, OutputDataType>::Padding(
     padHTop(padHTop),
     padHBottom(padHBottom),
     nRows(0),
-    nCols(0)
+    nCols(0),
+    inputHeight(0),
+    inputWidth(0)
 {
   // Nothing to do here.
 }
@@ -42,10 +44,18 @@ void Padding<InputDataType, OutputDataType>::Forward(
 {
   nRows = input.n_rows;
   nCols = input.n_cols;
-  output = arma::zeros(nRows + padWLeft + padWRight,
-      nCols + padHTop + padHBottom);
-  output.submat(padWLeft, padHTop, padWLeft + nRows - 1,
-      padHTop + nCols - 1) = input;
+  inSize = input.n_elem / (inputWidth * inputHeight * nCols);
+  inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
+      inputWidth, inputHeight, nCols * inSize, false, false);
+  outputTemp = arma::zeros<arma::Cube<eT> >(inputWidth + padWLeft + padWRight,
+      inputHeight + padHTop + padHBottom, nCols * inSize);
+  outputTemp.subcube(padWLeft, padHTop, 0, padWLeft + inputWidth - 1,
+      padHTop + inputHeight - 1, inSize - 1);
+  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / nCols,
+      nCols);
+
+  outputHeight = output.n_cols;
+  outputWidth = output.n_rows;
 }
 
 template<typename InputDataType, typename OutputDataType>

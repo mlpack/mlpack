@@ -101,6 +101,26 @@ class Padding
   //! Modify the bottom padding width.
   size_t& PadHBottom() { return padHBottom; }
 
+  //! Get the input width.
+  size_t InputWidth() const { return inputWidth; }
+  //! Modify the input width.
+  size_t& InputWidth() { return inputWidth; }
+
+  //! Get the input height.
+  size_t InputHeight() const { return inputHeight; }
+  //! Modify the input height.
+  size_t& InputHeight() { return inputHeight; }
+
+  //! Get the output width.
+  size_t OutputWidth() const { return outputWidth; }
+  //! Modify the output width.
+  size_t& OutputWidth() { return outputWidth; }
+
+  //! Get the output height.
+  size_t OutputHeight() const { return outputHeight; }
+  //! Modify the output height.
+  size_t& OutputHeight() { return outputHeight; }
+
   /**
    * Serialize the layer.
    */
@@ -122,6 +142,27 @@ class Padding
 
   //! Locally-stored number of rows and columns of input.
   size_t nRows, nCols;
+
+  //! Locally-stored input height.
+  size_t inputHeight;
+
+  //! Locally-stored input width.
+  size_t inputWidth;
+  
+  //! Locally-stored output height.
+  size_t outputHeight;
+  
+  //! Locally-stored output width.
+  size_t outputWidth;
+
+  //! Locally-stored number of input channels.
+  size_t inSize;
+
+  //! Locally-stored cube input parameter.
+  arma::cube inputTemp;
+
+  //! Locally-stored output parameter.
+  arma::cube outputTemp;
 
   //! Locally-stored delta object.
   OutputDataType delta;
