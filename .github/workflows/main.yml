@@ -132,11 +132,11 @@ jobs:
         if: runner.os == 'macOS'
         run: |
             ls /Users/runner/work/_temp/Library/* && find
-/Users/runner/work/_temp/Library/* ! -name 'remotes' -maxdepth=1 -type d -delete
+/Users/runner/work/_temp/Library/* \! -name 'remotes' -maxdepth=1 -type d -delete
 
       - name: Install dependencies
         run: |
-          install.packages("remotes")
+          install.packages('remotes')
           remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("digest", force=TRUE)
