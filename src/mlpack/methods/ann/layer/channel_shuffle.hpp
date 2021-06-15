@@ -21,6 +21,19 @@ namespace ann /** Artificial Neural Network. */ {
  * Channel Shuffle divides the channels/units in a tensor into groups
  * and rearrange while keeping the original tensor shape.
  *
+ * For more information, refer to the following paper,
+ *
+ * @code
+ * @article{zhang2018shufflenet,
+ *   author    = {Xiangyu Zhang, Xinyu Zhou, Mengxiao Lin, Jian Sun and
+ *                Megvii Inc},
+ *   title     = {Shufflenet: An extremely efficient convolutional neural
+ *                network for mobile devices},
+ *   year      = {2018},
+ *   url       = {https://arxiv.org/pdf/1707.01083},
+ * }
+ * @endcode
+ *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
