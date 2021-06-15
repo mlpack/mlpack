@@ -46,7 +46,7 @@ ChannelShuffle(
 {
   if (depth % groupCount != 0)
   {
-    Log::Fatal << "Number of channels must be divisible by groupCount.!" << std::endl;
+    Log::Fatal << "Number of channels must be divisible by groupCount!" << std::endl;
   }
 }
 
@@ -69,7 +69,7 @@ void ChannelShuffle<InputDataType, OutputDataType>::Forward(
   arma::cube inputAsCube(const_cast<arma::Mat<eT>&>(input).memptr(),
       inRowSize, inColSize, depth * batchSize, false, false);
   arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
-                          depth * batchSize, false, true);
+      depth * batchSize, false, true);
 
   const size_t groupSize= depth / groupCount;
   size_t outChannelIdx = 0;
@@ -105,7 +105,7 @@ void ChannelShuffle<InputDataType, OutputDataType>::Backward(
   arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), inColSize,
       inColSize, depth * batchSize, false, false);
   arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
-                          depth * batchSize, false, true);
+      depth * batchSize, false, true);
 
   const size_t groupSize= depth / groupCount;
   size_t gradientChannelIdx = 0;
