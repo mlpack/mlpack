@@ -24,15 +24,17 @@ Padding<InputDataType, OutputDataType>::Padding(
     const size_t padWLeft,
     const size_t padWRight,
     const size_t padHTop,
-    const size_t padHBottom) :
+    const size_t padHBottom,
+    const size_t inputWidth,
+    const size_t inputHeight) :
     padWLeft(padWLeft),
     padWRight(padWRight),
     padHTop(padHTop),
     padHBottom(padHBottom),
     nRows(0),
     nCols(0),
-    inputHeight(0),
-    inputWidth(0)
+    inputHeight(inputWidth),
+    inputWidth(inputHeight)
 {
   // Nothing to do here.
 }
@@ -44,15 +46,26 @@ void Padding<InputDataType, OutputDataType>::Forward(
 {
   nRows = input.n_rows;
   nCols = input.n_cols;
-  inSize = input.n_elem / (inputWidth * inputHeight * nCols);
-  inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
-      inputWidth, inputHeight, nCols * inSize, false, false);
-  outputTemp = arma::zeros<arma::Cube<eT> >(inputWidth + padWLeft + padWRight,
-      inputHeight + padHTop + padHBottom, nCols * inSize);
-  outputTemp.subcube(padWLeft, padHTop, 0, padWLeft + inputWidth - 1,
-      padHTop + inputHeight - 1, inSize - 1);
-  output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / nCols,
-      nCols);
+  
+  if (inputWidth == 0 || inputHeight == 0)
+  {
+    output = arma::zeros(nRows + padWLeft + padWRight,
+        nCols + padHTop + padHBottom);
+    output.submat(padWLeft, padHTop, padWLeft + nRows - 1,
+        padHTop + nCols - 1) = input;
+  }
+  else
+  {
+    inSize = input.n_elem / (inputWidth * inputHeight * nCols);
+    inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
+        inputWidth, inputHeight, nCols * inSize, false, false);
+    outputTemp = arma::zeros<arma::Cube<eT> >(inputWidth + padWLeft + padWRight,
+        inputHeight + padHTop + padHBottom, nCols * inSize);
+    outputTemp.subcube(padWLeft, padHTop, 0, padWLeft + inputWidth - 1,
+        padHTop + inputHeight - 1, inSize - 1);
+    output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / nCols,
+        nCols);
+  }
 
   outputHeight = output.n_cols;
   outputWidth = output.n_rows;

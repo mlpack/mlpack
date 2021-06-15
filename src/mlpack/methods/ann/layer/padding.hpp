@@ -45,7 +45,9 @@ class Padding
   Padding(const size_t padWLeft = 0,
           const size_t padWRight = 0,
           const size_t padHTop = 0,
-          const size_t padHBottom = 0);
+          const size_t padHBottom = 0,
+          const size_t inputWidth = 0,
+          const size_t inputHeight = 0);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
