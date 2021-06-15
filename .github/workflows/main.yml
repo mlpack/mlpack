@@ -127,25 +127,10 @@ jobs:
           key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
 
-#      - name: Annihilate R environment
-#        if: runner.os == 'macOS'
-#        run: |
-#            ls /Users/runner/work/_temp/Library/* && rm -rf /Users/runner/work/_temp/Library/*
-
       - name: Install dependencies
         run: |
           install.packages('remotes')
           remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
-          remotes::install_cran("rcmdcheck")
-          remotes::install_cran("digest", force=TRUE)
-          remotes::install_cran("ps", force=TRUE)
-          remotes::install_cran("processx", force=TRUE)
-          remotes::install_cran("Rcpp", force=TRUE)
-          remotes::install_cran("rlang", force=TRUE)
-          remotes::install_cran("magrittr", force=TRUE)
-          remotes::install_cran("testthat", force=TRUE)
-          remotes::install_cran("glue", force=TRUE)
-          remotes::install_cran("diffobj", force=TRUE)
         shell: Rscript {0}
 
       - name: Check
