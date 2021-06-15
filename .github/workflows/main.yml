@@ -131,8 +131,7 @@ jobs:
       - name: Annihilate R environment
         if: runner.os == 'macOS'
         run: |
-            ls /Users/runner/work/_temp/Library/* && find
-/Users/runner/work/_temp/Library/* \! -name 'remotes' -maxdepth=1 -type d -delete
+            ls /Users/runner/work/_temp/Library/* && rm -rf /Users/runner/work/_temp/Library/*
 
       - name: Install dependencies
         run: |
