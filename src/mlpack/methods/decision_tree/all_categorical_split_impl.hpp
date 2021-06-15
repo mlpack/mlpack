@@ -15,8 +15,28 @@
 namespace mlpack {
 namespace tree {
 
+/**
+ * Helper function to store split information. This is used for regression.
+ * payload contains the information to be stored in splitInfo.
+ */
+static void StoreSplitInfo(double& splitInfo, const double& payload)
+{
+  splitInfo = payload;
+}
+
+/**
+ * Helper function to store split information. This is used for classification.
+ * payload contains the information to be stored in splitInfo.
+ */
+static void StoreSplitInfo(arma::vec& splitInfo, const double& payload)
+{
+  splitInfo.set_size(1);
+  splitInfo[0] = payload;
+}
+
 template<typename FitnessFunction>
-template<bool UseWeights, typename VecType, typename LabelsType, typename WeightVecType>
+template<bool UseWeights, typename VecType, typename LabelsType,
+         typename WeightVecType, typename SplitInfoType>
 double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
@@ -26,7 +46,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
-    double& splitInfo,
+    SplitInfoType& splitInfo,
     AuxiliarySplitInfo& /* aux */)
 {
   // Count the number of elements in each potential child.
@@ -100,7 +120,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   if (overallGain > bestGain + minimumGainSplit + epsilon)
   {
     // This is better, so store it in splitInfo and return.
-    splitInfo = numCategories;
+    StoreSplitInfo(splitInfo, numCategories);
     return overallGain;
   }
 
