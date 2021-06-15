@@ -27,6 +27,48 @@ using namespace mlpack::tree;
 using namespace mlpack::distribution;
 
 /**
+ * Creates dataset with 5 groups with all the points in same group have exactly
+ * same label.
+ */
+void CreateMultiSplitData(arma::mat& d, arma::rowvec& l, const size_t count,
+    arma::rowvec& values)
+{
+  d = arma::mat(10, count, arma::fill::randu);
+  l = arma::rowvec(count);
+
+  // Group 1.
+  for (size_t i = 0; i < count / 5; i++)
+  {
+    d(3, i) = i;
+    l(i) = values[0];
+  }
+  // Group 2.
+  for (size_t i = count / 5; i < (count / 5) * 2; i++)
+  {
+    d(3, i) = i;
+    l(i) = values[1];
+  }
+  // Group 3.
+  for (size_t i = (count / 5) * 2; i < (count / 5) * 3; i++)
+  {
+    d(3, i) = i;
+    l(i) = values[2];
+  }
+  // Group 4.
+  for (size_t i = (count / 5) * 3; i < (count / 5) * 4; i++)
+  {
+    d(3, i) = i;
+    l(i) = values[3];
+  }
+  // Group 5.
+  for (size_t i = (count / 5) * 4; i < count; i++)
+  {
+    d(3, i) = i;
+    l(i) = values[4];
+  }
+}
+
+/**
  * Make sure the MSE gain is zero when the labels are perfect.
  */
 TEST_CASE("MSEGainPerfectTest", "[DecisionTreeRegressorTest]")
@@ -899,139 +941,103 @@ TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
 //   REQUIRE(mse == Approx(0.0).epsilon(1e-4));
 // }
 
-TEST_CASE("multisplittest", "[DecisionTreeRegressorTest]")
+/**
+ * Test that the tree is able to perfectly fit all the obvious splits present
+ * in the data.
+ *
+ *     |
+ *     |
+ *   2 |            xxxxxx
+ *     |
+ *     |
+ *   1 |      xxxxxx      xxxxxx
+ *     |
+ *     |
+ *   0 |xxxxxx                  xxxxxx
+ *     |___________________________________
+ */
+TEST_CASE("MultiSplitTest1", "[DecisionTreeRegressorTest]")
 {
-  arma::mat dataset(10, 500, arma::fill::randu);
-  arma::Row<double> labels(500);
+  arma::mat dataset;
+  arma::rowvec labels;
+  arma::rowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
 
-  for (size_t i = 0; i < 100; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 0.0;
-  }
-  for (size_t i = 100; i < 200; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 1.0;
-  }
-  for (size_t i = 200; i < 300; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 2.0;
-  }
-  for (size_t i = 300; i < 400; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 1.0;
-  }
-  for (size_t i = 400; i < 500; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 0.0;
-  }
+  CreateMultiSplitData(dataset, labels, 1000, values);
 
   arma::rowvec weights(labels.n_elem);
   weights.ones();
 
   // Minimum leaf size of 1.
-  std::cout << "****************Start**************\n";
-  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
+  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0);
   arma::rowvec preds;
   d.Predict(dataset, preds);
 
-  const double mse = arma::accu(arma::square(preds - labels)) / preds.n_elem;
-  REQUIRE(mse == Approx(0.0).epsilon(1e-4));
-  std::cout << "****************End****************\n";
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    REQUIRE(preds[i] == labels[i]);
 }
 
-TEST_CASE("multisplittest1", "[DecisionTreeRegressorTest]")
+/**
+ * Test that the tree is able to perfectly fit all the obvious splits present
+ * in the data. Same test as above, but with less data.
+ */
+TEST_CASE("MultiSplitTest2", "[DecisionTreeRegressorTest]")
 {
-  arma::mat dataset(10, 250, arma::fill::randu);
-  arma::Row<double> labels(500);
+  arma::mat dataset;
+  arma::rowvec labels;
+  arma::rowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
 
-  for (size_t i = 0; i < 50; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 0.0;
-  }
-  for (size_t i = 50; i < 100; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 1.0;
-  }
-  for (size_t i = 100; i < 150; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 2.0;
-  }
-  for (size_t i = 150; i < 200; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 1.0;
-  }
-  for (size_t i = 200; i < 250; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 0.0;
-  }
+  CreateMultiSplitData(dataset, labels, 100, values);
 
   arma::rowvec weights(labels.n_elem);
   weights.ones();
 
   // Minimum leaf size of 1.
-  std::cout << "****************Start**************\n";
-  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
+  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0);
   arma::rowvec preds;
   d.Predict(dataset, preds);
 
-  const double mse = arma::accu(arma::square(preds - labels)) / preds.n_elem;
-  REQUIRE(mse == Approx(0.0).epsilon(1e-4));
-  std::cout << "****************End****************\n";
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    REQUIRE(preds[i] == labels[i]);
 }
 
-TEST_CASE("multisplittest2", "[DecisionTreeRegressorTest]")
+/**
+ * Test that the tree is able to perfectly fit all the obvious splits present
+ * in the data.
+ *
+ *     |
+ *  20 |                        xxxxxx
+ *     |
+ *     |
+ *  15 |                  xxxxxx
+ *     |
+ *     |
+ *  10 |            xxxxxx
+ *     |
+ *     |
+ *   5 |      xxxxxx
+ *     |
+ *     |
+ *   0 |xxxxxx
+ *     |________________________________________
+ */
+TEST_CASE("MultiSplitTest3", "[DecisionTreeRegressorTest]")
 {
-  arma::mat dataset(10, 500, arma::fill::randu);
-  arma::Row<double> labels(500);
+  arma::mat dataset;
+  arma::Row<double> labels;
+  arma::rowvec values = {0.0, 5.0, 10.0, 15.0, 20.0};
 
-  for (size_t i = 0; i < 100; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 0.0;
-  }
-  for (size_t i = 100; i < 200; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 5.0;
-  }
-  for (size_t i = 200; i < 300; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 10.0;
-  }
-  for (size_t i = 300; i < 400; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 15.0;
-  }
-  for (size_t i = 400; i < 500; i++)
-  {
-    dataset(3, i) = i;
-    labels(i) = 20.0;
-  }
+  CreateMultiSplitData(dataset, labels, 500, values);
 
   arma::rowvec weights(labels.n_elem);
   weights.ones();
 
   // Minimum leaf size of 1.
-  std::cout << "****************Start**************\n";
-  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 20);
+  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0);
   arma::rowvec preds;
   d.Predict(dataset, preds);
 
-  const double mse = arma::accu(arma::square(preds - labels)) / preds.n_elem;
-  REQUIRE(mse == Approx(0.0).epsilon(1e-4));
-  std::cout << "****************End****************\n";
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    REQUIRE(preds[i] == labels[i]);
 }
 
 TEST_CASE("handmadedata", "[DecisionTreeRegressorTest]")
