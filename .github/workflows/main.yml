@@ -38,10 +38,10 @@ jobs:
         - name: Query dependencies
           run: |
             cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
-            Rscript --verbose -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
+            Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
 
         - name: Cache R packages
-          if: runner.os != 'Windows'
+          if: runner.os != 'Windows' && runner.os != 'macOS'
           uses: actions/cache@v1
           with:
             path: ${{ env.R_LIBS_USER }}
@@ -59,7 +59,6 @@ jobs:
           run: |
             remotes::install_deps(dependencies = TRUE)
             remotes::install_cran("roxygen2")
-            remotes::install_cran("processx", force = TRUE)
           shell: Rscript {0}
 
         - name: CMake
@@ -121,17 +120,17 @@ jobs:
         run: Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE), 'depends.Rds')"
 
       - name: Cache R packages
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && runner.os != 'macOS'
         uses: actions/cache@v1
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
           restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
 
-      - name: Annihilate R environment
-        if: runner.os == 'macOS'
-        run: |
-            ls /Users/runner/work/_temp/Library/* && rm -rf /Users/runner/work/_temp/Library/*
+#      - name: Annihilate R environment
+#        if: runner.os == 'macOS'
+#        run: |
+#            ls /Users/runner/work/_temp/Library/* && rm -rf /Users/runner/work/_temp/Library/*
 
       - name: Install dependencies
         run: |
@@ -150,7 +149,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Check
-        run: Rscript --verbose -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'warning', check_dir = 'check')"
+        run: Rscript -e "rcmdcheck::rcmdcheck('${{ needs.jobR.outputs.r_bindings }}', args = c('--no-manual','--as-cran'), error_on = 'warning', check_dir = 'check')"
 
       - name: Upload check results
         if: failure()
