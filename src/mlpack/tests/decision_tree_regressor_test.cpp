@@ -1045,22 +1045,3 @@ TEST_CASE("MultiSplitTest3", "[DecisionTreeRegressorTest]")
 
   REQUIRE(d.NumLeaves() == 5);
 }
-
-TEST_CASE("handmadedata", "[DecisionTreeRegressorTest]")
-{
-  // drug dosage (in mg).
-  arma::mat dataset = {{2, 3, 5, 10, 14, 16, 20, 22, 28, 30, 32, 35, 39}};
-  // percentage effectiveness.
-  arma::rowvec labels = {0, 0, 0, 5, 99, 99, 99, 95, 55, 45, 7, 0, 0};
-
-  arma::rowvec weights(labels.n_elem);
-  weights.ones();
-  std::cout << "****************Start**************\n";
-  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0, 5);
-  arma::rowvec preds;
-  d.Predict(dataset, preds);
-
-  const double mse = arma::accu(arma::square(preds - labels)) / preds.n_elem;
-  REQUIRE(mse == Approx(0.0).epsilon(1e-4));
-  std::cout << "****************End****************\n";
-}
