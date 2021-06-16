@@ -36,7 +36,7 @@ class BestBinaryNumericSplit
    * return the value 'bestGain'.  If a split is made, then splitInfo and aux
    * may be modified.
    *
-   * It is used only for classification tasks.
+   * This overload is used only for classification tasks.
    *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
@@ -69,7 +69,7 @@ class BestBinaryNumericSplit
    * return the value 'bestGain'.  If a split is made, then splitInfo and aux
    * may be modified.
    *
-   * It is used only for regression tasks.
+   * This overload is used only for regression tasks.
    *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).

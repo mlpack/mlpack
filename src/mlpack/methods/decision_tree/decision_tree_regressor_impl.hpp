@@ -615,8 +615,10 @@ double DecisionTreeRegressor<FitnessFunction,
   children.clear();
 
   // Look through the list of dimensions and obtain the gain of the best split.
-  // We'll cache the best numeric and categorical split auxiliary information in
-  // numericAux and categoricalAux (and clear them later if we make no split),
+  // We'll cache the best numeric and categorical split auxiliary information
+  // in numericAux and categoricalAux (and clear them later if we make no
+  // split). The split point is stored in splitPointOrPrediction for all
+  // internal nodes of the tree.
   double bestGain = FitnessFunction::template Evaluate<UseWeights>(
       responses.subvec(begin, begin + count - 1),
       numClasses,
@@ -798,11 +800,10 @@ double DecisionTreeRegressor<FitnessFunction,
   // We won't be using these members, so reset them.
   CategoricalAuxiliarySplitInfo::operator=(CategoricalAuxiliarySplitInfo());
 
-  // Look through the list of dimensions and obtain the best split.  We'll cache
+  // Look through the list of dimensions and obtain the best split. We'll cache
   // the best numeric split auxiliary information in numericAux (and clear it
-  // later if we don't make a split), and use classProbabilities as auxiliary
-  // information.  Later we'll overwrite classProbabilities to the empirical
-  // class probabilities if we do not split.
+  // later if we don't make a split). The split point is stored in
+  // splitPointOrPrediction for all internal nodes of the tree.
   double bestGain = FitnessFunction::template Evaluate<UseWeights>(
       responses.subvec(begin, begin + count - 1),
       numClasses,

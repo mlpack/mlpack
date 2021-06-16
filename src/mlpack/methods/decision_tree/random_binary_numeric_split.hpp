@@ -37,7 +37,7 @@ class RandomBinaryNumericSplit
    * return the value 'bestGain'.  If a split is made, then splitInfo
    * and aux may be modified.
    *
-   * It is used only for classification tasks.
+   * This overload is used only for classification tasks.
    *
    * @code
    * @article{10.1007/s10994-006-6226-1,
@@ -94,7 +94,7 @@ class RandomBinaryNumericSplit
    * return the value 'bestGain'.  If a split is made, then splitInfo
    * and aux may be modified.
    *
-   * It is used only for regression tasks.
+   * This overload is used only for regression tasks.
    *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).

@@ -2,7 +2,7 @@
  * @file methods/decision_tree/mad_gain.hpp
  * @author Rishabh Garg
  *
- * The mean absolute deviation gain class, a fitness funtion for regression
+ * The mean absolute deviation gain class, a fitness function for regression
  * based decision trees.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
