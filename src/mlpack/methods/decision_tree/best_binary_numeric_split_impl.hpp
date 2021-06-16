@@ -189,7 +189,7 @@ template<bool UseWeights, typename VecType, typename WeightVecType>
 double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
-    const arma::Row<double>& labels,
+    const arma::rowvec& responses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
@@ -204,10 +204,10 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
   // Next, sort the data.
   arma::uvec sortedIndices = arma::sort_index(data);
-  arma::Row<double> sortedLabels(labels.n_elem);
+  arma::rowvec sortedResponses(responses.n_elem);
   arma::rowvec sortedWeights;
-  for (size_t i = 0; i < sortedLabels.n_elem; ++i)
-    sortedLabels[i] = labels[sortedIndices[i]];
+  for (size_t i = 0; i < sortedResponses.n_elem; ++i)
+    sortedResponses[i] = responses[sortedIndices[i]];
 
   // Sanity check: if the first element is the same as the last, we can't split
   // in this dimension.
@@ -217,9 +217,9 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   // Only initialize if we are using weights.
   if (UseWeights)
   {
-    sortedWeights.set_size(sortedLabels.n_elem);
-    // The weights must keep the same order as the labels.
-    for (size_t i = 0; i < sortedLabels.n_elem; ++i)
+    sortedWeights.set_size(sortedResponses.n_elem);
+    // The weights must keep the same order as the responses.
+    for (size_t i = 0; i < sortedResponses.n_elem; ++i)
       sortedWeights[i] = weights[sortedIndices[i]];
   }
 
@@ -260,16 +260,18 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
       continue;
 
-    /* TODO: The following function calculates the gain for each split each time from scratch
-             This can be greatly improved using advanced techniques like prefix sum and
-             prefix sum of squares etc. This will have drastic effects on runtime and is
-             definitely something we would want in future.
+    /* TODO: The following function calculates the gain for each split each
+             time from scratch. This can be greatly improved using advanced
+             techniques like prefix sum and prefix sum of squares etc. This
+             will have drastic effects on runtime and is definitely something
+             we would want in future.
      */
     // Calculate the gain for the left and right child.
-    const double leftGain = FitnessFunction::template Evaluate<UseWeights>(sortedLabels,
-        sortedWeights, 0, index);
-    const double rightGain = FitnessFunction::template Evaluate<UseWeights>(sortedLabels,
-        sortedWeights, index, labels.n_elem);
+    const double leftGain = FitnessFunction::template
+        Evaluate<UseWeights>(sortedResponses, sortedWeights, 0, index);
+    const double rightGain = FitnessFunction::template
+        Evaluate<UseWeights>(sortedResponses, sortedWeights, index,
+            responses.n_elem);
 
     double gain;
     if (UseWeights)
@@ -280,7 +282,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     {
       // Calculate the gain at this split point.
       gain = double(index) * leftGain +
-          double(sortedLabels.n_elem - index) * rightGain;
+          double(sortedResponses.n_elem - index) * rightGain;
     }
 
     // Corner case: is this the best possible split?

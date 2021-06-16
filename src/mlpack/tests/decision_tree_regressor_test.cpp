@@ -28,56 +28,56 @@ using namespace mlpack::distribution;
 
 /**
  * Creates dataset with 5 groups with all the points in same group have exactly
- * same label.
+ * same responses.
  */
-void CreateMultiSplitData(arma::mat& d, arma::rowvec& l, const size_t count,
+void CreateMultiSplitData(arma::mat& d, arma::rowvec& r, const size_t count,
     arma::rowvec& values)
 {
   d = arma::mat(10, count, arma::fill::randu);
-  l = arma::rowvec(count);
+  r = arma::rowvec(count);
 
   // Group 1.
   for (size_t i = 0; i < count / 5; i++)
   {
     d(3, i) = i;
-    l(i) = values[0];
+    r(i) = values[0];
   }
   // Group 2.
   for (size_t i = count / 5; i < (count / 5) * 2; i++)
   {
     d(3, i) = i;
-    l(i) = values[1];
+    r(i) = values[1];
   }
   // Group 3.
   for (size_t i = (count / 5) * 2; i < (count / 5) * 3; i++)
   {
     d(3, i) = i;
-    l(i) = values[2];
+    r(i) = values[2];
   }
   // Group 4.
   for (size_t i = (count / 5) * 3; i < (count / 5) * 4; i++)
   {
     d(3, i) = i;
-    l(i) = values[3];
+    r(i) = values[3];
   }
   // Group 5.
   for (size_t i = (count / 5) * 4; i < count; i++)
   {
     d(3, i) = i;
-    l(i) = values[4];
+    r(i) = values[4];
   }
 }
 
 /**
- * Make sure the MSE gain is zero when the labels are perfect.
+ * Make sure the MSE gain is zero when the responses are perfect.
  */
 TEST_CASE("MSEGainPerfectTest", "[DecisionTreeRegressorTest]")
 {
   arma::rowvec weights(10, arma::fill::ones);
-  arma::rowvec labels;
-  labels.ones(10);
+  arma::rowvec responses;
+  responses.ones(10);
 
-  REQUIRE(MSEGain::Evaluate<false>(labels, 0, weights) ==
+  REQUIRE(MSEGain::Evaluate<false>(responses, 0, weights) ==
           Approx(0.0).margin(1e-5));
 }
 
@@ -87,11 +87,11 @@ TEST_CASE("MSEGainPerfectTest", "[DecisionTreeRegressorTest]")
 TEST_CASE("MSEGainEmptyTest", "[DecisionTreeRegressorTest]")
 {
   arma::rowvec weights = arma::ones<arma::rowvec>(10);
-  arma::rowvec labels;
-  REQUIRE(MSEGain::Evaluate<false>(labels, 0, weights) ==
+  arma::rowvec responses;
+  REQUIRE(MSEGain::Evaluate<false>(responses, 0, weights) ==
           Approx(0.0).margin(1e-5));
 
-  REQUIRE(MSEGain::Evaluate<true>(labels, 0, weights) ==
+  REQUIRE(MSEGain::Evaluate<true>(responses, 0, weights) ==
           Approx(0.0).margin(1e-5));
 }
 
@@ -101,48 +101,49 @@ TEST_CASE("MSEGainEmptyTest", "[DecisionTreeRegressorTest]")
  */
 TEST_CASE("MSEGainHandCalculation", "[DecisionTreeRegressorTest]")
 {
-  arma::rowvec labels = {4., 2., 3., 4., 13., 6., 20., 8., 9., 10.};
+  arma::rowvec responses = {4., 2., 3., 4., 13., 6., 20., 8., 9., 10.};
   arma::rowvec weights = {0.3, 0.3, 0.3, 0.3, 0.3, 0.7, 0.7, 0.7, 0.7, 0.7};
 
   // Hand calculated gain values.
   const double gain = -27.08999;
   const double weightedGain = -27.53960;
-  REQUIRE(MSEGain::Evaluate<false>(labels, 0, weights) ==
+  REQUIRE(MSEGain::Evaluate<false>(responses, 0, weights) ==
           Approx(gain).margin(1e-5));
-  REQUIRE(MSEGain::Evaluate<true>(labels, 0, weights) ==
+  REQUIRE(MSEGain::Evaluate<true>(responses, 0, weights) ==
           Approx(weightedGain).margin(1e-5));
 }
 
 /**
- * Make sure the MAD gain is zero when the labels are perfect.
+ * Make sure the MAD gain is zero when the responses are perfect.
  */
 TEST_CASE("MADGainPerfectTest", "[DecisionTreeRegressorTest]")
 {
   arma::rowvec weights(10, arma::fill::ones);
-  arma::rowvec labels;
-  labels.ones(10);
+  arma::rowvec responses;
+  responses.ones(10);
 
-  REQUIRE(MADGain::Evaluate<false>(labels, 0, weights) ==
+  REQUIRE(MADGain::Evaluate<false>(responses, 0, weights) ==
           Approx(0.0).margin(1e-5));
 }
 
 /**
- * Make sure that when mean of labels is zero, MAD_gain = mean of
+ * Make sure that when mean of responses is zero, MAD_gain = mean of
  * absolute values of the distribution.
  */
 TEST_CASE("MADGainNormalTest", "[DecisionTreeRegressorTest")
 {
   arma::rowvec weights(10, arma::fill::ones);
-  arma::rowvec labels = { 1, 2, 3, 4, 5, -1, -2, -3, -4, -5 }; // Mean = 0.
+  arma::rowvec responses = { 1, 2, 3, 4, 5, -1, -2, -3, -4, -5 }; // Mean = 0.
 
   // Theoretical gain.
   double theoreticalGain = 0.0;
-  for (size_t i = 0; i < labels.n_elem; ++i)
-    theoreticalGain -= std::abs(labels[i]);
-  theoreticalGain /= (double) labels.n_elem;
+  for (size_t i = 0; i < responses.n_elem; ++i)
+    theoreticalGain -= std::abs(responses[i]);
+  theoreticalGain /= (double) responses.n_elem;
 
   // Calculated gain.
-  const double calculatedGain = MADGain::Evaluate<false>(labels, 0, weights);
+  const double calculatedGain =
+      MADGain::Evaluate<false>(responses, 0, weights);
 
   REQUIRE(calculatedGain == Approx(theoreticalGain).margin(1e-5));
 }
@@ -153,11 +154,11 @@ TEST_CASE("MADGainNormalTest", "[DecisionTreeRegressorTest")
 TEST_CASE("MADGainEmptyTest", "[DecisionTreeRegressorTest]")
 {
   arma::rowvec weights = arma::ones<arma::rowvec>(10);
-  arma::rowvec labels;
-  REQUIRE(MADGain::Evaluate<false>(labels, 0, weights) ==
+  arma::rowvec responses;
+  REQUIRE(MADGain::Evaluate<false>(responses, 0, weights) ==
           Approx(0.0).margin(1e-5));
 
-  REQUIRE(MADGain::Evaluate<true>(labels, 0, weights) ==
+  REQUIRE(MADGain::Evaluate<true>(responses, 0, weights) ==
           Approx(0.0).margin(1e-5));
 }
 
@@ -167,15 +168,15 @@ TEST_CASE("MADGainEmptyTest", "[DecisionTreeRegressorTest]")
  */
 TEST_CASE("MADGainHandCalculation", "[DecisionTreeRegressorTest]")
 {
-  arma::rowvec labels = {4., 2., 3., 4., 13., 6., 20., 8., 9., 10.};
+  arma::rowvec responses = {4., 2., 3., 4., 13., 6., 20., 8., 9., 10.};
   arma::rowvec weights = {0.3, 0.3, 0.3, 0.3, 0.3, 0.7, 0.7, 0.7, 0.7, 0.7};
 
   // Hand calculated gain values.
   const double gain = -4.1;
   const double weightedGain = -3.8592;
-  REQUIRE(MADGain::Evaluate<false>(labels, 0, weights) ==
+  REQUIRE(MADGain::Evaluate<false>(responses, 0, weights) ==
           Approx(gain).margin(1e-5));
-  REQUIRE(MADGain::Evaluate<true>(labels, 0, weights) ==
+  REQUIRE(MADGain::Evaluate<true>(responses, 0, weights) ==
           Approx(weightedGain).margin(1e-5));
 }
 
@@ -186,28 +187,28 @@ TEST_CASE("MADGainHandCalculation", "[DecisionTreeRegressorTest]")
 TEST_CASE("AllCategoricalSplitSimpleSplitTest_", "[DecisionTreeRegressorTest]")
 {
   arma::vec predictor(100);
-  arma::rowvec labels(100);
-  arma::rowvec weights(labels.n_elem);
+  arma::rowvec responses(100);
+  arma::rowvec weights(responses.n_elem);
   weights.ones();
 
   for (size_t i = 0; i < 100; i+=2)
   {
     predictor[i] = 0;
-    labels[i] = 5.0;
+    responses[i] = 5.0;
     predictor[i + 1] = 1;
-    labels[i + 1] = 100;
+    responses[i + 1] = 100;
   }
 
   double splitInfo;
   AllCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
+  const double bestGain = MSEGain::Evaluate<false>(responses, 0, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictor, 2, labels, 0, weights, 3, 1e-7, splitInfo, aux);
+      bestGain, predictor, 2, responses, 0, weights, 3, 1e-7, splitInfo, aux);
   const double weightedGain =
       AllCategoricalSplit<MSEGain>::SplitIfBetter<true>(bestGain, predictor, 2,
-      labels, 0, weights, 3, 1e-7, splitInfo, aux);
+      responses, 0, weights, 3, 1e-7, splitInfo, aux);
 
   // Make sure that a split was made.
   REQUIRE(gain > bestGain);
@@ -225,17 +226,17 @@ TEST_CASE("AllCategoricalSplitSimpleSplitTest_", "[DecisionTreeRegressorTest]")
 TEST_CASE("AllCategoricalSplitMinSamplesTest_", "[DecisionTreeRegressorTest]")
 {
   arma::rowvec predictors = {0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3};
-  arma::rowvec labels = {0, 0, 0, 2, 2, 2, 1, 1, 1, 2, 2, 2};
-  arma::rowvec weights(labels.n_elem);
+  arma::rowvec responses = {0, 0, 0, 2, 2, 2, 1, 1, 1, 2, 2, 2};
+  arma::rowvec weights(responses.n_elem);
   weights.ones();
 
   double splitInfo;
   AllCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
+  const double bestGain = MSEGain::Evaluate<false>(responses, 0, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictors, 4, labels, 0, weights, 4, 1e-7, splitInfo, aux);
+      bestGain, predictors, 4, responses, 0, weights, 4, 1e-7, splitInfo, aux);
 
   // Make sure it's not split.
   REQUIRE(gain == DBL_MAX);
@@ -247,30 +248,30 @@ TEST_CASE("AllCategoricalSplitMinSamplesTest_", "[DecisionTreeRegressorTest]")
 TEST_CASE("AllCategoricalSplitNoGainTest_", "[DecisionTreeRegressorTest]")
 {
   arma::rowvec predictors(300);
-  arma::rowvec labels(300);
+  arma::rowvec responses(300);
   arma::rowvec weights = arma::ones<arma::rowvec>(300);
 
   for (size_t i = 0; i < 300; i += 3)
   {
     predictors[i] = int(i / 3) % 10;
-    labels[i] = -0.5;
+    responses[i] = -0.5;
     predictors[i + 1] = int(i / 3) % 10;
-    labels[i + 1] = 0;
+    responses[i + 1] = 0;
     predictors[i + 2] = int(i / 3) % 10;
-    labels[i + 2] = 0.5;
+    responses[i + 2] = 0.5;
   }
 
   double splitInfo;
   AllCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
+  const double bestGain = MSEGain::Evaluate<false>(responses, 0, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictors, 10, labels, 0, weights, 10, 1e-7,
+      bestGain, predictors, 10, responses, 0, weights, 10, 1e-7,
       splitInfo, aux);
   const double weightedGain =
       AllCategoricalSplit<MSEGain>::SplitIfBetter<true>(bestGain, predictors,
-      10, labels, 0, predictors, 10, 1e-7, splitInfo, aux);
+      10, responses, 0, predictors, 10, 1e-7, splitInfo, aux);
 
   // Make sure that there was no split.
   REQUIRE(gain == DBL_MAX);
@@ -281,23 +282,26 @@ TEST_CASE("AllCategoricalSplitNoGainTest_", "[DecisionTreeRegressorTest]")
  * Check that the BestBinaryNumericSplit will split on an obviously splittable
  * dimension.
  */
-TEST_CASE("BestBinaryNumericSplitSimpleSplitTest_", "[DecisionTreeRegressorTest]")
+TEST_CASE("BestBinaryNumericSplitSimpleSplitTest_",
+    "[DecisionTreeRegressorTest]")
 {
-  arma::rowvec predictors = { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
-  arma::rowvec labels = { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-  arma::rowvec weights(labels.n_elem);
+  arma::rowvec predictors =
+      { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
+  arma::rowvec responses =
+      { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
+  arma::rowvec weights(responses.n_elem);
   weights.ones();
 
   double splitInfo;
   BestBinaryNumericSplit<MADGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MADGain::Evaluate<false>(labels, 0, weights);
+  const double bestGain = MADGain::Evaluate<false>(responses, 0, weights);
   const double gain = BestBinaryNumericSplit<MADGain>::SplitIfBetter<false>(
-      bestGain, predictors, labels, weights, 3, 1e-7, splitInfo, aux);
+      bestGain, predictors, responses, weights, 3, 1e-7, splitInfo, aux);
   const double weightedGain =
       BestBinaryNumericSplit<MADGain>::SplitIfBetter<true>(bestGain, predictors,
-      labels, weights, 3, 1e-7, splitInfo, aux);
+      responses, weights, 3, 1e-7, splitInfo, aux);
 
   // Make sure that a split was made.
   REQUIRE(gain > bestGain);
@@ -315,23 +319,26 @@ TEST_CASE("BestBinaryNumericSplitSimpleSplitTest_", "[DecisionTreeRegressorTest]
  * Check that the BestBinaryNumericSplit won't split if not enough points are
  * given.
  */
-TEST_CASE("BestBinaryNumericSplitMinSamplesTest_", "[DecisionTreeRegressorTest]")
+TEST_CASE("BestBinaryNumericSplitMinSamplesTest_",
+    "[DecisionTreeRegressorTest]")
 {
-  arma::rowvec predictors = { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
-  arma::rowvec labels = { 0.5, 0.5, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-  arma::rowvec weights(labels.n_elem);
+  arma::rowvec predictors =
+      { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
+  arma::rowvec responses =
+      { 0.5, 0.5, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
+  arma::rowvec weights(responses.n_elem);
 
   double splitInfo;
   BestBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
+  const double bestGain = MSEGain::Evaluate<false>(responses, 0, weights);
   const double gain = BestBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictors, labels, weights, 8, 1e-7, splitInfo, aux);
+      bestGain, predictors, responses, weights, 8, 1e-7, splitInfo, aux);
   // This should make no difference because it won't split at all.
   const double weightedGain =
-      BestBinaryNumericSplit<MSEGain>::SplitIfBetter<true>(bestGain, predictors,
-      labels, weights, 8, 1e-7, splitInfo, aux);
+      BestBinaryNumericSplit<MSEGain>::SplitIfBetter<true>(bestGain,
+      predictors, responses, weights, 8, 1e-7, splitInfo, aux);
 
   // Make sure that no split was made.
   REQUIRE(gain == DBL_MAX);
@@ -339,30 +346,29 @@ TEST_CASE("BestBinaryNumericSplitMinSamplesTest_", "[DecisionTreeRegressorTest]"
 }
 
 /**
- * Check that the BestBinaryNumericSplit doesn't split a dimension that gives no
- * gain.
+ * Check that the BestBinaryNumericSplit doesn't split a dimension that gives
+ * no gain.
  */
 TEST_CASE("BestBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
 {
   arma::rowvec predictors(100);
-  arma::rowvec labels(100);
+  arma::rowvec responses(100);
   arma::rowvec weights;
   for (size_t i = 0; i < 100; i += 2)
   {
     predictors[i] = i;
-    labels[i] = 0.0;
+    responses[i] = 0.0;
     predictors[i + 1] = i;
-    labels[i + 1] = 1.0;
+    responses[i + 1] = 1.0;
   }
 
   double splitInfo;
   BestBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(labels, 0, weights);
+  const double bestGain = MSEGain::Evaluate<false>(responses, 0, weights);
   const double gain = BestBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictors, labels, weights, 10, 1e-7, splitInfo,
-      aux);
+      bestGain, predictors, responses, weights, 10, 1e-7, splitInfo, aux);
 
   // Make sure there was no split.
   REQUIRE(gain == DBL_MAX);
@@ -376,20 +382,20 @@ TEST_CASE("RandomBinaryNumericSplitAlwaysSplit_",
     "[DecisionTreeRegressorTest]")
 {
   arma::vec values("0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0");
-  arma::rowvec labels("0 0 0 0 0 1 1 1 1 1 1");
+  arma::rowvec responses("0 0 0 0 0 1 1 1 1 1 1");
   arma::rowvec weights;
-  weights.ones(labels.n_elem);
+  weights.ones(responses.n_elem);
 
   double splitInfo;
   RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(labels, 2, weights);
+  const double bestGain = MSEGain::Evaluate<false>(responses, 2, weights);
   const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, values, labels, weights, 1, 1e-7, splitInfo, aux);
+      bestGain, values, responses, weights, 1, 1e-7, splitInfo, aux);
   const double weightedGain =
       RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<true>(bestGain, values,
-      labels, weights, 1, 1e-7, splitInfo, aux);
+      responses, weights, 1, 1e-7, splitInfo, aux);
 
   // Make sure that split was made.
   REQUIRE(gain != DBL_MAX);
@@ -404,20 +410,20 @@ TEST_CASE("RandomBinaryNumericSplitMinSamplesTest_",
     "[DecisionTreeRegressorTest]")
 {
   arma::vec values("0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0");
-  arma::rowvec labels("0 0 0 0 0 1 1 1 1 1 1");
-  arma::rowvec weights(labels.n_elem);
+  arma::rowvec responses("0 0 0 0 0 1 1 1 1 1 1");
+  arma::rowvec weights(responses.n_elem);
 
   double splitInfo;
   RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(labels, 2, weights);
+  const double bestGain = MSEGain::Evaluate<false>(responses, 2, weights);
   const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, values, labels, weights, 8, 1e-7, splitInfo, aux);
+      bestGain, values, responses, weights, 8, 1e-7, splitInfo, aux);
   // This should make no difference because it won't split at all.
   const double weightedGain =
       RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<true>(bestGain, values,
-      labels, weights, 8, 1e-7, splitInfo, aux);
+      responses, weights, 8, 1e-7, splitInfo, aux);
 
   // Make sure that no split was made.
   REQUIRE(gain == DBL_MAX);
@@ -431,23 +437,23 @@ TEST_CASE("RandomBinaryNumericSplitMinSamplesTest_",
 TEST_CASE("RandomBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
 {
   arma::vec values(100);
-  arma::Row<double> labels(100);
+  arma::rowvec responses(100);
   arma::rowvec weights;
   for (size_t i = 0; i < 100; i += 2)
   {
     values[i] = i;
-    labels[i] = 0.0;
+    responses[i] = 0.0;
     values[i + 1] = i;
-    labels[i + 1] = 1.0;
+    responses[i + 1] = 1.0;
   }
 
   double splitInfo;
   RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(labels, 2, weights);
+  const double bestGain = MSEGain::Evaluate<false>(responses, 2, weights);
   const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, values, labels, weights, 10, 1e-7, splitInfo, aux, true);
+      bestGain, values, responses, weights, 10, 1e-7, splitInfo, aux, true);
 
   // Make sure there was no split.
   REQUIRE(gain == DBL_MAX);
@@ -460,48 +466,48 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
 TEST_CASE("BasicConstructionTest_", "[DecisionTreeRegressorTest]")
 {
   arma::mat dataset(10, 100, arma::fill::randu);
-  arma::Row<double> labels(100);
+  arma::rowvec responses(100);
   for (size_t i = 0; i < 50; ++i)
   {
     dataset(3, i) = i;
-    labels[i] = 0.0;
+    responses[i] = 0.0;
   }
   for (size_t i = 50; i < 100; ++i)
   {
     dataset(3, i) = i;
-    labels[i] = 1.0;
+    responses[i] = 1.0;
   }
 
   // Use default parameters.
-  DecisionTreeRegressor<> d(dataset, labels);
+  DecisionTreeRegressor<> d(dataset, responses);
 
   // Now require that we have some children.
   REQUIRE(d.NumChildren() > 0);
 }
 
 /**
- * Construct a tree with weighted labels.
+ * Construct a tree with weighted responses.
  */
 TEST_CASE("BasicConstructionTestWithWeight_", "[DecisionTreeRegressorTest]")
 {
   arma::mat dataset(10, 100, arma::fill::randu);
-  arma::Row<double> labels(100);
+  arma::rowvec responses(100);
   for (size_t i = 0; i < 50; ++i)
   {
     dataset(3, i) = i;
-    labels[i] = 0.0;
+    responses[i] = 0.0;
   }
   for (size_t i = 50; i < 100; ++i)
   {
     dataset(3, i) = i;
-    labels[i] = 1.0;
+    responses[i] = 1.0;
   }
-  arma::rowvec weights(labels.n_elem);
+  arma::rowvec weights(responses.n_elem);
   weights.ones();
 
   // Use default parameters.
-  DecisionTreeRegressor<> wd(dataset, labels, weights);
-  DecisionTreeRegressor<> d(dataset, labels);
+  DecisionTreeRegressor<> wd(dataset, responses, weights);
+  DecisionTreeRegressor<> d(dataset, responses);
 
   // Now require that we have some children.
   REQUIRE(wd.NumChildren() > 0);
@@ -515,53 +521,53 @@ TEST_CASE("BasicConstructionTestWithWeight_", "[DecisionTreeRegressorTest]")
 TEST_CASE("PerfectTrainingSet_", "[DecisionTreeRegressorTest]")
 {
   arma::mat dataset(10, 100, arma::fill::randu);
-  arma::Row<double> labels(100);
+  arma::rowvec responses(100);
   for (size_t i = 0; i < 50; ++i)
   {
     dataset(3, i) = i;
-    labels[i] = 0.0;
+    responses[i] = 0.0;
   }
   for (size_t i = 50; i < 100; ++i)
   {
     dataset(3, i) = i;
-    labels[i] = 1.0;
+    responses[i] = 1.0;
   }
 
-  DecisionTreeRegressor<> d(dataset, labels, 1, 0.0); // Minimum leaf size of 1.
+  // Minimum leaf size of 1.
+  DecisionTreeRegressor<> d(dataset, responses, 1, 0.0);
 
-  // Make sure that we can get perfect accuracy on the training set.
+  // Make sure that we can get perfect fit on the training set.
   for (size_t i = 0; i < 100; ++i)
   {
     double prediction;
     prediction = d.Predict(dataset.col(i));
 
-    REQUIRE(prediction == Approx(labels[i]).epsilon(1e-7));
+    REQUIRE(prediction == Approx(responses[i]).epsilon(1e-7));
   }
 }
 
 /**
- * Construct the decision tree with weighted labels
+ * Construct the decision tree with weighted responses.
  */
 TEST_CASE("PerfectTrainingSetWithWeight_", "[DecisionTreeRegressorTest]")
 {
   // Completely random dataset with no structure.
   arma::mat dataset(10, 100, arma::fill::randu);
-  arma::Row<double> labels(100);
+  arma::rowvec responses(100);
   for (size_t i = 0; i < 50; ++i)
   {
     dataset(3, i) = i;
-    labels[i] = 0.0;
+    responses[i] = 0.0;
   }
   for (size_t i = 50; i < 100; ++i)
   {
     dataset(3, i) = i;
-    labels[i] = 1.0;
+    responses[i] = 1.0;
   }
-  arma::rowvec weights(labels.n_elem);
-  weights.ones();
+  arma::rowvec weights = arma::ones<arma::rowvec>(responses.n_elem);
 
   // Minimum leaf size of 1.
-  DecisionTreeRegressor<> d(dataset, labels, weights, 1, 0.0);
+  DecisionTreeRegressor<> d(dataset, responses, weights, 1, 0.0);
 
   // This part of code is dupliacte with no weighted one.
   for (size_t i = 0; i < 100; ++i)
@@ -569,7 +575,7 @@ TEST_CASE("PerfectTrainingSetWithWeight_", "[DecisionTreeRegressorTest]")
     size_t prediction;
     prediction = d.Predict(dataset.col(i));
 
-    REQUIRE(prediction == Approx(labels[i]).epsilon(1e-7));
+    REQUIRE(prediction == Approx(responses[i]).epsilon(1e-7));
   }
 }
 
@@ -579,18 +585,18 @@ TEST_CASE("PerfectTrainingSetWithWeight_", "[DecisionTreeRegressorTest]")
 TEST_CASE("CategoricalBuildTest_", "[DecisionTreeRegressorTest]")
 {
   arma::mat d;
-  arma::rowvec l;
+  arma::rowvec r;
   data::DatasetInfo di;
-  MockCategoricalData(d, l, di);
+  MockCategoricalData(d, r, di);
 
   // Split into a training set and a test set.
   arma::mat trainingData = d.cols(0, 1999);
   arma::mat testData = d.cols(2000, 3999);
-  arma::rowvec trainingLabels = l.subvec(0, 1999);
-  arma::rowvec testLabels = l.subvec(2000, 3999);
+  arma::rowvec trainingResponses = r.subvec(0, 1999);
+  arma::rowvec testResponses = r.subvec(2000, 3999);
 
   // Build the tree.
-  DecisionTreeRegressor<> tree(trainingData, di, trainingLabels, 10);
+  DecisionTreeRegressor<> tree(trainingData, di, trainingResponses, 10);
 
   // Now evaluate the quality of predictions.
   arma::rowvec predictions;
@@ -599,7 +605,7 @@ TEST_CASE("CategoricalBuildTest_", "[DecisionTreeRegressorTest]")
   REQUIRE(predictions.n_elem == testData.n_cols);
 
   // Make sure we get reasonable rmse.
-  const double rmse = RMSE(predictions, testLabels);
+  const double rmse = RMSE(predictions, testResponses);
   REQUIRE(rmse < 1.0);
 }
 
@@ -610,21 +616,21 @@ TEST_CASE("CategoricalBuildTest_", "[DecisionTreeRegressorTest]")
 TEST_CASE("CategoricalBuildTestWithWeight_", "[DecisionTreeRegressorTest]")
 {
   arma::mat d;
-  arma::rowvec l;
+  arma::rowvec r;
   data::DatasetInfo di;
-  MockCategoricalData(d, l, di);
+  MockCategoricalData(d, r, di);
 
   // Split into a training set and a test set.
   arma::mat trainingData = d.cols(0, 1999);
   arma::mat testData = d.cols(2000, 3999);
-  arma::rowvec trainingLabels = l.subvec(0, 1999);
-  arma::rowvec testLabels = l.subvec(2000, 3999);
+  arma::rowvec trainingResponses = r.subvec(0, 1999);
+  arma::rowvec testResponses = r.subvec(2000, 3999);
 
-  arma::rowvec weights = arma::ones<arma::rowvec>(
-      trainingLabels.n_elem);
+  arma::rowvec weights = arma::ones<arma::rowvec>(trainingResponses.n_elem);
 
   // Build the tree.
-  DecisionTreeRegressor<> tree(trainingData, di, trainingLabels, weights, 10);
+  DecisionTreeRegressor<> tree(trainingData, di, trainingResponses, weights,
+      10);
 
   // Now evaluate the quality of predictions.
   arma::rowvec predictions;
@@ -633,7 +639,7 @@ TEST_CASE("CategoricalBuildTestWithWeight_", "[DecisionTreeRegressorTest]")
   REQUIRE(predictions.n_elem == testData.n_cols);
 
   // Make sure we get reasonable rmse.
-  const double rmse = RMSE(predictions, testLabels);
+  const double rmse = RMSE(predictions, testResponses);
   REQUIRE(rmse < 1.0);
 }
 
@@ -689,19 +695,19 @@ TEST_CASE("CategoricalBuildTestWithWeight_", "[DecisionTreeRegressorTest]")
 TEST_CASE("CategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
 {
   arma::mat d;
-  arma::rowvec l;
+  arma::rowvec r;
   data::DatasetInfo di;
-  MockCategoricalData(d, l, di);
+  MockCategoricalData(d, r, di);
 
   // Split into a training set and a test set.
   arma::mat trainingData = d.cols(0, 1999);
   arma::mat testData = d.cols(2000, 3999);
-  arma::rowvec trainingLabels = l.subvec(0, 1999);
-  arma::rowvec testLabels = l.subvec(2000, 3999);
+  arma::rowvec trainingResponses = r.subvec(0, 1999);
+  arma::rowvec testResponses = r.subvec(2000, 3999);
 
   // Now create random points.
   arma::mat randomNoise(5, 2000);
-  arma::rowvec randomLabels(2000);
+  arma::rowvec randomResponses(2000);
   for (size_t i = 0; i < 2000; ++i)
   {
     randomNoise(0, i) = math::Random();
@@ -709,7 +715,7 @@ TEST_CASE("CategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
     randomNoise(2, i) = math::Random();
     randomNoise(3, i) = math::RandInt(0, 2);
     randomNoise(4, i) = math::RandInt(0, 5);
-    randomLabels[i] = math::Random(-10, 18);
+    randomResponses[i] = math::Random(-10, 18);
   }
 
   // Generate weights.
@@ -720,10 +726,11 @@ TEST_CASE("CategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
     weights[i] = math::Random(0.0, 0.001);
 
   arma::mat fullData = arma::join_rows(trainingData, randomNoise);
-  arma::rowvec fullLabels = arma::join_rows(trainingLabels, randomLabels);
+  arma::rowvec fullResponses = arma::join_rows(trainingResponses,
+      randomResponses);
 
   // Build the tree.
-  DecisionTreeRegressor<> tree(fullData, di, fullLabels, weights, 10);
+  DecisionTreeRegressor<> tree(fullData, di, fullResponses, weights, 10);
 
   // Now evaluate the quality of predictions.
   arma::rowvec predictions;
@@ -732,7 +739,7 @@ TEST_CASE("CategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
   REQUIRE(predictions.n_elem == testData.n_cols);
 
   // Make sure we get reasonable rmse.
-  const double rmse = RMSE(predictions, testLabels);
+  const double rmse = RMSE(predictions, testResponses);
   REQUIRE(rmse < 1.5);
 }
 
@@ -856,29 +863,30 @@ TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
   // Loading data.
   data::DatasetInfo info;
   arma::mat trainData, testData;
-  arma::Row<double> trainLabels, testLabels;
+  arma::rowvec trainResponses, testResponses;
   arma::rowvec weights = arma::ones<arma::rowvec>(355);
-  LoadBostonHousingDataset(trainData, testData, trainLabels, testLabels, info);
+  LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
+      info);
 
   // Build decision tree.
-  DecisionTreeRegressor<MSEGain> d(trainData, info, trainLabels);
+  DecisionTreeRegressor<MSEGain> d(trainData, info, trainResponses);
 
-  // Get the predicted test labels.
+  // Get the predicted test responses.
   arma::Row<double> predictions;
   d.Predict(testData, predictions);
 
   REQUIRE(predictions.n_elem == testData.n_cols);
 
   // Figure out rmse.
-  double rmse = RMSE(predictions, testLabels);
+  double rmse = RMSE(predictions, testResponses);
 
   // REQUIRE(rmse < 9.21);
-  // std::cout << predictions << std::endl << testLabels;
+  // std::cout << predictions << std::endl << testResponses;
   arma::Row<double> trainPred;
   d.Predict(trainData, trainPred);
   // std::cout << trainPred;
 
-  std::cout << "Train RMSE: " << RMSE(trainLabels, trainPred) << std::endl;
+  std::cout << "Train RMSE: " << RMSE(trainResponses, trainPred) << std::endl;
 }
 
 /**
@@ -959,21 +967,21 @@ TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
 TEST_CASE("MultiSplitTest1", "[DecisionTreeRegressorTest]")
 {
   arma::mat dataset;
-  arma::rowvec labels;
+  arma::rowvec responses;
   arma::rowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
 
-  CreateMultiSplitData(dataset, labels, 1000, values);
+  CreateMultiSplitData(dataset, responses, 1000, values);
 
-  arma::rowvec weights(labels.n_elem);
+  arma::rowvec weights(responses.n_elem);
   weights.ones();
 
   // Minimum leaf size of 1.
-  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0);
+  DecisionTreeRegressor<> d(dataset, responses, weights, 2, 0.0);
   arma::rowvec preds;
   d.Predict(dataset, preds);
 
-  for (size_t i = 0; i < labels.n_elem; ++i)
-    REQUIRE(preds[i] == labels[i]);
+  for (size_t i = 0; i < responses.n_elem; ++i)
+    REQUIRE(preds[i] == responses[i]);
 
   REQUIRE(d.NumLeaves() == 5);
 }
@@ -985,21 +993,21 @@ TEST_CASE("MultiSplitTest1", "[DecisionTreeRegressorTest]")
 TEST_CASE("MultiSplitTest2", "[DecisionTreeRegressorTest]")
 {
   arma::mat dataset;
-  arma::rowvec labels;
+  arma::rowvec responses;
   arma::rowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
 
-  CreateMultiSplitData(dataset, labels, 100, values);
+  CreateMultiSplitData(dataset, responses, 100, values);
 
-  arma::rowvec weights(labels.n_elem);
+  arma::rowvec weights(responses.n_elem);
   weights.ones();
 
   // Minimum leaf size of 1.
-  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0);
+  DecisionTreeRegressor<> d(dataset, responses, weights, 2, 0.0);
   arma::rowvec preds;
   d.Predict(dataset, preds);
 
-  for (size_t i = 0; i < labels.n_elem; ++i)
-    REQUIRE(preds[i] == labels[i]);
+  for (size_t i = 0; i < responses.n_elem; ++i)
+    REQUIRE(preds[i] == responses[i]);
 
   REQUIRE(d.NumLeaves() == 5);
 }
@@ -1027,21 +1035,21 @@ TEST_CASE("MultiSplitTest2", "[DecisionTreeRegressorTest]")
 TEST_CASE("MultiSplitTest3", "[DecisionTreeRegressorTest]")
 {
   arma::mat dataset;
-  arma::Row<double> labels;
+  arma::Row<double> responses;
   arma::rowvec values = {0.0, 5.0, 10.0, 15.0, 20.0};
 
-  CreateMultiSplitData(dataset, labels, 500, values);
+  CreateMultiSplitData(dataset, responses, 500, values);
 
-  arma::rowvec weights(labels.n_elem);
+  arma::rowvec weights(responses.n_elem);
   weights.ones();
 
   // Minimum leaf size of 1.
-  DecisionTreeRegressor<> d(dataset, labels, weights, 2, 0.0);
+  DecisionTreeRegressor<> d(dataset, responses, weights, 2, 0.0);
   arma::rowvec preds;
   d.Predict(dataset, preds);
 
-  for (size_t i = 0; i < labels.n_elem; ++i)
-    REQUIRE(preds[i] == labels[i]);
+  for (size_t i = 0; i < responses.n_elem; ++i)
+    REQUIRE(preds[i] == responses[i]);
 
   REQUIRE(d.NumLeaves() == 5);
 }

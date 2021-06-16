@@ -56,25 +56,25 @@ class DecisionTreeRegressor :
   DecisionTreeRegressor();
 
   /**
-   * Construct the decision tree on the given data and labels, where the data
-   * can be both numeric and categorical. Setting minimumLeafSize and
+   * Construct the decision tree on the given data and responses, where the
+   * data can be both numeric and categorical. Setting minimumLeafSize and
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
-   * Use std::move if data or labels are no longer needed to avoid copies.
+   * Use std::move if data or responses are no longer needed to avoid copies.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension of the dataset.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename LabelsType>
+  template<typename MatType, typename ResponsesType>
   DecisionTreeRegressor(MatType data,
                         const data::DatasetInfo& datasetInfo,
-                        LabelsType labels,
+                        ResponsesType responses,
                         const size_t minimumLeafSize = 10,
                         const double minimumGainSplit = 1e-7,
                         const size_t maximumDepth = 0,
@@ -82,23 +82,23 @@ class DecisionTreeRegressor :
                             DimensionSelectionType());
 
   /**
-   * Construct the decision tree on the given data and labels, assuming that
+   * Construct the decision tree on the given data and responses, assuming that
    * the data is all of the numeric type.  Setting minimumLeafSize and
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
-   * Use std::move if data or labels are no longer needed to avoid copies.
+   * Use std::move if data or responses are no longer needed to avoid copies.
    *
    * @param data Dataset to train on.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename LabelsType>
+  template<typename MatType, typename ResponsesType>
   DecisionTreeRegressor(MatType data,
-                        LabelsType labels,
+                        ResponsesType responses,
                         const size_t minimumLeafSize = 10,
                         const double minimumGainSplit = 1e-7,
                         const size_t maximumDepth = 0,
@@ -106,28 +106,28 @@ class DecisionTreeRegressor :
                             DimensionSelectionType());
 
   /**
-   * Construct the decision tree on the given data and labels with weights,
+   * Construct the decision tree on the given data and responses with weights,
    * where the data can be both numeric and categorical. Setting minimumLeafSize
    * and minimumGainSplit too small may cause the tree to overfit, but setting
    * them too large may cause it to underfit.
    *
-   * Use std::move if data, labels or weights are no longer needed to avoid
+   * Use std::move if data, responses or weights are no longer needed to avoid
    * copies.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension of the dataset.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param weights The weight list of given label.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename LabelsType, typename WeightsType>
+  template<typename MatType, typename ResponsesType, typename WeightsType>
   DecisionTreeRegressor(
       MatType data,
       const data::DatasetInfo& datasetInfo,
-      LabelsType labels,
+      ResponsesType responses,
       WeightsType weights,
       const size_t minimumLeafSize = 10,
       const double minimumGainSplit = 1e-7,
@@ -137,26 +137,26 @@ class DecisionTreeRegressor :
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
-   * Construct the decision tree on the given data and labels with weights,
+   * Construct the decision tree on the given data and responses with weights,
    * assuming that the data is all of the numeric type. Setting minimumLeafSize
    * and minimumGainSplit too small may cause the tree to overfit, but setting
    * them too large may cause it to underfit.
    *
-   * Use std::move if data, labels or weights are no longer needed to avoid
+   * Use std::move if data, responses or weights are no longer needed to avoid
    * copies.
    *
    * @param data Dataset to train on.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param weights The Weight list of given labels.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename LabelsType, typename WeightsType>
+  template<typename MatType, typename ResponsesType, typename WeightsType>
   DecisionTreeRegressor(
       MatType data,
-      LabelsType labels,
+      ResponsesType responses,
       WeightsType weights,
       const size_t minimumLeafSize = 10,
       const double minimumGainSplit = 1e-7,
@@ -167,27 +167,28 @@ class DecisionTreeRegressor :
 
   /**
    * Take ownership of another decision tree and train on the given data and
-   * labels with weights, where the data can be both numeric and categorical.
-   * Setting minimumLeafSize and minimumGainSplit too small may cause the
-   * tree to overfit, but setting them too large may cause it to underfit.
+   * responses with weights, where the data can be both numeric and
+   * categorical. Setting minimumLeafSize and minimumGainSplit too small may
+   * cause the tree to overfit, but setting them too large may cause it to
+   * underfit.
    *
-   * Use std::move if data, labels or weights are no longer needed to avoid
+   * Use std::move if data, responses or weights are no longer needed to avoid
    * copies.
    *
    * @param other Tree to take ownership of.
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension of the dataset.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param weights The weight list of given label.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    */
-  template<typename MatType, typename LabelsType, typename WeightsType>
+  template<typename MatType, typename ResponsesType, typename WeightsType>
   DecisionTreeRegressor(
       const DecisionTreeRegressor& other,
       MatType data,
       const data::DatasetInfo& datasetInfo,
-      LabelsType labels,
+      ResponsesType responses,
       WeightsType weights,
       const size_t minimumLeafSize = 10,
       const double minimumGainSplit = 1e-7,
@@ -195,27 +196,27 @@ class DecisionTreeRegressor :
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
-   * Take ownership of another decision tree and train on the given data and labels
-   * with weights, assuming that the data is all of the numeric type. Setting
-   * minimumLeafSize and minimumGainSplit too small may cause the tree to
-   * overfit, but setting them too large may cause it to underfit.
+   * Take ownership of another decision tree and train on the given data and
+   * responses with weights, assuming that the data is all of the numeric type.
+   * Setting minimumLeafSize and minimumGainSplit too small may cause the tree
+   * to overfit, but setting them too large may cause it to underfit.
    *
-   * Use std::move if data, labels or weights are no longer needed to avoid
+   * Use std::move if data, responses or weights are no longer needed to avoid
    * copies.
    * @param other Tree to take ownership of.
    * @param data Dataset to train on.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param weights The Weight list of given labels.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    */
-  template<typename MatType, typename LabelsType, typename WeightsType>
+  template<typename MatType, typename ResponsesType, typename WeightsType>
   DecisionTreeRegressor(
       const DecisionTreeRegressor& other,
       MatType data,
-      LabelsType labels,
+      ResponsesType responses,
       WeightsType weights,
       const size_t minimumLeafSize = 10,
       const double minimumGainSplit = 1e-7,
@@ -261,26 +262,26 @@ class DecisionTreeRegressor :
 
   /**
    * Train the decision tree on the given data.  This will overwrite the
-   * existing model.  The data may have numeric and categorical types, specified
+   * existing model. The data may have numeric and categorical types, specified
    * by the datasetInfo parameter.  Setting minimumLeafSize and
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
-   * Use std::move if data or labels are no longer needed to avoid copies.
+   * Use std::move if data or responses are no longer needed to avoid copies.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
-  template<typename MatType, typename LabelsType>
+  template<typename MatType, typename ResponsesType>
   double Train(MatType data,
                const data::DatasetInfo& datasetInfo,
-               LabelsType labels,
+               ResponsesType responses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
@@ -293,19 +294,19 @@ class DecisionTreeRegressor :
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
-   * Use std::move if data or labels are no longer needed to avoid copies.
+   * Use std::move if data or responses are no longer needed to avoid copies.
    *
    * @param data Dataset to train on.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
-  template<typename MatType, typename LabelsType>
+  template<typename MatType, typename ResponsesType>
   double Train(MatType data,
-               LabelsType labels,
+               ResponsesType responses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
@@ -319,12 +320,12 @@ class DecisionTreeRegressor :
    * minimumGainSplit too small may cause the tree to overfit, but setting them
    * too large may cause it to underfit.
    *
-   * Use std::move if data, labels or weights are no longer needed to avoid
+   * Use std::move if data, responses or weights are no longer needed to avoid
    * copies.
    *
    * @param data Dataset to train on.
    * @param datasetInfo Type information for each dimension.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
@@ -332,10 +333,10 @@ class DecisionTreeRegressor :
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
-  template<typename MatType, typename LabelsType, typename WeightsType>
+  template<typename MatType, typename ResponsesType, typename WeightsType>
   double Train(MatType data,
                const data::DatasetInfo& datasetInfo,
-               LabelsType labels,
+               ResponsesType responses,
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
@@ -351,11 +352,11 @@ class DecisionTreeRegressor :
    * minimumLeafSize and minimumGainSplit too small may cause the tree to
    * overfit, but setting them too large may cause it to underfit.
    *
-   * Use std::move if data, labels or weights are no longer needed to avoid
+   * Use std::move if data, responses or weights are no longer needed to avoid
    * copies.
    *
    * @param data Dataset to train on.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param weights Weights of all the labels
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
@@ -363,9 +364,9 @@ class DecisionTreeRegressor :
    * @param dimensionSelector Instantiated dimension selection policy.
    * @return The final entropy of decision tree.
    */
-  template<typename MatType, typename LabelsType, typename WeightsType>
+  template<typename MatType, typename ResponsesType, typename WeightsType>
   double Train(MatType data,
-               LabelsType labels,
+               ResponsesType responses,
                WeightsType weights,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
@@ -386,7 +387,7 @@ class DecisionTreeRegressor :
 
   /**
    * Make prediction for the given points, using the entire tree. The predicted
-   * labels for each point are stored in the given vector.
+   * responses for each point are stored in the given vector.
    *
    * @param data Set of points to predict.
    * @param predictions This will be filled with predictions for each point.
@@ -436,7 +437,7 @@ class DecisionTreeRegressor :
   size_t dimensionType;
   /**
    * This variable may hold different things. If the node has no children, then
-   * it is guaranteed to hold the prediction label for that node.  If the node
+   * it is guaranteed to hold the prediction value for that node.  If the node
    * has children, then it may be used arbitrarily by the split type's
    * CalculateDirection() and SplitIfBetter() function. In this case, it stores
    * the point at which the split was made.
@@ -452,10 +453,10 @@ class DecisionTreeRegressor :
       CategoricalAuxiliarySplitInfo;
 
   /**
-   * Calculate the prediction label for the leaf nodes.
+   * Calculate the prediction value for the leaf nodes.
    */
-  template<bool UseWeights, typename LabelsType, typename WeightsType>
-  void CalculatePrediction(const LabelsType& labels,
+  template<bool UseWeights, typename ResponsesType, typename WeightsType>
+  void CalculatePrediction(const ResponsesType& responses,
                            const WeightsType& weights);
 
   /**
@@ -468,19 +469,19 @@ class DecisionTreeRegressor :
    *      this node.
    * @param count Number of points in this node.
    * @param datasetInfo Type information for each dimension.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @return The final entropy of decision tree.
    */
-  template<bool UseWeights, typename MatType, typename LabelsType>
+  template<bool UseWeights, typename MatType, typename ResponsesType>
   double Train(MatType& data,
                const size_t begin,
                const size_t count,
                const data::DatasetInfo& datasetInfo,
-               LabelsType& labels,
+               ResponsesType& responses,
                const size_t numClasses,
                arma::rowvec& weights,
                const size_t minimumLeafSize,
@@ -497,18 +498,18 @@ class DecisionTreeRegressor :
    * @param begin Index of the starting point in the dataset that belongs to
    *      this node.
    * @param count Number of points in this node.
-   * @param labels Labels for each training point.
+   * @param responses Responses for each training point.
    * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @return The final entropy of decision tree.
    */
-  template<bool UseWeights, typename MatType, typename LabelsType>
+  template<bool UseWeights, typename MatType, typename ResponsesType>
   double Train(MatType& data,
                const size_t begin,
                const size_t count,
-               LabelsType& labels,
+               ResponsesType& responses,
                const size_t numClasses,
                arma::rowvec& weights,
                const size_t minimumLeafSize,
