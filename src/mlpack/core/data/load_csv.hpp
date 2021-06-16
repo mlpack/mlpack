@@ -100,7 +100,7 @@ class LoadCSV
     // Reset the DatasetInfo object, if needed.
     if (info.Dimensionality() == 0)
     {
-      info = DatasetMapper<MapPolicy>(rows);
+      info.SetDimensionality(rows);
     }
     else if (info.Dimensionality() != rows)
     {
@@ -195,7 +195,7 @@ class LoadCSV
         // Reset the DatasetInfo object, if needed.
         if (info.Dimensionality() == 0)
         {
-          info = DatasetMapper<MapPolicy>(rows);
+          info.SetDimensionality(rows);
         }
         else if (info.Dimensionality() != rows)
         {
