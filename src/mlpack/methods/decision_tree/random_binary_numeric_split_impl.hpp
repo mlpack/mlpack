@@ -207,12 +207,12 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   arma::rowvec leftWeights, rightWeights;
   if (UseWeights)
   {
-      leftWeights.set_size(leftLeafSize);
-      rightWeights.set_size(rightLeafSize);
+    leftWeights.set_size(leftLeafSize);
+    rightWeights.set_size(rightLeafSize);
   }
 
   size_t l = 0, r = 0;
-  for(size_t i = 0; i < data.n_elem; ++i)
+  for (size_t i = 0; i < data.n_elem; ++i)
   {
     if (UseWeights)
     {
