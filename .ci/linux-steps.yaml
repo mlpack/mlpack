@@ -44,8 +44,12 @@ steps:
 
     # Install cereal.
     wget https://github.com/USCiLab/cereal/archive/v1.3.0.tar.gz
-    tar -xvzpf v1.3.0.tar.gz # Unpack into cereal-1.3.0/.
-    cd v1.3.0 && cmake . && make && sudo make install && cd ..
+        tar -xvzpf v1.3.0.tar.gz # Unpack into cereal-1.3.0/.
+        cd cereal-1.3.0 && \
+        cmake . && \
+        make && \
+        sudo make install && \
+        cd ..
 
   displayName: 'Install Build Dependencies'
 
