@@ -25,7 +25,7 @@ using namespace mlpack;
 
 struct DecisionStumpTestFixture
 {
- public:
+public:
   DecisionStumpTestFixture()
   {
     // Cache in the options for this program.
@@ -97,7 +97,6 @@ TEST_CASE_METHOD(DecisionStumpTestFixture,
   arma::mat inputData;
   if (!data::Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
- 
   // Get the labels out.
   arma::Row<size_t> labels(inputData.n_cols);
   for (size_t i = 0; i < inputData.n_cols; ++i)
@@ -198,7 +197,7 @@ TEST_CASE_METHOD(DecisionStumpTestFixture, "DecisionStumpModelReuseTest",
   // Input trained model.
   SetInputParam("test", std::move(testData));
   SetInputParam("input_model",
-                std::move(IO::GetParam<DSModel*>("output_model")));
+                std::move(IO::GetParam<DSModel *>("output_model")));
 
   mlpackMain();
 
@@ -225,7 +224,7 @@ TEST_CASE_METHOD(DecisionStumpTestFixture, "DecisionStumpBucketSizeTest",
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
-  SetInputParam("bucket_size", (int) 0);
+  SetInputParam("bucket_size", (int)0);
 
   Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
@@ -249,7 +248,7 @@ TEST_CASE_METHOD(DecisionStumpTestFixture, "DecisionStumpTrainingVerTest",
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(IO::GetParam<DSModel*>("output_model")));
+                std::move(IO::GetParam<DSModel *>("output_model")));
 
   Log::Fatal.ignoreInput = true;
   REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);

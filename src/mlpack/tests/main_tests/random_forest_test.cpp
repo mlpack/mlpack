@@ -189,7 +189,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMaximumDepthTest",
                  "[RandomForestMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!data::Load("vc2.csv", inputData))  
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
@@ -204,8 +204,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMaximumDepthTest",
 }
 
 /**
- * Make sure only one of training
- *  data or pre-trained model is passed, when
+ * Make sure only one of training data or pre-trained model is passed, when
  * warm_start is not passed.
  */
 TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingVerTest",
