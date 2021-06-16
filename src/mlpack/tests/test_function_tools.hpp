@@ -83,20 +83,20 @@ inline void LogisticRegressionTestData(arma::mat& data,
 
 inline void LoadBostonHousingDataset(arma::mat& trainData,
                               arma::mat& testData,
-                              arma::Row<double>& trainLabels,
-                              arma::Row<double>& testLabels,
+                              arma::rowvec& trainResponses,
+                              arma::rowvec& testResponses,
                               data::DatasetInfo& info)
 {
   arma::mat dataset;
-  arma::Row<double> labels;
+  arma::rowvec responses;
 
   if (!data::Load("boston_housing_price.csv", dataset, info))
     FAIL("Cannot load test dataset boston_housing_price.csv!");
-  if (!data::Load("boston_housing_price_labels.csv", labels))
-    FAIL("Cannot load test dataset boston_housing_price_labels.csv!");
+  if (!data::Load("boston_housing_price_responses.csv", responses))
+    FAIL("Cannot load test dataset boston_housing_price_responses.csv!");
 
-  data::Split(dataset, labels, trainData, testData,
-      trainLabels, testLabels, 0.3);
+  data::Split(dataset, responses, trainData, testData,
+      trainResponses, testResponses, 0.3);
   // info.Type(3) = data::Datatype::categorical;
   // info.Type(8) = data::Datatype::categorical;
 
@@ -115,9 +115,9 @@ inline void LoadBostonHousingDataset(arma::mat& trainData,
 }
 
 inline double RMSE(const arma::Row<double>& predictions,
-                   const arma::Row<double>& trueLabels)
+                   const arma::Row<double>& trueResponses)
 {
-  double mse = arma::accu(arma::square(predictions - trueLabels)) /
+  double mse = arma::accu(arma::square(predictions - trueResponses)) /
       predictions.n_elem;
   return sqrt(mse);
 }

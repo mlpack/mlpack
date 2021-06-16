@@ -29,19 +29,19 @@ class MSEGain
 {
  public:
   /**
-   * Evaluate the mean squared error gain of labls from begin to end index.
+   * Evaluate the mean squared error gain of values from begin to end index.
    * Note that gain can be slightly greater than 0 due to floating-point
    * representation issues. Thus if you are checking for perfect fit, be
-   * sure to use 'gain >= 0.0' and not 'gain == 0.0'. The labels vector should
-   * always be of type arma::Row<double> or arma::rowvec.
+   * sure to use 'gain >= 0.0' and not 'gain == 0.0'. The values vector
+   * should always be of type arma::Row<double> or arma::rowvec.
    *
-   * @param labels Set of labels to evaluate MAD gain on.
-   * @param weights Weight of labels.
+   * @param values Set of values to evaluate MAD gain on.
+   * @param weights Weights associated to each value.
    * @param begin Start index.
    * @param end End index.
    */
   template<bool UseWeights, typename WeightVecType>
-  static double Evaluate(const arma::rowvec& labels,
+  static double Evaluate(const arma::rowvec& values,
                          const WeightVecType& weights,
                          const size_t begin,
                          const size_t end)
@@ -52,7 +52,7 @@ class MSEGain
     {
       double accWeights = 0.0;
       double weightedMean = 0.0;
-      WeightedSum(labels, weights, begin, end, accWeights, weightedMean);
+      WeightedSum(values, weights, begin, end, accWeights, weightedMean);
 
       // Catch edge case: if there are no weights, the impurity is zero.
       if (accWeights == 0.0)
@@ -61,18 +61,18 @@ class MSEGain
       weightedMean /= accWeights;
 
       for (size_t i = begin; i < end; ++i)
-        mse += weights[i] * std::pow(labels[i] - weightedMean, 2);
+        mse += weights[i] * std::pow(values[i] - weightedMean, 2);
 
       mse /= accWeights;
     }
     else
     {
       double mean = 0.0;
-      Sum(labels, begin, end, mean);
+      Sum(values, begin, end, mean);
       mean /= (double) (end - begin);
 
       for (size_t i = begin; i < end; ++i)
-        mse += std::pow(labels[i] - mean, 2);
+        mse += std::pow(values[i] - mean, 2);
 
       mse /= (double) (end - begin);
     }
@@ -83,19 +83,19 @@ class MSEGain
   /**
    * Evaluate the MSE gain on the complete vector.
    *
-   * @param labels Set of labels to evaluate MAD gain on.
-   * @param weights Weights associated to each label.
+   * @param values Set of values to evaluate MSE gain on.
+   * @param weights Weights associated to each value.
    */
   template<bool UseWeights, typename WeightVecType>
-  static double Evaluate(const arma::rowvec& labels,
+  static double Evaluate(const arma::rowvec& values,
                          const size_t /* numClasses */,
                          const WeightVecType& weights)
   {
     // Corner case: if there are no elements, the impurity is zero.
-    if (labels.n_elem == 0)
+    if (values.n_elem == 0)
       return 0.0;
 
-    return Evaluate<UseWeights>(labels, weights, 0, labels.n_elem);
+    return Evaluate<UseWeights>(values, weights, 0, values.n_elem);
   }
 };
 
