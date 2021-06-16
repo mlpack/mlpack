@@ -59,13 +59,14 @@ void Padding<InputDataType, OutputDataType>::Forward(
     inSize = input.n_elem / (inputWidth * inputHeight * nCols);
     inputTemp = arma::Cube<eT>(const_cast<arma::Mat<eT>&>(input).memptr(),
         inputWidth, inputHeight, inSize * nCols, false, false);
-    outputTemp = arma::zeros<arma::Cube<eT> >(inputWidth + padWLeft + padWRight,
+    outputTemp = arma::zeros<arma::Cube<eT>>(inputWidth + padWLeft + padWRight,
         inputHeight + padHTop + padHBottom, inSize * nCols);
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
     {   
       outputTemp.slice(i).submat(padWLeft, padHTop, padWLeft + inputWidth - 1,
           padHTop + inputHeight - 1) = inputTemp.slice(i);
     }
+
     output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / nCols,
         nCols);
   }
