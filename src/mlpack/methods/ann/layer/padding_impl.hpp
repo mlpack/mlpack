@@ -57,12 +57,15 @@ void Padding<InputDataType, OutputDataType>::Forward(
   else
   {
     inSize = input.n_elem / (inputWidth * inputHeight * nCols);
-    inputTemp = arma::cube(const_cast<arma::Mat<eT>&>(input).memptr(),
-        inputWidth, inputHeight, nCols * inSize, false, false);
+    inputTemp = arma::Cube<eT>(const_cast<arma::Mat<eT>&>(input).memptr(),
+        inputWidth, inputHeight, inSize * nCols, false, false);
     outputTemp = arma::zeros<arma::Cube<eT> >(inputWidth + padWLeft + padWRight,
-        inputHeight + padHTop + padHBottom, nCols * inSize);
-    outputTemp.subcube(padWLeft, padHTop, 0, padWLeft + inputWidth - 1,
-        padHTop + inputHeight - 1, inSize - 1) = inputTemp;
+        inputHeight + padHTop + padHBottom, inSize * nCols);
+    for (size_t i = 0; i < inputTemp.n_slices; ++i)
+    {   
+      outputTemp.slice(i).submat(padWLeft, padHTop, padWLeft + inputWidth - 1,
+          padHTop + inputHeight - 1) = inputTemp.slice(i);
+    }
     output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / nCols,
         nCols);
   }
@@ -91,9 +94,12 @@ void Padding<InputDataType, OutputDataType>::serialize(
   ar(CEREAL_NVP(padWRight));
   ar(CEREAL_NVP(padHTop));
   ar(CEREAL_NVP(padHBottom));
+  ar(CEREAL_NVP(inputWidth));
+  ar(CEREAL_NVP(inputHeight));
 }
 
 } // namespace ann
 } // namespace mlpack
 
 #endif
+    
