@@ -14,7 +14,7 @@
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
-
+/*
 template bool Load<int>(const std::string&,
                         arma::Mat<int>&,
                         const bool,
@@ -50,7 +50,44 @@ template bool Load<double>(const std::string&,
                            const bool,
                            const bool,
                            const arma::file_type);
+*/
+//---------------------------------------------------------
+template bool Load<int>(const std::string&,
+                        arma::Mat<int>&,
+                        const bool,
+                        const bool,
+                        const file_type);
 
+template bool Load<unsigned int>(const std::string&,
+                                 arma::Mat<unsigned int>&,
+                                 const bool,
+                                 const bool,
+                                 const file_type);
+
+template bool Load<unsigned long>(const std::string&,
+                                  arma::Mat<unsigned long>&,
+                                  const bool,
+                                  const bool,
+                                  const file_type);
+
+template bool Load<unsigned long long>(const std::string&,
+                                       arma::Mat<unsigned long long>&,
+                                       const bool,
+                                       const bool,
+                                       const file_type);
+
+template bool Load<float>(const std::string&,
+                          arma::Mat<float>&,
+                          const bool,
+                          const bool,
+                          const file_type);
+
+template bool Load<double>(const std::string&,
+                           arma::Mat<double>&,
+                           const bool,
+                           const bool,
+                           const file_type);
+// --------------------------------------------------------------------
 template bool Load<int>(const std::string&,
                         arma::SpMat<int>&,
                         const bool,

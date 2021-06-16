@@ -1,5 +1,6 @@
 /** 
  * @file core/data/csv_parser.hpp
+ * @author Conrad Sanderson
  * @author Gopi M. Tatiraju
  *
  * This csv parser is designed by taking reference from armadillo's csv parser.
@@ -40,20 +41,32 @@ namespace mlpack{
 namespace data{
 enum struct file_type : unsigned int
 {
-  file_type_unknown,
-  auto_detect,	      //!< attempt to automatically detect the file type
-  raw_ascii,	        //!< raw text (ASCII), without a header
-  arma_ascii,	        //!< Armadillo text format, with a header specifying matrix type and size
-  csv_ascii,	        //!< comma separated values (CSV), without a header
-  raw_binary,	        //!< raw binary format (machine dependent), without a header
-  arma_binary,	      //!< Armadillo binary format (machine dependent), with a header specifying matrix type and size
-  pgm_binary,	        //!< Portable Grey Map (greyscale image)
-  ppm_binary,	        //!< Portable Pixel Map (colour image), used by the field and cube classes
-  hdf5_binary,	      //!< HDF5: open binary format, not specific to Armadillo, which can store arbitrary data
-  hdf5_binary_trans,  //!< [DO NOT US deprecated] as per hdf5_binary, but save/load the data with columns transposed to rows
-  coord_ascii	        //!< simple co-ordinate format for sparse matrices (indices start at zero)
+  mlp_file_type_unknown,
+  mlp_auto_detect,        //!< attempt to automatically detect the file type
+  mlp_raw_ascii,          //!< raw text (ASCII), without a header
+  mlp_arma_ascii,         //!< Armadillo text format, with a header specifying matrix type and size
+  mlp_csv_ascii,          //!< comma separated values (CSV), without a header
+  mlp_raw_binary,         //!< raw binary format (machine dependent), without a header
+  mlp_arma_binary,        //!< Armadillo binary format (machine dependent), with a header specifying matrix type and size
+  mlp_pgm_binary,         //!< Portable Grey Map (greyscale image)
+  mlp_ppm_binary,         //!< Portable Pixel Map (colour image), used by the field and cube classes
+  mlp_hdf5_binary,        //!< HDF5: open binary format, not specific to Armadillo, which can store arbitrary data
+  mlp_hdf5_binary_trans,  //!< [DO NOT US deprecated] as per hdf5_binary, but save/load the data with columns transposed to rows
+  mlp_coord_ascii         //!< simple co-ordinate format for sparse matrices (indices start at zero)
   };
 
+static constexpr file_type mlp_file_type_unknown  = file_type::mlp_file_type_unknown;
+static constexpr file_type mlp_auto_detect        = file_type::mlp_auto_detect;
+static constexpr file_type mlp_raw_ascii          = file_type::mlp_raw_ascii;
+static constexpr file_type mlp_arma_ascii         = file_type::mlp_arma_ascii;
+static constexpr file_type mlp_csv_ascii          = file_type::mlp_csv_ascii;
+static constexpr file_type mlp_raw_binary         = file_type::mlp_raw_binary;
+static constexpr file_type mlp_arma_binary        = file_type::mlp_arma_binary;
+static constexpr file_type mlp_pgm_binary         = file_type::mlp_pgm_binary;
+static constexpr file_type mlp_ppm_binary         = file_type::mlp_ppm_binary;
+static constexpr file_type mlp_hdf5_binary        = file_type::mlp_hdf5_binary;
+static constexpr file_type mlp_hdf5_binary_trans  = file_type::mlp_hdf5_binary_trans;
+static constexpr file_type mlp_coord_ascii        = file_type::mlp_coord_ascii;
 /**
  * Convert the given string token to assigned datatype and assign
  * this value to the given address. The address here will be a

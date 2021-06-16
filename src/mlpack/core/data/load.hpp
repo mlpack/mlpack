@@ -21,6 +21,7 @@
 #include "format.hpp"
 #include "dataset_mapper.hpp"
 #include "image_info.hpp"
+#include "csv_parser.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -71,7 +72,7 @@ bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true,
-          const arma::file_type inputLoadType = arma::auto_detect);
+          const file_type inputLoadType = file_type::mlp_auto_detect);
 
 /**
  * Loads a sparse matrix from file, using arma::coord_ascii format.  This
@@ -119,44 +120,44 @@ extern template bool Load<int>(const std::string&,
                                arma::Mat<int>&,
                                const bool,
                                const bool,
-                               const arma::file_type);
+                               const file_type);
 
 // size_t and uword should be one of these three typedefs.
 extern template bool Load<unsigned int>(const std::string&,
                                         arma::Mat<unsigned int>&,
                                         const bool,
                                         const bool,
-                                        const arma::file_type);
+                                        const file_type);
 
 extern template bool Load<unsigned long>(const std::string&,
                                          arma::Mat<unsigned long>&,
                                          const bool,
                                          const bool,
-                                         const arma::file_type);
+                                         const file_type);
 
 extern template bool Load<unsigned long long>(const std::string&,
                                               arma::Mat<unsigned long long>&,
                                               const bool,
                                               const bool,
-                                              const arma::file_type);
+                                              const file_type);
 
 extern template bool Load<float>(const std::string&,
                                  arma::Mat<float>&,
                                  const bool,
                                  const bool,
-                                 const arma::file_type);
+                                 const file_type);
 
 extern template bool Load<double>(const std::string&,
                                   arma::Mat<double>&,
                                   const bool,
                                   const bool,
-                                  const arma::file_type);
+                                  const file_type);
 
 extern template bool Load<int>(const std::string&,
                                arma::Mat<int>&,
                                const bool,
                                const bool,
-                               const arma::file_type);
+                               const file_type);
 
 extern template bool Load<unsigned int>(const std::string&,
                                         arma::SpMat<unsigned int>&,

@@ -1,5 +1,6 @@
 /** 
  * @file core/data/csv_parser_impl.hpp
+ * @author Conrad Sanderson
  * @author Gopi M. Tatiraju
  *
  * This csv parser is designed by taking reference from armadillo's csv parser.
@@ -40,7 +41,6 @@ namespace mlpack
 {
 namespace data
 {
-
   /**
    * Given the address of a martix element(val)
    * sets it equal to the provided value(token)
@@ -125,25 +125,23 @@ namespace data
     bool load_okay = f.good();
 
     f.clear();
+    
     const std::fstream::pos_type pos1 = f.tellg();
-
+    
     size_t f_n_rows = 0;
     size_t f_n_cols = 0;
-
+    
     std::string line_string;
     std::stringstream line_stream;
-
     std::string token;
 
     while (f.good() && load_okay)
     {
       std::getline(f, line_string);
-
       if (line_string.size() == 0)
       {
         break;
       }
-
       line_stream.clear();
       line_stream.str(line_string);
 
@@ -187,9 +185,7 @@ namespace data
       while (line_stream.good())
       {
         std::getline(line_stream, token, ',');
-
         ConvertToken<MatType>(x.at(row, col), token);
-
         ++col;
       }
       ++row;

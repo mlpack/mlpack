@@ -22,6 +22,7 @@
 #include "load.hpp"
 #include "extension.hpp"
 #include "detect_file_type.hpp"
+#include "csv_parser.hpp"
 
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
@@ -90,7 +91,7 @@ bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal,
           const bool transpose,
-          const arma::file_type inputLoadType)
+          const file_type inputLoadType)
 {
   Timer::Start("loading_data");
 
@@ -113,14 +114,14 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  arma::file_type loadType = inputLoadType;
+  file_type loadType = inputLoadType;
   std::string stringType;
-  if (inputLoadType == arma::auto_detect)
+  if (inputLoadType == file_type::mlp_auto_detect)
   {
     // Attempt to auto-detect the type from the given file.
     loadType = AutoDetect(stream, filename);
     // Provide error if we don't know the type.
-    if (loadType == arma::file_type_unknown)
+    if (loadType == file_type::mlp_file_type_unknown)
     {
       Timer::Stop("loading_data");
       if (fatal)
@@ -137,7 +138,7 @@ bool Load(const std::string& filename,
   stringType = GetStringType(loadType);
 
 #ifndef ARMA_USE_HDF5
-  if (inputLoadType == arma::hdf5_binary)
+  if (inputLoadType == file_type::mlp_hdf5_binary)
   {
     // Ensure that HDF5 is supported.
     Timer::Stop("loading_data");
@@ -155,7 +156,7 @@ bool Load(const std::string& filename,
 #endif
 
   // Try to load the file; but if it's raw_binary, it could be a problem.
-  if (loadType == arma::raw_binary)
+  if (loadType == file_type::mlp_raw_binary)
     Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
         << "but this may not be the actual filetype!" << std::endl;
   else
@@ -165,9 +166,9 @@ bool Load(const std::string& filename,
   // We can't use the stream if the type is HDF5.
   bool success;
 
-  if (loadType != arma::hdf5_binary)
+  if (loadType != file_type::mlp_hdf5_binary)
   {
-    if(loadType == arma::csv_ascii)
+    if(loadType == file_type::mlp_csv_ascii)
       success = LoadCSVV(matrix, stream);
     else
       success = matrix.load(stream, loadType);
