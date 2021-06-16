@@ -164,12 +164,11 @@ bool Load(const std::string& filename,
 
   // We can't use the stream if the type is HDF5.
   bool success;
-  std::string print_status;
 
   if (loadType != arma::hdf5_binary)
   {
     if(loadType == arma::csv_ascii)
-      success = LoadCSVV(matrix, stream, print_status);
+      success = LoadCSVV(matrix, stream);
     else
       success = matrix.load(stream, loadType);
   }

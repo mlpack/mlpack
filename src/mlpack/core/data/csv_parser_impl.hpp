@@ -1,4 +1,15 @@
-/* This file is originated from armadillo and adapted for mlpack
+/** 
+ * @file core/data/csv_parser_impl.hpp
+ * @author Gopi M. Tatiraju
+ *
+ * This csv parser is designed by taking reference from armadillo's csv parser.
+ * In this mlpack's version, all the arma dependencies were removed or replaced
+ * accordingly, making the parser totally independent of armadillo.
+ *
+ * This parser will be totally independent to any linear algebra library.
+ * This can be used to load data into any matrix, i.e. arma and bandicoot
+ * in future.
+ *
  * https://gitlab.com/conradsnicta/armadillo-code/-/blob/10.5.x/include/armadillo_bits/diskio_meat.hpp
  * Copyright 2008-2016 Conrad Sanderson (http://conradsanderson.id.au)
  * Copyright 2008-2016 National ICT Australia (NICTA)
@@ -14,7 +25,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ------------------------------------------------------------------------
-*/
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #ifndef MLPACK_CORE_DATA_CSV_PARSER_IMPL_HPP
 #define MLPACK_CORE_DATA_CSV_PARSER_IMPL_HPP
 
@@ -38,16 +54,11 @@ namespace data
     if (N == 0)
     {
       val = typename MatType::elem_type(0);
-
       return true;
     }
 
     const char* str = token.c_str();
 
-    // checking for nan, +inf, -inf
-    // in both upper and lower case
-    // using arma::Datum which basically
-    // contains all the physical constants
     if ((N == 3) || (N == 4))
     {
       const bool neg = (str[0] == '-');
@@ -63,10 +74,8 @@ namespace data
           ((sig_b == 'n') || (sig_b == 'N')) &&
 	  ((sig_c == 'f') || (sig_c == 'F')))
       {
-        // val = if(neg == true) ? -INF : +INF
         val = neg ? -(std::numeric_limits<typename MatType::elem_type>::infinity()) :
 	            std::numeric_limits<typename MatType::elem_type>::infinity();
-
         return true;
       }
       else if (((sig_a == 'n') || (sig_a == 'N')) &&
@@ -74,7 +83,6 @@ namespace data
 	       ((sig_c == 'n') || (sig_c == 'N')))
       {
         val = std::numeric_limits<typename MatType::elem_type>::quiet_NaN();
-
         return true;
       }
     }
@@ -108,16 +116,11 @@ namespace data
     {
       return false;
     }
-
     return true;
   }
 
-  /**
-   * Loads the data from the csv file
-   * into the give MatType
-   */
   template<typename MatType>
-  bool LoadCSVV(MatType& x, std::fstream& f, std::string&)
+  bool LoadCSVV(MatType& x, std::fstream& f)
   {
     bool load_okay = f.good();
 
@@ -148,7 +151,6 @@ namespace data
 
       while (line_stream.good())
       {
-        // reading each element of the row
         std::getline(line_stream, token, ',');
         ++line_n_cols;
       }
@@ -192,7 +194,6 @@ namespace data
       }
       ++row;
     }
-
     return load_okay;
   }
 
