@@ -71,8 +71,8 @@ void Padding<InputDataType, OutputDataType>::Forward(
         nCols);
   }
 
-  outputHeight = output.n_cols;
-  outputWidth = output.n_rows;
+  outputWidth = inputWidth + padWLeft + padWRight;
+  outputHeight = inputHeight + padHTop + padHBottom;
 }
 
 template<typename InputDataType, typename OutputDataType>
