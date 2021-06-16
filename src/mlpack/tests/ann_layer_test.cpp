@@ -697,7 +697,7 @@ TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
 {
-  arma::mat output, input, delta;
+  arma::mat output, input, delta, input1, output1;
   Padding<> module(1, 2, 3, 4);
 
   // Test the Forward function.
@@ -710,6 +710,16 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   // Test the Backward function.
   module.Backward(input, output, delta);
   CheckMatrices(delta, input);
+
+  // Test forward function for multiple filters.
+  // Here it's 3 filters with height = 244, width = 244
+  // the output should be 266 * 266 * 3 with 1 padding.
+  Padding<> module1(1, 1, 1, 1, 244, 244);
+  input1 = arma::randu(224 * 224 * 3, 1);
+  module1.Forward(input1, output1);
+  REQUIRE(arma::accu(input1) == arma::accu(output1));
+  REQUIRE(output.n_rows == (226 * 226 * 3));
+  REQUIRE(output.n_cols == 1);
 }
 
 /**
