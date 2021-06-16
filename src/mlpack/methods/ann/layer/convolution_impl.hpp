@@ -151,12 +151,11 @@ void ConvolutionType<
     GradientConvolutionRule,
     InputType,
     OutputType
->::Reset()
+>::SetWeights(const typename OutputType::elem_type* weightPtr)
 {
-  weight = arma::Cube<typename OutputType::elem_type>(weights.memptr(),
+  weight = arma::Cube<typename OutputType::elem_type>(weightPtr,
       kernelWidth, kernelHeight, outSize * inSize, false, false);
-  bias = OutputType(weights.memptr() + weight.n_elem,
-      outSize, 1, false, false);
+  bias = OutputType(weightPtr + weight.n_elem, outSize, 1, false, false);
 }
 
 template<
@@ -405,15 +404,6 @@ void ConvolutionType<
   ar(CEREAL_NVP(outputWidth));
   ar(CEREAL_NVP(outputHeight));
   ar(CEREAL_NVP(padding));
-  ar(CEREAL_NVP(weights));
-
-  if (Archive::is_loading::value)
-  {
-    weight = arma::Cube<typename OutputType::elem_type>(weights.memptr(),
-        kernelWidth, kernelHeight, outSize * inSize, false, false);
-    bias = OutputType(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
-  }
 }
 
 template<

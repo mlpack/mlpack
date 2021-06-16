@@ -82,16 +82,18 @@ class ConstantType : public Layer<InputType, OutputType>
                 OutputType& g);
 
   //! Get the output size.
-  size_t OutSize() const { return outSize; }
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> result(this->inputDimensions.size(), 0);
+    result[0] = outSize;
+    return result;
+  }
 
   //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
-  size_t inSize;
-
   //! Locally-stored number of output units.
   size_t outSize;
 

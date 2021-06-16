@@ -22,7 +22,6 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputType, typename OutputType>
 ConcatenateType<InputType, OutputType>::
 ConcatenateType(const InputType& concat) :
-  inRows(0),
   concat(concat)
 {
   // Nothing to do here.
@@ -31,9 +30,6 @@ ConcatenateType(const InputType& concat) :
 template<typename InputType, typename OutputType>
 ConcatenateType<InputType, OutputType>::
 ConcatenateType(const ConcatenateType& layer) :
-  inRows(layer.inRows),
-  weights(layer.weights),
-  delta(layer.delta),
   concat(layer.concat)
 {
   // Nothing to to here.
@@ -42,9 +38,6 @@ ConcatenateType(const ConcatenateType& layer) :
 template<typename InputType, typename OutputType>
 ConcatenateType<InputType, OutputType>::
 ConcatenateType(ConcatenateType&& layer) :
-  inRows(layer.inRows),
-  weights(std::move(layer.weights)),
-  delta(std::move(layer.delta)),
   concat(std::move(layer.concat))
 {
   // Nothing to do here.
@@ -57,9 +50,6 @@ operator=(const ConcatenateType& layer)
 {
   if (this != &layer)
   {
-    inRows = layer.inRows;
-    weights = layer.weights;
-    delta = layer.delta;
     concat = layer.concat;
   }
 
@@ -73,11 +63,9 @@ operator=(ConcatenateType&& layer)
 {
   if (this != &layer)
   {
-    inRows = layer.inRows;
-    weights = std::move(layer.weights);
-    delta = std::move(layer.delta);
     concat = std::move(layer.concat);
   }
+
   return *this;
 }
 
@@ -86,16 +74,11 @@ void ConcatenateType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   if (concat.is_empty())
-    Log::Warn << "The concat matrix has not been provided." << std::endl;
+    Log::Warn << "Concatenate::Forward(): the concat matrix is empty or was "
+        << "not provided." << std::endl;
 
-  if (input.n_cols != concat.n_cols)
-  {
-    Log::Fatal << "The number of columns of the concat matrix should be equal "
-        << "to the number of columns of input matrix." << std::endl;
-  }
-
-  inRows = input.n_rows;
-  output = arma::join_cols(input, concat);
+  output = arma::join_rows(input,
+      arma::repmat(arma::vectorise(concat), input.n_cols));
 }
 
 template<typename InputType, typename OutputType>
@@ -104,7 +87,8 @@ void ConcatenateType<InputType, OutputType>::Backward(
     const OutputType& gy,
     OutputType& g)
 {
-  g = gy.submat(0, 0, inRows - 1, concat.n_cols - 1);
+  // TODO: was this change correct?
+  g = gy.submat(0, 0, gy.n_rows - concat.n_elem, gy.n_cols - 1);
 }
 
 } // namespace ann

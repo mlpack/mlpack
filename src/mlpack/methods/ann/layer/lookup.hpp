@@ -49,8 +49,8 @@ class LookupType : public Layer<InputType, OutputType>
    */
   LookupType(const size_t vocabSize = 0, const size_t embeddingSize = 0);
 
-	//! Clone the LookupType object. This handles polymorphism correctly.
-	LookupType* Clone() const { return new LookupType(*this); }
+  //! Clone the LookupType object. This handles polymorphism correctly.
+  LookupType* Clone() const { return new LookupType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -90,26 +90,24 @@ class LookupType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
   //! Get the size of the vocabulary.
   size_t VocabSize() const { return vocabSize; }
 
   //! Get the length of each embedding vector.
   size_t EmbeddingSize() const { return embeddingSize; }
+
+  //! Get the number of trainable parameters.
+  const size_t WeightSize() const { return embeddingSize * vocabSize; }
+
+  //! Get the dimensions of the output.  This layer adds an extra dimension for
+  //! the embedding.
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> result(inputDimensions.size() + 1, embeddingSize);
+    for (size_t i = 0; i < inputDimensions.size(); ++i)
+      result[i + 1] = inputDimensions[i];
+    return result;
+  }
 
   /**
    * Serialize the layer
@@ -126,15 +124,6 @@ class LookupType : public Layer<InputType, OutputType>
 
   //! Locally-stored weight object.
   OutputType weights;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class Lookup
 
 // Alias for using as embedding layer.

@@ -23,10 +23,7 @@ Recurrent<InputType, OutputType>::Recurrent() :
     rho(0),
     forwardStep(0),
     backwardStep(0),
-    gradientStep(0),
-    deterministic(false),
-    // TODO: does ownsLayer do anything?
-    ownsLayer(false)
+    gradientStep(0)
 {
   // Nothing to do.
 }
@@ -51,9 +48,7 @@ Recurrent<InputType, OutputType>::Recurrent(
     rho(rho),
     forwardStep(0),
     backwardStep(0),
-    gradientStep(0),
-    deterministic(false),
-    ownsLayer(true)
+    gradientStep(0)
 {
   initialModule = new SequentialType<InputType, OutputType>();
   mergeModule = new AddMerge<InputType, OutputType>(false, false, false);
@@ -81,9 +76,7 @@ Recurrent<InputType, OutputType>::Recurrent(
     rho(network.rho),
     forwardStep(network.forwardStep),
     backwardStep(network.backwardStep),
-    gradientStep(network.gradientStep),
-    deterministic(network.deterministic),
-    ownsLayer(network.ownsLayer)
+    gradientStep(network.gradientStep)
 {
   startModule = network.startModule->Clone();
   inputModule = network.inputModule->Clone();
@@ -114,18 +107,28 @@ template<typename InputType, typename OutputType>
 void Recurrent<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
+  InitializeForwardPassMemory();
+
+  // Convenience names.
+  OutputType& inputOutput = layerOutputs[0];
+  OutputType& mergeOutput = layerOutputs[1];
+  OutputType& feedbackOutput = layerOutputs[2];
+  OutputType& recurrentOutput = layerOutputs[3];
+
   if (forwardStep == 0)
   {
     initialModule->Forward(input, output);
   }
   else
   {
-    inputModule->Forward(input, inputModule->OutputParameter());
+    inputModule->Forward(input, inputOutput);
+    // TODO: how to get transferModule output?
     feedbackModule->Forward(transferModule->OutputParameter(),
-        feedbackModule->OutputParameter());
+        feedbackOutput);
     recurrentModule->Forward(input, output);
   }
 
+  // TODO: how to get transferModule output?
   output = transferModule->OutputParameter();
 
   // Save the feedback output parameter when training the module.
@@ -151,6 +154,18 @@ template<typename InputType, typename OutputType>
 void Recurrent<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
+  InitializeBackwardPassMemory();
+
+  // Convenience names.
+  OutputType& inputOutput = layerOutputs[0];
+  OutputType& mergeOutput = layerOutputs[1];
+  OutputType& feedbackOutput = layerOutputs[2];
+  OutputType& recurrentOutput = layerOutputs[3];
+  OutputType& inputDelta = layerDeltas[0];
+  OutputType& mergeDelta = layerDeltas[1];
+  OutputType& feedbackDelta = layerDeltas[2];
+  OutputType& recurrentDelta = layerDeltas[3];
+
   if (!recurrentError.is_empty())
   {
     recurrentError += gy;
@@ -162,20 +177,18 @@ void Recurrent<InputType, OutputType>::Backward(
 
   if (backwardStep < (rho - 1))
   {
-    recurrentModule->Backward(recurrentModule->OutputParameter(),
-        recurrentError, recurrentModule->Delta());
-    inputModule->Backward(inputModule->OutputParameter(),
-        recurrentModule->Delta(), g);
-    feedbackModule->Backward(feedbackModule->OutputParameter(),
-        recurrentModule->Delta(), feedbackModule->Delta());
+    recurrentModule->Backward(recurrentOutput, recurrentError, recurrentDelta);
+    inputModule->Backward(inputOutput, recurrentDelta, g);
+    feedbackModule->Backward(feedbackOutput, recurrentDelta, feedbackDelta);
   }
   else
   {
+    // TODO: how to get these parameters?
     initialModule->Backward(initialModule->OutputParameter(), recurrentError,
         g);
   }
 
-  recurrentError = feedbackModule->Delta();
+  recurrentError = feedbackDelta;
   backwardStep++;
 }
 
@@ -185,21 +198,35 @@ void Recurrent<InputType, OutputType>::Gradient(
     const OutputType& error,
     OutputType& /* gradient */)
 {
+  // Convenience names.
+  OutputType& inputOutput = layerOutputs[0];
+  OutputType& mergeOutput = layerOutputs[1];
+  OutputType& feedbackOutput = layerOutputs[2];
+  OutputType& recurrentOutput = layerOutputs[3];
+  OutputType& inputDelta = layerDeltas[0];
+  OutputType& mergeDelta = layerDeltas[1];
+  OutputType& feedbackDelta = layerDeltas[2];
+  OutputType& recurrentDelta = layerDeltas[3];
+  OutputType& inputGradient = layerGradients[0];
+  OutputType& mergeGradient = layerGradients[1];
+  OutputType& feedbackGradient = layerGradients[2];
+  OutputType& recurrentGradient = layerGradients[3];
+
   if (gradientStep < (rho - 1))
   {
-    recurrentModule->Gradient(input, error, recurrentModule->Gradient());
-    inputModule->Gradient(input, mergeModule->Delta(), inputModule->Gradient());
+    recurrentModule->Gradient(input, error, recurrentGradient);
+    inputModule->Gradient(input, mergeDelta, inputGradient);
     feedbackModule->Gradient(
         feedbackOutputParameter[feedbackOutputParameter.size() - 2 -
-        gradientStep], mergeModule->Delta(), feedbackModule->Gradient());
+        gradientStep], mergeDelta, feedbackGradient);
   }
   else
   {
-    // TODO: what about if there is no Gradient()?
-    recurrentModule->Gradient().zeros();
-    inputModule->Gradient().zeros();
-    feedbackModule->Gradient().zeros();
+    recurrentGradient.zeros();
+    inputGradient.zeros();
+    feedbackGradient.zeros();
 
+    // TODO: how to do this?
     initialModule->Gradient(input, startModule->Delta(),
         initialModule->Gradient());
   }
@@ -217,23 +244,15 @@ template<typename Archive>
 void Recurrent<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<MultiLayer<InputType, OutputType>>(this));
 
-  // Clean up memory, if we are loading.
-  if (cereal::is_loading<Archive>())
-  {
-    // TODO: should we consider ownsLayer here?
-
-    // Clear old things, if needed.
-    network.clear();
-  }
+  // TODO: overhaul this
 
   ar(CEREAL_POINTER(startModule));
   ar(CEREAL_POINTER(inputModule));
   ar(CEREAL_POINTER(feedbackModule));
   ar(CEREAL_POINTER(transferModule));
   ar(CEREAL_NVP(rho));
-  ar(CEREAL_NVP(ownsLayer));
 
   // Set up the network.
   if (cereal::is_loading<Archive>())

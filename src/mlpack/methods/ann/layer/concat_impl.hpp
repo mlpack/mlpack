@@ -21,96 +21,65 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 ConcatType<InputType, OutputType>::ConcatType(
-    const bool model, const bool run) :
+    const bool run) :
     axis(0),
     useAxis(false),
-    model(model),
-    run(run),
-    channels(1)
+    channels(1),
+    run(run)
 {
-  weights.set_size(0, 0);
+  // Nothing to do.
 }
 
 template<typename InputType, typename OutputType>
 ConcatType<InputType, OutputType>::ConcatType(
-    arma::Row<size_t>& inputSize,
     const size_t axis,
-    const bool model,
     const bool run) :
-    inputSize(inputSize),
     axis(axis),
     useAxis(true),
-    model(model),
+    channels(0),
     run(run)
 {
-  weights.set_size(0, 0);
-
-  // Parameters to help calculate the number of channels.
-  size_t oldColSize = 1, newColSize = 1;
-  // Axis is specified and useAxis is true.
-  if (useAxis)
-  {
-    // Axis is specified without input dimension.
-    // Throw an error.
-    if (inputSize.n_elem > 0)
-    {
-      // Calculate rowSize, newColSize based on the axis
-      // of concatenation. Finally concat along cols and
-      // reshape to original format i.e. (input, batch_size).
-      size_t i = std::min(axis + 1, (size_t) inputSize.n_elem);
-      for (; i < inputSize.n_elem; ++i)
-        newColSize *= inputSize[i];
-    }
-    else
-      Log::Fatal << "Input dimensions not specified." << std::endl;
-  }
-  else
-    channels = 1;
-
-  if (newColSize <= 0)
-    Log::Fatal << "Col size is zero." << std::endl;
-
-  channels = newColSize / oldColSize;
-  inputSize.clear();
+  // Nothing to do.
 }
 
 template<typename InputType, typename OutputType>
 ConcatType<InputType, OutputType>::~ConcatType()
 {
-  if (!model)
-  {
-    // Clear memory.
-    for (size_t i = 0; i < network.size(); ++i)
-      delete network[i];
-  }
+  // Clear memory.
+  for (size_t i = 0; i < this->network.size(); ++i)
+    delete this->network[i];
 }
 
 template<typename InputType, typename OutputType>
 void ConcatType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
+  this->InitializeForwardPassMemory();
+  ComputeChannels();
+
   if (run)
   {
-    for (size_t i = 0; i < network.size(); ++i)
+    for (size_t i = 0; i < this->network.size(); ++i)
     {
-      network[i]->Forward(input,network[i]->OutputParameter());
+      this->network[i]->Forward(input, this->layerOutputs[i]);
     }
   }
 
-  output = network.front()->OutputParameter();
+  output = this->layerOutputs.front();
 
   // Reshape output to incorporate the channels.
   output.reshape(output.n_rows / channels, output.n_cols * channels);
 
-  for (size_t i = 1; i < network.size(); ++i)
+  for (size_t i = 1; i < this->network.size(); ++i)
   {
-    OutputType out = network[i]->OutputParameter();
+    OutputType out = this->layerOutputs[i];
 
     out.reshape(out.n_rows / channels, out.n_cols * channels);
 
-    // Vertically concatentate output from each layer.
+    // Vertically concatenate output from each layer.
     output = arma::join_cols(output, out);
   }
+
   // Reshape output to its original shape.
   output.reshape(output.n_rows * channels, output.n_cols / channels);
 }
@@ -119,33 +88,31 @@ template<typename InputType, typename OutputType>
 void ConcatType<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
+  this->InitializeBackwardPassMemory();
+
   size_t rowCount = 0;
   if (run)
   {
     OutputType delta;
     OutputType gyTmp(((OutputType&) gy).memptr(), gy.n_rows / channels,
         gy.n_cols * channels, false, false);
-    for (size_t i = 0; i < network.size(); ++i)
+    for (size_t i = 0; i < this->network.size(); ++i)
     {
       // Use rows from the error corresponding to the output from each layer.
-      size_t rows = network[i]->OutputParameter().n_rows;
+      size_t rows = this->network[i]->OutputParameter().n_rows;
 
-      // Extract from gy the parameters for the i-th network.
+      // Extract from gy the parameters for the i-th this->network.
       delta = gyTmp.rows(rowCount / channels, (rowCount + rows) / channels - 1);
       delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
 
-      network[i]->Backward(
-          network[i]->OutputParameter(),
-          delta,
-          network[i]->Delta()
-        );
+      this->network[i]->Backward(this->layerOutputs[i], delta, this->layerDeltas[i]);
       rowCount += rows;
     }
 
-    g = network[0]->Delta();
-    for (size_t i = 1; i < network.size(); ++i)
+    g = this->layerDeltas[0];
+    for (size_t i = 1; i < this->network.size(); ++i)
     {
-      g += network[i]->Delta();
+      g += this->layerDeltas[i];
     }
   }
   else
@@ -163,9 +130,9 @@ void ConcatType<InputType, OutputType>::Backward(
 
   for (size_t i = 0; i < index; ++i)
   {
-    rowCount += network[i]->OutputParameter().n_rows;
+    rowCount += this->layerOutputs[i].n_rows;
   }
-  rows = network[index]->OutputParameter().n_rows;
+  rows = this->layerOutputs[index].n_rows;
 
   // Reshape gy to extract the i-th layer gy.
   OutputType gyTmp(((OutputType&) gy).memptr(), gy.n_rows / channels,
@@ -175,38 +142,37 @@ void ConcatType<InputType, OutputType>::Backward(
       channels - 1);
   delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
 
-  network[index]->Backward(
-      network[index]->OutputParameter(),
-      delta,
-      network[index]->Delta()
-    );
+  this->network[index]->Backward(this->layerOutputs[index], delta, this->layerDeltas[index]);
 
-  g = network[index]->Delta();
+  g = this->layerDeltas[index];
 }
 
 template<typename InputType, typename OutputType>
 void ConcatType<InputType, OutputType>::Gradient(
     const InputType& input,
     const OutputType& error,
-    OutputType& /* gradient */)
+    OutputType& gradient)
 {
   if (run)
   {
     size_t rowCount = 0;
+    size_t paramCount = 0;
     // Reshape error to extract the i-th layer error.
     OutputType errorTmp(((OutputType&) error).memptr(),
         error.n_rows / channels, error.n_cols * channels, false, false);
-    for (size_t i = 0; i < network.size(); ++i)
+    for (size_t i = 0; i < this->network.size(); ++i)
     {
-      size_t rows = network[i]->OutputParameter().n_rows;
+      size_t rows = this->network[i]->OutputParameter().n_rows;
 
-      // Extract from error the parameters for the i-th network.
+      // Extract from error the parameters for the i-th this->network.
       OutputType err = errorTmp.rows(rowCount / channels, (rowCount + rows) /
           channels - 1);
       err.reshape(err.n_rows * channels, err.n_cols / channels);
 
-      network[i]->Gradient(input, err, network[i]->Gradient());
+      this->network[i]->Gradient(input, err, OutputType(gradient.colptr(paramCount),
+          1, this->network[i]->WeightSize(), false, true));
       rowCount += rows;
+      paramCount += this->network[i]->WeightSize();
     }
   }
 }
@@ -215,15 +181,17 @@ template<typename InputType, typename OutputType>
 void ConcatType<InputType, OutputType>::Gradient(
     const InputType& input,
     const OutputType& error,
-    OutputType& /* gradient */,
+    OutputType& gradient,
     const size_t index)
 {
   size_t rowCount = 0;
+  size_t paramCount = 0;
   for (size_t i = 0; i < index; ++i)
   {
-    rowCount += network[i]->OutputParameter().n_rows;
+    rowCount += this->network[i]->OutputParameter().n_rows;
+    paramCount += this->network[i]->WeightSize();
   }
-  size_t rows = network[index]->OutputParameter().n_rows;
+  size_t rows = this->network[index]->OutputParameter().n_rows;
 
   OutputType errorTmp(((OutputType&) error).memptr(),
       error.n_rows / channels, error.n_cols * channels, false, false);
@@ -231,7 +199,8 @@ void ConcatType<InputType, OutputType>::Gradient(
       channels - 1);
   err.reshape(err.n_rows * channels, err.n_cols / channels);
 
-  network[index]->Gradient(input, err, network[index]->Gradient());
+  this->network[index]->Gradient(input, err, OutputType(gradient.memptr(), 1,
+      paramCount, false, true));
 }
 
 template<typename InputType, typename OutputType>
@@ -239,15 +208,40 @@ template<typename Archive>
 void ConcatType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<MultiLayer<InputType, OutputType>>(this));
 
-  ar(CEREAL_NVP(model));
+  ar(CEREAL_NVP(axis));
+  ar(CEREAL_NVP(useAxis));
+  ar(CEREAL_NVP(channels));
   ar(CEREAL_NVP(run));
+}
 
-  // Do we have to load or save a model?
-  if (model)
+template<typename InputType, typename OutputType>
+void ConcatType<InputType, OutputType>::ComputeChannels()
+{
+  // Parameters to help calculate the number of channels.
+  size_t oldColSize = 1, newColSize = 1;
+  // Axis is specified and useAxis is true.
+  if (useAxis)
   {
-    ar(CEREAL_VECTOR_POINTER(network));
+    // Axis is specified without input dimension.
+    // Throw an error.
+    if (inputDimensions.size() > 0)
+    {
+      // Calculate rowSize, newColSize based on the axis
+      // of concatenation. Finally concat along cols and
+      // reshape to original format i.e. (input, batch_size).
+      size_t i = std::min(axis + 1, inputDimensions.size());
+      for (; i < inputDimensions.size(); ++i)
+        newColSize *= inputSize[i];
+    }
+    else
+      Log::Fatal << "Concat(): input has zero dimensions." << std::endl;
+
+    if (newColSize <= 0)
+      Log::Fatal << "Concat(): column size is zero." << std::endl;
+
+    channels = newColSize / oldColSize;
   }
 }
 

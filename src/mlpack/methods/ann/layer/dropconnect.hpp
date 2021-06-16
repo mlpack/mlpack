@@ -76,6 +76,10 @@ class DropConnectType : public Layer<InputType, OutputType>
   //! Clone the DropConnectType object. This handles polymorphism correctly.
   DropConnectType* Clone() const { return new DropConnectType(*this); }
 
+  // TODO: copy and move constructors and operators
+
+  ~DropConnectType();
+
   /**
    * Ordinary feed forward pass of the DropConnect layer.
    *
@@ -104,20 +108,6 @@ class DropConnectType : public Layer<InputType, OutputType>
                 const OutputType& error,
                 OutputType& gradient);
 
-  //! Get the model modules.
-  std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
-
-  //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
-
-  //! The value of the deterministic parameter.
-  bool const& Deterministic() const { return deterministic; }
-
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
   //! The probability of setting a value to zero.
   double Ratio() const { return ratio; }
 
@@ -128,8 +118,12 @@ class DropConnectType : public Layer<InputType, OutputType>
     scale = 1.0 / (1.0 - ratio);
   }
 
-  //! Return the size of the weight matrix.
-  size_t WeightSize() const { return 0; }
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    // Propagate input dimensions to the base layer.
+    baseLayer->InputDimensions() = this->inputDimensions;
+    return baseLayer->OutputDimensions();
+  }
 
   /**
    * Serialize the layer.
@@ -144,23 +138,14 @@ class DropConnectType : public Layer<InputType, OutputType>
   //! The scale fraction.
   double scale;
 
-  //! Locally-stored weight object.
-  OutputType weights;
-
   //! Locally-stored mask object.
   OutputType mask;
-
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
 
   //! Denoise mask for the weights.
   OutputType denoise;
 
   //! Locally-stored layer module.
   Layer<InputType, OutputType>* baseLayer;
-
-  //! Locally-stored network modules.
-  std::vector<Layer<InputType, OutputType>*> network;
 }; // class DropConnect.
 
 // Convenience typedefs.

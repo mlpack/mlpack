@@ -20,9 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputType, typename OutputType,
          typename Activation>
 RBF<InputType, OutputType, Activation>::RBF() :
-    inSize(0),
     outSize(0),
-    sigmas(0),
     betas(0)
 {
   // Nothing to do here.
@@ -31,26 +29,24 @@ RBF<InputType, OutputType, Activation>::RBF() :
 template<typename InputType, typename OutputType,
          typename Activation>
 RBF<InputType, OutputType, Activation>::RBF(
-    const size_t inSize,
     const size_t outSize,
     InputType& centres,
     double betas) :
-    inSize(inSize),
     outSize(outSize),
     betas(betas),
     centres(centres)
 {
-  sigmas = 0;
+  double sigmas = 0;
   if (betas == 0)
   {
     for (size_t i = 0; i < centres.n_cols; i++)
     {
-      double max_dis = 0;
+      double maxDis = 0;
       InputType temp = centres.each_col() - centres.col(i);
-      max_dis = arma::accu(arma::max(arma::pow(arma::sum(
+      maxDis = arma::accu(arma::max(arma::pow(arma::sum(
           arma::pow((temp), 2), 0), 0.5).t()));
-      if (max_dis > sigmas)
-        sigmas = max_dis;
+      if (maxDis > sigmas)
+        sigmas = maxDis;
     }
     this->betas = std::pow(2 * outSize, 0.5) / sigmas;
   }
@@ -61,6 +57,14 @@ void RBF<InputType, OutputType, Activation>::Forward(
     const InputType& input,
     OutputType& output)
 {
+  // Sanity check: make sure the dimensions are right.
+  if (input.n_rows != centres.n_rows)
+  {
+    Log::Fatal << "RBF::Forward(): input size (" << input.n_rows << ") does "
+        << "not match given center size (" << centres.n_rows << ")!"
+        << std::endl;
+  }
+
   distances = InputType(outSize, input.n_cols);
 
   for (size_t i = 0; i < input.n_cols; i++)
@@ -69,8 +73,7 @@ void RBF<InputType, OutputType, Activation>::Forward(
     distances.col(i) = arma::pow(arma::sum(
         arma::pow((temp), 2), 0), 0.5).t();
   }
-  Activation::Fn(distances * std::pow(betas, 0.5),
-      output);
+  Activation::Fn(distances * std::pow(betas, 0.5), output);
 }
 
 
@@ -93,6 +96,7 @@ void RBF<InputType, OutputType, Activation>::serialize(
 
   ar(CEREAL_NVP(distances));
   ar(CEREAL_NVP(centres));
+  ar(CEREAL_NVP(betas);
 }
 
 } // namespace ann

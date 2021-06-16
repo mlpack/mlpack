@@ -20,8 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 CELUType<InputType, OutputType>::CELUType(const double alpha) :
-    alpha(alpha),
-    deterministic(false)
+    alpha(alpha)
 {
   if (alpha == 0)
   {
@@ -41,7 +40,7 @@ void CELUType<InputType, OutputType>::Forward(
         (std::exp(input(i) / alpha) - 1);
   }
 
-  if (!deterministic)
+  if (!this->deterministic)
   {
     derivative.set_size(arma::size(input));
     for (size_t i = 0; i < input.n_elem; ++i)
@@ -68,6 +67,8 @@ void CELUType<InputType, OutputType>::serialize(
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
   ar(CEREAL_NVP(alpha));
+  if (Archive::is_loading::value)
+    derivative.clear();
 }
 
 } // namespace ann

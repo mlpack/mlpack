@@ -17,10 +17,8 @@
 
 #include "util/gradient_update.hpp"
 #include "util/deterministic_update.hpp"
-#include "util/loss_update.hpp"
 #include "util/output_width_update.hpp"
 #include "util/output_height_update.hpp"
-#include "util/reset_update.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -33,8 +31,6 @@ FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::FFN(
     OutputLayerType outputLayer, InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
-    width(0),
-    height(0),
     reset(false),
     numFunctions(0),
     deterministic(false)
@@ -48,8 +44,6 @@ template<typename OutputLayerType,
          typename OutputType>
 FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::~FFN()
 {
-  std::cout << "delete this " << this << " network size " << network.size() <<
-"\n";
   for (size_t i = 0; i < network.size(); ++i)
     delete network[i];
 }
@@ -125,7 +119,7 @@ double FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(*this, parameter, callbacks...);
+  const double out = optimizer.Optimize(*this, parameters, callbacks...);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
@@ -150,7 +144,7 @@ double FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const double out = optimizer.Optimize(*this, parameter, callbacks...);
+  const double out = optimizer.Optimize(*this, parameters, callbacks...);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::FFN(): final objective of trained model is " << out
@@ -164,13 +158,9 @@ template<typename OutputLayerType,
          typename OutputType>
 template<typename PredictorsType, typename ResponsesType>
 void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-    Forward(const PredictorsType& inputs, ResponsesType& results)
+Forward(const PredictorsType& inputs, ResponsesType& results)
 {
-  if (parameter.is_empty())
-    ResetParameters();
-
-  Forward(inputs);
-  results = network.back()->OutputParameter();
+  Forward(inputs, results, 0, network.size() - 1);
 }
 
 template<typename OutputLayerType,
@@ -179,18 +169,63 @@ template<typename OutputLayerType,
          typename OutputType>
 template<typename PredictorsType, typename ResponsesType>
 void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-    Forward(const PredictorsType& inputs, ResponsesType& results,
-        const size_t begin, const size_t end)
+Forward(const PredictorsType& inputs,
+        ResponsesType& results,
+        const size_t begin,
+        const size_t end)
 {
-  network[begin]->Forward(inputs, network[begin]->OutputParameter());
+  // Sanity checking...
+  if (end < begin)
+    return;
 
-  for (size_t i = 1; i < end - begin + 1; ++i)
+  // This is the function that actually runs the data through the network.  It
+  // is here that we need to check that the network is initialized correctly.
+
+  if (parameters.is_empty())
   {
-    network[begin + i]->Forward(network[begin + i - 1]->OutputParameter(),
-        network[begin + i]->OutputParameter());
+    // This does network initialization.
+    ResetParameters();
   }
 
-  results = network[end]->OutputParameter();
+  // Next we need to ensure that space for layerOutputs is allocated correctly.
+  InitializeForwardPassMemory(inputs.n_cols);
+
+  // TODO: what is reset?
+  if (!reset)
+  {
+    // Assume the input is flat...
+    std::vector<size_t> dims;
+    dims.push_back(inputs.n_rows);
+    dims.push_back(1);
+
+    network.front()->InputDimensions() = dims;
+    for (size_t i = 1; i < network.size(); ++i)
+    {
+      network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
+    }
+
+    reset = true;
+  }
+
+  // Ensure that the results matrix is the right size.
+  results.set_size(inputs.n_cols * network[end]->OutputSize());
+
+  if (end > begin)
+  {
+    network[begin]->Forward(inputs, layerOutputs[begin]);
+
+    for (size_t i = 1; i < end - begin; ++i)
+    {
+      network[begin + i]->Forward(layerOutputs[begin + i - 1],
+          layerOutputs[begin + i]);
+    }
+
+    network[end]->Forward(layerOutputs[end - 1], results);
+  }
+  else
+  {
+    network[end]->Forward(inputs, results);
+  }
 }
 
 template<typename OutputLayerType,
@@ -199,24 +234,25 @@ template<typename OutputLayerType,
          typename OutputType>
 template<typename PredictorsType, typename TargetsType, typename GradientsType>
 double FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-    Backward(const PredictorsType& inputs, const TargetsType& targets,
-        GradientsType& gradients)
+Backward(const PredictorsType& inputs,
+         const TargetsType& targets,
+         GradientsType& gradients)
 {
-  double res = outputLayer.Forward(network.back()->OutputParameter(), targets);
+  // We assume that Forward() has already been called!
+  double res = outputLayer.Forward(layerOutputs[network.size() - 1], targets);
 
   for (size_t i = 0; i < network.size(); ++i)
-    res += LossUpdate(network[i]);
+    res += network[i]->Loss();
 
-  outputLayer.Backward(network.back()->OutputParameter(), targets, error);
+  // error's size will be set correctly by outputLayer.Backward().
+  outputLayer.Backward(layerOutputs[network.size() - 1], targets, error);
 
-  gradients = arma::zeros<arma::mat>(parameter.n_rows, parameter.n_cols);
+  gradients = arma::zeros<GradientsType>(parameters.n_rows, parameters.n_cols);
 
   Backward();
-  ResetGradients(gradients);
-  Gradient(inputs);
+  Gradient(inputs, gradients);
 
   return res;
-
 }
 
 template<typename OutputLayerType,
@@ -224,9 +260,11 @@ template<typename OutputLayerType,
          typename InputType,
          typename OutputType>
 void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-    Predict(InputType predictors, OutputType& results)
+Predict(InputType predictors, OutputType& results, const size_t batchSize)
 {
-  if (parameter.is_empty())
+  // TODO: actually care about batchSize
+
+  if (parameters.is_empty())
     ResetParameters();
 
   if (!deterministic)
@@ -235,19 +273,15 @@ void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
     ResetDeterministic();
   }
 
-  OutputType resultsTemp;
-  Forward(arma::mat(predictors.colptr(0), predictors.n_rows, 1, false, true));
+  results.set_size(network.back()->OutputSize(), predictors.n_cols);
 
-  resultsTemp = network.back()->OutputParameter().col(0);
-  results = arma::mat(resultsTemp.n_elem, predictors.n_cols);
-  results.col(0) = resultsTemp.col(0);
-
-  for (size_t i = 1; i < predictors.n_cols; ++i)
+  for (size_t i = 0; i < predictors.n_cols; ++i)
   {
-    Forward(arma::mat(predictors.colptr(i), predictors.n_rows, 1, false, true));
+    InputType predictorAlias(predictors.colptr(i), predictors.n_rows, 1, false,
+        true);
+    OutputType resultAlias(results.colptr(i), results.n_rows, 1, false, true);
 
-    resultsTemp = network.back()->OutputParameter();
-    results.col(i) = resultsTemp.col(0);
+    Forward(predictorAlias, resultAlias);
   }
 }
 
@@ -257,9 +291,9 @@ template<typename OutputLayerType,
          typename OutputType>
 template<typename PredictorsType, typename ResponsesType>
 double FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-    Evaluate(const PredictorsType& predictors, const ResponsesType& responses)
+Evaluate(const PredictorsType& predictors, const ResponsesType& responses)
 {
-  if (parameter.is_empty())
+  if (parameters.is_empty())
     ResetParameters();
 
   if (!deterministic)
@@ -268,10 +302,11 @@ double FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
     ResetDeterministic();
   }
 
-  Forward(predictors);
+  // Note that layerOutputs may not yet be initialized correctly, but if it
+  // isn't, this will be handled by Forward().
+  Forward(predictors, layerOutputs.back());
 
-  double res = outputLayer.Forward(network.back()->OutputParameter(),
-      responses);
+  double res = outputLayer.Forward(layerOutputs.back(), responses);
   for (size_t i = 0; i < network.size(); ++i)
     res += LossUpdate(network[i]);
 
@@ -297,10 +332,12 @@ template<typename OutputLayerType,
          typename InputType,
          typename OutputType>
 double FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-    Evaluate(const OutputType& /* parameters */, const size_t begin,
-        const size_t batchSize, const bool deterministic)
+Evaluate(const OutputType& /* parameters */,
+         const size_t begin,
+         const size_t batchSize,
+         const bool deterministic)
 {
-  if (parameter.is_empty())
+  if (parameters.is_empty())
     ResetParameters();
 
   if (deterministic != this->deterministic)
@@ -309,13 +346,13 @@ double FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
     ResetDeterministic();
   }
 
-  Forward(predictors.cols(begin, begin + batchSize - 1));
+  Forward(predictors.cols(begin, begin + batchSize - 1), layerOutputs.back());
 
-  double res = outputLayer.Forward(network.back()->OutputParameter(),
+  double res = outputLayer.Forward(layerOutputs.back(),
       responses.cols(begin, begin + batchSize - 1));
 
   for (size_t i = 0; i < network.size(); ++i)
-    res += LossUpdate(network[i]);
+    res += network[i]->Loss();
 
   return res;
 }
@@ -325,8 +362,9 @@ template<typename OutputLayerType,
          typename InputType,
          typename OutputType>
 double FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-Evaluate(const OutputType& parameters, const size_t begin,
-    const size_t batchSize)
+Evaluate(const OutputType& parameters,
+         const size_t begin,
+         const size_t batchSize)
 {
   return Evaluate(parameters, begin, batchSize, true);
 }
@@ -357,37 +395,26 @@ EvaluateWithGradient(const OutputType& parameters,
 {
   if (gradient.is_empty())
   {
-    if (parameter.is_empty())
-      ResetParameters();
-
-    gradient = arma::zeros<OutputType>(parameter.n_rows, parameter.n_cols);
+    gradient = arma::zeros<OutputType>(parameters.n_rows, parameters.n_cols);
   }
   else
   {
     gradient.zeros();
   }
 
-  if (this->deterministic)
-  {
-    this->deterministic = false;
-    ResetDeterministic();
-  }
+  // TODO: can this just be a call to Forward() then Backward()?
 
-  Forward(predictors.cols(begin, begin + batchSize - 1));
-  double res = outputLayer.Forward(
-      network.back()->OutputParameter(),
-      responses.cols(begin, begin + batchSize - 1));
+  double res = Evaluate(parameters, begin, batchSize, false);
 
   for (size_t i = 0; i < network.size(); ++i)
     res += network[i]->Loss();
 
-  outputLayer.Backward(network.back()->OutputParameter(),
+  outputLayer.Backward(layerOutputs.back(),
       responses.cols(begin, begin + batchSize - 1),
       error);
 
   Backward();
-  ResetGradients(gradient);
-  Gradient(predictors.cols(begin, begin + batchSize - 1));
+  Gradient(predictors.cols(begin, begin + batchSize - 1), gradient);
 
   return res;
 }
@@ -397,8 +424,10 @@ template<typename OutputLayerType,
          typename InputType,
          typename OutputType>
 void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-Gradient(const OutputType& parameters, const size_t begin,
-    OutputType& gradient, const size_t batchSize)
+Gradient(const OutputType& parameters,
+         const size_t begin,
+         OutputType& gradient,
+         const size_t batchSize)
 {
   this->EvaluateWithGradient(parameters, begin, gradient, batchSize);
 }
@@ -424,7 +453,7 @@ ResetParameters()
 
   // Reset the network parameter with the given initialization rule.
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
-  networkInit.Initialize(network, parameter);
+  networkInit.Initialize(network, parameters);
 }
 
 template<typename OutputLayerType,
@@ -434,8 +463,9 @@ template<typename OutputLayerType,
 void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
 ResetDeterministic()
 {
+  // TODO: change the name of this...
   for (size_t i = 0; i < network.size(); ++i)
-    DeterministicUpdate(network[i], deterministic);
+    network[i]->Deterministic() = true;
 }
 
 template<typename OutputLayerType,
@@ -455,68 +485,23 @@ template<typename OutputLayerType,
          typename InputType,
          typename OutputType>
 void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-Forward(const InputType& input)
+Backward()
 {
-  network.front()->Forward(input, network.front()->OutputParameter());
+  // This actually does the backward computation.  In order to do that, we need
+  // to make sure that the local variables we'll be using are properly
+  // initialized.
+  InitializeBackwardPassMemory(layerOutputs.back().n_cols);
 
-  if (!reset)
-  {
-    const size_t outputWidth = OutputWidth(network.front());
-    if (outputWidth != 0)
-      width = outputWidth;
-
-    const size_t outputHeight = OutputHeight(network.front());
-    if (outputHeight != 0)
-      height = outputHeight;
-  }
+  // layerDeltas.back() will have size
+  // network[network.size() - 2]->OutputSize() * batchSize.
+  network.back()->Backward(layerOutputs.back(), error, layerDeltas.back());
 
   for (size_t i = 1; i < network.size(); ++i)
   {
-    if (!reset)
-    {
-      // Set the input width.
-      network[i]->InputWidth() = width;
-
-      // Set the input height.
-      network[i]->InputHeight() = height;
-    }
-
-    network[i]->Forward(network[i - 1]->OutputParameter(), network[i]->OutputParameter());
-
-    if (!reset)
-    {
-      // Get the output width.
-      const size_t outputWidth = OutputWidth(network[i]);
-      if (outputWidth != 0)
-        width = outputWidth;
-
-      // Get the output height.
-      const size_t outputHeight = OutputHeight(network[i]);
-      if (outputHeight != 0)
-        height = outputHeight;
-    }
-  }
-
-  if (!reset)
-    reset = true;
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-Backward()
-{
-  network.back()->Backward(network.back()->OutputParameter(),
-      error, network.back()->Delta());
-
-  for (size_t i = 2; i < network.size(); ++i)
-  {
     network[network.size() - i]->Backward(
-        network[network.size() - i]->OutputParameter(),
-        network[network.size() - i + 1]->Delta(),
-        network[network.size() - i]->Delta());
+        layerOutputs[network.size() - i],
+        layerDeltas[network.size() - i + 1],
+        layerDeltas[network.size() - i]);
   }
 }
 
@@ -525,20 +510,21 @@ template<typename OutputLayerType,
          typename InputType,
          typename OutputType>
 void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-Gradient(const InputType& input)
+Gradient(const InputType& input, OutputType& gradient)
 {
-  arma::mat inputTemp = input;
-  network.front()->Gradient(inputTemp,
-      network[1]->Delta(), network.front()->Gradient());
+  // Make sure that the memory is initialized for layerGradients.
+  InitializeGradientPassMemory(gradient);
+
+  network.front()->Gradient(input, layerDeltas[1], layerGradients.front());
 
   for (size_t i = 1; i < network.size() - 1; ++i)
   {
-    network[i]->Gradient(network[i - 1]->OutputParameter(),
-        network[i + 1]->Delta(),  network[i]->Gradient());
+    network[i]->Gradient(layerOutputs[i - 1], layerDeltas[i + 1],
+        layerGradients[i]);
   }
 
-  network[network.size() - 1]->Gradient(network[network.size() - 2]->OutputParameter(),
-      error, network[network.size() - 1]->Gradient());
+  network.back()->Gradient(layerOutputs[network.size() - 2], error,
+      layerGradients.back());
 }
 
 template<typename OutputLayerType,
@@ -549,31 +535,45 @@ template<typename Archive>
 void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
 serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(width));
-  ar(CEREAL_NVP(height));
+  // Serialize the output layer and initialization rule.
+  ar(CEREAL_NVP(outputLayer));
+  ar(CEREAL_NVP(initializeRule));
 
-  ar(CEREAL_NVP(reset));
-
-  std::cout << "serialize this " << this << ", network size " << network.size()
-<< "; loading " << Archive::is_loading::value << "\n";
+  // Serialize the network itself.
   ar(CEREAL_VECTOR_POINTER(network));
+  ar(CEREAL_NVP(parameters));
 
-  // TODO: do we need to serialize this?
-  ar(CEREAL_NVP(parameter));
-
-  // TODO: I'm assuming we don't need to serialize delta, inputParameter,
-  // outputParameter, or gradient.
+  // Serialize the expected input size.
+  ar(CEREAL_NVP(inputDimensions));
+  ar(CEREAL_NVP(reset));
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())
   {
+    // We can clear these members, since it's not possible to serialize in the
+    // middle of training and resume.
+    predictors.clear();
+    responses.clear();
+    numFunctions = 0;
+
+    layerOutputMatrix.clear();
+    layerOutputs.clear();
+    layerOutputs.resize(network.size(), OutputType());
+
+    deltaMatrix.clear();
+    layerDeltas.clear();
+    layerDeltas.resize(network.size(), OutputType());
+
+    gradientMatrix.clear();
+    layerGradients.clear();
+    layerGradients.resize(network.size(), OutputType());
+
     deterministic = true;
-    ResetDeterministic();
 
     // Reset each layer so its weights are set right.
     // TODO: should we just do that in serialize()?
-    for (size_t i = 0; i < network.size(); ++i)
-      network[i]->Reset();
+//    for (size_t i = 0; i < network.size(); ++i)
+//      network[i]->Reset();
   }
 }
 
@@ -586,21 +586,111 @@ Swap(FFN& network)
 {
   std::swap(outputLayer, network.outputLayer);
   std::swap(initializeRule, network.initializeRule);
-  std::swap(width, network.width);
-  std::swap(height, network.height);
   std::swap(reset, network.reset);
   std::swap(this->network, network.network);
+  std::swap(parameters, network.parameters);
+  std::swap(inputDimensions, network.inputDimensions);
   std::swap(predictors, network.predictors);
   std::swap(responses, network.responses);
-  std::swap(parameter, network.parameter);
   std::swap(numFunctions, network.numFunctions);
   std::swap(error, network.error);
   std::swap(deterministic, network.deterministic);
-  std::swap(delta, network.delta);
-  std::swap(inputParameter, network.inputParameter);
-  std::swap(outputParameter, network.outputParameter);
-  std::swap(gradient, network.gradient);
+  std::swap(layerOutputMatrix, network.layerOutputMatrix);
+  std::swap(totalOutputSize, network.totalOutputSize);
+  std::swap(layerOutputs, network.layerOutputs);
+  std::swap(deltaMatrix, network.deltaMatrix);
+  std::swap(layerDeltas, network.layerDeltas);
+  std::swap(gradientMatrix, network.gradientMatrix);
+  std::swap(layerGradients, network.layerGradients);
 };
+
+// Initialize memory to be used for storing the outputs of each layer, if
+// necessary.  This should be called at the start of each forward pass, but does
+// not need to be called at any other time.
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
+InitializeForwardPassMemory(const size_t batchSize)
+{
+  // We need to initialize memory to store the output of each layer's Forward()
+  // call.  We'll do this all in one matrix, but, the size of this matrix
+  // depends on the batch size we are using for computation.  We avoid resizing
+  // layerOutputMatrix down, unless we only need 10% or less of it.
+  if (batchSize * totalOutputSize > layerOutputMatrix.n_elem ||
+      batchSize * totalOutputSize < std::floor(0.1 * layerOutputMatrix.n_elem))
+  {
+    // All outputs will be represented by one big block of memory.
+    layerOutputMatrix = OutputType(1, batchSize * totalOutputSize);
+  }
+
+  // Now, create an alias to the right place for each layer.  We assume that
+  // layerOutputs is already sized correctly (this should be done by Add()).
+  size_t start = 0;
+  for (size_t i = 0; i < layerOutputs.size(); ++i)
+  {
+    const size_t layerOutputSize = network[i]->OutputSize();
+    layerOutputs[i] = OutputType(layerOutputMatrix.colptr(start),
+        layerOutputSize, batchSize, false, true);
+    start += batchSize * layerOutputSize;
+  }
+}
+
+// Initialize memory to be used for the backward pass.  This should be called at
+// the start of each backward pass, but does not need to be called at any other
+// time.
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
+InitializeBackwardPassMemory(const size_t batchSize)
+{
+  // We need to initialize memory to store the output of each layer's Backward()
+  // and Gradient() calls.  We do this similarly to
+  // InitializeForwardPassMemory(), but we must store a matrix to use as the
+  // delta for each layer.
+  const size_t inputSize = std::accumulate(inputDimensions.begin(),
+      inputDimensions.end(), 0);
+  const size_t totalInputSize = totalOutputSize - network.back()->OutputSize() +
+      inputSize;
+  if (batchSize * totalInputSize > deltaMatrix.n_elem ||
+      batchSize * totalInputSize < std::floor(0.1 * layerOutputMatrix.n_elem))
+  {
+    // All deltas will be represented by one big block of memory.
+    deltaMatrix = OutputType(1, batchSize * totalInputSize);
+  }
+
+  // Now, create an alias to the right place for each layer.  We assume that
+  // layerDeltas is already sized correctly (this should be done by Add()).
+  size_t start = 0;
+  for (size_t i = 0; i < layerDeltas.size(); ++i)
+  {
+    const size_t layerInputSize = (i == 0) ? inputSize :
+        network[i - 1]->OutputSize();
+    layerDeltas[i] = OutputType(deltaMatrix.colptr(start), layerInputSize,
+        batchSize, false, true);
+    start += batchSize * layerInputSize;
+  }
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
+InitializeGradientPassMemory(OutputType& gradient)
+{
+  // We need to initialize the aliases `layerGradients()` for each layer.
+  size_t start = 0;
+  for (size_t i = 0; i < layerGradients.size(); ++i)
+  {
+    const size_t layerParamSize = network[i]->WeightSize();
+    layerGradients[i] = OutputType(gradient.colptr(start), layerParamSize, 1,
+        false, true);
+  }
+}
 
 template<typename OutputLayerType,
          typename InitializationRuleType,
@@ -610,26 +700,28 @@ FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::FFN(
     const FFN& network):
     outputLayer(network.outputLayer),
     initializeRule(network.initializeRule),
-    width(network.width),
-    height(network.height),
     reset(network.reset),
+    parameters(network.parameters),
+    inputDimensions(network.inputDimensions),
     predictors(network.predictors),
     responses(network.responses),
-    parameter(network.parameter),
     numFunctions(network.numFunctions),
     error(network.error),
-    deterministic(network.deterministic),
-    delta(network.delta),
-    inputParameter(network.inputParameter),
-    outputParameter(network.outputParameter),
-    gradient(network.gradient)
+    deterministic(network.deterministic)
 {
   // Build new layers according to source network
   for (size_t i = 0; i < network.network.size(); ++i)
   {
     this->network.push_back(network.network[i]->Clone());
-    ResetUpdate(this->network.back());
+    // TODO:  dig into this
+    // this will need the weights to be set right for each layer...
+    //ResetUpdate(this->network.back());
   }
+
+  layerOutputs.resize(this->network.size(), OutputType());
+  totalOutputSize = network.totalOutputSize;
+  layerDeltas.resize(this->network.size(), OutputType());
+  layerGradients.resize(this->network.size(), OutputType());
 };
 
 template<typename OutputLayerType,
@@ -640,21 +732,23 @@ FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::FFN(
     FFN&& network):
     outputLayer(std::move(network.outputLayer)),
     initializeRule(std::move(network.initializeRule)),
-    width(network.width),
-    height(network.height),
     reset(network.reset),
+    network(std::move(network.network)),
+    parameters(std::move(network.parameters)),
+    inputDimensions(std::move(network.inputDimensions)),
     predictors(std::move(network.predictors)),
     responses(std::move(network.responses)),
-    parameter(std::move(network.parameter)),
     numFunctions(network.numFunctions),
     error(std::move(network.error)),
     deterministic(network.deterministic),
-    delta(std::move(network.delta)),
-    inputParameter(std::move(network.inputParameter)),
-    outputParameter(std::move(network.outputParameter)),
-    gradient(std::move(network.gradient))
+    layerOutputMatrix(std::move(network.layerOutputMatrix)),
+    layerOutputs(std::move(network.layerOutputs)),
+    deltaMatrix(std::move(network.deltaMatrix)),
+    layerDeltas(std::move(network.layerDeltas)),
+    gradientMatrix(std::move(network.gradientMatrix)),
+    layerGradients(std::move(network.layerGradients))
 {
-  this->network = std::move(network.network);
+  // Nothing else to do.
 };
 
 template<typename OutputLayerType,
@@ -663,7 +757,7 @@ template<typename OutputLayerType,
          typename OutputType>
 FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>&
 FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-operator =(FFN network)
+operator=(FFN network)
 {
   Swap(network);
   return *this;

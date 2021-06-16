@@ -23,8 +23,7 @@ template<typename InputType, typename OutputType>
 DropoutType<InputType, OutputType>::DropoutType(
     const double ratio) :
     ratio(ratio),
-    scale(1.0 / (1.0 - ratio)),
-    deterministic(false)
+    scale(1.0 / (1.0 - ratio))
 {
   // Nothing to do here.
 }
@@ -33,8 +32,7 @@ template<typename InputType, typename OutputType>
 DropoutType<InputType, OutputType>::DropoutType(
     const DropoutType& layer) :
     ratio(layer.ratio),
-    scale(layer.scale),
-    deterministic(layer.deterministic)
+    scale(layer.scale)
 {
   // Nothing to do here.
 }
@@ -43,8 +41,7 @@ template<typename InputType, typename OutputType>
 DropoutType<InputType, OutputType>::DropoutType(
     const DropoutType&& layer) :
     ratio(std::move(layer.ratio)),
-    scale(std::move(scale)),
-    deterministic(std::move(deterministic))
+    scale(std::move(scale))
 {
   // Nothing to do here.
 }
@@ -57,7 +54,6 @@ operator=(const DropoutType& layer)
   {
     ratio = layer.ratio;
     scale = layer.scale;
-    deterministic = layer.deterministic;
   }
 
   return *this;
@@ -71,7 +67,6 @@ operator=(DropoutType&& layer)
   {
     ratio = std::move(layer.ratio);
     scale = std::move(layer.scale);
-    deterministic = std::move(layer.deterministic);
   }
 
   return *this;
@@ -82,9 +77,9 @@ void DropoutType<InputType, OutputType>::Forward(
     const InputType& input,
     OutputType& output)
 {
-  // The dropout mask will not be multiplied in the deterministic mode
+  // The dropout mask will not be multiplied in the this->deterministic mode
   // (during testing).
-  if (deterministic)
+  if (this->deterministic)
   {
     output = input;
   }

@@ -91,10 +91,11 @@ operator=(Linear3DType&& layer)
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
-void Linear3DType<InputType, OutputType, RegularizerType>::Reset()
+void Linear3DType<InputType, OutputType, RegularizerType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  weight = OutputType(weights.memptr(), outSize, inSize, false, false);
-  bias = OutputType(weights.memptr() + weight.n_elem, outSize, 1, false, false);
+  weight = OutputType(weightsPtr, outSize, inSize, false, false);
+  bias = OutputType(weightsPtr + weight.n_elem, outSize, 1, false, false);
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
@@ -103,6 +104,7 @@ void Linear3DType<InputType, OutputType, RegularizerType>::Forward(
 {
   typedef typename arma::Cube<typename InputType::elem_type> CubeType;
 
+  // TODO: we can probably ensure that this check isn't needed
   if (input.n_rows % inSize != 0)
   {
     Log::Fatal << "Number of features in the input must be divisible by inSize."
@@ -121,7 +123,7 @@ void Linear3DType<InputType, OutputType, RegularizerType>::Forward(
   {
     // Shape of weight : (outSize, inSize).
     // Shape of inputTemp : (inSize, nPoints, batchSize).
-    InputType z = weight * inputTemp.slice(i);
+    OutputType z = weight * inputTemp.slice(i);
     z.each_col() += bias;
     output.col(i) = arma::vectorise(z);
   }
@@ -204,10 +206,7 @@ void Linear3DType<InputType, OutputType, RegularizerType>::serialize(
 
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
-  ar(CEREAL_NVP(weights));
-
-  if (Archive::is_loading::value)
-    Reset();
+  ar(CEREAL_NVP(regularizer));
 }
 
 } // namespace ann

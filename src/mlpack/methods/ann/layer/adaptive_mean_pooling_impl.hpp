@@ -49,7 +49,7 @@ void AdaptiveMeanPoolingType<InputType, OutputType>::Forward(
 {
   if (!reset)
   {
-    IntializeAdaptivePadding();
+    InitializeAdaptivePadding();
     reset = true;
   }
 

@@ -78,31 +78,17 @@ class AddType : public Layer<InputType, OutputType>
                 const OutputType& error,
                 OutputType& gradient);
 
-  //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
-
   //! Get the size of weights.
   size_t WeightSize() const { return outSize; }
+
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> result(this->inputDimensions.size(), 1);
+    result[0] = outSize;
+    return result;
+  }
+
+  void SetWeights(typename OutputType::elem_type* weightPtr);
 
   /**
    * Serialize the layer
@@ -116,15 +102,6 @@ class AddType : public Layer<InputType, OutputType>
 
   //! Locally-stored weight object.
   OutputType weights;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class Add
 
 // Standard Add layer.

@@ -106,16 +106,6 @@ class BaseLayer : public Layer<InputType, OutputType>
     g = gy % derivative;
   }
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
   /**
    * Serialize the layer.
    */
@@ -125,13 +115,6 @@ class BaseLayer : public Layer<InputType, OutputType>
     ar(cereal::base_class<Layer<InputType, OutputType>>(this));
     // Nothing to serialize.
   }
-
- private:
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class BaseLayer
 
 // Convenience typedefs.

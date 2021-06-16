@@ -21,16 +21,16 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 AddMerge<InputType, OutputType>::AddMerge(
-    const bool model, const bool run) :
-    model(model), run(run), ownsLayers(!model)
+    const bool run) :
+    run(run), ownsLayers(true)
 {
   // Nothing to do here.
 }
 
 template<typename InputType, typename OutputType>
 AddMerge<InputType, OutputType>::AddMerge(
-    const bool model, const bool run, const bool ownsLayers) :
-    model(model), run(run), ownsLayers(ownsLayers)
+    const bool run, const bool ownsLayers) :
+    run(run), ownsLayers(ownsLayers)
 {
   // Nothing to do here.
 }
@@ -38,29 +38,27 @@ AddMerge<InputType, OutputType>::AddMerge(
 template<typename InputType, typename OutputType>
 AddMerge<InputType, OutputType>::~AddMerge()
 {
-  if (!model && ownsLayers)
-  {
-    for (size_t i = 0; i < network.size(); ++i)
-      delete network[i];
-  }
+
 }
 
 template<typename InputType, typename OutputType>
 void AddMerge<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
+  this->InitializeForwardPassMemory();
+
   if (run)
   {
-    for (size_t i = 0; i < network.size(); ++i)
+    for (size_t i = 0; i < this->network.size(); ++i)
     {
-      network[i]->Forward(input, network->OutputParameter());
+      this->network[i]->Forward(input, this->layerOutputs[i]);
     }
   }
 
-  output = network.front()->OutputParameter();
-  for (size_t i = 1; i < network.size(); ++i)
+  output = this->layerOutputs.front();
+  for (size_t i = 1; i < this->network.size(); ++i)
   {
-    output += network[i]->OutputParameter();
+    output += this->layerOutputs[i];
   }
 }
 
@@ -70,22 +68,26 @@ void AddMerge<InputType, OutputType>::Backward(
     const OutputType& gy,
     OutputType& g)
 {
+  this->InitializeBackwardPassMemory();
+
   if (run)
   {
-    for (size_t i = 0; i < network.size(); ++i)
+    for (size_t i = 0; i < this->network.size(); ++i)
     {
-      network[i]->Backward(network[i]->OutputParameter(), gy,
-          network[i]->Delta());
+      this->network[i]->Backward(this->layerOutputs[i], gy,
+          this->layerDeltas[i]);
     }
 
-    g = network[0]->Delta();
-    for (size_t i = 1; i < network.size(); ++i)
+    g = this->layerDeltas[0];
+    for (size_t i = 1; i < this->network.size(); ++i)
     {
-      g += network[i]->Delta();
+      g += this->layerDeltas[i];
     }
   }
   else
+  {
     g = gy;
+  }
 }
 
 template<typename InputType, typename OutputType>
@@ -95,22 +97,23 @@ void AddMerge<InputType, OutputType>::Backward(
     OutputType& g,
     const size_t index)
 {
-  network[index]->Backward(network[index]->OutputParameter(), gy,
-      network[index]->Delta());
-  g = network[index]->Delta();
+  this->network[index]->Backward(this->layerOutputs[index], gy, g);
 }
 
 template<typename InputType, typename OutputType>
 void AddMerge<InputType, OutputType>::Gradient(
     const InputType& input,
     const OutputType& error,
-    OutputType& /* gradient */ )
+    OutputType& gradient)
 {
   if (run)
   {
-    for (size_t i = 0; i < network.size(); ++i)
+    size_t start = 0;
+    for (size_t i = 0; i < this->network.size(); ++i)
     {
-      network[i]->Gradient(input, error, network[i]->Gradient());
+      this->network[i]->Gradient(input, error, OutputType(gradient.colptr(start),
+          1, this->network[i]->WeightSize(), false, true));
+      start += this->network[i]->WeightSize();
     }
   }
 }
@@ -119,10 +122,10 @@ template<typename InputType, typename OutputType>
 void AddMerge<InputType, OutputType>::Gradient(
     const InputType& input,
     const OutputType& error,
-    OutputType& /* gradient */,
+    OutputType& gradient,
     const size_t index)
 {
-  network[index]->Gradient(input, error, network[index]->Gradient());
+  this->network[index]->Gradient(input, error, gradient);
 }
 
 template<typename InputType, typename OutputType>
@@ -130,13 +133,10 @@ template<typename Archive>
 void AddMerge<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<MultiLayer<InputType, OutputType>>(this));
 
-  ar(CEREAL_VECTOR_POINTER(network));
-  ar(CEREAL_NVP(model));
   ar(CEREAL_NVP(run));
   ar(CEREAL_NVP(ownsLayers));
-  ar(CEREAL_NVP(weights));
 }
 
 } // namespace ann

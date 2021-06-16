@@ -34,30 +34,24 @@ template <
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class ConcatType : public Layer<InputType, OutputType>
+class ConcatType : public MultiLayer<InputType, OutputType>
 {
  public:
   /**
    * Create the Concat object using the specified parameters.
    *
-   * @param model Expose all network modules.
    * @param run Call the Forward/Backward method before the output is merged.
    */
-  ConcatType(const bool model = false,
-             const bool run = true);
+  ConcatType(const bool run = true);
 
   /**
-   * Create the Concat object using the specified parameters.
+   * Create the Concat object, specifying a particular axis on which the layer
+   * outputs should be concatenated.
    *
-   * @param inputSize A vector denoting input size of each layer added.
    * @param axis Concat axis.
-   * @param model Expose all network modules.
    * @param run Call the Forward/Backward method before the output is merged.
    */
-  ConcatType(arma::Row<size_t>& inputSize,
-             const size_t axis,
-             const bool model = false,
-             const bool run = true);
+  ConcatType(const size_t axis, const bool run = true);
 
   /**
    * Destroy the layers held by the model.
@@ -128,60 +122,10 @@ class ConcatType : public Layer<InputType, OutputType>
                 OutputType& gradient,
                 const size_t index);
 
-  /**
-   * Add a new module to the model.
-   *
-   * @param args The layer parameter.
-   */
-  template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
-
-  /**
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  void Add(Layer<>* layer) { network.push_back(layer); }
-
-  //! Return the model modules.
-  std::vector<Layer<>*>& Model()
-  {
-    if (model)
-    {
-      return network;
-    }
-
-    return empty;
-  }
-
-  //! Return the initial point for the optimization.
-  const OutputType& Parameters() const { return weights; }
-  //! Modify the initial point for the optimization.
-  OutputType& Parameters() { return weights; }
-
   //! Get the value of run parameter.
   bool Run() const { return run; }
   //! Modify the value of run parameter.
   bool& Run() { return run; }
-
-  const InputType& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  const OutputType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.e
-  const OutputType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  const OutputType& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
 
   //! Get the axis of concatenation.
   const size_t& ConcatAxis() const { return axis; }
@@ -196,8 +140,9 @@ class ConcatType : public Layer<InputType, OutputType>
   void serialize(Archive& ar,  const uint32_t /* version */);
 
  private:
-  //! Parameter which indicates the input size of modules.
-  arma::Row<size_t> inputSize;
+  //! Utility function to compute the channels given the current
+  //! inputDimensions.
+  void ComputeChannels();
 
   //! Parameter which indicates the axis of concatenation.
   size_t axis;
@@ -205,36 +150,12 @@ class ConcatType : public Layer<InputType, OutputType>
   //! Parameter which indicates whether to use the axis of concatenation.
   bool useAxis;
 
-  //! Parameter which indicates if the modules should be exposed.
-  bool model;
+  //! Parameter to store channels.
+  size_t channels;
 
   //! Parameter which indicates if the Forward/Backward method should be called
   //! before merging the output.
   bool run;
-
-  //! Parameter to store channels.
-  size_t channels;
-
-  //! Locally-stored network modules.
-  std::vector<Layer<>*> network;
-
-  //! Locally-stored model weights.
-  OutputType weights;
-
-  //! Locally-stored empty list of modules.
-  std::vector<Layer<>*> empty;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored input parameter object.
-  InputType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
 }; // class ConcatType.
 
 // Standard Concat layer.

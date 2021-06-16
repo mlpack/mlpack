@@ -32,7 +32,6 @@ template<typename InputType, typename OutputType>
 void HardTanHType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output = input;
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (output(i) > maxValue ? maxValue :

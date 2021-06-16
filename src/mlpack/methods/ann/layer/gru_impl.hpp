@@ -36,8 +36,7 @@ GRU<InputType, OutputType>::GRU(
     batchSize(1),
     forwardStep(0),
     backwardStep(0),
-    gradientStep(0),
-    deterministic(false)
+    gradientStep(0)
 {
   // Input specific linear layers(for zt, rt, ot).
   input2GateModule = new LinearType<InputType, OutputType>(inSize, 3 * outSize);

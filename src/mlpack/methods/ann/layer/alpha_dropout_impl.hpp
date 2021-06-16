@@ -72,6 +72,9 @@ void AlphaDropout<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(alphaDash));
   ar(CEREAL_NVP(a));
   ar(CEREAL_NVP(b));
+
+  // No need to serialize the mask, since it will be recomputed on the next
+  // forward pass.
 }
 
 } // namespace ann

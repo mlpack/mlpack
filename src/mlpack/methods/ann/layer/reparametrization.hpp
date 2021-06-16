@@ -22,8 +22,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Reparametrization layer class. This layer samples from the
- * given parameters of a normal distribution.
+ * Implementation of the Reparametrization layer class. This layer samples from
+ * the given parameters of a normal distribution.
  *
  * This class also supports beta-VAE, a state-of-the-art framework for
  * automated discovery of interpretable factorised latent representations from
@@ -38,7 +38,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   author  = {Irina Higgins, Loic Matthey, Arka Pal, Christopher Burgess,
  *              Xavier Glorot, Matthew Botvinick, Shakir Mohamed and
  *              Alexander Lerchner | Google DeepMind},
- *   journal = {2017 International Conference on Learning Representations(ICLR)},
+ *   journal = {2017 International Conference on Learning Representations
+ *                 (ICLR)},
  *   year    = {2017},
  *   url     = {https://deepmind.com/research/publications/beta-VAE-Learning-Basic-Visual-Concepts-with-a-Constrained-Variational-Framework}
  * }
@@ -60,7 +61,8 @@ class ReparametrizationType : public Layer<InputType, OutputType>
   ReparametrizationType();
 
   /**
-   * Create the Reparametrization layer object using the specified sample vector size.
+   * Create the Reparametrization layer object using the specified sample vector
+   * size.
    *
    * @param latentSize The number of output latent units.
    * @param stochastic Whether we want random sample or constant.
@@ -68,15 +70,15 @@ class ReparametrizationType : public Layer<InputType, OutputType>
    * @param beta The beta (hyper)parameter for beta-VAE mentioned above.
    */
   ReparametrizationType(const size_t latentSize,
-                         const bool stochastic = true,
-                         const bool includeKl = true,
-                         const double beta = 1);
+                        const bool stochastic = true,
+                        const bool includeKl = true,
+                        const double beta = 1);
 
   /**
    * Clone the ReparametrizationType object. This handles polymorphism
    * correctly.
    */
-	ReparametrizationType* Clone() const
+  ReparametrizationType* Clone() const
   {
     return new ReparametrizationType(*this);
   }
@@ -103,16 +105,6 @@ class ReparametrizationType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
   //! Get the output size.
   size_t const& OutputSize() const { return latentSize; }
   //! Modify the output size.
@@ -137,6 +129,14 @@ class ReparametrizationType : public Layer<InputType, OutputType>
   //! Get the value of the beta hyperparameter.
   double const& Beta() const { return beta; }
 
+  const std::vector<size_t> OutputDimensions() const
+  {
+    std::vector<size_t> outputDimensions(inputDimensions.size(), 1);
+    // This flattens the input.
+    outputDimensions[0] = latentSize;
+    return outputDimensions;
+  }
+
   /**
    * Serialize the layer
    */
@@ -156,9 +156,6 @@ class ReparametrizationType : public Layer<InputType, OutputType>
   //! The beta hyperparameter for constrained variational frameworks.
   double beta;
 
-  //! Locally-stored delta object.
-  OutputType delta;
-
   //! Locally-stored current gaussian sample.
   OutputType gaussianSample;
 
@@ -171,9 +168,6 @@ class ReparametrizationType : public Layer<InputType, OutputType>
 
   //! Locally-stored current standard deviation.
   OutputType stdDev;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class ReparametrizationType
 
 // Standard Reparametrization layer.

@@ -51,6 +51,12 @@ template<typename InputType, typename OutputType>
 void RecurrentAttention<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
+  InitializeForwardPassMemory();
+
+  // Convenience naming.
+  OutputType& rnnOutput = layerOutputs.front();
+  OutputType& actionOutput = layerOutputs.back();
+
   // Initialize the action input.
   if (initialInput.is_empty())
   {
@@ -62,21 +68,20 @@ void RecurrentAttention<InputType, OutputType>::Forward(
   {
     if (forwardStep == 0)
     {
-      actionModule->Forward(initialInput, actionModule->OutputParameter());
+      actionModule->Forward(initialInput, actionOutput);
     }
     else
     {
-      actionModule->Forward(rnnModule->OutputParameter(),
-          actionModule->OutputParameter());
+      actionModule->Forward(rnnOutput, actionOutput);
     }
 
     // Initialize the glimpse input.
     InputType glimpseInput = arma::zeros(input.n_elem, 2);
     glimpseInput.col(0) = input;
-    glimpseInput.submat(0, 1, actionModule->OutputParameter().n_elem - 1, 1) =
-        actionModule.OutputParameter();
+    glimpseInput.submat(0, 1, actionOutput.n_elem - 1, 1) =
+        actionOutput;
 
-    rnnModule->Forward(glimpseInput, rnnModule->OutputParameter());
+    rnnModule->Forward(glimpseInput, rnnOutput);
 
     // Save the output parameter when training the module.
     if (!deterministic)
@@ -84,12 +89,13 @@ void RecurrentAttention<InputType, OutputType>::Forward(
       for (size_t l = 0; l < network.size(); ++l)
       {
         // TODO: what if network[i] has a Model()?
+        // TODO: what does this actually do?  do we need it?
         moduleOutputParameter.push_back(network[l]->OutputParameter());
       }
     }
   }
 
-  output = rnnModule->OutputParameter();
+  output = rnnOutput;
 
   forwardStep = 0;
   backwardStep = 0;
@@ -101,6 +107,14 @@ void RecurrentAttention<InputType, OutputType>::Backward(
     const OutputType& gy,
     OutputType& g)
 {
+  InitializeBackwardPassMemory();
+
+  // Convenience names.
+  OutputType& rnnOutput = layerOutputs.front();
+  OutputType& actionOutput = layerOutputs.back();
+  OutputType& rnnGradient = layerGradients.front();
+  OutputType& actionGradient = layerGradients.back();
+
   if (intermediateGradient.is_empty() && backwardStep == 0)
   {
     // Initialize the attention gradients.
@@ -113,8 +127,7 @@ void RecurrentAttention<InputType, OutputType>::Backward(
     attentionGradient = arma::zeros(weights, 1);
 
     // Initialize the action error.
-    actionError = arma::zeros(actionModule->OutputParameter().n_rows,
-        actionModule->OutputParameter().n_cols);
+    actionError = arma::zeros(actionOutput.n_rows, actionOutput.n_cols);
   }
 
   // Propagate the attention gradients.
@@ -122,11 +135,11 @@ void RecurrentAttention<InputType, OutputType>::Backward(
   {
     size_t offset = 0;
     //  TODO: what if rnnModule has a Model()?
-    rnnModule->Gradient() = arma::mat(intermediateGradient.memptr() + offset,
+    rnnGradient = OutputType(intermediateGradient.memptr() + offset,
         rnnModule->Parameters().n_rows, rnnModule->Parameters().n_cols, false,
         false);
     offset += rnnModule->Parameters().n_elem;
-    actionModule->Gradient() = arma::mat(intermediateGradient.memptr() + offset,
+    actionGradient = OutputType(intermediateGradient.memptr() + offset,
         actionModule->Parameters().n_rows, actionModule->Parameters().n_cols,
         false, false);
 
@@ -154,15 +167,14 @@ void RecurrentAttention<InputType, OutputType>::Backward(
 
     if (backwardStep == (rho - 1))
     {
-      actionModule->Backward(actionModule->OutputParameter(), actionError,
-          actionDelta);
+      actionModule->Backward(actionOutput, actionError, actionDelta);
     }
     else
     {
       actionModule->Backward(initialInput, actionError, actionDelta);
     }
 
-    rnnModule->Backward(rnnModule->OutputParameter(), recurrentError, rnnDelta);
+    rnnModule->Backward(rnnOutput, recurrentError, rnnDelta);
 
     if (backwardStep == 0)
     {
@@ -183,18 +195,22 @@ void RecurrentAttention<InputType, OutputType>::Gradient(
     const OutputType& /* error */,
     OutputType& /* gradient */)
 {
+  // Convenience naming.
+  OutputType& rnnGradient = layerGradients.front();
+  OutputType& actionGradient = layerGradients.back();
+
   size_t offset = 0;
   // TODO: handle case where rnnModule or actionModule have a model
   if (rnnModule->Parameters().n_elem != 0)
   {
-    rnnModule->Gradient() = attentionGradient.submat(offset, 0, offset +
+    rnnGradient = attentionGradient.submat(offset, 0, offset +
         rnnModule->Parameters().n_elem - 1, 0);
     offset += rnnModule->Parameters().n_elem;
   }
 
   if (actionModule->Parameters().n_elem != 0)
   {
-    actionModule->Gradient() = attentionGradient.submat(offset, 0, offset +
+    actionGradient = attentionGradient.submat(offset, 0, offset +
         actionModule->Parameters().n_elem - 1, 0);
   }
 }
@@ -204,15 +220,14 @@ template<typename Archive>
 void RecurrentAttention<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<MultiLayer<InputType, OutputType>>(this));
 
   ar(CEREAL_NVP(rho));
   ar(CEREAL_NVP(outSize));
   ar(CEREAL_NVP(forwardStep));
   ar(CEREAL_NVP(backwardStep));
 
-  ar(CEREAL_POINTER(rnnModule));
-  ar(CEREAL_POINTER(actionModule));
+  // TODO: lots of clearing?
 }
 
 } // namespace ann

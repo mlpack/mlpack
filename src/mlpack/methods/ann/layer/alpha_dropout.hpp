@@ -78,21 +78,6 @@ class AlphaDropout : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the detla.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! The value of the deterministic parameter.
-  const bool& Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
   //! The probability of setting a value to alphaDash.
   double Ratio() const { return ratio; }
 
@@ -103,10 +88,10 @@ class AlphaDropout : public Layer<InputType, OutputType>
   double B() const { return b; }
 
   //! Value of alphaDash.
-  double AlphaDash() const {return alphaDash; }
+  double AlphaDash() const { return alphaDash; }
 
   //! Get the mask.
-  OutputType const& Mask() const {return mask;}
+  const OutputType& Mask() const { return mask; }
 
   //! Modify the probability of setting a value to alphaDash. As
   //! 'a' and 'b' depend on 'ratio', modify them as well.
@@ -124,13 +109,7 @@ class AlphaDropout : public Layer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
-
-  //! Locally-stored mast object.
+  //! Locally-stored mask object.
   OutputType mask;
 
   //! The probability of setting a value to aplhaDash.

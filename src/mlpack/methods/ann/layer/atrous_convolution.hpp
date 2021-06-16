@@ -176,25 +176,18 @@ class AtrousConvolution : public Layer<InputType, OutputType>
   //! Modify the weight of the layer.
   arma::Cube<typename OutputType::elem_type>& Weight() { return weight; }
 
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> result(inputDimensions.size(), 0);
+    result[0] = outputWidth;
+    result[1] = outputHeight;
+    return result;
+  }
+
   //! Get the bias of the layer.
   const OutputType& Bias() const { return bias; }
   //! Modify the bias of the layer.
   OutputType& Bias() { return bias; }
-
-  //! Get the output parameter.
-  const OutputType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  const OutputType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  const OutputType& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
 
   //! Get the input width.
   const size_t& InputWidth() const { return inputWidth; }
@@ -215,12 +208,6 @@ class AtrousConvolution : public Layer<InputType, OutputType>
   const size_t& OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
-
-  //! Get the input size.
-  const size_t& InputSize() const { return inSize; }
-
-  //! Get the output size.
-  const size_t& OutputSize() const { return outSize; }
 
   //! Get the kernel width.
   const size_t& KernelWidth() const { return kernelWidth; }
@@ -390,15 +377,6 @@ class AtrousConvolution : public Layer<InputType, OutputType>
 
   //! Locally-stored padding layer.
   PaddingType<InputType, OutputType> padding;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class AtrousConvolution
 
 } // namespace ann

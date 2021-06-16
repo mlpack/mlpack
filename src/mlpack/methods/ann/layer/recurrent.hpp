@@ -34,7 +34,7 @@ template <
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class Recurrent : public Layer<InputType, OutputType>
+class Recurrent : public MultiLayer<InputType, OutputType>
 {
  public:
   /**
@@ -98,34 +98,6 @@ class Recurrent : public Layer<InputType, OutputType>
                 const OutputType& error,
                 OutputType& /* gradient */);
 
-  //! Get the model modules.
-  std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
-
-    //! The value of the deterministic parameter.
-  const bool& Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
-  //! Get the parameters.
-  OutputType const& Parameters() const { return parameters; }
-  //! Modify the parameters.
-  OutputType& Parameters() { return parameters; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
   //! Get the number of steps to backpropagate through time.
   size_t const& Rho() const { return rho; }
 
@@ -160,13 +132,6 @@ class Recurrent : public Layer<InputType, OutputType>
   //! Locally-stored number of gradient steps.
   size_t gradientStep;
 
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
-
-  //! To know whether this object allocated memory. We need this to know
-  //! whether we should delete the metric member variable in the destructor.
-  bool ownsLayer;
-
   //! Locally-stored weight object.
   OutputType parameters;
 
@@ -184,15 +149,6 @@ class Recurrent : public Layer<InputType, OutputType>
 
   //! Locally-stored feedback output parameters.
   std::vector<OutputType> feedbackOutputParameter;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 
   //! Locally-stored recurrent error parameter.
   OutputType recurrentError;

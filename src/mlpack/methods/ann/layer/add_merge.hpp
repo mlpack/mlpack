@@ -34,7 +34,7 @@ template<
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class AddMerge : public Layer<InputType, OutputType>
+class AddMerge : public MultiLayer<InputType, OutputType>
 {
  public:
   /**
@@ -43,7 +43,7 @@ class AddMerge : public Layer<InputType, OutputType>
    * @param model Expose all the network modules.
    * @param run Call the Forward/Backward method before the output is merged.
    */
-  AddMerge(const bool model = false, const bool run = true);
+  AddMerge(const bool run = true);
 
   /**
    * Create the AddMerge object using the specified parameters.
@@ -52,7 +52,7 @@ class AddMerge : public Layer<InputType, OutputType>
    * @param run Call the Forward/Backward method before the output is merged.
    * @param ownsLayers Delete the layers when this is deallocated.
    */
-  AddMerge(const bool model, const bool run, const bool ownsLayers);
+  AddMerge(const bool run, const bool ownsLayers);
 
   //! Destructor to release allocated memory.
   ~AddMerge();
@@ -64,7 +64,7 @@ class AddMerge : public Layer<InputType, OutputType>
    * @param * (input) Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& /* input */, OutputType& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -118,56 +118,18 @@ class AddMerge : public Layer<InputType, OutputType>
                 OutputType& gradient,
                 const size_t index);
 
-  /*
-   * Add a new module to the model.
-   *
-   * @param args The layer parameter.
-   */
-  template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
-
-  /*
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  void Add(Layer<InputType, OutputType>* layer) { network.push_back(layer); }
-
-  //! Get the input parameter.
-  InputType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Return the model modules.
-  std::vector<Layer<InputType, OutputType>*>& Model()
-  {
-    if (model)
-    {
-      return network;
-    }
-
-    return empty;
-  }
-
-  //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
-
   //! Get the value of run parameter.
   bool Run() const { return run; }
   //! Modify the value of run parameter.
   bool& Run() { return run; }
+
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    // Propagate input size to child layers.
+    for (size_t i = 0; i < this->network.size(); ++i)
+      this->network[i]->InputDimensions() = this->inputDimensions;
+    return this->network.back()->OutputDimensions();
+  }
 
   /**
    * Serialize the layer.
@@ -176,9 +138,6 @@ class AddMerge : public Layer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Parameter which indicates if the modules should be exposed.
-  bool model;
-
   //! Parameter which indicates if the Forward/Backward method should be called
   //! before merging the output.
   bool run;
@@ -186,27 +145,6 @@ class AddMerge : public Layer<InputType, OutputType>
   //! We need this to know whether we should delete the internally-held layers
   //! in the destructor.
   bool ownsLayers;
-
-  //! Locally-stored network modules.
-  std::vector<Layer<InputType, OutputType>*> network;
-
-  //! Locally-stored empty list of modules.
-  std::vector<Layer<InputType, OutputType>*> empty;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored input parameter object.
-  InputType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
-
-  //! Locally-stored weight object.
-  OutputType weights;
 }; // class AddMerge
 
 } // namespace ann

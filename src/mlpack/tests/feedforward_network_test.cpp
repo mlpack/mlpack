@@ -158,7 +158,7 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 
 /**
  * Check whether copying and moving network with Reparametrization is working or not.
- */
+ *
 TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
@@ -189,7 +189,7 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTes
 
 /**
  * Check whether copying and moving network with linear3d is working or not.
- */
+ *
 TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
@@ -222,7 +222,7 @@ TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
 
 /**
  * Check whether copying and moving of Noisy Linear layer is working or not.
- */
+ *
 TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
 {
   // Create training input by 5x5 matrix.
@@ -257,7 +257,7 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
 
 /**
  * Check whether copying and moving of concatenate layer is working or not.
- */
+ *
 TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 {
   // Create training input by 5x5 matrix.
@@ -307,7 +307,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 
 /**
  * Check whether copying and moving of Dropout network is working or not.
- */
+ *
 TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
@@ -561,7 +561,7 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
 
 /**
  * Train the highway network on a larger dataset.
- */
+ *
 TEST_CASE("HighwayNetworkTest", "[FeedForwardNetworkTest]")
 {
   arma::mat dataset;
@@ -726,7 +726,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 
 /**
  * Test the overload of Forward function which allows partial forward pass.
- */
+ *
 TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 {
   FFN<NegativeLogLikelihood<>, RandomInitialization> model;
@@ -753,8 +753,8 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   // Forward pass only through the Add module.
   model.Forward(input,
                 output,
-                1 /* Index of the Add module */,
-                1 /* Index of the Add module */);
+                1 /* Index of the Add module *,
+                1 /* Index of the Add module *);
 
   // As we only forward pass through Add module, input and output should
   // differ by a matrix of ones.
@@ -763,13 +763,14 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   // Forward pass only through the Add module and the LinearNoBias module.
   model.Forward(input,
                 output,
-                1 /* Index of the Add module */,
-                2 /* Index of the LinearNoBias module */);
+                1 /* Index of the Add module *,
+                2 /* Index of the LinearNoBias module *);
 
   // As we only forward pass through Add module followed by the LinearNoBias
   // module, output should be a matrix of 20s.(output = weight * input)
   CheckMatrices(output, arma::ones(10, 1) * 20);
 }
+*/
 
 /**
  * Test that FFN::Train() returns finite objective value.

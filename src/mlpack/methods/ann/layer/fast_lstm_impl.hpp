@@ -57,7 +57,6 @@ FastLSTMType<InputType, OutputType>::FastLSTMType(const FastLSTMType& layer) :
     batchSize(layer.batchSize),
     batchStep(layer.batchStep),
     gradientStepIdx(layer.gradientStepIdx),
-    grad(layer.grad),
     rhoSize(layer.rho),
     bpttSteps(layer.bpttSteps)
 {
@@ -76,7 +75,6 @@ FastLSTMType<InputType, OutputType>::FastLSTMType(FastLSTMType&& layer) :
     batchSize(std::move(layer.batchSize)),
     batchStep(std::move(layer.batchStep)),
     gradientStepIdx(std::move(layer.gradientStepIdx)),
-    grad(std::move(layer.grad)),
     rhoSize(std::move(layer.rho)),
     bpttSteps(std::move(layer.bpttSteps))
 {
@@ -99,7 +97,6 @@ FastLSTMType<InputType, OutputType>::operator=(const FastLSTMType& layer)
     batchSize = layer.batchSize;
     batchStep = layer.batchStep;
     gradientStepIdx = layer.gradientStepIdx;
-    grad = layer.grad;
     rhoSize = layer.rho;
     bpttSteps = layer.bpttSteps;
   }
@@ -122,7 +119,6 @@ FastLSTMType<InputType, OutputType>::operator=(FastLSTMType&& layer)
     batchSize = std::move(layer.batchSize);
     batchStep = std::move(layer.batchStep);
     gradientStepIdx = std::move(layer.gradientStepIdx);
-    grad = std::move(layer.grad);
     rhoSize = std::move(layer.rho);
     bpttSteps = std::move(layer.bpttSteps);
   }
@@ -383,7 +379,6 @@ void FastLSTMType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(cellActivation));
   ar(CEREAL_NVP(forgetGateError));
   ar(CEREAL_NVP(prevError));
-  ar(CEREAL_NVP(outParameter));
 
   // Restore aliases.
   if (Archive::is_loading::value)

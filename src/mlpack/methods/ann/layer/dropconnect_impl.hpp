@@ -26,7 +26,7 @@ template<typename InputType, typename OutputType>
 DropConnectType<InputType, OutputType>::DropConnectType() :
     ratio(0.5),
     scale(2.0),
-    deterministic(true)
+    baseLayer(new LinearType<InputType, OutputType>(0, 0))
 {
   // Nothing to do here.
 }
@@ -38,10 +38,15 @@ DropConnectType<InputType, OutputType>::DropConnectType(
     const double ratio) :
     ratio(ratio),
     scale(1.0 / (1 - ratio)),
-    deterministic(false),
     baseLayer(new LinearType<InputType, OutputType>(inSize, outSize))
 {
-  network.push_back(baseLayer);
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+DropConnectType<InputType, OutputType>::~DropConnectType()
+{
+  delete baseLayer;
 }
 
 template<typename InputType, typename OutputType>
@@ -51,7 +56,7 @@ void DropConnectType<InputType, OutputType>::Forward(
 {
   // The DropConnect mask will not be multiplied in the deterministic mode
   // (during testing).
-  if (deterministic)
+  if (this->deterministic)
   {
     baseLayer->Forward(input, output);
   }
@@ -85,9 +90,9 @@ template<typename InputType, typename OutputType>
 void DropConnectType<InputType, OutputType>::Gradient(
     const InputType& input,
     const OutputType& error,
-    OutputType& /* gradient */)
+    OutputType& gradient)
 {
-  baseLayer->Gradient(input, error, baseLayer->Gradient());
+  baseLayer->Gradient(input, error, gradient);
 
   // Denoise the weights.
   baseLayer->Parameters() = denoise;
@@ -102,15 +107,7 @@ void DropConnectType<InputType, OutputType>::serialize(
 
   ar(CEREAL_NVP(ratio));
   ar(CEREAL_NVP(scale));
-  ar(CEREAL_NVP(weights));
-  // TODO: I don't think baseLayer needs to be deleted...
   ar(CEREAL_POINTER(baseLayer));
-
-  if (cereal::is_loading<Archive>())
-  {
-    network.clear();
-    network.push_back(baseLayer);
-  }
 }
 
 }  // namespace ann

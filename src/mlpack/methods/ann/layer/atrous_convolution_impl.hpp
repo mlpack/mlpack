@@ -161,12 +161,11 @@ void AtrousConvolution<
     GradientConvolutionRule,
     InputType,
     OutputType
->::Reset()
+>::ResetWeights(typename OutputType::elem_type* weightsPtr)
 {
-  weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
-      outSize * inSize, false, false);
-  bias = arma::mat(weights.memptr() + weight.n_elem,
-      outSize, 1, false, false);
+  weight = arma::Cube<typename OutputType::elem_type>(weightsPtr, kernelWidth,
+      kernelHeight, outSize * inSize, false, true);
+  bias = OutputType(weightsPtr + weight.n_elem, outSize, 1, false, true);
 }
 
 template<

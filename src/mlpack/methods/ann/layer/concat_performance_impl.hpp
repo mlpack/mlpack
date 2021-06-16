@@ -27,8 +27,7 @@ ConcatPerformance<
     OutputLayerType,
     InputType,
     OutputType
->::ConcatPerformance(const size_t inSize, OutputLayerType&& outputLayer) :
-    inSize(inSize),
+>::ConcatPerformance(OutputLayerType&& outputLayer) :
     outputLayer(std::move(outputLayer))
 {
   // Nothing to do here.
@@ -45,7 +44,7 @@ void ConcatPerformance<
     OutputType
 >::Forward(const InputType& input, OutputType& target)
 {
-  const size_t elements = input.n_elem / inSize;
+  const size_t elements = input.n_elem / inputDimensions[0];
 
   double output = 0;
   for (size_t i = 0; i < input.n_elem; i += elements)
@@ -73,14 +72,14 @@ void ConcatPerformance<
     const OutputType& target,
     OutputType& output)
 {
-  const size_t elements = input.n_elem / inSize;
+  const size_t elements = input.n_elem / inputDimensions[0];
 
   InputType subInput = input.submat(0, 0, elements - 1, 0);
   OutputType subOutput;
 
   outputLayer.Backward(subInput, target, subOutput);
 
-  output = arma::zeros(subOutput.n_elem, inSize);
+  output = arma::zeros(subOutput.n_elem, inputDimensions[0]);
   output.col(0) = subOutput;
 
   for (size_t i = elements, j = 0; i < input.n_elem; i+= elements, ++j)
@@ -106,7 +105,6 @@ void ConcatPerformance<
 {
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
-  ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outputLayer));
 }
 

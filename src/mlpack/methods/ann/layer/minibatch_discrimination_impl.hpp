@@ -32,21 +32,21 @@ MiniBatchDiscrimination<InputType, OutputType
 template <typename InputType, typename OutputType>
 MiniBatchDiscrimination<InputType, OutputType
 >::MiniBatchDiscrimination(
-    const size_t inSize,
     const size_t outSize,
     const size_t features) :
-    A(inSize),
-    B(outSize - inSize),
-    C(features),
+    a(0), // This will be set when OutputDimensions() is called.
+    b(outSize - inSize),
+    c(features),
     batchSize(0)
 {
-  weights.set_size(A * B * C, 1);
+  // Nothing to do.
 }
 
 template<typename InputType, typename OutputType>
-void MiniBatchDiscrimination<InputType, OutputType>::Reset()
+void MiniBatchDiscrimination<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  weight = arma::mat(weights.memptr(), B * C, A, false, false);
+  weights = OutputType(weightsPtr, b * c, a, false, false);
 }
 
 template<typename InputType, typename OutputType>
@@ -54,20 +54,20 @@ void MiniBatchDiscrimination<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   batchSize = input.n_cols;
-  tempM = weight * input;
-  M = arma::Cube<typename InputType::elem_type>(tempM.memptr(), B, C, batchSize,
+  M = weight * input;
+  arma::Cube<typename InputType::elem_type> cubeM(M.memptr(), b, c, batchSize,
       false, false);
-  distances.set_size(B, batchSize, batchSize);
-  output.set_size(B, batchSize);
+  distances.set_size(b, batchSize, batchSize);
 
-  for (size_t i = 0; i < M.n_slices; ++i)
+  for (size_t i = 0; i < cubeM.n_slices; ++i)
   {
-    output.col(i).ones();
-    for (size_t j = 0; j < M.n_slices; ++j)
+    output.col(i).subvec(0, a - 1) = input.col(i);
+    output.col(i).subvec(a, output.n_rows - 1).ones();
+    for (size_t j = 0; j < cubeM.n_slices; ++j)
     {
       if (j < i)
       {
-        output.col(i) += distances.slice(j).col(i);
+        output.col(i).subvec(a, output.n_rows - 1) += distances.slice(j).col(i);
       }
       else if (i == j)
       {
@@ -76,22 +76,20 @@ void MiniBatchDiscrimination<InputType, OutputType>::Forward(
       else
       {
         distances.slice(i).col(j) =
-            arma::exp(-arma::sum(abs(M.slice(i) - M.slice(j)), 1));
+            arma::exp(-arma::sum(abs(cubeM.slice(i) - cubeM.slice(j)), 1));
         output.col(i) += distances.slice(i).col(j);
       }
     }
   }
-
-  output = join_cols(input, output); // (A + B) x batchSize
 }
 
 template<typename InputType, typename OutputType>
 void MiniBatchDiscrimination<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  g = gy.head_rows(A);
-  arma::Mat<typename OutputType::elem_type> gM = gy.tail_rows(B);
-  deltaM.zeros(B, C, batchSize);
+  g = gy.head_rows(a);
+  OutputType gM = gy.tail_rows(B);
+  deltaM.zeros(b, c, batchSize);
 
   for (size_t i = 0; i < M.n_slices; ++i)
   {
@@ -101,8 +99,7 @@ void MiniBatchDiscrimination<InputType, OutputType>::Backward(
       {
         continue;
       }
-      arma::Mat<typename InputType::elem_type> t =
-          arma::sign(M.slice(i) - M.slice(j));
+      InputType t = arma::sign(M.slice(i) - M.slice(j));
       t.each_col() %=
           distances.slice(std::min(i, j)).col(std::max(i, j)) % gM.col(i);
       deltaM.slice(i) -= t;
@@ -110,8 +107,7 @@ void MiniBatchDiscrimination<InputType, OutputType>::Backward(
     }
   }
 
-  deltaTemp = arma::Mat<typename OutputType::elem_type>(deltaM.memptr(), B * C,
-      batchSize, false, false);
+  OutputType deltaTemp(deltaM.memptr(), b * c, batchSize, false, true);
   g += weight.t() * deltaTemp;
 }
 
@@ -131,14 +127,9 @@ void MiniBatchDiscrimination<InputType, OutputType>::serialize(
 {
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
-  ar(CEREAL_NVP(A));
-  ar(CEREAL_NVP(B));
-  ar(CEREAL_NVP(C));
-  ar(CEREAL_NVP(weights));
-
-  // Restore the `weight` alias.
-  if (cereal::is_loading<Archive>())
-    Reset();
+  ar(CEREAL_NVP(a));
+  ar(CEREAL_NVP(b));
+  ar(CEREAL_NVP(c));
 }
 
 } // namespace ann

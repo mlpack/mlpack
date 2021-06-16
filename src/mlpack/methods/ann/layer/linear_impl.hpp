@@ -94,12 +94,11 @@ LinearType<InputType, OutputType, RegularizerType>::operator=(
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
-void LinearType<InputType, OutputType, RegularizerType>::Reset()
+void LinearType<InputType, OutputType, RegularizerType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  weight = arma::mat(
-      weights.memptr(), outSize, inSize, false, false);
-  bias = arma::mat(
-      weights.memptr() + weight.n_elem, outSize, 1, false, false);
+  weight = OutputType( weightsPtr, outSize, inSize, false, false);
+  bias = OutputType( weightsPtr + weight.n_elem, outSize, 1, false, false);
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
@@ -139,10 +138,6 @@ void LinearType<InputType, OutputType, RegularizerType>::serialize(
 
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
-  ar(CEREAL_NVP(weights));
-
-  if (Archive::is_loading::value)
-    Reset();
 }
 
 } // namespace ann

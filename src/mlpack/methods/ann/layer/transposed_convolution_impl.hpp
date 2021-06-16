@@ -185,11 +185,11 @@ void TransposedConvolutionType<
     GradientConvolutionRule,
     InputType,
     OutputType
->::Reset()
+>::SetWeights(typename OutputType::elem_type* weightPtr)
 {
-  weight = arma::Cube<typename OutputType::elem_type>(weights.memptr(),
+  weight = arma::Cube<typename OutputType::elem_type>(weightPtr,
       kernelWidth, kernelHeight, outSize * inSize, false, false);
-  bias = arma::Mat<typename OutputType::elem_type>(weights.memptr() +
+  bias = arma::Mat<typename OutputType::elem_type>(weightsPtr +
       weight.n_elem, outSize, 1, false, false);
 }
 
@@ -471,7 +471,6 @@ void TransposedConvolutionType<
   ar(CEREAL_NVP(outputHeight));
   ar(CEREAL_NVP(paddingForward));
   ar(CEREAL_NVP(paddingBackward));
-  ar(CEREAL_NVP(weights));
 
   if (cereal::is_loading<Archive>())
   {
@@ -479,7 +478,6 @@ void TransposedConvolutionType<
     size_t totalPadHeight = padHTop + padHBottom;
     aW = (outputWidth + kernelWidth - totalPadWidth - 2) % strideWidth;
     aH = (outputHeight + kernelHeight - totalPadHeight - 2) % strideHeight;
-    Reset();
   }
 }
 

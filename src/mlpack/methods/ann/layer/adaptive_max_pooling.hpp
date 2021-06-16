@@ -47,7 +47,8 @@ class AdaptiveMaxPoolingType : public Layer<InputType, OutputType>
   /**
    * Create the AdaptiveMaxPooling object.
    *
-   * @param outputShape A two-value tuple indicating width and height of the output.
+   * @param outputShape A two-value tuple indicating width and height of the
+   *     output.
    */
   AdaptiveMaxPoolingType(const std::tuple<size_t, size_t>& outputShape);
 
@@ -73,16 +74,6 @@ class AdaptiveMaxPoolingType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
-  //! Get the input width.
-  size_t const& InputWidth() const { return poolingLayer.InputWidth(); }
-  //! Modify the input width.
-  size_t& InputWidth() { return poolingLayer.InputWidth(); }
-
-  //! Get the input height.
-  size_t const& InputHeight() const { return poolingLayer.InputHeight(); }
-  //! Modify the input height.
-  size_t& InputHeight() { return poolingLayer.InputHeight(); }
-
   //! Get the output width.
   size_t const& OutputWidth() const { return outputWidth; }
   //! Modify the output width.
@@ -93,11 +84,16 @@ class AdaptiveMaxPoolingType : public Layer<InputType, OutputType>
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size.
-  size_t const& InputSize() const { return poolingLayer.InputSize(); }
+  //! Get the number of trainable weights.
+  size_t WeightSize() const { return 0; }
 
-  //! Get the output size.
-  size_t OutputSize() const { return poolingLayer.OutputSize(); }
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> result(this->inputDimensions.size(), 1);
+    result[0] = outputWidth;
+    result[1] = outputHeight;
+    return result;
+  }
 
   /**
    * Serialize the layer.
@@ -109,7 +105,7 @@ class AdaptiveMaxPoolingType : public Layer<InputType, OutputType>
   /**
    * Initialize Kernel Size and Stride for Adaptive Pooling.
    */
-  void IntializeAdaptivePadding()
+  void InitializeAdaptivePadding()
   {
     poolingLayer.StrideWidth() = std::floor(poolingLayer.InputWidth() /
         outputWidth);

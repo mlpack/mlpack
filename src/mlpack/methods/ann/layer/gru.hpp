@@ -110,11 +110,6 @@ class GRU : public Layer<InputType, OutputType>
    */
   void ResetCell(const size_t size);
 
-  //! The value of the deterministic parameter.
-  const bool& Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
   //! Get the maximum number of steps to backpropagate through time (BPTT).
   size_t Rho() const { return rho; }
   //! Modify the maximum number of steps to backpropagate through time (BPTT).
@@ -124,21 +119,6 @@ class GRU : public Layer<InputType, OutputType>
   OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
 
   //! Get the model modules.
   std::vector<Layer<InputType, OutputType>*>& Model() { return network; }

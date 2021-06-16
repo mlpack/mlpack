@@ -97,11 +97,6 @@ class CELUType : public Layer<InputType, OutputType>
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
-  //! Get the value of deterministic parameter.
-  bool const& Deterministic() const { return deterministic; }
-  //! Modify the value of deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
   //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
@@ -112,9 +107,6 @@ class CELUType : public Layer<InputType, OutputType>
 
   //! CELU Hyperparameter (alpha > 0).
   double alpha;
-
-  //! If true the derivative computation is disabled, see notes above.
-  bool deterministic;
 }; // class CELUType
 
 // Convenience typedefs.

@@ -80,7 +80,7 @@ class LinearType: public Layer<InputType, OutputType>
    * Reset the layer parameter (weights and bias). The method is called to
    * assign the allocated memory to the internal learnable parameters.
    */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -121,7 +121,7 @@ class LinearType: public Layer<InputType, OutputType>
                 OutputType& gradient);
 
   //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
+  const OutputType& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
@@ -145,6 +145,14 @@ class LinearType: public Layer<InputType, OutputType>
   size_t WeightSize() const
   {
     return (inSize * outSize) + outSize;
+  }
+
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> result(this->inputDimensions.size(), 1);
+    // The Linear layer flattens its input.
+    result[0] = outSize;
+    return result;
   }
 
   //! Serialize the layer.

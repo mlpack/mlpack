@@ -53,6 +53,14 @@ void AddType<InputType, OutputType>::Gradient(
 }
 
 template<typename InputType, typename OutputType>
+void AddType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightPtr)
+{
+  // Set the weights to wrap the given memory.
+  weights = OutputType(weightPtr, 1, outSize, false, true);
+}
+
+template<typename InputType, typename OutputType>
 template<typename Archive>
 void AddType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)

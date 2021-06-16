@@ -40,10 +40,11 @@ LayerNormType<InputType, OutputType>::LayerNormType(
 }
 
 template<typename InputType, typename OutputType>
-void LayerNormType<InputType, OutputType>::Reset()
+void LayerNormType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  gamma = OutputType(weights.memptr(), size, 1, false, false);
-  beta = OutputType(weights.memptr() + gamma.n_elem, size, 1, false, false);
+  gamma = OutputType(weightsPtr, size, 1, false, false);
+  beta = OutputType(weightsPtr + gamma.n_elem, size, 1, false, false);
 
   if (!loading)
   {
@@ -121,13 +122,13 @@ void LayerNormType<InputType, OutputType>::serialize(
   ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
   ar(CEREAL_NVP(size));
-  ar(CEREAL_NVP(weights));
   ar(CEREAL_NVP(eps));
 
+  // Ensure that we don't set the values of the weights if we have already
+  // learned them.
   if (cereal::is_loading<Archive>())
   {
     loading = true;
-    Reset();
   }
 }
 

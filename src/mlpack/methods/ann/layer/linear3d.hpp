@@ -67,13 +67,13 @@ class Linear3DType : public Layer<InputType, OutputType>
   //! Move assignment operator.
   Linear3DType& operator=(Linear3DType&& layer);
 
-	//! Clone the Linear3DType object. This handles polymorphism correctly.
-	Linear3DType* Clone() const { return new Linear3DType(*this); }
+  //! Clone the Linear3DType object. This handles polymorphism correctly.
+  Linear3DType* Clone() const { return new Linear3DType(*this); }
 
   /*
    * Reset the layer parameter.
    */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -113,31 +113,11 @@ class Linear3DType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the input parameter.
-  InputType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
   //! Get the input size.
   size_t InputSize() const { return inSize; }
 
   //! Get the output size.
   size_t OutputSize() const { return outSize; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
 
   //! Get the weight of the layer.
   OutputType const& Weight() const { return weight; }
@@ -148,6 +128,18 @@ class Linear3DType : public Layer<InputType, OutputType>
   OutputType const& Bias() const { return bias; }
   //! Modify the bias weights of the layer.
   OutputType& Bias() { return bias; }
+
+  const size_t WeightSize() const { return outSize * (inSize + 1); }
+
+  const std::vector<size_t>& OutputDimension() const
+  {
+    // The Linear3D layer shares weights for each row of the input, and
+    // duplicates it across the columns.  Thus, we only change the number of
+    // rows.
+    std::vector<size_t> result(inputDimensions);
+    result[0] = outSize;
+    return result;
+  }
 
   /**
    * Serialize the layer
@@ -170,18 +162,6 @@ class Linear3DType : public Layer<InputType, OutputType>
 
   //! Locally-stored bias term parameters.
   OutputType bias;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored input parameter object.
-  InputType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;

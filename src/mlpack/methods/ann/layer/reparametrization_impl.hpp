@@ -82,7 +82,9 @@ void ReparametrizationType<InputType, OutputType>::Backward(
         % g * beta, gy + mean * beta / mean.n_cols);
   }
   else
+  {
     g = join_cols(gy % std::move(gaussianSample) % g, gy);
+  }
 }
 
 template<typename InputType, typename OutputType>
@@ -95,6 +97,7 @@ void ReparametrizationType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(latentSize));
   ar(CEREAL_NVP(stochastic));
   ar(CEREAL_NVP(includeKl));
+  ar(CEREAL_NVP(beta));
 }
 
 } // namespace ann

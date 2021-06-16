@@ -39,11 +39,9 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   /**
    * Create the NoisyLinear layer object using the specified number of units.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  NoisyLinearType(const size_t inSize,
-                  const size_t outSize);
+  NoisyLinearType(const size_t outSize);
 
   //! Copy constructor.
   NoisyLinearType(const NoisyLinearType&);
@@ -61,7 +59,7 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   NoisyLinearType* Clone() const { return new NoisyLinearType(*this); }
 
   //! Reset the layer parameter.
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   //! Reset the noise parameters (epsilons).
   void ResetNoise();
@@ -107,21 +105,25 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the input size.
-  size_t InputSize() const { return inSize; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
-
   //! Modify the bias weights of the layer.
   OutputType& Bias() { return bias; }
+
+  const size_t WeightSize() const { return (outSize * inSize + outSize) * 2; }
+
+  const std::vector<size_t> OutputDimensions() const
+  {
+    inSize = std::accumulate(inputDimensions.begin(), inputDimensions.end(), 0);
+    std::vector<size_t> outputDimensions(inputDimensions, 1);
+    outputDimensions[0] = outSize;
+    return outputDimensions;
+  }
 
   //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
+  //! Cached size of input.
   size_t inSize;
 
   //! Locally-stored number of output units.

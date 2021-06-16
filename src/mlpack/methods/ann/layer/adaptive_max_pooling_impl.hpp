@@ -49,7 +49,7 @@ void AdaptiveMaxPoolingType<InputType, OutputType>::Forward(
 {
   if (!reset)
   {
-    IntializeAdaptivePadding();
+    InitializeAdaptivePadding();
     reset = true;
   }
 

@@ -95,11 +95,6 @@ class DropoutType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
-  //! The value of the deterministic parameter.
-  bool const& Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
   //! The probability of setting a value to zero.
   double Ratio() const { return ratio; }
 
@@ -125,9 +120,6 @@ class DropoutType : public Layer<InputType, OutputType>
 
   //! The scale fraction.
   double scale;
-
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
 }; // class DropoutType
 
 // Convenience typedefs.

@@ -59,7 +59,7 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
   LinearNoBiasType* Clone() const { return new LinearNoBiasType(*this); }
 
   //! Reset the layer parameter.
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -95,7 +95,7 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
                 OutputType& gradient);
 
   //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
+  const OutputType& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
@@ -104,6 +104,15 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
 
   //! Get the output size.
   size_t OutputSize() const { return outSize; }
+
+  size_t WeightSize() const { return inSize * outSize; }
+
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> result(this->inputDimensions.size(), 1);
+    result[0] = outSize;
+    return result;
+  }
 
   //! Serialize the layer.
   template<typename Archive>

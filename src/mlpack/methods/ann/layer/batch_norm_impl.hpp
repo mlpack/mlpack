@@ -28,7 +28,6 @@ BatchNorm<InputType, OutputType>::BatchNorm() :
     average(true),
     momentum(0.0),
     loading(false),
-    deterministic(false),
     count(0),
     averageFactor(0.0)
 {
@@ -46,7 +45,6 @@ BatchNorm<InputType, OutputType>::BatchNorm(
     average(average),
     momentum(momentum),
     loading(false),
-    deterministic(false),
     count(0),
     averageFactor(0.0)
 {
@@ -56,12 +54,13 @@ BatchNorm<InputType, OutputType>::BatchNorm(
 }
 
 template<typename InputType, typename OutputType>
-void BatchNorm<InputType, OutputType>::Reset()
+void BatchNorm<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
   // Gamma acts as the scaling parameters for the normalized output.
-  gamma = arma::mat(weights.memptr(), size, 1, false, false);
+  gamma = OutputType(weightsPtr, size, 1, false, false);
   // Beta acts as the shifting parameters for the normalized output.
-  beta = arma::mat(weights.memptr() + gamma.n_elem, size, 1, false, false);
+  beta = OutputType(weightsPtr + gamma.n_elem, size, 1, false, false);
 
   if (!loading)
   {
@@ -69,7 +68,7 @@ void BatchNorm<InputType, OutputType>::Reset()
     beta.fill(0.0);
   }
 
-  deterministic = false;
+  this->deterministic = false;
   loading = false;
 }
 
@@ -78,8 +77,8 @@ void BatchNorm<InputType, OutputType>::Forward(
     const InputType& input,
     OutputType& output)
 {
-  Log::Assert(input.n_rows % size == 0, "Input features must be divisible \
-      by feature maps.");
+  Log::Assert(input.n_rows % size == 0, "Input features must be divisible "
+      "by feature maps.");
 
   const size_t batchSize = input.n_cols;
   const size_t inputSize = input.n_rows / size;
@@ -88,7 +87,7 @@ void BatchNorm<InputType, OutputType>::Forward(
   output.set_size(arma::size(input));
 
   // We will calculate minibatch norm on each channel / feature map.
-  if (!deterministic)
+  if (!this->deterministic)
   {
     // Check only during training, batch-size can be one during inference.
     if (batchSize == 1 && inputSize == 1)

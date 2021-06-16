@@ -45,8 +45,7 @@ class ConcatPerformance : public Layer<InputType, OutputType>
    * @param inSize The number of inputs.
    * @param outputLayer Output layer used to evaluate the network.
    */
-  ConcatPerformance(const size_t inSize = 0,
-                    OutputLayerType&& outputLayer = OutputLayerType());
+  ConcatPerformance(OutputLayerType&& outputLayer = OutputLayerType());
 
   /*
    * Computes the Negative log likelihood.
@@ -81,27 +80,15 @@ class ConcatPerformance : public Layer<InputType, OutputType>
   //! Modify the delta.
   OutputType& Delta() { return delta; }
 
-  //! Get the number of inputs.
-  size_t InSize() const { return inSize; }
-
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of inputs.
-  size_t inSize;
-
   //! Instantiated outputlayer used to evaluate the network.
   OutputLayerType outputLayer;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class ConcatPerformance
 
 } // namespace ann

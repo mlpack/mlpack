@@ -76,7 +76,7 @@ class BatchNorm : public Layer<InputType, OutputType>
   /**
    * Reset the layer parameters.
    */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Forward pass of the Batch Normalization layer. Transforms the input data
@@ -114,26 +114,6 @@ class BatchNorm : public Layer<InputType, OutputType>
   const OutputType& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
-
-  //! Get the output parameter.
-  const OutputType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  const OutputType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  const OutputType& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
-  //! Get the value of deterministic parameter.
-  const bool& Deterministic() const { return deterministic; }
-  //! Modify the value of deterministic parameter.
-  bool& Deterministic() { return deterministic; }
 
   //! Get the mean over the training data.
   const OutputType& TrainingMean() const { return runningMean; }
@@ -198,12 +178,6 @@ class BatchNorm : public Layer<InputType, OutputType>
   //! Locally-stored parameters.
   OutputType weights;
 
-  /**
-   * If true then mean and variance over the training set will be considered
-   * instead of being calculated over the batch.
-   */
-  bool deterministic;
-
   //! Locally-stored running mean/variance counter.
   size_t count;
 
@@ -216,15 +190,6 @@ class BatchNorm : public Layer<InputType, OutputType>
 
   //! Locally-stored variance object.
   OutputType runningVariance;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 
   //! Locally-stored normalized input.
   arma::Cube<typename InputType::elem_type> normalized;

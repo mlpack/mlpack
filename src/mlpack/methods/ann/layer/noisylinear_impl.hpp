@@ -20,7 +20,6 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 NoisyLinearType<InputType, OutputType>::NoisyLinearType() :
-    inSize(0),
     outSize(0)
 {
   // Nothing to do here.
@@ -29,23 +28,18 @@ NoisyLinearType<InputType, OutputType>::NoisyLinearType() :
 template<typename InputType, typename OutputType>
 NoisyLinearType<InputType, OutputType>::NoisyLinearType(
   const NoisyLinearType& layer) :
-    inSize(layer.inSize),
     outSize(layer.outSize),
     weights(layer.weights)
 {
-  Reset();
+
 }
 
 template<typename InputType, typename OutputType>
 NoisyLinearType<InputType, OutputType>::NoisyLinearType(
-    const size_t inSize,
     const size_t outSize) :
-    inSize(inSize),
     outSize(outSize)
 {
-  weights.set_size((outSize * inSize + outSize) * 2, 1);
-  weightEpsilon.set_size(outSize, inSize);
-  biasEpsilon.set_size(outSize, 1);
+
 }
 
 template<typename InputType, typename OutputType>
@@ -55,10 +49,8 @@ NoisyLinearType<InputType, OutputType>::NoisyLinearType(
     outSize(std::move(layer.outSize)),
     weights(std::move(layer.weights))
 {
-  layer.inSize = 0;
   layer.outSize = 0;
   layer.weights = nullptr;
-  Reset();
 }
 
 template<typename InputType, typename OutputType>
@@ -70,7 +62,6 @@ NoisyLinearType<InputType, OutputType>::operator=(const NoisyLinearType& layer)
     inSize = layer.inSize;
     outSize = layer.outSize;
     weights = layer.weights;
-    Reset();
   }
 
   return *this;
@@ -88,23 +79,24 @@ NoisyLinearType<InputType, OutputType>::operator=(NoisyLinearType&& layer)
     layer.outSize = 0;
     weights = std::move(layer.weights);
     layer.weights = nullptr;
-    Reset();
   }
 
   return *this;
 }
 
 template<typename InputType, typename OutputType>
-void NoisyLinearType<InputType, OutputType>::Reset()
+void NoisyLinearType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  weightMu = arma::mat(weights.memptr(),
-      outSize, inSize, false, false);
-  biasMu = arma::mat(weights.memptr() + weightMu.n_elem,
-      outSize, 1, false, false);
-  weightSigma = arma::mat(weights.memptr() + weightMu.n_elem + biasMu.n_elem,
-      outSize, inSize, false, false);
-  biasSigma = arma::mat(weights.memptr() + weightMu.n_elem * 2 + biasMu.n_elem,
-      outSize, 1, false, false);
+  weights = OutputType(weightsPtr, 1, (outSize * inSize + outSize) * 2, false,
+      true);
+
+  weightMu = OutputType(weightsPtr, outSize, inSize, false, true);
+  biasMu = OutputType(weightsPtr + weightMu.n_elem, outSize, 1, false, true);
+  weightSigma = OutputType(weightsPtr + weightMu.n_elem + biasMu.n_elem,
+      outSize, inSize, false, true);
+  biasSigma = OutputType(weightsPtr + weightMu.n_elem * 2 + biasMu.n_elem,
+      outSize, 1, false, true);
 
   this->ResetNoise();
 }
@@ -179,10 +171,13 @@ void NoisyLinearType<InputType, OutputType>::serialize(
 
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
-  ar(CEREAL_NVP(weights));
 
   if (cereal::is_loading<Archive>())
-    Reset();
+  {
+    // TODO: more to do here?
+
+    ResetNoise();
+  }
 }
 
 } // namespace ann

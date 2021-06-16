@@ -67,6 +67,7 @@ class MultiheadAttentionType : public Layer<InputType, OutputType>
    */
   MultiheadAttentionType();
 
+  // TODO: does srcSeqLen need to be given?
   /**
    * Create the MultiheadAttention object using the specified modules.
    *
@@ -84,8 +85,9 @@ class MultiheadAttentionType : public Layer<InputType, OutputType>
                          const InputType& attnmask = InputType(),
                          const InputType& keyPaddingMask = InputType());
 
-	//! Clone the MultiheadAttentionType object. This handles polymorphism correctly.
-	MultiheadAttentionType* Clone() const
+  //! Clone the MultiheadAttentionType object. This handles polymorphism
+  //! correctly.
+  MultiheadAttentionType* Clone() const
   {
     return new MultiheadAttentionType(*this);
   }
@@ -93,7 +95,7 @@ class MultiheadAttentionType : public Layer<InputType, OutputType>
   /**
    * Reset the layer parameters.
    */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -163,25 +165,18 @@ class MultiheadAttentionType : public Layer<InputType, OutputType>
   //! Modify the Key Padding Mask.
   OutputType& KeyPaddingMask() { return keyPaddingMask; }
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
+  const size_t WeightSize() const { return (4 * embedDim + 4) * embedDim; }
 
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
+  const std::vector<size_t> OutputDimensions() const
+  {
+    // This returns the output as a 2-dimensional (embedDim * tgtSeqLen)
+    // matrix.
+    std::vector<size_t> outputDimensions(inputDimensions.size(), 1);
+    outputDimensions[0] = embedDim;
+    outputDimensions[1] = tgtSeqLen;
 
-  //! Get the gradient.
-  OutputType const& Gradient() const { return grad; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return grad; }
-
-  //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
+    return outputDimensions;
+  }
 
  private:
   //! Element Type of the output.
@@ -253,22 +248,13 @@ class MultiheadAttentionType : public Layer<InputType, OutputType>
   //! Softmax layer to represent the probabilities of next sequence.
   Softmax softmax;
 
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient.
-  OutputType grad;
-
-  //! Locally-stored output parameter.
-  OutputType outputParameter;
-
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
 }; // class MultiheadAttention
 
 // Standard MultiheadAttention layer using no regularization.
 typedef MultiheadAttentionType<arma::mat, arma::mat, NoRegularizer>
-MultiheadAttention;
+    MultiheadAttention;
 
 } // namespace ann
 } // namespace mlpack

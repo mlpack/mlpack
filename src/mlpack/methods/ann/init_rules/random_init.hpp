@@ -115,6 +115,13 @@ class RandomInitialization
       Initialize(W.slice(i));
   }
 
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(CEREAL_NVP(lowerBound));
+    ar(CEREAL_NVP(upperBound));
+  }
+
  private:
   //! The number used as lower bound.
   double lowerBound;

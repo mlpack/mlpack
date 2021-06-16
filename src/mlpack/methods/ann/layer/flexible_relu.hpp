@@ -74,7 +74,7 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
    * Reset the layer parameter (alpha). The method is called to
    * assign the allocated memory to the learnable layer parameter.
    */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -113,9 +113,11 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
   OutputType& Parameters() { return alpha; }
 
   //! Get the parameter controlling the range of the ReLU function.
-  double const& Alpha() const { return alpha; }
+  const double& Alpha() const { return alpha; }
   //! Modify the parameter controlling the range of the ReLU function.
   double& Alpha() { return alpha; }
+
+  const size_t WeightSize() const { return 1; }
 
   /**
    * Serialize the layer.
@@ -128,8 +130,10 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
   OutputType alpha;
 
   //! Parameter controlling the range of the ReLU function.
-  // TODO: I don't think this parameter is needed.
   double userAlpha;
+
+  //! Whether or not a forward pass has ever been performed.
+  bool initialized;
 }; // class FlexibleReLUType
 
 // Convenience typedefs.

@@ -179,6 +179,11 @@ class LSTM : public Layer<InputType, OutputType>
   //! Get the number of output units.
   size_t OutSize() const { return outSize; }
 
+  const size_t WeightSize() const
+  {
+    // TODO ...
+  }
+
   /**
    * Serialize the layer
    */
@@ -222,15 +227,6 @@ class LSTM : public Layer<InputType, OutputType>
 
   //! Locally-stored cell activation error.
   OutputType cellActivationError;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType grad;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 
   //! Weights between the output and input gate.
   OutputType output2GateInputWeight;

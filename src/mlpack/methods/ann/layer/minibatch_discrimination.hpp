@@ -60,18 +60,16 @@ class MiniBatchDiscrimination : public Layer<InputType, OutputType>
    * Create the MiniBatchDiscrimination layer object using the specified
    * number of units.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param features The number of features to compute for each dimension.
    */
-  MiniBatchDiscrimination(const size_t inSize,
-                          const size_t outSize,
+  MiniBatchDiscrimination(const size_t outSize,
                           const size_t features);
 
   /**
    * Reset the layer parameter.
    */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
@@ -111,25 +109,18 @@ class MiniBatchDiscrimination : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the input parameter.
-  InputType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputType& InputParameter() { return inputParameter; }
+  const size_t WeightSize() const { return a * b * c; }
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
+  const std::vector<size_t> OutputDimensions() const
+  {
+    a = std::accumulate(inputDimensions.begin(), inputDimensions.end(), 0);
+    std::vector<size_t> outputDimensions(inputDimensions.size(), 1);
+    // TODO: not sure if this is right... we just interpret it all as
+    // one-dimensional.
+    outputDimensions[0] = a + b;
 
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
+    return outputDimensions;
+  }
 
   /**
    * Serialize the layer.
@@ -139,43 +130,22 @@ class MiniBatchDiscrimination : public Layer<InputType, OutputType>
 
  private:
   //! Locally-stored dimensions of weight.
-  size_t A, B, C;
+  size_t a, b, c;
 
   //! Locally-stored input batch size.
   size_t batchSize;
 
-  //! Locally-stored temporary features object.
-  arma::Mat<typename InputType::elem_type> tempM;
-
   //! Locally-stored weight object.
   OutputType weights;
 
-  //! Locally-stored weight parameters.
-  OutputType weight;
-
-  //! Locally-stored features of input.
-  arma::Cube<typename InputType::elem_type> M;
+  //! Locally-stored features of input.  Cached to avoid recomputation.
+  InputType M;
 
   //! Locally-stored delta for features object.
   arma::Cube<typename OutputType::elem_type> deltaM;
 
   //! Locally-stored L1 distances between features.
   arma::Cube<typename InputType::elem_type> distances;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored temporary delta object.
-  OutputType deltaTemp;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored input parameter object.
-  InputType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class MiniBatchDiscrimination
 
 } // namespace ann

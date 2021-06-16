@@ -21,6 +21,7 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+// TODO: refactor recurrent layer
 /**
  * This class implements the Recurrent Model for Visual Attention, using a
  * variety of possible layer implementations.
@@ -47,7 +48,7 @@ template <
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class RecurrentAttention : public Layer<InputType, OutputType>
+class RecurrentAttention : public MultiLayer<InputType, OutputType>
 {
  public:
   /**
@@ -103,37 +104,6 @@ class RecurrentAttention : public Layer<InputType, OutputType>
                 const OutputType& /* error */,
                 OutputType& /* gradient */);
 
-  //! Get the model modules.
-  std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
-
-    //! The value of the deterministic parameter.
-  const bool& Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
-  //! Get the parameters.
-  OutputType const& Parameters() const { return parameters; }
-  //! Modify the parameters.
-  OutputType& Parameters() { return parameters; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
-  //! Get the module output size.
-  size_t OutSize() const { return outSize; }
-
   //! Get the number of steps to backpropagate through time.
   size_t const& Rho() const { return rho; }
 
@@ -186,9 +156,6 @@ class RecurrentAttention : public Layer<InputType, OutputType>
   //! Locally-stored number of backward steps.
   size_t backwardStep;
 
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
-
   //! Locally-stored weight object.
   OutputType parameters;
 
@@ -200,15 +167,6 @@ class RecurrentAttention : public Layer<InputType, OutputType>
 
   //! List of all module parameters for the backward pass (BBTT).
   std::vector<OutputType> moduleOutputParameter;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 
   //! Locally-stored recurrent error parameter.
   OutputType recurrentError;

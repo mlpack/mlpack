@@ -98,7 +98,7 @@ class FastLSTMType : public Layer<InputType, OutputType>
                const size_t rho = std::numeric_limits<size_t>::max());
 
   //! Clone the FastLSTMType object. This handles polymorphism correctly.
-	FastLSTMType* Clone() const { return new FastLSTMType(*this); }
+  FastLSTMType* Clone() const { return new FastLSTMType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -156,21 +156,6 @@ class FastLSTMType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return grad; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return grad; }
-
   //! Get the number of input units.
   size_t InSize() const { return inSize; }
 
@@ -183,8 +168,15 @@ class FastLSTMType : public Layer<InputType, OutputType>
     return 4 * outSize * inSize + 4 * outSize + 4 * outSize * outSize;
   }
 
+  const std::vector<size_t> OutputDimensions() const
+  {
+    std::vector<size_t> result(inputDimensions.size(), 0);
+    result[0] = outSize;
+    return result;
+  }
+
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
@@ -272,12 +264,6 @@ class FastLSTMType : public Layer<InputType, OutputType>
   //! Locally-stored cell activation error.
   OutputType cellActivationError;
 
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType grad;
-
   //! Locally-stored output parameter object.
   OutputType outputParameter;
 
@@ -310,9 +296,6 @@ class FastLSTMType : public Layer<InputType, OutputType>
 
   //! Locally-stored previous error.
   OutputType prevError;
-
-  //! Locally-stored output parameters.
-  OutputType outParameter;
 
   //! Locally-stored current rho size.
   size_t rhoSize;

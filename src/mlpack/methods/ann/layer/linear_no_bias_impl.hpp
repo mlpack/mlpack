@@ -40,9 +40,10 @@ LinearNoBiasType<InputType, OutputType, RegularizerType>::LinearNoBiasType(
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
-void LinearNoBiasType<InputType, OutputType, RegularizerType>::Reset()
+void LinearNoBiasType<InputType, OutputType, RegularizerType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
+  weight = arma::mat(weightsPtr, outSize, inSize, false, false);
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
@@ -79,10 +80,6 @@ void LinearNoBiasType<InputType, OutputType, RegularizerType>::serialize(
 
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
-  ar(CEREAL_NVP(weights));
-
-  if (Archive::is_loading::value)
-    Reset();
 }
 
 } // namespace ann
