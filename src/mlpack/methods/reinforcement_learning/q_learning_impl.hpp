@@ -54,7 +54,7 @@ QLearning<
   // Set up q-learning network.
   if (learningNetwork.Parameters().is_empty())
     learningNetwork.ResetParameters();
-      
+
   targetNetwork.ResetParameters();
 
   #if ENS_VERSION_MAJOR == 1

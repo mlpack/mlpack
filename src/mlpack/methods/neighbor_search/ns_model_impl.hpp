@@ -516,7 +516,6 @@ void NSModel<SortPolicy>::InitializeModel(const NeighborSearchMode searchMode,
           epsilon);
       break;
   }
-
 }
 
 //! Build the reference tree.

@@ -46,7 +46,7 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
         << "included." << std::endl;
   }
 }
-    
+
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>::Reparametrization(
     const Reparametrization& layer) :
@@ -55,7 +55,7 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
     includeKl(layer.includeKl),
     beta(layer.beta)
 {
-   // Nothing to do here.
+  // Nothing to do here.
 }
 
 template <typename InputDataType, typename OutputDataType>
@@ -66,13 +66,13 @@ Reparametrization<InputDataType, OutputDataType>::Reparametrization(
     includeKl(std::move(layer.includeKl)),
     beta(std::move(layer.beta))
 {
-   // Nothing to do here.
+  // Nothing to do here.
 }
-    
+
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>&
 Reparametrization<InputDataType, OutputDataType>::
-operator=(const Reparametrization& layer) 
+operator=(const Reparametrization& layer)
 {
   if (this != &layer)
   {
@@ -83,11 +83,11 @@ operator=(const Reparametrization& layer)
   }
   return *this;
 }
-    
+
 template <typename InputDataType, typename OutputDataType>
 Reparametrization<InputDataType, OutputDataType>&
 Reparametrization<InputDataType, OutputDataType>::
-operator=(Reparametrization&& layer) 
+operator=(Reparametrization&& layer)
 {
   if (this != &layer)
   {
@@ -98,8 +98,8 @@ operator=(Reparametrization&& layer)
   }
   return *this;
 }
-  
-    
+
+
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void Reparametrization<InputDataType, OutputDataType>::Forward(

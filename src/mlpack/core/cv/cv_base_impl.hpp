@@ -108,8 +108,8 @@ void CVBase<MLAlgorithm,
             WeightsType>::AssertDataConsistency(const MatType& xs,
                                                 const PredictionsType& ys)
 {
-  util::CheckSameSizes(xs, (size_t) ys.n_cols, "CVBase::AssertDataConsistency()",
-      "predictions");
+  util::CheckSameSizes(xs, (size_t) ys.n_cols,
+      "CVBase::AssertDataConsistency()", "predictions");
 }
 
 template<typename MLAlgorithm,
