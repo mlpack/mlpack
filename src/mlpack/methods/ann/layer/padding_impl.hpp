@@ -62,7 +62,7 @@ void Padding<InputDataType, OutputDataType>::Forward(
     outputTemp = arma::zeros<arma::Cube<eT> >(inputWidth + padWLeft + padWRight,
         inputHeight + padHTop + padHBottom, nCols * inSize);
     outputTemp.subcube(padWLeft, padHTop, 0, padWLeft + inputWidth - 1,
-        padHTop + inputHeight - 1, inSize - 1);
+        padHTop + inputHeight - 1, inSize - 1) = inputTemp;
     output = arma::Mat<eT>(outputTemp.memptr(), outputTemp.n_elem / nCols,
         nCols);
   }
