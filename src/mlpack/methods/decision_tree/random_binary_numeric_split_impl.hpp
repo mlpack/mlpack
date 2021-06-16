@@ -141,7 +141,7 @@ template<bool UseWeights, typename VecType, typename WeightVecType>
 double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
-    const arma::Row<double>& labels,
+    const arma::rowvec& responses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
@@ -203,7 +203,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   }
 
   // Splitting data to compute gain.
-  arma::rowvec leftLabels(leftLeafSize), rightLabels(rightLeafSize);
+  arma::rowvec leftResponses(leftLeafSize), rightResponses(rightLeafSize);
   arma::rowvec leftWeights, rightWeights;
   if (UseWeights)
   {
@@ -222,18 +222,16 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
         rightWeights[r] = weights[i];
     }
     if (data[i] < randomPivot)
-      leftLabels[l++] = labels[i];
+      leftResponses[l++] = responses[i];
     else
-      rightLabels[r++] = labels[i];
+      rightResponses[r++] = responses[i];
   }
 
   // Calculate the gain for the left and right child.
-  const double leftGain =
-      FitnessFunction::template Evaluate<UseWeights>(leftLabels, leftWeights,
-          0, leftLeafSize);
-  const double rightGain =
-      FitnessFunction::template Evaluate<UseWeights>(rightLabels, rightWeights,
-          0, rightLeafSize);
+  const double leftGain = FitnessFunction::template
+      Evaluate<UseWeights>(leftResponses, leftWeights, 0, leftLeafSize);
+  const double rightGain = FitnessFunction::template
+      Evaluate<UseWeights>(rightResponses, rightWeights, 0, rightLeafSize);
 
   // Calculate the gain at this split point.
   double gain;
@@ -250,7 +248,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   if (UseWeights)
     gain /= totalWeight;
   else
-    gain /= labels.n_elem;
+    gain /= responses.n_elem;
 
   return gain;
 }

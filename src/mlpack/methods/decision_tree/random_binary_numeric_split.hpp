@@ -99,9 +99,8 @@ class RandomBinaryNumericSplit
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
    * @param data The dimension of data points to check for a split in.
-   * @param labels Labels for each point.
-   * @param numClasses Number of classes in the dataset.
-   * @param weights Weights associated with labels.
+   * @param responses Responses for each point.
+   * @param weights Weights associated with responses.
    * @param minimumLeafSize Minimum number of points in a leaf node for
    *      splitting.
    * @param minimumGainSplit Minimum gain split.
@@ -116,7 +115,7 @@ class RandomBinaryNumericSplit
   static double SplitIfBetter(
       const double bestGain,
       const VecType& data,
-      const arma::Row<double>& labels,
+      const arma::rowvec& responses,
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
