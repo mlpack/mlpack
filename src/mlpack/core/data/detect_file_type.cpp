@@ -29,6 +29,17 @@ namespace data {
  */
 std::string GetStringType(const arma::file_type& type)
 {
+   switch (type)
+  {
+    case file_type::mlp_csv_ascii:   return "CSV data";
+    case file_type::mlp_raw_ascii:   return "raw ASCII formatted data";
+    case file_type::mlp_raw_binary:  return "raw binary formatted data";
+    case file_type::mlp_arma_ascii:  return "Armadillo ASCII formatted data";
+    case file_type::mlp_arma_binary: return "Armadillo binary formatted data";
+    case file_type::mlp_pgm_binary:  return "PGM data";
+    case file_type::mlp_hdf5_binary: return "HDF5 data";
+    default:                	 return "";
+  }
   switch (type)
   {
     case arma::csv_ascii:   return "CSV data";
@@ -53,7 +64,7 @@ std::string GetStringType(const arma::file_type& type)
  *
  * @param f Opened istream to look into to guess the file type.
  */
-arma::file_type GuessFileType(std::istream& f)
+file_type GuessFileType(std::istream& f)
 {
   f.clear();
   const std::fstream::pos_type pos1 = f.tellg();
@@ -74,7 +85,7 @@ arma::file_type GuessFileType(std::istream& f)
 
   // Handle empty files.
   if (nMax == 0)
-    return arma::file_type_unknown;
+    return file_type::mlp_file_type_unknown;
 
   const arma::uword nUse = std::min(nMax, arma::uword(4096));
 
@@ -92,7 +103,7 @@ arma::file_type GuessFileType(std::istream& f)
   if (!loadOkay)
   {
     delete[] dataMem;
-    return arma::file_type_unknown;
+    return file_type::mlp_file_type_unknown;
   }
 
   bool hasBinary = false;
@@ -168,12 +179,12 @@ arma::file_type GuessFileType(std::istream& f)
   delete[] dataMem;
 
   if (hasBinary)
-    return arma::raw_binary;
+    return file_type::mlp_raw_binary;
 
   if (hasComma && (hasBracket == false))
-    return arma::csv_ascii;
+    return file_type::mlp_csv_ascii;
 
-  return arma::raw_ascii;
+  return file_type::mlp_raw_ascii;
 }
 
 /**
@@ -189,22 +200,22 @@ arma::file_type GuessFileType(std::istream& f)
  * @param filename Name of the file.
  * @return The detected file type.
  */
-arma::file_type AutoDetect(std::fstream& stream, const std::string& filename)
+file_type AutoDetect(std::fstream& stream, const std::string& filename)
 {
   // Get the extension.
   std::string extension = Extension(filename);
-  arma::file_type detectedLoadType = arma::file_type_unknown;
+  file_type detectedLoadType = file_type::mlp_file_type_unknown;
 
   if (extension == "csv" || extension == "tsv")
   {
     detectedLoadType = GuessFileType(stream);
-    if (detectedLoadType == arma::csv_ascii)
+    if (detectedLoadType == file_type::mlp_csv_ascii)
     {
       if (extension == "tsv")
         Log::Warn << "'" << filename << "' is comma-separated, not "
             "tab-separated!" << std::endl;
     }
-    else if (detectedLoadType == arma::raw_ascii) // .csv file can be tsv.
+    else if (detectedLoadType == file_type::mlp_raw_ascii) // .csv file can be tsv.
     {
       if (extension == "csv")
       {
@@ -231,7 +242,7 @@ arma::file_type AutoDetect(std::fstream& stream, const std::string& filename)
     }
     else
     {
-      detectedLoadType = arma::file_type_unknown;
+      detectedLoadType = file_type::mlp_file_type_unknown;
     }
   }
   else if (extension == "txt")
@@ -251,15 +262,15 @@ arma::file_type AutoDetect(std::fstream& stream, const std::string& filename)
 
     if (rawHeader == ARMA_MAT_TXT)
     {
-      detectedLoadType = arma::arma_ascii;
+      detectedLoadType = file_type::mlp_arma_ascii;
     }
     else // It's not arma_ascii.  Now we let Armadillo guess.
     {
       detectedLoadType = GuessFileType(stream);
 
-      if (detectedLoadType != arma::raw_ascii &&
-          detectedLoadType != arma::csv_ascii)
-        detectedLoadType = arma::file_type_unknown;
+      if (detectedLoadType != file_type::mlp_raw_ascii &&
+          detectedLoadType != file_type::mlp_csv_ascii)
+        detectedLoadType = file_type::mlp_file_type_unknown;
     }
   }
   else if (extension == "bin")
@@ -277,25 +288,25 @@ arma::file_type AutoDetect(std::fstream& stream, const std::string& filename)
 
     if (rawHeader == ARMA_MAT_BIN)
     {
-      detectedLoadType = arma::arma_binary;
+      detectedLoadType = file_type::mlp_arma_binary;
     }
     else // We can only assume it's raw binary.
     {
-      detectedLoadType = arma::raw_binary;
+      detectedLoadType = file_type::mlp_raw_binary;
     }
   }
   else if (extension == "pgm")
   {
-    detectedLoadType = arma::pgm_binary;
+    detectedLoadType = file_type::mlp_pgm_binary;
   }
   else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
            extension == "he5")
   {
-    detectedLoadType = arma::hdf5_binary;
+    detectedLoadType = file_type::mlp_hdf5_binary;
   }
   else // Unknown extension...
   {
-    detectedLoadType = arma::file_type_unknown;
+    detectedLoadType = file_type::mlp_file_type_unknown;
   }
 
   return detectedLoadType;
@@ -307,34 +318,34 @@ arma::file_type AutoDetect(std::fstream& stream, const std::string& filename)
  * @param filename Name of the file whose type we should detect.
  * @return Detected type of file.
  */
-arma::file_type DetectFromExtension(const std::string& filename)
+file_type DetectFromExtension(const std::string& filename)
 {
   const std::string extension = Extension(filename);
 
   if (extension == "csv")
   {
-    return arma::csv_ascii;
+    return file_type::mlp_csv_ascii;
   }
   else if (extension == "txt")
   {
-    return arma::raw_ascii;
+    return file_type::mlp_raw_ascii;
   }
   else if (extension == "bin")
   {
-    return arma::arma_binary;
+    return file_type::mlp_arma_binary;
   }
   else if (extension == "pgm")
   {
-    return arma::pgm_binary;
+    return file_type::mlp_pgm_binary;
   }
   else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
            extension == "he5")
   {
-    return arma::hdf5_binary;
+    return file_type::mlp_hdf5_binary;
   }
   else
   {
-    return arma::file_type_unknown;
+    return file_type::mlp_file_type_unknown;
   }
 }
 
