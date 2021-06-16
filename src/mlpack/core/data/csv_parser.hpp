@@ -39,6 +39,7 @@
 
 namespace mlpack{
 namespace data{
+
 enum struct file_type : unsigned int
 {
   mlp_file_type_unknown,
@@ -55,18 +56,15 @@ enum struct file_type : unsigned int
   mlp_coord_ascii         //!< simple co-ordinate format for sparse matrices (indices start at zero)
   };
 
-static constexpr file_type mlp_file_type_unknown  = file_type::mlp_file_type_unknown;
-static constexpr file_type mlp_auto_detect        = file_type::mlp_auto_detect;
-static constexpr file_type mlp_raw_ascii          = file_type::mlp_raw_ascii;
-static constexpr file_type mlp_arma_ascii         = file_type::mlp_arma_ascii;
-static constexpr file_type mlp_csv_ascii          = file_type::mlp_csv_ascii;
-static constexpr file_type mlp_raw_binary         = file_type::mlp_raw_binary;
-static constexpr file_type mlp_arma_binary        = file_type::mlp_arma_binary;
-static constexpr file_type mlp_pgm_binary         = file_type::mlp_pgm_binary;
-static constexpr file_type mlp_ppm_binary         = file_type::mlp_ppm_binary;
-static constexpr file_type mlp_hdf5_binary        = file_type::mlp_hdf5_binary;
-static constexpr file_type mlp_hdf5_binary_trans  = file_type::mlp_hdf5_binary_trans;
-static constexpr file_type mlp_coord_ascii        = file_type::mlp_coord_ascii;
+/**
+ * WHere should I place this fucntion?
+ * This fucntion is used to convert mlpack file type to respective
+ * arma file type.
+ *
+ * @param type Mlpack's file_type which will we converted to arma's file_type
+ */
+arma::file_type ToArmaFileType(file_type& type);
+
 /**
  * Convert the given string token to assigned datatype and assign
  * this value to the given address. The address here will be a
@@ -103,8 +101,5 @@ bool LoadCSVV(MatType& x, std::fstream& f);
 
 } // namespace data
 } // namespace mlpack
-
-// Include implementation
-#include "csv_parser_impl.hpp"
 
 #endif

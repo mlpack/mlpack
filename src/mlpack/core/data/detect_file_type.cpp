@@ -27,7 +27,7 @@ namespace data {
  *
  * @param type Type to get the logical name of.
  */
-std::string GetStringType(const arma::file_type& type)
+std::string GetStringType(const file_type& type)
 {
    switch (type)
   {
@@ -39,17 +39,6 @@ std::string GetStringType(const arma::file_type& type)
     case file_type::mlp_pgm_binary:  return "PGM data";
     case file_type::mlp_hdf5_binary: return "HDF5 data";
     default:                	 return "";
-  }
-  switch (type)
-  {
-    case arma::csv_ascii:   return "CSV data";
-    case arma::raw_ascii:   return "raw ASCII formatted data";
-    case arma::raw_binary:  return "raw binary formatted data";
-    case arma::arma_ascii:  return "Armadillo ASCII formatted data";
-    case arma::arma_binary: return "Armadillo binary formatted data";
-    case arma::pgm_binary:  return "PGM data";
-    case arma::hdf5_binary: return "HDF5 data";
-    default:                return "";
   }
 }
 

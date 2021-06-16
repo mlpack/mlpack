@@ -171,12 +171,12 @@ bool Load(const std::string& filename,
     if(loadType == file_type::mlp_csv_ascii)
       success = LoadCSVV(matrix, stream);
     else
-      success = matrix.load(stream, loadType);
+      success = matrix.load(stream, ToArmaFileType(loadType));
   }
     // success = LoadData(filename, matrix, file_type::csv_ascii);
     // success = matrix.load(stream, loadType);
   else
-    success = matrix.load(filename, loadType);
+    success = matrix.load(filename, ToArmaFileType(loadType));
 
   if (!success)
   {
