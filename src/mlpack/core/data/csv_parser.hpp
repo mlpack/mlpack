@@ -42,16 +42,16 @@ enum struct file_type : unsigned int
 {
   file_type_unknown,
   auto_detect,	      //!< attempt to automatically detect the file type
-  raw_ascii,	      //!< raw text (ASCII), without a header
-  arma_ascii,	      //!< Armadillo text format, with a header specifying matrix type and size
-  csv_ascii,	      //!< comma separated values (CSV), without a header
-  raw_binary,	      //!< raw binary format (machine dependent), without a header
+  raw_ascii,	        //!< raw text (ASCII), without a header
+  arma_ascii,	        //!< Armadillo text format, with a header specifying matrix type and size
+  csv_ascii,	        //!< comma separated values (CSV), without a header
+  raw_binary,	        //!< raw binary format (machine dependent), without a header
   arma_binary,	      //!< Armadillo binary format (machine dependent), with a header specifying matrix type and size
-  pgm_binary,	      //!< Portable Grey Map (greyscale image)
-  ppm_binary,	      //!< Portable Pixel Map (colour image), used by the field and cube classes
+  pgm_binary,	        //!< Portable Grey Map (greyscale image)
+  ppm_binary,	        //!< Portable Pixel Map (colour image), used by the field and cube classes
   hdf5_binary,	      //!< HDF5: open binary format, not specific to Armadillo, which can store arbitrary data
   hdf5_binary_trans,  //!< [DO NOT US deprecated] as per hdf5_binary, but save/load the data with columns transposed to rows
-  coord_ascii	      //!< simple co-ordinate format for sparse matrices (indices start at zero)
+  coord_ascii	        //!< simple co-ordinate format for sparse matrices (indices start at zero)
   };
 
 /**
