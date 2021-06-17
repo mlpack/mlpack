@@ -726,7 +726,7 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   // the output should be [248 * 248 * 3, 3] with 1 padding.
   Padding<> module2(1 ,1, 1, 1, 244, 244);
   input1 = arma::randu(244 * 244 * 3, 3);
-  module1.Forward(input1, output1);
+  module2.Forward(input1, output1);
   REQUIRE(arma::accu(input1) == arma::accu(output1));
   REQUIRE(output1.n_rows == (248 * 248 * 3));
   REQUIRE(output1.n_cols == 3);
