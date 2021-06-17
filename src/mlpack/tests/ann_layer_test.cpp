@@ -718,8 +718,8 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   input1 = arma::randu(224 * 224 * 3, 1);
   module1.Forward(input1, output1);
   REQUIRE(arma::accu(input1) == arma::accu(output1));
-  REQUIRE(output.n_rows == (226 * 226 * 3));
-  REQUIRE(output.n_cols == 1);
+  REQUIRE(output1.n_rows == (226 * 226 * 3));
+  REQUIRE(output1.n_cols == 1);
 
   // Test forward function for multiple batches with multiple filters.
   // Here it's 3 filters with height = 244, width = 244
@@ -728,8 +728,8 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   input1 = arma::randu(244 * 244 * 3, 3);
   module1.Forward(input1, output1);
   REQUIRE(arma::accu(input1) == arma::accu(output1));
-  REQUIRE(output.n_rows == (248 * 248 * 3));
-  REQUIRE(output.n_cols == 3);
+  REQUIRE(output1.n_rows == (248 * 248 * 3));
+  REQUIRE(output1.n_cols == 3);
 }
 
 /**
