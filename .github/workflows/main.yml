@@ -41,7 +41,7 @@ jobs:
             Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps(dependencies = TRUE), 'depends.Rds')"
 
         - name: Cache R packages
-          if: runner.os != 'Windows'
+          if: runner.os != 'Windows' && runner.os != 'macOS'
           uses: actions/cache@v1
           with:
             path: ${{ env.R_LIBS_USER }}
@@ -120,7 +120,7 @@ jobs:
         run: Rscript -e "install.packages('remotes')" -e "saveRDS(remotes::dev_package_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE), 'depends.Rds')"
 
       - name: Cache R packages
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && runner.os != 'macOS'
         uses: actions/cache@v1
         with:
           path: ${{ env.R_LIBS_USER }}
@@ -129,6 +129,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          install.packages('remotes')
           remotes::install_deps('${{ needs.jobR.outputs.r_bindings }}', dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
