@@ -71,9 +71,7 @@ class MSEGain
       Sum(values, begin, end, mean);
       mean /= (double) (end - begin);
 
-      for (size_t i = begin; i < end; ++i)
-        mse += std::pow(values[i] - mean, 2);
-
+      mse = arma::accu(arma::square(values.subvec(begin, end - 1) - mean));
       mse /= (double) (end - begin);
     }
 

@@ -75,9 +75,7 @@ class MADGain
       Sum(values, begin, end, mean);
       mean /= (double) (end - begin);
 
-      for (size_t i = begin; i < end; ++i)
-        mad += std::abs(values[i] - mean);
-
+      mad = arma::accu(arma::abs(values - mean));
       mad /= (double) (end - begin);
     }
 
