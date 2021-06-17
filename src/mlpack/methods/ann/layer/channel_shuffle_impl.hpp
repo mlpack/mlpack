@@ -65,7 +65,6 @@ void ChannelShuffle<InputDataType, OutputDataType>::Forward(
     assert(output.n_cols == batchSize);
   }
 
-
   arma::cube inputAsCube(const_cast<arma::Mat<eT>&>(input).memptr(),
       inRowSize, inColSize, depth * batchSize, false, false);
   arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
