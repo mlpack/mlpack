@@ -15,14 +15,7 @@
 // In case it hasn't already been included.
 #include "load.hpp"
 
-#include <algorithm>
-#include <mlpack/core/util/timers.hpp>
-
 #include "extension.hpp"
-
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/algorithm/string/trim.hpp>
 
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/binary.hpp>
