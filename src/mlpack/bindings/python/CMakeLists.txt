@@ -106,6 +106,7 @@ set(BINDING_SOURCES
   get_methods.hpp
   get_program_name.hpp
   import_decl.hpp
+  is_serializable.hpp
   print_class_defn.hpp
   print_defn.hpp
   print_doc.hpp
@@ -303,10 +304,13 @@ macro (add_python_binding group_name)
     add_dependencies(generate_pyx_${name} python_configured)
     # Add the convenience import to __init__.py.  Note that this happens during
     # configuration.
-    # file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
-    # "from .${name} import ${name}\n")
+    file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
+    "from .${name} import ${name}\n")
     endif()
   endforeach()
+
+  file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
+  "from .${group_name} import ${group_name}\n")
 
   if(EXISTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/${group_name}_main_includes.hpp)
     file(REMOVE ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/${group_name}_main_includes.hpp)
@@ -329,7 +333,7 @@ macro (add_python_binding group_name)
           ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
   # if(NOT EXISTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_${group_name}.cpp)
   #   message(FATAL_ERROR "file is not existing!!!")
-  # endif() 
+  # endif()
 
   add_executable(generate_py_wrapper_${group_name}
   ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_${group_name}.cpp

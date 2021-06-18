@@ -33,24 +33,27 @@ void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
 
 	cout << importString << endl;
 
-	string className = GetClassName(groupName); // create class name from group name
+	string className = groupName; // create class name from group name
 
 	// print class.
 	cout << "class " << className << ":" << endl;
 	cout << "  def __init__():" << endl;
 	cout << "    pass" << endl;
 
-	map<string, ParamData>::iterator ParamItr;
+	typedef map<string, ParamData>::iterator ParamItr;
 	for(int i=0; i<methods.size(); i++)
 	{
 		cout << "  " << "def " << methods[i] << "(" << endl;
+		int indent = 5 /* ' def ' */ + methods[i].size() + 1 /* '(' */;
 		for(ParamItr itr=accumulate[methods[i]].begin();
 				itr != accumulate[methods[i]].end(); ++itr)
 		{
-			int indent = 4 /* 'def ' */ + methods[i].size() + 1 /* '(' */;
-			cout << string(indent, ' ') << 
+			if(itr->first == "lambda")
+				cout << string(indent, ' ') << "lambda_" << "," << endl;
+			else
+				cout << string(indent, ' ') << itr->first << "," << endl;
 		}
-		cout << "):" << endl;
+		cout << string(indent, ' ') << "):" << endl;
 		cout << "  " << "  pass" << endl;
 	}
 }

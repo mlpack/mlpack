@@ -22,7 +22,7 @@
 #include "print_input_processing.hpp"
 #include "print_output_processing.hpp"
 #include "import_decl.hpp"
-#include <iostream>
+#include "is_serializable.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -115,6 +115,7 @@ class PyOption
     IO::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
     IO::GetSingleton().functionMap[data.tname]["ImportDecl"] = &ImportDecl<T>;
+    IO::GetSingleton().functionMap[data.tname]["IsSerializable"] = &IsSerializable<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
     // import more than one .so that uses IO, so we have to keep the options
