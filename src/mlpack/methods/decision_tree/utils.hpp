@@ -15,7 +15,7 @@
 /**
  * Calculates the weighted sum and total weight of labels.
  */
-void WeightedSum(const arma::rowvec& labels,
+inline void WeightedSum(const arma::rowvec& labels,
                  const arma::rowvec& weights,
                  const size_t begin,
                  const size_t end,
@@ -88,7 +88,7 @@ void WeightedSum(const arma::rowvec& labels,
 /**
  * Sums up the labels vector.
  */
-void Sum(const arma::rowvec& labels,
+inline void Sum(const arma::rowvec& labels,
         const size_t begin,
         const size_t end,
         double& mean)
