@@ -118,11 +118,11 @@ class DropConnectType : public Layer<InputType, OutputType>
     scale = 1.0 / (1.0 - ratio);
   }
 
-  const std::vector<size_t>& OutputDimensions() const
+  void ComputeOutputDimensions()
   {
     // Propagate input dimensions to the base layer.
     baseLayer->InputDimensions() = this->inputDimensions;
-    return baseLayer->OutputDimensions();
+    this->outputDimensions = baseLayer->OutputDimensions();
   }
 
   /**

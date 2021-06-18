@@ -147,12 +147,13 @@ class LinearType: public Layer<InputType, OutputType>
     return (inSize * outSize) + outSize;
   }
 
-  const std::vector<size_t>& OutputDimensions() const
+  void ComputeOutputDimensions()
   {
-    std::vector<size_t> result(this->inputDimensions.size(), 1);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
+
     // The Linear layer flattens its input.
-    result[0] = outSize;
-    return result;
+    this->outputDimensions[0] = outSize;
   }
 
   //! Serialize the layer.

@@ -295,6 +295,8 @@ class FFN
    * @param layer The Layer to be added to the model.
    */
   //! TODO: this should invalidate cached parameters
+  //! TODO: if weights are set in this layer, we should copy them and update our
+  //cached parameters
   void Add(Layer<InputType, OutputType>* layer)
   {
     network.push_back(layer);
@@ -335,7 +337,9 @@ class FFN
   InputType& Predictors() { return predictors; }
 
   //! Reset the module infomration (weights/parameters).
-  void ResetParameters();
+  void InitializeWeights();
+
+  void SetLayerMemory();
 
   //! Serialize the model.
   template<typename Archive>
@@ -486,9 +490,18 @@ class FFN
   //! The current evaluation mode (training or testing).
   bool deterministic;
 
+  //! If true, each layer has its memory properly set for a forward/backward
+  //! pass.
+  bool layerMemoryIsSet;
+
+  //! If true, each layer has its inputDimensions properly set, and
+  //! `totalInputSize` and `totalOutputSize` are valid.
+  bool inputDimensionsAreSet;
+
   //! Locally-stored output parameter object.  This holds the results of
   //! Forward() for each layer, all in one matrix.
   OutputType layerOutputMatrix;
+  size_t totalInputSize;
   size_t totalOutputSize;
   //! Aliases to different parts of layerOutputMatrix, for convenience.
   //! layerOutputs[i] stores the results of Forward() for layer i.
@@ -505,6 +518,13 @@ class FFN
   //! gradientOutputs[i] stores the results of Gradient() for layer i.
   std::vector<OutputType> layerGradients;
 }; // class FFN
+
+// Utility function to make `m` an alias of the given memory at `newMem`, with a
+// size of numElem x 1.
+template<typename MatType>
+void MakeAlias(MatType& m,
+               typename MatType::elem_type* newMem,
+               const size_t numElem);
 
 } // namespace ann
 } // namespace mlpack

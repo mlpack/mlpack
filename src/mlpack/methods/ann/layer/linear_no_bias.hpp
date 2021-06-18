@@ -107,11 +107,12 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
 
   size_t WeightSize() const { return inSize * outSize; }
 
-  const std::vector<size_t>& OutputDimensions() const
+  void ComputeOutputDimensions()
   {
-    std::vector<size_t> result(this->inputDimensions.size(), 1);
-    result[0] = outSize;
-    return result;
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
+
+    this->outputDimensions[0] = outSize;
   }
 
   //! Serialize the layer.

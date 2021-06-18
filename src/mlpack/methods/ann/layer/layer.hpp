@@ -60,7 +60,7 @@ class Layer
 {
  public:
   //! Default constructor.
-  Layer() { /* Nothing to do here */ }
+  Layer() : validOutputDimensions(false) { /* Nothing to do here */ }
 
   //! Default deconstructor.
   virtual ~Layer() { }
@@ -196,6 +196,18 @@ class Layer
   //! Modify the input dimensions.
   std::vector<size_t>& InputDimensions() { return inputDimensions; }
 
+  //! Get the output dimensions.
+  const std::vector<size_t>& OutputDimensions()
+  {
+    if (!validOutputDimensions)
+    {
+      this->ComputeOutputDimensions();
+      validOutputDimensions = true;
+    }
+
+    return outputDimensions;
+  }
+
   //! Get the parameters.
   virtual const OutputType& Parameters() const { return OutputType(); }
   //! Set the parameters.
@@ -208,21 +220,27 @@ class Layer
   //! Compute the output dimensions.  This should be overloaded if the layer is
   //! meant to work on higher-dimensional objects.  When this is called, it is a
   //! safe assumption that InputDimensions() is correct.
-  virtual const std::vector<size_t>& OutputDimensions() const
+  virtual void ComputeOutputDimensions()
   {
     // The default implementation is to assume that the output size is the same
     // as the input.
-    return inputDimensions;
+    outputDimensions = inputDimensions;
   }
 
   //! Get the number of elements in the output from this layer.
   //! This is marked final because no class should ever need to override
   //! this---instead, override OutputDimensions()!
   // TODO: is final not available in C++11?
-  size_t OutputSize() const
+  size_t OutputSize()
   {
-    const std::vector<size_t> outputDims = this->OutputDimensions();
-    return std::accumulate(outputDims.begin(), outputDims.end(), 0);
+    if (!validOutputDimensions)
+    {
+      this->ComputeOutputDimensions();
+      validOutputDimensions = true;
+    }
+
+    return std::accumulate(this->outputDimensions.begin(),
+        this->outputDimensions.end(), 0);
   }
 
   template<typename Archive>
@@ -239,6 +257,8 @@ class Layer
 
   // TODO: comment
   std::vector<size_t> inputDimensions;
+  std::vector<size_t> outputDimensions;
+  bool validOutputDimensions;
 
   //! If true testing mode otherwise training mode.
   bool deterministic;

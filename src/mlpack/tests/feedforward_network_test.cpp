@@ -53,7 +53,7 @@ void TestNetwork(ModelType& model,
   size_t correct = arma::accu(prediction == testLabels);
 
   double classificationError = 1 - double(correct) / testData.n_cols;
-  /* REQUIRE(classificationError <= classificationErrorThreshold); */
+  REQUIRE(classificationError <= classificationErrorThreshold);
 }
 
 // network1 should be allocated with `new`, and trained on some data.
@@ -429,7 +429,7 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
   model.Add<LogSoftMax>();
 
   ens::VanillaUpdate opt;
-  model.ResetParameters();
+  model.InitializeWeights();
   #if ENS_VERSION_MAJOR == 1
   opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
   #else
@@ -741,7 +741,7 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 
   model.Add<Linear>(10, 10);
 
-  model.ResetParameters();
+  model.InitializeWeights();
   // Set the parameters of the Add<> module to a matrix of ones.
   addModule->Parameters() = arma::ones(10, 1);
   // Set the parameters of the LinearNoBias<> module to a matrix of ones.
@@ -820,7 +820,7 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
   model.Add(linearB);
 
   // Initialize network parameter.
-  model.ResetParameters();
+  model.InitializeWeights();
 
   // Set all network parameter to one.
   model.Parameters().ones();
