@@ -287,6 +287,7 @@ class FFN
     layerOutputs.push_back(OutputType());
     layerDeltas.push_back(OutputType());
     layerGradients.push_back(OutputType());
+    inputDimensionsAreSet = false;
   }
 
   /**
@@ -303,6 +304,7 @@ class FFN
     layerOutputs.push_back(OutputType());
     layerDeltas.push_back(OutputType());
     layerGradients.push_back(OutputType());
+    inputDimensionsAreSet = false;
   }
 
   //! Get the network model.
@@ -498,11 +500,11 @@ class FFN
   //! `totalInputSize` and `totalOutputSize` are valid.
   bool inputDimensionsAreSet;
 
+  size_t totalInputSize;
+  size_t totalOutputSize;
   //! Locally-stored output parameter object.  This holds the results of
   //! Forward() for each layer, all in one matrix.
   OutputType layerOutputMatrix;
-  size_t totalInputSize;
-  size_t totalOutputSize;
   //! Aliases to different parts of layerOutputMatrix, for convenience.
   //! layerOutputs[i] stores the results of Forward() for layer i.
   std::vector<OutputType> layerOutputs;

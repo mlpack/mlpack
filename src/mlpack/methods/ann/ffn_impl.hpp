@@ -37,7 +37,8 @@ FFN<
     initializeRule(std::move(initializeRule)),
     reset(false),
     numFunctions(0),
-    deterministic(false)
+    deterministic(false),
+    inputDimensionsAreSet(false)
 {
   /* Nothing to do here. */
 }
@@ -325,8 +326,9 @@ void FFN<
     Log::Assert(totalInputSize == inputs.n_rows, "FFN::Forward(): input size "
         "does not match expected size set with InputDimensions()!");
 
-    totalOutputSize = 0;
     network.front()->InputDimensions() = inputDimensions;
+    totalInputSize += network[0]->OutputSize();
+    totalOutputSize = network[0]->OutputSize();
     for (size_t i = 1; i < network.size(); ++i)
     {
       network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
@@ -850,18 +852,6 @@ void FFN<
     OutputType
 >::InitializeForwardPassMemory(const size_t batchSize)
 {
-  // Compute input size and output size.
-  totalInputSize = std::accumulate(inputDimensions.begin(),
-      inputDimensions.end(), 0);
-  totalOutputSize = 0;
-  for (size_t i = 0; i < network.size(); ++i)
-  {
-    size_t layerOutputSize = network[i]->OutputSize();
-    if (i < network.size())
-      totalInputSize += layerOutputSize;
-    totalOutputSize += layerOutputSize;
-  }
-
   // We need to initialize memory to store the output of each layer's Forward()
   // call.  We'll do this all in one matrix, but, the size of this matrix
   // depends on the batch size we are using for computation.  We avoid resizing
