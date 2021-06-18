@@ -524,7 +524,8 @@ class FFN
 template<typename MatType>
 void MakeAlias(MatType& m,
                typename MatType::elem_type* newMem,
-               const size_t numElem);
+               const size_t numRows,
+               const size_t numCols);
 
 } // namespace ann
 } // namespace mlpack

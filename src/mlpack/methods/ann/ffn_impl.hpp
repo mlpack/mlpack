@@ -850,6 +850,18 @@ void FFN<
     OutputType
 >::InitializeForwardPassMemory(const size_t batchSize)
 {
+  // Compute input size and output size.
+  totalInputSize = std::accumulate(inputDimensions.begin(),
+      inputDimensions.end(), 0);
+  totalOutputSize = 0;
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    size_t layerOutputSize = network[i]->OutputSize();
+    if (i < network.size())
+      totalInputSize += layerOutputSize;
+    totalOutputSize += layerOutputSize;
+  }
+
   // We need to initialize memory to store the output of each layer's Forward()
   // call.  We'll do this all in one matrix, but, the size of this matrix
   // depends on the batch size we are using for computation.  We avoid resizing
@@ -867,8 +879,13 @@ void FFN<
   for (size_t i = 0; i < layerOutputs.size(); ++i)
   {
     const size_t layerOutputSize = network[i]->OutputSize();
-    layerOutputs[i] = OutputType(layerOutputMatrix.colptr(start),
-        layerOutputSize, batchSize, false, true);
+
+    Log::Assert(
+        start + layerOutputSize * batchSize <= batchSize * totalOutputSize,
+        "Creating alias outside bounds!");
+
+    MakeAlias(layerOutputs[i], layerOutputMatrix.memptr() + start,
+        layerOutputSize, batchSize);
     start += batchSize * layerOutputSize;
   }
 }
@@ -907,8 +924,13 @@ void FFN<
   {
     const size_t layerInputSize = (i == 0) ? inputSize :
         network[i - 1]->OutputSize();
-    layerDeltas[i] = OutputType(deltaMatrix.colptr(start), layerInputSize,
-        batchSize, false, true);
+
+    Log::Assert(
+        start + layerInputSize * batchSize <= batchSize * totalInputSize,
+        "Creating alias outside bounds!");
+
+    MakeAlias(layerDeltas[i], deltaMatrix.memptr() + start, layerInputSize,
+        batchSize);
     start += batchSize * layerInputSize;
   }
 }
@@ -929,7 +951,7 @@ void FFN<
   for (size_t i = 0; i < layerGradients.size(); ++i)
   {
     const size_t layerParamSize = network[i]->WeightSize();
-    MakeAlias(layerGradients[i], gradient.memptr() + start, layerParamSize);
+    MakeAlias(layerGradients[i], gradient.memptr() + start, layerParamSize, 1);
     start += layerParamSize;
   }
 }
@@ -938,13 +960,14 @@ void FFN<
 template<typename MatType>
 void MakeAlias(MatType& m,
                typename MatType::elem_type* newMem,
-               const size_t numElem)
+               const size_t numRows,
+               const size_t numCols)
 {
   // We use placement new to reinitialize the object, since the copy and move
   // assignment operators in Armadillo will end up copying memory instead of
   // making an alias.
   m.~MatType();
-  new (&m) MatType(newMem, numElem, 1, false, true);
+  new (&m) MatType(newMem, numRows, numCols, false, true);
 }
 
 } // namespace ann
