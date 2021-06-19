@@ -95,6 +95,56 @@ class MSEGain
 
     return Evaluate<UseWeights>(values, weights, 0, values.n_elem);
   }
+
+  /**
+   * Calculates the weighted mean squared error gain given the sum of squares
+   * and mean.
+   *
+   * X = array of values of size n.
+   * W = array of weights of size n.
+   *
+   * @f{eqnarray*}{
+   *    MSE = \sum\limits_{i=1}^n {W_i * {X_i}^2} -
+   *        {\dfrac{\sum\limits_{j=1}^n W_j * X_j}
+   *        {\sum\limits_{j=1}^n W_i}}^2
+   * @f}
+   *
+   * @param weightedSumSquares Precomputed weighted sum of square
+   *    (sum(Wi * Xi^2)) of values.
+   * @param weightedMean Precomputed weighted mean (sum(Wi * Xi) / sum(Wi)) of
+   *    values.
+   * @param totalChildWeight Total weight of all the samples in that child.
+   */
+  static double Evaluate(const double weightedSumSquares,
+                         const double weightedMean,
+                         const double totalChildWeight)
+  {
+    double mse = weightedSumSquares / totalChildWeight -
+        weightedMean * weightedMean;
+    return -mse;
+  }
+
+  /**
+   * Calculates the  mean squared error gain given the sum of squares and mean.
+   *
+   * X = array of values of size n.
+   *
+   * @f{eqnarray*}{
+   *   MSE = \sum\limits_{i=1}^n {X_i}^2 -
+   *       {\dfrac{\sum\limits_{j=1}^n X_j}{n}}^2
+   * @f}
+   *
+   * @param sumSquares Precomputed sum of square (sum(Xi^2)) of values.
+   * @param mean Precomputed mean (sum(Xi) / n) of values.
+   * @param childSize The total number of samples in that child.
+   */
+  static double Evaluate(const double sumSquares,
+                         const double mean,
+                         const size_t childSize)
+  {
+    double mse = sumSquares / (double) childSize - mean * mean;
+    return -mse;
+  }
 };
 
 } // namespace tree
