@@ -1,8 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classmlpack_1_1neighbor_1_1NSWrapperBase.html" title="NSWrapperBase is a base wrapper class for holding all NeighborSearch types supported by NSModel." alt="" coords="5,210,132,237"/>
-<area shape="rect" id="node2" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title=" " alt="" coords="198,5,519,135"/>
-<area shape="rect" id="node4" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title=" " alt="" coords="180,159,537,288"/>
-<area shape="rect" id="node6" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title="NSWrapper is a wrapper class for most NeighborSearch types." alt="" coords="243,313,475,369"/>
-<area shape="rect" id="node3" href="$classmlpack_1_1neighbor_1_1LeafSizeNSWrapper.html" title="LeafSizeNSWrapper wraps any NeighborSearch types that take a leaf size for tree construction." alt="" coords="595,35,794,105"/>
-<area shape="rect" id="node5" href="$classmlpack_1_1neighbor_1_1SpillNSWrapper.html" title="The SpillNSWrapper class wraps the NeighborSearch class when the spill tree is used." alt="" coords="585,210,804,237"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_dictionary.hpp" name="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_dictionary.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="286,5,513,61"/>
-<area shape="rect" id="node2" href="$string__encoding_8hpp.html" title=" " alt="" coords="316,109,483,165"/>
-<area shape="rect" id="node3" href="$bag__of__words__encoding__policy_8hpp.html" title=" " alt="" coords="5,213,260,284"/>
-<area shape="rect" id="node4" href="$dictionary__encoding__policy_8hpp.html" title=" " alt="" coords="285,213,514,284"/>
-<area shape="rect" id="node5" href="$tf__idf__encoding__policy_8hpp.html" title=" " alt="" coords="539,213,737,284"/>
-</map>

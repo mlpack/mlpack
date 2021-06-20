@@ -1,6 +1,0 @@
-<map id="SpillNSWrapper&lt; SortPolicy &gt;" name="SpillNSWrapper&lt; SortPolicy &gt;">
-<area shape="rect" id="node1" title="The SpillNSWrapper class wraps the NeighborSearch class when the spill tree is used." alt="" coords="1225,67,1444,93"/>
-<area shape="rect" id="node2" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title=" " alt="" coords="819,15,1176,145"/>
-<area shape="rect" id="node3" href="$classmlpack_1_1neighbor_1_1NSWrapperBase.html" title="NSWrapperBase is a base wrapper class for holding all NeighborSearch types supported by NSModel." alt="" coords="5,24,132,51"/>
-<area shape="rect" id="node4" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title="NSWrapper is a wrapper class for most NeighborSearch types." alt="" coords="181,84,413,140"/>
-</map>
