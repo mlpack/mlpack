@@ -162,7 +162,7 @@ class LpPooling
   void Pooling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     arma::Mat<eT> inputPre = input;
-    input = arma::pow(input, normType);
+    inputPre = arma::pow(inputPre, normType);
 
     for (size_t i = 1; i < input.n_cols; ++i)
       inputPre.col(i) += inputPre.col(i - 1);
