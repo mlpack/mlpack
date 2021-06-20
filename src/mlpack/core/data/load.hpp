@@ -115,7 +115,7 @@ bool Load(const std::string& filename,
  *
  * @cond
  */
-
+/*
 extern template bool Load<int>(const std::string&,
                                arma::Mat<int>&,
                                const bool,
@@ -184,6 +184,7 @@ extern template bool Load<double>(const std::string&,
                                   const bool,
                                   const bool);
 
+*/
 /**
  * @endcond
  */
@@ -298,6 +299,7 @@ bool Load(const std::string& filename,
  * @cond
  */
 
+/*
 extern template bool Load<int, IncrementPolicy>(
     const std::string&,
     arma::Mat<int>&,
@@ -332,7 +334,7 @@ extern template bool Load<double, IncrementPolicy>(
     DatasetMapper<IncrementPolicy>&,
     const bool,
     const bool);
-
+*/
 /**
  * @endcond
  */
