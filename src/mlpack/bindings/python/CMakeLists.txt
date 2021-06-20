@@ -310,7 +310,7 @@ macro (add_python_binding group_name)
   endforeach()
 
   file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
-  "from .${group_name} import ${group_name}\n")
+  "from .${group_name} import *\n")
 
   if(EXISTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/${group_name}_main_includes.hpp)
     file(REMOVE ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/${group_name}_main_includes.hpp)
